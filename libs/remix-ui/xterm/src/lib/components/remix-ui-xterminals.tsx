@@ -92,6 +92,11 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
     plugin.call('xterm', 'keystroke', data, pid)
   }
 
+  const resize = (event: { cols: number; rows: number }, pid: number) => {
+    plugin.call('xterm', 'resize', event, pid)
+  }
+
+
   const createTerminal = async (shell?: string) => {
     const pid = await plugin.call('xterm', 'createTerminal', workingDir, shell)
     setShowOutput(false)
@@ -188,7 +193,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
             {terminals.map((xtermState) => {
               return (
                 <div className={`h-100 xterm-terminal ${xtermState.hidden ? 'hide-xterm' : 'show-xterm'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
-                  <RemixUiXterm theme={theme} setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
+                  <RemixUiXterm theme={theme} setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} resize={resize} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
                 </div>
               )
             })}

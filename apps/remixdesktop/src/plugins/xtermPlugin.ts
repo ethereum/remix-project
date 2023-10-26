@@ -117,7 +117,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
     if (os.platform() === 'win32') {
       let bash = await findExecutable('bash.exe')
       if(bash.length === 0) {
-        bash = await findExecutable('bash.exe', undefined, [process.env['ProgramFiles'] + '\\Git\\usr\\bin'])
+        bash = await findExecutable('bash.exe', undefined, [process.env['ProgramFiles'] + '\\Git\\bin'])
       }
       if (bash) {
         const shells = ['powershell.exe', 'cmd.exe', ...bash]
@@ -162,7 +162,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
     this.emit('close', pid)
   }
 
-  async resize(pid: number, {cols, rows}: {cols: number; rows: number}) {
+  async resize({cols, rows}: {cols: number; rows: number}, pid: number) {
     if (this.terminals[pid]) {
       try {
         this.terminals[pid].resize(cols, rows)
