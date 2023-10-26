@@ -86,20 +86,16 @@ export class ExecutionContext {
         else if (id === 11155111) name = 'Sepolia'
         else name = 'Custom'
 
-        if (id === '1') {
-          web3.eth.getBlock(0, (error, block) => {
-            if (error) console.log('cant query first block')
+        if (id === 1) {
+          web3.eth.getBlock(0).then((block) => {
             if (block && block.hash !== this.mainNetGenesisHash) name = 'Custom'
             callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
-          })
+          }).catch((error) => callback(error))
         } else {
           callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
         }
       }
-      const res = web3.eth.net.getId(cb)
-      if(res && typeof res.then ==='function'){
-        res.then(id=>cb(null,id)).catch(err=>cb(err))
-      }
+      web3.eth.net.getId().then(id=>cb(null,parseInt(id))).catch(err=>cb(err))
     }
   }
 
