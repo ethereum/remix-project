@@ -134,13 +134,8 @@ class XtermPluginClient extends ElectronBasePluginClient {
       })
       parsedEnv = parseEnv(stdout)
     }
-    // filter undefined out of the env
-    const env = Object.keys(parsedEnv || process.env)
-      .filter((key) => process.env[key] !== undefined)
-      .reduce((env, key) => {
-        env[key] = process.env[key] || ''
-        return env
-      }, {} as Record<string, string>)
+
+    let env = parsedEnv || process.env
 
     const ptyProcess = pty.spawn(shell || defaultShell, [], {
       name: 'xterm-color',
@@ -156,6 +151,13 @@ class XtermPluginClient extends ElectronBasePluginClient {
     this.terminals[ptyProcess.pid] = ptyProcess
 
     setTimeout(() => {
+      if(parsedEnv) {
+
+        this.sendData('default shell\n', ptyProcess.pid)
+        this.sendData(defaultShell + '\n', ptyProcess.pid)
+        this.sendData('parsed' + '\n', ptyProcess.pid)
+        this.sendData(JSON.stringify(parsedEnv) + '\n', ptyProcess.pid)
+      }
       this.sendData(JSON.stringify(env), ptyProcess.pid)
     }, 2000)
 
