@@ -18,9 +18,9 @@ export class CircomPluginClient extends PluginClient {
 
   constructor() {
     super()
+    this.methods = ['init', 'parse', 'compile', 'generateR1cs']
     createClient(this)
     this.internalEvents = new EventManager()
-    this.methods = ['init', 'parse', 'compile']
     this.onload()
   }
 
