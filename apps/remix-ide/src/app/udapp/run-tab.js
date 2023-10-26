@@ -133,9 +133,8 @@ export class RunTab extends ViewPlugin {
           }
         },
         provider: {
-
-          async sendAsync (payload) {
-            return udapp.call(name, 'sendAsync', payload)
+          sendAsync (payload) {
+             return udapp.call(name, 'sendAsync', payload)
           }
         }
       })
