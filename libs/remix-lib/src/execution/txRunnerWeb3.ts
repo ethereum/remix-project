@@ -69,7 +69,7 @@ export class TxRunnerWeb3 {
             cb(null, res.transactionHash)
           } catch (e)  {
             console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
-            cb(null, e.receipt.transactionHash)
+            cb(e, null)
           }
         },
         () => {
@@ -82,7 +82,7 @@ export class TxRunnerWeb3 {
         cb(null, res.transactionHash)
       } catch (e)  {
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
-        cb(null, e.receipt.transactionHash)
+        cb(e, null)
       }
     }
   }
@@ -143,7 +143,7 @@ export class TxRunnerWeb3 {
             }, (error) => {
               callback(error)
             })
-          })
+          }, callback)
         })
         .catch(err => {
           if (err && err.message.indexOf('Invalid JSON RPC response') !== -1) {
@@ -163,7 +163,7 @@ export class TxRunnerWeb3 {
             }, (error) => {
               callback(error)
             })
-          })
+          }, callback)
         })
     })
   }
