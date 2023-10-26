@@ -757,7 +757,7 @@ const scriptBlockAndTransaction = `
 (async () => {
     try {
         web3.eth.getTransaction('0x022ccd55747677ac50f8d9dfd1bf5b843fa2f36438a28c1d0a0958e057bb3e2a').then(console.log)
-        web3.eth.getBlock('7367447').then(console.log);
+        web3.eth.getBlock(7367447).then(console.log);
         let ethersProvider = new ethers.providers.Web3Provider(web3Provider)
         ethersProvider.getBlock(7367447).then(console.log)
     } catch (e) {
