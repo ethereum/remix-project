@@ -88,7 +88,6 @@ export const updateScenarioPath = (dispatch: React.Dispatch<any>, path: string) 
 }
 
 export const setSendTransactionValue = (dispatch: React.Dispatch<any>, value: string) => {
-  console.log('setSendTransactionValue', value)
   dispatch(setSendValue(value))
 }
 
