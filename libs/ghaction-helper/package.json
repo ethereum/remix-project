@@ -28,8 +28,9 @@
     "@remix-project/remix-simulator": "^0.2.33",
     "chai": "^4.3.7",
     "ethers": "^5.7.2",
-    "web3": "^1.5.3"
+    "web3": "^4.1.1"
   },
   "types": "./src/index.d.ts",
   "gitHead": "b6db2a29c223e423c70f06b87d9b245e26f0b220"
 }
+

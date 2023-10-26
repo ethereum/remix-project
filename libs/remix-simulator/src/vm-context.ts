@@ -374,7 +374,7 @@ export class VMContext {
     return this.currentVm
   }
 
-  addBlock (block: Block, genesis?: boolean) {
+  addBlock (block: Block, genesis?: boolean, isCall?: boolean) {
     let blockNumber = bigIntToHex(block.header.number)
     if (blockNumber === '0x') {
       blockNumber = '0x0'
@@ -384,7 +384,7 @@ export class VMContext {
     this.blocks[blockNumber] = block
     this.latestBlockNumber = blockNumber
 
-    if (!genesis) this.logsManager.checkBlock(blockNumber, block, this.web3())
+    if (!isCall && !genesis) this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
   trackTx (txHash, block, tx) {

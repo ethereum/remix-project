@@ -250,7 +250,7 @@ module.exports = {
       .createContract('')
       .testFunction('last',
         {
-          status: 'true Transaction mined and execution succeed'
+          status: '0x1 Transaction mined and execution succeed'
         })
 
 

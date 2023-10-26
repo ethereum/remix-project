@@ -2,7 +2,7 @@ import React from 'react' // eslint-disable-line
 import {format} from 'util'
 import {Plugin} from '@remixproject/engine'
 import {compile} from '@remix-project/remix-solidity'
-import {TransactionConfig} from 'web3-core'
+import {Transaction} from 'web3-types'
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 const profile = {
@@ -69,7 +69,7 @@ export class SolidityScript extends Plugin {
     }
 
     // deploy the contract
-    let tx: TransactionConfig = {
+    let tx: Transaction = {
       from: accounts[0],
       data: bytecode
     }
@@ -81,7 +81,7 @@ export class SolidityScript extends Plugin {
     }
     const receiptCall = await web3.eth.sendTransaction(tx)
 
-    const hhlogs = await web3.eth.getHHLogsForTx(receiptCall.transactionHash)
+    const hhlogs = await web3.remix.getHHLogsForTx(receiptCall.transactionHash)
 
     if (hhlogs && hhlogs.length) {
       const finalLogs = (
