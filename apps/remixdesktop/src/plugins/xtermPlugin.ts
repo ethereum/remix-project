@@ -115,7 +115,10 @@ class XtermPluginClient extends ElectronBasePluginClient {
 
   async getShells(): Promise<string[]> {
     if (os.platform() === 'win32') {
-      const bash = await findExecutable('bash.exe')
+      let bash = await findExecutable('bash.exe')
+      if(bash.length === 0) {
+        bash = await findExecutable('bash.exe', undefined, [process.env['ProgramFiles'] + '\\Git\\usr\\bin'])
+      }
       if (bash) {
         const shells = ['powershell.exe', 'cmd.exe', ...bash]
         // filter out duplicates
@@ -149,17 +152,6 @@ class XtermPluginClient extends ElectronBasePluginClient {
       this.sendData(data, ptyProcess.pid)
     })
     this.terminals[ptyProcess.pid] = ptyProcess
-
-    setTimeout(() => {
-      if(parsedEnv) {
-
-        this.sendData('default shell\n', ptyProcess.pid)
-        this.sendData(defaultShell + '\n', ptyProcess.pid)
-        this.sendData('parsed' + '\n', ptyProcess.pid)
-        this.sendData(JSON.stringify(parsedEnv) + '\n', ptyProcess.pid)
-      }
-      this.sendData(JSON.stringify(env), ptyProcess.pid)
-    }, 2000)
 
     return ptyProcess.pid
   }
