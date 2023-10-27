@@ -1,9 +1,12 @@
 .remix-ui-xterminals-container {
     display: flex;
     flex-direction: row;
+    flex: 1;
 }
 .xterm-panel {
-
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .remix-ui-xterminals-buttons {
