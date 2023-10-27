@@ -1,6 +1,8 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip } from '@remix-ui/helper'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { ContractPropertyName } from 'libs/remix-ui/solidity-compiler/src/lib/types'
 
 import React from 'react'
 import { useIntl } from 'react-intl'
@@ -13,10 +15,6 @@ export interface RemixUiCompileDetailsProps {
   insertValue: any
   saveAs: any
 }
-
-export type ContractPropertyName = 'compilerInput' | 'name' | 'metadata' | 'bytecode' | 'abi' | 'storageLayout'
-  | 'web3Deploy' | 'metadataHash' | 'functionHashes' | 'gasEstimates' | 'devdoc' | 'userdoc' | 'Runtime Bytecode'
-  | 'Assembly'
 
 const _paq = (window._paq = window._paq || [])
 
