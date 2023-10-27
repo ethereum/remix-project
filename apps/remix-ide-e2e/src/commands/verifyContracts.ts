@@ -43,7 +43,6 @@ function verifyContracts (browser: NightwatchBrowser, compiledContractNames: str
           .click('*[data-id="compilation-details"]')
           .waitForElementVisible('*[data-id="remixui_treeviewitem_metadata"]')
           .pause(2000)
-          .click('*[data-id="remixui_treeviewitem_metadata"]')
           .assert.visible('*[data-id="treeViewDivtreeViewItemsettings"]')
           .pause(2000)
           .click('*[data-id="treeViewDivtreeViewItemsettings"]')
