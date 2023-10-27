@@ -25,6 +25,7 @@ export interface RemixUiXtermProps {
   theme: {
     backgroundColor: string
     textColor: string
+    fillColor: string
   }
 }
 
@@ -36,6 +37,15 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
     props.setTerminalRef(pid, xtermRef.current)
   }, [xtermRef.current])
 
+  useEffect(() => {
+    xtermRef.current.terminal.options.theme = {
+      background: theme.backgroundColor,
+      foreground: theme.textColor,
+      selection: theme.fillColor,
+      cursor: theme.textColor,
+    }
+  },[theme])
+
   const onResize = (event: { cols: number; rows: number }) => {
     resize(event, pid)
   }
@@ -43,16 +53,6 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
   return (
     <Xterm
       addons={[fitAddon]}
-      options={{
-        theme: {
-          background: theme.backgroundColor,
-          foreground: theme.textColor,
-        },
-        fontFamily: config.fontFamily,
-        fontSize: config.fontSize,
-        letterSpacing: config.letterSpacing,
-        lineHeight: config.lineHeight,
-      }}
       onResize={onResize}
       onRender={() => fitAddon.fit()}
       ref={xtermRef}
