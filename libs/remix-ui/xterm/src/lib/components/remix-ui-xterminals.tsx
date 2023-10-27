@@ -6,16 +6,16 @@ import { Button, ButtonGroup, Dropdown, Tab, Tabs } from 'react-bootstrap'
 import { CustomIconsToggle } from '@remix-ui/helper'
 import { RemixUiTerminal } from '@remix-ui/terminal'
 export interface RemixUiXterminalsProps {
-    plugin: ElectronPlugin
-    onReady: (api: any) => void
+  plugin: ElectronPlugin
+  onReady: (api: any) => void
 }
 
 export interface xtermState {
-    pid: number
-    queue: string
-    timeStamp: number
-    ref: any
-    hidden: boolean
+  pid: number
+  queue: string
+  timeStamp: number
+  ref: any
+  hidden: boolean
 }
 
 export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
@@ -42,7 +42,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
           const removed = prevState.filter(xtermState => xtermState.pid !== pid)
           if (removed.length > 0)
             removed[removed.length - 1].hidden = false
-          if(removed.length === 0)
+          if (removed.length === 0)
             setShowOutput(true)
           return [...removed]
         })
@@ -79,10 +79,12 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   const writeToTerminal = (data: string, pid: number) => {
     setTerminals(prevState => {
       const terminal = prevState.find(xtermState => xtermState.pid === pid)
-      if (terminal.ref && terminal.ref.terminal) {
-        terminal.ref.terminal.write(data)
-      } else {
-        terminal.queue += data
+      if (terminal) {
+        if (terminal.ref && terminal.ref.terminal) {
+          terminal.ref.terminal.write(data)
+        } else {
+          terminal.queue += data
+        }
       }
       return [...prevState]
     })
@@ -166,14 +168,14 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         <div className={`xterm-panel-header-right  ${showOutput ? 'd-none' : ''}`}>
 
           <Dropdown as={ButtonGroup}>
-            <button className="btn btn-sm btn-secondary" onClick={async() => createTerminal()}><span className="far fa-plus border-0 p-0 m-0"></span></button>
+            <button className="btn btn-sm btn-secondary" onClick={async () => createTerminal()}><span className="far fa-plus border-0 p-0 m-0"></span></button>
 
 
             <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
 
             <Dropdown.Menu className='custom-dropdown-items remixui_menuwidth'>
               {shells.map((shell, index) => {
-                return (<Dropdown.Item key={index} onClick={async() => await createTerminal(shell)}>{shell}</Dropdown.Item>)
+                return (<Dropdown.Item key={index} onClick={async () => await createTerminal(shell)}>{shell}</Dropdown.Item>)
               })}
             </Dropdown.Menu>
           </Dropdown>
@@ -212,28 +214,52 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 }
 
 const themeCollection = [
-  { themeName: 'HackerOwl', backgroundColor: '#011628', textColor: '#babbcc',
-    shapeColor: '#8694a1',fillColor: '#011C32'},
-  { themeName: 'Cerulean', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#343a40',fillColor: '#f8f9fa'},
-  { themeName: 'Cyborg', backgroundColor: '#060606', textColor: '#adafae',
-    shapeColor: '#adafae', fillColor: '#222222'},
-  { themeName: 'Dark', backgroundColor: '#222336', textColor: '#babbcc',
-    shapeColor: '#babbcc',fillColor: '#2a2c3f'},
-  { themeName: 'Flatly', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#7b8a8b',fillColor: '#ffffff'},
-  { themeName: 'Black', backgroundColor: '#1a1a1a', textColor: '#babbcc',
-    shapeColor: '#b5b4bc',fillColor: '#1f2020'},
-  { themeName: 'Light', backgroundColor: '#eef1f6', textColor: '#3b445e',
-    shapeColor: '#343a40',fillColor: '#ffffff'},
-  { themeName: 'Midcentury', backgroundColor: '#DBE2E0', textColor: '#11556c',
-    shapeColor: '#343a40',fillColor: '#eeede9'},
-  { themeName: 'Spacelab', backgroundColor: '#ffffff', textColor: '#343a40',
-    shapeColor: '#333333', fillColor: '#eeeeee'},
-  { themeName: 'Candy', backgroundColor: '#d5efff', textColor: '#11556c',
-    shapeColor: '#343a40',fillColor: '#fbe7f8' },
-  { themeName: 'Violet', backgroundColor: '#f1eef6', textColor: '#3b445e',
-    shapeColor: '#343a40',fillColor: '#f8fafe' },
-  { themeName: 'Pride', backgroundColor: '#f1eef6', textColor: '#343a40',
-    shapeColor: '#343a40',fillColor: '#f8fafe' },
+  {
+    themeName: 'HackerOwl', backgroundColor: '#011628', textColor: '#babbcc',
+    shapeColor: '#8694a1', fillColor: '#011C32'
+  },
+  {
+    themeName: 'Cerulean', backgroundColor: '#ffffff', textColor: '#343a40',
+    shapeColor: '#343a40', fillColor: '#f8f9fa'
+  },
+  {
+    themeName: 'Cyborg', backgroundColor: '#060606', textColor: '#adafae',
+    shapeColor: '#adafae', fillColor: '#222222'
+  },
+  {
+    themeName: 'Dark', backgroundColor: '#222336', textColor: '#babbcc',
+    shapeColor: '#babbcc', fillColor: '#2a2c3f'
+  },
+  {
+    themeName: 'Flatly', backgroundColor: '#ffffff', textColor: '#343a40',
+    shapeColor: '#7b8a8b', fillColor: '#ffffff'
+  },
+  {
+    themeName: 'Black', backgroundColor: '#1a1a1a', textColor: '#babbcc',
+    shapeColor: '#b5b4bc', fillColor: '#1f2020'
+  },
+  {
+    themeName: 'Light', backgroundColor: '#eef1f6', textColor: '#3b445e',
+    shapeColor: '#343a40', fillColor: '#ffffff'
+  },
+  {
+    themeName: 'Midcentury', backgroundColor: '#DBE2E0', textColor: '#11556c',
+    shapeColor: '#343a40', fillColor: '#eeede9'
+  },
+  {
+    themeName: 'Spacelab', backgroundColor: '#ffffff', textColor: '#343a40',
+    shapeColor: '#333333', fillColor: '#eeeeee'
+  },
+  {
+    themeName: 'Candy', backgroundColor: '#d5efff', textColor: '#11556c',
+    shapeColor: '#343a40', fillColor: '#fbe7f8'
+  },
+  {
+    themeName: 'Violet', backgroundColor: '#f1eef6', textColor: '#3b445e',
+    shapeColor: '#343a40', fillColor: '#f8fafe'
+  },
+  {
+    themeName: 'Pride', backgroundColor: '#f1eef6', textColor: '#343a40',
+    shapeColor: '#343a40', fillColor: '#f8fafe'
+  },
 ]
