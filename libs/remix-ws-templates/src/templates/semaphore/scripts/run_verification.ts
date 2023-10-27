@@ -1,6 +1,7 @@
 import { ethers, BigNumber } from 'ethers'
 import { IncrementalMerkleTree } from "@zk-kit/incremental-merkle-tree"
 import { poseidon } from "circomlibjs" // v0.0.8
+// @ts-ignore
 const snarkjs = require('snarkjs');
 
 const logger = {
@@ -22,8 +23,14 @@ function hash(message: any): bigint {
 
 (async () => {
   try {
-    const r1cs = "https://ipfs-cluster.ethdevops.io/ipfs/QmbMk4ksBYLQzJ6TiZfzaALF8W11xvB8Wz6a2GrG9oDrXW";
-    const wasm = "https://ipfs-cluster.ethdevops.io/ipfs/QmUbpEvHHKaHEqYLjhn93S8rEsUGeqiTYgRjGPk7g8tBbz";     
+    // @ts-ignore
+    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/semaphore.r1cs', true);
+    // @ts-ignore
+    const r1cs = new Uint8Array(r1csBuffer);
+        // @ts-ignore
+    const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/semaphore.wasm', true);
+    // @ts-ignore
+    const wasm = new Uint8Array(wasmBuffer);   
      
     const zkey_final = {
       type: "mem",

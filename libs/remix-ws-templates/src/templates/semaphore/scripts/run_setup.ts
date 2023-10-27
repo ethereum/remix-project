@@ -1,6 +1,6 @@
 import { ethers, BigNumber } from 'ethers'
-import { IncrementalMerkleTree } from "@zk-kit/incremental-merkle-tree"
-import { poseidon } from "circomlibjs" // v0.0.8
+
+// @ts-ignore
 const snarkjs = require('snarkjs');
 
 const logger = {
@@ -21,9 +21,14 @@ function hash(message: any): bigint {
 
 (async () => {
   try {
+    // @ts-ignore
+    await remix.call('circuit-compiler', 'generateR1cs', 'circuits/semaphore.circom');
+
     const ptau_final = "https://ipfs-cluster.ethdevops.io/ipfs/QmTiT4eiYz5KF7gQrDsgfCSTRv3wBPYJ4bRN1MmTRshpnW";
-    const r1cs = "https://ipfs-cluster.ethdevops.io/ipfs/QmbMk4ksBYLQzJ6TiZfzaALF8W11xvB8Wz6a2GrG9oDrXW";
-    const wasm = "https://ipfs-cluster.ethdevops.io/ipfs/QmUbpEvHHKaHEqYLjhn93S8rEsUGeqiTYgRjGPk7g8tBbz";
+    // @ts-ignore
+    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/semaphore.r1cs', true);
+    // @ts-ignore
+    const r1cs = new Uint8Array(r1csBuffer);
     const zkey_0 = { type: "mem" };
     const zkey_1 = { type: "mem" };
     const zkey_final = { type: "mem" };
@@ -50,7 +55,7 @@ function hash(message: any): bigint {
     await remix.call('fileManager', 'writeFile', './zk/build/verification_key.json', JSON.stringify(vKey))
     
     const templates = {
-      groth16: await remix.call('fileManager', 'readFile', './zk/templates/groth16_verifier.sol.ejs')
+      groth16: await remix.call('fileManager', 'readFile', 'templates/groth16_verifier.sol.ejs')
     }
     const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
     

@@ -11,6 +11,8 @@ export default async () => {
     // @ts-ignore
     'scripts/run_verification.ts': (await import('!!raw-loader!./scripts/run_verification.ts')).default,
     // @ts-ignore
-    'README.txt': (await import('raw-loader!./README.txt')).default,
+    'templates/groth16_verifier.sol.ejs': (await import('!!raw-loader!./templates/groth16_verifier.sol.ejs')).default,
+    // @ts-ignore
+    'README.txt': (await import('raw-loader!./README.txt')).default
   }
 }
