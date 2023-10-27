@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {LocaleModule} from '../../types/locale-module'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { LocaleModule } from '../../types/locale-module'
 import './remix-ui-locale-module.module.css'
 
 export interface RemixUiLocaleModuleProps {
   localeModule: LocaleModule
 }
 
-export function RemixUiLocaleModule({localeModule}: RemixUiLocaleModuleProps) {
+export function RemixUiLocaleModule({ localeModule }: RemixUiLocaleModuleProps) {
   const [localeCode, setLocaleCode] = useState('')
 
   useEffect(() => {
