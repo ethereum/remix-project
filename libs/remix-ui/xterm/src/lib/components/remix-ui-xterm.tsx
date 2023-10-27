@@ -55,6 +55,12 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
       addons={[fitAddon]}
       onResize={onResize}
       onRender={() => fitAddon.fit()}
+      options={{	
+        fontFamily: config.fontFamily,	
+        fontSize: config.fontSize,	
+        letterSpacing: config.letterSpacing,	
+        lineHeight: config.lineHeight,	
+      }}
       ref={xtermRef}
       onData={(data) => {
         send(data, pid)
