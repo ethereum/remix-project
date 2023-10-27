@@ -53,7 +53,7 @@ export class FitAddon implements ITerminalAddon {
       return undefined;
     }
 
-    if (!this._terminal.element || !this._terminal.element.parentElement) {
+    if (!this._terminal.element || !this._terminal.element.parentElement || !this._terminal.element.parentElement.parentElement) {
       return undefined;
     }
 
@@ -69,7 +69,8 @@ export class FitAddon implements ITerminalAddon {
       0 : core.viewport.scrollBarWidth;
 
 
-    const parentElementStyle = window.getComputedStyle(this._terminal.element.parentElement);
+    console.log(this._terminal.element.parentElement.parentElement)
+    const parentElementStyle = window.getComputedStyle(this._terminal.element.parentElement.parentElement);
     const parentElementHeight = parseInt(parentElementStyle.getPropertyValue('height'));
     const parentElementWidth = Math.max(0, parseInt(parentElementStyle.getPropertyValue('width')));
     const elementStyle = window.getComputedStyle(this._terminal.element);
@@ -87,6 +88,7 @@ export class FitAddon implements ITerminalAddon {
       cols: Math.max(MINIMUM_COLS, Math.floor(availableWidth / dims.css.cell.width)),
       rows: Math.max(MINIMUM_ROWS, Math.floor(availableHeight / dims.css.cell.height))
     };
+
     return geometry;
   }
 }
