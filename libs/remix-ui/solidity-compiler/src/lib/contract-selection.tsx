@@ -156,6 +156,14 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return <pre className="remixui_value">{node || ''}</pre>
   }
 
+  const payload = {
+    saveAs: saveAs,
+    contractProperties: {},
+    selectedContract: '',
+    help: {},
+    insertValue: insertValue
+  }
+
   const details = () => {
     _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'display'])
     if (!selectedContract) throw new Error('No contract compiled yet')
@@ -182,6 +190,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     // Make 'compilerInput' first field to display it as first item in 'Compilation Details' modal
     if (compilerInput) contractProperties.compilerInput = compilerInput
     contractProperties = Object.assign(contractProperties, contractsDetails[selectedContract])
+    payload.contractProperties = contractProperties
+    payload.selectedContract = selectedContract
+    payload.help = help
+    payload.insertValue = insertValue
     const log = (
       <div className="remixui_detailsJSON">
         <TreeView>
@@ -225,7 +237,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
       saveAs(new Blob([JSON.stringify(contractProperties, null, '\t')]), `${selectedContract}_compData.json`)
     }
-    modal(selectedContract, log, intl.formatMessage({id: 'solidity.download'}), downloadFn, true, intl.formatMessage({id: 'solidity.close'}), null)
+    // modal(selectedContract, log, intl.formatMessage({id: 'solidity.download'}), downloadFn, true, intl.formatMessage({id: 'solidity.close'}), null)
   }
 
   const copyBytecode = () => {
@@ -301,8 +313,9 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             <button
               data-id="compilation-details"
               className="btn btn-secondary btn-block"
-              onClick={() => {
+              onClick={async () => {
                 details()
+                await (api as any).call('compilationDetails', 'showDetails', payload)
               }}
             >
               <CustomTooltip

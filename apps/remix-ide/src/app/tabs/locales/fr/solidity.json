@@ -1,6 +1,7 @@
 {
   "solidity.displayName": "Solidity compiler",
   "solidity.compiler": "Compiler",
+  "solidity.compileDetails": "Télécharger les détails de la compilation (format JSON)",
   "solidity.addACustomCompiler": "Add a custom compiler",
   "solidity.addACustomCompilerWithURL": "Add a custom compiler with URL",
   "solidity.includeNightlyBuilds": "Include nightly builds",
