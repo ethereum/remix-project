@@ -55,7 +55,7 @@ export function RemixUiCompileDetails({ plugin, contractProperties, selectedCont
                 ></i>
               </span>
             )
-            console.log({ contractProperties, propertyName })
+
             return (
               <div className="remixui_log" key={index}>
                 <TreeViewItem
