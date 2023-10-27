@@ -69,7 +69,6 @@ export class FitAddon implements ITerminalAddon {
       0 : core.viewport.scrollBarWidth;
 
 
-    console.log(this._terminal.element.parentElement.parentElement)
     const parentElementStyle = window.getComputedStyle(this._terminal.element.parentElement.parentElement);
     const parentElementHeight = parseInt(parentElementStyle.getPropertyValue('height'));
     const parentElementWidth = Math.max(0, parseInt(parentElementStyle.getPropertyValue('width')));
