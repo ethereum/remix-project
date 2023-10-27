@@ -13,6 +13,10 @@ export interface RemixUiCompileDetailsProps {
   saveAs: any
 }
 
+export type ContractPropertyName = 'compilerInput' | 'name' | 'metadata' | 'bytecode' | 'abi' | 'storageLayout'
+  | 'web3Deploy' | 'metadataHash' | 'functionHashes' | 'gasEstimates' | 'devdoc' | 'userdoc' | 'Runtime Bytecode'
+  | 'Assembly'
+
 const _paq = (window._paq = window._paq || [])
 
 export function RemixUiCompileDetails({ plugin, contractProperties, selectedContract, saveAs, help, insertValue }: RemixUiCompileDetailsProps) {
@@ -32,7 +36,7 @@ export function RemixUiCompileDetails({ plugin, contractProperties, selectedCont
       </div>
       <div className="remixui_detailsJSON">
         <TreeView>
-          {Object.keys(contractProperties).map((propertyName, index) => {
+          {Object.keys(contractProperties).map((propertyName: ContractPropertyName, index) => {
             const copyDetails = (
               <span className="remixui_copyDetails">
                 <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copy'})} content={contractProperties[propertyName]} direction="top" />
@@ -59,6 +63,8 @@ export function RemixUiCompileDetails({ plugin, contractProperties, selectedCont
                       {propertyName} {copyDetails} {questionMark}
                     </div>
                   }
+                  expand={propertyName === 'metadata' || propertyName === 'bytecode' ? true : false}
+                  iconY='fas fa-caret-down'
                 >
                   {insertValue(contractProperties, propertyName)}
                 </TreeViewItem>
