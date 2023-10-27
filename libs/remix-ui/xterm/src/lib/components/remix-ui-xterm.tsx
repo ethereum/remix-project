@@ -36,10 +36,6 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
     props.setTerminalRef(pid, xtermRef.current)
   }, [xtermRef.current])
 
-  const onKey = (event: {key: string; domEvent: KeyboardEvent}) => {
-    send(event.key, pid)
-  }
-
   const onResize = (event: { cols: number; rows: number }) => {
     resize(event, pid)
   }
@@ -60,7 +56,9 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
       onResize={onResize}
       onRender={() => fitAddon.fit()}
       ref={xtermRef}
-      onKey={onKey}
+      onData={(data) => {
+        send(data, pid)
+      }}
     ></Xterm>
   )
 }

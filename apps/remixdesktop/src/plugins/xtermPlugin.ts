@@ -12,6 +12,7 @@ import {userInfo} from 'node:os'
 import {findExecutable} from '../utils/findExecutable'
 import {spawnSync} from 'child_process'
 import { stripAnsi } from '../lib'
+import { DataBatcher } from '../lib/databatcher'
 
 export const detectDefaultShell = () => {
   const {env} = process
@@ -55,7 +56,6 @@ const parseEnv = (env: any) => {
     .split('\n')
     .filter((l) => Boolean(l))) {
     const [key, ...values] = line.split('=')
-    console.log(key, values)
     Object.assign(returnValue, {
       [key]: values.join('='),
     })
@@ -102,6 +102,7 @@ const clientProfile: Profile = {
 
 class XtermPluginClient extends ElectronBasePluginClient {
   terminals: pty.IPty[] = []
+  dataBatchers: DataBatcher[] = []
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
     this.onload(() => {
@@ -147,9 +148,13 @@ class XtermPluginClient extends ElectronBasePluginClient {
       cwd: path || process.cwd(),
       env: env,
     })
-
+    const dataBatcher = new DataBatcher(ptyProcess.pid)
     ptyProcess.onData((data: string) => {
-      this.sendData(data, ptyProcess.pid)
+      dataBatcher.write(Buffer.from(data))
+      //this.sendData(data, ptyProcess.pid)
+    })
+    dataBatcher.on('flush', (data: string, uid: number) => {
+      this.sendData(data, uid)
     })
     this.terminals[ptyProcess.pid] = ptyProcess
 
