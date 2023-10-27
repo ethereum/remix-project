@@ -106,6 +106,7 @@ export const TabsUI = (props: TabsUIProps) => {
           {getFileDecorationIcons(tab)}
           <span
             className="close-tabs"
+            data-id={`close_${tab.name}`}
             onClick={(event) => {
               props.onClose(index)
               event.stopPropagation()
