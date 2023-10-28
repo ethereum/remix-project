@@ -48,6 +48,24 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         })
       })
 
+      plugin.on('xterm', 'new', async (pid: number) => {
+        setShowOutput(false)
+        setTerminals(prevState => {
+          // set all to hidden
+          prevState.forEach(xtermState => {
+            xtermState.hidden = true
+          })
+          return [...prevState, {
+            pid: pid,
+            queue: '',
+            timeStamp: Date.now(),
+            ref: null,
+            hidden: false
+          }]
+        })
+      })
+      
+
       plugin.on('fs', 'workingDirChanged', (path: string) => {
         setWorkingDir(path)
         setTerminalsEnabled(true)

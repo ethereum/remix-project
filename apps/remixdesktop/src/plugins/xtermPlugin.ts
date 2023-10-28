@@ -103,10 +103,14 @@ const clientProfile: Profile = {
 class XtermPluginClient extends ElectronBasePluginClient {
   terminals: pty.IPty[] = []
   dataBatchers: DataBatcher[] = []
+  workingDir: string = ''
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
     this.onload(() => {
       this.emit('loaded')
+      this.on('fs' as any, 'workingDirChanged', async (path: string) => {
+        this.workingDir = path
+      })
     })
   }
 
@@ -192,5 +196,9 @@ class XtermPluginClient extends ElectronBasePluginClient {
     this.emit('data', data, pid)
   }
 
-  async new(): Promise<void> {}
+  async new(): Promise<void> {
+    console.log('new terminal')
+    const pid = await this.createTerminal(this.workingDir)
+    this.emit('new', pid)
+  }
 }
