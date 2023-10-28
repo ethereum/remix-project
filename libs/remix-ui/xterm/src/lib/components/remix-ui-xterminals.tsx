@@ -30,9 +30,6 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 
   useEffect(() => {
     setTimeout(async () => {
-      plugin.on('xterm', 'loaded', async () => {
-        console.log('xterm loaded')
-      })
 
       plugin.on('xterm', 'data', async (data: string, pid: number) => {
         writeToTerminal(data, pid)
@@ -79,9 +76,6 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
       const theme = await plugin.call('theme', 'currentTheme')
       handleThemeChange(theme)
 
-
-      const shells = await plugin.call('xterm', 'getShells')
-      setShells(shells)
     }, 2000)
   }, [])
 
@@ -119,6 +113,8 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 
 
   const createTerminal = async (shell?: string) => {
+    const shells = await plugin.call('xterm', 'getShells')
+    setShells(shells)
     const pid = await plugin.call('xterm', 'createTerminal', workingDir, shell)
     setShowOutput(false)
     setTerminals(prevState => {
