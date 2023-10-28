@@ -94,6 +94,7 @@ import WindowMenu from './menus/window';
 import EditMenu from './menus/edit';
 import GitMenu from './menus/git';
 import ViewMenu from './menus/view';
+import TerminalMenu from './menus/terminal';
 import { execCommand } from './menus/commands';
 
 
@@ -107,6 +108,7 @@ FileMenu(commandKeys, execCommand),
 GitMenu(commandKeys, execCommand),
 EditMenu(commandKeys, execCommand),
 ViewMenu(commandKeys, execCommand),
+TerminalMenu(commandKeys, execCommand),
 WindowMenu(commandKeys, execCommand, []),
 ]
 
