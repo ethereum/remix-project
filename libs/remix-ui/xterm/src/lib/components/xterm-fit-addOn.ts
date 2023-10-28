@@ -85,7 +85,7 @@ export class FitAddon implements ITerminalAddon {
     const availableWidth = parentElementWidth - elementPaddingHor - scrollbarWidth;
     const geometry = {
       cols: Math.max(MINIMUM_COLS, Math.floor(availableWidth / dims.css.cell.width)),
-      rows: Math.max(MINIMUM_ROWS, Math.floor(availableHeight / dims.css.cell.height))
+      rows: Math.max(MINIMUM_ROWS, Math.floor((availableHeight - 17) / dims.css.cell.height))
     };
 
     return geometry;

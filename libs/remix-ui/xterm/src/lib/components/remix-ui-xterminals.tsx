@@ -73,6 +73,18 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         handleThemeChange(theme)
       })
 
+      plugin.on('layout', 'resize', async (height: number) => {
+        setTerminals(prevState => {
+          const terminal = prevState.find(xtermState => xtermState.hidden === false)
+          if (terminal) {
+            if (terminal.ref && terminal.ref.terminal) {
+              terminal.timeStamp = Date.now()
+            }
+          }
+          return [...prevState]
+        })
+      })
+
       const theme = await plugin.call('theme', 'currentTheme')
       handleThemeChange(theme)
 

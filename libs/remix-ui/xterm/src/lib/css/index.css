@@ -45,6 +45,7 @@
 .xterm-panel-header {
     display: flex;
     flex-direction: row;
+    
 }
 
 .xterm-panel-header-left {

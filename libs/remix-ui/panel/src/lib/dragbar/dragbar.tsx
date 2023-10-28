@@ -8,6 +8,7 @@ interface IRemixDragBarUi {
   setHideStatus: (hide: boolean) => void
   hidden: boolean
   minHeight?: number
+  onResize: (height: number) => void
 }
 
 const DragBar = (props: IRemixDragBarUi) => {
@@ -19,6 +20,7 @@ const DragBar = (props: IRemixDragBarUi) => {
     const h = window.innerHeight - data.y
     props.refObject.current.setAttribute('style', `height: ${h}px;`)
     setDragBarPosY(props.refObject.current.offsetTop)
+    props.onResize(h)
     setDragState(false)
     props.setHideStatus(false)
   }
