@@ -3,8 +3,9 @@ import { ElectronPlugin } from '@remixproject/engine-electron'
 import RemixUiXterm from './remix-ui-xterm'
 import '../css/index.css'
 import { Button, ButtonGroup, Dropdown, Tab, Tabs } from 'react-bootstrap'
-import { CustomIconsToggle } from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 import { RemixUiTerminal } from '@remix-ui/terminal'
+import { FormattedMessage } from 'react-intl'
 export interface RemixUiXterminalsProps {
   plugin: ElectronPlugin
   onReady: (api: any) => void
@@ -64,7 +65,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
           }]
         })
       })
-      
+
 
       plugin.on('fs', 'workingDirChanged', (path: string) => {
         setWorkingDir(path)
@@ -174,6 +175,11 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
     if (terminals.length === 0) createTerminal()
   }
 
+  const clearTerminal = () => {
+    const terminal = terminals.find(xtermState => xtermState.hidden === false)
+    if (terminal && terminal.ref && terminal.ref.terminal)
+      terminal.ref.terminal.clear()
+  }
 
   return (<>
 
@@ -186,7 +192,16 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         <div className={`xterm-panel-header-right  ${showOutput ? 'd-none' : ''}`}>
 
           <Dropdown as={ButtonGroup}>
-            <button className="btn btn-sm btn-secondary" onClick={async () => createTerminal()}><span className="far fa-plus border-0 p-0 m-0"></span></button>
+            <button className="btn btn-sm btn-secondary mr-2" onClick={async () => clearTerminal()}>
+              <CustomTooltip tooltipText={<FormattedMessage id='xterm.clear' defaultMessage='Clear terminal' />}>
+                <span className="far fa-ban border-0 p-0 m-0"></span>
+              </CustomTooltip>
+            </button>
+            <button className="btn btn-sm btn-secondary" onClick={async () => createTerminal()}>
+              <CustomTooltip tooltipText={<FormattedMessage id='xterm.new' defaultMessage='New terminal' />}>
+                <span className="far fa-plus border-0 p-0 m-0"></span>
+              </CustomTooltip>
+            </button>
 
 
             <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
@@ -197,7 +212,11 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
               })}
             </Dropdown.Menu>
           </Dropdown>
-          <button className="btn ml-2 btn-sm btn-secondary" onClick={closeTerminal}><span className="far fa-trash border-0 ml-1"></span></button>
+          <button className="btn ml-2 btn-sm btn-secondary" onClick={closeTerminal}>
+            <CustomTooltip tooltipText={<FormattedMessage id='xterm.close' defaultMessage='Close terminal' />}>
+              <span className="far fa-trash border-0 ml-1"></span>
+            </CustomTooltip>
+          </button>
         </div>
       </div>
 
