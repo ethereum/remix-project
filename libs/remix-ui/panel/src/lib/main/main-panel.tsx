@@ -52,13 +52,17 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
     appContext.layout.emit('change', appContext.layout.panels)
   }
 
+  const resize = (height: number) => {
+    appContext.layout.emit('resize', height)
+  }
+
   return (
     <div className="mainview">
       {Object.values(plugins).map((pluginRecord, i) => {
         return (
           <React.Fragment key={`mainView${i}`}>
             {pluginRecord.profile.name === 'terminal' ? (
-              <DragBar key="dragbar-terminal" hidden={pluginRecord.minimized || false} setHideStatus={showTerminal} refObject={terminalRef}></DragBar>
+              <DragBar key="dragbar-terminal" onResize={resize} hidden={pluginRecord.minimized || false} setHideStatus={showTerminal} refObject={terminalRef}></DragBar>
             ) : null}
             <RemixUIPanelPlugin ref={refs[i]} key={pluginRecord.profile.name} pluginRecord={pluginRecord} />
           </React.Fragment>

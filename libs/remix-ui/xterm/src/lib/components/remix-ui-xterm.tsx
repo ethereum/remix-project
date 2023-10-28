@@ -46,9 +46,15 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
     }
   },[theme])
 
+  useEffect(() => {
+    fitAddon.fit()
+  },[timeStamp])
+
   const onResize = (event: { cols: number; rows: number }) => {
     resize(event, pid)
   }
+
+ 
 
   return (
     <Xterm
