@@ -1,5 +1,4 @@
-import { toHex, toDecimal } from 'web3-utils'
-import BN from 'bn.js'
+import { toHex, toNumber, toBigInt } from 'web3-utils'
 import { toChecksumAddress, Address, bigIntToHex } from '@ethereumjs/util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
@@ -26,6 +25,7 @@ export class Transactions {
   txRunnerVMInstance
   txRunnerInstance
   TX_INDEX = '0x0' // currently there's always only 1 tx per block, so the transaction index will always be 0x0
+  comingCallId
 
   constructor (vmContext) {
     this.vmContext = vmContext
@@ -73,7 +73,8 @@ export class Transactions {
       eth_getTransactionByBlockNumberAndIndex: this.eth_getTransactionByBlockNumberAndIndex.bind(this),
       eth_getExecutionResultFromSimulator: this.eth_getExecutionResultFromSimulator.bind(this),
       eth_getHHLogsForTx: this.eth_getHHLogsForTx.bind(this),
-      eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this)
+      eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this),
+      eth_registerCallId: this.eth_registerCallId.bind(this)
     }
   }
 
@@ -154,9 +155,8 @@ export class Transactions {
     }
 
     payload.params[0].gas = 10000000 * 10
-
     this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
-    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {      
+    processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
       if (error) return cb(error)
       const result: RunTxResult = value.result
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
@@ -169,12 +169,12 @@ export class Transactions {
           return cb(e.message)
         }
       }
-      let gasUsed = result.execResult.executionGasUsed
+      let gasUsed = Number(toNumber(result.execResult.executionGasUsed))
       if (result.execResult.gasRefund) {
-        gasUsed += result.execResult.gasRefund
+        gasUsed += Number(toNumber(result.execResult.gasRefund))
       }
-      gasUsed = gasUsed + value.tx.getBaseFee()
-      cb(null, Math.ceil(Number(gasUsed) + (15 * Number(gasUsed)) / 100))
+      gasUsed = gasUsed + Number(toNumber(value.tx.getBaseFee()))
+      cb(null, Math.ceil(gasUsed + (15 * gasUsed) / 100))
     })
   }
 
@@ -190,6 +190,11 @@ export class Transactions {
     })
   }
 
+  eth_registerCallId (payload, cb) {
+    this.comingCallId = payload.params[0]
+    cb()
+  }
+
   eth_call (payload, cb) {
     // from might be lowercased address (web3)
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
@@ -200,12 +205,10 @@ export class Transactions {
     }
 
     payload.params[0].value = undefined
-
-    const tag = payload.params[0].timestamp // e2e reference
-
+    const tag = payload.params[0].timestamp
     processTx(this.txRunnerInstance, payload, true, (error, result: VMexecutionResult) => {
       if (!error && result) {
-        this.vmContext.addBlock(result.block)
+        this.vmContext.addBlock(result.block, null, true)
         const hash = '0x' + result.tx.hash().toString('hex')
         this.vmContext.trackTx(hash, result.block, result.tx)
         const returnValue = `0x${result.result.execResult.returnValue.toString('hex') || '0'}`
@@ -217,9 +220,14 @@ export class Transactions {
           logs: result.result.execResult.logs,
           returnValue: returnValue
         }
-        this.vmContext.trackExecResult(hash, execResult)
-        this.tags[tag] = result.transactionHash
         // calls are not supposed to return a transaction hash. we do this for keeping track of it and allowing debugging calls.
+        // either the tag is specified as a timestamp in a tx or the caller should call registerCallId before calling the call.
+        if (tag) this.tags[tag] = result.transactionHash
+        else if (this.comingCallId) {
+          this.tags[this.comingCallId] = result.transactionHash
+          this.comingCallId = null
+        }
+        this.vmContext.trackExecResult(hash, execResult)
         return cb(null, returnValue)
       }
       cb(error)
@@ -234,7 +242,7 @@ export class Transactions {
     const address = payload.params[0]
 
     this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
-      const nonce = new BN(account.nonce).toString(10)
+      const nonce = toBigInt(account.nonce).toString(10)
       cb(null, nonce)
     }).catch((error) => {
       cb(error)
@@ -292,7 +300,7 @@ export class Transactions {
     const txIndex = payload.params[1]
 
     const txBlock = this.vmContext.blocks[payload.params[0]]
-    const txHash = '0x' + txBlock.transactions[toDecimal(txIndex)].hash().toString('hex')
+    const txHash = '0x' + txBlock.transactions[toNumber(txIndex) as number].hash().toString('hex')
 
     this.vmContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {
@@ -337,7 +345,7 @@ export class Transactions {
     const txIndex = payload.params[1]
 
     const txBlock = this.vmContext.blocks[payload.params[0]]
-    const txHash = '0x' + txBlock.transactions[toDecimal(txIndex)].hash().toString('hex')
+    const txHash = '0x' + txBlock.transactions[toNumber(txIndex) as number].hash().toString('hex')
 
     this.vmContext.web3().eth.getTransactionReceipt(txHash, (error, receipt) => {
       if (error) {

@@ -59,6 +59,7 @@
   "solidity.copyBytecode": "Copy Bytecode to clipboard",
   "solidity.unableToDisplay": "Unable to display",
   "solidity.download": "Download",
+  "solidity.compileDetails": "Download compilation details (JSON format)",
   "solidity.close": "Close",
   "solidity.contract": "Contract",
   "solidity.displayContractDetails": "Display Contract Details",

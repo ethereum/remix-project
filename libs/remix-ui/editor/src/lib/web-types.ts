@@ -184,40 +184,32 @@ export const loadTypes = async (monaco) => {
   // Web3
 
   // @ts-ignore
-  const indexWeb3 = await import('raw-loader!web3/types/index.d.ts')
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3.default, `file:///node_modules/@types/web3/index.d.ts`)
+  const indexWeb3 = await import('raw-loader!web3')
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3.default, `file:///node_modules/web3/lib/types/index.d.ts`)
 
   // @ts-ignore
-  const indexWeb3Bzz = await import('raw-loader!web3-bzz/types/index.d.ts')
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Bzz.default, `file:///node_modules/@types/web3-bzz/index.d.ts`)
+  const indexWeb3Core = await import('raw-loader!web3-core')
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Core.default, `file:///node_modules/web3-core/lib/types/index.d.ts`)
 
   // @ts-ignore
-  const indexWeb3Core = await import('raw-loader!web3-core/types/index.d.ts')
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Core.default, `file:///node_modules/@types/web3-core/index.d.ts`)
+  const indexWeb3Eth = await import('raw-loader!web3-eth')
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Eth.default, `file:///node_modules/web3-eth/lib/types/index.d.ts`)
 
   // @ts-ignore
-  const indexWeb3Eth = await import('raw-loader!web3-eth/types/index.d.ts')
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Eth.default, `file:///node_modules/@types/web3-eth/index.d.ts`)
+  const indexWeb3Personal = await import('raw-loader!web3-eth-personal')
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Personal.default, `file:///node_modules/web3-eth-personal/lib/types/index.d.ts`)
 
   // @ts-ignore
-  const indexWeb3Personal = await import('raw-loader!web3-eth-personal/types/index.d.ts')
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Personal.default, `file:///node_modules/@types/web3-eth-personal/index.d.ts`)
+  const indexWeb3Contract = await import('raw-loader!web3-eth-contract')
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Contract.default, `file:///node_modules/web3-eth-contract/lib/types/index.d.ts`)
 
   // @ts-ignore
-  const indexWeb3Contract = await import('raw-loader!web3-eth-contract/types/index.d.ts')
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Contract.default, `file:///node_modules/@types/web3-eth-contract/index.d.ts`)
+  const indexWeb3Net = await import('raw-loader!web3-net')
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Net.default, `file:///node_modules/web3-net/lib/types/index.d.ts`)
 
   // @ts-ignore
-  const indexWeb3Net = await import('raw-loader!web3-net/types/index.d.ts')
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Net.default, `file:///node_modules/@types/web3-net/index.d.ts`)
-
-  // @ts-ignore
-  const indexWeb3Shh = await import('raw-loader!web3-shh/types/index.d.ts')
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Shh.default, `file:///node_modules/@types/web3-shh/index.d.ts`)
-
-  // @ts-ignore
-  const indexWeb3Util = await import('raw-loader!web3-utils/types/index.d.ts')
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Util.default, `file:///node_modules/@types/web3-utils/index.d.ts`)
+  const indexWeb3Util = await import('raw-loader!web3-utils')
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(indexWeb3Util.default, `file:///node_modules/web3-utils/lib/types/index.d.ts`)
   // remix
   const indexRemixApi = remixTypes + `\n
     declare global {

@@ -279,7 +279,6 @@ parameters:
     default: true
 ```
 
-
 ## Important Links
 
 - Official website: https://remix-project.org
