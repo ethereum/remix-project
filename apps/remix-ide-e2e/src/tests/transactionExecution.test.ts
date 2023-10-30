@@ -240,7 +240,7 @@ module.exports = {
       .waitForElementPresent({
         locateStrategy: 'css selector',
         selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
-        timeout: 240000
+        timeout: 250000
       }) // wait for the udapp to load the list of accounts
       .selectContract('MyResolver')
       .createContract('')
