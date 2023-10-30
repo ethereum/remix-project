@@ -1,0 +1,61 @@
+{
+  "name": "compile-details",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/compile-details/src",
+  "projectType": "application",
+  "implicitDependencies": [
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/compile-details",
+        "index": "apps/compile-details/src/index.html",
+        "baseHref": "./",
+        "main": "apps/compile-details/src/main.tsx",
+        "tsConfig": "apps/compile-details/tsconfig.app.json",
+        "assets": [
+          "apps/compile-details/src/favicon.ico",
+          "apps/compile-details/src/profile.json"
+        ],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "apps/compile-details/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/compile-details/src/environments/environment.ts",
+              "with": "apps/compile-details/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "compile-details:build",
+        "hmr": true,
+        "baseHref": "/"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "compile-details:build:development",
+          "port": 6003
+        },
+        "production": {
+          "buildTarget": "compile-details:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}

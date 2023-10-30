@@ -156,15 +156,13 @@ contract Ballot {
   output = JSON.parse(output)
   const param = '0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000148656c6c6f20576f726c64210000000000000000000000000000000000000000'
   const web3 = await vmCall.getWeb3()
-  vmCall.sendTx(web3, {nonce: 0, privateKey: privateKey}, null, 0, output.contracts['test.sol']['Ballot'].evm.bytecode.object + param, (error, hash) => {
+  vmCall.sendTx(web3, {nonce: 0, privateKey: privateKey}, undefined, 0, output.contracts['test.sol']['Ballot'].evm.bytecode.object + param, (error, hash) => {
     console.log(error, hash)
     if (error) {
       throw error
     } else {
-      web3.eth.getTransaction(hash, (error, tx) => {
-        if (error) {
-          throw error
-        } else {
+      web3.eth.getTransaction(hash)
+        .then(tx => {
           const sources = {
             target: 'test.sol',
             sources: { 'test.sol': { content: ballot } }
@@ -193,8 +191,8 @@ contract Ballot {
           })
   
           debugManager.debug(tx)
-        }
-      })
+        })
+        .catch(error => { throw error })
     }
   })
 })()

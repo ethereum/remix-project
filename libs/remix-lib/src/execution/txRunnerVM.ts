@@ -72,12 +72,12 @@ export class TxRunnerVM {
     if (!from && useCall && Object.keys(this.vmaccounts).length) {
       from = Object.keys(this.vmaccounts)[0]
       account = this.vmaccounts[from]
-    } else account = this.vmaccounts[from] 
-    
+    } else account = this.vmaccounts[from]
+
     if (!account) {
       return callback('Invalid account selected')
     }
-    
+
     this.getVMObject().stateManager.getAccount(Address.fromString(from)).then((res: Account) => {
       const EIP1559 = this.commonContext.hardfork() !== 'berlin' // berlin is the only pre eip1559 fork that we handle.
       let tx
@@ -106,7 +106,7 @@ export class TxRunnerVM {
       const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
       const difficulties = [69762765929000, 70762765929000, 71762765929000]
       const difficulty = this.commonContext.consensusType() === ConsensusType.ProofOfStake ? 0 : difficulties[this.blockNumber % difficulties.length]
-      
+
       const blocknumber = this.blockNumber + 1
       const block = Block.fromBlockData({
         header: {

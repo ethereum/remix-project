@@ -4,6 +4,7 @@ import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-lin
 import {DropdownPanelProps, ExtractData, ExtractFunc} from '../../types' // eslint-disable-line
 import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
 import {initialState, reducer} from '../../reducers/calldata'
+import {isBigInt} from 'web3-validator'
 import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
@@ -19,6 +20,8 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     extractFunc,
     formatSelfFunc,
     registerEvent,
+    handleExpandFunc,
+    formatClassNamesFunc,
     triggerEvent,
     loadMoreEvent,
     loadMoreCompletedEvent,
@@ -53,6 +56,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   }
   const formatSelfDefault = (key: string | number, data: ExtractData) => {
     let value
+    if (isBigInt(data.self)) data.self = data.self.toString()
     if (hexHighlight && typeof data.self === 'string') {
       const isHex = data.self.startsWith('0x') || hexHighlight
       if (isHex) {
@@ -133,9 +137,9 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
         toggleDropdown: !prevState.toggleDropdown
       }
     })
-  }
+  };
 
-  const handleExpand = (keyPath) => {
+  const handleExpand = handleExpandFunc || function (keyPath) {
     if (!state.expandPath.includes(keyPath)) {
       state.expandPath.push(keyPath)
     } else {
@@ -182,6 +186,10 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     else if (calldata && Object.keys(calldata).length === 0 && calldata.constructor === Object) isEmpty = true
 
     setState((prevState) => {
+      const copiableContent = JSON.stringify(calldata, (key, value) => {
+        if (isBigInt(value)) value = value.toString()
+        return value
+      }, '\t').replace(/0xNaN/g, '0x0')
       return {
         ...prevState,
         dropdownContent: {
@@ -189,7 +197,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
           display: 'block'
         },
         // replace 0xNaN with 0x0
-        copiableContent: JSON.stringify(calldata, null, '\t').replace(/0xNaN/g, '0x0'),
+        copiableContent,
         message: {
           innerText: isEmpty ? intl.formatMessage({id: 'debugger.noDataAvailable'}) : '',
           display: isEmpty ? 'block' : 'none'
@@ -215,6 +223,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
           label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)}
           onClick={() => handleExpand(keyPath)}
           expand={state.expandPath.includes(keyPath)}
+          labelClass={formatClassNamesFunc && formatClassNamesFunc(key, data)}
         >
           <TreeView id={`treeView${key}`} key={keyPath}>
             {children}
@@ -240,6 +249,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
           label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)}
           onClick={() => handleExpand(keyPath)}
           expand={state.expandPath.includes(keyPath)}
+          labelClass={formatClassNamesFunc && formatClassNamesFunc(key, data)}
         />
       )
     }

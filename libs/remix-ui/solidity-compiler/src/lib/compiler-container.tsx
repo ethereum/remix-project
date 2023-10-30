@@ -37,8 +37,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     isFoundryProject,
     workspaceName,
     configFilePath,
-    setConfigFilePath
+    setConfigFilePath,
+    //@ts-ignore
+    pluginProps
   } = props // eslint-disable-line
+
   const [state, setState] = useState({
     hideWarnings: false,
     autoCompile: false,
