@@ -1,8 +1,7 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip } from '@remix-ui/helper'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { ContractPropertyName } from 'libs/remix-ui/solidity-compiler/src/lib/types'
+import { ContractPropertyName } from '@remix-ui/solidity-compiler'
 
 import React from 'react'
 import { useIntl } from 'react-intl'
