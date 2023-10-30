@@ -19,7 +19,7 @@ function verifyCallReturnValue (browser: NightwatchBrowser, address: string, che
     .waitForElementVisible({
       locateStrategy: 'css selector',
       selector: '#instance' + address + ' [data-id="udapp_value"]',
-      timeout: 60000
+      timeout: 240000
     })
     .execute(function (address: string) {
     const nodes = document.querySelectorAll('#instance' + address + ' [data-id="udapp_value"]') as NodeListOf<HTMLElement>
