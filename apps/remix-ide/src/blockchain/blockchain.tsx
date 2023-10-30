@@ -962,7 +962,7 @@ export class Blockchain extends Plugin {
       cb(null, txResult, address, returnValue)
     } catch (error) {
       if (this.isInjectedWeb3()) {
-        let errorObj = error.replace('Returned error: ', '').replace('error: ', '')
+        const errorObj = error.replace('Returned error: ', '').replace('error: ', '')
         if (errorObj) {
           const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
           const injectedError = txExecution.checkError({ errorMessage: errorObj }, compiledContracts)
