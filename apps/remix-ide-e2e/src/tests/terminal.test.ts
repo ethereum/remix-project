@@ -106,6 +106,7 @@ module.exports = {
       .clickLaunchIcon('solidity')
       .click('*[data-id="compilerContainerCompileBtn"]').pause(5000) // compile Owner
       .executeScriptInTerminal('remix.execute(\'deployWithEthersJs.js\')')
+      .pause(10000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Contract Address:', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd9145CCE52D386f254917e481eB44e9943F39138', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'Deployment successful.', 60000)

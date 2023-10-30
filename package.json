@@ -158,7 +158,7 @@
     "deep-equal": "^1.0.1",
     "document-register-element": "1.13.1",
     "eslint-config-prettier": "^8.5.0",
-    "ethers": "^5",
+    "ethers": "6.8.0",
     "ethjs-util": "^0.1.6",
     "express": "^4.18.2",
     "express-ws": "^5.0.2",
