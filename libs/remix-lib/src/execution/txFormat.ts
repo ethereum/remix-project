@@ -401,7 +401,7 @@ export function decodeResponse (response, fnabi) {
       }
       if (!response || !response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
       // decode data
-      const abiCoder = new ethers.utils.AbiCoder()
+      const abiCoder = new ethers.AbiCoder()
       const decodedObj = abiCoder.decode(outputTypes, response)
 
       const json = {}

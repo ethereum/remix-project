@@ -13,13 +13,13 @@ const providerConfig = {
 
 global.remixProvider = new Provider(providerConfig)
 global.remixProvider.init()
-global.web3Provider = new ethers.providers.Web3Provider(global.remixProvider)
+global.web3Provider = new ethers.BrowserProvider(global.remixProvider)
 global.provider = global.web3Provider
 global.ethereum = global.web3Provider
 global.web3 = new Web3(global.web3Provider)
 
 const isFactoryOptions = (signerOrOptions: any) => {
-  if (!signerOrOptions || signerOrOptions === undefined || signerOrOptions instanceof ethers.Signer) return false
+  if (!signerOrOptions || signerOrOptions === undefined || signerOrOptions instanceof ethers.VoidSigner) return false
   return true
 }
 
@@ -74,7 +74,7 @@ const collectLibrariesAndLink = async (artifact: any, libraries: any) => {
   const linksToApply = new Map()
   for (const [linkedLibraryName, linkedLibraryAddress] of Object.entries(libraries)) {
     // @ts-ignore
-    if (!ethers.utils.isAddress(linkedLibraryAddress)) {
+    if (!ethers.isAddress(linkedLibraryAddress)) {
       throw new Error(
         `You tried to link the contract ${artifact.contractName} with the library ${linkedLibraryName}, but provided this invalid address: ${linkedLibraryAddress}`
       )
@@ -188,7 +188,7 @@ const getContractFactory = async (contractNameOrABI: ethers.ContractInterface, b
   }
 }
 
-const getContractAt = async (contractNameOrABI: ethers.ContractInterface, address: string, signer = null) => {
+const getContractAt = async (contractNameOrABI: ethers.Interface, address: string, signer = null) => {
   //@ts-ignore
   const provider = web3Provider
 

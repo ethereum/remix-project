@@ -102,9 +102,9 @@ export function checkError (execResult, compiledContracts) {
               // ethers doesn't crash anymore if "error" type is specified, but it doesn't extract the errors. see:
               // https://github.com/ethers-io/ethers.js/commit/bd05aed070ac9e1421a3e2bff2ceea150bedf9b7
               // we need here to fake the type, so the "getSighash" function works properly
-              const fn = getFunctionFragment({ ...item, type: 'function', stateMutability: 'nonpayable' })
+              const fn = contract.abi.fragment(item)
               if (!fn) continue
-              const sign = fn.getSighash(item.name)
+              const sign = fn.getFunction(item.name).selector
               if (!sign) continue
               if (returnDataHex === sign.replace('0x', '')) {
                 customError = item.name
@@ -159,7 +159,7 @@ export function checkError (execResult, compiledContracts) {
     if (!customError) {
       // It is the hash of Error(string)
       if (returnData && (returnDataHex === '08c379a0')) {
-        const abiCoder = new ethers.utils.AbiCoder()
+        const abiCoder = new ethers.AbiCoder()
         const reason = abiCoder.decode(['string'], '0x' + returnData.slice(10))[0]
         msg = `\tThe transaction has been reverted to the initial state.\nReason provided by the contract: "${reason}".`
       } else {

@@ -29,7 +29,7 @@ export interface IProvider {
 }
 
 export abstract class AbstractProvider extends Plugin implements IProvider {
-  provider: ethers.providers.JsonRpcProvider
+  provider: ethers.JsonRpcProvider
   blockchain: Blockchain
   defaultUrl: string
   connected: boolean
@@ -89,7 +89,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
         this.call('notification', 'modal', modalContent)
       })
     })()
-    this.provider = new ethers.providers.JsonRpcProvider(this.nodeUrl)
+    this.provider = new ethers.JsonRpcProvider(this.nodeUrl)
     return {
       nodeUrl: this.nodeUrl
     }

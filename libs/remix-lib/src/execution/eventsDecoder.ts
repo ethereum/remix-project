@@ -40,11 +40,11 @@ export class EventsDecoder {
 
   _eventABI (contract): Record<string, { event, inputs, object, abi }> {
     const eventABI: Record<string, { event, inputs, object, abi }> = {}
-    const abi = new ethers.utils.Interface(contract.abi)
-    for (const e in abi.events) {
-      const event = abi.getEvent(e)
-      eventABI[abi.getEventTopic(e).replace('0x', '')] = { event: event.name, inputs: event.inputs, object: event, abi: abi }
-    }
+    const abi = new ethers.Interface(contract.abi)
+    abi.forEachEvent(e => {
+      const event = abi.getEvent(e.name)
+      eventABI[abi.getEvent(e.name).topicHash.replace('0x', '')] = { event: event.name, inputs: event.inputs, object: event, abi: abi }
+    })
     return eventABI
   }
 

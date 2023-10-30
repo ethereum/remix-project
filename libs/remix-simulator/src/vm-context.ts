@@ -89,7 +89,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
 }
 
 export interface CustomEthersStateManagerOpts {
-  provider: string | ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
+  provider: string | ethers.JsonRpcProvider
   blockTag: string,
   /**
    * A {@link Trie} instance
@@ -98,14 +98,14 @@ export interface CustomEthersStateManagerOpts {
 }
 
 class CustomEthersStateManager extends StateManagerCommonStorageDump {
-  private provider: ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
+  private provider: ethers.JsonRpcProvider
   private blockTag: string
 
   constructor(opts: CustomEthersStateManagerOpts) {
     super(opts)
     if (typeof opts.provider === 'string') {
-      this.provider = new ethers.providers.StaticJsonRpcProvider(opts.provider)
-    } else if (opts.provider instanceof ethers.providers.JsonRpcProvider) {
+      this.provider = new ethers.JsonRpcProvider(opts.provider)
+    } else if (opts.provider instanceof ethers.JsonRpcProvider) {
       this.provider = opts.provider
     } else {
       throw new Error(`valid JsonRpcProvider or url required; got ${opts.provider}`)
@@ -187,7 +187,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
     let storage = await super.getContractStorage(address, key)
     if (storage && storage.length > 0) return storage
     else {
-      storage = toBuffer(await this.provider.getStorageAt(
+      storage = toBuffer(await this.provider.getStorage(
         address.toString(),
         bufferToBigInt(key),
         this.blockTag)
@@ -307,7 +307,7 @@ export class VMContext {
     if (this.nodeUrl) {
       let block = this.blockNumber
       if (this.blockNumber === 'latest') {
-        const provider = new ethers.providers.StaticJsonRpcProvider(this.nodeUrl)
+        const provider = new ethers.JsonRpcProvider(this.nodeUrl)
         block = await provider.getBlockNumber()
         stateManager = new CustomEthersStateManager({
           provider: this.nodeUrl,

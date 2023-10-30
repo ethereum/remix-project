@@ -382,7 +382,7 @@ export class TxListener {
       const type = abi.inputs[i].type
       inputTypes.push(type.indexOf('tuple') === 0 ? makeFullTypeDefinition(abi.inputs[i]) : type)
     }
-    const abiCoder = new ethers.utils.AbiCoder()
+    const abiCoder = new ethers.AbiCoder()
     const decoded = abiCoder.decode(inputTypes, data)
     const ret = {}
     for (const k in abi.inputs) {

@@ -268,15 +268,15 @@ export class VmProxy {
         const fnselectorStrInHex = '0x' + fnselectorStr
         const fnselector = parseInt(fnselectorStrInHex)
         const fnArgs = ConsoleLogs[fnselector]
-        const iface = new ethers.utils.Interface([`function log${fnArgs} view`])
+        const iface = new ethers.Interface([`function log${fnArgs} view`])
         const functionDesc = iface.getFunction(`log${fnArgs}`)
-        const sigHash = iface.getSighash(`log${fnArgs}`)
+        const sigHash = functionDesc.selector
         if (fnArgs.includes('uint') && sigHash !== fnselectorStrInHex) {
           payload = payload.replace(fnselectorStr, sigHash)
         } else {
           payload = '0x' + payload
         }
-        let consoleArgs = iface.decodeFunctionData(functionDesc, payload)
+        let consoleArgs: any[] = iface.decodeFunctionData(functionDesc, payload)
         consoleArgs = consoleArgs.map((value) => {
           // Copied from: https://github.com/web3/web3.js/blob/e68194bdc590d811d4bf66dde12f99659861a110/packages/web3-utils/src/utils.js#L48C10-L48C10
           if (value && ((value.constructor && value.constructor.name === 'BigNumber') || isBigInt(value))) {
@@ -355,7 +355,7 @@ export class VmProxy {
     const txHash = '0x' + block.transactions[block.transactions.length - 1].hash().toString('hex')
 
     if (this.storageCache['after_' + txHash] && this.storageCache['after_' + txHash][address]) {
-      const slot = '0x' + hash.keccak(toBuffer(ethers.utils.hexZeroPad(position, 32))).toString('hex')
+      const slot = '0x' + hash.keccak(toBuffer(ethers.zeroPadValue(position, 32))).toString('hex')
       const storage = this.storageCache['after_' + txHash][address]
       return cb(null, storage[slot].value)
     }

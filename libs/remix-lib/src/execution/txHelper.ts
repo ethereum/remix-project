@@ -28,19 +28,19 @@ export function encodeParams (funABI, args) {
 
   // NOTE: the caller will concatenate the bytecode and this
   //       it could be done here too for consistency
-  const abiCoder = new ethers.utils.AbiCoder()
+  const abiCoder = new ethers.AbiCoder()
   return abiCoder.encode(types, args)
 }
 
 export function encodeFunctionId (funABI) {
   if (funABI.type === 'fallback' || funABI.type === 'receive') return '0x'
-  const abi = new ethers.utils.Interface([funABI])
-  return abi.getSighash(funABI.name)
+  const abi = new ethers.Interface([funABI])
+  return abi.getFunction(funABI.name).selector
 }
 
-export function getFunctionFragment (funABI): ethers.utils.Interface {
+export function getFunctionFragment (funABI): ethers.Interface {
   if (funABI.type === 'fallback' || funABI.type === 'receive') return null
-  return new ethers.utils.Interface([funABI])
+  return new ethers.Interface([funABI])
 }
 
 export function sortAbiFunction (contractabi) {

@@ -162,7 +162,7 @@ export class Transactions {
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
         try {
           const msg = `0x${result.execResult.returnValue.toString('hex') || '0'}`
-          const abiCoder = new ethers.utils.AbiCoder()
+          const abiCoder = new ethers.AbiCoder()
           const reason = abiCoder.decode(['string'], '0x' + msg.slice(10))[0]
           return cb('revert ' + reason)
         } catch (e) {

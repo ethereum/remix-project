@@ -60,7 +60,7 @@ export class RefType {
 
   _decodeFromCallData (variableDetails, calldata) {
     calldata = calldata.length > 0 ? calldata[0] : '0x'
-    const ethersAbi = new ethers.utils.Interface(variableDetails.abi)
+    const ethersAbi = new ethers.Interface(variableDetails.abi)
     const fnSign = calldata.substr(0, 10)
     const decodedData = ethersAbi.decodeFunctionData(ethersAbi.getFunction(fnSign), calldata)
     const decodedValue = decodedData[variableDetails.name]
