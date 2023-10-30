@@ -1,7 +1,7 @@
 // @ts-ignore
 import { ethers } from "ethers"
 
-export class SignerWithAddress extends ethers.Signer {
+export class SignerWithAddress extends ethers.VoidSigner {
   address: string
   _signer: {
         provider: any
@@ -17,7 +17,7 @@ export class SignerWithAddress extends ethers.Signer {
   }
 
   constructor(address: string, _signer: any) {
-    super()
+    super(address)
     this.address = address
     this._signer = _signer
     this.provider = _signer.provider
