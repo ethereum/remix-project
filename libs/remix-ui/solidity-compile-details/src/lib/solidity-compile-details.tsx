@@ -1,6 +1,8 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip } from '@remix-ui/helper'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
+import { ContractPropertyName } from '@remix-ui/solidity-compiler'
+
 import React from 'react'
 import { useIntl } from 'react-intl'
 
@@ -32,7 +34,7 @@ export function RemixUiCompileDetails({ plugin, contractProperties, selectedCont
       </div>
       <div className="remixui_detailsJSON">
         <TreeView>
-          {Object.keys(contractProperties).map((propertyName, index) => {
+          {Object.keys(contractProperties).map((propertyName: ContractPropertyName, index) => {
             const copyDetails = (
               <span className="remixui_copyDetails">
                 <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copy'})} content={contractProperties[propertyName]} direction="top" />
@@ -59,6 +61,8 @@ export function RemixUiCompileDetails({ plugin, contractProperties, selectedCont
                       {propertyName} {copyDetails} {questionMark}
                     </div>
                   }
+                  expand={propertyName === 'metadata' || propertyName === 'bytecode' ? true : false}
+                  iconY='fas fa-caret-down'
                 >
                   {insertValue(contractProperties, propertyName)}
                 </TreeViewItem>
