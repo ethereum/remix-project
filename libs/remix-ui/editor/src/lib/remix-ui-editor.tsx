@@ -885,6 +885,9 @@ export const EditorUI = (props: EditorUIProps) => {
         options={{
           glyphMargin: true,
           readOnly: (!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly,
+          inlineSuggest: {
+            enabled: true,
+          }
         }}
         defaultValue={defaultEditorValue}
       />
