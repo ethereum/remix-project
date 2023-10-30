@@ -143,7 +143,7 @@ export class CircomPluginClient extends PluginClient {
       
       this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'wasm')
       // @ts-ignore
-      await this.call('fileManager', 'writeFile', this.lastCompiledCircuitPath, circuitProgram, true)
+      await this.call('fileManager', 'writeFile', this.lastCompiledCircuitPath, circuitProgram, { encoding: null })
       const fileContent = this.lastParsedFiles[path]
       const searchComponentName = fileContent.match(/component\s+main\s*(?:{[^{}]*})?\s*=\s*([A-Za-z_]\w*)\s*\(.*\)/)
 
@@ -201,7 +201,7 @@ export class CircomPluginClient extends PluginClient {
 
     if (!wasmPath) throw new Error('No wasm file found')
     // @ts-ignore
-    const buffer: any = await this.call('fileManager', 'readFile', wasmPath, true)
+    const buffer: any = await this.call('fileManager', 'readFile', wasmPath, { encoding: null })
     const dataRead = new Uint8Array(buffer)
     const witness = await generate_witness(dataRead, input)
     // @ts-ignore
