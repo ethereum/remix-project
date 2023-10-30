@@ -1,7 +1,7 @@
 export default async () => {
   return {
     // @ts-ignore
-    //'contracts/helloWorld.sol': (await import('raw-loader!./contracts/helloWorld.sol')).default,
+    'contracts/helloWorld.sol': (await import('raw-loader!./contracts/helloWorld.sol')).default,
     // @ts-ignore
     'scripts/deploy_with_ethers.ts': (await import('!!raw-loader!./scripts/deploy_with_ethers.ts')).default,
     // @ts-ignore
