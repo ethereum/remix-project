@@ -46,6 +46,7 @@ import {InjectedSKALEChaosTestnetProvider} from './app/providers/injected-skale-
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
+import { CompilationDetailsPlugin } from './app/plugins/compile-details'
 import { ContractFlattener } from './app/plugins/contractFlattener'
 import { TemplatesPlugin } from './app/plugins/remix-templates'
 import { fsPlugin } from './app/plugins/electron/fsPlugin'
@@ -199,6 +200,9 @@ class AppComponent {
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 
+    // ----------------- Compilation Details ----------------------------
+    const compilationDetails = new CompilationDetailsPlugin(appManager)
+
     // ----------------- ContractFlattener ----------------------------
     const contractFlattener = new ContractFlattener()
 
@@ -324,6 +328,7 @@ class AppComponent {
       this.walkthroughService,
       search,
       solidityumlgen,
+      compilationDetails,
       contractFlattener,
       solidityScript,
       templates,

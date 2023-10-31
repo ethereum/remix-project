@@ -15,7 +15,6 @@ import { RemixUiXterminals } from '@remix-ui/xterm'
 interface IRemixAppUi {
   app: any
 }
-
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)

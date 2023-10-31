@@ -461,7 +461,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
         {state.debugging && <StepManager stepManager={stepManager} />}
       </div>
       <div className="debuggerPanels" ref={panelsRef}>
-        {state.debugging && <VmDebuggerHead debugging={state.debugging} vmDebugger={vmDebugger} />}
+        {state.debugging && <VmDebuggerHead debugging={state.debugging} vmDebugger={vmDebugger} stepManager={stepManager} />}
         {state.debugging && (
           <VmDebugger
             debugging={state.debugging}

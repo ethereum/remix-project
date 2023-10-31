@@ -4,6 +4,7 @@
   "solidity.addACustomCompiler": "添加一个自定义编译器",
   "solidity.addACustomCompilerWithURL": "通过URL添加一个自定义编译器",
   "solidity.includeNightlyBuilds": "包含每日构造版本",
+  "solidity.compileDetails": "下载编译详细信息（JSON 格式",
   "solidity.autoCompile": "自动编译",
   "solidity.hideWarnings": "隐藏警告",
   "solidity.enableHardhat": "启用 Hardhat 编译",

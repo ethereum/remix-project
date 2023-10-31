@@ -20,13 +20,13 @@ module.exports = {
       .clickFunction('f - transact (not payable)')
       .testFunction('last',
         {
-          status: 'true Transaction mined and execution succeed',
+          status: '0x1 Transaction mined and execution succeed',
           'decoded output': { 0: 'uint256: 8' }
         })
       .clickFunction('g - transact (not payable)')
       .testFunction('last',
         {
-          status: 'true Transaction mined and execution succeed',
+          status: '0x1 Transaction mined and execution succeed',
           'decoded output': {
             0: 'uint256: 345',
             1: 'string: comment_comment_',
@@ -45,7 +45,7 @@ module.exports = {
       .clickFunction('retunValues1 - transact (not payable)')
       .testFunction('last',
         {
-          status: 'true Transaction mined and execution succeed',
+          status: '0x1 Transaction mined and execution succeed',
           'decoded output': {
             0: 'bool: _b true',
             1: 'uint256: _u 345',
@@ -56,7 +56,7 @@ module.exports = {
       .clickFunction('retunValues2 - transact (not payable)')
       .testFunction('last',
         {
-          status: 'true Transaction mined and execution succeed',
+          status: '0x1 Transaction mined and execution succeed',
           'decoded output': {
             0: 'bytes1: _b 0x12',
             1: 'bytes2: _b2 0x1223',
@@ -73,7 +73,7 @@ module.exports = {
       .clickFunction('retunValues3 - transact (not payable)')
       .testFunction('last',
         {
-          status: 'true Transaction mined and execution succeed',
+          status: '0x1 Transaction mined and execution succeed',
           'decoded output': {
             0: 'uint8: _en 2',
             1: 'int256[5][]: _a1 1,-45,-78,56,60,-1,42,334,-45455,-446,1,10,-5435,45,-7'
@@ -89,7 +89,7 @@ module.exports = {
       .clickFunction('inputValue1 - transact (not payable)', { types: 'uint256 _u, int256 _i, string _str', values: '"2343242", "-4324324", "string _ string _  string _  string _  string _  string _  string _  string _  string _  string _"' })
       .testFunction('last',
         {
-          status: 'true Transaction mined and execution succeed',
+          status: '0x1 Transaction mined and execution succeed',
           'decoded output': {
             0: 'uint256: _uret 2343242',
             1: 'int256: _iret -4324324',
@@ -99,7 +99,7 @@ module.exports = {
       .pause(500)
       .clickFunction('inputValue2 - transact (not payable)', { types: 'uint256[3] _n, bytes8[4] _b8', values: '[1,2,3], ["0x1234000000000000", "0x1234000000000000","0x1234000000000000","0x1234000000000000"]' })
       .testFunction('last', {
-        status: 'true Transaction mined and execution succeed',
+        status: '0x1 Transaction mined and execution succeed',
         'decoded output': {
           0: 'uint256[3]: _nret 1,2,3',
           1: 'bytes8[4]: _b8ret 0x1234000000000000,0x1234000000000000,0x1234000000000000,0x1234000000000000'
@@ -147,7 +147,7 @@ module.exports = {
       .clickFunction('inputValue3 - transact (not payable)', { types: 'uint256[] _u', values: '["2.445e10", "13e1"]' })
       .waitForElementContainsText('*[data-id="terminalJournal"]', '24450000000', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '130', 60000)
-      .click('*[data-id="deployAndRunClearInstances"]')      
+      .click('*[data-id="deployAndRunClearInstances"]')
   },
 
   'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
@@ -222,7 +222,7 @@ module.exports = {
       .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '24' })
       .testFunction('last', // we check if the contract is actually reachable.
         {
-          status: 'true Transaction mined and execution succeed',
+          status: '0x1 Transaction mined and execution succeed',
           'decoded input': {
             'uint256 num': '24'
           }
@@ -237,7 +237,11 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.17+commit.8df45f5f.js')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-mainnet-fork')
-      .waitForElementPresent('select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]') // wait for the udapp to load the list of accounts
+      .waitForElementPresent({
+        locateStrategy: 'css selector',
+        selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
+        timeout: 250000
+      }) // wait for the udapp to load the list of accounts
       .selectContract('MyResolver')
       .createContract('')
       .clickInstance(0)
@@ -381,7 +385,7 @@ contract C {
       content: `// SPDX-License-Identifier: GPL-3.0
 
       pragma solidity ^0.8.7;
-      
+
       /// error description
       /// @param a param1
       /// @param b param2
@@ -393,7 +397,7 @@ contract C {
           }
           function g() public {
               revert CustomError(2, 3, "error_string_2");
-          }          
+          }
       }`
     }
   },
@@ -402,7 +406,7 @@ contract C {
       content: `// SPDX-License-Identifier: GPL-3.0
 
       pragma solidity ^0.8.7;
-      
+
       library lib {
           /// error description from library
           /// @param a param1 from library
@@ -411,13 +415,13 @@ contract C {
           error CustomError(uint a, uint b, string c);
           function set() public {
               revert CustomError(48, 46, "error_string_from_library");
-          }      
-      }      
-      
+          }
+      }
+
       contract D {
           function h() public {
               lib.set();
-          }      
+          }
       }`
     }
   },
@@ -435,10 +439,10 @@ contract C {
       contract Owner {
 
           address private owner;
-          
+
           // event for EVM logging
           event OwnerSet(address indexed oldOwner, address indexed newOwner);
-          
+
           // modifier to check if caller is owner
           modifier isOwner() {
               // If the first argument of 'require' evaluates to 'false', execution terminates and all
@@ -449,7 +453,7 @@ contract C {
               require(msg.sender == owner, "Caller is not owner");
               _;
           }
-          
+
           /**
            * @dev Set contract deployer as owner
            */
@@ -468,7 +472,7 @@ contract C {
           }
 
           /**
-           * @dev Return owner address 
+           * @dev Return owner address
            * @return address of owner
            */
           function getOwner() external view returns (address) {
@@ -503,7 +507,7 @@ contract C {
           }
 
           /**
-           * @dev Return value 
+           * @dev Return value
            * @return value of 'number'
            */
           function retrieve() public view returns (uint256){
@@ -535,7 +539,7 @@ contract C {
                 return resolver.addr(node);
             }
         }
-        `      
+        `
     }
   }, {
     "scientific_notation.sol": {
@@ -567,7 +571,7 @@ contract C {
              cake++;
           }
       }
-        `      
+        `
     }
   }
 ]
