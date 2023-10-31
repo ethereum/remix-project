@@ -147,7 +147,7 @@ module.exports = {
       .clickFunction('inputValue3 - transact (not payable)', { types: 'uint256[] _u', values: '["2.445e10", "13e1"]' })
       .waitForElementContainsText('*[data-id="terminalJournal"]', '24450000000', 60000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '130', 60000)
-      .click('*[data-id="deployAndRunClearInstances"]')      
+      .click('*[data-id="deployAndRunClearInstances"]')
   },
 
   'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
@@ -237,7 +237,11 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.17+commit.8df45f5f.js')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-mainnet-fork')
-      .waitForElementPresent('select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]', 30000) // wait for the udapp to load the list of accounts
+      .waitForElementPresent({
+        locateStrategy: 'css selector',
+        selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
+        timeout: 250000
+      }) // wait for the udapp to load the list of accounts
       .selectContract('MyResolver')
       .createContract('')
       .clickInstance(0)
@@ -381,7 +385,7 @@ contract C {
       content: `// SPDX-License-Identifier: GPL-3.0
 
       pragma solidity ^0.8.7;
-      
+
       /// error description
       /// @param a param1
       /// @param b param2
@@ -393,7 +397,7 @@ contract C {
           }
           function g() public {
               revert CustomError(2, 3, "error_string_2");
-          }          
+          }
       }`
     }
   },
@@ -402,7 +406,7 @@ contract C {
       content: `// SPDX-License-Identifier: GPL-3.0
 
       pragma solidity ^0.8.7;
-      
+
       library lib {
           /// error description from library
           /// @param a param1 from library
@@ -411,13 +415,13 @@ contract C {
           error CustomError(uint a, uint b, string c);
           function set() public {
               revert CustomError(48, 46, "error_string_from_library");
-          }      
-      }      
-      
+          }
+      }
+
       contract D {
           function h() public {
               lib.set();
-          }      
+          }
       }`
     }
   },
@@ -435,10 +439,10 @@ contract C {
       contract Owner {
 
           address private owner;
-          
+
           // event for EVM logging
           event OwnerSet(address indexed oldOwner, address indexed newOwner);
-          
+
           // modifier to check if caller is owner
           modifier isOwner() {
               // If the first argument of 'require' evaluates to 'false', execution terminates and all
@@ -449,7 +453,7 @@ contract C {
               require(msg.sender == owner, "Caller is not owner");
               _;
           }
-          
+
           /**
            * @dev Set contract deployer as owner
            */
@@ -468,7 +472,7 @@ contract C {
           }
 
           /**
-           * @dev Return owner address 
+           * @dev Return owner address
            * @return address of owner
            */
           function getOwner() external view returns (address) {
@@ -503,7 +507,7 @@ contract C {
           }
 
           /**
-           * @dev Return value 
+           * @dev Return value
            * @return value of 'number'
            */
           function retrieve() public view returns (uint256){
@@ -535,7 +539,7 @@ contract C {
                 return resolver.addr(node);
             }
         }
-        `      
+        `
     }
   }, {
     "scientific_notation.sol": {
@@ -567,7 +571,7 @@ contract C {
              cake++;
           }
       }
-        `      
+        `
     }
   }
 ]

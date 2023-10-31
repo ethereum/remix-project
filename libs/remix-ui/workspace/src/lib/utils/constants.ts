@@ -81,5 +81,6 @@ export const TEMPLATE_NAMES = {
   'ozerc1155': 'OpenZeppelin ERC1155',
   'zeroxErc20': '0xProject ERC20',
   'gnosisSafeMultisig': 'Gnosis Safe',
-  'playground': 'Playground'
+  'playground': 'Playground',
+  'semaphore': 'Semaphore'
 }

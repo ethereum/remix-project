@@ -53,3 +53,7 @@ export interface CompilationDetails {
 export interface ContractsFile {
  [currentFile: string]: CompilationDetails
 }
+
+export type ContractPropertyName = 'compilerInput' | 'name' | 'metadata' | 'bytecode' | 'abi' | 'storageLayout'
+  | 'web3Deploy' | 'metadataHash' | 'functionHashes' | 'gasEstimates' | 'devdoc' | 'userdoc' | 'Runtime Bytecode'
+  | 'Assembly'

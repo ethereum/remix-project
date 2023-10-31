@@ -6,6 +6,7 @@ export { default as ozerc1155 } from './templates/ozerc1155'
 export { default as zeroxErc20 } from './templates/zeroxErc20'
 export { default as gnosisSafeMultisig } from './templates/gnosisSafeMultisig'
 export { default as playground } from './templates/playground'
+export { default as semaphore } from './templates/semaphore'
 
 export { contractDeployerScripts } from './script-templates/contract-deployer'
 export { etherscanScripts } from './script-templates/etherscan'

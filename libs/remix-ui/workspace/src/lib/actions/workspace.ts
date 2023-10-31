@@ -28,7 +28,7 @@ import {
 } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
-import { JSONStandardInput, WorkspaceTemplate } from '../types'
+import { FileTree, JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
 import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/constants'
@@ -82,8 +82,8 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
 
 export const addInputField = async (type: 'file' | 'folder', path: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   const provider = plugin.fileManager.currentFileProvider()
-  const promise = new Promise((resolve, reject) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
+  const promise: Promise<FileTree> = new Promise((resolve, reject) => {
+    provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) {
         cb && cb(error)
         return reject(error)
@@ -119,9 +119,8 @@ export const createWorkspace = async (
 ) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
-  dispatch(createWorkspaceRequest(promise))
-  promise
-    .then(async () => {
+  dispatch(createWorkspaceRequest())
+  promise.then(async () => {
       dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
       await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
       await plugin.workspaceCreated(workspaceName)
@@ -175,7 +174,7 @@ export const createWorkspace = async (
       await plugin.setWorkspaces(await getWorkspaces())
     })
     .catch((error) => {
-      dispatch(createWorkspaceError({ error }))
+      dispatch(createWorkspaceError(error.message))
       cb && cb(error)
     })
   return promise
@@ -338,20 +337,20 @@ export const workspaceExists = async (name: string) => {
 export const fetchWorkspaceDirectory = async (path: string) => {
   if (!path) return
   const provider = plugin.fileManager.currentFileProvider()
-  const promise = new Promise((resolve) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
+  const promise: Promise<FileTree> = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) console.error(error)
       resolve(fileTree)
     })
   })
 
-  dispatch(fetchWorkspaceDirectoryRequest(promise))
+  dispatch(fetchWorkspaceDirectoryRequest())
   promise
     .then((fileTree) => {
       dispatch(fetchWorkspaceDirectorySuccess(path, fileTree))
     })
     .catch((error) => {
-      dispatch(fetchWorkspaceDirectoryError({ error }))
+      dispatch(fetchWorkspaceDirectoryError(error.message))
     })
   return promise
 }
