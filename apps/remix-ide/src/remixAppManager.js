@@ -74,7 +74,8 @@ const requiredModules = [
   'compilationDetails',
   'contractflattener',
   'solidity-script',
-  'openaigpt'
+  'openaigpt',
+  'circuit-compiler'
 ]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)

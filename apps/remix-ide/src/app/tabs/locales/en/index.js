@@ -13,6 +13,7 @@ import permissionHandlerJson from './permissionHandler.json';
 import solUmlGenJson from './solUmlGen.json'
 import remixAppJson from './remixApp.json'
 import remixUiTabsJson from './remixUiTabs.json'
+import circuitJson from './circuit.json';
 
 export default {
   ...debuggerJson,
@@ -30,4 +31,5 @@ export default {
   ...solUmlGenJson,
   ...remixAppJson,
   ...remixUiTabsJson,
+  ...circuitJson
 }
