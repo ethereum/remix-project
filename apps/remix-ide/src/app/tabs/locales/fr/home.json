@@ -55,6 +55,7 @@
   "home.files": "Files",
   "home.newFile": "New File",
   "home.openFile": "Open File",
+  "home.openFileTooltip": "Open a File from you File System",
   "home.connectToLocalhost": "Access File System",
   "home.loadFrom": "Load from",
   "home.resources": "Resources"

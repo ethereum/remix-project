@@ -40,6 +40,10 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
     uploadFile(target, dir, cb)
   })
 
+  plugin.on('filePanel', 'switchToWorkspace', async (workspace) => {
+    await switchToWorkspace(workspace.name)
+  })
+
   plugin.on('fileDecorator', 'fileDecoratorsChanged', async (items: fileDecoration[]) => {
     setFileDecorators(items)
   })
