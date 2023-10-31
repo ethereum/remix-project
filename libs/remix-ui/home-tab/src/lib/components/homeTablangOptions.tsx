@@ -1,18 +1,25 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Dropdown, DropdownButton } from 'react-bootstrap'
 import DropdownItem from "react-bootstrap/DropdownItem";
 
-export function LanguageOptions() {
-  const langOptions = ['EN', 'ES', 'FR', 'ZH'] //get languages from locale
-  const changeLanguage = (e: any) => {
-    //change language
+export function LanguageOptions({ plugin }: { plugin: any }) {
+  const [langOptions, setLangOptions] = useState<string>('') //get languages from locale
+  const changeLanguage = async (lang: string) => {
+    await plugin.call('locale', 'switchLocale', lang)
   }
   return (
     <>
       <div className="d-flex align-items-center justify-content-end mx-1">
-        <DropdownButton title="EN" id="langdropdown" size="sm">
-          {langOptions.map(lang => (
-            <DropdownItem as={'span'} onClick={changeLanguage}>{lang}</DropdownItem>
+        <DropdownButton title={langOptions} id="langdropdown" size="sm">
+          {['EN', 'ES', 'FR', 'ZH'].map(lang => (
+            <DropdownItem as={'span'} onClick={() =>
+            {
+              changeLanguage(lang.toLowerCase())
+              setLangOptions(lang)
+            }}
+            >
+              {lang}
+            </DropdownItem>
           ))}
         </DropdownButton>
       </div>
