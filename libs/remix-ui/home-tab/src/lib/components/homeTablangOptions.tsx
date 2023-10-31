@@ -1,12 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Dropdown, DropdownButton } from 'react-bootstrap'
 import DropdownItem from "react-bootstrap/DropdownItem";
 
 export function LanguageOptions({ plugin }: { plugin: any }) {
-  const [langOptions, setLangOptions] = useState<string>('') //get languages from locale
+  const [langOptions, setLangOptions] = useState<string>()
+
   const changeLanguage = async (lang: string) => {
     await plugin.call('locale', 'switchLocale', lang)
   }
+
+  useEffect(() => {
+    plugin.call('locale', 'currentLocale').then(opt => {
+      setLangOptions(opt.code.toUpperCase())
+    })
+  }, [langOptions])
+
   return (
     <>
       <div className="d-flex align-items-center justify-content-end mx-1">
