@@ -113,7 +113,8 @@ export function isNative(name) {
     'injected-ephemery-testnet-provider',
     'injected',
     'doc-gen',
-    'doc-viewer'
+    'doc-viewer',
+    'circuit-compiler'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }

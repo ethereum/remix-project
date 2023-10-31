@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, {SyntheticEvent, useEffect, useState} from 'react'
-import {FileType} from '../types'
+import {FileType, WorkspaceElement} from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view'
 import {getPathIcon} from '@remix-ui/helper'
@@ -14,7 +14,7 @@ export interface RenderFileProps {
   file: FileType
   index: number
   focusEdit: {element: string; type: string; isNew: boolean; lastEdit: string}
-  focusElement: {key: string; type: 'file' | 'folder' | 'gist'}[]
+  focusElement: {key: string; type: WorkspaceElement}[]
   focusContext: {element: string; x: number; y: number; type: string}
   ctrlKey: boolean
   expandPath: string[]

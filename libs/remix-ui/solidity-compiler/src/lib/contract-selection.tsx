@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react' // eslint-disable-line
 import {FormattedMessage, useIntl} from 'react-intl'
-import {ContractSelectionProps} from './types'
+import {ContractPropertyName, ContractSelectionProps} from './types'
 import {PublishToStorage} from '@remix-ui/publish-to-storage' // eslint-disable-line
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
 import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
@@ -122,7 +122,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return ret
   }
 
-  const insertValue = (details, propertyName) => {
+  const insertValue = (details, propertyName: ContractPropertyName) => {
     let node
     if (propertyName === 'web3Deploy' || propertyName === 'name' || propertyName === 'Assembly') {
       node = <pre>{details[propertyName]}</pre>
@@ -197,7 +197,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     const log = (
       <div className="remixui_detailsJSON">
         <TreeView>
-          {Object.keys(contractProperties).map((propertyName, index) => {
+          {Object.keys(contractProperties).map((propertyName: ContractPropertyName, index) => {
             const copyDetails = (
               <span className="remixui_copyDetails">
                 <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copy'})} content={contractProperties[propertyName]} direction="top" />
