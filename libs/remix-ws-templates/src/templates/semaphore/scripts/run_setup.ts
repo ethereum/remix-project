@@ -14,9 +14,9 @@ const logger = {
  * @returns The message digest.
  */
 function hash(message: any): bigint {
-    message = BigNumber.from(message).toTwos(256).toHexString()
-    message = ethers.utils.zeroPad(message, 32)
-    return BigInt(ethers.utils.keccak256(message)) >> BigInt(8)
+  message = BigNumber.from(message).toTwos(256).toHexString()
+  message = ethers.utils.zeroPad(message, 32)
+  return BigInt(ethers.utils.keccak256(message)) >> BigInt(8)
 }
 
 (async () => {
