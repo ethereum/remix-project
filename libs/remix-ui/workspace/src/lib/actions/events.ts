@@ -1,7 +1,7 @@
 import { fileDecoration } from '@remix-ui/file-decorators'
 import { extractParentFromKey } from '@remix-ui/helper'
 import React from 'react'
-import { action, WorkspaceTemplate } from '../types'
+import { action, FileTree, WorkspaceTemplate } from '../types'
 import { ROOT_PATH } from '../utils/constants'
 import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode, setFileDecorationSuccess } from './payload'
 import { addInputField, createWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
@@ -38,6 +38,10 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
 
   plugin.on('filePanel', 'uploadFileReducerEvent', (dir: string, target, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
     uploadFile(target, dir, cb)
+  })
+
+  plugin.on('filePanel', 'switchToWorkspace', async (workspace) => {
+    await switchToWorkspace(workspace.name)
   })
 
   plugin.on('fileDecorator', 'fileDecoratorsChanged', async (items: fileDecoration[]) => {
@@ -173,8 +177,8 @@ const folderAdded = async (folderPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
   const path = extractParentFromKey(folderPath) || ROOT_PATH
 
-  const promise = new Promise((resolve) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
+  const promise: Promise<FileTree> = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) console.error(error)
       resolve(fileTree)
     })
@@ -196,8 +200,8 @@ const fileRemoved = async (removePath: string) => {
 const fileRenamed = async (oldPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
   const path = extractParentFromKey(oldPath) || ROOT_PATH
-  const promise = new Promise((resolve) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
+  const promise: Promise<FileTree> = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) console.error(error)
 
       resolve(fileTree)

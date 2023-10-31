@@ -7,14 +7,16 @@ import "../contracts/MyToken.sol";
 
 contract MyTokenTest is MyToken {
 
-    address acc0;
+    address acc0 = TestsAccounts.getAccount(0);
     address acc1;
     address acc2;
     address acc3;
     address acc4;
 
+    // acc0 will be set as initial owner
+    constructor() MyToken(acc0) {}
+
     function beforeAll() public {
-        acc0 = TestsAccounts.getAccount(0); 
         acc1 = TestsAccounts.getAccount(1);
         acc2 = TestsAccounts.getAccount(2);
         acc3 = TestsAccounts.getAccount(3);

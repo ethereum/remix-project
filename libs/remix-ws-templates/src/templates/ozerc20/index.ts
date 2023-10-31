@@ -29,7 +29,6 @@ export default async (opts) => {
     if (erc20.defaults.mintable) filesObj['tests/MyToken_test.sol'] = (await import('raw-loader!./tests/MyToken_mintable_test.sol')).default
     // @ts-ignore
     else filesObj['tests/MyToken_test.sol'] = (await import('raw-loader!./tests/MyToken_test.sol')).default
-
   }
   return filesObj
 }
