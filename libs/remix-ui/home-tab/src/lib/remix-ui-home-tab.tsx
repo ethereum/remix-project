@@ -61,7 +61,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <HomeTabLearn plugin={plugin} />
           </div>
           <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{width: '65%'}} id="remixUIHTRight">
-            <LanguageOptions />
+            <LanguageOptions plugin={plugin}/>
             <HomeTabFeatured></HomeTabFeatured>
             <HomeTabGetStarted plugin={plugin}></HomeTabGetStarted>
             <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>
