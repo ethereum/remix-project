@@ -5,8 +5,7 @@ import {IframePlugin} from '@remixproject/engine-web'
 const _paq = (window._paq = window._paq || [])
 
 // requiredModule removes the plugin from the plugin manager list on UI
-const requiredModules = [
-  // services + layout views + system views
+const requiredModules = [ // services + layout views + system views
   'manager',
   'config',
   'compilerArtefacts',
@@ -74,7 +73,8 @@ const requiredModules = [
   'compilationDetails',
   'contractflattener',
   'solidity-script',
-  'openaigpt'
+  'openaigpt',
+  'home'
 ]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
@@ -113,7 +113,8 @@ export function isNative(name) {
     'injected-ephemery-testnet-provider',
     'injected',
     'doc-gen',
-    'doc-viewer'
+    'doc-viewer',
+    'circuit-compiler'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }

@@ -14,6 +14,7 @@ import solUmlGenJson from './solUmlGen.json'
 import remixAppJson from './remixApp.json'
 import remixUiTabsJson from './remixUiTabs.json'
 import enJson from '../en';
+import circuitJson from './circuit.json';
 
 // There may have some un-translated content. Always fill in the gaps with EN JSON.
 // No need for a defaultMessage prop when render a FormattedMessage component.
@@ -33,4 +34,5 @@ export default Object.assign({}, enJson, {
   ...solUmlGenJson,
   ...remixAppJson,
   ...remixUiTabsJson,
+  ...circuitJson
 })

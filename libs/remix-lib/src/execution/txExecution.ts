@@ -81,7 +81,7 @@ export function checkError (execResult, compiledContracts) {
   }
   const exceptionError = execResult.errorMessage || ''
   const error = `Error occured: ${execResult.errorMessage}.\n`
-  let msg
+  let msg = ''
   if (exceptionError === errorCode.INVALID_OPCODE) {
     msg = '\t\n\tThe execution might have thrown.\n'
     ret.error = true
