@@ -114,7 +114,8 @@ export function isNative(name) {
     'injected',
     'doc-gen',
     'doc-viewer',
-    'circuit-compiler'
+    'circuit-compiler',
+    'compliationDetails'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
