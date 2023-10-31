@@ -22,9 +22,11 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir',
-    'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh',
-    'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory'],
+  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'writeFileNoRewrite',
+    'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
+    'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
+    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory'
+  ],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -37,7 +39,6 @@ const errorMsg = {
 const createError = (err) => {
   return new Error(`${errorMsg[err.code]} ${err.message || ''}`)
 }
-
 class FileManager extends Plugin {
   mode: string
   openedFiles: any
@@ -244,6 +245,30 @@ class FileManager extends Plugin {
           await this._setFileInternal(path, fileData[i])
           this.emit('fileAdded', path)
         }
+      }
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+  
+  /**
+   * Set the content of a specific file, does nnot rewrite file if it exists but creates a new unique name
+   * @param {string} path path of the file
+   * @param {string} data content to write on the file
+   * @returns {void}
+   */
+  async writeFileNoRewrite(path, data) {
+    try {
+      path = this.normalize(path)
+      path = this.limitPluginScope(path)
+      if (await this.exists(path)) {
+        const newPath = await helper.createNonClashingNameAsync(path, this)
+        const content = await this.setFileContent(newPath, data)
+        return {newContent: content, newPath}
+      } else {
+        const ret = await this.setFileContent(path, data)
+        this.emit('fileAdded', path)
+        return {newContent: ret, newpath: path}
       }
     } catch (e) {
       throw new Error(e)
