@@ -5,7 +5,7 @@ import StepDetail from './step-detail' // eslint-disable-line
 import SolidityState from './solidity-state' // eslint-disable-line
 import SolidityLocals from './solidity-locals' // eslint-disable-line
 
-export const VmDebuggerHead = ({vmDebugger: {registerEvent, triggerEvent}, debugging}) => {
+export const VmDebuggerHead = ({vmDebugger: {registerEvent, triggerEvent}, debugging, stepManager}) => {
   const [functionPanel, setFunctionPanel] = useState(null)
   const [stepDetail, setStepDetail] = useState({
     'vm trace step': '-',
@@ -32,7 +32,11 @@ export const VmDebuggerHead = ({vmDebugger: {registerEvent, triggerEvent}, debug
         const functions = []
 
         for (const func of stack) {
-          functions.push((func.functionDefinition.name || func.functionDefinition.kind) + '(' + func.inputs.join(', ') + ')' + ' - ' + func.gasCost + ' gas')
+          const label = (func.functionDefinition.name || func.functionDefinition.kind) + '(' + func.inputs.join(', ') + ')' + ' - ' + func.gasCost + ' gas'
+          functions.push({
+            label,
+            function: func
+          })
         }
         setFunctionPanel(() => functions)
       })
@@ -127,7 +131,7 @@ export const VmDebuggerHead = ({vmDebugger: {registerEvent, triggerEvent}, debug
   return (
     <div id="vmheadView" className="mt-1 px-2 d-flex">
       <div className="d-flex flex-column pr-2" style={{flex: 1}}>
-        <FunctionPanel className="pb-1" data={functionPanel} />
+        <FunctionPanel className="pb-1" data={functionPanel} stepManager={stepManager} />
         <SolidityLocals className="pb-1" data={solidityLocals.calldata} message={solidityLocals.message} registerEvent={registerEvent} triggerEvent={triggerEvent} />
         <CodeListView className="pb-2 flex-grow-1" registerEvent={registerEvent} />
       </div>

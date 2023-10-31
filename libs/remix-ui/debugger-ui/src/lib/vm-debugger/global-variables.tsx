@@ -1,7 +1,6 @@
 import React from 'react' // eslint-disable-line
 import DropdownPanel from './dropdown-panel' // eslint-disable-line
-import {BN} from 'bn.js'
-import Web3 from 'web3'
+import {toBigInt} from 'web3-utils' // eslint-disable-line
 
 export const GlobalVariables = ({block, receipt, tx, className}) => {
   // see https://docs.soliditylang.org/en/latest/units-and-global-variables.html#block-and-transaction-properties
@@ -18,7 +17,7 @@ export const GlobalVariables = ({block, receipt, tx, className}) => {
     'tx.origin': tx && tx.from
   }
   if (block && block.baseFeePerGas) {
-    globals['block.basefee'] = Web3.utils.toBN(block.baseFeePerGas).toString(10) + ` Wei (${block.baseFeePerGas})`
+    globals['block.basefee'] = toBigInt(block.baseFeePerGas).toString(10) + ` Wei (${block.baseFeePerGas})`
   }
 
   return (
