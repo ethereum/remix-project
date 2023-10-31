@@ -5,7 +5,7 @@ import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
 
-export type action = { name: string, type?: Array<'folder' | 'gist' | 'file' | 'workspace'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number }
+export type action = { name: string, type?: Array<WorkspaceElement>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number }
 export interface JSONStandardInput {
   language: "Solidity";
   settings?: any,
@@ -17,7 +17,7 @@ export interface JSONStandardInput {
   };
 }
 export type MenuItems = action[]
-export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721'
+export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'semaphore'
 export interface WorkspaceProps {
   plugin: FilePanelType
 }
@@ -88,7 +88,7 @@ export interface FileExplorerProps {
     focusEdit: string,
     hideIconsMenu: React.Dispatch<React.SetStateAction<boolean>>,
     showIconsMenu: boolean,
-    focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
+    focusElement: { key: string, type: WorkspaceElement }[],
     dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
     // eslint-disable-next-line no-undef
     modal:(title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
@@ -105,8 +105,8 @@ export interface FileExplorerProps {
     dispatchRunScript: (path: string) => Promise<void>,
     dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
     dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
-    dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>,
-    dispatchSetFocusElement: (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => Promise<void>,
+    dispatchHandleClickFile: (path: string, type: WorkspaceElement) => Promise<void>,
+    dispatchSetFocusElement: (elements: { key: string, type: WorkspaceElement }[]) => Promise<void>,
     dispatchFetchDirectory:(path: string) => Promise<void>,
     dispatchRemoveInputField:(path: string) => Promise<void>,
     dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
@@ -114,7 +114,7 @@ export interface FileExplorerProps {
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
     dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
     handlePasteClick: (dest: string, destType: string) => void
-    handleCopyClick: (path: string, type: 'folder' | 'gist' | 'file' | 'workspace') => void
+    handleCopyClick: (path: string, type: WorkspaceElement) => void
     addMenuItems: (items: MenuItems) => void
     removeMenuItems: (items: MenuItems) => void
     handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
@@ -171,7 +171,7 @@ export interface WorkSpaceState {
     actions: {
       id: string
       name: string
-      type?: Array<'folder' | 'gist' | 'file' | 'workspace'>
+      type?: Array<WorkspaceElement>
       path?: string[]
       extension?: string[]
       pattern?: string[]
@@ -201,5 +201,107 @@ export type  FileFocusContextType = {
 
 export type CopyElementType = {
   key: string
-  type: 'folder' | 'gist' | 'file' | 'workspace'
+  type: WorkspaceElement
 }
+
+export type FileTree = {
+  [x: string]: {
+    isDirectory: boolean
+  }
+}
+
+export interface ActionPayloadTypes {
+  SET_CURRENT_WORKSPACE: {
+    name: string
+    isGitRepo: boolean
+    branches?: {remote: string | undefined; name: string}[]
+    currentBranch?: string
+  },
+  SET_WORKSPACES: {
+    name: string
+    isGitRepo: boolean
+    branches?: {remote: string | undefined; name: string}[]
+    currentBranch?: string
+  }[],
+  SET_MODE: 'browser' | 'localhost',
+  FETCH_DIRECTORY_REQUEST: undefined | null,
+  FETCH_DIRECTORY_SUCCESS: { path: string; fileTree: FileTree },
+  FETCH_DIRECTORY_ERROR: string,
+  FETCH_WORKSPACE_DIRECTORY_REQUEST: undefined | null,
+  FETCH_WORKSPACE_DIRECTORY_SUCCESS: { path: string; fileTree: FileTree },
+  FETCH_WORKSPACE_DIRECTORY_ERROR: string,
+  DISPLAY_NOTIFICATION: {
+    title: string
+    message: string
+    actionOk: () => void
+    actionCancel: () => void
+    labelOk: string
+    labelCancel: string
+  },
+  HIDE_NOTIFICATION: undefined | null,
+  FILE_ADDED_SUCCESS: string,
+  FOLDER_ADDED_SUCCESS: {
+    path: string
+    folderPath: string
+    fileTree: FileTree
+  },
+  FILE_REMOVED_SUCCESS: string,
+  ROOT_FOLDER_CHANGED: string,
+  ADD_INPUT_FIELD: {
+    path: string
+    fileTree: FileTree
+    type: 'file' | 'folder'
+  },
+  REMOVE_INPUT_FIELD: { path: string; },
+  SET_READ_ONLY_MODE: boolean,
+  FILE_RENAMED_SUCCESS: {
+    path: string
+    oldPath: string
+    fileTree: FileTree
+  },
+  CREATE_WORKSPACE_REQUEST: undefined | null,
+  CREATE_WORKSPACE_SUCCESS: {
+    name: string
+    isGitRepo: boolean
+    branches?: { remote: string | undefined; name: string }[]
+    currentBranch?: string
+  },
+  CREATE_WORKSPACE_ERROR: string,
+  RENAME_WORKSPACE: { oldName: string; workspaceName: string },
+  DELETE_WORKSPACE: string,
+  DISPLAY_POPUP_MESSAGE: string,
+  HIDE_POPUP_MESSAGE: undefined | null,
+  SET_FOCUS_ELEMENT: {
+    key: string
+    type: WorkspaceElement
+  }[],
+  REMOVE_FOCUS_ELEMENT: string,
+  SET_CONTEXT_MENU_ITEM: action,
+  REMOVE_CONTEXT_MENU_ITEM: { name: string },
+  SET_EXPAND_PATH: string[],
+  LOAD_LOCALHOST_REQUEST: undefined | null,
+  LOAD_LOCALHOST_SUCCESS: undefined | null,
+  LOAD_LOCALHOST_ERROR: string,
+  CLONE_REPOSITORY_REQUEST: undefined | null,
+  CLONE_REPOSITORY_SUCCESS: undefined | null,
+  CLONE_REPOSITORY_FAILED: undefined | null,
+  FS_INITIALIZATION_COMPLETED: undefined | null,
+  SET_FILE_DECORATION_SUCCESS: fileDecoration[],
+  SET_CURRENT_WORKSPACE_BRANCHES: { remote: string | undefined; name: string }[],
+  SET_CURRENT_WORKSPACE_CURRENT_BRANCH: string,
+  SET_CURRENT_WORKSPACE_IS_GITREPO: boolean,
+  SET_GIT_CONFIG: {
+    username: string;
+    token: string;
+    email: string
+  }
+}
+
+export interface Action<T extends keyof ActionPayloadTypes> {
+  type: T,
+  payload: ActionPayloadTypes[T]
+}
+
+export type Actions = {[A in keyof ActionPayloadTypes]: Action<A>}[keyof ActionPayloadTypes]
+
+export type WorkspaceElement = 'folder' | 'gist' | 'file' | 'workspace'
