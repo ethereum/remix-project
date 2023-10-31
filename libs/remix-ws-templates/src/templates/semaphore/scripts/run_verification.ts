@@ -1,7 +1,8 @@
 import { ethers, BigNumber } from 'ethers'
 import { IncrementalMerkleTree } from "@zk-kit/incremental-merkle-tree"
 import { poseidon } from "circomlibjs" // v0.0.8
-// @ts-ignore
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const snarkjs = require('snarkjs');
 
 const logger = {
@@ -27,7 +28,7 @@ function hash(message: any): bigint {
     const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/semaphore.r1cs', true);
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer);
-        // @ts-ignore
+    // @ts-ignore
     const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/semaphore.wasm', true);
     // @ts-ignore
     const wasm = new Uint8Array(wasmBuffer);   

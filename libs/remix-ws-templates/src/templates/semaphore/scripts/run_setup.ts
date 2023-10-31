@@ -1,6 +1,6 @@
 import { ethers, BigNumber } from 'ethers'
 
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const snarkjs = require('snarkjs');
 
 const logger = {
