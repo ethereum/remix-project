@@ -853,16 +853,6 @@ export class Blockchain extends Plugin {
         try {
           this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb, async (error, result) => {
             if (error) {
-              if (typeof error !== 'string') {
-                if (error.message) error = error.message
-                else {
-                  try {
-                    error = 'error: ' + JSON.stringify(error)
-                  } catch (e) {
-                    console.log(e)
-                  }
-                }
-              }
               return reject(error)
             }
 
@@ -880,18 +870,7 @@ export class Blockchain extends Plugin {
             return resolve({result, tx})
           })
         } catch (err) {
-          let error = err
-          if (error && typeof error !== 'string') {
-            if (error.message) error = error.message
-            else {
-              try {
-                error = 'error: ' + JSON.stringify(error)
-              } catch (e) {
-                console.log(e)
-              }
-            }
-          }
-          return reject(error)
+          return reject(err)
         }
       })
     }
@@ -962,14 +941,11 @@ export class Blockchain extends Plugin {
       cb(null, txResult, address, returnValue)
     } catch (error) {
       if (this.isInjectedWeb3()) {
-        let errorObj = error.replace('Returned error: ', '')
-        errorObj = JSON.parse(errorObj)
-        if (errorObj.errorData) {
-          const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
-          const injectedError = txExecution.checkError({ errorMessage: errorObj.error, errorData: errorObj.errorData }, compiledContracts)
-          cb(injectedError.message)
-        } else 
-          cb(error)
+        const errorMessage = error.innerError ? error.innerError.message : error.message
+        const errorData = error.innerError ? error.innerError.data : error.data
+        const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
+        const injectedError = txExecution.checkError({ errorMessage, errorData }, compiledContracts)
+        cb(injectedError.message)
       } else 
         cb(error)
     }
