@@ -136,6 +136,11 @@ export const createWorkspace = async (workspaceName: string, workspaceTemplateNa
       const isActive = await plugin.call('manager', 'isActive', 'dgit')
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
     }
+    if (workspaceTemplateName === 'semaphore') {
+      const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
+
+      if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
+    }
     // this call needs to be here after the callback because it calls dGitProvider which also calls this function and that would cause an infinite loop
     await plugin.setWorkspaces(await getWorkspaces())
   }).catch((error) => {

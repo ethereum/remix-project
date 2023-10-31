@@ -74,8 +74,7 @@ const requiredModules = [
   'compilationDetails',
   'contractflattener',
   'solidity-script',
-  'openaigpt',
-  'circuit-compiler'
+  'openaigpt'
 ]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
@@ -114,7 +113,8 @@ export function isNative(name) {
     'injected-ephemery-testnet-provider',
     'injected',
     'doc-gen',
-    'doc-viewer'
+    'doc-viewer',
+    'circuit-compiler'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
