@@ -597,37 +597,37 @@ export const cloneRepository = async (url: string) => {
       dispatch(cloneRepositoryRequest())
       promise
         .then(async () => {
-        const isActive = await plugin.call('manager', 'isActive', 'dgit')
+          const isActive = await plugin.call('manager', 'isActive', 'dgit')
 
-        if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-        await fetchWorkspaceDirectory(ROOT_PATH)
-        const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-        const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
+          if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+          await fetchWorkspaceDirectory(ROOT_PATH)
+          const workspacesPath = plugin.fileProviders.workspace.workspacesPath
+          const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
 
-        dispatch(setCurrentWorkspaceBranches(branches))
-        const currentBranch = await getGitRepoCurrentBranch(workspacesPath + '/' + repoName)
+          dispatch(setCurrentWorkspaceBranches(branches))
+          const currentBranch = await getGitRepoCurrentBranch(workspacesPath + '/' + repoName)
 
-        dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
-        dispatch(cloneRepositorySuccess())
-      }).catch(() => {
-        const cloneModal = {
-          id: 'cloneGitRepository',
-          title: 'Clone Git Repository',
-          message: 
+          dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
+          dispatch(cloneRepositorySuccess())
+        }).catch(() => {
+          const cloneModal = {
+            id: 'cloneGitRepository',
+            title: 'Clone Git Repository',
+            message: 
             'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin',
-          modalType: 'modal',
-          okLabel: 'OK',
-          okFn: async () => {
-            await deleteWorkspace(repoName)
-            dispatch(cloneRepositoryFailed())
-          },
-          hideFn: async () => {
-            await deleteWorkspace(repoName)
-            dispatch(cloneRepositoryFailed())
+            modalType: 'modal',
+            okLabel: 'OK',
+            okFn: async () => {
+              await deleteWorkspace(repoName)
+              dispatch(cloneRepositoryFailed())
+            },
+            hideFn: async () => {
+              await deleteWorkspace(repoName)
+              dispatch(cloneRepositoryFailed())
+            }
           }
-        }
-        plugin.call('notification', 'modal', cloneModal)
-      })
+          plugin.call('notification', 'modal', cloneModal)
+        })
     } catch (e) {
       dispatch(displayPopUp('An error occured: ' + e))
     }
