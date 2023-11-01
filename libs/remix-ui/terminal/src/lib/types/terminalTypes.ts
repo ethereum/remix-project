@@ -28,5 +28,6 @@ export const CMD_HISTORY = 'cmdHistory'
 
 export interface RemixUiTerminalProps {
     plugin: any,
-    onReady: (api: any) => void
+    onReady: (api: any) => void,
+    visible: boolean,
 }

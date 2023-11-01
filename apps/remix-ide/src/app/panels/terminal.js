@@ -120,6 +120,7 @@ class Terminal extends Plugin {
       : <RemixUiTerminal
         plugin={state.plugin}
         onReady={state.onReady}
+        visible={true}
       />
   }
 

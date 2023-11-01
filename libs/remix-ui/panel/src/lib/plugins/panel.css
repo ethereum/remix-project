@@ -103,3 +103,8 @@ iframe {
 .terminal-wrap.minimized {
     height: 2rem !important;
 }
+
+
+.terminal-wrap.minimized.desktop {
+    height: 4.5rem !important;
+}

@@ -574,6 +574,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
 
   return (
+    ( !props.visible? <></>: 
     <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel" ref={panelRef}>
       <div className="remix_ui_terminal_bar d-flex">
         <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
@@ -801,7 +802,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       {toaster && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg1'})} />}
       {toastProvider.show && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg2'}, {fileName: toastProvider.fileName})} />}
     </div>
-  )
+  ))
 }
 
 const typewrite = (elementsRef, message, callback) => {  
