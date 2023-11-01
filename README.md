@@ -164,7 +164,7 @@ To run the Selenium tests via Nightwatch:
         
 **NOTE:**
 
-- **The `ballot` tests suite** requires running `ganache-cli` locally.
+- **The `ballot` tests suite** requires running `ganache` locally.
 
 - **The `remixd` tests suite** requires running `remixd` locally.
 

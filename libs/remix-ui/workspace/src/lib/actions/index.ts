@@ -8,7 +8,8 @@ import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin,
 import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
-import isElectron from 'is-electron'
+import isElectron  from 'is-electron'
+import { Actions, FileTree } from '../types'
 
 export * from './events'
 export * from './workspace'
@@ -16,7 +17,7 @@ export * from './workspace'
 const queryParams = new QueryParams()
 const _paq = window._paq = window._paq || []
 
-let plugin, dispatch: React.Dispatch<any>
+let plugin, dispatch: React.Dispatch<Actions>
 
 export type UrlParametersType = {
   gist: string,
@@ -44,7 +45,7 @@ const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean
   }
 }
 
-export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<any>) => {
+export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.Dispatch<Actions>) => {
   if (filePanelPlugin) {
     plugin = filePanelPlugin
     dispatch = reducerDispatch
@@ -168,18 +169,18 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
 export const fetchDirectory = async (path: string) => {
   const provider = plugin.fileManager.currentFileProvider()
   const promise = new Promise((resolve) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
+    provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) console.error(error)
 
       resolve(fileTree)
     })
   })
 
-  dispatch(fetchDirectoryRequest(promise))
-  promise.then((fileTree) => {
+  dispatch(fetchDirectoryRequest())
+  promise.then((fileTree: FileTree) => {
     dispatch(fetchDirectorySuccess(path, fileTree))
-  }).catch((error) => {
-    dispatch(fetchDirectoryError({ error }))
+  }).catch((error: ErrorEvent) => {
+    dispatch(fetchDirectoryError(error.message))
   })
   return promise
 }

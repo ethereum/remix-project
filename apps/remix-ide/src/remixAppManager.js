@@ -6,8 +6,7 @@ const isElectron = require('is-electron')
 const _paq = (window._paq = window._paq || [])
 
 // requiredModule removes the plugin from the plugin manager list on UI
-let requiredModules = [
-  // services + layout views + system views
+let requiredModules = [ // services + layout views + system views
   'manager',
   'config',
   'compilerArtefacts',
@@ -75,7 +74,8 @@ let requiredModules = [
   'compilationDetails',
   'contractflattener',
   'solidity-script',
-  'openaigpt'
+  'openaigpt',
+  'home'
 ]
 
 if (isElectron()) {
@@ -86,7 +86,7 @@ if (isElectron()) {
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'etherscan', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'compilationDetails']
+const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'etherscan', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler']
 
 const sensitiveCalls = {
   fileManager: ['writeFile', 'copyFile', 'rename', 'copyDir'],
@@ -119,7 +119,9 @@ export function isNative(name) {
     'injected-ephemery-testnet-provider',
     'injected',
     'doc-gen',
-    'doc-viewer'
+    'doc-viewer',
+    'circuit-compiler',
+    'compilationDetails'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }

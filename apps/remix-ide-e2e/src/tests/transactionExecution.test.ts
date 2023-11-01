@@ -172,7 +172,9 @@ module.exports = {
 
   'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal , using London VM Fork #group3': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('udapp')
+      .clickLaunchIcon('solidity')
+      .click('.remixui_compilerConfigSection')
+      .setValue('#evmVersionSelector', 'london') // Set EVM version as fork version
       .clearTransactions()
       .switchEnvironment('vm-london') // switch to London fork
       .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c') // this account will be used for this test suite

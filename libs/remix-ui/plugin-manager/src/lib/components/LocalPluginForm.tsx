@@ -265,7 +265,7 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
                 checked={location === 'sidePanel'}
                 onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')}
               />
-              <label className="form-check-label" htmlFor="sidePanel">
+              <label className="form-check-label" htmlFor="localPluginRadioButtonsidePanelSidePanel">
                 <FormattedMessage id="pluginManager.localForm.sidePanel" />
               </label>
             </div>
@@ -280,7 +280,7 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
                 checked={location === 'mainPanel'}
                 onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')}
               />
-              <label className="form-check-label" htmlFor="mainPanel">
+              <label className="form-check-label" htmlFor="localPluginRadioButtonsidePanelMainPanel">
                 <FormattedMessage id="pluginManager.localForm.mainPanel" />
               </label>
             </div>
@@ -295,7 +295,7 @@ function LocalPluginForm({closeModal, visible, pluginManager}: LocalPluginFormPr
                 checked={location === 'none'}
                 onChange={(e) => setLocation(e.target.value as 'sidePanel' | 'mainPanel' | 'none')}
               />
-              <label className="form-check-label" htmlFor="none">
+              <label className="form-check-label" htmlFor="localPluginRadioButtonsidePanelNone">
                 <FormattedMessage id="pluginManager.localForm.none" />
               </label>
             </div>

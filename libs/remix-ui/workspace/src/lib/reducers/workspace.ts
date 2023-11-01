@@ -1,12 +1,8 @@
 import {extractNameFromKey} from '@remix-ui/helper'
-import {action, FileType} from '../types'
+import {action, Actions, FileType, WorkspaceElement} from '../types'
 import * as _ from 'lodash'
 import {fileDecoration} from '@remix-ui/file-decorators'
 import {ROOT_PATH} from '../utils/constants'
-interface Action {
-  type: string
-  payload: any
-}
 export interface BrowserState {
   browser: {
     currentWorkspace: string
@@ -64,7 +60,7 @@ export interface BrowserState {
   readonly: boolean
   popup: string
   focusEdit: string
-  focusElement: {key: string; type: 'file' | 'folder' | 'gist'}[]
+  focusElement: {key: string; type: WorkspaceElement}[]
   initializingFS: boolean
   gitConfig: {username: string; email: string; token: string}
 }
@@ -123,15 +119,10 @@ export const browserInitialState: BrowserState = {
   gitConfig: {username: '', email: '', token: ''}
 }
 
-export const browserReducer = (state = browserInitialState, action: Action) => {
+export const browserReducer = (state = browserInitialState, action: Actions) => {
   switch (action.type) {
   case 'SET_CURRENT_WORKSPACE': {
-    const payload = action.payload as {
-        name: string
-        isGitRepo: boolean
-        branches?: {remote: any; name: string}[]
-        currentBranch?: string
-      }
+    const payload = action.payload
     const workspaces = state.browser.workspaces.find(
       ({name}) => name === payload.name
     )
@@ -149,12 +140,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_WORKSPACES': {
-    const payload = action.payload as {
-        name: string
-        isGitRepo: boolean
-        branches?: {remote: any; name: string}[]
-        currentBranch?: string
-      }[]
+    const payload = action.payload
 
     return {
       ...state,
@@ -166,7 +152,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_MODE': {
-    const payload = action.payload as 'browser' | 'localhost'
+    const payload = action.payload
 
     return {
       ...state,
@@ -193,7 +179,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'FETCH_DIRECTORY_SUCCESS': {
-    const payload = action.payload as {path: string; fileTree}
+    const payload = action.payload
 
     return {
       ...state,
@@ -257,7 +243,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'FETCH_WORKSPACE_DIRECTORY_SUCCESS': {
-    const payload = action.payload as {path: string; fileTree}
+    const payload = action.payload
 
     return {
       ...state,
@@ -304,14 +290,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'DISPLAY_NOTIFICATION': {
-    const payload = action.payload as {
-        title: string
-        message: string
-        actionOk: () => void
-        actionCancel: () => void
-        labelOk: string
-        labelCancel: string
-      }
+    const payload = action.payload
 
     return {
       ...state,
@@ -337,7 +316,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'FILE_ADDED_SUCCESS': {
-    const payload = action.payload as string
+    const payload = action.payload
 
     return {
       ...state,
@@ -367,11 +346,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'FOLDER_ADDED_SUCCESS': {
-    const payload = action.payload as {
-        path: string
-        folderPath: string
-        fileTree
-      }
+    const payload = action.payload
 
     return {
       ...state,
@@ -406,7 +381,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'FILE_REMOVED_SUCCESS': {
-    const payload = action.payload as string
+    const payload = action.payload
 
     return {
       ...state,
@@ -448,11 +423,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'ADD_INPUT_FIELD': {
-    const payload = action.payload as {
-        path: string
-        fileTree
-        type: 'file' | 'folder'
-      }
+    const payload = action.payload
 
     return {
       ...state,
@@ -475,7 +446,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'REMOVE_INPUT_FIELD': {
-    const payload = action.payload as {path: string; fileTree}
+    const payload = action.payload
 
     return {
       ...state,
@@ -498,7 +469,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_READ_ONLY_MODE': {
-    const payload = action.payload as boolean
+    const payload = action.payload
 
     return {
       ...state,
@@ -507,11 +478,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'FILE_RENAMED_SUCCESS': {
-    const payload = action.payload as {
-        path: string
-        oldPath: string
-        fileTree
-      }
+    const payload = action.payload
 
     return {
       ...state,
@@ -545,12 +512,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'CREATE_WORKSPACE_SUCCESS': {
-    const payload = action.payload as {
-        name: string
-        isGitRepo: boolean
-        branches?: {remote: any; name: string}[]
-        currentBranch?: string
-      }
+    const payload = action.payload
     const workspaces = state.browser.workspaces.find(
       ({name}) => name === payload.name
     )
@@ -583,7 +545,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'RENAME_WORKSPACE': {
-    const payload = action.payload as {oldName: string; workspaceName: string}
+    const payload = action.payload
     let renamedWorkspace
     const workspaces = state.browser.workspaces.filter(
       ({name, isGitRepo, branches, currentBranch}) => {
@@ -613,7 +575,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'DELETE_WORKSPACE': {
-    const payload = action.payload as string
+    const payload = action.payload
     const workspaces = state.browser.workspaces.filter(
       ({name}) => name && name !== payload
     )
@@ -628,7 +590,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'DISPLAY_POPUP_MESSAGE': {
-    const payload = action.payload as string
+    const payload = action.payload
 
     return {
       ...state,
@@ -644,10 +606,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_FOCUS_ELEMENT': {
-    const payload = action.payload as {
-        key: string
-        type: 'file' | 'folder' | 'gist'
-      }[]
+    const payload = action.payload
 
     return {
       ...state,
@@ -656,7 +615,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'REMOVE_FOCUS_ELEMENT': {
-    const payload: string = action.payload
+    const payload = action.payload
 
     return {
       ...state,
@@ -667,7 +626,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_CONTEXT_MENU_ITEM': {
-    const payload = action.payload as action
+    const payload = action.payload
 
     return {
       ...state,
@@ -803,7 +762,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_CURRENT_WORKSPACE_BRANCHES': {
-    const payload: {remote: any; name: string}[] = action.payload
+    const payload = action.payload
 
     return {
       ...state,
@@ -819,7 +778,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_CURRENT_WORKSPACE_CURRENT_BRANCH': {
-    const payload: string = action.payload
+    const payload = action.payload
 
     return {
       ...state,
@@ -835,7 +794,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_CURRENT_WORKSPACE_IS_GITREPO': {
-    const payload: boolean = action.payload
+    const payload = action.payload
 
     return {
       ...state,
@@ -851,7 +810,7 @@ export const browserReducer = (state = browserInitialState, action: Action) => {
   }
 
   case 'SET_GIT_CONFIG': {
-    const payload: {username: string; token: string; email: string} =
+    const payload =
         action.payload
     return {
       ...state,
@@ -1152,7 +1111,7 @@ const addContextMenuItem = (
 
 const removeContextMenuItem = (
   state: BrowserState,
-  plugin
+  plugin: {name: string}
 ): {
   registeredMenuItems: action[]
   removedMenuItems: action[]

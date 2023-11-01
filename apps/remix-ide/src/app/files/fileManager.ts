@@ -24,9 +24,11 @@ const profile = {
   icon: 'assets/img/fileManager.webp',
   permission: true,
   version: packageJson.version,
-  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir',
-    'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile', 'getFolder', 'setFile', 'switchFile', 'refresh',
-    'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath', 'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory'],
+  methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'writeFileNoRewrite',
+    'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
+    'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
+    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory'
+  ],
   kind: 'file-system'
 }
 const errorMsg = {
@@ -39,7 +41,6 @@ const errorMsg = {
 const createError = (err) => {
   return new Error(`${errorMsg[err.code]} ${err.message || ''}`)
 }
-
 class FileManager extends Plugin {
   mode: string
   openedFiles: any
@@ -207,15 +208,15 @@ class FileManager extends Plugin {
    * @param {string} data content to write on the file
    * @returns {void}
    */
-  async writeFile(path, data) {
+  async writeFile(path, data, options?) {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
       if (await this.exists(path)) {
         await this._handleIsFile(path, `Cannot write file ${path}`)
-        return await this.setFileContent(path, data)
+        return await this.setFileContent(path, data, options)
       } else {
-        const ret = await this.setFileContent(path, data)
+        const ret = await this.setFileContent(path, data, options)
         this.emit('fileAdded', path)
         return ret
       }
@@ -255,19 +256,43 @@ class FileManager extends Plugin {
       throw new Error(e)
     }
   }
+  
+  /**
+   * Set the content of a specific file, does nnot rewrite file if it exists but creates a new unique name
+   * @param {string} path path of the file
+   * @param {string} data content to write on the file
+   * @returns {void}
+   */
+  async writeFileNoRewrite(path, data) {
+    try {
+      path = this.normalize(path)
+      path = this.limitPluginScope(path)
+      if (await this.exists(path)) {
+        const newPath = await helper.createNonClashingNameAsync(path, this)
+        const content = await this.setFileContent(newPath, data)
+        return {newContent: content, newPath}
+      } else {
+        const ret = await this.setFileContent(path, data)
+        this.emit('fileAdded', path)
+        return {newContent: ret, newpath: path}
+      }
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
 
   /**
    * Return the content of a specific file
    * @param {string} path path of the file
    * @returns {string} content of the file
    */
-  async readFile(path) {
+  async readFile(path, options?) {
     try {
       path = this.normalize(path)
       path = this.limitPluginScope(path)
       await this._handleExists(path, `Cannot read file ${path}`)
       await this._handleIsFile(path, `Cannot read file ${path}`)
-      return this.getFileContent(path)
+      return this.getFileContent(path, options)
     } catch (e) {
       throw new Error(e)
     }
@@ -590,7 +615,7 @@ class FileManager extends Plugin {
     return path ? path[1] : '/'
   }
 
-  getFileContent(path) {
+  getFileContent(path, options?) {
     const provider = this.fileProviderOf(path)
 
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
@@ -600,11 +625,11 @@ class FileManager extends Plugin {
       provider.get(path, (err, content) => {
         if (err) reject(err)
         resolve(content)
-      })
+      }, options)
     })
   }
 
-  async setFileContent(path, content) {
+  async setFileContent(path, content, options?) {
     if (this.currentRequest) {
       const canCall = await this.askUserPermission(`writeFile`, `modifying ${path} ...`)
       const required = this.appManager.isRequired(this.currentRequest.from)
@@ -613,10 +638,10 @@ class FileManager extends Plugin {
         this.call('notification', 'toast', fileChangedToastMsg(this.currentRequest.from, path))
       }
     }
-    return await this._setFileInternal(path, content)
+    return await this._setFileInternal(path, content, options)
   }
 
-  _setFileInternal(path, content) {
+  _setFileInternal(path, content, options?) {
     const provider = this.fileProviderOf(path)
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
     // TODO : Add permission
@@ -627,7 +652,7 @@ class FileManager extends Plugin {
         this.syncEditor(path)
         this.emit('fileSaved', path)
         resolve(true)
-      })
+      }, options)
     })
   }
 

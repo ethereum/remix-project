@@ -31,5 +31,11 @@
   "solidityUnitTesting.assertion": "断言",
   "solidityUnitTesting.expectedValueShouldBe": "期望值应该是",
   "solidityUnitTesting.receivedValue": "实际值",
-  "solidityUnitTesting.skippingTheRemainingTests": "跳过该方法的其余测试。"
+  "solidityUnitTesting.skippingTheRemainingTests": "跳过该方法的其余测试。",
+  "solidityUnitTesting.toasterMsg": "目录创建成功",
+  "solidityUnitTesting.tooltipText1": "至少有一个合约测试失败",
+  "solidityUnitTesting.tooltipText2": "所有合约测试通过",
+  "solidityUnitTesting.tooltipText3": "开始调试",
+  "solidityUnitTesting.fail": "失败",
+  "solidityUnitTesting.pass": "通过"
 }

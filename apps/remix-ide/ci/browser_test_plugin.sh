@@ -7,7 +7,7 @@ echo "$BUILD_ID"
 TEST_EXITCODE=0
 
 npx http-server -p 9999 ./dist/apps/$1 &
-yarn run ganache-cli &
+npx ganache &
 npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
 
