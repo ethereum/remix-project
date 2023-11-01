@@ -172,7 +172,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"29")]',
       })
-      .goToVMTraceStep(7453)
+      .goToVMTraceStep(5453)
       .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
       .click('*[data-id="treeViewDivtreeViewItemarray"]')
       .waitForElementPresent('*[data-id="treeViewDivtreeViewLoadMore"]')
