@@ -82,7 +82,7 @@ export function checkError (execResult, compiledContracts) {
   const exceptionError = execResult.errorMessage || ''
   const error = `Error occured: ${execResult.errorMessage}.\n`
   let msg = ''
-  if (exceptionError === errorCode.INVALID_OPCODE) {
+  if (exceptionError.includes(errorCode.INVALID_OPCODE)) {
     msg = '\t\n\tThe execution might have thrown OR the EVM version used by the selected environment is not compatible with the compiler EVM version.\n'
     ret.error = true
   } else if (exceptionError === errorCode.OUT_OF_GAS) {
