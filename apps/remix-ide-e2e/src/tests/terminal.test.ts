@@ -92,6 +92,9 @@ module.exports = {
 
   'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
+      .clickLaunchIcon('solidity')
+      .click('.remixui_compilerConfigSection')
+      .setValue('#evmVersionSelector', 'london') // Set EVM version as fork version
       .clickLaunchIcon('settings')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-london')

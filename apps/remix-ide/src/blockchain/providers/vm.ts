@@ -100,7 +100,7 @@ export class VMProvider {
   }
 
   getGasPrice (cb) {
-    this.web3.eth.getGasPrice(cb)
+    this.web3.eth.getGasPrice().then((result => cb(null, result))).catch((error) => cb(error))
   }
 
   signMessage (message, account, _passphrase, cb) {

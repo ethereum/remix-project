@@ -3,7 +3,7 @@
     "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "apps/circuit-compiler/src",
     "projectType": "application",
-    "implicitDependencies": ["remixd"],
+    "implicitDependencies": [],
     "targets": {
       "build": {
         "executor": "@nrwl/webpack:webpack",
@@ -17,7 +17,7 @@
           "main": "apps/circuit-compiler/src/main.tsx",
           "polyfills": "apps/circuit-compiler/src/polyfills.ts",
           "tsConfig": "apps/circuit-compiler/tsconfig.app.json",
-          "assets": ["apps/circuit-compiler/src/profile.json"],
+          "assets": ["apps/circuit-compiler/src/profile.json", "apps/circuit-compiler/src/snarkjs.min.js"],
           "styles": ["apps/circuit-compiler/src/css/app.css"],
           "scripts": [],
           "webpackConfig": "apps/circuit-compiler/webpack.config.js"          

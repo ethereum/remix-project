@@ -235,7 +235,7 @@ const sources = [
       content:
       `
       pragma solidity ^0.8.0;
-      contract helloWorld {
+      contract HelloWorld {
           string public message;
           
           fallback () external {
@@ -249,7 +249,7 @@ const sources = [
     },
     'checkBalance.sol': {
       content: `pragma solidity ^0.8.0;
-      contract checkBalance {
+      contract CheckBalance {
         constructor () payable {}
 
         function sendSomeEther(uint256 num) public {

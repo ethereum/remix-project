@@ -124,7 +124,7 @@ export const continueHandler = (dispatch: React.Dispatch<any>, gasEstimationProm
     dispatch(displayNotification('Gas estimation failed', gasEstimationPrompt(msg), 'Send Transaction', 'Cancel Transaction', () => {
       continueTxExecution()
     }, () => {
-      cancelCb()
+      cancelCb(error)
     }))
   } else {
     continueTxExecution()
