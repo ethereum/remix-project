@@ -9,20 +9,21 @@ export function CompileBtn () {
 
   return (
     <CustomTooltip
-        placement="auto"
-        tooltipId="overlay-tooltip-compile"
-        tooltipText={
-          <div className="text-left">
-            <div>
-              <b>Ctrl+S</b> to compile {appState.filePath}
-            </div>
+      placement="auto"
+      tooltipId="overlay-tooltip-compile"
+      tooltipText={
+        <div className="text-left">
+          <div>
+            <b>Ctrl+S</b> to compile {appState.filePath}
           </div>
-        }
-      >
+        </div>
+      }
+    >
       <button
         className="btn btn-primary btn-block d-block w-100 text-break mb-1 mt-3"
         onClick={() => { compileCircuit(plugin, appState) }}
         disabled={(appState.filePath === "") || (appState.status === "compiling") || (appState.status === "generating")}
+        data-id="compile_circuit_btn"
       >
         <div className="d-flex align-items-center justify-content-center">
           <RenderIf condition={appState.status === 'compiling'}>
