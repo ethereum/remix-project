@@ -175,11 +175,13 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   }
 
   const selectOutput = () => {
+    props.plugin.call('layout', 'minimize', props.plugin.profile.name, false)
     setShowOutput(true)
   }
 
   const showTerminal = () => {
     setShowOutput(false)
+    props.plugin.call('layout', 'minimize', props.plugin.profile.name, false)
     if (terminals.length === 0) createTerminal()
   }
 
@@ -190,68 +192,66 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   }
 
   return (<>
+    <div className='xterm-panel-header bg-light'>
+      <div className='xterm-panel-header-left p-1'>
+        <button className={`btn btn-sm btn-secondary mr-2 ${!showOutput ? 'xterm-btn-none' : 'xterm-btn-active'}`} onClick={selectOutput}>ouput</button>
+        <button className={`btn btn-sm btn-secondary ${terminalsEnabled ? '' : 'd-none'} ${showOutput ? 'xterm-btn-none' : 'xterm-btn-active'}`} onClick={showTerminal}><span className="far fa-terminal border-0 ml-1"></span></button>
+      </div>
+      <div className={`xterm-panel-header-right  ${showOutput ? 'd-none' : ''}`}>
 
-    <div className='xterm-panel'>
-      <div className='xterm-panel-header bg-light'>
-        <div className='xterm-panel-header-left p-1'>
-          <button className={`btn btn-sm btn-secondary mr-2 ${!showOutput ? 'xterm-btn-none' : 'xterm-btn-active'}`} onClick={selectOutput}>ouput</button>
-          <button className={`btn btn-sm btn-secondary ${terminalsEnabled ? '' : 'd-none'} ${showOutput ? 'xterm-btn-none' : 'xterm-btn-active'}`} onClick={showTerminal}><span className="far fa-terminal border-0 ml-1"></span></button>
-        </div>
-        <div className={`xterm-panel-header-right  ${showOutput ? 'd-none' : ''}`}>
-
-          <Dropdown as={ButtonGroup}>
-            <button className="btn btn-sm btn-secondary mr-2" onClick={async () => clearTerminal()}>
-              <CustomTooltip tooltipText={<FormattedMessage id='xterm.clear' defaultMessage='Clear terminal' />}>
-                <span className="far fa-ban border-0 p-0 m-0"></span>
-              </CustomTooltip>
-            </button>
-            <button className="btn btn-sm btn-secondary" onClick={async () => createTerminal()}>
-              <CustomTooltip tooltipText={<FormattedMessage id='xterm.new' defaultMessage='New terminal' />}>
-                <span className="far fa-plus border-0 p-0 m-0"></span>
-              </CustomTooltip>
-            </button>
-
-
-            <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
-
-            <Dropdown.Menu className='custom-dropdown-items remixui_menuwidth'>
-              {shells.map((shell, index) => {
-                return (<Dropdown.Item key={index} onClick={async () => await createTerminal(shell)}>{shell}</Dropdown.Item>)
-              })}
-            </Dropdown.Menu>
-          </Dropdown>
-          <button className="btn ml-2 btn-sm btn-secondary" onClick={closeTerminal}>
-            <CustomTooltip tooltipText={<FormattedMessage id='xterm.close' defaultMessage='Close terminal' />}>
-              <span className="far fa-trash border-0 ml-1"></span>
+        <Dropdown as={ButtonGroup}>
+          <button className="btn btn-sm btn-secondary mr-2" onClick={async () => clearTerminal()}>
+            <CustomTooltip tooltipText={<FormattedMessage id='xterm.clear' defaultMessage='Clear terminal' />}>
+              <span className="far fa-ban border-0 p-0 m-0"></span>
             </CustomTooltip>
           </button>
-        </div>
-      </div>
+          <button className="btn btn-sm btn-secondary" onClick={async () => createTerminal()}>
+            <CustomTooltip tooltipText={<FormattedMessage id='xterm.new' defaultMessage='New terminal' />}>
+              <span className="far fa-plus border-0 p-0 m-0"></span>
+            </CustomTooltip>
+          </button>
 
 
-      <div className='remix-ui-xterminals-container'>
-        <>
-          <div className={`${!showOutput ? 'd-none' : 'd-block w-100'} `}>
-            <RemixUiTerminal
-              plugin={props.plugin}
-              onReady={props.onReady} />
-          </div>
-          <div className={`remix-ui-xterminals-section ${showOutput ? 'd-none' : 'd-flex'} `}>
-            {terminals.map((xtermState) => {
-              return (
-                <div className={`h-100 xterm-terminal ${xtermState.hidden ? 'hide-xterm' : 'show-xterm'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
-                  <RemixUiXterm theme={theme} setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} resize={resize} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
-                </div>
-              )
+          <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
+
+          <Dropdown.Menu className='custom-dropdown-items remixui_menuwidth'>
+            {shells.map((shell, index) => {
+              return (<Dropdown.Item key={index} onClick={async () => await createTerminal(shell)}>{shell}</Dropdown.Item>)
             })}
-            <div className='remix-ui-xterminals-buttons border-left'>
-              {terminals.map((xtermState, index) => {
-                return (<button key={index} onClick={async () => selectTerminal(xtermState)} className={`btn btn-sm mt-2 btn-secondary ${xtermState.hidden ? 'xterm-btn-none' : 'xterm-btn-active'}`}><span className="fa fa-terminal border-0 p-0 m-0"></span></button>)
-              })}
-            </div>
-          </div>
-        </>
+          </Dropdown.Menu>
+        </Dropdown>
+        <button className="btn ml-2 btn-sm btn-secondary" onClick={closeTerminal}>
+          <CustomTooltip tooltipText={<FormattedMessage id='xterm.close' defaultMessage='Close terminal' />}>
+            <span className="far fa-trash border-0 ml-1"></span>
+          </CustomTooltip>
+        </button>
       </div>
+    </div>
+
+    <RemixUiTerminal
+      plugin={props.plugin}
+      onReady={props.onReady}
+      visible={showOutput}
+    />
+
+    <div className='remix-ui-xterminals-container'>
+      <>
+
+        <div className={`remix-ui-xterminals-section ${showOutput ? 'd-none' : 'd-flex'} `}>
+          {terminals.map((xtermState) => {
+            return (
+              <div className={`h-100 xterm-terminal ${xtermState.hidden ? 'hide-xterm' : 'show-xterm'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
+                <RemixUiXterm theme={theme} setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} resize={resize} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
+              </div>
+            )
+          })}
+          <div className='remix-ui-xterminals-buttons border-left'>
+            {terminals.map((xtermState, index) => {
+              return (<button key={index} onClick={async () => selectTerminal(xtermState)} className={`btn btn-sm mt-2 btn-secondary ${xtermState.hidden ? 'xterm-btn-none' : 'xterm-btn-active'}`}><span className="fa fa-terminal border-0 p-0 m-0"></span></button>)
+            })}
+          </div>
+        </div>
+      </>
     </div>
 
 
