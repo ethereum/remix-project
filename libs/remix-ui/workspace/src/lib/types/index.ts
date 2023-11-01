@@ -294,7 +294,8 @@ export interface ActionPayloadTypes {
     username: string;
     token: string;
     email: string
-  }
+  },
+  SET_ELECTRON_RECENT_FOLDERS: string[]
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {
