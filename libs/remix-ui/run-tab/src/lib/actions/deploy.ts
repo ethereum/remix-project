@@ -121,7 +121,7 @@ export const continueHandler = (dispatch: React.Dispatch<any>, gasEstimationProm
   if (error) {
     let msg = typeof error !== 'string' ? error.message : error
     
-    if (msg.includes('invalid opcode')) msg += '/n OR the EVM version used by the selected environment is not compatible with the compiler EVM version.'
+    if (msg.includes('invalid opcode')) msg += '\n OR the EVM version used by the selected environment is not compatible with the compiler EVM version.'
     
     dispatch(displayNotification('Gas estimation failed', gasEstimationPrompt(msg), 'Send Transaction', 'Cancel Transaction', () => {
       continueTxExecution()
