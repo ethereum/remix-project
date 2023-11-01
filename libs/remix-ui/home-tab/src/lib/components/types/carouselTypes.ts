@@ -114,3 +114,10 @@ export default class Carousel extends React.Component<CarouselProps> {
   direction: Direction;
   containerRef: React.RefObject<HTMLDivElement>;
 }
+
+export type localeLang = {
+  code: string
+  localeName: string
+  messages: { [key: string]: string }
+  name: string
+}

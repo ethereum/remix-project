@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Dropdown, DropdownButton } from 'react-bootstrap'
-import DropdownItem from "react-bootstrap/DropdownItem";
+import DropdownItem from 'react-bootstrap/DropdownItem'
+import { localeLang } from './types/carouselTypes'
+
+
 
 export function LanguageOptions({ plugin }: { plugin: any }) {
   const [langOptions, setLangOptions] = useState<string>()
@@ -12,6 +15,12 @@ export function LanguageOptions({ plugin }: { plugin: any }) {
   useEffect(() => {
     plugin.call('locale', 'currentLocale').then(opt => {
       setLangOptions(opt.code.toUpperCase())
+    })
+  }, [langOptions])
+
+  useEffect(() => {
+    plugin.on('locale', 'localeChanged', (lang: localeLang) => {
+      setLangOptions(lang.code.toUpperCase())
     })
   }, [langOptions])
 
