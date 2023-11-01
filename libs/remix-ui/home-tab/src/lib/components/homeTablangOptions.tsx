@@ -17,7 +17,7 @@ export function LanguageOptions({ plugin }: { plugin: any }) {
 
   return (
     <>
-      <div className="d-flex align-items-center justify-content-end mx-1">
+      <div className="d-flex align-items-center justify-content-end mr-2">
         <DropdownButton title={langOptions} id="langdropdown" size="sm">
           {['EN', 'ES', 'FR', 'ZH'].map(lang => (
             <DropdownItem as={'span'} onClick={() =>
