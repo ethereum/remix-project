@@ -8,7 +8,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Should create semaphore workspace template #group1 #group2 #group3': function (browser: NightwatchBrowser) {
+  'Should create semaphore workspace template #group1 #group2 #group3 #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
@@ -92,5 +92,93 @@ module.exports = {
       })
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
+  },
+  'Should display warnings for compiled circuit without pragma version #group4': function (browser: NightwatchBrowser) {
+    browser
+      .addFile('circuits/warning.circom', { content: warningCircuit })
+      .waitForElementPresent('[data-path="Semaphore - 1/circuits/warning.circom"]')
+      .waitForElementVisible('[data-path="Semaphore - 1/circuits/warning.circom"]')
+      .click('[data-id="treeViewLitreeViewItemcircuits/warning.circom"]')
+      .clickLaunchIcon('circuit-compiler')
+      .frame(0)
+      .waitForElementPresent('button[data-id="compile_circuit_btn"]')
+      .waitForElementVisible('button[data-id="compile_circuit_btn"]')
+      .click('button[data-id="compile_circuit_btn"]')
+      .waitForElementPresent('[data-id="circuit_feedback"]')
+      .assert.hasClass('[data-id="circuit_feedback"]', 'alert-warning')
+      .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/warning.circom does not include pragma version. Assuming pragma version (2, 1, 5)')
+  },
+  'Should hide/show warnings for compiled circuit #group4': function (browser: NightwatchBrowser) {
+    browser
+      .click('[data-id="hide_circuit_warnings_checkbox_input"]')
+      .waitForElementNotPresent('[data-id="circuit_feedback"]')
+      .click('[data-id="hide_circuit_warnings_checkbox_input"]')
+      .waitForElementVisible('[data-id="circuit_feedback"]')
+      .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/warning.circom does not include pragma version. Assuming pragma version (2, 1, 5)')
+  },
+  'Should display error for invalid circuit #group4': function (browser: NightwatchBrowser) {
+    browser
+      .frameParent()
+      .clickLaunchIcon('filePanel')
+      .addFile('circuits/error.circom', { content: errorCircuit })
+      .waitForElementPresent('[data-path="Semaphore - 1/circuits/error.circom"]')
+      .waitForElementVisible('[data-path="Semaphore - 1/circuits/error.circom"]')
+      .click('[data-id="treeViewLitreeViewItemcircuits/error.circom"]')
+      .clickLaunchIcon('circuit-compiler')
+      .frame(0)
+      .waitForElementPresent('button[data-id="compile_circuit_btn"]')
+      .waitForElementVisible('button[data-id="compile_circuit_btn"]')
+      .click('button[data-id="compile_circuit_btn"]')
+      .waitForElementPresent('[data-id="circuit_feedback"]')
+      .assert.hasClass('[data-id="circuit_feedback"]', 'alert-danger')
+      .waitForElementContainsText('[data-id="circuit_feedback"]', 'No main specified in the project structure')
+  },
+  'Should auto compile circuit #group4': function (browser: NightwatchBrowser) {
+    browser
+      .click('[data-id="auto_compile_circuit_checkbox_input"]')
+      .frameParent()
+      .setEditorValue(validCircuit, function () {
+        browser
+          .frame(0)
+          .waitForElementNotPresent('[data-id="circuit_feedback"]')
+          .frameParent()
+          .clickLaunchIcon('filePanel')
+          .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/error.wasm"]')
+      })
   }
 }
+
+const warningCircuit = `
+template Multiplier2() {
+  signal input a;
+  signal input b;
+  signal output c;
+  c <== a*b;
+}
+
+component main = Multiplier2();
+`
+
+const errorCircuit = `
+pragma circom 2.0.0;
+
+template Multiplier2() {
+    signal input a;
+    signal input b;
+    signal output c;
+    c <== a*b;
+ }
+`
+
+const validCircuit = `
+pragma circom 2.0.0;
+
+template Multiplier2() {
+    signal input a;
+    signal input b;
+    signal output c;
+    c <== a*b;
+ }
+
+ component main = Multiplier2();
+`
