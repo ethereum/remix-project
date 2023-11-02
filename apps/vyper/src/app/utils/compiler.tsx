@@ -36,6 +36,7 @@ export function isCompilationError(output: VyperCompilationOutput): output is Vy
  * @param contract The name and content of the contract
  */
 export async function compile(url: string, contract: Contract): Promise<VyperCompilationOutput> {
+  console.log('vyper reloaded!')
   if (!contract.name) {
     throw new Error('Set your Vyper contract file.')
   }
@@ -43,12 +44,16 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   if (extension !== 'vy') {
     throw new Error('Use extension .vy for Vyper.')
   }
+  const data = new URLSearchParams()
+  data.append('files', contract.content)
 
   const files = new FormData();
   const content = new Blob([contract.content], {
     type: 'text/plain'
   });
-  files.append("file", content, 'contract.vy');
+  files.append("files", content, 'contract.vy')
+  files.append('vyper_version', '0.3.10')
+  console.log({ files, contract, content, url })
   let response = await fetch(url + '/compile', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
