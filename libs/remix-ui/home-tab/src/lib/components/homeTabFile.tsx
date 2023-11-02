@@ -151,10 +151,10 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
       }
       `
     if (createFile) {
-      const { newPath } = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
+      const { newPath } = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/HelloWorld.sol', content)
       await plugin.call('fileManager', 'open', newPath)
     } else {
-      await plugin.call('fileManager', 'open', '/contracts/helloWorld.sol')
+      await plugin.call('fileManager', 'open', '/contracts/HelloWorld.sol')
     }
     
   }
