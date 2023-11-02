@@ -21,7 +21,7 @@ export function CompilerFeedback ({ feedback, filePathToId, hideWarnings, openEr
     <div>
       <div className="circuit_errors_box py-4">
         <RenderIf condition={ (typeof feedback === "string") && showException }>
-          <div className="circuit_feedback error alert alert-danger">
+          <div className="circuit_feedback error alert alert-danger" data-id="circuit_feedback">
             <span> { feedback } </span>
             <div className="close" data-id="renderer" onClick={handleCloseException}>
               <i className="fas fa-times"></i>
@@ -39,12 +39,12 @@ export function CompilerFeedback ({ feedback, filePathToId, hideWarnings, openEr
               Array.isArray(feedback) && feedback.map((response, index) => (
                 <div key={index} onClick={() => handleOpenError(response)}>
                   <RenderIf condition={response.type === 'Error'}>
-                    <div className={`circuit_feedback ${response.type.toLowerCase()} alert alert-danger`}>
+                    <div className={`circuit_feedback ${response.type.toLowerCase()} alert alert-danger`} data-id="circuit_feedback">
                       <FeedbackAlert message={response.message} location={ response.labels[0] ? response.labels[0].message + ` ${filePathToId[response.labels[0].file_id]}:${response.labels[0].range.start}:${response.labels[0].range.end}` : null} />
                     </div>
                   </RenderIf>
                   <RenderIf condition={(response.type === 'Warning') && !hideWarnings}>
-                    <div className={`circuit_feedback ${response.type.toLowerCase()} alert alert-warning`}>
+                    <div className={`circuit_feedback ${response.type.toLowerCase()} alert alert-warning`} data-id="circuit_feedback">
                       <FeedbackAlert message={response.message} location={null} />
                     </div>
                   </RenderIf>
