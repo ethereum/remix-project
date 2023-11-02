@@ -65,6 +65,12 @@ module.exports = {
       .checkVariableDebug('soliditylocals', localsCheck)
   },
 
+  'Click on a function name (from the functions panel), the debugger should focus on the function body #group1': function (browser: NightwatchBrowser) {
+    browser.click('*[data-id="functionPanel"] *[data-id="treeViewDiv0"]') // click on "delegate"
+    .waitForElementContainsText('*[data-id="stepdetail"]', 'vm trace step:\n143', 60000)
+  },
+
+
   'Access Ballot via at address #group1': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('udapp')
       .click('*[data-id="universalDappUiUdappClose"]')
