@@ -142,13 +142,13 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false }) // calling once is not working.
     const content = `// SPDX-License-Identifier: MIT
-      pragma solidity >=0.6.12 <0.9.0;
+pragma solidity >=0.6.12 <0.9.0;
 
-      contract HelloWorld {
-        function print() public pure returns (string memory) {
-          return "Hello World!";
-        }
-      }
+contract HelloWorld {
+  function print() public pure returns (string memory) {
+    return "Hello World!";
+  }
+}
       `
     if (createFile) {
       const { newPath } = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/HelloWorld.sol', content)
