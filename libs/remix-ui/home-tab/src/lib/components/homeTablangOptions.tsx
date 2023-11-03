@@ -38,7 +38,7 @@ export function LanguageOptions({ plugin }: { plugin: any }) {
                 changeLanguage(lang.toLowerCase())
                 setLangOptions(lang)
               }}
-              style={{ color: 'var(--white)'}}
+              style={{ color: 'var(--text)'}}
               >
                 {lang}
               </DropdownItem>
