@@ -8,12 +8,7 @@ export function CompileBtn () {
   const { plugin, appState } = useContext(CircuitAppContext)
 
   return (
-    <button
-      className="btn btn-primary btn-block d-block w-100 text-break mb-1 mt-3"
-      onClick={() => { compileCircuit(plugin, appState) }}
-      disabled={(appState.filePath === "") || (appState.status === "compiling") || (appState.status === "generating")}
-    >
-      <CustomTooltip
+    <CustomTooltip
         placement="auto"
         tooltipId="overlay-tooltip-compile"
         tooltipText={
@@ -23,6 +18,11 @@ export function CompileBtn () {
             </div>
           </div>
         }
+      >
+      <button
+        className="btn btn-primary btn-block d-block w-100 text-break mb-1 mt-3"
+        onClick={() => { compileCircuit(plugin, appState) }}
+        disabled={(appState.filePath === "") || (appState.status === "compiling") || (appState.status === "generating")}
       >
         <div className="d-flex align-items-center justify-content-center">
           <RenderIf condition={appState.status === 'compiling'}>
@@ -45,7 +45,7 @@ export function CompileBtn () {
             </span>
           </div>
         </div>
-      </CustomTooltip>
-    </button>
+      </button>
+    </CustomTooltip>
   )
 }
