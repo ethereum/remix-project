@@ -104,7 +104,7 @@ module.exports = {
       .waitForElementPresent('button[data-id="compile_circuit_btn"]')
       .waitForElementVisible('button[data-id="compile_circuit_btn"]')
       .click('button[data-id="compile_circuit_btn"]')
-      .waitForElementPresent('[data-id="circuit_feedback"]')
+      .pause(1000)
       .waitForElementVisible('[data-id="circuit_feedback"]')
       .assert.hasClass('[data-id="circuit_feedback"]', 'alert-warning')
       .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/warning.circom does not include pragma version. Assuming pragma version (2, 1, 5)')
