@@ -14,6 +14,7 @@ export interface FileLabelProps {
   }
   fileDecorations: fileDecoration[]
   editModeOff: (content: string) => void
+  dragStatus: boolean
 }
 
 export const FileLabel = (props: FileLabelProps) => {
@@ -84,6 +85,7 @@ export const FileLabel = (props: FileLabelProps) => {
         tooltipText={`${file.path}`}
         tooltipId={`fileExplorer.${file.path}`}
         tooltipClasses="text-nowrap"
+        hide={props.dragStatus}
       >
         <span className={`remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')} data-path={file.path}>
           {file.name}
