@@ -16,6 +16,7 @@ export const scanAPIurls = {
   100: 'https://api.gnosisscan.io/api',
   1101: 'https://api-zkevm.polygonscan.com/api',
   59144: 'https://api.lineascan.build/api',
+  8453: 'https://api.basescan.org/api',
 
   // all testnet
   5: 'https://api-goerli.etherscan.io/api',
