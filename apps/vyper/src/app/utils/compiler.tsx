@@ -44,14 +44,12 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   if (extension !== 'vy') {
     throw new Error('Use extension .vy for Vyper.')
   }
-  const data = new URLSearchParams()
-  data.append('files', contract.content)
 
   const files = new FormData();
   const content = new Blob([contract.content], {
     type: 'text/plain'
   });
-  files.append("files", content, 'contract.vy')
+  files.append("files", content, `${contract.name}.vy`)
   files.append('vyper_version', '0.3.10')
   console.log({ files, contract, content, url })
   let response = await fetch(url + '/compile', {
@@ -59,7 +57,7 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
     headers: {'Content-Type': 'application/json'},
     body: files
   })
-
+  console.log('compile done...')
   if (response.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)
   }
