@@ -20,10 +20,7 @@ Related links:
  - Remix-debug NPM module: https://www.npmjs.com/package/@remix-project/remix-debug
  - Remix-tests NPM module: https://www.npmjs.com/package/@remix-project/remix-tests
  - Remix documentation: http://remix-ide.readthedocs.io/en/latest/
- - General gitter channel: https://gitter.im/ethereum/remix
- - Dev gitter channel: https://gitter.im/ethereum/remix-dev
- - Dev plugin gitter channel: https://gitter.im/ethereum/remix-dev-plugin
- 
+ - Discord: https://discord.gg/mh9hFCKkEq
  
 ---
 
@@ -187,4 +184,4 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 
 # Coding best practices
 
- - https://github.com/ethereum/remix-project/blob/master/best-practices.md
+ - https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md
