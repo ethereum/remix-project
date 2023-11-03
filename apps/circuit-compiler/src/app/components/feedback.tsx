@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CompilerFeedbackProps, CompilerReport } from '../types'
 import { RenderIf } from '@remix-ui/helper'
 import {CopyToClipboard} from '@remix-ui/clipboard'
@@ -10,6 +10,10 @@ export function CompilerFeedback ({ feedback, filePathToId, hideWarnings, openEr
   const handleCloseException = () => {
     setShowException(false)
   }
+
+  useEffect(() => {
+    console.log('feedback', JSON.stringify(feedback))
+  }, [feedback])
 
   const handleOpenError = (report: CompilerReport) => {
     if (report.labels.length > 0) {

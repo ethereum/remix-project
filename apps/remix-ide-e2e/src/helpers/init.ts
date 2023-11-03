@@ -13,7 +13,6 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     //.switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
-
     .perform((done) => {
       if (!loadPlugin) return done()
       browser
@@ -27,30 +26,37 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     })
     .verifyLoad()
     .perform(() => {
+
       if (hideToolTips) {
+        
         browser.execute(function () { // hide tooltips
           function addStyle(styleString) {
+            
             const style = document.createElement('style');
             style.textContent = styleString;
             document.head.append(style);
           }
 
           addStyle(`
-            .bs-popover-right {
-              display:none !important;
-            }
-            .bs-popover-top {
-              display:none !important;
-            }
-            .bs-popover-left {
-              display:none !important;
-            }
-            .bs-popover-bottom {
+            .popover {
               display:none !important;
             }
           `);
         })
-      }
+    }})
+    .perform(() => {
+      console.log('init')
+      browser.execute(function () { 
+        (window as any).logs = []
+        console.log = function () {
+          (window as any).logs.push(JSON.stringify(arguments))
+        }
+        console.error = function () {
+          (window as any).logs.push(JSON.stringify(arguments))
+        }
+      })
+    })
+    .perform(() => {
       if (preloadPlugins) {
         initModules(browser, () => {
           browser

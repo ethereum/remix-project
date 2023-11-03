@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { CustomTooltip, RenderIf } from '@remix-ui/helper'
 import {FormattedMessage} from 'react-intl'
 import { CircuitAppContext } from '../contexts'
@@ -14,6 +14,10 @@ import { PrimeValue } from '../types'
 
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
+
+  useEffect(() => {
+    console.log('circuitApp.appState.status', circuitApp.appState.status)
+  }, [circuitApp.appState.status])
 
   const showCompilerLicense = (message = 'License not available') => {
     // @ts-ignore
