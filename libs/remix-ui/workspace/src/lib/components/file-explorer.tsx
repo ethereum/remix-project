@@ -334,6 +334,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
+  const dragStatus = (isDragged: boolean) => {
+    props.dragStatus(isDragged)
+  }
+
   useEffect(() => {
     if (files[ROOT_PATH]){
       try {
@@ -349,7 +353,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
 
   return (
-    <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
+    <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove} dragStatus={dragStatus}>
       <div ref={treeRef} tabIndex={0} style={{outline: 'none'}}>
         <TreeView id="treeView">
           <li key={`treeViewLiMenu`} data-id={`treeViewLiMenu`} className="li_tv">
@@ -393,6 +397,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     key={index}
                     showIconsMenu={props.showIconsMenu}
                     hideIconsMenu={props.hideIconsMenu}
+                    dragStatus={state.dragStatus}
                   />
                 ))
               }

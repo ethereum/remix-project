@@ -125,6 +125,7 @@ export interface FileExplorerProps {
     toGist: (path?: string, type?: string) => void
     handleNewFileInput: (parentFolder?: string) => Promise<void>
     handleNewFolderInput: (parentFolder?: string) => Promise<void>
+    dragStatus: (status: boolean) => void
 }
 type Placement = import('react-overlays/usePopper').Placement
 export interface FileExplorerMenuProps {
@@ -190,6 +191,7 @@ export interface WorkSpaceState {
     showContextMenu: boolean
     reservedKeywords: string[]
     copyElement: CopyElementType[]
+    dragStatus: boolean
 }
 
 export type FileFocusContextType = {
