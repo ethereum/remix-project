@@ -256,6 +256,7 @@ export class CircomPluginClient extends PluginClient {
               if (depPath) {
                 // if depPath is provided, try to resolve include import from './deps' folder in remix
                 path = pathModule.resolve(depPath.slice(0, depPath.lastIndexOf('/')), include)
+                path = path.replace('https:/', 'https://')
                 if (path.indexOf('/') === 0) path = path.slice(1)
                 dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
               } else {
