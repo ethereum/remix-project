@@ -106,25 +106,40 @@ export class WalletConnectRemixClient extends PluginClient {
 
         if (provider.isMetaMask) {
           return new Promise((resolve) => {
-            provider.sendAsync(data, (err, response) => {
-              if (err) {
-                console.error(err)
-                return resolve({jsonrpc: '2.0', result: [], id: data.id})
+            provider.sendAsync(data, (error, response) => {
+              if (error) {
+                if (error.data && error.data.originalError && error.data.originalError.data) {
+                  resolve({
+                    jsonrpc: '2.0',
+                    error: error.data.originalError,
+                    id: data.id
+                  })
+                } else if (error.data && error.data.message) {
+                  resolve({
+                    jsonrpc: '2.0',
+                    error: error.data && error.data,
+                    id: data.id
+                  })
+                } else {
+                  resolve({
+                    jsonrpc: '2.0',
+                    error,
+                    id: data.id
+                  })
+                }                
               }
               return resolve(response)
             })
           })
         } else {
           const message = await provider.request(data)
-
           return {jsonrpc: '2.0', result: message, id: data.id}
         }
       }
     } else {
-      console.error(
-        `Cannot make ${data.method} request. Remix client is not connected to walletconnect client`
-      )
-      return {jsonrpc: '2.0', result: [], id: data.id}
+      const err = `Cannot make ${data.method} request. Remix client is not connected to walletconnect client`
+      console.error(err)
+      return {jsonrpc: '2.0', error: { message: err, code: -32603 }, id: data.id}
     }
   }
 
