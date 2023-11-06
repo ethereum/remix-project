@@ -25,6 +25,7 @@ export interface RenderFileProps {
   handleClickFile: (path: string, type: string) => void
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
   fileDecorations: fileDecoration[]
+  dragStatus: boolean
 }
 
 export const FileRender = (props: RenderFileProps) => {
@@ -107,7 +108,7 @@ export const FileRender = (props: RenderFileProps) => {
           <>
             <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
               <div className="d-flex flex-row">
-                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} />
                 <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>
             </Draggable>
@@ -138,6 +139,7 @@ export const FileRender = (props: RenderFileProps) => {
                 handleContextMenu={props.handleContextMenu}
                 expandPath={props.expandPath}
                 key={index}
+                dragStatus={props.dragStatus}
               />
             ))}
           </TreeView>
@@ -155,7 +157,7 @@ export const FileRender = (props: RenderFileProps) => {
           <>
             <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
               <div className="d-flex flex-row">
-                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} />
+                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} />
                 <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>
             </Draggable>
