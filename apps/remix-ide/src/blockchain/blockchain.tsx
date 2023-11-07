@@ -1,5 +1,5 @@
 import React from 'react' // eslint-disable-line
-import Web3 from 'web3'
+import {fromWei, toBigInt, toWei} from 'web3-utils'
 import {Plugin} from '@remixproject/engine'
 import {toBuffer, addHexPrefix} from '@ethereumjs/util'
 import {EventEmitter} from 'events'
@@ -244,7 +244,7 @@ export class Blockchain extends Plugin {
     const proxyModal = {
       id: 'confirmProxyDeployment',
       title: 'Confirm Deploy Proxy (ERC1967)',
-      message: `Confirm you want to deploy an ERC1967 proxy contract that is connected to your implementation.           
+      message: `Confirm you want to deploy an ERC1967 proxy contract that is connected to your implementation.
       For more info on ERC1967, see: https://docs.openzeppelin.com/contracts/4.x/api/proxy#ERC1967Proxy`,
       modalType: 'modal',
       okLabel: 'OK',
@@ -477,17 +477,17 @@ export class Blockchain extends Plugin {
 
   fromWei(value, doTypeConversion, unit) {
     if (doTypeConversion) {
-      return Web3.utils.fromWei(typeConversion.toInt(value), unit || 'ether')
+      return fromWei(typeConversion.toInt(value), unit || 'ether')
     }
-    return Web3.utils.fromWei(value.toString(10), unit || 'ether')
+    return fromWei(value.toString(10), unit || 'ether')
   }
 
   toWei(value, unit) {
-    return Web3.utils.toWei(value, unit || 'gwei')
+    return toWei(value, unit || 'gwei')
   }
 
   calculateFee(gas, gasPrice, unit?) {
-    return Web3.utils.toBN(gas).mul(Web3.utils.toBN(Web3.utils.toWei(gasPrice.toString(10) as string, unit || 'gwei')))
+    return toBigInt(gas) * toBigInt(toWei(gasPrice.toString(10) as string, unit || 'gwei'))
   }
 
   determineGasFees(tx) {
@@ -552,7 +552,6 @@ export class Blockchain extends Plugin {
   }
 
   web3() {
-    // @todo(https://github.com/ethereum/remix-project/issues/431)
     const isVM = this.executionContext.isVM()
     if (isVM) {
       return (this.providers.vm as VMProvider).web3
@@ -749,7 +748,7 @@ export class Blockchain extends Plugin {
             if (error) return reject(error)
             try {
               if (this.executionContext.isVM()) {
-                const execResult = await this.web3().eth.getExecutionResultFromSimulator(result.transactionHash)
+                const execResult = await this.web3().remix.getExecutionResultFromSimulator(result.transactionHash)
                 resolve(resultToRemixTx(result, execResult))
               } else resolve(resultToRemixTx(result))
             } catch (e) {
@@ -854,23 +853,13 @@ export class Blockchain extends Plugin {
         try {
           this.txRunner.rawRun(tx, confirmationCb, continueCb, promptCb, async (error, result) => {
             if (error) {
-              if (typeof error !== 'string') {
-                if (error.message) error = error.message
-                else {
-                  try {
-                    error = 'error: ' + JSON.stringify(error)
-                  } catch (e) {
-                    console.log(e)
-                  }
-                }
-              }
               return reject(error)
             }
 
             const isVM = this.executionContext.isVM()
             if (isVM && tx.useCall) {
               try {
-                result.transactionHash = await this.web3().eth.getHashFromTagBySimulator(timestamp)
+                result.transactionHash = await this.web3().remix.getHashFromTagBySimulator(timestamp)
               } catch (e) {
                 console.log('unable to retrieve back the "call" hash', e)
               }
@@ -881,18 +870,7 @@ export class Blockchain extends Plugin {
             return resolve({result, tx})
           })
         } catch (err) {
-          let error = err
-          if (error && typeof error !== 'string') {
-            if (error.message) error = error.message
-            else {
-              try {
-                error = 'error: ' + JSON.stringify(error)
-              } catch (e) {
-                console.log(e)
-              }
-            }
-          }
-          return reject(error)
+          return reject(err)
         }
       })
     }
@@ -911,7 +889,7 @@ export class Blockchain extends Plugin {
       let execResult
       let returnValue = null
       if (isVM) {
-        const hhlogs = await this.web3().eth.getHHLogsForTx(txResult.transactionHash)
+        const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
 
         if (hhlogs && hhlogs.length) {
           const finalLogs = (
@@ -937,7 +915,8 @@ export class Blockchain extends Plugin {
           _paq.push(['trackEvent', 'udapp', 'hardhat', 'console.log'])
           this.call('terminal', 'logHtml', finalLogs)
         }
-        execResult = await this.web3().eth.getExecutionResultFromSimulator(txResult.transactionHash)
+        execResult = await this.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
+        
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
           returnValue = execResult
@@ -962,14 +941,11 @@ export class Blockchain extends Plugin {
       cb(null, txResult, address, returnValue)
     } catch (error) {
       if (this.isInjectedWeb3()) {
-        let errorObj = error.replace('Returned error: ', '')
-        errorObj = JSON.parse(errorObj)
-        if (errorObj.errorData) {
-          const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
-          const injectedError = txExecution.checkError({ errorMessage: errorObj.error, errorData: errorObj.errorData }, compiledContracts)
-          cb(injectedError.message)
-        } else 
-          cb(error)
+        const errorMessage = error.innerError ? error.innerError.message : error.message
+        const errorData = error.innerError ? error.innerError.data : error.data
+        const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
+        const injectedError = txExecution.checkError({ errorMessage, errorData }, compiledContracts)
+        cb(injectedError.message)
       } else 
         cb(error)
     }

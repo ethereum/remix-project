@@ -26,12 +26,9 @@ export class CodeManager {
     this.codeResolver = new CodeResolver({
       getCode: async (address) => {
         return new Promise((resolve, reject) => {
-          this.traceManager.web3.eth.getCode(address, (error, code) => {
-            if (error) {
-              return reject(error)
-            }
-            return resolve(code)
-          })
+          this.traceManager.web3.eth.getCode(address)
+            .then(code => resolve(code))
+            .catch(error => reject(error))
         })
       },
       fork: this.traceManager.getCurrentFork()

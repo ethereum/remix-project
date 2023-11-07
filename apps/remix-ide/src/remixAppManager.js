@@ -70,6 +70,7 @@ const requiredModules = [ // services + layout views + system views
   'codeParser',
   'codeFormatter',
   'solidityumlgen',
+  'compilationDetails',
   'contractflattener',
   'solidity-script',
   'openaigpt',
@@ -112,7 +113,9 @@ export function isNative(name) {
     'injected-ephemery-testnet-provider',
     'injected',
     'doc-gen',
-    'doc-viewer'
+    'doc-viewer',
+    'circuit-compiler',
+    'compilationDetails'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }

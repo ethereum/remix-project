@@ -1,7 +1,7 @@
-import React, {useState, useEffect, useRef, useContext, SyntheticEvent, ChangeEvent, KeyboardEvent, MouseEvent} from 'react' // eslint-disable-line
+import React, {useState, useEffect, useRef, useContext, ChangeEvent} from 'react' // eslint-disable-line
 import {FormattedMessage, useIntl} from 'react-intl'
 import {Dropdown} from 'react-bootstrap'
-import {CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
+import {CustomIconsToggle, CustomMenu, CustomToggle, extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
 import {FileExplorer} from './components/file-explorer' // eslint-disable-line
 import {FileSystemContext} from './contexts'
 import './css/remix-ui-workspace.css'
@@ -68,7 +68,8 @@ export function Workspace() {
     mouseOverElement: null,
     showContextMenu: false,
     reservedKeywords: [ROOT_PATH, 'gist-'],
-    copyElement: []
+    copyElement: [],
+    dragStatus: false
   })
 
   useEffect(() => {
@@ -385,7 +386,6 @@ export function Workspace() {
       // @ts-ignore
       uupsRadioRef.current.checked = false
     } else displayOzCustomRef.current.style.display = 'none'
-
     // @ts-ignore
     let displayName = TEMPLATE_NAMES[(workspaceCreateTemplateInput.current && workspaceCreateTemplateInput.current.value) || 'remixDefault']
     displayName = global.plugin.getAvailableWorkspaceName(displayName)
@@ -613,6 +613,15 @@ export function Workspace() {
     })
   }
 
+  const dragStatus = (status: boolean) => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        dragStatus: status
+      }
+    })
+  }
+
   const handleNewFileInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
@@ -727,6 +736,11 @@ export function Workspace() {
           <optgroup style={{fontSize: 'medium'}} label="GnosisSafe">
             <option style={{fontSize: 'small'}} value="gnosisSafeMultisig">
               {intl.formatMessage({id: 'filePanel.multiSigWallet'})}
+            </option>
+          </optgroup>
+          <optgroup style={{fontSize: 'medium'}} label="Circom ZKP">
+            <option style={{fontSize: 'small'}} value="semaphore">
+              {intl.formatMessage({id: 'filePanel.semaphore'})}
             </option>
           </optgroup>
         </select>
@@ -1037,6 +1051,7 @@ export function Workspace() {
                     editModeOn={editModeOn}
                     handleNewFileInput={handleNewFileInput}
                     handleNewFolderInput={handleNewFolderInput}
+                    dragStatus={dragStatus}
                   />
                 </div>
               )}
@@ -1095,6 +1110,7 @@ export function Workspace() {
                     editModeOn={editModeOn}
                     handleNewFileInput={handleNewFileInput}
                     handleNewFolderInput={handleNewFolderInput}
+                    dragStatus={dragStatus}
                   />
                 </div>
               )}

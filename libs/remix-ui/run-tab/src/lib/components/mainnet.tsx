@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react'
 import {FormattedMessage, useIntl} from 'react-intl'
 import {CopyToClipboard} from '@remix-ui/clipboard'
-import Web3 from 'web3'
+import {fromWei, toBigInt, toWei} from 'web3-utils'
 import {MainnetProps} from '../types'
 
 export function MainnetPrompt(props: MainnetProps) {
@@ -15,7 +15,7 @@ export function MainnetPrompt(props: MainnetProps) {
       if (txFeeText) setTransactionFee(txFeeText)
       if (gasPriceValue) onGasPriceChange(gasPriceValue)
       if (props.network && props.network.lastBlock && props.network.lastBlock.baseFeePerGas) {
-        const baseFee = Web3.utils.fromWei(Web3.utils.toBN(props.network.lastBlock.baseFeePerGas), 'Gwei')
+        const baseFee = fromWei(toBigInt(props.network.lastBlock.baseFeePerGas), 'Gwei')
 
         setBaseFee(baseFee)
         onMaxFeeChange(baseFee)
@@ -27,7 +27,7 @@ export function MainnetPrompt(props: MainnetProps) {
   const onMaxFeeChange = (value: string) => {
     const maxFee = value
     // @ts-ignore
-    if (Web3.utils.toBN(props.network.lastBlock.baseFeePerGas).gt(Web3.utils.toBN(Web3.utils.toWei(maxFee, 'Gwei')))) {
+    if (toBN(props.network.lastBlock.baseFeePerGas).gt(toBN(toWei(maxFee, 'Gwei')))) {
       setTransactionFee(intl.formatMessage({id: 'udapp.transactionFeeText'}))
       props.updateGasPriceStatus(false)
       props.updateConfirmSettings(true)
@@ -125,7 +125,7 @@ export function MainnetPrompt(props: MainnetProps) {
             <div className="align-items-center my-1" title={intl.formatMessage({id: 'udapp.title2'})}>
               <div className="d-flex">
                 <span className="text-dark mr-2 text-nowrap">
-                  <FormattedMessage id="udapp.maxFee" values={{baseFeePerGas: Web3.utils.fromWei(Web3.utils.toBN(props.network.lastBlock.baseFeePerGas), 'Gwei')}} />:
+                  <FormattedMessage id="udapp.maxFee" values={{baseFeePerGas: fromWei(toBigInt(props.network.lastBlock.baseFeePerGas), 'Gwei')}} />:
                 </span>
                 <input
                   className="form-control mr-1 text-right"

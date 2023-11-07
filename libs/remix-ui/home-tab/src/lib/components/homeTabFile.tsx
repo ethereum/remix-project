@@ -134,22 +134,32 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
 
     const wName = 'Playground'
     const workspaces = await plugin.call('filePanel', 'getWorkspaces')
+    let createFile = true
     if (!workspaces.find((workspace) => workspace.name === wName)) {
       await plugin.call('filePanel', 'createWorkspace', wName, 'playground')
+      createFile = false
     }
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false }) // calling once is not working.
     const content = `// SPDX-License-Identifier: MIT
-    pragma solidity >=0.6.12 <0.9.0;
+pragma solidity >=0.6.12 <0.9.0;
 
-    contract HelloWorld {
-      function print() public pure returns (string memory) {
-        return "Hello World!";
-      }
+contract HelloWorld {
+  /**
+   * @dev Prints Hello World string
+   */
+  function print() public pure returns (string memory) {
+    return "Hello World!";
+  }
+}
+      `
+    if (createFile) {
+      const { newPath } = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/HelloWorld.sol', content)
+      await plugin.call('fileManager', 'open', newPath)
+    } else {
+      await plugin.call('fileManager', 'open', '/contracts/HelloWorld.sol')
     }
-    `
-    const { newPath } = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/helloWorld.sol', content)
-    await plugin.call('fileManager', 'open', newPath)
+    
   }
   
   const uploadFile = async (target) => {

@@ -86,12 +86,8 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
     }
     try {
       let resultData
-      if (web3Provider.send) resultData = await web3Provider.send(data.method, data.params)
-      else if (web3Provider.request)
-        resultData = await web3Provider.request({
-          method: data.method,
-          params: data.params
-        })
+      if (web3Provider.request) resultData = await web3Provider.request({method: data.method, params: data.params})
+      else if (web3Provider.send) resultData = await web3Provider.send(data.method, data.params)
       else {
         resolve({jsonrpc: '2.0', error: 'provider not valid', id: data.id})
         return
@@ -108,16 +104,22 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
       if (error.data && error.data.originalError && error.data.originalError.data) {
         resolve({
           jsonrpc: '2.0',
-          error: error.data.originalError.message,
-          errorData: error.data.originalError.data,
+          error: error.data.originalError,
           id: data.id
         })
-      } else
+      } else if (error.data && error.data.message) {
         resolve({
           jsonrpc: '2.0',
-          error: error.data && error.data.message ? error.data.message : error.message,
+          error: error.data && error.data,
           id: data.id
         })
+      } else {
+        resolve({
+          jsonrpc: '2.0',
+          error,
+          id: data.id
+        })
+      }
     }
   }
 }

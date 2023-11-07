@@ -92,6 +92,9 @@ module.exports = {
 
   'Deploy "Owner" using an ether.js script, listen to event and check event are logged in the terminal #group4': function (browser: NightwatchBrowser) {
     browser
+      .clickLaunchIcon('solidity')
+      .click('.remixui_compilerConfigSection')
+      .setValue('#evmVersionSelector', 'london') // Set EVM version as fork version
       .clickLaunchIcon('settings')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-london')
@@ -291,6 +294,11 @@ module.exports = {
     browser
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-mainnet-fork')
+      .waitForElementPresent({
+        locateStrategy: 'css selector',
+        selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
+        timeout: 240000
+      })
       .executeScriptInTerminal(`web3.eth.getCode('0x180587b00c8642e2c7ac3a758712d97e6f7bdcc7')`) // mainnet contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x608060405260043610601f5760003560e01c80635c60da1b14603157602b565b36602b576029605f565b005b6029605f565b348015603c57600080fd5b5060436097565b6040516001600160a01b03909116815260200160405180910390f35b609560917f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b60d1565b565b600060c97f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b905090565b90565b3660008037600080366000845af43d6000803e80801560ef573d6000f35b3d6000fdfea2646970667358221220969dbb4b1d8aec2bb348e26488dc1a33b6bcf0190f567d161312ab7ca9193d8d64736f6c63430008110033', 120000)
   },
@@ -298,6 +306,11 @@ module.exports = {
   'Should connect to the sepolia fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
     browser
       .switchEnvironment('vm-custom-fork')
+      .waitForElementPresent({
+        locateStrategy: 'css selector',
+        selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
+        timeout: 240000
+      })
       .waitForElementPresent('[data-id="vm-custom-fork-modal-footer-ok-react"]')
       .execute(() => {
           (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
@@ -757,7 +770,7 @@ const scriptBlockAndTransaction = `
 (async () => {
     try {
         web3.eth.getTransaction('0x022ccd55747677ac50f8d9dfd1bf5b843fa2f36438a28c1d0a0958e057bb3e2a').then(console.log)
-        web3.eth.getBlock('7367447').then(console.log);
+        web3.eth.getBlock(7367447).then(console.log);
         let ethersProvider = new ethers.providers.Web3Provider(web3Provider)
         ethersProvider.getBlock(7367447).then(console.log)
     } catch (e) {

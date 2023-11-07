@@ -28,7 +28,7 @@ import {
 } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
-import { JSONStandardInput, WorkspaceTemplate } from '../types'
+import { FileTree, JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
 import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/constants'
@@ -82,8 +82,8 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
 
 export const addInputField = async (type: 'file' | 'folder', path: string, cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
   const provider = plugin.fileManager.currentFileProvider()
-  const promise = new Promise((resolve, reject) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
+  const promise: Promise<FileTree> = new Promise((resolve, reject) => {
+    provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) {
         cb && cb(error)
         return reject(error)
@@ -119,65 +119,67 @@ export const createWorkspace = async (
 ) => {
   await plugin.fileManager.closeAllFiles()
   const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
-  dispatch(createWorkspaceRequest(promise))
-  promise
-    .then(async () => {
-      dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
-      await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
-      await plugin.workspaceCreated(workspaceName)
+  dispatch(createWorkspaceRequest())
+  promise.then(async () => {
+    dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
+    await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+    await plugin.workspaceCreated(workspaceName)
 
-      if (isGitRepo && createCommit) {
-        const name = await plugin.call('settings', 'get', 'settings/github-user-name')
-        const email = await plugin.call('settings', 'get', 'settings/github-email')
-        const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
+    if (isGitRepo && createCommit) {
+      const name = await plugin.call('settings', 'get', 'settings/github-user-name')
+      const email = await plugin.call('settings', 'get', 'settings/github-email')
+      const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
 
-        if (!currentBranch) {
-          if (!name || !email) {
-            await plugin.call('notification', 'toast', 'To use Git features, add username and email to the Github section of the Settings panel.')
-          } else {
-            // commit the template as first commit
-            plugin.call('notification', 'toast', 'Creating initial git commit ...')
+      if (!currentBranch) {
+        if (!name || !email) {
+          await plugin.call('notification', 'toast', 'To use Git features, add username and email to the Github section of the Settings panel.')
+        } else {
+          // commit the template as first commit
+          plugin.call('notification', 'toast', 'Creating initial git commit ...')
 
-            await plugin.call('dGitProvider', 'init')
-            if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
-            const status = await plugin.call('dGitProvider', 'status', { ref: 'HEAD' })
+          await plugin.call('dGitProvider', 'init')
+          if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
+          const status = await plugin.call('dGitProvider', 'status', { ref: 'HEAD' })
 
-            Promise.all(
-              status.map(([filepath, , worktreeStatus]) =>
-                worktreeStatus
-                  ? plugin.call('dGitProvider', 'add', {
-                    filepath: removeSlash(filepath),
-                  })
-                  : plugin.call('dGitProvider', 'rm', {
-                    filepath: removeSlash(filepath),
-                  })
-              )
-            ).then(async () => {
-              await plugin.call('dGitProvider', 'commit', {
-                author: {
-                  name,
-                  email,
-                },
-                message: `Initial commit: remix template ${workspaceTemplateName}`,
-              })
+          Promise.all(
+            status.map(([filepath, , worktreeStatus]) =>
+              worktreeStatus
+                ? plugin.call('dGitProvider', 'add', {
+                  filepath: removeSlash(filepath),
+                })
+                : plugin.call('dGitProvider', 'rm', {
+                  filepath: removeSlash(filepath),
+                })
+            )
+          ).then(async () => {
+            await plugin.call('dGitProvider', 'commit', {
+              author: {
+                name,
+                email,
+              },
+              message: `Initial commit: remix template ${workspaceTemplateName}`,
             })
-          }
+          })
         }
       }
-      if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
-      cb && cb(null, workspaceName)
-      if (isGitRepo) {
-        await checkGit()
-        const isActive = await plugin.call('manager', 'isActive', 'dgit')
-        if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-      }
-      // this call needs to be here after the callback because it calls dGitProvider which also calls this function and that would cause an infinite loop
-      await plugin.setWorkspaces(await getWorkspaces())
-    })
-    .catch((error) => {
-      dispatch(createWorkspaceError({ error }))
-      cb && cb(error)
-    })
+    }
+    if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
+    cb && cb(null, workspaceName)
+    if (isGitRepo) {
+      await checkGit()
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+    }
+    if (workspaceTemplateName === 'semaphore') {
+      const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
+      if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
+    }
+    // this call needs to be here after the callback because it calls dGitProvider which also calls this function and that would cause an infinite loop
+    await plugin.setWorkspaces(await getWorkspaces())
+  }).catch((error) => {
+    dispatch(createWorkspaceError(error.message))
+    cb && cb(error)
+  })
   return promise
 }
 
@@ -338,20 +340,20 @@ export const workspaceExists = async (name: string) => {
 export const fetchWorkspaceDirectory = async (path: string) => {
   if (!path) return
   const provider = plugin.fileManager.currentFileProvider()
-  const promise = new Promise((resolve) => {
-    provider.resolveDirectory(path, (error, fileTree) => {
+  const promise: Promise<FileTree> = new Promise((resolve) => {
+    provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) console.error(error)
       resolve(fileTree)
     })
   })
 
-  dispatch(fetchWorkspaceDirectoryRequest(promise))
+  dispatch(fetchWorkspaceDirectoryRequest())
   promise
     .then((fileTree) => {
       dispatch(fetchWorkspaceDirectorySuccess(path, fileTree))
     })
     .catch((error) => {
-      dispatch(fetchWorkspaceDirectoryError({ error }))
+      dispatch(fetchWorkspaceDirectoryError(error.message))
     })
   return promise
 }
