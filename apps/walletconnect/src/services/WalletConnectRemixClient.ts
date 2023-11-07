@@ -59,7 +59,9 @@ export class WalletConnectRemixClient extends PluginClient {
       ]
       const {publicClient} = configureChains(this.chains, [
         w3mProvider({projectId: PROJECT_ID})
-      ])
+      ], {
+        pollingInterval: 5000
+      })
 
       this.wagmiConfig = createConfig({
         autoConnect: false,
@@ -132,8 +134,12 @@ export class WalletConnectRemixClient extends PluginClient {
             })
           })
         } else {
-          const message = await provider.request(data)
-          return {jsonrpc: '2.0', result: message, id: data.id}
+          try {
+            const message = await provider.request(data)
+            return {jsonrpc: '2.0', result: message, id: data.id}
+          } catch (e) {
+            return {jsonrpc: '2.0', error: { message: e.message, code: -32603 }, id: data.id}
+          }
         }
       }
     } else {
