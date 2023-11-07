@@ -74,7 +74,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
             const value = decode(val.value)
             storage['0x' + val.key.toString('hex')] = {
               key: this.keyHashes[val.key.toString('hex')],
-              value: '0x' + value.toString('hex')
+              value: '0x' + value.toString()
             }
           })
           stream.on('end', () => {

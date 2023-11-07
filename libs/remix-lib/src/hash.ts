@@ -158,7 +158,7 @@ export const ripemd160FromArray = function(a: number[], padded: boolean): Buffer
  * @param a The input data
  */
 export const rlphash = function(a: Input): Buffer {
-  return keccak(encode(a))
+  return keccak(Buffer.from(encode(a)))
 }
 
 /**
