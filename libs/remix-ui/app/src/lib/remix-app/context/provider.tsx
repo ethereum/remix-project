@@ -80,7 +80,7 @@ export const ModalProvider = ({children = [], reducer = modalReducer, initialSta
   )
 }
 
-export const AppProvider = ({children = [], value = {}} = {}) => {
+export const AppProvider = ({children = [], value = {}} = null) => {
   return (
     <AppContext.Provider value={value}>
       <ModalProvider>{children}</ModalProvider>
