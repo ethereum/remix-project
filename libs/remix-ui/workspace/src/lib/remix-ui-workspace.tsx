@@ -71,7 +71,8 @@ export function Workspace() {
     mouseOverElement: null,
     showContextMenu: false,
     reservedKeywords: [ROOT_PATH, 'gist-'],
-    copyElement: []
+    copyElement: [],
+    dragStatus: false
   })
 
   useEffect(() => {
@@ -628,6 +629,15 @@ export function Workspace() {
     })
   }
 
+  const dragStatus = (status: boolean) => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        dragStatus: status
+      }
+    })
+  }
+
   const handleNewFileInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = getFocusedFolder()
     const expandPath = [...new Set([...global.fs.browser.expandPath, parentFolder])]
@@ -1060,6 +1070,7 @@ export function Workspace() {
                     editModeOn={editModeOn}
                     handleNewFileInput={handleNewFileInput}
                     handleNewFolderInput={handleNewFolderInput}
+                    dragStatus={dragStatus}
                   />
                 </div>
               )}
@@ -1118,6 +1129,7 @@ export function Workspace() {
                     editModeOn={editModeOn}
                     handleNewFileInput={handleNewFileInput}
                     handleNewFolderInput={handleNewFolderInput}
+                    dragStatus={dragStatus}
                   />
                 </div>
               )}

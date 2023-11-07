@@ -26,19 +26,26 @@ export function LanguageOptions({ plugin }: { plugin: any }) {
 
   return (
     <>
-      <div className="d-flex align-items-center justify-content-end mr-2">
-        <DropdownButton title={langOptions} id="langdropdown" size="sm">
-          {['EN', 'ES', 'FR', 'ZH'].map(lang => (
-            <DropdownItem as={'span'} onClick={() =>
-            {
-              changeLanguage(lang.toLowerCase())
-              setLangOptions(lang)
-            }}
-            >
-              {lang}
-            </DropdownItem>
-          ))}
-        </DropdownButton>
+      <div className={langOptions !== 'fr' ? `d-flex align-items-center justify-content-end mr-2` : `d-flex align-items-center justify-content-end mr-3`}>
+        <Dropdown>
+          <Dropdown.Toggle title={langOptions} id="languagedropdown" size="sm">
+            {langOptions}
+          </Dropdown.Toggle>
+          <Dropdown.Menu className="dropdown-menu langSelector" style={{ minWidth: '2rem', backgroundColor: 'var(--body-bg)'}}>
+            {['EN', 'ES', 'FR', 'IT', 'ZH'].map((lang, index) => (
+              <DropdownItem as={'span'} className="p-2" onClick={() =>
+              {
+                changeLanguage(lang.toLowerCase())
+                setLangOptions(lang)
+              }}
+              style={{ color: 'var(--text)', cursor: 'pointer' }}
+              key={index}
+              >
+                {lang}
+              </DropdownItem>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
     </>
   )
