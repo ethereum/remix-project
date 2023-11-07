@@ -5,5 +5,6 @@ export const MoveContext = createContext<MoveContextType>({
   dragged: {} as { path: string, isDirectory: boolean },
   moveFile: () => null,
   moveFolder: () => null,
-  currentlyMoved: () => null
+  currentlyMoved: () => null,
+  dragStatus: () => null
 })
