@@ -26,8 +26,7 @@ export function MainnetPrompt(props: MainnetProps) {
 
   const onMaxFeeChange = (value: string) => {
     const maxFee = value
-    // @ts-ignore
-    if (toBN(props.network.lastBlock.baseFeePerGas).gt(toBN(toWei(maxFee, 'Gwei')))) {
+    if (toBigInt(props.network.lastBlock.baseFeePerGas) > toBigInt(toWei(maxFee, 'Gwei'))) {
       setTransactionFee(intl.formatMessage({id: 'udapp.transactionFeeText'}))
       props.updateGasPriceStatus(false)
       props.updateConfirmSettings(true)
