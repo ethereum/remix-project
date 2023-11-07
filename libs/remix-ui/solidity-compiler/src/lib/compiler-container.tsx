@@ -3,7 +3,7 @@ import {FormattedMessage, useIntl} from 'react-intl'
 import semver from 'semver'
 import {CompilerContainerProps} from './types'
 import {ConfigurationSettings} from '@remix-project/remix-lib'
-import {checkSpecialChars, CustomTooltip, extractNameFromKey} from '@remix-ui/helper'
+import {checkSpecialChars, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey} from '@remix-ui/helper'
 import {canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL} from '@remix-project/remix-solidity'
 import {compilerReducer, compilerInitialState} from './reducers/compiler'
 import {resetEditorMode, listenToEvents} from './actions/compiler'
@@ -14,6 +14,7 @@ import axios, {AxiosResponse} from 'axios'
 
 import './css/style.css'
 import isElectron from 'is-electron'
+import { Dropdown } from 'react-bootstrap'
 const defaultPath = 'compiler_config.json'
 
 declare global {
@@ -765,6 +766,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
               <FormattedMessage id="solidity.compiler" />
             </label>
+
             <CustomTooltip
               placement="top"
               tooltipId="promptCompilerTooltip"
@@ -776,6 +778,34 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <CustomTooltip placement="top" tooltipId="showCompilerTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="solidity.seeCompilerLicense" />}>
               <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
+            <Dropdown id="versionSelector" data-id="versionSelector">
+              <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
+                {state.allversions.map((build, i) => {
+
+                  if ((state.selectedVersion || state.defaultVersion) === build.path) {
+                    return (<span key={i}>{build.longVersion}</span>)
+                  }})}
+
+              </Dropdown.Toggle>
+          
+              <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden" data-id="custom-dropdown-items">
+                {state.allversions.map((build, i) => {
+                  return _shouldBeAdded(build.longVersion) ? (
+                    <Dropdown.Item
+                      key={i}
+                      data-id={`dropdown-item-${build.value}`}
+                    >
+                      <div className='d-flex w-100'>
+                        <span className="">
+                          {build.longVersion}
+                        </span>
+                        <span className='far fa-arrow-circle-down'></span>
+                      </div>
+                    </Dropdown.Item>
+                  ) : null
+                })}
+              </Dropdown.Menu>
+            </Dropdown>
             <select
               value={state.selectedVersion || state.defaultVersion}
               onChange={(e) => handleLoadVersion(e.target.value)}
