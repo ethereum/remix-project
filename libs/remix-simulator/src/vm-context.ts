@@ -71,10 +71,10 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
           const stream = trie.createReadStream()
 
           stream.on('data', (val) => {
-            const value = decode(val.value)
+            const value: any = decode(val.value)
             storage['0x' + val.key.toString('hex')] = {
               key: this.keyHashes[val.key.toString('hex')],
-              value: '0x' + value.toString()
+              value: '0x' + value.toString('hex')
             }
           })
           stream.on('end', () => {
