@@ -34,6 +34,7 @@
     "express": "^4.16.3",
     "express-ws": "^4.0.0",
     "merge": "^1.2.0",
+    "rlp": "^3.0.0",
     "string-similarity": "^4.0.4",
     "time-stamp": "^2.0.0",
     "web3": "^4.1.1",
