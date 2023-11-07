@@ -158,7 +158,7 @@ export class Transactions {
     this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
     processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
       if (error) return cb(error)
-      const result: RunTxResult = value.result
+      const result: any = value.result
       if (result.execResult && result.execResult.exceptionError && result.execResult.exceptionError.errorType === 'EvmError') {
         return cb(result.execResult.exceptionError.error)
       }
