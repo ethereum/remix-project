@@ -1,4 +1,5 @@
 import {CompilationResult, ABIDescription} from '@remixproject/plugin-api'
+import axios from 'axios'
 
 export interface Contract {
   name: string
@@ -30,13 +31,25 @@ export function isCompilationError(output: VyperCompilationOutput): output is Vy
   return output.status === 'failed'
 }
 
+export function normalizeContractPath(contractPath: string): string[] {
+  const paths = contractPath.split('/')
+  const filename = paths[paths.length - 1].split('.')[0]
+  let folders = ''
+  for (let i = 0; i < paths.length - 1; i++) {
+    if(i !== paths.length -1) {
+      folders += `${paths[i]}/`
+    }
+  }
+  const resultingPath = `${folders}${filename}`
+  return [folders,resultingPath, filename]
+}
+
 /**
  * Compile the a contract
  * @param url The url of the compiler
  * @param contract The name and content of the contract
  */
-export async function compile(url: string, contract: Contract): Promise<VyperCompilationOutput> {
-  console.log('vyper reloaded!')
+export async function compile(url: string, contract: Contract): Promise<any> {
   if (!contract.name) {
     throw new Error('Set your Vyper contract file.')
   }
@@ -47,47 +60,34 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
 
   const files = new FormData();
   const content = new Blob([contract.content], {
-    type: 'text/vy'
+    type: 'text/plain'
   });
-  files.append("files", content, `${contract.name}.vy`)
-  files.append('vyper_version', '0.3.10')
-  console.log({ files, contract, content, url })
-  let response = await fetch(url + '/compile', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: files
-  })
-  console.log('compile done...')
-  if (response.status === 404) {
+  const nameResult = normalizeContractPath(contract.name)
+  console.log({ nameResult })
+  files.append('files', content, `${nameResult[2]}.vy`)
+  const response = await axios.post(url + '/compile?vyper_version=0.2.16', files)
+  console.log({ response })
+
+  if (response.data.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)
   }
-  /*if (response.status === 400) {
+  if (response.data.status === 400) {
     throw new Error(`Vyper compilation failed: ${response.statusText}`)
-  }*/
-
-  const initCallResult = await response.json()
-
-  let apiCallFinished = false
-  while (!apiCallFinished) {
-    response = await fetch(url + '/status/' + initCallResult.id , {
-      method: 'Get'
-    })
-    const res = await response.json()
-    if (res.status === 'SUCCESS') {
-      response = await fetch(url + '/compiled_artifact/' + initCallResult.id , {
-        method: 'Get'
-      })
-      apiCallFinished = true
-      return response.json()
-    } else if (res.status === 'FAILED') {
-      response = await fetch(url + '/exceptions/' + initCallResult.id , {
-        method: 'Get'
-      })
-      apiCallFinished = true
-      return response.json()
-    }
-    await new Promise((resolve) => setTimeout(() => resolve({}), 2000))
   }
+
+
+  // let apiCallFinished = false
+  const statusResponse = await axios.get(`${url}/status/${response.data}`)
+  let responsePayload = {}
+  if (statusResponse.data !== 'SUCCESS' && statusResponse.data !== 'FAILED') {
+    const errorResponse = await axios.get(`${url}/exceptions/${response.data}`)
+    responsePayload = errorResponse.data
+    return responsePayload
+  }
+
+  const resultResponse = await axios.get(`${url}/compiled_artifact/${response.data}`)
+  console.log({ resultResponse })
+  return resultResponse.data
 }
 
 /**
