@@ -14,7 +14,8 @@ export const Drag = (props: DragType) => {
         moveFolder: props.onFolderMoved,
         currentlyMoved: (path) => {
           setDragged(() => path)
-        }
+        },
+        dragStatus: props.dragStatus
       }}
     >
       {props.children}
@@ -68,12 +69,17 @@ export const Draggable = (props: DraggableType) => {
   }
 
   const handleDrag = () => {
+    context.dragStatus(true)
     if (context.dragged.path !== destination.path) {
       context.currentlyMoved({
         path: destination.path,
         isDirectory: destination.isDirectory
       })
     }
+  }
+
+  const handleDragEnd = () => {
+    context.dragStatus(false)
   }
 
   return (
@@ -96,6 +102,9 @@ export const Draggable = (props: DraggableType) => {
             if (destination) {
               handleDrag()
             }
+          }}
+          onDragEnd={(event) => {
+            handleDragEnd()
           }}
           onDragOver={(event) => {
             if (destination) {

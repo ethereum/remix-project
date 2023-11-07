@@ -33,6 +33,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.createWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web', 'desktop']}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="clone"
@@ -42,6 +43,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.cloneGitRepository()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web', 'desktop']}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="rename"
@@ -51,6 +53,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.renameCurrentWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web']}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="download"
@@ -60,6 +63,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.downloadCurrentWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web']}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="delete"
@@ -69,6 +73,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.deleteCurrentWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web']}
       ></HamburgerMenuItem>
       <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{pointerEvents: 'none'}} />
       <HamburgerMenuItem
@@ -79,6 +84,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.deleteAllWorkspaces()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web']}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="backup"
@@ -88,6 +94,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.downloadWorkspaces()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web']}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="restore"
@@ -97,6 +104,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.restoreBackup()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web']}
       ></HamburgerMenuItem>
       <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{pointerEvents: 'none'}} />
       <HamburgerMenuItem
@@ -107,6 +115,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.addGithubAction()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web', 'desktop']}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="tssoltestghaction"
@@ -116,6 +125,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.addTsSolTestGithubAction()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web', 'desktop']}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="slitherghaction"
@@ -125,6 +135,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.addSlitherGithubAction()
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web', 'desktop']}
       ></HamburgerMenuItem>
       <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{pointerEvents: 'none'}} />
       <HamburgerMenuItem
@@ -135,6 +146,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.addHelperScripts('etherscan')
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web', 'desktop']}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="addscriptdeployer"
@@ -144,6 +156,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.addHelperScripts('deployer')
           props.hideIconsMenu(!showIconsMenu)
         }}
+        platforms={['web', 'desktop']}
       ></HamburgerMenuItem>
     </>
   )
