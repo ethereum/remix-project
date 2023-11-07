@@ -2,7 +2,7 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 
-const cacheDir = path.join(os.homedir(), '.cache_remix_ide')
+export const cacheDir = path.join(os.homedir(), '.cache_remix_ide')
 
 console.log('cacheDir', cacheDir)
 
