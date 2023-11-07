@@ -175,16 +175,22 @@ export class TxRunnerWeb3 {
   }
 }
 
-async function tryTillReceiptAvailable (txhash, web3) {
+async function tryTillReceiptAvailable (txhash: string, web3: Web3) {
   try {
     const receipt = await web3.eth.getTransactionReceipt(txhash)
-    if (receipt) return receipt
+    if (receipt) {
+      if (!receipt.to && !receipt.contractAddress) {
+        // this is a contract creation and the receipt doesn't contain a contract address. we have to keep polling...
+        console.log('this is a contract creation and the receipt does nott contain a contract address. we have to keep polling...')
+      } else
+        return receipt
+    }
   } catch (e) {}
   await pause()
   return await tryTillReceiptAvailable(txhash, web3)
 }
 
-async function tryTillTxAvailable (txhash, web3) {
+async function tryTillTxAvailable (txhash: string, web3: Web3) {
   try {
     const tx = await web3.eth.getTransaction(txhash)
     if (tx && tx.blockHash) return tx
