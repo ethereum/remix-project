@@ -7,10 +7,9 @@ import DragBar from './components/dragbar/dragbar'
 import {AppProvider} from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
-import { AppContext } from './context/context'
+import { AppContext, appProviderContextType } from './context/context'
 import { FormattedMessage, IntlProvider } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper';
-import { RemixUiXterminals } from '@remix-ui/xterm'
 
 interface IRemixAppUi {
   app: any
@@ -74,12 +73,13 @@ const RemixApp = (props: IRemixAppUi) => {
     })
   }
 
-  const value = {
+  const value: appProviderContextType = {
     settings: props.app.settings,
     showMatamo: props.app.showMatamo,
     appManager: props.app.appManager,
     modal: props.app.notification,
-    layout: props.app.layout
+    layout: props.app.layout,
+    platform: props.app.platform,
   }
 
   return (
