@@ -155,6 +155,7 @@
     "commander": "^9.4.1",
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
+    "create-hash": "^1.2.0",
     "deep-equal": "^1.0.1",
     "document-register-element": "1.13.1",
     "eslint-config-prettier": "^8.5.0",
