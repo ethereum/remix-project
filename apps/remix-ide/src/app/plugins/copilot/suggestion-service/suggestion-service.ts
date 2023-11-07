@@ -1,15 +1,15 @@
 import EventEmitter from 'events'
 
+export type SuggestOptions = { max_new_tokens: number, temperature: number, top_k: number, do_sample: boolean }
+
 export class SuggestionService {
   worker: Worker
   responses: Array<any>
   events: EventEmitter
   constructor() {
-    console.log('SuggestionService instanciate worker')
     this.worker = new Worker(new URL('./worker.js', import.meta.url), {
         type: 'module'
     });
-    this.init()
     this.events = new EventEmitter()
     this.responses = []
   }
@@ -69,16 +69,16 @@ export class SuggestionService {
     })
   }
 
-  suggest (content: string, max_new_tokens: number, temperature: number, top_k: number, do_sample: boolean)  {
+  suggest (content: string, options: SuggestOptions)  {
     return new Promise((resolve, reject) => {
       this.worker.postMessage({
         id: this.responses.length,
         cmd: 'suggest',
         text: content,
-        max_new_tokens,
-        temperature,
-        top_k,
-        do_sample
+        max_new_tokens: options.max_new_tokens,
+        temperature: options.temperature,
+        top_k: options.top_k,
+        do_sample: options.do_sample
       })
       this.responses.push((error, result) => {
         if (error) return reject(error)

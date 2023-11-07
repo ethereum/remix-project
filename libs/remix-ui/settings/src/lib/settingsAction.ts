@@ -24,6 +24,21 @@ export const personal = (config, checked, dispatch) => {
   dispatch({ type: 'personal', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
 }
 
+export const copilotActivate = (config, checked, dispatch) => {
+  config.set('settings/copilot/suggest/activate', checked)
+  dispatch({ type: 'copilot/suggest/activate', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+}
+
+export const copilotMaxNewToken = (config, checked, dispatch) => {
+  config.set('settings/copilot/suggest/max_new_tokens', checked)
+  dispatch({ type: 'copilot/suggest/max_new_tokens', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+}
+
+export const copilotTemperature = (config, checked, dispatch) => {
+  config.set('settings/copilot/suggest/temperature', checked)
+  dispatch({ type: 'copilot/suggest/temperature', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+}
+
 export const useMatomoAnalytics = (config, checked, dispatch) => {
   config.set('settings/matomo-analytics', checked)
   dispatch({ type: 'useMatomoAnalytics', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })

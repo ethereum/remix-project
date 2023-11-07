@@ -1,5 +1,4 @@
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
-import { SuggestionService } from '../suggestion-service/suggestion-service'
 const controller = new AbortController();
 const { signal } = controller;
 const result: string = ''
@@ -7,20 +6,9 @@ const result: string = ''
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
   props: EditorUIProps
   monaco: any
-  suggestionService: SuggestionService
   constructor(props: any, monaco: any) {
     this.props = props
-    this.monaco = monaco
-    this.suggestionService = new SuggestionService()
-    this.suggestionService.events.on('progress', (data) => {
-      this.props.plugin.call('terminal', 'log', {type: 'info', value: `loading Solidity copilot: ${(data.loaded / data.total) * 100}% done.` })
-    })
-    this.suggestionService.events.on('done', (data) => {
-      this.props.plugin.call('terminal', 'log', { type: 'info', value: `Solidity copilot loaded.`})
-    })
-    this.suggestionService.events.on('ready', (data) => {
-      this.props.plugin.call('terminal', 'log', { type: 'info', value: `Solidity copilot ready to use.`})
-    })
+    this.monaco = monaco    
   }
 
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
@@ -32,7 +20,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: position.column,
     });
 
-    const result = await this.suggestionService.suggest(word, 3, 0.5, 5, false)
+    const result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
     const generatedText = (result as any).output[0].generated_text as string
     console.log(word, result)
     
