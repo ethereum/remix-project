@@ -121,4 +121,6 @@ const appExpress = express()
 
 console.log('cacheDir', cacheDir)
 appExpress.use(express.static(cacheDir))
-appExpress.listen(3000)
+const server = appExpress.listen(0, () => {
+  console.log('Listening on port:', (server.address() as any).port);
+});
