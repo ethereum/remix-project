@@ -47,7 +47,7 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
 
   const files = new FormData();
   const content = new Blob([contract.content], {
-    type: 'text/python'
+    type: 'text/vy'
   });
   files.append("files", content, `${contract.name}.vy`)
   files.append('vyper_version', '0.3.10')
