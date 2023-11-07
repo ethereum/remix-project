@@ -24,6 +24,7 @@ export class WalletConnectRemixClient extends PluginClient {
   chains: Chain[]
   currentChain: number
   internalEvents: EventManager
+  connected: boolean
 
   constructor() {
     super()
@@ -76,13 +77,15 @@ export class WalletConnectRemixClient extends PluginClient {
 
   subscribeToEvents() {
     this.wagmiConfig.subscribe((event) => {
-      if (event.status === 'connected') {
+      if (event.status === 'connected' && !this.connected) {
+        this.connected = true
         this.emit('accountsChanged', [event.data.account])
         if (this.currentChain !== event.data.chain.id) {
           this.currentChain = event.data.chain.id
           this.emit('chainChanged', event.data.chain.id)
         }
-      } else if (event.status === 'disconnected') {
+      } else if (event.status === 'disconnected' && this.connected) {
+        this.connected = false
         this.emit('accountsChanged', [])
         this.emit('chainChanged', 0)
         this.currentChain = 0
