@@ -704,7 +704,7 @@ class FileManager extends Plugin {
   }
 
   async openFile(file?: string) {
-    if (!file) {
+    if (!file && file != '') {
       this.emit('noFileSelected')
       this.events.emit('noFileSelected')
     } else {
