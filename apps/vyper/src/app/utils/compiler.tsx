@@ -49,7 +49,7 @@ export function normalizeContractPath(contractPath: string): string[] {
  * @param url The url of the compiler
  * @param contract The name and content of the contract
  */
-export async function compile(url: string, contract: Contract): Promise<any> {
+export async function compile(url: string, contract: Contract): Promise<any | VyperCompilationOutput> {
   if (!contract.name) {
     throw new Error('Set your Vyper contract file.')
   }
@@ -75,8 +75,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     throw new Error(`Vyper compilation failed: ${response.statusText}`)
   }
 
-
-  // let apiCallFinished = false
   const statusResponse = await axios.get(`${url}/status/${response.data}`)
   let responsePayload = {}
   if (statusResponse.data !== 'SUCCESS' && statusResponse.data !== 'FAILED') {
