@@ -23389,6 +23389,11 @@ react-is@^17.0.1, react-is@^17.0.2:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-json-view-lite@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-json-view-lite/-/react-json-view-lite-1.2.0.tgz#2fced1da474ae6e71ccd2352931033f3133311b4"
+  integrity sha512-Z5KSFNDjw3oYr6a2ZZ6SxAiU5OlXrlTbvEUshYeEn9eCEgrfb+DaJRK+6ZG+x7nLVl5RtOOBsfzD5iseUgLMRQ==
+
 react-json-view@^1.21.3:
   version "1.21.3"
   resolved "https://registry.yarnpkg.com/react-json-view/-/react-json-view-1.21.3.tgz#f184209ee8f1bf374fb0c41b0813cff54549c475"
