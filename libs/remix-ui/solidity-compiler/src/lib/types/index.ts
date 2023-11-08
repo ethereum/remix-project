@@ -20,7 +20,8 @@ export interface CompilerContainerProps {
   updateCurrentVersion: any,
   configurationSettings: ConfigurationSettings,
   configFilePath: string,
-  setConfigFilePath: (path: string) => void
+  setConfigFilePath: (path: string) => void,
+  compilersDownloaded: string[]
 }
 export interface ContractSelectionProps {
   api: ICompilerApi,

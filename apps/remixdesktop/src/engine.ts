@@ -8,6 +8,7 @@ import { IsoGitPlugin } from './plugins/isoGitPlugin';
 import { ConfigPlugin } from './plugins/configPlugin';
 import { TemplatesPlugin } from './plugins/templates';
 import { RipgrepPlugin } from './plugins/ripgrepPlugin';
+import { CompilerLoaderPlugin } from './plugins/compilerLoader';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -17,6 +18,7 @@ const isoGitPlugin = new IsoGitPlugin()
 const configPlugin = new ConfigPlugin()
 const templatesPlugin = new TemplatesPlugin()
 const ripgrepPlugin = new RipgrepPlugin()
+const compilerLoaderPlugin = new CompilerLoaderPlugin()
 engine.register(appManager)
 engine.register(fsPlugin)
 engine.register(xtermPlugin)
@@ -24,6 +26,7 @@ engine.register(isoGitPlugin)
 engine.register(configPlugin)
 engine.register(templatesPlugin)
 engine.register(ripgrepPlugin)
+engine.register(compilerLoaderPlugin)
 
 appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')

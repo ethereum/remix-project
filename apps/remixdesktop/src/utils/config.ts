@@ -10,6 +10,9 @@ try {
     if (!fs.existsSync(cacheDir)) {
         fs.mkdirSync(cacheDir)
     }
+    if (!fs.existsSync(cacheDir + '/compilers')) {
+        fs.mkdirSync(cacheDir + '/compilers')
+    }
     if(!fs.existsSync(cacheDir + '/remixdesktop.json')) {
         fs.writeFileSync(cacheDir + '/remixdesktop.json', JSON.stringify({}))
     }
