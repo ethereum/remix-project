@@ -2,7 +2,8 @@ import {PluginManager} from '@remixproject/engine'
 import {EventEmitter} from 'events'
 import {QueryParams} from '@remix-project/remix-lib'
 import {IframePlugin} from '@remixproject/engine-web'
-const isElectron = require('is-electron')
+import Registry from './app/state/registry'
+
 const _paq = (window._paq = window._paq || [])
 
 // requiredModule removes the plugin from the plugin manager list on UI
@@ -78,9 +79,6 @@ let requiredModules = [ // services + layout views + system views
   'home'
 ]
 
-if (isElectron()) {
-  requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig']
-}
 
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
@@ -146,6 +144,10 @@ export class RemixAppManager extends PluginManager {
     this.event = new EventEmitter()
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
+      requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig']
+    }
+    
   }
 
   async canActivatePlugin(from, to) {

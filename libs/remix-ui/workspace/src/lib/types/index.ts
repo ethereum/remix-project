@@ -4,8 +4,9 @@ import { customAction } from '@remixproject/plugin-api'
 import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
+import { appPlatformTypes } from '@remix-ui/app'
 
-export type action = { name: string, type?: Array<WorkspaceElement>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number, platform?: 'electron' | 'browser' }
+export type action = { name: string, type?: Array<WorkspaceElement>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number, platform?: appPlatformTypes }
 export interface JSONStandardInput {
   language: 'Solidity'
   settings?: any

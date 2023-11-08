@@ -1,6 +1,6 @@
 'use strict'
+import Registry from "../../../state/registry";
 import { CodeParser } from "../code-parser";
-import isElectron from 'is-electron'
 
 export type CodeParserImportsData = {
     files?: string[],
@@ -40,7 +40,7 @@ export default class CodeParserImports {
   }
 
   setFileTree = async () => {
-    if (isElectron()) {
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
       const files = await this.plugin.call('ripgrep', 'glob', '/', '**/*.sol')
       // only get path property of files
       this.data.files = files.map((x) => x.path)

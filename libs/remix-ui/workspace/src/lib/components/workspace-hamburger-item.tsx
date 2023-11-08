@@ -2,8 +2,7 @@ import React, { useContext } from 'react'
 import {CustomTooltip, CustomMenu, CustomIconsToggle} from '@remix-ui/helper'
 import {Dropdown, NavDropdown} from 'react-bootstrap'
 import {FormattedMessage} from 'react-intl'
-import { AppContext, appPlatformType } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
-
+import { AppContext, appPlatformTypes } from '@remix-ui/app'
 const _paq = (window._paq = window._paq || [])
 
 export interface HamburgerMenuItemProps {
@@ -11,7 +10,7 @@ export interface HamburgerMenuItemProps {
   kind: string
   actionOnClick: () => void
   fa: string
-  platforms: appPlatformType[]
+  platforms: appPlatformTypes[]
 }
 
 export function HamburgerMenuItem(props: HamburgerMenuItemProps) {
@@ -73,7 +72,7 @@ export interface HamburgerSubMenuItemProps {
   id: string
   title: string
   subMenus: Array<HamburgerMenuItemProps>
-  platforms: appPlatformType[]
+  platforms: appPlatformTypes[]
 }
 
 export function HamburgerSubMenuItem(props: HamburgerSubMenuItemProps) {

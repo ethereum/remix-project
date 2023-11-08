@@ -1,7 +1,6 @@
 import React from 'react'
 import {AlertModal, AppModal} from '../interface'
 import {ModalInitialState} from '../state/modals'
-import { Plugin } from '@remixproject/engine'
 
 export type appProviderContextType = {
   settings: any,
@@ -9,10 +8,13 @@ export type appProviderContextType = {
   appManager: any
   modal: any
   layout: any
-  platform: appPlatformType
+  platform: appPlatformTypes
 }
 
-export type appPlatformType = 'web' | 'desktop'
+export enum appPlatformTypes  {
+  web = 'web',
+  desktop = 'desktop'
+}
 
 
 export const AppContext = React.createContext<appProviderContextType>(null)
