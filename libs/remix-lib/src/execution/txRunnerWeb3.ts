@@ -23,7 +23,7 @@ export class TxRunnerWeb3 {
       // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
       tx.type = '0x2'
     } else {
-      tx.type = '0x1'
+      // tx.type = '0x1'
     }
     if (txFee) {
       if (txFee.baseFeePerGas) {
