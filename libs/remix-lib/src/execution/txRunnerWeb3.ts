@@ -2,7 +2,7 @@
 import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import Web3 from 'web3'
-import {toBigInt} from 'web3-utils'
+import {toBigInt, toHex} from 'web3-utils'
 
 export class TxRunnerWeb3 {
   event
@@ -27,11 +27,11 @@ export class TxRunnerWeb3 {
     }
     if (txFee) {
       if (txFee.baseFeePerGas) {
-        tx.maxPriorityFeePerGas = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.maxPriorityFee, 'gwei'))
-        tx.maxFeePerGas = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.maxFee, 'gwei'))
+        tx.maxPriorityFeePerGas = toHex(BigInt(this.getWeb3().utils.toWei(txFee.maxPriorityFee, 'gwei')))
+        tx.maxFeePerGas = toHex(BigInt(this.getWeb3().utils.toWei(txFee.maxFee, 'gwei')))
         tx.type = '0x2'
       } else {
-        tx.gasPrice = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei'))
+        tx.gasPrice = toHex(BigInt(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei')))
         tx.type = '0x1'
       }
     }
