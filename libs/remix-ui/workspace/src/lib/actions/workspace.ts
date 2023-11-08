@@ -38,7 +38,6 @@ import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
 import { contractDeployerScripts, etherscanScripts } from '@remix-project/remix-ws-templates'
-import isElectron from 'is-electron'
 
 declare global {
   interface Window {
@@ -120,7 +119,7 @@ export const createWorkspace = async (
   isGitRepo: boolean = false,
   createCommit: boolean = true
 ) => {
-  if (isElectron()) {
+  if (plugin.registry.get('platform').api.isDesktop()) {
     if (workspaceTemplateName) {
       await plugin.call('remix-templates', 'loadTemplateInNewWindow', workspaceTemplateName, opts)
     }
@@ -577,7 +576,7 @@ export const cloneRepository = async (url: string) => {
   const token = config.get('settings/gist-access-token')
   const repoConfig = { url, token }
 
-  if (isElectron()) {
+  if (plugin.registry.get('platform').api.isDesktop()) {
     try {
       await plugin.call('dGitProvider', 'clone', repoConfig)
     } catch (e) {

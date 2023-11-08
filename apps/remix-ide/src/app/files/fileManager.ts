@@ -10,8 +10,6 @@ import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from 
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
 
-import isElectron from 'is-electron'
-
 /*
   attach to files event (removed renamed)
   trigger: currentFileChanged
@@ -157,7 +155,7 @@ class FileManager extends Plugin {
   refresh() {
     const provider = this.fileProviderOf('/')
     // emit rootFolderChanged so that File Explorer reloads the file tree
-    if(isElectron()){
+    if(Registry.getInstance().get('platform').api.isDesktop()){
       provider.event.emit('refresh')
     }else{
       provider.event.emit('rootFolderChanged', provider.workspace || '/')
@@ -791,7 +789,7 @@ class FileManager extends Plugin {
       return this._deps.filesProviders.localhost
     }
 
-    if(isElectron()){
+    if(Registry.getInstance().get('platform').api.isDesktop()){
       return this._deps.filesProviders.electron
     }
     return this._deps.filesProviders.workspace
@@ -916,7 +914,7 @@ class FileManager extends Plugin {
   }
 
   currentWorkspace() {
-    if(isElectron()){
+    if(Registry.getInstance().get('platform').api.isDesktop()){
       return ''
     }
 

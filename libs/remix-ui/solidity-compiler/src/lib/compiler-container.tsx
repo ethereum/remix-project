@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useReducer} from 'react' // eslint-disable-line
+import React, {useEffect, useState, useRef, useReducer, useContext} from 'react' // eslint-disable-line
 import {FormattedMessage, useIntl} from 'react-intl'
 import semver from 'semver'
 import {CompilerContainerProps} from './types'
@@ -11,9 +11,9 @@ import {getValidLanguage} from '@remix-project/remix-solidity'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import {configFileContent} from './compilerConfiguration'
 import axios, {AxiosResponse} from 'axios'
+import { AppContext, appPlatformTypes } from '@remix-ui/app'
 
 import './css/style.css'
-import isElectron from 'is-electron'
 const defaultPath = 'compiler_config.json'
 
 declare global {
@@ -25,6 +25,7 @@ declare global {
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
+  const {platform} = useContext(AppContext)
   const {
     api,
     compileTabLogic,
@@ -576,7 +577,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
     if (selectedVersion === 'builtin') selectedVersion = state.defaultVersion
-    if (selectedVersion !== 'builtin' && (canUseWorker(selectedVersion) || isElectron())) {
+    if (selectedVersion !== 'builtin' && (canUseWorker(selectedVersion) || platform === appPlatformTypes.desktop)) {
       compileTabLogic.compiler.loadVersion(true, url)
     } else {
       compileTabLogic.compiler.loadVersion(false, url)

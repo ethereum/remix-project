@@ -1,15 +1,16 @@
 import React, { MouseEventHandler, useContext, useEffect, useState } from "react"
 import { FileSystemContext } from "../contexts"
-import isElectron from 'is-electron'
+import { AppContext, appPlatformTypes } from '@remix-ui/app'
 import { FormattedMessage } from "react-intl"
 import '../css/electron-menu.css'
 import { CustomTooltip } from '@remix-ui/helper'
 
 export const ElectronMenu = () => {
+  const {platform} = useContext(AppContext)
   const global = useContext(FileSystemContext)
 
   useEffect(() => {
-    if (isElectron()) {
+    if (platform === appPlatformTypes.desktop) {
       global.dispatchGetElectronRecentFolders()
     }
   }, [])
@@ -24,7 +25,7 @@ export const ElectronMenu = () => {
   }
 
   return (
-    !isElectron() ? null :
+    (platform !== appPlatformTypes.desktop) ? null :
       (global.fs.browser.isSuccessfulWorkspace ? null :
         <>
           <div onClick={async () => { await openFolderElectron(null) }} className='btn btn-primary'><FormattedMessage id="electron.openFolder" /></div>

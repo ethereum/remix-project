@@ -7,7 +7,7 @@ import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
-import isElectron from 'is-electron'
+import { AppContext, appPlatformTypes } from '@remix-ui/app'
 declare global {
   interface Window {
     _paq: any
@@ -19,6 +19,7 @@ interface HomeTabGetStartedProps {
 }
 
 function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
+  const {platform} = useContext(AppContext)
   const themeFilter = useContext(ThemeContext)
   const carouselRef = useRef<any>({})
   const carouselRefDiv = useRef(null)
@@ -59,7 +60,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
   }
 
   const createWorkspace = async (templateName) => {
-    if(isElectron()){
+    if(platform === appPlatformTypes.desktop){
       await plugin.call('remix-templates', 'loadTemplateInNewWindow', templateName)
       return
     }
