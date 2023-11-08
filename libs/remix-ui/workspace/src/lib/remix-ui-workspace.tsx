@@ -12,7 +12,7 @@ import {MenuItems, WorkSpaceState} from './types'
 import {contextMenuActions} from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
-import isElectron from 'is-electron'
+import { AppContext, appPlatformTypes } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 
 const _paq = (window._paq = window._paq || [])
@@ -20,6 +20,7 @@ const _paq = (window._paq = window._paq || [])
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
 export function Workspace() {
+  const {platform} = useContext(AppContext)
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const ELECTRON = 'electron'
@@ -229,7 +230,6 @@ export function Workspace() {
   }
 
   const cloneGitRepository = () => {
-    console.log('clone from workspace modal')
     global.modal(
       intl.formatMessage({id: 'filePanel.workspace.clone'}),
       cloneModalMessage(),
@@ -935,7 +935,7 @@ export function Workspace() {
                   </span>                  
                 </div>
                 <div className='mx-2'>
-                  {!isElectron() ? (
+                  {(platform !== appPlatformTypes.desktop) ? (
                     <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
                       <Dropdown.Toggle
                         as={CustomToggle}

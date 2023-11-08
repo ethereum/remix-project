@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-expressions */
-import isElectron from 'is-electron'
 import React, {useContext, useEffect, useRef, useState} from 'react' // eslint-disable-line
 import DragBar from '../dragbar/dragbar'
 import RemixUIPanelPlugin from '../plugins/panel-plugin'
 import {PluginRecord} from '../types'
+import { AppContext, appPlatformTypes } from '@remix-ui/app'
 import './main-panel.css'
 
 
@@ -12,6 +12,7 @@ export type RemixUIMainPanelProps = {
 }
 
 const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
+  const {platform} = useContext(AppContext)
   const appContext = useContext(props.Context)
   const [plugins, setPlugins] = useState<PluginRecord[]>([])
   const editorRef = useRef<HTMLDivElement>(null)
@@ -29,7 +30,7 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
           profile: panel.plugin.profile,
           active: panel.active,
           view: panel.plugin.profile.name === 'tabs' ? panel.plugin.renderTabsbar() : panel.plugin.render(),
-          class: panel.plugin.profile.name + '-wrap ' + (panel.minimized ? 'minimized ' : ' ') + (isElectron()? 'desktop' : ''),
+          class: panel.plugin.profile.name + '-wrap ' + (panel.minimized ? 'minimized ' : ' ') + ((platform === appPlatformTypes.desktop)? 'desktop' : ''),
           minimized: panel.minimized
         })
       })

@@ -14,7 +14,7 @@ import JSZip from 'jszip'
 import path from 'path'
 import FormData from 'form-data'
 import axios from 'axios'
-import isElectron from 'is-electron'
+import Registry from '../state/registry'
 
 const profile = {
   name: 'dGitProvider',
@@ -57,7 +57,7 @@ class DGitProvider extends Plugin {
 
   async getGitConfig() {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return {
         fs: window.remixFileSystem,
         dir: '/'
@@ -89,7 +89,7 @@ class DGitProvider extends Plugin {
   }
 
   async init(input?) {
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'init', {
         defaultBranch: (input && input.branch) || 'main'
       })
@@ -105,7 +105,7 @@ class DGitProvider extends Plugin {
   }
 
   async version() {
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'version')
     }
 
@@ -115,7 +115,7 @@ class DGitProvider extends Plugin {
 
   async status(cmd) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'status', cmd)
 
       return status
@@ -132,7 +132,7 @@ class DGitProvider extends Plugin {
 
   async add(cmd) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'add', cmd)
     } else {
       await git.add({
@@ -146,7 +146,7 @@ class DGitProvider extends Plugin {
 
   async rm(cmd) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'rm', cmd)
     } else {
       await git.remove({
@@ -160,7 +160,7 @@ class DGitProvider extends Plugin {
 
   async reset(cmd) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'reset', cmd)
     } else {
       await git.resetIndex({
@@ -174,7 +174,7 @@ class DGitProvider extends Plugin {
 
   async checkout(cmd, refresh = true) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'checkout', cmd)
     } else {
       await git.checkout({
@@ -192,7 +192,7 @@ class DGitProvider extends Plugin {
 
   async log(cmd) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'log', {
         ...cmd,
         depth: 10
@@ -211,7 +211,7 @@ class DGitProvider extends Plugin {
   }
 
   async remotes(config) {
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'remotes', config)
     }
 
@@ -227,7 +227,7 @@ class DGitProvider extends Plugin {
   async branch(cmd, refresh = true) {
 
     let status
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       status = await this.call('isogit', 'branch', cmd)
     } else {
       status = await git.branch({
@@ -248,7 +248,7 @@ class DGitProvider extends Plugin {
 
 
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'currentbranch')
     }
 
@@ -265,7 +265,7 @@ class DGitProvider extends Plugin {
 
   async branches(config) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'branches')
     }
 
@@ -288,7 +288,7 @@ class DGitProvider extends Plugin {
 
   async commit(cmd) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       try {
         await this.call('isogit', 'init')
         const sha = await this.call('isogit', 'commit', cmd)
@@ -315,7 +315,7 @@ class DGitProvider extends Plugin {
 
   async lsfiles(cmd) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'lsfiles', cmd)
     }
 
@@ -328,7 +328,7 @@ class DGitProvider extends Plugin {
 
   async resolveref(cmd) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'resolveref', cmd)
     }
 
@@ -340,7 +340,7 @@ class DGitProvider extends Plugin {
   }
 
   async readblob(cmd) {
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const readBlobResult = await this.call('isogit', 'readblob', cmd)
       return readBlobResult
     }
@@ -370,7 +370,7 @@ class DGitProvider extends Plugin {
   }
 
   async addremote(input) {
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'addremote', { url: input.url, remote: input.remote })
       return
     }
@@ -378,7 +378,7 @@ class DGitProvider extends Plugin {
   }
 
   async delremote(input) {
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'delremote', { remote: input.remote })
       return
     }
@@ -391,7 +391,7 @@ class DGitProvider extends Plugin {
 
   async clone(input, workspaceName, workspaceExists = false) {
 
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const folder = await this.call('fs', 'selectFolder')
       if (!folder) return false
       const cmd = {
@@ -442,7 +442,7 @@ class DGitProvider extends Plugin {
       },
       input,
     }
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'push', cmd)
     } else {
 
@@ -470,7 +470,7 @@ class DGitProvider extends Plugin {
       input,
     }
     let result
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       result = await this.call('isogit', 'pull', cmd)
     }
     else {
@@ -501,7 +501,7 @@ class DGitProvider extends Plugin {
       input
     }
     let result
-    if (isElectron()) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
       result = await this.call('isogit', 'fetch', cmd)
     } else {
       const cmd2 = {

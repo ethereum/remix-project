@@ -8,8 +8,8 @@ import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin,
 import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
-import isElectron  from 'is-electron'
 import { Actions, FileTree } from '../types'
+import Registry from 'apps/remix-ide/src/app/state/registry'
 
 export * from './events'
 export * from './workspace'
@@ -55,7 +55,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const electrOnProvider = filePanelPlugin.fileProviders.electron
     const params = queryParams.get() as UrlParametersType
     let workspaces = []
-    if (!isElectron()) {
+    if (!(Registry.getInstance().get('platform').api.isDesktop())) {
       workspaces = await getWorkspaces() || []
       dispatch(setWorkspaces(workspaces))
     }
@@ -118,7 +118,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           await basicWorkspaceInit(workspaces, workspaceProvider)
         }
       } else await basicWorkspaceInit(workspaces, workspaceProvider)
-    } else if (isElectron()) {
+    } else if (Registry.getInstance().get('platform').api.isDesktop()) {
       if (params.opendir) {
         params.opendir = decodeURIComponent(params.opendir)
         plugin.call('notification', 'toast', `opening ${params.opendir}...`)
@@ -154,7 +154,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     listenOnProviderEvents(workspaceProvider)(dispatch)
     listenOnProviderEvents(localhostProvider)(dispatch)
     listenOnProviderEvents(electrOnProvider)(dispatch)
-    if (isElectron()) {
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
       dispatch(setMode('browser'))
     } else {
       dispatch(setMode('browser'))

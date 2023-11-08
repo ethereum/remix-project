@@ -47,7 +47,7 @@ const Context = ({opts, provider}: {opts; provider: string}) => {
       <div>
         <span>
           <span className="remix_ui_terminal_tx">
-            [block:{block} txIndex:{i}]
+            [block:{block.toString()} txIndex:{i.toString()}]
           </span>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">from:</span> {from}
@@ -76,7 +76,7 @@ const Context = ({opts, provider}: {opts; provider: string}) => {
       <div>
         <span>
           <span className="remix_ui_terminal_tx">
-            [block:{block} txIndex:{i}]
+            [block:{block.toString()} txIndex:{i.toString()}]
           </span>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">from:</span> {from}

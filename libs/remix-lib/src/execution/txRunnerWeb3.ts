@@ -23,7 +23,7 @@ export class TxRunnerWeb3 {
       // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
       tx.type = '0x2'
     } else {
-      tx.type = '0x1'
+      // tx.type = '0x1'
     }
     if (txFee) {
       if (txFee.baseFeePerGas) {
@@ -81,7 +81,7 @@ export class TxRunnerWeb3 {
       )
     } else {
       try {
-        const res = await this.getWeb3().eth.sendTransaction(tx)
+        const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false })
         cb(null, res.transactionHash)
       } catch (e)  {
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
@@ -175,16 +175,22 @@ export class TxRunnerWeb3 {
   }
 }
 
-async function tryTillReceiptAvailable (txhash, web3) {
+async function tryTillReceiptAvailable (txhash: string, web3: Web3) {
   try {
     const receipt = await web3.eth.getTransactionReceipt(txhash)
-    if (receipt) return receipt
+    if (receipt) {
+      if (!receipt.to && !receipt.contractAddress) {
+        // this is a contract creation and the receipt doesn't contain a contract address. we have to keep polling...
+        console.log('this is a contract creation and the receipt does nott contain a contract address. we have to keep polling...')
+      } else
+        return receipt
+    }
   } catch (e) {}
   await pause()
   return await tryTillReceiptAvailable(txhash, web3)
 }
 
-async function tryTillTxAvailable (txhash, web3) {
+async function tryTillTxAvailable (txhash: string, web3: Web3) {
   try {
     const tx = await web3.eth.getTransaction(txhash)
     if (tx && tx.blockHash) return tx

@@ -1,3 +1,4 @@
+import { appPlatformTypes } from '@remix-ui/app'
 import { FileType } from '@remix-ui/file-decorators'
 import { WorkspaceProps, MenuItems } from '../types'
 
@@ -64,7 +65,7 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: '',
   group: 2,
-  platform: 'browser'
+  platform: appPlatformTypes.web
 }, {
   id: 'run',
   name: 'Run',
@@ -79,7 +80,7 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: '',
   group: 4,
-  platform: 'browser'
+  platform: appPlatformTypes.web
 }, {
   id: 'publishFolderToGist',
   name: 'Publish folder to gist',
@@ -87,7 +88,7 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: '',
   group: 4,
-  platform: 'browser'
+  platform: appPlatformTypes.web
 }, {
   id: 'publishFileToGist',
   name: 'Publish file to gist',
@@ -95,7 +96,7 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: '',
   group: 4,
-  platform: 'browser'
+  platform: appPlatformTypes.web
 }, {
   id: 'uploadFile',
   name: 'Load a Local File',
@@ -103,7 +104,7 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: 'Load a Local File',
   group: 4,
-  platform: 'browser'
+  platform: appPlatformTypes.web
 }, {
   id: 'publishToGist',
   name: 'Push changes to gist',
@@ -111,7 +112,7 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: 'Publish all to Gist',
   group: 4,
-  platform: 'browser'
+  platform: appPlatformTypes.web
 },
 {
   id: 'publishWorkspace',
@@ -120,7 +121,7 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: '',
   group: 4,
-  platform: 'browser'
+  platform: appPlatformTypes.web
 }]
 
 export const fileKeySort = (children: FileType[]): string[] => {

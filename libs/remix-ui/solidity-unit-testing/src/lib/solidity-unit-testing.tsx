@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, ReactElement } from 'react' // eslint-disable-line
+import React, { useState, useRef, useEffect, ReactElement, useContext } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import * as semver from 'semver'
 import { eachOfSeries } from 'async' // eslint-disable-line
@@ -9,7 +9,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { format } from 'util'
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
-import isElectron from 'is-electron'
+import { AppContext, appPlatformTypes } from '@remix-ui/app'
 
 const _paq = ((window as any)._paq = (window as any)._paq || []) // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -44,7 +44,7 @@ interface FinalResult {
 
 export const SolidityUnitTesting = (props: Record<string, any>) => {
   // eslint-disable-line @typescript-eslint/no-explicit-any
-
+  const {platform} = useContext(AppContext)
   const { helper, testTab, initialPath } = props
   const { testTabLogic } = testTab
 
@@ -608,7 +608,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
           currentCompilerUrl,
           evmVersion,
           optimize,
-          usingWorker: canUseWorker(currentVersion) || isElectron(),
+          usingWorker: canUseWorker(currentVersion) || platform === appPlatformTypes.desktop,
           runs,
         }
         const deployCb = async (file: string, contractAddress: string) => {
