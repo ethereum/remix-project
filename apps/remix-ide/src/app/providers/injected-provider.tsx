@@ -80,7 +80,7 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
       this.call('notification', 'toast', 'No injected provider (e.g Metamask) has been found.')
       return resolve({
         jsonrpc: '2.0',
-        error: 'no injected provider found',
+        error: { message: 'no injected provider found', code: -32603 },
         id: data.id
       })
     }
@@ -89,7 +89,7 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
       if (web3Provider.request) resultData = await web3Provider.request({method: data.method, params: data.params})
       else if (web3Provider.send) resultData = await web3Provider.send(data.method, data.params)
       else {
-        resolve({jsonrpc: '2.0', error: 'provider not valid', id: data.id})
+        resolve({jsonrpc: '2.0', error: { message: 'provider not valid', code: -32603 }, id: data.id})
         return
       }
       if (resultData) {
@@ -98,7 +98,7 @@ export abstract class InjectedProvider extends Plugin implements IProvider {
         }
         resolve({jsonrpc: '2.0', result: resultData, id: data.id})
       } else {
-        resolve({jsonrpc: '2.0', error: 'no return data provided', id: data.id})
+        resolve({jsonrpc: '2.0', result: null, id: data.id})
       }
     } catch (error) {
       if (error.data && error.data.originalError && error.data.originalError.data) {

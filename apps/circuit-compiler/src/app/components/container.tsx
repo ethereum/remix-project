@@ -70,7 +70,7 @@ export function Container () {
                 <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
               </WitnessToggler>
             </RenderIf>
-            <RenderIf condition={circuitApp.appState.status !== 'compiling' && circuitApp.appState.status !== 'computing' && circuitApp.appState.status !== 'generating'}>
+            <RenderIf condition={(circuitApp.appState.status !== 'compiling') && (circuitApp.appState.status !== 'computing') && (circuitApp.appState.status !== 'generating')}>
               <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} />
             </RenderIf>
           </div>

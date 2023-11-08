@@ -14,11 +14,15 @@ export type JsonDataResult = {
   id: number
   jsonrpc: string // version
   result?: any
-  error?: any
+  error?: {
+    code: number,
+    message: string
+    data?: string
+  }
   errorData?: any
 }
 
-export type RejectRequest = (error: Error) => void
+export type RejectRequest = (error: JsonDataResult) => void
 export type SuccessRequest = (data: JsonDataResult) => void
 
 export interface IProvider {
@@ -98,7 +102,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
   sendAsync(data: JsonDataRequest): Promise<JsonDataResult> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
-      if (!this.provider) return reject(new Error('provider node set'))
+      if (!this.provider) return reject({jsonrpc: '2.0', id: data.id, error: { message: 'provider node set', code: -32603 } } as JsonDataResult)
       this.sendAsyncInternal(data, resolve, reject)
     })
   }
@@ -128,7 +132,8 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
         if (error && error.message && error.message.includes('net_version') && error.message.includes('SERVER_ERROR')) {
           this.switchAway(true)
         }
-        reject(error)
+        error.code = -32603
+        reject({jsonrpc: '2.0', error, id: data.id})
       }
     } else {
       const result = data.method === 'net_listening' ? 'canceled' : []
