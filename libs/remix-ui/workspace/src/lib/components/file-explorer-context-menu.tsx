@@ -1,11 +1,11 @@
-import React, {useRef, useEffect, useState} from 'react' // eslint-disable-line
+import React, {useRef, useEffect, useState, useContext} from 'react' // eslint-disable-line
 import {useIntl} from 'react-intl'
 import {action, FileExplorerContextMenuProps} from '../types'
 
 import '../css/file-explorer-context-menu.css'
 import {customAction} from '@remixproject/plugin-api'
 import UploadFile from './upload-file'
-import isElectron from 'is-electron'
+import { AppContext, appPlatformTypes } from '@remix-ui/app'
 
 declare global {
   interface Window {
@@ -15,6 +15,7 @@ declare global {
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
+  const {platform} = useContext(AppContext)
   const {
     actions,
     createNewFile,
@@ -83,7 +84,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   }
 
   const itemMatchesCondition = (item: action, itemType: string, itemPath: string) => {
-    if( isElectron() && item.platform && item.platform === 'browser') return false
+    if( platform === appPlatformTypes.desktop && item.platform && item.platform === appPlatformTypes.web) return false
     else if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === itemType) !== -1)) return true
     else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === itemPath) !== -1)) return true
     else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => itemPath.endsWith(ext)) !== -1)) return true

@@ -71,6 +71,7 @@ const Config = require('./config')
 
 const FileManager = require('./app/files/fileManager')
 import FileProvider from "./app/files/fileProvider"
+import { appPlatformTypes } from '@remix-ui/app'
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 
@@ -87,10 +88,22 @@ const Terminal = require('./app/panels/terminal')
 const {TabProxy} = require('./app/panels/tab-proxy.js')
 
 
+export class platformApi {
+  get name () {
+    return isElectron() ? appPlatformTypes.desktop : appPlatformTypes.web
+  }
+  isDesktop () {
+    return isElectron()
+  }
+}
 
 class AppComponent {
   constructor() {
-
+    const PlatFormAPi = new platformApi()
+    Registry.getInstance().put({
+      api: PlatFormAPi,
+      name: 'platform'
+    })
     this.appManager = new RemixAppManager({})
     this.queryParams = new QueryParams()
     this._components = {}
@@ -129,6 +142,8 @@ class AppComponent {
       api: this._components.filesProviders,
       name: 'fileproviders'
     })
+
+
   }
 
   async run() {

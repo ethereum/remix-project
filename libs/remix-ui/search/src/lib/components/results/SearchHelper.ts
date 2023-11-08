@@ -1,12 +1,12 @@
 import { EOL } from 'os'
 import { SearchResultLineLine } from '../../types'
-import isElectron from 'is-electron'
+import Registry from 'apps/remix-ide/src/app/state/registry'
 
 
 export const getDirectory = async (dir: string, plugin: any) => {
   let result = []
 
-  if (isElectron()) {
+  if (Registry.getInstance().get('platform').api.isDesktop()) {
 
     const files = await plugin.call('ripgrep', 'glob', dir, '**/*')
     // only get path property of files

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react' // eslint-disable-line
+import React, {useState, useEffect, useContext} from 'react' // eslint-disable-line
 
 import './remix-ui-home-tab.css'
 import {ThemeContext, themes} from './themeContext'
@@ -9,7 +9,7 @@ import HomeTabScamAlert from './components/homeTabScamAlert'
 import HomeTabGetStarted from './components/homeTabGetStarted'
 import HomeTabFeatured from './components/homeTabFeatured'
 import HomeTabFeaturedPlugins from './components/homeTabFeaturedPlugins'
-import isElectron from 'is-electron'
+import { AppContext, appPlatformTypes } from '@remix-ui/app'
 import { HomeTabFileElectron } from './components/homeTabFileElectron'
 import { LanguageOptions } from './components/homeTablangOptions'
 
@@ -24,6 +24,7 @@ export interface RemixUiHomeTabProps {
 }
 
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
+  const {platform} = useContext(AppContext)
   const {plugin} = props
 
   const [state, setState] = useState<{
@@ -59,7 +60,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         <div className="d-flex flex-row w-100 custom_home_bg">
           <div className="px-2 pl-3 justify-content-start d-flex border-right flex-column" id="remixUIHTLeft" style={{width: 'inherit'}}>
             <HomeTabTitle />
-            {!isElectron()?
+            {!(platform === appPlatformTypes.desktop) ?
               <HomeTabFile plugin={plugin} />:
               <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>}
             <HomeTabLearn plugin={plugin} />
