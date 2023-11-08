@@ -114,13 +114,3 @@ WindowMenu(commandKeys, execCommand, []),
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 
-import express from 'express';
-import { cacheDir } from './utils/config'
-
-const appExpress = express()
-
-console.log('cacheDir', cacheDir)
-appExpress.use(express.static(cacheDir))
-const server = appExpress.listen(0, () => {
-  console.log('Listening on port:', (server.address() as any).port);
-});

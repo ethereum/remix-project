@@ -27,6 +27,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
   onContentChanged: () => void
   onFileClosed: (name: string) => void
   statusChanged: (data: { key: string, title?: string, type?: string }) => void
+  
+  compilersDownloaded: (list: string[]) => void
 
   initCompilerApi () {
     this.configurationSettings = null
@@ -277,6 +279,19 @@ export const CompilerApiMixin = (Base) => class extends Base {
     }
 
     this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
+
+    this.on('compilerloader', 'downloadFinished', (path, url) => {
+      console.log('downloadFinished', path, url)
+    })
+
+    this.on('compilerloader', 'downloadStarted', (url) => {
+      console.log('downloadStarted', url)
+    })
+
+    this.on('compilerloader', 'compilersDownloaded', (list: string[]) => {
+      console.log('compilersDownloaded', list)
+      this.compilersDownloaded(list)
+    })
 
     this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {
       this.compileErrors = data

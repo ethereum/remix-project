@@ -35,7 +35,8 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       cancelLabel: '',
       cancelFn: () => {},
       handleHide: null
-    }
+    },
+    compilersDownloaded: []
   })
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
@@ -135,6 +136,12 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     setBadgeStatus({...badgeStatus, [currentFile]: data})
   }
 
+  api.compilersDownloaded = (list: string[]) => {
+    setState((prevState) => {
+      return {...prevState, compilersDownloaded: list}
+    })
+  }
+
   const setConfigFilePath = (path: string) => {
     setState((prevState) => {
       return {...prevState, configFilePath: path}
@@ -222,6 +229,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           configurationSettings={configurationSettings}
           configFilePath={state.configFilePath}
           setConfigFilePath={setConfigFilePath}
+          compilersDownloaded={state.compilersDownloaded}
         />
 
         {contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && (

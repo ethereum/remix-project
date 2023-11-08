@@ -6,6 +6,7 @@
   "solidity.addACustomCompiler": "Add a custom compiler",
   "solidity.addACustomCompilerWithURL": "Add a custom compiler with URL",
   "solidity.includeNightlyBuilds": "Include nightly builds",
+  "solidity.downloadedCompilers": "Show downloaded only",
   "solidity.autoCompile": "Auto compile",
   "solidity.hideWarnings": "Hide warnings",
   "solidity.enableHardhat": "Enable Hardhat Compilation",

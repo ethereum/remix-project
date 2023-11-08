@@ -46,6 +46,8 @@ export interface ICompilerApi {
     compileWithTruffle: (configPath: string) => Promise<string>
     statusChanged: (data: { key: string, title?: string, type?: string }) => void,
     emit?: (key: string, ...payload: any) => void
+
+    compilersDownloaded: (list: string[]) => void
 }
 
 export type terminalLog = {

@@ -41,6 +41,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     workspaceName,
     configFilePath,
     setConfigFilePath,
+    compilersDownloaded,
     //@ts-ignore
     pluginProps
   } = props // eslint-disable-line
@@ -55,6 +56,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     timeout: 300,
     allversions: [],
     customVersions: [],
+    downloaded: [],
     compilerLicense: null,
     selectedVersion: null,
     defaultVersion: 'soljson-v0.8.22+commit.4fc1097e.js', // this default version is defined: in makeMockCompiler (for browser test)
@@ -63,7 +65,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     includeNightlies: false,
     language: 'Solidity',
     evmVersion: '',
-    createFileOnce: true
+    createFileOnce: true,
+    onlyDownloaded: false
   })
   const [showFilePathInput, setShowFilePathInput] = useState<boolean>(false)
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
@@ -119,6 +122,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     fetchAllVersion((allversions, selectedVersion, isURL) => {
+      console.log('allversions', allversions)
       setState((prevState) => {
         return {...prevState, allversions}
       })
@@ -228,6 +232,28 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setConfiguration(configurationSettings)
     }
   }, [configurationSettings])
+
+  useEffect(() => {
+    console.log('compilersDownloaded', compilersDownloaded)
+    setState((prevState) => {
+      return {...prevState, downloaded: compilersDownloaded}
+    })
+  },[compilersDownloaded])
+
+  useEffect(() => {
+    updateAllVersionsWithDownloadStatus()
+  }, [state.downloaded])
+
+  const updateAllVersionsWithDownloadStatus = () => {
+    const updatedAllVersions = state.allversions.map((version) => {
+      version.isDownloaded = state.downloaded.includes(version.path)
+      return version
+    })
+    console.log('updatedAllVersions', updatedAllVersions)
+    setState((prevState) => {
+      return {...prevState, allversions: updatedAllVersions}
+    })
+  }
 
   const toggleConfigType = () => {
     if (state.useFileConfiguration)
@@ -708,6 +734,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
+  const handleOnlyDownloadedChange = (e) => {
+    const checked = e.target.checked
+    if (!checked) handleLoadVersion(state.defaultVersion)
+    setState((prevState) => {
+      return {...prevState, onlyDownloaded: checked}
+    })
+  }
+
   const handleLanguageChange = (value) => {
     compileTabLogic.setLanguage(value)
     state.autoCompile && compile()
@@ -797,10 +831,11 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                       data-id={`dropdown-item-${build.value}`}
                     >
                       <div className='d-flex w-100'>
+                        {state.selectedVersion === build.path ? <span className='fas fa-check text-success mr-2'></span> : null}
                         <span className="">
                           {build.longVersion}
                         </span>
-                        <span className='far fa-arrow-circle-down'></span>
+                        {build.isDownloaded?<span className='fas fa-arrow-circle-down text-success'></span>:<span className='far fa-arrow-circle-down'></span>}
                       </div>
                     </Dropdown.Item>
                   ) : null
@@ -842,6 +877,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
             <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">
               <FormattedMessage id="solidity.includeNightlyBuilds" />
+            </label>
+          </div>
+          <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
+            <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleOnlyDownloadedChange} checked={state.includeNightlies} />
+            <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">
+              <FormattedMessage id="solidity.downloadedCompilers" />
             </label>
           </div>
           <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
