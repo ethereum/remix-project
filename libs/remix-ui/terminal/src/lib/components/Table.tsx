@@ -75,8 +75,8 @@ const showTable = (opts, showTableHash) => {
               <FormattedMessage id="terminal.blockNumber" />
             </td>
             <td className="remix_ui_terminal_td" data-id={`txLoggerTableContractAddress${opts.hash}`} data-shared={`pair_${opts.hash}`}>
-              {opts.blockNumber}
-              <CopyToClipboard content={opts.blockNumber} />
+              {opts.blockNumber.toString()}
+              <CopyToClipboard content={opts.blockNumber.toString()} />
             </td>
           </tr>
         ) : null}

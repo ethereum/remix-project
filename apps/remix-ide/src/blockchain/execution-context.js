@@ -7,12 +7,14 @@ const _paq = window._paq = window._paq || []
 
 let web3
 
+const config  = { defaultTransactionType: '0x0' }
 if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
   var injectedProvider = window.ethereum
   web3 = new Web3(injectedProvider)
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 }
+web3.eth.setConfig(config)
 
 /*
   trigger contextChanged, web3EndpointChanged
@@ -59,6 +61,7 @@ export class ExecutionContext {
   }
 
   setWeb3 (context, web3) {
+    web3.setConfig(config)
     this.customWeb3[context] = web3
   }
 
