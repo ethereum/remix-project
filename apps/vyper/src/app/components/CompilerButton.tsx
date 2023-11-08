@@ -6,9 +6,10 @@ interface Props {
   compilerUrl: string
   contract?: string
   setOutput: (name: string, output: VyperCompilationOutput) => void
+  setCompilerResponse: (response: any) => void
 }
 
-function CompilerButton({contract, setOutput, compilerUrl}: Props) {
+function CompilerButton({contract, setOutput, compilerUrl, setCompilerResponse}: Props) {
   if (!contract || !contract) {
     return <Button disabled>No contract selected</Button>
   }
@@ -41,6 +42,8 @@ function CompilerButton({contract, setOutput, compilerUrl}: Props) {
         return
       }
       setOutput(_contract.name, output)
+      setCompilerResponse(output)
+
       // ERROR
       if (isCompilationError(output)) {
         const line = output.line

@@ -63,10 +63,8 @@ export async function compile(url: string, contract: Contract): Promise<any | Vy
     type: 'text/plain'
   });
   const nameResult = normalizeContractPath(contract.name)
-  console.log({ nameResult })
   files.append('files', content, `${nameResult[2]}.vy`)
   const response = await axios.post(url + '/compile?vyper_version=0.2.16', files)
-  console.log({ response })
 
   if (response.data.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)
@@ -93,8 +91,13 @@ export async function compile(url: string, contract: Contract): Promise<any | Vy
  * @param name Name of the contract file
  * @param compilationResult Result returned by the compiler
  */
-export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResult): CompilationResult {
+export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResult | any): CompilationResult {
   const contractName = fileName.split('/').slice(-1)[0].split('.')[0]
+
+  if (compilationResult.contractTypes.ast.name !== undefined) {
+    console.log('compilationResult found')
+    return compilationResult
+  }
   const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
   return {
     sources: {

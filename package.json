@@ -203,6 +203,7 @@
     "react-image-magnifiers": "^1.4.0",
     "react-intl": "^6.0.4",
     "react-json-view": "^1.21.3",
+    "react-json-view-lite": "^1.2.0",
     "react-markdown": "^8.0.5",
     "react-multi-carousel": "^2.8.2",
     "react-router-dom": "^6.3.0",

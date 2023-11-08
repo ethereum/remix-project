@@ -33,6 +33,7 @@ const App: React.FC = () => {
     environment: 'local',
     localUrl: 'http://localhost:8000'
   })
+  const [compilerResponse, setCompilerResponse] = useState<any>({})
 
   useEffect(() => {
     async function start() {
@@ -92,10 +93,15 @@ const App: React.FC = () => {
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <WarnRemote environment={state.environment} />
         <div className="px-4" id="compile-btn">
-          <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} />
+          <CompilerButton
+            compilerUrl={compilerUrl()}
+            contract={contract}
+            setOutput={(name, update) => setOutput({...output, [name]: update})}
+            setCompilerResponse={setCompilerResponse}
+          />
         </div>
         <article id="result" className="px-2">
-          <VyperResult output={contract ? output[contract] : undefined} />
+          <VyperResult output={contract ? output[contract] : undefined} compilerResponse={compilerResponse} />
         </article>
       </section>
     </main>
