@@ -81,7 +81,7 @@ export class TxRunnerWeb3 {
       )
     } else {
       try {
-        const res = await this.getWeb3().eth.sendTransaction(tx)
+        const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false })
         cb(null, res.transactionHash)
       } catch (e)  {
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
