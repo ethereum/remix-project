@@ -95,25 +95,19 @@ module.exports = {
   },
   'Should display warnings for compiled circuit without pragma version #group4': function (browser: NightwatchBrowser) {
     browser
-      .addFile('circuits/warning.circom', { content: warningCircuit })
-      .waitForElementPresent('[data-path="Semaphore - 1/circuits/warning.circom"]')
-      .waitForElementVisible('[data-path="Semaphore - 1/circuits/warning.circom"]')
-      .click('[data-id="treeViewLitreeViewItemcircuits/warning.circom"]')
+      .click('[data-id="treeViewLitreeViewItemcircuits/simple.circom"]')
+      .waitForElementPresent('[data-path="Semaphore - 1/circuits/simple.circom"]')
+      .waitForElementVisible('[data-path="Semaphore - 1/circuits/simple.circom"]')
+      .setEditorValue(warningCircuit)
       .clickLaunchIcon('circuit-compiler')
       .frame(0)
       .waitForElementPresent('button[data-id="compile_circuit_btn"]')
       .waitForElementVisible('button[data-id="compile_circuit_btn"]')
       .click('button[data-id="compile_circuit_btn"]')
-      .frameParent()
-      .clickLaunchIcon('filePanel')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/warning.wasm"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/warning.wasm"]')
-      .clickLaunchIcon('circuit-compiler')
-      .frame(0)
       .waitForElementPresent('[data-id="circuit_feedback"]')
       .waitForElementVisible('[data-id="circuit_feedback"]')
       .assert.hasClass('[data-id="circuit_feedback"]', 'alert-warning')
-      .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/warning.circom does not include pragma version. Assuming pragma version (2, 1, 5)')
+      .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/simple.circom does not include pragma version. Assuming pragma version (2, 1, 5)')
   },
   'Should hide/show warnings for compiled circuit #group4': function (browser: NightwatchBrowser) {
     browser
@@ -121,17 +115,12 @@ module.exports = {
       .waitForElementNotPresent('[data-id="circuit_feedback"]')
       .click('[data-id="hide_circuit_warnings_checkbox_input"]')
       .waitForElementVisible('[data-id="circuit_feedback"]')
-      .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/warning.circom does not include pragma version. Assuming pragma version (2, 1, 5)')
+      .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/simple.circom does not include pragma version. Assuming pragma version (2, 1, 5)')
   },
   'Should display error for invalid circuit #group4': function (browser: NightwatchBrowser) {
     browser
       .frameParent()
-      .clickLaunchIcon('filePanel')
-      .addFile('circuits/error.circom', { content: errorCircuit })
-      .waitForElementPresent('[data-path="Semaphore - 1/circuits/error.circom"]')
-      .waitForElementVisible('[data-path="Semaphore - 1/circuits/error.circom"]')
-      .click('[data-id="treeViewLitreeViewItemcircuits/error.circom"]')
-      .clickLaunchIcon('circuit-compiler')
+      .setEditorValue(errorCircuit)
       .frame(0)
       .waitForElementPresent('button[data-id="compile_circuit_btn"]')
       .waitForElementVisible('button[data-id="compile_circuit_btn"]')
@@ -144,14 +133,12 @@ module.exports = {
     browser
       .click('[data-id="auto_compile_circuit_checkbox_input"]')
       .frameParent()
-      .setEditorValue(validCircuit, function () {
-        browser
-          .frame(0)
-          .waitForElementNotPresent('[data-id="circuit_feedback"]')
-          .frameParent()
-          .clickLaunchIcon('filePanel')
-          .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/error.wasm"]')
-      })
+      .setEditorValue(validCircuit)
+      .frame(0)
+      .waitForElementNotPresent('[data-id="circuit_feedback"]')
+      .frameParent()
+      .clickLaunchIcon('filePanel')
+      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
   }
 }
 
