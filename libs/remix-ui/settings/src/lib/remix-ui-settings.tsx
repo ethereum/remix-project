@@ -404,7 +404,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">
-          <FormattedMessage id="settings.copilot" />
+          <FormattedMessage id="settings.copilot.activate" />
         </h6>
 
         <div className="pt-2 mb-0">
@@ -413,7 +413,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               <div className="custom-control custom-checkbox mb-1">
                 <input onChange={onchangeCopilotActivate} id="copilot-activate" type="checkbox" className="custom-control-input" checked={isCopilotActivated} />
                 <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/copilot/suggest/activate')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.enablePersonalModeText" />
+                  <FormattedMessage id="settings.copilot.activate" />
                 </label>
               </div>
             </div>
@@ -426,7 +426,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               <div className="custom-control custom-checkbox mb-1">
                 <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="custom-control-input" />
                 <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/copilot/suggest/max_new_tokens')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.enablePersonalModeText" />
+                  <FormattedMessage id="settings.copilot.activate" />
                 </label>
               </div>
             </div>
@@ -439,7 +439,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               <div className="custom-control custom-checkbox mb-1">
                 <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='1' type="range" className="custom-control-input" />
                 <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/copilot/suggest/temperature')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.enablePersonalModeText" />
+                  <FormattedMessage id="settings.copilot.activate" />
                 </label>
               </div>
             </div>
