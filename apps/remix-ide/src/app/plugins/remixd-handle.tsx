@@ -112,7 +112,7 @@ export class RemixdHandle extends WebsocketPlugin {
     }
     if (this.localhostProvider.isConnected()) {
       this.deactivate()
-    } else if (!(Registry.getInstance().get('platform').api.isDektop())) {
+    } else if (!(Registry.getInstance().get('platform').api.isDesktop())) {
       // warn the user only if he/she is in the browser context
       const mod: AppModal = {
         id: 'remixdConnect',
