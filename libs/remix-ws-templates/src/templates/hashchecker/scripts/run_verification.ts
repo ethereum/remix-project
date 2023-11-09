@@ -9,17 +9,6 @@ const logger = {
   error: (...args) => console.error(...args),
 }
 
-/**
- * Creates a keccak256 hash of a message compatible with the SNARK scalar modulus.
- * @param message The message to be hashed.
- * @returns The message digest.
- */
-function hash(message: any): bigint {
-  message = BigNumber.from(message).toTwos(256).toHexString()
-  message = ethers.utils.zeroPad(message, 32)
-  return BigInt(ethers.utils.keccak256(message)) >> BigInt(8)
-}
-
 (async () => {
   try {
     // @ts-ignore
