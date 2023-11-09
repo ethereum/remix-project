@@ -1,4 +1,4 @@
-import { appPlatformTypes } from 'libs/remix-ui/app/src/lib/remix-app/context/context'
+import { appPlatformTypes } from '@remix-ui/app'
 import React from 'react'
 import {Dropdown} from 'react-bootstrap'
 import {HamburgerMenuItem, HamburgerSubMenuItem} from './workspace-hamburger-item'

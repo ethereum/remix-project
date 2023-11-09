@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import { EventEmitter } from 'events'
 import {RemixUiStaticAnalyser} from '@remix-ui/static-analyser' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 import { PluginViewWrapper } from '@remix-ui/helper'
 
 var EventManager = require('../../lib/events')

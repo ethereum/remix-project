@@ -4,7 +4,7 @@ import { AstNode } from "@remix-project/remix-solidity"
 import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
 import { pathToFileURL } from 'url'
-import Registry from "../../../state/registry"
+import {Registry} from '@remix-project/remix-lib'
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 

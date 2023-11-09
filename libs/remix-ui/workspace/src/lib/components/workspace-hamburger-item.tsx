@@ -20,23 +20,23 @@ export function HamburgerMenuItem(props: HamburgerMenuItemProps) {
   return (
     <>
       {props.platforms.includes(platform)?(
-      <Dropdown.Item>
-        <CustomTooltip placement="right" tooltipId={uid + 'Tooltip'} tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id={'filePanel.workspace.' + props.kind} />}>
-          <div
-            data-id={uid}
-            key={uid + '-fe-ws'}
-            onClick={() => {
-              props.actionOnClick()
-              _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', uid])
-            }}
-          >
-            <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' pl-2'} style={{width: '1.4rem'}}></span>
-            <span className="px-2">
-              <FormattedMessage id={'filePanel.' + props.kind} />
-            </span>
-          </div>
-        </CustomTooltip>
-      </Dropdown.Item>):null}
+        <Dropdown.Item>
+          <CustomTooltip placement="right" tooltipId={uid + 'Tooltip'} tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id={'filePanel.workspace.' + props.kind} />}>
+            <div
+              data-id={uid}
+              key={uid + '-fe-ws'}
+              onClick={() => {
+                props.actionOnClick()
+                _paq.push(['trackEvent', 'fileExplorer', 'workspaceMenu', uid])
+              }}
+            >
+              <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' pl-2'} style={{width: '1.4rem'}}></span>
+              <span className="px-2">
+                <FormattedMessage id={'filePanel.' + props.kind} />
+              </span>
+            </div>
+          </CustomTooltip>
+        </Dropdown.Item>):null}
     </>
   )
 }

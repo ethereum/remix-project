@@ -1,6 +1,6 @@
 import { EOL } from 'os'
 import { SearchResultLineLine } from '../../types'
-import Registry from 'apps/remix-ide/src/app/state/registry'
+import {Registry} from '@remix-project/remix-lib'
 
 
 export const getDirectory = async (dir: string, plugin: any) => {
