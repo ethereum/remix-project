@@ -14,7 +14,7 @@ import JSZip from 'jszip'
 import path from 'path'
 import FormData from 'form-data'
 import axios from 'axios'
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 
 const profile = {
   name: 'dGitProvider',

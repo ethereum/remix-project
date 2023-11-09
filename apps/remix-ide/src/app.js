@@ -22,7 +22,7 @@ import {WalkthroughService} from './walkthroughService'
 
 import {OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler} from '@remix-project/core-plugin'
 
-import Registry from './app/state/registry'
+import {Registry} from '@remix-project/remix-lib'
 import {ConfigPlugin} from './app/plugins/config'
 import {StoragePlugin} from './app/plugins/storage'
 import {Layout} from './app/panels/layout'

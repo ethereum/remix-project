@@ -1,5 +1,5 @@
 'use strict'
-import Registry from "../../../state/registry";
+import {Registry} from '@remix-project/remix-lib'
 import { CodeParser } from "../code-parser";
 
 export type CodeParserImportsData = {

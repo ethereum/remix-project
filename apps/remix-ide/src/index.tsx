@@ -5,7 +5,7 @@ import './index.css'
 import {ThemeModule} from './app/tabs/theme-module'
 import {Preload} from './app/components/preload'
 import Config from './config'
-import Registry from './app/state/registry'
+import {Registry} from '@remix-project/remix-lib'
 import {Storage} from '@remix-project/remix-lib'
 ;(async function () {
   try {

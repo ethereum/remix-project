@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import { FileSystemProvider } from '@remix-ui/workspace' // eslint-disable-line
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 import { RemixdHandle } from '../plugins/remixd-handle'
 const { HardhatHandle } = require('../files/hardhat-handle.js')
 const { FoundryHandle } = require('../files/foundry-handle.js')
