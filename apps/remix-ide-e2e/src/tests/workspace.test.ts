@@ -394,7 +394,7 @@ module.exports = {
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/calculateHash.circom"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/calculate_hash.circom"]')
       .click('*[data-id="treeViewLitreeViewItemcircuits/calculateHash.circom"]')
       .pause(1000)
       .getEditorValue((content) => {

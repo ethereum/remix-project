@@ -1,7 +1,7 @@
 export default async () => {
   return {
     // @ts-ignore
-    'circuits/calculateHash.circom': (await import('raw-loader!./circuits/calculateHash.circom')).default,
+    'circuits/calculate_hash.circom': (await import('raw-loader!./circuits/calculate_hash.circom')).default,
     // @ts-ignore
     'scripts/run_setup.ts': (await import('!!raw-loader!./scripts/run_setup.ts')).default,
     // @ts-ignore
