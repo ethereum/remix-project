@@ -13,7 +13,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
     if (context.selectedSuggestionInfo) {
-      console.log('return empty from provideInlineCompletions')
+    	console.log('return empty from provideInlineCompletions')
 			return;
 		}
     // get text before the position of the completion
