@@ -21,7 +21,7 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem'],
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'updateSubmodules'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -48,13 +48,13 @@ class DGitProvider extends Plugin {
     this.ipfsSources = [this.remixIPFS, this.globalIPFSConfig, this.ipfsconfig]
   }
 
-  async getGitConfig () {
+  async getGitConfig (dir = '') {
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
 
     if (!workspace) return
     return {
       fs: window.remixFileSystemCallback,
-      dir: addSlash(workspace.absolutePath)
+      dir: addSlash(path.join(workspace.absolutePath, dir || '')),
     }
   }
 
@@ -105,15 +105,37 @@ class DGitProvider extends Plugin {
   }
 
   async checkout (cmd, refresh = true) {
+    const gitmodules = await this.parseGitmodules() || []
     await git.checkout({
       ...await this.getGitConfig(),
       ...cmd
     })
-    if (refresh) {
+    const newgitmodules = await this.parseGitmodules() || []
+    // find the difference between the two gitmodule versions
+    const toRemove = gitmodules.filter((module) => {
+      return !newgitmodules.find((newmodule) => {
+        return newmodule.name === module.name
+      })
+    })
+
+    for (const module of toRemove) {
+      const path = (await this.getGitConfig(module.path)).dir
+      if (await window.remixFileSystem.exists(path)) {
+        const stat = await window.remixFileSystem.stat(path)
+        try {
+          if (stat.isDirectory()) {
+            await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
+          }
+        } catch (e) {
+        }
+      }
+    }
+
+    if (refresh)
       setTimeout(async () => {
         await this.call('fileManager', 'refresh')
       }, 1000)
-    }
+
     this.emit('checkout')
   }
 
@@ -150,19 +172,19 @@ class DGitProvider extends Plugin {
   }
 
   async currentbranch (config) {
-    try{
+    try {
       const defaultConfig = await this.getGitConfig()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
       const name = await git.currentBranch(cmd)
 
       return name
-    }catch(e){
+    } catch (e) {
       return ''
     }
   }
 
   async branches (config) {
-    try{
+    try {
       const defaultConfig = await this.getGitConfig()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
       const remotes = await this.remotes(config)
@@ -174,7 +196,7 @@ class DGitProvider extends Plugin {
         branches = [...branches, ...remotebranches]
       }
       return branches
-    }catch(e){
+    } catch (e) {
       return []
     }
   }
@@ -261,6 +283,7 @@ class DGitProvider extends Plugin {
     }
 
     const result = await git.clone(cmd)
+    await this.updateSubmodules(input)
     if (!workspaceExists) {
       setTimeout(async () => {
         await this.call('fileManager', 'refresh')
@@ -270,7 +293,80 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  async push (input) {
+  async parseGitmodules () {
+    try {
+      const gitmodules = await this.call('fileManager', 'readFile', '.gitmodules')
+      if (gitmodules) {
+        const lines = gitmodules.split('\n')
+        let currentModule = {}
+        let modules = []
+        for (let line of lines) {
+          line = line.trim()
+          if (line.startsWith('[')) {
+            if (currentModule.path) {
+              modules.push(currentModule)
+            }
+            currentModule = {}
+            currentModule.name = line.replace('[submodule "', '').replace('"]', '')
+          } else if (line.startsWith('url')) {
+            currentModule.url = line.replace('url = ', '')
+          } else if (line.startsWith('path')) {
+            currentModule.path = line.replace('path = ', '')
+          }
+        }
+        if (currentModule.path) {
+          modules.push(currentModule)
+        }
+        return modules
+      }
+    } catch (e) {
+      // do nothing
+    }
+  }
+
+  async updateSubmodules(input) {
+    try {
+      const gitmodules = await this.parseGitmodules()
+      //parse gitmodules
+      if (gitmodules) {
+        for (let module of gitmodules) {
+          const path = (await this.getGitConfig(module.path)).dir
+          if (await window.remixFileSystem.exists(path)) {
+            const stat = await window.remixFileSystem.stat(path)
+            try {
+              if (stat.isDirectory()) {
+                await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
+              }
+            } catch (e) {
+            }
+          }
+        }
+        for (let module of gitmodules) {
+          try {
+            const cmd = {
+              url: module.url,
+              singleBranch: true,
+              depth: 1,
+              ...await this.parseInput(input),
+              ...await this.getGitConfig(module.path)
+            }
+            await git.clone(cmd)
+          } catch (e) {
+            console.log(e)
+
+          }
+        }
+        setTimeout(async () => {
+          await this.call('fileManager', 'refresh')
+        }, 1000)
+      }
+    } catch (e) {
+      console.log(e)
+      // do nothing
+    }
+  }
+
+  async push(input) {
     const cmd = {
       force: input.force,
       ref: input.ref,
