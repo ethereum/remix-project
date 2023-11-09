@@ -2,7 +2,7 @@ import {PluginManager} from '@remixproject/engine'
 import {EventEmitter} from 'events'
 import {QueryParams} from '@remix-project/remix-lib'
 import {IframePlugin} from '@remixproject/engine-web'
-import Registry from './app/state/registry'
+import {Registry} from '@remix-project/remix-lib'
 
 const _paq = (window._paq = window._paq || [])
 

@@ -3,7 +3,7 @@ import React from 'react' // eslint-disable-line
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import vm from 'vm'
 const EventManager = require('../../lib/events')
