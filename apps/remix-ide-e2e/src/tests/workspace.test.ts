@@ -395,7 +395,7 @@ module.exports = {
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/calculate_hash.circom"]')
-      .click('*[data-id="treeViewLitreeViewItemcircuits/calculateHash.circom"]')
+      .click('*[data-id="treeViewLitreeViewItemcircuits/calculate_hash.circom"]')
       .pause(1000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`template CalculateHash() {`) !== -1,
