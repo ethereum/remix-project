@@ -104,6 +104,7 @@
   "filePanel.burnable": "Burnable",
   "filePanel.pausable": "Pausable",
   "filePanel.semaphore": "Semaphore",
+  "filePanel.hashchecker": "Hash Checker",
   "filePanel.transparent": "Transparent",
   "filePanel.initGitRepoTitle": "Check option to initialize workspace as a new git repository",
   "filePanel.switchToBranchTitle1": "Checkout new branch from remote branch",

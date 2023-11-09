@@ -7,6 +7,7 @@ export { default as zeroxErc20 } from './templates/zeroxErc20'
 export { default as gnosisSafeMultisig } from './templates/gnosisSafeMultisig'
 export { default as playground } from './templates/playground'
 export { default as semaphore } from './templates/semaphore'
+export { default as hashchecker } from './templates/hashchecker'
 
 export { contractDeployerScripts } from './script-templates/contract-deployer'
 export { etherscanScripts } from './script-templates/etherscan'
