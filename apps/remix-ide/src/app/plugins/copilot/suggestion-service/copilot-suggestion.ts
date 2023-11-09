@@ -41,7 +41,7 @@ export class CopilotSuggestion extends Plugin {
   }
 
   async init() {
-   return this.service.init()
+    return this.service.init()
   }
 
   async uninstall() {
