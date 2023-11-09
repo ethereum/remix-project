@@ -127,6 +127,7 @@ class DGitProvider extends Plugin {
             await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
           }
         } catch (e) {
+          // do nothing
         }
       }
     }
@@ -338,6 +339,7 @@ class DGitProvider extends Plugin {
                 await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
               }
             } catch (e) {
+              // do nothing
             }
           }
         }
