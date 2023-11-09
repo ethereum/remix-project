@@ -110,7 +110,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       <Dropdown.Divider className="border mt-0 mb-0 remixui_menuhr" style={{pointerEvents: 'none'}} />
       <HamburgerMenuItem
         kind="solghaction"
-        fa="fak fa-solidity-mono"
+        fa="fa-kit fa-solidity-mono"
         hideOption={hideWorkspaceOptions}
         actionOnClick={() => {
           props.addGithubAction()
@@ -141,7 +141,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{pointerEvents: 'none'}} />
       <HamburgerMenuItem
         kind="addscriptetherscan"
-        fa="fak fa-ts-logo"
+        fa="fa-kit fa-ts-logo"
         hideOption={hideWorkspaceOptions}
         actionOnClick={() => {
           props.addHelperScripts('etherscan')
@@ -151,7 +151,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="addscriptdeployer"
-        fa="fak fa-ts-logo"
+        fa="fa-kit fa-ts-logo"
         hideOption={hideWorkspaceOptions}
         actionOnClick={() => {
           props.addHelperScripts('deployer')
@@ -170,7 +170,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           subMenus={[
             {
               kind:'etherscan-script',
-              fa: 'fak fa-ts-logo',
+              fa: 'fa-kit fa-ts-logo',
               hideOption: hideWorkspaceOptions,
               actionOnClick: () => {
                 alert('etherscan')
@@ -180,7 +180,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
             },
             {
               kind:'contract-deployer-factory-script',
-              fa: 'fak fa-ts-logo',
+              fa: 'fa-kit fa-ts-logo',
               hideOption: hideWorkspaceOptions,
               actionOnClick: () => {
                 alert('deloyer')
