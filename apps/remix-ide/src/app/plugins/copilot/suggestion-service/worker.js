@@ -71,11 +71,12 @@ self.addEventListener('message', async (event) => {
 
       // Allows for partial output
       callback_function: x => {
-        self.postMessage({
+        /*self.postMessage({
           id,
           status: 'update',
           output: generator.tokenizer.decode(x[0].output_token_ids, { skip_special_tokens: true })
         });
+        */
       }
     });
 
