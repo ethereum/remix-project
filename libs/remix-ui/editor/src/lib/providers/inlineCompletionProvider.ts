@@ -20,6 +20,12 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: position.column,
     });
 
+    // abort if there is a signal
+    if (token.isCancellationRequested) {
+      console.log('aborted')
+      return { items: [] };
+    }    
+
     const result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
     const generatedText = (result as any).output[0].generated_text as string
     console.log(word, result)
@@ -31,12 +37,12 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         snippet: clean
       }
     };
-
+    
     // abort if there is a signal
     if (token.isCancellationRequested) {
       console.log('aborted')
       return { items: [] };
-    }    
+    }
     return {
       items: [item]
     }
