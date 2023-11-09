@@ -24,6 +24,7 @@ export function Workspace() {
   const [selectedWorkspace, setSelectedWorkspace] = useState<{
     name: string
     isGitRepo: boolean
+    hasGitSubmodules?: boolean
     branches?: {remote: any; name: string}[]
     currentBranch?: string
   }>(null)
@@ -139,7 +140,6 @@ export function Workspace() {
 
   useEffect(() => {
     const workspace = global.fs.browser.workspaces.find((workspace) => workspace.name === currentWorkspace)
-
     setSelectedWorkspace(workspace)
   }, [currentWorkspace])
 
@@ -649,6 +649,14 @@ export function Workspace() {
     setShowBranches(isOpen)
   }
 
+  const updateSubModules = async () => {
+    try {
+      await global.dispatchUpdateGitSubmodules()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   const handleBranchFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const branchFilter = e.target.value
 
@@ -1122,6 +1130,12 @@ export function Workspace() {
         <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
           <div className="d-flex justify-space-between p-1">
             <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
+            {selectedWorkspace.hasGitSubmodules? 
+              <div className="pt-1 mr-1">
+                {global.fs.browser.isRequestingCloning ? <div style={{ height: 30 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div>  :
+                  <div style={{ height: 30 }} onClick={updateSubModules} className='btn btn-sm border text-muted small'>update submodules</div>}
+              </div>  
+              : null}
             <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
               <Dropdown style={{height: 30, minWidth: 80}} onToggle={toggleBranches} show={showBranches} drop={'up'}>
                 <Dropdown.Toggle
