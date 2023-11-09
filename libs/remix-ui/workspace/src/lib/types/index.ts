@@ -292,6 +292,7 @@ export interface ActionPayloadTypes {
   SET_CURRENT_WORKSPACE_BRANCHES: { remote: string | undefined; name: string }[],
   SET_CURRENT_WORKSPACE_CURRENT_BRANCH: string,
   SET_CURRENT_WORKSPACE_IS_GITREPO: boolean,
+  SET_CURRENT_WORKSPACE_HAS_GIT_SUBMODULES: boolean,
   SET_GIT_CONFIG: {
     username: string;
     token: string;
