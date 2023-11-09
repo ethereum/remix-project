@@ -6,7 +6,7 @@ const profile = {
   name: 'copilot-suggestion',
   displayName: 'copilot-suggestion',
   description: 'copilot-suggestion',
-  methods: ['suggest']
+  methods: ['suggest', 'init', 'uninstall']
 }
 
 export class CopilotSuggestion extends Plugin {
@@ -26,11 +26,16 @@ export class CopilotSuggestion extends Plugin {
   }
 
   async suggest(content: string) {
+    if (!await this.call('settings', 'get', 'settings/copilot/suggest/activate')) return { output: [{ generated_text: ''}]}
+
+    const max_new_tokens = await this.call('settings', 'get', 'settings/copilot/suggest/max_new_tokens')
+    const temperature = await this.call('settings', 'get', 'settings/copilot/suggest/temperature')
+    console.log('suggest', max_new_tokens, temperature)
     const options: SuggestOptions = {
       do_sample: false,
       top_k: 0,
-      temperature: await this.call('settings', 'get', 'settings/copilot/suggest/temperature'),
-      max_new_tokens: await this.call('settings', 'get', 'settings/copilot/suggest/max_new_tokens')
+      temperature,
+      max_new_tokens
     }
     return this.service.suggest(content, options)
   }
@@ -40,5 +45,5 @@ export class CopilotSuggestion extends Plugin {
   }
 
   async uninstall() {
-   }
+  }
 }
