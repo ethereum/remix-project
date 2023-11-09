@@ -6,7 +6,7 @@ import * as packageJson from '../../../../../package.json'
 import {version as remixdVersion} from '../../../../../libs/remixd/package.json'
 import {PluginManager} from '@remixproject/engine'
 import {AppModal, AlertModal, appPlatformTypes} from '@remix-ui/app'
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 
 const LOCALHOST = ' - connect to localhost - '
 

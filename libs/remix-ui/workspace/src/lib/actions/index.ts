@@ -9,7 +9,7 @@ import { QueryParams } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
 import { Actions, FileTree } from '../types'
-import Registry from 'apps/remix-ide/src/app/state/registry'
+import {Registry} from '@remix-project/remix-lib'
 
 export * from './events'
 export * from './workspace'

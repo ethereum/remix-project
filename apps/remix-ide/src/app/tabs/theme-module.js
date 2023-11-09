@@ -2,7 +2,7 @@ import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as packageJson from '../../../../../package.json'
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 const isElectron = require('is-electron')
 const _paq = window._paq = window._paq || []
 
