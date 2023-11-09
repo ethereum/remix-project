@@ -295,7 +295,7 @@ module.exports = {
     }, null, '/')
   },
   'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"default_workspace",isGitRepo:false,hasGitSubmodules:false}, {name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false,has}, {name:"testspace",isGitRepo:false,hasGitSubmodules:false}], null, null)
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"default_workspace",isGitRepo:false,hasGitSubmodules:false}, {name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false}, {name:"testspace",isGitRepo:false,hasGitSubmodules:false}], null, null)
   },
   'Should have set workspace event #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, { event: 'setWorkspace', args: [{ name: 'newspace', isLocalhost: false }] }, 'newspace')
