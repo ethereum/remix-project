@@ -135,11 +135,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
 
   const onchangeCopilotMaxNewToken = (event) => {
-    copilotMaxNewToken(props.config, event.target.value, dispatch)
+    copilotMaxNewToken(props.config, parseInt(event.target.value), dispatch)
   }
 
   const onchangeCopilotTemperature = (event) => {
-    copilotTemperature(props.config, event.target.value, dispatch)
+    copilotTemperature(props.config, parseInt(event.target.value) / 100, dispatch)
   }
 
   const onchangePersonal = (event) => {
@@ -399,12 +399,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const isCopilotActivated = props.config.get('settings/copilot/suggest/activate') || false
   const copilotMaxnewToken = props.config.get('settings/copilot/suggest/max_new_tokens') || 5
-  const copilotTemperatureValue = props.config.get('settings/copilot/suggest/temperature') || 0.5
+  const copilotTemperatureValue = (props.config.get('settings/copilot/suggest/temperature') || 0.5) * 100
+  if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
   const copilotSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">
-          <FormattedMessage id="settings.copilot.activate" />
+          <FormattedMessage id="settings.copilot" />
         </h6>
 
         <div className="pt-2 mb-0">
@@ -423,11 +424,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         <div className="pt-2 mb-0">
           <div className="text-secondary mb-0 h6">
             <div>
-              <div className="custom-control custom-checkbox mb-1">
-                <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="custom-control-input" />
-                <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/copilot/suggest/max_new_tokens')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.copilot.activate" />
+              <div className="mb-1">
+                <label className={`align-middle ${getTextClass('settings/copilot/suggest/max_new_tokens')}`} htmlFor="copilot-activate">
+                  <FormattedMessage id="settings.copilot.max_new_tokens" />
                 </label>
+                <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="custom-range" />                
               </div>
             </div>
           </div>
@@ -436,11 +437,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         <div className="pt-2 mb-0">
           <div className="text-secondary mb-0 h6">
             <div>
-              <div className="custom-control custom-checkbox mb-1">
-                <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='1' type="range" className="custom-control-input" />
-                <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/copilot/suggest/temperature')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.copilot.activate" />
+              <div className="mb-1">
+                <label className={`align-middle ${getTextClass('settings/copilot/suggest/temperature')}`} htmlFor="copilot-activate">
+                  <FormattedMessage id="settings.copilot.temperature" />
                 </label>
+                <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='100' type="range" className="custom-range" />                
               </div>
             </div>
           </div>
@@ -528,6 +529,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div>
       {state.message ? <Toaster message={state.message} /> : null}
       {generalConfig()}
+      {copilotSettings()}
       <GithubSettings
         saveToken={(githubToken: string, githubUserName: string, githubEmail: string) => {
           saveTokenToast(props.config, dispatchToast, githubToken, 'gist-access-token')
@@ -553,8 +555,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {swarmSettings()}
       {ipfsSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
-      <RemixUiLocaleModule localeModule={props._deps.localeModule} />
-      {copilotSettings()}
+      <RemixUiLocaleModule localeModule={props._deps.localeModule} />      
     </div>
   )
 }
