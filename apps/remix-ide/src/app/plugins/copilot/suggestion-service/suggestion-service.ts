@@ -4,14 +4,16 @@ export type SuggestOptions = { max_new_tokens: number, temperature: number, top_
 
 export class SuggestionService {
   worker: Worker
-  responses: Array<any>
+  responses: { [key: number]: Function }
   events: EventEmitter
+  current: number
   constructor() {
     this.worker = new Worker(new URL('./worker.js', import.meta.url), {
       type: 'module'
     });
     this.events = new EventEmitter()
-    this.responses = []
+    this.responses = {}
+    this.current
   }
 
   async init() {
@@ -50,7 +52,13 @@ export class SuggestionService {
       case 'complete':
         console.log(e.data)
         if (this.responses[e.data.id]) {
-          this.responses[e.data.id](null, e.data)
+          if (this.current === e.data.id) {
+            this.responses[e.data.id](null, e.data)
+          } else {
+            this.responses[e.data.id]('aborted')
+          }          
+          delete this.responses[e.data.id]
+          this.current = null
         } else {
           console.log('no callback for', e.data)
         }
@@ -71,8 +79,11 @@ export class SuggestionService {
 
   suggest (content: string, options: SuggestOptions)  {
     return new Promise((resolve, reject) => {
+      if (this.current) return reject(new Error('already running'))
+      const timespan = Date.now()
+      this.current = timespan
       this.worker.postMessage({
-        id: this.responses.length,
+        id: timespan,
         cmd: 'suggest',
         text: content,
         max_new_tokens: options.max_new_tokens,
@@ -80,10 +91,10 @@ export class SuggestionService {
         top_k: options.top_k,
         do_sample: options.do_sample
       })
-      this.responses.push((error, result) => {
+      this.responses[timespan] = (error, result) => {
         if (error) return reject(error)
         resolve(result)
-      })
+      }
     })    
   }
 }
