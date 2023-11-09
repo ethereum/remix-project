@@ -24,28 +24,37 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: position.column,
     });
 
+    if (!word.endsWith(' ') && !word.endsWith('\n') && !word.endsWith(';')) {
+      console.log('not a trigger char')
+			return;
+    }
+
     // abort if there is a signal
     if (token.isCancellationRequested) {
       console.log('aborted')
-      return { items: [] };
-    }    
+      return
+    }
 
-    const result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
+    let result
+    try {
+      result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
+    } catch (err) { 
+      return
+    }
+    
     const generatedText = (result as any).output[0].generated_text as string
-    console.log(word, result)
+    // console.log(word, result)
     
     const clean = generatedText.replace(word, '')
-    console.log(clean)
+    console.log('suggest result', clean)
     const item: monacoTypes.languages.InlineCompletion = {
-      insertText: {
-        snippet: clean
-      }
+      insertText: clean
     };
     
     // abort if there is a signal
     if (token.isCancellationRequested) {
       console.log('aborted')
-      return { items: [] };
+      return
     }
     return {
       items: [item],
