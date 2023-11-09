@@ -45,7 +45,8 @@ import {
   createSolidityGithubAction,
   createTsSolGithubAction,
   createSlitherGithubAction,
-  createHelperScripts
+  createHelperScripts,
+  updateGitSubmodules
 } from '../actions'
 import {Modal, WorkspaceProps, WorkspaceTemplate} from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -224,6 +225,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createHelperScripts(script)
   }
 
+  const dispatchUpdateGitSubmodules = async () => {
+    await updateGitSubmodules()
+  }
+
   useEffect(() => {
     dispatchInitWorkspace()
   }, [])
@@ -341,7 +346,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCreateSolidityGithubAction,
     dispatchCreateTsSolGithubAction,
     dispatchCreateSlitherGithubAction,
-    dispatchCreateHelperScripts
+    dispatchCreateHelperScripts,
+    dispatchUpdateGitSubmodules
   }
   return (
     <FileSystemContext.Provider value={value}>
