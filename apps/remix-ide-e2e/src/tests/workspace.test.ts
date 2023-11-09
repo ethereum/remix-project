@@ -382,6 +382,35 @@ module.exports = {
       })
     // No test file is added in upgradeable contract template
   },
+  'Should create circom zkp hashchecker workspace #group1': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=hashchecker]')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .pause(100)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/calculate_hash.circom"]')
+      .click('*[data-id="treeViewLitreeViewItemcircuits/calculate_hash.circom"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`template CalculateHash() {`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/run_setup.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/run_verification.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
+      .click('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`contract Groth16Verifier {`) !== -1,
+          'Incorrect content')
+      })
+  },
 
   // WORKSPACE TEMPLATES E2E END
 
