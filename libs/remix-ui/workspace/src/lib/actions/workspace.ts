@@ -780,7 +780,10 @@ export const createHelperScripts = async (script: string) => {
 
 export const updateGitSubmodules = async () => {
   dispatch(cloneRepositoryRequest())
-  await plugin.call('dGitProvider', 'updateSubmodules')
+  const config = plugin.registry.get('config').api
+  const token = config.get('settings/gist-access-token')
+  const repoConfig = { token }
+  await plugin.call('dGitProvider', 'updateSubmodules', repoConfig)
   dispatch(cloneRepositorySuccess())
 }
 
