@@ -11,9 +11,11 @@ const profile = {
 
 export class CopilotSuggestion extends Plugin {
   service: SuggestionService
+  context: string
   constructor() {
     super(profile)
     this.service = new SuggestionService()
+    this.context = ''
     this.service.events.on('progress', (data) => {
       this.call('terminal', 'log', {type: 'info', value: `loading Solidity copilot: ${(data.loaded / data.total) * 100}% done.` })
     })
@@ -22,7 +24,7 @@ export class CopilotSuggestion extends Plugin {
     })
     this.service.events.on('ready', (data) => {
       this.call('terminal', 'log', { type: 'info', value: `Solidity copilot ready to use.`})
-    })
+    })    
   }
 
   async suggest(content: string) {
@@ -37,13 +39,25 @@ export class CopilotSuggestion extends Plugin {
       temperature,
       max_new_tokens
     }
-    return this.service.suggest(content, options)
+    return this.service.suggest(this.context ? this.context + '\n\n' + content : content, options)
+  }
+
+  async loadModeContent() {
+    let importsContent = ''
+    const imports = await this.call('codeParser', 'getImports')
+    for (const imp of imports.modules) {
+      try {
+        importsContent += '\n\n' + (await this.call('contentImport', 'resolve', imp)).content
+      } catch (e) {
+        console.log(e)
+      }      
+    }
+    return importsContent
   }
 
   async init() {
     return this.service.init()
   }
 
-  async uninstall() {
-  }
+  async uninstall() {}
 }
