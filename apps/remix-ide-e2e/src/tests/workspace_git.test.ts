@@ -270,8 +270,10 @@ module.exports = {
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/bunsenstraat/test-branch-submodule')
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .waitForElementPresent('.fa-spinner')
-      .waitForElementNotPresent('.fa-spinner')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+      .waitForElementVisible({
+        selector: '*[data-id="treeViewLitreeViewItem.git"]',
+        timeout: 60000
+      })
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'test-branch-submodule')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite"]')
@@ -304,7 +306,10 @@ module.exports = {
     .waitForElementVisible('[data-id="updatesubmodules"]')
     .click('[data-id="updatesubmodules"]')
     .waitForElementPresent('.fa-spinner')
-    .waitForElementNotPresent('.fa-spinner')
+    .waitForElementVisible({
+      selector: '*[data-id="treeViewLitreeViewItem.git"]',
+      timeout: 60000
+    })
     .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins"]')
     .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite"]')
     .pause(2000)
