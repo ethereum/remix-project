@@ -78,6 +78,11 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
   plugin.on('settings', 'configChanged', async () => {
     await getGitConfig()
   })
+  plugin.on('fileManager', 'fileAdded', async (filePath: string) => {
+    if(filePath.includes('.gitmodules')) {
+      await checkGit()
+    }
+  })
   getGitConfig()
 }
 
