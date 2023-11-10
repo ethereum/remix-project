@@ -215,7 +215,6 @@ export class Compiler {
           try {
             if (source && source.sources) {
               const { optimize, runs, evmVersion, language, remappings, useFileConfiguration, configFileContent } = this.state
-              console.log('remappings---->', remappings)
               if (useFileConfiguration) {
                 input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
               } else {
@@ -338,7 +337,10 @@ export class Compiler {
 
         try {
           if (useFileConfiguration) {
-            input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+            let compilerInput = JSON.parse(configFileContent)
+            if (compilerInput.settings.remappings?.length) compilerInput.settings.remappings.push(...remappings)
+            else compilerInput.settings.remappings = remappings
+            input = compilerInputForConfigFile(source.sources, compilerInput)
           } else {
             input = compilerInput(source.sources, { optimize, runs, evmVersion, language, remappings })
           }

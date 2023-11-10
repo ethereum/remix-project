@@ -110,7 +110,7 @@ export class CompileTabLogic {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
-        if(!this.useFileConfiguration && await this.api.fileExists('remappings.txt')) {
+        if(await this.api.fileExists('remappings.txt')) {
           this.api.readFile('remappings.txt').then( remappings => {
             this.compiler.set('remappings', remappings.split('\n'))
           })
