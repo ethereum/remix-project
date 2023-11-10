@@ -337,7 +337,7 @@ export class Compiler {
 
         try {
           if (useFileConfiguration) {
-            let compilerInput = JSON.parse(configFileContent)
+            const compilerInput = JSON.parse(configFileContent)
             if (compilerInput.settings.remappings?.length) compilerInput.settings.remappings.push(...remappings)
             else compilerInput.settings.remappings = remappings
             input = compilerInputForConfigFile(source.sources, compilerInput)
