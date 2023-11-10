@@ -282,7 +282,7 @@ module.exports = {
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins/README.md"]')
       .waitForElementVisible('[data-id="updatesubmodules"]')
   },
-  'When swicthing branches the submodules should dissappear': function (browser: NightwatchBrowser) {
+  'When switching branches the submodules should dissappear #group4': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
     .click('[data-id="workspaceGitBranchesDropdown"]')
@@ -293,7 +293,7 @@ module.exports = {
     .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemplugins"]')
     .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemwebsite"]')
   },
-  'When switching to main update the modules': function (browser: NightwatchBrowser) {
+  'When switching to main update the modules #group4': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
     .click('[data-id="workspaceGitBranchesDropdown"]')
