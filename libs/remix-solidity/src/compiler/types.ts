@@ -147,7 +147,8 @@ export interface CompilerInputOptions {
         [fileName: string]: Record<string, string>
     },
     evmVersion?: EVMVersion,
-    language?: Language
+    language?: Language,
+    remappings?: string[]
 }
 
 export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'berlin' | 'london' | 'paris' | null
@@ -168,6 +169,7 @@ export interface CompilerState {
     runs: number
     evmVersion: EVMVersion| null,
     language: Language,
+    remappings: string[]
     compilationStartTime: number| null,
     target: string | null,
     useFileConfiguration: boolean,
