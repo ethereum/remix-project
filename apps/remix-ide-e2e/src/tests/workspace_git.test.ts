@@ -275,14 +275,26 @@ module.exports = {
         timeout: 60000
       })
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'test-branch-submodule')
+      .waitForElementVisible('[data-id="updatesubmodules"]')
+      .click('[data-id="updatesubmodules"]')
+      .waitForElementPresent('.fa-spinner')
+      .waitForElementVisible({
+        selector: '*[data-id="treeViewLitreeViewItem.git"]',
+        timeout: 60000
+      })
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive"]')
       .pause(2000)
       .click('[data-id="treeViewDivtreeViewItemwebsite"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite/index.html"]')
       .click('[data-id="treeViewDivtreeViewItemplugins"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins/README.md"]')
-      .waitForElementVisible('[data-id="updatesubmodules"]')
+      .click('[data-id="treeViewDivtreeViewItemrecursive"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive/README.md"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive/plugins"]')
+      .click('[data-id="treeViewDivtreeViewItemrecursive/plugins"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive/plugins/build"]')
   },
   'When switching branches the submodules should dissappear #group4': function (browser: NightwatchBrowser) {
     browser
@@ -319,7 +331,12 @@ module.exports = {
     .click('[data-id="treeViewDivtreeViewItemplugins"]')
     .click('[data-id="treeViewDivtreeViewItemplugins"]')
     .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins/README.md"]')
-    .waitForElementVisible('[data-id="updatesubmodules"]')
+    .click('[data-id="treeViewDivtreeViewItemrecursive"]')
+    .click('[data-id="treeViewDivtreeViewItemrecursive"]')
+    .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive/README.md"]')
+    .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive/plugins"]')
+    .click('[data-id="treeViewDivtreeViewItemrecursive/plugins"]')
+    .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive/plugins/build"]')
   },
 
   tearDown: sauce,
