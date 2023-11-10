@@ -24,7 +24,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: position.column,
     });
 
-    if (!word.endsWith(' ') && !word.endsWith('\n') && !word.endsWith(';')) {
+    if (!word.endsWith(' ') && !word.endsWith('\n') && !word.endsWith(';') && !word.endsWith('.')) {
       console.log('not a trigger char')
 			return;
     }
