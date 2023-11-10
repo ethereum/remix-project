@@ -4,6 +4,7 @@ export type SuggestOptions = { max_new_tokens: number, temperature: number, top_
 
 export class SuggestionService {
   worker: Worker
+  // eslint-disable-next-line @typescript-eslint/ban-types
   responses: { [key: number]: Function }
   events: EventEmitter
   current: number
