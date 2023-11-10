@@ -14,8 +14,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
     if (context.selectedSuggestionInfo) {
     	console.log('return empty from provideInlineCompletions')
-			return;
-		}
+      return;
+    }
     // get text before the position of the completion
     const word = model.getValueInRange({
       startLineNumber: 1,
@@ -26,7 +26,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     if (!word.endsWith(' ') && !word.endsWith('\n') && !word.endsWith(';') && !word.endsWith('.')) {
       console.log('not a trigger char')
-			return;
+      return;
     }
 
     // abort if there is a signal
@@ -43,7 +43,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     }
     
     const generatedText = (result as any).output[0].generated_text as string
-		// the generated text remove a space from the context. that why we need to remove all the spaces
+    // the generated text remove a space from the context. that why we need to remove all the spaces
     const clean = generatedText.replace(/ /g, '').replace(word.replace(/ /g, ''), '')
     console.log('suggest result', clean)
     const item: monacoTypes.languages.InlineCompletion = {
