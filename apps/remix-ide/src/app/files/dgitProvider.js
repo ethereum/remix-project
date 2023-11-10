@@ -118,18 +118,15 @@ class DGitProvider extends Plugin {
       })
     })
 
-    console.log('to remove', toRemove)
     for (const module of toRemove) {
       const path = (await this.getGitConfig(module.path)).dir
       if (await window.remixFileSystem.exists(path)) {
         const stat = await window.remixFileSystem.stat(path)
         try {
           if (stat.isDirectory()) {
-            console.log('removing', path)
             await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
           }
         } catch (e) {
-          console.log(e)
           // do nothing
         }
       }
