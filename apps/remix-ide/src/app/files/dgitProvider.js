@@ -118,15 +118,18 @@ class DGitProvider extends Plugin {
       })
     })
 
+    console.log('to remove', toRemove)
     for (const module of toRemove) {
       const path = (await this.getGitConfig(module.path)).dir
       if (await window.remixFileSystem.exists(path)) {
         const stat = await window.remixFileSystem.stat(path)
         try {
           if (stat.isDirectory()) {
+            console.log('removing', path)
             await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
           }
         } catch (e) {
+          console.log(e)
           // do nothing
         }
       }
@@ -282,9 +285,8 @@ class DGitProvider extends Plugin {
       ...await this.parseInput(input),
       ...await this.getGitConfig()
     }
-
+    this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
     const result = await git.clone(cmd)
-    await this.updateSubmodules(input)
     if (!workspaceExists) {
       setTimeout(async () => {
         await this.call('fileManager', 'refresh')
@@ -294,9 +296,9 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  async parseGitmodules () {
+  async parseGitmodules (dir = '') {
     try {
-      const gitmodules = await this.call('fileManager', 'readFile', '.gitmodules')
+      const gitmodules = await this.call('fileManager', 'readFile', path.join(dir, '.gitmodules'))
       if (gitmodules) {
         const lines = gitmodules.split('\n')
         let currentModule = {}
@@ -327,16 +329,19 @@ class DGitProvider extends Plugin {
 
   async updateSubmodules(input) {
     try {
-      const gitmodules = await this.parseGitmodules()
+      const currentDir = (input && input.dir) || ''
+      const gitmodules = await this.parseGitmodules(currentDir)
+      this.call('terminal', 'logHtml', `Found ${(gitmodules && gitmodules.length) || 0} submodules in ${currentDir || '/'}`)
       //parse gitmodules
       if (gitmodules) {
         for (let module of gitmodules) {
-          const path = (await this.getGitConfig(module.path)).dir
-          if (await window.remixFileSystem.exists(path)) {
-            const stat = await window.remixFileSystem.stat(path)
+          const dir = path.join(currentDir, module.path)
+          const targetPath = (await this.getGitConfig(dir)).dir
+          if (await window.remixFileSystem.exists(targetPath)) {
+            const stat = await window.remixFileSystem.stat(targetPath)
             try {
               if (stat.isDirectory()) {
-                await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
+                await window.remixFileSystem.unlink(targetPath)
               }
             } catch (e) {
               // do nothing
@@ -344,18 +349,29 @@ class DGitProvider extends Plugin {
           }
         }
         for (let module of gitmodules) {
+          const dir = path.join(currentDir, module.path)
+          // if url contains git@github.com: convert it
+          if(module.url && module.url.startsWith('git@github.com:')) {
+            module.url = module.url.replace('git@github.com:', 'https://github.com/')
+          }
           try {
             const cmd = {
               url: module.url,
               singleBranch: true,
               depth: 1,
               ...await this.parseInput(input),
-              ...await this.getGitConfig(module.path)
+              ...await this.getGitConfig(dir)
             }
+            this.call('terminal', 'logHtml', `Cloning submodule ${dir}...`)
             await git.clone(cmd)
+            this.call('terminal', 'logHtml', `Cloned successfully submodule ${dir}...`)
+            await this.updateSubmodules({
+              ...input,
+              dir
+            })
           } catch (e) {
+            this.call('terminal', 'log', { type: 'error', value: `[Cloning]: Error occured! ${e}` })
             console.log(e)
-
           }
         }
         setTimeout(async () => {
@@ -363,7 +379,7 @@ class DGitProvider extends Plugin {
         }, 1000)
       }
     } catch (e) {
-      console.log(e)
+      this.call('terminal', 'log', { type: 'error', value: `[Cloning]: Error occured! ${e}` })
       // do nothing
     }
   }
