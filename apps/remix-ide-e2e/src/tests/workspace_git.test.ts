@@ -293,7 +293,7 @@ module.exports = {
     .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemplugins"]')
     .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemwebsite"]')
   },
-  'When swicthing to main update the modules': function (browser: NightwatchBrowser) {
+  'When switching to main update the modules': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
     .click('[data-id="workspaceGitBranchesDropdown"]')
