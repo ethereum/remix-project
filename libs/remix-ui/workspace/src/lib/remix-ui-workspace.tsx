@@ -1136,7 +1136,7 @@ export function Workspace() {
             {selectedWorkspace.hasGitSubmodules? 
               <div className="pt-1 mr-1">
                 {global.fs.browser.isRequestingCloning ? <div style={{ height: 30 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div>  :
-                  <div style={{ height: 30 }} onClick={updateSubModules} className='btn btn-sm border text-muted small'>update submodules</div>}
+                  <div style={{ height: 30 }} onClick={updateSubModules} data-id='updatesubmodules' className='btn btn-sm border text-muted small'>update submodules</div>}
               </div>  
               : null}
             <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
