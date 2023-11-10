@@ -255,5 +255,76 @@ module.exports = {
 
   // GIT BRANCHES E2E END
 
-  tearDown: sauce
+  // GIT SUBMODULES E2E START
+
+  'Should clone a repository with submodules #group4': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('[data-id="workspaceMenuDropdown"]')
+      .click('[data-id="workspaceMenuDropdown"]')
+      .waitForElementVisible('[data-id="workspaceclone"]')
+      .click('[data-id="workspaceclone"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalBody-react"]')
+      .click('[data-id="fileSystemModalDialogModalBody-react"]')
+      .waitForElementVisible('[data-id="modalDialogCustomPromptTextClone"]')
+      .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/bunsenstraat/test-branch-submodule')
+      .click('[data-id="fileSystem-modal-footer-ok-react"]')
+      .waitForElementPresent('.fa-spinner')
+      .waitForElementNotPresent('.fa-spinner')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+      .waitForElementContainsText('[data-id="workspacesSelect"]', 'test-branch-submodule')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite"]')
+      .pause(2000)
+      .click('[data-id="treeViewDivtreeViewItemwebsite"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite/index.html"]')
+      .click('[data-id="treeViewDivtreeViewItemplugins"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins/README.md"]')
+      .waitForElementVisible('[data-id="updatesubmodules"]')
+  },
+  'When swicthing branches the submodules should dissappear': function (browser: NightwatchBrowser) {
+    browser
+    .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
+    .click('[data-id="workspaceGitBranchesDropdown"]')
+    .waitForElementVisible('[data-id="custom-dropdown-menu"]')
+    .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/second')
+    .waitForElementPresent('[data-id="workspaceGit-origin/second"]')
+    .click('[data-id="workspaceGit-origin/second"]')
+    .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemplugins"]')
+    .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemwebsite"]')
+  },
+  'When swicthing to main update the modules': function (browser: NightwatchBrowser) {
+    browser
+    .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
+    .click('[data-id="workspaceGitBranchesDropdown"]')
+    .waitForElementVisible('[data-id="custom-dropdown-menu"]')
+    .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/main')
+    .waitForElementPresent('[data-id="workspaceGit-origin/main"]')
+    .click('[data-id="workspaceGit-origin/main"]')
+    .waitForElementVisible('[data-id="updatesubmodules"]')
+    .click('[data-id="updatesubmodules"]')
+    .waitForElementPresent('.fa-spinner')
+    .waitForElementNotPresent('.fa-spinner')
+    .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins"]')
+    .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite"]')
+    .pause(2000)
+    .click('[data-id="treeViewDivtreeViewItemwebsite"]')
+    .click('[data-id="treeViewDivtreeViewItemwebsite"]')
+    .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite/index.html"]')
+    .click('[data-id="treeViewDivtreeViewItemplugins"]')
+    .click('[data-id="treeViewDivtreeViewItemplugins"]')
+    .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins/README.md"]')
+    .waitForElementVisible('[data-id="updatesubmodules"]')
+  },
+
+  tearDown: sauce,
 }
+
+
+const gitmodules = `[submodule "subdemo3"]
+path = subdemo3
+url = https://github.com/bunsenstraat/empty3
+[submodule "testactionsub"]
+path = testactionsub
+url = https://github.com/bunsenstraat/testactions
+`
