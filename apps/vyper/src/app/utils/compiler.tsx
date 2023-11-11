@@ -1,5 +1,6 @@
 import {CompilationResult, ABIDescription} from '@remixproject/plugin-api'
 import axios from 'axios'
+import { VyperCompilationResultType } from './types'
 
 export interface Contract {
   name: string
@@ -50,7 +51,7 @@ export function normalizeContractPath(contractPath: string): string[] {
  * @param contract The name and content of the contract
  */
 export async function compile(url: string, contract: Contract): Promise<VyperCompilationOutput> {
-
+  console.log('responding to call to comile')
   if (!contract.name) {
     throw new Error('Set your Vyper contract file.')
   }
@@ -87,11 +88,13 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
       method: 'Get'
     })).data
     console.log({ result })
-    return result.data
-  } else if (status === 'FAILED') {
+    return result
+  } else if (status === 'PENDING' || status === 'FAILED') {
+    console.log('pending or failed state encountered')
     result = await(await axios.get(url + '/exceptions/' + compileCode , {
       method: 'Get'
     })).data
+    console.log({ result }, 'this is an exception')
     return result.data
   }
   console.log({ result })
@@ -104,9 +107,9 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
  * @param name Name of the contract file
  * @param compilationResult Result returned by the compiler
  */
-export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResult): CompilationResult {
+export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResultType): CompilationResult {
   const contractName = fileName.split('/').slice(-1)[0].split('.')[0]
-  const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
+  //const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
   return {
     sources: {
       [fileName]: {
@@ -133,7 +136,7 @@ export function toStandardOutput(fileName: string, compilationResult: VyperCompi
               object: compilationResult['bytecode_runtime'].replace('0x', ''),
               opcodes: ''
             },
-            methodIdentifiers: methodIdentifiers
+            // methodIdentifiers: methodIdentifiers
           }
         }
       } as any
