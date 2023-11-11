@@ -36,9 +36,7 @@ function CompilerButton({contract, setOutput, compilerUrl, setCompilerResponse}:
       })
       let output
       try {
-        console.log('calling comile endpoint now')
         output = await compile(compilerUrl, _contract)
-        console.log('output from compile endpoint', {output})
       } catch (e: any) {
         setOutput(_contract.name, {status: 'failed', message: e.message})
         return
