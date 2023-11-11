@@ -108,7 +108,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     setState((prevState) => {
-        return {...prevState, onlyDownloaded: !online}
+      return {...prevState, onlyDownloaded: !online}
     })
   },[online])
 
