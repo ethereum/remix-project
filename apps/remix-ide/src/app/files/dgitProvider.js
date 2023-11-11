@@ -380,15 +380,6 @@ class DGitProvider extends Plugin {
             })
             if(result && result.length) {
               this.call('terminal', 'logHtml', `Checking out submodule ${dir} to ${result[0]} in directory ${dir}`)
-              await git.fetch({
-                ...await this.getGitConfig(dir),
-                ...await this.parseInput(input),
-              })
-              const status = await git.log({
-                ...await this.getGitConfig(dir),
-                ...cmd
-              })
-
               await git.checkout({
                 ...await this.getGitConfig(dir),
                 ref: result[0]
