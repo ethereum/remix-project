@@ -4,13 +4,12 @@ import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Button from 'react-bootstrap/Button'
 import JSONTree from 'react-json-view'
-import { JsonView } from 'react-json-view-lite'
+import ReactJson from 'react-json-view'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import { VyperCompilationResult } from '../utils/types'
 
 interface VyperResultProps {
   output?: VyperCompilationOutput
-  compilerResponse?: any
 }
 
 export type ExampleContract = {
@@ -18,7 +17,7 @@ export type ExampleContract = {
   address: string
 }
 
-function VyperResult(props, {output, compilerResponse}: VyperResultProps) {
+function VyperResult({ output }: VyperResultProps) {
   const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
 
   if (!output)
@@ -56,9 +55,7 @@ function VyperResult(props, {output, compilerResponse}: VyperResultProps) {
           </Button>
         </CopyToClipboard>
         {/* <JSONTree src={output.abi} /> */}
-        <JsonView
-          data={compilerResponse}
-        />
+        <ReactJson src={output.abi} />
       </Tab>
       <Tab eventKey="bytecode" title="Bytecode">
         <CopyToClipboard getContent={() => output.bytecode}>

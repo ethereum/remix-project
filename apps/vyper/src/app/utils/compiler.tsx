@@ -88,16 +88,12 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
     })).data
     return result
   } else if (status === 'PENDING' || status === 'FAILED') {
-    console.log('pending or failed state encountered')
     result = await(await axios.get(url + '/exceptions/' + compileCode , {
       method: 'Get'
     })).data
-    console.log({ result }, 'this is an exception')
     return result.data
   }
-  console.log({ result })
   await new Promise((resolve) => setTimeout(() => resolve({}), 2000))
-
 }
 
 /**
@@ -116,7 +112,7 @@ export function toStandardOutput(fileName: string, compilationResult: VyperCompi
     sources: {
       [fileName]: {
         id: 1,
-        ast: compiledAst,//{} as any,
+        ast: compiledAst,
         legacyAST: {} as any
       }
     },
