@@ -51,7 +51,6 @@ export function normalizeContractPath(contractPath: string): string[] {
  * @param contract The name and content of the contract
  */
 export async function compile(url: string, contract: Contract): Promise<VyperCompilationOutput> {
-  console.log('responding to call to comile')
   if (!contract.name) {
     throw new Error('Set your Vyper contract file.')
   }
@@ -87,7 +86,6 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
     result = await(await axios.get(url + '/compiled_artifact/' + compileCode , {
       method: 'Get'
     })).data
-    console.log({ result })
     return result
   } else if (status === 'PENDING' || status === 'FAILED') {
     console.log('pending or failed state encountered')
@@ -109,12 +107,16 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
  */
 export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResultType): CompilationResult {
   const contractName = fileName.split('/').slice(-1)[0].split('.')[0]
+  const compiledAbi = compilationResult['contractTypes'][contractName].abi
+  const deployedBytecode = compilationResult['contractTypes'][contractName].deploymentBytecode.bytecode.replace('0x', '')
+  const bytecode = compilationResult['contractTypes'][contractName].runtimeBytecode.bytecode.replace('0x', '')
+  const compiledAst = compilationResult['contractTypes'][contractName].abi
   //const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
   return {
     sources: {
       [fileName]: {
         id: 1,
-        ast: {} as any,
+        ast: compiledAst,//{} as any,
         legacyAST: {} as any
       }
     },
@@ -124,16 +126,16 @@ export function toStandardOutput(fileName: string, compilationResult: VyperCompi
         [contractName]: {
           // The Ethereum Contract ABI. If empty, it is represented as an empty array.
           // See https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI
-          abi: compilationResult['abi'],
+          abi: compiledAbi,
           evm: {
             bytecode: {
               linkReferences: {},
-              object: compilationResult['bytecode'].replace('0x', ''),
+              object: deployedBytecode,
               opcodes: ''
             },
             deployedBytecode: {
               linkReferences: {},
-              object: compilationResult['bytecode_runtime'].replace('0x', ''),
+              object: bytecode,
               opcodes: ''
             },
             // methodIdentifiers: methodIdentifiers
