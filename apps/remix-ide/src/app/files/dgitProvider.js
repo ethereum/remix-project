@@ -217,22 +217,10 @@ class DGitProvider extends Plugin {
   }
 
   async lsfiles (cmd) {
-    console.log('lsfiles')
     const filesInStaging = await git.listFiles({
       ...await this.getGitConfig(),
       ...cmd
     })
-    console.log(await git.resolveRef({
-      ...await this.getGitConfig(),
-      ref: 'HEAD'
-    }))
-    console.log(await git.readTree({
-      ...await this.getGitConfig(),
-      oid: await git.resolveRef({
-        ...await this.getGitConfig(),
-        ref: 'HEAD'
-      })
-    }))
     return filesInStaging
   }
 
@@ -367,32 +355,46 @@ class DGitProvider extends Plugin {
             const cmd = {
               url: module.url,
               singleBranch: true,
-              depth: 1,
+              depth: 5000, // this is needed because we need the history to find the commit hash
               ...await this.parseInput(input),
               ...await this.getGitConfig(dir)
             }
             this.call('terminal', 'logHtml', `Cloning submodule ${dir}...`)
             await git.clone(cmd)
             this.call('terminal', 'logHtml', `Cloned successfully submodule ${dir}...`)
-            console.log('checkout the commit of the submodule ', currentDir, module.path)
-
-            console.log(await git.readTree({
-              ...await this.getGitConfig(currentDir),
-              oid: await git.resolveRef({
-                ...await this.getGitConfig(currentDir),
-                ref: 'HEAD'
-              })
-            }))
-
-            const treeWalker = new git.TreeWalker(await git.readTree({
-              ...await this.getGitConfig(currentDir),
-              oid: await git.resolveRef({
-                ...await this.getGitConfig(currentDir),
-                ref: 'HEAD'
-              })}))
-
-            console.log(treeWalker)
             
+            const commitHash = await git.resolveRef({
+              ...await this.getGitConfig(currentDir),
+              ref: 'HEAD'
+            })
+
+            const result = await git.walk({
+              ...await this.getGitConfig(currentDir),
+              trees: [git.TREE({ ref: commitHash })],
+              map: async function (filepath, [A]) {
+                //console.log(filepath, await A.oid())
+                if(filepath === module.path) {
+                  return await A.oid()
+                }
+              }
+            })
+            if(result && result.length) {
+              this.call('terminal', 'logHtml', `Checking out submodule ${dir} to ${result[0]} in directory ${dir}`)
+              await git.fetch({
+                ...await this.getGitConfig(dir),
+                ...await this.parseInput(input),
+              })
+              const status = await git.log({
+                ...await this.getGitConfig(dir),
+                ...cmd
+              })
+
+              await git.checkout({
+                ...await this.getGitConfig(dir),
+                ref: result[0]
+              })
+              this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
+            }
 
             await this.updateSubmodules({
               ...input,
