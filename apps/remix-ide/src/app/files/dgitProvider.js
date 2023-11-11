@@ -372,7 +372,6 @@ class DGitProvider extends Plugin {
               ...await this.getGitConfig(currentDir),
               trees: [git.TREE({ ref: commitHash })],
               map: async function (filepath, [A]) {
-                //console.log(filepath, await A.oid())
                 if(filepath === module.path) {
                   return await A.oid()
                 }
