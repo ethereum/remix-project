@@ -19,6 +19,7 @@ const RemixApp = (props: IRemixAppUi) => {
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [maximiseTrigger, setMaximiseTrigger] = useState<number>(0)
   const [resetTrigger, setResetTrigger] = useState<number>(0)
+  const [online, setOnline] = useState<boolean>(true)
   const [locale, setLocale] = useState<{code: string; messages: any}>({
     code: 'en',
     messages: {}
@@ -71,6 +72,10 @@ const RemixApp = (props: IRemixAppUi) => {
     props.app.localeModule.events.on('localeChanged', (nextLocale) => {
       setLocale(nextLocale)
     })
+
+    setInterval(() => {
+      setOnline(window.navigator.onLine)
+    }, 1000)
   }
 
   const value: appProviderContextType = {
@@ -80,6 +85,7 @@ const RemixApp = (props: IRemixAppUi) => {
     modal: props.app.notification,
     layout: props.app.layout,
     platform: props.app.platform,
+    online: online
   }
 
   return (

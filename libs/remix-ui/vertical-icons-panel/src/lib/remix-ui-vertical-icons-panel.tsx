@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useReducer, useRef, useState} from 'react'
+import React, {Fragment, useContext, useEffect, useReducer, useRef, useState} from 'react'
 import {Plugin} from '@remixproject/engine'
 import './remix-ui-vertical-icons-panel.css'
 import IconList from './components/IconList'
@@ -6,6 +6,8 @@ import Home from './components/Home'
 import {verticalScrollReducer} from './reducers/verticalScrollReducer'
 import {Chevron} from './components/Chevron'
 import {IconRecord} from './types'
+import { AppContext } from '@remix-ui/app'
+import { CustomTooltip } from '@remix-ui/helper'
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: Plugin
   icons: IconRecord[]
@@ -22,6 +24,7 @@ const RemixUiVerticalIconsPanel = ({verticalIconsPlugin, icons}: RemixUiVertical
   const iconPanelRef = useRef<any>()
   const [activateScroll, dispatchScrollAction] = useReducer(verticalScrollReducer, initialState)
   const [theme, setTheme] = useState<string>('dark')
+  const {online} = useContext(AppContext)
 
   const evaluateScrollability = () => {
     dispatchScrollAction({
@@ -116,6 +119,20 @@ const RemixUiVerticalIconsPanel = ({verticalIconsPlugin, icons}: RemixUiVertical
             itemContextAction={itemContextAction}
           />
         </div>
+        {online ?
+          <CustomTooltip
+            placement="top"
+            tooltipText={'You are online'}
+          >
+            <i className="fa-solid fa-wifi text-success p-2"></i>
+          </CustomTooltip>
+          :
+          <CustomTooltip
+            placement="top"
+            tooltipText={'You are offline'}
+          >
+            <i className="fa-solid fa-wifi-exclamation text-danger p-2"></i>
+          </CustomTooltip>}
       </div>
     </div>
   )
