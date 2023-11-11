@@ -217,10 +217,22 @@ class DGitProvider extends Plugin {
   }
 
   async lsfiles (cmd) {
+    console.log('lsfiles')
     const filesInStaging = await git.listFiles({
       ...await this.getGitConfig(),
       ...cmd
     })
+    console.log(await git.resolveRef({
+      ...await this.getGitConfig(),
+      ref: 'HEAD'
+    }))
+    console.log(await git.readTree({
+      ...await this.getGitConfig(),
+      oid: await git.resolveRef({
+        ...await this.getGitConfig(),
+        ref: 'HEAD'
+      })
+    }))
     return filesInStaging
   }
 
@@ -362,6 +374,26 @@ class DGitProvider extends Plugin {
             this.call('terminal', 'logHtml', `Cloning submodule ${dir}...`)
             await git.clone(cmd)
             this.call('terminal', 'logHtml', `Cloned successfully submodule ${dir}...`)
+            console.log('checkout the commit of the submodule ', currentDir, module.path)
+
+            console.log(await git.readTree({
+              ...await this.getGitConfig(currentDir),
+              oid: await git.resolveRef({
+                ...await this.getGitConfig(currentDir),
+                ref: 'HEAD'
+              })
+            }))
+
+            const treeWalker = new git.TreeWalker(await git.readTree({
+              ...await this.getGitConfig(currentDir),
+              oid: await git.resolveRef({
+                ...await this.getGitConfig(currentDir),
+                ref: 'HEAD'
+              })}))
+
+            console.log(treeWalker)
+            
+
             await this.updateSubmodules({
               ...input,
               dir
@@ -370,6 +402,9 @@ class DGitProvider extends Plugin {
             this.call('terminal', 'log', { type: 'error', value: `[Cloning]: Error occured! ${e}` })
             console.log(e)
           }
+        }
+        for (let module of gitmodules) {
+
         }
         setTimeout(async () => {
           await this.call('fileManager', 'refresh')
