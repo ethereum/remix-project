@@ -19,7 +19,6 @@ export class compilerLoaderPlugin extends ElectronPlugin {
 
     this.on('solidity', 'loadingCompiler', async (url) => {
       console.log('loadingCompiler in compilerloader', url, this)
-      this.call('terminal', 'logHtml', 'Downloading compiler from ' +  url)
       await this.call('compilerloader', 'downloadCompiler', url)
       const compilerList = await this.call('compilerloader', 'listCompilers')
       console.log('compilerList', compilerList)

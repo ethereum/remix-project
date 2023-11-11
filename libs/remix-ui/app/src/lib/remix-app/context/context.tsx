@@ -9,6 +9,7 @@ export type appProviderContextType = {
   modal: any
   layout: any
   platform: appPlatformTypes
+  online: boolean
 }
 
 export enum appPlatformTypes  {

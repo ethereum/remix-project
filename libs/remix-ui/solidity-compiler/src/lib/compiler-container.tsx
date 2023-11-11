@@ -3,7 +3,7 @@ import {FormattedMessage, useIntl} from 'react-intl'
 import semver from 'semver'
 import {CompilerContainerProps} from './types'
 import {ConfigurationSettings} from '@remix-project/remix-lib'
-import {checkSpecialChars, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey} from '@remix-ui/helper'
+import {checkSpecialChars, CustomTooltip, extractNameFromKey} from '@remix-ui/helper'
 import {canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL} from '@remix-project/remix-solidity'
 import {compilerReducer, compilerInitialState} from './reducers/compiler'
 import {resetEditorMode, listenToEvents} from './actions/compiler'
@@ -15,6 +15,8 @@ import { AppContext, appPlatformTypes } from '@remix-ui/app'
 
 import './css/style.css'
 import { Dropdown } from 'react-bootstrap'
+import { hidden } from 'colors'
+import { CompilerDropdown } from './components/compiler-dropdown'
 const defaultPath = 'compiler_config.json'
 
 declare global {
@@ -26,7 +28,7 @@ declare global {
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const {platform} = useContext(AppContext)
+  const {platform, online} = useContext(AppContext)
   const {
     api,
     compileTabLogic,
@@ -103,6 +105,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setToggleExpander(true)
     }
   }, [state.useFileConfiguration])
+
+  useEffect(() => {
+    setState((prevState) => {
+        return {...prevState, onlyDownloaded: !online}
+    })
+  },[online])
 
   useEffect(() => {
     const listener = (event) => {
@@ -335,10 +343,18 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         longVersion: 'latest local version - ' + state.defaultVersion
       }
     ]
-    // fetch normal builds
-    const binRes: AxiosResponse = await axios(`${baseURLBin}/list.json`)
-    // fetch wasm builds
-    const wasmRes: AxiosResponse = await axios(`${baseURLWasm}/list.json`)
+    let binRes: AxiosResponse
+    let wasmRes: AxiosResponse
+    try {
+      // fetch normal builds
+      binRes = await axios(`${baseURLBin}/list.json`)
+      // fetch wasm builds
+      wasmRes = await axios(`${baseURLWasm}/list.json`)
+    } catch (e) {
+      selectedVersion = 'builtin'
+      console.log('Error while fetching compiler list', e.message)
+      return callback(allVersions, selectedVersion)
+    }
     if (binRes.status !== 200 && wasmRes.status !== 200) {
       selectedVersion = 'builtin'
       return callback(allVersions, selectedVersion)
@@ -813,65 +829,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <CustomTooltip placement="top" tooltipId="showCompilerTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="solidity.seeCompilerLicense" />}>
               <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
-            <Dropdown id="versionSelector" data-id="versionSelector">
-              <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
-                {state.allversions.map((build, i) => {
-
-                  if ((state.selectedVersion || state.defaultVersion) === build.path) {
-                    return (<span key={i}>{build.longVersion}</span>)
-                  }})}
-
-              </Dropdown.Toggle>
-          
-              <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden" data-id="custom-dropdown-items">
-                {state.allversions.map((build, i) => {
-                  return _shouldBeAdded(build.longVersion) ? (
-                    <Dropdown.Item
-                      key={i}
-                      data-id={`dropdown-item-${build.value}`}
-                    >
-                      <div className='d-flex w-100'>
-                        {state.selectedVersion === build.path ? <span className='fas fa-check text-success mr-2'></span> : null}
-                        <span className="">
-                          {build.longVersion}
-                        </span>
-                        {build.isDownloaded?<span className='fas fa-arrow-circle-down text-success'></span>:<span className='far fa-arrow-circle-down'></span>}
-                      </div>
-                    </Dropdown.Item>
-                  ) : null
-                })}
-              </Dropdown.Menu>
-            </Dropdown>
-            <select
-              value={state.selectedVersion || state.defaultVersion}
-              onChange={(e) => handleLoadVersion(e.target.value)}
-              className="custom-select"
-              id="versionSelector"
-              disabled={state.allversions.length <= 0}
-            >
-              {state.allversions.length <= 0 && (
-                <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>
-                  {state.defaultVersion}
-                </option>
-              )}
-              {state.allversions.length <= 0 && (
-                <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>
-                  builtin
-                </option>
-              )}
-              {state.customVersions.map((url, i) => (
-                <option key={i} data-id={state.selectedVersion === url ? 'selected' : ''} value={url}>
-                  custom
-                </option>
-              ))}
-              {state.allversions.map((build, i) => {
-                return _shouldBeAdded(build.longVersion) ? (
-                  <option key={i} value={build.path} data-id={state.selectedVersion === build.path ? 'selected' : ''}>
-                    {build.longVersion}
-                  </option>
-                ) : null
-              })}
-            </select>
+            <CompilerDropdown
+              allversions={state.allversions}
+              customVersions={state.customVersions}
+              selectedVersion={state.selectedVersion}
+              defaultVersion={state.defaultVersion}
+              handleLoadVersion={handleLoadVersion}
+              _shouldBeAdded={_shouldBeAdded}
+              onlyDownloaded={state.onlyDownloaded}
+            ></CompilerDropdown>
           </div>
           <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
@@ -880,8 +846,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </label>
           </div>
           <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
-            <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleOnlyDownloadedChange} checked={state.includeNightlies} />
-            <label htmlFor="nightlies" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">
+            <input className="mr-2 custom-control-input" id="downloadedcompilers" type="checkbox" onChange={handleOnlyDownloadedChange} checked={state.onlyDownloaded} />
+            <label htmlFor="downloadedcompilers" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">
               <FormattedMessage id="solidity.downloadedCompilers" />
             </label>
           </div>

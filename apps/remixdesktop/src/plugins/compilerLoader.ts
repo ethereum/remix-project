@@ -1,21 +1,21 @@
 import {Profile} from '@remixproject/plugin-utils'
-import {
-  ElectronBasePlugin,
-  ElectronBasePluginClient,
-} from '@remixproject/plugin-electron'
+import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
 import fs from 'fs/promises'
+import axios from 'axios'
 
+import express from 'express'
+import {cacheDir} from '../utils/config'
 
-import express from 'express';
-import { cacheDir } from '../utils/config'
+export const baseURLBin = 'https://binaries.soliditylang.org/bin'
+export const baseURLWasm = 'https://binaries.soliditylang.org/wasm'
 
 const appExpress = express()
 
 console.log('cacheDir', cacheDir)
 appExpress.use(express.static(cacheDir))
 const server = appExpress.listen(0, () => {
-  console.log('Listening on port:', (server.address() as any));
-});
+  console.log('Listening on port:', server.address() as any)
+})
 
 const profile: Profile = {
   displayName: 'compilerLoader',
@@ -53,16 +53,47 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
 
   async downloadCompiler(url: string): Promise<void> {
     console.log('downloadCompiler', url)
-    this.emit('downloadStarted', url)
-    const res = await fetch(url)
-    const buffer = await res.arrayBuffer()
-    const file = Buffer.from(buffer)
-    const fileName = url.split('/').pop()
-    if (fileName) {
-      const filePath = cacheDir + '/compilers/' + fileName
-      await fs.writeFile(filePath, file)
-      console.log('downloaded', filePath)
-      this.emit('downloadFinished', fileName, url)
+
+    const plugin = this
+    try {
+      const fileName = url.split('/').pop()
+      if (fileName) {
+        const filePath = cacheDir + '/compilers/' + fileName
+        try{
+        if (await fs.stat(filePath)) {
+          return
+        }}
+        catch(e){
+          // do nothing
+        }
+      }
+      this.emit('downloadStarted', url)
+      this.call('terminal' as any, 'logHtml', 'Downloading compiler from ' +  url)
+      const res = await axios.get(url, {
+        responseType: 'arraybuffer',
+        onDownloadProgress(progressEvent) {
+          if (progressEvent.total) {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            plugin.call('terminal' as any, 'logHtml', 'percent loaded: ' + percentCompleted)
+          } else {
+            plugin.call('terminal' as any, 'logHtml', 'bytes loaded: ' + progressEvent.loaded)
+          }
+        },
+      })
+      const buffer = await res.data
+      const file = Buffer.from(buffer)
+      
+      if (fileName) {
+        const filePath = cacheDir + '/compilers/' + fileName
+        await fs.writeFile(filePath, file)
+        console.log('downloaded', filePath)
+        this.emit('downloadFinished', fileName, url)
+      }
+    } catch (e: any) {
+        plugin.call('terminal' as any, 'log', {
+          type: 'error',
+          value: `Failed to download ${url}: ${e.message}`,
+        })
     }
   }
 
