@@ -396,9 +396,7 @@ class DGitProvider extends Plugin {
             console.log(e)
           }
         }
-        for (let module of gitmodules) {
 
-        }
         setTimeout(async () => {
           await this.call('fileManager', 'refresh')
         }, 1000)
