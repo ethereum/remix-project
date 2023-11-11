@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
-import {VyperCompilationResult, VyperCompilationOutput, isCompilationError} from '../utils'
+import {VyperCompilationOutput, isCompilationError} from '../utils'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Button from 'react-bootstrap/Button'
 import JSONTree from 'react-json-view'
 import { JsonView } from 'react-json-view-lite'
 import {CopyToClipboard} from '@remix-ui/clipboard'
+import { VyperCompilationResult } from '../utils/types'
 
 interface VyperResultProps {
   output?: VyperCompilationOutput
