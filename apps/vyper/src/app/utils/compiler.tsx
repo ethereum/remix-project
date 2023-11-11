@@ -49,7 +49,8 @@ export function normalizeContractPath(contractPath: string): string[] {
  * @param url The url of the compiler
  * @param contract The name and content of the contract
  */
-export async function compile(url: string, contract: Contract): Promise<any | VyperCompilationOutput> {
+export async function compile(url: string, contract: Contract): Promise<VyperCompilationOutput> {
+
   if (!contract.name) {
     throw new Error('Set your Vyper contract file.')
   }
@@ -62,28 +63,40 @@ export async function compile(url: string, contract: Contract): Promise<any | Vy
   const content = new Blob([contract.content], {
     type: 'text/plain'
   });
+
   const nameResult = normalizeContractPath(contract.name)
   files.append('files', content, `${nameResult[2]}.vy`)
-  const response = await axios.post(url + '/compile?vyper_version=0.2.16', files)
+  const response = await axios.post(url + '/compile?vyper_version=0.3.10', files)
 
-  if (response.data.status === 404) {
+  if (response.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)
   }
-  if (response.data.status === 400) {
+  if (response.status === 400) {
     throw new Error(`Vyper compilation failed: ${response.statusText}`)
   }
 
-  const statusResponse = await axios.get(`${url}/status/${response.data}`)
-  let responsePayload = {}
-  if (statusResponse.data !== 'SUCCESS' && statusResponse.data !== 'FAILED') {
-    const errorResponse = await axios.get(`${url}/exceptions/${response.data}`)
-    responsePayload = errorResponse.data
-    return responsePayload
-  }
+  const compileCode = response.data
+  let result: any
 
-  const resultResponse = await axios.get(`${url}/compiled_artifact/${response.data}`)
-  console.log({ resultResponse })
-  return resultResponse.data
+  const status = await (await axios.get(url + '/status/' + compileCode , {
+    method: 'Get'
+  })).data
+
+  if (status === 'SUCCESS') {
+    result = await(await axios.get(url + '/compiled_artifact/' + compileCode , {
+      method: 'Get'
+    })).data
+    console.log({ result })
+    return result.data
+  } else if (status === 'FAILED') {
+    result = await(await axios.get(url + '/exceptions/' + compileCode , {
+      method: 'Get'
+    })).data
+    return result.data
+  }
+  console.log({ result })
+  await new Promise((resolve) => setTimeout(() => resolve({}), 2000))
+
 }
 
 /**
@@ -91,13 +104,8 @@ export async function compile(url: string, contract: Contract): Promise<any | Vy
  * @param name Name of the contract file
  * @param compilationResult Result returned by the compiler
  */
-export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResult | any): CompilationResult {
+export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResult): CompilationResult {
   const contractName = fileName.split('/').slice(-1)[0].split('.')[0]
-
-  if (compilationResult.contractTypes.ast.name !== undefined) {
-    console.log('compilationResult found')
-    return compilationResult
-  }
   const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
   return {
     sources: {
