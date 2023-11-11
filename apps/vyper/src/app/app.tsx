@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {VyperCompilationOutput, remixClient} from './utils'
+import {VyperCompilationOutput, remixClient, toStandardOutput} from './utils'
 import {CompilationResult} from '@remixproject/plugin-api'
 
 // Components
@@ -13,6 +13,7 @@ import ToggleButton from 'react-bootstrap/ToggleButton'
 import Button from 'react-bootstrap/Button'
 
 import './app.css'
+import { VyperCompilationResultType } from './utils/types'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -27,7 +28,7 @@ interface OutputMap {
 
 const App: React.FC = () => {
   const [contract, setContract] = useState<string>()
-  const [output, setOutput] = useState<OutputMap>({})
+  const [output, setOutput] = useState<any>({})
   const [state, setState] = useState<AppState>({
     status: 'idle',
     environment: 'local',
@@ -51,6 +52,52 @@ const App: React.FC = () => {
     }
     start()
   }, [])
+
+  // useEffect(() => {
+  //   const getStandardOutput = () => {
+  //     const contractName = contract.split('/').slice(-1)[0].split('.')[0]
+  //     const compiledAbi = output['contractTypes'][contractName].abi
+  //     const deployedBytecode = output['contractTypes'][contractName].deploymentBytecode.bytecode.replace('0x', '')
+  //     const bytecode = output['contractTypes'][contractName].runtimeBytecode.bytecode.replace('0x', '')
+  //     const compiledAst = output['contractTypes'][contractName].abi
+  //     //const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
+  //     return {
+  //       sources: {
+  //         [contract]: {
+  //           id: 1,
+  //           ast: compiledAst,
+  //           legacyAST: {} as any
+  //         }
+  //       },
+  //       contracts: {
+  //         [contract]: {
+  //           // If the language used has no contract names, this field should equal to an empty string
+  //           [contractName]: {
+  //             // The Ethereum Contract ABI. If empty, it is represented as an empty array.
+  //             // See https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI
+  //             abi: compiledAbi,
+  //             evm: {
+  //               bytecode: {
+  //                 linkReferences: {},
+  //                 object: deployedBytecode,
+  //                 opcodes: ''
+  //               },
+  //               deployedBytecode: {
+  //                 linkReferences: {},
+  //                 object: bytecode,
+  //                 opcodes: ''
+  //               },
+  //               // methodIdentifiers: methodIdentifiers
+  //             }
+  //           }
+  //         } as any
+  //       }
+  //     }
+  //   }
+  //   const data = getStandardOutput()
+  //   console.log({ data })
+  //   setCompilerResponse(data)
+  // }, [output])
 
   /** Update the environment state value */
   function setEnvironment(environment: 'local' | 'remote') {
@@ -97,11 +144,11 @@ const App: React.FC = () => {
             compilerUrl={compilerUrl()}
             contract={contract}
             setOutput={(name, update) => setOutput({...output, [name]: update})}
-            setCompilerResponse={setCompilerResponse}
           />
         </div>
         <article id="result" className="px-2">
-          <VyperResult output={contract ? output[contract] : undefined} compilerResponse={compilerResponse} />
+          {/* <VyperResult output={contract ? output[contract] : undefined} contractName={contract} /> */}
+          <VyperResult output={contract ? output : undefined} />
         </article>
       </section>
     </main>
