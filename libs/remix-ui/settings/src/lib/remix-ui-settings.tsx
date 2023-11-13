@@ -467,7 +467,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             <div>
               <div className="mb-1">
                 <label className={`align-middle ${getTextClass('settings/copilot/suggest/max_new_tokens')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.copilot.max_new_tokens" />
+                  <FormattedMessage id="settings.copilot.max_new_tokens" /> - <span>{copilotMaxnewToken}</span>
                 </label>
                 <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="custom-range" />                
               </div>
@@ -480,7 +480,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             <div>
               <div className="mb-1">
                 <label className={`align-middle ${getTextClass('settings/copilot/suggest/temperature')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.copilot.temperature" />
+                  <FormattedMessage id="settings.copilot.temperature" /> - <span>{copilotTemperatureValue / 100}</span>
                 </label>
                 <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='100' type="range" className="custom-range" />                
               </div>
