@@ -1,0 +1,733 @@
+{
+	"compiler": {
+		"version": "0.8.4+commit.c7e474f2"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "contract ISemaphoreVerifier",
+						"name": "_verifier",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "Semaphore__CallerIsNotTheGroupAdmin",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "Semaphore__GroupAlreadyExists",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "Semaphore__GroupDoesNotExist",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "Semaphore__MerkleTreeDepthIsNotSupported",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "Semaphore__MerkleTreeRootIsExpired",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "Semaphore__MerkleTreeRootIsNotPartOfTheGroup",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "Semaphore__YouAreUsingTheSameNillifierTwice",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "oldAdmin",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newAdmin",
+						"type": "address"
+					}
+				],
+				"name": "GroupAdminUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "merkleTreeDepth",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "zeroValue",
+						"type": "uint256"
+					}
+				],
+				"name": "GroupCreated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "oldMerkleTreeDuration",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newMerkleTreeDuration",
+						"type": "uint256"
+					}
+				],
+				"name": "GroupMerkleTreeDurationUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "identityCommitment",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "merkleTreeRoot",
+						"type": "uint256"
+					}
+				],
+				"name": "MemberAdded",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "identityCommitment",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "merkleTreeRoot",
+						"type": "uint256"
+					}
+				],
+				"name": "MemberRemoved",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "identityCommitment",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newIdentityCommitment",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "merkleTreeRoot",
+						"type": "uint256"
+					}
+				],
+				"name": "MemberUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "merkleTreeRoot",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "nullifierHash",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "externalNullifier",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "signal",
+						"type": "uint256"
+					}
+				],
+				"name": "ProofVerified",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "identityCommitment",
+						"type": "uint256"
+					}
+				],
+				"name": "addMember",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "identityCommitments",
+						"type": "uint256[]"
+					}
+				],
+				"name": "addMembers",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "merkleTreeDepth",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "admin",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "merkleTreeDuration",
+						"type": "uint256"
+					}
+				],
+				"name": "createGroup",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "merkleTreeDepth",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "admin",
+						"type": "address"
+					}
+				],
+				"name": "createGroup",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					}
+				],
+				"name": "getMerkleTreeDepth",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					}
+				],
+				"name": "getMerkleTreeRoot",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					}
+				],
+				"name": "getNumberOfMerkleTreeLeaves",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "groups",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "admin",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "merkleTreeDuration",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "identityCommitment",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "proofSiblings",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint8[]",
+						"name": "proofPathIndices",
+						"type": "uint8[]"
+					}
+				],
+				"name": "removeMember",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "newAdmin",
+						"type": "address"
+					}
+				],
+				"name": "updateGroupAdmin",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "newMerkleTreeDuration",
+						"type": "uint256"
+					}
+				],
+				"name": "updateGroupMerkleTreeDuration",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "identityCommitment",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "newIdentityCommitment",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "proofSiblings",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint8[]",
+						"name": "proofPathIndices",
+						"type": "uint8[]"
+					}
+				],
+				"name": "updateMember",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "verifier",
+				"outputs": [
+					{
+						"internalType": "contract ISemaphoreVerifier",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "groupId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "merkleTreeRoot",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "signal",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "nullifierHash",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "externalNullifier",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256[8]",
+						"name": "proof",
+						"type": "uint256[8]"
+					}
+				],
+				"name": "verifyProof",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"details": "This contract uses the Semaphore base contracts to provide a complete service to allow admins to create and manage groups and their members to generate Semaphore proofs and verify them. Group admins can add, update or remove group members, and can be an Ethereum account or a smart contract. This contract also assigns each new Merkle tree generated with a new root a duration (or an expiry) within which the proofs generated with that root can be validated.",
+			"kind": "dev",
+			"methods": {
+				"addMember(uint256,uint256)": {
+					"details": "See {ISemaphore-addMember}."
+				},
+				"addMembers(uint256,uint256[])": {
+					"details": "See {ISemaphore-addMembers}."
+				},
+				"constructor": {
+					"details": "Initializes the Semaphore verifier used to verify the user's ZK proofs.",
+					"params": {
+						"_verifier": ": Semaphore verifier address."
+					}
+				},
+				"createGroup(uint256,uint256,address)": {
+					"details": "See {ISemaphore-createGroup}."
+				},
+				"createGroup(uint256,uint256,address,uint256)": {
+					"details": "See {ISemaphore-createGroup}."
+				},
+				"getMerkleTreeDepth(uint256)": {
+					"details": "See {ISemaphoreGroups-getMerkleTreeDepth}."
+				},
+				"getMerkleTreeRoot(uint256)": {
+					"details": "See {ISemaphoreGroups-getMerkleTreeRoot}."
+				},
+				"getNumberOfMerkleTreeLeaves(uint256)": {
+					"details": "See {ISemaphoreGroups-getNumberOfMerkleTreeLeaves}."
+				},
+				"removeMember(uint256,uint256,uint256[],uint8[])": {
+					"details": "See {ISemaphore-removeMember}."
+				},
+				"updateGroupAdmin(uint256,address)": {
+					"details": "See {ISemaphore-updateGroupAdmin}."
+				},
+				"updateGroupMerkleTreeDuration(uint256,uint256)": {
+					"details": "See {ISemaphore-updateGroupMerkleTreeDuration}."
+				},
+				"updateMember(uint256,uint256,uint256,uint256[],uint8[])": {
+					"details": "See {ISemaphore-updateMember}."
+				},
+				"verifyProof(uint256,uint256,uint256,uint256,uint256,uint256[8])": {
+					"details": "See {ISemaphore-verifyProof}."
+				}
+			},
+			"stateVariables": {
+				"groups": {
+					"details": "Gets a group id and returns the group parameters."
+				}
+			},
+			"title": "Semaphore",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"semaphore/contracts/Semaphore.sol": "Semaphore"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/utils/Context.sol": {
+			"keccak256": "0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6df0ddf21ce9f58271bdfaa85cde98b200ef242a05a3f85c2bc10a8294800a92",
+				"dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3"
+			]
+		},
+		"@zk-kit/incremental-merkle-tree.sol/IncrementalBinaryTree.sol": {
+			"keccak256": "0x2aa0ffaa3840783c139d6bc893ed4902273300d84ec57eb69575ce7ea0d5da29",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://efc8ddd0e0ee922d3a3e00b3edc1bf0331d842029840b1c6bac6c8cd90fdf3a2",
+				"dweb:/ipfs/Qmdvc13AkfT2ru6uTP2xjxMLicLuKMDpXstigNg2o1pTZA"
+			]
+		},
+		"poseidon-solidity/PoseidonT3.sol": {
+			"keccak256": "0x0102caa303bbc6690508f3615604f7730789ed990058c9513a87ccb30e4835be",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1fe7291d5f998eaf7dfe37961b8a8e72f60cf79a7a34459efa5683ca3a702971",
+				"dweb:/ipfs/QmQExqgvNEPKLq15rNygqmthUnAPWgTm4m3Bb5BCExwHF1"
+			]
+		},
+		"semaphore/contracts/Semaphore.sol": {
+			"keccak256": "0x38ce4f8835e374df4996ecca546a3c284399faeaea4a1ced92fc949de5c47158",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b93d2dbddc91c0fedd76f7f576f1e0688bb7ff9ad5c83b76cbdbaee718b3c5e9",
+				"dweb:/ipfs/QmaqPjTUPRtYmh42TDNoBBDb2TvYzTXz3ew8KpevAVz3qr"
+			]
+		},
+		"semaphore/contracts/base/Pairing.sol": {
+			"keccak256": "0xc758747510dd614c9d003b4fe1d262de324ece56d014dcf5fc1754a1170284c5",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://60a954cf205939b0e216129e1589b063298aa2c6f52a199f983b40584f972a01",
+				"dweb:/ipfs/QmWnS2dehDnLqhGMmAgfSkKjSxs5dNmNVt4nHhr9t5dbkt"
+			]
+		},
+		"semaphore/contracts/base/SemaphoreGroups.sol": {
+			"keccak256": "0x133e40f0a0c2653106c781533421002aef559c4a50ba34af3b8d766bc0547ebf",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://a8756720add3f7b38eda5e6b6171efbaf0f895317b04bf6d85bea880aa50d910",
+				"dweb:/ipfs/QmdqWd9eZc36HNJjBZgVkkzLfM3oDVgFztT3bgSVxEnxcv"
+			]
+		},
+		"semaphore/contracts/interfaces/ISemaphore.sol": {
+			"keccak256": "0xfa25980d1c35cea5ee12de59b41914c29a2684ef5f3ed63989dec09e5ad54886",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://33f9a86e3c3ea3c6aee313de96513107e51491643dd6f7c7519572855f6b3408",
+				"dweb:/ipfs/QmbGW8xBVMHdKyjjqxkfk5uWw8EbgJVedCz3hzdHcxCABb"
+			]
+		},
+		"semaphore/contracts/interfaces/ISemaphoreGroups.sol": {
+			"keccak256": "0x74fa12aab58efa450297ccfe149e75c7858442b02fad38ff3aea1eecd7e3b9bc",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://38b61490ae124cc051a3735004db56e9f6c515643f847de45b224d26a1bdb488",
+				"dweb:/ipfs/QmdM3WZP6cgF15hSMWbKNswYW2HdJi4PSQBxV6j48djxY2"
+			]
+		},
+		"semaphore/contracts/interfaces/ISemaphoreVerifier.sol": {
+			"keccak256": "0xbf28519ab3f34ea0d74b2134928a5c7064645aa4e3bb9d0457d45a0c68ed3a4e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://eccf79d1ca0c904986d14df3c16d5ec0bc5edc34969e7cde28591d1ad9377586",
+				"dweb:/ipfs/QmQ17AJJy4YUhmQr1n7tZQpGvqGCPXjryTFaMsnkeCF1iJ"
+			]
+		}
+	},
+	"version": 1
+}

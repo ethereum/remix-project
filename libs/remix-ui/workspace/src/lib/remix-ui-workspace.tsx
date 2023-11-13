@@ -747,11 +747,14 @@ export function Workspace() {
             </option>
           </optgroup>
           <optgroup style={{fontSize: 'medium'}} label="Circom ZKP">
+            <option style={{fontSize: 'small'}} value="hashchecker">
+              {intl.formatMessage({id: 'filePanel.hashchecker'})}
+            </option>
             <option style={{fontSize: 'small'}} value="semaphore">
               {intl.formatMessage({id: 'filePanel.semaphore'})}
             </option>
-            <option style={{fontSize: 'small'}} value="hashchecker">
-              {intl.formatMessage({id: 'filePanel.hashchecker'})}
+            <option style={{fontSize: 'small'}} value="semaphore_chainlink_ccip">
+              {intl.formatMessage({id: 'filePanel.semaphore_chainlink_ccip'})}
             </option>
           </optgroup>
         </select>

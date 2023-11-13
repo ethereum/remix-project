@@ -105,6 +105,7 @@
   "filePanel.pausable": "Pausable",
   "filePanel.semaphore": "Semaphore",
   "filePanel.hashchecker": "Hash Checker",
+  "filePanel.semaphore_chainlink_ccip": "Semaphore - Chainlink CCIP",
   "filePanel.transparent": "Transparent",
   "filePanel.initGitRepoTitle": "Check option to initialize workspace as a new git repository",
   "filePanel.switchToBranchTitle1": "Checkout new branch from remote branch",

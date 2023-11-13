@@ -83,5 +83,6 @@ export const TEMPLATE_NAMES = {
   'gnosisSafeMultisig': 'Gnosis Safe',
   'playground': 'Playground',
   'semaphore': 'Semaphore',
-  'hashchecker': 'Hash Checker'
+  'hashchecker': 'Hash Checker',
+  'semaphore_chainlink_ccip': 'Semaphore - Chainlink CCIP'
 }

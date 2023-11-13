@@ -8,6 +8,7 @@ export { default as gnosisSafeMultisig } from './templates/gnosisSafeMultisig'
 export { default as playground } from './templates/playground'
 export { default as semaphore } from './templates/semaphore'
 export { default as hashchecker } from './templates/hashchecker'
+export { default as semaphore_chainlink_ccip } from './templates/chainlink-ccip-semaphore'
 
 export { contractDeployerScripts } from './script-templates/contract-deployer'
 export { etherscanScripts } from './script-templates/etherscan'

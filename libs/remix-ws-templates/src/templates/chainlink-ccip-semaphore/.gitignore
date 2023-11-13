@@ -1,0 +1,6 @@
+.deps
+contracts/artifacts
+**/*/artifacts
+zk/build
+build
+semaphore/contracts/**/*/artifacts
