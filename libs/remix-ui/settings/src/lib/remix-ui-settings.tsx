@@ -129,15 +129,19 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
   }
 
-  const onchangeCopilotActivate = (event) => {
-    copilotActivate(props.config, event.target.checked, dispatch)
+  const onchangeCopilotActivate = async (event) => {
     if (!event.target.checked) {
       copilotActivate(props.config, event.target.checked, dispatch)
       props.plugin.call('copilot-suggestion', 'uninstall')
       return
     }   
     const message = <div>Please wait while the copilot is downloaded. <span ref={copilotDownload}>0</span>/100 .</div>
-    copilotActivate(props.config, event.target.checked, dispatch)
+    props.plugin.on('copilot-suggestion', 'loading', (data) => {
+      if (!copilotDownload.current) return
+      const loaded = ((data.loaded / data.total) * 100).toString()
+      const dot = loaded.match(/(.*)\./g)
+      copilotDownload.current.innerText = dot ? dot[0].replace('.', '') : loaded
+    })
     const modalActivate: AppModal = {
       id: 'loadcopilotActivate',
       title: 'Downloading Solidity copilot',
@@ -163,11 +167,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         }
       }
     }
+    props.plugin.call('copilot-suggestion', 'init')
     props.plugin.call('notification', 'modal', modalActivate)
-    props.plugin.on('copilot-suggestion', 'loading', (data) => {
-      if (!copilotDownload.current) return
-      copilotDownload.current.innerText = (data.loaded / data.total) * 100
-    })
+    
   }
 
   const onchangeCopilotMaxNewToken = (event) => {
