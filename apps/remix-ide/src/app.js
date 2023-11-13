@@ -56,6 +56,7 @@ const remixLib = require('@remix-project/remix-lib')
 
 import {QueryParams} from '@remix-project/remix-lib'
 import {SearchPlugin} from './app/tabs/search'
+import { CopilotSuggestion } from './app/plugins/copilot/suggestion-service/copilot-suggestion'
 
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
@@ -186,8 +187,9 @@ class AppComponent {
     // ----------------- ContractFlattener ----------------------------
     const contractFlattener = new ContractFlattener()
 
-    // ----------------- Open AI --------------------------------------
+    // ----------------- AI --------------------------------------
     const openaigpt = new OpenAIGpt()
+    const copilotSuggestion = new CopilotSuggestion()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -310,7 +312,8 @@ class AppComponent {
       compilationDetails,
       contractFlattener,
       solidityScript,
-      openaigpt
+      openaigpt,
+      copilotSuggestion
     ])
 
     // LAYOUT & SYSTEM VIEWS
