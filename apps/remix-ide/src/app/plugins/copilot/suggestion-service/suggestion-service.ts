@@ -17,6 +17,13 @@ export class SuggestionService {
     this.current
   }
 
+  terminate(): void {
+    this.worker.terminate()
+    this.worker = new Worker(new URL('./worker.js', import.meta.url), {
+      type: 'module'
+    });
+  }
+
   async init() {
     const onMessageReceived = (e) => {
       switch (e.data.status) {
