@@ -6,25 +6,29 @@ const profile = {
   name: 'copilot-suggestion',
   displayName: 'copilot-suggestion',
   description: 'copilot-suggestion',
-  methods: ['suggest', 'init', 'uninstall']
+  methods: ['suggest', 'init', 'uninstall', 'status']
 }
 
 export class CopilotSuggestion extends Plugin {
   service: SuggestionService
   context: string
+  ready: boolean
   constructor() {
     super(profile)
     this.service = new SuggestionService()
     this.context = ''
     this.service.events.on('progress', (data) => {
-      this.call('terminal', 'log', {type: 'info', value: `loading Solidity copilot: ${(data.loaded / data.total) * 100}% done.` })
+      this.emit('loading', data)
     })
     this.service.events.on('done', (data) => {
-      this.call('terminal', 'log', { type: 'info', value: `Solidity copilot loaded.`})
     })
     this.service.events.on('ready', (data) => {
-      this.call('terminal', 'log', { type: 'info', value: `Solidity copilot ready to use.`})
+      this.ready = true
     })    
+  }
+
+  status () {
+    return this.ready
   }
 
   async suggest(content: string) {
@@ -59,5 +63,7 @@ export class CopilotSuggestion extends Plugin {
     return this.service.init()
   }
 
-  async uninstall() {}
+  async uninstall() {
+    this.service.terminate()
+  }
 }

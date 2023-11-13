@@ -1,6 +1,7 @@
 import {ViewPlugin} from '@remixproject/engine-web'
-import React, {useState, useReducer, useEffect, useCallback} from 'react' // eslint-disable-line
+import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react' // eslint-disable-line
 
+import {AppModal, AlertModal, ModalTypes} from '@remix-ui/app'
 import {labels, textDark, textSecondary} from './constants'
 
 import './remix-ui-settings.css'
@@ -52,6 +53,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [ipfsProtocol, setipfsProtocol] = useState('')
   const [ipfsProjectId, setipfsProjectId] = useState('')
   const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
+  const copilotDownload = useRef(null)
+
   const intl = useIntl()
   const initValue = () => {
     const metadataConfig = props.config.get('settings/generate-contract-metadata')
@@ -126,12 +129,45 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
   }
 
-  const onchangeCopilotActivate = (event) => {    
+  const onchangeCopilotActivate = (event) => {
     copilotActivate(props.config, event.target.checked, dispatch)
-    if (event.target.checked) props.plugin.call('copilot-suggestion', 'init')
-    else {
+    if (!event.target.checked) {
+      copilotActivate(props.config, event.target.checked, dispatch)
       props.plugin.call('copilot-suggestion', 'uninstall')
+      return
+    }   
+    const message = <div>Please wait while the copilot is downloaded. <span ref={copilotDownload}>0</span>/100 .</div>
+    copilotActivate(props.config, event.target.checked, dispatch)
+    const modalActivate: AppModal = {
+      id: 'loadcopilotActivate',
+      title: 'Downloading Solidity copilot',
+      modalType: ModalTypes.default,
+      okLabel: 'Close',
+      message,
+      okFn: async() => {
+        props.plugin.off('copilot-suggestion', 'loading')
+        if (await props.plugin.call('copilot-suggestion', 'status')) {
+          copilotActivate(props.config, true, dispatch)          
+        } else {
+          props.plugin.call('copilot-suggestion', 'uninstall')
+          copilotActivate(props.config, false, dispatch)
+        }
+      },
+      hideFn: async () => {
+        props.plugin.off('copilot-suggestion', 'loading')
+        if (await props.plugin.call('copilot-suggestion', 'status')) {
+          copilotActivate(props.config, true, dispatch)          
+        } else {
+          props.plugin.call('copilot-suggestion', 'uninstall')
+          copilotActivate(props.config, false, dispatch)
+        }
+      }
     }
+    props.plugin.call('notification', 'modal', modalActivate)
+    props.plugin.on('copilot-suggestion', 'loading', (data) => {
+      if (!copilotDownload.current) return
+      copilotDownload.current.innerText = (data.loaded / data.total) * 100
+    })
   }
 
   const onchangeCopilotMaxNewToken = (event) => {
@@ -398,8 +434,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
 
   const isCopilotActivated = props.config.get('settings/copilot/suggest/activate') || false
-  const copilotMaxnewToken = props.config.get('settings/copilot/suggest/max_new_tokens') || 5
-  const copilotTemperatureValue = (props.config.get('settings/copilot/suggest/temperature') || 0.5) * 100
+  const copilotMaxnewToken = props.config.get('settings/copilot/suggest/max_new_tokens')
+  if (!copilotMaxnewToken) props.config.set('settings/copilot/suggest/max_new_tokens', 5)
+  const copilotTemperatureValue = (props.config.get('settings/copilot/suggest/temperature')) * 100
+  if (!copilotTemperatureValue) props.config.set('settings/copilot/suggest/temperature', 0.5)
+
   if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
   const copilotSettings = () => (
     <div className="border-top">
