@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {useEffect, useRef, useContext} from 'react'
 import {useIntl, FormattedMessage} from 'react-intl'
-import {TEMPLATE_NAMES} from '@remix-ui/workspace'
+import {TEMPLATE_NAMES,TEMPLATE_METADATA} from '@remix-ui/workspace'
 import {ThemeContext} from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
@@ -59,12 +59,16 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
 
   const createWorkspace = async (templateName) => {
     await plugin.appManager.activatePlugin('filePanel')
-    const timeStamp = Date.now()
     let templateDisplayName = TEMPLATE_NAMES[templateName]
     templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
-    await plugin.call('filePanel', 'createWorkspace', templateDisplayName, templateName)
-    await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
-    plugin.verticalIcons.select('filePanel')
+    const metadata = TEMPLATE_METADATA['breakthroughLabsUniswapv4Hooks']
+    if (metadata) {
+      plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, templateDisplayName, true)
+    } else {
+      await plugin.call('filePanel', 'createWorkspace', templateDisplayName, templateName)
+      await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
+      plugin.verticalIcons.select('filePanel')      
+    }
     _paq.push(['trackEvent', 'hometab', 'homeGetStarted', templateName])
   }
 
