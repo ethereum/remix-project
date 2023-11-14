@@ -85,12 +85,17 @@ export const TEMPLATE_NAMES = {
   'semaphore': 'Semaphore',
   'hashchecker': 'Hash Checker',
   'rln': 'Rate-Limiting Nullifier',
-  'breakthroughLabsUniswapv4Hooks': 'Breakthrough-Labs Uniswapv4Hooks'
+  'breakthroughLabsUniswapv4Hooks': 'Breakthrough-Labs Uniswapv4Hooks',
+  'uniswapV4Periphery': 'Uniswap v4 Periphery',
 }
 
 export const TEMPLATE_METADATA = {
   'breakthroughLabsUniswapv4Hooks': {
     url: 'https://github.com/Breakthrough-Labs/Uniswapv4Hooks',
     branch: 'foundry_pure'
+  },
+  'uniswapV4Periphery': {
+    url: 'https://github.com/Uniswap/v4-periphery',
+    branch: 'main'
   }
 }
