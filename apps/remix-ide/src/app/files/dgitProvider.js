@@ -399,7 +399,7 @@ class DGitProvider extends Plugin {
                 this.call('terminal', 'log', {
                   type: 'error',
                   value: `Could not checkout submodule to ${result[0]}`
-              })} else {              
+                })} else {              
                 this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
               }
             }
