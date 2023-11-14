@@ -386,13 +386,22 @@ class DGitProvider extends Plugin {
                 ref: result[0]
               })
 
-              
               await git.checkout({
                 ...await this.getGitConfig(dir),
                 ref: result[0]
               })
               
-              this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
+              const log = await git.log({
+                ...await this.getGitConfig(dir),
+              })
+
+              if(log[0].oid !== result[0]) {
+                this.call('terminal', 'log', {
+                  type: 'error',
+                  value: `Could not checkout submodule to ${result[0]}`
+              })} else {              
+                this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
+              }
             }
 
             await this.updateSubmodules({
