@@ -83,5 +83,13 @@ export const TEMPLATE_NAMES = {
   'gnosisSafeMultisig': 'Gnosis Safe',
   'playground': 'Playground',
   'semaphore': 'Semaphore',
-  'hashchecker': 'Hash Checker'
+  'hashchecker': 'Hash Checker',
+  'breakthroughLabsUniswapv4Hooks': 'Breakthrough-Labs Uniswapv4Hooks'
+}
+
+export const TEMPLATE_METADATA = {
+  'breakthroughLabsUniswapv4Hooks': {
+    url: 'https://github.com/Breakthrough-Labs/Uniswapv4Hooks',
+    branch: 'foundry_pure'
+  }
 }

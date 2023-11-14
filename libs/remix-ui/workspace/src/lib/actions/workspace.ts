@@ -1,6 +1,7 @@
 import React from 'react'
 import { bufferToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
+import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
 import axios, { AxiosResponse } from 'axios'
 import {
   addInputFieldSuccess,
@@ -38,6 +39,7 @@ import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
 import { contractDeployerScripts, etherscanScripts } from '@remix-project/remix-ws-templates'
+import { template } from 'lodash'
 
 declare global {
   interface Window {
@@ -194,8 +196,13 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: W
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
   if ((await workspaceExists(workspaceName)) && template === 'remixDefault') throw new Error('workspace already exists')
   else {
-    const workspaceProvider = plugin.fileProviders.workspace
-    await workspaceProvider.createWorkspace(workspaceName)
+    const metadata = TEMPLATE_METADATA[template]
+    if (metadata) {
+      plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, TEMPLATE_NAMES[template], true)
+    } else {
+      const workspaceProvider = plugin.fileProviders.workspace
+      await workspaceProvider.createWorkspace(workspaceName)
+    }
   }
 }
 
