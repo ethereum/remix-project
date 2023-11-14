@@ -1,10 +1,10 @@
-import {Profile} from '@remixproject/plugin-utils'
-import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
+import { Profile } from '@remixproject/plugin-utils'
+import { ElectronBasePlugin, ElectronBasePluginClient } from '@remixproject/plugin-electron'
 import fs from 'fs/promises'
 import axios from 'axios'
 
 import express from 'express'
-import {cacheDir} from '../utils/config'
+import { cacheDir } from '../utils/config'
 
 export const baseURLBin = 'https://binaries.soliditylang.org/bin'
 export const baseURLWasm = 'https://binaries.soliditylang.org/wasm'
@@ -27,7 +27,10 @@ export class CompilerLoaderPlugin extends ElectronBasePlugin {
   clients: CompilerLoaderPluginClient[] = []
   constructor() {
     super(profile, clientProfile, CompilerLoaderPluginClient)
-    this.methods = [...super.methods, 'getPort']
+    this.methods = [...super.methods, 'getPort'];
+    (async()=>{
+      await getLists()
+    })()
   }
 
   async getPort(): Promise<number> {
@@ -39,7 +42,7 @@ const clientProfile: Profile = {
   name: 'compilerloader',
   displayName: 'compilerloader',
   description: 'Compiler Loader',
-  methods: ['getPort', 'downloadCompiler', 'listCompilers'],
+  methods: ['getPort', 'downloadCompiler', 'listCompilers', 'getBaseUrls', 'getLists'],
 }
 
 class CompilerLoaderPluginClient extends ElectronBasePluginClient {
@@ -59,16 +62,17 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
       const fileName = url.split('/').pop()
       if (fileName) {
         const filePath = cacheDir + '/compilers/' + fileName
-        try{
-        if (await fs.stat(filePath)) {
-          return
-        }}
-        catch(e){
+        try {
+          if (await fs.stat(filePath)) {
+            return
+          }
+        }
+        catch (e) {
           // do nothing
         }
       }
       this.emit('downloadStarted', url)
-      this.call('terminal' as any, 'logHtml', 'Downloading compiler from ' +  url)
+      this.call('terminal' as any, 'logHtml', 'Downloading compiler from ' + url)
       const res = await axios.get(url, {
         responseType: 'arraybuffer',
         onDownloadProgress(progressEvent) {
@@ -82,7 +86,7 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
       })
       const buffer = await res.data
       const file = Buffer.from(buffer)
-      
+
       if (fileName) {
         const filePath = cacheDir + '/compilers/' + fileName
         await fs.writeFile(filePath, file)
@@ -90,10 +94,10 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
         this.emit('downloadFinished', fileName, url)
       }
     } catch (e: any) {
-        plugin.call('terminal' as any, 'log', {
-          type: 'error',
-          value: `Failed to download ${url}: ${e.message}`,
-        })
+      plugin.call('terminal' as any, 'log', {
+        type: 'error',
+        value: `Failed to download ${url}: ${e.message}`,
+      })
     }
   }
 
@@ -102,4 +106,54 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
     const compilers = await fs.readdir(compilersDir)
     return compilers
   }
+
+  async getBaseUrls(){
+
+  }
+
+  async getLists(){
+
+  }
+}
+
+
+const getLists = async()=>{
+  
+  let binData
+  let wasmData
+
+  try{
+    let binRes = await axios.get(baseURLBin + '/list.json')
+    await fs.writeFile(cacheDir + '/binlist.json', JSON.stringify(binRes.data, null, 2))
+    binData = binRes.data
+  }catch(e) {
+  }
+
+  try{
+    let wasmRes = await axios.get(baseURLWasm + '/list.json')
+    await fs.writeFile(cacheDir + '/wasmlist.json', JSON.stringify(wasmRes.data, null, 2))
+    wasmData = wasmRes.data
+  }catch(e) {
+  }
+
+  if(!wasmData){
+    try{
+      wasmData = JSON.parse(await fs.readFile(cacheDir + '/wasmlist.json', 'utf8'));
+    }catch(e){
+      wasmData = {}
+    }
+  }
+
+  if(!binData){
+    try{
+      binData = JSON.parse(await fs.readFile(cacheDir + '/binlist.json', 'utf8'));
+    }catch(e){
+      binData = {}
+    }
+  }
+
+  return {
+    binData, wasmData
+  }
+
 }

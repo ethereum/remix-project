@@ -1,12 +1,28 @@
 import { ElectronPlugin } from '@remixproject/engine-electron';
+import { Plugin } from '@remixproject/engine';
 
-export class compilerLoaderPlugin extends ElectronPlugin {
+const profile = {
+  displayName: 'compilerLoader',
+  name: 'compilerloader',
+  description: 'Loads the compiler for offline use',
+}
+
+const methods = ['getBaseUrls']
+
+export class compilerLoaderPlugin extends Plugin {
   constructor() {
-    super({
-      displayName: 'compilerLoader',
-      name: 'compilerloader',
-      description: 'Loads the compiler for offline use',
-    })
+    super(profile)
+    this.methods = methods
+  }
+
+  async getBaseUrls() {
+   
+  }
+}
+
+export class compilerLoaderPluginDesktop extends ElectronPlugin {
+  constructor() {
+    super(profile)
     this.methods = []
     
   }
