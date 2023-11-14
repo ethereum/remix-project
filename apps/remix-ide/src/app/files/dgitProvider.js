@@ -362,6 +362,48 @@ class DGitProvider extends Plugin {
             this.call('terminal', 'logHtml', `Cloning submodule ${dir}...`)
             await git.clone(cmd)
             this.call('terminal', 'logHtml', `Cloned successfully submodule ${dir}...`)
+            
+            const commitHash = await git.resolveRef({
+              ...await this.getGitConfig(currentDir),
+              ref: 'HEAD'
+            })
+
+            const result = await git.walk({
+              ...await this.getGitConfig(currentDir),
+              trees: [git.TREE({ ref: commitHash })],
+              map: async function (filepath, [A]) {
+                if(filepath === module.path) {
+                  return await A.oid()
+                }
+              }
+            })
+            if(result && result.length) {
+              this.call('terminal', 'logHtml', `Checking out submodule ${dir} to ${result[0]} in directory ${dir}`)
+              await git.fetch({
+                ...await this.parseInput(input),
+                ...await this.getGitConfig(dir),
+                singleBranch: true,
+                ref: result[0]
+              })
+
+              await git.checkout({
+                ...await this.getGitConfig(dir),
+                ref: result[0]
+              })
+              
+              const log = await git.log({
+                ...await this.getGitConfig(dir),
+              })
+
+              if(log[0].oid !== result[0]) {
+                this.call('terminal', 'log', {
+                  type: 'error',
+                  value: `Could not checkout submodule to ${result[0]}`
+                })} else {              
+                this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
+              }
+            }
+
             await this.updateSubmodules({
               ...input,
               dir
@@ -371,6 +413,7 @@ class DGitProvider extends Plugin {
             console.log(e)
           }
         }
+
         setTimeout(async () => {
           await this.call('fileManager', 'refresh')
         }, 1000)
