@@ -753,6 +753,9 @@ export function Workspace() {
             <option style={{fontSize: 'small'}} value="hashchecker">
               {intl.formatMessage({id: 'filePanel.hashchecker'})}
             </option>
+            <option style={{fontSize: 'small'}} value="rln">
+              {intl.formatMessage({id: 'filePanel.rln'})}
+            </option>
           </optgroup>
         </select>
 
