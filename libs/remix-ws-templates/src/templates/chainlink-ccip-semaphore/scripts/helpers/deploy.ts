@@ -7,24 +7,24 @@ import { ethers } from 'ethers'
  * @return {Contract} deployed contract
  */
 export const deploy = async (
-    contractName: string,
-    args: Array<any>,
-    libraries?: { [key: string]: any },
+  contractName: string,
+  args: Array<any>,
+  libraries?: { [key: string]: any },
 ): Promise<ethers.Contract> => {
-    console.log(`deploying ${contractName}`)
+  console.log(`deploying ${contractName}`)
 
-    const signer = new ethers.providers.Web3Provider(web3Provider).getSigner()
+  const signer = new ethers.providers.Web3Provider(web3Provider).getSigner()
 
-    // internal Remix method that resolves the artifacts and links the libraries
-    let factory = await ethers.getContractFactory(contractName as any, null, {
-        signer,
-        libraries,
-    } as any)
+  // internal Remix method that resolves the artifacts and links the libraries
+  const factory = await ethers.getContractFactory(contractName as any, null, {
+    signer,
+    libraries,
+  } as any)
 
-    const contract = await factory.deploy(...args)
+  const contract = await factory.deploy(...args)
 
-    // The contract is NOT deployed yet; we must wait until it is mined
-    await contract.deployed()
+  // The contract is NOT deployed yet; we must wait until it is mined
+  await contract.deployed()
 
-    return contract
+  return contract
 }
