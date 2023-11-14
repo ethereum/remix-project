@@ -58,17 +58,17 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
   }
 
   const createWorkspace = async (templateName) => {
-    await plugin.appManager.activatePlugin('filePanel')
     let templateDisplayName = TEMPLATE_NAMES[templateName]
-    templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
-    const metadata = TEMPLATE_METADATA['breakthroughLabsUniswapv4Hooks']
+    const metadata = TEMPLATE_METADATA[templateName]
     if (metadata) {
-      plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, templateDisplayName, true)
-    } else {
-      await plugin.call('filePanel', 'createWorkspace', templateDisplayName, templateName)
-      await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
-      plugin.verticalIcons.select('filePanel')      
+      await plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, templateDisplayName)
+      return
     }
+    await plugin.appManager.activatePlugin('filePanel')    
+    templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
+    await plugin.call('filePanel', 'createWorkspace', templateDisplayName, templateName)
+    await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
+    plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'hometab', 'homeGetStarted', templateName])
   }
 

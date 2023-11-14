@@ -192,17 +192,17 @@ export const createWorkspace = async (
 }
 
 export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault') => {
+  const metadata = TEMPLATE_METADATA[template]
+  if (metadata) {
+    await plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, TEMPLATE_NAMES[template])
+    return
+  }
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
   if ((await workspaceExists(workspaceName)) && template === 'remixDefault') throw new Error('workspace already exists')
   else {
-    const metadata = TEMPLATE_METADATA[template]
-    if (metadata) {
-      plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, TEMPLATE_NAMES[template], true)
-    } else {
-      const workspaceProvider = plugin.fileProviders.workspace
-      await workspaceProvider.createWorkspace(workspaceName)
-    }
+    const workspaceProvider = plugin.fileProviders.workspace
+    await workspaceProvider.createWorkspace(workspaceName)
   }
 }
 
