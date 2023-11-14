@@ -355,7 +355,7 @@ class DGitProvider extends Plugin {
             const cmd = {
               url: module.url,
               singleBranch: true,
-              depth: 5000, // this is needed because we need the history to find the commit hash
+              depth: 1,
               ...await this.parseInput(input),
               ...await this.getGitConfig(dir)
             }
@@ -379,10 +379,19 @@ class DGitProvider extends Plugin {
             })
             if(result && result.length) {
               this.call('terminal', 'logHtml', `Checking out submodule ${dir} to ${result[0]} in directory ${dir}`)
+              await git.fetch({
+                ...await this.parseInput(input),
+                ...await this.getGitConfig(dir),
+                singleBranch: true,
+                ref: result[0]
+              })
+
+              
               await git.checkout({
                 ...await this.getGitConfig(dir),
                 ref: result[0]
               })
+              
               this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
             }
 
