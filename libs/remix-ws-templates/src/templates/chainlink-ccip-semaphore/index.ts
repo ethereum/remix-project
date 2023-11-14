@@ -105,24 +105,6 @@ export default async () => {
       // @ts-ignore
       'semaphore/contracts/interfaces/ISemaphoreVoting.sol': (await import('raw-loader!./semaphore/contracts/interfaces/ISemaphoreVoting.sol')).default,
       // @ts-ignore
-      'semaphore/contracts/interfaces/ISemaphoreWhistleblowing.sol': (await import('raw-loader!./semaphore/contracts/interfaces/ISemaphoreWhistleblowing.sol')).default,
-      // @ts-ignore
-      'zk/circuits/mux1.circom': (await import('raw-loader!./zk/circuits/mux1.circom')).default,
-      // @ts-ignore
-      'zk/circuits/poseidon.circom': (await import('raw-loader!./zk/circuits/poseidon.circom')).default,
-      // @ts-ignore
-      'zk/circuits/poseidon_constants.circom': (await import('raw-loader!./zk/circuits/poseidon_constants.circom')).default,
-      // @ts-ignore
-      'zk/circuits/semaphore.circom': (await import('raw-loader!./zk/circuits/semaphore.circom')).default,
-      // @ts-ignore
-      'zk/circuits/tree.circom': (await import('raw-loader!./zk/circuits/tree.circom')).default,
-      // @ts-ignore
-      'zk/scripts/deploy.ts': (await import('raw-loader!./zk/scripts/deploy.ts')).default,
-      // @ts-ignore
-      'zk/scripts/run_setup.ts': (await import('raw-loader!./zk/scripts/run_setup.ts')).default,
-      // @ts-ignore
-      'zk/scripts/run_verification.ts': (await import('raw-loader!./zk/scripts/run_verification.ts')).default,
-      // @ts-ignore
-      'zk/templates/groth16_verifier.sol.ejs': (await import('raw-loader!./zk/templates/groth16_verifier.sol.ejs')).default
+      'semaphore/contracts/interfaces/ISemaphoreWhistleblowing.sol': (await import('raw-loader!./semaphore/contracts/interfaces/ISemaphoreWhistleblowing.sol')).default
   }
 }
