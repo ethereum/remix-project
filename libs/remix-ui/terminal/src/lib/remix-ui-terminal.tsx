@@ -116,7 +116,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         }
         scriptRunnerDispatch({
           type: message.type ? message.type : 'log',
-          payload: { message: [message.value] },
+          payload: { message: [message.value], provider: message.provider },
         })
       },
     })
