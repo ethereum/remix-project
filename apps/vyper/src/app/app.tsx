@@ -32,7 +32,7 @@ const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
     status: 'idle',
     environment: 'local',
-    localUrl: 'http://localhost:8000'
+    localUrl: 'http://localhost:8000/'
   })
   const [compilerResponse, setCompilerResponse] = useState<any>({})
 
@@ -101,8 +101,7 @@ const App: React.FC = () => {
           />
         </div>
         <article id="result" className="px-2">
-          {/* <VyperResult output={contract ? output[contract] : undefined} contractName={contract} /> */}
-          <VyperResult output={contract ? output : undefined} />
+          <VyperResult output={contract ? output[contract] : undefined} />
         </article>
       </section>
     </main>
