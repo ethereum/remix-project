@@ -16,7 +16,9 @@ class CreateContract extends EventEmitter {
 function createContract (browser: NightwatchBrowser, inputParams: string, callback: VoidFunction) {
   if (inputParams) {
     browser.setValue('.udapp_contractActionsContainerSingle > input', inputParams, function () {
-      browser.click('.udapp_contractActionsContainerSingle > div').pause(500).perform(function () { callback() })
+      browser
+        .waitForElementVisible('.udapp_contractActionsContainerSingle > div')
+        .click('.udapp_contractActionsContainerSingle > div').pause(500).perform(function () { callback() })
     })
   } else {
     browser
