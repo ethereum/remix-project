@@ -78,17 +78,17 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   const compileCode = response.data
   let result: any
 
-  const status = await (await axios.get(url + '/status/' + compileCode , {
+  const status = await (await axios.get(url + 'status/' + compileCode , {
     method: 'Get'
   })).data
 
   if (status === 'SUCCESS') {
-    result = await(await axios.get(url + '/compiled_artifact/' + compileCode , {
+    result = await(await axios.get(url + 'compiled_artifact/' + compileCode , {
       method: 'Get'
     })).data
     return result
   } else if (status === 'PENDING' || status === 'FAILED') {
-    result = await(await axios.get(url + '/exceptions/' + compileCode , {
+    result = await(await axios.get(url + 'exceptions/' + compileCode , {
       method: 'Get'
     })).data
     return result.data
