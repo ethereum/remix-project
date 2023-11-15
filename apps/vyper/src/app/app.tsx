@@ -53,52 +53,6 @@ const App: React.FC = () => {
     start()
   }, [])
 
-  // useEffect(() => {
-  //   const getStandardOutput = () => {
-  //     const contractName = contract.split('/').slice(-1)[0].split('.')[0]
-  //     const compiledAbi = output['contractTypes'][contractName].abi
-  //     const deployedBytecode = output['contractTypes'][contractName].deploymentBytecode.bytecode.replace('0x', '')
-  //     const bytecode = output['contractTypes'][contractName].runtimeBytecode.bytecode.replace('0x', '')
-  //     const compiledAst = output['contractTypes'][contractName].abi
-  //     //const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
-  //     return {
-  //       sources: {
-  //         [contract]: {
-  //           id: 1,
-  //           ast: compiledAst,
-  //           legacyAST: {} as any
-  //         }
-  //       },
-  //       contracts: {
-  //         [contract]: {
-  //           // If the language used has no contract names, this field should equal to an empty string
-  //           [contractName]: {
-  //             // The Ethereum Contract ABI. If empty, it is represented as an empty array.
-  //             // See https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI
-  //             abi: compiledAbi,
-  //             evm: {
-  //               bytecode: {
-  //                 linkReferences: {},
-  //                 object: deployedBytecode,
-  //                 opcodes: ''
-  //               },
-  //               deployedBytecode: {
-  //                 linkReferences: {},
-  //                 object: bytecode,
-  //                 opcodes: ''
-  //               },
-  //               // methodIdentifiers: methodIdentifiers
-  //             }
-  //           }
-  //         } as any
-  //       }
-  //     }
-  //   }
-  //   const data = getStandardOutput()
-  //   console.log({ data })
-  //   setCompilerResponse(data)
-  // }, [output])
-
   /** Update the environment state value */
   function setEnvironment(environment: 'local' | 'remote') {
     setState({...state, environment})

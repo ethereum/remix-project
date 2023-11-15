@@ -54,8 +54,7 @@ function VyperResult({ output }: VyperResultProps) {
             Copy ABI
           </Button>
         </CopyToClipboard>
-        {/* <JSONTree src={output.abi} /> */}
-        <ReactJson src={output.abi} />
+        <JSONTree src={output.abi} />
       </Tab>
       <Tab eventKey="bytecode" title="Bytecode">
         <CopyToClipboard getContent={() => output.bytecode}>
