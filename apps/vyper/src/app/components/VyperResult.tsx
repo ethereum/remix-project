@@ -3,13 +3,14 @@ import {VyperCompilationOutput, isCompilationError} from '../utils'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Button from 'react-bootstrap/Button'
-import JSONTree from 'react-json-view'
+import JSONTree, { ThemeKeys } from 'react-json-view'
 import ReactJson from 'react-json-view'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import { VyperCompilationResult } from '../utils/types'
 
 interface VyperResultProps {
-  output?: VyperCompilationOutput
+  output?: any
+  themeColor?: string
 }
 
 export type ExampleContract = {
@@ -17,7 +18,7 @@ export type ExampleContract = {
   address: string
 }
 
-function VyperResult({ output }: VyperResultProps) {
+function VyperResult({ output, themeColor }: VyperResultProps) {
   const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
 
   if (!output)
@@ -49,36 +50,36 @@ function VyperResult({ output }: VyperResultProps) {
   return (
     <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)}>
       <Tab eventKey="abi" title="ABI">
-        <CopyToClipboard getContent={() => JSON.stringify(output.abi)}>
+        <CopyToClipboard getContent={() => JSON.stringify(Object.values(output)[0]['abi'])}>
           <Button variant="info" className="copy" data-id="copy-abi">
             Copy ABI
           </Button>
         </CopyToClipboard>
-        <JSONTree src={output.abi} />
+        <JSONTree src={Object.values(output)[0]['abi']} theme={themeColor as any}/>
       </Tab>
       <Tab eventKey="bytecode" title="Bytecode">
-        <CopyToClipboard getContent={() => output.bytecode}>
+        <CopyToClipboard getContent={() => JSON.stringify(Object.values(output)[0]['bytecode'].object.toString())}>
           <Button variant="info" className="copy">
             Copy Bytecode
           </Button>
         </CopyToClipboard>
-        <textarea defaultValue={output.bytecode}></textarea>
+        <textarea defaultValue={Object.values(output)[0]['bytecode'].object.toString()}></textarea>
       </Tab>
       <Tab eventKey="bytecode_runtime" title="Runtime Bytecode">
-        <CopyToClipboard getContent={() => output.bytecode_runtime}>
+        <CopyToClipboard getContent={() => JSON.stringify(Object.values(output)[0]['runtimeBytecode'].object.toString())}>
           <Button variant="info" className="copy">
             Copy Runtime Bytecode
           </Button>
         </CopyToClipboard>
-        <textarea defaultValue={output.bytecode_runtime}></textarea>
+        <textarea defaultValue={Object.values(output)[0]['runtimeBytecode'].object.toString()}></textarea>
       </Tab>
       <Tab eventKey="ir" title="LLL">
-        <CopyToClipboard getContent={() => output.ir}>
-          <Button variant="info" className="copy">
-            Copy LLL Code
+        <CopyToClipboard getContent={() => JSON.stringify(Object.values(output)[0]['ir'])}>
+          <Button disabled={Object.values(output)[0]['ir'].length <= 1} variant="info" className="copy">
+            {Object.values(output)[0]['ir'].length > 1 ? 'Copy LLL Code' : 'Nothing to copy yet'}
           </Button>
         </CopyToClipboard>
-        <textarea defaultValue={output.ir}></textarea>
+        <textarea defaultValue={Object.values(output)[0]['ir'].toString()}></textarea>
       </Tab>
     </Tabs>
   )

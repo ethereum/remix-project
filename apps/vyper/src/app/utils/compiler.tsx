@@ -10,6 +10,7 @@ export interface Contract {
 export interface VyperCompilationResult {
   status: 'success'
   bytecode: string
+  contractName?: string
   bytecode_runtime: string
   abi: ABIDescription[]
   ir: string
@@ -102,7 +103,7 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
  * @param compilationResult Result returned by the compiler
  */
 export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResultType): CompilationResult {
-  const contractName = fileName.split('/').slice(-1)[0].split('.')[0]
+  const contractName = normalizeContractPath(fileName)[2]
   const compiledAbi = compilationResult['contractTypes'][contractName].abi
   const deployedBytecode = compilationResult['contractTypes'][contractName].deploymentBytecode.bytecode.replace('0x', '')
   const bytecode = compilationResult['contractTypes'][contractName].runtimeBytecode.bytecode.replace('0x', '')
@@ -123,6 +124,7 @@ export function toStandardOutput(fileName: string, compilationResult: VyperCompi
           // The Ethereum Contract ABI. If empty, it is represented as an empty array.
           // See https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI
           abi: compiledAbi,
+          contractName: contractName,
           evm: {
             bytecode: {
               linkReferences: {},

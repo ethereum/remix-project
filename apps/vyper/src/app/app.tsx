@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {VyperCompilationOutput, remixClient, toStandardOutput} from './utils'
+import {VyperCompilationOutput, normalizeContractPath, remixClient, toStandardOutput} from './utils'
 import {CompilationResult} from '@remixproject/plugin-api'
 
 // Components
@@ -13,7 +13,6 @@ import ToggleButton from 'react-bootstrap/ToggleButton'
 import Button from 'react-bootstrap/Button'
 
 import './app.css'
-import { VyperCompilationResultType } from './utils/types'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -34,7 +33,7 @@ const App: React.FC = () => {
     environment: 'local',
     localUrl: 'http://localhost:8000/'
   })
-  const [compilerResponse, setCompilerResponse] = useState<any>({})
+
 
   useEffect(() => {
     async function start() {
@@ -100,8 +99,9 @@ const App: React.FC = () => {
             setOutput={(name, update) => setOutput({...output, [name]: update})}
           />
         </div>
+
         <article id="result" className="px-2">
-          <VyperResult output={contract ? output[contract] : undefined} />
+          {Object.keys(output).length > 0 ? <VyperResult output={ output} themeColor={remixClient.checkActiveTheme()} /> : null}
         </article>
       </section>
     </main>
