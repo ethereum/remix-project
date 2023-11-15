@@ -1,11 +1,13 @@
 import React from 'react'
-import {isVyper, compile, toStandardOutput, VyperCompilationOutput, isCompilationError, remixClient} from '../utils'
+import {isVyper, compile, toStandardOutput, VyperCompilationOutput, isCompilationError, remixClient, normalizeContractPath} from '../utils'
 import Button from 'react-bootstrap/Button'
+import _ from 'lodash'
+import { runtime } from 'webpack'
 
 interface Props {
   compilerUrl: string
   contract?: string
-  setOutput: (name: string, output: VyperCompilationOutput) => void
+  setOutput: (name: string, output: any) => void
 }
 
 function CompilerButton({contract, setOutput, compilerUrl}: Props) {
@@ -40,8 +42,26 @@ function CompilerButton({contract, setOutput, compilerUrl}: Props) {
         setOutput(_contract.name, {status: 'failed', message: e.message})
         return
       }
-      setOutput(_contract.name, output)
-      // setCompilerResponse(output)
+      const compileReturnType = () => {
+        const t: any = toStandardOutput(contract, output)
+        const temp = _.merge(t['contracts'][contract])
+        const normal = normalizeContractPath(contract)[2]
+        console.log(normal)
+        const abi = temp[normal]['abi']
+        const evm = _.merge(temp[normal]['evm'])
+        const dpb = evm.deployedBytecode
+        const runtimeBytecode = evm.bytecode
+
+        const result = {
+          contractName: normal,
+          abi: abi,
+          bytecode: dpb,
+          runtimeBytecode: runtimeBytecode,
+          ir: ''
+        }
+        return result
+      }
+      setOutput(_contract.name, compileReturnType())
 
       // ERROR
       if (isCompilationError(output)) {
