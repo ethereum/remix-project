@@ -9,7 +9,7 @@ declare global {
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done)
+    init(browser, done, 'http://localhost:8080')
   },
 
   'Should connect to vyper plugin #group1': function (browser: NightwatchBrowser) {
@@ -60,7 +60,7 @@ module.exports = {
           browser.assert.ok(okVisible.value === true, 'ABI should be visible')
         }
       })
-      
+
 
   },
 
