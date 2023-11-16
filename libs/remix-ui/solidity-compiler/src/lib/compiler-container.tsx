@@ -59,6 +59,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compiledFileName: '',
     includeNightlies: false,
     language: 'Solidity',
+    remappings: [],
     evmVersion: '',
     createFileOnce: true
   })
