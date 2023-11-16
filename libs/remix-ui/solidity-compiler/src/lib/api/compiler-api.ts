@@ -345,6 +345,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
           if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
           else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
           else this.compileTabLogic.runCompiler(undefined)
+        } else if (this.currentFile && this.currentFile.endsWith('.circom')) {
+          await this.call('circuit-compiler', 'compile', this.currentFile)
         }
       }
     }

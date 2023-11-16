@@ -85,3 +85,10 @@ export type CompileOptionsProps = {
   autoCompile: boolean,
   hideWarnings: boolean
 }
+
+export type ResolverOutput = {
+  [name: string]: {
+    content: string,
+    parent: string
+  }
+}
