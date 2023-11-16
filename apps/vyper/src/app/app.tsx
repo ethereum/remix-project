@@ -81,8 +81,8 @@ const App: React.FC = () => {
         </a>
       </header>
       <section>
-        <div className="px-4 w-100">
-          <Button data-id="add-repository" className="w-100 text-dark w-100 bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
+        <div className="px-3 w-100">
+          <Button data-id="add-repository" className="w-100 text-dark bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
             Clone Vyper examples repository
           </Button>
         </div>
@@ -96,7 +96,7 @@ const App: React.FC = () => {
         </ToggleButtonGroup>
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <WarnRemote environment={state.environment} />
-        <div className="px-4" id="compile-btn">
+        <div className="px-3" id="compile-btn">
           <CompilerButton
             compilerUrl={compilerUrl()}
             contract={contract}

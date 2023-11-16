@@ -18,6 +18,13 @@ export type ExampleContract = {
   address: string
 }
 
+type TabContentMembers = {
+  tabText: string
+  tabPayload: any
+  tabMemberType: 'abi' | 'bytecode' | 'bytecode_runtime' | 'ir'
+  className: string
+}
+
 function VyperResult({ output, themeColor }: VyperResultProps) {
   const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
 
@@ -47,40 +54,53 @@ function VyperResult({ output, themeColor }: VyperResultProps) {
     )
   }
 
+  const tabContent = [
+    {
+      tabHeadingText: 'ABI',
+      tabPayload: Object.values(output)[0]['abi'],
+      tabMemberType: 'abi',
+      tabButtonText: () => 'Copy ABI',
+      eventKey: 'abi'
+    },
+    {
+      tabHeadingText: 'Bytecode',
+      tabPayload: Object.values(output)[0]['bytecode'].object.toString(),
+      tabMemberType: 'bytecode',
+      tabButtonText: () => 'Copy Bytecode',
+      eventKey: 'bytecode'
+    },
+    {
+      tabHeadingText: 'Runtime Bytecode',
+      tabPayload: Object.values(output)[0]['runtimeBytecode'].object.toString(),
+      tabMemberType: 'bytecode_runtime',
+      tabButtonText: () => 'Copy Runtime Bytecode',
+      eventKey: 'bytecode_runtime'
+    }
+    // {
+    //   tabHeadingText: 'LLL',
+    //   tabPayload: Object.values(output)[0]['ir'] ? '' : '',
+    //   tabMemberType: 'ir',
+    //   tabButtonText: () => Object.values(output)[0]['ir'] ? 'Copy LLL Code' : 'Nothing to copy yet',
+    //   eventKey: 'ir'
+    // }
+  ]
+
   return (
     <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)} justify>
-      <Tab eventKey="abi" title="ABI" as={'span'}>
-        <CopyToClipboard getContent={() => JSON.stringify(Object.values(output)[0]['abi'])}>
-          <Button variant="info" className="copy" data-id="copy-abi">
-            Copy ABI
-          </Button>
-        </CopyToClipboard>
-        <JSONTree src={Object.values(output)[0]['abi']} theme={themeColor as any}/>
-      </Tab>
-      <Tab eventKey="bytecode" title="Bytecode">
-        <CopyToClipboard getContent={() => JSON.stringify(Object.values(output)[0]['bytecode'].object.toString())}>
-          <Button variant="info" className="copy">
-            Copy Bytecode
-          </Button>
-        </CopyToClipboard>
-        <textarea defaultValue={Object.values(output)[0]['bytecode'].object.toString()}></textarea>
-      </Tab>
-      <Tab eventKey="bytecode_runtime" title="Runtime Bytecode">
-        <CopyToClipboard getContent={() => JSON.stringify(Object.values(output)[0]['runtimeBytecode'].object.toString())}>
-          <Button variant="info" className="copy">
-            Copy Runtime Bytecode
-          </Button>
-        </CopyToClipboard>
-        <textarea defaultValue={Object.values(output)[0]['runtimeBytecode'].object.toString()}></textarea>
-      </Tab>
-      <Tab eventKey="ir" title="LLL">
-        <CopyToClipboard getContent={() => JSON.stringify(Object.values(output)[0]['ir'])}>
-          <Button disabled={Object.values(output)[0]['ir'].length <= 1} variant="info" className="copy">
-            {Object.values(output)[0]['ir'].length > 1 ? 'Copy LLL Code' : 'Nothing to copy yet'}
-          </Button>
-        </CopyToClipboard>
-        <textarea defaultValue={Object.values(output)[0]['ir'].toString()}></textarea>
-      </Tab>
+      {tabContent.map((content, index) => (
+        <Tab eventKey={content.eventKey} title={content.tabHeadingText} as={'span'} key={`${index}-${content.eventKey}`}>
+          <CopyToClipboard getContent={() => content.eventKey !== 'abi' ? content.tabPayload : JSON.stringify(Object.values(output)[0]['abi'])}>
+            <Button variant="info" className="copy" data-id={content.eventKey === 'abi' ? "copy-abi" : ''}>
+              {content.tabButtonText()}
+            </Button>
+          </CopyToClipboard>
+          {
+            content.eventKey === 'abi' ? <JSONTree src={content.tabPayload} theme={themeColor as any}/> : (
+              <textarea defaultValue={content.tabPayload}></textarea>
+            )
+          }
+        </Tab>))
+      }
     </Tabs>
   )
 }

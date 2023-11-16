@@ -118,7 +118,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
   }
 
   return (
-    <button data-id="compile" onClick={compileContract} title={contract} className="d-flex flex-column btn btn-primary btn-block">
+    <button data-id="compile" onClick={compileContract} title={contract} className="d-flex flex-column btn btn-primary w-100">
       <span>Compile</span>
       <span className="overflow-hidden text-truncate text-nowrap">{contract}</span>
     </button>
