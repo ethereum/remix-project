@@ -48,8 +48,8 @@ function VyperResult({ output, themeColor }: VyperResultProps) {
   }
 
   return (
-    <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)}>
-      <Tab eventKey="abi" title="ABI">
+    <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)} justify>
+      <Tab eventKey="abi" title="ABI" as={'span'}>
         <CopyToClipboard getContent={() => JSON.stringify(Object.values(output)[0]['abi'])}>
           <Button variant="info" className="copy" data-id="copy-abi">
             Copy ABI
