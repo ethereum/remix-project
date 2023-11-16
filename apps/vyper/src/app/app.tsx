@@ -65,6 +65,10 @@ const App: React.FC = () => {
     return state.environment === 'remote' ? 'https://vyper2.remixproject.org/' : state.localUrl
   }
 
+  function resetCompilerResultState() {
+    setOutput({})
+  }
+
   return (
     <main id="vyper-plugin">
       <header>
@@ -97,6 +101,7 @@ const App: React.FC = () => {
             compilerUrl={compilerUrl()}
             contract={contract}
             setOutput={(name, update) => setOutput({...output, [name]: update})}
+            resetCompilerState={resetCompilerResultState}
           />
         </div>
 
