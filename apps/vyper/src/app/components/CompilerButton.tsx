@@ -8,9 +8,10 @@ interface Props {
   compilerUrl: string
   contract?: string
   setOutput: (name: string, output: any) => void
+  resetCompilerState: () => void
 }
 
-function CompilerButton({contract, setOutput, compilerUrl}: Props) {
+function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: Props) {
   if (!contract || !contract) {
     return <Button disabled>No contract selected</Button>
   }
@@ -21,6 +22,7 @@ function CompilerButton({contract, setOutput, compilerUrl}: Props) {
 
   /** Compile a Contract */
   async function compileContract() {
+    resetCompilerState()
     try {
       await remixClient.discardHighlight()
       let _contract: any
@@ -46,7 +48,6 @@ function CompilerButton({contract, setOutput, compilerUrl}: Props) {
         const t: any = toStandardOutput(contract, output)
         const temp = _.merge(t['contracts'][contract])
         const normal = normalizeContractPath(contract)[2]
-        console.log(normal)
         const abi = temp[normal]['abi']
         const evm = _.merge(temp[normal]['evm'])
         const dpb = evm.deployedBytecode
