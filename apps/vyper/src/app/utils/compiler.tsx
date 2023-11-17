@@ -87,6 +87,7 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
     result = await(await axios.get(url + 'compiled_artifact/' + compileCode , {
       method: 'Get'
     })).data
+    console.log({result})
     return result
   } else if (status === 'PENDING' || status === 'FAILED') {
     result = await(await axios.get(url + 'exceptions/' + compileCode , {
