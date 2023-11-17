@@ -75,14 +75,14 @@ function VyperResult({ output, themeColor }: VyperResultProps) {
       tabMemberType: 'bytecode_runtime',
       tabButtonText: () => 'Copy Runtime Bytecode',
       eventKey: 'bytecode_runtime'
+    },
+    {
+      tabHeadingText: 'LLL',
+      tabPayload: Object.values(output)[0]['ir'] ? '' : '',
+      tabMemberType: 'ir',
+      tabButtonText: () => Object.values(output)[0]['ir'] ? 'Copy LLL Code' : 'Nothing to copy yet',
+      eventKey: 'ir'
     }
-    // {
-    //   tabHeadingText: 'LLL',
-    //   tabPayload: Object.values(output)[0]['ir'] ? '' : '',
-    //   tabMemberType: 'ir',
-    //   tabButtonText: () => Object.values(output)[0]['ir'] ? 'Copy LLL Code' : 'Nothing to copy yet',
-    //   eventKey: 'ir'
-    // }
   ]
 
   return (

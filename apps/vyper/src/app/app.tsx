@@ -96,7 +96,7 @@ const App: React.FC = () => {
         </ToggleButtonGroup>
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <WarnRemote environment={state.environment} />
-        <div className="px-3" id="compile-btn">
+        <div className="px-3 w-100" id="compile-btn">
           <CompilerButton
             compilerUrl={compilerUrl()}
             contract={contract}
