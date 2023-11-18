@@ -93,7 +93,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const intl = useIntl()
 
   const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    messagesEndRef.current && messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
   }
 
   useEffect(() => {

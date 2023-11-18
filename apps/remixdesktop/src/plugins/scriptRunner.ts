@@ -1,5 +1,4 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
-import { utilityProcess } from "electron"
 import path from "path"
 import * as esbuild from 'esbuild'
 import { RemixURLResolver } from '@remix-project/remix-url-resolver'
@@ -44,21 +43,40 @@ class ScriptRunnerClient extends ElectronBasePluginClient {
     })
   }
   
-  async execute(content: string, path: string): Promise<void> {
-    path = convertPathToPosix(this.fixPath(path))
+  async execute(content: string, dir: string): Promise<void> {
+
+    this.call('terminal' as any, 'log', this.workingDir)
+    const child = utilityProcess.fork(path.join(__dirname,'/../tools/yarn/bin/', 'yarn.js'), [`--cwd=${this.workingDir}`, 'add', 'web3'], {
+      stdio: 'pipe',
+    })
+    child && child.stdout && child.stdout.on('data', (data) => {
+      this.call('terminal' as any, 'log', data.toString())
+    })
+    child && child.stdout && child.stdout.on('end', (data) => {
+      this.call('terminal' as any, 'log', 'end')
+    })
+    
+    dir = convertPathToPosix(this.fixPath(dir))
     console.log('execute', path)
     const out = convertPathToPosix(this.fixPath('dist'))
     const build = await esbuild.build({
-      entryPoints: [path],
+      entryPoints: [dir],
       bundle: true,
       outdir: out,
-      plugins: [onResolvePlugin],
+      plugins: [],
     })
-    console.log(build)
     if(build.errors.length > 0) {
       console.log('ERRORS', build.errors)
       return
     }
+    console.log(path.join(out,'test.js'))
+    const child2 = utilityProcess.fork(path.join(out,'test.js'), [], {
+      stdio: 'pipe'
+    })
+    child2 && child2.stdout && child2.stdout.on('data', (data) => {
+      this.call('terminal' as any, 'log', data.toString())
+    })
+    
 
   }
 
@@ -95,4 +113,44 @@ const onResolvePlugin = {
 
     })
   }
+}
+
+
+import { URL } from "url"
+import axios from "axios"
+import { app, utilityProcess } from "electron"
+
+let httpPlugin = {
+  name: 'http',
+  setup(build: esbuild.PluginBuild) {
+    // Intercept import paths starting with "http:" and "https:" so
+    // esbuild doesn't attempt to map them to a file system location.
+    // Tag them with the "http-url" namespace to associate them with
+    // this plugin.
+    build.onResolve({ filter: /^https?:\/\// }, args => ({
+      path: args.path,
+      namespace: 'http-url',
+    }))
+
+    // We also want to intercept all import paths inside downloaded
+    // files and resolve them against the original URL. All of these
+    // files will be in the "http-url" namespace. Make sure to keep
+    // the newly resolved URL in the "http-url" namespace so imports
+    // inside it will also be resolved as URLs recursively.
+    build.onResolve({ filter: /.*/, namespace: 'http-url' }, args => ({
+      path: new URL(args.path, args.importer).toString(),
+      namespace: 'http-url',
+    }))
+
+    // When a URL is loaded, we want to actually download the content
+    // from the internet. This has just enough logic to be able to
+    // handle the example import from unpkg.com but in reality this
+    // would probably need to be more complex.
+    build.onLoad({ filter: /.*/, namespace: 'http-url' }, async (args) => {
+      // Download the file
+      const response = await axios.get(args.path, { responseType: 'arraybuffer' })
+      //console.log('response', response.data.toString())
+      return { contents: response.data.toString(), loader: 'js' }
+    })
+  },
 }
