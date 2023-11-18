@@ -22,9 +22,9 @@
     "category": "public.app-category.productivity"
   },
   "scripts": {
-    "start:dev": "tsc && cross-env NODE_ENV=development electron --inspect=5858 .",
-    "start:production": "tsc && cross-env NODE_ENV=production electron .",
-    "dist": "tsc && electron-builder",
+    "start:dev": "tsc && cp -R node_modules/yarn build/tools/ &&  cross-env NODE_ENV=development electron --inspect=5858 .",
+    "start:production": "tsc &&  && cp -R node_modules/yarn build/tools/ && cross-env NODE_ENV=production electron .",
+    "dist": "tsc  && cp -R node_modules/yarn build/tools/ && electron-builder",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
