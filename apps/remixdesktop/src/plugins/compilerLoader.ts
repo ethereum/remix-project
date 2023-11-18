@@ -112,7 +112,7 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
   }
 
   async getLists(){
-
+    return await getLists()
   }
 }
 
@@ -123,14 +123,14 @@ const getLists = async()=>{
   let wasmData
 
   try{
-    let binRes = await axios.get(baseURLBin + '/list.json')
+    const binRes = await axios.get(baseURLBin + '/list.json')
     await fs.writeFile(cacheDir + '/binlist.json', JSON.stringify(binRes.data, null, 2))
     binData = binRes.data
   }catch(e) {
   }
 
   try{
-    let wasmRes = await axios.get(baseURLWasm + '/list.json')
+    const wasmRes = await axios.get(baseURLWasm + '/list.json')
     await fs.writeFile(cacheDir + '/wasmlist.json', JSON.stringify(wasmRes.data, null, 2))
     wasmData = wasmRes.data
   }catch(e) {

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, Menu, MenuItem } from 'electron';
+import { app, BrowserWindow, dialog, Menu, MenuItem, utilityProcess } from 'electron';
 import path from 'path';
 
 
@@ -27,7 +27,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
     },
   });
   if (dir && dir.endsWith('/')) dir = dir.slice(0, -1)
-  let params = dir ? `?opendir=${encodeURIComponent(dir)}` : '';
+  const params = dir ? `?opendir=${encodeURIComponent(dir)}` : '';
   // and load the index.html of the app.
   mainWindow.loadURL(
     process.env.NODE_ENV === 'production' || isPackaged ? `file://${__dirname}/remix-ide/index.html` + params :
@@ -104,13 +104,15 @@ const commandKeys: Record<string, string> = {
 };
 
 const menu = [...(process.platform === 'darwin' ? [darwinMenu(commandKeys, execCommand, showAbout)] : []),
-FileMenu(commandKeys, execCommand),
-GitMenu(commandKeys, execCommand),
-EditMenu(commandKeys, execCommand),
-ViewMenu(commandKeys, execCommand),
-TerminalMenu(commandKeys, execCommand),
-WindowMenu(commandKeys, execCommand, []),
+  FileMenu(commandKeys, execCommand),
+  GitMenu(commandKeys, execCommand),
+  EditMenu(commandKeys, execCommand),
+  ViewMenu(commandKeys, execCommand),
+  TerminalMenu(commandKeys, execCommand),
+  WindowMenu(commandKeys, execCommand, []),
 ]
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
+
+
 
