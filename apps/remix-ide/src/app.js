@@ -55,6 +55,7 @@ import { electronConfig } from './app/plugins/electron/electronConfigPlugin'
 import { electronTemplates } from './app/plugins/electron/templatesPlugin'
 import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
+import { scriptRunnerPlugin } from './app/plugins/electron/scriptRunnerPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 import {OpenAIGpt} from './app/plugins/openaigpt'
 
@@ -366,7 +367,8 @@ class AppComponent {
       this.engine.register([xterm])
       const ripgrep = new ripgrepPlugin()
       this.engine.register([ripgrep])
-  
+      const scriptRunner = new scriptRunnerPlugin()
+      this.engine.register([scriptRunner])
     }
 
     const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
@@ -490,7 +492,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if(isElectron()){
-      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep'])
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'scriptRunner'])
     }
 
     this.appManager.on(

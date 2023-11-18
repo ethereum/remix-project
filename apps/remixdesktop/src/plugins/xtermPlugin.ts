@@ -143,7 +143,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
       parsedEnv = parseEnv(stdout)
     }
 
-    let env = parsedEnv || process.env
+    const env = parsedEnv || process.env
 
     const ptyProcess = pty.spawn(shell || defaultShell, [], {
       name: 'xterm-color',
