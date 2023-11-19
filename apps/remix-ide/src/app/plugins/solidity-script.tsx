@@ -62,7 +62,7 @@ export class SolidityScript extends Plugin {
       return
     }
     const bytecode = '0x' + contract.object.evm.bytecode.object
-    const web3 = await this.call('blockchain', 'web3VM')
+    const web3 = await this.call('blockchain', 'web3')
     const accounts = await this.call('blockchain', 'getAccounts')
     if (!accounts || accounts.length === 0) {
       throw new Error('no account available')
