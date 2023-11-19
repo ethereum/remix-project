@@ -74,8 +74,8 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
   }
   const startCookbook = async () => {
     await plugin.appManager.activatePlugin(['cookbookdev'])
-    plugin.verticalIcons.select('cookbook.dev')
-    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'cookbook.dev'])
+    plugin.verticalIcons.select('cookbookdev')
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'cookbookdev'])
   }
   const startSolidityUnitTesting = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solidityUnitTesting'])
