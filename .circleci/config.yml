@@ -125,7 +125,7 @@ jobs:
                 yarn add node-pty
                 yarn --ignore-optional
                 yarn add @remix-project/remix-ws-templates
-                yarn dist --linux
+                yarn dist
                 rm -rf release/*-unpacked
         - save_cache:
             key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
@@ -169,7 +169,7 @@ jobs:
               cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
               cd apps/remixdesktop/
               yarn
-              yarn dist --win
+              yarn dist
               rm -rf release/*-unpacked
       - save_cache:
           key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
@@ -214,7 +214,7 @@ jobs:
             mkdir apps/remixdesktop/build
             cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
             cd apps/remixdesktop
-            USE_HARD_LINKS=false yarn dist --mac 
+            USE_HARD_LINKS=false yarn dist
             rm -rf release/mac*
       - store_artifacts:
           path: apps/remixdesktop/release/
