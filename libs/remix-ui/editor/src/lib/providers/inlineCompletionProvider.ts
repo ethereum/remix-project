@@ -9,7 +9,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
   monaco: any
   constructor(props: any, monaco: any) {
     this.props = props
-    this.monaco = monaco    
+    this.monaco = monaco
   }
 
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
@@ -53,18 +53,19 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     let result
     try {
       result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
-    } catch (err) { 
+    } catch (err) {
       return
     }
-    
+
     const generatedText = (result as any).output[0].generated_text as string
     // the generated text remove a space from the context...
     let clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ').replace(word, '')
+    clean = clean.replace(/_s_/g, ' ')
     console.log('suggest result', clean)
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: clean
     };
-    
+
     // abort if there is a signal
     if (token.isCancellationRequested) {
       console.log('aborted')
@@ -77,13 +78,13 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
   }
   handleItemDidShow?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, updatedInsertText: string): void {
-   
+
   }
   handlePartialAccept?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, acceptedCharacters: number): void {
 
   }
   freeInlineCompletions(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>): void {
-    
+
   }
   groupId?: string;
   yieldsToGroupIds?: string[];
