@@ -55,6 +55,7 @@ export class SolidityScript extends Plugin {
       })
     }
 
+    await this.call('compilerArtefacts', 'saveCompilerAbstract', 'script.sol', compilation)
     // get the contract
     const contract = compilation.getContract('SolidityScript')
     if (!contract) {
@@ -73,13 +74,27 @@ export class SolidityScript extends Plugin {
       from: accounts[0],
       data: bytecode
     }
-    const receipt = await web3.eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
+    let receipt
+    try {
+      receipt = await web3.eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
+    } catch (e) {
+      this.call('terminal', 'logHtml', e.message)
+      return
+    }
+    
     tx = {
       from: accounts[0],
       to: receipt.contractAddress,
       data: '0x69d4394b' // function remixRun() public
     }
-    const receiptCall = await web3.eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
+    let receiptCall 
+    
+    try {
+      receiptCall = await web3.eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
+    } catch (e) {
+      this.call('terminal', 'logHtml', e.message)
+      return
+    }   
 
     const hhlogs = await web3.remix.getHHLogsForTx(receiptCall.transactionHash)
 
