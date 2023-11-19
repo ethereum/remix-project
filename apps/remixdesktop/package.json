@@ -63,6 +63,7 @@
     "files": [
       "build/**/*"
     ],
+    "publish": "never",
     "mac": {
       "category": "public.app-category.productivity",
       "target": [
