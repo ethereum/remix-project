@@ -18,7 +18,7 @@ export interface RemixUiCompileDetailsProps {
 const _paq = (window._paq = window._paq || [])
 
 export function RemixUiCompileDetails({ plugin, contractProperties, selectedContract, saveAs, help, insertValue }: RemixUiCompileDetailsProps) {
-
+  console.log({selectedContract, contractProperties})
   const intl = useIntl()
   const downloadFn = () => {
     _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
@@ -33,7 +33,7 @@ export function RemixUiCompileDetails({ plugin, contractProperties, selectedCont
         </CustomTooltip>
       </div>
       <div className="remixui_detailsJSON">
-        <TreeView>
+        {<TreeView>
           {Object.keys(contractProperties).map((propertyName: ContractPropertyName, index) => {
             const copyDetails = (
               <span className="remixui_copyDetails">
@@ -69,7 +69,7 @@ export function RemixUiCompileDetails({ plugin, contractProperties, selectedCont
               </div>
             )
           })}
-        </TreeView>
+        </TreeView>}
       </div>
     </>
   )

@@ -108,6 +108,10 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
       })
       const data = toStandardOutput(_contract.name, output)
       remixClient.compilationFinish(_contract.name, _contract.content, data)
+
+      //map data to compilation details shape
+      
+      remixClient.call('compilationDetails' as any, 'showDetails', data)
     } catch (err: any) {
       remixClient.changeStatus({
         key: 'failed',
