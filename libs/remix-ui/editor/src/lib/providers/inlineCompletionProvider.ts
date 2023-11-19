@@ -1,4 +1,5 @@
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
+import axios, {AxiosResponse} from 'axios'
 const controller = new AbortController();
 const { signal } = controller;
 const result: string = ''
@@ -29,12 +30,26 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return;
     }
 
+    const generativeComment = word.match(/\/\/(.*)\n /)
+    if (generativeComment[1]) {
+      // use the code generation model
+      const {data} = await axios.post('https://llm.remix-project.org', {comment: generativeComment[1]})
+      const item: monacoTypes.languages.InlineCompletion = {
+        insertText: data
+      };
+      return {
+        items: [item],
+        enableForwardStability: true
+      }
+    }
+
     // abort if there is a signal
     if (token.isCancellationRequested) {
       console.log('aborted')
       return
     }
 
+    console.log(word)
     let result
     try {
       result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
