@@ -46,7 +46,7 @@ class ScriptRunnerClient extends ElectronBasePluginClient {
   async execute(content: string, dir: string): Promise<void> {
 
     this.call('terminal' as any, 'log', this.workingDir)
-    const child = utilityProcess.fork(path.join(__dirname,'/../tools/yarn/bin/', 'yarn.js'), [`--cwd=${this.workingDir}`, 'add', 'ethers'], {
+    const child = utilityProcess.fork(path.join(__dirname,'/../tools/yarn/bin/', 'yarn.js'), [`--cwd=${this.workingDir}`, 'init -y'], {
       stdio: 'pipe',
     })
     child && child.stdout && child.stdout.on('data', (data) => {
