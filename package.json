@@ -226,8 +226,7 @@
     "winston": "^3.3.3",
     "ws": "^7.3.0",
     "xterm": "^5.2.1",
-    "xterm-addon-search": "^0.12.0",
-    "yarn": "^1.22.21"
+    "xterm-addon-search": "^0.12.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
