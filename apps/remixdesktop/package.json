@@ -22,9 +22,9 @@
     "category": "public.app-category.productivity"
   },
   "scripts": {
-    "start:dev": "tsc && cp -R node_modules/yarn build/tools/ &&  cross-env NODE_ENV=development electron --inspect=5858 .",
-    "start:production": "tsc &&  && cp -R node_modules/yarn build/tools/ && cross-env NODE_ENV=production electron .",
-    "dist": "tsc  && cp -R node_modules/yarn build/tools/ && electron-builder",
+    "start:dev": "tsc && cross-env NODE_ENV=development electron --inspect=5858 .",
+    "start:production": "tsc && cross-env NODE_ENV=production electron .",
+    "dist": "tsc && electron-builder",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
@@ -50,8 +50,7 @@
     "esbuild": "^0.19.5",
     "express": "^4.18.2",
     "isomorphic-git": "^1.24.2",
-    "node-pty": "^0.10.1",
-    "yarn": "^1.22.21"
+    "node-pty": "^0.10.1"
   },
   "optionalDependencies": {
     "@remix-project/remix-ws-templates": "^1.0.27"
