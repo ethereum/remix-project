@@ -24,7 +24,7 @@
   "scripts": {
     "start:dev": "tsc && cross-env NODE_ENV=development electron --inspect=5858 .",
     "start:production": "tsc && cross-env NODE_ENV=production electron .",
-    "dist": "tsc && electron-builder",
+    "dist": "tsc && electron-builder -p never",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
