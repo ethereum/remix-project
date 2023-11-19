@@ -16,7 +16,7 @@ const Context = ({opts, provider}: {opts; provider: string}) => {
   const i = data.receipt ? data.transactionIndex : data.transactionIndex
   const value = val ? typeConversion.toInt(val) : 0
 
-  if (provider.startsWith('vm')) {
+  if (provider && provider.startsWith('vm')) {
     return (
       <div>
         <span>
