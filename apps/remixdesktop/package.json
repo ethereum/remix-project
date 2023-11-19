@@ -50,7 +50,8 @@
     "esbuild": "^0.19.5",
     "express": "^4.18.2",
     "isomorphic-git": "^1.24.2",
-    "node-pty": "^0.10.1"
+    "node-pty": "^0.10.1",
+    "yarn": "^1.22.21"
   },
   "optionalDependencies": {
     "@remix-project/remix-ws-templates": "^1.0.27"
