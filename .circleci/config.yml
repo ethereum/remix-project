@@ -120,7 +120,7 @@ jobs:
             command: |
                 node -v
                 mkdir apps/remixdesktop/build
-                cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
+                cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
                 yarn add node-pty
                 yarn --ignore-optional
@@ -166,7 +166,7 @@ jobs:
       - run: 
           command: |
               mkdir apps/remixdesktop/build
-              cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
+              cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
               yarn
               yarn dist
@@ -212,7 +212,7 @@ jobs:
           command: |
             nvm use 20.0.0
             mkdir apps/remixdesktop/build
-            cp -r dist/apps/remix-ide apps/remixdesktop/build/remix-ide
+            cp -r dist/apps/remix-ide apps/remixdesktop/build
             cd apps/remixdesktop
             USE_HARD_LINKS=false yarn dist
             rm -rf release/mac*
