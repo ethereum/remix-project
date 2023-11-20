@@ -132,6 +132,7 @@ class ScriptRunnerClient extends ElectronBasePluginClient {
         bundle: true,
         outdir: out,
         plugins: [],
+        platform: 'node'
       })
       console.log('build', build)
       if (build.errors.length > 0) {
