@@ -1,11 +1,9 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import path from "path"
 import * as esbuild from 'esbuild'
-import { RemixURLResolver } from '@remix-project/remix-url-resolver'
 import fs from 'fs/promises'
 import os, { arch } from 'os'
 
-const resolver = new RemixURLResolver()
 export const cacheDir = path.join(os.homedir(), '.cache_remix_ide')
 
 const profile = {
