@@ -62,3 +62,4 @@ apps/remixdesktop/.webpack
 apps/remixdesktop/out
 apps/remixdesktop/release/
 apps/remix-ide/src/assets/list.json
+apps/remix-ide/src/assets/esbuild.wasm
