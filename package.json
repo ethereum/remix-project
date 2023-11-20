@@ -163,6 +163,8 @@
     "deep-equal": "^1.0.1",
     "document-register-element": "1.13.1",
     "electron-squirrel-startup": "^1.0.0",
+    "esbuild": "^0.19.6",
+    "esbuild-wasm": "^0.19.6",
     "eslint-config-prettier": "^8.5.0",
     "ethers": "^5",
     "ethjs-util": "^0.1.6",
