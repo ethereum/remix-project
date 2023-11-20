@@ -29,11 +29,12 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       console.log('not a trigger char')
       return;
     }
-
-    const generativeComment = word.match(/\/\/(.*)\n /)
-    if (generativeComment[1]) {
+    let regex = new RegExp('\/\/(.*)\n ', 'g')
+    
+    const generativeComment = [...p.matchAll(regex)]
+    if (generativeComment && generativeComment.length) {
       // use the code generation model
-      const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: generativeComment[1]})
+      const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: generativeComment[generativeComment.length - 1]})
       const item: monacoTypes.languages.InlineCompletion = {
         insertText: data
       };
