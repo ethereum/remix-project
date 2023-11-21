@@ -73,13 +73,13 @@ export class SolidityScript extends Plugin {
       from: accounts[0],
       data: bytecode
     }
-    const receipt = await web3.eth.sendTransaction(tx)
+    const receipt = await web3.eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
     tx = {
       from: accounts[0],
       to: receipt.contractAddress,
       data: '0x69d4394b' // function remixRun() public
     }
-    const receiptCall = await web3.eth.sendTransaction(tx)
+    const receiptCall = await web3.eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
 
     const hhlogs = await web3.remix.getHHLogsForTx(receiptCall.transactionHash)
 

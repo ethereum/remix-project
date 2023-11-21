@@ -11,7 +11,7 @@ const providerConfig = {
   blockNumber: global.blockNumber || null
 }
 
-const config  = { defaultTransactionType: '0x0', ignoreGasPricing: true }
+const config  = { defaultTransactionType: '0x0' }
 global.remixProvider = new Provider(providerConfig)
 global.remixProvider.init()
 global.web3Provider = new ethers.providers.Web3Provider(global.remixProvider)
