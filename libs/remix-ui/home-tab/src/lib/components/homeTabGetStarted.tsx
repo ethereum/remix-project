@@ -106,48 +106,54 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
           >
             <WorkspaceTemplate
               gsID="sUTLogo"
-              workspaceTitle="Gnosis Safe MultiSig"
+              workspaceTitle="MultiSig"
               description={
                 intl.formatMessage({ id: 'home.gnosisSafeMultisigTemplateDesc' })
               }
+              projectLogo="assets/img/gnosissafeLogo.png"
               callback={() => createWorkspace("gnosisSafeMultisig")}
             />
             <WorkspaceTemplate
               gsID="sUTLogo"
-              workspaceTitle="0xProject ERC20"
+              workspaceTitle="ERC20"
               description={
                 intl.formatMessage({ id: 'home.zeroxErc20TemplateDesc' })
               }
+              projectLogo="assets/img/oxprojectLogo.png"
               callback={() => createWorkspace("zeroxErc20")}
             />
             <WorkspaceTemplate
               gsID="sourcifyLogo"
-              workspaceTitle="OpenZeppelin ERC20"
+              workspaceTitle="ERC20"
               description={intl.formatMessage({id: 'home.ozerc20TemplateDesc'})}
+              projectLogo="assets/img/openzeppelinLogo.png"
               callback={() => createWorkspace('ozerc20')}
             />
             <WorkspaceTemplate
               gsID="sUTLogo"
-              workspaceTitle="OpenZeppelin ERC721"
+              workspaceTitle="ERC721"
               description={intl.formatMessage({
                 id: 'home.ozerc721TemplateDesc'
               })}
+              projectLogo="assets/img/openzeppelinLogo.png"
               callback={() => createWorkspace("ozerc721")}
             />
             <WorkspaceTemplate
               gsID="sUTLogo"
-              workspaceTitle="OpenZeppelin ERC1155"
+              workspaceTitle="ERC1155"
               description={intl.formatMessage({
                 id: 'home.ozerc1155TemplateDesc'
               })}
+              projectLogo="assets/img/openzeppelinLogo.png"
               callback={() => createWorkspace("ozerc1155")}
             />
             <WorkspaceTemplate
               gsID="solhintLogo"
-              workspaceTitle="Remix Basic"
+              workspaceTitle="Basic"
               description={intl.formatMessage({
                 id: 'home.remixDefaultTemplateDesc'
               })}
+              projectLogo="assets/img/remixverticaltextLogo.png"
               callback={() => createWorkspace("remixDefault")}
             />
           </Carousel>
