@@ -228,7 +228,7 @@ export class CircomPluginClient extends PluginClient {
       includes.map(async (include) => {
         // fix for endless recursive includes
         let dependencyContent = ''
-        let path = include
+        let path = include.replace(/(\.\.\/)+/g, '')
         // @ts-ignore
         const pathExists = await this.call('fileManager', 'exists', path)
 
