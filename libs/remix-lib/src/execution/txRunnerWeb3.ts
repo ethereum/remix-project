@@ -65,7 +65,7 @@ export class TxRunnerWeb3 {
       promptCb(
         async (value) => {
           try {
-            const res = await (this.getWeb3() as any).eth.personal.sendTransaction({...tx, value})
+            const res = await (this.getWeb3() as any).eth.personal.sendTransaction({...tx, value}, { checkRevertBeforeSending: false, ignoreGasPricing: true })
             cb(null, res.transactionHash)
           } catch (e)  {
             console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
@@ -81,7 +81,7 @@ export class TxRunnerWeb3 {
       )
     } else {
       try {
-        const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false })
+        const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true})
         cb(null, res.transactionHash)
       } catch (e)  {
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
