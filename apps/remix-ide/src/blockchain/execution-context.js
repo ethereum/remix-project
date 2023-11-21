@@ -7,7 +7,7 @@ const _paq = window._paq = window._paq || []
 
 let web3
 
-const config  = { defaultTransactionType: '0x0' }
+const config  = { defaultTransactionType: '0x0', ignoreGasPricing: true }
 if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
   var injectedProvider = window.ethereum
   web3 = new Web3(injectedProvider)
