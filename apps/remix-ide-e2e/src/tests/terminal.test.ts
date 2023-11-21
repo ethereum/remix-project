@@ -356,6 +356,8 @@ module.exports = {
       })
       .useCss()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'test running free function', 120000)
+      .WaitForElementNotContainsText('*[data-id="terminalJournal"]', `test running free function
+      test running free function`)
   }
 }
 
