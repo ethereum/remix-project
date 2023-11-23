@@ -373,7 +373,7 @@ module.exports = {
         function addr(bytes32 node) public virtual view returns (address);
     }
 
-    function resolve() public view returns(address) {
+    function resolveENS() view {
         // Same address for Mainet, Ropsten, Rinkerby, Gorli and other networks;
         ENS ens = ENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
         (,bytes32 node) = NameEncoder.dnsEncodeName("vitalik.eth");
@@ -382,14 +382,19 @@ module.exports = {
     }
     `
     browser
+      .clickLaunchIcon('udapp')
+      .switchEnvironment('vm-mainnet-fork')
+      .clickLaunchIcon('filePanel')
       .addFile('test_mainnet.sol', { content: script })
-      .scrollToLine(15)
-    const path = "//*[@class='view-line' and contains(.,'resolve') and contains(.,'view')]//span//span[contains(.,'(')]"    
-    const pathRunFunction = `//li//*[@aria-label='Run the free function "resolve"']`
-    browser.waitForElementVisible('#editorView')
+      
+    const path = "//*[@class='view-line' and contains(.,'resolveENS') and contains(.,'view')]//span//span[contains(.,'(')]"    
+    const pathRunFunction = `//li//*[@aria-label='Run the free function "resolveENS"']`
+    browser.waitForElementVisible('#editorView')      
+      //.waitForElementPresent(pathRunFunction)
+      .pause(10000) // the parser need to parse the code
       .useXpath()
+      .scrollToLine(16)
       .click(path)
-      .pause(3000) // the parser need to parse the code
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions
