@@ -28,17 +28,7 @@ export const VmDebuggerHead = ({vmDebugger: {registerEvent, triggerEvent}, debug
   useEffect(() => {
     registerEvent &&
       registerEvent('functionsStackUpdate', (stack) => {
-        if (stack === null || stack.length === 0) return
-        const functions = []
-
-        for (const func of stack) {
-          const label = (func.functionDefinition.name || func.functionDefinition.kind) + '(' + func.inputs.join(', ') + ')' + ' - ' + func.gasCost + ' gas'
-          functions.push({
-            label,
-            function: func
-          })
-        }
-        setFunctionPanel(() => functions)
+        setFunctionPanel(stack)
       })
     registerEvent &&
       registerEvent('traceUnloaded', () => {

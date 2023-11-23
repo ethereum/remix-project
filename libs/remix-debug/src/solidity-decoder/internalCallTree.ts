@@ -30,6 +30,7 @@ export class InternalCallTree {
   traceManager
   sourceLocationTracker
   scopes
+  scopesTree
   scopeStarts
   functionCallStack
   functionDefinitionsByScope
@@ -77,13 +78,19 @@ export class InternalCallTree {
       const scopeId = '1'
       this.scopeStarts[0] = scopeId
       this.scopes[scopeId] = { firstStep: 0, locals: {}, isCreation, gasCost: 0 }
+      const treeStart = {
+        key: scopeId,
+        value: scopeId,
+        children: []
+      }
+      this.scopesTree = [treeStart]
 
       const compResult = await this.solidityProxy.compilationResult(calledAddress)
       if (!compResult) {
         this.event.trigger('noCallTreeAvailable', [])
       } else {
         try {
-          buildTree(this, 0, scopeId, isCreation).then((result) => {
+          buildTree(this, 0, scopeId, isCreation, treeStart).then((result) => {
             if (result.error) {
               this.event.trigger('callTreeBuildFailed', [result.error])
             } else {
@@ -113,6 +120,7 @@ export class InternalCallTree {
       scopeId : <currentscope_id>.<sub_scope_id>.<sub_sub_scope_id>
     */
     this.scopes = {}
+    this.scopesTree = {}
     /*
       scopeStart: represent start of a new scope. Keys are index in the vmtrace, values are scopeId
     */
@@ -147,6 +155,14 @@ export class InternalCallTree {
       scope = this.scopes[scopeId]
     }
     return scope
+  }
+
+  getScopes () {
+    return {
+      scopeStarts: this.scopeStarts,
+      scopes: this.scopes,
+      scopesTree: this.scopesTree
+    }
   }
 
   parentScope (scopeId) {
@@ -220,7 +236,7 @@ export class InternalCallTree {
   }
 }
 
-async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, contractObj?, sourceLocation?, validSourceLocation?) {
+async function buildTree (tree, step, scopeId, isCreation, callTreeRef, functionDefinition?, contractObj?, sourceLocation?, validSourceLocation?) {
   let subScope = 1
   if (functionDefinition) {
     const address = tree.traceManager.getCurrentCalledAddressAt(step)
@@ -340,6 +356,13 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
         const newScopeId = scopeId === '' ? subScope.toString() : scopeId + '.' + subScope
         tree.scopeStarts[step] = newScopeId
         tree.scopes[newScopeId] = { firstStep: step, locals: {}, isCreation, gasCost: 0 }
+        const childrenTree = {
+          scopeId: newScopeId,
+          children: [],
+          key: newScopeId,
+          value: newScopeId
+        }
+        callTreeRef.children.push(childrenTree)
         // for the ctor we we are at the start of its trace, we have to replay this step in order to catch all the locals:
         const nextStep = constructorExecutionStarts ? step : step + 1
         if (constructorExecutionStarts) {
@@ -349,7 +372,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
           await registerFunctionParameters(tree, tree.pendingConstructor, step, newScopeId, contractObj, previousValidSourceLocation, address)
           tree.pendingConstructor = null
         }
-        const externalCallResult = await buildTree(tree, nextStep, newScopeId, isCreateInstrn, functionDefinition, contractObj, sourceLocation, validSourceLocation)
+        const externalCallResult = await buildTree(tree, nextStep, newScopeId, isCreateInstrn, childrenTree, functionDefinition, contractObj, sourceLocation, validSourceLocation)
         if (externalCallResult.error) {
           return { outStep: step, error: 'InternalCallTree - ' + externalCallResult.error }
         } else {

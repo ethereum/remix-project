@@ -106,12 +106,6 @@ export class VmDebuggerLogic {
       triggerStorageUpdateStampId = setTimeout(() => {
         (() => {
           try {
-            this.event.trigger('functionsStackUpdate', [this._callTree.retrieveFunctionsStack(index)])
-          } catch (e) {
-            console.log(e)
-          }
-          
-          try {
             const memory = this._traceManager.getMemoryAt(index)
             if (this.stepManager.currentStepIndex === index) {
               this.event.trigger('traceManagerMemoryUpdate', [ui.formatMemory(memory, 32)])
@@ -233,8 +227,13 @@ export class VmDebuggerLogic {
 
     this.debugger.callTree.event.register('callTreeReady', () => {
       if (this.debugger.callTree.reducedTrace.length) {
+        try {
+          this.event.trigger('functionsStackUpdate', [this._callTree.getScopes()])
+        } catch (e) {
+          console.log(e)
+        }
         return this.event.trigger('newCallTree', [])
-      }
+      }      
     })
   }
 
