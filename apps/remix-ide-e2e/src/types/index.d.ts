@@ -69,7 +69,7 @@ declare module 'nightwatch' {
     switchWorkspace: (workspaceName: string) => NightwatchBrowser
     switchEnvironment: (provider: string) => NightwatchBrowser
     connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
-    WaitForElementNotContainsText: (id: string, value: string, timeout: number = 10000) => NightwatchBrowser
+    waitForElementNotContainsText: (id: string, value: string, timeout: number = 10000) => NightwatchBrowser
   }
 
   export interface NightwatchBrowser {
