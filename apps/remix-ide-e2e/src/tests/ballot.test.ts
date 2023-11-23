@@ -92,7 +92,7 @@ module.exports = {
         })
   },
 
-  'Compile Ballot with remappings set in remappings.txt file #group1': function (browser: NightwatchBrowser) {
+  'Compile with remappings set in remappings.txt file #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
