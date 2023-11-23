@@ -38,4 +38,4 @@ template HashChecker() {
     
 }
 
-component main {public [value1, value2, value3, value4]} = HashChecker();
+component main {public [hash]} = HashChecker();
