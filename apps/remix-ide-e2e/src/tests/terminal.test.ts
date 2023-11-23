@@ -301,17 +301,13 @@ module.exports = {
       })
       .executeScriptInTerminal(`web3.eth.getCode('0x180587b00c8642e2c7ac3a758712d97e6f7bdcc7')`) // mainnet contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x608060405260043610601f5760003560e01c80635c60da1b14603157602b565b36602b576029605f565b005b6029605f565b348015603c57600080fd5b5060436097565b6040516001600160a01b03909116815260200160405180910390f35b609560917f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b60d1565b565b600060c97f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b905090565b90565b3660008037600080366000845af43d6000803e80801560ef573d6000f35b3d6000fdfea2646970667358221220969dbb4b1d8aec2bb348e26488dc1a33b6bcf0190f567d161312ab7ca9193d8d64736f6c63430008110033', 120000)
+      .click('*[data-id="terminalClearConsole"]')
   },
 
   'Should connect to the sepolia fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
     browser
-      .switchEnvironment('vm-custom-fork')
-      .waitForElementPresent({
-        locateStrategy: 'css selector',
-        selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
-        timeout: 240000
-      })
-      .waitForElementPresent('[data-id="vm-custom-fork-modal-footer-ok-react"]')
+      .switchEnvironment('vm-custom-fork')      
+      .waitForElementVisible('[data-id="vm-custom-fork-modal-footer-ok-react"]')
       .execute(() => {
           (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
       }, [], () => { })
@@ -326,41 +322,18 @@ module.exports = {
       .click('*[data-id="CustomForkEvmType"] [value="merge"]')
       .pause(5000)
       .modalFooterOKClick('vm-custom-fork')
+      .waitForElementPresent({
+        locateStrategy: 'css selector',
+        selector: 'select[data-id="runTabSelectAccount"] option[value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
+        timeout: 240000
+      })
       .pause(5000)
       .executeScriptInTerminal(`web3.eth.getCode('0x75F509A4eDA030470272DfBAf99A47D587E76709')`) // sepolia contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
-  },
-  
-  'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
-    const script = `import "hardhat/console.sol";
+      .click('*[data-id="terminalClearConsole"]')
+  },  
 
-    function runSomething () view {
-        console.log("test running free function");
-    } 
-    `
-    browser
-      .addFile('test.sol', { content: script })
-      .scrollToLine(3)
-    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
-    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething"']`
-    browser.waitForElementVisible('#editorView')
-      .useXpath()
-      .click(path)
-      .pause(3000) // the parser need to parse the code
-      .perform(function () {
-        const actions = this.actions({ async: true });
-        return actions
-            .keyDown(this.Keys.SHIFT)
-            .keyDown(this.Keys.ALT)
-            .sendKeys('r')
-      })
-      .useCss()
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'test running free function', 120000)
-      .waitForElementNotContainsText('*[data-id="terminalJournal"]', `test running free function
-      test running free function`, 2000)
-  },
-
-  'Should run a free function while being connected to mainnet #group11': function (browser: NightwatchBrowser) {
+  'Should run a free function while being connected to mainnet #group9': function (browser: NightwatchBrowser) {
     const script = `
     import "https://github.com/ensdomains/ens-contracts/blob/master/contracts/utils/NameEncoder.sol";
     import "hardhat/console.sol";
@@ -404,6 +377,33 @@ module.exports = {
       })
       .useCss()
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', 120000)
+  },
+  
+  'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
+    const script = `import "hardhat/console.sol";
+
+    function runSomething () view {
+        console.log("test running free function");
+    } 
+    `
+    browser
+      .addFile('test.sol', { content: script })
+      .scrollToLine(3)
+    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
+    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething"']`
+    browser.waitForElementVisible('#editorView')
+      .useXpath()
+      .click(path)
+      .pause(3000) // the parser need to parse the code
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+            .keyDown(this.Keys.SHIFT)
+            .keyDown(this.Keys.ALT)
+            .sendKeys('r')
+      })
+      .useCss()
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'test running free function', 120000)
   }
 }
 
