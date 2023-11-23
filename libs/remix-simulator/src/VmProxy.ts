@@ -123,7 +123,6 @@ export class VmProxy {
     this.stateCopy = await this.vm.stateManager.copy()
     this.incr++
     this.processingHash = bufferToHex(data.hash())
-    console.log('txWillProcess', this.processingHash )
     this.vmTraces[this.processingHash] = {
       gas: '0x0',
       return: '0x0',
@@ -159,7 +158,6 @@ export class VmProxy {
   }
 
   async txProcessed (data: AfterTxEvent) {
-    console.log('txProcessed', this.processingHash)
     if (this.flagDoNotRecordEVMSteps) {
       this.flagDoNotRecordEVMSteps = false
       return
@@ -262,7 +260,6 @@ export class VmProxy {
       this.vmTraces[this.processingHash].structLogs.push(step)
       // Track hardhat console.log call
       if (step.op === 'STATICCALL' && toHexPaddedString(step.stack[step.stack.length - 2]) === '0x000000000000000000000000000000000000000000636f6e736f6c652e6c6f67') {
-        console.log('STATICCALL', this.processingHash)
         const payloadStart = parseInt(toHexPaddedString(step.stack[step.stack.length - 3]), 16)
         const memory = formatMemory(data.memory)
         const memoryStr = memory.join('')
