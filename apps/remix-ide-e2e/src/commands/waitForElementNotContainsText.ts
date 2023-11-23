@@ -1,7 +1,7 @@
 import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
-class WaitForElementNotContainsText extends EventEmitter {
+class waitForElementNotContainsText extends EventEmitter {
   command (this: NightwatchBrowser, id: string, value: string, timeout = 10000): NightwatchBrowser {
     let waitId // eslint-disable-line
     let currentValue
@@ -25,4 +25,4 @@ class WaitForElementNotContainsText extends EventEmitter {
   }
 }
 
-module.exports = WaitForElementNotContainsText
+module.exports = waitForElementNotContainsText
