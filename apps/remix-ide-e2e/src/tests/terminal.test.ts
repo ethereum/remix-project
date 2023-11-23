@@ -342,7 +342,7 @@ module.exports = {
       .addFile('test.sol', { content: script })
       .scrollToLine(3)
     const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
-    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething" in the Remix VM']`
+    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething".']`
     browser.waitForElementVisible('#editorView')
       .useXpath()
       .click(path)
@@ -358,6 +358,47 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'test running free function', 120000)
       .waitForElementNotContainsText('*[data-id="terminalJournal"]', `test running free function
       test running free function`, 2000)
+  },
+
+  'Should run a free function while being connected to mainnet #group10': function (browser: NightwatchBrowser) {
+    const script = `
+    import "https://github.com/ensdomains/ens-contracts/blob/master/contracts/utils/NameEncoder.sol";
+    import "hardhat/console.sol";
+
+    abstract contract ENS {
+        function resolver(bytes32 node) public virtual view returns (Resolver);
+    }
+
+    abstract contract Resolver {
+        function addr(bytes32 node) public virtual view returns (address);
+    }
+
+    function resolve() public view returns(address) {
+        // Same address for Mainet, Ropsten, Rinkerby, Gorli and other networks;
+        ENS ens = ENS(0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e);
+        (,bytes32 node) = NameEncoder.dnsEncodeName("vitalik.eth");
+        Resolver resolver = ens.resolver(node);
+        console.log(resolver.addr(node));
+    }
+    `
+    browser
+      .addFile('test_mainnet.sol', { content: script })
+      .scrollToLine(15)
+    const path = "//*[@class='view-line' and contains(.,'resolve') and contains(.,'view')]//span//span[contains(.,'(')]"    
+    const pathRunFunction = `//li//*[@aria-label='Run the free function "resolve".']`
+    browser.waitForElementVisible('#editorView')
+      .useXpath()
+      .click(path)
+      .pause(3000) // the parser need to parse the code
+      .perform(function () {
+        const actions = this.actions({ async: true });
+        return actions
+            .keyDown(this.Keys.SHIFT)
+            .keyDown(this.Keys.ALT)
+            .sendKeys('r')
+      })
+      .useCss()
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', 120000)
   }
 }
 
