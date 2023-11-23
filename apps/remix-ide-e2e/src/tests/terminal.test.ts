@@ -360,7 +360,7 @@ module.exports = {
       test running free function`, 2000)
   },
 
-  'Should run a free function while being connected to mainnet #group10': function (browser: NightwatchBrowser) {
+  'Should run a free function while being connected to mainnet #group11': function (browser: NightwatchBrowser) {
     const script = `
     import "https://github.com/ensdomains/ens-contracts/blob/master/contracts/utils/NameEncoder.sol";
     import "hardhat/console.sol";
