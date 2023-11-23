@@ -105,10 +105,10 @@ module.exports = {
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(1000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .addFile('contracts/lib/storage/src/Storage.sol', { content: retrieverContract })
+      .addFile('contracts/lib/storage/src/Storage.sol', { content: storageContract})
       .addFile('remappings.txt', { content: 'storage=contracts/lib/storage/src' })
-      .addFile('contracts/Retreiver.sol', { content: storageContract })
-      .verifyContracts(['Retreiver', 'Storage'])
+      .addFile('contracts/Retriever.sol', { content: retrieverContract })
+      .verifyContracts(['Retriever', 'Storage'])
   },
 
   'Deploy and use Ballot using external web3  #group2': function (browser: NightwatchBrowser) {
