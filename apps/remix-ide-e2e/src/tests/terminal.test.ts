@@ -342,7 +342,7 @@ module.exports = {
       .addFile('test.sol', { content: script })
       .scrollToLine(3)
     const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
-    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething".']`
+    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething"']`
     browser.waitForElementVisible('#editorView')
       .useXpath()
       .click(path)
@@ -385,7 +385,7 @@ module.exports = {
       .addFile('test_mainnet.sol', { content: script })
       .scrollToLine(15)
     const path = "//*[@class='view-line' and contains(.,'resolve') and contains(.,'view')]//span//span[contains(.,'(')]"    
-    const pathRunFunction = `//li//*[@aria-label='Run the free function "resolve".']`
+    const pathRunFunction = `//li//*[@aria-label='Run the free function "resolve"']`
     browser.waitForElementVisible('#editorView')
       .useXpath()
       .click(path)
