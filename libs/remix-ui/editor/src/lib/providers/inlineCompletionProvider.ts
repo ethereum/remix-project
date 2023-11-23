@@ -1,3 +1,4 @@
+/* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
 import axios, {AxiosResponse} from 'axios'
 const controller = new AbortController();
@@ -29,8 +30,9 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       console.log('not a trigger char')
       return;
     }
-    let regex = new RegExp('\/\/(.*)\n ', 'g')
-    
+    // eslint-disable-next-line no-useless-escape
+    const regex = new RegExp('\/\/(.*)\n ', 'g')
+
     const generativeComment = [...word.matchAll(regex)]
     if (generativeComment && generativeComment.length) {
       // use the code generation model
@@ -60,7 +62,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     const generatedText = (result as any).output[0].generated_text as string
     // the generated text remove a space from the context...
-    let clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ').replace(word, '')
+    const clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ').replace(word, '')
     console.log('suggest result', clean)
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: clean
