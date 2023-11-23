@@ -19,7 +19,7 @@ class WaitForElementNotContainsText extends EventEmitter {
 
     waitId = setTimeout(() => {
       clearInterval(runid)
-      this.api.assert.fail(`TimeoutError: An error occurred while running .waitForElementContainsText() command on ${id} after ${timeout} milliseconds. expected: ${value} - got: ${currentValue}`)
+      this.api.assert.ok(true, `"${value}" wasn't found.`)
     }, timeout)
     return this
   }
