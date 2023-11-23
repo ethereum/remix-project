@@ -2,8 +2,7 @@ import React, {useState, useEffect, useRef} from 'react'
 
 import {CompilationFileSources, CompilationResult} from '@remixproject/plugin-api'
 
-import {RemixClient} from './RemixPlugin'
-import {createClient} from '@remixproject/plugin-webview'
+import { EtherscanPluginClient } from './EtherscanPluginClient'
 
 import {AppContext} from './AppContext'
 import {DisplayRoutes} from './routes'
@@ -17,36 +16,33 @@ import './App.css'
 
 export const getNewContractNames = (compilationResult: CompilationResult) => {
   const compiledContracts = compilationResult.contracts
-  let result: string[] = []
+  const result: string[] = []
 
   for (const file of Object.keys(compiledContracts)) {
-    const newContractNames = Object.keys(compiledContracts[file])
-    result = [...result, ...newContractNames]
+    const filePathArray = file.split('/')
+    const newContractNames = filePathArray[filePathArray.length - 1]
+
+    result.push(newContractNames)
   }
 
   return result
 }
 
+const plugin = new EtherscanPluginClient()
+
 const App = () => {
   const [apiKey, setAPIKey] = useLocalStorage('apiKey', '')
-  const [clientInstance, setClientInstance] = useState(undefined as any)
   const [receipts, setReceipts] = useLocalStorage('receipts', [])
-  const [contracts, setContracts] = useState([] as string[])
-  const [themeType, setThemeType] = useState('dark' as ThemeType)
+  const [contracts, setContracts] = useState<string[]>([])
+  const [themeType, setThemeType] = useState<ThemeType>('dark')
   const timer = useRef(null)
-
-  const clientInstanceRef = useRef(clientInstance)
-  clientInstanceRef.current = clientInstance
   const contractsRef = useRef(contracts)
+
   contractsRef.current = contracts
 
   useEffect(() => {
-    const client = new RemixClient()
-    createClient(client)
-    const loadClient = async () => {
-      await client.onload()
-      setClientInstance(client)
-      client.on('solidity', 'compilationFinished', (fileName: string, source: CompilationFileSources, languageVersion: string, data: CompilationResult) => {
+    plugin.internalEvents.on('etherscan_activated', () => {
+      plugin.on('solidity', 'compilationFinished', (fileName: string, source: CompilationFileSources, languageVersion: string, data: CompilationResult) => {
         const newContractsNames = getNewContractNames(data)
 
         const newContractsToSave: string[] = [...contractsRef.current, ...newContractsNames]
@@ -55,21 +51,11 @@ const App = () => {
 
         setContracts(uniqueContracts)
       })
-
-      //const currentTheme = await client.call("theme", "currentTheme")
-      //setThemeType(currentTheme.quality)
-      //client.on("theme", "themeChanged", (theme) => {
-      //  setThemeType(theme.quality)
-      //})
-    }
-
-    loadClient()
+    })
   }, [])
 
   useEffect(() => {
-    let receiptsNotVerified: Receipt[] = receipts.filter((item: Receipt) => {
-      return item.status === 'Pending in queue' || item.status === 'Max rate limit reached'
-    })
+    let receiptsNotVerified: Receipt[] = receipts.filter((item: Receipt) => item.status === 'Pending in queue' || item.status === 'Max rate limit reached')
 
     if (receiptsNotVerified.length > 0) {
       if (timer.current) {
@@ -77,15 +63,12 @@ const App = () => {
         timer.current = null
       }
       timer.current = setInterval(async () => {
-        const {network, networkId} = await getNetworkName(clientInstanceRef.current)
-        if (!clientInstanceRef.current) {
-          return
-        }
+        const {network, networkId} = await getNetworkName(plugin)
 
-        if (network === 'vm') {
-          return
-        }
+        if (!plugin) return
+        if (network === 'vm') return
         let newReceipts = receipts
+
         for (const item of receiptsNotVerified) {
           await new Promise((r) => setTimeout(r, 500)) // avoid api rate limit exceed.
           let status
@@ -110,9 +93,7 @@ const App = () => {
             })
           }
         }
-        receiptsNotVerified = newReceipts.filter((item: Receipt) => {
-          return item.status === 'Pending in queue' || item.status === 'Max rate limit reached'
-        })
+        receiptsNotVerified = newReceipts.filter((item: Receipt) => item.status === 'Pending in queue' || item.status === 'Max rate limit reached')
         if (timer.current && receiptsNotVerified.length === 0) {
           clearInterval(timer.current)
           timer.current = null
@@ -127,7 +108,7 @@ const App = () => {
       value={{
         apiKey,
         setAPIKey,
-        clientInstance,
+        clientInstance: plugin,
         receipts,
         setReceipts,
         contracts,
