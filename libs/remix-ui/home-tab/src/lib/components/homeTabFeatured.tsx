@@ -41,6 +41,32 @@ function HomeTabFeatured() {
               dotListClass="position-relative mt-2"
             >
               <div className="mx-1 px-1 d-flex">
+                <a href="https://github.com/ethereum/remix-project/releases" target="__blank">
+                  <img src={'assets/img/bgRemi_small.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
+                </a>
+                <div className="h6 w-50 p-2 pl-4 align-self-center" style={{flex: '1'}}>
+                  <h5>
+                    <FormattedMessage id="homeReleaseDetails.title" />
+                  </h5>
+                  <div style={{fontSize: '0.8rem'}} className="mb-3">
+                    <ul>
+                      <li><FormattedMessage id="homeReleaseDetails.highlight1" /></li>
+                      <li><FormattedMessage id="homeReleaseDetails.highlight2" /></li>
+                      <li><FormattedMessage id="homeReleaseDetails.highlight3" /></li>
+                      <li><FormattedMessage id="homeReleaseDetails.highlight4" /></li>
+                    </ul>
+                  </div>
+                  <a
+                    className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
+                    onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'seeFullChangelog'])}
+                    target="__blank"
+                    href="https://github.com/ethereum/remix-project/releases"
+                  >
+                    <FormattedMessage id="homeReleaseDetails.more" />
+                  </a>
+                </div>
+              </div>
+              <div className="mx-1 px-1 d-flex">
                 <a href="https://remix-project.org" target="__blank">
                   <img src={'assets/img/bgRemi_small.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
