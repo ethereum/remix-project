@@ -1,5 +1,6 @@
 'use strict'
 import Web3, { Web3PluginBase } from 'web3'
+import {toHex} from 'web3-utils'
 
 export function extendWeb3 (web3) {
   if(!web3.debug){
@@ -38,7 +39,7 @@ class Web3DebugPlugin extends Web3PluginBase {
   public storageRangeAt(txBlockHash, txIndex, address, start, maxSize, cb) {
     this.requestManager.send({
       method: 'debug_storageRangeAt',
-      params: [txBlockHash, txIndex, address, start, maxSize]
+      params: [txBlockHash, toHex(txIndex), address, start, maxSize]
     })
       .then(result => cb(null, result))
       .catch(error => cb(error))
