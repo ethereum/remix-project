@@ -67,8 +67,9 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
 
   const nameResult = normalizeContractPath(contract.name)
   files.append('files', content, `${nameResult[2]}.vy`)
+  files.append('data', JSON.stringify({vyper_version: '0.3.10'}))
   const response = await axios.post(url + 'compile?vyper_version=0.3.10', files)
-
+  console.log({response})
   if (response.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)
   }
