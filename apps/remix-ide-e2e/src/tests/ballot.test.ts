@@ -547,7 +547,7 @@ contract Storage {
 const retrieverContract = `
 pragma solidity >=0.8.2 <0.9.0;
 
-import "storage/store.sol";
+import "storage/Storage.sol";
 
 contract Retriever is Storage {
 
