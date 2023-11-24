@@ -64,14 +64,14 @@ function VyperResult({ output, themeColor }: VyperResultProps) {
     },
     {
       tabHeadingText: 'Bytecode',
-      tabPayload: Object.values(output)[0]['bytecode'].object.toString(),
+      // tabPayload: Object.values(output)[0]['bytecode'].object.toString(),
       tabMemberType: 'bytecode',
       tabButtonText: () => 'Copy Bytecode',
       eventKey: 'bytecode'
     },
     {
       tabHeadingText: 'Runtime Bytecode',
-      tabPayload: Object.values(output)[0]['runtimeBytecode'].object.toString(),
+      // tabPayload: Object.values(output)[0]['runtimeBytecode'].object.toString(),
       tabMemberType: 'bytecode_runtime',
       tabButtonText: () => 'Copy Runtime Bytecode',
       eventKey: 'bytecode_runtime'
@@ -89,7 +89,7 @@ function VyperResult({ output, themeColor }: VyperResultProps) {
     <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)} justify>
       {tabContent.map((content, index) => (
         <Tab eventKey={content.eventKey} title={content.tabHeadingText} as={'span'} key={`${index}-${content.eventKey}`}>
-          <CopyToClipboard getContent={() => content.eventKey !== 'abi' ? content.tabPayload : JSON.stringify(Object.values(output)[0]['abi'])}>
+          {/* <CopyToClipboard getContent={() => content.eventKey !== 'abi' ? content.tabPayload : JSON.stringify(Object.values(output)[0]['abi'])}>
             <Button variant="info" className="copy" data-id={content.eventKey === 'abi' ? "copy-abi" : ''}>
               {content.tabButtonText()}
             </Button>
@@ -99,8 +99,11 @@ function VyperResult({ output, themeColor }: VyperResultProps) {
               <textarea defaultValue={content.tabPayload}></textarea>
             )
           }
-        </Tab>))
-      }
+        } */}
+          <Button>
+            {content.tabButtonText()}
+          </Button>
+        </Tab>))}
     </Tabs>
   )
 }
