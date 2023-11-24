@@ -306,12 +306,12 @@ module.exports = {
 
   'Should connect to the sepolia fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
     browser
-      .switchEnvironment('vm-custom-fork')      
+      .switchEnvironment('vm-custom-fork')
       .waitForElementVisible('[data-id="vm-custom-fork-modal-footer-ok-react"]')
       .execute(() => {
           (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
       }, [], () => { })
-      .clearValue('*[data-id="CustomForkNodeUrl"]').pause(1000).setValue('*[data-id="CustomForkNodeUrl"]', 'https://remix-sepolia.ethdevops.io')
+      .clearValue('*[data-id="CustomForkNodeUrl"]').pause(1000).setValue('*[data-id="CustomForkNodeUrl"]', 'https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9')
       .execute(() => {
         (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkBlockNumber"]') as any).focus()
       }, [], () => { })
@@ -355,7 +355,7 @@ module.exports = {
     }
     `
     browser
-      .clickLaunchIcon('udapp')
+      // .clickLaunchIcon('udapp')
       .switchEnvironment('vm-mainnet-fork')
       .clickLaunchIcon('filePanel')
       .addFile('test_mainnet.sol', { content: script })

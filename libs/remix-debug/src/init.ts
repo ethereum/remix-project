@@ -21,11 +21,12 @@ export function setProvider (web3, url) {
 
 export function web3DebugNode (network) {
   const web3DebugNodes = {
-    Main: 'https://eth.getblock.io/68069907-1d3c-466e-a533-a943afd935c6/mainnet',
+    Main: 'https://go.getblock.io/56f8bc5187aa4ac696348f67545acf38',
+    Holesky: 'https://go.getblock.io/7b91c53809fb49c787087e02ef84820b',
     Rinkeby: 'https://remix-rinkeby.ethdevops.io',
     Ropsten: 'https://remix-ropsten.ethdevops.io',
     Goerli: 'https://remix-goerli.ethdevops.io',
-    Sepolia: 'https://remix-sepolia.ethdevops.io'
+    Sepolia: 'https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9'
   }
   if (web3DebugNodes[network]) {
     return loadWeb3(web3DebugNodes[network])
