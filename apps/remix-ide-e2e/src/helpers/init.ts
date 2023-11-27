@@ -13,6 +13,8 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     //.switchBrowserTab(0)
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
+    .waitForElementVisible('data-id="EnterModalDialogContainer-react"]')
+    .click('[data-id="beginnerbtn"]')
 
     .perform((done) => {
       if (!loadPlugin) return done()
