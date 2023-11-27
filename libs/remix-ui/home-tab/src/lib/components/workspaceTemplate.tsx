@@ -14,7 +14,6 @@ interface WorkspaceTemplateProps {
 function WorkspaceTemplate({gsID, workspaceTitle, description, projectLogo, callback}: WorkspaceTemplateProps) {
   const themeFilter = useContext(ThemeContext)
 
-  console.log("theme ", themeFilter)
   return (
     <div className="d-flex remixui_home_workspaceTemplate">
       <button

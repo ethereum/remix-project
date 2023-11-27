@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import './style/remix-app.css'
 import {RemixUIMainPanel} from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
+import EnterDialog from './components/modals/enter'
 import OriginWarning from './components/modals/origin-warning'
 import DragBar from './components/dragbar/dragbar'
 import {AppProvider} from './context/provider'
@@ -10,12 +11,14 @@ import DialogViewPlugin from './components/modals/dialogViewPlugin'
 import {AppContext} from './context/context'
 import {IntlProvider, FormattedMessage} from 'react-intl'
 import {CustomTooltip} from '@remix-ui/helper'
+import {UsageTypes} from './types'
 
 interface IRemixAppUi {
   app: any
 }
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
+  const [showEnterDialog, setShowEnterDialog] = useState<boolean>(true)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [maximiseTrigger, setMaximiseTrigger] = useState<number>(0)
   const [resetTrigger, setResetTrigger] = useState<number>(0)
@@ -37,6 +40,8 @@ const RemixApp = (props: IRemixAppUi) => {
     if (props.app) {
       activateApp()
     }
+    const hadUsageTypeAsked = localStorage.getItem('hadUsageTypeAsked')
+    setShowEnterDialog(!hadUsageTypeAsked)
   }, [])
 
   function setListeners() {
@@ -80,12 +85,20 @@ const RemixApp = (props: IRemixAppUi) => {
     layout: props.app.layout
   }
 
+  const handleUserChosenType = (type) => {
+    setShowEnterDialog(false)
+    localStorage.setItem('hadUsageTypeAsked', "true")
+
+    // Use the type to setup the UI accordingly
+  }
+
   return (
     //@ts-ignore
     <IntlProvider locale={locale.code} messages={locale.messages}>
       <AppProvider value={value}>
         <OriginWarning></OriginWarning>
         <MatomoDialog hide={!appReady}></MatomoDialog>
+        <EnterDialog hide={!showEnterDialog} handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>
         <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
           <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
             {props.app.menuicons.render()}
