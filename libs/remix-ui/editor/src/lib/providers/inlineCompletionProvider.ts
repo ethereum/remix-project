@@ -36,7 +36,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     const generativeComment = [...word.matchAll(regex)]
     if (generativeComment && generativeComment.length) {
       // use the code generation model
-      const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: generativeComment[generativeComment.length - 1]})
+      const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: generativeComment[generativeComment.length - 1][1]})
       const item: monacoTypes.languages.InlineCompletion = {
         insertText: data
       };
