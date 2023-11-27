@@ -32,7 +32,7 @@ export class Transactions {
     this.tags = {}
   }
 
-  init (accounts) {
+  init (accounts, blockNumber) {
     this.accounts = accounts
     const api = {
       logMessage: (msg) => {
@@ -55,7 +55,7 @@ export class Transactions {
       }
     }
 
-    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => this.vmContext.vmObject())
+    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => this.vmContext.vmObject(), blockNumber)
     this.txRunnerInstance = new TxRunner(this.txRunnerVMInstance, {})
     this.txRunnerInstance.vmaccounts = accounts
   }

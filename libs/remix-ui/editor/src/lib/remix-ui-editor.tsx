@@ -734,7 +734,7 @@ export const EditorUI = (props: EditorUIProps) => {
     let freeFunctionAction
     const executeFreeFunctionAction = {
       id: 'executeFreeFunction',
-      label: 'Run a free function in the Remix VM',
+      label: 'Run a free function',
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'execute', // create a new grouping
       precondition: 'freeFunctionCondition',
@@ -792,7 +792,7 @@ export const EditorUI = (props: EditorUIProps) => {
       const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
       const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
       if (freeFunctionNode) {
-        executeFreeFunctionAction.label = `Run the free function "${freeFunctionNode.name}" in the Remix VM`
+        executeFreeFunctionAction.label = `Run the free function "${freeFunctionNode.name}"`
         freeFunctionAction = editor.addAction(executeFreeFunctionAction)
       }
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
