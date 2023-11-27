@@ -1,6 +1,6 @@
 import {CompilationResult, ABIDescription} from '@remixproject/plugin-api'
 import axios from 'axios'
-import { VyperCompilationResultType } from './types'
+import { VyperCompilationResultType, CompileFormat, BytecodeObject, AST, ABI, ETHPM3Format, CompilerInformationObject } from './types'
 
 export interface Contract {
   name: string
@@ -59,16 +59,53 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   if (extension !== 'vy') {
     throw new Error('Use extension .vy for Vyper.')
   }
-
-  const files = new FormData();
-  const content = new Blob([contract.content], {
-    type: 'text/plain'
-  });
-
   const nameResult = normalizeContractPath(contract.name)
-  files.append('files', content, `${nameResult[2]}.vy`)
-  files.append('data', JSON.stringify({vyper_version: '0.3.10'}))
-  const response = await axios.post(url + 'compile?vyper_version=0.3.10', files)
+
+  // const files = new FormData();
+  // const content = new Blob([contract.content], {
+  //   type: 'text/plain'
+  // });
+
+  // files.append('files', content, `${nameResult[2]}.vy`)
+  // files.append('data', JSON.stringify({vyper_version: '0.3.10'}))
+  type ByteCodeType = { bytecode: string, linkReferences: { offset: any; length: number; name?: string; }; linkDependencies?: { offsets: number[]; }; }
+
+  const compilePackage: ETHPM3Format = {
+    manifest: 'ethpm/3',
+    name: nameResult[2],
+    version: '0.3.10',
+    meta: {
+      authors: [],
+      license: '',
+      description: '',
+      keywords: []
+    },
+    sources: {
+      [contract.name] : {
+        content: contract.content,
+        checksum: {
+          'keccak256': '',
+          hash: ''
+        },
+        type: '',
+        license: ''
+      }
+    },
+    buildDependencies: {},
+    compilers: {} as CompilerInformationObject[],
+    contractTypes: {
+      [nameResult[2]]: {
+        content: contract.content
+      },
+      contractName: nameResult[2],
+      abi: {} as ABI[],
+      ast: {} as AST,
+      depolymentBytecode: {} as ByteCodeType,
+      runtimeBytecode: {} as any,
+    },
+    deployments: {}
+  }
+  const response = await axios.post(`${url}compile`, compilePackage )
   console.log({response})
   if (response.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)

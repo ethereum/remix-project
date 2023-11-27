@@ -174,10 +174,13 @@ export interface Items {
 }
 
 export interface BytecodeObject {
-  title:      string;
-  type:       TypeEnum;
-  anyOf:      BytecodeObjectAnyOf[];
-  properties: BytecodeObjectProperties;
+  title:      string
+  type:       TypeEnum
+  offsets: number[]
+  anyOf:      BytecodeObjectAnyOf[]
+  properties: BytecodeObjectProperties
+  bytecode: string
+  linkReferences?: { offset?: any; length?: number; name?: string}[]
 }
 
 export interface BytecodeObjectAnyOf {
@@ -355,4 +358,183 @@ export interface AnyOf {
 export interface Version {
   title: string;
   type:  TypeEnum;
+}
+
+export type CompileFormat = {
+  contractTypes: {
+    abi?: ABI[]
+    ast?: AST
+    contractName?: string
+    depolymentBytecode?: BytecodeObject
+    devMessages?: { [key: string]: string }
+    devdoc?: Devdoc
+    methodIdentifiers?: { [key: string]: string }
+    pcmap?: any
+    runtimeBytecode?: BytecodeObject
+    sourceId?: string
+    sourcemap?: string
+    userdoc?: { [key: string]: string }
+  }
+  manifest?: string
+  sources?: {
+    [fileName: string]: {
+      content: string
+      urls?: string[]
+      references?: string[]
+      imports?: string[]
+      checksum?: { [key: string]: string }
+    }
+  }
+}
+
+export type Devdoc = {
+  methods: any
+}
+
+export type ETHPM3Format = {
+  manifest: 'ethpm/3'
+  name: string
+  version: string
+  meta: Record<string, any>
+  buildDependencies: Record<string, any>
+  sources: {
+    [fileName: string]: {
+      content: string
+      checksum?: {
+        keccak256: string
+        hash: string
+      }
+      type?: any
+      license?: string
+    }
+  }
+  compilers: CompilerInformationObject[]
+  contractTypes: {
+    contractName: string
+    sourceId?: string
+    depolymentBytecode: {
+      bytecode: string
+      linkReferences: {
+        offset: any
+        length: number
+        name?: string
+      }
+      linkDependencies?: { offsets: number[]}
+    }
+    runtimeBytecode: {
+      bytecode: string
+      linkReferences: {
+        offset: any
+        length: number
+        name?: string
+      }
+      linkDependencies?: LinkValueObject
+    }
+    abi: ABI[]
+    ast: AST
+    userDoc?: {
+      methods: any
+      notice: string
+    }
+    devDoc?: {
+      methods: any,
+      author: string
+      details: string
+      title: string
+      license: string
+  }
+}
+deployments: {
+  [contractName: string]: ContractInstanceObject
+}
+
+
+}
+
+export type CompilerInformationObject = {
+  name: string
+  version: string
+  settings?: {
+    optimizer: {
+      enabled: boolean
+      runs: number
+    }
+    outputSelection: {
+      [fileName: string]: {
+        [contractName: string]: string[]
+      }
+    }
+  },
+  contractTypes?: string[]
+}
+
+export type LinkValueObject = {
+  offsets: number[]
+  type: string
+  value: string
+}
+
+export type PackageMetaDataObject = {
+  authors?: string[]
+  description?: string
+  keywords?: string[]
+  license?: string
+  links?: {
+    [key: string]: string
+  }
+}
+
+export type ContractInstanceObject = {
+  contractType: string
+  address: string
+  transaction?: string
+  block?: string
+  runtimeBytecode?: BytecodeObject
+  compiler?: string
+  linkDependencies?: LinkValueObject
+}
+
+export type ASTSrc = {
+  jumpCode: string;
+  length:   number;
+}
+
+export type Child = {
+  astType:        string;
+  children:       Child[];
+  classification: number;
+  colOffset:      number;
+  endColOffset:   number;
+  endLineno:      number;
+  lineno:         number;
+  name?:          string;
+  src:            ChildSrc;
+  docStr?:        Child;
+}
+
+export type ChildSrc = {
+  jumpCode: string;
+  length:   number;
+  start:    number;
+}
+
+export type AST = {
+  astType:        string;
+  children:       Child[];
+  classification: number;
+  colOffset:      number;
+  endColOffset:   number;
+  endLineno:      number;
+  lineno:         number;
+  name:           string;
+  src:            ASTSrc;
+}
+
+export type ABI = {
+  anonymous?:       boolean;
+  inputs:           any[];
+  name?:            string;
+  type:             any
+  stateMutability?: any;
+  outputs?:         any[];
 }
