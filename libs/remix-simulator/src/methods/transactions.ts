@@ -158,10 +158,7 @@ export class Transactions {
     this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
     processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
       if (error) return cb(error)
-      const result: any = value.result
-      if (result.execResult && result.execResult.exceptionError && result.execResult.exceptionError.errorType === 'EvmError') {
-        return cb(result.execResult.exceptionError.error)
-      }
+      const result: any = value.result      
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
         try {
           const msg = `0x${result.execResult.returnValue.toString('hex') || '0'}`
@@ -171,6 +168,9 @@ export class Transactions {
         } catch (e) {
           return cb(e.message)
         }
+      }
+      if (result.execResult && result.execResult.exceptionError && result.execResult.exceptionError.errorType === 'EvmError') {
+        return cb(result.execResult.exceptionError.error)
       }
       let gasUsed = Number(toNumber(result.execResult.executionGasUsed))
       if (result.execResult.gasRefund) {
