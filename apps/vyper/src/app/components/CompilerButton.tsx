@@ -44,6 +44,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
         setOutput(_contract.name, {status: 'failed', message: e.message})
         return
       }
+      console.log({ output })
       const compileReturnType = () => {
         const t: any = toStandardOutput(contract, output)
         const temp = _.merge(t['contracts'][contract])
@@ -110,7 +111,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
       remixClient.compilationFinish(_contract.name, _contract.content, data)
 
       //map data to compilation details shape
-      
+
       remixClient.call('compilationDetails' as any, 'showDetails', data)
     } catch (err: any) {
       remixClient.changeStatus({

@@ -26,6 +26,7 @@ type TabContentMembers = {
 }
 
 function VyperResult({ output, themeColor }: VyperResultProps) {
+  // const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
   const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
 
   if (!output)

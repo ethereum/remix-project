@@ -51,7 +51,7 @@ export function normalizeContractPath(contractPath: string): string[] {
  * @param url The url of the compiler
  * @param contract The name and content of the contract
  */
-export async function compile(url: string, contract: Contract): Promise<VyperCompilationOutput> {
+export async function compile(url: string, contract: Contract): Promise<any> {
   if (!contract.name) {
     throw new Error('Set your Vyper contract file.')
   }
@@ -69,41 +69,12 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   // files.append('files', content, `${nameResult[2]}.vy`)
   // files.append('data', JSON.stringify({vyper_version: '0.3.10'}))
   type ByteCodeType = { bytecode: string, linkReferences: { offset: any; length: number; name?: string; }; linkDependencies?: { offsets: number[]; }; }
-
-  const compilePackage: ETHPM3Format = {
+  const contractName = contract['name']
+  const compilePackage = {
     manifest: 'ethpm/3',
-    name: nameResult[2],
-    version: '0.3.10',
-    meta: {
-      authors: [],
-      license: '',
-      description: '',
-      keywords: []
-    },
     sources: {
-      [contract.name] : {
-        content: contract.content,
-        checksum: {
-          'keccak256': '',
-          hash: ''
-        },
-        type: '',
-        license: ''
-      }
-    },
-    buildDependencies: {},
-    compilers: {} as CompilerInformationObject[],
-    contractTypes: {
-      [nameResult[2]]: {
-        content: contract.content
-      },
-      contractName: nameResult[2],
-      abi: {} as ABI[],
-      ast: {} as AST,
-      depolymentBytecode: {} as ByteCodeType,
-      runtimeBytecode: {} as any,
-    },
-    deployments: {}
+      [contractName] : {content : contract.content}
+    }
   }
   const response = await axios.post(`${url}compile`, compilePackage )
   console.log({response})
@@ -122,7 +93,7 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
   })).data
 
   if (status === 'SUCCESS') {
-    result = await(await axios.get(url + 'compiled_artifact/' + compileCode , {
+    result = await(await axios.get(url + 'artifacts/' + compileCode , {
       method: 'Get'
     })).data
     console.log({result})
@@ -131,6 +102,7 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
     result = await(await axios.get(url + 'exceptions/' + compileCode , {
       method: 'Get'
     })).data
+    console.log({result})
     return result.data
   }
   await new Promise((resolve) => setTimeout(() => resolve({}), 2000))
@@ -141,19 +113,19 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
  * @param name Name of the contract file
  * @param compilationResult Result returned by the compiler
  */
-export function toStandardOutput(fileName: string, compilationResult: VyperCompilationResultType): CompilationResult {
+export function toStandardOutput(fileName: string, compilationResult: any): any {
   const contractName = normalizeContractPath(fileName)[2]
   const compiledAbi = compilationResult['contractTypes'][contractName].abi
   const deployedBytecode = compilationResult['contractTypes'][contractName].deploymentBytecode.bytecode.replace('0x', '')
   const bytecode = compilationResult['contractTypes'][contractName].runtimeBytecode.bytecode.replace('0x', '')
-  const compiledAst = compilationResult['contractTypes'][contractName].abi
+  const compiledAst = compilationResult['contractTypes'][contractName].ast
+  const methodIdentifiers = compilationResult['contractTypes'][contractName].methodIdentifiers
   //const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
   return {
     sources: {
       [fileName]: {
         id: 1,
-        ast: compiledAst,
-        legacyAST: {} as any
+        ast: compiledAst
       }
     },
     contracts: {
@@ -175,7 +147,7 @@ export function toStandardOutput(fileName: string, compilationResult: VyperCompi
               object: bytecode,
               opcodes: ''
             },
-            // methodIdentifiers: methodIdentifiers
+            methodIdentifiers: methodIdentifiers
           }
         }
       } as any
