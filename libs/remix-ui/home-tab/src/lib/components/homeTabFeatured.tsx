@@ -41,7 +41,7 @@ function HomeTabFeatured() {
               dotListClass="position-relative mt-2"
             >
               <div className="mx-1 px-1 d-flex">
-                <a href="https://github.com/ethereum/remix-project/releases" target="__blank">
+                <a href="https://github.com/ethereum/remix-project/releases/tag/v0.37.0" target="__blank">
                   <img src={'assets/img/bgRemi_small.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4 align-self-center" style={{flex: '1'}}>
@@ -60,7 +60,7 @@ function HomeTabFeatured() {
                     className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
                     onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'seeFullChangelog'])}
                     target="__blank"
-                    href="https://github.com/ethereum/remix-project/releases"
+                    href="https://github.com/ethereum/remix-project/releases/tag/v0.37.0"
                   >
                     <FormattedMessage id="homeReleaseDetails.more" />
                   </a>
