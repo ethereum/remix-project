@@ -46,7 +46,7 @@ const TerminalWelcomeMessage = ({packageJson, storage}) => {
       <ul className="ml-0 mr-4">
         <li key="web3-152">
           <a target="_blank" href="https://web3js.readthedocs.io/en/1.0/">
-            web3 version 1.5.2
+            web3.js
           </a>
         </li>
         <li key="ethers-console">
@@ -54,7 +54,9 @@ const TerminalWelcomeMessage = ({packageJson, storage}) => {
             ethers.js
           </a>{' '}
         </li>
-        <li key="remix-console">remix</li>
+        <li key="ethers-console">
+          gpt - <i>start a sentence with "gpt"</i> {' '}
+        </li>
       </ul>
       <div>
         <FormattedMessage id="terminal.welcomeText10" />.
