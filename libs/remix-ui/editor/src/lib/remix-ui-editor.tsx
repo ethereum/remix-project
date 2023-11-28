@@ -20,6 +20,7 @@ import './remix-ui-editor.css'
 import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
+const _paq = (window._paq = window._paq || [])
 
 enum MarkerSeverity {
   Hint = 1,
@@ -709,6 +710,7 @@ export const EditorUI = (props: EditorUIProps) => {
         Generate the documentation for the function ${currentFunction.current} using the Doxygen style syntax
         `
         await props.plugin.call('openaigpt', 'message', message)
+        _paq.push(['trackEvent', 'ai', 'openai', 'generateDocumentation'])
       },
     }
 
@@ -727,6 +729,7 @@ export const EditorUI = (props: EditorUIProps) => {
         Explain the function ${currentFunction.current}
         `
         await props.plugin.call('openaigpt', 'message', message)
+        _paq.push(['trackEvent', 'ai', 'openai', 'explainFunction'])
       },
     }
 
