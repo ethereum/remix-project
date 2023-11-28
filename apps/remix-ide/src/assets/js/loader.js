@@ -17,7 +17,6 @@ if (domains[window.location.hostname]) {
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
   _paq.push(["setExcludedQueryParams", ["code","gist"]]);
   _paq.push(["setExcludedReferrers", ["etherscan.io"]]);
-  _paq.push(['disableCookies']);
   _paq.push(['enableJSErrorTracking']);
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
