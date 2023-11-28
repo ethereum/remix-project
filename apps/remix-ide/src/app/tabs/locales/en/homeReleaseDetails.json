@@ -1,8 +1,11 @@
 {
-  "homeReleaseDetails.title": "RELEASE HIGHLIGHTS:",
-  "homeReleaseDetails.highlight1": "Highlight 1",
-  "homeReleaseDetails.highlight2": "Highlight 2",
-  "homeReleaseDetails.highlight3": "Highlight 3",
-  "homeReleaseDetails.highlight4": "Highlight 4",
+  "homeReleaseDetails.title": "RELEASE HIGHLIGHTS",
+  "homeReleaseDetails.highlight1": "Circom plugin and ZKP Circom Semaphore template",
+  "homeReleaseDetails.highlight2": "ERC auto-complete will load the file",
+  "homeReleaseDetails.highlight3": "The Remix UI now translated into Spanish, French, Italian, and Simplified Chinese",
+  "homeReleaseDetails.highlight4": "Load Recent Workspaces & Start Coding Button",
   "homeReleaseDetails.more": "See Full Changelog"
 }
+
+
+
