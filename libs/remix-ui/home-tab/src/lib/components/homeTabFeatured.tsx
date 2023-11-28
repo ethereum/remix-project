@@ -50,10 +50,10 @@ function HomeTabFeatured() {
                   </h5>
                   <div style={{fontSize: '0.8rem'}} className="mb-3">
                     <ul>
-                      <li><FormattedMessage id="homeReleaseDetails.highlight1" /></li>
-                      <li><FormattedMessage id="homeReleaseDetails.highlight2" /></li>
-                      <li><FormattedMessage id="homeReleaseDetails.highlight3" /></li>
-                      <li><FormattedMessage id="homeReleaseDetails.highlight4" /></li>
+                      <li className="p-1"><FormattedMessage id="homeReleaseDetails.highlight1" /></li>
+                      <li className="p-1"><FormattedMessage id="homeReleaseDetails.highlight2" /></li>
+                      <li className="p-1"><FormattedMessage id="homeReleaseDetails.highlight3" /></li>
+                      <li className="p-1"><FormattedMessage id="homeReleaseDetails.highlight4" /></li>
                     </ul>
                   </div>
                   <a
