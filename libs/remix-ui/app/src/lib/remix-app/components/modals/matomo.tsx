@@ -67,8 +67,6 @@ const MatomoDialog = (props) => {
 
   const handleModalOkClick = async () => {
     _paq.push(['forgetUserOptOut'])
-    // @TODO remove next line when https://github.com/matomo-org/matomo/commit/9e10a150585522ca30ecdd275007a882a70c6df5 is used
-    document.cookie = 'mtm_consent_removed=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
     settings.updateMatomoAnalyticsChoice(true)
     appManager.call('walkthrough', 'start')
     setVisible(false)
