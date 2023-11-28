@@ -16,13 +16,12 @@ import './App.css'
 
 export const getNewContractNames = (compilationResult: CompilationResult) => {
   const compiledContracts = compilationResult.contracts
-  const result: string[] = []
+  let result: string[] = []
 
   for (const file of Object.keys(compiledContracts)) {
-    const filePathArray = file.split('/')
-    const newContractNames = filePathArray[filePathArray.length - 1]
+    const newContractNames = Object.keys(compiledContracts[file])
 
-    result.push(newContractNames)
+    result = [...result, ...newContractNames]
   }
 
   return result
@@ -32,9 +31,10 @@ const plugin = new EtherscanPluginClient()
 
 const App = () => {
   const [apiKey, setAPIKey] = useLocalStorage('apiKey', '')
-  const [receipts, setReceipts] = useLocalStorage('receipts', [])
+  const [receipts, setReceipts] = useLocalStorage('receipts', []) 
   const [contracts, setContracts] = useState<string[]>([])
   const [themeType, setThemeType] = useState<ThemeType>('dark')
+  const [networkName, setNetworkName] = useState('Loading...')
   const timer = useRef(null)
   const contractsRef = useRef(contracts)
 
@@ -51,6 +51,11 @@ const App = () => {
 
         setContracts(uniqueContracts)
       })
+      plugin.on('blockchain' as any, 'networkStatus', (result) => {
+        setNetworkName(`${result.network.name} ${result.network.id !== '-' ? `(Chain id: ${result.network.id})` : '(Not supported)'}`)
+      })
+      // @ts-ignore
+      plugin.call('blockchain', 'getCurrentNetworkStatus').then((result: any) => setNetworkName(`${result.network.name} ${result.network.id !== '-' ? `(Chain id: ${result.network.id})` : '(Not supported)'}`))
     })
   }, [])
 
@@ -114,10 +119,11 @@ const App = () => {
         contracts,
         setContracts,
         themeType,
-        setThemeType
+        setThemeType,
+        networkName
       }}
     >
-      <DisplayRoutes />
+      { plugin && <DisplayRoutes /> }
     </AppContext.Provider>
   )
 }
