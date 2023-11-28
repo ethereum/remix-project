@@ -30,6 +30,14 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       console.log('not a trigger char')
       return;
     }
+
+    try {
+      const isActivate = await this.props.plugin.call('copilot-suggestion', 'isActivate')
+      if (!isActivate) return
+    } catch (err) {
+      return;
+    }
+
     // eslint-disable-next-line no-useless-escape
     const regex = new RegExp('\/\/(.*)\n ', 'g')
 
