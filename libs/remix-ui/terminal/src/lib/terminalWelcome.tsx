@@ -55,7 +55,7 @@ const TerminalWelcomeMessage = ({packageJson, storage}) => {
           </a>{' '}
         </li>
         <li key="ethers-console">
-          gpt - <i>start a sentence with "gpt"</i> {' '}
+          gpt <i>your question</i> {' '}
         </li>
       </ul>
       <div>
