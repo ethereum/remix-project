@@ -19,7 +19,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return;
     }
     // get text before the position of the completion
-    const word = model.getValueInRange({
+    let word = model.getValueInRange({
       startLineNumber: 1,
       startColumn: 1,
       endLineNumber: position.lineNumber,
@@ -38,13 +38,12 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return;
     }
 
-    // eslint-disable-next-line no-useless-escape
-    const regex = new RegExp('\/\/\/(.*)\n ', 'g')
-
-    const generativeComment = [...word.matchAll(regex)]
-    if (generativeComment && generativeComment.length) {
+    word = word.split('\n')
+    if (!word.length) return
+    const ask = word[word.length - 2].trimStart()
+    if (word[word.length - 1] === '' && ask.startsWith('///')) {
       // use the code generation model
-      const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: generativeComment[generativeComment.length - 1][1]})
+      const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: ask.replace('///', ''})
       const parsedData = JSON.parse(data).trimStart()
       console.log('parsedData', parsedData)
       const item: monacoTypes.languages.InlineCompletion = {
@@ -55,7 +54,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         enableForwardStability: true
       }
     }
-
+    
     // abort if there is a signal
     if (token.isCancellationRequested) {
       console.log('aborted')
