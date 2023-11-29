@@ -44,8 +44,6 @@ export const useMatomoAnalytics = (config, checked, dispatch) => {
   dispatch({ type: 'useMatomoAnalytics', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
   if (checked) {
     _paq.push(['forgetUserOptOut'])
-    // @TODO remove next line when https://github.com/matomo-org/matomo/commit/9e10a150585522ca30ecdd275007a882a70c6df5 is used
-    document.cookie = 'mtm_consent_removed=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
   } else {
     _paq.push(['optUserOut'])
   }
