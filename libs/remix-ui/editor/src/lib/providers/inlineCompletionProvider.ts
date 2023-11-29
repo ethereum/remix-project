@@ -60,7 +60,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return
     }
 
-    console.log(word)
     let result
     try {
       result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
@@ -71,7 +70,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     const generatedText = (result as any).output[0].generated_text as string
     // the generated text remove a space from the context...
     const clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ').replace(word, '')
-    console.log('suggest result', clean)
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: clean
     };
