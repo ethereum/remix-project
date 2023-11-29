@@ -39,13 +39,14 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     }
 
     // eslint-disable-next-line no-useless-escape
-    const regex = new RegExp('\/\/(.*)\n ', 'g')
+    const regex = new RegExp('\/\/\/(.*)\n ', 'g')
 
     const generativeComment = [...word.matchAll(regex)]
     if (generativeComment && generativeComment.length) {
       // use the code generation model
       const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: generativeComment[generativeComment.length - 1][1]})
-      const parsedData = JSON.parse(data)
+      const parsedData = JSON.parse(data).trimStart()
+      console.log('parsedData', parsedData)
       const item: monacoTypes.languages.InlineCompletion = {
         insertText: parsedData
       };
