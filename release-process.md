@@ -21,7 +21,7 @@ Testing is performed after the Feature Freeze on `remix-beta.ethereum.org`. `bui
 
 Once ready to run, it can be run using the Node.js: `node build-qa-doc.js`
 
-Find out the four release highlights and update in this file: `remix-project/apps/remix-ide/src/app/tabs/locales/en/homeReleaseDetails.json`
+Find out the four release highlights and update in this file: `remix-project/apps/remix-ide/src/app/tabs/locales/en/homeReleaseDetails.json` along with the version in `title` string
 
 Update the GitHub release link in this file: `remix-project/libs/remix-ui/home-tab/src/lib/components/homeTabFeatured.tsx` at line 44 & 63
 
