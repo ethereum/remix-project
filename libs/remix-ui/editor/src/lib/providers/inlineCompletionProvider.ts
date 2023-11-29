@@ -19,7 +19,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return;
     }
     // get text before the position of the completion
-    let word = model.getValueInRange({
+    const word = model.getValueInRange({
       startLineNumber: 1,
       startColumn: 1,
       endLineNumber: position.lineNumber,
@@ -38,22 +38,26 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return;
     }
 
-    word = word.split('\n')
-    if (!word.length) return
-    const ask = word[word.length - 2].trimStart()
-    if (word[word.length - 1] === '' && ask.startsWith('///')) {
-      // use the code generation model
-      const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: ask.replace('///', ''})
-      const parsedData = JSON.parse(data).trimStart()
-      console.log('parsedData', parsedData)
-      const item: monacoTypes.languages.InlineCompletion = {
-        insertText: parsedData
-      };
-      return {
-        items: [item],
-        enableForwardStability: true
+    try {
+      const split = word.split('\n')
+      if (!split.length) return
+      const ask = split[split.length - 2].trimStart()
+      if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
+        // use the code generation model
+        const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: ask.replace('///', '')})
+        const parsedData = JSON.parse(data).trimStart()
+        console.log('parsedData', parsedData)
+        const item: monacoTypes.languages.InlineCompletion = {
+          insertText: parsedData
+        };
+        return {
+          items: [item],
+          enableForwardStability: true
+        }
       }
-    }
+    } catch (e) {
+      console.error(e)
+    }   
     
     // abort if there is a signal
     if (token.isCancellationRequested) {
