@@ -11,10 +11,10 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
   browser
     .url(url || 'http://127.0.0.1:8080')
     //.switchBrowserTab(0)
+    .waitForElementVisible('[id="beginnerbtn"]')
+    .click('[id="beginnerbtn"]')
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
-    .waitForElementVisible('data-id="EnterModalDialogContainer-react"]')
-    .click('[data-id="beginnerbtn"]')
 
     .perform((done) => {
       if (!loadPlugin) return done()
