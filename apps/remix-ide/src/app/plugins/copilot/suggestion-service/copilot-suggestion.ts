@@ -6,7 +6,7 @@ const profile = {
   name: 'copilot-suggestion',
   displayName: 'copilot-suggestion',
   description: 'copilot-suggestion',
-  methods: ['suggest', 'init', 'uninstall', 'status']
+  methods: ['suggest', 'init', 'uninstall', 'status', 'isActivate']
 }
 
 export class CopilotSuggestion extends Plugin {
@@ -29,6 +29,15 @@ export class CopilotSuggestion extends Plugin {
 
   status () {
     return this.ready
+  }
+
+  async isActivate () {
+    try {
+      return await this.call('settings', 'get', 'settings/copilot/suggest/activate')
+    } catch (e) {
+      console.error(e)
+      return false
+    }
   }
 
   async suggest(content: string) {
