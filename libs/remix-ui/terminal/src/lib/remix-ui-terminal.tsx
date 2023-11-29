@@ -28,6 +28,7 @@ import RenderKnownTransactions from './components/RenderKnownTransactions' // es
 import parse from 'html-react-parser'
 import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
+const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
 export interface ClipboardEvent<T = Element> extends SyntheticEvent<T, any> {
@@ -229,6 +230,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     try {
       if (script.trim().startsWith('git')) {
         // await this.call('git', 'execute', script) code might be used in the future
+      } else if (script.trim().startsWith('gpt')) {
+        call('terminal', 'log',{ type: 'warn', value: `> ${script}` })
+        await call('openaigpt', 'message', script)
+        _paq.push(['trackEvent', 'ai', 'openai', 'askFromTerminal'])
       } else {
         await call('scriptRunner', 'execute', script)
       }
