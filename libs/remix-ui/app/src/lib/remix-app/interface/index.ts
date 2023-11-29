@@ -15,7 +15,7 @@ export interface AppModal {
     message: string | JSX.Element
     okLabel: string | JSX.Element
     okFn?: (value?:any) => void
-    cancelLabel: string | JSX.Element
+    cancelLabel?: string | JSX.Element
     cancelFn?: () => void,
     modalType?: ModalTypes,
     defaultValue?: string

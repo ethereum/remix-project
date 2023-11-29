@@ -182,23 +182,8 @@ class FileProvider {
         if (!stat.isDirectory()) {
           return await this.removeFile(path)
         } else {
-          const items = await window.remixFileSystem.readdir(path)
-          if (items.length !== 0) {
-            for (const item of items) {
-              const curPath = `${path}${path.endsWith('/') ? '' : '/'}${item}`
-              if ((await window.remixFileSystem.stat(curPath)).isDirectory()) { // delete folder
-                await this.remove(curPath)
-              } else { // delete file
-                await this.removeFile(curPath)
-              }
-            }
-            await window.remixFileSystem.rmdir(path)
-            this.event.emit('fileRemoved', this._normalizePath(path))
-          } else {
-            // folder is empty
-            await window.remixFileSystem.rmdir(path)
-            this.event.emit('fileRemoved', this._normalizePath(path))
-          }          
+          await window.remixFileSystem.unlink(path)
+          this.event.emit('fileRemoved', this._normalizePath(path))        
         }
       } catch (e) {
         console.log(e)

@@ -16,7 +16,7 @@ const Context = ({opts, provider}: {opts; provider: string}) => {
   const i = data.receipt ? data.transactionIndex : data.transactionIndex
   const value = val ? typeConversion.toInt(val) : 0
 
-  if (provider.startsWith('vm')) {
+  if (provider && provider.startsWith('vm')) {
     return (
       <div>
         <span>
@@ -47,7 +47,7 @@ const Context = ({opts, provider}: {opts; provider: string}) => {
       <div>
         <span>
           <span className="remix_ui_terminal_tx">
-            [block:{block} txIndex:{i}]
+            [block:{block.toString()} txIndex:{i ? i.toString() : '-'}]
           </span>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">from:</span> {from}
@@ -76,7 +76,7 @@ const Context = ({opts, provider}: {opts; provider: string}) => {
       <div>
         <span>
           <span className="remix_ui_terminal_tx">
-            [block:{block} txIndex:{i}]
+            [block:{block.toString()} txIndex:{i ? i.toString() : '-'}]
           </span>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">from:</span> {from}

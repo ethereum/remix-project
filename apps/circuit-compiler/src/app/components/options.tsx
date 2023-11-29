@@ -14,7 +14,7 @@ export function CompileOptions ({autoCompile, hideWarnings, setCircuitAutoCompil
           checked={autoCompile}
           id="autoCompileCircuit"
         />
-        <label className="form-check-label custom-control-label" htmlFor="autoCompileCircuit">
+        <label className="form-check-label custom-control-label" htmlFor="autoCompileCircuit" data-id="auto_compile_circuit_checkbox_input">
           <FormattedMessage id="circuit.autoCompile" />
         </label>
       </div>
@@ -27,7 +27,7 @@ export function CompileOptions ({autoCompile, hideWarnings, setCircuitAutoCompil
           title="Hide warnings"
           checked={hideWarnings}
         />
-        <label className="form-check-label custom-control-label" htmlFor="hideCircuitWarnings">
+        <label className="form-check-label custom-control-label" htmlFor="hideCircuitWarnings" data-id="hide_circuit_warnings_checkbox_input">
           <FormattedMessage id="solidity.hideWarnings" />
         </label>
       </div>

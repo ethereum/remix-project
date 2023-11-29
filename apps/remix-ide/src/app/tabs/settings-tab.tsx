@@ -63,6 +63,7 @@ module.exports = class SettingsTab extends ViewPlugin {
   updateComponent(state: any) {
     return (
       <RemixUiSettings
+        plugin={this}
         config={state.config}
         editor={state.editor}
         _deps={state._deps}

@@ -82,5 +82,7 @@ export const TEMPLATE_NAMES = {
   'zeroxErc20': '0xProject ERC20',
   'gnosisSafeMultisig': 'Gnosis Safe',
   'playground': 'Playground',
-  'semaphore': 'Semaphore'
+  'semaphore': 'Semaphore',
+  'hashchecker': 'Hash Checker',
+  'rln': 'Rate-Limiting Nullifier'
 }

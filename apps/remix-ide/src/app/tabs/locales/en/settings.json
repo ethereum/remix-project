@@ -36,5 +36,9 @@
   "settings.port": "PORT",
   "settings.projectID": "PROJECT ID",
   "settings.projectSecret": "PROJECT SECRET",
-  "settings.analyticsInRemix": "Analytics in Remix IDE"
+  "settings.analyticsInRemix": "Analytics in Remix IDE",
+  "settings.copilot": "Solidity copilot - Alpha",
+  "settings.copilot.activate": "Load & Activate copilot",
+  "settings.copilot.max_new_tokens": "Maximum amount of new words to generate",
+  "settings.copilot.temperature": "Temperature"
 }

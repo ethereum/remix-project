@@ -53,11 +53,16 @@ export function Container () {
       <article>
         <div className="pt-0 circuit_section">
           <div className="mb-1">
-            <label className="circuit_label form-check-label" htmlFor="versionSelector">
+            <label className="circuit_label form-check-label">
               <FormattedMessage id="circuit.compiler" />
             </label>
-            <CustomTooltip placement="top" tooltipId="showCompilerTooltip" tooltipClasses="text-nowrap" tooltipText={'See compiler license'}>
-              <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
+            <CustomTooltip
+              placement="top"
+              tooltipId="showCircumCompilerTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText='See compiler license'
+            >
+              <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
             <VersionList setVersion={handleVersionSelect} versionList={circuitApp.appState.versionList} currentVersion={circuitApp.appState.version} />
             <CompileOptions setCircuitAutoCompile={handleCircuitAutoCompile} setCircuitHideWarnings={handleCircuitHideWarnings} autoCompile={circuitApp.appState.autoCompile} hideWarnings={circuitApp.appState.hideWarnings} />
@@ -70,7 +75,7 @@ export function Container () {
                 <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
               </WitnessToggler>
             </RenderIf>
-            <RenderIf condition={circuitApp.appState.status !== 'compiling' && circuitApp.appState.status !== 'computing' && circuitApp.appState.status !== 'generating'}>
+            <RenderIf condition={(circuitApp.appState.status !== 'compiling') && (circuitApp.appState.status !== 'computing') && (circuitApp.appState.status !== 'generating')}>
               <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} />
             </RenderIf>
           </div>

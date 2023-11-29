@@ -32,7 +32,7 @@ export class Transactions {
     this.tags = {}
   }
 
-  init (accounts) {
+  init (accounts, blockNumber) {
     this.accounts = accounts
     const api = {
       logMessage: (msg) => {
@@ -55,7 +55,7 @@ export class Transactions {
       }
     }
 
-    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => this.vmContext.vmObject())
+    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => this.vmContext.vmObject(), blockNumber)
     this.txRunnerInstance = new TxRunner(this.txRunnerVMInstance, {})
     this.txRunnerInstance.vmaccounts = accounts
   }
@@ -158,7 +158,7 @@ export class Transactions {
     this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
     processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
       if (error) return cb(error)
-      const result: RunTxResult = value.result
+      const result: any = value.result      
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
         try {
           const msg = `0x${result.execResult.returnValue.toString('hex') || '0'}`
@@ -168,6 +168,9 @@ export class Transactions {
         } catch (e) {
           return cb(e.message)
         }
+      }
+      if (result.execResult && result.execResult.exceptionError && result.execResult.exceptionError.errorType === 'EvmError') {
+        return cb(result.execResult.exceptionError.error)
       }
       let gasUsed = Number(toNumber(result.execResult.executionGasUsed))
       if (result.execResult.gasRefund) {
@@ -265,7 +268,7 @@ export class Transactions {
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: bigIntToHex(txBlock.header.number),
         from: receipt.from,
-        gas: toHex(receipt.gas),
+        gas: toHex(BigInt(receipt.gas)),
         chainId: '0xd05',
         // 'gasPrice': '2000000000000', // 0x123
         gasPrice: '0x4a817c800', // 20000000000
@@ -314,7 +317,7 @@ export class Transactions {
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: bigIntToHex(txBlock.header.number),
         from: receipt.from,
-        gas: toHex(receipt.gas),
+        gas: toHex(BigInt(receipt.gas)),
         chainId: '0xd05',
         // 'gasPrice': '2000000000000', // 0x123
         gasPrice: '0x4a817c800', // 20000000000
@@ -359,7 +362,7 @@ export class Transactions {
         blockHash: '0x' + txBlock.hash().toString('hex'),
         blockNumber: bigIntToHex(txBlock.header.number),
         from: receipt.from,
-        gas: toHex(receipt.gas),
+        gas: toHex(BigInt(receipt.gas)),
         // 'gasPrice': '2000000000000', // 0x123
         chainId: '0xd05',
         gasPrice: '0x4a817c800', // 20000000000

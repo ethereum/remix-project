@@ -4,7 +4,7 @@ import EventManager from 'events'
 import pathModule from 'path'
 import { parse, compile, generate_witness, generate_r1cs, compiler_list } from 'circom_wasm'
 import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
-import { CompilationConfig, CompilerReport } from '../types'
+import { CompilationConfig, CompilerReport, ResolverOutput } from '../types'
 
 export class CircomPluginClient extends PluginClient {
   public internalEvents: EventManager
@@ -32,20 +32,17 @@ export class CircomPluginClient extends PluginClient {
     this.internalEvents.emit('circom_activated')
   }
 
-  async parse(path: string, fileContent?: string): Promise<CompilerReport[]> {
+  async parse(path: string, fileContent?: string): Promise<[CompilerReport[], Record<string, string>]> {
     if (!fileContent) {
       // @ts-ignore
       fileContent = await this.call('fileManager', 'readFile', path)
     }
-    this.lastParsedFiles = {
-      [path]: fileContent,
-    }
-    this.lastParsedFiles = await this.resolveDependencies(path, fileContent, this.lastParsedFiles)
+    this.lastParsedFiles = await this.resolveDependencies(path, fileContent, { [path]: { content: fileContent, parent: null } })
     const parsedOutput = parse(path, this.lastParsedFiles)
 
     try {
       const result: CompilerReport[] = JSON.parse(parsedOutput.report())
-      const mapReportFilePathToId = {}
+      const mapReportFilePathToId: Record<string, string> = {}
 
       if (result.length === 0) {
         // @ts-ignore
@@ -101,10 +98,8 @@ export class CircomPluginClient extends PluginClient {
           await this.call('editor', 'clearErrorMarkers', [path])
         }
       }
-      
-  
-      this.internalEvents.emit('circuit_parsing_done', result, mapReportFilePathToId)
-      return result
+
+      return [result, mapReportFilePathToId]
     } catch (e) {
       throw new Error(e)
     }
@@ -112,7 +107,7 @@ export class CircomPluginClient extends PluginClient {
 
   async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
     this.internalEvents.emit('circuit_compiling_start')
-    const parseErrors = await this.parse(path)
+    const [parseErrors, filePathToId] = await this.parse(path)
 
     if (parseErrors && (parseErrors.length > 0)) {
       if (parseErrors[0].type === 'Error') {
@@ -121,6 +116,8 @@ export class CircomPluginClient extends PluginClient {
       } else if (parseErrors[0].type === 'Warning') {
         this.internalEvents.emit('circuit_parsing_warning', parseErrors)
       }
+    } else {
+      this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
     }
     if (compilationConfig) {
       const { prime, version } = compilationConfig
@@ -160,7 +157,7 @@ export class CircomPluginClient extends PluginClient {
 
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
     this.internalEvents.emit('circuit_generating_r1cs_start')
-    const parseErrors = await this.parse(path)
+    const [parseErrors, filePathToId] = await this.parse(path)
 
     if (parseErrors && (parseErrors.length > 0)) {
       if (parseErrors[0].type === 'Error') {
@@ -169,6 +166,8 @@ export class CircomPluginClient extends PluginClient {
       } else if (parseErrors[0].type === 'Warning') {
         this.internalEvents.emit('circuit_parsing_warning', parseErrors)
       }
+    } else {
+      this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
     }
     if (compilationConfig) {
       const { prime, version } = compilationConfig
@@ -209,14 +208,13 @@ export class CircomPluginClient extends PluginClient {
     this.internalEvents.emit('circuit_computing_witness_done')
   }
 
-  async resolveDependencies(filePath: string, fileContent: string, output = {}, depPath: string = '', blackPath: string[] = []): Promise<Record<string, string>> {
+  async resolveDependencies(filePath: string, fileContent: string, output: ResolverOutput = {}, depPath: string = '', parent: string = ''): Promise<Record<string, string>> {
     // extract all includes
     const includes = (fileContent.match(/include ['"].*['"]/g) || []).map((include) => include.replace(/include ['"]/g, '').replace(/['"]/g, ''))
 
     await Promise.all(
       includes.map(async (include) => {
         // fix for endless recursive includes
-        if (blackPath.includes(include)) return
         let dependencyContent = ''
         let path = include
         // @ts-ignore
@@ -266,20 +264,43 @@ export class CircomPluginClient extends PluginClient {
             }
           }
         }
-        // extract all includes from the dependency content
-        const dependencyIncludes = (dependencyContent.match(/include ['"].*['"]/g) || []).map((include) => include.replace(/include ['"]/g, '').replace(/['"]/g, ''))
+        const fileNameToInclude = extractNameFromKey(include)
+        const similarFile = Object.keys(output).find(path => {
+          return path.indexOf(fileNameToInclude) > -1
+        })
+        const isDuplicateContent = similarFile && output[similarFile] ? output[similarFile].content === dependencyContent : false
 
-        blackPath.push(include)
-        // recursively resolve all dependencies of the dependency
-        if (dependencyIncludes.length > 0) {
-          await this.resolveDependencies(filePath, dependencyContent, output, path, blackPath)
-          output[include] = dependencyContent
+        if (output[include] && output[include].parent) {
+          // if include import already exists, remove the include import from the parent file
+          const regexPattern = new RegExp(`include ['"]${include}['"];`, 'g')
+
+          output[output[include].parent].content = output[output[include].parent].content.replace(regexPattern, "")
+        } else if (isDuplicateContent) {
+          // if include import has the same content as another file, replace the include import with the file name of the other file (similarFile)
+          if (output[similarFile].parent) output[output[similarFile].parent].content = output[output[similarFile].parent].content.replace(similarFile, include)
+          if (include !== similarFile) {
+            output[include] = output[similarFile]
+            delete output[similarFile]
+          }
         } else {
-          output[include] = dependencyContent
+          // extract all includes from the dependency content
+          const dependencyIncludes = (dependencyContent.match(/include ['"].*['"]/g) || []).map((include) => include.replace(/include ['"]/g, '').replace(/['"]/g, ''))
+          
+          output[include] = {
+            content: dependencyContent,
+            parent
+          }
+          // recursively resolve all dependencies of the dependency
+          if (dependencyIncludes.length > 0) await this.resolveDependencies(filePath, dependencyContent, output, path, include)
         }
       })
     )
-    return output
+    const result: Record<string, string> = {}
+
+    Object.keys(output).forEach((key) => {
+      result[key] = output[key].content
+    })
+    return result
   }
 
   async resolveReportPath (path: string): Promise<string> {

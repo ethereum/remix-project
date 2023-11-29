@@ -11,7 +11,7 @@ export function WitnessToggler ({ children }: { children: JSX.Element }) {
 
   return (
     <div>
-      <div className="d-flex circuit_config_section justify-content-between" onClick={toggleConfigurations}>
+      <div className="d-flex circuit_config_section justify-content-between" onClick={toggleConfigurations} data-id="witness_toggler">
         <div className="d-flex">
           <label className="mt-1 circuit_config_section">
             <FormattedMessage id="circuit.computeWitness" />

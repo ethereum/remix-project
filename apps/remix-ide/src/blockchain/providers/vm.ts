@@ -62,6 +62,7 @@ export class VMProvider {
               }
             }
             this.web3 = new Web3(this.provider as LegacySendAsyncProvider)
+            this.web3.setConfig({ defaultTransactionType: '0x0' })
             extend(this.web3)
             this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
             resolve({})

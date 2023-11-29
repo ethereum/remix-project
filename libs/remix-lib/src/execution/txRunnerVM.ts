@@ -31,13 +31,13 @@ export class TxRunnerVM {
   nextNonceForCall: number
   getVMObject: () => any
 
-  constructor (vmaccounts, api, getVMObject) {
+  constructor (vmaccounts, api, getVMObject, blockNumber) {
     this.event = new EventManager()
     this.logsManager = new LogsManager()
     // has a default for now for backwards compatibility
     this.getVMObject = getVMObject
     this.commonContext = this.getVMObject().common
-    this.blockNumber = 0
+    this.blockNumber = blockNumber || 0
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
     this.queusTxs = []

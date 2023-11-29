@@ -26,14 +26,16 @@ export function WitnessSection ({ plugin, signalInputs, status }: {plugin: Circo
                   <label className="circuit_inner_label form-check-label" htmlFor="circuitPrimeSelector">
                     <FormattedMessage id="circuit.signalInput" /> { input }
                   </label>
-                  <input className="form-control m-0 txinput" placeholder={input} name={input} onChange={handleSignalInput} />
+                  <input className="form-control m-0 txinput" placeholder={input} name={input} onChange={handleSignalInput} data-id={`circuit_input_${input}`} />
                 </div>
               ))
             }
             <button
               className="btn btn-sm btn-secondary"
               onClick={() => { computeWitness(plugin, status, witnessValues) }}
-              disabled={(status === "compiling") || (status === "generating") || (status === "computing")}>
+              disabled={(status === "compiling") || (status === "generating") || (status === "computing")}
+              data-id="compute_witness_btn"
+            >
               <RenderIf condition={status === 'computing'}>
                 <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
               </RenderIf>

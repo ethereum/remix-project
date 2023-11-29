@@ -41,6 +41,21 @@ export const initialState = {
       name: 'displayErrors',
       isChecked: true,
       textClass: textSecondary
+    },
+    {
+      name: 'copilot/suggest/activate',
+      isChecked: false,
+      textClass: textSecondary
+    },
+    {
+      name: 'copilot/suggest/max_new_tokens',
+      value: 5,
+      textClass: textSecondary
+    },
+    {
+      name: 'copilot/suggest/temperature',
+      value: 0.5,
+      textClass: textSecondary
     }
   ]
 }
@@ -122,6 +137,36 @@ export const settingReducer = (state, action) => {
     state.elementState.map(element => {
       if (element.name === 'useShowGasInEditor') {
         element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
+      }
+    })
+    return {
+      ...state
+    }
+  case 'copilot/suggest/activate':
+    state.elementState.map(element => {
+      if (element.name === 'copilot/suggest/activate') {
+        element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
+      }
+    })
+    return {
+      ...state
+    }
+  case 'copilot/suggest/max_new_tokens':
+    state.elementState.map(element => {
+      if (element.name === 'copilot/suggest/max_new_tokens') {
+        element.value = action.payload.value
+        element.textClass = action.payload.textClass
+      }
+    })
+    return {
+      ...state
+    }
+  case 'copilot/suggest/temperature':
+    state.elementState.map(element => {
+      if (element.name === 'useShowGasInEditor') {
+        element.value = action.payload.value
         element.textClass = action.payload.textClass
       }
     })

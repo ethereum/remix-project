@@ -2,7 +2,7 @@
 import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import Web3 from 'web3'
-import {toBigInt} from 'web3-utils'
+import {toBigInt, toHex} from 'web3-utils'
 
 export class TxRunnerWeb3 {
   event
@@ -23,15 +23,15 @@ export class TxRunnerWeb3 {
       // this is to avoid the following issue: https://github.com/MetaMask/metamask-extension/issues/11824
       tx.type = '0x2'
     } else {
-      tx.type = '0x1'
+      // tx.type = '0x1'
     }
     if (txFee) {
       if (txFee.baseFeePerGas) {
-        tx.maxPriorityFeePerGas = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.maxPriorityFee, 'gwei'))
-        tx.maxFeePerGas = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.maxFee, 'gwei'))
+        tx.maxPriorityFeePerGas = toHex(BigInt(this.getWeb3().utils.toWei(txFee.maxPriorityFee, 'gwei')))
+        tx.maxFeePerGas = toHex(BigInt(this.getWeb3().utils.toWei(txFee.maxFee, 'gwei')))
         tx.type = '0x2'
       } else {
-        tx.gasPrice = this.getWeb3().utils.toHex(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei'))
+        tx.gasPrice = toHex(BigInt(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei')))
         tx.type = '0x1'
       }
     }
@@ -65,7 +65,7 @@ export class TxRunnerWeb3 {
       promptCb(
         async (value) => {
           try {
-            const res = await (this.getWeb3() as any).eth.personal.sendTransaction({...tx, value})
+            const res = await (this.getWeb3() as any).eth.personal.sendTransaction({...tx, value}, { checkRevertBeforeSending: false, ignoreGasPricing: true })
             cb(null, res.transactionHash)
           } catch (e)  {
             console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
@@ -81,7 +81,7 @@ export class TxRunnerWeb3 {
       )
     } else {
       try {
-        const res = await this.getWeb3().eth.sendTransaction(tx)
+        const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true})
         cb(null, res.transactionHash)
       } catch (e)  {
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
@@ -175,16 +175,22 @@ export class TxRunnerWeb3 {
   }
 }
 
-async function tryTillReceiptAvailable (txhash, web3) {
+async function tryTillReceiptAvailable (txhash: string, web3: Web3) {
   try {
     const receipt = await web3.eth.getTransactionReceipt(txhash)
-    if (receipt) return receipt
+    if (receipt) {
+      if (!receipt.to && !receipt.contractAddress) {
+        // this is a contract creation and the receipt doesn't contain a contract address. we have to keep polling...
+        console.log('this is a contract creation and the receipt does nott contain a contract address. we have to keep polling...')
+      } else
+        return receipt
+    }
   } catch (e) {}
   await pause()
   return await tryTillReceiptAvailable(txhash, web3)
 }
 
-async function tryTillTxAvailable (txhash, web3) {
+async function tryTillTxAvailable (txhash: string, web3: Web3) {
   try {
     const tx = await web3.eth.getTransaction(txhash)
     if (tx && tx.blockHash) return tx

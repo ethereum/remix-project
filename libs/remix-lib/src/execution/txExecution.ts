@@ -89,7 +89,7 @@ export function checkError (execResult, compiledContracts) {
     msg = '\tThe transaction ran out of gas. Please increase the Gas Limit.\n'
     ret.error = true
   } else if (exceptionError === errorCode.REVERT || exceptionError === 'execution reverted') {
-    const returnData = execResult.errorData
+    const returnData = execResult.errorData || '0x00000000'
     const returnDataHex = returnData.slice(2, 10)
     let customError
     if (compiledContracts) {

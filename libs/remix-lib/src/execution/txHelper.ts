@@ -14,10 +14,10 @@ export function encodeParams (funABI, args) {
   if (funABI.inputs && funABI.inputs.length) {
     for (let i = 0; i < funABI.inputs.length; i++) {
       const type = funABI.inputs[i].type
-      // "false" will be converting to `false` and "true" will be working
-      // fine as abiCoder assume anything in quotes as `true`
-      if (type === 'bool' && args[i] === 'false') {
-        args[i] = false
+      if (type === 'bool') {
+        if (args[i] === false || args[i] === 'false' || args[i] === '0' || args[i] === 0) args[i] = false
+        else if (args[i] === true || args[i] === 'true' || args[i] === '1' || args[i] === 1) args[i] = true   
+        else throw new Error(`provided value for boolean is invalid: ${args[i]}`)    
       }
       types.push(type.indexOf('tuple') === 0 ? makeFullTypeDefinition(funABI.inputs[i]) : type)
       if (args.length < types.length) {

@@ -23,7 +23,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'getProvider'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider'],
   version: packageJson.version
 }
 
@@ -940,12 +940,20 @@ export class Blockchain extends Plugin {
 
       cb(null, txResult, address, returnValue)
     } catch (error) {
-      if (this.isInjectedWeb3()) {
-        const errorMessage = error.innerError ? error.innerError.message : error.message
-        const errorData = error.innerError ? error.innerError.data : error.data
+      const buildError = async (errorMessage, errorData) => {
         const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
-        const injectedError = txExecution.checkError({ errorMessage, errorData }, compiledContracts)
-        cb(injectedError.message)
+        return txExecution.checkError({ errorMessage, errorData }, compiledContracts)
+      }
+      let errorMessage
+      let errorData
+      if (error.innerError) {
+        errorMessage = error.innerError.message
+        errorData = error.innerError.data
+        cb((await buildError(errorMessage, errorData)).message)
+      } else if (error.message || error.data) {
+        errorMessage = error.message
+        errorData = error.data     
+        cb((await buildError(errorMessage, errorData)).message)
       } else 
         cb(error)
     }

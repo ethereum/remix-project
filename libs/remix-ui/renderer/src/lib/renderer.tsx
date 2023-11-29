@@ -78,7 +78,7 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
       explain why the error occurred and how to fix it.
       `
       await plugin.call('openaigpt', 'message', message)
-      _paq.push(['trackEvent', 'GPTSupport', 'askGPT'])
+      _paq.push(['trackEvent', 'ai', 'openai', 'explainSolidityError'])
     } catch (err) {
       console.error('unable to askGtp')
       console.error(err)

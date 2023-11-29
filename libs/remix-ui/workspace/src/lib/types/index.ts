@@ -17,7 +17,7 @@ export interface JSONStandardInput {
   }
 }
 export type MenuItems = action[]
-export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore'
+export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore' | 'hashchecker' | 'rln'
 export interface WorkspaceProps {
   plugin: FilePanelType
 }
@@ -292,6 +292,7 @@ export interface ActionPayloadTypes {
   SET_CURRENT_WORKSPACE_BRANCHES: { remote: string | undefined; name: string }[],
   SET_CURRENT_WORKSPACE_CURRENT_BRANCH: string,
   SET_CURRENT_WORKSPACE_IS_GITREPO: boolean,
+  SET_CURRENT_WORKSPACE_HAS_GIT_SUBMODULES: boolean,
   SET_GIT_CONFIG: {
     username: string;
     token: string;

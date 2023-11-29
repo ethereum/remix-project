@@ -24,6 +24,7 @@ export class WalletConnectRemixClient extends PluginClient {
   chains: Chain[]
   currentChain: number
   internalEvents: EventManager
+  currentAcount: string
 
   constructor() {
     super()
@@ -59,7 +60,9 @@ export class WalletConnectRemixClient extends PluginClient {
       ]
       const {publicClient} = configureChains(this.chains, [
         w3mProvider({projectId: PROJECT_ID})
-      ])
+      ], {
+        pollingInterval: 5000
+      })
 
       this.wagmiConfig = createConfig({
         autoConnect: false,
@@ -75,13 +78,17 @@ export class WalletConnectRemixClient extends PluginClient {
   subscribeToEvents() {
     this.wagmiConfig.subscribe((event) => {
       if (event.status === 'connected') {
-        this.emit('accountsChanged', [event.data.account])
+        if (event.data.account !== this.currentAcount) {
+          this.currentAcount = event.data.account
+          this.emit('accountsChanged', [event.data.account])          
+        }
         if (this.currentChain !== event.data.chain.id) {
           this.currentChain = event.data.chain.id
           this.emit('chainChanged', event.data.chain.id)
         }
       } else if (event.status === 'disconnected') {
         this.emit('accountsChanged', [])
+        this.currentAcount = ''
         this.emit('chainChanged', 0)
         this.currentChain = 0
       }
@@ -106,25 +113,44 @@ export class WalletConnectRemixClient extends PluginClient {
 
         if (provider.isMetaMask) {
           return new Promise((resolve) => {
-            provider.sendAsync(data, (err, response) => {
-              if (err) {
-                console.error(err)
-                return resolve({jsonrpc: '2.0', result: [], id: data.id})
+            provider.sendAsync(data, (error, response) => {
+              if (error) {
+                if (error.data && error.data.originalError && error.data.originalError.data) {
+                  resolve({
+                    jsonrpc: '2.0',
+                    error: error.data.originalError,
+                    id: data.id
+                  })
+                } else if (error.data && error.data.message) {
+                  resolve({
+                    jsonrpc: '2.0',
+                    error: error.data && error.data,
+                    id: data.id
+                  })
+                } else {
+                  resolve({
+                    jsonrpc: '2.0',
+                    error,
+                    id: data.id
+                  })
+                }                
               }
               return resolve(response)
             })
           })
         } else {
-          const message = await provider.request(data)
-
-          return {jsonrpc: '2.0', result: message, id: data.id}
+          try {
+            const message = await provider.request(data)
+            return {jsonrpc: '2.0', result: message, id: data.id}
+          } catch (e) {
+            return {jsonrpc: '2.0', error: { message: e.message, code: -32603 }, id: data.id}
+          }
         }
       }
     } else {
-      console.error(
-        `Cannot make ${data.method} request. Remix client is not connected to walletconnect client`
-      )
-      return {jsonrpc: '2.0', result: [], id: data.id}
+      const err = `Cannot make ${data.method} request. Remix client is not connected to walletconnect client`
+      console.error(err)
+      return {jsonrpc: '2.0', error: { message: err, code: -32603 }, id: data.id}
     }
   }
 
