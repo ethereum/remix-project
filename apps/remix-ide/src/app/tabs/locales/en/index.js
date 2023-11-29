@@ -1,6 +1,7 @@
 import debuggerJson from './debugger.json';
 import filePanelJson from './filePanel.json';
 import homeJson from './home.json';
+import homeReleaseDetailsJson from './homeReleaseDetails.json';
 import panelJson from './panel.json';
 import pluginManagerJson from './pluginManager.json';
 import searchJson from './search.json';
@@ -19,6 +20,7 @@ export default {
   ...debuggerJson,
   ...filePanelJson,
   ...homeJson,
+  ...homeReleaseDetailsJson,
   ...panelJson,
   ...pluginManagerJson,
   ...searchJson,
