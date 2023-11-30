@@ -89,7 +89,10 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
   return (
     <>
       <div className='d-flex' style={{width: 'auto', placeContent: stylePC}}>      
-        {iconRecord.active && <div className='pt-1 bg-primary' style={{width: "6px", height: "36px", position: 'relative'}}></div>}
+        {iconRecord.active && <div
+          className='pt-1 bg-primary'
+          style={{width: "6px", height: "36px", position: 'relative', borderRadius: '24%'}}
+        ></div>}
         <CustomTooltip
           placement={name === 'settings' ? 'right' : name === 'search' ? 'top' : name === 'udapp' ? 'bottom' : 'top'}
           tooltipText={title}
