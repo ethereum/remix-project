@@ -57,7 +57,7 @@ export function Container () {
               <FormattedMessage id="circuit.compiler" />
             </label>
             <CustomTooltip
-              placement="top"
+              placement="bottom"
               tooltipId="showCircumCompilerTooltip"
               tooltipClasses="text-nowrap"
               tooltipText='See compiler license'
