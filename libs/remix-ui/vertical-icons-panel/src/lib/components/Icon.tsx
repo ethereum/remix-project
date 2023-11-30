@@ -84,49 +84,54 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
     }
   }, [])
 
+
+  const stylePC = iconRecord.active ? 'flex-start' : 'center'
   return (
     <>
-      <CustomTooltip
-        placement={name === 'settings' ? 'right' : name === 'search' ? 'top' : name === 'udapp' ? 'bottom' : 'top'}
-        tooltipText={title}
-        delay={{show: 1000, hide: 0}}
-      >
-        <div
-          className={`remixui_icon m-2  pt-1`}
-          onClick={() => {
-            ;(verticalIconPlugin as any).toggle(name)
-          }}
-          {...{plugin: name}}
-          onContextMenu={(e: any) => {
-            e.preventDefault()
-            e.stopPropagation()
-            handleContextMenu(e)
-          }}
-          data-id={`verticalIconsKind${name}`}
-          id={`verticalIconsKind${name}`}
-          ref={iconRef}
+      <div className='d-flex' style={{width: 'auto', placeContent: stylePC}}>      
+        {iconRecord.active && <div className='pt-1 bg-primary' style={{width: "6px", height: "36px", position: 'relative'}}></div>}
+        <CustomTooltip
+          placement={name === 'settings' ? 'right' : name === 'search' ? 'top' : name === 'udapp' ? 'bottom' : 'top'}
+          tooltipText={title}
+          delay={{show: 1000, hide: 0}}
         >
-          <img
-            data-id={iconRecord.active ? `selected` : ''}
-            className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}` : ''}`}
-            src={icon}
-            alt={name}
+          <div
+            className={`remixui_icon m-0  pt-1`}
+            onClick={() => {
+              ;(verticalIconPlugin as any).toggle(name)
+            }}
+            {...{plugin: name}}
+            onContextMenu={(e: any) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleContextMenu(e)
+            }}
+            data-id={`verticalIconsKind${name}`}
+            id={`verticalIconsKind${name}`}
+            ref={iconRef}
+          >
+            <img
+              data-id={iconRecord.active ? `selected` : ''}
+              className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}` : ''}`}
+              src={icon}
+              alt={name}
+            />
+            <Badge badgeStatus={badgeStatus} />
+          </div>
+        </CustomTooltip>
+        {showContext ? (
+          <VerticalIconsContextMenu
+            pageX={pageX}
+            pageY={pageY}
+            links={links}
+            profileName={name}
+            hideContextMenu={closeContextMenu}
+            canBeDeactivated={canDeactivate}
+            verticalIconPlugin={verticalIconPlugin}
+            contextMenuAction={contextMenuAction}
           />
-          <Badge badgeStatus={badgeStatus} />
-        </div>
-      </CustomTooltip>
-      {showContext ? (
-        <VerticalIconsContextMenu
-          pageX={pageX}
-          pageY={pageY}
-          links={links}
-          profileName={name}
-          hideContextMenu={closeContextMenu}
-          canBeDeactivated={canDeactivate}
-          verticalIconPlugin={verticalIconPlugin}
-          contextMenuAction={contextMenuAction}
-        />
-      ) : null}
+        ) : null}
+      </div>
     </>
   )
 }
