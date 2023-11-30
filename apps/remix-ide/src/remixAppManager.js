@@ -75,7 +75,8 @@ const requiredModules = [ // services + layout views + system views
   'solidity-script',
   'openaigpt',
   'home',
-  'doc-viewer'
+  'doc-viewer',
+  'doc-gen'
 ]
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
