@@ -5,8 +5,10 @@ const _paq = (window._paq = window._paq || []) //eslint-disable-line
 const profile = {
   name: 'copilot-suggestion',
   displayName: 'copilot-suggestion',
-  description: 'copilot-suggestion',
-  methods: ['suggest', 'init', 'uninstall', 'status', 'isActivate']
+  description: 'Get Solidity suggestions in editor',
+  methods: ['suggest', 'init', 'uninstall', 'status', 'isActivate'],
+  version: '0.1.0-alpha',
+  maintainedBy: "Remix"
 }
 
 export class CopilotSuggestion extends Plugin {
