@@ -11,10 +11,6 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
   browser
     .url(url || 'http://127.0.0.1:8080')
     //.switchBrowserTab(0)
-    .waitForElementVisible('[data-id="EnterModalDialogModalBody-react"]')
-    .scrollInto('[data-id = "EnterModalDialogModalBody-react"]')
-    .waitForElementVisible('[data-id="beginnerbtn"]')
-    .click('[data-id="beginnerbtn"]')
     .waitForElementVisible('[id="remixTourSkipbtn"]')
     .click('[id="remixTourSkipbtn"]')
 
