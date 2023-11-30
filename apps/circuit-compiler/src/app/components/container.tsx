@@ -11,7 +11,6 @@ import { WitnessToggler } from './witnessToggler'
 import { WitnessSection } from './witness'
 import { CompilerFeedback } from './feedback'
 import { PrimeValue } from '../types'
-import { CompilerLicense } from '../constants/license'
 
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
