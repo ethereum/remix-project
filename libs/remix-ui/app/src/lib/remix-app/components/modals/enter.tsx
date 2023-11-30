@@ -46,10 +46,10 @@ const EnterDialog = (props: EnterDialogProps) => {
             </div>
           </div>
           <div className="modal-body text-break remixModalBody d-flex flex-row p-3 justify-content-between" data-id={`EnterModalDialogModalBody-react`}>
-            <button className="btn-secondary" data-id="beginnerbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Beginner)}}>Learn/Playground</button>
-            <button className="btn-secondary" data-id="tutorbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Tutor)}}>Teach/Workshop</button>
-            <button className="btn-secondary" data-id="prototyperbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Prototyper)}}>Prototype/Test</button>
-            <button className="btn-secondary" data-id="productionbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Production)}}>Production level</button>
+            <button className="btn-secondary" data-id="beginnerbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Beginner)}}>Beginner</button>
+            <button className="btn-secondary" data-id="tutorbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Tutor)}}>Teacher</button>
+            <button className="btn-secondary" data-id="prototyperbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Prototyper)}}>Prototyper</button>
+            <button className="btn-secondary" data-id="productionbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Production)}}>Production User</button>
           </div>
         </div>
       </div>
