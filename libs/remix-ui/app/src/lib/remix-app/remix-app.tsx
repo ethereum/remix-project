@@ -95,7 +95,7 @@ const RemixApp = (props: IRemixAppUi) => {
 
   const handleUserChosenType = async (type) => {
     setShowEnterDialog(false)
-    localStorage.setItem('hadUsageTypeAsked', "1")
+    localStorage.setItem('hadUsageTypeAsked', type)
 
     await props.app.appManager.call('walkthrough', 'start')
 
