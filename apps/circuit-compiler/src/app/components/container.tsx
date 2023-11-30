@@ -15,9 +15,17 @@ import { PrimeValue } from '../types'
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
 
-  const showCompilerLicense = (message = 'License not available') => {
-    // @ts-ignore
-    circuitApp.plugin.call('notification', 'modal', { id: 'modal_circuit_compiler_license', title: 'Compiler License', message })
+  const showCompilerLicense = async (message = 'License not available') => {
+    try {
+      const response = await fetch('https://raw.githubusercontent.com/iden3/circom/master/COPYING')
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+      const content = await response.text()
+      // @ts-ignore
+      circuitApp.plugin.call('notification', 'modal', { id: 'modal_circuit_compiler_license', title: 'Compiler License', message: content })
+    } catch (e) {
+      // @ts-ignore
+      circuitApp.plugin.call('notification', 'modal', { id: 'modal_circuit_compiler_license', title: 'Compiler License', message })
+    }
   }
 
   const handleVersionSelect = (version: string) => {
@@ -57,7 +65,7 @@ export function Container () {
               <FormattedMessage id="circuit.compiler" />
             </label>
             <CustomTooltip
-              placement="top"
+              placement="bottom"
               tooltipId="showCircumCompilerTooltip"
               tooltipClasses="text-nowrap"
               tooltipText='See compiler license'

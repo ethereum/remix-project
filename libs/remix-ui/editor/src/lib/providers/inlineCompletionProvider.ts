@@ -15,7 +15,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
     if (context.selectedSuggestionInfo) {
-    	console.log('return empty from provideInlineCompletions')
       return;
     }
     // get text before the position of the completion
@@ -27,7 +26,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     });
 
     if (!word.endsWith(' ') && !word.endsWith('\n') && !word.endsWith(';') && !word.endsWith('.')) {
-      console.log('not a trigger char')
       return;
     }
 
@@ -40,13 +38,12 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     try {
       const split = word.split('\n')
-      if (!split.length) return
+      if (split.length < 2) return
       const ask = split[split.length - 2].trimStart()
       if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
         // use the code generation model
         const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: ask.replace('///', '')})
         const parsedData = JSON.parse(data).trimStart()
-        console.log('parsedData', parsedData)
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: parsedData
         };
@@ -61,7 +58,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     
     // abort if there is a signal
     if (token.isCancellationRequested) {
-      console.log('aborted')
       return
     }
 
@@ -81,7 +77,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     // abort if there is a signal
     if (token.isCancellationRequested) {
-      console.log('aborted')
       return
     }
     return {
