@@ -34,11 +34,13 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('README.txt')
+      .waitForElementVisible('*[id="editorView"]', 10000)
       .getEditorValue((content) => {
         browser.assert.ok(content.includes('Output from script will appear in remix terminal.'))
       })
       .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/1_Storage.sol')
+      .waitForElementVisible('*[id="editorView"]', 10000)
       .getEditorValue((content) => {
         browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
       })
@@ -69,7 +71,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('TEST_README.txt')
-      .pause(6000)
+      .waitForElementVisible('*[id="editorView"]', 10000)
       .getEditorValue((content) => {
         browser.assert.equal(content, 'TEST README')
       })
@@ -92,6 +94,7 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .click('*[data-id="treeViewLitreeViewItemtest_contracts/artifacts"]')
       .openFile('test_contracts/artifacts/Storage_metadata.json')
+      .waitForElementVisible('*[id="editorView"]', 10000)
       .getEditorValue((content) => {
         const metadata = JSON.parse(content)
         browser.assert.equal(metadata.test, 'data')
