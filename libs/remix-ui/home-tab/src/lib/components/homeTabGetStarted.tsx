@@ -71,10 +71,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
   return (
     <div className="pl-2" id="hTGetStartedSection">
       <label style={{fontSize: '1.2rem'}}>
-        <span className="mr-2">
-          <FormattedMessage id="home.getStarted" />
-        </span>
-        - <FormattedMessage id="home.projectTemplates" />
+        <FormattedMessage id="home.projectTemplates" />
       </label>
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
         <ThemeContext.Provider value={themeFilter}>
