@@ -38,7 +38,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     try {
       const split = word.split('\n')
-      if (!split.length) return
+      if (split.length < 2) return
       const ask = split[split.length - 2].trimStart()
       if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
         // use the code generation model
