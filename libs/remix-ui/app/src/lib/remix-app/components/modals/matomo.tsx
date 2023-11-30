@@ -57,14 +57,12 @@ const MatomoDialog = (props) => {
   const declineModal = async () => {
     settings.updateMatomoAnalyticsChoice(false)
     _paq.push(['optUserOut'])
-    //appManager.call('walkthrough', 'start')
     setVisible(false)
   }
 
   const handleModalOkClick = async () => {
     _paq.push(['forgetUserOptOut'])
     settings.updateMatomoAnalyticsChoice(true)
-    //appManager.call('walkthrough', 'start')
     setVisible(false)
   }
 

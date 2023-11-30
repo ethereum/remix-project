@@ -133,7 +133,6 @@ class AppComponent {
     this.showMatamo = matomoDomains[window.location.hostname] && !Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.showEnter = !localStorage.getItem('hadUsageTypeAsked')
     
-    console.log("show ", this.showMatamo, " ", this.showEnter)
     this.walkthroughService = new WalkthroughService(appManager, !this.showMatamo || !this.showEnter)
 
     const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
