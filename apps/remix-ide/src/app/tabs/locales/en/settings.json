@@ -39,6 +39,6 @@
   "settings.analyticsInRemix": "Analytics in Remix IDE",
   "settings.copilot": "Solidity copilot - Alpha",
   "settings.copilot.activate": "Load & Activate copilot",
-  "settings.copilot.max_new_tokens": "Maximum amount of new words to generate",
+  "settings.copilot.max_new_tokens": "Maximum number of words to generate",
   "settings.copilot.temperature": "Temperature"
 }
