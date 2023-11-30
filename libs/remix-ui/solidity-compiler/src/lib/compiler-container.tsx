@@ -766,14 +766,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <FormattedMessage id="solidity.compiler" />
             </label>
             <CustomTooltip
-              placement="top"
+              placement="bottom"
               tooltipId="promptCompilerTooltip"
               tooltipClasses="text-nowrap"
               tooltipText={<FormattedMessage id="solidity.addACustomCompilerWithURL" />}
             >
               <span className="far fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()}></span>
             </CustomTooltip>
-            <CustomTooltip placement="top" tooltipId="showCompilerTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="solidity.seeCompilerLicense" />}>
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="showCompilerTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={<FormattedMessage id="solidity.seeCompilerLicense" />}
+            >
               <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
             <select
