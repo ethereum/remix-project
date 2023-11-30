@@ -42,7 +42,7 @@ function HomeTabFeatured() {
             >
               <div className="mx-1 px-1 d-flex">
                 <a href="https://medium.com/remix-ide/remix-release-v0-37-0-dbc750f7ab15" target="__blank">
-                  <img src={'assets/img/ht-latest-features.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
+                  <img src={'assets/img/remi_drums_whatsnew.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4 align-self-center" style={{flex: '1'}}>
                   <h5>
