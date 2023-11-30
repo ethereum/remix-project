@@ -74,7 +74,7 @@ function HomeTabFeatured() {
                   <h5>
                     <FormattedMessage id="home.jumpIntoWeb3" />
                   </h5>
-                  <div style={{fontSize: '0.8rem'}} className="mb-3">
+                  <div style={{fontSize: '0.8rem', lineHeight: '1.25rem'}} className="mb-3">
                     <FormattedMessage id="home.jumpIntoWeb3Text" />
                   </div>
                   <a
