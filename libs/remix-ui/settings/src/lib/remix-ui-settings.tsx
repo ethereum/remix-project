@@ -146,7 +146,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       id: 'loadcopilotActivate',
       title: 'Downloading Solidity copilot',
       modalType: ModalTypes.default,
-      okLabel: 'Close',
+      okLabel: 'Stop',
       message,
       okFn: async() => {
         props.plugin.off('copilot-suggestion', 'loading')
