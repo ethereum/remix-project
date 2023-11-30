@@ -135,8 +135,7 @@ const RemixApp = (props: IRemixAppUi) => {
     <IntlProvider locale={locale.code} messages={locale.messages}>
       <AppProvider value={value}>
         <OriginWarning></OriginWarning>
-        <MatomoDialog hide={!appReady} okFn={() => {setShowEnterDialog(true)}}>
-        </MatomoDialog>
+        <MatomoDialog hide={!appReady} okFn={() => {setShowEnterDialog(true)}}></MatomoDialog>
         <EnterDialog hide={!showEnterDialog} handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>
         <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
           <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">

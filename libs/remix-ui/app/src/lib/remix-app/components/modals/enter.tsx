@@ -40,7 +40,7 @@ const EnterDialog = (props: EnterDialogProps) => {
             <h3 className='text-dark'>Welcome to Remix IDE</h3>
             <div className='d-flex flex-row pt-2'>
               <h6 className="modal-title" data-id={`EnterModalDialogModalTitle-react`}>
-                To load the project with the most efficient setup we would like to know your experiance type.
+                To load the project with the most efficient setup we would like to know your experience type.
               </h6>
               <i className="text-dark fal fa-door-open text-center" style={{minWidth: "100px", fontSize: "xxx-large"}}></i>
             </div>
