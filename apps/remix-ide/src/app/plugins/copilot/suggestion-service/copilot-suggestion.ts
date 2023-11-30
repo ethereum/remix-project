@@ -47,7 +47,6 @@ export class CopilotSuggestion extends Plugin {
 
     const max_new_tokens = await this.call('settings', 'get', 'settings/copilot/suggest/max_new_tokens')
     const temperature = await this.call('settings', 'get', 'settings/copilot/suggest/temperature')
-    console.log('suggest', max_new_tokens, temperature)
     const options: SuggestOptions = {
       do_sample: false,
       top_k: 0,
