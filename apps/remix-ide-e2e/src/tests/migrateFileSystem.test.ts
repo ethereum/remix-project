@@ -11,6 +11,7 @@ module.exports = {
       .maximizeWindow()
       .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
       .click('*[data-id="skipbackup-btn"]')
+      .pause(5000)
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
   },
   'Should load the testmigration url and refresh and still have test data #group7': function (browser: NightwatchBrowser) {
@@ -20,6 +21,7 @@ module.exports = {
       .maximizeWindow()
       .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
       .click('*[data-id="skipbackup-btn"]')
+      .pause(5000)
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
       .refreshPage()
   },
@@ -31,6 +33,7 @@ module.exports = {
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow()
+      .pause(5000)
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('README.txt')
@@ -52,6 +55,7 @@ module.exports = {
       .maximizeWindow()
       .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
       .click('*[data-id="skipbackup-btn"]')
+      .pause(5000)
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
   },
   'Should generate error in migration by deleting indexedDB and falling back to local storage with test #group5': function (browser: NightwatchBrowser) {
@@ -61,6 +65,7 @@ module.exports = {
       .maximizeWindow().execute(('delete window.indexedDB'))
       .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
       .click('*[data-id="skipbackup-btn"]')
+      .pause(5000)
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
   },
   'should have localstorage storage in terminal #group2 #group3 #group5': function (browser: NightwatchBrowser) {
