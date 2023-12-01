@@ -220,13 +220,15 @@ export class CircomPluginClient extends PluginClient {
     this.internalEvents.emit('circuit_computing_witness_done')
   }
 
-  async resolveDependencies(filePath: string, fileContent: string, output: ResolverOutput = {}, depPath: string = '', parent: string = ''): Promise<Record<string, string>> {
+  async resolveDependencies(filePath: string, fileContent: string, output?: Record<string, string>, depPath: string = '', blackPath: string[] = []): Promise<Record<string, string>> {
+    if (!output) output = { [filePath]: fileContent }
     // extract all includes
     const includes = (fileContent.match(/include ['"].*['"]/g) || []).map((include) => include.replace(/include ['"]/g, '').replace(/['"]/g, ''))
 
     await Promise.all(
       includes.map(async (include) => {
         // fix for endless recursive includes
+        if (blackPath.includes(include)) return
         let dependencyContent = ''
         let path = include.replace(/(\.\.\/)+/g, '')
         // @ts-ignore
@@ -248,6 +250,7 @@ export class CircomPluginClient extends PluginClient {
 
           if (relativePathExists) {
             // fetch file content if include import exists as a relative path
+            path = relativePath
             dependencyContent = await this.call('fileManager', 'readFile', relativePath)
           } else {
             if (include.startsWith('circomlib')) {
@@ -264,7 +267,7 @@ export class CircomPluginClient extends PluginClient {
               }
             } else {
               if (depPath) {
-                // if depPath is provided, try to resolve include import from './deps' folder in remix
+                // resolves relative dependecies for .deps folder
                 path = pathModule.resolve(depPath.slice(0, depPath.lastIndexOf('/')), include)
                 path = path.replace('https:/', 'https://')
                 if (path.indexOf('/') === 0) path = path.slice(1)
@@ -276,43 +279,36 @@ export class CircomPluginClient extends PluginClient {
             }
           }
         }
-        const fileNameToInclude = extractNameFromKey(include)
-        const similarFile = Object.keys(output).find(path => {
-          return path.indexOf(fileNameToInclude) > -1
-        })
-        const isDuplicateContent = similarFile && output[similarFile] ? output[similarFile].content === dependencyContent : false
+        if (path.indexOf('https://') === 0) {
+          // Regular expression to match include statements and make deps imports uniform
+          const includeRegex = /include "(.+?)";/g;
+          const replacement = 'include "circomlib/circuits/$1";';
 
-        if (output[include] && output[include].parent) {
-          // if include import already exists, remove the include import from the parent file
-          const regexPattern = new RegExp(`include ['"]${include}['"];`, 'g')
+          dependencyContent = dependencyContent.replace(includeRegex, replacement);
+        }
 
-          output[output[include].parent].content = output[output[include].parent].content.replace(regexPattern, "")
-        } else if (isDuplicateContent) {
-          // if include import has the same content as another file, replace the include import with the file name of the other file (similarFile)
-          if (output[similarFile].parent) output[output[similarFile].parent].content = output[output[similarFile].parent].content.replace(similarFile, include)
-          if (include !== similarFile) {
-            output[include] = output[similarFile]
-            delete output[similarFile]
+        // extract all includes from the dependency content
+        const dependencyIncludes = (dependencyContent.match(/include ['"].*['"]/g) || []).map((include) => {
+          const includeName = include.replace(/include ['"]/g, '').replace(/['"]/g, '')
+
+          if (!blackPath.includes(includeName)) return includeName
+          else {
+            // if include already exists in output, remove it from the dependency content
+            dependencyContent = dependencyContent.replace(`${include};`, '')
+            return
           }
+        }).filter((include) => include)
+        blackPath.push(include)
+        // recursively resolve all dependencies of the dependency
+        if (dependencyIncludes.length > 0) {
+          await this.resolveDependencies(filePath, dependencyContent, output, path, blackPath)
+          output[include] = dependencyContent
         } else {
-          // extract all includes from the dependency content
-          const dependencyIncludes = (dependencyContent.match(/include ['"].*['"]/g) || []).map((include) => include.replace(/include ['"]/g, '').replace(/['"]/g, ''))
-          
-          output[include] = {
-            content: dependencyContent,
-            parent
-          }
-          // recursively resolve all dependencies of the dependency
-          if (dependencyIncludes.length > 0) await this.resolveDependencies(filePath, dependencyContent, output, path, include)
+          output[include] = dependencyContent
         }
       })
     )
-    const result: Record<string, string> = {}
-
-    Object.keys(output).forEach((key) => {
-      result[key] = output[key].content
-    })
-    return result
+    return output
   }
 
   async resolveReportPath (path: string): Promise<string> {
