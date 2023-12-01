@@ -256,10 +256,10 @@ export class CircomPluginClient extends PluginClient {
               const version = splitInclude[1].match(/v[0-9]+.[0-9]+.[0-9]+/g)
 
               if (version && version[0]) {
-                path = `https://raw.githubusercontent.com/iden3/circomlib/${version[0]}/circuits/${splitInclude.slice(2).join('/')}`
+                path = `https://raw.githubusercontent.com/iden3/circomlib/${version[0]}/${splitInclude.slice(2).join('/')}`
                 dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
               } else {
-                path = `https://raw.githubusercontent.com/iden3/circomlib/master/circuits/${splitInclude.slice(1).join('/')}`
+                path = `https://raw.githubusercontent.com/iden3/circomlib/master/${splitInclude.slice(1).join('/')}`
                 dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
               }
             } else {
@@ -335,9 +335,9 @@ export class CircomPluginClient extends PluginClient {
           const version = splitInclude[1].match(/v[0-9]+.[0-9]+.[0-9]+/g)
 
           if (version && version[0]) {
-            path = `/.deps/https/raw.githubusercontent.com/iden3/circomlib/${version[0]}/circuits/${splitInclude.slice(2).join('/')}`
+            path = `/.deps/https/raw.githubusercontent.com/iden3/circomlib/${version[0]}/${splitInclude.slice(2).join('/')}`
           } else {
-            path = `/.deps/https/raw.githubusercontent.com/iden3/circomlib/master/circuits/${splitInclude.slice(1).join('/')}`
+            path = `/.deps/https/raw.githubusercontent.com/iden3/circomlib/master/${splitInclude.slice(1).join('/')}`
           }
           // @ts-ignore
           const exists = await this.call('fileManager', 'exists', path)
