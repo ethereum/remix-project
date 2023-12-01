@@ -1,5 +1,6 @@
 import {Plugin} from '@remixproject/engine'
 import {SuggestionService, SuggestOptions} from './suggestion-service'
+//@ts-ignore
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 const profile = {
@@ -26,7 +27,7 @@ export class CopilotSuggestion extends Plugin {
     })
     this.service.events.on('ready', (data) => {
       this.ready = true
-    })    
+    })
   }
 
   status () {
@@ -64,7 +65,7 @@ export class CopilotSuggestion extends Plugin {
         importsContent += '\n\n' + (await this.call('contentImport', 'resolve', imp)).content
       } catch (e) {
         console.log(e)
-      }      
+      }
     }
     return importsContent
   }

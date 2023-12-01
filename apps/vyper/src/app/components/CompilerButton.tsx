@@ -24,7 +24,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
   async function compileContract() {
     resetCompilerState()
     try {
-      await remixClient.discardHighlight()
+      // await remixClient.discardHighlight()
       let _contract: any
       try {
         _contract = await remixClient.getContract()
@@ -73,27 +73,27 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
             start: {line: line - 1, column: 10},
             end: {line: line - 1, column: 10}
           }
-          remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
+          // remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
         } else {
-          const regex = output.message.match(/line ((\d+):(\d+))+/g)
-          const errors = output.message.split(/line ((\d+):(\d+))+/g) // extract error message
+          const regex = output?.message?.match(/line ((\d+):(\d+))+/g)
+          const errors = output?.message?.split(/line ((\d+):(\d+))+/g) // extract error message
           if (regex) {
             let errorIndex = 0
             regex.map((errorLocation) => {
-              const location = errorLocation.replace('line ', '').split(':')
+              const location = errorLocation?.replace('line ', '').split(':')
               let message = errors[errorIndex]
               errorIndex = errorIndex + 4
-              if (message && message.split('\n\n').length > 0) {
+              if (message && message?.split('\n\n').length > 0) {
                 try {
-                  message = message.split('\n\n')[message.split('\n\n').length - 1]
+                  message = message?.split('\n\n')[message.split('\n\n').length - 1]
                 } catch (e) {}
               }
-              if (location.length > 0) {
+              if (location?.length > 0) {
                 const lineColumnPos = {
                   start: {line: parseInt(location[0]) - 1, column: 10},
                   end: {line: parseInt(location[0]) - 1, column: 10}
                 }
-                remixClient.highlight(lineColumnPos as any, _contract.name, message)
+                // remixClient.highlight(lineColumnPos as any, _contract.name, message)
               }
             })
           }
@@ -101,7 +101,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
         throw new Error(output.message)
       }
       // SUCCESS
-      remixClient.discardHighlight()
+      // remixClient.discardHighlight()
       remixClient.changeStatus({
         key: 'succeed',
         type: 'success',
