@@ -22,7 +22,7 @@ interface AppState {
 }
 
 interface OutputMap {
-  [fileName: string]: VyperCompilationOutput
+  [fileName: string]: any
 }
 
 const App: React.FC = () => {
@@ -106,7 +106,8 @@ const App: React.FC = () => {
         </div>
 
         <article id="result" className="px-2">
-          {Object.keys(output).length > 0 ? <VyperResult output={ output} themeColor={remixClient.checkActiveTheme()} /> : null}
+          <h5>Result Output!</h5>
+          {Object.keys(output).length > 0 ? <VyperResult output={output} themeColor={remixClient.checkActiveTheme()} /> : null}
         </article>
       </section>
     </main>
