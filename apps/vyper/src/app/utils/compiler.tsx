@@ -59,16 +59,7 @@ export async function compile(url: string, contract: Contract): Promise<any> {
   if (extension !== 'vy') {
     throw new Error('Use extension .vy for Vyper.')
   }
-  const nameResult = normalizeContractPath(contract.name)
 
-  // const files = new FormData();
-  // const content = new Blob([contract.content], {
-  //   type: 'text/plain'
-  // });
-
-  // files.append('files', content, `${nameResult[2]}.vy`)
-  // files.append('data', JSON.stringify({vyper_version: '0.3.10'}))
-  type ByteCodeType = { bytecode: string, linkReferences: { offset: any; length: number; name?: string; }; linkDependencies?: { offsets: number[]; }; }
   const contractName = contract['name']
   const compilePackage = {
     manifest: 'ethpm/3',
@@ -76,8 +67,9 @@ export async function compile(url: string, contract: Contract): Promise<any> {
       [contractName] : {content : contract.content}
     }
   }
+  console.log('about to compile contract!!!')
   const response = await axios.post(`${url}compile`, compilePackage )
-  console.log({response})
+
   if (response.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)
   }
@@ -91,21 +83,18 @@ export async function compile(url: string, contract: Contract): Promise<any> {
   const status = await (await axios.get(url + 'status/' + compileCode , {
     method: 'Get'
   })).data
-
   if (status === 'SUCCESS') {
     result = await(await axios.get(url + 'artifacts/' + compileCode , {
       method: 'Get'
     })).data
-    console.log({result})
     return result
   } else if (status === 'PENDING' || status === 'FAILED') {
     result = await(await axios.get(url + 'exceptions/' + compileCode , {
       method: 'Get'
     })).data
-    console.log({result})
-    return result.data
+    return result
   }
-  await new Promise((resolve) => setTimeout(() => resolve({}), 2000))
+  await new Promise((resolve) => setTimeout(() => resolve({}), 3000))
 }
 
 /**
@@ -119,8 +108,10 @@ export function toStandardOutput(fileName: string, compilationResult: any): any 
   const deployedBytecode = compilationResult['contractTypes'][contractName].deploymentBytecode.bytecode.replace('0x', '')
   const bytecode = compilationResult['contractTypes'][contractName].runtimeBytecode.bytecode.replace('0x', '')
   const compiledAst = compilationResult['contractTypes'][contractName].ast
-  const methodIdentifiers = compilationResult['contractTypes'][contractName].methodIdentifiers
-  //const methodIdentifiers = JSON.parse(JSON.stringify(compilationResult['method_identifiers']).replace(/0x/g, ''))
+  const methodIds = compilationResult['contractTypes'][contractName].methodIdentifiers
+  const methodIdentifiers = Object.entries(methodIds as Record<any,string>).map(([key, value]) => {
+    return { [key]: value.replace('0x', '') }
+  })
   return {
     sources: {
       [fileName]: {
