@@ -105,7 +105,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
       remixClient.changeStatus({
         key: 'succeed',
         type: 'success',
-        title: 'succeed'
+        title: 'success'
       })
       const data = toStandardOutput(_contract.name, output)
       remixClient.compilationFinish(_contract.name, _contract.content, data)
