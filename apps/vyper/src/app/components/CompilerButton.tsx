@@ -73,7 +73,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
             start: {line: line - 1, column: 10},
             end: {line: line - 1, column: 10}
           }
-          remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
+          remixClient.highlight(lineColumnPos as any, _contract.name, output.message)
         } else {
           const regex = output?.message?.match(/line ((\d+):(\d+))+/g)
           const errors = output?.message?.split(/line ((\d+):(\d+))+/g) // extract error message
