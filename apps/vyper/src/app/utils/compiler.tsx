@@ -46,6 +46,24 @@ export function normalizeContractPath(contractPath: string): string[] {
   return [folders,resultingPath, filename]
 }
 
+function parseErrorString(errorString) {
+  // Split the string into lines
+  const lines = errorString.trim().split('\n')
+  // Extract the line number and message
+  const message = lines[1].trim()
+  const targetLine = lines[2].split(',')
+  const lineColumn = targetLine[targetLine.length - 1].split(' ')[2].split(':')
+  console.log('lineColumn', lineColumn)
+
+  const errorObject = {
+    status: 'failed',
+    message: message,
+    column: parseInt(lineColumn[1]),
+    line: parseInt(lineColumn[0])
+  }
+  return errorObject
+}
+
 /**
  * Compile the a contract
  * @param url The url of the compiler
@@ -88,10 +106,11 @@ export async function compile(url: string, contract: Contract): Promise<any> {
       method: 'Get'
     })).data
     return result
-  } else if (status === 'PENDING' || status === 'FAILED') {
-    result = await(await axios.get(url + 'exceptions/' + compileCode , {
+  } else if (status === 'FAILED') {
+    const intermediate = await(await axios.get(url + 'exceptions/' + compileCode , {
       method: 'Get'
     })).data
+    result = parseErrorString(intermediate[0])
     return result
   }
   await new Promise((resolve) => setTimeout(() => resolve({}), 3000))
