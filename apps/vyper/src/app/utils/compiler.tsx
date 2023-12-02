@@ -48,19 +48,21 @@ export function normalizeContractPath(contractPath: string): string[] {
 
 function parseErrorString(errorString) {
   // Split the string into lines
-  const lines = errorString.trim().split('\n')
+  let lines = errorString.trim().split('\n')
   // Extract the line number and message
-  const message = lines[1].trim()
-  const targetLine = lines[2].split(',')
-  const lineColumn = targetLine[targetLine.length - 1].split(' ')[2].split(':')
-  console.log('lineColumn', lineColumn)
-
+  let message = lines[1].trim()
+  let targetLine = lines[2].split(',')
+  let lineColumn = targetLine[targetLine.length - 1].split(' ')[2].split(':')
   const errorObject = {
     status: 'failed',
     message: message,
     column: parseInt(lineColumn[1]),
     line: parseInt(lineColumn[0])
   }
+  message = null
+  targetLine = null
+  lineColumn = null
+  lines = null
   return errorObject
 }
 
@@ -78,15 +80,14 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     throw new Error('Use extension .vy for Vyper.')
   }
 
-  const contractName = contract['name']
+  let contractName = contract['name']
   const compilePackage = {
     manifest: 'ethpm/3',
     sources: {
       [contractName] : {content : contract.content}
     }
   }
-  console.log('about to compile contract!!!')
-  const response = await axios.post(`${url}compile`, compilePackage )
+  let response = await axios.post(`${url}compile`, compilePackage )
 
   if (response.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)
@@ -96,6 +97,8 @@ export async function compile(url: string, contract: Contract): Promise<any> {
   }
 
   const compileCode = response.data
+  contractName = null
+  response = null
   let result: any
 
   const status = await (await axios.get(url + 'status/' + compileCode , {
