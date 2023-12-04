@@ -9,8 +9,8 @@ import VyperCompile from './components/vyperCompile'
 
 export interface RemixUiCompileDetailsProps {
   plugin?: any
-  contractProperties: any
-  selectedContract: string
+  contractProperties?: any
+  selectedContract?: string
   help?: any
   insertValue?: any
   saveAs: any
@@ -23,22 +23,14 @@ export function RemixUiCompileDetails({ plugin, contractProperties, selectedCont
 
   return (
     <>
-      {
-        contractProperties.abi && contractProperties.gasEstimates.Creation && contractProperties.web3Deploy ? (
-          <SolidityCompile
-            contractProperties={contractProperties}
-            plugin={plugin}
-            selectedContract={selectedContract}
-            help={help}
-            insertValue={insertValue}
-            saveAs={saveAs}
-          /> ) :
-          <VyperCompile
-            saveAs={saveAs}
-            contractProperties={contractProperties}
-            selectedContract={selectedContract}
-          />
-      }
+      <SolidityCompile
+        contractProperties={contractProperties}
+        plugin={plugin}
+        selectedContract={selectedContract}
+        help={help}
+        insertValue={insertValue}
+        saveAs={saveAs}
+      />
     </>
   )
 }
