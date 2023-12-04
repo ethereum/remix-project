@@ -112,9 +112,9 @@ export class CompileTabLogic {
         this.event.emit('startingCompilation')
         if(await this.api.fileExists('remappings.txt')) {
           this.api.readFile('remappings.txt').then(remappings => {
-            this.compiler.set('remappings', remappings.split('\n').filter(Boolean))
+            this.compiler.set('remappings', remappings.split('\n'))
           })
-        }
+        } else this.compiler.set('remappings', [])
         if (this.configFilePath) {
           this.api.readFile(this.configFilePath).then( contentConfig => {
             this.compiler.set('configFileContent', contentConfig)
