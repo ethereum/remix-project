@@ -156,6 +156,9 @@
             ],
             "@remixproject/walletconnect-plugin": [
                 "apps/walletconnect/src/index.ts"
+            ],
+            "@remixproject/vyper-compile-details": [
+                "apps/vyper-compile-details/src/index.ts"
             ]
         }
     }
