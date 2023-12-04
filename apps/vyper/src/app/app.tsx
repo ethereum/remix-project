@@ -105,9 +105,15 @@ const App: React.FC = () => {
           />
         </div>
 
-        <article id="result" className="px-2">
-          <h5>Result Output!</h5>
-          {Object.keys(output).length > 0 ? <VyperResult output={output} themeColor={remixClient.checkActiveTheme()} /> : null}
+        {console.log(output)}
+        <article id="result" className="px-2 mx-2 border-top mt-3">
+          {
+            output && Object.keys(output).length > 0 ? (
+              <>
+                <VyperResult output={output} />
+              </>
+            ) : null
+          }
         </article>
       </section>
     </main>
