@@ -110,7 +110,7 @@ const App: React.FC = () => {
           {
             output && Object.keys(output).length > 0 ? (
               <>
-                <VyperResult output={output} />
+                <VyperResult output={output} plugin={remixClient} />
               </>
             ) : null
           }

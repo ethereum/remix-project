@@ -10,6 +10,7 @@ import { VyperCompilationResult } from '../utils/types'
 
 interface VyperResultProps {
   output?: any
+  plugin?: any
 }
 
 export type ExampleContract = {
@@ -24,7 +25,7 @@ type TabContentMembers = {
   className: string
 }
 
-function VyperResult({ output }: VyperResultProps) {
+function VyperResult({ output, plugin }: VyperResultProps) {
   // const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
 
   if (!output)
@@ -56,9 +57,9 @@ function VyperResult({ output }: VyperResultProps) {
   return (
     <>
       <div className="border border-top"></div>
-      <div>
-        <button className="btn btn-secondary btn-block mx-2" onClick={() => {
-
+      <div className="d-flex justify-content-center px-2 w-100">
+        <button className="btn btn-secondary w-100" onClick={async () => {
+          await plugin?.call('vyperCompilationDetails', 'showDetails', {})
         }}>
           <span>Compilation Details</span>
         </button>

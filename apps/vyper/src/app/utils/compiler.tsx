@@ -1,6 +1,5 @@
 import {CompilationResult, ABIDescription} from '@remixproject/plugin-api'
 import axios from 'axios'
-import { VyperCompilationResultType, CompileFormat, ETHPM3Format, CompilerInformationObject } from './types'
 
 export interface Contract {
   name: string
