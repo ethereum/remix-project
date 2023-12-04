@@ -1,6 +1,6 @@
 import {CompilationResult, ABIDescription} from '@remixproject/plugin-api'
 import axios from 'axios'
-import { VyperCompilationResultType, CompileFormat, BytecodeObject, AST, ABI, ETHPM3Format, CompilerInformationObject } from './types'
+import { VyperCompilationResultType, CompileFormat, ETHPM3Format, CompilerInformationObject } from './types'
 
 export interface Contract {
   name: string
@@ -108,6 +108,7 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     result = await(await axios.get(url + 'artifacts/' + compileCode , {
       method: 'Get'
     })).data
+    console.log(result)
     return result
   } else if (status === 'FAILED') {
     const intermediate = await(await axios.get(url + 'exceptions/' + compileCode , {
@@ -166,6 +167,37 @@ export function toStandardOutput(fileName: string, compilationResult: any): any 
       } as any
     }
   }
+}
+export type StandardOutput = {
+  sources: {
+    [fileName: string]: {
+      id: number,
+      ast: AST
+    }
+  },
+  contracts: {
+    [fileName: string]: {
+      [contractName: string]: {
+        abi: ABI,
+        contractName: string,
+        evm: {
+          bytecode: BytecodeObject,
+          deployedBytecode: BytecodeObject,
+          methodIdentifiers: {
+            [method: string]: string
+          }
+        }
+      }
+    }
+  }
+}
+
+type AST = any // Replace with the actual AST type
+type ABI = ABIDescription[] // Replace with the actual ABI type
+type BytecodeObject = {
+  linkReferences: Record<string, any>,
+  object: string,
+  opcodes: string
 }
 
 /*

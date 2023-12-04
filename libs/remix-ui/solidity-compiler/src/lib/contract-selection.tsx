@@ -123,7 +123,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const insertValue = (details, propertyName: ContractPropertyName) => {
-    console.log({ details })
     let node
     if (propertyName === 'web3Deploy' || propertyName === 'name' || propertyName === 'Assembly') {
       node = <pre>{details[propertyName]}</pre>
@@ -311,6 +310,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 </span>
               </CustomTooltip>
             </button>
+            {console.log(payload)}
             <button
               data-id="compilation-details"
               className="btn btn-secondary btn-block"
