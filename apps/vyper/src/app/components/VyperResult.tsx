@@ -10,7 +10,6 @@ import { VyperCompilationResult } from '../utils/types'
 
 interface VyperResultProps {
   output?: any
-  themeColor?: string
 }
 
 export type ExampleContract = {
@@ -25,9 +24,8 @@ type TabContentMembers = {
   className: string
 }
 
-function VyperResult({ output, themeColor }: VyperResultProps) {
+function VyperResult({ output }: VyperResultProps) {
   // const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
-  const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
 
   if (!output)
     return (
@@ -55,58 +53,17 @@ function VyperResult({ output, themeColor }: VyperResultProps) {
     )
   }
 
-  // const tabContent = [
-  //   {
-  //     tabHeadingText: 'ABI',
-  //     tabPayload: Object.values(output)[0]['abi'],
-  //     tabMemberType: 'abi',
-  //     tabButtonText: () => 'Copy ABI',
-  //     eventKey: 'abi'
-  //   },
-  //   {
-  //     tabHeadingText: 'Bytecode',
-  //     // tabPayload: Object.values(output)[0]['bytecode'].object.toString(),
-  //     tabMemberType: 'bytecode',
-  //     tabButtonText: () => 'Copy Bytecode',
-  //     eventKey: 'bytecode'
-  //   },
-  //   {
-  //     tabHeadingText: 'Runtime Bytecode',
-  //     // tabPayload: Object.values(output)[0]['runtimeBytecode'].object.toString(),
-  //     tabMemberType: 'bytecode_runtime',
-  //     tabButtonText: () => 'Copy Runtime Bytecode',
-  //     eventKey: 'bytecode_runtime'
-  //   },
-  //   {
-  //     tabHeadingText: 'LLL',
-  //     tabPayload: Object.values(output)[0]['ir'] ? '' : '',
-  //     tabMemberType: 'ir',
-  //     tabButtonText: () => Object.values(output)[0]['ir'] ? 'Copy LLL Code' : 'Nothing to copy yet',
-  //     eventKey: 'ir'
-  //   }
-  // ]
-
   return (
-    // <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)} justify>
-    //   {tabContent.map((content, index) => (
-    //     <Tab eventKey={content.eventKey} title={content.tabHeadingText} as={'span'} key={`${index}-${content.eventKey}`}>
-    //       {/* <CopyToClipboard getContent={() => content.eventKey !== 'abi' ? content.tabPayload : JSON.stringify(Object.values(output)[0]['abi'])}>
-    //         <Button variant="info" className="copy" data-id={content.eventKey === 'abi' ? "copy-abi" : ''}>
-    //           {content.tabButtonText()}
-    //         </Button>
-    //       </CopyToClipboard>
-    //       {
-    //         content.eventKey === 'abi' ? <JSONTree src={content.tabPayload} theme={themeColor as any}/> : (
-    //           <textarea defaultValue={content.tabPayload}></textarea>
-    //         )
-    //       }
-    //     } */}
-    //       <Button>
-    //         {content.tabButtonText()}
-    //       </Button>
-    //     </Tab>))}
-    // </Tabs>
-    <h1>There was a result!</h1>
+    <>
+      <div className="border border-top"></div>
+      <div>
+        <button className="btn btn-secondary btn-block mx-2" onClick={() => {
+
+        }}>
+          <span>Compilation Details</span>
+        </button>
+      </div>
+    </>
   )
 }
 
