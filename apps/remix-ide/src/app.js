@@ -47,7 +47,7 @@ import {FileDecorator} from './app/plugins/file-decorator'
 import {CodeFormat} from './app/plugins/code-format'
 import {SolidityUmlGen} from './app/plugins/solidity-umlgen'
 import { CompilationDetailsPlugin } from './app/plugins/compile-details'
-import { VyperCompilationDetailsPlugin } from './app/plugins/vyper-compile-details'
+import { VyperCompilationDetailsPlugin } from './app/plugins/vyper-compilation-details'
 import {ContractFlattener} from './app/plugins/contractFlattener'
 import {OpenAIGpt} from './app/plugins/openaigpt'
 
@@ -131,12 +131,10 @@ class AppComponent {
       'remix.ethereum.org': 23,
       '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
     }
-    
-    this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
-    this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
-    this.showMatamo = matomoDomains[window.location.hostname] && !this.matomoConfAlreadySet
-    
-    this.walkthroughService = new WalkthroughService(appManager)
+    this.showMatamo = matomoDomains[window.location.hostname] && !Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
+    this.showEnter = matomoDomains[window.location.hostname] && !localStorage.getItem('hadUsageTypeAsked')
+
+    this.walkthroughService = new WalkthroughService(appManager, !this.showMatamo || !this.showEnter)
 
     const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
     // workaround for Electron support

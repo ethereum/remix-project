@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import {PluginViewWrapper} from '@remix-ui/helper'
 import { RemixAppManager } from '../../remixAppManager'
 import { RemixUiVyperCompileDetails } from '@remix-ui/vyper-compile-details'
-
+//@ts-ignore
 const _paq = (window._paq = window._paq || [])
 
 const profile = {
