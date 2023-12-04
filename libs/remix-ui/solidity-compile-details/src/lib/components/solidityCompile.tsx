@@ -1,6 +1,7 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip } from '@remix-ui/helper'
 import { ContractPropertyName } from '@remix-ui/solidity-compiler'
+import React from 'react'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { useIntl } from 'react-intl'
 const _paq = (window._paq = window._paq || [])
