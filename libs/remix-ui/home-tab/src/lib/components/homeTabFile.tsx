@@ -201,6 +201,7 @@ contract HelloWorld {
 
   const handleSwichToRecentWorkspace = async (e, workspaceName) => {
     e.preventDefault()
+    _paq.push(['trackEvent', 'hometab', 'filesSection', 'loadRecentWorkspace'])
     await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
   }
 
