@@ -72,7 +72,7 @@ export function RecorderUI(props: RecorderProps) {
           </span>
         </div>
       </div>
-      { toggleExpander && <div className={`pb-2 flex-column ${toggleExpander ? 'd-flex' : 'd-none'}`} data-id='remixRecorderExpanded'>
+      { toggleExpander && <div className={`pb-2 flex-column d-flex`} data-id='remixRecorderExpanded'>
         <div className="mb-1 mt-1 custom-control custom-checkbox mb-1" id='udappRecorderUseLatest'>
           <input ref={inputLive} type="checkbox" id="livemode-recorder" className="custom-control-input custom-select" name="input-livemode" />
           <CustomTooltip
