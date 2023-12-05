@@ -3,7 +3,9 @@
     width: 42px;
     height: 42px;
     cursor: pointer;
-  }
+    justify-content: space-between;
+    align-self: center;
+}
   .remixui_homeIcon:hover {
     box-shadow: 0px 0px 14px -7px;
   }
@@ -17,8 +19,6 @@
   .remixui_icons {
     display: flex;
     flex-flow: column nowrap;
-    justify-content: space-between;
-    align-items: center;
   }
   .remixui_icon:hover {
     box-shadow: 0px 0px 14px -7px;
