@@ -294,6 +294,13 @@ export const setCurrentWorkspaceIsGitRepo = (isRepo: boolean): Action<'SET_CURRE
   }
 }
 
+export const setCurrentWorkspaceHasGitSubmodules = (hasGitSubmodules: boolean): Action<'SET_CURRENT_WORKSPACE_HAS_GIT_SUBMODULES'> => {
+  return {
+    type: 'SET_CURRENT_WORKSPACE_HAS_GIT_SUBMODULES',
+    payload: hasGitSubmodules
+  }
+}
+
 export const setGitConfig = (config: {username: string, token: string, email: string}): Action<'SET_GIT_CONFIG'> => {
   return {
     type: 'SET_GIT_CONFIG',

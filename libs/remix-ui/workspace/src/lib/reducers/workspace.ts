@@ -9,6 +9,7 @@ export interface BrowserState {
     workspaces: {
       name: string
       isGitRepo: boolean
+      hasGitSubmodules?: boolean
       branches?: {
         remote: any
         name: string
@@ -795,6 +796,22 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
         workspaces: state.browser.workspaces.map((workspace) => {
           if (workspace.name === state.browser.currentWorkspace)
             workspace.isGitRepo = payload
+          return workspace
+        })
+      }
+    }
+  }
+
+  case 'SET_CURRENT_WORKSPACE_HAS_GIT_SUBMODULES': {
+    const payload = action.payload
+
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        workspaces: state.browser.workspaces.map((workspace) => {
+          if (workspace.name === state.browser.currentWorkspace)
+            workspace.hasGitSubmodules = payload
           return workspace
         })
       }

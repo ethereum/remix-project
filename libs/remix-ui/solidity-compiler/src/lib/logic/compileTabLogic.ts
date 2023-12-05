@@ -106,10 +106,15 @@ export class CompileTabLogic {
   compileFile (target) {
     if (!target) throw new Error('No target provided for compiliation')
     return new Promise((resolve, reject) => {
-      this.api.readFile(target).then((content) => {
+      this.api.readFile(target).then(async(content) => {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
+        if(await this.api.fileExists('remappings.txt')) {
+          this.api.readFile('remappings.txt').then(remappings => {
+            this.compiler.set('remappings', remappings.split('\n').filter(Boolean))
+          })
+        } else this.compiler.set('remappings', [])
         if (this.configFilePath) {
           this.api.readFile(this.configFilePath).then( contentConfig => {
             this.compiler.set('configFileContent', contentConfig)

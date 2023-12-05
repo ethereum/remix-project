@@ -215,6 +215,7 @@ export const loadTypes = async (monaco) => {
     declare global {
         const remix: PluginClient;
         const web3Provider;
+        const require;
     }
     `
   monaco.languages.typescript.typescriptDefaults.addExtraLib(indexRemixApi)

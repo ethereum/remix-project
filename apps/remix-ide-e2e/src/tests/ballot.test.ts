@@ -92,6 +92,25 @@ module.exports = {
         })
   },
 
+  'Compile with remappings set in remappings.txt file #group1': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_remix_default' })
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .pause(1000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .addFile('contracts/lib/storage/src/Storage.sol', { content: storageContract})
+      .addFile('remappings.txt', { content: 'storage=contracts/lib/storage/src' })
+      .addFile('contracts/Retriever.sol', { content: retrieverContract })
+      .verifyContracts(['Retriever', 'Storage'])
+  },
+
   'Deploy and use Ballot using external web3  #group2': function (browser: NightwatchBrowser) {
     browser
       .openFile('Untitled.sol')
@@ -509,5 +528,31 @@ object "Contract" {
           }
       }
   }
+}
+`
+
+const storageContract = `
+pragma solidity >=0.8.2 <0.9.0;
+
+contract Storage {
+
+    uint256 public number;
+
+    function store(uint256 num) public {
+        number = num;
+    }
+}
+`
+
+const retrieverContract = `
+pragma solidity >=0.8.2 <0.9.0;
+
+import "storage/Storage.sol";
+
+contract Retriever is Storage {
+
+    function retrieve() public view returns (uint256){
+        return number;
+    }
 }
 `

@@ -11,8 +11,8 @@ module.exports = {
       .maximizeWindow()
       .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
       .click('*[data-id="skipbackup-btn"]')
-      .waitForElementVisible('[id="remixTourSkipbtn"]')
-      .click('[id="remixTourSkipbtn"]')
+      .pause(5000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
   },
   'Should load the testmigration url and refresh and still have test data #group7': function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testmigration=true')
@@ -21,8 +21,9 @@ module.exports = {
       .maximizeWindow()
       .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
       .click('*[data-id="skipbackup-btn"]')
-      .waitForElementVisible('[id="remixTourSkipbtn"]')
-      .click('[id="remixTourSkipbtn"]').refreshPage()
+      .pause(5000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
+      .refreshPage()
   },
   'should have indexedDB storage in terminal #group1 #group7': function (browser: NightwatchBrowser) {
     browser.assert.containsText('*[data-id="terminalJournal"]', 'indexedDB')
@@ -32,16 +33,17 @@ module.exports = {
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow()
-      .waitForElementVisible('[id="remixTourSkipbtn"]')
-      .click('[id="remixTourSkipbtn"]')
-      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
+      .pause(5000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('README.txt')
+      .waitForElementVisible('*[id="editorView"]', 10000)
       .getEditorValue((content) => {
         browser.assert.ok(content.includes('Output from script will appear in remix terminal.'))
       })
       .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/1_Storage.sol')
+      .waitForElementVisible('*[id="editorView"]', 10000)
       .getEditorValue((content) => {
         browser.assert.ok(content.includes('function retrieve() public view returns (uint256){'))
       })
@@ -53,8 +55,8 @@ module.exports = {
       .maximizeWindow()
       .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
       .click('*[data-id="skipbackup-btn"]')
-      .waitForElementVisible('[id="remixTourSkipbtn"]')
-      .click('[id="remixTourSkipbtn"]')
+      .pause(5000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
   },
   'Should generate error in migration by deleting indexedDB and falling back to local storage with test #group5': function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testmigration=true')
@@ -63,8 +65,8 @@ module.exports = {
       .maximizeWindow().execute(('delete window.indexedDB'))
       .waitForElementVisible('*[data-id="skipbackup-btn"]', 5000)
       .click('*[data-id="skipbackup-btn"]')
-      .waitForElementVisible('[id="remixTourSkipbtn"]')
-      .click('[id="remixTourSkipbtn"]')
+      .pause(5000)
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 10000)
   },
   'should have localstorage storage in terminal #group2 #group3 #group5': function (browser: NightwatchBrowser) {
     browser.assert.containsText('*[data-id="terminalJournal"]', 'localstorage')
@@ -74,6 +76,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('TEST_README.txt')
+      .waitForElementVisible('*[id="editorView"]', 10000)
       .getEditorValue((content) => {
         browser.assert.equal(content, 'TEST README')
       })
@@ -96,6 +99,7 @@ module.exports = {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]', 5000)
       .click('*[data-id="treeViewLitreeViewItemtest_contracts/artifacts"]')
       .openFile('test_contracts/artifacts/Storage_metadata.json')
+      .waitForElementVisible('*[id="editorView"]', 10000)
       .getEditorValue((content) => {
         const metadata = JSON.parse(content)
         browser.assert.equal(metadata.test, 'data')

@@ -1,0 +1,7 @@
+{
+  "/infer": {
+      "post": {
+          "data": "testing data"
+      }
+  }
+}

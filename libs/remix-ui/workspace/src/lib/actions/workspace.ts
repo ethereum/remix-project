@@ -25,7 +25,8 @@ import {
   setRenameWorkspace,
   setCurrentWorkspaceIsGitRepo,
   setGitConfig,
-  setElectronRecentFolders
+  setElectronRecentFolders,
+  setCurrentWorkspaceHasGitSubmodules,
 } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
@@ -78,6 +79,11 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
   })
   plugin.on('settings', 'configChanged', async () => {
     await getGitConfig()
+  })
+  plugin.on('fileManager', 'fileAdded', async (filePath: string) => {
+    if(filePath.includes('.gitmodules')) {
+      await checkGit()
+    }
   })
   getGitConfig()
 }
@@ -178,7 +184,7 @@ export const createWorkspace = async (
       const isActive = await plugin.call('manager', 'isActive', 'dgit')
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
     }
-    if (workspaceTemplateName === 'semaphore') {
+    if (workspaceTemplateName === 'semaphore' || workspaceTemplateName === 'hashchecker' || workspaceTemplateName === 'rln') {
       const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
       if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
     }
@@ -442,7 +448,6 @@ export const switchToWorkspace = async (name: string) => {
     await plugin.fileProviders.workspace.setWorkspace(name)
     await plugin.setWorkspace({ name, isLocalhost: false })
     const isGitRepo = await plugin.fileManager.isGitRepo()
-
     if (isGitRepo) {
       const isActive = await plugin.call('manager', 'isActive', 'dgit')
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
@@ -532,9 +537,9 @@ export const uploadFolder = async (target, targetFolder: string, cb?: (err: Erro
   }
 }
 
-export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[]> | undefined => {
+export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[]> | undefined => {
   try {
-    const workspaces: { name: string; isGitRepo: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[] = await new Promise((resolve, reject) => {
+    const workspaces: { name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
 
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
@@ -546,7 +551,7 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
             .filter((item) => items[item].isDirectory)
             .map(async (folder) => {
               const isGitRepo: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.git')
-
+              const hasGitSubmodules: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.gitmodules')
               if (isGitRepo) {
                 let branches = []
                 let currentBranch = null
@@ -558,11 +563,13 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
                   isGitRepo,
                   branches,
                   currentBranch,
+                  hasGitSubmodules
                 }
               } else {
                 return {
                   name: folder.replace(workspacesPath + '/', ''),
                   isGitRepo,
+                  hasGitSubmodules
                 }
               }
             })
@@ -638,7 +645,9 @@ export const cloneRepository = async (url: string) => {
 
 export const checkGit = async () => {
   const isGitRepo = await plugin.fileManager.isGitRepo()
+  const hasGitSubmodule = await plugin.fileManager.hasGitSubmodules()
   dispatch(setCurrentWorkspaceIsGitRepo(isGitRepo))
+  dispatch(setCurrentWorkspaceHasGitSubmodules(hasGitSubmodule))
   await refreshBranches()
   const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
   dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
@@ -801,6 +810,15 @@ export const createHelperScripts = async (script: string) => {
   if (!scriptsRef[script]) return
   await scriptsRef[script](plugin)
   plugin.call('notification', 'toast', 'scripts added in the "scripts" folder')
+}
+
+export const updateGitSubmodules = async () => {
+  dispatch(cloneRepositoryRequest())
+  const config = plugin.registry.get('config').api
+  const token = config.get('settings/gist-access-token')
+  const repoConfig = { token }
+  await plugin.call('dGitProvider', 'updateSubmodules', repoConfig)
+  dispatch(cloneRepositorySuccess())
 }
 
 export const checkoutRemoteBranch = async (branch: string, remote: string) => {

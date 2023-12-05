@@ -25,7 +25,7 @@ const profile = {
   methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'writeFileNoRewrite',
     'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
     'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
-    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory'
+    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule'
   ],
   kind: 'file-system'
 }
@@ -928,6 +928,13 @@ class FileManager extends Plugin {
 
   async isGitRepo(): Promise<boolean> {
     const path = '.git'
+    const exists = await this.exists(path)
+
+    return exists
+  }
+
+  async hasGitSubmodules(): Promise<boolean> {
+    const path = '.gitmodules'
     const exists = await this.exists(path)
 
     return exists

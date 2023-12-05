@@ -22,7 +22,7 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'version'],
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'version', 'updateSubmodules'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -69,7 +69,7 @@ class DGitProvider extends Plugin {
     if (!workspace) return
     return {
       fs: window.remixFileSystemCallback,
-      dir: addSlash(workspace.absolutePath)
+      dir: addSlash(path.join(workspace.absolutePath, dir || '')),
     }
   }
 
@@ -177,16 +177,39 @@ class DGitProvider extends Plugin {
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'checkout', cmd)
     } else {
+      const gitmodules = await this.parseGitmodules() || []
       await git.checkout({
         ...await this.getGitConfig(),
         ...cmd
       })
+      const newgitmodules = await this.parseGitmodules() || []
+      // find the difference between the two gitmodule versions
+      const toRemove = gitmodules.filter((module) => {
+        return !newgitmodules.find((newmodule) => {
+          return newmodule.name === module.name
+        })
+      })
+  
+      for (const module of toRemove) {
+        const path = (await this.getGitConfig(module.path)).dir
+        if (await window.remixFileSystem.exists(path)) {
+          const stat = await window.remixFileSystem.stat(path)
+          try {
+            if (stat.isDirectory()) {
+              await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
+            }
+          } catch (e) {
+            // do nothing
+          }
+        }
+      }
     }
     if (refresh) {
       setTimeout(async () => {
         await this.call('fileManager', 'refresh')
       }, 1000)
     }
+
     this.emit('checkout')
   }
 
@@ -418,7 +441,7 @@ class DGitProvider extends Plugin {
         ...await this.parseInput(input),
         ...await this.getGitConfig()
       }
-
+      this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
       const result = await git.clone(cmd)
       if (!workspaceExists) {
         setTimeout(async () => {
@@ -427,6 +450,137 @@ class DGitProvider extends Plugin {
       }
       this.emit('clone')
       return result
+    }
+  }
+
+  async parseGitmodules (dir = '') {
+    try {
+      const gitmodules = await this.call('fileManager', 'readFile', path.join(dir, '.gitmodules'))
+      if (gitmodules) {
+        const lines = gitmodules.split('\n')
+        let currentModule = {}
+        let modules = []
+        for (let line of lines) {
+          line = line.trim()
+          if (line.startsWith('[')) {
+            if (currentModule.path) {
+              modules.push(currentModule)
+            }
+            currentModule = {}
+            currentModule.name = line.replace('[submodule "', '').replace('"]', '')
+          } else if (line.startsWith('url')) {
+            currentModule.url = line.replace('url = ', '')
+          } else if (line.startsWith('path')) {
+            currentModule.path = line.replace('path = ', '')
+          }
+        }
+        if (currentModule.path) {
+          modules.push(currentModule)
+        }
+        return modules
+      }
+    } catch (e) {
+      // do nothing
+    }
+  }
+
+  async updateSubmodules(input) {
+    try {
+      const currentDir = (input && input.dir) || ''
+      const gitmodules = await this.parseGitmodules(currentDir)
+      this.call('terminal', 'logHtml', `Found ${(gitmodules && gitmodules.length) || 0} submodules in ${currentDir || '/'}`)
+      //parse gitmodules
+      if (gitmodules) {
+        for (let module of gitmodules) {
+          const dir = path.join(currentDir, module.path)
+          const targetPath = (await this.getGitConfig(dir)).dir
+          if (await window.remixFileSystem.exists(targetPath)) {
+            const stat = await window.remixFileSystem.stat(targetPath)
+            try {
+              if (stat.isDirectory()) {
+                await window.remixFileSystem.unlink(targetPath)
+              }
+            } catch (e) {
+              // do nothing
+            }
+          }
+        }
+        for (let module of gitmodules) {
+          const dir = path.join(currentDir, module.path)
+          // if url contains git@github.com: convert it
+          if(module.url && module.url.startsWith('git@github.com:')) {
+            module.url = module.url.replace('git@github.com:', 'https://github.com/')
+          }
+          try {
+            const cmd = {
+              url: module.url,
+              singleBranch: true,
+              depth: 1,
+              ...await this.parseInput(input),
+              ...await this.getGitConfig(dir)
+            }
+            this.call('terminal', 'logHtml', `Cloning submodule ${dir}...`)
+            await git.clone(cmd)
+            this.call('terminal', 'logHtml', `Cloned successfully submodule ${dir}...`)
+            
+            const commitHash = await git.resolveRef({
+              ...await this.getGitConfig(currentDir),
+              ref: 'HEAD'
+            })
+
+            const result = await git.walk({
+              ...await this.getGitConfig(currentDir),
+              trees: [git.TREE({ ref: commitHash })],
+              map: async function (filepath, [A]) {
+                if(filepath === module.path) {
+                  return await A.oid()
+                }
+              }
+            })
+            if(result && result.length) {
+              this.call('terminal', 'logHtml', `Checking out submodule ${dir} to ${result[0]} in directory ${dir}`)
+              await git.fetch({
+                ...await this.parseInput(input),
+                ...await this.getGitConfig(dir),
+                singleBranch: true,
+                ref: result[0]
+              })
+
+              await git.checkout({
+                ...await this.getGitConfig(dir),
+                ref: result[0]
+              })
+              
+              const log = await git.log({
+                ...await this.getGitConfig(dir),
+              })
+
+              if(log[0].oid !== result[0]) {
+                this.call('terminal', 'log', {
+                  type: 'error',
+                  value: `Could not checkout submodule to ${result[0]}`
+                })} else {              
+                this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
+              }
+            }
+
+            await this.updateSubmodules({
+              ...input,
+              dir
+            })
+          } catch (e) {
+            this.call('terminal', 'log', { type: 'error', value: `[Cloning]: Error occured! ${e}` })
+            console.log(e)
+          }
+        }
+
+        setTimeout(async () => {
+          await this.call('fileManager', 'refresh')
+        }, 1000)
+      }
+    } catch (e) {
+      this.call('terminal', 'log', { type: 'error', value: `[Cloning]: Error occured! ${e}` })
+      // do nothing
     }
   }
 

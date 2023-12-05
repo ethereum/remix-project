@@ -18,7 +18,7 @@ export class GoerliForkVMProvider extends BasicVMProvider {
     )
     this.blockchain = blockchain
     this.fork = 'shanghai'
-    this.nodeUrl = 'https://remix-sepolia.ethdevops.io'
+    this.nodeUrl = 'https://remix-goerli.ethdevops.io'
     this.blockNumber = 'latest'
   }
 

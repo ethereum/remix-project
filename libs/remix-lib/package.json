@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-lib",
-  "version": "0.5.43",
+  "version": "0.5.44",
   "description": "Library to various Remix tools",
   "contributors": [
     {
@@ -55,6 +55,6 @@
   },
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-lib#readme",
   "typings": "src/index.d.ts",
-  "gitHead": "b8606fe2db170b6ef7cdd19b498db74cf2fb14b1",
+  "gitHead": "29e14eb9e9750b43522e3667bb340ff6884d1ebf",
   "types": "./src/index.d.ts"
 }

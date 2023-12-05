@@ -1,11 +1,16 @@
-import React, {useState, useReducer, useEffect, useCallback} from 'react' // eslint-disable-line
+import {ViewPlugin} from '@remixproject/engine-web'
+import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react' // eslint-disable-line
 
+import {AppModal, AlertModal, ModalTypes} from '@remix-ui/app'
 import {labels, textDark, textSecondary} from './constants'
 
 import './remix-ui-settings.css'
 import {
   generateContractMetadat,
   personal,
+  copilotActivate,
+  copilotMaxNewToken,
+  copilotTemperature,
   textWrapEventAction,
   useMatomoAnalytics,
   saveTokenToast,
@@ -23,10 +28,10 @@ import {RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
 import {FormattedMessage, useIntl} from 'react-intl'
 import {GithubSettings} from './github-settings'
 import {EtherscanSettings} from './etherscan-settings'
-import {CustomTooltip} from '@remix-ui/helper'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
+  plugin: ViewPlugin
   config: any
   editor: any
   _deps: any
@@ -48,6 +53,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [ipfsProtocol, setipfsProtocol] = useState('')
   const [ipfsProjectId, setipfsProjectId] = useState('')
   const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
+  const copilotDownload = useRef(null)
+
   const intl = useIntl()
   const initValue = () => {
     const metadataConfig = props.config.get('settings/generate-contract-metadata')
@@ -120,6 +127,57 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const textWrapEvent = (event) => {
     textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
+  }
+
+  const onchangeCopilotActivate = async (event) => {
+    if (!event.target.checked) {
+      copilotActivate(props.config, event.target.checked, dispatch)
+      props.plugin.call('copilot-suggestion', 'uninstall')
+      return
+    }   
+    const message = <div>Please wait while the copilot is downloaded. <span ref={copilotDownload}>0</span>/100 .</div>
+    props.plugin.on('copilot-suggestion', 'loading', (data) => {
+      if (!copilotDownload.current) return
+      const loaded = ((data.loaded / data.total) * 100).toString()
+      const dot = loaded.match(/(.*)\./g)
+      copilotDownload.current.innerText = dot ? dot[0].replace('.', '') : loaded
+    })
+    const modalActivate: AppModal = {
+      id: 'loadcopilotActivate',
+      title: 'Download Solidity copilot',
+      modalType: ModalTypes.default,
+      okLabel: 'Close',
+      message,
+      okFn: async() => {
+        props.plugin.off('copilot-suggestion', 'loading')
+        if (await props.plugin.call('copilot-suggestion', 'status')) {
+          copilotActivate(props.config, true, dispatch)          
+        } else {
+          props.plugin.call('copilot-suggestion', 'uninstall')
+          copilotActivate(props.config, false, dispatch)
+        }
+      },
+      hideFn: async () => {
+        props.plugin.off('copilot-suggestion', 'loading')
+        if (await props.plugin.call('copilot-suggestion', 'status')) {
+          copilotActivate(props.config, true, dispatch)          
+        } else {
+          props.plugin.call('copilot-suggestion', 'uninstall')
+          copilotActivate(props.config, false, dispatch)
+        }
+      }
+    }
+    props.plugin.call('copilot-suggestion', 'init')
+    props.plugin.call('notification', 'modal', modalActivate)
+    
+  }
+
+  const onchangeCopilotMaxNewToken = (event) => {
+    copilotMaxNewToken(props.config, parseInt(event.target.value), dispatch)
+  }
+
+  const onchangeCopilotTemperature = (event) => {
+    copilotTemperature(props.config, parseInt(event.target.value) / 100, dispatch)
   }
 
   const onchangePersonal = (event) => {
@@ -377,6 +435,63 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     saveIpfsSettingsToast(props.config, dispatchToast, ipfsUrl, ipfsProtocol, ipfsPort, ipfsProjectId, ipfsProjectSecret)
   }
 
+  const isCopilotActivated = props.config.get('settings/copilot/suggest/activate') || false
+  const copilotMaxnewToken = props.config.get('settings/copilot/suggest/max_new_tokens')
+  if (!copilotMaxnewToken) props.config.set('settings/copilot/suggest/max_new_tokens', 5)
+  const copilotTemperatureValue = (props.config.get('settings/copilot/suggest/temperature')) * 100
+  if (!copilotTemperatureValue) props.config.set('settings/copilot/suggest/temperature', 0.5)
+
+  if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
+  const copilotSettings = () => (
+    <div className="border-top">
+      <div className="card-body pt-3 pb-2">
+        <h6 className="card-title">
+          <FormattedMessage id="settings.copilot" />
+        </h6>
+
+        <div className="pt-2 mb-0">
+          <div className="text-secondary mb-0 h6">
+            <div>
+              <div className="custom-control custom-checkbox mb-1">
+                <input onChange={onchangeCopilotActivate} id="copilot-activate" type="checkbox" className="custom-control-input" checked={isCopilotActivated} />
+                <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/copilot/suggest/activate')}`} htmlFor="copilot-activate">
+                  <FormattedMessage id="settings.copilot.activate" />
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-2 mb-0">
+          <div className="text-secondary mb-0 h6">
+            <div>
+              <div className="mb-1">
+                <label className={`form-check-label align-middle ${getTextClass('settings/copilot/suggest/max_new_tokens')}`} htmlFor="copilot-activate">
+                  <FormattedMessage id="settings.copilot.max_new_tokens" /> - <span>{copilotMaxnewToken}</span>
+                </label>
+                <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="custom-range" />                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-2 mb-0">
+          <div className="text-secondary mb-0 h6">
+            <div>
+              <div className="mb-1">
+                <label className={`form-check-label align-middle ${getTextClass('settings/copilot/suggest/temperature')}`} htmlFor="copilot-activate">
+                  <FormattedMessage id="settings.copilot.temperature" /> - <span>{copilotTemperatureValue / 100}</span>
+                </label>
+                <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='100' type="range" className="custom-range" />                
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  )
+
   const ipfsSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
@@ -455,6 +570,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     <div>
       {state.message ? <Toaster message={state.message} /> : null}
       {generalConfig()}
+      {copilotSettings()}
       <GithubSettings
         saveToken={(githubToken: string, githubUserName: string, githubEmail: string) => {
           saveTokenToast(props.config, dispatchToast, githubToken, 'gist-access-token')
@@ -480,7 +596,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {swarmSettings()}
       {ipfsSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
-      <RemixUiLocaleModule localeModule={props._deps.localeModule} />
+      <RemixUiLocaleModule localeModule={props._deps.localeModule} />      
     </div>
   )
 }

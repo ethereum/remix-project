@@ -41,6 +41,32 @@ function HomeTabFeatured() {
               dotListClass="position-relative mt-2"
             >
               <div className="mx-1 px-1 d-flex">
+                <a href="https://medium.com/remix-ide/remix-release-v0-38-0-dccd551b6f1e" target="__blank">
+                  <img src={'assets/img/remi_drums_whatsnew.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
+                </a>
+                <div className="h6 w-50 p-2 pl-4 align-self-center" style={{flex: '1'}}>
+                  <h5>
+                    <FormattedMessage id="homeReleaseDetails.title" />
+                  </h5>
+                  <div style={{fontSize: '0.8rem'}} className="mb-3">
+                    <ul>
+                      <li style={{padding: '0.15rem'}}><FormattedMessage id="homeReleaseDetails.highlight1" /></li>
+                      <li style={{padding: '0.15rem'}}><FormattedMessage id="homeReleaseDetails.highlight2" /></li>
+                      <li style={{padding: '0.15rem'}}><FormattedMessage id="homeReleaseDetails.highlight3" /></li>
+                      <li style={{padding: '0.15rem'}}><FormattedMessage id="homeReleaseDetails.highlight4" /></li>
+                    </ul>
+                  </div>
+                  <a
+                    className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
+                    onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'seeFullChangelog'])}
+                    target="__blank"
+                    href="https://medium.com/remix-ide/remix-release-v0-38-0-dccd551b6f1e"
+                  >
+                    <FormattedMessage id="homeReleaseDetails.more" />
+                  </a>
+                </div>
+              </div>
+              <div className="mx-1 px-1 d-flex">
                 <a href="https://remix-project.org" target="__blank">
                   <img src={'assets/img/bgRemi_small.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
@@ -48,14 +74,14 @@ function HomeTabFeatured() {
                   <h5>
                     <FormattedMessage id="home.jumpIntoWeb3" />
                   </h5>
-                  <div style={{fontSize: '0.8rem'}} className="mb-3">
+                  <div style={{fontSize: '0.8rem', lineHeight: '1.25rem'}} className="mb-3">
                     <FormattedMessage id="home.jumpIntoWeb3Text" />
                   </div>
                   <a
                     className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
                     onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'jumpIntoWeb3'])}
                     target="__blank"
-                    href="https://us8.list-manage.com/survey?u=5a84beb6d688fe180c0da482a&id=1148d10f8c"
+                    href="https://remix-project.org/"
                   >
                     <FormattedMessage id="home.jumpIntoWeb3More" />
                   </a>

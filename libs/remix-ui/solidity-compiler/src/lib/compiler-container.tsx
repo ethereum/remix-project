@@ -66,6 +66,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compiledFileName: '',
     includeNightlies: false,
     language: 'Solidity',
+    remappings: [],
     evmVersion: '',
     createFileOnce: true,
     onlyDownloaded: false
@@ -819,15 +820,20 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </label>
 
             <CustomTooltip
-              placement="top"
+              placement="bottom"
               tooltipId="promptCompilerTooltip"
               tooltipClasses="text-nowrap"
               tooltipText={<FormattedMessage id="solidity.addACustomCompilerWithURL" />}
             >
               <span className="far fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()}></span>
             </CustomTooltip>
-            <CustomTooltip placement="top" tooltipId="showCompilerTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="solidity.seeCompilerLicense" />}>
-              <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="showCompilerTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={<FormattedMessage id="solidity.seeCompilerLicense" />}
+            >
+              <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
             <CompilerDropdown
               allversions={state.allversions}

@@ -17,9 +17,15 @@ Once feature freeze is done, `remix_beta` should be updated latest to the master
  - `git push -f origin remix_beta`
  
 ## Testing
-Testing is performed after the Feature Freeze on `remix-beta.ethereum.org`. `build-qa-doc.js` script can be used to generate the list of QA tasks. Instructions to use the file are given in the file itself: https://github.com/ethereum/remix-project/blob/master/build-qa-doc.js#L18 . 
+Testing is performed after the Feature Freeze on `remix-beta.ethereum.org`. `build-qa-doc.js` script can be used to generate the list of QA tasks. Instructions to use the file are given in the file itself: https://github.com/ethereum/remix-project/blob/master/build-qa-doc.js#L18 
 
 Once ready to run, it can be run using the Node.js: `node build-qa-doc.js`
+
+Find out the four release highlights and update in this file: `remix-project/apps/remix-ide/src/app/tabs/locales/en/homeReleaseDetails.json` along with the version in `title` string
+
+Update the GitHub release link in this file: `remix-project/libs/remix-ui/home-tab/src/lib/components/homeTabFeatured.tsx` at line 44 & 63
+
+This will set latest release details in the first slide of `Featured` section.
 
 ## remixd NPM release
 Once testing is completed, release will start by publishing `remixd`.if required, `remixd` can be also released individually
@@ -41,7 +47,9 @@ This command uses `lerna` and is solely responsible for publishing all the remix
 Once this command has been run, the versions for each remix library will be updated to latest in the libs' package.json file.
  - Create and merge bump PR to master
  
-## Remix IDE Release 
+## Remix IDE Release
+Make sure release highlights and full changelog link is updated to show them on Home tab.
+
 ### Part 1. Bump the version and update Beta
 
 #### Make sure `remix_beta` is up-to-date with `master` branch:
@@ -64,8 +72,7 @@ Once this command has been run, the versions for each remix library will be upda
  - `git pull origin remix_beta`
  - Create tag: `git tag v<version-number>`, `<version-number>` should be same as in package.json of `remix_beta` branch
  - Push tag: `git push --tags`
- - Generate changelog using `build-changelog.js` script as described in the script itself
- - Publish a release in GitHub using the generated changelog
+ - Publish a new release on GitHub and generate automated changelog by selecting the appropriate tag
 
 ### Part 2. Update the Remix Live
 
