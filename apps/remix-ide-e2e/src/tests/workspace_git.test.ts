@@ -339,6 +339,36 @@ module.exports = {
     .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive/plugins/build"]')
   },
 
+   // GIT SUBMODULES E2E ENDS
+
+   // GIT WORKSPACE E2E STARTS
+
+   'Should create a git workspace (uniswapV4Periphery) #group4': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=uniswapV4Periphery]')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .pause(100)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .openFile('contracts')
+      .openFile('contracts/hooks')
+      .openFile('contracts/hooks/examples')
+      .openFile('contracts/hooks/examples/FullRange.sol')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`contract FullRange is BaseHook`) !== -1,
+          'Incorrect content')
+      })
+  }, 
+
+  // GIT WORKSPACE E2E ENDS
+
+
   tearDown: sauce,
 }
 
