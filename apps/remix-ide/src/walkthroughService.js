@@ -49,7 +49,7 @@ export class WalkthroughService extends Plugin {
       {
         element: document.querySelector('#udappRecorderSave'),
         title: 'Transactions Recorder',
-        intro: 'Once there is a transaction, click the button Save to save the scenario.',
+        intro: 'Once there is a Once one or a few transactions have been executed from Remix, click this button to save these transactions as a scenario file.',
         tooltipClass: 'bg-light text-dark',
         position: 'right',
         highlightClass: 'bg-light border border-warning'
@@ -57,7 +57,7 @@ export class WalkthroughService extends Plugin {
       {
         element: document.querySelector('#udappRecorderRun'),
         title: 'Transactions Recorder',
-        intro: 'Run previously saved scenario over any environment.',
+        intro: 'Open a scenario file and click this button to run it against the current selected provider.',
         tooltipClass: 'bg-light text-dark',
         position: 'right',
         highlightClass: 'bg-light border border-warning'
