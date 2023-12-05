@@ -8,10 +8,6 @@ import Config from './config'
 import {Registry} from '@remix-project/remix-lib'
 import {Storage} from '@remix-project/remix-lib'
 
-import * as esbuild from 'esbuild-wasm'
-
-
-
 
 ;(async function () {
   try {
@@ -21,18 +17,6 @@ import * as esbuild from 'esbuild-wasm'
   } catch (e) {}
   const theme = new ThemeModule()
   theme.initTheme()
-
-  await esbuild.initialize({
-    wasmURL: './assets/esbuild.wasm',
-  })
-
-  const code = `import { ethers } from 'ethers'`
-
-  const result = await esbuild.transform(code, {})
-  await esbuild.build({
-    
-  })
-  console.log(result)
   
   render(
     <React.StrictMode>

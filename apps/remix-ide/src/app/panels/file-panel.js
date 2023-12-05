@@ -43,7 +43,8 @@ const profile = {
     'renameWorkspace',
     'deleteWorkspace',
     'loadTemplate', 
-    'clone'
+    'clone',
+    'isExpanded',
   ],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
@@ -72,6 +73,8 @@ module.exports = class Filepanel extends ViewPlugin {
     this.workspaces = []
     this.appManager = appManager
     this.currentWorkspaceMetadata = null
+
+    this.expandPath = []
   }
 
   render() {
@@ -229,5 +232,12 @@ module.exports = class Filepanel extends ViewPlugin {
   workspaceCreated(workspace) {
     this.emit('workspaceCreated', workspace)
   }
+
+  isExpanded(path) {
+    console.log('isExpanded', path, this.expandPath)
+    if(path === '/') return true
+    return this.expandPath.includes(path)
+  }
+
   /** end section */
 }

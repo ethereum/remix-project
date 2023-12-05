@@ -287,6 +287,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     }
   }, [fs.popup])
 
+  useEffect(() => {
+    plugin.expandPath = fs.browser.expandPath
+  },[fs.browser.expandPath])
+
   const handleHideModal = () => {
     setFocusModal((modal) => {
       return {...modal, hide: true, message: null}

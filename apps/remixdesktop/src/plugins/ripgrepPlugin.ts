@@ -1,9 +1,6 @@
 import {PluginClient} from '@remixproject/plugin'
 import {Profile} from '@remixproject/plugin-utils'
-import {
-  ElectronBasePlugin,
-  ElectronBasePluginClient,
-} from '@remixproject/plugin-electron'
+import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
 import path from 'path'
 import {rgPath} from '@vscode/ripgrep'
 import byline from 'byline'
@@ -47,42 +44,42 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
   }
 
   async glob(path: string, pattern: string, options?: any) {
-    path = convertPathToPosix(this.fixPath(path))
+    try {
+      const fixedPath = this.fixPath(path)
+      path = convertPathToPosix(fixedPath)
 
-    return new Promise((c, e) => {
-      // replace packed app path with unpacked app path for release on windows
+      return new Promise((c, e) => {
+        // replace packed app path with unpacked app path for release on windows
 
-      const customRgPath = rgPath.includes('app.asar.unpacked')
-        ? rgPath
-        : rgPath.replace('app.asar', 'app.asar.unpacked')
-      const rg = spawn(customRgPath, ['.', '-l', path])
+        const customRgPath = rgPath.includes('app.asar.unpacked') ? rgPath : rgPath.replace('app.asar', 'app.asar.unpacked')
+        const rg = spawn(customRgPath, ['.', '-l', path])
 
-      const resultrg: any[] = []
+        const resultrg: any[] = []
 
-      const stream = byline(rg.stdout.setEncoding('utf8'))
-      stream.on('data', (rgresult: string) => {
-        let pathWithoutWorkingDir = rgresult.replace(
-          convertPathToPosix(this.workingDir),
-          ''
-        )
-        if (pathWithoutWorkingDir.endsWith('/')) {
-          pathWithoutWorkingDir = pathWithoutWorkingDir.slice(0, -1)
-        }
-        if (pathWithoutWorkingDir.startsWith('/')) {
-          pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
-        }
-        if (pathWithoutWorkingDir.startsWith('\\')) {
-          pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
-        }
-        resultrg.push({
-          path: convertPathToPosix(pathWithoutWorkingDir),
-          isDirectory: false,
+        const stream = byline(rg.stdout.setEncoding('utf8'))
+        stream.on('data', (rgresult: string) => {
+          let pathWithoutWorkingDir = rgresult.replace(convertPathToPosix(this.workingDir), '')
+          if (pathWithoutWorkingDir.endsWith('/')) {
+            pathWithoutWorkingDir = pathWithoutWorkingDir.slice(0, -1)
+          }
+          if (pathWithoutWorkingDir.startsWith('/')) {
+            pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
+          }
+          if (pathWithoutWorkingDir.startsWith('\\')) {
+            pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
+          }
+          resultrg.push({
+            path: convertPathToPosix(pathWithoutWorkingDir),
+            isDirectory: false,
+          })
+        })
+        stream.on('end', () => {
+          c(resultrg)
         })
       })
-      stream.on('end', () => {
-        c(resultrg)
-      })
-    })
+    } catch (e) {
+      return []
+    }
   }
 
   fixPath(path: string): string {

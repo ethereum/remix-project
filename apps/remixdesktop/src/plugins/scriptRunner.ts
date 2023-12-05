@@ -132,7 +132,8 @@ class ScriptRunnerClient extends ElectronBasePluginClient {
         bundle: true,
         outdir: out,
         plugins: [],
-        platform: 'node'
+        platform: 'node',
+        inject: ['/Volumes/bunsen/code/basic6/remix.ts']
       })
       console.log('build', build)
       if (build.errors.length > 0) {
