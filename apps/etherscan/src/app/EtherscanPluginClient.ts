@@ -1,10 +1,21 @@
 import {PluginClient} from '@remixproject/plugin'
+import { createClient } from '@remixproject/plugin-webview'
 import {verify, EtherScanReturn} from './utils/verify'
 import {getReceiptStatus, getEtherScanApi, getNetworkName, getProxyContractReceiptStatus} from './utils'
+import EventManager from 'events'
 
-export class RemixClient extends PluginClient {
-  loaded() {
-    return this.onload()
+export class EtherscanPluginClient extends PluginClient {
+  public internalEvents: EventManager
+
+  constructor() {
+    super()
+    createClient(this)
+    this.internalEvents = new EventManager()
+    this.onload()
+  }
+
+  onActivation(): void {
+    this.internalEvents.emit('etherscan_activated')
   }
 
   async verify(
