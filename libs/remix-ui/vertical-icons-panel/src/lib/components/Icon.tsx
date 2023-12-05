@@ -88,7 +88,7 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
   const stylePC = iconRecord.active ? 'flex-start' : 'center'
   return (
     <>
-      <div className='d-flex' style={{width: 'auto', placeContent: stylePC}}>      
+      <div className='d-flex py-1' style={{width: 'auto', placeContent: stylePC}}>      
         {iconRecord.active && <div
           className='pt-1 bg-primary'
           style={{width: "6px", height: "36px", position: 'relative', borderRadius: '24%'}}
