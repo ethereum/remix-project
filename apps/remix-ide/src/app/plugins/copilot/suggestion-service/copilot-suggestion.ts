@@ -50,8 +50,8 @@ export class CopilotSuggestion extends Plugin {
     const options: SuggestOptions = {
       do_sample: false,
       top_k: 0,
-      temperature,
-      max_new_tokens
+      temperature: max_new_tokens || 0,
+      max_new_tokens: temperature || 0
     }
     return this.service.suggest(this.context ? this.context + '\n\n' + content : content, options)
   }

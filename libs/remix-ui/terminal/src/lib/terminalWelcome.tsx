@@ -54,7 +54,7 @@ const TerminalWelcomeMessage = ({packageJson, storage}) => {
             ethers.js
           </a>{' '}
         </li>
-        <li key="ethers-console">
+        <li key="gpt">
           gpt <i>&lt;your question here&gt;</i> {' '}
         </li>
       </ul>
