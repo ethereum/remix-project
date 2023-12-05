@@ -46,6 +46,8 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
 
   async showDetails(sentPayload: any) {
     console.log({ sentPayload })
+    const contractName = Object.entries(sentPayload).find(([key, value]) =>  key )
+    this.profile.displayName = `${contractName}`
     await this.call('tabs', 'focus', 'vyperCompilationDetails')
     this.payload = sentPayload
     this.renderComponent()
