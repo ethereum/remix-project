@@ -15,9 +15,17 @@ import { PrimeValue } from '../types'
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
 
-  const showCompilerLicense = (message = 'License not available') => {
-    // @ts-ignore
-    circuitApp.plugin.call('notification', 'modal', { id: 'modal_circuit_compiler_license', title: 'Compiler License', message })
+  const showCompilerLicense = async (message = 'License not available') => {
+    try {
+      const response = await fetch('https://raw.githubusercontent.com/iden3/circom/master/COPYING')
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+      const content = await response.text()
+      // @ts-ignore
+      circuitApp.plugin.call('notification', 'modal', { id: 'modal_circuit_compiler_license', title: 'Compiler License', message: content })
+    } catch (e) {
+      // @ts-ignore
+      circuitApp.plugin.call('notification', 'modal', { id: 'modal_circuit_compiler_license', title: 'Compiler License', message })
+    }
   }
 
   const handleVersionSelect = (version: string) => {
@@ -53,11 +61,16 @@ export function Container () {
       <article>
         <div className="pt-0 circuit_section">
           <div className="mb-1">
-            <label className="circuit_label form-check-label" htmlFor="versionSelector">
+            <label className="circuit_label form-check-label">
               <FormattedMessage id="circuit.compiler" />
             </label>
-            <CustomTooltip placement="top" tooltipId="showCompilerTooltip" tooltipClasses="text-nowrap" tooltipText={'See compiler license'}>
-              <span className="fa fa-file-text-o border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="showCircumCompilerTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText='See compiler license'
+            >
+              <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
             <VersionList setVersion={handleVersionSelect} versionList={circuitApp.appState.versionList} currentVersion={circuitApp.appState.version} />
             <CompileOptions setCircuitAutoCompile={handleCircuitAutoCompile} setCircuitHideWarnings={handleCircuitHideWarnings} autoCompile={circuitApp.appState.autoCompile} hideWarnings={circuitApp.appState.hideWarnings} />

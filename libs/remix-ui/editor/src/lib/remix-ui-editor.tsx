@@ -19,6 +19,8 @@ import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
 import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { IPosition } from 'monaco-editor'
+import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
+const _paq = (window._paq = window._paq || [])
 
 enum MarkerSeverity {
   Hint = 1,
@@ -708,6 +710,7 @@ export const EditorUI = (props: EditorUIProps) => {
         Generate the documentation for the function ${currentFunction.current} using the Doxygen style syntax
         `
         await props.plugin.call('openaigpt', 'message', message)
+        _paq.push(['trackEvent', 'ai', 'openai', 'generateDocumentation'])
       },
     }
 
@@ -726,6 +729,7 @@ export const EditorUI = (props: EditorUIProps) => {
         Explain the function ${currentFunction.current}
         `
         await props.plugin.call('openaigpt', 'message', message)
+        _paq.push(['trackEvent', 'ai', 'openai', 'explainFunction'])
       },
     }
 
@@ -733,7 +737,7 @@ export const EditorUI = (props: EditorUIProps) => {
     let freeFunctionAction
     const executeFreeFunctionAction = {
       id: 'executeFreeFunction',
-      label: 'Run a free function in the Remix VM',
+      label: 'Run a free function',
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'execute', // create a new grouping
       precondition: 'freeFunctionCondition',
@@ -791,7 +795,7 @@ export const EditorUI = (props: EditorUIProps) => {
       const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
       const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
       if (freeFunctionNode) {
-        executeFreeFunctionAction.label = `Run the free function "${freeFunctionNode.name}" in the Remix VM`
+        executeFreeFunctionAction.label = `Run the free function "${freeFunctionNode.name}"`
         freeFunctionAction = editor.addAction(executeFreeFunctionAction)
       }
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
@@ -867,6 +871,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
+    monacoRef.current.languages.registerInlineCompletionsProvider('remix-solidity', new RemixInLineCompletionProvider(props, monaco))
     monaco.languages.registerCodeActionProvider('remix-solidity', new RemixCodeActionProvider(props, monaco))
 
     loadTypes(monacoRef.current)
@@ -883,6 +888,9 @@ export const EditorUI = (props: EditorUIProps) => {
         options={{
           glyphMargin: true,
           readOnly: (!editorRef.current || !props.currentFile) && editorModelsState[props.currentFile]?.readOnly,
+          inlineSuggest: {
+            enabled: true,
+          }
         }}
         defaultValue={defaultEditorValue}
       />

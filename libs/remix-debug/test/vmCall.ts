@@ -23,7 +23,7 @@ async function sendTx (web3, from, to, value, data, cb) {
       value,
       data,
       gas: 7000000
-    })
+    }, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
     cb(null, receipt.transactionHash)
     return receipt.transactionHash
   } catch (e) {

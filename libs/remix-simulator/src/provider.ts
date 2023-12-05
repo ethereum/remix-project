@@ -60,7 +60,7 @@ export class Provider {
     this.pendingRequests = []
     await this.vmContext.init()
     await this.Accounts.resetAccounts()
-    this.Transactions.init(this.Accounts.accounts)
+    this.Transactions.init(this.Accounts.accounts, this.vmContext.blockNumber)
     this.initialized = true
     if (this.pendingRequests.length > 0) {
       this.pendingRequests.map((req) => {

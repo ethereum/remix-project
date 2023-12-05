@@ -32,6 +32,7 @@ export class Compiler {
       runs: 200,
       evmVersion: null,
       language: 'Solidity',
+      remappings: [],
       compilationStartTime: null,
       target: null,
       useFileConfiguration: false,
@@ -213,12 +214,11 @@ export class Compiler {
           let input = ""
           try {
             if (source && source.sources) {
-              const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
-
+              const { optimize, runs, evmVersion, language, remappings, useFileConfiguration, configFileContent } = this.state
               if (useFileConfiguration) {
                 input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
               } else {
-                input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+                input = compilerInput(source.sources, { optimize, runs, evmVersion, language, remappings })
               }
 
               result = JSON.parse(remoteCompiler.compile(input, { import: missingInputsCallback }))
@@ -331,15 +331,18 @@ export class Compiler {
 
     this.state.compileJSON = (source: SourceWithTarget, timeStamp: number) => {
       if (source && source.sources) {
-        const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
+        const { optimize, runs, evmVersion, language, remappings, useFileConfiguration, configFileContent } = this.state
         jobs.push({ sources: source })
         let input = ""
 
         try {
           if (useFileConfiguration) {
-            input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+            const compilerInput = JSON.parse(configFileContent)
+            if (compilerInput.settings.remappings?.length) compilerInput.settings.remappings.push(...remappings)
+            else compilerInput.settings.remappings = remappings
+            input = compilerInputForConfigFile(source.sources, compilerInput)
           } else {
-            input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+            input = compilerInput(source.sources, { optimize, runs, evmVersion, language, remappings })
           }
         } catch (exception) {
           this.onCompilationFinished({ error: { formattedMessage: exception.message } }, [], source, "", this.state.currentVersion)

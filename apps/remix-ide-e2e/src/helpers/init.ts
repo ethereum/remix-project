@@ -11,9 +11,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
   browser
     .url(url || 'http://127.0.0.1:8080')
     //.switchBrowserTab(0)
-    .waitForElementVisible('[id="remixTourSkipbtn"]')
-    .click('[id="remixTourSkipbtn"]')
-
+    
     .perform((done) => {
       if (!loadPlugin) return done()
       browser
@@ -54,7 +52,6 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
       if (preloadPlugins) {
         initModules(browser, () => {
           browser
-
             .clickLaunchIcon('solidity')
             .waitForElementVisible('[for="autoCompile"]')
             .click('[for="autoCompile"]')

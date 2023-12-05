@@ -46,7 +46,10 @@ import {
   createTsSolGithubAction,
   createSlitherGithubAction,
   createHelperScripts,
-  openElectronFolder, getElectronRecentFolders, removeRecentElectronFolder
+  openElectronFolder, 
+  getElectronRecentFolders, 
+  removeRecentElectronFolder,
+  updateGitSubmodules
 } from '../actions'
 import {Modal, WorkspaceProps, WorkspaceTemplate} from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -238,6 +241,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
 
+  const dispatchUpdateGitSubmodules = async () => {
+    await updateGitSubmodules()
+  }
+
   useEffect(() => {
     dispatchInitWorkspace()
   }, [])
@@ -362,7 +369,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCreateHelperScripts,
     dispatchOpenElectronFolder,
     dispatchGetElectronRecentFolders,
-    dispatchRemoveRecentFolder
+    dispatchRemoveRecentFolder,
+    dispatchUpdateGitSubmodules
   }
   return (
     <FileSystemContext.Provider value={value}>

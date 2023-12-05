@@ -313,6 +313,7 @@ export class VMContext {
           provider: this.nodeUrl,
           blockTag: '0x' + block.toString(16)
         })
+        this.blockNumber = block
       } else {
         stateManager = new CustomEthersStateManager({
           provider: this.nodeUrl,
