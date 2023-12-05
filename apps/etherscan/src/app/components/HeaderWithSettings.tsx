@@ -67,7 +67,7 @@ const SettingsIcon: React.FC<IconProps> = ({from}: IconProps) => {
   )
 }
 
-export const  HeaderWithSettings: React.FC<Props> = ({title = '', from}) => {
+export const HeaderWithSettings: React.FC<Props> = ({title = '', from}) => {
   return (
     <AppContext.Consumer>
       {() => (

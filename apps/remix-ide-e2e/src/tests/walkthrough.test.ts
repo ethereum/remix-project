@@ -15,6 +15,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="recorderStartWalkthrough"]')
       .click('*[data-id="recorderStartWalkthrough"]')
       .waitForElementPresent('*[id="remixRecorderWalkthrowTitle"]')
-      .waitForElementPresent('*[id="remixRecorderExpanded"]')
+      .waitForElementPresent('*[data-id="remixRecorderExpanded"]')
   }
 }
