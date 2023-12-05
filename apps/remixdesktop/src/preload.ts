@@ -6,7 +6,7 @@ console.log('preload.ts', new Date().toLocaleTimeString())
 
 /* preload script needs statically defined API for each plugin */
 
-const exposedPLugins = ['fs', 'git', 'xterm', 'isogit', 'electronconfig', 'electronTemplates', 'ripgrep', 'compilerloader', 'scriptRunner']
+const exposedPLugins = ['fs', 'git', 'xterm', 'isogit', 'electronconfig', 'electronTemplates', 'ripgrep', 'compilerloader']
 
 let webContentsId: number | undefined
 
