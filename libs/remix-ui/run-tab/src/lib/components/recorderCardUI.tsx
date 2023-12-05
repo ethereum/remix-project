@@ -50,7 +50,21 @@ export function RecorderUI(props: RecorderProps) {
               {props.count}
             </div>
           </CustomTooltip>
-          <i style={{fontSize: 'medium'}} className={'ml-2 fal fa-info-circle align-self-center'} aria-hidden="true" onClick={() => startWalkthrough()}></i>
+          <CustomTooltip
+            placement={'right'}
+            tooltipClasses="text-nowrap"
+            tooltipId="recordedTransactionsWalkthroughtooltip"
+            tooltipText={<FormattedMessage id="udapp.transactionsWalkthroughTooltip" />}
+          >
+            <i
+              style={{fontSize: 'medium'}}
+              className={'ml-2 fal fa-info-circle align-self-center'}
+              aria-hidden="true"
+              onClick={() => startWalkthrough()}
+              data-id="recorderStartWalkthrough"
+            >
+            </i>
+          </CustomTooltip>
         </div>
         <div className="p-3">
           <span data-id="udappRecorderTitleExpander" onClick={toggleClass}>
@@ -58,7 +72,7 @@ export function RecorderUI(props: RecorderProps) {
           </span>
         </div>
       </div>
-      <div className={`pb-2 flex-column ${toggleExpander ? 'd-flex' : 'd-none'}`}>
+      { toggleExpander && <div className={`pb-2 flex-column ${toggleExpander ? 'd-flex' : 'd-none'}`} data-id='remixRecorderExpanded'>
         <div className="mb-1 mt-1 custom-control custom-checkbox mb-1" id='udappRecorderUseLatest'>
           <input ref={inputLive} type="checkbox" id="livemode-recorder" className="custom-control-input custom-select" name="input-livemode" />
           <CustomTooltip
@@ -112,7 +126,7 @@ export function RecorderUI(props: RecorderProps) {
             </button>
           </CustomTooltip>
         </div>
-      </div>
+      </div>}
     </div>
   )
 }
