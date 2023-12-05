@@ -25,7 +25,7 @@ interface IRemixAppUi {
 }
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
-  const [showEnterDialog, setShowEnterDialog] = useState<boolean>(true)
+  const [showEnterDialog, setShowEnterDialog] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [maximiseTrigger, setMaximiseTrigger] = useState<number>(0)
   const [resetTrigger, setResetTrigger] = useState<number>(0)
