@@ -74,6 +74,7 @@ export interface FilePanelType extends ViewPlugin {
   initialWorkspace: string
   resetNewFile: () => void
   getWorkspaces: () => string[]
+  expandPath: string[]
 }
 
 /* eslint-disable-next-line */

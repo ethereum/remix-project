@@ -175,6 +175,12 @@ const removePluginActions = (plugin, cb: (err: Error, result?: string | number |
 }
 
 const fileAdded = async (filePath: string) => {
+  const path = extractParentFromKey(filePath) || ROOT_PATH
+  console.log('fileAdded', filePath, path)
+  const isExpanded = await plugin.call('filePanel', 'isExpanded', path)
+
+  if(!isExpanded) return
+  
   await dispatch(fileAddedSuccess(filePath))
   if (filePath.includes('_test.sol')) {
     plugin.emit('newTestFileCreated', filePath)
@@ -184,6 +190,12 @@ const fileAdded = async (filePath: string) => {
 const folderAdded = async (folderPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
   const path = extractParentFromKey(folderPath) || ROOT_PATH
+
+  const isExpanded = await plugin.call('filePanel', 'isExpanded', path)
+
+  console.log('folderAdded', folderPath, path, isExpanded)
+
+  if(!isExpanded) return
 
   const promise: Promise<FileTree> = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree: FileTree) => {

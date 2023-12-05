@@ -108,6 +108,7 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   // best for non recursive
   async readdir(path: string): Promise<string[]> {
+    if (this.workingDir === '')  throw new Error('workingDir is not set')
     // call node fs.readdir
     if (!path) return []
     const startTime = Date.now()
@@ -203,7 +204,6 @@ class FSPluginClient extends ElectronBasePluginClient {
         ignorePermissionErrors: true,
         ignoreInitial: true,
         ignored: [
-          '**/node_modules/**',
           '**/.git/index.lock', // this file is created and unlinked all the time when git is running on Windows
         ],
       })
@@ -211,7 +211,7 @@ class FSPluginClient extends ElectronBasePluginClient {
         let pathWithoutPrefix = path.replace(this.workingDir, '')
         pathWithoutPrefix = convertPathToPosix(pathWithoutPrefix)
         if (pathWithoutPrefix.startsWith('/')) pathWithoutPrefix = pathWithoutPrefix.slice(1)
-
+        console.log('eventName', eventName, pathWithoutPrefix)
         if (eventName === 'change') {
           // remove workingDir from path
           const newContent = await fs.readFile(path, 'utf-8')

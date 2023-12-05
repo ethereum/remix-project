@@ -16,7 +16,8 @@ export class ElectronProvider extends FileProvider {
   }
 
   async init() {
-    this._appManager.on('fs', 'change', (event, path) => {
+    this._appManager.on('fs', 'change', async (event, path) => {
+      console.log('change', event, path)
       switch (event) {
       case 'add':
         this.event.emit('fileAdded', path)
@@ -74,7 +75,6 @@ export class ElectronProvider extends FileProvider {
  * @param {*} path is the folder to be removed
  */
   async remove(path: string) {
-    console.log('remove', path)
     try {
       await window.remixFileSystem.rmdir(path)
       return true
