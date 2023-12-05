@@ -301,6 +301,7 @@ export function RunTabUI(props: RunTabProps) {
             proxy={runTab.proxy}
           />
           <RecorderUI
+            plugin={plugin}
             gasEstimationPrompt={gasEstimationPrompt}
             passphrasePrompt={passphrasePrompt}
             mainnetPrompt={mainnetPrompt}
