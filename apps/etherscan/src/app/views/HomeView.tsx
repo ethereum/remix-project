@@ -10,7 +10,7 @@ import {VerifyView} from './VerifyView'
 export const HomeView: React.FC = () => {
   return (
     <AppContext.Consumer>
-      {({apiKey, clientInstance, setReceipts, receipts, contracts}) => {
+      {({apiKey, clientInstance, setReceipts, receipts, contracts, networkName}) => {
         return !apiKey ? (
           <Navigate
             to={{
@@ -26,6 +26,7 @@ export const HomeView: React.FC = () => {
               const newReceipts = [...receipts, receipt]
               setReceipts(newReceipts)
             }}
+            networkName={networkName}
           />
         )
       }}
