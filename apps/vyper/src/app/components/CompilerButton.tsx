@@ -126,10 +126,10 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
 
   return (
     <button data-id="compile" onClick={compileContract} title={contract} className="d-flex flex-column btn btn-primary w-100">
-      <div className="d-flex justify-center align-item-center">
+      <div className="d-flex justify-content-center align-item-center">
+        {loadingSpinner ? <span className="fas fa-sync fa-pulse" role="status" aria-hidden="true" /> : null}
         <span>Compile</span>
         <span className="overflow-hidden text-truncate text-nowrap">{contract}</span>
-        {loadingSpinner && <span className="fas fa-spinner fa-pulse" role="status" aria-hidden="true" />}
       </div>
     </button>
   )
