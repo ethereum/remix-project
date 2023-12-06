@@ -130,8 +130,8 @@ class AppComponent {
       'remix.ethereum.org': 23,
       '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
     }
-    this.showMatamo = matomoDomains[window.location.hostname] && !Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
-    this.showEnter = this.showMatamo && !localStorage.getItem('hadUsageTypeAsked')
+    this.showMatamo = true /*matomoDomains[window.location.hostname]*/ && !Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
+    this.showEnter = !this.showMatamo && !localStorage.getItem('hadUsageTypeAsked')
     
     this.walkthroughService = new WalkthroughService(appManager, !this.showMatamo || !this.showEnter)
 
