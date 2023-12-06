@@ -59,8 +59,6 @@ const MatomoDialog = (props) => {
     _paq.push(['optUserOut'])
     // revoke tracking consent
     _paq.push(['forgetConsentGiven']);
-    // OR revoke cookie consent
-    _paq.push(['forgetCookieConsentGiven']);
     setVisible(false)
   }
 
@@ -68,8 +66,6 @@ const MatomoDialog = (props) => {
     _paq.push(['forgetUserOptOut'])
     // user has given consent to process their data
     _paq.push(['setConsentGiven']);
-    // OR user has given consent to store and use cookies
-    _paq.push(['setCookieConsentGiven']);
     settings.updateMatomoAnalyticsChoice(true)
     setVisible(false)
   }

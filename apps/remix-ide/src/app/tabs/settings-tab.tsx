@@ -95,14 +95,10 @@ module.exports = class SettingsTab extends ViewPlugin {
       _paq.push(['optUserOut'])
       // revoke tracking consent
       _paq.push(['forgetConsentGiven']);
-      // OR revoke cookie consent
-      _paq.push(['forgetCookieConsentGiven']);
     } else {
       _paq.push(['forgetUserOptOut'])
       // user has given consent to process their data
       _paq.push(['setConsentGiven']);
-      // OR user has given consent to store and use cookies
-      _paq.push(['setCookieConsentGiven']);
     }
     this.dispatch({
       ...this
