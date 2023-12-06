@@ -14,7 +14,7 @@ export function Configurations ({primeValue, setPrimeValue}: ConfigurationsProps
             placement={"auto"}
             tooltipId="circuitPrimeLabelTooltip"
             tooltipClasses="text-nowrap"
-            tooltipText={<span>{'To choose the prime number to use to generate the circuit. Receives the name of the curve (bn128, bls12381, goldilocks) [default: bn128]'}</span>}
+            tooltipText={<span>{'To choose the prime number to use to generate the circuit. Receives the name of the curve (bn128, bls12381, goldilocks, grumpkin, pallas, vesta)'}</span>}
           >
             <div>
               <select
@@ -28,6 +28,9 @@ export function Configurations ({primeValue, setPrimeValue}: ConfigurationsProps
                 <option value="bn128">bn128</option>
                 <option value="bls12381">bls12381</option>
                 <option value="goldilocks">goldilocks</option>
+                <option value="grumpkin">grumpkin</option>
+                <option value="pallas">pallas</option>
+                <option value="vesta">vesta</option>
               </select>
             </div>
           </CustomTooltip>
