@@ -5,6 +5,12 @@ import * as packageJson from '../../../../../package.json'
 import {RemixUiSettings} from '@remix-ui/settings' //eslint-disable-line
 import Registry from '../state/registry'
 import {PluginViewWrapper} from '@remix-ui/helper'
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+const _paq = (window._paq = window._paq || [])
 
 const profile = {
   name: 'settings',
