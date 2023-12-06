@@ -10,7 +10,7 @@ export const enum ModalTypes {
 
 export const enum UsageTypes {
   Beginner = 1,
-  Tutor,
   Prototyper,
-  Production,
+  Advance,
+  Production
 }

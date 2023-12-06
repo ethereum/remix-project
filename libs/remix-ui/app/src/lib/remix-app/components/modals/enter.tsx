@@ -4,7 +4,7 @@ import {UsageTypes} from '../../types'
 import { type } from 'os'
 
 interface EnterDialogProps {
-  hide: boolean,
+  show: boolean,
   handleUserChoice: (userChoice: UsageTypes) => void,
 }
 
@@ -13,14 +13,16 @@ const EnterDialog = (props: EnterDialogProps) => {
   const {showEnter} = useContext(AppContext)
 
   useEffect(() => {
-    setVisibility(!props.hide)
-  }, [props.hide])
+    setVisibility(props.show)
+    console.log("useeff vis in enter", props.show, " showEnter ", showEnter)
+  }, [props.show])
 
   const enterAs = async (uType) => {
     props.handleUserChoice(uType)
   }
 
   const modalClass = (visibility && showEnter) ? "d-flex" : "d-none"
+  console.log("enterDialog class ", modalClass)
   return (
     <div
       data-id={`EnterModalDialogContainer-react`}
@@ -39,17 +41,17 @@ const EnterDialog = (props: EnterDialogProps) => {
           <div className="modal-header d-flex flex-column">
             <h3 className='text-dark'>Welcome to Remix IDE</h3>
             <div className='d-flex flex-row pt-2'>
-              <h6 className="modal-title" data-id={`EnterModalDialogModalTitle-react`}>
-                To load the project with the most efficient setup we would like to know your experience type.
+              <h6 className="modal-title text-dark" data-id={`EnterModalDialogModalTitle-react`}>
+                In order to understand your needs better, we would like to know how you typically use Remix
               </h6>
               <i className="text-dark fal fa-door-open text-center" style={{minWidth: "100px", fontSize: "xxx-large"}}></i>
             </div>
           </div>
-          <div className="modal-body text-break remixModalBody d-flex flex-row p-3 justify-content-between" data-id={`EnterModalDialogModalBody-react`}>
-            <button className="btn btn-secondary" data-id="beginnerbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Beginner)}}>Beginner</button>
-            <button className="btn btn-secondary" data-id="tutorbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Tutor)}}>Teacher</button>
-            <button className="btn btn-secondary" data-id="prototyperbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Prototyper)}}>Prototyper</button>
-            <button className="btn btn-secondary" data-id="productionbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Production)}}>Production User</button>
+          <div className="modal-body text-break remixModalBody d-flex flex-column p-3 justify-content-between" data-id={`EnterModalDialogModalBody-react`}>
+            <button className="btn btn-secondary text-left" data-id="beginnerbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Beginner)}}>Learning - discovering web3 development</button>
+            <button className="btn btn-secondary my-1 text-left" data-id="prototyperbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Prototyper)}}>Prototyping - trying out concepts and techniques</button>
+            <button className="btn btn-secondary text-left" data-id="advanceUserbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Advance)}}>Developing  projects - Remix as your main dev tool</button>
+            <button className="btn btn-secondary mt-1 text-left" data-id="productionbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Production)}}>Production - only deployments</button>
           </div>
         </div>
       </div>

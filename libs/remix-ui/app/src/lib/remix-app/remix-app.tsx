@@ -113,7 +113,7 @@ const RemixApp = (props: IRemixAppUi) => {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
       break
     }
-    case UsageTypes.Tutor: {
+    case UsageTypes.Advance: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'tutor'])
       break
     }
@@ -135,8 +135,8 @@ const RemixApp = (props: IRemixAppUi) => {
     <IntlProvider locale={locale.code} messages={locale.messages}>
       <AppProvider value={value}>
         <OriginWarning></OriginWarning>
-        <MatomoDialog hide={!appReady} okFn={() => {setShowEnterDialog(true)}}></MatomoDialog>
-        <EnterDialog hide={!showEnterDialog} handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>
+        <MatomoDialog hide={!appReady} okFn={() => {console.log("ok"); setShowEnterDialog(true)}}></MatomoDialog>
+        <EnterDialog show={showEnterDialog} handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>
         <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
           <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
             {props.app.menuicons.render()}
