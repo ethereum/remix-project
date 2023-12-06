@@ -45,7 +45,7 @@ export type CompilationConfig = {
   version: string
 }
 
-export type PrimeValue = "bn128" | "bls12381" | "goldilocks"
+export type PrimeValue = "bn128" | "bls12381" | "goldilocks" | "grumpkin" | "pallas" | "vesta"
 
 export type CompilerFeedbackProps = {
   feedback: string | CompilerReport[],

@@ -2,14 +2,16 @@ import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import EventManager from 'events'
 import pathModule from 'path'
-import { parse, compile, generate_witness, generate_r1cs, compiler_list } from 'circom_wasm'
+import { compiler_list } from 'circom_wasm'
+import compilerV216 from 'circom_wasm/v2.1.6'
+import compilerV215 from 'circom_wasm/v2.1.5'
 import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import { CompilationConfig, CompilerReport, ResolverOutput } from '../types'
 
 export class CircomPluginClient extends PluginClient {
   public internalEvents: EventManager
   private _compilationConfig: CompilationConfig = {
-    version: "2.1.5",
+    version: "2.1.6",
     prime: "bn128"
   }
   private lastCompiledCircuitPath: string = ''
@@ -38,7 +40,8 @@ export class CircomPluginClient extends PluginClient {
       fileContent = await this.call('fileManager', 'readFile', path)
     }
     this.lastParsedFiles = await this.resolveDependencies(path, fileContent, { [path]: { content: fileContent, parent: null } })
-    const parsedOutput = parse(path, this.lastParsedFiles)
+    const compiler = this._compilationConfig.version === '2.1.5' ? compilerV215 : compilerV216
+    const parsedOutput = compiler.parse(path, this.lastParsedFiles)
 
     try {
       const result: CompilerReport[] = JSON.parse(parsedOutput.report())
@@ -122,12 +125,13 @@ export class CircomPluginClient extends PluginClient {
     if (compilationConfig) {
       const { prime, version } = compilationConfig
 
-      if ((prime !== "bn128") && (prime !== "bls12381") && (prime !== "goldilocks")) throw new Error('Invalid prime value')
+      if ((prime !== "bn128") && (prime !== "bls12381") && (prime !== "goldilocks") && (prime !== "grumpkin") && (prime !== "pallas") && (prime !== "vesta")) throw new Error('Invalid prime value')
       if (!compiler_list.versions.includes(version)) throw new Error("Unsupported compiler version")
       this._compilationConfig.prime = prime
       this._compilationConfig.version = version
     }
-    const circuitApi = compile(path, this.lastParsedFiles, { prime: this._compilationConfig.prime })
+    const compiler = this._compilationConfig.version === '2.1.5' ? compilerV215 : compilerV216
+    const circuitApi = compiler.compile(path, this.lastParsedFiles, { prime: this._compilationConfig.prime })
     const circuitProgram = circuitApi.program()
 
     if (circuitProgram.length < 1) {
@@ -172,12 +176,13 @@ export class CircomPluginClient extends PluginClient {
     if (compilationConfig) {
       const { prime, version } = compilationConfig
 
-      if ((prime !== "bn128") && (prime !== "bls12381") && (prime !== "goldilocks")) throw new Error('Invalid prime value')
+      if ((prime !== "bn128") && (prime !== "bls12381") && (prime !== "goldilocks") && (prime !== "grumpkin") && (prime !== "pallas") && (prime !== "vesta")) throw new Error('Invalid prime value')
       if (!compiler_list.versions.includes(version)) throw new Error("Unsupported compiler version")
       this._compilationConfig.prime = prime
       this._compilationConfig.version = version
     }
-    const r1csApi = generate_r1cs(path, this.lastParsedFiles, { prime: this._compilationConfig.prime })
+    const compiler = this._compilationConfig.version === '2.1.5' ? compilerV215 : compilerV216
+    const r1csApi = compiler.generate_r1cs(path, this.lastParsedFiles, { prime: this._compilationConfig.prime })
     const r1csProgram = r1csApi.program()
 
     if (r1csProgram.length < 1) {
@@ -202,7 +207,8 @@ export class CircomPluginClient extends PluginClient {
     // @ts-ignore
     const buffer: any = await this.call('fileManager', 'readFile', wasmPath, { encoding: null })
     const dataRead = new Uint8Array(buffer)
-    const witness = await generate_witness(dataRead, input)
+    const compiler = this._compilationConfig.version === '2.1.5' ? compilerV215 : compilerV216
+    const witness = await compiler.generate_witness(dataRead, input)
     // @ts-ignore
     await this.call('fileManager', 'writeFile', wasmPath.replace('.wasm', '.wtn'), witness, true)
     this.internalEvents.emit('circuit_computing_witness_done')
