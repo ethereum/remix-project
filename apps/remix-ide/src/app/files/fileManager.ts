@@ -741,7 +741,6 @@ class FileManager extends Plugin {
       // TODO: Only keep `this.emit` (issue#2210)
       this.emit('currentFileChanged', file)
       this.events.emit('currentFileChanged', file)
-      if (file.endsWith('.md')) await this.call('doc-viewer' as any, 'viewDocs', [file])
       return true
     }
   }
