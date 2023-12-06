@@ -4,7 +4,8 @@ import {ModalInitialState} from '../state/modals'
 
 export type appProviderContextType = {
   settings: any,
-  showMatamo: boolean
+  showMatamo: boolean,
+  showEnter: boolean,
   appManager: any
   modal: any
   layout: any

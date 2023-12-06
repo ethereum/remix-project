@@ -55,7 +55,7 @@ class DGitProvider extends Plugin {
     this.ipfsSources = [this.remixIPFS, this.globalIPFSConfig, this.ipfsconfig]
   }
 
-  async getGitConfig() {
+  async getGitConfig(dir = '') {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return {
@@ -458,7 +458,7 @@ class DGitProvider extends Plugin {
       const gitmodules = await this.call('fileManager', 'readFile', path.join(dir, '.gitmodules'))
       if (gitmodules) {
         const lines = gitmodules.split('\n')
-        let currentModule = {}
+        let currentModule:any = {}
         let modules = []
         for (let line of lines) {
           line = line.trim()
