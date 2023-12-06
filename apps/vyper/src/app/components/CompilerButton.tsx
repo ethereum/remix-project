@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {isVyper, compile, toStandardOutput, VyperCompilationOutput, isCompilationError, remixClient, normalizeContractPath} from '../utils'
 import Button from 'react-bootstrap/Button'
 import _ from 'lodash'
@@ -12,6 +12,7 @@ interface Props {
 }
 
 function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: Props) {
+  const [loadingSpinner, setLoadingSpinnerState] = useState(false)
   if (!contract || !contract) {
     return <Button disabled>No contract selected</Button>
   }
@@ -23,6 +24,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
   /** Compile a Contract */
   async function compileContract() {
     resetCompilerState()
+    setLoadingSpinnerState(true)
     try {
       await remixClient.discardHighlight()
       let _contract: any
@@ -111,6 +113,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
       remixClient.compilationFinish(_contract.name, _contract.content, data)
       console.log(data)
       setOutput(_contract.name, data)
+      setLoadingSpinnerState(false)
       // remixClient.call('compilationDetails' as any, 'showDetails', data)
     } catch (err: any) {
       remixClient.changeStatus({
@@ -123,8 +126,11 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
 
   return (
     <button data-id="compile" onClick={compileContract} title={contract} className="d-flex flex-column btn btn-primary w-100">
-      <span>Compile</span>
-      <span className="overflow-hidden text-truncate text-nowrap">{contract}</span>
+      <div className="d-flex justify-center align-item-center">
+        <span>Compile</span>
+        <span className="overflow-hidden text-truncate text-nowrap">{contract}</span>
+        {loadingSpinner && <span className="fas fa-spinner fa-pulse" role="status" aria-hidden="true" />}
+      </div>
     </button>
   )
 }
