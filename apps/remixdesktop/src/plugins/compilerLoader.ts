@@ -45,9 +45,34 @@ const clientProfile: Profile = {
   methods: ['getPort', 'downloadCompiler', 'listCompilers', 'getBaseUrls', 'getLists'],
 }
 
+export interface iSolJsonBinDataBuild {
+  path: string,
+  version: string,
+  build: string,
+  longVersion: string,
+}
+export interface iSolJsonBinData {
+  baseURLWasm: string,
+  baseURLBin: string,
+  wasmList: iSolJsonBinDataBuild[],
+  binList: iSolJsonBinDataBuild[]
+}
+
 class CompilerLoaderPluginClient extends ElectronBasePluginClient {
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
+  }
+
+  async onActivation(): Promise<void> {
+      const lists = await this.getLists()
+      console.log('onActivation', (server.address() as any))
+      const baseURLS: iSolJsonBinData = {
+        baseURLWasm: 'http://localhost:' + (server.address() as any).port + '/compilers',
+        baseURLBin: 'http://localhost:' + (server.address() as any).port + '/compilers',
+        wasmList: lists.wasmData,
+        binList: lists.binData
+      }
+      this.emit('setSolJsonBinData', baseURLS)
   }
 
   async getPort(): Promise<number> {
@@ -153,7 +178,7 @@ const getLists = async()=>{
   }
 
   return {
-    binData, wasmData
+    binData: binData.builds as any[], wasmData: wasmData.builds as any[]
   }
 
 }

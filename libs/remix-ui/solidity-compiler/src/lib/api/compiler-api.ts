@@ -1,7 +1,7 @@
 import React from 'react';
 import { compile, helper } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
-import type { ConfigurationSettings } from '@remix-project/remix-lib'
+import type { ConfigurationSettings, iSolJsonBinData } from '@remix-project/remix-lib'
 
 export const CompilerApiMixin = (Base) => class extends Base {
   currentFile: string
@@ -29,6 +29,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   statusChanged: (data: { key: string, title?: string, type?: string }) => void
   
   compilersDownloaded: (list: string[]) => void
+  setSolJsonBinData: (urls: iSolJsonBinData) => void
 
   initCompilerApi () {
     this.configurationSettings = null
@@ -291,6 +292,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.on('compilerloader', 'compilersDownloaded', (list: string[]) => {
       console.log('compilersDownloaded', list)
       this.compilersDownloaded(list)
+    })
+
+    this.on('compilerloader', 'setSolJsonBinData', (urls: iSolJsonBinData) => {
+      console.log('basuURLS', urls)
+      this.setSolJsonBinData(urls)
     })
 
     this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {

@@ -1,4 +1,4 @@
-import { ICompilerApi, ConfigurationSettings } from '@remix-project/remix-lib'
+import { ICompilerApi, ConfigurationSettings, iSolJsonBinData } from '@remix-project/remix-lib'
 import { CompileTabLogic } from '../logic/compileTabLogic'
 export type onCurrentFileChanged = (fileName: string) => void
 
@@ -22,7 +22,10 @@ export interface CompilerContainerProps {
   configFilePath: string,
   setConfigFilePath: (path: string) => void,
   compilersDownloaded: string[]
+  solJsonBinData: iSolJsonBinData
 }
+
+
 export interface ContractSelectionProps {
   api: ICompilerApi,
   compiledFileName: string,

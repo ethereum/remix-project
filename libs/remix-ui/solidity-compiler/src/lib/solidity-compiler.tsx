@@ -5,8 +5,10 @@ import {ContractSelection} from './contract-selection' // eslint-disable-line
 import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
 import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
 import {Renderer} from '@remix-ui/renderer' // eslint-disable-line
+import {baseURLBin, baseURLWasm} from '@remix-project/remix-solidity'
 
 import './css/style.css'
+import { iSolJsonBinData } from '@remix-project/remix-lib'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const {
@@ -36,7 +38,13 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       cancelFn: () => {},
       handleHide: null
     },
-    compilersDownloaded: []
+    compilersDownloaded: [],
+    solJsonBinData: {
+      baseURLBin,
+      baseURLWasm,
+      binList: [],
+      wasmList: []
+    }
   })
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
@@ -142,6 +150,13 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     })
   }
 
+  api.setSolJsonBinData = (urls: iSolJsonBinData) => {
+    setState((prevState) => {
+      return {...prevState, baseURLS: urls}
+    })
+  }
+
+
   const setConfigFilePath = (path: string) => {
     setState((prevState) => {
       return {...prevState, configFilePath: path}
@@ -230,6 +245,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           configFilePath={state.configFilePath}
           setConfigFilePath={setConfigFilePath}
           compilersDownloaded={state.compilersDownloaded}
+          solJsonBinData={state.solJsonBinData}
         />
 
         {contractsFile[currentFile] && contractsFile[currentFile].contractsDetails && (

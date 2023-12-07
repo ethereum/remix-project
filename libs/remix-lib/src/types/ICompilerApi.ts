@@ -48,6 +48,20 @@ export interface ICompilerApi {
     emit?: (key: string, ...payload: any) => void
 
     compilersDownloaded: (list: string[]) => void
+    setSolJsonBinData: (binData: iSolJsonBinData) => void
+}
+
+export interface iSolJsonBinDataBuild {
+    path: string,
+    version: string,
+    build: string,
+    longVersion: string,
+}
+export interface iSolJsonBinData {
+    baseURLWasm: string,
+    baseURLBin: string,
+    wasmList: iSolJsonBinDataBuild[],
+    binList: iSolJsonBinDataBuild[]
 }
 
 export type terminalLog = {
