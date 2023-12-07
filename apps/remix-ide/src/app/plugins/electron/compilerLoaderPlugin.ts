@@ -24,7 +24,6 @@ export class compilerLoaderPluginDesktop extends ElectronPlugin {
   constructor() {
     super(profile)
     this.methods = []
-    
   }
 
   onActivation(): void {
@@ -39,6 +38,10 @@ export class compilerLoaderPluginDesktop extends ElectronPlugin {
       const compilerList = await this.call('compilerloader', 'listCompilers')
       console.log('compilerList', compilerList)
       this.emit('compilersDownloaded', compilerList)
+    })
+
+    this.on('compilerloader', 'setSolJsonBinData', (url) => {
+      console.log('setSolJsonBinData', url)
     })
   }
 
