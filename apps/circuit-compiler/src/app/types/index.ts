@@ -76,7 +76,8 @@ export type FeedbackAlertProps = {
 
 export type ConfigurationsProps = {
   setPrimeValue: (prime: PrimeValue) => void,
-  primeValue: PrimeValue
+  primeValue: PrimeValue,
+  versionValue: string
 }
 
 export type CompileOptionsProps = {

@@ -1,8 +1,8 @@
-import { CustomTooltip } from "@remix-ui/helper"
+import { CustomTooltip, RenderIf } from "@remix-ui/helper"
 import { FormattedMessage } from "react-intl"
 import { ConfigurationsProps, PrimeValue } from "../types"
 
-export function Configurations ({primeValue, setPrimeValue}: ConfigurationsProps) {
+export function Configurations ({primeValue, setPrimeValue, versionValue}: ConfigurationsProps) {
   return (
     <div className="pb-2 border-bottom flex-column">
       <div className="flex-column d-flex">
@@ -25,12 +25,23 @@ export function Configurations ({primeValue, setPrimeValue}: ConfigurationsProps
                   pointerEvents: 'auto'
                 }}
               >
-                <option value="bn128">bn128</option>
-                <option value="bls12381">bls12381</option>
-                <option value="goldilocks">goldilocks</option>
-                <option value="grumpkin">grumpkin</option>
-                <option value="pallas">pallas</option>
-                <option value="vesta">vesta</option>
+                <RenderIf condition={versionValue === '2.1.5'}>
+                  <>
+                    <option value="bn128">bn128</option>
+                    <option value="bls12381">bls12381</option>
+                    <option value="goldilocks">goldilocks</option>
+                  </>
+                </RenderIf>
+                <RenderIf condition={versionValue === '2.1.6'}>
+                  <>
+                    <option value="bn128">bn128</option>
+                    <option value="bls12381">bls12381</option>
+                    <option value="goldilocks">goldilocks</option>
+                    <option value="grumpkin">grumpkin</option>
+                    <option value="pallas">pallas</option>
+                    <option value="vesta">vesta</option>
+                  </>
+                </RenderIf>
               </select>
             </div>
           </CustomTooltip>

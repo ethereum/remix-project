@@ -29,6 +29,7 @@ export function Container () {
   }
 
   const handleVersionSelect = (version: string) => {
+    circuitApp.plugin.compilerVersion = version
     circuitApp.dispatch({ type: 'SET_COMPILER_VERSION', payload: version })
   }
 
@@ -44,7 +45,8 @@ export function Container () {
     }
   }
 
-  const handlePrimeChange = (value: string) => {
+  const handlePrimeChange = (value: PrimeValue) => {
+    circuitApp.plugin.compilerPrime = value
     circuitApp.dispatch({ type: 'SET_PRIME_VALUE', payload: value as PrimeValue })
   }
 
@@ -75,7 +77,7 @@ export function Container () {
             <VersionList setVersion={handleVersionSelect} versionList={circuitApp.appState.versionList} currentVersion={circuitApp.appState.version} />
             <CompileOptions setCircuitAutoCompile={handleCircuitAutoCompile} setCircuitHideWarnings={handleCircuitHideWarnings} autoCompile={circuitApp.appState.autoCompile} hideWarnings={circuitApp.appState.hideWarnings} />
             <ConfigToggler>
-              <Configurations setPrimeValue={handlePrimeChange} primeValue={circuitApp.appState.primeValue} />
+              <Configurations setPrimeValue={handlePrimeChange} primeValue={circuitApp.appState.primeValue} versionValue={circuitApp.appState.version} />
             </ConfigToggler>
             <CircuitActions />
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
