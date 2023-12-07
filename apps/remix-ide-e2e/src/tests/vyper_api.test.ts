@@ -12,7 +12,7 @@ module.exports = {
     init(browser, done, 'http://localhost:8080')
   },
 
-  'Should connect to vyper plugin #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should connect to vyper plugin #group1': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('pluginManager')
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonvyper"]')
       .clickLaunchIcon('vyper')
