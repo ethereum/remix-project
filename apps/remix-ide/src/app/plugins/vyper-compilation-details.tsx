@@ -45,10 +45,11 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
   }
 
   async showDetails(sentPayload: any) {
-    console.log({ sentPayload })
+    console.log(sentPayload )
     const contractName = Object.entries(sentPayload).find(([key, value]) =>  key )
-    this.profile.displayName = `${contractName}`
     await this.call('tabs', 'focus', 'vyperCompilationDetails')
+    this.profile.displayName = `${contractName}`
+    this.renderComponent()
     this.payload = sentPayload
     this.renderComponent()
   }
@@ -74,12 +75,7 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
   updateComponent(state: any) {
     return (
       <RemixUiVyperCompileDetails
-        // plugin={this}
-        // contractProperties={state.contractProperties}
-        // selectedContract={state.selectedContract}
-        // saveAs={state.saveAs}
-        // help={state.help}
-        // insertValue={state.insertValue}
+        payload={this.payload}
       />
     )
   }

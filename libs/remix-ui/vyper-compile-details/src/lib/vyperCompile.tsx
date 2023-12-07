@@ -12,43 +12,43 @@ import { ABIDescription } from '@remixproject/plugin-api'
 const _paq = (window._paq = window._paq || [])
 
 export interface VyperCompilationResult {
-  status: 'success'
+  status?: 'success'
   bytecode: string
-  bytecode_runtime: string
+  bytecodeRuntime: string
   abi: ABIDescription[]
   ir: string
-  method_identifiers: {
+  methodIdentifiers: {
     [method: string]: string
   }
 }
 
 
-export default function VyperCompile({ saveAs, contractProperties, selectedContract }: any) {
+export default function VyperCompile(props: VyperCompilationResult) {
   const intl = useIntl()
-  const downloadFn = () => {
-    _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
-    saveAs(new Blob([JSON.stringify(contractProperties, null, '\t')]), `${selectedContract}_compData.json`)
-  }
+  // const downloadFn = () => {
+  //   _paq.push(['trackEvent', 'compiler', 'compilerDetails', 'download'])
+  //   saveAs(new Blob([JSON.stringify(contractProperties, null, '\t')]), `${selectedContract}_compData.json`)
+  // }
   const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
 
   const tabContent = [
     {
       tabHeadingText: 'ABI',
-      tabPayload: Object.values(contractProperties)[0]['abi'],
+      tabPayload: props.abi, //Object.values(props)[0]['abi'],
       tabMemberType: 'abi',
       tabButtonText: () => 'Copy ABI',
       eventKey: 'abi'
     },
     {
       tabHeadingText: 'Bytecode',
-      tabPayload: Object.values(contractProperties)[0]['bytecode'].object.toString(),
+      tabPayload: props.bytecode, //Object.values(props)[0]['bytecode'].object.toString(),
       tabMemberType: 'bytecode',
       tabButtonText: () => 'Copy Bytecode',
       eventKey: 'bytecode'
     },
     {
       tabHeadingText: 'Runtime Bytecode',
-      tabPayload: Object.values(contractProperties)[0]['runtimeBytecode'].object.toString(),
+      tabPayload: props.bytecodeRuntime,// Object.values(props)[0]['runtimeBytecode'].object.toString(),
       tabMemberType: 'bytecode_runtime',
       tabButtonText: () => 'Copy Runtime Bytecode',
       eventKey: 'bytecode_runtime'
@@ -63,28 +63,28 @@ export default function VyperCompile({ saveAs, contractProperties, selectedContr
   ]
   return (
     <>
-      <div className="d-flex justify-content-between align-items-center mr-1">
+      {/* <div className="d-flex justify-content-between align-items-center mr-1">
         <span className="lead">{selectedContract}</span>
         <CustomTooltip tooltipText={intl.formatMessage({id: 'solidity.compileDetails'})}>
           <span className="btn btn-outline-success border-success mr-1" onClick={downloadFn}>Download</span>
         </CustomTooltip>
-      </div>
+      </div> */}
       <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)} justify>
         {tabContent.map((content, index) => (
           <Tab eventKey={content.eventKey} title={content.tabHeadingText} as={'span'} key={`${index}-${content.eventKey}`}>
-            <CopyToClipboard getContent={() => content.eventKey !== 'abi' ? content.tabPayload : JSON.stringify(Object.values(contractProperties)[0]['abi'])}>
+            <CopyToClipboard getContent={() => content.eventKey !== 'abi' ? content.tabPayload : JSON.stringify(Object.values(props)[0]['abi'])}>
               <Button variant="info" className="copy" data-id={content.eventKey === 'abi' ? "copy-abi" : ''}>
                 {content.tabButtonText()}
               </Button>
             </CopyToClipboard>
             {
-              content.eventKey === 'abi' ? <JSONTree src={content.tabPayload} theme={{} as any}/> : (
-                <textarea defaultValue={content.tabPayload}></textarea>
+              content.eventKey === 'abi' ? <JSONTree src={content.tabPayload as ABIDescription[]} theme={{} as any}/> : (
+                <textarea defaultValue={content.tabPayload as string}></textarea>
               )
             }
-            <Button>
+            {/* <Button>
               {content.tabButtonText()}
-            </Button>
+            </Button> */}
           </Tab>))}
       </Tabs>
     </>

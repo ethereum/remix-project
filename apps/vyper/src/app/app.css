@@ -48,14 +48,6 @@ html, body, #root, main {
 
 }
 
-#compile-btn {
-
-}
-
-#compile-btn * {
-  width: 100%;
-}
-
 #result {
   flex: 1;
   display: flex;
