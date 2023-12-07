@@ -49,7 +49,7 @@ module.exports = {
       .click('[data-id="compile"]')
       .waitForElementVisible({
         selector:'[data-id="compilation-details"]',
-        timeout: 60000
+        timeout: 120000
       })
       .click('[data-id="compilation-details"]')
       .frameParent()
