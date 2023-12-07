@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import {isVyper, compile, toStandardOutput, VyperCompilationOutput, isCompilationError, remixClient, normalizeContractPath} from '../utils'
 import Button from 'react-bootstrap/Button'
 import _ from 'lodash'
@@ -46,25 +46,29 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
         setOutput(_contract.name, {status: 'failed', message: e.message})
         return
       }
-      // console.log({ output })
-      // const compileReturnType = () => {
-      //   const t: any = toStandardOutput(contract, output)
-      //   const temp = _.merge(t['contracts'][contract])
-      //   const normal = normalizeContractPath(contract)[2]
-      //   const abi = temp[normal]['abi']
-      //   const evm = _.merge(temp[normal]['evm'])
-      //   const dpb = evm.deployedBytecode
-      //   const runtimeBytecode = evm.bytecode
+      console.log({ output })
+      const compileReturnType = () => {
+        const t: any = toStandardOutput(contract, output)
+        console.log(t)
+        const temp = _.merge(t['contracts'][contract])
+        const normal = normalizeContractPath(contract)[2]
+        const abi = temp[normal]['abi']
+        const evm = _.merge(temp[normal]['evm'])
+        const dpb = evm.deployedBytecode
+        const runtimeBytecode = evm.bytecode
+        const methodIdentifiers = evm.methodIdentifiers
 
-      //   const result = {
-      //     contractName: normal,
-      //     abi: abi,
-      //     bytecode: dpb,
-      //     runtimeBytecode: runtimeBytecode,
-      //     ir: ''
-      //   }
-      //   return result
-      // }
+        const result = {
+          contractName: normal,
+          abi: abi,
+          bytecode: dpb,
+          runtimeBytecode: runtimeBytecode,
+          ir: '',
+          methodIdentifiers: methodIdentifiers
+        }
+        console.log(result)
+        return result
+      }
       // setOutput(_contract.name, compileReturnType())
 
       // ERROR
@@ -111,9 +115,9 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
       })
       const data = toStandardOutput(_contract.name, output)
       remixClient.compilationFinish(_contract.name, _contract.content, data)
-      console.log(data)
-      setOutput(_contract.name, data)
-      setLoadingSpinnerState(false)
+      // console.log(data)
+      setOutput(_contract.name, compileReturnType())
+      // setLoadingSpinnerState(false)
       // remixClient.call('compilationDetails' as any, 'showDetails', data)
     } catch (err: any) {
       remixClient.changeStatus({
@@ -125,13 +129,15 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
   }
 
   return (
-    <button data-id="compile" onClick={compileContract} title={contract} className="d-flex flex-column btn btn-primary w-100">
-      <div className="d-flex justify-content-center align-item-center">
-        {loadingSpinner ? <span className="fas fa-sync fa-pulse" role="status" aria-hidden="true" /> : null}
-        <span>Compile</span>
-        <span className="overflow-hidden text-truncate text-nowrap">{contract}</span>
-      </div>
-    </button>
+    <Fragment>
+      <button data-id="compile" onClick={compileContract} title={contract} className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3">
+        <div className="fa-1x">
+          {/* {loadingSpinner ? <span className="fas fa-sync fa-pulse" role="status" aria-hidden="true" /> : null} */}
+          <span>Compile</span>
+          <span className="overflow-hidden text-truncate text-nowrap">{contract}</span>
+        </div>
+      </button>
+    </Fragment>
   )
 }
 

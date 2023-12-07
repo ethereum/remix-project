@@ -5,7 +5,6 @@ import { ContractPropertyName } from '@remix-ui/solidity-compiler'
 
 import React from 'react'
 import SolidityCompile from './components/solidityCompile'
-import VyperCompile from './components/vyperCompile'
 
 export interface RemixUiCompileDetailsProps {
   plugin?: any
