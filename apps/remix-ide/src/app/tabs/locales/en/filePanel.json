@@ -106,6 +106,8 @@
   "filePanel.semaphore": "Semaphore",
   "filePanel.hashchecker": "Hash Checker",
   "filePanel.rln": "Rate-Limiting Nullifier",
+  "filePanel.breakthroughLabsUniswapv4Hooks": "Breakthrough-Labs Uniswapv4Hooks",
+  "filePanel.uniswapV4Periphery": "Uniswap v4 Periphery",
   "filePanel.transparent": "Transparent",
   "filePanel.initGitRepoTitle": "Check option to initialize workspace as a new git repository",
   "filePanel.switchToBranchTitle1": "Checkout new branch from remote branch",

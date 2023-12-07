@@ -190,9 +190,13 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
   }, []) // eslint-disable-line
 
   const updateDirList = (path: string) => {
-    testTabLogic.dirList(path).then((options: string[]) => {
-      setPathOptions(options)
-    })
+    try {
+      testTabLogic.dirList(path).then((options: string[]) => {
+        setPathOptions(options)
+      })
+    } catch {
+      console.log("No test directory has been found in the workspace.")
+    }
   }
 
   const handleTestDirInput = async (e: any) => {

@@ -514,7 +514,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             <CustomTooltip placement={'top-end'} tooltipClasses="text-wrap text-left" tooltipId="runAndDeployAddresstooltip" tooltipText={atAddressOptions.title}>
               <div id="runAndDeployAtAdressButtonContainer" data-title={atAddressOptions.title}>
                 <button
-                  className="udapp_atAddress btn-sm py-2 btn-primary"
+                  className={atAddressOptions.disabled ? "disabled udapp_atAddress btn btn-sm py-2 btn-primary"  : "udapp_atAddress btn btn-sm py-2 btn-primary"}
                   id="runAndDeployAtAdressButton"
                   disabled={atAddressOptions.disabled}
                   style={{ border: 'none' }}

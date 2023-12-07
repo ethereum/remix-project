@@ -279,6 +279,7 @@ export interface RecorderProps {
   scenarioPrompt: (msg: string, defaultValue: string) => JSX.Element,
   count: number
   currentFile: string
+  plugin: RunTab
 }
 
 export interface InstanceContainerProps {
