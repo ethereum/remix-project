@@ -8,13 +8,12 @@ interface EnterDialogProps {
 }
 
 const EnterDialog = (props: EnterDialogProps) => {
-  const [visibility, setVisibility] = useState<boolean>(true)
 
   const enterAs = async (uType) => {
     props.handleUserChoice(uType)
   }
 
-  const modalClass = visibility ? "d-flex" : "d-none"
+  const modalClass = "d-flex"
   return (
     <div
       data-id={`EnterModalDialogContainer-react`}
