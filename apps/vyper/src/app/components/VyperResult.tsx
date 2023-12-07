@@ -58,7 +58,7 @@ function VyperResult({ output, plugin }: VyperResultProps) {
     <>
       <div className="border border-top"></div>
       <div className="d-flex justify-content-center px-2 w-100">
-        <button className="btn btn-secondary w-100" onClick={async () => {
+        <button data-id="compilation-details" className="btn btn-secondary w-100" onClick={async () => {
           await plugin?.call('vyperCompilationDetails', 'showDetails', output)
         }}>
           <span>Compilation Details</span>

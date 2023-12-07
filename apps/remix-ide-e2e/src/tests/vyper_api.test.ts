@@ -47,27 +47,22 @@ module.exports = {
       .frame(0)
       .click('[data-id="remote-compiler"]')
       .click('[data-id="compile"]')
-      .isVisible({
-        selector: '[data-id="copy-abi"]',
-        timeout: 4000,
-        abortOnFailure: false,
-        suppressNotFoundErrors: true
-      }, (okVisible) => {
-        if (okVisible.value === null) {
-          console.log('retrying compilation...')
-          browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
-        } else{
-          browser.assert.ok(okVisible.value === true, 'ABI should be visible')
-        }
+      .waitForElementVisible({
+        selector:'[data-id="compilation-details"]',
+        timeout: 60000
       })
-
-
+      .click('[data-id="compilation-details"]')
+      .frameParent()
+      .waitForElementVisible('[data-id="copy-abi"]')
+      .waitForElementVisible({
+        selector: "//*[@class='variable-value' and contains(.,'highestBidder')]",
+        locateStrategy: 'xpath',
+      })
   },
 
   'Compile test contract and deploy to remix VM #group1': function (browser: NightwatchBrowser) {
     let contractAddress
     browser
-      .frameParent()
       .clickLaunchIcon('filePanel')
       .switchWorkspace('default_workspace')
       .addFile('test.vy', { content: testContract })
@@ -75,20 +70,13 @@ module.exports = {
       // @ts-ignore
       .frame(0)
       .click('[data-id="compile"]')
-      .isVisible({
-        selector: '[data-id="copy-abi"]',
-        timeout: 4000,
-        abortOnFailure: false,
-        suppressNotFoundErrors: true
-      }, (okVisible) => {
-        if (okVisible.value === null) {
-          console.log('retrying compilation...')
-          browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
-        } else{
-          browser.assert.ok(okVisible.value === true, 'ABI should be visible')
-        }
+      .waitForElementVisible({
+        selector:'[data-id="compilation-details"]',
+        timeout: 60000
       })
+      .click('[data-id="compilation-details"]')
       .frameParent()
+      .waitForElementVisible('[data-id="copy-abi"]')
       .clickLaunchIcon('udapp')
       .createContract('')
       .clickInstance(0)
