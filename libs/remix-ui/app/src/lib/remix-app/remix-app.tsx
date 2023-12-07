@@ -105,6 +105,7 @@ const RemixApp = (props: IRemixAppUi) => {
     settings: props.app.settings,
     showMatamo: props.app.showMatamo,
     appManager: props.app.appManager,
+    showEnter: props.app.showEnter,
     modal: props.app.notification,
     layout: props.app.layout,
     platform: props.app.platform,
