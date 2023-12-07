@@ -48,7 +48,18 @@ const RemixApp = (props: IRemixAppUi) => {
       activateApp()
     }
     const hadUsageTypeAsked = localStorage.getItem('hadUsageTypeAsked')
-    setShowEnterDialog(!hadUsageTypeAsked)
+    if (props.app.showMatamo) {
+      // if matomo dialog is displayed, it will take care of calling "setShowEnterDialog",
+      // if the user approves matomo tracking.
+      // so "showEnterDialog" stays false
+    } else {
+      // if matomo dialog isn't displayed, we show the "enter dialog" only if:
+      //  - it wasn't already set
+      //  - (and) if user has given consent
+      if (!hadUsageTypeAsked && props.app.matomoCurrentSetting) {
+        setShowEnterDialog(true)
+      }
+    } 
   }, [])
 
   function setListeners() {
@@ -87,7 +98,6 @@ const RemixApp = (props: IRemixAppUi) => {
   const value = {
     settings: props.app.settings,
     showMatamo: props.app.showMatamo,
-    showEnter: props.app.showEnter,
     appManager: props.app.appManager,
     modal: props.app.notification,
     layout: props.app.layout
@@ -113,7 +123,7 @@ const RemixApp = (props: IRemixAppUi) => {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
       break
     }
-    case UsageTypes.Tutor: {
+    case UsageTypes.Advance: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'tutor'])
       break
     }
@@ -135,8 +145,8 @@ const RemixApp = (props: IRemixAppUi) => {
     <IntlProvider locale={locale.code} messages={locale.messages}>
       <AppProvider value={value}>
         <OriginWarning></OriginWarning>
-        <MatomoDialog hide={!appReady} okFn={() => {setShowEnterDialog(true)}}></MatomoDialog>
-        <EnterDialog hide={!showEnterDialog} handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>
+        <MatomoDialog hide={!appReady} okFn={() => setShowEnterDialog(true)}></MatomoDialog>
+        {showEnterDialog && <EnterDialog handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>}
         <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
           <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
             {props.app.menuicons.render()}

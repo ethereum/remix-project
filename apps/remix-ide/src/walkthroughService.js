@@ -11,21 +11,8 @@ const profile = {
 }
 
 export class WalkthroughService extends Plugin {
-  constructor (appManager, showWalkthrough) {
+  constructor (appManager) {
     super(profile)
-    /*let readyToStart = 0;
-    appManager.event.on('activate', (plugin) => {
-      if (plugin.name === 'udapp') readyToStart++
-      if (readyToStart == 2 && showWalkthrough) {
-        this.start()
-      }
-    })
-    appManager.event.on('activate', (plugin) => {
-      if (plugin.name === 'solidity') readyToStart++
-      if (readyToStart == 2 && showWalkthrough) {
-        this.start()
-      }
-    })*/
   }
 
   startRecorderW () {
@@ -49,7 +36,7 @@ export class WalkthroughService extends Plugin {
       {
         element: document.querySelector('#udappRecorderSave'),
         title: 'Transactions Recorder',
-        intro: 'Once there is a Once one or a few transactions have been executed from Remix, click this button to save these transactions as a scenario file.',
+        intro: 'Once there is a one or a few transactions have been executed from Remix, click this button to save these transactions as a scenario file.',
         tooltipClass: 'bg-light text-dark',
         position: 'right',
         highlightClass: 'bg-light border border-warning'
@@ -89,21 +76,24 @@ export class WalkthroughService extends Plugin {
           intro: 'Click to launch the Home tab that contains links, tips, and shortcuts..',
           element: document.querySelector('#verticalIconsHomeIcon'),
           tooltipClass: 'bg-light text-dark',
-          position: 'right'
+          position: 'right',
+          highlightClass: 'bg-light border border-warning'
         },
         {
           element: document.querySelector('#verticalIconsKindsolidity'),
           title: 'Solidity Compiler',
           intro: 'Having selected a .sol file in the File Explorer (the icon above), compile it with the Solidity Compiler.',
           tooltipClass: 'bg-light text-dark',
-          position: 'right'
+          position: 'right',
+          highlightClass: 'bg-light border border-warning'
         },
         {
           title: 'Deploy your contract',
           element: document.querySelector('#verticalIconsKindudapp'),
           intro: 'Choose a chain, deploy a contract and play with your functions.',
           tooltipClass: 'bg-light text-dark',
-          position: 'right'
+          position: 'right',
+          highlightClass: 'bg-light border border-warning'
         }
         ]
       }).onafterchange((targetElement) => {
