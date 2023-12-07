@@ -35,9 +35,9 @@ export function RecorderUI(props: RecorderProps) {
 
   return (
     <div className="udapp_cardContainer py-1 list-group-item border-top border-bottom" id="udappRecorderCard">
-      <div className="udapp_recorderSection d-flex justify-content-between" onClick={toggleClass}>
+      <div className="udapp_recorderSection d-flex justify-content-between">
         <div className="d-flex justify-content-center align-items-center">
-          <label className="mt-1 udapp_recorderSectionLabel">
+          <label className="text-nowrap mt-1 udapp_recorderSectionLabel" onClick={toggleClass}>
             <FormattedMessage id="udapp.transactionsRecorded" />
           </label>
           <CustomTooltip
@@ -46,7 +46,7 @@ export function RecorderUI(props: RecorderProps) {
             tooltipId="recordedTransactionsCounttooltip"
             tooltipText={<FormattedMessage id="udapp.transactionsCountTooltip" />}
           >
-            <div className="ml-2 badge badge-pill badge-primary text-center" data-title="The number of recorded transactions">
+            <div className="pl-3 badge badge-pill badge-primary text-center" style={{cursor:"default"}} data-title="The number of recorded transactions">
               {props.count}
             </div>
           </CustomTooltip>
@@ -66,6 +66,7 @@ export function RecorderUI(props: RecorderProps) {
             </i>
           </CustomTooltip>
         </div>
+        <div className="w-100" onClick={toggleClass}></div>
         <div className="p-3">
           <span data-id="udappRecorderTitleExpander" onClick={toggleClass}>
             <i className={!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down'} aria-hidden="true"></i>

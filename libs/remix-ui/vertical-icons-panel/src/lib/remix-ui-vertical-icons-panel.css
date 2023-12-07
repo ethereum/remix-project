@@ -30,7 +30,14 @@
     height: 36px;
     border-radius: 8px;
     align-items: center;
+     animation: highlight 2s forwards ;
   }
+
+  @keyframes highlight {
+    from {background-color: var(--secondary);}
+    to {background-color: transparent;}
+  }
+
   .remixui_icon img {
     width: 28px;
     height: 28px;
