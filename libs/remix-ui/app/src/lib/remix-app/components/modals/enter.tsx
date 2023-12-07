@@ -4,25 +4,17 @@ import {UsageTypes} from '../../types'
 import { type } from 'os'
 
 interface EnterDialogProps {
-  show: boolean,
   handleUserChoice: (userChoice: UsageTypes) => void,
 }
 
 const EnterDialog = (props: EnterDialogProps) => {
-  const [visibility, setVisibility] = useState<boolean>(false)
-  const {showEnter} = useContext(AppContext)
-
-  useEffect(() => {
-    setVisibility(props.show)
-    console.log("useeff vis in enter", props.show, " showEnter ", showEnter)
-  }, [props.show])
+  const [visibility, setVisibility] = useState<boolean>(true)
 
   const enterAs = async (uType) => {
     props.handleUserChoice(uType)
   }
 
-  const modalClass = (visibility && showEnter) ? "d-flex" : "d-none"
-  console.log("enterDialog class ", modalClass)
+  const modalClass = visibility ? "d-flex" : "d-none"
   return (
     <div
       data-id={`EnterModalDialogContainer-react`}

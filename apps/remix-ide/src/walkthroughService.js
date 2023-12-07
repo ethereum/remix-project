@@ -11,21 +11,8 @@ const profile = {
 }
 
 export class WalkthroughService extends Plugin {
-  constructor (appManager, showWalkthrough) {
+  constructor (appManager) {
     super(profile)
-    /*let readyToStart = 0;
-    appManager.event.on('activate', (plugin) => {
-      if (plugin.name === 'udapp') readyToStart++
-      if (readyToStart == 2 && showWalkthrough) {
-        this.start()
-      }
-    })
-    appManager.event.on('activate', (plugin) => {
-      if (plugin.name === 'solidity') readyToStart++
-      if (readyToStart == 2 && showWalkthrough) {
-        this.start()
-      }
-    })*/
   }
 
   startRecorderW () {
