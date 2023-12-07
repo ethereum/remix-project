@@ -19,7 +19,7 @@ export class WalkthroughService extends Plugin {
     introJs().setOptions({
       steps: [{
         title: 'Transactions Recorder',
-        intro: 'Save transactions (deployed contracts and function executions) and replay them in another environment e.g Transactions created in Remix VM can be replayed in the Injected Provider.Click to launch the Home tab that contains links, tips, and shortcuts..',
+        intro: 'Save transactions (deployed contracts and function executions) and replay them in another environment e.g Transactions created in Remix VM can be replayed in the Injected Provider. Click to launch the Home tab that contains links, tips, and shortcuts.',
         element: document.querySelector('#udappRecorderCard'),
         tooltipClass: 'bg-light text-dark',
         position: 'right',
@@ -28,7 +28,7 @@ export class WalkthroughService extends Plugin {
       {
         element: document.querySelector('#udappRecorderUseLatest'),
         title: 'Transactions Recorder',
-        intro: 'If set the recorder will run transactions using the latest compilation result.',
+        intro: 'If selected the recorder will run transactions using the latest compilation result.',
         tooltipClass: 'bg-light text-dark',
         position: 'right',
         highlightClass: 'bg-light border border-warning'
@@ -36,7 +36,7 @@ export class WalkthroughService extends Plugin {
       {
         element: document.querySelector('#udappRecorderSave'),
         title: 'Transactions Recorder',
-        intro: 'Once there is a one or a few transactions have been executed from Remix, click this button to save these transactions as a scenario file.',
+        intro: 'Once one or more transactions have been executed from Remix, click this button to save these transactions as a scenario file.',
         tooltipClass: 'bg-light text-dark',
         position: 'right',
         highlightClass: 'bg-light border border-warning'
