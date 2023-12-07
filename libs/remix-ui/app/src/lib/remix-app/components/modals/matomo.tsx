@@ -8,7 +8,12 @@ declare global {
 }
 const _paq = (window._paq = window._paq || [])
 
-const MatomoDialog = (props) => {
+interface MatomoDialogProps {
+  okFn: () => void,
+  hide: boolean
+}
+
+const MatomoDialog = (props: MatomoDialogProps) => {
   const {settings, showMatamo, appManager} = useContext(AppContext)
   const {modal} = useDialogDispatchers()
   const [visible, setVisible] = useState<boolean>(props.hide)
@@ -68,6 +73,7 @@ const MatomoDialog = (props) => {
     _paq.push(['setConsentGiven']);
     settings.updateMatomoAnalyticsChoice(true)
     setVisible(false)
+    props.okFn()
   }
 
   return <></>
