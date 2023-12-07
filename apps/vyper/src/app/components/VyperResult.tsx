@@ -53,7 +53,6 @@ function VyperResult({ output, plugin }: VyperResultProps) {
       </div>
     )
   }
-  console.log(output)
   return (
     <>
       <div className="border border-top"></div>
