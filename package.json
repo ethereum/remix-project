@@ -105,6 +105,7 @@
     "nightwatch_local_stress_editor": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/stressEditor.test.js --env=chromeDesktop",
     "nightwatch_local_search": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/search.test.js --env=chromeDesktop",
     "nightwatch_local_providers": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/providers.test.js --env=chromeDesktop",
+    "nightwatch_local_walkthrough": "yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js dist/apps/remix-ide-e2e/src/tests/walkthrough.test.js --env=chromeDesktop",
     "onchange": "onchange apps/remix-ide/build/app.js -- npm-run-all lint",
     "remixd": "nx build remixd && chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080",
     "simulator": "nx build remix-simulator && chmod +x dist/libs/remix-simulator/bin/ethsim && dist/libs/remix-simulator/bin/ethsim start --rpc",

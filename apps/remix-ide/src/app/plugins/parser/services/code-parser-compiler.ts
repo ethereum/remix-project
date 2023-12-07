@@ -142,6 +142,14 @@ export default class CodeParserCompiler {
         this.compiler.set('runs', state.runs)
         this.compiler.set('useFileConfiguration', true)
         this.compiler.set('compilerRetriggerMode', CompilerRetriggerMode.retrigger)
+
+        if (await this.plugin.call('fileManager', 'exists','remappings.txt')) {
+          const remappings = await this.plugin.call('fileManager', 'readFile','remappings.txt')
+          this.compiler.set('remappings', remappings.split('\n').filter(Boolean))
+        } else {
+          this.compiler.set('remappings', [])
+        }
+        
         const configFileContent = {
           "language": "Solidity",
           "settings": {

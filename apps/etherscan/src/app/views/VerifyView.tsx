@@ -14,7 +14,8 @@ interface Props {
   client: PluginClient
   apiKey: string
   onVerifiedContract: (receipt: Receipt) => void
-  contracts: string[]
+  contracts: string[],
+  networkName: string
 }
 
 interface FormValues {
@@ -23,26 +24,13 @@ interface FormValues {
   expectedImplAddress?: string
 }
 
-export const VerifyView: React.FC<Props> = ({apiKey, client, contracts, onVerifiedContract}) => {
+export const VerifyView: React.FC<Props> = ({apiKey, client, contracts, onVerifiedContract, networkName}) => {
   const [results, setResults] = useState('')
-  const [networkName, setNetworkName] = useState('Loading...')
   const [selectedContract, setSelectedContract] = useState('')
   const [showConstructorArgs, setShowConstructorArgs] = useState(false)
   const [isProxyContract, setIsProxyContract] = useState(false)
   const [constructorInputs, setConstructorInputs] = useState([])
   const verificationResult = useRef({})
-
-  useEffect(() => {
-    if (client && client.on) {
-      client.on('blockchain' as any, 'networkStatus', (result) => {
-        setNetworkName(`${result.network.name} ${result.network.id !== '-' ? `(Chain id: ${result.network.id})` : '(Not supported)'}`)
-      })
-    }
-    return () => {
-      // To fix memory leak
-      if (client && client.off) client.off('blockchain' as any, 'networkStatus')
-    }
-  }, [client])
 
   useEffect(() => {
     if (contracts.includes(selectedContract)) updateConsFields(selectedContract)

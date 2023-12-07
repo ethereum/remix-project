@@ -166,7 +166,7 @@ class AppComponent {
     this.showMatamo = matomoDomains[window.location.hostname] && !Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
 
     this.platform = isElectron() ? 'desktop' : 'web'
-    this.showEnter = matomoDomains[window.location.hostname] && !localStorage.getItem('hadUsageTypeAsked')
+    this.showEnter = this.showMatamo && !localStorage.getItem('hadUsageTypeAsked')
     
     this.walkthroughService = new WalkthroughService(appManager, !this.showMatamo || !this.showEnter)
 

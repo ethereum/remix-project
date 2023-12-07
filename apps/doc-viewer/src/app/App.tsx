@@ -12,9 +12,14 @@ export default function App() {
       setContents(fileContents)
     })
   }, [])
+  const edit = () => {
+    if (!client.mdFile) return
+    client.call('fileManager', 'open' as any, client.mdFile)
+  }
   return (
     <>
       <div className="m-5 p-2">
+        <button className="btn btn-secondary mb-2" onClick={edit}>EDIT</button>
         <ReactMarkdown children={contents} remarkPlugins={[remarkGfm]} />
       </div>
     </>
