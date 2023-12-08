@@ -14,11 +14,11 @@ interface Props {
 function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: Props) {
   const [loadingSpinner, setLoadingSpinnerState] = useState(false)
   if (!contract || !contract) {
-    return <Button disabled>No contract selected</Button>
+    return <Button disabled className="w-100">No contract selected</Button>
   }
 
   if (!isVyper(contract)) {
-    return <Button disabled>Not a vyper contract</Button>
+    return <Button disabled className="w-100">Not a vyper contract</Button>
   }
 
   /** Compile a Contract */
@@ -130,7 +130,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
 
   return (
     <Fragment>
-      <button data-id="compile" onClick={compileContract} title={contract} className="btn btn-primary btn-block d-block w-100 text-break remixui_disabled mb-1 mt-3">
+      <button data-id="compile" onClick={compileContract} title={contract} className="btn btn-primary w-100 text-break remixui_disabled mb-1 mt-3">
         <div className="fa-1x">
           {/* {loadingSpinner ? <span className="fas fa-sync fa-pulse" role="status" aria-hidden="true" /> : null} */}
           <span>Compile</span>
