@@ -69,10 +69,8 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
           ir: '',
           methodIdentifiers: methodIdentifiers
         }
-        console.log(result)
         return result
       }
-      // setOutput(_contract.name, compileReturnType())
 
       // ERROR
       if (isCompilationError(output)) {
@@ -118,10 +116,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
       })
       const data = toStandardOutput(_contract.name, output)
       remixClient.compilationFinish(_contract.name, _contract.content, data)
-      // console.log(data)
       setOutput(_contract.name, compileReturnType())
-      // setLoadingSpinnerState(false)
-      // remixClient.call('compilationDetails' as any, 'showDetails', data)
     } catch (err: any) {
       remixClient.changeStatus({
         key: 'failed',
