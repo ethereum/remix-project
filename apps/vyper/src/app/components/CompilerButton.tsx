@@ -43,10 +43,13 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
       try {
         output = await compile(compilerUrl, _contract)
       } catch (e: any) {
-        setOutput(_contract.name, {status: 'failed', message: e.message})
+        remixClient.changeStatus({
+          key: 'failed',
+          type: 'error',
+          title: e.message
+        })
         return
       }
-      console.log({ output })
       const compileReturnType = () => {
         const t: any = toStandardOutput(contract, output)
         console.log(t)
@@ -130,11 +133,13 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
 
   return (
     <Fragment>
-      <button data-id="compile" onClick={compileContract} title={contract} className="btn btn-primary w-100 text-break remixui_disabled mb-1 mt-3">
-        <div className="fa-1x">
-          {/* {loadingSpinner ? <span className="fas fa-sync fa-pulse" role="status" aria-hidden="true" /> : null} */}
-          <span>Compile</span>
-          <span className="overflow-hidden text-truncate text-nowrap">{contract}</span>
+      <button data-id="compile" onClick={compileContract} title={contract} className="btn btn-primary w-100 d-block btn-block text-break remixui_disabled mb-1 mt-3">
+        <div className="d-flex align-items-center justify-content-center fa-1x">
+          <span className="fas fa-sync fa-pulse mr-1" />
+          <div className="text-truncate overflow-hidden text-nowrap">
+            <span>Compile</span>
+            <span className="ml-1 text-nowrap">{contract}</span>
+          </div>
         </div>
       </button>
     </Fragment>
