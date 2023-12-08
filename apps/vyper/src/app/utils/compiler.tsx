@@ -87,7 +87,7 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     }
   }
   let response = await axios.post(`${url}compile`, compilePackage )
-
+  console.log(response)
   if (response.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)
   }
