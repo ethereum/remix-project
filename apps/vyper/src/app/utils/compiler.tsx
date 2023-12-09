@@ -1,4 +1,4 @@
-import {CompilationResult, ABIDescription} from '@remixproject/plugin-api'
+import { ABIDescription} from '@remixproject/plugin-api'
 import axios from 'axios'
 
 export interface Contract {
