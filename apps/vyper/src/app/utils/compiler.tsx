@@ -87,7 +87,7 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     }
   }
   let response = await axios.post(`${url}compile`, compilePackage )
-  console.log(response)
+
   if (response.status === 404) {
     throw new Error(`Vyper compiler not found at "${url}".`)
   }
@@ -107,7 +107,7 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     result = await(await axios.get(url + 'artifacts/' + compileCode , {
       method: 'Get'
     })).data
-    console.log(result)
+
     return result
   } else if (status === 'FAILED') {
     const intermediate = await(await axios.get(url + 'exceptions/' + compileCode , {
