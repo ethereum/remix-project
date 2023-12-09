@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {VyperCompilationOutput, normalizeContractPath, remixClient, toStandardOutput} from './utils'
+import {remixClient} from './utils'
 import {CompilationResult} from '@remixproject/plugin-api'
 
 // Components
