@@ -105,7 +105,6 @@ const App: React.FC = () => {
           />
         </div>
 
-        {console.log(output)}
         <article id="result" className="px-2 mx-2 border-top mt-3">
           {
             output && Object.keys(output).length > 0 && output.status !== 'failed' ? (

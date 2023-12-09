@@ -52,7 +52,6 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
       }
       const compileReturnType = () => {
         const t: any = toStandardOutput(contract, output)
-        console.log(t)
         const temp = _.merge(t['contracts'][contract])
         const normal = normalizeContractPath(contract)[2]
         const abi = temp[normal]['abi']
