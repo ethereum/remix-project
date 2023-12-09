@@ -3,8 +3,6 @@ import {VyperCompilationOutput, isCompilationError} from '../utils'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Button from 'react-bootstrap/Button'
-import JSONTree, { ThemeKeys } from 'react-json-view'
-import ReactJson from 'react-json-view'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import { VyperCompilationResult } from '../utils/types'
 

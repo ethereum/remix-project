@@ -3,6 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import {PluginViewWrapper} from '@remix-ui/helper'
 import { RemixAppManager } from '../../remixAppManager'
 import { RemixUiVyperCompileDetails } from '@remix-ui/vyper-compile-details'
+import { ThemeKeys, ThemeObject } from '@microlink/react-json-view'
 //@ts-ignore
 const _paq = (window._paq = window._paq || [])
 
@@ -20,6 +21,8 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
   appManager: RemixAppManager
   element: HTMLDivElement
   payload: any
+  themeStyle: any
+  theme: ThemeKeys | ThemeObject
   constructor(appManager: RemixAppManager) {
     super(profile)
     this.appManager = appManager
@@ -35,6 +38,7 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
   }
 
   async onActivation() {
+    this.handleThemeChange()
     await this.call('tabs', 'focus', 'vyperCompilationDetails')
     this.renderComponent()
     _paq.push(['trackEvent', 'plugin', 'activated', 'vyperCompilationDetails'])
@@ -51,11 +55,88 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
     this.profile.displayName = `${contractName}`
     this.renderComponent()
     this.payload = sentPayload
+    const active = await this.call('theme', 'currentTheme')
+    console.log(active)
+    if (active.quality === 'dark') {
+      switch(active.name) {
+      case 'HackerOwl':
+        this.theme = 'harmonic'
+        this.themeStyle = { backgroundColor: active.backgroundColor }
+        break
+      case 'Black':
+        this.theme = 'eighties'
+        this.themeStyle = { backgroundColor: active.backgroundColor }
+        break
+      case 'Cyborg':
+        this.theme = 'shapeshifter'
+        this.themeStyle = { backgroundColor: active.backgroundColor }
+        break
+      case 'Dark':
+        this.theme = 'flat'
+        this.themeStyle = { backgroundColor: active.backgroundColor }
+        break
+      default:
+        this.theme = 'shapeshifter'
+        this.themeStyle = { backgroundColor: active.backgroundColor }
+        break
+      }
+    } else {
+      switch(active.name) {
+      case 'Candy':
+        this.theme = 'apathy:inverted'
+        this.themeStyle = { backgroundColor: active.backgroundColor }
+        break
+      case 'Midcentury':
+        this.theme = 'apathy:inverted'
+        this.themeStyle = { backgroundColor: active.backgroundColor }
+        break
+      case 'Unicorn':
+        this.theme = 'apathy:inverted'
+        this.themeStyle = { backgroundColor: active.backgroundColor }
+        break
+      case 'Violet':
+        this.theme = 'summerfruit:inverted'
+        this.themeStyle = { backgroundColor: active.backgroundColor }
+        break
+      default:
+        this.theme = 'bright:inverted'
+        break
+      }
+    }
     this.renderComponent()
+  }
+
+  private handleThemeChange() {
+    this.on('theme', 'themeChanged', (theme: any) => {
+      if (theme.quality === 'dark') {
+        switch(theme.name) {
+        case 'HackerOwl':
+          this.theme = 'solarized'
+          break
+        case 'Black':
+          this.theme = 'shapeshifter'
+          break
+        case 'Cyborg':
+          this.theme = 'shapeshifter'
+          break
+        case 'Dark':
+          this.theme = 'harmonic'
+          break
+        default:
+          this.theme = 'shapeshifter'
+          break
+        }
+      } else {
+        this.theme = 'bright:inverted'
+      }
+      this.themeStyle = { color: theme.quality === 'dark' ? '#ffffff'/*theme.textColor*/ : theme.textColor }
+      this.renderComponent()
+    })
   }
 
   setDispatch(dispatch: React.Dispatch<any>): void {
     this.dispatch = dispatch
+    this.renderComponent()
   }
   render() {
     return (
@@ -68,14 +149,18 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
   renderComponent() {
     this.dispatch({
       ...this,
-      ...this.payload
+      ...this.payload,
+      themeStyle: this.themeStyle,
+      theme: this.theme
     })
   }
 
   updateComponent(state: any) {
     return (
       <RemixUiVyperCompileDetails
-        payload={this.payload}
+        payload={state.payload}
+        theme={state.theme}
+        themeStyle={state.themeStyle}
       />
     )
   }

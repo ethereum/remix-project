@@ -4,7 +4,6 @@ import {createClient} from '@remixproject/plugin-webview'
 import {PluginClient} from '@remixproject/plugin'
 import {Contract} from './compiler'
 import {ExampleContract} from '../components/VyperResult'
-import { ThemeKeys } from 'react-json-view'
 
 export class RemixClient extends PluginClient {
   private client = createClient<Api, Readonly<RemixApi>>(this)
