@@ -1,7 +1,6 @@
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import JSONTree, { ThemeKeys, ThemeObject } from '@microlink/react-json-view'
 import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Button from 'react-bootstrap/Button'
@@ -27,10 +26,8 @@ export interface VyperCompileProps {
 
 
 export default function VyperCompile({result, theme, themeStyle}: VyperCompileProps) {
-  const intl = useIntl()
 
   const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
-  console.log(theme, themeStyle)
   const tabContent = [
     {
       tabHeadingText: 'ABI',

@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import {isVyper, compile, toStandardOutput, VyperCompilationOutput, isCompilationError, remixClient, normalizeContractPath} from '../utils'
+import {isVyper, compile, toStandardOutput, isCompilationError, remixClient, normalizeContractPath} from '../utils'
 import Button from 'react-bootstrap/Button'
 import _ from 'lodash'
 import { runtime } from 'webpack'
