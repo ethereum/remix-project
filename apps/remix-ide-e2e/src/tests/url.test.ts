@@ -224,8 +224,10 @@ module.exports = {
 
       .clickLaunchIcon('solidity')
       .click('*[data-id="scConfigExpander"]')
-      .waitForElementVisible('#versionSelector option[data-id="selected"]')
-      .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.16+commit.07a7930e')
+      .waitForElementVisible({
+        selector: "//*[@data-id='selectedVersion' and contains(.,'0.8.16+commit.07a7930e')]",
+        locateStrategy: 'xpath'
+      })
       .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'istanbul')
       .assert.containsText('#compilierLanguageSelector option[data-id="selected"]', 'Yul')
       .verify.elementPresent('#optimize:checked')
@@ -235,14 +237,18 @@ module.exports = {
       .refreshPage()
 
       .clickLaunchIcon('solidity')
-      .waitForElementVisible('#versionSelector option[data-id="selected"]')
-      .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.7+commit.e28d00a7')
+      .waitForElementVisible({
+        selector: "//*[@data-id='selectedVersion' and contains(.,'0.8.7+commit.e28d00a7')]",
+        locateStrategy: 'xpath'
+      })
       .url('http://127.0.0.1:8080/#version=0.8.15+commit.e14f2714')
       .refreshPage()
       .pause(3000)
       .clickLaunchIcon('solidity')
-      .waitForElementVisible('#versionSelector option[data-id="selected"]')
-      .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.15+commit.e14f2714')
+      .waitForElementVisible({
+        selector: "//*[@data-id='selectedVersion' and contains(.,'0.8.15+commit.e14f2714')]",
+        locateStrategy: 'xpath'
+      })
   },
 
   'Should load using compiler from link passed in remix URL #group3': function (browser: NightwatchBrowser) {
@@ -253,7 +259,10 @@ module.exports = {
       .clickLaunchIcon('solidity')
 
       .click('*[data-id="scConfigExpander"]')
-      .assert.containsText('#versionSelector option[data-id="selected"]', 'custom')
+      .waitForElementVisible({
+        selector: "//*[@data-id='selectedVersion' and contains(.,'custom')]",
+        locateStrategy: 'xpath'
+      })
       // default values
       .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'default')
       .verify.elementPresent('#optimize')
