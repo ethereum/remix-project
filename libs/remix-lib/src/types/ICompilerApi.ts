@@ -47,7 +47,6 @@ export interface ICompilerApi {
     statusChanged: (data: { key: string, title?: string, type?: string }) => void,
     emit?: (key: string, ...payload: any) => void
 
-    compilersDownloaded: (list: string[]) => void
     setSolJsonBinData: (binData: iSolJsonBinData) => void
 }
 

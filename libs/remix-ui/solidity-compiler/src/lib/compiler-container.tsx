@@ -43,7 +43,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     workspaceName,
     configFilePath,
     setConfigFilePath,
-    compilersDownloaded,
     solJsonBinData,
     //@ts-ignore
     pluginProps

@@ -28,7 +28,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
   onFileClosed: (name: string) => void
   statusChanged: (data: { key: string, title?: string, type?: string }) => void
   
-  compilersDownloaded: (list: string[]) => void
   setSolJsonBinData: (urls: iSolJsonBinData) => void
 
   initCompilerApi () {
@@ -280,19 +279,6 @@ export const CompilerApiMixin = (Base) => class extends Base {
     }
 
     this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
-
-    this.on('compilerloader', 'downloadFinished', (path, url) => {
-      console.log('downloadFinished', path, url)
-    })
-
-    this.on('compilerloader', 'downloadStarted', (url) => {
-      console.log('downloadStarted', url)
-    })
-
-    this.on('compilerloader', 'compilersDownloaded', (list: string[]) => {
-      console.log('compilersDownloaded', list)
-      this.compilersDownloaded(list)
-    })
 
     this.on('compilerloader', 'jsonBinDataLoaded', (urls: iSolJsonBinData) => {
       this.setSolJsonBinData(urls)

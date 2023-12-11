@@ -38,7 +38,6 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       cancelFn: () => { },
       handleHide: null
     },
-    compilersDownloaded: [],
     solJsonBinData: {
       baseURLBin,
       baseURLWasm,
@@ -144,12 +143,6 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
   api.statusChanged = (data: { key: string; title?: string; type?: string }) => {
     setBadgeStatus({ ...badgeStatus, [currentFile]: data })
-  }
-
-  api.compilersDownloaded = (list: string[]) => {
-    setState((prevState) => {
-      return { ...prevState, compilersDownloaded: list }
-    })
   }
 
   api.setSolJsonBinData = (data: iSolJsonBinData) => {
@@ -278,7 +271,6 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
           configurationSettings={configurationSettings}
           configFilePath={state.configFilePath}
           setConfigFilePath={setConfigFilePath}
-          compilersDownloaded={state.compilersDownloaded}
           solJsonBinData={state.solJsonBinData}
         />
 
