@@ -58,7 +58,7 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
   }
 
   const startSolidity = async () => {
-    //await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
+    await plugin.appManager.activatePlugin(['solidity', 'udapp', 'solidityStaticAnalysis', 'solidityUnitTesting'])
     plugin.verticalIcons.select('solidity')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidity'])
   }
@@ -74,8 +74,8 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
   }
   const startCookbook = async () => {
     await plugin.appManager.activatePlugin(['cookbookdev'])
-    plugin.verticalIcons.select('cookbookdev')
-    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'cookbookdev'])
+    plugin.verticalIcons.select('cookbook.dev')
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'cookbook.dev'])
   }
   const startSolidityUnitTesting = async () => {
     await plugin.appManager.activatePlugin(['solidity', 'solidityUnitTesting'])
