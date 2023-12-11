@@ -246,7 +246,6 @@ export class RemixURLResolver {
     const builtinHandlers: Handler[] = this.getHandlers()
     const handlers: Handler[] = customHandlers ? [...builtinHandlers, ...customHandlers] : [...builtinHandlers]
     const matchedHandler = handlers.filter(handler => handler.match(filePath))
-    console.log('matchedHandler', matchedHandler)
     const handler: Handler = matchedHandler[0]
     const match = handler.match(filePath)
     const { content, cleanUrl } = await handler.handle(match)
