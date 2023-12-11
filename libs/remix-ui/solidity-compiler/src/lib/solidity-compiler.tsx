@@ -166,7 +166,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       prerelease: ''
     }
     const binVersions = data.binList
-    let selectorList = binVersions
+    const selectorList = binVersions
     
     const wasmVersions = data.wasmList
     selectorList.forEach((compiler, index) => {

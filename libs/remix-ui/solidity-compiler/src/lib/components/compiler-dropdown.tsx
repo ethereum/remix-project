@@ -15,7 +15,7 @@ interface compilerDropdownProps {
   defaultVersion: string,
   allversions: compilerVersion[],
   handleLoadVersion: (url: string) => void,
-  _shouldBeAdded: (version: string) => {},
+  _shouldBeAdded: (version: string) => boolean,
   onlyDownloaded: boolean
 }
 
@@ -26,22 +26,22 @@ export const CompilerDropdown = (props: compilerDropdownProps) => {
     <Dropdown id="versionSelector" data-id="versionSelector">
       <Dropdown.Toggle as={CompilerMenuToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
         <div style={{ flexGrow: 1, overflow: 'hidden', display:'flex', justifyContent:'left' }}>
-        <div className="text-truncate">
-          {customVersions.map((url, i) => {
-            if (selectedVersion === url) return (<span key={i}>custom</span>)
-          })}
-          {allversions.map((build, i) => {
+          <div className="text-truncate">
+            {customVersions.map((url, i) => {
+              if (selectedVersion === url) return (<span data-id="selectedVersion" key={i}>custom</span>)
+            })}
+            {allversions.map((build, i) => {
 
-            if ((selectedVersion || defaultVersion) === build.path) {
-              return (<span key={i}>{build.longVersion}</span>)
-            }
-          })}
+              if ((selectedVersion || defaultVersion) === build.path) {
+                return (<span data-id="selectedVersion" key={i}>{build.longVersion}</span>)
+              }
+            })}
           </div>
         </div>
       </Dropdown.Toggle>
 
       <Dropdown.Menu as={CompilerMenu} className="w-100 custom-dropdown-items overflow-hidden" data-id="custom-dropdown-items">
-      {allversions.length <= 0 && (
+        {allversions.length <= 0 && (
           <Dropdown.Item
             key={`default`}
             data-id='builtin'

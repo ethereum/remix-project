@@ -798,12 +798,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             </label>
           </div>
           {platform === appPlatformTypes.desktop ?     
-          <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
-            <input className="mr-2 custom-control-input" id="downloadedcompilers" type="checkbox" onChange={handleOnlyDownloadedChange} checked={state.onlyDownloaded} />
-            <label htmlFor="downloadedcompilers" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">
-              <FormattedMessage id="solidity.downloadedCompilers" />
-            </label>
-          </div>:null}
+            <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
+              <input className="mr-2 custom-control-input" id="downloadedcompilers" type="checkbox" onChange={handleOnlyDownloadedChange} checked={state.onlyDownloaded} />
+              <label htmlFor="downloadedcompilers" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">
+                <FormattedMessage id="solidity.downloadedCompilers" />
+              </label>
+            </div>:null}
           <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
             <input
               className="remixui_autocompile custom-control-input"
