@@ -63,7 +63,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     } else if (params.code || params.url) {
       const d = new Date()
       const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }
-      const workspaceName = 'Code sample\'s creation date ' + d.toLocaleDateString(undefined, dateOptions as any) + ' ' + Date.now()
+      const workspaceName = 'Code sample creation date ' + d.toLocaleDateString(undefined, dateOptions as any) + ' ' + d.toLocaleTimeString().replace(/:/g, '-')
       await createWorkspaceTemplate(workspaceName, 'code-template')
       plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: workspaceName, isGitRepo: false }))
