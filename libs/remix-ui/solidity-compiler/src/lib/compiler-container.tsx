@@ -136,6 +136,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       const versionFromQueryParameter = getSelectVersionFromQueryParam()
       if (versionFromQueryParameter.isURL) _updateVersionSelector(state.defaultVersion, versionFromQueryParameter.selectedVersion)
       else{
+        setState((prevState) => {
+          return {...prevState, selectedVersion: versionFromQueryParameter.selectedVersion}
+        })
         updateCurrentVersion(versionFromQueryParameter.selectedVersion)
         _updateVersionSelector(versionFromQueryParameter.selectedVersion)
       }
@@ -546,13 +549,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       url = customUrl
       api.setCompilerQueryParameters({version: selectedVersion})
     } else {
-
-      setState((prevState) => {
-        return {
-          ...prevState,
-          selectedVersion,
-        }
-      })
       if (checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed, special chars not allowed.')
       }
