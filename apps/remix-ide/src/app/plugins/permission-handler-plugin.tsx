@@ -92,7 +92,17 @@ export class PermissionHandlerPlugin extends Plugin {
       const {allow, hash} = sensitiveCall ? this.sessionPermissions[to.name][method][from.name] : this.permissions[to.name][method][from.name]
       if (!allow) {
         const warning = this.notAllowWarning(from, to, method)
-        this.call('notification', 'toast', warning)
+        const warnEl =
+        <div className='d-flex flex-column'>
+          <span>{ warning }</span>
+          <div className='d-flex flex-row'>
+            <span onClick={()=>{}}>To change the permission go to </span>
+            <span className='px-2' style={{fontWeight: 'bolder'}}>Plugin Manager</span>
+            <img alt="" id="permissionModalImagesFrom" src="/assets/img/pluginManager.webp" style={{height: '1rem', width: '1rem'}} />
+            <span className='pl-1' style={{fontWeight: 'bolder'}}> / Permissions</span>
+          </div>
+        </div>
+        this.call('notification', 'toast', warnEl)
         return false
       }
       return hash === from.hash
