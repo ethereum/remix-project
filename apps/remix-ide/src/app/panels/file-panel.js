@@ -234,7 +234,6 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   isExpanded(path) {
-    console.log('isExpanded', path, this.expandPath)
     if(path === '/') return true
     return this.expandPath.includes(path)
   }
