@@ -341,10 +341,10 @@ contract HelloWorld {
           >
             GitHub
           </button>
-          <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
+          <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => showFullMessage('Gist', 'Gist ID or the URL ', ['https://gist.github.com/EthereumRemix/eb375da9fa1fa26399ce1f021b48a31d', 'or', 'eb375da9fa1fa26399ce1f021b48a31d'])}>
             Gist
           </button>
-          <button className="btn p-2 border mr-2" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')}>
+          <button className="btn p-2 border mr-2" onClick={() => showFullMessage('IPFS', 'IPFS hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')}>
             IPFS
           </button>
           <button
