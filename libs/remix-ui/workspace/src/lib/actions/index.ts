@@ -55,14 +55,18 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const workspaces = await getWorkspaces() || []
     dispatch(setWorkspaces(workspaces))
     if (params.gist) {
-      await createWorkspaceTemplate('gist-sample', 'gist-template')
-      plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace({ name: 'gist-sample', isGitRepo: false }))
+      const workspaceName = 'Gist sample ' + params.gist
+      await createWorkspaceTemplate(workspaceName, 'gist-template')
+      plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+      dispatch(setCurrentWorkspace({ name: workspaceName, isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
     } else if (params.code || params.url) {
-      await createWorkspaceTemplate('code-sample', 'code-template')
-      plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
+      const d = new Date()
+      const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }
+      const workspaceName = 'Code sample\'s creation date ' + d.toLocaleDateString(undefined, dateOptions as any) + ' ' + Date.now()
+      await createWorkspaceTemplate(workspaceName, 'code-template')
+      plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+      dispatch(setCurrentWorkspace({ name: workspaceName, isGitRepo: false }))
       const filePath = await loadWorkspacePreset('code-template')
       plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
     } else if (params.address) {
@@ -82,7 +86,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             {id: 5, name: 'goerli'}
           ]
           let found = false
-          const workspaceName = 'etherscan-code-sample'
+          const workspaceName = 'Code sample of ' + params.address
           let filePath
           const foundOnNetworks = []
           for (const network of networks) {
