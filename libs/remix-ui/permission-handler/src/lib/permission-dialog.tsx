@@ -19,10 +19,12 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
   }
 
   const imgFrom = () => {
-    return <img className={`${theme === 'dark' ? 'invert' : ''}`} alt="" id="permissionModalImagesFrom" src={from.icon} />
+    if (!from.icon || from.icon === '') from.icon = "/assets/img/unknownPluginIcon.webp"
+    return <img className={`opacity(0.5);`} alt="" id="permissionModalImagesFrom" src={from.icon} />
   }
   const imgTo = () => {
-    return <img className={`${theme === 'dark' ? 'invert' : ''}`} alt="" id="permissionModalImagesTo" src={to.icon} />
+    if (!to.icon || to.icon === '') to.icon = "/assets/img/unknownPluginIcon.webp"
+    return <img className={`opacity(0.5);`} alt="" id="permissionModalImagesTo" src={to.icon} />
   }
   const pluginsImages = () => {
     return (
