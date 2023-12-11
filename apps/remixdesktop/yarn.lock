@@ -690,6 +690,13 @@
   dependencies:
     "@remixproject/plugin-utils" "0.3.41"
 
+"@remixproject/plugin-api@^0.3.38":
+  version "0.3.38"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-api/-/plugin-api-0.3.38.tgz#7dcff37483451b654fc51290157992fff3fbd8b7"
+  integrity sha512-GLXAnV7TMYV2KlXTml+W0H6s0m5EkVb5w610Jh9k4PLFVrocl9xDEG4VlZ8BF/uv+yjXRi4dn++8zWMRe5375Q==
+  dependencies:
+    "@remixproject/plugin-utils" "0.3.38"
+
 "@remixproject/plugin-electron@0.3.41":
   version "0.3.41"
   resolved "https://registry.yarnpkg.com/@remixproject/plugin-electron/-/plugin-electron-0.3.41.tgz#6f736dfa5146bdf41fe0c452ab0b78e7f914fda1"
@@ -699,6 +706,13 @@
     "@remixproject/plugin" "0.3.41"
     "@remixproject/plugin-api" "0.3.41"
     "@remixproject/plugin-utils" "0.3.41"
+
+"@remixproject/plugin-utils@0.3.38":
+  version "0.3.38"
+  resolved "https://registry.yarnpkg.com/@remixproject/plugin-utils/-/plugin-utils-0.3.38.tgz#402adbef700a9392fbeae7d536ba020b7cfbdfaa"
+  integrity sha512-DpbB+BFfWvZ/pKWlXY0Ms3mqp/ajWxBI+TUiJor2AkLtCSBS1+Uk7BWG++jNSqgjdvVKxxWa4kJygFwUPtUYXA==
+  dependencies:
+    tslib "2.0.1"
 
 "@remixproject/plugin-utils@0.3.41":
   version "0.3.41"

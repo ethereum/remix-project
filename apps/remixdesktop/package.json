@@ -41,6 +41,7 @@
     "@remixproject/engine": "0.3.41",
     "@remixproject/engine-electron": "0.3.41",
     "@remixproject/plugin": "0.3.41",
+    "@remixproject/plugin-api": "^0.3.38",
     "@remixproject/plugin-electron": "0.3.41",
     "@vscode/ripgrep": "^1.15.6",
     "add": "^2.0.6",

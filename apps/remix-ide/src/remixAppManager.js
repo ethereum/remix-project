@@ -327,6 +327,19 @@ export class RemixAppManager extends PluginManager {
       sticky: true,
       group: 7
     })
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
+      await this.call('filePanel', 'registerContextMenuItem', {
+        id: 'fs',
+        name: 'revealInExplorer',
+        label: 'Reveal in file explorer',
+        type: ['folder', 'file'],
+        extension: [],
+        path: [],
+        pattern: [],
+        sticky: true,
+        group: 8
+      })
+    }
   }
 }
 
