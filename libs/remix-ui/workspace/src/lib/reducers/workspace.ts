@@ -3,6 +3,7 @@ import {action, Actions, FileType, WorkspaceElement} from '../types'
 import * as _ from 'lodash'
 import {fileDecoration} from '@remix-ui/file-decorators'
 import {ROOT_PATH} from '../utils/constants'
+import isElectron from 'is-electron'
 export interface BrowserState {
   browser: {
     currentWorkspace: string
@@ -328,7 +329,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
               ? fileAdded(state, payload)
               : state.browser.files,
         expandPath:
-          state.mode === 'browser'
+          state.mode === 'browser' && !isElectron()
             ? [...new Set([...state.browser.expandPath, payload])]
             : state.browser.expandPath
       },
@@ -339,7 +340,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
               ? fileAdded(state, payload)
               : state.localhost.files,
         expandPath:
-            state.mode === 'localhost'
+            state.mode === 'localhost' 
               ? [...new Set([...state.localhost.expandPath, payload])]
               : state.localhost.expandPath
       }
@@ -358,7 +359,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
               ? fetchDirectoryContent(state, payload)
               : state.browser.files,
         expandPath:
-          state.mode === 'browser'
+          state.mode === 'browser' && !isElectron()
             ? [...new Set([...state.browser.expandPath, payload.folderPath])]
             : state.browser.expandPath
       },

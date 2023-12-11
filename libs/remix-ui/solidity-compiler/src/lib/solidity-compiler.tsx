@@ -184,6 +184,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     })
     data.selectorList = selectorList
     data.selectorList.reverse()
+    data.selectorList.unshift(builtin)
     setState((prevState) => {
       return { ...prevState, solJsonBinData: data }
     })
