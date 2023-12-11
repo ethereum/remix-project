@@ -107,12 +107,11 @@ const RemixApp = (props: IRemixAppUi) => {
     setShowEnterDialog(false)
     localStorage.setItem('hadUsageTypeAsked', type)
 
-    await props.app.appManager.call('walkthrough', 'start')
-
     // Use the type to setup the UI accordingly
     switch (type) {
     case UsageTypes.Beginner: {
       await props.app.appManager.call('manager', 'activatePlugin', 'LearnEth')
+      await props.app.appManager.call('walkthrough', 'start')
       // const wName = 'Playground'
       // const workspaces = await props.app.appManager.call('filePanel', 'getWorkspaces')
       // if (!workspaces.find((workspace) => workspace.name === wName)) {
