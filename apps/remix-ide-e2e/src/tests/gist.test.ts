@@ -81,7 +81,7 @@ module.exports = {
       .assert.containsText('*[data-id="homeTabModalDialogModalTitle-react"]', 'Import from Gist')
       .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="homeTabModalDialogModalBody-react"]', 'Enter the Gist ID or the URL you would like to load.')
-      .waitForElementVisible('*[data-id="homeTabhomeTabModalDialogCustomPromptTexttText"]')
+      .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
       .modalFooterCancelClick('gisthandler')
   },
 
