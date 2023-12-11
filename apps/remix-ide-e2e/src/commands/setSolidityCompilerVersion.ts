@@ -14,6 +14,11 @@ class SetSolidityCompilerVersion extends EventEmitter {
       })
       .waitForElementVisible(`[data-id="dropdown-item-${version}"]`)
       .click(`[data-id="dropdown-item-${version}"]`)
+      .waitForElementPresent({
+        selector: `//*[@data-id='compilerloaded' and @data-version='${version}']`,
+        locateStrategy: 'xpath',
+        timeout: 120000
+      })
       .perform(() => {
         this.emit('complete')
       })
