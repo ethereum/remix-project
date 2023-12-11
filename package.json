@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.38.0-dev",
+  "version": "0.39.0-dev",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "main": "index.js",
@@ -150,7 +150,7 @@
     "ansi-gray": "^0.1.1",
     "assert": "^2.1.0",
     "async": "^2.6.2",
-    "axios": "1.1.2",
+    "axios": "1.6.0",
     "bn.js": "^5.1.2",
     "bootstrap": "^5.2.2",
     "brace": "^0.8.0",
