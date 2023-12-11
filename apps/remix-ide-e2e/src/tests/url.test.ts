@@ -66,7 +66,7 @@ module.exports = {
       .click('[for="autoCompile"]') // back to True in the local storage
       .assert.containsText('*[data-id="compilerContainerCompileBtn"]', 'contract-76747f6e19.sol')
       .clickLaunchIcon('filePanel')
-      .currentWorkspaceIs('code-sample')
+      .currentWorkspaceStartsWith('Code sample')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol') !== -1,
@@ -83,7 +83,7 @@ module.exports = {
         selector: `//li[@data-id="treeViewLitreeViewItemethereum/remix-project/apps/remix-ide/contracts/app/solidity/mode.sol"]`,
         locateStrategy: 'xpath'
       })
-      .currentWorkspaceIs('code-sample')
+      .currentWorkspaceStartsWith('Code sample')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'proposals.length = _numProposals;') !== -1,
@@ -119,7 +119,7 @@ module.exports = {
         selector: `//li[@data-id="treeViewLitreeViewItemethereum/remix-project/apps/remix-ide/contracts/app/solidity/mode.sol"]`,
         locateStrategy: 'xpath'
       })
-      .currentWorkspaceIs('code-sample')
+      .currentWorkspaceStartsWith('Code sample')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'proposals.length = _numProposals;') !== -1,
@@ -136,7 +136,7 @@ module.exports = {
 
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontract-eaa022e37e.yul"]')
-      .currentWorkspaceIs('code-sample')
+      .currentWorkspaceStartsWith('Code sample')
       .openFile('contract-eaa022e37e.yul')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
