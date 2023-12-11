@@ -49,14 +49,11 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
   }
 
   async showDetails(sentPayload: any) {
-    console.log(sentPayload )
     const contractName = Object.entries(sentPayload).find(([key, value]) =>  key )
     await this.call('tabs', 'focus', 'vyperCompilationDetails')
     this.profile.displayName = `${contractName}`
-    this.renderComponent()
     this.payload = sentPayload
     const active = await this.call('theme', 'currentTheme')
-    console.log(active)
     if (active.quality === 'dark') {
       switch(active.name) {
       case 'HackerOwl':
@@ -112,24 +109,29 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
         switch(theme.name) {
         case 'HackerOwl':
           this.theme = 'solarized'
+          this.themeStyle = { backgroundColor: theme.backgroundColor }
           break
         case 'Black':
           this.theme = 'shapeshifter'
+          this.themeStyle = { backgroundColor: theme.backgroundColor }
           break
         case 'Cyborg':
           this.theme = 'shapeshifter'
+          this.themeStyle = { backgroundColor: theme.backgroundColor }
           break
         case 'Dark':
           this.theme = 'harmonic'
+          this.themeStyle = { backgroundColor: theme.backgroundColor }
           break
         default:
           this.theme = 'shapeshifter'
+          this.themeStyle = { backgroundColor: theme.backgroundColor }
           break
         }
       } else {
         this.theme = 'bright:inverted'
+        this.themeStyle = { backgroundColor: theme.backgroundColor }
       }
-      this.themeStyle = { color: theme.quality === 'dark' ? '#ffffff'/*theme.textColor*/ : theme.textColor }
       this.renderComponent()
     })
   }
