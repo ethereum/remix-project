@@ -294,10 +294,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
       this.compilersDownloaded(list)
     })
 
-    this.on('compilerloader', 'setSolJsonBinData', (urls: iSolJsonBinData) => {
-      console.log('basuURLS', urls)
+    this.on('compilerloader', 'jsonBinDataLoaded', (urls: iSolJsonBinData) => {
       this.setSolJsonBinData(urls)
     })
+    this.call('compilerloader', 'getJsonBinData')
+
 
     this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {
       this.compileErrors = data

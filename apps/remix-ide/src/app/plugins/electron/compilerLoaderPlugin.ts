@@ -1,5 +1,8 @@
 import { ElectronPlugin } from '@remixproject/engine-electron';
 import { Plugin } from '@remixproject/engine';
+import { baseURLBin, baseURLWasm } from '@remix-project/remix-solidity'
+import axios, {AxiosResponse} from 'axios'
+import { iSolJsonBinData } from '@remix-project/remix-lib'
 
 const profile = {
   displayName: 'compilerLoader',
@@ -7,7 +10,7 @@ const profile = {
   description: 'Loads the compiler for offline use',
 }
 
-const methods = ['getBaseUrls']
+const methods = ['getJsonBinData']
 
 export class compilerLoaderPlugin extends Plugin {
   constructor() {
@@ -15,9 +18,39 @@ export class compilerLoaderPlugin extends Plugin {
     this.methods = methods
   }
 
-  async getBaseUrls() {
-   
+  async getJsonBinData() {
+    let response: iSolJsonBinData = {
+      baseURLBin: '',
+      baseURLWasm: '',
+      binList: [],
+      wasmList: [],
+      selectorList: []
+    }
+    let binRes: AxiosResponse
+    let wasmRes: AxiosResponse
+    try {
+      // fetch normal builds
+      binRes = await axios(`${baseURLBin}/list.json`)
+      // fetch wasm builds
+      wasmRes = await axios(`${baseURLWasm}/list.json`)
+    } catch (e) {
+    }
+    if (wasmRes.status === 200) {
+      response.wasmList = wasmRes.data.builds
+    }
+    if (binRes.status === 200) {
+      response.binList = binRes.data.builds
+    }
+    response.baseURLBin = baseURLBin
+    response.baseURLWasm = baseURLWasm
+
+    this.emit('jsonBinDataLoaded', response)
   }
+
+  async onActivation(): Promise<void> {
+
+  }
+
 }
 
 export class compilerLoaderPluginDesktop extends ElectronPlugin {
@@ -26,24 +59,11 @@ export class compilerLoaderPluginDesktop extends ElectronPlugin {
     this.methods = []
   }
 
-  onActivation(): void {
-    this.on('compilerloader', 'downloadFinished', (path, url) => {
-      console.log('downloadFinished', path, url)
-      this.call('terminal', 'logHtml', 'Compiler downloaded from ' + url + ' to ' + path)
-    })
-
+  async onActivation(): Promise<void> {
+  
     this.on('solidity', 'loadingCompiler', async (url) => {
-      console.log('loadingCompiler in compilerloader', url, this)
       await this.call('compilerloader', 'downloadCompiler', url)
-      const compilerList = await this.call('compilerloader', 'listCompilers')
-      console.log('compilerList', compilerList)
-      this.emit('compilersDownloaded', compilerList)
     })
 
-    this.on('compilerloader', 'setSolJsonBinData', (url) => {
-      console.log('setSolJsonBinData', url)
-    })
   }
-
-
 }

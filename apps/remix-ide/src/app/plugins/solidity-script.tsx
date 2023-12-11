@@ -21,7 +21,7 @@ export class SolidityScript extends Plugin {
     _paq.push(['trackEvent', 'SolidityScript', 'execute', 'script'])
     this.call('terminal', 'log', `Running free function '${functionName}' from ${path}...`)
     let content = await this.call('fileManager', 'readFile', path)
-    const params = await this.call('solidity', 'getCompilerParameters')
+    const params = await this.call('solidity', 'getCompilerQueryParameters')
 
     content = `
       // SPDX-License-Identifier: GPL-3.0

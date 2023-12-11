@@ -11,8 +11,8 @@ export interface ICompilerApi {
     compileTabLogic: any
     configurationSettings: ConfigurationSettings
 
-    getCompilerParameters: () => ConfigurationSettings
-    setCompilerParameters: (ConfigurationSettings?) => void
+    getCompilerQueryParameters: () => ConfigurationSettings
+    setCompilerQueryParameters: (ConfigurationSettings?) => void
 
     getAppParameter: (value: string) => Promise<any>
     setAppParameter: (name: string, value: string | boolean) => void
@@ -55,13 +55,18 @@ export interface iSolJsonBinDataBuild {
     path: string,
     version: string,
     build: string,
+    prerelease: string,
     longVersion: string,
+    binURL: string,
+    wasmURL: string,
+    isDownloaded: boolean,
 }
 export interface iSolJsonBinData {
     baseURLWasm: string,
     baseURLBin: string,
     wasmList: iSolJsonBinDataBuild[],
-    binList: iSolJsonBinDataBuild[]
+    binList: iSolJsonBinDataBuild[],
+    selectorList: iSolJsonBinDataBuild[]
 }
 
 export type terminalLog = {
