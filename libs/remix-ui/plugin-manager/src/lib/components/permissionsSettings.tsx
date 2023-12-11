@@ -90,7 +90,7 @@ function PermisssionsSettings() {
                         htmlFor={`permission-checkbox-${targetPlugin}-${funcName}-${targetPlugin}`}
                         data-id={`permission-label-${targetPlugin}-${funcName}-${targetPlugin}`}
                       >
-                        <FormattedMessage id="pluginManager.allow" /> <u>{pluginName}</u> <FormattedMessage id="pluginManager.toCall" /> <u>{funcName}</u>
+                        <FormattedMessage id="pluginManager.allow" /><u>{pluginName}</u> <FormattedMessage id="pluginManager.toCall" /> <u>{funcName}</u>
                       </label>
                     </span>
                   </div>
