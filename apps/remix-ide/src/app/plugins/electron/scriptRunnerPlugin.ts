@@ -12,20 +12,20 @@ export class scriptRunnerPlugin extends ElectronPlugin {
   }
 
   async onActivation(): Promise<void> {
-      this.on('scriptRunner', 'missingModule', async (module: string) => {
-        console.log('missingModule', module)
-        const addModuleModal: AppModal = {
-          id: 'AddModuleModal',
-          title: `Missing module ${module}`,
-          message: `Do you want to install the missing module? ${module} \n\nYou can also install it manually using the terminal if you have yarn or npm installed:\nyarn add ${module}`,
-          okLabel: 'Install',
-          cancelLabel: 'No',
-        }
-        const result = await this.call('notification', 'modal', addModuleModal)
-        if (result) {
-          await this.addModule(module)
-        }
-      })
+    this.on('scriptRunner', 'missingModule', async (module: string) => {
+      console.log('missingModule', module)
+      const addModuleModal: AppModal = {
+        id: 'AddModuleModal',
+        title: `Missing module ${module}`,
+        message: `Do you want to install the missing module? ${module} \n\nYou can also install it manually using the terminal if you have yarn or npm installed:\nyarn add ${module}`,
+        okLabel: 'Install',
+        cancelLabel: 'No',
+      }
+      const result = await this.call('notification', 'modal', addModuleModal)
+      if (result) {
+        await this.addModule(module)
+      }
+    })
   }
 
   async addModule(module: string, version: string = ''): Promise<void> {

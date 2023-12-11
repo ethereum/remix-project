@@ -19,7 +19,7 @@ export class compilerLoaderPlugin extends Plugin {
   }
 
   async getJsonBinData() {
-    let response: iSolJsonBinData = {
+    const response: iSolJsonBinData = {
       baseURLBin: '',
       baseURLWasm: '',
       binList: [],

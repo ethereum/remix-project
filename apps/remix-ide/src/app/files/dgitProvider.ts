@@ -459,7 +459,7 @@ class DGitProvider extends Plugin {
       if (gitmodules) {
         const lines = gitmodules.split('\n')
         let currentModule:any = {}
-        let modules = []
+        const modules = []
         for (let line of lines) {
           line = line.trim()
           if (line.startsWith('[')) {
@@ -491,7 +491,7 @@ class DGitProvider extends Plugin {
       this.call('terminal', 'logHtml', `Found ${(gitmodules && gitmodules.length) || 0} submodules in ${currentDir || '/'}`)
       //parse gitmodules
       if (gitmodules) {
-        for (let module of gitmodules) {
+        for (const module of gitmodules) {
           const dir = path.join(currentDir, module.path)
           const targetPath = (await this.getGitConfig(dir)).dir
           if (await window.remixFileSystem.exists(targetPath)) {
@@ -505,7 +505,7 @@ class DGitProvider extends Plugin {
             }
           }
         }
-        for (let module of gitmodules) {
+        for (const module of gitmodules) {
           const dir = path.join(currentDir, module.path)
           // if url contains git@github.com: convert it
           if(module.url && module.url.startsWith('git@github.com:')) {
