@@ -327,6 +327,10 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
             state.mode === 'browser'
               ? fileAdded(state, payload)
               : state.browser.files,
+        expandPath:
+          state.mode === 'browser'
+            ? [...new Set([...state.browser.expandPath, payload])]
+            : state.browser.expandPath
       },
       localhost: {
         ...state.localhost,
@@ -353,6 +357,10 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
             state.mode === 'browser'
               ? fetchDirectoryContent(state, payload)
               : state.browser.files,
+        expandPath:
+          state.mode === 'browser'
+            ? [...new Set([...state.browser.expandPath, payload.folderPath])]
+            : state.browser.expandPath
       },
       localhost: {
         ...state.localhost,
