@@ -2,7 +2,7 @@ import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plug
 import fs from 'fs/promises'
 import { Profile } from "@remixproject/plugin-utils";
 import chokidar from 'chokidar'
-import { dialog } from "electron";
+import { dialog, shell } from "electron";
 import { createWindow, isPackaged } from "../main";
 import { writeConfig } from "../utils/config";
 import { Path } from 'path-scurry'
@@ -11,6 +11,7 @@ import byline from 'byline';
 
 import path from "path";
 import { spawn } from "child_process";
+import { customAction } from "@remixproject/plugin-api";
 
 const profile: Profile = {
   displayName: 'fs',
@@ -85,7 +86,7 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'openFolderInSameWindow', 'getRecentFolders', 'removeRecentFolder', 'openWindow', 'selectFolder']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'openFolderInSameWindow', 'getRecentFolders', 'removeRecentFolder', 'openWindow', 'selectFolder', 'revealInExplorer', 'openInVSCode']
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
@@ -326,6 +327,10 @@ class FSPluginClient extends ElectronBasePluginClient {
     this.watch()
     this.emit('workingDirChanged', path)
     await this.call('fileManager', 'closeAllFiles')
+  }
+
+  async revealInExplorer(action: customAction): Promise<void> {
+    shell.showItemInFolder(this.fixPath(action.path[0]))
   }
 
   fixPath(path: string): string {
