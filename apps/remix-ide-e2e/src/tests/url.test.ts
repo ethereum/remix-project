@@ -91,25 +91,13 @@ module.exports = {
       })
   },
 
-  'Should load Etherscan verified contracts from URL "address" param)': !function (browser: NightwatchBrowser) {
+  'Should load Etherscan verified contracts from URL "address" param) #group1': function (browser: NightwatchBrowser) {
     browser
 
-      .url('http://127.0.0.1:8080/#address=0x56db08fb78bc6689a1ef66efd079083fed0e4915')
-      .refreshPage()
-
-      .currentWorkspaceIs('etherscan-code-sample')
-      .assert.elementPresent('*[data-id=treeViewLitreeViewItemropsten]')
-      .assert.elementPresent('*[data-id=treeViewLitreeViewItemrinkeby]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemrinkeby/0x56db08fb78bc6689a1ef66efd079083fed0e4915"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemrinkeby/0x56db08fb78bc6689a1ef66efd079083fed0e4915/Sample.sol"]')
-      .getEditorValue((content) => {
-        browser.assert.ok(content && content.indexOf(
-          'contract Sample {') !== -1)
-      })
       .url('http://127.0.0.1:8080/#address=0xdac17f958d2ee523a2206206994597c13d831ec7')
       .refreshPage()
       .pause(7000)
-      .currentWorkspaceIs('etherscan-code-sample')
+      .currentWorkspaceIs('Code-sample of 0xdac17f958d2ee523a2206206994597c13d831ec7')
       .assert.elementPresent('*[data-id=treeViewLitreeViewItemmainnet]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
       .assert.elementPresent('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7/TetherToken.sol"]')
