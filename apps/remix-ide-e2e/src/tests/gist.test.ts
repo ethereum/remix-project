@@ -78,9 +78,9 @@ module.exports = {
       .pause(1000)
       .scrollAndClick('button[data-id="landingPageImportFromGistButton"]')
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalTitle-react"]')
-      .assert.containsText('*[data-id="gisthandlerModalDialogModalTitle-react"]', 'Load a Gist')
+      .assert.containsText('*[data-id="gisthandlerModalDialogModalTitle-react"]', 'Import from Gist')
       .waitForElementVisible('*[data-id="gisthandlerModalDialogModalBody-react"]')
-      .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Enter the ID of the Gist or URL you would like to load.')
+      .assert.containsText('*[data-id="gisthandlerModalDialogModalBody-react"]', 'Enter the Gist ID or the URL you would like to load.')
       .waitForElementVisible('*[data-id="modalDialogCustomPromp"]')
       .modalFooterCancelClick('gisthandler')
   },
