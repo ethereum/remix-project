@@ -11,7 +11,7 @@ const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 export class CompileTabLogic {
   public compiler
-  public api
+  public api:  ICompilerApi
   public contentImport
   public optimize
   public runs
@@ -32,16 +32,16 @@ export class CompileTabLogic {
   }
 
   init () {
-    this.optimize = this.api.getCompilerParameters().optimize
-    this.api.setCompilerParameters({ optimize: this.optimize })
+    this.optimize = this.api.getCompilerQueryParameters().optimize
+    this.api.setCompilerQueryParameters({ optimize: this.optimize })
     this.compiler.set('optimize', this.optimize)
 
-    this.runs = this.api.getCompilerParameters().runs
+    this.runs = this.api.getCompilerQueryParameters().runs
     this.runs = this.runs && this.runs !== 'undefined' ? this.runs : 200
-    this.api.setCompilerParameters({ runs: this.runs })
+    this.api.setCompilerQueryParameters({ runs: this.runs })
     this.compiler.set('runs', this.runs)
 
-    this.evmVersion = this.api.getCompilerParameters().evmVersion
+    this.evmVersion = this.api.getCompilerQueryParameters().evmVersion
     if (
       this.evmVersion === 'undefined' || 
       this.evmVersion === 'null' || 
@@ -49,10 +49,10 @@ export class CompileTabLogic {
       !this.evmVersions.includes(this.evmVersion)) {
       this.evmVersion = null
     }
-    this.api.setCompilerParameters({ evmVersion: this.evmVersion })
+    this.api.setCompilerQueryParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
 
-    this.language = getValidLanguage(this.api.getCompilerParameters().language)
+    this.language = getValidLanguage(this.api.getCompilerQueryParameters().language)
     if (this.language != null) {
       this.compiler.set('language', this.language)
     }
@@ -60,7 +60,7 @@ export class CompileTabLogic {
 
   setOptimize (newOptimizeValue: boolean) {
     this.optimize = newOptimizeValue
-    this.api.setCompilerParameters({ optimize: this.optimize })
+    this.api.setCompilerQueryParameters({ optimize: this.optimize })
     this.compiler.set('optimize', this.optimize)
   }
 
@@ -75,13 +75,13 @@ export class CompileTabLogic {
 
   setRuns (runs) {
     this.runs = runs
-    this.api.setCompilerParameters({ runs: this.runs })
+    this.api.setCompilerQueryParameters({ runs: this.runs })
     this.compiler.set('runs', this.runs)
   }
 
   setEvmVersion (newEvmVersion) {
     this.evmVersion = newEvmVersion
-    this.api.setCompilerParameters({ evmVersion: this.evmVersion })
+    this.api.setCompilerQueryParameters({ evmVersion: this.evmVersion })
     this.compiler.set('evmVersion', this.evmVersion)
   }
 
@@ -95,7 +95,7 @@ export class CompileTabLogic {
    */
   setLanguage (lang) {
     this.language = lang
-    this.api.setCompilerParameters({ language: lang })
+    this.api.setCompilerQueryParameters({ language: lang })
     this.compiler.set('language', lang)
   }
 

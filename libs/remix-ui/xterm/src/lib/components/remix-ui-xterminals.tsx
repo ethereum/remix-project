@@ -171,7 +171,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   const closeTerminal = () => {
     const pid = terminals.find(xtermState => xtermState.hidden === false).pid
     if (pid)
-      plugin.call('xterm', 'close', pid)
+      plugin.call('xterm', 'closeTerminal', pid)
   }
 
   const selectOutput = () => {

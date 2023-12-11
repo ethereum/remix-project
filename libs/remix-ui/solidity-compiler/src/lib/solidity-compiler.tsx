@@ -1,19 +1,19 @@
-import React, {useEffect, useState} from 'react' // eslint-disable-line
-import {CompileErrors, ContractsFile, SolidityCompilerProps} from './types'
-import {CompilerContainer} from './compiler-container' // eslint-disable-line
-import {ContractSelection} from './contract-selection' // eslint-disable-line
-import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
-import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
-import {Renderer} from '@remix-ui/renderer' // eslint-disable-line
-import {baseURLBin, baseURLWasm} from '@remix-project/remix-solidity'
+import React, { useEffect, useState } from 'react' // eslint-disable-line
+import { CompileErrors, ContractsFile, SolidityCompilerProps } from './types'
+import { CompilerContainer } from './compiler-container' // eslint-disable-line
+import { ContractSelection } from './contract-selection' // eslint-disable-line
+import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
+import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
+import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
+import { baseURLBin, baseURLWasm, pathToURL } from '@remix-project/remix-solidity'
 
 import './css/style.css'
-import { iSolJsonBinData } from '@remix-project/remix-lib'
+import { iSolJsonBinData, iSolJsonBinDataBuild } from '@remix-project/remix-lib'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const {
     api,
-    api: {currentFile, compileTabLogic, configurationSettings}
+    api: { currentFile, compileTabLogic, configurationSettings }
   } = props
 
   const [state, setState] = useState({
@@ -32,10 +32,10 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       title: '',
       message: null,
       okLabel: '',
-      okFn: () => {},
+      okFn: () => { },
       donotHideOnOkClick: false,
       cancelLabel: '',
-      cancelFn: () => {},
+      cancelFn: () => { },
       handleHide: null
     },
     compilersDownloaded: [],
@@ -43,17 +43,19 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       baseURLBin,
       baseURLWasm,
       binList: [],
-      wasmList: []
-    }
+      wasmList: [],
+      selectorList: []
+    },
+    defaultVersion: 'soljson-v0.8.22+commit.4fc1097e.js', // this default version is defined: in makeMockCompiler (for browser test)
   })
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
-  const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({[currentFile]: api.compileErrors})
-  const [badgeStatus, setBadgeStatus] = useState<Record<string, {key: string; title?: string; type?: string}>>({})
+  const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({ [currentFile]: api.compileErrors })
+  const [badgeStatus, setBadgeStatus] = useState<Record<string, { key: string; title?: string; type?: string }>>({})
   const [contractsFile, setContractsFile] = useState<ContractsFile>({})
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const hide = ((await api.getAppParameter('hideWarnings')) as boolean) || false
       setHideWarnings(hide)
     })()
@@ -63,7 +65,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     if (badgeStatus[currentFile]) {
       api.emit('statusChanged', badgeStatus[currentFile])
     } else {
-      api.emit('statusChanged', {key: 'none'})
+      api.emit('statusChanged', { key: 'none' })
     }
   }, [badgeStatus[currentFile], currentFile])
 
@@ -76,7 +78,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
   api.onCurrentFileChanged = (currentFile: string) => {
     setState((prevState) => {
-      return {...prevState, currentFile}
+      return { ...prevState, currentFile }
     })
   }
 
@@ -99,24 +101,24 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   api.onFileRemoved = (path: string) => {
     if (path === state.configFilePath)
       setState((prevState) => {
-        return {...prevState, configFilePath: ''}
+        return { ...prevState, configFilePath: '' }
       })
   }
 
   api.onNoFileSelected = () => {
     setState((prevState) => {
-      return {...prevState, currentFile: ''}
+      return { ...prevState, currentFile: '' }
     })
     setCompileErrors({} as Record<string, CompileErrors>)
   }
 
   api.onCompilationFinished = (compilationDetails: {
-    contractMap: {file: string} | Record<string, any>
+    contractMap: { file: string } | Record<string, any>
     contractsDetails: Record<string, any>
     target?: string
     input?: Record<string, any>
   }) => {
-    const {contractMap, contractsDetails, target, input} = compilationDetails
+    const { contractMap, contractsDetails, target, input } = compilationDetails
     const contractList = contractMap
       ? Object.keys(contractMap).map((key) => {
         return {
@@ -128,50 +130,81 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
     setContractsFile({
       ...contractsFile,
-      [target]: {contractList, contractsDetails, input}
+      [target]: { contractList, contractsDetails, input }
     })
-    setCompileErrors({...compileErrors, [currentFile]: api.compileErrors})
+    setCompileErrors({ ...compileErrors, [currentFile]: api.compileErrors })
   }
 
   api.onFileClosed = (name) => {
     if (name === currentFile) {
-      setCompileErrors({...compileErrors, [currentFile]: {} as CompileErrors})
-      setBadgeStatus({...badgeStatus, [currentFile]: {key: 'none'}})
+      setCompileErrors({ ...compileErrors, [currentFile]: {} as CompileErrors })
+      setBadgeStatus({ ...badgeStatus, [currentFile]: { key: 'none' } })
     }
   }
 
-  api.statusChanged = (data: {key: string; title?: string; type?: string}) => {
-    setBadgeStatus({...badgeStatus, [currentFile]: data})
+  api.statusChanged = (data: { key: string; title?: string; type?: string }) => {
+    setBadgeStatus({ ...badgeStatus, [currentFile]: data })
   }
 
   api.compilersDownloaded = (list: string[]) => {
     setState((prevState) => {
-      return {...prevState, compilersDownloaded: list}
+      return { ...prevState, compilersDownloaded: list }
     })
   }
 
-  api.setSolJsonBinData = (urls: iSolJsonBinData) => {
+  api.setSolJsonBinData = (data: iSolJsonBinData) => {
+
+    const builtin: iSolJsonBinDataBuild =
+    {
+      path: 'builtin',
+      longVersion: 'latest local version - ' + state.defaultVersion,
+      binURL: '',
+      wasmURL: '',
+      isDownloaded: false,
+      version: 'builtin',
+      build: '',
+      prerelease: ''
+    }
+    const binVersions = data.binList
+    let selectorList = binVersions
+    
+    const wasmVersions = data.wasmList
+    selectorList.forEach((compiler, index) => {
+      const wasmIndex = wasmVersions.findIndex((wasmCompiler) => {
+        return wasmCompiler.longVersion === compiler.longVersion
+      })
+      if (wasmIndex !== -1) {
+        const URLWasm: string = process && process.env && process.env['NX_WASM_URL'] ? process.env['NX_WASM_URL'] : wasmVersions[wasmIndex].wasmURL || data.baseURLWasm
+        selectorList[index] = wasmVersions[wasmIndex]
+        pathToURL[compiler.path] = URLWasm
+      } else {
+        const URLBin: string = process && process.env && process.env['NX_BIN_URL'] ? process.env['NX_BIN_URL'] : compiler.binURL || data.baseURLBin
+        pathToURL[compiler.path] = URLBin
+      }
+    })
+    data.selectorList = selectorList
+    data.selectorList.reverse()
     setState((prevState) => {
-      return {...prevState, baseURLS: urls}
+      return { ...prevState, solJsonBinData: data }
     })
   }
 
 
   const setConfigFilePath = (path: string) => {
     setState((prevState) => {
-      return {...prevState, configFilePath: path}
+      return { ...prevState, configFilePath: path }
     })
   }
 
   const toast = (message: string) => {
     setState((prevState) => {
-      return {...prevState, toasterMsg: message}
+      return { ...prevState, toasterMsg: message }
     })
   }
 
   const updateCurrentVersion = (value) => {
     setCurrentVersion(value)
-    api.setCompilerParameters({version: value})
+    api.setCompilerQueryParameters({ version: value })
   }
 
   const modal = async (
@@ -203,7 +236,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
   const handleHideModal = () => {
     setState((prevState) => {
-      return {...prevState, modal: {...state.modal, hide: true, message: null}}
+      return { ...prevState, modal: { ...state.modal, hide: true, message: null } }
     })
   }
 
@@ -280,10 +313,10 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
                 compileErrors[currentFile].errors.map((err, index) => {
                   if (hideWarnings) {
                     if (err.severity !== 'warning') {
-                      return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{type: err.severity, errorType: err.type}} />
+                      return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
                     }
                   } else {
-                    return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{type: err.severity, errorType: err.type}} />
+                    return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
                   }
                 })}
             </>

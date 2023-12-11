@@ -44,6 +44,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     configFilePath,
     setConfigFilePath,
     compilersDownloaded,
+    solJsonBinData,
     //@ts-ignore
     pluginProps
   } = props // eslint-disable-line
@@ -56,7 +57,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     optimize: false,
     compileTimeout: null,
     timeout: 300,
-    allversions: [],
+    //allversions: [],
     customVersions: [],
     downloaded: [],
     compilerLicense: null,
@@ -69,7 +70,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     remappings: [],
     evmVersion: '',
     createFileOnce: true,
-    onlyDownloaded: false
+    onlyDownloaded: false,
+    updatedVersionSelectorFromUrlQuery: false,
   })
   const [showFilePathInput, setShowFilePathInput] = useState<boolean>(false)
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
@@ -130,22 +132,22 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   })
 
   useEffect(() => {
-    fetchAllVersion((allversions, selectedVersion, isURL) => {
-      console.log('allversions', allversions)
-      setState((prevState) => {
-        return {...prevState, allversions}
-      })
-      if (isURL) _updateVersionSelector(state.defaultVersion, selectedVersion)
-      else {
-        setState((prevState) => {
-          return {...prevState, selectedVersion}
-        })
-        updateCurrentVersion(selectedVersion)
-        _updateVersionSelector(selectedVersion)
+    if(!state.updatedVersionSelectorFromUrlQuery && solJsonBinData.binList && solJsonBinData.binList.length) {
+      const versionFromQueryParameter = getSelectVersionFromQueryParam()
+      if (versionFromQueryParameter.isURL) _updateVersionSelector(state.defaultVersion, versionFromQueryParameter.selectedVersion)
+      else{
+        updateCurrentVersion(versionFromQueryParameter.selectedVersion)
+        _updateVersionSelector(versionFromQueryParameter.selectedVersion)
       }
-    })
-    const currentFileName = api.currentFile
+      setState((prevState) => {
+        return {...prevState, updatedVersionSelectorFromUrlQuery: true}
+      })
+    }
+  }, [solJsonBinData])
 
+
+  useEffect(() => {
+    const currentFileName = api.currentFile
     currentFile(currentFileName)
     listenToEvents(compileTabLogic, api)(dispatch)
   }, [])
@@ -163,7 +165,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         setConfigFilePath(configFilePathSaved)
 
         setState((prevState) => {
-          const params = api.getCompilerParameters()
+          const params = api.getCompilerQueryParameters()
           const optimize = params.optimize
           const runs = params.runs as string
           const evmVersion = compileTabLogic.evmVersions.includes(params.evmVersion) ? params.evmVersion : 'default'
@@ -242,28 +244,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     }
   }, [configurationSettings])
 
-  useEffect(() => {
-    console.log('compilersDownloaded', compilersDownloaded)
-    setState((prevState) => {
-      return {...prevState, downloaded: compilersDownloaded}
-    })
-  },[compilersDownloaded])
-
-  useEffect(() => {
-    updateAllVersionsWithDownloadStatus()
-  }, [state.downloaded])
-
-  const updateAllVersionsWithDownloadStatus = () => {
-    const updatedAllVersions = state.allversions.map((version) => {
-      version.isDownloaded = state.downloaded.includes(version.path)
-      return version
-    })
-    console.log('updatedAllVersions', updatedAllVersions)
-    setState((prevState) => {
-      return {...prevState, allversions: updatedAllVersions}
-    })
-  }
-
   const toggleConfigType = () => {
     if (state.useFileConfiguration)
       if (state.createFileOnce) {
@@ -335,38 +315,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     return semver.coerce(version) ? semver.coerce(version).version : ''
   }
 
-  // fetching both normal and wasm builds and creating a [version, baseUrl] map
-  const fetchAllVersion = async (callback) => {
-    let selectedVersion, allVersionsWasm, isURL
-    let allVersions = [
-      {
-        path: 'builtin',
-        longVersion: 'latest local version - ' + state.defaultVersion
-      }
-    ]
-    let binRes: AxiosResponse
-    let wasmRes: AxiosResponse
+  const getSelectVersionFromQueryParam = () => {
+    let selectedVersion = state.defaultVersion
+    let isURL = false
     try {
-      // fetch normal builds
-      binRes = await axios(`${baseURLBin}/list.json`)
-      // fetch wasm builds
-      wasmRes = await axios(`${baseURLWasm}/list.json`)
-    } catch (e) {
-      selectedVersion = 'builtin'
-      console.log('Error while fetching compiler list', e.message)
-      return callback(allVersions, selectedVersion)
-    }
-    if (binRes.status !== 200 && wasmRes.status !== 200) {
-      selectedVersion = 'builtin'
-      return callback(allVersions, selectedVersion)
-    }
-    try {
-      const versions = binRes.data.builds.slice().reverse()
+      const versions = solJsonBinData.binList
 
-      allVersions = [...allVersions, ...versions]
-      selectedVersion = state.defaultVersion
-      if (api.getCompilerParameters().version) {
-        const versionFromURL = api.getCompilerParameters().version
+      if (api.getCompilerQueryParameters().version) {
+        const versionFromURL = api.getCompilerQueryParameters().version
         // Check if version is a URL and corresponding filename starts with 'soljson'
         if (versionFromURL.startsWith('https://')) {
           const urlArr = versionFromURL.split('/')
@@ -382,29 +338,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           if (selectedVersionArr.length) selectedVersion = selectedVersionArr[0].path
         }
       }
-      if (wasmRes.status === 200) {
-        allVersionsWasm = wasmRes.data.builds.slice().reverse()
-      }
+    
     } catch (e) {
       tooltip(intl.formatMessage({id: 'solidity.tooltipText5'}) + e)
     }
-    // replace in allVersions those compiler builds which exist in allVersionsWasm with new once
-    if (allVersionsWasm && allVersions) {
-      allVersions.forEach((compiler, index) => {
-        const wasmIndex = allVersionsWasm.findIndex((wasmCompiler) => {
-          return wasmCompiler.longVersion === compiler.longVersion
-        })
-        const URLWasm: string = process && process.env && process.env['NX_WASM_URL'] ? process.env['NX_WASM_URL'] : baseURLWasm
-        const URLBin: string = process && process.env && process.env['NX_BIN_URL'] ? process.env['NX_BIN_URL'] : baseURLBin
-        if (wasmIndex !== -1) {
-          allVersions[index] = allVersionsWasm[wasmIndex]
-          pathToURL[compiler.path] = URLWasm
-        } else {
-          pathToURL[compiler.path] = URLBin
-        }
-      })
-    }
-    callback(allVersions, selectedVersion, isURL)
+
+    return {selectedVersion, isURL}
   }
 
   /**
@@ -423,15 +362,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   // Load solc compiler version according to pragma in contract file
   const _setCompilerVersionFromPragma = (filename: string) => {
-    if (!state.allversions) return
+    if (!solJsonBinData.selectorList) return
     api.readFile(filename).then((data) => {
       if (!data) return
       const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
       if (pragmaArr && pragmaArr.length === 1) {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
         const pragma = pragmaStr.substring(0, pragmaStr.length - 1)
-        const releasedVersions = state.allversions.filter((obj) => !obj.prerelease).map((obj) => obj.version)
-        const allVersions = state.allversions.map((obj) => _retrieveVersion(obj.version))
+        const releasedVersions = solJsonBinData.selectorList.filter((obj) => !obj.prerelease).map((obj) => obj.version)
+        const allVersions = solJsonBinData.selectorList.map((obj) => _retrieveVersion(obj.version))
         const currentCompilerName = _retrieveVersion(state.selectedVersion)
         // contains only numbers part, for example '0.4.22'
         const pureVersion = _retrieveVersion()
@@ -443,7 +382,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const isOfficial = allVersions.includes(currentCompilerName)
         if (isOfficial && !isInRange && !isNewestNightly) {
           const compilerToLoad = semver.maxSatisfying(releasedVersions, pragma)
-          const compilerPath = state.allversions.filter((obj) => !obj.prerelease && obj.version === compilerToLoad)[0].path
+          const compilerPath = solJsonBinData.selectorList.filter((obj) => !obj.prerelease && obj.version === compilerToLoad)[0].path
           if (state.selectedVersion !== compilerPath) {
             // @ts-ignore
             api.call('notification', 'toast', intl.formatMessage({id: 'solidity.toastMessage'}, {version: _retrieveVersion(compilerPath)}))
@@ -591,7 +530,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
     }
     updateCurrentVersion(selectedVersion)
-    api.setCompilerParameters({version: selectedVersion})
+    api.setCompilerQueryParameters({version: selectedVersion})
     let url
 
     if (customUrl !== '') {
@@ -605,8 +544,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
       updateCurrentVersion(selectedVersion)
       url = customUrl
-      api.setCompilerParameters({version: selectedVersion})
+      api.setCompilerQueryParameters({version: selectedVersion})
     } else {
+
+      setState((prevState) => {
+        return {
+          ...prevState,
+          selectedVersion,
+        }
+      })
       if (checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed, special chars not allowed.')
       }
@@ -836,7 +782,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
             <CompilerDropdown
-              allversions={state.allversions}
+              allversions={solJsonBinData.selectorList}
               customVersions={state.customVersions}
               selectedVersion={state.selectedVersion}
               defaultVersion={state.defaultVersion}
@@ -851,12 +797,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <FormattedMessage id="solidity.includeNightlyBuilds" />
             </label>
           </div>
+          {platform === appPlatformTypes.desktop ?     
           <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="downloadedcompilers" type="checkbox" onChange={handleOnlyDownloadedChange} checked={state.onlyDownloaded} />
             <label htmlFor="downloadedcompilers" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">
               <FormattedMessage id="solidity.downloadedCompilers" />
             </label>
-          </div>
+          </div>:null}
           <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
             <input
               className="remixui_autocompile custom-control-input"

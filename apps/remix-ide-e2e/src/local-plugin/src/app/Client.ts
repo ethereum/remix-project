@@ -4,7 +4,7 @@ export class RemixPlugin extends PluginClient {
   constructor () {
     super()
     this.methods = ['testCommand']
-    createClient(this)
+    createClient(this as any)
   }
 
   async testCommand (data: any) {

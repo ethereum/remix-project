@@ -97,7 +97,7 @@ const clientProfile: Profile = {
   name: 'xterm',
   displayName: 'xterm',
   description: 'xterm plugin',
-  methods: ['createTerminal', 'close', 'keystroke', 'getShells', 'resize'],
+  methods: ['createTerminal', 'closeTerminal', 'keystroke', 'getShells', 'resize'],
 }
 
 class XtermPluginClient extends ElectronBasePluginClient {
@@ -165,7 +165,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
     return ptyProcess.pid
   }
 
-  async close(pid: number): Promise<void> {
+  async closeTerminal(pid: number): Promise<void> {
     this.terminals[pid].kill()
     delete this.terminals[pid]
     this.emit('close', pid)
