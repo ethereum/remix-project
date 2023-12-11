@@ -82,24 +82,20 @@ module.exports = {
       .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="homeTabModalDialogModalBody-react"]', 'Enter the Gist ID or the URL you would like to load.')
       .waitForElementVisible('*[data-id="homeTabModalDialogCustomPromptText"]')
-      .modalFooterCancelClick('gisthandler')
   },
 
   'Display Error Message For Invalid Gist ID #group1': function (browser: NightwatchBrowser) {
     browser
-      .pause(1000)
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .clickLaunchIcon('filePanel')
-      .scrollAndClick('*[data-id="landingPageImportFromGistButton"]')
-      .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"] input[data-id="homeTabModalDialogCustomPromptText"]')
       .execute(() => {
         (document.querySelector('*[data-id="homeTabModalDialogModalBody-react"] input[data-id="homeTabModalDialogCustomPromptText"]') as any).focus()
       }, [], () => {})
       .setValue('*[data-id="homeTabModalDialogModalBody-react"] input[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidGistId)
-      .modalFooterOKClick('gisthandler')
+      .modalFooterOKClick('homeTab')
       .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"]')
       .assert.containsText('*[data-id="homeTabModalDialogModalBody-react"]', 'Not Found')
-      .modalFooterOKClick('gisthandler')
+      .modalFooterOKClick('homeTab')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]')
+      .waitForElementContainsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidGistId)
   },
 
   'Display Error Message For Missing Gist Token When Publishing #group1': function (browser: NightwatchBrowser) {
@@ -140,7 +136,7 @@ module.exports = {
         (document.querySelector('*[data-id="homeTabModalDialogModalBody-react"] input[data-id="homeTabModalDialogCustomPromptText"]') as any).focus()
       })
       .setValue('*[data-id="homeTabModalDialogModalBody-react"] input[data-id="homeTabModalDialogCustomPromptText"]', testData.validGistId)
-      .modalFooterOKClick('gisthandler')
+      .modalFooterOKClick('homeTab')
       .pause(10000)
       .openFile(`gist-${testData.validGistId}/README.txt`)
       .waitForElementVisible(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt']`)
