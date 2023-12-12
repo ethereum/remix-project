@@ -8,14 +8,12 @@ import ModuleHeading from './moduleHeading'
 
 interface ActivePluginCardContainerProps {
   pluginComponent: PluginManagerComponent
-  setActiveProfiles: React.Dispatch<React.SetStateAction<Profile<any>[]>>
-  activeProfiles: Profile[]
 }
 function ActivePluginCardContainer({pluginComponent}: ActivePluginCardContainerProps) {
   const deactivatePlugin = (pluginName: string) => {
     pluginComponent.deactivateP(pluginName)
   }
-
+  
   const intl = useIntl()
 
   return (

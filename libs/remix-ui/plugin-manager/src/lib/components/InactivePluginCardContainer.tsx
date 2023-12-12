@@ -8,8 +8,6 @@ import ModuleHeading from './moduleHeading'
 
 interface InactivePluginCardContainerProps {
   pluginComponent: PluginManagerComponent
-  setInactiveProfiles: React.Dispatch<React.SetStateAction<Profile<any>[]>>
-  inactiveProfiles: Profile<any>[]
 }
 
 function InactivePluginCardContainer({pluginComponent}: InactivePluginCardContainerProps) {
