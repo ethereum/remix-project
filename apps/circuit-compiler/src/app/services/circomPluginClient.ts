@@ -285,19 +285,35 @@ export class CircomPluginClient extends PluginClient {
           const replacement = 'include "circomlib/circuits/$1";';
 
           dependencyContent = dependencyContent.replace(includeRegex, replacement);
+        } else {
+          if (!include.startsWith('circomlib') && !pathModule.isAbsolute(filePath) && !pathModule.isAbsolute(path)) {
+          // if include is not absolute, resolve it using the parent path of the current file opened in editor
+            const absIncludePath = pathModule.resolve('/' + filePath.slice(0, filePath.lastIndexOf('/')), '/' + path)
+
+            output[filePath] = output[filePath].replace(`${include}`, `${absIncludePath}`)
+            include = absIncludePath
+          }
         }
-
         // extract all includes from the dependency content
-        const dependencyIncludes = (dependencyContent.match(/include ['"].*['"]/g) || []).map((include) => {
-          const includeName = include.replace(/include ['"]/g, '').replace(/['"]/g, '')
+        const dependencyIncludes = (dependencyContent.match(/include ['"].*['"]/g) || []).map((childInclude) => {
+          const includeName = childInclude.replace(/include ['"]/g, '').replace(/['"]/g, '')
 
-          if (!blackPath.includes(includeName)) return includeName
-          else {
+          if (!blackPath.includes(includeName)) {
+            if(!includeName.startsWith('circomlib')) {
+              const absFilePath = pathModule.resolve(include.slice(0, include.lastIndexOf('/')), includeName)
+
+              dependencyContent = dependencyContent.replace(`${includeName}`, `${absFilePath}`)
+              return absFilePath
+            }
+            return includeName
+          } else {
             // if include already exists in output, remove it from the dependency content
-            dependencyContent = dependencyContent.replace(`${include};`, '')
+            const includePattern = new RegExp(`include "\\s*${includeName}\\s*";`, 'g')
+
+            dependencyContent = dependencyContent.replace(includePattern, '')
             return
           }
-        }).filter((include) => include)
+        }).filter((childInclude) => childInclude)
         blackPath.push(include)
         // recursively resolve all dependencies of the dependency
         if (dependencyIncludes.length > 0) {
