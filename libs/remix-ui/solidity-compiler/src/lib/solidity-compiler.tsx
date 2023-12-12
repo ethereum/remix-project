@@ -198,7 +198,6 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
 
   const updateCurrentVersion = (value) => {
     setCurrentVersion(value)
-    api.setCompilerQueryParameters({ version: value })
   }
 
   const modal = async (
