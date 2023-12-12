@@ -58,7 +58,7 @@ export interface iSolJsonBinDataBuild {
     longVersion: string,
     binURL: string,
     wasmURL: string,
-    isDownloaded: boolean,
+    isDownloaded: boolean
 }
 export interface iSolJsonBinData {
     baseURLWasm: string,

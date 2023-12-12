@@ -75,7 +75,7 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
 
   async downloadCompiler(url: string): Promise<void> {
     console.log('downloadCompiler', url)
-
+    if(url.includes('localhost')) return
     const plugin = this
     try {
       const fileName = url.split('/').pop()

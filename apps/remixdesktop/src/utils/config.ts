@@ -8,7 +8,6 @@ console.log('cacheDir', cacheDir)
 
 export const createDefaultConfigLocations = async() => {
   try {
-    console.log('mdkir', cacheDir, fs.existsSync(cacheDir))
     if (!fs.existsSync(cacheDir)) {
       fs.mkdirSync(cacheDir)
     }
