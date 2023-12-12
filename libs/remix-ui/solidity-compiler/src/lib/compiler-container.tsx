@@ -154,7 +154,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         return {...prevState, selectedVersion: version}
       })
       updateCurrentVersion(version)
-      _updateVersionSelector(version)
+      _updateVersionSelector(version, '', false)
     }
   }, [solJsonBinData])
 
@@ -533,7 +533,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileTabLogic.runCompiler(externalCompType)
   }
 
-  const _updateVersionSelector = (version, customUrl = '') => {
+  const _updateVersionSelector = (version, customUrl = '', setQueryParameter = true) => {
     // update selectedversion of previous one got filtered out
     let selectedVersion = version
     if (!selectedVersion || !_shouldBeAdded(selectedVersion)) {
@@ -543,7 +543,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
     }
     updateCurrentVersion(selectedVersion)
-    api.setCompilerQueryParameters({version: selectedVersion})
+    if(setQueryParameter)
+      api.setCompilerQueryParameters({version: selectedVersion})
     let url
 
     if (customUrl !== '') {
@@ -557,7 +558,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
       updateCurrentVersion(selectedVersion)
       url = customUrl
-      api.setCompilerQueryParameters({version: selectedVersion})
+      if(setQueryParameter)
+        api.setCompilerQueryParameters({version: selectedVersion})
     } else {
       if (checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed, special chars not allowed.')
