@@ -331,7 +331,7 @@ export class RemixAppManager extends PluginManager {
       await this.call('filePanel', 'registerContextMenuItem', {
         id: 'fs',
         name: 'revealInExplorer',
-        label: 'Reveal in file explorer',
+        label: navigator.userAgentData.platform.indexOf('mac') > -1 ? 'Reveal in Finder' : 'Reveal in Explorer',
         type: ['folder', 'file'],
         extension: [],
         path: [],
