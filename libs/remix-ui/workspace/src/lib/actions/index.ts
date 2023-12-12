@@ -55,9 +55,9 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const workspaces = await getWorkspaces() || []
     dispatch(setWorkspaces(workspaces))
     if (params.gist) {
-      await createWorkspaceTemplate('gist-sample', 'gist-template')
-      plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace({ name: 'gist-sample', isGitRepo: false }))
+      await createWorkspaceTemplate('code-sample', 'gist-template')
+      plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
+      dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
     } else if (params.code || params.url) {
       await createWorkspaceTemplate('code-sample', 'code-template')
@@ -82,7 +82,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             {id: 5, name: 'goerli'}
           ]
           let found = false
-          const workspaceName = 'etherscan-code-sample'
+          const workspaceName = 'code-sample'
           let filePath
           const foundOnNetworks = []
           for (const network of networks) {

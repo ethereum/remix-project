@@ -128,5 +128,6 @@
   "filePanel.movingFileFailedMsg": "Unexpected error while moving file: {src}",
   "filePanel.movingFolderFailed": "Moving Folder Failed",
   "filePanel.movingFolderFailedMsg": "Unexpected error while moving folder: {src}",
-  "filePanel.workspaceActions": "Workspace actions"
+  "filePanel.workspaceActions": "Workspace actions",
+  "filePanel.saveCodeSample": "This code sample will not be persisted. Please click here to save this code as a persisted workspace."
 }
