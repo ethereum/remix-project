@@ -1,18 +1,32 @@
 import {Profile} from '@remixproject/plugin-utils'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-use-before-define
-import React from 'react'
-import {FormattedMessage} from 'react-intl'
+import React, { useContext, useEffect, useState } from 'react'
+import {FormattedMessage, useIntl} from 'react-intl'
 import '../remix-ui-plugin-manager.css'
 import {CustomTooltip} from '@remix-ui/helper'
+import { AppContext } from '@remix-ui/app'
 interface PluginCardProps {
-  profile: Profile & {
-    icon?: string
-  }
+  profile: any
   buttonText: string
   activatePlugin: (plugin: string) => void
 }
 
 function InactivePluginCard({profile, buttonText, activatePlugin}: PluginCardProps) {
+  const {online} = useContext(AppContext)
+  const [canBeActivated, setCanBeActivated] = useState(false)
+  const intl = useIntl()
+  useEffect(() => {
+    if(!online) {
+      if(profile.url && (!profile.url.includes('http') || profile.url.includes('localhost') || profile.url.includes('127.0.0.1'))) {
+        setCanBeActivated(true)
+      }else{
+        setCanBeActivated(false)
+      }
+    }else{
+      setCanBeActivated(true)
+    }
+  },[online])
+
   return (
     <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
       <article className="list-group-item py-1 mb-1 plugins-list-group-item">
@@ -69,6 +83,7 @@ function InactivePluginCard({profile, buttonText, activatePlugin}: PluginCardPro
                 tooltipClasses="text-nowrap"
                 tooltipText={<FormattedMessage id="pluginManager.activatePlugin" values={{pluginName: profile.displayName || profile.name}} />}
               >
+                {!canBeActivated ? <button className="btn btn-secondary btn-sm">{intl.formatMessage({id: 'pluginManager.UnavailableOffline'})}</button> : (
                 <button
                   onClick={() => {
                     activatePlugin(profile.name)
@@ -77,7 +92,7 @@ function InactivePluginCard({profile, buttonText, activatePlugin}: PluginCardPro
                   data-id={`pluginManagerComponentActivateButton${profile.name}`}
                 >
                   {buttonText}
-                </button>
+                </button>)}
               </CustomTooltip>
             }
           </h6>
