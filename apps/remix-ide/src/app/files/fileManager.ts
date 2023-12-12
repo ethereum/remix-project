@@ -476,7 +476,7 @@ class FileManager extends Plugin {
         })
       })
     } catch (e) {
-      throw new Error(e)
+      return {}
     }
   }
 

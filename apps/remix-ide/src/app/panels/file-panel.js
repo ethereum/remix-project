@@ -100,10 +100,8 @@ module.exports = class Filepanel extends ViewPlugin {
    */
   registerContextMenuItem(item) {
     return new Promise((resolve, reject) => {
-      this.emit('registerContextMenuItemReducerEvent', item, (err, data) => {
-        if (err) reject(err)
-        else resolve(data)
-      })
+      this.emit('registerContextMenuItemReducerEvent', item)
+      resolve(item)
     })
   }
 

@@ -339,6 +339,17 @@ export class RemixAppManager extends PluginManager {
         sticky: true,
         group: 8
       })
+      await this.call('filePanel', 'registerContextMenuItem', {
+        id: 'fs',
+        name: 'openInVSCode',
+        label: 'Open in VSCode',
+        type: ['folder', 'file'],
+        extension: [],
+        path: [],
+        pattern: [],
+        sticky: true,
+        group: 8
+      })
     }
   }
 }

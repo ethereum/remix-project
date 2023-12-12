@@ -17,7 +17,6 @@ export class ElectronProvider extends FileProvider {
 
   async init() {
     this._appManager.on('fs', 'change', async (event, path) => {
-      console.log('change', event, path)
       switch (event) {
       case 'add':
         this.event.emit('fileAdded', path)
@@ -45,8 +44,6 @@ export class ElectronProvider extends FileProvider {
   // isDirectory is already included
   // this is a more efficient version of the default implementation
   async resolveDirectory(path, cb) {
-    console.log('resolveDirectory', path)
-    console.log('start', new Date(new Date().getTime()).toLocaleTimeString())
     path = this.removePrefix(path)
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
@@ -61,8 +58,6 @@ export class ElectronProvider extends FileProvider {
           // ^ ret does not accept path starting with '/'
         }
       }
-      //console.log(ret, 'ret resolveDirectory ELECTRON')
-      console.log('end', new Date(new Date().getTime()).toLocaleTimeString())
       if (cb) cb(null, ret)
       return ret
     } catch (error) {
