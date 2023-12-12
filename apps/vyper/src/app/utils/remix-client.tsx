@@ -1,4 +1,4 @@
-import {HighlightPosition, CompilationResult, RemixApi} from '@remixproject/plugin-api'
+import {HighlightPosition, CompilationResult, RemixApi, customAction} from '@remixproject/plugin-api'
 import {Api, Status} from '@remixproject/plugin-utils'
 import {createClient} from '@remixproject/plugin-webview'
 import {PluginClient} from '@remixproject/plugin'
@@ -35,6 +35,10 @@ export class RemixClient extends PluginClient {
     } catch (err) {
       console.log(err)
     }
+  }
+
+  async vyperCompileCustomAction(action: customAction[]) {
+    console.log(action)
   }
 
   async cloneVyperRepo() {
