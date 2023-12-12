@@ -135,6 +135,17 @@ jobs:
             path: apps/remixdesktop/release/
             destination: remixdesktop-linux
 
+  SSM_Signing:
+    executor: win/server-2022
+    steps:    
+      - run:
+          name: "Client-Tool-Setup"
+          command: |
+            cd C:\
+            curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
+            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
+            & 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools\smksp_cert_sync.exe'
+
   build-remixdesktop-windows:
     executor:
       name: win/default # executor type
@@ -424,6 +435,7 @@ workflows:
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
+      - SSM_Signing
       - build
       - remix-ide-browser:
           requires:
