@@ -143,8 +143,11 @@ jobs:
           command: |
             cd C:\
             curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
-            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
-            & 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools\smksp_cert_sync.exe'
+            msiexec.exe /i smtools-windows-x64.msi /quiet /qn
+     - run:
+          name: "Client-Tool run"
+          command: |
+            'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools\smksp_cert_sync.exe'
 
   build-remixdesktop-windows:
     executor:
