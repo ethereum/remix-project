@@ -38,13 +38,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       cancelFn: () => { },
       handleHide: null
     },
-    solJsonBinData: {
-      baseURLBin,
-      baseURLWasm,
-      binList: [],
-      wasmList: [],
-      selectorList: []
-    },
+    solJsonBinData: null,
     defaultVersion: 'soljson-v0.8.22+commit.4fc1097e.js', // this default version is defined: in makeMockCompiler (for browser test)
   })
   const [currentVersion, setCurrentVersion] = useState('')
