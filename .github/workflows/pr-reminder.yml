@@ -12,6 +12,5 @@ jobs:
     - uses: yann300/pr-reviews-reminder-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITTER_TOKEN: ${{ secrets.GITTER_TOKEN }}
       with:
-        webhook-url: 'https://api.gitter.im/v1/rooms/5e451c02d73408ce4fd98526/chatMessages' # Required
+        webhook-url: 'https://discord.com/api/webhooks/1183697720578416751/lpivNULL2_q1kUGA1yBxQURuvp6I29m47RTMs-UepVMSQKT9MvLi10MAqQCjxY6zWNCF/github' # Required
