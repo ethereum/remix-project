@@ -97,6 +97,8 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
       setState((prevState) => {
         return { ...prevState, importSource: startsWith + state.importSource }
       })
+    } else if (type === 'Gist') {
+      return plugin.call('gistHandler', 'load', state.importSource)
     }
     contentImport.import(
       state.modalInfo.prefix + state.importSource,

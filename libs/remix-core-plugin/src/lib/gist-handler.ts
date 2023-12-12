@@ -85,7 +85,8 @@ export class GistHandler extends Plugin {
     return loadingFromGist
   }
 
-  load (gistId: string | null) {
+  load (value: string | null) {
+    const gistId = getGistId(value)
     const self = this
     return self.handleLoad(gistId, async (gistId: string | null) => {
       let data: any
