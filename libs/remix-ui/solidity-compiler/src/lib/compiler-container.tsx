@@ -789,7 +789,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             >
               <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
-            { solJsonBinData && solJsonBinData.binList && solJsonBinData.binList.length > 0 ? (
+            { solJsonBinData && solJsonBinData.selectorList && solJsonBinData.selectorList.length > 0 ? (
             <CompilerDropdown
               allversions={solJsonBinData.selectorList}
               customVersions={state.customVersions}
