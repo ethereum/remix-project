@@ -29,15 +29,10 @@ export const Preload = () => {
   )
 
   function loadAppComponent() {
-    // log time
-    console.log('app import', new Date().toLocaleString())
     import('../../app')
       .then((AppComponent) => {
-        console.log('app loaded', new Date().toLocaleString())
         const appComponent = new AppComponent.default()
-        console.log('app run', new Date().toLocaleString())
         appComponent.run().then(() => {
-          console.log('Remix loaded', new Date().toLocaleString())
           render(
             <>
               <RemixApp app={appComponent} />

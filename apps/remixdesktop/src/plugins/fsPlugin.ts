@@ -86,7 +86,7 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'openFolderInSameWindow', 'getRecentFolders', 'removeRecentFolder', 'openWindow', 'selectFolder', 'revealInExplorer', 'openInVSCode']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'openFolderInSameWindow', 'getRecentFolders', 'removeRecentFolder', 'openWindow', 'selectFolder', 'revealInExplorer', 'openInVSCode', 'openInVSCode']
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
@@ -331,6 +331,10 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   async revealInExplorer(action: customAction): Promise<void> {
     shell.showItemInFolder(this.fixPath(action.path[0]))
+  }
+
+  async openInVSCode(action: customAction): Promise<void> {
+    shell.openExternal(`vscode://file/${this.fixPath(action.path[0])}`)
   }
 
   fixPath(path: string): string {

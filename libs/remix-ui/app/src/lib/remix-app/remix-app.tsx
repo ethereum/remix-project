@@ -46,7 +46,6 @@ const RemixApp = (props: IRemixAppUi) => {
       setLocale(props.app.localeModule.currentLocale())
     }
     if (props.app) {
-      console.log('app activate', new Date().toLocaleString())
       activateApp()
     }
     const hadUsageTypeAsked = localStorage.getItem('hadUsageTypeAsked')
