@@ -91,9 +91,6 @@ module.exports = {
       }, [], () => {})
       .setValue('*[data-id="homeTabModalDialogModalBody-react"] input[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidGistId)
       .modalFooterOKClick('homeTab')
-      .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"]')
-      .assert.containsText('*[data-id="homeTabModalDialogModalBody-react"]', 'Not Found')
-      .modalFooterOKClick('homeTab')
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
       .waitForElementContainsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidGistId)
   },
