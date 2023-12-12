@@ -435,7 +435,6 @@ workflows:
   run_flaky_tests:
     when: << pipeline.parameters.run_flaky_tests >>
     jobs:
-      - SSM_Signing
       - build
       - remix-ide-browser:
           requires:
@@ -449,6 +448,7 @@ workflows:
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
+      - SSM_Signing
       - build
       - build-desktop:
           filters:
