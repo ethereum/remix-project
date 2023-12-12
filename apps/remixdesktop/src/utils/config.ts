@@ -6,19 +6,25 @@ export const cacheDir = path.join(os.homedir(), '.cache_remix_ide')
 
 console.log('cacheDir', cacheDir)
 
-try {
-  if (!fs.existsSync(cacheDir)) {
-    fs.mkdirSync(cacheDir)
+export const createDefaultConfigLocations = async() => {
+  try {
+    console.log('mdkir', cacheDir, fs.existsSync(cacheDir))
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir)
+    }
+    if (!fs.existsSync(cacheDir + '/compilers')) {
+      fs.mkdirSync(cacheDir + '/compilers')
+    }
+    if (!fs.existsSync(cacheDir + '/remixdesktop.json')) {
+      fs.writeFileSync(cacheDir + '/remixdesktop.json', JSON.stringify({}))
+    }
+  } catch (e) {
+    console.log(e)
   }
-  if (!fs.existsSync(cacheDir + '/compilers')) {
-    fs.mkdirSync(cacheDir + '/compilers')
-  }
-  if(!fs.existsSync(cacheDir + '/remixdesktop.json')) {
-    fs.writeFileSync(cacheDir + '/remixdesktop.json', JSON.stringify({}))
-  }
-} catch (e) {
 }
-export const writeConfig = (data: any) => {
+
+export const writeConfig = async (data: any) => {
+  await createDefaultConfigLocations()
   const cache = readConfig()
   try {
     fs.writeFileSync(cacheDir + '/remixdesktop.json', JSON.stringify({ ...cache, ...data }))
@@ -27,7 +33,8 @@ export const writeConfig = (data: any) => {
   }
 }
 
-export const readConfig = () => {
+export const readConfig = async () => {
+  await createDefaultConfigLocations()
   if (fs.existsSync(cacheDir + '/remixdesktop.json')) {
     try {
       // read the cache file

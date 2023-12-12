@@ -42,17 +42,6 @@ class ConfigPluginClient extends ElectronBasePluginClient {
 
   }
 
-  async onActivation(): Promise<void> {
-    //utilityProcess.fork('/Users/filipmertens/Documents/GitHub/remix-project/apps/remixdesktop/node_modules/yarn/bin/yarn.js')
-    /*const child = utilityProcess.fork(path.join(__dirname, 'utility.js'), [app.getPath('userData')])
-    this.call('terminal' as any, 'log', JSON.stringify(process.env))
-    child.on('message', (data) => {
-      console.log('message from child', data)
-      this.call('terminal', 'log', data)
-    })
-    */
-  }
-
   async writeConfig(data: any): Promise<void> {
     writeConfig(data)
   }
