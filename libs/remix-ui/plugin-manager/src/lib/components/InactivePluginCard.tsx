@@ -84,15 +84,15 @@ function InactivePluginCard({profile, buttonText, activatePlugin}: PluginCardPro
                 tooltipText={<FormattedMessage id="pluginManager.activatePlugin" values={{pluginName: profile.displayName || profile.name}} />}
               >
                 {!canBeActivated ? <button className="btn btn-secondary btn-sm">{intl.formatMessage({id: 'pluginManager.UnavailableOffline'})}</button> : (
-                <button
-                  onClick={() => {
-                    activatePlugin(profile.name)
-                  }}
-                  className="btn btn-success btn-sm"
-                  data-id={`pluginManagerComponentActivateButton${profile.name}`}
-                >
-                  {buttonText}
-                </button>)}
+                  <button
+                    onClick={() => {
+                      activatePlugin(profile.name)
+                    }}
+                    className="btn btn-success btn-sm"
+                    data-id={`pluginManagerComponentActivateButton${profile.name}`}
+                  >
+                    {buttonText}
+                  </button>)}
               </CustomTooltip>
             }
           </h6>
