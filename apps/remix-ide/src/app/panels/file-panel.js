@@ -180,6 +180,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   saveRecent(workspaceName) {
+    if (workspaceName === 'code-sample') return
     if (!localStorage.getItem('recentWorkspaces')) {
       localStorage.setItem('recentWorkspaces', JSON.stringify([ workspaceName ]))
     } else {

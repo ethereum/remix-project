@@ -9,6 +9,13 @@ class WorkspaceFileProvider extends FileProvider {
     this.workspacesPath = '.workspaces'
     this.workspace = null
     this.event = new EventManager()
+
+    try {
+      // make sure "code-sample" has been removed
+      window.remixFileSystem.unlink(this.workspacesPath + '/code-sample')    
+    } catch (e) {
+      console.error(e)
+    }    
   }
 
   setWorkspace (workspace) {

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, useContext, ChangeEvent} from 'react' // eslint-disable-line
 import {FormattedMessage, useIntl} from 'react-intl'
 import {Dropdown} from 'react-bootstrap'
-import {CustomIconsToggle, CustomMenu, CustomToggle, extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
+import {CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
 import {FileExplorer} from './components/file-explorer' // eslint-disable-line
 import {FileSystemContext} from './contexts'
 import './css/remix-ui-workspace.css'
@@ -943,6 +943,14 @@ export function Workspace() {
                     <label className="pl-2 form-check-label" style={{wordBreak: 'keep-all'}}>
                       <FormattedMessage id='filePanel.workspace' />
                     </label>
+                    {selectedWorkspace && selectedWorkspace.name === 'code-sample' && <CustomTooltip
+                      placement="right"
+                      tooltipId="saveCodeSample"
+                      tooltipClasses="text-nowrap"
+                      tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
+                    >
+                      <i onClick={() => renameCurrentWorkspace()} className="far fa-exclamation-triangle text-info ml-2 mt-1" aria-hidden="true"></i>
+                    </CustomTooltip>}
                   </span>                  
                 </div>
                 <div className='mx-2'>
