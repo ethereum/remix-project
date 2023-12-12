@@ -153,12 +153,12 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       longVersion: 'latest local version - ' + state.defaultVersion,
       binURL: '',
       wasmURL: '',
-      isDownloaded: false,
+      isDownloaded: true,
       version: 'builtin',
       build: '',
       prerelease: ''
     }
-    const binVersions = data.binList
+    const binVersions = [...data.binList]
     const selectorList = binVersions
     
     const wasmVersions = data.wasmList

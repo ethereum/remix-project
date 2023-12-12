@@ -109,6 +109,10 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [state.useFileConfiguration])
 
   useEffect(() => {
+    if(online && state.onlyDownloaded){
+      // @ts-ignore
+      api.call('compilerloader','getJsonBinData')
+    }
     setState((prevState) => {
       return {...prevState, onlyDownloaded: !online}
     })
@@ -128,7 +132,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       document.removeEventListener('mousedown', listener)
       document.removeEventListener('touchstart', listener)
     }
-  })
+  }, [])
 
   useEffect(() => {
     if(!state.updatedVersionSelectorFromUrlQuery && solJsonBinData.binList && solJsonBinData.binList.length) {
@@ -144,6 +148,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       setState((prevState) => {
         return {...prevState, updatedVersionSelectorFromUrlQuery: true}
       })
+    } else if(!solJsonBinData.binList || (solJsonBinData.binList && solJsonBinData.binList.length == 0)){
+      const version = 'builtin'
+      setState((prevState) => {
+        return {...prevState, selectedVersion: version}
+      })
+      updateCurrentVersion(version)
+      _updateVersionSelector(version)
     }
   }, [solJsonBinData])
 
@@ -616,6 +627,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const handleLoadVersion = (value) => {
+    if(value !== 'builtin' && !pathToURL[value]) return
     setState((prevState) => {
       return {...prevState, selectedVersion: value, matomoAutocompileOnce: true}
     })
