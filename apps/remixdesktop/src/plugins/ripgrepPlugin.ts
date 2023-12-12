@@ -52,6 +52,7 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
         // replace packed app path with unpacked app path for release on windows
 
         const customRgPath = rgPath.includes('app.asar.unpacked') ? rgPath : rgPath.replace('app.asar', 'app.asar.unpacked')
+        console.log('customRgPath', customRgPath, path)
         const rg = spawn(customRgPath, ['.', '-l', path])
 
         const resultrg: any[] = []

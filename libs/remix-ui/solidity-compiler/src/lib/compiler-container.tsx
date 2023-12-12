@@ -4,18 +4,16 @@ import semver from 'semver'
 import {CompilerContainerProps} from './types'
 import {ConfigurationSettings} from '@remix-project/remix-lib'
 import {checkSpecialChars, CustomTooltip, extractNameFromKey} from '@remix-ui/helper'
-import {canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL} from '@remix-project/remix-solidity'
+import {canUseWorker, urlFromVersion, pathToURL} from '@remix-project/remix-solidity'
 import {compilerReducer, compilerInitialState} from './reducers/compiler'
 import {resetEditorMode, listenToEvents} from './actions/compiler'
 import {getValidLanguage} from '@remix-project/remix-solidity'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import {configFileContent} from './compilerConfiguration'
-import axios, {AxiosResponse} from 'axios'
 import { AppContext, appPlatformTypes } from '@remix-ui/app'
 
 import './css/style.css'
-import { Dropdown } from 'react-bootstrap'
-import { hidden } from 'colors'
+
 import { CompilerDropdown } from './components/compiler-dropdown'
 const defaultPath = 'compiler_config.json'
 
@@ -56,7 +54,6 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     optimize: false,
     compileTimeout: null,
     timeout: 300,
-    //allversions: [],
     customVersions: [],
     downloaded: [],
     compilerLicense: null,
@@ -135,6 +132,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [])
 
   useEffect(() => {
+    if(!solJsonBinData) return
     if(!state.updatedVersionSelectorFromUrlQuery && solJsonBinData.binList && solJsonBinData.binList.length) {
       const versionFromQueryParameter = getSelectVersionFromQueryParam()
       if (versionFromQueryParameter.isURL) _updateVersionSelector(state.defaultVersion, versionFromQueryParameter.selectedVersion)
@@ -332,7 +330,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     let selectedVersion = state.defaultVersion
     let isURL = false
     try {
-      const versions = solJsonBinData.binList
+      const versions = [...solJsonBinData.binList]
+      versions.reverse()
 
       if (api.getCompilerQueryParameters().version) {
         const versionFromURL = api.getCompilerQueryParameters().version
@@ -790,6 +789,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             >
               <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
+            { solJsonBinData && solJsonBinData.binList && solJsonBinData.binList.length > 0 ? (
             <CompilerDropdown
               allversions={solJsonBinData.selectorList}
               customVersions={state.customVersions}
@@ -798,7 +798,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               handleLoadVersion={handleLoadVersion}
               _shouldBeAdded={_shouldBeAdded}
               onlyDownloaded={state.onlyDownloaded}
-            ></CompilerDropdown>
+            ></CompilerDropdown>):null}
           </div>
           <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
