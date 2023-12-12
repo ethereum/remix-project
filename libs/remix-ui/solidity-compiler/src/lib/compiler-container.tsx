@@ -790,15 +790,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
             { solJsonBinData && solJsonBinData.selectorList && solJsonBinData.selectorList.length > 0 ? (
-            <CompilerDropdown
-              allversions={solJsonBinData.selectorList}
-              customVersions={state.customVersions}
-              selectedVersion={state.selectedVersion}
-              defaultVersion={state.defaultVersion}
-              handleLoadVersion={handleLoadVersion}
-              _shouldBeAdded={_shouldBeAdded}
-              onlyDownloaded={state.onlyDownloaded}
-            ></CompilerDropdown>):null}
+              <CompilerDropdown
+                allversions={solJsonBinData.selectorList}
+                customVersions={state.customVersions}
+                selectedVersion={state.selectedVersion}
+                defaultVersion={state.defaultVersion}
+                handleLoadVersion={handleLoadVersion}
+                _shouldBeAdded={_shouldBeAdded}
+                onlyDownloaded={state.onlyDownloaded}
+              ></CompilerDropdown>):null}
           </div>
           <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
