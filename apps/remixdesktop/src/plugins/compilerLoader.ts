@@ -133,19 +133,19 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
     this.solJsonBinData = {
       baseURLWasm: 'http://localhost:' + (server.address() as any).port + '/compilers',
       baseURLBin: 'http://localhost:' + (server.address() as any).port + '/compilers',
-      wasmList: lists.wasmData,
-      binList: lists.binData,
+      wasmList: lists.wasmData || [],
+      binList: lists.binData || [],
     }
     console.log('emit', Date.now())
     const localCompilers = await this.listCompilers()
-    this.solJsonBinData.wasmList = this.solJsonBinData.wasmList.map((item) => {
+    this.solJsonBinData.wasmList && (this.solJsonBinData.wasmList = this.solJsonBinData.wasmList.map((item) => {
       localCompilers.includes(item.path) ? (item.wasmURL = 'http://localhost:' + (server.address() as any).port + '/compilers/') && (item.isDownloaded=true) : (item.wasmURL = baseURLWasm) && (item.isDownloaded = false)
       return item
-    })
-    this.solJsonBinData.binList = this.solJsonBinData.binList.map((item) => {
+    }))
+    this.solJsonBinData.binList && (this.solJsonBinData.binList = this.solJsonBinData.binList.map((item) => {
       localCompilers.includes(item.path) ? (item.binURL = 'http://localhost:' + (server.address() as any).port + '/compilers/') && (item.isDownloaded=true) : (item.binURL = baseURLBin) && (item.isDownloaded = false)
       return item
-    })
+    }))
     this.emit('jsonBinDataLoaded', this.solJsonBinData)
   }
 
