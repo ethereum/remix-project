@@ -178,7 +178,6 @@ const removePluginActions = (plugin, cb: (err: Error, result?: string | number |
 const fileAdded = async (filePath: string) => {
   if (isElectron()) {
     const path = extractParentFromKey(filePath) || ROOT_PATH
-    console.log('fileAdded', filePath, path)
     const isExpanded = await plugin.call('filePanel', 'isExpanded', path)
 
     if (!isExpanded) return

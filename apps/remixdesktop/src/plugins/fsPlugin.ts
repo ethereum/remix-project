@@ -212,7 +212,6 @@ class FSPluginClient extends ElectronBasePluginClient {
         let pathWithoutPrefix = path.replace(this.workingDir, '')
         pathWithoutPrefix = convertPathToPosix(pathWithoutPrefix)
         if (pathWithoutPrefix.startsWith('/')) pathWithoutPrefix = pathWithoutPrefix.slice(1)
-        console.log('eventName', eventName, pathWithoutPrefix)
         if (eventName === 'change') {
           // remove workingDir from path
           const newContent = await fs.readFile(path, 'utf-8')

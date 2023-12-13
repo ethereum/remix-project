@@ -91,3 +91,38 @@ export const SearchingInitialState: SearchState = {
   searching: null,
   run: false,
 }
+
+
+
+export interface SearchInWorkspaceOptions {
+	pattern: string
+	path: string
+  /**
+   * Maximum number of results to return.  Defaults to unlimited.
+   */
+  maxResults?: number
+  /**
+   * Search case sensitively if true.
+   */
+  matchCase?: boolean
+  /**
+   * Search whole words only if true.
+   */
+  matchWholeWord?: boolean
+  /**
+   * Use regular expressions for search if true.
+   */
+  useRegExp?: boolean
+  /**
+   * Include all .gitignored and hidden files.
+   */
+  includeIgnored?: boolean
+  /**
+   * Glob pattern for matching files and directories to include the search.
+   */
+  include?: string[]
+  /**
+   * Glob pattern for matching files and directories to exclude the search.
+   */
+  exclude?: string[]
+}

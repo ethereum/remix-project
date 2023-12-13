@@ -41,7 +41,17 @@ export default class CodeParserImports {
 
   setFileTree = async () => {
     if (Registry.getInstance().get('platform').api.isDesktop()) {
-      const files = await this.plugin.call('ripgrep', 'glob', '/', '**/*.sol')
+      const search = {
+        path: '/',
+        include: ['**/*.sol', '**/*.vy', '**/*.py'],
+        exclude: [],
+        pattern: ['.'],
+        matchCase: false,
+        useRegExp: false,
+        matchWholeWord: false,
+        maxResults: 10000
+      }
+      const files = await this.plugin.call('ripgrep', 'glob', search)
       // only get path property of files
       this.data.files = files.map((x) => x.path)
     } else {

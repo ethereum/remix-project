@@ -5,6 +5,7 @@ import path from 'path'
 import {rgPath} from '@vscode/ripgrep'
 import byline from 'byline'
 import {spawn} from 'child_process'
+import { SearchInWorkspaceOptions } from '../lib'
 
 const profile: Profile = {
   name: 'ripgrep',
@@ -31,6 +32,19 @@ const clientProfile: Profile = {
   methods: ['glob'],
 }
 
+const getArgs = (options?: SearchInWorkspaceOptions) => {
+  const args = ['-l']
+  args.push(options && options.matchCase ? '--case-sensitive' : '--ignore-case')
+  if (options && options.matchWholeWord) {
+    args.push('--word-regexp')
+  }
+  if (options && options.includeIgnored) {
+    args.push('-uu')
+  }
+  args.push(options && options.useRegExp ? '--regexp' : '--fixed-strings')
+  return args
+}
+
 export class RipgrepPluginClient extends ElectronBasePluginClient {
   workingDir: string = ''
   constructor(webContentsId: number, profile: Profile) {
@@ -43,17 +57,35 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
     })
   }
 
-  async glob(path: string, pattern: string, options?: any) {
+  async glob(opts: SearchInWorkspaceOptions) {
     try {
-      const fixedPath = this.fixPath(path)
-      path = convertPathToPosix(fixedPath)
+      opts = JSON.parse(JSON.stringify(opts))
+      const fixedPath = this.fixPath(opts.path)
+      const path = convertPathToPosix(fixedPath)
+
+      const args = getArgs(opts)
+      const globs: string[] = []
+      if (opts && opts.include) {
+        for (const include of opts.include) {
+          if (include !== '') {
+            globs.push('--glob=**/' + include)
+          }
+        }
+      }
+      if (opts && opts.exclude) {
+        for (const exclude of opts.exclude) {
+          if (exclude !== '') {
+            globs.push('--glob=!**/' + exclude)
+          }
+        }
+      }
 
       return new Promise((c, e) => {
         // replace packed app path with unpacked app path for release on windows
 
         const customRgPath = rgPath.includes('app.asar.unpacked') ? rgPath : rgPath.replace('app.asar', 'app.asar.unpacked')
-        console.log('customRgPath', customRgPath, path)
-        const rg = spawn(customRgPath, ['.', '-l', path])
+
+        const rg = spawn(customRgPath, [...globs, ...args,  opts.pattern, path])
 
         const resultrg: any[] = []
 
