@@ -169,7 +169,10 @@ jobs:
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
               yarn
-              yarn dist
+              yarn installRipGrepMacOXarm64
+              yarn dist --mac --arm64
+              yarn installRipGrepMacOXx64
+              yarn dist --mac --x64
               rm -rf release/*-unpacked
       - save_cache:
           key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
