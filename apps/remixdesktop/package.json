@@ -36,7 +36,8 @@
     "cross-env": "^7.0.3",
     "electron": "^25.0.1",
     "electron-builder": "^23.6.0",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.3",
+    "yarn": "^1.22.21"
   },
   "dependencies": {
     "@remix-project/remix-url-resolver": "^0.0.65",
