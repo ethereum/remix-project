@@ -25,6 +25,8 @@
     "start:dev": "tsc && cp -R node_modules/yarn build/tools/ &&  cross-env NODE_ENV=development electron --inspect=5858 .",
     "start:production": "tsc &&  && cp -R node_modules/yarn build/tools/ && cross-env NODE_ENV=production electron .",
     "dist": "tsc  && cp -R node_modules/yarn build/tools/ && electron-builder -p never",
+    "installRipGrepMacOXx64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=x64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
+    "installRipGrepMacOXarm64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=arm64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
@@ -48,12 +50,10 @@
     "axios": "^1.6.1",
     "byline": "^5.0.0",
     "chokidar": "^3.5.3",
-    "esbuild": "^0.19.5",
     "express": "^4.18.2",
     "isomorphic-git": "^1.24.2",
     "node-pty": "^0.10.1",
-    "semver": "^7.5.4",
-    "yarn": "^1.22.21"
+    "semver": "^7.5.4"
   },
   "optionalDependencies": {
     "@remix-project/remix-ws-templates": "^1.0.27"
@@ -73,7 +73,8 @@
         {
           "target": "dmg",
           "arch": [
-            "x64"
+            "x64",
+            "arm64"
           ]
         }
       ],
