@@ -1,10 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {createContext, useReducer} from 'react'
-import {findLinesInStringWithMatch, getDirectory, replaceAllInFile, replaceTextInLine} from '../components/results/SearchHelper'
-import {SearchReducer} from '../reducers/Reducer'
-import {SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState, undoBufferRecord} from '../types'
-import {filePathFilter} from '@jsdevtools/file-path-filter'
-import {escapeRegExp} from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
+import { createContext, useReducer } from 'react'
+import { findLinesInStringWithMatch, getDirectory, replaceAllInFile, replaceTextInLine } from '../components/results/SearchHelper'
+import { SearchReducer } from '../reducers/Reducer'
+import { SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState, undoBufferRecord, SearchInWorkspaceOptions } from '../types'
+import { filePathFilter } from '@jsdevtools/file-path-filter'
+import { escapeRegExp } from 'lodash'
+import { appPlatformTypes } from '@remix-ui/app'
 
 export interface SearchingStateInterface {
   state: SearchState
@@ -36,7 +37,7 @@ export interface SearchingStateInterface {
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
 
-export const SearchProvider = ({children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined} = {}) => {
+export const SearchProvider = ({ children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined, platform = undefined } = {}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const [files, setFiles] = useState([])
   const clearSearchingTimeout = useRef(null)
@@ -148,7 +149,7 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
     updateCount: (count: number, file: string) => {
       dispatch({
         type: 'UPDATE_COUNT',
-        payload: {count, file}
+        payload: { count, file }
       })
     },
     setSearching(file: string) {
@@ -371,7 +372,7 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
 
   useEffect(() => {
     if (state.find) {
-      ;(async () => {
+      ; (async () => {
         try {
           const pathFilter: any = {}
           if (state.include) {
@@ -380,18 +381,47 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
           if (state.exclude) {
             pathFilter.exclude = setGlobalExpression(state.exclude)
           }
-          const filteredFiles = files.filter(filePathFilter(pathFilter)).map((file) => {
-            const r: SearchResult = {
-              filename: file,
-              lines: [],
-              path: file,
-              timeStamp: Date.now(),
-              forceReload: false,
-              count: 0
+
+          if (platform == appPlatformTypes.desktop) {
+            const search: SearchInWorkspaceOptions = {
+              path: '/',
+              pattern: state.find,
+              useRegExp: state.useRegExp,
+              matchCase: state.casesensitive,
+              matchWholeWord: state.matchWord,
+              include: pathFilter.include,
+              exclude: pathFilter.exclude
             }
-            return r
-          })
-          value.setSearchResults(filteredFiles)
+
+            const filesfromripgrep = await plugin.call('ripgrep', 'glob', search)
+
+            const filteredFiles = filesfromripgrep.map((file) => {
+              const r: SearchResult = {
+                filename: file.path,
+                lines: [],
+                path: file.path,
+                timeStamp: Date.now(),
+                forceReload: false,
+                count: 0
+              }
+              return r
+            })
+            value.setSearchResults(filteredFiles)
+          } else {
+            const filteredFiles = files.filter(filePathFilter(pathFilter)).map((file) => {
+              const r: SearchResult = {
+                filename: file,
+                lines: [],
+                path: file,
+                timeStamp: Date.now(),
+                forceReload: false,
+                count: 0
+              }
+              return r
+            })
+            value.setSearchResults(filteredFiles)
+          }
+          
         } catch (e) {
           console.log(e)
         }

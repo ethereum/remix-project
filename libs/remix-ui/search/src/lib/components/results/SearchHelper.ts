@@ -7,10 +7,8 @@ export const getDirectory = async (dir: string, plugin: any) => {
   let result = []
 
   if (Registry.getInstance().get('platform').api.isDesktop()) {
-
-    const files = await plugin.call('ripgrep', 'glob', dir, '**/*')
     // only get path property of files
-    result = files.map(x => x.path)
+    result = []
   } else {
 
     const files = await plugin.call('fileManager', 'readdir', dir)
