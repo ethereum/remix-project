@@ -319,8 +319,8 @@ export class RemixAppManager extends PluginManager {
       group: 7
     })
     await this.call('filePanel', 'registerContextMenuItem', {
-      id: 'vyper',
-      name: 'vyperCompileCustomAction',
+      id: 'filePanel',
+      name: 'performCompileCustomAction',
       label: 'Compile with Vyper',
       type: [],
       extension: ['.vy'],

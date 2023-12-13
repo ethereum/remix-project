@@ -42,6 +42,7 @@ const profile = {
     'registerContextMenuItem',
     'renameWorkspace',
     'deleteWorkspace',
+    'performCompileCustomAction'
   ],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
