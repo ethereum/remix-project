@@ -168,6 +168,7 @@ jobs:
               mkdir apps/remixdesktop/build
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
+              yarn
               yarn dist
               rm -rf release/*-unpacked
       - save_cache:
