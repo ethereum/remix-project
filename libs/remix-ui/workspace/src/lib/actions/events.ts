@@ -195,8 +195,6 @@ const folderAdded = async (folderPath: string) => {
   const path = extractParentFromKey(folderPath) || ROOT_PATH
   if (isElectron()) {
     const isExpanded = await plugin.call('filePanel', 'isExpanded', path)
-
-    console.log('folderAdded', folderPath, path, isExpanded)
     if (!isExpanded) return
   }
   
