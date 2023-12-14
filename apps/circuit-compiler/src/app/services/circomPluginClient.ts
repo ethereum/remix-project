@@ -254,16 +254,27 @@ export class CircomPluginClient extends PluginClient {
             dependencyContent = await this.call('fileManager', 'readFile', relativePath)
           } else {
             if (include.startsWith('circomlib')) {
-              // try to resolve include import from github if it is a circomlib dependency
               const splitInclude = include.split('/')
               const version = splitInclude[1].match(/v[0-9]+.[0-9]+.[0-9]+/g)
 
+              try {
+                // try to resolve include import from .deps folder
+                if (version && version[0]) {
+                  path = `.deps/https/raw.githubusercontent.com/iden3/circomlib/${version[0]}/${splitInclude.slice(2).join('/')}`
+                  dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
+                } else {
+                  path = `.deps/https/raw.githubusercontent.com/iden3/circomlib/master/${splitInclude.slice(1).join('/')}`
+                  dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
+                }
+              } catch (e) {
+                // try to resolve include import from github if it is a circomlib dependency
               if (version && version[0]) {
                 path = `https://raw.githubusercontent.com/iden3/circomlib/${version[0]}/${splitInclude.slice(2).join('/')}`
                 dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
               } else {
                 path = `https://raw.githubusercontent.com/iden3/circomlib/master/${splitInclude.slice(1).join('/')}`
                 dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
+                }
               }
             } else {
               if (depPath) {
@@ -281,10 +292,10 @@ export class CircomPluginClient extends PluginClient {
         }
         if (path.indexOf('https://') === 0) {
           // Regular expression to match include statements and make deps imports uniform
-          const includeRegex = /include "(.+?)";/g;
-          const replacement = 'include "circomlib/circuits/$1";';
+          const includeRegex = /include "(.+?)";/g
+          const replacement = 'include "circomlib/circuits/$1";'
 
-          dependencyContent = dependencyContent.replace(includeRegex, replacement);
+          dependencyContent = dependencyContent.replace(includeRegex, replacement)
         } else {
           if (!include.startsWith('circomlib') && !pathModule.isAbsolute(filePath) && !pathModule.isAbsolute(path)) {
           // if include is not absolute, resolve it using the parent path of the current file opened in editor
@@ -300,7 +311,8 @@ export class CircomPluginClient extends PluginClient {
 
           if (!blackPath.includes(includeName)) {
             if(!includeName.startsWith('circomlib')) {
-              const absFilePath = pathModule.resolve(include.slice(0, include.lastIndexOf('/')), includeName)
+              let absFilePath = pathModule.resolve(include.slice(0, include.lastIndexOf('/')), includeName)
+              absFilePath = include.startsWith('circomlib') ? absFilePath.substring(1) : absFilePath
 
               dependencyContent = dependencyContent.replace(`${includeName}`, `${absFilePath}`)
               return absFilePath
