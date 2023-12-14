@@ -268,12 +268,12 @@ export class CircomPluginClient extends PluginClient {
                 }
               } catch (e) {
                 // try to resolve include import from github if it is a circomlib dependency
-              if (version && version[0]) {
-                path = `https://raw.githubusercontent.com/iden3/circomlib/${version[0]}/${splitInclude.slice(2).join('/')}`
-                dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
-              } else {
-                path = `https://raw.githubusercontent.com/iden3/circomlib/master/${splitInclude.slice(1).join('/')}`
-                dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
+                if (version && version[0]) {
+                  path = `https://raw.githubusercontent.com/iden3/circomlib/${version[0]}/${splitInclude.slice(2).join('/')}`
+                  dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
+                } else {
+                  path = `https://raw.githubusercontent.com/iden3/circomlib/master/${splitInclude.slice(1).join('/')}`
+                  dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
                 }
               }
             } else {
