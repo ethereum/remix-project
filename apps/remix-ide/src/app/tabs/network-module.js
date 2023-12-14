@@ -19,10 +19,16 @@ export class NetworkModule extends Plugin {
   constructor (blockchain) {
     super(profile)
     this.blockchain = blockchain
+
     // TODO: See with remix-lib to make sementic coherent
     this.blockchain.event.register('contextChanged', (provider) => {
       this.emit('providerChanged', provider)
     })
+  }
+
+  onActivation () {
+    // emit the initial provider type
+    this.emit('providerChanged', this.blockchain.getProvider)
   }
 
   /** Return the current network provider (web3, vm, injected) */
