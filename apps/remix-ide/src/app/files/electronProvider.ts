@@ -44,6 +44,7 @@ export class ElectronProvider extends FileProvider {
   // isDirectory is already included
   // this is a more efficient version of the default implementation
   async resolveDirectory(path, cb) {
+    console.log('resolveDirectory', path)
     path = this.removePrefix(path)
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
@@ -58,6 +59,7 @@ export class ElectronProvider extends FileProvider {
           // ^ ret does not accept path starting with '/'
         }
       }
+      console.log('resolveDirectory done')
       if (cb) cb(null, ret)
       return ret
     } catch (error) {

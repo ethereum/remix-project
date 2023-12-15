@@ -13,6 +13,7 @@ import {Drag, Draggable} from '@remix-ui/drag-n-drop'
 import {ROOT_PATH} from '../utils/constants'
 import { fileKeySort } from '../utils'
 import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
+import { FileBlok } from './file-blok'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -334,11 +335,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
+  useEffect(() => {
+    console.log('fe files changed', ROOT_PATH)
+
+  },[files])
+
+  useEffect(() => {
+    console.log('FE RENDER', ROOT_PATH)
+  },[])
+
   const dragStatus = (isDragged: boolean) => {
     props.dragStatus(isDragged)
   }
 
   useEffect(() => {
+    console.log('fe props', files)
+    return
+    console.log('fe props', files[ROOT_PATH])
     if (files[ROOT_PATH]){
       try {
         const children: FileType[] = files[ROOT_PATH] as any
@@ -380,7 +393,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           <div>
             <TreeView id="treeViewMenu">
               {files[ROOT_PATH] &&
-                childrenKeys.map((key, index) => (
+                Object.keys(files[ROOT_PATH]).map((key, index) => (
+                  <>
                   <FileRender
                     file={files[ROOT_PATH][key]}
                     fileDecorations={fileState}
@@ -399,6 +413,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     hideIconsMenu={props.hideIconsMenu}
                     dragStatus={state.dragStatus}
                   />
+                  </>
                 ))
               }
             </TreeView>
