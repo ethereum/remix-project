@@ -18,6 +18,8 @@ export class fsPlugin extends ElectronPlugin {
     })
     this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'setWorkingDir', 'getRecentFolders', 'openWindow']
 
+
+
     // List of commands all filesystems are expected to provide. `rm` is not
     // included since it may not exist and must be handled as a special case
     const commands = [
@@ -114,6 +116,7 @@ export class fsPlugin extends ElectronPlugin {
 
     }
 
+    
 
 
 
@@ -132,6 +135,14 @@ export class fsPlugin extends ElectronPlugin {
     this.on('fs', 'workingDirChanged', async (path: string) => {
       workingDir = path
       await this.call('fileManager', 'refresh')
+    })
+    this.on('fs', 'error', async (error: string) => {
+      if(error === 'ENOSPC'){
+        this.call('notification', 'alert', {
+          id: 'fsError',
+          message: 'Cannot watch file changes. There are too many files in your project.'
+        })
+      }
     })
   }
 
