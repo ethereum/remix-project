@@ -148,9 +148,13 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async rmdir(path: string): Promise<void> {
-    return fs.rm(this.fixPath(path), {
+    if (this.watcher) await this.watcher.close()
+    await fs.rm(this.fixPath(path), {
       recursive: true,
     })
+    this.emit('change', 'unlinkDir', path)
+    await this.watch()
+    
   }
 
   async unlink(path: string): Promise<void> {
@@ -199,7 +203,9 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async watch(): Promise<void> {
+
     if (this.watcher) this.watcher.close()
+    try{
     this.watcher = chokidar
       .watch(this.workingDir, {
         ignorePermissionErrors: true,
@@ -207,11 +213,14 @@ class FSPluginClient extends ElectronBasePluginClient {
         ignored: [
           '**/.git/index.lock', // this file is created and unlinked all the time when git is running on Windows
         ],
+        depth: 20
+        
       })
       .on('all', async (eventName, path, stats) => {
         let pathWithoutPrefix = path.replace(this.workingDir, '')
         pathWithoutPrefix = convertPathToPosix(pathWithoutPrefix)
         if (pathWithoutPrefix.startsWith('/')) pathWithoutPrefix = pathWithoutPrefix.slice(1)
+
         if (eventName === 'change') {
           // remove workingDir from path
           const newContent = await fs.readFile(path, 'utf-8')
@@ -233,6 +242,16 @@ class FSPluginClient extends ElectronBasePluginClient {
           }
         }
       })
+      .on('error', error => {
+        this.watcher.close()
+        if(error.message.includes('ENOSPC')) {
+          this.emit('error', 'ENOSPC')
+        }
+        console.log(`Watcher error: ${error}`)
+      })
+    }catch(e){
+      console.log('error watching', e)
+    }
   }
 
   async closeWatch(): Promise<void> {
@@ -274,7 +293,7 @@ class FSPluginClient extends ElectronBasePluginClient {
     writeConfig(config)
   }
 
-  async selectFolder(path?: string): Promise<string> {
+  async selectFolder(path?: string, title?: string): Promise<string> {
     let dirs: string[] | undefined
     if (!path) {
       dirs = dialog.showOpenDialogSync(this.window, {
