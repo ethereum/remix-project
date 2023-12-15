@@ -272,6 +272,7 @@ export default class FileProvider {
   }
 
   async resolveDirectory (path, cb) {
+    const startTime = Date.now()
     path = this.removePrefix(path)
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
@@ -286,6 +287,7 @@ export default class FileProvider {
           // ^ ret does not accept path starting with '/'
         }
       }
+      console.log(`resolveDirectory ${path} took ${Date.now() - startTime} ms`)
       if (cb) cb(null, ret)
       return ret
     } catch (error) {
