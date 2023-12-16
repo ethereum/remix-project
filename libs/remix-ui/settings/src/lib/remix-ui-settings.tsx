@@ -30,6 +30,7 @@ import { RemixUiThemeModule, ThemeModule } from '@remix-ui/theme-module'
 import { RemixUiLocaleModule, LocaleModule } from '@remix-ui/locale-module'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { GithubSettings } from './github-settings'
+import { GitlabSettings } from './gitlab-settings'
 import { EtherscanSettings } from './etherscan-settings'
 import { SindriSettings } from './sindri-settings'
 
@@ -588,6 +589,19 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           removeTokenToast(props.config, dispatchToast, 'gist-access-token')
           removeTokenToast(props.config, dispatchToast, 'github-user-name')
           removeTokenToast(props.config, dispatchToast, 'github-email')
+        }}
+        config={props.config}
+      />
+      <GitlabSettings
+        saveToken={(gitlabToken: string, gitlabUserName: string, gitlabEmail: string) => {
+          saveTokenToast(props.config, dispatchToast, gitlabToken, 'gitlab-token')
+          saveTokenToast(props.config, dispatchToast, gitlabUserName, 'gitlab-user-name')
+          saveTokenToast(props.config, dispatchToast, gitlabEmail, 'gitlab-email')
+        }}
+        removeToken={() => {
+          removeTokenToast(props.config, dispatchToast, 'gitlab-token')
+          removeTokenToast(props.config, dispatchToast, 'gitlab-user-name')
+          removeTokenToast(props.config, dispatchToast, 'gitlab-email')
         }}
         config={props.config}
       />
