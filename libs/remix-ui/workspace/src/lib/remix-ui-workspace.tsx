@@ -556,11 +556,9 @@ export function Workspace() {
 
   const handleTypingUrl = () => {
     const url = cloneUrlRef.current.value
-    const corsproxy = corsproxyUrlRef.current.value
 
-    if (corsproxy) {
-      config.set('corsproxy', corsproxy)
-    }
+    const corsproxy = corsproxyUrlRef.current.value
+    config.set('corsproxy', corsproxy)
 
     if (url) {
       global.dispatchCloneRepository(url)
