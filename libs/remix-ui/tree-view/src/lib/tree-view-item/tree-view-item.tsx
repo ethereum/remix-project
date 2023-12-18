@@ -1,18 +1,19 @@
 import React, {useState, useEffect} from 'react' // eslint-disable-line
-import {TreeViewItemProps} from '../../types'
+import {TreeViewItemProps, TreeViewItemPropsUpdates } from '../../types'
 
 import './tree-view-item.css'
 
-export const TreeViewItem = (props: TreeViewItemProps) => {
-  const {id, children, label, labelClass, expand, iconX = 'fas fa-caret-right', iconY = '', icon, controlBehaviour = false, innerRef, showIcon = true, ...otherProps} = props
+export const TreeViewItem = (props: TreeViewItemPropsUpdates) => {
+  const {id, children, label, labelClass, expand, iconX = 'fas fa-caret-right', iconY = '', icon, controlBehaviour = false, innerRef, showIcon = true, onMouseEnter, onMouseLeave, ...otherProps} = props
   const [isExpanded, setIsExpanded] = useState(false)
-  console.log(props)
   useEffect(() => {
     setIsExpanded(expand)
   }, [expand])
 
   return (
-    <li ref={innerRef} key={`treeViewLi${id}`} data-id={`treeViewLi${id}`} className="li_tv" {...otherProps}>
+    <li ref={innerRef} key={`treeViewLi${id}`} data-id={`treeViewLi${id}`} className="li_tv" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
+      {...otherProps}
+    >
       <div
         key={`treeViewDiv${id}`}
         data-id={`treeViewDiv${id}`}
