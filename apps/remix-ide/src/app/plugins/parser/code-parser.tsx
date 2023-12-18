@@ -193,11 +193,19 @@ export class CodeParser extends Plugin {
     })
 
     this.on('config', 'configChanged', async (config) => {
-      await this.reload()
+      if (config.key === 'settings/auto-completion' || 
+          config.key === 'settings/display-errors' || 
+          config.key === 'settings/show-gas') {
+        await this.reload()
+      }
     })
 
     this.on('settings', 'configChanged', async (config) => {
-      await this.reload()
+      if (config.key === 'settings/auto-completion' || 
+          config.key === 'settings/display-errors' || 
+          config.key === 'settings/show-gas') {
+        await this.reload()
+      }
     })
 
     await this.compilerService.init()

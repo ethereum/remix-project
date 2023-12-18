@@ -370,7 +370,9 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
 
   let evmVersion = null
   try {
-    evmVersion = JSON.parse(loadedContractData.metadata).settings.evmVersion
+    if (loadedContractData && loadedContractData.metadata) {
+      evmVersion = JSON.parse(loadedContractData.metadata).settings.evmVersion
+    }
   } catch (err) {}
   return (
     <div className="udapp_container mb-2" data-id="contractDropdownContainer">
