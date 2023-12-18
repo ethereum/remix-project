@@ -7,7 +7,7 @@ import {Receipt} from '../types'
 
 import {VerifyView} from './VerifyView'
 
-export const HomeView: React.FC = () => {
+export const HomeView: React.FC<React.PropsWithChildren> = () => {
   return (
     <AppContext.Consumer>
       {({apiKey, clientInstance, setReceipts, receipts, contracts, networkName}) => {

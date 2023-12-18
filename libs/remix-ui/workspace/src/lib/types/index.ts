@@ -5,6 +5,7 @@ import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { appPlatformTypes } from '@remix-ui/app'
+import { Placement } from 'react-bootstrap/esm/types'
 
 export type action = { name: string, type?: Array<WorkspaceElement>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number, platform?: appPlatformTypes }
 export interface JSONStandardInput {
@@ -129,7 +130,7 @@ export interface FileExplorerProps {
     handleNewFolderInput: (parentFolder?: string) => Promise<void>
     dragStatus: (status: boolean) => void
 }
-type Placement = import('react-overlays/usePopper').Placement
+
 export interface FileExplorerMenuProps {
   title: string
   menuItems: string[]
