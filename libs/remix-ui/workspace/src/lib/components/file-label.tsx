@@ -15,12 +15,14 @@ export interface FileLabelProps {
   fileDecorations: fileDecoration[]
   editModeOff: (content: string) => void
   dragStatus: boolean
+  hover: boolean
 }
 
 export const FileLabel = (props: FileLabelProps) => {
   const {file, focusEdit, editModeOff, fileDecorations} = props
   const [isEditable, setIsEditable] = useState<boolean>(false)
   const [fileStateClasses, setFileStateClasses] = useState<string>('')
+
   const labelRef = useRef(null)
 
   useEffect(() => {
@@ -92,7 +94,7 @@ export const FileLabel = (props: FileLabelProps) => {
             {file.name}
           </span>
         </CustomTooltip>
-        <div className={`d-flex flex-row align-items-center`}>
+        {props.hover && <div className={`d-flex flex-row align-items-center`}>
           {
             file.isDirectory ? (
               <>
@@ -136,6 +138,7 @@ export const FileLabel = (props: FileLabelProps) => {
             <span className="far fa-trash fa-1x ml-3"></span>
           </CustomTooltip>
         </div>
+        }
       </div>
     </div>
   )

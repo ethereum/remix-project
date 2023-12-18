@@ -108,7 +108,7 @@ export const FileRender = (props: RenderFileProps) => {
           <>
             <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
               <div className="d-flex flex-row">
-                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} />
+                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} hover={hover}/>
                 <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>
             </Draggable>
@@ -119,8 +119,8 @@ export const FileRender = (props: RenderFileProps) => {
         labelClass={labelClass}
         controlBehaviour={props.ctrlKey}
         expand={props.expandPath.includes(file.path)}
-        onMouseOver={handleMouseOver}
-        onMouseOut={handleMouseOut}
+        onMouseEnter={handleMouseOver}
+        onMouseLeave={handleMouseOut}
       >
         {file.child ? (
           <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps}>
@@ -157,7 +157,7 @@ export const FileRender = (props: RenderFileProps) => {
           <>
             <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
               <div className="d-flex flex-row">
-                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} />
+                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} hover={hover}/>
                 <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>
             </Draggable>
@@ -167,8 +167,8 @@ export const FileRender = (props: RenderFileProps) => {
         onContextMenu={handleContextMenu}
         icon={icon}
         labelClass={labelClass}
-        onMouseOver={handleMouseOver}
-        onMouseOut={handleMouseOut}
+        onMouseEnter={handleMouseOver}
+        onMouseLeave={handleMouseOut}
       />
     )
   }
