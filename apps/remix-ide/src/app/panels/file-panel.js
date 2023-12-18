@@ -82,6 +82,21 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   /**
+   * Perform a compile on currently selected file via contextmenu
+   * @param {Array<{extension: string[], group: number, id:string, label:string, name: string, path: string[], patterns: any[], sticky: boolean, type: any[]}>} action
+   */
+  async performCompileCustomAction (action) {
+    if (action.extension[0] === '.vy') {
+      const isActive = await this.call('manager', 'isActive', 'vyper')
+      if (!isActive) {
+        await this.call('manager', 'activatePlugin', 'vyper')
+      }
+
+      console.log(action, isActive)
+    }
+  }
+
+  /**
    * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
    * typically:
    * group 0 for file manipulations
