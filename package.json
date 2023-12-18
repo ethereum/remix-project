@@ -386,6 +386,6 @@
     "webpack-cli": "^4.10.0"
   },
   "resolutions": {
-    "@types/react": "^17.0.24"
+    "@types/react": "^18.2.0"
   }
 }
