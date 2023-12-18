@@ -79,18 +79,64 @@ export const FileLabel = (props: FileLabelProps) => {
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-      <CustomTooltip
-        placement="top"
-        delay={{show: 1000, hide: 0}}
-        tooltipText={`${file.path}`}
-        tooltipId={`fileExplorer.${file.path}`}
-        tooltipClasses="text-nowrap"
-        hide={props.dragStatus}
-      >
-        <span className={`remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder' : 'remixui_leaf')} data-path={file.path}>
-          {file.name}
-        </span>
-      </CustomTooltip>
+      <div className="d-flex flex-row align-items-center w-100">
+        <CustomTooltip
+          placement="top"
+          delay={{show: 1000, hide: 0}}
+          tooltipText={`${file.path}`}
+          tooltipId={`fileExplorer.${file.path}`}
+          tooltipClasses="text-nowrap"
+          hide={props.dragStatus}
+        >
+          <span className={`remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder w-100' : 'remixui_leaf')} data-path={file.path}>
+            {file.name}
+          </span>
+        </CustomTooltip>
+        <div className={`d-flex flex-row align-items-center`}>
+          {
+            file.isDirectory ? (
+              <>
+                <CustomTooltip
+                  placement="right-start"
+                  delay={{show: 1000, hide: 0}}
+                  tooltipText={<FormattedMessage id="fileExplorer.edit" />}
+                  tooltipId={`fileExplorer.edit.${file.path}`}
+                  tooltipClasses="text-nowrap"
+                >
+                  <span className="far fa-file fa-1x ml-3"></span>
+                </CustomTooltip>
+                <CustomTooltip
+                  placement="right-start"
+                  delay={{show: 1000, hide: 0}}
+                  tooltipText={<FormattedMessage id="fileExplorer.edit" />}
+                  tooltipId={`fileExplorer.edit.${file.path}`}
+                  tooltipClasses="text-nowrap"
+                >
+                  <span className="far fa-folder fa-1x ml-3 mr-3"></span>
+                </CustomTooltip>
+              </>
+            ) : null
+          }
+          <CustomTooltip
+            placement="right-start"
+            delay={{show: 1000, hide: 0}}
+            tooltipText={<FormattedMessage id="fileExplorer.edit" />}
+            tooltipId={`fileExplorer.edit.${file.path}`}
+            tooltipClasses="text-nowrap"
+          >
+            <span className="far fa-pen fa-1x"></span>
+          </CustomTooltip>
+          <CustomTooltip
+            placement="right-start"
+            delay={{show: 1000, hide: 0}}
+            tooltipText={<FormattedMessage id="fileExplorer.edit" />}
+            tooltipId={`fileExplorer.edit.${file.path}`}
+            tooltipClasses="text-nowrap"
+          >
+            <span className="far fa-trash fa-1x ml-3"></span>
+          </CustomTooltip>
+        </div>
+      </div>
     </div>
   )
 }

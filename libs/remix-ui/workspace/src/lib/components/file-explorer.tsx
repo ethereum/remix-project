@@ -35,7 +35,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   const treeRef = useRef<HTMLDivElement>(null)
   const [childrenKeys, setChildrenKeys] = useState<string[]>([])
-
+  console.log(state)
   useEffect(() => {
     if (contextMenuItems) {
       addMenuItems(contextMenuItems)
@@ -63,6 +63,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
       })
     }
   }, [props.focusEdit])
+
+  useEffect(() => {
+    document.addEventListener('keydown', (e) => {
+      console.log(e.key)
+    })
+  }, [])
 
   useEffect(() => {
     setState(workspaceState)
@@ -351,7 +357,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [props])
 
-
+  console.log(props)
   return (
     <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove} dragStatus={dragStatus}>
       <div ref={treeRef} tabIndex={0} style={{outline: 'none'}}>

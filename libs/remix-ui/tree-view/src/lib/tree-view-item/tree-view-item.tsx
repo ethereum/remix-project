@@ -6,7 +6,7 @@ import './tree-view-item.css'
 export const TreeViewItem = (props: TreeViewItemProps) => {
   const {id, children, label, labelClass, expand, iconX = 'fas fa-caret-right', iconY = '', icon, controlBehaviour = false, innerRef, showIcon = true, ...otherProps} = props
   const [isExpanded, setIsExpanded] = useState(false)
-
+  console.log(props)
   useEffect(() => {
     setIsExpanded(expand)
   }, [expand])
@@ -20,7 +20,9 @@ export const TreeViewItem = (props: TreeViewItemProps) => {
         onClick={() => !controlBehaviour && setIsExpanded(!isExpanded)}
       >
         {children && showIcon ? (
-          <div className={isExpanded ? `pl-2 ${iconY}` : `pl-2 ${iconX} caret caret_tv`} style={{visibility: children ? 'visible' : 'hidden'}}></div>
+          <div className={isExpanded ? `pl-2 ${iconY}` : `pl-2 ${iconX} caret caret_tv`} style={{visibility: children ? 'visible' : 'hidden'}}>
+
+          </div>
         ) : icon ? (
           <div className={`pr-2 pl-2 ${icon} caret caret_tv`}></div>
         ) : null}
