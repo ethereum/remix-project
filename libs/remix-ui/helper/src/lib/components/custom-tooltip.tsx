@@ -27,7 +27,7 @@ export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, 
                 <>{typeof tooltipText === 'string' ? <span className={'text-wrap p-1 px-2 bg-secondary ' + { tooltipTextClasses }}>{tooltipText}</span> : tooltipText}</>
               </Popover.Body>
             </Popover>
-            </>}
+          </>}
           delay={delay}
         >
           <>{children}</>
