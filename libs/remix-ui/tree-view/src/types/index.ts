@@ -24,3 +24,8 @@ export interface TreeViewItemProps {
     onBlur?: (...args: any) => void,
     showIcon?: boolean
 }
+
+export interface TreeViewItemPropsUpdates extends TreeViewItemProps {
+  onMouseEnter?: (...args: any) => void,
+  onMouseLeave?: (...args: any) => void,
+}
