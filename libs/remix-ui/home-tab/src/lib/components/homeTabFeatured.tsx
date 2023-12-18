@@ -41,6 +41,38 @@ function HomeTabFeatured() {
               dotListClass="position-relative mt-2"
             >
               <div className="mx-1 px-1 d-flex">
+                <a href="https://cryptpad.fr/form/#/2/form/view/pV-DdryeJoYUWvW+gXsFaMNynEY7t5mUsgeD1urgwSE/" target="__blank">
+                  <img src={'/assets/img/soliditySurvey2023.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
+                </a>
+                <div className="h6 w-50 p-2 pl-4  align-self-center" style={{flex: '1'}}>
+                  <h5>
+                  The Solidity Developer Survey 2023 is live!
+                  </h5>
+                  <p className='pt-2'>
+                    Please take a few minute of your time to 
+                    <a
+                      className="mx-1"
+                      onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey23'])}
+                      target="__blank"
+                      href="https://soliditylang.org/blog/2023/12/08/solidity-developer-survey-2023-announcement/"
+                    >
+                      COMPLETE THE SURVEY. 
+                    </a>
+                  </p>
+                  <p style={{fontSize: '0.8rem'}} className="mb-3">
+                    Thank you for your support! Read the full announcement
+                    <a
+                      className="remixui_home_text mx-1"
+                      onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey23'])}
+                      target="__blank"
+                      href="https://soliditylang.org/blog/2023/12/08/solidity-developer-survey-2023-announcement/"
+                    >
+                      here.
+                    </a>
+                  </p>
+                </div>
+              </div>
+              <div className="mx-1 px-1 d-flex">
                 <a href="https://medium.com/remix-ide/remix-release-v0-38-0-dccd551b6f1e" target="__blank">
                   <img src={'assets/img/remi_drums_whatsnew.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
