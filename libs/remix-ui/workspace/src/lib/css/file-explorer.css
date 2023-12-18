@@ -20,6 +20,9 @@ input[type="file"] {
     font-size         : 14px;
     cursor            : pointer;
 }
+.remixui_folder_space {
+    width: 90%;
+}
 .remixui_file               {
     padding           : 4px;
 }

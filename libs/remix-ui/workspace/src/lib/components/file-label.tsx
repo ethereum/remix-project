@@ -81,7 +81,7 @@ export const FileLabel = (props: FileLabelProps) => {
       onKeyDown={handleEditInput}
       onBlur={handleEditBlur}
     >
-      <div className="d-flex flex-row align-items-center w-100">
+      <div className="d-flex flex-row w-100">
         <CustomTooltip
           placement="top"
           delay={{show: 1000, hide: 0}}
@@ -90,11 +90,11 @@ export const FileLabel = (props: FileLabelProps) => {
           tooltipClasses="text-nowrap"
           hide={props.dragStatus}
         >
-          <span className={`remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder w-100' : 'remixui_leaf')} data-path={file.path}>
+          <span className={`remixui_label ${fileStateClasses} ` + (file.isDirectory ? 'folder remixui_folder_space' : 'remixui_leaf')} data-path={file.path}>
             {file.name}
           </span>
         </CustomTooltip>
-        {props.hover && <div className={`d-flex flex-row align-items-center`}>
+        {props.hover && <div className={`d-flex flex-row align-items-center`} style={{ marginLeft: '8rem' }}>
           {
             file.isDirectory ? (
               <>
@@ -105,7 +105,7 @@ export const FileLabel = (props: FileLabelProps) => {
                   tooltipId={`fileExplorer.edit.${file.path}`}
                   tooltipClasses="text-nowrap"
                 >
-                  <span className="far fa-file fa-1x ml-3"></span>
+                  <span className="far fa-folder fa-1x mr-1"></span>
                 </CustomTooltip>
                 <CustomTooltip
                   placement="right-start"
@@ -114,7 +114,7 @@ export const FileLabel = (props: FileLabelProps) => {
                   tooltipId={`fileExplorer.edit.${file.path}`}
                   tooltipClasses="text-nowrap"
                 >
-                  <span className="far fa-folder fa-1x ml-3 mr-3"></span>
+                  <span className="far fa-file fa-1x ml-1 mr-1"></span>
                 </CustomTooltip>
               </>
             ) : null
@@ -126,7 +126,7 @@ export const FileLabel = (props: FileLabelProps) => {
             tooltipId={`fileExplorer.edit.${file.path}`}
             tooltipClasses="text-nowrap"
           >
-            <span className="far fa-pen fa-1x"></span>
+            <span className="far fa-pen fa-1x mr-1"></span>
           </CustomTooltip>
           <CustomTooltip
             placement="right-start"
@@ -135,7 +135,7 @@ export const FileLabel = (props: FileLabelProps) => {
             tooltipId={`fileExplorer.edit.${file.path}`}
             tooltipClasses="text-nowrap"
           >
-            <span className="far fa-trash fa-1x ml-3"></span>
+            <span className="far fa-trash fa-1x"></span>
           </CustomTooltip>
         </div>
         }
