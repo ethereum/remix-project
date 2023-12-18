@@ -35,6 +35,7 @@
   "settings.username": "USERNAME",
   "settings.email": "EMAIL",
   "settings.deleteGithubCredentials": "Delete Github Credentials",
+  "settings.deleteGitlabCredentials": "Delete Gitlab Credentials",
   "settings.privateBeeAddress": "PRIVATE BEE ADDRESS",
   "settings.postageStampID": "POSTAGE STAMP ID",
   "settings.host": "HOST",
