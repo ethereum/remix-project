@@ -645,14 +645,6 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     })
 
-    // zoomin zoomout
-    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_EQUAL, () => {
-      editor.updateOptions({fontSize: editor.getOption(51) + 1})
-    })
-    editor.addCommand(monacoRef.current.KeyMod.CtrlCmd | (monacoRef.current.KeyCode as any).US_MINUS, () => {
-      editor.updateOptions({fontSize: editor.getOption(51) - 1})
-    })
-
     // add context menu items
     const zoominAction = {
       id: 'zoomIn',
@@ -664,7 +656,7 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Equal,
       ],
       run: () => {
-        editor.updateOptions({fontSize: editor.getOption(51) + 1})
+        editor.trigger('keyboard', 'editor.action.fontZoomIn', {});
       }
     }
     const zoomOutAction = {
@@ -677,7 +669,7 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.Minus,
       ],
       run: () => {
-        editor.updateOptions({fontSize: editor.getOption(51) - 1})
+        editor.trigger('keyboard', 'editor.action.fontZoomOut', {});
       }
     }
     const formatAction = {

@@ -13,6 +13,12 @@ export function ValueUI(props: ValueProps) {
     sendValue !== props.sendValue && props.setSendValue(sendValue)
   }, [sendValue])
 
+  useEffect(() => {
+    if(props.sendValue !== sendValue) {
+      setSendValue(props.sendValue)
+    }
+  },[props.sendValue])
+
   const validateInputKey = (e) => {
     // preventing not numeric keys
     // preventing 000 case
@@ -63,7 +69,7 @@ export function ValueUI(props: ValueProps) {
             data-id="dandrValue"
             onKeyPress={validateInputKey}
             onChange={validateValue}
-            value={props.sendValue}
+            value={sendValue}
           />
         </CustomTooltip>
 
