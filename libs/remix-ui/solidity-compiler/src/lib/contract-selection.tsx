@@ -310,7 +310,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 </span>
               </CustomTooltip>
             </button>
-            {console.log(payload)}
+
             <button
               data-id="compilation-details"
               className="btn btn-secondary btn-block"
