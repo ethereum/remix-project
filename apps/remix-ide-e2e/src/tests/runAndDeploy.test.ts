@@ -25,9 +25,10 @@ module.exports = {
   'Should load run and deploy tab and check value validation #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
-      .validateValueInput('#value', '0000', '0')
-      .validateValueInput('#value', '', '0')
-      .validateValueInput('#value', 'dragon', '0')
+      .validateValueInput('*[data-id="dandrValue"]', '999', '999')
+      .validateValueInput('*[data-id="dandrValue"]', '0000', '0')
+      .validateValueInput('*[data-id="dandrValue"]', '1.3', '0') // no decimal
+      // .validateValueInput('*[data-id="dandrValue"]', 'dragon', '0') // only numbers
   },
 
   'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
