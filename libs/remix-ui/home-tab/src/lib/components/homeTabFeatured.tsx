@@ -40,7 +40,7 @@ function HomeTabFeatured() {
               autoPlaySpeed={15000}
               dotListClass="position-relative mt-2"
             >
-              <div className="mx-1 px-1 d-flex">
+              <div className="mr-1 pr-1 d-flex">
                 <a href="https://cryptpad.fr/form/#/2/form/view/pV-DdryeJoYUWvW+gXsFaMNynEY7t5mUsgeD1urgwSE/" target="__blank">
                   <img src={'/assets/img/soliditySurvey2023.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
@@ -72,7 +72,7 @@ function HomeTabFeatured() {
                   </a>
                 </div>
               </div>
-              <div className="mx-1 px-1 d-flex">
+              <div className="mr-1 pr-1 d-flex">
                 <a href="https://medium.com/remix-ide/remix-release-v0-38-0-dccd551b6f1e" target="__blank">
                   <img src={'assets/img/remi_drums_whatsnew.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
@@ -98,7 +98,7 @@ function HomeTabFeatured() {
                   </a>
                 </div>
               </div>
-              <div className="mx-1 px-1 d-flex">
+              <div className="mr-1 pr-1 d-flex">
                 <a href="https://remix-project.org" target="__blank">
                   <img src={'assets/img/bgRemi_small.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
@@ -119,7 +119,7 @@ function HomeTabFeatured() {
                   </a>
                 </div>
               </div>
-              <div className="mx-1 px-1 d-flex">
+              <div className="mr-1 pr-1 d-flex">
                 <a href="https://www.youtube.com/@EthereumRemix/videos" target="__blank">
                   <img src={'/assets/img/YouTubeLogo.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
@@ -143,7 +143,7 @@ function HomeTabFeatured() {
                   </a>
                 </div>
               </div>
-              <div className="mx-1 px-1 d-flex">
+              <div className="mr-1 pr-1 d-flex">
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform" target="__blank">
                   <img src={'/assets/img/remixRewardBetaTester_small.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
