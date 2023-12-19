@@ -46,7 +46,7 @@ function HomeTabFeatured() {
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{flex: '1'}}>
                   <h5>
-                  THE SOLIDITY DEVELOPER SURVEY 2023
+                  SOLIDITY DEVELOPER SURVEY 2023
                   </h5>
                   <p className='pt-2 mb-1'>
                     Please take a few minutes of your time to complete the survey.
