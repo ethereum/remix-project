@@ -76,6 +76,16 @@ export const removeTokenToast = (config, dispatch, key) => {
   dispatch({ type: 'removed', payload: { message: 'Credentials removed' } })
 }
 
+export const saveCorsproxyToast = (config, dispatch, value, key) => {
+  config.set('settings/' + key, value)
+  dispatch({ type: 'save', payload: { message: 'Corsproxy updated' } })
+}
+
+export const removeCorsproxyToast = (config, dispatch, key) => {
+  config.set('settings/' + key, '')
+  dispatch({ type: 'removed', payload: { message: 'Corsproxy removed' } })
+}
+
 export const saveSwarmSettingsToast = (config, dispatch, privateBeeAddress, postageStampId) => {
   config.set('settings/swarm-private-bee-address', privateBeeAddress)
   config.set('settings/swarm-postage-stamp-id', postageStampId)

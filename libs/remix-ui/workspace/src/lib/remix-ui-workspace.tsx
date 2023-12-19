@@ -46,8 +46,6 @@ export function Workspace() {
   const workspaceCreateTemplateInput = useRef()
   const intl = useIntl()
   const cloneUrlRef = useRef<HTMLInputElement>()
-  const config = global.plugin.registry.get('config').api
-  const corsproxyUrlRef = useRef<HTMLInputElement>()
   const initGitRepoRef = useRef<HTMLInputElement>()
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter((branch) => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
@@ -557,9 +555,6 @@ export function Workspace() {
   const handleTypingUrl = () => {
     const url = cloneUrlRef.current.value
 
-    const corsproxy = corsproxyUrlRef.current.value
-    config.set('corsproxy', corsproxy)
-
     if (url) {
       global.dispatchCloneRepository(url)
     } else {
@@ -1046,7 +1041,6 @@ export function Workspace() {
   const cloneModalMessage = () => {
     return (
       <>
-        <div><FormattedMessage id="filePanel.workspace.gitRepoUrl" /></div>
         <input
           type="text"
           data-id="modalDialogCustomPromptTextClone"
@@ -1056,43 +1050,6 @@ export function Workspace() {
           ref={cloneUrlRef}
           className="form-control"
         />
-        <div className="pt-4"><FormattedMessage id="filePanel.workspace.corsProxyUrl" /></div>
-        <input
-          type="text"
-          data-id="modalDialogCustomPromptTextCorsproxy"
-          placeholder={intl.formatMessage({
-            id: 'filePanel.workspace.enterCorsproxyUrl'
-          })}
-          ref={corsproxyUrlRef}
-          defaultValue={config.get('corsproxy')}
-          className="form-control"
-        />
-        <div className="pt-2">
-          <FormattedMessage id="filePanel.workspace.corsproxyText1" />
-          <div className="p-1 pl-3">
-            <b>npm install -g @drafish/cors-proxy</b>
-          </div>
-          <div className="p-1 pl-3">
-            <b>cors-proxy start</b>
-          </div>
-          <div className="pt-2">
-            <FormattedMessage
-              id="filePanel.workspace.corsproxyText2"
-            />
-          </div>
-          <div className="pt-2">
-            <FormattedMessage
-              id="filePanel.workspace.corsproxyText3"
-              values={{
-                a: (chunks) => (
-                  <a href="https://github.com/drafish/cors-proxy" target="_blank">
-                    {chunks}
-                  </a>
-                )
-              }}
-            />
-          </div>
-        </div>
       </>
     )
   }
