@@ -15,6 +15,8 @@ import {
   useMatomoAnalytics,
   saveTokenToast,
   removeTokenToast,
+  saveCorsproxyToast,
+  removeCorsproxyToast,
   saveSwarmSettingsToast,
   saveIpfsSettingsToast,
   useAutoCompletion,
@@ -28,6 +30,7 @@ import {RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
 import {FormattedMessage, useIntl} from 'react-intl'
 import {GithubSettings} from './github-settings'
 import {GitlabSettings} from './gitlab-settings'
+import {CorsproxySettings} from './corsproxy-settings'
 import {EtherscanSettings} from './etherscan-settings'
 
 /* eslint-disable-next-line */
@@ -601,6 +604,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           removeTokenToast(props.config, dispatchToast, 'gitlab-token')
           removeTokenToast(props.config, dispatchToast, 'gitlab-user-name')
           removeTokenToast(props.config, dispatchToast, 'gitlab-email')
+        }}
+        config={props.config}
+      />
+      <CorsproxySettings
+        saveCorsproxy={(url: string) => {
+          saveCorsproxyToast(props.config, dispatchToast, url, 'corsproxy-url')
+        }}
+        removeCorsproxy={() => {
+          removeCorsproxyToast(props.config, dispatchToast, 'corsproxy-url')
         }}
         config={props.config}
       />
