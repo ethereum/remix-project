@@ -127,5 +127,6 @@
   "filePanel.movingFileFailedMsg": "Unexpected error while moving file: {src}",
   "filePanel.movingFolderFailed": "Moving Folder Failed",
   "filePanel.movingFolderFailedMsg": "Unexpected error while moving folder: {src}",
-  "filePanel.workspaceActions": "Workspace actions"
+  "filePanel.workspaceActions": "Workspace actions",
+  "filePanel.edit": "edit"
 }

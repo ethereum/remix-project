@@ -108,7 +108,7 @@ export const FileRender = (props: RenderFileProps) => {
           <>
             <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
               <div className="d-flex flex-row">
-                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} hover={hover}/>
+                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} hover={hover} />
                 <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>
             </Draggable>

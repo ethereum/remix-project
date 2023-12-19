@@ -64,3 +64,11 @@ ul {
     -webkit-user-select: text;
     user-select: text;
 }
+
+.remixui_icons {
+
+}
+
+.remixui_icons:hover {
+    color: #fff;
+}
