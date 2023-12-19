@@ -15,7 +15,6 @@ export function ValueUI(props: ValueProps) {
   },[props.sendValue])
 
   const validateValue = (e) => {
-    console.log('validateValue', e.target.value)
     const value = e.target.value
 
     if (!value) {
