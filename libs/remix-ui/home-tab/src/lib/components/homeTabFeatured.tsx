@@ -54,7 +54,7 @@ function HomeTabFeatured() {
                   <p className="mb-3">
                     Thank you for your support! Read the full announcement
                     <a
-                      className="remixui_home_text mx-1"
+                      className="mx-1"
                       onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey23'])}
                       target="__blank"
                       href="https://soliditylang.org/blog/2023/12/08/solidity-developer-survey-2023-announcement/"
