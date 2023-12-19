@@ -40,12 +40,16 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
       }})
       .perform(() => {
         browser.execute(function () { 
-          (window as any).logs = []
+          (window as any).logs = [];
+          (console as any).browserLog = console.log;
+          (console as any).browserError = console.error
           console.log = function () {
-            (window as any).logs.push(JSON.stringify(arguments))
+            (window as any).logs.push(JSON.stringify(arguments));
+            (console as any).browserLog(...arguments)
           }
           console.error = function () {
-            (window as any).logs.push(JSON.stringify(arguments))
+            (window as any).logs.push(JSON.stringify(arguments));
+            (console as any).browserError(...arguments)
           }
         })
       })

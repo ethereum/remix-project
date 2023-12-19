@@ -5,9 +5,12 @@ class ValidateValueInput extends EventEmitter {
   command (this: NightwatchBrowser, selector: string, valueTosSet: string, expectedValue: string) {
     const browser = this.api
     browser.perform((done) => {
-      browser.clearValue(selector)
-        .pause(2000)
-        .setValue(selector, valueTosSet).pause(2000)
+      browser
+        .clearValue(selector)
+        .execute((selector) => {
+          (document.querySelector(selector) as any).focus()
+        }, [selector], () => { })
+        .setValue(selector, valueTosSet)
         .execute(function (selector) {
           const elem = document.querySelector(selector) as HTMLInputElement
           return elem.value
