@@ -46,20 +46,12 @@ function HomeTabFeatured() {
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{flex: '1'}}>
                   <h5>
-                  The Solidity Developer Survey 2023 is live!
+                  THE SOLIDITY DEVELOPER SURVEY 2023
                   </h5>
-                  <p className='pt-2'>
-                    Please take a few minutes of your time to 
-                    <a
-                      className="mx-1"
-                      onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey23'])}
-                      target="__blank"
-                      href="https://soliditylang.org/blog/2023/12/08/solidity-developer-survey-2023-announcement/"
-                    >
-                      COMPLETE THE SURVEY. 
-                    </a>
+                  <p className='pt-2 mb-1'>
+                    Please take a few minutes of your time to complete the survey.
                   </p>
-                  <p style={{fontSize: '0.8rem'}} className="mb-3">
+                  <p className="mb-3">
                     Thank you for your support! Read the full announcement
                     <a
                       className="remixui_home_text mx-1"
@@ -70,6 +62,14 @@ function HomeTabFeatured() {
                       here.
                     </a>
                   </p>
+                  <a
+                    href="https://cryptpad.fr/form/#/2/form/view/pV-DdryeJoYUWvW+gXsFaMNynEY7t5mUsgeD1urgwSE/"
+                    target="__blank"
+                    className='remixui_home_text btn-sm btn btn-secondary text-decoration-none'
+                    style={{cursor: 'pointer'}}
+                  >
+                    Start Survey
+                  </a>
                 </div>
               </div>
               <div className="mx-1 px-1 d-flex">
