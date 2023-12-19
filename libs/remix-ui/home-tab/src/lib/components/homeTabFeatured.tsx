@@ -49,7 +49,7 @@ function HomeTabFeatured() {
                   The Solidity Developer Survey 2023 is live!
                   </h5>
                   <p className='pt-2'>
-                    Please take a few minute of your time to 
+                    Please take a few minutes of your time to 
                     <a
                       className="mx-1"
                       onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'soliditySurvey23'])}
