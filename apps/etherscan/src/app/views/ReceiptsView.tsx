@@ -13,7 +13,7 @@ interface FormValues {
   receiptGuid: string
 }
 
-export const ReceiptsView: React.FC<React.PropsWithChildren> = () => {
+export const ReceiptsView = () => {
   const [results, setResults] = useState({succeed: false, message: ''})
   const [isProxyContractReceipt, setIsProxyContractReceipt] = useState(false)
   const context = React.useContext(AppContext)
@@ -124,7 +124,7 @@ export const ReceiptsView: React.FC<React.PropsWithChildren> = () => {
   )
 }
 
-const ReceiptsTable: React.FC<{receipts: Receipt[]}> = ({receipts}) => {
+const ReceiptsTable = ({receipts}) => {
   return (
     <div className="table-responsive">
       <h6>Receipts</h6>

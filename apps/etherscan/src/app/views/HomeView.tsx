@@ -7,7 +7,7 @@ import {Receipt} from '../types'
 
 import {VerifyView} from './VerifyView'
 
-export const HomeView: React.FC<React.PropsWithChildren> = () => {
+export const HomeView = () => {
   const context = React.useContext(AppContext)
   
   return !context.apiKey ? (
