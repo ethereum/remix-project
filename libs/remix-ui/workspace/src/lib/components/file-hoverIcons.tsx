@@ -2,10 +2,12 @@ import React, { useContext, useState } from 'react'
 import { CustomTooltip } from '@remix-ui/helper'
 import { FormattedMessage } from 'react-intl'
 import { FileSystemContext } from '../contexts'
+import { ROOT_PATH } from '../utils/constants'
 
 export type FileHoverIconsProps = {
   hover?: boolean
   file: any
+  handleNewFolderOp: any
 }
 
 export function FileHoverIcons(props: FileHoverIconsProps) {
@@ -29,7 +31,12 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
                   className="far fa-folder fa-1x mr-1 remixui_icons"
                   onClick={async (e) => {
                     e.stopPropagation()
+                    console.log(props.file)
+                    console.log(props)
+                    console.log(fsContext)
                     const dir = await plugin.call('fileManager', 'getFolder', props.file.path)
+                    await props.handleNewFolderOp('')
+                    // await plugin.call('fileManager', 'mkdir', props.file.path)
                     console.log(dir)
                     console.log('clicked on folder icon')
                   }}

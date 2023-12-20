@@ -403,6 +403,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     showIconsMenu={props.showIconsMenu}
                     hideIconsMenu={props.hideIconsMenu}
                     dragStatus={state.dragStatus}
+                    handleFolderInput={props.handleNewFolderInput}
                   />
                 ))
               }

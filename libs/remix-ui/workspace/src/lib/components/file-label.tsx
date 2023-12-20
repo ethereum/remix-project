@@ -17,6 +17,7 @@ export interface FileLabelProps {
   editModeOff: (content: string) => void
   dragStatus: boolean
   hover: boolean
+  handleNewFolderCreation: any
 }
 
 export const FileLabel = (props: FileLabelProps) => {
@@ -99,6 +100,7 @@ export const FileLabel = (props: FileLabelProps) => {
       <FileHoverIcons
         file={file}
         hover={props.hover}
+        handleNewFolderOp={props.handleNewFolderCreation}
       />
     </div>
   )
