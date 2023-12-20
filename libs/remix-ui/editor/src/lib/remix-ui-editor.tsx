@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
+import { FormattedMessage, useIntl } from 'react-intl'
 import { isArray } from 'lodash'
 import Editor, { loader, Monaco } from '@monaco-editor/react'
 import { AlertModal } from '@remix-ui/app'
+import { QueryParams } from '@remix-project/remix-lib'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
@@ -90,6 +92,18 @@ type errorMarker = {
 
 loader.config({ paths: { vs: 'assets/js/monaco-editor/min/vs' } })
 
+const queryParams = new QueryParams()
+// @ts-ignore
+const queryLocale = queryParams.get().lang
+const locales = {
+  zh: 'zh-cn',
+  en: '',
+  fr: 'fr',
+  it: 'it',
+  es: 'es'
+}
+loader.config({ "vs/nls": { availableLanguages: { "*": locales[queryLocale] || '' } } })
+
 export type DecorationsReturn = {
   currentDecorations: Array<string>
   registeredDecorations?: Array<any>
@@ -130,6 +144,7 @@ export interface EditorUIProps {
   editorAPI: EditorAPIType
 }
 export const EditorUI = (props: EditorUIProps) => {
+  const intl = useIntl()
   const [, setCurrentBreakpoints] = useState({})
   const defaultEditorValue = `
   \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____ 
@@ -137,16 +152,16 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t| |_) | |  _|   | |\\/| |  | |   \\  /    | |  | | | | |  _|  
   \t\t\t\t\t\t\t|  _ <  | |___  | |  | |  | |   /  \\    | |  | |_| | | |___ 
   \t\t\t\t\t\t\t|_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
-  \t\t\t\t\t\t\tKeyboard Shortcuts:\n
-  \t\t\t\t\t\t\t\tCTRL + S: Compile the current contract\n
-  \t\t\t\t\t\t\t\tCTRL + Shift + F : Open the File Explorer\n
-  \t\t\t\t\t\t\t\tCTRL + Shift + A : Open the Plugin Manager\n
-  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: Compile the current contract & Run an associated script\n
-  \t\t\t\t\t\t\tEditor Keyboard Shortcuts:\n
-  \t\t\t\t\t\t\t\tCTRL + Alt + F : Format the code in the current file\n
-  \t\t\t\t\t\t\tImportant Links:\n
-  \t\t\t\t\t\t\t\tOfficial website about the Remix Project: https://remix-project.org/\n
-  \t\t\t\t\t\t\t\tOfficial documentation: https://remix-ide.readthedocs.io/en/latest/\n
+  \t\t\t\t\t\t\t${intl.formatMessage({id: 'editor.keyboardShortcuts'})}:\n
+  \t\t\t\t\t\t\t\tCTRL + S: ${intl.formatMessage({id: 'editor.keyboardShortcuts.text1'})}\n
+  \t\t\t\t\t\t\t\tCTRL + Shift + F : ${intl.formatMessage({id: 'editor.keyboardShortcuts.text2'})}\n
+  \t\t\t\t\t\t\t\tCTRL + Shift + A : ${intl.formatMessage({id: 'editor.keyboardShortcuts.text3'})}\n
+  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: ${intl.formatMessage({id: 'editor.keyboardShortcuts.text4'})}\n
+  \t\t\t\t\t\t\t${intl.formatMessage({id: 'editor.editorKeyboardShortcuts'})}:\n
+  \t\t\t\t\t\t\t\tCTRL + Alt + F : ${intl.formatMessage({id: 'editor.editorKeyboardShortcuts.text1'})}\n
+  \t\t\t\t\t\t\t${intl.formatMessage({id: 'editor.importantLinks'})}:\n
+  \t\t\t\t\t\t\t\t${intl.formatMessage({id: 'editor.importantLinks.text1'})}: https://remix-project.org/\n
+  \t\t\t\t\t\t\t\t${intl.formatMessage({id: 'editor.importantLinks.text2'})}: https://remix-ide.readthedocs.io/en/latest/\n
   \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
   \t\t\t\t\t\t\t\tGitter: https://gitter.im/ethereum/remix\n
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
@@ -614,27 +629,34 @@ export const EditorUI = (props: EditorUIProps) => {
       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         const modalContent: AlertModal = {
           id: 'newCodePasted',
-          title: 'Pasted Code Alert',
+          title: intl.formatMessage({id: 'editor.title1'}),
           message: (
             <div>
               {' '}
               <i className="fas fa-exclamation-triangle text-danger mr-1"></i>
-              You have just pasted a code snippet or contract in the editor.
+              <FormattedMessage id="editor.title1.message1" />
               <div>
-                Make sure you fully understand this code before deploying or interacting with it. Don't get scammed!
+                <FormattedMessage id="editor.title1.message2" />
                 <div className="mt-2">
-                  Running untrusted code can put your wallet <span className="text-warning"> at risk </span>. In a worst-case scenario, you could{' '}
-                  <span className="text-warning">lose all your money</span>.
+                  <FormattedMessage id="editor.title1.message3" values={{span: (chunks) => <span className="text-warning">{chunks}</span>}} />
                 </div>
-                <div className="text-warning  mt-2">If you don't fully understand it, please don't run this code.</div>
-                <div className="mt-2">If you are not a smart contract developer, ask someone you trust who has the skills to determine if this code is safe to use.</div>
+                <div className="text-warning  mt-2">
+                  <FormattedMessage id="editor.title1.message4" />
+                </div>
                 <div className="mt-2">
-                  See{' '}
-                  <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">
-                    {' '}
-                    these recommendations{' '}
-                  </a>{' '}
-                  for more information.
+                  <FormattedMessage id="editor.title1.message5" />
+                </div>
+                <div className="mt-2">
+                  <FormattedMessage
+                    id="editor.title1.message6"
+                    values={{
+                      a: (chunks) => (
+                        <a target="_blank" href="https://remix-ide.readthedocs.io/en/latest/security.html">
+                          {chunks}
+                        </a>
+                      ),
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -648,7 +670,7 @@ export const EditorUI = (props: EditorUIProps) => {
     // add context menu items
     const zoominAction = {
       id: 'zoomIn',
-      label: 'Zoom In',
+      label: intl.formatMessage({id: 'editor.zoomIn'}),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'zooming', // create a new grouping
       keybindings: [
@@ -661,7 +683,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
     const zoomOutAction = {
       id: 'zoomOut',
-      label: 'Zoom Out',
+      label: intl.formatMessage({id: 'editor.zoomOut'}),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'zooming', // create a new grouping
       keybindings: [
@@ -674,7 +696,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
     const formatAction = {
       id: 'autoFormat',
-      label: 'Format Code',
+      label: intl.formatMessage({id: 'editor.formatCode'}),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'formatting', // create a new grouping
       keybindings: [
@@ -690,7 +712,7 @@ export const EditorUI = (props: EditorUIProps) => {
     let gptGenerateDocumentationAction
     const executeGptGenerateDocumentationAction = {
       id: 'generateDocumentation',
-      label: 'Generate documentation for this function',
+      label: intl.formatMessage({id: 'editor.generateDocumentation'}),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'gtp', // create a new grouping
       keybindings: [],
@@ -709,7 +731,7 @@ export const EditorUI = (props: EditorUIProps) => {
     let gptExplainFunctionAction
     const executegptExplainFunctionAction = {
       id: 'explainFunction',
-      label: 'Explain this function',
+      label: intl.formatMessage({id: 'editor.explainFunction'}),
       contextMenuOrder: 1, // choose the order
       contextMenuGroupId: 'gtp', // create a new grouping
       keybindings: [],
@@ -729,7 +751,7 @@ export const EditorUI = (props: EditorUIProps) => {
     let freeFunctionAction
     const executeFreeFunctionAction = {
       id: 'executeFreeFunction',
-      label: 'Run a free function',
+      label: intl.formatMessage({id: 'editor.executeFreeFunction'}),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'execute', // create a new grouping
       precondition: 'freeFunctionCondition',
@@ -746,10 +768,10 @@ export const EditorUI = (props: EditorUIProps) => {
             const file = await props.plugin.call('fileManager', 'getCurrentFile')
             props.plugin.call('solidity-script', 'execute', file, freeFunctionNode.name)
           } else {
-            props.plugin.call('notification', 'toast', 'This can only execute free function')
+            props.plugin.call('notification', 'toast', intl.formatMessage({id: 'editor.toastText1'}))
           }
         } else {
-          props.plugin.call('notification', 'toast', 'Please go to Remix settings and activate the code editor features or wait that the current editor context is loaded.')
+          props.plugin.call('notification', 'toast', intl.formatMessage({id: 'editor.toastText2'}))
         }
       },
     }
@@ -787,15 +809,15 @@ export const EditorUI = (props: EditorUIProps) => {
       const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
       const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
       if (freeFunctionNode) {
-        executeFreeFunctionAction.label = `Run the free function "${freeFunctionNode.name}"`
+        executeFreeFunctionAction.label = intl.formatMessage({id: 'editor.executeFreeFunction2'}, {name: freeFunctionNode.name})
         freeFunctionAction = editor.addAction(executeFreeFunctionAction)
       }
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
         currentFunction.current = functionImpl.name
-        executeGptGenerateDocumentationAction.label = `Generate documentation for the function "${functionImpl.name}"`
+        executeGptGenerateDocumentationAction.label = intl.formatMessage({id: 'editor.generateDocumentation2'}, {name: functionImpl.name})
         gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
-        executegptExplainFunctionAction.label = `Explain the function "${functionImpl.name}"`
+        executegptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunction2'}, {name: functionImpl.name})
         gptExplainFunctionAction = editor.addAction(executegptExplainFunctionAction)
       }
       freeFunctionCondition.set(!!freeFunctionNode)
@@ -889,7 +911,12 @@ export const EditorUI = (props: EditorUIProps) => {
       {editorModelsState[props.currentFile]?.readOnly && (
         <span className="pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">
           <i className="fas fa-lock-alt p-2"></i>
-          The file is opened in <b>read-only</b> mode.
+          <FormattedMessage
+            id="editor.text"
+            values={{
+              b: (chunks) => <b>{chunks}</b>,
+            }}
+          />
         </span>
       )}
     </div>
