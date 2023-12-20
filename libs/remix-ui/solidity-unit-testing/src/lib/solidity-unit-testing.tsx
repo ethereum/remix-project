@@ -165,8 +165,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
     })
 
     testTab.on('filePanel', 'workspaceCreated', async () => {
-      setTimeout(async () => {
-        await setCurrentPath(defaultPath)}, 100)
+      setTimeout(async () => await setCurrentPath(defaultPath), 100)
     })
 
     testTab.on('filePanel', 'setWorkspace', async () => {
