@@ -31,13 +31,9 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
                   className="far fa-folder fa-1x mr-1 remixui_icons"
                   onClick={async (e) => {
                     e.stopPropagation()
-                    console.log(props.file)
                     console.log(props)
                     console.log(fsContext)
-                    const dir = await plugin.call('fileManager', 'getFolder', props.file.path)
-                    await props.handleNewFolderOp('')
-                    // await plugin.call('fileManager', 'mkdir', props.file.path)
-                    console.log(dir)
+                    await props.handleNewFolderOp(props.file.path)
                     console.log('clicked on folder icon')
                   }}
                 ></span>
