@@ -60,11 +60,7 @@ const App = () => {
 
   useEffect(() => {
     plugin.onload(() => {
-       console.log('plugin loaded')
-       console.log(plugin.isLoaded)
         setListeners()
-    })
-    plugin.internalEvents.on('etherscan_activated', () => {
     })
   }, [])
 
