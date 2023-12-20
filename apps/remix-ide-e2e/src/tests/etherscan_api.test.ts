@@ -24,7 +24,7 @@ module.exports = {
       .click('[data-id="save-api-key"]')
   },
 
-  'Should verify a contract (contract is already verified) #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should verify a contract (contract is already verified) #group1': function (browser: NightwatchBrowser) {
     browser
       .frameParent()
       .clickLaunchIcon('udapp') // switch to Goerli
