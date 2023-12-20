@@ -96,7 +96,7 @@ export const ReceiptsView = () => {
                 It's a proxy contract GUID
               </label>
             </div>
-            <SubmitButton text="Check" disable={!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
+            <SubmitButton dataId={null} text="Check" disable={!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
           </form>
         )}
       </Formik>
