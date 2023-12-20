@@ -436,10 +436,16 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
 
   const isCopilotActivated = props.config.get('settings/copilot/suggest/activate') || false
-  const copilotMaxnewToken = props.config.get('settings/copilot/suggest/max_new_tokens')
-  if (!copilotMaxnewToken) props.config.set('settings/copilot/suggest/max_new_tokens', 5)
-  const copilotTemperatureValue = (props.config.get('settings/copilot/suggest/temperature')) * 100
-  if (!copilotTemperatureValue) props.config.set('settings/copilot/suggest/temperature', 0.5)
+  let copilotMaxnewToken = props.config.get('settings/copilot/suggest/max_new_tokens')
+  if (!copilotMaxnewToken) {
+    props.config.set('settings/copilot/suggest/max_new_tokens', 5)
+    copilotMaxnewToken = 5
+  }
+  let copilotTemperatureValue = (props.config.get('settings/copilot/suggest/temperature')) * 100
+  if (!copilotTemperatureValue) {
+    props.config.set('settings/copilot/suggest/temperature', 0.5)
+    copilotTemperatureValue = 0.5
+  }
 
   if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
   const copilotSettings = () => (

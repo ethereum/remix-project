@@ -93,7 +93,11 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
   const dispatchFetchWorkspaceDirectory = async (path: string) => {
-    await fetchWorkspaceDirectory(path)
+    try {
+      await fetchWorkspaceDirectory(path)
+    } catch (err) {
+      console.error(err)
+    }    
   }
 
   const dispatchSwitchToWorkspace = async (name: string) => {
