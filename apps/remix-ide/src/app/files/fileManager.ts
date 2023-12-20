@@ -621,8 +621,7 @@ class FileManager extends Plugin {
     return new Promise((resolve, reject) => {
       if (this.currentFile() === path) {
         const editorContent = this.editor.currentContent()
-        resolve(editorContent || '')
-        return
+        if(editorContent) resolve(editorContent)
       }
       provider.get(path, (err, content) => {
         if (err) reject(err)
