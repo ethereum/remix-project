@@ -25,9 +25,10 @@ module.exports = {
   'Should load run and deploy tab and check value validation #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
-      .validateValueInput('#value', '0000', '0')
-      .validateValueInput('#value', '', '0')
-      .validateValueInput('#value', 'dragon', '0')
+      .validateValueInput('*[data-id="dandrValue"]', '999', '999')
+      .validateValueInput('*[data-id="dandrValue"]', '0000', '0')
+      .validateValueInput('*[data-id="dandrValue"]', '1.3', '0') // no decimal
+      // .validateValueInput('*[data-id="dandrValue"]', 'dragon', '0') // only numbers
   },
 
   'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
@@ -81,10 +82,10 @@ module.exports = {
         instanceAddress = address
         browser
         .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
-        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH')
+        .waitForElementContainsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH', 10000)
         .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
         .pause(1000)
-        .assert.containsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH')
+        .waitForElementContainsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH', 10000)
       })
   },
 

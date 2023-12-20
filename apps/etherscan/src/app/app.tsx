@@ -40,22 +40,27 @@ const App = () => {
 
   contractsRef.current = contracts
 
+  const setListeners = () => {
+    plugin.on('solidity', 'compilationFinished', (fileName: string, source: CompilationFileSources, languageVersion: string, data: CompilationResult) => {
+      const newContractsNames = getNewContractNames(data)
+
+      const newContractsToSave: string[] = [...contractsRef.current, ...newContractsNames]
+
+      const uniqueContracts: string[] = [...new Set(newContractsToSave)]
+
+      setContracts(uniqueContracts)
+    })
+    plugin.on('blockchain' as any, 'networkStatus', (result) => {
+      setNetworkName(`${result.network.name} ${result.network.id !== '-' ? `(Chain id: ${result.network.id})` : '(Not supported)'}`)
+    })
+    // @ts-ignore
+    plugin.call('blockchain', 'getCurrentNetworkStatus').then((result: any) => setNetworkName(`${result.network.name} ${result.network.id !== '-' ? `(Chain id: ${result.network.id})` : '(Not supported)'}`))
+
+  }
+
   useEffect(() => {
-    plugin.internalEvents.on('etherscan_activated', () => {
-      plugin.on('solidity', 'compilationFinished', (fileName: string, source: CompilationFileSources, languageVersion: string, data: CompilationResult) => {
-        const newContractsNames = getNewContractNames(data)
-
-        const newContractsToSave: string[] = [...contractsRef.current, ...newContractsNames]
-
-        const uniqueContracts: string[] = [...new Set(newContractsToSave)]
-
-        setContracts(uniqueContracts)
-      })
-      plugin.on('blockchain' as any, 'networkStatus', (result) => {
-        setNetworkName(`${result.network.name} ${result.network.id !== '-' ? `(Chain id: ${result.network.id})` : '(Not supported)'}`)
-      })
-      // @ts-ignore
-      plugin.call('blockchain', 'getCurrentNetworkStatus').then((result: any) => setNetworkName(`${result.network.name} ${result.network.id !== '-' ? `(Chain id: ${result.network.id})` : '(Not supported)'}`))
+    plugin.onload(() => {
+        setListeners()
     })
   }, [])
 

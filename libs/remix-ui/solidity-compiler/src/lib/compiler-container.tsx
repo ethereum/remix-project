@@ -6,7 +6,7 @@ import {ConfigurationSettings} from '@remix-project/remix-lib'
 import {checkSpecialChars, CustomTooltip, extractNameFromKey} from '@remix-ui/helper'
 import {canUseWorker, urlFromVersion, pathToURL} from '@remix-project/remix-solidity'
 import {compilerReducer, compilerInitialState} from './reducers/compiler'
-import {resetEditorMode, listenToEvents} from './actions/compiler'
+import {listenToEvents} from './actions/compiler'
 import {getValidLanguage} from '@remix-project/remix-solidity'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import {configFileContent} from './compilerConfiguration'
@@ -231,16 +231,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     if (compilerContainer.editor.mode) {
-      switch (compilerContainer.editor.mode) {
-      case 'sessionSwitched':
+      if (compilerContainer.editor.mode.startsWith('sessionSwitched')) {
         sessionSwitched()
-        resetEditorMode()(dispatch)
-        break
-      case 'contentChanged':
+        return
+      } else if (compilerContainer.editor.mode.startsWith('contentChanged')) {
         contentChanged()
-        resetEditorMode()(dispatch)
-        break
-      }
+        return
+      }      
     }
   }, [compilerContainer.editor.mode])
 

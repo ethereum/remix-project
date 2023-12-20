@@ -35,8 +35,6 @@ export class CompilationDetailsPlugin extends ViewPlugin {
   }
 
   async onActivation() {
-    await this.call('tabs', 'focus', 'compilationDetails')
-    this.renderComponent()
     _paq.push(['trackEvent', 'plugin', 'activated', 'compilationDetails'])
   }
 
@@ -46,13 +44,17 @@ export class CompilationDetailsPlugin extends ViewPlugin {
 
   async showDetails(sentPayload: any) {
     await this.call('tabs', 'focus', 'compilationDetails')
-    this.payload = sentPayload
-    this.renderComponent()
+    setTimeout(() => {
+      // TODO: use the react API to render when the tab is focused and tbe plugin in the view.
+      this.payload = sentPayload
+      this.renderComponent()
+    }, 2000)
   }
 
   setDispatch(dispatch: React.Dispatch<any>): void {
     this.dispatch = dispatch
   }
+
   render() {
     return (
       <div id="compileDetails">

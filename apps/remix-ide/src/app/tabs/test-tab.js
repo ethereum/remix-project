@@ -81,13 +81,14 @@ module.exports = class TestTab extends ViewPlugin {
   onDeactivation () {
     this.off('filePanel', 'newTestFileCreated')
     this.off('filePanel', 'setWorkspace')
+    this.off('filePanel', 'workspaceCreated')
     // 'currentFileChanged' event is added more than once
     this.fileManager.events.removeAllListeners('currentFileChanged')
   }
 
   listenToEvents () {
     this.on('filePanel', 'workspaceCreated', async () => {
-      this.createTestLibs()
+      setTimeout(() => this.createTestLibs(), 50)
     })
 
     this.testRunner.event.on('compilationFinished', (success, data, source, input, version) => {
