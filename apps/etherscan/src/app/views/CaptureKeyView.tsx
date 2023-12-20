@@ -6,7 +6,7 @@ import {useNavigate, useLocation} from 'react-router-dom'
 import {AppContext} from '../AppContext'
 import {SubmitButton} from '../components'
 
-export const CaptureKeyView: React.FC<React.PropsWithChildren> = () => {
+export const CaptureKeyView = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const [msg, setMsg] = useState('')
