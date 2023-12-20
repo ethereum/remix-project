@@ -13,7 +13,7 @@ interface IconProps {
   from: string
 }
 
-const HomeIcon: React.FC<IconProps> = ({from}: IconProps) => {
+const HomeIcon = ({from}: IconProps) => {
   return (
     <NavLink
       data-id="home"
@@ -31,7 +31,7 @@ const HomeIcon: React.FC<IconProps> = ({from}: IconProps) => {
   )
 }
 
-const ReceiptsIcon: React.FC<IconProps> = ({from}: IconProps) => {
+const ReceiptsIcon = ({from}: IconProps) => {
   return (
     <NavLink
       data-id="receipts"
@@ -49,7 +49,7 @@ const ReceiptsIcon: React.FC<IconProps> = ({from}: IconProps) => {
   )
 }
 
-const SettingsIcon: React.FC<IconProps> = ({from}: IconProps) => {
+const SettingsIcon = ({from}: IconProps) => {
   return (
     <NavLink
       data-id="settings"
@@ -67,7 +67,7 @@ const SettingsIcon: React.FC<IconProps> = ({from}: IconProps) => {
   )
 }
 
-export const HeaderWithSettings: React.FC<Props> = ({title = '', from}) => {
+export const HeaderWithSettings = ({title = '', from}) => {
   return (
     <div className="d-flex justify-content-between">
           <h6 className="d-inline">{title}</h6>

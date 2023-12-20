@@ -24,7 +24,7 @@ interface FormValues {
   expectedImplAddress?: string
 }
 
-export const VerifyView: React.FC<Props> = ({apiKey, client, contracts, onVerifiedContract, networkName}) => {
+export const VerifyView ({apiKey, client, contracts, onVerifiedContract, networkName}) => {
   const [results, setResults] = useState('')
   const [selectedContract, setSelectedContract] = useState('')
   const [showConstructorArgs, setShowConstructorArgs] = useState(false)
