@@ -41,7 +41,7 @@ const App = () => {
   contractsRef.current = contracts
 
   useEffect(() => {
-    
+    plugin.internalEvents.on('etherscan_activated', () => {
       plugin.on('solidity', 'compilationFinished', (fileName: string, source: CompilationFileSources, languageVersion: string, data: CompilationResult) => {
         const newContractsNames = getNewContractNames(data)
 
@@ -56,7 +56,7 @@ const App = () => {
       })
       // @ts-ignore
       plugin.call('blockchain', 'getCurrentNetworkStatus').then((result: any) => setNetworkName(`${result.network.name} ${result.network.id !== '-' ? `(Chain id: ${result.network.id})` : '(Not supported)'}`))
-    
+    })
   }, [])
 
   useEffect(() => {
