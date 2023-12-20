@@ -619,7 +619,11 @@ class FileManager extends Plugin {
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
     // TODO: change provider to Promise
     return new Promise((resolve, reject) => {
-      if (this.currentFile() === path) return resolve(this.editor.currentContent())
+      if (this.currentFile() === path) {
+        const editorContent = this.editor.currentContent()
+        resolve(editorContent || '')
+        return
+      }
       provider.get(path, (err, content) => {
         if (err) reject(err)
         resolve(content)
