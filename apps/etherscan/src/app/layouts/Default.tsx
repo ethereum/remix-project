@@ -7,7 +7,7 @@ interface Props {
   title?: string
 }
 
-export const DefaultLayout: React.FC<PropsWithChildren<Props>> = ({children, from, title}) => {
+export const DefaultLayout = ({children, from, title}) => {
   return (
     <div>
       <HeaderWithSettings from={from} title={title} />

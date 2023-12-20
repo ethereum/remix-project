@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const ErrorView: React.FC<React.PropsWithChildren> = () => {
+export const ErrorView = () => {
   return (
     <div
       style={{
