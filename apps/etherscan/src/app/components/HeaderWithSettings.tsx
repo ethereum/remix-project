@@ -69,9 +69,7 @@ const SettingsIcon: React.FC<IconProps> = ({from}: IconProps) => {
 
 export const HeaderWithSettings: React.FC<Props> = ({title = '', from}) => {
   return (
-    <AppContext.Consumer>
-      {() => (
-        <div className="d-flex justify-content-between">
+    <div className="d-flex justify-content-between">
           <h6 className="d-inline">{title}</h6>
           <div className="nav">
             <HomeIcon from={from} />
@@ -79,7 +77,5 @@ export const HeaderWithSettings: React.FC<Props> = ({title = '', from}) => {
             <SettingsIcon from={from} />
           </div>
         </div>
-      )}
-    </AppContext.Consumer>
   )
 }
