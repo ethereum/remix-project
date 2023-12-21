@@ -763,7 +763,13 @@ export function Workspace() {
             </option>
             <option style={{fontSize: 'small'}} value="breakthroughLabsUniswapv4Hooks">
               {intl.formatMessage({id: 'filePanel.breakthroughLabsUniswapv4Hooks'})}
-            </option>           
+            </option> 
+
+            <option style={{fontSize: 'small'}} value="uniswapV4HookBookMultiSigSwapHook">
+              {intl.formatMessage({id: 'filePanel.uniswapV4HookBookMultiSigSwapHook'})}
+            </option>
+
+
           </optgroup>
         </select>
         <div id="ozcustomization" data-id="ozCustomization" ref={displayOzCustomRef} style={{display: 'none'}} className="mb-2">
