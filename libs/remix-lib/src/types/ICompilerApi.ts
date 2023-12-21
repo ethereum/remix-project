@@ -48,6 +48,7 @@ export interface ICompilerApi {
     emit?: (key: string, ...payload: any) => void
 
     setSolJsonBinData: (binData: iSolJsonBinData) => void
+    solJsonBinData: iSolJsonBinData
 }
 
 export interface iSolJsonBinDataBuild {

@@ -1,12 +1,12 @@
 import React, { MouseEventHandler, useContext, useEffect, useState } from "react"
 import { FileSystemContext } from "../contexts"
-import { AppContext, appPlatformTypes } from '@remix-ui/app'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { FormattedMessage } from "react-intl"
 import '../css/electron-menu.css'
 import { CustomTooltip } from '@remix-ui/helper'
 
 export const ElectronMenu = () => {
-  const {platform} = useContext(AppContext)
+  const platform = useContext(platformContext)
   const global = useContext(FileSystemContext)
 
   useEffect(() => {

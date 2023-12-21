@@ -3,17 +3,17 @@ import React, {useContext, useEffect, useRef, useState} from 'react' // eslint-d
 import DragBar from '../dragbar/dragbar'
 import RemixUIPanelPlugin from '../plugins/panel-plugin'
 import {PluginRecord} from '../types'
-import { AppContext, appPlatformTypes } from '@remix-ui/app'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import './main-panel.css'
 
 
 export type RemixUIMainPanelProps = {
-  Context: React.Context<any>
+  layout: any
 }
 
 const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
-  const {platform} = useContext(AppContext)
-  const appContext = useContext(props.Context)
+  const platform = useContext(platformContext)
+  const {layout} = props
   const [plugins, setPlugins] = useState<PluginRecord[]>([])
   const editorRef = useRef<HTMLDivElement>(null)
   const mainPanelRef = useRef<HTMLDivElement>(null)
@@ -23,9 +23,9 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
   const refs = [tabsRef, editorRef, mainPanelRef, terminalRef]
 
   const renderPanels = () => {
-    if (appContext) {
+    if (layout.panels) {
       const pluginPanels: PluginRecord[] = []
-      Object.values(appContext.layout.panels).map((panel: any) => {
+      Object.values(layout.panels).map((panel: any) => {
         pluginPanels.push({
           profile: panel.plugin.profile,
           active: panel.active,
@@ -40,23 +40,23 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
 
   useEffect(() => {
     renderPanels()
-    appContext.layout.event.on('change', () => {
+    layout.event.on('change', () => {
       renderPanels()
     })
 
     return () => {
-      appContext.layout.event.off('change')
+      layout.event.off('change')
     }
   }, [])
 
   const showTerminal = (hide: boolean) => {
-    appContext.layout.panels.terminal.minimized = hide
-    appContext.layout.event.emit('change', appContext.layout.panels)
-    appContext.layout.emit('change', appContext.layout.panels)
+    layout.panels.terminal.minimized = hide
+    layout.event.emit('change', layout.panels)
+    layout.emit('change', layout.panels)
   }
 
   const resize = (height: number) => {
-    appContext.layout.emit('resize', height)
+    layout.emit('resize', height)
   }
 
   return (

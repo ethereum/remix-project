@@ -140,7 +140,10 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   }
 
   api.setSolJsonBinData = (data: iSolJsonBinData) => {
+    setSolJsonBinData(data)
+  }
 
+  const setSolJsonBinData = (data: iSolJsonBinData) => {
     const builtin: iSolJsonBinDataBuild =
     {
       path: 'builtin',
@@ -244,6 +247,12 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       for more information.
     </div>
   )
+
+  useEffect(() => {
+    if(!state.solJsonBinData && api.solJsonBinData){
+      setSolJsonBinData(api.solJsonBinData)
+    }
+  },[])
 
   return (
     <>
