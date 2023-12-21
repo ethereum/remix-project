@@ -55,7 +55,7 @@ module.exports = {
       .waitForElementVisible('[for="autoCompile"]')
       .click('[for="autoCompile"]') // we set it too false in the local storage
   },
-  'Should load the code from URL params (code param) #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should load the code from URL params (code param) #group1': function (browser: NightwatchBrowser) {
     browser
 
       .url('http://127.0.0.1:8080/#autoCompile=true&optimize=true&runs=300&code=cHJhZ21hIHNvbGlkaXR5ID49MC42LjAgPDAuNy4wOwoKaW1wb3J0ICJodHRwczovL2dpdGh1Yi5jb20vT3BlblplcHBlbGluL29wZW56ZXBwZWxpbi1jb250cmFjdHMvYmxvYi9tYXN0ZXIvY29udHJhY3RzL2FjY2Vzcy9Pd25hYmxlLnNvbCI7Cgpjb250cmFjdCBHZXRQYWlkIGlzIE93bmFibGUgewogIGZ1bmN0aW9uIHdpdGhkcmF3KCkgZXh0ZXJuYWwgb25seU93bmVyIHsKICB9Cn0')
