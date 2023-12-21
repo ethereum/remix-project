@@ -61,14 +61,23 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
     let templateDisplayName = TEMPLATE_NAMES[templateName]
     const metadata = TEMPLATE_METADATA[templateName]
     if (metadata) {
-      await plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, templateDisplayName)
-      return
+      if (metadata && metadata.type === 'git') {
+        await plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, templateDisplayName)
+      } else if (metadata && metadata.type === 'plugin') {
+        await plugin.appManager.activatePlugin('filePanel')
+        templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
+        await plugin.call('filePanel', 'createWorkspace', templateDisplayName, 'blank')
+        await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
+        plugin.verticalIcons.select('filePanel')
+        await plugin.call(metadata.name, metadata.endpoint, ...metadata.params)
+      }
+    } else {
+      await plugin.appManager.activatePlugin('filePanel')
+      templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
+      await plugin.call('filePanel', 'createWorkspace', templateDisplayName, templateName)
+      await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
+      plugin.verticalIcons.select('filePanel')
     }
-    await plugin.appManager.activatePlugin('filePanel')    
-    templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
-    await plugin.call('filePanel', 'createWorkspace', templateDisplayName, templateName)
-    await plugin.call('filePanel', 'setWorkspace', templateDisplayName)
-    plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'hometab', 'homeGetStarted', templateName])
   }
 
