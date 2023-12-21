@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import {CustomTooltip, CustomMenu, CustomIconsToggle} from '@remix-ui/helper'
 import {Dropdown, NavDropdown} from 'react-bootstrap'
 import {FormattedMessage} from 'react-intl'
-import { AppContext, appPlatformTypes } from '@remix-ui/app'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 const _paq = (window._paq = window._paq || [])
 
 export interface HamburgerMenuItemProps {
@@ -15,7 +15,7 @@ export interface HamburgerMenuItemProps {
 
 export function HamburgerMenuItem(props: HamburgerMenuItemProps) {
   const {hideOption} = props
-  const {platform} = useContext(AppContext)
+  const platform = useContext(platformContext)
   const uid = 'workspace' + props.kind
   return (
     <>

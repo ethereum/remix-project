@@ -9,7 +9,9 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { format } from 'util'
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
-import { AppContext, appPlatformTypes } from '@remix-ui/app'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
+
+
 
 const _paq = ((window as any)._paq = (window as any)._paq || []) // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -44,7 +46,7 @@ interface FinalResult {
 
 export const SolidityUnitTesting = (props: Record<string, any>) => {
   // eslint-disable-line @typescript-eslint/no-explicit-any
-  const {platform} = useContext(AppContext)
+  const platform = useContext(platformContext)
   const { helper, testTab, initialPath } = props
   const { testTabLogic } = testTab
 
@@ -162,10 +164,6 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
         allTests.current.push(file)
         selectedTests.current.push(file)
       }
-    })
-
-    testTab.on('filePanel', 'workspaceCreated', async () => {
-      setTimeout(async () => await setCurrentPath(defaultPath), 100)
     })
 
     testTab.on('filePanel', 'setWorkspace', async () => {

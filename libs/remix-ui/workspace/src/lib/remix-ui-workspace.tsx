@@ -12,7 +12,7 @@ import {MenuItems, WorkSpaceState} from './types'
 import {contextMenuActions} from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
-import { AppContext, appPlatformTypes } from '@remix-ui/app'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 
 const _paq = (window._paq = window._paq || [])
@@ -20,7 +20,7 @@ const _paq = (window._paq = window._paq || [])
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
 export function Workspace() {
-  const {platform} = useContext(AppContext)
+  const platform = useContext(platformContext)
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const ELECTRON = 'electron'

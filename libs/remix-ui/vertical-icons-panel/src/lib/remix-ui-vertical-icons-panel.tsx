@@ -6,7 +6,7 @@ import Home from './components/Home'
 import { verticalScrollReducer } from './reducers/verticalScrollReducer'
 import { Chevron } from './components/Chevron'
 import { IconRecord } from './types'
-import { AppContext } from '@remix-ui/app'
+import { onLineContext } from '@remix-ui/app'
 import { CustomTooltip } from '@remix-ui/helper'
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: Plugin
@@ -24,7 +24,7 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
   const iconPanelRef = useRef<any>()
   const [activateScroll, dispatchScrollAction] = useReducer(verticalScrollReducer, initialState)
   const [theme, setTheme] = useState<string>('dark')
-  const { online } = useContext(AppContext)
+  const online = useContext(onLineContext)
 
   const evaluateScrollability = () => {
     dispatchScrollAction({
