@@ -630,7 +630,7 @@ export function Workspace() {
     global.dispatchHandleExpandPath(expandPath)
     editModeOn(parentFolder + '/blank', 'file', true)
   }
-
+  console.log(global)
   const handleNewFolderInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = getFocusedFolder()
     else if (parentFolder.indexOf('.sol') !== -1 || parentFolder.indexOf('.js') !== -1) parentFolder = extractParentFromKey(parentFolder)
@@ -763,7 +763,7 @@ export function Workspace() {
             </option>
             <option style={{fontSize: 'small'}} value="breakthroughLabsUniswapv4Hooks">
               {intl.formatMessage({id: 'filePanel.breakthroughLabsUniswapv4Hooks'})}
-            </option>           
+            </option>
           </optgroup>
         </select>
         <div id="ozcustomization" data-id="ozCustomization" ref={displayOzCustomRef} style={{display: 'none'}} className="mb-2">
@@ -937,7 +937,7 @@ export function Workspace() {
                     <label className="pl-2 form-check-label" style={{wordBreak: 'keep-all'}}>
                       <FormattedMessage id='filePanel.workspace' />
                     </label>
-                  </span>                  
+                  </span>
                 </div>
                 <div className='mx-2'>
                   <Dropdown id="workspacesSelect" data-id="workspacesSelect" onToggle={toggleDropdown} show={showDropdown}>
@@ -1143,11 +1143,11 @@ export function Workspace() {
         <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
           <div className="d-flex justify-space-between p-1">
             <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
-            {selectedWorkspace.hasGitSubmodules? 
+            {selectedWorkspace.hasGitSubmodules?
               <div className="pt-1 mr-1">
                 {global.fs.browser.isRequestingCloning ? <div style={{ height: 30 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div>  :
                   <div style={{ height: 30 }} onClick={updateSubModules} data-id='updatesubmodules' className='btn btn-sm border text-muted small'>update submodules</div>}
-              </div>  
+              </div>
               : null}
             <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
               <Dropdown style={{height: 30, minWidth: 80}} onToggle={toggleBranches} show={showBranches} drop={'up'}>

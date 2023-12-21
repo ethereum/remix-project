@@ -18,6 +18,8 @@ export interface FileLabelProps {
   dragStatus: boolean
   hover: boolean
   handleNewFolderCreation: any
+  handleNewFileCreation: any
+  renamePath: any
 }
 
 export const FileLabel = (props: FileLabelProps) => {
@@ -101,6 +103,8 @@ export const FileLabel = (props: FileLabelProps) => {
         file={file}
         hover={props.hover}
         handleNewFolderOp={props.handleNewFolderCreation}
+        handleNewFileOp={props.handleNewFileCreation}
+        renamePathOp={props.renamePath}
       />
     </div>
   )

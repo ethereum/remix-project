@@ -24,7 +24,9 @@ export interface RenderFileProps {
   handleClickFolder: (path: string, type: string) => void
   handleClickFile: (path: string, type: string) => void
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
+  renamePath: any
   handleFolderInput: any
+  handleFileInput: any
   fileDecorations: fileDecoration[]
   dragStatus: boolean
 }
@@ -109,7 +111,16 @@ export const FileRender = (props: RenderFileProps) => {
           <>
             <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
               <div className="d-flex flex-row">
-                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} hover={hover} handleNewFolderCreation={props.handleFolderInput} />
+                <FileLabel
+                  fileDecorations={props.fileDecorations}
+                  file={file} focusEdit={props.focusEdit}
+                  editModeOff={props.editModeOff}
+                  dragStatus={props.dragStatus}
+                  hover={hover}
+                  handleNewFolderCreation={props.handleFolderInput}
+                  handleNewFileCreation={props.handleFileInput}
+                  renamePath={props.renamePath}
+                />
                 <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>
             </Draggable>
@@ -142,6 +153,8 @@ export const FileRender = (props: RenderFileProps) => {
                 key={index}
                 dragStatus={props.dragStatus}
                 handleFolderInput={props.handleFolderInput}
+                handleFileInput={props.handleFileInput}
+                renamePath={props.renamePath}
               />
             ))}
           </TreeView>
@@ -159,7 +172,17 @@ export const FileRender = (props: RenderFileProps) => {
           <>
             <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
               <div className="d-flex flex-row">
-                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} hover={hover} handleNewFolderCreation={props.handleFolderInput} />
+                <FileLabel
+                  fileDecorations={props.fileDecorations}
+                  file={file}
+                  focusEdit={props.focusEdit}
+                  editModeOff={props.editModeOff}
+                  dragStatus={props.dragStatus}
+                  hover={hover}
+                  handleNewFolderCreation={props.handleFolderInput}
+                  handleNewFileCreation={props.handleFileInput}
+                  renamePath={props.renamePath}
+                />
                 <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>
             </Draggable>

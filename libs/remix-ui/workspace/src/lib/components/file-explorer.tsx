@@ -404,6 +404,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     hideIconsMenu={props.hideIconsMenu}
                     dragStatus={state.dragStatus}
                     handleFolderInput={props.handleNewFolderInput}
+                    handleFileInput={props.handleNewFileInput}
+                    renamePath={renamePath}
                   />
                 ))
               }

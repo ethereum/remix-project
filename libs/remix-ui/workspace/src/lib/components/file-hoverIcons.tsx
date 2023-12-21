@@ -8,6 +8,8 @@ export type FileHoverIconsProps = {
   hover?: boolean
   file: any
   handleNewFolderOp: any
+  handleNewFileOp: any
+  renamePathOp: any
 }
 
 export function FileHoverIcons(props: FileHoverIconsProps) {
@@ -33,7 +35,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
                     e.stopPropagation()
                     console.log(props)
                     console.log(fsContext)
-                    await props.handleNewFolderOp(props.file.path)
+                    // await props.handleNewFolderOp(props.file.path)
                     console.log('clicked on folder icon')
                   }}
                 ></span>
@@ -47,8 +49,9 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
               >
                 <span
                   className="far fa-file fa-1x ml-1 mr-1 remixui_icons"
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.stopPropagation()
+                    await props.handleNewFileOp(props.file.path)
                     console.log('clicked on file icon')
                   }}
                 ></span>
@@ -65,8 +68,9 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
         >
           <span
             className="far fa-pen fa-1x mr-1 remixui_icons"
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation()
+              await props.renamePathOp([props.file.path])
               console.log('clicked on edit icon')
             }}
           ></span>
