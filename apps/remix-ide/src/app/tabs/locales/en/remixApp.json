@@ -1,3 +1,5 @@
 {
-  "remixApp.scrollToSeeAllTabs": "Scroll to see all tabs"
+  "remixApp.scrollToSeeAllTabs": "Scroll to see all tabs",
+  "remixApp.alert": "Alert",
+  "remixApp.ok": "OK"
 }
