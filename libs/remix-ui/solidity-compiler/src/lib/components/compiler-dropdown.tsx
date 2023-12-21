@@ -1,4 +1,6 @@
-import { AppContext, appPlatformTypes } from '@remix-ui/app';
+import { appPlatformTypes, platformContext, onLineContext } from '@remix-ui/app';
+
+;
 import React, { useEffect, useState, useRef, useReducer, useContext } from 'react' // eslint-disable-line
 import { Dropdown } from 'react-bootstrap';
 import { CompilerMenu, CompilerMenuToggle } from './compiler-menu';
@@ -20,7 +22,8 @@ interface compilerDropdownProps {
 }
 
 export const CompilerDropdown = (props: compilerDropdownProps) => {
-  const {platform, online} = useContext(AppContext)
+  const online = useContext(onLineContext)
+  const platform = useContext(platformContext)
   const { customVersions, selectedVersion, defaultVersion, allversions, handleLoadVersion, _shouldBeAdded, onlyDownloaded } = props
   return (
     <Dropdown id="versionSelector" data-id="versionSelector">

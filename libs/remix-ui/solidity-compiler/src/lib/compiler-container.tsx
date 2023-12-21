@@ -10,11 +10,13 @@ import {listenToEvents} from './actions/compiler'
 import {getValidLanguage} from '@remix-project/remix-solidity'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import {configFileContent} from './compilerConfiguration'
-import { AppContext, appPlatformTypes } from '@remix-ui/app'
+import { appPlatformTypes, platformContext, onLineContext } from '@remix-ui/app'
 
 import './css/style.css'
 
 import { CompilerDropdown } from './components/compiler-dropdown'
+
+
 const defaultPath = 'compiler_config.json'
 
 declare global {
@@ -26,7 +28,8 @@ declare global {
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
-  const {platform, online} = useContext(AppContext)
+  const online = useContext(onLineContext)
+  const platform = useContext(platformContext)
   const {
     api,
     compileTabLogic,

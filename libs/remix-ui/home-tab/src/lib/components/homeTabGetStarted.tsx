@@ -7,7 +7,9 @@ import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
-import { AppContext, appPlatformTypes } from '@remix-ui/app'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
+
+
 declare global {
   interface Window {
     _paq: any
@@ -19,7 +21,7 @@ interface HomeTabGetStartedProps {
 }
 
 function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
-  const {platform} = useContext(AppContext)
+  const platform = useContext(platformContext)
   const themeFilter = useContext(ThemeContext)
   const carouselRef = useRef<any>({})
   const carouselRefDiv = useRef(null)
