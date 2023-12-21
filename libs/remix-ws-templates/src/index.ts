@@ -9,6 +9,7 @@ export { default as playground } from './templates/playground'
 export { default as semaphore } from './templates/semaphore'
 export { default as hashchecker } from './templates/hashchecker'
 export { default as rln } from './templates/rln'
+export { default as ecdsa }  from './templates/ecdsa'
 
 export { contractDeployerScripts } from './script-templates/contract-deployer'
 export { etherscanScripts } from './script-templates/etherscan'
