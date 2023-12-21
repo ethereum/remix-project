@@ -177,10 +177,10 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       return tmp ? tmp[1] : version
     }
 
-    testTab.fileManager.events.on('noFileSelected', async () => {
+    testTab.on('fileManager', 'noFileSelected', async () => {
       await updateForNewCurrent()
     })
-    testTab.fileManager.events.on('currentFileChanged', async (file: string) => {
+    testTab.on('fileManager', 'currentFileChanged', async (file: string) => {
       await updateForNewCurrent(file)
     })
     testTab.on('solidity', 'compilerLoaded', async (version: string, license: string) => {

@@ -319,7 +319,6 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 
   case 'FILE_ADDED_SUCCESS': {
     const payload = action.payload
-
     return {
       ...state,
       browser: {
