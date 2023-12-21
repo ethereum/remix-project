@@ -24,9 +24,10 @@ export interface RenderFileProps {
   handleClickFolder: (path: string, type: string) => void
   handleClickFile: (path: string, type: string) => void
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
-  renamePath: any
+  editModeOn: any
   handleFolderInput: any
   handleFileInput: any
+  deletePath: any
   fileDecorations: fileDecoration[]
   dragStatus: boolean
 }
@@ -119,7 +120,8 @@ export const FileRender = (props: RenderFileProps) => {
                   hover={hover}
                   handleNewFolderCreation={props.handleFolderInput}
                   handleNewFileCreation={props.handleFileInput}
-                  renamePath={props.renamePath}
+                  editModeOn={props.editModeOn}
+                  deletePath={props.deletePath}
                 />
                 <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>
@@ -154,7 +156,8 @@ export const FileRender = (props: RenderFileProps) => {
                 dragStatus={props.dragStatus}
                 handleFolderInput={props.handleFolderInput}
                 handleFileInput={props.handleFileInput}
-                renamePath={props.renamePath}
+                editModeOn={props.editModeOn}
+                deletePath={props.deletePath}
               />
             ))}
           </TreeView>
@@ -181,7 +184,8 @@ export const FileRender = (props: RenderFileProps) => {
                   hover={hover}
                   handleNewFolderCreation={props.handleFolderInput}
                   handleNewFileCreation={props.handleFileInput}
-                  renamePath={props.renamePath}
+                  editModeOn={props.editModeOn}
+                  deletePath={props.deletePath}
                 />
                 <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
               </div>

@@ -396,6 +396,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     ctrlKey={state.ctrlKey}
                     expandPath={props.expandPath}
                     editModeOff={editModeOff}
+                    editModeOn={props.editModeOn}
                     handleClickFile={handleClickFile}
                     handleClickFolder={handleClickFolder}
                     handleContextMenu={handleContextMenu}
@@ -405,7 +406,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     dragStatus={state.dragStatus}
                     handleFolderInput={props.handleNewFolderInput}
                     handleFileInput={props.handleNewFileInput}
-                    renamePath={renamePath}
+                    deletePath={props.dispatchDeletePath}
                   />
                 ))
               }
