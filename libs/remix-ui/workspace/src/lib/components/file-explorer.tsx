@@ -35,7 +35,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   const treeRef = useRef<HTMLDivElement>(null)
   const [childrenKeys, setChildrenKeys] = useState<string[]>([])
-  console.log(props)
+
   useEffect(() => {
     if (contextMenuItems) {
       addMenuItems(contextMenuItems)
@@ -63,6 +63,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
       })
     }
   }, [props.focusEdit])
+
+  const handleKeypress = async (e: KeyboardEvent) => {
+    
+  }
 
   useEffect(() => {
     document.addEventListener('keydown', (e) => {

@@ -630,7 +630,7 @@ export function Workspace() {
     global.dispatchHandleExpandPath(expandPath)
     editModeOn(parentFolder + '/blank', 'file', true)
   }
-  console.log(global)
+
   const handleNewFolderInput = async (parentFolder?: string) => {
     if (!parentFolder) parentFolder = getFocusedFolder()
     else if (parentFolder.indexOf('.sol') !== -1 || parentFolder.indexOf('.js') !== -1) parentFolder = extractParentFromKey(parentFolder)
