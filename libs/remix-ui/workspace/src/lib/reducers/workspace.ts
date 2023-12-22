@@ -1,4 +1,4 @@
-import {extractNameFromKey} from '@remix-ui/helper'
+import {extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
 import {action, Actions, FileType, WorkspaceElement} from '../types'
 import * as _ from 'lodash'
 import {fileDecoration} from '@remix-ui/file-decorators'
@@ -182,6 +182,11 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 
   case 'FETCH_DIRECTORY_SUCCESS': {
     const payload = action.payload
+    console.log('make a flat tree', payload)
+    const startTime = new Date().getTime()
+    const fd = fetchDirectoryContent(state, payload)
+    const endTime = new Date().getTime()
+    console.log('fetchDirectoryContent tree', endTime - startTime)
 
     return {
       ...state,
@@ -189,7 +194,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
         ...state.browser,
         files:
             state.mode === 'browser'
-              ? fetchDirectoryContent(state, payload)
+              ? fd
               : state.browser.files,
         isRequestingDirectory: false,
         isSuccessfulDirectory: true,
@@ -246,6 +251,13 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 
   case 'FETCH_WORKSPACE_DIRECTORY_SUCCESS': {
     const payload = action.payload
+    if(state.mode === 'browser'){
+      console.log('make a flat tree', payload)
+    }
+    const startTime = new Date().getTime()
+    const fd = fetchDirectoryContent(state, payload)
+    const endTime = new Date().getTime()
+    console.log('fetchDirectoryContent tree', endTime - startTime)
 
     return {
       ...state,
@@ -253,7 +265,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
         ...state.browser,
         files:
             state.mode === 'browser'
-              ? fetchWorkspaceDirectoryContent(state, payload)
+              ? fd
               : state.browser.files,
         isRequestingWorkspace: false,
         isSuccessfulWorkspace: true,
@@ -606,7 +618,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
       popup: ''
     }
   }
-
+  
   case 'SET_FOCUS_ELEMENT': {
     const payload = action.payload
 

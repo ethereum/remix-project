@@ -8,9 +8,6 @@ export type appProviderContextType = {
   showEnter: boolean,
   appManager: any
   modal: any
-  layout: any
-  platform: appPlatformTypes
-  online: boolean
 }
 
 export enum appPlatformTypes  {
@@ -18,8 +15,9 @@ export enum appPlatformTypes  {
   desktop = 'desktop'
 }
 
-
 export const AppContext = React.createContext<appProviderContextType>(null)
+export const onLineContext = React.createContext<boolean>(null)
+export const platformContext = React.createContext<appPlatformTypes>(null)
 
 export interface dispatchModalInterface {
   modal: (data: AppModal) => void

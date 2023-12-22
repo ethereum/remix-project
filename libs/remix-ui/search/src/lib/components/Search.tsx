@@ -6,11 +6,13 @@ import {Include} from './Include'
 import {Exclude} from './Exclude'
 import {FindContainer} from './FindContainer'
 import {Undo} from './Undo'
-import { AppContext } from '@remix-ui/app'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
+
+
 
 export const SearchTab = (props) => {
   const plugin = props.plugin
-  const {platform} = useContext(AppContext)
+  const platform = useContext(platformContext)
 
   return (
     <>

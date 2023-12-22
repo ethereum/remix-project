@@ -5,6 +5,7 @@ import React from 'react' // eslint-disable-line
 import { FileSystemProvider } from '@remix-ui/workspace' // eslint-disable-line
 import {Registry} from '@remix-project/remix-lib'
 import { RemixdHandle } from '../plugins/remixd-handle'
+import {PluginViewWrapper} from '@remix-ui/helper'
 const { HardhatHandle } = require('../files/hardhat-handle.js')
 const { FoundryHandle } = require('../files/foundry-handle.js')
 const { TruffleHandle } = require('../files/truffle-handle.js')
@@ -77,12 +78,29 @@ module.exports = class Filepanel extends ViewPlugin {
     this.expandPath = []
   }
 
+  setDispatch(dispatch) {
+    this.dispatch = dispatch
+    this.renderComponent()
+  }
+
   render() {
     return (
       <div id="fileExplorerView">
-        <FileSystemProvider plugin={this} />
+        <PluginViewWrapper plugin={this} />
       </div>
     )
+  }
+  updateComponent(state) {
+    console.log('updateComponent', state)
+    return (
+        <FileSystemProvider plugin={state.plugin} />
+    )
+  }
+
+  renderComponent() {
+    this.dispatch({
+      plugin: this,
+    })
   }
 
   /**
