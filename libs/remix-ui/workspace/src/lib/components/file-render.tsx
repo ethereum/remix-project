@@ -27,7 +27,7 @@ export interface RenderFileProps {
   editModeOn: any
   handleFolderInput: any
   handleFileInput: any
-  deletePath: any
+  deletePath: (path: string | string[]) => void
   fileDecorations: fileDecoration[]
   dragStatus: boolean
 }

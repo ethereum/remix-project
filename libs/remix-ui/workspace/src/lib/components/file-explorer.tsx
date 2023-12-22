@@ -406,7 +406,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                     dragStatus={state.dragStatus}
                     handleFolderInput={props.handleNewFolderInput}
                     handleFileInput={props.handleNewFileInput}
-                    deletePath={props.dispatchDeletePath}
+                    deletePath={props.deletePath}
                   />
                 ))
               }

@@ -1070,6 +1070,7 @@ export function Workspace() {
                     getFocusedFolder={getFocusedFolder}
                     toGist={toGist}
                     editModeOn={editModeOn}
+                    deletePath={deletePath}
                     handleNewFileInput={handleNewFileInput}
                     handleNewFolderInput={handleNewFolderInput}
                     dragStatus={dragStatus}
@@ -1129,6 +1130,7 @@ export function Workspace() {
                     getFocusedFolder={getFocusedFolder}
                     toGist={toGist}
                     editModeOn={editModeOn}
+                    deletePath={deletePath}
                     handleNewFileInput={handleNewFileInput}
                     handleNewFolderInput={handleNewFolderInput}
                     dragStatus={dragStatus}

@@ -37,7 +37,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
                     e.stopPropagation()
                     console.log(props)
                     console.log(fsContext)
-                    // await props.handleNewFolderOp(props.file.path)
+                    await props.handleNewFolderOp(props.file.path)
                     console.log('clicked on folder icon')
                   }}
                 ></span>
@@ -95,7 +95,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
             console.log(fsContext)
             console.log(e)
             console.log('clicked on trash icon')
-            // await props.deletePathOp(props.file.path)
+            await props.deletePathOp(props.file.path)
           }}
         ></span>
         {/* </CustomTooltip> */}

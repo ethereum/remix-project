@@ -117,6 +117,7 @@ export interface FileExplorerProps {
     handleCopyClick: (path: string, type: WorkspaceElement) => void
     addMenuItems: (items: MenuItems) => void
     removeMenuItems: (items: MenuItems) => void
+    deletePath: (path: string | string[]) => void
     handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
     uploadFile: (target) => void
     uploadFolder: (target) => void
