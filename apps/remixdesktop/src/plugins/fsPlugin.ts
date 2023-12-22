@@ -5,12 +5,7 @@ import chokidar from 'chokidar'
 import {dialog, shell} from 'electron'
 import {createWindow, isPackaged} from '../main'
 import {writeConfig} from '../utils/config'
-import {Path} from 'path-scurry'
-import {rgPath} from '@vscode/ripgrep'
-import byline from 'byline'
-
 import path from 'path'
-import {spawn} from 'child_process'
 import {customAction} from '@remixproject/plugin-api'
 
 const profile: Profile = {
