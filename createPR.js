@@ -31,4 +31,4 @@ async function createPR(prNumber, baseBranch) {
 
 createPR(process.env.fromPR, process.env.baseBranch || 'remix_beta')
 
-// Run: fromPR=4369 node testGHAPI.js
+// Run: fromPR=4369 node createPR.js
