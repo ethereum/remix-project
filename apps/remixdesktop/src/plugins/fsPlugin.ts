@@ -1,22 +1,22 @@
-import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
+import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
 import fs from 'fs/promises'
-import { Profile } from "@remixproject/plugin-utils";
+import {Profile} from '@remixproject/plugin-utils'
 import chokidar from 'chokidar'
-import { dialog, shell } from "electron";
-import { createWindow, isPackaged } from "../main";
-import { writeConfig } from "../utils/config";
-import { Path } from 'path-scurry'
+import {dialog, shell} from 'electron'
+import {createWindow, isPackaged} from '../main'
+import {writeConfig} from '../utils/config'
+import {Path} from 'path-scurry'
 import {rgPath} from '@vscode/ripgrep'
-import byline from 'byline';
+import byline from 'byline'
 
-import path from "path";
-import { spawn } from "child_process";
-import { customAction } from "@remixproject/plugin-api";
+import path from 'path'
+import {spawn} from 'child_process'
+import {customAction} from '@remixproject/plugin-api'
 
 const profile: Profile = {
   displayName: 'fs',
   name: 'fs',
-  description: 'fs'
+  description: 'fs',
 }
 
 const convertPathToPosix = (pathName: string): string => {
@@ -27,7 +27,6 @@ const getBaseName = (pathName: string): string => {
   return path.basename(pathName)
 }
 
-
 export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
   constructor() {
@@ -37,8 +36,8 @@ export class FSPlugin extends ElectronBasePlugin {
 
   async onActivation(): Promise<void> {
     const config = await this.call('electronconfig' as any, 'readConfig')
-    const openedFolders = config && config.openedFolders || []
-    this.call('electronconfig', 'writeConfig', { 'openedFolders': openedFolders })
+    const openedFolders = (config && config.openedFolders) || []
+    this.call('electronconfig', 'writeConfig', {openedFolders: openedFolders})
     const foldersToDelete: string[] = []
     if (openedFolders && openedFolders.length) {
       for (const folder of openedFolders) {
@@ -54,9 +53,9 @@ export class FSPlugin extends ElectronBasePlugin {
       }
       if (foldersToDelete.length) {
         const newFolders = openedFolders.filter((f: string) => !foldersToDelete.includes(f))
-        this.call('electronconfig', 'writeConfig', { 'recentFolders': newFolders })
+        this.call('electronconfig', 'writeConfig', {recentFolders: newFolders})
       }
-    }else{
+    } else {
       createWindow()
     }
   }
@@ -74,25 +73,25 @@ export class FSPlugin extends ElectronBasePlugin {
   }
 
   openFolder(webContentsId: any): void {
-    const client = this.clients.find(c => c.webContentsId === webContentsId)
+    const client = this.clients.find((c) => c.webContentsId === webContentsId)
     if (client) {
       client.openFolder()
     }
   }
-
 }
 
 const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'openFolderInSameWindow', 'getRecentFolders', 'removeRecentFolder', 'openWindow', 'selectFolder', 'revealInExplorer', 'openInVSCode', 'openInVSCode']
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'openFolderInSameWindow', 'getRecentFolders', 'removeRecentFolder', 'openWindow', 'selectFolder', 'revealInExplorer', 'openInVSCode', 'openInVSCode'],
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
   watchers: Record<string, chokidar.FSWatcher> = {}
   workingDir: string = ''
   trackDownStreamUpdate: Record<string, string> = {}
+  expandedPaths: string[] = ['.']
 
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
@@ -109,7 +108,7 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   // best for non recursive
   async readdir(path: string): Promise<string[]> {
-    if (this.workingDir === '')  throw new Error('workingDir is not set')
+    if (this.workingDir === '') throw new Error('workingDir is not set')
     // call node fs.readdir
     if (!path) return []
     const startTime = Date.now()
@@ -200,8 +199,9 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async watch(): Promise<void> {
-    try{
+    try {
       this.on('filePanel' as any, 'expandPathChanged', async (paths: string[]) => {
+        this.expandedPaths = ['.', ...paths] // add root
         for (let path of paths) {
           if (!this.watchers[path]) {
             path = this.fixPath(path)
@@ -209,7 +209,7 @@ class FSPluginClient extends ElectronBasePluginClient {
             console.log('added watcher', path)
           }
         }
-        paths = paths.map(path => this.fixPath(path))
+        paths = paths.map((path) => this.fixPath(path))
         for (const watcher in this.watchers) {
           if (watcher === this.workingDir) continue
           if (!paths.includes(watcher)) {
@@ -221,12 +221,12 @@ class FSPluginClient extends ElectronBasePluginClient {
       })
       this.watchers[this.workingDir] = await this.watcherInit(this.workingDir) // root
       console.log('added root watcher', this.workingDir)
-    } catch(e){
+    } catch (e) {
       console.log('error watching', e)
     }
   }
 
-  private async watcherInit (path: string) {
+  private async watcherInit(path: string) {
     const watcher = chokidar
       .watch(path, {
         ignorePermissionErrors: true,
@@ -234,36 +234,39 @@ class FSPluginClient extends ElectronBasePluginClient {
         ignored: [
           '**/.git/index.lock', // this file is created and unlinked all the time when git is running on Windows
         ],
-        depth: 1
-        
+        depth: 0,
       })
       .on('all', async (eventName, path, stats) => {
         this.watcherExec(eventName, path)
       })
-      .on('error', error => {
+      .on('error', (error) => {
         watcher.close()
-        if(error.message.includes('ENOSPC')) {
+        if (error.message.includes('ENOSPC')) {
           this.emit('error', 'ENOSPC')
         }
         console.log(`Watcher error: ${error}`)
       })
-      return watcher
+    return watcher
   }
 
-  private async watcherExec (eventName: string, path: string) {
-    let pathWithoutPrefix = path.replace(this.workingDir, '')
+  private async watcherExec(eventName: string, eventPath: string) {
+    let pathWithoutPrefix = eventPath.replace(this.workingDir, '')
     pathWithoutPrefix = convertPathToPosix(pathWithoutPrefix)
     if (pathWithoutPrefix.startsWith('/')) pathWithoutPrefix = pathWithoutPrefix.slice(1)
 
     if (eventName === 'change') {
       // remove workingDir from path
-      const newContent = await fs.readFile(path, 'utf-8')
+      const newContent = await fs.readFile(eventPath, 'utf-8')
 
       const currentContent = this.trackDownStreamUpdate[pathWithoutPrefix]
 
       if (currentContent !== newContent) {
         try {
-          console.log('emitting', eventName, pathWithoutPrefix)
+          const dirname = path.dirname(pathWithoutPrefix)
+          if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
+            console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
+            this.emit('change', eventName, pathWithoutPrefix)
+          }
           this.emit('change', eventName, pathWithoutPrefix)
         } catch (e) {
           console.log('error emitting change', e)
@@ -271,8 +274,12 @@ class FSPluginClient extends ElectronBasePluginClient {
       }
     } else {
       try {
-        console.log('emitting', eventName, pathWithoutPrefix)
-        this.emit('change', eventName, pathWithoutPrefix)
+        const dirname = path.dirname(pathWithoutPrefix)
+        console.log('check emitting', eventName, pathWithoutPrefix, this.expandedPaths, dirname)
+        if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
+          console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
+          this.emit('change', eventName, pathWithoutPrefix)
+        }
       } catch (e) {
         console.log('error emitting change', e)
       }
