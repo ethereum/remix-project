@@ -2,7 +2,7 @@ const { Octokit } = require("octokit");
 
 async function createPR(prNumber, baseBranch) {
     const octokit = new Octokit({
-        auth: ''
+        auth: process.env.authToken || ''
       })
       
     const prData = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}', {
@@ -29,6 +29,6 @@ async function createPR(prNumber, baseBranch) {
     console.log('Pull Request Created!!! See: ', response.data.html_url)
 }
 
-createPR(process.env.fromPR, process.env.baseBranch || 'remix_beta')
+createPR(process.env.fromPR, 'remix_beta')
 
-// Run: fromPR=4369 node createPR.js
+// Run: fromPR=4369 authToken=abc123 node createPRToBeta.js
