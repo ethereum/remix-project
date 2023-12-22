@@ -149,9 +149,9 @@ export const RecursiveTree = (props: RecursiveTreeProps) => {
             }
 
           }>
-          <Popover.Content className='py-1'>
+          <Popover.Body>
             {mouseOverTarget && mouseOverTarget.path}
-          </Popover.Content>
+          </Popover.Body>
         </Popover>
       }
 
