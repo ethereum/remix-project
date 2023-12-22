@@ -68,7 +68,7 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
     let currentCheck = ''
     for (const value of paths) {
       currentCheck = currentCheck + '/' + value
-      await folderAdded(currentCheck)
+      //await folderAdded(currentCheck)
     }
   })
 }

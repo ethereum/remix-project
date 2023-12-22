@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import {FormattedMessage, useIntl} from 'react-intl'
 import '../remix-ui-plugin-manager.css'
 import {CustomTooltip} from '@remix-ui/helper'
-import { AppContext } from '@remix-ui/app'
+import { AppContext, onLineContext } from '@remix-ui/app'
 interface PluginCardProps {
   profile: any
   buttonText: string
@@ -12,7 +12,7 @@ interface PluginCardProps {
 }
 
 function InactivePluginCard({profile, buttonText, activatePlugin}: PluginCardProps) {
-  const {online} = useContext(AppContext)
+  const online = useContext(onLineContext)
   const [canBeActivated, setCanBeActivated] = useState(false)
   const intl = useIntl()
   useEffect(() => {

@@ -4,7 +4,7 @@ import {AlertModal, AppModal} from '../interface'
 import {modalReducer} from '../reducer/modals'
 import {ModalInitialState} from '../state/modals'
 import {ModalTypes} from '../types'
-import {AppContext, dispatchModalContext, modalContext} from './context'
+import {AppContext, dispatchModalContext, modalContext, platformContext, onLineContext} from './context'
 
 export const ModalProvider = ({children = [], reducer = modalReducer, initialState = ModalInitialState} = {}) => {
   const [{modals, toasters, focusModal, focusToaster}, dispatch] = useReducer(reducer, initialState)
@@ -83,7 +83,9 @@ export const ModalProvider = ({children = [], reducer = modalReducer, initialSta
 export const AppProvider = ({children = [], value = {}} = null) => {
   return (
     <AppContext.Provider value={value}>
-      <ModalProvider>{children}</ModalProvider>
+      <ModalProvider>
+        {children}
+      </ModalProvider>
     </AppContext.Provider>
   )
 }

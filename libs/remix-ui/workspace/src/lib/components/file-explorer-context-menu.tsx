@@ -5,7 +5,9 @@ import {action, FileExplorerContextMenuProps} from '../types'
 import '../css/file-explorer-context-menu.css'
 import {customAction} from '@remixproject/plugin-api'
 import UploadFile from './upload-file'
-import { AppContext, appPlatformTypes } from '@remix-ui/app'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
+
+
 
 declare global {
   interface Window {
@@ -15,7 +17,7 @@ declare global {
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
-  const {platform} = useContext(AppContext)
+  const platform = useContext(platformContext)
   const {
     actions,
     createNewFile,

@@ -12,15 +12,18 @@ import {MenuItems, WorkSpaceState} from './types'
 import {contextMenuActions} from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
-import { AppContext, appPlatformTypes } from '@remix-ui/app'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
+import { NewFileExplorer } from './components/file-explorer-new'
+
+
 
 const _paq = (window._paq = window._paq || [])
 
 const canUpload = window.File || window.FileReader || window.FileList || window.Blob
 
 export function Workspace() {
-  const {platform} = useContext(AppContext)
+  const platform = useContext(platformContext)
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const ELECTRON = 'electron'
@@ -78,6 +81,10 @@ export function Workspace() {
   })
 
   useEffect(() => {
+    console.log("platform", platform)
+  },[platform])
+
+  useEffect(() => {
     if (canPaste) {
       addMenuItems([
         {
@@ -108,6 +115,14 @@ export function Workspace() {
       ])
     }
   }, [canPaste])
+
+  useEffect(() => {
+    console.log('WORKSPACE RENDER')
+  })
+
+  useEffect(() => {
+    console.log("workspace state")
+  },[currentWorkspace])
 
   useEffect(() => {
     let workspaceName = localStorage.getItem('currentWorkspace')
@@ -908,6 +923,7 @@ export function Workspace() {
         }}
         onContextMenu={(e) => {
           e.preventDefault()
+          console.log(e)
           handleContextMenu(e.pageX, e.pageY, ROOT_PATH, 'workspace', 'workspace')
         }}
       >
@@ -1041,7 +1057,7 @@ export function Workspace() {
                   <i className="fas fa-spinner fa-pulse fa-2x"></i>
                 </div>
               )}
-              {!(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && global.fs.mode === 'browser' && currentWorkspace !== NO_WORKSPACE && (
+              {global.fs.mode === 'browser' && currentWorkspace !== NO_WORKSPACE && (
                 <div className="h-100 remixui_treeview" data-id="filePanelFileExplorerTree">
                   <FileExplorer
                     fileState={global.fs.browser.fileState}

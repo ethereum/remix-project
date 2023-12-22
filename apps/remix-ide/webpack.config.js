@@ -77,6 +77,13 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     solc: 'solc'
   }
 
+  // set alias
+  config.resolve.alias = {
+    ...config.resolve.alias,
+    'react-dom$': 'react-dom/profiling',
+  }
+
+
   // add public path
   if(process.env.NX_DESKTOP_FROM_DIST){
     config.output.publicPath = './'

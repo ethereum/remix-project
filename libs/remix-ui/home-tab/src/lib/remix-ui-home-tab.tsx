@@ -9,9 +9,11 @@ import HomeTabScamAlert from './components/homeTabScamAlert'
 import HomeTabGetStarted from './components/homeTabGetStarted'
 import HomeTabFeatured from './components/homeTabFeatured'
 import HomeTabFeaturedPlugins from './components/homeTabFeaturedPlugins'
-import { AppContext, appPlatformTypes } from '@remix-ui/app'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { HomeTabFileElectron } from './components/homeTabFileElectron'
 import { LanguageOptions } from './components/homeTablangOptions'
+
+
 
 declare global {
   interface Window {
@@ -24,7 +26,7 @@ export interface RemixUiHomeTabProps {
 }
 
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
-  const {platform} = useContext(AppContext)
+  const platform = useContext(platformContext)
   const {plugin} = props
 
   const [state, setState] = useState<{
