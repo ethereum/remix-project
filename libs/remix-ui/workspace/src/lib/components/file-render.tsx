@@ -1,21 +1,21 @@
 // eslint-disable-next-line no-use-before-define
-import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { FileType, WorkspaceElement } from '../types'
+import React, {SyntheticEvent, useEffect, useState} from 'react'
+import {FileType, WorkspaceElement} from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
-import { getPathIcon } from '@remix-ui/helper'
+import {TreeView, TreeViewItem} from '@remix-ui/tree-view'
+import {getPathIcon} from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FileLabel } from './file-label'
-import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
-import { Draggable } from '@remix-ui/drag-n-drop'
+import {FileLabel} from './file-label'
+import {fileDecoration, FileDecorationIcons} from '@remix-ui/file-decorators'
+import {Draggable} from '@remix-ui/drag-n-drop'
 import { fileKeySort } from '../utils'
 
 export interface RenderFileProps {
   file: FileType
   index: number
-  focusEdit: { element: string; type: string; isNew: boolean; lastEdit: string }
-  focusElement: { key: string; type: WorkspaceElement }[]
-  focusContext: { element: string; x: number; y: number; type: string }
+  focusEdit: {element: string; type: string; isNew: boolean; lastEdit: string}
+  focusElement: {key: string; type: WorkspaceElement}[]
+  focusContext: {element: string; x: number; y: number; type: string}
   ctrlKey: boolean
   expandPath: string[]
   hideIconsMenu?: React.Dispatch<React.SetStateAction<boolean>>
@@ -29,24 +29,19 @@ export interface RenderFileProps {
 }
 
 export const FileRender = (props: RenderFileProps) => {
-  const { file } = props
+  const [file, setFile] = useState<FileType>({} as FileType)
   const [hover, setHover] = useState<boolean>(false)
-  //const [icon, setIcon] = useState<string>('')
+  const [icon, setIcon] = useState<string>('')
   const [childrenKeys, setChildrenKeys] = useState<string[]>([])
 
   useEffect(() => {
-    //if (props.file && props.file.path && props.file.type) {
-    //  //consolelog('set icon', props.file.path)
-    //  setIcon(getPathIcon(props.file.path))
-    //}
+    if (props.file && props.file.path && props.file.type) {
+      setFile(props.file)
+      setIcon(getPathIcon(props.file.path))
+    }
   }, [props.file])
 
   useEffect(() => {
-    //consolelog('file render', props.file.path)
-  }, [])
-
-  useEffect(() => {
-    return
     if (file.child) {
       try {
         const children: FileType[] = file.child as any
@@ -101,13 +96,8 @@ export const FileRender = (props: RenderFileProps) => {
     event.stopPropagation()
     setHover(true)
   }
-  //consolelog('eval file render', file.path)
 
-  if (!file.path) return (<></>)
-
-  ///return (<><div className='btn btn-primary'>file</div></>)
-
-  if (file.isDirectory && false) {
+  if (file.isDirectory) {
     return (
       <TreeViewItem
         id={`treeViewItem${file.path}`}
@@ -134,7 +124,7 @@ export const FileRender = (props: RenderFileProps) => {
       >
         {file.child ? (
           <TreeView id={`treeView${file.path}`} key={`treeView${file.path}`} {...spreadProps}>
-            {Object.keys(file.child).map((key, index) => (
+            {childrenKeys.map((key, index) => (
               <FileRender
                 file={file.child[key]}
                 fileDecorations={props.fileDecorations}
@@ -158,24 +148,28 @@ export const FileRender = (props: RenderFileProps) => {
         )}
       </TreeViewItem>
     )
-  } else if (!file.isDirectory) {
-    //consolelog('start do file render', file.path)
-    return (
-      <>
-        <li ref={null} key={`treeViewLi${file.path}`} data-id={`treeViewLi${file.path}`} className="li_tv">
-          <div
-            key={`treeViewDiv${file.path}`}
-            data-id={`treeViewDiv${file.path}`}
-            className={`d-flex flex-row align-items-center ${labelClass}`}
-            onClick={() => {}}
-          >
-            <div className={`pr-2 pl-2 ${getPathIcon(file.path)} caret caret_tv`}></div>
-            <span className="w-100 ml-1 pl-2">{file.name}</span>
-          </div>
-        </li>
-      </>
-    )
   } else {
-    return <></>
+    return (
+      <TreeViewItem
+        id={`treeViewItem${file.path}`}
+        key={`treeView${file.path}`}
+        label={
+          <>
+            <Draggable isDraggable={props.focusEdit.element !== null} file={file} expandedPath={props.expandPath} handleClickFolder={props.handleClickFolder}>
+              <div className="d-flex flex-row">
+                <FileLabel fileDecorations={props.fileDecorations} file={file} focusEdit={props.focusEdit} editModeOff={props.editModeOff} dragStatus={props.dragStatus} />
+                <FileDecorationIcons file={file} fileDecorations={props.fileDecorations} />
+              </div>
+            </Draggable>
+          </>
+        }
+        onClick={handleFileClick}
+        onContextMenu={handleContextMenu}
+        icon={icon}
+        labelClass={labelClass}
+        onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
+      />
+    )
   }
 }
