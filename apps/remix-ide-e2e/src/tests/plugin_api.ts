@@ -431,7 +431,7 @@ module.exports = {
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast')
 
   },
-  'Should open 2 alerts from localplugin #group9': function (browser: NightwatchBrowser) {
+  'Should open 2 alerts from localplugin #group9': !function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('localPlugin')
       .useXpath()

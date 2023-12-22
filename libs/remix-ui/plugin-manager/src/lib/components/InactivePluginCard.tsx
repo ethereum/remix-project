@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import {FormattedMessage, useIntl} from 'react-intl'
 import '../remix-ui-plugin-manager.css'
 import {CustomTooltip} from '@remix-ui/helper'
-import { AppContext, onLineContext } from '@remix-ui/app'
+import { onLineContext } from '@remix-ui/app'
 interface PluginCardProps {
   profile: any
   buttonText: string

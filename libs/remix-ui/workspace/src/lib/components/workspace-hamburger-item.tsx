@@ -2,8 +2,7 @@ import React, { useContext } from 'react'
 import {CustomTooltip, CustomMenu, CustomIconsToggle} from '@remix-ui/helper'
 import {Dropdown, NavDropdown} from 'react-bootstrap'
 import {FormattedMessage} from 'react-intl'
-import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
-
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 const _paq = (window._paq = window._paq || [])
 
 export interface HamburgerMenuItemProps {
@@ -79,7 +78,7 @@ export interface HamburgerSubMenuItemProps {
 export function HamburgerSubMenuItem(props: HamburgerSubMenuItemProps) {
   return (
     <>
-      <NavDropdown title={props.title} as={CustomMenu} key={props.id} id={props.id} drop="right">
+      <NavDropdown title={props.title} as={CustomMenu} key={props.id} id={props.id} drop={'end'}>
         {props.subMenus.map((item) => (
           <NavHamburgerMenuItem platforms={props.platforms} kind={item.kind} fa={item.fa} hideOption={item.hideOption} actionOnClick={item.actionOnClick} />
         ))}

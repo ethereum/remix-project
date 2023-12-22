@@ -7,8 +7,6 @@ import {customAction} from '@remixproject/plugin-api'
 import UploadFile from './upload-file'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 
-
-
 declare global {
   interface Window {
     _paq: any

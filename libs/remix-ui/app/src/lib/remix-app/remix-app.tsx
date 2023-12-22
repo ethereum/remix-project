@@ -8,7 +8,7 @@ import DragBar from './components/dragbar/dragbar'
 import { AppProvider } from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
-import { AppContext, appProviderContextType, onLineContext, platformContext } from './context/context'
+import { appProviderContextType, onLineContext, platformContext } from './context/context'
 import { FormattedMessage, IntlProvider } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper'
 import { UsageTypes } from './types'
@@ -105,7 +105,7 @@ const RemixApp = (props: IRemixAppUi) => {
     showMatamo: props.app.showMatamo,
     appManager: props.app.appManager,
     showEnter: props.app.showEnter,
-    modal: props.app.notification,
+    modal: props.app.notification
   }
 
   const handleUserChosenType = async (type) => {

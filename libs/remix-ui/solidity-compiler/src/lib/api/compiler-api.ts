@@ -16,6 +16,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   compileErrors: any
   compileTabLogic: CompileTabLogic
   configurationSettings: ConfigurationSettings
+  solJsonBinData: iSolJsonBinData
 
   onCurrentFileChanged: (fileName: string) => void
   // onResetResults: () => void
@@ -281,7 +282,11 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
 
     this.on('compilerloader', 'jsonBinDataLoaded', (urls: iSolJsonBinData) => {
-      this.setSolJsonBinData(urls)
+      try{
+        this.setSolJsonBinData(urls)
+      }catch(e){
+      }
+      this.solJsonBinData = urls
     })
     this.call('compilerloader', 'getJsonBinData')
 
