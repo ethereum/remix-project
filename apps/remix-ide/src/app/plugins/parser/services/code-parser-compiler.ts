@@ -48,7 +48,7 @@ export default class CodeParserCompiler {
   init() {
 
     this.onAstFinished = async (success, data: CompilationResult, source: CompilationSourceCode, input: any, version) => {
-      this.plugin.call('editor', 'clearAnnotations')
+      await this.plugin.call('editor', 'clearAnnotations')
       this.errorState = true
       const result = new CompilerAbstract('soljson', data, source, input)
       let allErrors: errorMarker[] = []
@@ -93,7 +93,7 @@ export default class CodeParserCompiler {
 
         const displayErrors = await this.plugin.call('config', 'getAppParameter', 'display-errors')
         if (displayErrors) await this.plugin.call('editor', 'addErrorMarker', allErrors)
-        this.addDecorators(allErrors, sources)
+        await this.addDecorators(allErrors, sources)
       } else {
         await this.plugin.call('editor', 'clearErrorMarkers', result.getSourceCode().sources)
         await this.clearDecorators(result.getSourceCode().sources)
@@ -168,8 +168,6 @@ export default class CodeParserCompiler {
         }
 
         this.compiler.set('configFileContent', JSON.stringify(configFileContent))
-        this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
-        if (!this.plugin.currentFile) return
         const content = await this.plugin.call('fileManager', 'readFile', this.plugin.currentFile)
         const sources = { [this.plugin.currentFile]: { content } }
         this.compiler.compile(sources, this.plugin.currentFile)

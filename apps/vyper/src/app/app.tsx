@@ -25,7 +25,7 @@ interface OutputMap {
   [fileName: string]: VyperCompilationOutput
 }
 
-const App: React.FC = () => {
+const App = () => {
   const [contract, setContract] = useState<string>()
   const [output, setOutput] = useState<OutputMap>({})
   const [state, setState] = useState<AppState>({
@@ -82,10 +82,10 @@ const App: React.FC = () => {
           </Button>
         </div>
         <ToggleButtonGroup name="remote" onChange={setEnvironment} type="radio" value={state.environment}>
-          <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
+          <ToggleButton id="remote-compiler" data-id="remote-compiler" variant="secondary" name="remote" value="remote">
             Remote Compiler v0.2.16
           </ToggleButton>
-          <ToggleButton data-id="local-compiler" variant="secondary" name="local" value="local">
+          <ToggleButton id="local-compiler" data-id="local-compiler" variant="secondary" name="local" value="local">
             Local Compiler
           </ToggleButton>
         </ToggleButtonGroup>
