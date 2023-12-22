@@ -46,7 +46,7 @@ export function RecorderUI(props: RecorderProps) {
             tooltipId="recordedTransactionsCounttooltip"
             tooltipText={<FormattedMessage id="udapp.transactionsCountTooltip" />}
           >
-            <div className="pl-3 badge badge-pill badge-primary text-center" style={{cursor:"default"}} data-title="The number of recorded transactions">
+            <div className="ml-2 badge badge-pill badge-primary text-center" style={{cursor:"default"}} data-title="The number of recorded transactions">
               {props.count}
             </div>
           </CustomTooltip>
