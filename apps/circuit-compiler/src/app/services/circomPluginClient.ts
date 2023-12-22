@@ -127,10 +127,10 @@ export class CircomPluginClient extends PluginClient {
 
     if (parseErrors && (parseErrors.length > 0)) {
       if (parseErrors[0].type === 'Error') {
-        this.internalEvents.emit('circuit_parsing_errored', parseErrors)
+        this.internalEvents.emit('circuit_parsing_errored', parseErrors, filePathToId)
         return
       } else if (parseErrors[0].type === 'Warning') {
-        this.internalEvents.emit('circuit_parsing_warning', parseErrors)
+        this.internalEvents.emit('circuit_parsing_warning', parseErrors, filePathToId)
       }
     } else {
       this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
