@@ -535,7 +535,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             >
               <input
                 ref={atAddressValue}
-                className={(!addressIsValid ? 'border border-danger' : 'border-0') + ' h-100 udapp_input udapp_ataddressinput ataddressinput form-control'}
+                className={(!addressIsValid ? 'border border-danger' : 'border-dark') + ' h-100 udapp_input udapp_ataddressinput ataddressinput form-control'}
                 placeholder={intl.formatMessage({
                   id: 'udapp.loadContractFromAddress',
                 })}

@@ -25,7 +25,7 @@ function WorkspaceTemplate({gsID, workspaceTitle, description, projectLogo, call
           <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="etherscan-receipt-proxy-status" tooltipText={description}>
             <div className='d-flex flex-column align-items-center'>
               <label className="h5 pb-1 mt-1 text-uppercase remixui_home_cursorStyle" style={{color: themeFilter.name == "dark" ? "var(--white)" : "var(--black)"}}>{workspaceTitle}</label>
-              <img className="" src={projectLogo} alt="" style={{height: "20px", width: "fit-content", filter: themeFilter.name == "dark" ? "invert(1)" : "invert(0)"}} />
+              <img className="" src={projectLogo} alt="" style={{height: "20px", filter: themeFilter.name == "dark" ? "invert(1)" : "invert(0)"}} />
             </div>
           </CustomTooltip>
         </div>

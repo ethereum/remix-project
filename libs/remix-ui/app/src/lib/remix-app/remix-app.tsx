@@ -112,35 +112,34 @@ const RemixApp = (props: IRemixAppUi) => {
     setShowEnterDialog(false)
     localStorage.setItem('hadUsageTypeAsked', type)
 
-    await props.app.appManager.call('walkthrough', 'start')
-
     // Use the type to setup the UI accordingly
     switch (type) {
-      case UsageTypes.Beginner: {
-        await props.app.appManager.call('manager', 'activatePlugin', 'LearnEth')
-        // const wName = 'Playground'
-        // const workspaces = await props.app.appManager.call('filePanel', 'getWorkspaces')
-        // if (!workspaces.find((workspace) => workspace.name === wName)) {
-        //   await props.app.appManager.call('filePanel', 'createWorkspace', wName, 'playground')
-        // }
-        // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
+    case UsageTypes.Beginner: {
+      await props.app.appManager.call('manager', 'activatePlugin', 'LearnEth')
+      await props.app.appManager.call('walkthrough', 'start')
+      // const wName = 'Playground'
+      // const workspaces = await props.app.appManager.call('filePanel', 'getWorkspaces')
+      // if (!workspaces.find((workspace) => workspace.name === wName)) {
+      //   await props.app.appManager.call('filePanel', 'createWorkspace', wName, 'playground')
+      // }
+      // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
 
-        _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
-        break
-      }
-      case UsageTypes.Advance: {
-        _paq.push(['trackEvent', 'enterDialog', 'usageType', 'tutor'])
-        break
-      }
-      case UsageTypes.Prototyper: {
-        _paq.push(['trackEvent', 'enterDialog', 'usageType', 'prototyper'])
-        break
-      }
-      case UsageTypes.Production: {
-        _paq.push(['trackEvent', 'enterDialog', 'usageType', 'production'])
-        break
-      }
-      default: throw new Error()
+      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
+      break
+    }
+    case UsageTypes.Advance: {
+      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'tutor'])
+      break
+    }
+    case UsageTypes.Prototyper: {
+      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'prototyper'])
+      break
+    }
+    case UsageTypes.Production: {
+      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'production'])
+      break
+    }
+    default: throw new Error()
     }
 
   }
