@@ -14,8 +14,6 @@ import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
-import { NewFileExplorer } from './components/file-explorer-new'
-
 
 
 const _paq = (window._paq = window._paq || [])
