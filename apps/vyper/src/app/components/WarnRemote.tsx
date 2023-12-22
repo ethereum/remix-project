@@ -10,7 +10,7 @@ function WarnRemoteLabel({environment}: Props) {
   }
 
   return (
-    <small className="mx-4 text-warning pb-4">The remote compiler should only be used for testing NOT for production environments. For production, use a local compiler.</small>
+    <small className="mx-4 text-warning pb-4">Do not use the remote compiler in a production environment, it is only for testing purposes. For production, use a local compiler.</small>
   )
 }
 
