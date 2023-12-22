@@ -5,7 +5,6 @@ import JSZip from 'jszip'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import {Registry} from '@remix-project/remix-lib'
-import { EventEmitter } from 'events'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
@@ -42,7 +41,6 @@ const createError = (err) => {
 class FileManager extends Plugin {
   mode: string
   openedFiles: any
-  events: EventEmitter
   editor: any
   _components: any
   appManager: RemixAppManager
@@ -56,7 +54,6 @@ class FileManager extends Plugin {
     super(profile)
     this.mode = 'browser'
     this.openedFiles = {} // list all opened files
-    this.events = new EventEmitter()
     this.editor = editor
     this._components = {}
     this._components.registry = Registry.getInstance()
@@ -565,7 +562,6 @@ class FileManager extends Plugin {
     }
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRenamed', oldName, newName, isFolder)
-    this.events.emit('fileRenamed', oldName, newName, isFolder)
   }
 
   currentFileProvider() {
@@ -583,7 +579,6 @@ class FileManager extends Plugin {
   async closeAllFiles() {
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('filesAllClosed')
-    this.events.emit('filesAllClosed')
     for (const file in this.openedFiles) {
       await this.closeFile(file)
     }
@@ -595,11 +590,9 @@ class FileManager extends Plugin {
       this._deps.config.set('currentFile', '')
       // TODO: Only keep `this.emit` (issue#2210)
       this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
     }
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileClosed', name)
-    this.events.emit('fileClosed', name)
   }
 
   currentPath() {
@@ -703,8 +696,9 @@ class FileManager extends Plugin {
     delete this.openedFiles[path]
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRemoved', path)
-    this.events.emit('fileRemoved', path)
-    this.openFile(this._deps.config.get('currentFile'))
+    if (path === this._deps.config.get('currentFile')) {
+      this.openFile(this._deps.config.get('currentFile'))
+    }
   }
 
   async unselectCurrentFile() {
@@ -712,13 +706,11 @@ class FileManager extends Plugin {
     this._deps.config.set('currentFile', '')
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('noFileSelected')
-    this.events.emit('noFileSelected')
   }
 
   async openFile(file?: string) {
     if (!file) {
       this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
     } else {
       file = this.normalize(file)
       const resolved = this.getPathFromUrl(file)
@@ -752,7 +744,6 @@ class FileManager extends Plugin {
       }
       // TODO: Only keep `this.emit` (issue#2210)
       this.emit('currentFileChanged', file)
-      this.events.emit('currentFileChanged', file)
       return true
     }
   }

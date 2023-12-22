@@ -90,7 +90,7 @@ const clientProfile: Profile = {
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
-  watcher: chokidar.FSWatcher
+  watchers: Record<string, chokidar.FSWatcher> = {}
   workingDir: string = ''
   trackDownStreamUpdate: Record<string, string> = {}
 
@@ -148,13 +148,10 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async rmdir(path: string): Promise<void> {
-    if (this.watcher) await this.watcher.close()
     await fs.rm(this.fixPath(path), {
       recursive: true,
     })
     this.emit('change', 'unlinkDir', path)
-    await this.watch()
-    
   }
 
   async unlink(path: string): Promise<void> {
@@ -203,59 +200,89 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async watch(): Promise<void> {
-
-    if (this.watcher) this.watcher.close()
     try{
-    this.watcher = chokidar
-      .watch(this.workingDir, {
+      this.on('filePanel' as any, 'expandPathChanged', async (paths: string[]) => {
+        for (let path of paths) {
+          if (!this.watchers[path]) {
+            path = this.fixPath(path)
+            this.watchers[path] = await this.watcherInit(path)
+            console.log('added watcher', path)
+          }
+        }
+        paths = paths.map(path => this.fixPath(path))
+        for (const watcher in this.watchers) {
+          if (watcher === this.workingDir) continue
+          if (!paths.includes(watcher)) {
+            this.watchers[watcher].close()
+            delete this.watchers[watcher]
+            console.log('removed watcher', watcher)
+          }
+        }
+      })
+      this.watchers[this.workingDir] = await this.watcherInit(this.workingDir) // root
+      console.log('added root watcher', this.workingDir)
+    } catch(e){
+      console.log('error watching', e)
+    }
+  }
+
+  private async watcherInit (path: string) {
+    const watcher = chokidar
+      .watch(path, {
         ignorePermissionErrors: true,
         ignoreInitial: true,
         ignored: [
           '**/.git/index.lock', // this file is created and unlinked all the time when git is running on Windows
         ],
-        depth: 20
+        depth: 1
         
       })
       .on('all', async (eventName, path, stats) => {
-        let pathWithoutPrefix = path.replace(this.workingDir, '')
-        pathWithoutPrefix = convertPathToPosix(pathWithoutPrefix)
-        if (pathWithoutPrefix.startsWith('/')) pathWithoutPrefix = pathWithoutPrefix.slice(1)
-
-        if (eventName === 'change') {
-          // remove workingDir from path
-          const newContent = await fs.readFile(path, 'utf-8')
-
-          const currentContent = this.trackDownStreamUpdate[pathWithoutPrefix]
-
-          if (currentContent !== newContent) {
-            try {
-              this.emit('change', eventName, pathWithoutPrefix)
-            } catch (e) {
-              console.log('error emitting change', e)
-            }
-          }
-        } else {
-          try {
-            this.emit('change', eventName, pathWithoutPrefix)
-          } catch (e) {
-            console.log('error emitting change', e)
-          }
-        }
+        this.watcherExec(eventName, path)
       })
       .on('error', error => {
-        this.watcher.close()
+        watcher.close()
         if(error.message.includes('ENOSPC')) {
           this.emit('error', 'ENOSPC')
         }
         console.log(`Watcher error: ${error}`)
       })
-    }catch(e){
-      console.log('error watching', e)
+      return watcher
+  }
+
+  private async watcherExec (eventName: string, path: string) {
+    let pathWithoutPrefix = path.replace(this.workingDir, '')
+    pathWithoutPrefix = convertPathToPosix(pathWithoutPrefix)
+    if (pathWithoutPrefix.startsWith('/')) pathWithoutPrefix = pathWithoutPrefix.slice(1)
+
+    if (eventName === 'change') {
+      // remove workingDir from path
+      const newContent = await fs.readFile(path, 'utf-8')
+
+      const currentContent = this.trackDownStreamUpdate[pathWithoutPrefix]
+
+      if (currentContent !== newContent) {
+        try {
+          console.log('emitting', eventName, pathWithoutPrefix)
+          this.emit('change', eventName, pathWithoutPrefix)
+        } catch (e) {
+          console.log('error emitting change', e)
+        }
+      }
+    } else {
+      try {
+        console.log('emitting', eventName, pathWithoutPrefix)
+        this.emit('change', eventName, pathWithoutPrefix)
+      } catch (e) {
+        console.log('error emitting change', e)
+      }
     }
   }
 
   async closeWatch(): Promise<void> {
-    if (this.watcher) this.watcher.close()
+    for (const watcher in this.watchers) {
+      this.watchers[watcher].close()
+    }
   }
 
   async updateRecentFolders(path: string): Promise<void> {

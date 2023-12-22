@@ -378,6 +378,7 @@ export const handleClickFile = async (path: string, type: 'file' | 'folder' | 'g
 }
 
 export const handleExpandPath = (paths: string[]) => {
+  plugin.emit('expandPathChanged', paths)
   dispatch(setExpandPath(paths))
 }
 
