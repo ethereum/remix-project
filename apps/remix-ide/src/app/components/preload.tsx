@@ -9,13 +9,17 @@ import {fileSystemUtility, migrationTestData} from '../files/filesystems/fileSys
 import './styles/preload.css'
 const _paq = (window._paq = window._paq || [])
 
+let netWorkLoadTestTimer: NodeJS.Timeout
+
 export const Preload = () => {
   const [supported, setSupported] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
+  const [slowNetWorkTimeout, setSlowNetWorkTimeout] = useState<boolean>()
   const [showDownloader, setShowDownloader] = useState<boolean>(false)
   const remixFileSystems = useRef<fileSystems>(new fileSystems())
   const remixIndexedDB = useRef<fileSystem>(new indexedDBFileSystem())
   const localStorageFileSystem = useRef<fileSystem>(new localStorageFS())
+
   // url parameters to e2e test the fallbacks and error warnings
   const testmigrationFallback = useRef<boolean>(
     window.location.hash.includes('e2e_testmigration_fallback=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:'
@@ -27,9 +31,19 @@ export const Preload = () => {
     window.location.hash.includes('e2e_testblock_storage=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:'
   )
 
+  function startDetectSlowNetwork() {
+    netWorkLoadTestTimer = setTimeout(() => {
+        setSlowNetWorkTimeout(true)
+        clearTimeout(netWorkLoadTestTimer)
+    }, 5000)
+
+  }
+
   function loadAppComponent() {
+    startDetectSlowNetwork()
     import('../../app')
       .then((AppComponent) => {
+        clearTimeout(netWorkLoadTestTimer)
         const appComponent = new AppComponent.default()
         appComponent.run().then(() => {
           render(
@@ -128,6 +142,13 @@ export const Preload = () => {
             <div className="pt-2">
               Linux:<br></br>- Chrome & FireFox: CTRL + SHIFT + R<br></br>
             </div>
+          </div>
+        ) : null}
+        {slowNetWorkTimeout ? (
+          <div className="preload-info-container alert alert-warning text-left">
+            Your network is very slow! 
+            <br></br>
+            You may encounter problems loading the application...
           </div>
         ) : null}
         {showDownloader ? (

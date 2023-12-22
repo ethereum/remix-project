@@ -1,5 +1,6 @@
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../package.json'
+import "intro.js/minified/introjs.min.css"
 const introJs = require('intro.js')
 
 const profile = {
