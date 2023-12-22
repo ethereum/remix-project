@@ -70,11 +70,13 @@ function App() {
       dispatch({ type: 'SET_FILE_PATH_TO_ID', payload: filePathToId })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
     })
-    plugin.internalEvents.on('circuit_parsing_errored', (report) => {
+    plugin.internalEvents.on('circuit_parsing_errored', (report, filePathToId) => {
+      dispatch({ type: 'SET_FILE_PATH_TO_ID', payload: filePathToId })
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
     })
-    plugin.internalEvents.on('circuit_parsing_warning', (report) => {
+    plugin.internalEvents.on('circuit_parsing_warning', (report, filePathToId) => {
+      dispatch({ type: 'SET_FILE_PATH_TO_ID', payload: filePathToId })
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'warning' })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
     })
