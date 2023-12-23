@@ -195,20 +195,23 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   async watch(): Promise<void> {
     try {
+      this.off('filePanel' as any, 'expandPathChanged')
       this.on('filePanel' as any, 'expandPathChanged', async (paths: string[]) => {
+        console.log('expandPathChanged', paths)
         this.expandedPaths = ['.', ...paths] // add root
+        console.log(Object.keys(this.watchers))
+        paths = paths.map((path) => this.fixPath(path))
         for (let path of paths) {
-          if (!this.watchers[path]) {
-            path = this.fixPath(path)
+          if (!Object.keys(this.watchers).includes(path)) {
             this.watchers[path] = await this.watcherInit(path)
             console.log('added watcher', path)
           }
         }
-        paths = paths.map((path) => this.fixPath(path))
+       
         for (const watcher in this.watchers) {
           if (watcher === this.workingDir) continue
           if (!paths.includes(watcher)) {
-            this.watchers[watcher].close()
+            await this.watchers[watcher].close()
             delete this.watchers[watcher]
             console.log('removed watcher', watcher)
           }
