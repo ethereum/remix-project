@@ -719,10 +719,7 @@ export const EditorUI = (props: EditorUIProps) => {
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
-        const message = `
-        solidity code: ${content}
-        Generate the documentation for the function ${currentFunction.current} using the Doxygen style syntax
-        `
+        const message = intl.formatMessage({id: 'editor.generateDocumentationByAI'}, {content, currentFunction: currentFunction.current})
         await props.plugin.call('openaigpt', 'message', message)
         _paq.push(['trackEvent', 'ai', 'openai', 'generateDocumentation'])
       },
@@ -738,10 +735,7 @@ export const EditorUI = (props: EditorUIProps) => {
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
-        const message = `
-        solidity code: ${content}
-        Explain the function ${currentFunction.current}
-        `
+        const message = intl.formatMessage({id: 'editor.explainFunctionByAI'}, {content, currentFunction: currentFunction.current})
         await props.plugin.call('openaigpt', 'message', message)
         _paq.push(['trackEvent', 'ai', 'openai', 'explainFunction'])
       },
