@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import copy from 'copy-to-clipboard'
-import {Placement} from 'react-bootstrap/esm/types'
+import {Placement} from 'react-bootstrap/esm/Overlay'
 
 import './copy-to-clipboard.css'
 import {CustomTooltip} from '@remix-ui/helper'

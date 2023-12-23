@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, SyntheticEvent } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, SyntheticEvent, useTransition } from 'react' // eslint-disable-line
 import { useIntl } from 'react-intl'
 import { TreeView } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
@@ -8,12 +8,11 @@ import { FileExplorerProps, FileType, WorkSpaceState, WorkspaceElement } from '.
 import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, getPathIcon, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FileRender } from './file-render'
 import { Drag, Draggable } from '@remix-ui/drag-n-drop'
 import { ROOT_PATH } from '../utils/constants'
 import { fileKeySort } from '../utils'
 import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
-import { RecursiveTreeItem, RecursiveTree } from './file-recursive-tree'
+import { RecursiveTree } from './file-recursive-tree'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -34,6 +33,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     fileState
   } = props
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
+  const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
   const [childrenKeys, setChildrenKeys] = useState<string[]>([])
 
@@ -153,6 +153,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleClickFile = (path: string, type: WorkspaceElement) => {
+    console.log('handleClickFile', path, type)
     if (!state.ctrlKey) {
       props.dispatchHandleClickFile(path, type)
     } else {
@@ -187,14 +188,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
     } else {
       let expandPath = []
-
+      
       if (!props.expandPath.includes(path)) {
         expandPath = [...new Set([...props.expandPath, path])]
         props.dispatchFetchDirectory(path)
       } else {
         expandPath = [...new Set(props.expandPath.filter((key) => key && typeof key === 'string' && !key.startsWith(path)))]
       }
-
+      console.log('handleClickFolder', path, type)
       props.dispatchSetFocusElement([{ key: path, type }])
       props.dispatchHandleExpandPath(expandPath)
     }
@@ -416,12 +417,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
         </li>
         <div>
           <div onClick={handleTreeClick}>
-            <RecursiveTree handleContextMenu={handleContextMenu} expandPath={props.expandPath} files={files} />
+            <RecursiveTree
+              focusEdit={state.focusEdit}
+              focusElement={props.focusElement}
+              focusContext={state.focusContext}
+              editModeOff={editModeOff}
+              handleContextMenu={handleContextMenu} 
+              expandPath={props.expandPath} 
+              files={files} />
           </div>
         </div>
-        <Draggable isDraggable={false} file={{ name: '/', path: '/', type: 'folder', isDirectory: true }} expandedPath={props.expandPath} handleClickFolder={null}>
-          <div className='d-block w-100 pb-4 mb-4'></div>
-        </Draggable>
+
+        <div className='d-block w-100 pb-4 mb-4'></div>
       </TreeView>
     </div>
 
