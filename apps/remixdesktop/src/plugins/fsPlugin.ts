@@ -7,6 +7,9 @@ import {createWindow, isPackaged} from '../main'
 import {writeConfig} from '../utils/config'
 import path from 'path'
 import {customAction} from '@remixproject/plugin-api'
+import { PluginEventDataBatcher } from '../utils/pluginEventDataBatcher'
+
+
 
 const profile: Profile = {
   displayName: 'fs',
@@ -87,6 +90,7 @@ class FSPluginClient extends ElectronBasePluginClient {
   workingDir: string = ''
   trackDownStreamUpdate: Record<string, string> = {}
   expandedPaths: string[] = ['.']
+  dataBatcher: PluginEventDataBatcher
 
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
@@ -98,6 +102,11 @@ class FSPluginClient extends ElectronBasePluginClient {
         await this.removeFromOpenedFolders(this.workingDir)
         await this.closeWatch()
       })
+    })
+    this.dataBatcher = new PluginEventDataBatcher(webContentsId)
+    this.dataBatcher.on('flush', (data: any) => {
+      console.log('flush', data)
+      this.emit('eventGroup', data)
     })
   }
 
@@ -201,7 +210,7 @@ class FSPluginClient extends ElectronBasePluginClient {
         this.expandedPaths = ['.', ...paths] // add root
         console.log(Object.keys(this.watchers))
         paths = paths.map((path) => this.fixPath(path))
-        for (let path of paths) {
+        for (const path of paths) {
           if (!Object.keys(this.watchers).includes(path)) {
             this.watchers[path] = await this.watcherInit(path)
             console.log('added watcher', path)
@@ -263,9 +272,8 @@ class FSPluginClient extends ElectronBasePluginClient {
           const dirname = path.dirname(pathWithoutPrefix)
           if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
             console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
-            this.emit('change', eventName, pathWithoutPrefix)
+            this.dataBatcher.write('change', eventName, pathWithoutPrefix)
           }
-          this.emit('change', eventName, pathWithoutPrefix)
         } catch (e) {
           console.log('error emitting change', e)
         }
@@ -276,7 +284,8 @@ class FSPluginClient extends ElectronBasePluginClient {
         console.log('check emitting', eventName, pathWithoutPrefix, this.expandedPaths, dirname)
         if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
           console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
-          this.emit('change', eventName, pathWithoutPrefix)
+          //this.emit('change', eventName, pathWithoutPrefix)
+          this.dataBatcher.write('change', eventName, pathWithoutPrefix)
         }
       } catch (e) {
         console.log('error emitting change', e)
