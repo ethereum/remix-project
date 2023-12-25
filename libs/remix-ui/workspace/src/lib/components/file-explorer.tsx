@@ -13,6 +13,7 @@ import { ROOT_PATH } from '../utils/constants'
 import { fileKeySort } from '../utils'
 import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
 import { RecursiveTree } from './file-recursive-tree'
+import { FlatTree } from './flat-tree'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -37,11 +38,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const treeRef = useRef<HTMLDivElement>(null)
   const [childrenKeys, setChildrenKeys] = useState<string[]>([])
 
+
   useEffect(() => {
     if (contextMenuItems) {
       addMenuItems(contextMenuItems)
     }
   }, [contextMenuItems])
+
+
 
   useEffect(() => {
     if (removedContextMenuItems) {
@@ -390,9 +394,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
 
+
   return (
 
-    <div ref={treeRef} tabIndex={0} style={{ outline: 'none' }}>
+    <div ref={treeRef} tabIndex={0} style={{ outline: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    }}>
       <TreeView id="treeView">
         <li key={`treeViewLiMenu`} data-id={`treeViewLiMenu`} className="li_tv">
           <div
@@ -404,6 +413,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               <div onClick={handleFileExplorerMenuClick}>
                 <FileExplorerMenu
                   title={''}
+ 
                   menuItems={props.menuItems}
                   createNewFile={handleNewFileInput}
                   createNewFolder={handleNewFolderInput}
@@ -415,19 +425,22 @@ export const FileExplorer = (props: FileExplorerProps) => {
             </span>
           </div>
         </li>
+        <div style={{flexGrow: 2}}>
         <div>
-          <div onClick={handleTreeClick}>
-            <RecursiveTree
-              focusEdit={state.focusEdit}
-              focusElement={props.focusElement}
-              focusContext={state.focusContext}
-              editModeOff={editModeOff}
-              handleContextMenu={handleContextMenu} 
-              expandPath={props.expandPath} 
-              files={files} />
-          </div>
+        <FlatTree
+          treeRef={treeRef}
+          handleTreeClick={handleTreeClick}
+          focusEdit={state.focusEdit}
+          focusElement={props.focusElement}
+          focusContext={state.focusContext}
+          editModeOff={editModeOff}
+          files={files}
+          expandPath={props.expandPath}
+          handleContextMenu={handleContextMenu} 
+        />
         </div>
-
+        </div>
+          
         <div className='d-block w-100 pb-4 mb-4'></div>
       </TreeView>
     </div>
@@ -436,3 +449,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
 }
 
 export default FileExplorer
+
+/*
+
+            <RecursiveTree
+              focusEdit={state.focusEdit}
+              focusElement={props.focusElement}
+              focusContext={state.focusContext}
+              editModeOff={editModeOff}
+              handleContextMenu={handleContextMenu} 
+              expandPath={props.expandPath} 
+              files={files} />*/

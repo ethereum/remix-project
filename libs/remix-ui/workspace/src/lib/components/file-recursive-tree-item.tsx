@@ -44,8 +44,8 @@ export const RecursiveTreeItem = (props: RecursiveTreeItemProps) => {
         >
           <div className={`pr-2 pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : getPathIcon(file.path)} caret caret_tv`}></div>
           {focusEdit && file.path && focusEdit.element === file.path ? 
-          <RecursiveItemInput editModeOff={editModeOff} file={file}/>:
-          <span draggable="true" className="ml-1 pl-2" data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`}>{file.name}</span>}
+            <RecursiveItemInput editModeOff={editModeOff} file={file}/>:
+            <span draggable="true" className="ml-1 pl-2" data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`}>{file.name}</span>}
         </div>
         <ul className="ul_tv ml-0 pl-1" >
           {
