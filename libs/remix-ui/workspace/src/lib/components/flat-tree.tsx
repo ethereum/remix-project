@@ -2,16 +2,20 @@ import React, { SyntheticEvent, startTransition, useEffect, useRef, useState } f
 import { Popover } from 'react-bootstrap'
 import { FileType, WorkspaceElement } from '../types'
 import { ROOT_PATH } from '../utils/constants'
-import { RecursiveTreeItem } from './file-recursive-tree-item'
+import { getPathIcon } from '@remix-ui/helper';
+import { Virtuoso } from 'react-virtuoso'
+import { RecursiveItemInput } from './file-recursive-item-input';
 
-interface RecursiveTreeProps {
+interface FlatTreeProps {
   files: { [x: string]: Record<string, FileType> },
   expandPath: string[],
-  handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
-  focusEdit: {element: string; type: string; isNew: boolean; lastEdit: string}
-  focusElement: {key: string; type: WorkspaceElement}[]
-  focusContext: {element: string; x: number; y: number; type: string}
+  focusEdit: { element: string; type: string; isNew: boolean; lastEdit: string }
   editModeOff: (content: string) => void
+  focusElement: { key: string; type: WorkspaceElement }[]
+  focusContext: { element: string; x: number; y: number; type: string }
+  handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
+  handleTreeClick: (e: SyntheticEvent) => void
+  treeRef: React.MutableRefObject<HTMLDivElement>
 }
 
 let mouseTimer: any = {
@@ -19,11 +23,10 @@ let mouseTimer: any = {
   timer: null
 }
 
-
-export const RecursiveTree = (props: RecursiveTreeProps) => {
-  const { files, expandPath, editModeOff } = props
-  const [internalFiles, setInternalFiles] = useState<{ [x: string]: Record<string, FileType> }>({})
-  const ref = useRef(null)
+export const FlatTree = (props: FlatTreeProps) => {
+  const { files, expandPath, focusEdit, editModeOff, handleTreeClick } = props
+  const [flatTree, setFlatTree] = useState<{ [x: string]: FileType }>({})
+  const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
     path: string,
     type: string,
@@ -34,24 +37,50 @@ export const RecursiveTree = (props: RecursiveTreeProps) => {
     }
   }>(null)
   const [showMouseOverTarget, setShowMouseOverTarget] = useState<boolean>(false)
+  const ref = useRef(null)
+  const [size, setSize] = useState(0)
+  
+  
 
-  useEffect(() => {
-    console.log('focus edit', props.focusEdit)
-  },[props.focusEdit])
+  
+
+  const labelClass = (file: FileType) =>
+    props.focusEdit.element === file.path
+      ? 'bg-light'
+      : props.focusElement.findIndex((item) => item.key === file.path) !== -1
+        ? 'bg-secondary'
+        : hover == file.path
+          ? 'bg-light border-no-shift'
+          : props.focusContext.element === file.path && props.focusEdit.element !== file.path
+            ? 'bg-light border-no-shift'
+            : ''
 
   useEffect(() => {
     console.log('flat files changed', files, ROOT_PATH)
-    
-    setInternalFiles(files)
+    const flatTree = {}
+    const mapChild = (file: FileType) => {
+      flatTree[file.path] = file
+      expandPath && expandPath.includes(file.path) &&
+        file.child && Object.keys(file.child).map((key) => {
+        mapChild(file.child[key])
+      })
+    }
+    files && files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key) => {
+      mapChild(files[ROOT_PATH][key])
+    })
+    console.log('flat tree', flatTree)
+    setFlatTree(flatTree)
+  }, [props])
 
-  },[files])
 
-  useEffect(() => {
-    console.log('STATE', props.focusContext, props.focusElement, props.focusEdit, expandPath)
-    //files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => {
-    //  console.log('recursive tree', files[ROOT_PATH][key])
-    //})
-  }, [props.focusContext, props.focusElement, props.focusEdit, expandPath])
+
+
+  const getIndentLevelDiv = (path: string) => {
+    const pathArray = path.split('/')
+    const level = pathArray.length - 1
+    const indent = level * 10
+    return (<div style={{ width: `${indent}px` }}></div>)
+  }
 
   const getEventTarget = async (e: any, useLabel: boolean = false) => {
     let target = e.target as HTMLElement
@@ -141,14 +170,35 @@ export const RecursiveTree = (props: RecursiveTreeProps) => {
   }
 
   useEffect(() => {
-    console.log('show mouse over target', showMouseOverTarget)
-  }, [showMouseOverTarget])
+    console.log('tree ref', props.treeRef.current)
+    const boundingRect = props.treeRef.current.getBoundingClientRect()
+    console.log('bounding rect', boundingRect)
+    setSize(boundingRect.height - 100)
+  },[props.treeRef.current])
 
 
-  return (
+  const Row = (index) => {
+    const node = Object.keys(flatTree)[index]
+    const file = flatTree[node]
+    //console.log('node', node)
+    return (<div
+      className={`d-flex flex-row align-items-center ${labelClass(file)}`}
+      onMouseOver={() => setHover(file.path)}
+      onMouseOut={() => setHover(file.path)}
+      data-type={file.isDirectory ? 'folder' : 'file'} data-path={`${file.path}`} data-id={`treeViewLi${file.path}`}
+    >
+      {getIndentLevelDiv(file.path)}
+      
+      <div className={`pr-2 pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : getPathIcon(file.path)} caret caret_tv`}></div>
+      {focusEdit && file.path && focusEdit.element === file.path ? 
+        <RecursiveItemInput editModeOff={editModeOff} file={file}/>:
+        <div draggable={true} className="ml-1 pl-2" data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`} key={index}>{file.name}
+        </div>}
+    </div>)
+  }
 
-    <div onMouseLeave={onMouseLeave} onMouseMove={onMouseMove} onDrop={onDrop} onDragOver={onDragOver} onContextMenu={handleContextMenu}>
-
+  return (<>
+    <div onClick={handleTreeClick} onMouseLeave={onMouseLeave} onMouseMove={onMouseMove} onDrop={onDrop} onDragOver={onDragOver} onContextMenu={handleContextMenu}>
       {showMouseOverTarget && mouseOverTarget &&
         <Popover id='popover-basic'
           placement='top'
@@ -168,27 +218,12 @@ export const RecursiveTree = (props: RecursiveTreeProps) => {
           </Popover.Content>
         </Popover>
       }
-
-      <ul className="ul_tv ml-0 pl-1" >{files[ROOT_PATH] &&
-        internalFiles && internalFiles[ROOT_PATH] && Object.keys(internalFiles[ROOT_PATH]).map((key, index) => {
-        //console.log('recursive tree', files[ROOT_PATH][key])
-        return (<RecursiveTreeItem
-          editModeOff={editModeOff}
-          focusEdit={props.focusEdit}
-          focusElement={props.focusElement}
-          focusContext={props.focusContext}
-          expandPath={expandPath}
-          key={index}
-          file={internalFiles[ROOT_PATH][key]}
-        />)
-      })}
-      </ul>
+      <Virtuoso
+        style={{ height: `${size}px` }}
+        totalCount={Object.keys(flatTree).length}
+        itemContent={index => Row(index)}
+      />
     </div>
+  </>)
 
-  )
 }
-
-
-
-
-

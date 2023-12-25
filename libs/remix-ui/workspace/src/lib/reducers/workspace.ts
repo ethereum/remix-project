@@ -187,7 +187,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     const startTime = new Date().getTime()
     const fd = fetchDirectoryContent(state, payload)
     const endTime = new Date().getTime()
-    console.log('fetchDirectoryContent tree', endTime - startTime)
+    console.log('fetchDirectoryContent tree', endTime - startTime, fd)
 
     return {
       ...state,
@@ -863,6 +863,10 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   default:
     throw new Error()
   }
+}
+
+const flattenTree = () =>{
+
 }
 
 const fileAdded = (

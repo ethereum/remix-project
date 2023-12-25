@@ -77,11 +77,13 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     solc: 'solc'
   }
 
-  // set alias
+  // uncomment this to enable react profiling
+  /*
   config.resolve.alias = {
     ...config.resolve.alias,
     'react-dom$': 'react-dom/profiling',
   }
+  */
 
 
   // add public path
