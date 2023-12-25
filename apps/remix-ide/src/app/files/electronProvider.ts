@@ -17,29 +17,41 @@ export class ElectronProvider extends FileProvider {
 
   async init() {
     this._appManager.on('fs', 'change', async (event, path) => {
-      switch (event) {
-      case 'add':
-        this.event.emit('fileAdded', path)
-        break
-      case 'unlink':
-        this.event.emit('fileRemoved', path)
-        break
-      case 'change':
-        this.get(path, (_error, content) => {
-          this.event.emit('fileExternallyChanged', path, content, false)
-        })
-        break
-      case 'rename':
-        this.event.emit('fileRenamed', path)
-        break
-      case 'addDir':
-        this.event.emit('folderAdded', path)
-        break
-      case 'unlinkDir':
-        this.event.emit('fileRemoved', path)
+      this.handleEvent(event, path)
+    })
+    this._appManager.on('fs', 'eventGroup', async (data) => {
+      console.log('eventGroup', data)
+      for (const event of data) {
+        console.log('event', event)
+        this.handleEvent(event.payload[0], event.payload[1])
       }
     })
   }
+
+  handleEvent = (event, path) => {
+    switch (event) {
+    case 'add':
+      this.event.emit('fileAdded', path)
+      break
+    case 'unlink':
+      this.event.emit('fileRemoved', path)
+      break
+    case 'change':
+      this.get(path, (_error, content) => {
+        this.event.emit('fileExternallyChanged', path, content, false)
+      })
+      break
+    case 'rename':
+      this.event.emit('fileRenamed', path)
+      break
+    case 'addDir':
+      this.event.emit('folderAdded', path)
+      break
+    case 'unlinkDir':
+      this.event.emit('fileRemoved', path)
+    }
+  }
+
 
   // isDirectory is already included
   // this is a more efficient version of the default implementation

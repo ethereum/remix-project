@@ -398,9 +398,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
   return (
 
     <div ref={treeRef} tabIndex={0} style={{ outline: 'none',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
     }}>
       <TreeView id="treeView">
         <li key={`treeViewLiMenu`} data-id={`treeViewLiMenu`} className="li_tv">
@@ -426,19 +426,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
           </div>
         </li>
         <div style={{flexGrow: 2}}>
-        <div>
-        <FlatTree
-          treeRef={treeRef}
-          handleTreeClick={handleTreeClick}
-          focusEdit={state.focusEdit}
-          focusElement={props.focusElement}
-          focusContext={state.focusContext}
-          editModeOff={editModeOff}
-          files={files}
-          expandPath={props.expandPath}
-          handleContextMenu={handleContextMenu} 
-        />
-        </div>
+          <div>
+            <FlatTree
+              treeRef={treeRef}
+              handleTreeClick={handleTreeClick}
+              focusEdit={state.focusEdit}
+              focusElement={props.focusElement}
+              focusContext={state.focusContext}
+              editModeOff={editModeOff}
+              files={files}
+              expandPath={props.expandPath}
+              handleContextMenu={handleContextMenu} 
+            />
+          </div>
         </div>
           
         <div className='d-block w-100 pb-4 mb-4'></div>
