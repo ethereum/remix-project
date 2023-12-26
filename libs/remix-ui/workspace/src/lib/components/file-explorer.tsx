@@ -438,6 +438,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               focusContext={state.focusContext}
               editModeOff={editModeOff}
               files={files}
+              fileState={fileState}
               expandPath={props.expandPath}
               handleContextMenu={handleContextMenu}
               moveFile={handleFileMove}
