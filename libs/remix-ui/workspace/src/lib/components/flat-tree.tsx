@@ -7,6 +7,7 @@ import { Virtuoso } from 'react-virtuoso'
 import { RecursiveItemInput } from './file-recursive-item-input';
 import { FlatTreeDrop } from './flat-tree-drop';
 import { getEventTarget } from '../utils/getEventTarget';
+import { fileDecoration } from '@remix-ui/file-decorators';
 
 interface FlatTreeProps {
   files: { [x: string]: Record<string, FileType> },
@@ -20,6 +21,7 @@ interface FlatTreeProps {
   treeRef: React.MutableRefObject<HTMLDivElement>
   moveFile: (dest: string, src: string) => void
   moveFolder: (dest: string, src: string) => void
+  fileState: fileDecoration[]
 }
 
 let mouseTimer: any = {
@@ -28,7 +30,7 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder } = props
+  const { files, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState } = props
   const [flatTree, setFlatTree] = useState<{ [x: string]: FileType }>({})
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
@@ -123,6 +125,16 @@ export const FlatTree = (props: FlatTreeProps) => {
     return flatTree[path]
   }
 
+  const getFileStateClasses = (file: FileType) => {
+    const state = fileState.find((state: fileDecoration) => {
+      if (state.path === file.path) return true
+      if (state.bubble && file.isDirectory && state.path.startsWith(file.path)) return true
+    })
+    if (state && state.fileStateLabelClass) {
+      return state.fileStateLabelClass
+    } 
+  }
+
   const onMouseMove = async (e: any) => {
     ///console.log('mouse move', e)
     const target = await getEventTarget(e, true)
@@ -180,7 +192,7 @@ export const FlatTree = (props: FlatTreeProps) => {
       <div className={`pr-2 pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : getPathIcon(file.path)} caret caret_tv`}></div>
       {focusEdit && file.path && focusEdit.element === file.path ? 
         <RecursiveItemInput editModeOff={editModeOff} file={file}/>:
-        <div draggable={true} onDragStart={onDragStart} onDragEnd={onDragEnd} className={`ml-1 pl-2 text-nowrap remixui_leaf`} data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`} key={index}>{file.name}
+        <div draggable={true} onDragStart={onDragStart} onDragEnd={onDragEnd} className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`} data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`} key={index}>{file.name}
         </div>}
     </div>)
   }

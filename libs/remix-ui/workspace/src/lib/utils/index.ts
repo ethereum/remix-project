@@ -124,7 +124,7 @@ export const contextMenuActions: MenuItems = [{
   platform: appPlatformTypes.web
 }]
 
-export const fileKeySort = (children: FileType[]): string[] => {
+export const fileKeySort = (children: any): string[] => {
   const directories = Object.keys(children).filter((key: string) => children[key].isDirectory && children[key].name !== '')
 
   // sort case insensitive

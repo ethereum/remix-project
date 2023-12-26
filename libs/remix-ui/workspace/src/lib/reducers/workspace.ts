@@ -4,6 +4,7 @@ import * as _ from 'lodash'
 import {fileDecoration} from '@remix-ui/file-decorators'
 import {ROOT_PATH} from '../utils/constants'
 import isElectron from 'is-electron'
+import { fileKeySort } from '../utils'
 export interface BrowserState {
   browser: {
     currentWorkspace: string
@@ -187,6 +188,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     const startTime = new Date().getTime()
     const fd = fetchDirectoryContent(state, payload)
     const endTime = new Date().getTime()
+ 
     console.log('fetchDirectoryContent tree', endTime - startTime, fd)
 
     return {
@@ -258,6 +260,11 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     const startTime = new Date().getTime()
     const fd = fetchWorkspaceDirectoryContent(state, payload)
     const endTime = new Date().getTime()
+   
+    console.log(fd[payload.path])
+    const sortedKeys = fileKeySort(fd[payload.path])
+    console.log('sortedKeys', sortedKeys)
+
     console.log('fetchDirectoryContent tree', endTime - startTime, fd)
 
     return {
