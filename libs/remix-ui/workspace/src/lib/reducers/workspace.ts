@@ -256,9 +256,9 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
       console.log('make a flat tree', payload)
     }
     const startTime = new Date().getTime()
-    const fd = fetchDirectoryContent(state, payload)
+    const fd = fetchWorkspaceDirectoryContent(state, payload)
     const endTime = new Date().getTime()
-    console.log('fetchDirectoryContent tree', endTime - startTime)
+    console.log('fetchDirectoryContent tree', endTime - startTime, fd)
 
     return {
       ...state,
