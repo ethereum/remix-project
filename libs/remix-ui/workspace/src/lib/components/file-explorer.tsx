@@ -369,13 +369,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [props])
 
-  const handleTreeClick = (e: SyntheticEvent) => {
-    console.log('tree click', e.target)
-    // find any parent of e.target that has a data-path attribute
-    // if found, call handleClickFolder with that path
-    // if not found, do nothing
+  const handleTreeClick = (event: SyntheticEvent) => {
+    event.stopPropagation()
+    console.log('tree click', event.target)
 
-    let target = e.target as HTMLElement
+
+    let target = event.target as HTMLElement
     while (target && target.getAttribute && !target.getAttribute('data-path')) {
       target = target.parentElement
     }
@@ -384,11 +383,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const type = target.getAttribute('data-type')
       if (path && type === 'file') {
         console.log('tree click', path)
-        handleClickFile(path, type as WorkspaceElement)
+
+        if (state.focusEdit.element !== path) handleClickFile(path, type)
+       
       } else if (path && type === 'folder') {
         console.log('tree click', path)
-        handleClickFolder(path, type)
+        if (state.focusEdit.element !== path) handleClickFolder(path, type)
+        
       }
+      if (props.showIconsMenu === true) props.hideIconsMenu(!props.showIconsMenu)
     }
 
   }
@@ -436,7 +439,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
               editModeOff={editModeOff}
               files={files}
               expandPath={props.expandPath}
-              handleContextMenu={handleContextMenu} 
+              handleContextMenu={handleContextMenu}
+              moveFile={handleFileMove}
+              moveFolder={handleFolderMove}
             />
           </div>
         </div>
@@ -449,14 +454,3 @@ export const FileExplorer = (props: FileExplorerProps) => {
 }
 
 export default FileExplorer
-
-/*
-
-            <RecursiveTree
-              focusEdit={state.focusEdit}
-              focusElement={props.focusElement}
-              focusContext={state.focusContext}
-              editModeOff={editModeOff}
-              handleContextMenu={handleContextMenu} 
-              expandPath={props.expandPath} 
-              files={files} />*/
