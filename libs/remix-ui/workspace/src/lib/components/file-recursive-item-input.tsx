@@ -55,5 +55,5 @@ export const RecursiveItemInput = (props: RecursiveItemInputProps) => {
     onFocus={handleFocus} 
     onChange={e => setValue(e.target.value)} 
     defaultValue={file.name}>
-    </input>)
+  </input>)
 }
