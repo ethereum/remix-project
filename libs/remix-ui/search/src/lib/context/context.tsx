@@ -266,12 +266,18 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
     await value.reloadFile(file)
   }
 
+  const updateFiles = async () => {
+    setTimeout(async () => {
+      setFiles(await getDirectory('/', plugin))
+    }, 2000)
+  }
+
   useEffect(() => {
     plugin.on('filePanel', 'setWorkspace', async (workspace) => {
       value.setSearchResults(null)
       value.clearUndo()
       value.setCurrentWorkspace(workspace.name)
-      setFiles(await getDirectory('/', plugin))
+      await updateFiles()
     })
     plugin.on('fileManager', 'fileSaved', async (file) => {
       await reloadStateForFile(file)
@@ -280,15 +286,15 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
     plugin.on('fileManager', 'rootFolderChanged', async (file) => {
       const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
       if (workspace) value.setCurrentWorkspace(workspace.name)
-      setFiles(await getDirectory('/', plugin))
+      await updateFiles()
     })
 
     plugin.on('fs', 'workingDirChanged', async () => {
-      setFiles(await getDirectory('/', plugin))
+      await updateFiles()
     })
 
     plugin.on('fileManager', 'fileAdded', async (file) => {
-      setFiles(await getDirectory('/', plugin))
+      await updateFiles()
       await reloadStateForFile(file)
     })
     plugin.on('fileManager', 'currentFileChanged', async (file) => {
@@ -300,16 +306,15 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
         const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
         if (workspace && workspace.name) {
           value.setCurrentWorkspace(workspace.name)
-          setFiles(await getDirectory('/', plugin))
+          await updateFiles()
         }
       } catch (e) {
         console.log(e)
       }
     }
-    setTimeout(async () => {
-      await fetchWorkspace()
-    }, 5000)
-
+    
+    fetchWorkspace()
+    
     return () => {
       plugin.off('fileManager', 'fileChanged')
       plugin.off('filePanel', 'setWorkspace')
