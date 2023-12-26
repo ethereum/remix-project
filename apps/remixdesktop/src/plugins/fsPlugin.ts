@@ -339,6 +339,7 @@ class FSPluginClient extends ElectronBasePluginClient {
     if (!path) {
       dirs = dialog.showOpenDialogSync(this.window, {
         properties: ['openDirectory', 'createDirectory', 'showHiddenFiles'],
+        title: title || 'Select or create a folder',
       })
     }
     path = dirs && dirs.length && dirs[0] ? dirs[0] : path

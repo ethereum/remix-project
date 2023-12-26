@@ -195,7 +195,7 @@ export function Workspace() {
     global.modal(
       intl.formatMessage({id: 'filePanel.workspace.create'}),
       createModalMessage(),
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({id: (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder'}),
       onFinishCreateWorkspace,
       intl.formatMessage({id: 'filePanel.cancel'})
     )
@@ -246,7 +246,7 @@ export function Workspace() {
     global.modal(
       intl.formatMessage({id: 'filePanel.workspace.clone'}),
       cloneModalMessage(),
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({id:  (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder'}),
       handleTypingUrl,
       intl.formatMessage({id: 'filePanel.cancel'})
     )
@@ -431,7 +431,7 @@ export function Workspace() {
       global.modal(
         intl.formatMessage({id: 'filePanel.workspace.clone'}),
         intl.formatMessage({id: 'filePanel.workspace.cloneMessage'}),
-        intl.formatMessage({id: 'filePanel.ok'}),
+        intl.formatMessage({id: (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder'}),
         () => {},
         intl.formatMessage({id: 'filePanel.cancel'})
       )

@@ -75,6 +75,7 @@
   "filePanel.ok": "OK",
   "filePanel.yes": "Yes",
   "filePanel.cancel": "Cancel",
+  "filePanel.selectFolder": "Select or create folder",
   "filePanel.createNewWorkspace": "create a new workspace",
   "filePanel.connectToLocalhost": "connect to localhost",
   "filePanel.copiedToClipboard": "Copied to clipboard {path}",

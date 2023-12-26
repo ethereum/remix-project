@@ -44,7 +44,7 @@ class TemplatesPluginClient extends ElectronBasePluginClient {
 
   async loadTemplateInNewWindow (files: any) {
 
-    let folder = await this.call('fs' as any, 'selectFolder', 'Select or create a folder to load the template in')
+    let folder = await this.call('fs' as any, 'selectFolder', null ,'Select or create a folder to load the template in')
     if (!folder || folder === '') return
     // @ts-ignore
 

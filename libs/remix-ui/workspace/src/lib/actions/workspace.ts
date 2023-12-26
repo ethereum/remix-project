@@ -629,7 +629,7 @@ export const cloneRepository = async (url: string) => {
             message: 
             'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin',
             modalType: 'modal',
-            okLabel: 'OK',
+            okLabel: plugin.registry.get('platform').api.isDesktop() ? 'Select or create folder':'OK',
             okFn: async () => {
               await deleteWorkspace(repoName)
               dispatch(cloneRepositoryFailed())
