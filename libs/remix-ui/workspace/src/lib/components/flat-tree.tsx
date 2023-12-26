@@ -76,6 +76,10 @@ export const FlatTree = (props: FlatTreeProps) => {
 
 
   const getIndentLevelDiv = (path: string) => {
+    // remove double slash
+    path = path.replace(/\/\//g, '/')
+    // remove leading slash
+    path = path.replace(/^\//g, '')
     const pathArray = path.split('/')
     const level = pathArray.length - 1
     const indent = level * 10
