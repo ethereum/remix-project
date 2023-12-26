@@ -93,7 +93,7 @@ module.exports = class Filepanel extends ViewPlugin {
   updateComponent(state) {
     console.log('updateComponent', state)
     return (
-        <FileSystemProvider plugin={state.plugin} />
+      <FileSystemProvider plugin={state.plugin} />
     )
   }
 
