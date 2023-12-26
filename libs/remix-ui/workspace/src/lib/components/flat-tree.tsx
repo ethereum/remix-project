@@ -5,6 +5,8 @@ import { ROOT_PATH } from '../utils/constants'
 import { getPathIcon } from '@remix-ui/helper';
 import { Virtuoso } from 'react-virtuoso'
 import { RecursiveItemInput } from './file-recursive-item-input';
+import { FlatTreeDrop } from './flat-tree-drop';
+import { getEventTarget } from '../utils/getEventTarget';
 
 interface FlatTreeProps {
   files: { [x: string]: Record<string, FileType> },
@@ -16,6 +18,8 @@ interface FlatTreeProps {
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
   handleTreeClick: (e: SyntheticEvent) => void
   treeRef: React.MutableRefObject<HTMLDivElement>
+  moveFile: (dest: string, src: string) => void
+  moveFolder: (dest: string, src: string) => void
 }
 
 let mouseTimer: any = {
@@ -24,7 +28,7 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, expandPath, focusEdit, editModeOff, handleTreeClick } = props
+  const { files, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder } = props
   const [flatTree, setFlatTree] = useState<{ [x: string]: FileType }>({})
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
@@ -37,13 +41,12 @@ export const FlatTree = (props: FlatTreeProps) => {
     }
   }>(null)
   const [showMouseOverTarget, setShowMouseOverTarget] = useState<boolean>(false)
+  const [dragSource, setDragSource] = useState<FileType>()
+  const [isDragging, setIsDragging] = useState<boolean>(false)
   const ref = useRef(null)
   const [size, setSize] = useState(0)
   
   
-
-  
-
   const labelClass = (file: FileType) =>
     props.focusEdit.element === file.path
       ? 'bg-light'
@@ -72,9 +75,6 @@ export const FlatTree = (props: FlatTreeProps) => {
     setFlatTree(flatTree)
   }, [props])
 
-
-
-
   const getIndentLevelDiv = (path: string) => {
     // remove double slash
     path = path.replace(/\/\//g, '/')
@@ -83,33 +83,7 @@ export const FlatTree = (props: FlatTreeProps) => {
     const pathArray = path.split('/')
     const level = pathArray.length - 1
     const indent = level * 10
-    return (<div style={{ width: `${indent}px` }}></div>)
-  }
-
-  const getEventTarget = async (e: any, useLabel: boolean = false) => {
-    let target = e.target as HTMLElement
-    while (target && target.getAttribute && !target.getAttribute(useLabel? 'data-label-path' : 'data-path')) {
-      target = target.parentElement
-    }
-    if (target && target.getAttribute) {
-      const path = target.getAttribute(useLabel? 'data-label-path' : 'data-path')
-      const type = target.getAttribute(useLabel? 'data-label-type' : 'data-type')
-      const position = target.getBoundingClientRect()
-      // get size of element
-
-      const endPosition = {
-        top: position.top - position.height * 2 + 4,
-        left: position.left ,
-      }
-
-      const content = target.textContent
-      return {
-        path,
-        type,
-        content,
-        position: endPosition
-      }
-    }
+    return (<div style={{ paddingLeft: `${indent}px` }}></div>)
   }
 
   const handleContextMenu = async (e: any) => {
@@ -121,22 +95,32 @@ export const FlatTree = (props: FlatTreeProps) => {
     }
   }
 
+  const onDragStart = async (event: SyntheticEvent) => {
+    console.log('drag start', event)
+    const target = await getEventTarget(event)
+    console.log(flatTree[target.path], target.path)
+    setDragSource(flatTree[target.path])
+    setIsDragging(true)
+  }
+
+  useEffect(() => {
+    console.log('drag source', dragSource)
+    if(isDragging) {
+      mouseTimer = {
+        path: null,
+        timer: null
+      }
+    }
+  },[isDragging])
+
   const onDragEnd = (event: SyntheticEvent) => {
+    setIsDragging(false)
     console.log('drag end', event)
   }
 
-  const onDrop = async (event: SyntheticEvent) => {
-    event.preventDefault()
-    console.log('drop', event)
-    const target = await getEventTarget(event)
-    console.log('drop', target)
-  }
-
-  const onDragOver = async (e: SyntheticEvent) => {
-    e.preventDefault()
-    //console.log('drag over', e)
-    const target = await getEventTarget(e)
-    //console.log('drag over', target)
+  const getFlatTreeItem = (path: string) => {
+    console.log('get flat tree item', path, flatTree[path])
+    return flatTree[path]
   }
 
   const onMouseMove = async (e: any) => {
@@ -196,14 +180,20 @@ export const FlatTree = (props: FlatTreeProps) => {
       <div className={`pr-2 pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : getPathIcon(file.path)} caret caret_tv`}></div>
       {focusEdit && file.path && focusEdit.element === file.path ? 
         <RecursiveItemInput editModeOff={editModeOff} file={file}/>:
-        <div draggable={true} className="ml-1 pl-2" data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`} key={index}>{file.name}
+        <div draggable={true} onDragStart={onDragStart} onDragEnd={onDragEnd} className={`ml-1 pl-2 text-nowrap remixui_leaf`} data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`} key={index}>{file.name}
         </div>}
     </div>)
   }
 
   return (<>
-    <div onClick={handleTreeClick} onMouseLeave={onMouseLeave} onMouseMove={onMouseMove} onDrop={onDrop} onDragOver={onDragOver} onContextMenu={handleContextMenu}>
-      {showMouseOverTarget && mouseOverTarget &&
+    <FlatTreeDrop
+      dragSource={dragSource}
+      getFlatTreeItem={getFlatTreeItem}
+      moveFile={moveFile}
+      moveFolder={moveFolder}
+    >
+      <div onClick={handleTreeClick} onMouseLeave={onMouseLeave} onMouseMove={onMouseMove} onContextMenu={handleContextMenu}>
+        {showMouseOverTarget && mouseOverTarget && !isDragging &&
         <Popover id='popover-basic'
           placement='top'
           ref={ref}
@@ -221,13 +211,14 @@ export const FlatTree = (props: FlatTreeProps) => {
             {mouseOverTarget && mouseOverTarget.path}
           </Popover.Content>
         </Popover>
-      }
-      <Virtuoso
-        style={{ height: `${size}px` }}
-        totalCount={Object.keys(flatTree).length}
-        itemContent={index => Row(index)}
-      />
-    </div>
+        }
+        <Virtuoso
+          style={{ height: `${size}px` }}
+          totalCount={Object.keys(flatTree).length}
+          itemContent={index => Row(index)}
+        />
+      </div>
+    </FlatTreeDrop>
   </>)
 
 }

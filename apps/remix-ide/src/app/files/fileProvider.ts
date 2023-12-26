@@ -287,7 +287,7 @@ export default class FileProvider {
           // ^ ret does not accept path starting with '/'
         }
       }
-      console.log(`resolveDirectory ${path} took ${Date.now() - startTime} ms`)
+      //console.log(`resolveDirectory ${path} took ${Date.now() - startTime} ms`)
       if (cb) cb(null, ret)
       return ret
     } catch (error) {
