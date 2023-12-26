@@ -51,7 +51,9 @@ export default class CodeParserImports {
         matchWholeWord: false,
         maxResults: 10000
       }
+
       const files = await this.plugin.call('ripgrep', 'glob', search)
+
       // only get path property of files
       this.data.files = files.map((x) => x.path)
     } else {
