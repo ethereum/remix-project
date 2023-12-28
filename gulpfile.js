@@ -77,6 +77,7 @@ async function setBranchHead(branchName, head) {
 task('updateBeta', async function () {
    const masterBranchDetails = await axios.get('https://api.github.com/repos/ethereum/remix-project/branches/master')
    const masterBranchHead = masterBranchDetails.data.commit.sha
-   await setBranchHead('remixbeta', masterBranchHead)
+   console.log(`Setting remix_beta to ${masterBranchHead} commit`)
+   await setBranchHead('remix_beta', masterBranchHead)
    await Promise.resolve();
 });
