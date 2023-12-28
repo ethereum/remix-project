@@ -10,17 +10,18 @@ const axios = require('axios');
 var packageJSON = require('./package.json');
 
 /**
- * @dev Task to create git tag using version from package.json and pushing this specific tag
+ * @dev Task to create git tag using version from package.json of remix_beta branch and pushing this specific tag
  */
 task('publishTagfromBeta', async function () {
     let cmdOp = await promisifyExec(`git checkout remix_beta`)
-    console.log(cmdOp.stdout)
+    console.info(cmdOp.stdout)
     cmdOp = await promisifyExec(`git pull origin remix_beta`)
-    console.log(cmdOp.stdout)
+    console.info(cmdOp.stdout)
     const betaPackageJSON = require('./package.json');
     const tag = "v" + betaPackageJSON.version
+    console.info(`Creating tag ${tag} from remix_beta branch`)
     cmdOp = await promisifyExec(`git tag ${tag}; git push --tags`);
-    console.log(cmdOp.stdout)
+    console.info(cmdOp.stdout)
 });
 
 /**
