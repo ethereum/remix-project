@@ -5,6 +5,7 @@ const { task } = require('gulp');
 const fs = require('fs');
 const util = require('util');
 const promisifyExec = util.promisify(require('child_process').exec);
+const axios = require('axios');
 
 var packageJSON = require('./package.json');
 
@@ -61,4 +62,21 @@ task('syncLibVersions', async function () {
         fs.writeFileSync(__dirname + '/libs/' + lib + '/package.json', JSON.stringify(distPackageJSON, null, 2), 'utf8')
     })
     await Promise.resolve();
+});
+
+async function setBranchHead(branchName, head) {
+   await promisifyExec(`git checkout ${branchName}`);
+   await promisifyExec(`git pull origin ${branchName}`);
+   await promisifyExec(`git reset --hard ${head}`);
+   await promisifyExec(`git push -f origin ${branchName}`);
+}
+
+/*
+* @dev Task to set remix_beta branch up to date with master
+*/
+task('updateBeta', async function () {
+   const masterBranchDetails = await axios.get('https://api.github.com/repos/ethereum/remix-project/branches/master')
+   const masterBranchHead = masterBranchDetails.data.commit.sha
+   await setBranchHead('remixbeta', masterBranchHead)
+   await Promise.resolve();
 });
