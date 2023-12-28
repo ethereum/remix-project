@@ -125,18 +125,19 @@ export const contextMenuActions: MenuItems = [{
 }]
 
 export const fileKeySort = (children: any): string[] => {
-  const directories = Object.keys(children).filter((key: string) => children[key].isDirectory && children[key].name !== '')
+  const directories = Object.keys(children).filter((key: string) => children[key].isDirectory)
 
   // sort case insensitive
   directories.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
 
-  const fileKeys = Object.keys(children).filter((key: string) => !children[key].isDirectory && children[key].name !== '')
+  const fileKeys = Object.keys(children).filter((key: string) => !children[key].isDirectory)
   // sort case insensitive
   fileKeys.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
 
   // find the children with a blank name
-  const blankChildren = Object.keys(children).filter((key: string) => children[key].name === '')
+  //const blankChildren = Object.keys(children).filter((key: string) => children[key].name === '')
 
-  const keys = [...directories, ...fileKeys, ...blankChildren]
+  const keys = [...directories, ...fileKeys]
+  console.log('sorted keys', keys)
   return keys
 }
