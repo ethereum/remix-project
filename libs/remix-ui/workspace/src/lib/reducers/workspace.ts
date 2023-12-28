@@ -184,7 +184,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 
   case 'FETCH_DIRECTORY_SUCCESS': {
     const payload = action.payload
-    console.log('make a flat tree', payload)
+    console.log('FETCH_DIRECTORY_SUCCESS', payload)
     const startTime = new Date().getTime()
     const fd = fetchDirectoryContent(state, payload)
     const endTime = new Date().getTime()
@@ -255,16 +255,11 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'FETCH_WORKSPACE_DIRECTORY_SUCCESS': {
     const payload = action.payload
     if(state.mode === 'browser'){
-      console.log('make a flat tree', payload)
+      console.log('FETCH_WORKSPACE_DIRECTORY_SUCCESS', payload)
     }
     const startTime = new Date().getTime()
     const fd = fetchWorkspaceDirectoryContent(state, payload)
     const endTime = new Date().getTime()
-   
-    console.log(fd[payload.path])
-    const sortedKeys = fileKeySort(fd[payload.path])
-    console.log('sortedKeys', sortedKeys)
-
     console.log('fetchDirectoryContent tree', endTime - startTime, fd)
 
     return {
@@ -957,6 +952,7 @@ const fetchDirectoryContent = (
     return state.mode === 'browser'
       ? state.browser.files
       : state[state.mode].files
+  fileKeySort(payload.fileTree)
   if (state.mode === 'browser') {
     if (payload.path === ROOT_PATH) {
       let files = normalize(payload.fileTree, ROOT_PATH, payload.type)
