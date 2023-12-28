@@ -20,7 +20,9 @@ task('publishTagfromBeta', async function () {
     const betaPackageJSON = require('./package.json');
     const tag = "v" + betaPackageJSON.version
     console.info(`Creating tag ${tag} from remix_beta branch`)
-    cmdOp = await promisifyExec(`git tag ${tag}; git push --tags`);
+    cmdOp = await promisifyExec(`git tag ${tag};`);
+    console.info(cmdOp.stdout)
+    cmdOp = await promisifyExec(`git push --tags`);
     console.info(cmdOp.stdout)
 });
 
