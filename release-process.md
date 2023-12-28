@@ -80,11 +80,18 @@ or individually:
 
 #### Create git tag from beta branch:
 
+Use this unified command:
+
+ - `yarn run publishTagfromBeta`
+
+or individually:
+
  - `git checkout remix_beta`
  - `git pull origin remix_beta`
  - Create tag: `git tag v<version-number>`, `<version-number>` should be same as in package.json of `remix_beta` branch
  - Push tag: `git push --tags`
- - Publish a new release on GitHub and generate automated changelog by selecting the appropriate tag
+
+Publish a new release on GitHub using created tag and generate automated changelog by selecting the appropriate previous tag
 
 ### Part 2. Update the Remix Live
 
