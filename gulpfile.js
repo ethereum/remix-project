@@ -12,9 +12,15 @@ var packageJSON = require('./package.json');
 /**
  * @dev Task to create git tag using version from package.json and pushing this specific tag
  */
-task('publishTag', async function () {
-    const tag = "v" + packageJSON.version
-    await promisifyExec(`git tag ${tag}; git push origin ${tag}`);
+task('publishTagfromBeta', async function () {
+    let cmdOp = await promisifyExec(`git checkout remix_beta`)
+    console.log(cmdOp.stdout)
+    cmdOp = await promisifyExec(`git pull origin remix_beta`)
+    console.log(cmdOp.stdout)
+    const betaPackageJSON = require('./package.json');
+    const tag = "v" + betaPackageJSON.version
+    cmdOp = await promisifyExec(`git tag ${tag}; git push --tags`);
+    console.log(cmdOp.stdout)
 });
 
 /**
