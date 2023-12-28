@@ -67,6 +67,7 @@ task('syncLibVersions', async function () {
 async function setBranchHead(branchName, head) {
    await promisifyExec(`git checkout ${branchName}`);
    await promisifyExec(`git pull origin ${branchName}`);
+   console.log(`pull done for ${branchName}`)
    await promisifyExec(`git reset --hard ${head}`);
    await promisifyExec(`git push -f origin ${branchName}`);
 }
