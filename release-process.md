@@ -11,6 +11,12 @@ This document includes the release instructions for:
 ## Feature Freeze
 Once feature freeze is done, `remix_beta` should be updated latest to the master which will automatically update `remix-beta.ethereum.org` through a CI job.
 
+Use this unified command:
+
+ - `yarn run updateBeta`
+
+or individually:
+
  - `git checkout remix_beta`
  - `git pull origin remix_beta`
  - `git reset --hard <master-commit-hash>` (`master-commit-hash` will be latest commit id from `master` branch)
@@ -54,6 +60,12 @@ Make sure release highlights and full changelog link is updated to show them on 
 
 #### Make sure `remix_beta` is up-to-date with `master` branch:
 
+Use this unified command:
+
+ - `yarn run updateBeta`
+
+or individually:
+
  - `git checkout remix_beta`
  - `git pull origin remix_beta`
  - `git reset --hard <master-commit-hash>`
@@ -77,6 +89,12 @@ Make sure release highlights and full changelog link is updated to show them on 
 ### Part 2. Update the Remix Live
 
 Updating the `remix_live` branch latest to the `remix_beta` runs the CircleCI build which updates liver version of Remix IDE on `remix.ethereum.org`
+
+Use this unified command:
+
+ - `yarn run updateLive`
+
+or individually:
 
  - `git checkout remix_live`
  - `git pull origin remix_live`

@@ -65,20 +65,37 @@ task('syncLibVersions', async function () {
 });
 
 async function setBranchHead(branchName, head) {
-   console.log(await promisifyExec(`git checkout ${branchName}`));
-   console.log(await promisifyExec(`git pull origin ${branchName}`));
-   console.log(`pull done for ${branchName}`)
-   console.log(await promisifyExec(`git reset --hard ${head}`));
-   await promisifyExec(`git push -f origin ${branchName}`);
+    try {
+        console.log(`Setting ${branchName} branch head to ${head}`)
+        let cmdOp = await promisifyExec(`git checkout ${branchName}`)
+        console.log(cmdOp.stdout)
+        cmdOp = await promisifyExec(`git pull origin ${branchName}`)
+        console.log(cmdOp.stdout)
+        cmdOp = await promisifyExec(`git reset --hard ${head}`)
+        console.log(cmdOp.stdout)
+        cmdOp = await promisifyExec(`git push -f origin ${branchName}`)
+        console.log(cmdOp.stdout)
+    }catch(error) {
+        console.error(error)
+    }
 }
 
 /*
 * @dev Task to set remix_beta branch up to date with master
 */
-task('updateBeta', async function () {
+task('updateBetaToMaster', async function () {
    const masterBranchDetails = await axios.get('https://api.github.com/repos/ethereum/remix-project/branches/master')
    const masterBranchHead = masterBranchDetails.data.commit.sha
-   console.log(`Setting remix_beta to ${masterBranchHead} commit`)
    await setBranchHead('remix_beta', masterBranchHead)
    await Promise.resolve();
 });
+
+/*
+* @dev Task to set remix_live branch up to date with remix_beta
+*/
+task('updateLiveToBeta', async function () {
+    const betaBranchDetails = await axios.get('https://api.github.com/repos/ethereum/remix-project/branches/remix_beta')
+    const betaBranchHead = betaBranchDetails.data.commit.sha
+    await setBranchHead('remix_live', betaBranchHead)
+    await Promise.resolve();
+ });
