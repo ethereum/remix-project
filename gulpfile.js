@@ -18,14 +18,13 @@ task('publishTagfromBeta', async function () {
         console.log(cmdOp.stdout)
         cmdOp = await promisifyExec(`git pull origin remix_beta`)
         console.log(cmdOp.stdout)
-        const betaPackageJSON = require('./package.json');
+        const betaPackageJSON = fs.readFileSync(__dirname + '/package.json', 'utf8')
         const tag = "v" + betaPackageJSON.version
         console.log(`Creating tag ${tag} from remix_beta branch`)
-        console.log(fs.readFileSync(__dirname + '/package.json', 'utf8'))
-        // cmdOp = await promisifyExec(`git tag ${tag}`);
-        // console.log(cmdOp.stdout)
-        // cmdOp = await promisifyExec(`git push --tags`);
-        // console.log(cmdOp.stdout)
+        cmdOp = await promisifyExec(`git tag ${tag}`)
+        console.log(cmdOp.stdout)
+        cmdOp = await promisifyExec(`git push --tags`)
+        console.log(cmdOp.stdout)
     }catch(error) {
         console.error(error)
     }
