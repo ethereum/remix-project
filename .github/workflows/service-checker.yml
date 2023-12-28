@@ -11,4 +11,4 @@ jobs:
     steps:
     - uses: Aniket-Engg/pr-reviews-reminder-action@master
       with:
-        webhook-url: ${{ secrets.SERVICECHECKER_WEBHOOK_URL }}
+        sc-webhook-url: ${{ secrets.SERVICECHECKER_WEBHOOK_URL }}
