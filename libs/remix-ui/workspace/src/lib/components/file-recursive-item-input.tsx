@@ -45,13 +45,14 @@ export const RecursiveItemInput = (props: RecursiveItemInputProps) => {
   },[])
 
   return(<input 
-    onBlur={handleEditBlur} 
+    onBlur={handleEditBlur}
+    data-id='/blank' 
     onKeyDown={handleKeyDown} 
     ref={ref} 
     style={{
       height: '1.5em',
     }}
-    className='form-control p-0 ml-2' 
+    className='form-control p-0 ml-2 remixui_items' 
     onFocus={handleFocus} 
     onChange={e => setValue(e.target.value)} 
     defaultValue={file.name}>

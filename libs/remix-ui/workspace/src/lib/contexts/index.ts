@@ -3,7 +3,7 @@ import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
 
 export const FileSystemContext = createContext<{
-  fs: BrowserState,
+  fs: any,
   plugin: any,
   modal:(title: string | JSX.Element, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   dispatchInitWorkspace:() => Promise<void>,

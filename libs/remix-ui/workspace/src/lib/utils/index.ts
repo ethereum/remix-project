@@ -124,13 +124,13 @@ export const contextMenuActions: MenuItems = [{
   platform: appPlatformTypes.web
 }]
 
-export const fileKeySort = (children: any): string[] => {
-  const directories = Object.keys(children).filter((key: string) => children[key].isDirectory)
+export const fileKeySort = (fileTree: any) => {
+  const directories = Object.keys(fileTree).filter((key: string) => fileTree[key].isDirectory)
 
   // sort case insensitive
   directories.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
 
-  const fileKeys = Object.keys(children).filter((key: string) => !children[key].isDirectory)
+  const fileKeys = Object.keys(fileTree).filter((key: string) => !fileTree[key].isDirectory)
   // sort case insensitive
   fileKeys.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
 
@@ -139,5 +139,10 @@ export const fileKeySort = (children: any): string[] => {
 
   const keys = [...directories, ...fileKeys]
   console.log('sorted keys', keys)
-  return keys
+  // rebuild the fileTree using the keys
+  const newFileTree = {}
+  keys.forEach((key: string) => {
+    newFileTree[key] = fileTree[key]
+  })
+  return newFileTree
 }
