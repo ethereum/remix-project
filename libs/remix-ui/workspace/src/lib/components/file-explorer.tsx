@@ -8,11 +8,8 @@ import { FileExplorerProps, FileType, WorkSpaceState, WorkspaceElement } from '.
 import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, getPathIcon, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Drag, Draggable } from '@remix-ui/drag-n-drop'
 import { ROOT_PATH } from '../utils/constants'
-import { fileKeySort } from '../utils'
 import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
-import { RecursiveTree } from './file-recursive-tree'
 import { FlatTree } from './flat-tree'
 
 export const FileExplorer = (props: FileExplorerProps) => {
@@ -22,6 +19,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     contextMenuItems,
     removedContextMenuItems,
     files,
+    flatTree,
     workspaceState,
     toGist,
     addMenuItems,
@@ -36,8 +34,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
-  const [childrenKeys, setChildrenKeys] = useState<string[]>([])
-
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -349,26 +345,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     console.log('FE RENDER', ROOT_PATH)
   }, [])
 
-  const dragStatus = (isDragged: boolean) => {
-    props.dragStatus(isDragged)
-  }
-
-  useEffect(() => {
-    console.log('fe props', props)
-    return
-    console.log('fe props', files[ROOT_PATH])
-    if (files[ROOT_PATH]) {
-      try {
-        const children: FileType[] = files[ROOT_PATH] as any
-        setChildrenKeys(fileKeySort(children))
-      } catch (error) {
-        setChildrenKeys(Object.keys(files[ROOT_PATH]))
-      }
-    } else {
-      setChildrenKeys([])
-    }
-  }, [props])
-
   const handleTreeClick = (event: SyntheticEvent) => {
     event.stopPropagation()
     console.log('tree click', event.target)
@@ -438,6 +414,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
               focusContext={state.focusContext}
               editModeOff={editModeOff}
               files={files}
+              flatTree={flatTree}
               fileState={fileState}
               expandPath={props.expandPath}
               handleContextMenu={handleContextMenu}

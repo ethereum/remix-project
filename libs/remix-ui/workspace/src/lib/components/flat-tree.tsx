@@ -8,9 +8,11 @@ import { RecursiveItemInput } from './file-recursive-item-input';
 import { FlatTreeDrop } from './flat-tree-drop';
 import { getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration } from '@remix-ui/file-decorators';
+import { focusElement } from '../actions/payload';
 
 interface FlatTreeProps {
   files: { [x: string]: Record<string, FileType> },
+  flatTree: { [x: string]: FileType },
   expandPath: string[],
   focusEdit: { element: string; type: string; isNew: boolean; lastEdit: string }
   editModeOff: (content: string) => void
@@ -30,8 +32,8 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState } = props
-  const [flatTree, setFlatTree] = useState<{ [x: string]: FileType }>({})
+  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement } = props
+  //const [flatTree, setFlatTree] = useState<{ [x: string]: FileType }>({})
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
     path: string,
@@ -61,21 +63,11 @@ export const FlatTree = (props: FlatTreeProps) => {
             : ''
 
   useEffect(() => {
-    console.log('flat files changed', files, ROOT_PATH)
-    const flatTree = {}
-    const mapChild = (file: FileType) => {
-      flatTree[file.path] = file
-      expandPath && expandPath.includes(file.path) &&
-        file.child && Object.keys(file.child).map((key) => {
-        mapChild(file.child[key])
-      })
-    }
-    files && files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key) => {
-      mapChild(files[ROOT_PATH][key])
-    })
-    console.log('flat tree', flatTree)
-    setFlatTree(flatTree)
-  }, [props])
+    console.log('PROP flat tree changed', props.flatTree)
+  },[props.flatTree])
+
+  useEffect(() => {
+  }, [expandPath, focusEdit, focusElement])
 
   const getIndentLevelDiv = (path: string) => {
     // remove double slash
@@ -84,7 +76,7 @@ export const FlatTree = (props: FlatTreeProps) => {
     path = path.replace(/^\//g, '')
     const pathArray = path.split('/')
     const level = pathArray.length - 1
-    const indent = level * 10
+    const indent = level * 4
     return (<div style={{ paddingLeft: `${indent}px` }}></div>)
   }
 
@@ -181,11 +173,13 @@ export const FlatTree = (props: FlatTreeProps) => {
     const node = Object.keys(flatTree)[index]
     const file = flatTree[node]
     //console.log('node', node)
-    return (<div
+    return (<li
       className={`d-flex flex-row align-items-center ${labelClass(file)}`}
       onMouseOver={() => setHover(file.path)}
       onMouseOut={() => setHover(file.path)}
-      data-type={file.isDirectory ? 'folder' : 'file'} data-path={`${file.path}`} data-id={`treeViewLi${file.path}`}
+      data-type={file.isDirectory ? 'folder' : 'file'} 
+      data-path={`${file.path}`} 
+      data-id={`treeViewLitreeViewItem${file.path}`}
     >
       {getIndentLevelDiv(file.path)}
       
@@ -194,7 +188,7 @@ export const FlatTree = (props: FlatTreeProps) => {
         <RecursiveItemInput editModeOff={editModeOff} file={file}/>:
         <div draggable={true} onDragStart={onDragStart} onDragEnd={onDragEnd} className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`} data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`} key={index}>{file.name}
         </div>}
-    </div>)
+    </li>)
   }
 
   return (<>

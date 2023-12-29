@@ -85,6 +85,7 @@ export interface FileExplorerProps {
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
+    flatTree: {[x: string]: FileType},
     workspaceState: WorkSpaceState,
     fileState: fileDecoration[],
     expandPath: string[],

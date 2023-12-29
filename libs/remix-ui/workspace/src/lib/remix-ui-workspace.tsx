@@ -1064,6 +1064,7 @@ export function Workspace() {
                     contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                     removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                     files={global.fs.browser.files}
+                    flatTree={global.fs.browser.flatTree}
                     workspaceState={state}
                     expandPath={global.fs.browser.expandPath}
                     focusEdit={global.fs.focusEdit}
@@ -1122,6 +1123,7 @@ export function Workspace() {
                     contextMenuItems={global.fs.localhost.contextMenu.registeredMenuItems}
                     removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
                     files={global.fs.localhost.files}
+                    flatTree={global.fs.browser.flatTree}
                     fileState={[]}
                     workspaceState={state}
                     expandPath={global.fs.localhost.expandPath}
