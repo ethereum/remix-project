@@ -4,6 +4,7 @@ import {FormattedMessage} from 'react-intl'
 import {ThemeContext, themes} from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
+const releaseDetails =  require('./../../../../../../releaseDetails.json')
 
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
@@ -73,28 +74,26 @@ function HomeTabFeatured() {
                 </div>
               </div>
               <div className="mr-1 pr-1 d-flex">
-                <a href="https://medium.com/remix-ide/remix-release-v0-38-0-dccd551b6f1e" target="__blank">
+                <a href={releaseDetails.moreLink} target="__blank">
                   <img src={'assets/img/remi_drums_whatsnew.webp'} style={{flex: '1', height: '170px', maxWidth: '170px'}} alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4 align-self-center" style={{flex: '1'}}>
-                  <h5>
-                    <FormattedMessage id="homeReleaseDetails.title" />
-                  </h5>
+                  <h5>{releaseDetails.version} {releaseDetails.title}</h5>
                   <div style={{fontSize: '0.8rem'}} className="mb-3">
                     <ul>
-                      <li style={{padding: '0.15rem'}}><FormattedMessage id="homeReleaseDetails.highlight1" /></li>
-                      <li style={{padding: '0.15rem'}}><FormattedMessage id="homeReleaseDetails.highlight2" /></li>
-                      <li style={{padding: '0.15rem'}}><FormattedMessage id="homeReleaseDetails.highlight3" /></li>
-                      <li style={{padding: '0.15rem'}}><FormattedMessage id="homeReleaseDetails.highlight4" /></li>
+                      { releaseDetails.highlight1 ? <li style={{padding: '0.15rem'}}>{releaseDetails.highlight1}</li> : '' }
+                      { releaseDetails.highlight2 ? <li style={{padding: '0.15rem'}}>{releaseDetails.highlight2}</li> : '' }
+                      { releaseDetails.highlight3 ? <li style={{padding: '0.15rem'}}>{releaseDetails.highlight3}</li> : '' }
+                      { releaseDetails.highlight4 ? <li style={{padding: '0.15rem'}}>{releaseDetails.highlight4}</li> : '' }
                     </ul>
                   </div>
                   <a
                     className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
                     onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'seeFullChangelog'])}
                     target="__blank"
-                    href="https://medium.com/remix-ide/remix-release-v0-38-0-dccd551b6f1e"
+                    href={releaseDetails.moreLink} 
                   >
-                    <FormattedMessage id="homeReleaseDetails.more" />
+                    {releaseDetails.more} 
                   </a>
                 </div>
               </div>
