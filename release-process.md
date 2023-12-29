@@ -33,24 +33,28 @@ Update the GitHub release link in this file: `remix-project/libs/remix-ui/home-t
 
 This will set latest release details in the first slide of `Featured` section.
 
-## remixd NPM release
-Once testing is completed, release will start by publishing `remixd`.if required, `remixd` can be also released individually
+## Remix Project NPM packages publishing
 
- - Bump version for remixd in `./libs/remixd/package.json`
- - Run: `yarn build remixd`
- - Move to build directory: `cd ./dist/libs/remixd`
- - Publish to NPM: `npm publish` (Make sure you are logged in to NPM)
- - create bump PR to master
+Once testing is completed, release will start by publishing Remix NPM packages.
 
-## Remix libraries NPM release
- - Make sure you are on latest `master` branch
- - `git pull origin master`
- - `git checkout -b bumpLibsVersion`
- - `yarn run publish:libs `
+ - Make sure you are on `master` branch: `git checkout master`
+ - Pull the latest: `git pull origin master`
+ - Create a branch: `git checkout -b bumpLibsVersion`
+
+### remixd NPM release
+
+  `yarn run publish:remixd`
+
+This command will ask for a new version.
+
+### Other libraries NPM release
+
+  `yarn run publish:libs `
  
 This command uses `lerna` and is solely responsible for publishing all the remix libraries. It will ask for a new version of each library. Make sure you are logged in to NPM.
 
-Once this command has been run, the versions for each remix library will be updated to latest in the libs' package.json file.
+Once these command run successfully, the version for each remix library will be updated to latest in the libs' package.json file.
+
  - Create and merge bump PR to master
  
 ## Remix IDE Release
