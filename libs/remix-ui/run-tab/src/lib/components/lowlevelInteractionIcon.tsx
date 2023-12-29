@@ -1,9 +1,9 @@
 import { CustomTooltip } from '@remix-ui/helper'
-import React from 'react'
+import React, { useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 
 export function LowLevelInteractionIcon () {
-  const version = window.location.href.split('=')[5].split('+')[0].split('-')[1]
+  const [version, _] = useState(window.location.href.split('=')[5].split('+')[0].split('-')[1])
 
   return (
     <>
