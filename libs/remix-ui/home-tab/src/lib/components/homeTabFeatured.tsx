@@ -4,7 +4,7 @@ import {FormattedMessage} from 'react-intl'
 import {ThemeContext, themes} from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
-const releaseDetails =  require('./../../../../../../releaseDetails.json')
+import * as releaseDetails from './../../../../../../releaseDetails.json'
 
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
