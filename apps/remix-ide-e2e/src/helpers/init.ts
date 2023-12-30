@@ -35,6 +35,9 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
           .popover {
             display:none !important;
           }
+          .popover-body {
+            display:none !important;
+          }
           `);
         })
       }})
