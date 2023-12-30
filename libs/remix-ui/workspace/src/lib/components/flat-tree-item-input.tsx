@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react"
 import { FileType } from "../types"
 
-interface RecursiveItemInputProps {
+interface FlatTreeItemInputProps {
   file: FileType
   editModeOff: (content: string) => void
 }
 
-export const RecursiveItemInput = (props: RecursiveItemInputProps) => {
+export const FlatTreeItemInput = (props: FlatTreeItemInputProps) => {
   const { file, editModeOff } = props
   const [value, setValue] = useState<string>(file.name)
   const ref = useRef(null)
