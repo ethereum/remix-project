@@ -8,8 +8,7 @@ export type LowLevelInteractionIconProps = {
 }
 
 export function LowLevelInteractionIcon (props: LowLevelInteractionIconProps) {
-  const getVersion = () => window.location.href.split('=')[5].split('+')[0].split('-')[1]
-  const [version, setVersion] = useState(() => getVersion())
+  const [version, setVersion] = useState('')
 
   useEffect(() => {
     const listenForCompileFinished = async () => {
