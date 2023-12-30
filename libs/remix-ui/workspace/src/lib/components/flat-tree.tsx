@@ -4,7 +4,7 @@ import { FileType, WorkspaceElement } from '../types'
 import { ROOT_PATH } from '../utils/constants'
 import { getPathIcon } from '@remix-ui/helper';
 import { Virtuoso } from 'react-virtuoso'
-import { RecursiveItemInput } from './file-recursive-item-input';
+import { FlatTreeItemInput } from './flat-tree-item-input';
 import { FlatTreeDrop } from './flat-tree-drop';
 import { getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration } from '@remix-ui/file-decorators';
@@ -185,7 +185,7 @@ export const FlatTree = (props: FlatTreeProps) => {
       
       <div className={`pr-2 pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : getPathIcon(file.path)} caret caret_tv`}></div>
       {focusEdit && file.path && focusEdit.element === file.path ? 
-        <RecursiveItemInput editModeOff={editModeOff} file={file}/>:
+        <FlatTreeItemInput editModeOff={editModeOff} file={file}/>:
         <div draggable={true} onDragStart={onDragStart} onDragEnd={onDragEnd} className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`} data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`} key={index}>{file.name}
         </div>}
     </li>)
