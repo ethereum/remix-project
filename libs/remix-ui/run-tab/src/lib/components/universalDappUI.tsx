@@ -285,7 +285,7 @@ export function UniversalDappUI(props: UdappProps) {
             <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
               <FormattedMessage id="udapp.lowLevelInteractions" />
             </div>
-            <LowLevelInteractionIcon />
+            <LowLevelInteractionIcon plugin={props.plugin} />
           </div>
           <div className="d-flex flex-column align-items-start">
             <label className="">CALLDATA</label>
