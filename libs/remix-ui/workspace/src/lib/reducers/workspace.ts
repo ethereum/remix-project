@@ -895,6 +895,7 @@ const flattenTree = (files, expandPath: string[]) =>{
   console.log('flattenTree', files, expandPath)
   const flatTree = {}
   const mapChild = (file: FileType) => {
+    if(!file.path) return
     console.log('mapChild', file)
     flatTree[file.path] = file
     expandPath && expandPath.find((path) => path.startsWith(file.path)) &&
