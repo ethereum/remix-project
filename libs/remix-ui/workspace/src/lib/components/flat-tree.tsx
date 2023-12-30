@@ -203,6 +203,7 @@ export const FlatTree = (props: FlatTreeProps) => {
         <Popover id='popover-basic'
           placement='top'
           ref={ref}
+          className='popover'
           style={
             {
               position: 'fixed',
