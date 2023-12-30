@@ -347,7 +347,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleTreeClick = (event: SyntheticEvent) => {
     event.stopPropagation()
-    console.log('tree click', event.target)
+    //console.log('tree click', event.target)
 
 
     let target = event.target as HTMLElement
