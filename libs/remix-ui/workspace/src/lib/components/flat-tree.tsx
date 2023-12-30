@@ -200,7 +200,7 @@ export const FlatTree = (props: FlatTreeProps) => {
       moveFile={moveFile}
       moveFolder={moveFolder}
     >
-      <div onClick={handleTreeClick} onMouseLeave={onMouseLeave} onMouseMove={onMouseMove} onContextMenu={handleContextMenu}>
+      <div data-id="treeViewUltreeViewMenu" onClick={handleTreeClick} onMouseLeave={onMouseLeave} onMouseMove={onMouseMove} onContextMenu={handleContextMenu}>
         {showMouseOverTarget && mouseOverTarget && !isDragging &&
           <Popover id='popover-basic'
             placement='top'
