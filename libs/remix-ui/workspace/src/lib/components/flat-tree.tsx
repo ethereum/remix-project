@@ -49,8 +49,8 @@ export const FlatTree = (props: FlatTreeProps) => {
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const ref = useRef(null)
   const [size, setSize] = useState(0)
-  
-  
+
+
   const labelClass = (file: FileType) =>
     props.focusEdit.element === file.path
       ? 'bg-light'
@@ -64,7 +64,7 @@ export const FlatTree = (props: FlatTreeProps) => {
 
   useEffect(() => {
     console.log('PROP flat tree changed', props.flatTree)
-  },[props.flatTree])
+  }, [props.flatTree])
 
   useEffect(() => {
   }, [expandPath, focusEdit, focusElement])
@@ -99,13 +99,13 @@ export const FlatTree = (props: FlatTreeProps) => {
 
   useEffect(() => {
     console.log('drag source', dragSource)
-    if(isDragging) {
+    if (isDragging) {
       mouseTimer = {
         path: null,
         timer: null
       }
     }
-  },[isDragging])
+  }, [isDragging])
 
   const onDragEnd = (event: SyntheticEvent) => {
     setIsDragging(false)
@@ -124,7 +124,7 @@ export const FlatTree = (props: FlatTreeProps) => {
     })
     if (state && state.fileStateLabelClass) {
       return state.fileStateLabelClass
-    } 
+    }
   }
 
   const onMouseMove = async (e: any) => {
@@ -166,7 +166,7 @@ export const FlatTree = (props: FlatTreeProps) => {
     const boundingRect = props.treeRef.current.getBoundingClientRect()
     console.log('bounding rect', boundingRect)
     setSize(boundingRect.height - 100)
-  },[props.treeRef.current])
+  }, [props.treeRef.current])
 
 
   const Row = (index) => {
@@ -174,20 +174,22 @@ export const FlatTree = (props: FlatTreeProps) => {
     const file = flatTree[node]
     //console.log('node', node)
     return (<li
-      className={`d-flex flex-row align-items-center ${labelClass(file)}`}
+      className={`${labelClass(file)}`}
       onMouseOver={() => setHover(file.path)}
       onMouseOut={() => setHover(file.path)}
-      data-type={file.isDirectory ? 'folder' : 'file'} 
-      data-path={`${file.path}`} 
+      data-type={file.isDirectory ? 'folder' : 'file'}
+      data-path={`${file.path}`}
       data-id={`treeViewLitreeViewItem${file.path}`}
     >
-      {getIndentLevelDiv(file.path)}
-      
-      <div className={`pr-2 pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : getPathIcon(file.path)} caret caret_tv`}></div>
-      {focusEdit && file.path && focusEdit.element === file.path ? 
-        <FlatTreeItemInput editModeOff={editModeOff} file={file}/>:
-        <div draggable={true} onDragStart={onDragStart} onDragEnd={onDragEnd} className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`} data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`} key={index}>{file.name}
-        </div>}
+      <div data-id={`treeViewDivtreeViewItem${file.path}`} className={`d-flex flex-row align-items-center`}>
+        {getIndentLevelDiv(file.path)}
+
+        <div className={`pr-2 pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : getPathIcon(file.path)} caret caret_tv`}></div>
+        {focusEdit && file.path && focusEdit.element === file.path ?
+          <FlatTreeItemInput editModeOff={editModeOff} file={file} /> :
+          <div draggable={true} onDragStart={onDragStart} onDragEnd={onDragEnd} className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`} data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`} key={index}>{file.name}
+          </div>}
+      </div>
     </li>)
   }
 
@@ -200,24 +202,24 @@ export const FlatTree = (props: FlatTreeProps) => {
     >
       <div onClick={handleTreeClick} onMouseLeave={onMouseLeave} onMouseMove={onMouseMove} onContextMenu={handleContextMenu}>
         {showMouseOverTarget && mouseOverTarget && !isDragging &&
-        <Popover id='popover-basic'
-          placement='top'
-          ref={ref}
-          className='popover'
-          style={
-            {
-              position: 'fixed',
-              top: `${mouseOverTarget.position.top}px`,
-              left: `${mouseOverTarget.position.left}px`,
-              minWidth: 'fit-content'
-            }
-          }>
-          <Popover.Content
-            className='text-wrap p-1 px-2 bg-secondary w-100'
-          >
-            {mouseOverTarget && mouseOverTarget.path}
-          </Popover.Content>
-        </Popover>
+          <Popover id='popover-basic'
+            placement='top'
+            ref={ref}
+            className='popover'
+            style={
+              {
+                position: 'fixed',
+                top: `${mouseOverTarget.position.top}px`,
+                left: `${mouseOverTarget.position.left}px`,
+                minWidth: 'fit-content'
+              }
+            }>
+            <Popover.Content
+              className='text-wrap p-1 px-2 bg-secondary w-100'
+            >
+              {mouseOverTarget && mouseOverTarget.path}
+            </Popover.Content>
+          </Popover>
         }
         <Virtuoso
           style={{ height: `${size}px` }}
