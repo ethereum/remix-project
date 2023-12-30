@@ -23,7 +23,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     })
     .verifyLoad()
     .perform(() => {
-      if (hideToolTips) {
+      //if (hideToolTips) {
         browser.execute(function () { // hide tooltips
           function addStyle(styleString) {
             const style = document.createElement('style');
@@ -40,7 +40,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
           }
           `);
         })
-      }})
+      })
       .perform(() => {
         browser.execute(function () { 
           (window as any).logs = [];
