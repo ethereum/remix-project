@@ -283,6 +283,7 @@ export interface RecorderProps {
 }
 
 export interface InstanceContainerProps {
+  plugin: RunTab,
   instances: {
     instanceList: {
       contractData?: ContractData,
@@ -396,6 +397,7 @@ export interface UdappProps {
     decodedResponse?: Record<number, any>,
     abi?: any
   },
+  plugin: RunTab,
   context: 'memory' | 'blockchain',
   removeInstance: (index: number) => void,
   index: number,
