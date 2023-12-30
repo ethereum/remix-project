@@ -5409,6 +5409,9 @@ a.close.disabled {
   padding: 9px 14px;
   color: #fff;
 }
+.popover {
+  display: none !important;
+}
 .carousel {
   position: relative;
 }
