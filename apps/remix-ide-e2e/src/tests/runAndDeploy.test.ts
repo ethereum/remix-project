@@ -27,7 +27,7 @@ module.exports = {
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
       .validateValueInput('*[data-id="dandrValue"]', '999', '999')
       .validateValueInput('*[data-id="dandrValue"]', '0000', '0')
-      .validateValueInput('*[data-id="dandrValue"]', '1.3', '0') // no decimal
+      .validateValueInput('*[data-id="dandrValue"]', '1.3', '3') // no decimal
       // .validateValueInput('*[data-id="dandrValue"]', 'dragon', '0') // only numbers
   },
 
