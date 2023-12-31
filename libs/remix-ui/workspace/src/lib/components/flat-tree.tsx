@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, startTransition, useEffect, useRef, useState } from 'react'
+import React, { SyntheticEvent, startTransition, useEffect, useRef, useState, RefObject, useMemo } from 'react'
 import { Popover } from 'react-bootstrap'
 import { FileType, WorkspaceElement } from '../types'
 import { ROOT_PATH } from '../utils/constants'
@@ -9,6 +9,23 @@ import { FlatTreeDrop } from './flat-tree-drop';
 import { getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration } from '@remix-ui/file-decorators';
 import { focusElement } from '../actions/payload';
+
+export default function useOnScreen(ref: RefObject<HTMLElement>) {
+
+  const [isIntersecting, setIntersecting] = useState(false)
+
+  const observer = useMemo(() => new IntersectionObserver(
+    ([entry]) => setIntersecting(entry.isIntersecting)
+  ), [ref])
+
+
+  useEffect(() => {
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
+  return isIntersecting
+}
 
 interface FlatTreeProps {
   files: { [x: string]: Record<string, FileType> },
@@ -50,6 +67,15 @@ export const FlatTree = (props: FlatTreeProps) => {
   const ref = useRef(null)
   const [size, setSize] = useState(0)
 
+  const isOnScreen = useOnScreen(props.treeRef)
+
+  useEffect(() => {
+    console.log('is on screen', isOnScreen)
+    if(isOnScreen) {
+      setViewPortHeight()
+    }
+  },[isOnScreen])
+
 
   const labelClass = (file: FileType) =>
     props.focusEdit.element === file.path
@@ -90,7 +116,6 @@ export const FlatTree = (props: FlatTreeProps) => {
   }
 
   const onDragStart = async (event: SyntheticEvent) => {
-    console.log('drag start', event)
     const target = await getEventTarget(event)
     console.log(flatTree[target.path], target.path)
     setDragSource(flatTree[target.path])
@@ -161,18 +186,28 @@ export const FlatTree = (props: FlatTreeProps) => {
     setShowMouseOverTarget(false)
   }
 
-  useEffect(() => {
-    console.log('tree ref', props.treeRef.current)
+
+  const setViewPortHeight = () => {
     const boundingRect = props.treeRef.current.getBoundingClientRect()
-    console.log('bounding rect', boundingRect)
     setSize(boundingRect.height - 100)
+  }
+
+
+  useEffect(() => {
+    window.addEventListener('resize', setViewPortHeight)
+    return () => {
+      window.removeEventListener('resize', setViewPortHeight)
+    }
+  }, [])
+
+  useEffect(() => {
+    setViewPortHeight()
   }, [props.treeRef.current])
 
 
   const Row = (index) => {
     const node = Object.keys(flatTree)[index]
     const file = flatTree[node]
-    //console.log('node', node)
     return (<li
       className={`${labelClass(file)}`}
       onMouseOver={() => setHover(file.path)}
