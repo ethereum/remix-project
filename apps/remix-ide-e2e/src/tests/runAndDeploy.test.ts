@@ -25,9 +25,9 @@ module.exports = {
   'Should load run and deploy tab and check value validation #flaky #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
-      .validateValueInput('*[data-id="dandrValue"]', '999', '999')
-      .validateValueInput('*[data-id="dandrValue"]', '0000', '0')
-      .validateValueInput('*[data-id="dandrValue"]', '1.3', '3') // no decimal
+      .validateValueInput('*[data-id="dandrValue"]', ['9','9','9'], '999')
+      .validateValueInput('*[data-id="dandrValue"]', ['0','0','0'], '0')
+      .validateValueInput('*[data-id="dandrValue"]', ['1','.','3'], '3') // no decimal
       // .validateValueInput('*[data-id="dandrValue"]', 'dragon', '0') // only numbers
   },
 
