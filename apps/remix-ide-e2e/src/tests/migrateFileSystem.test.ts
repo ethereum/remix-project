@@ -6,6 +6,7 @@ module.exports = {
   '@disabled': true,
   'Should load the testmigration url #group1': function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testmigration=true')
+      .hideToolTips()
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow()
@@ -16,6 +17,7 @@ module.exports = {
   },
   'Should load the testmigration url and refresh and still have test data #group7': function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testmigration=true')
+      .hideToolTips() 
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow()
@@ -30,6 +32,7 @@ module.exports = {
   },
   'Should fallback to localstorage with default data #group2': function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testmigration_fallback=true')
+      .hideToolTips()
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow()
@@ -50,6 +53,7 @@ module.exports = {
   },
   'Should load the testmigration url with local storage anabled #group3': function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testmigration=true&e2e_testmigration_fallback=true')
+      .hideToolTips()
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow()
@@ -60,6 +64,7 @@ module.exports = {
   },
   'Should generate error in migration by deleting indexedDB and falling back to local storage with test #group5': function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testmigration=true')
+      .hideToolTips()
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow().execute(('delete window.indexedDB'))
@@ -112,6 +117,7 @@ module.exports = {
   // end of test data entries
   'Should load with all storage blocked #group4': function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testblock_storage=true')
+      .hideToolTips()
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow()
@@ -119,6 +125,7 @@ module.exports = {
   },
   'Should with errors #group6': function (browser: NightwatchBrowser) {
     browser.url('http://127.0.0.1:8080?e2e_testmigration=true')
+      .hideToolTips()
       .pause(6000)
       .switchBrowserTab(0)
       .maximizeWindow().execute('delete window.localStorage')
