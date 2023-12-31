@@ -480,6 +480,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'REMOVE_INPUT_FIELD': {
     const payload = action.payload
     const fd = removeInputField(state, payload.path)
+    console.log('REMOVE_INPUT_FIELD', payload, fd)
     const flatTree = flattenTree(fd, state.mode === 'browser'? state.browser.expandPath : state.localhost.expandPath)
     return {
       ...state,
@@ -895,8 +896,9 @@ const flattenTree = (files, expandPath: string[]) =>{
   console.log('flattenTree', files, expandPath)
   const flatTree = {}
   const mapChild = (file: FileType) => {
-    if(!file.path) return
-    console.log('mapChild', file)
+
+    if(!file || !file.path) return
+
     flatTree[file.path] = file
     expandPath && expandPath.find((path) => path.startsWith(file.path)) &&
       file.child && Object.keys(file.child).map((key) => {
@@ -904,6 +906,7 @@ const flattenTree = (files, expandPath: string[]) =>{
     })
   }
   files && files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key) => {
+
     mapChild(files[ROOT_PATH][key])
   })
   console.log('flat tree', flatTree)
@@ -963,8 +966,8 @@ const removeInputField = (
 ): {[x: string]: Record<string, FileType>} => {
   let files =
     state.mode === 'browser' ? state.browser.files : state.localhost.files
-  const root = state.mode === 'browser' ? ROOT_PATH : state.mode
-
+  const root = ROOT_PATH
+  console.log('removeInputField', path, files, root)
   if (path === root) {
     delete files[root][path + '/' + 'blank']
     return files
