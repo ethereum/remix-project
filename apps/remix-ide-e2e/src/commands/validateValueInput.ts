@@ -2,7 +2,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
 class ValidateValueInput extends EventEmitter {
-  command (this: NightwatchBrowser, selector: string, valueTosSet: string, expectedValue: string) {
+  command (this: NightwatchBrowser, selector: string, valueTosSet: string[], expectedValue: string) {
     const browser = this.api
     browser.perform((done) => {
       browser
