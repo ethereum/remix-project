@@ -6,8 +6,9 @@ class ValidateValueInput extends EventEmitter {
     const browser = this.api
     browser.perform((done) => {
       browser
-        .clearValue(selector)
         .click(selector)
+        .clearValue(selector)
+        .clearValue(selector)
         .setValue(selector, valueTosSet)
         .pause(500)
         .execute(function (selector) {
