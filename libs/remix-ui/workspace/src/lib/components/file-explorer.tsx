@@ -337,9 +337,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   useEffect(() => {
-    console.log('fe files changed', ROOT_PATH)
+    console.log('fe files changed', ROOT_PATH, files, flatTree)
 
-  }, [files])
+  }, [flatTree, files])
   
   useEffect(() => {
     console.log('FE RENDER', ROOT_PATH)
