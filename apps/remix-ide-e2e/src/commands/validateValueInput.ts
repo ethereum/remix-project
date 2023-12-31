@@ -9,7 +9,8 @@ class ValidateValueInput extends EventEmitter {
         .click(selector).saveScreenshot(`./reports/screenshots/validateValueInput_`+ expectedValue +`.png`)
         .clearValue(selector).saveScreenshot(`./reports/screenshots/validateValueInput_2_`+ expectedValue +`.png`)
         .clearValue(selector).saveScreenshot(`./reports/screenshots/validateValueInput_3_`+ expectedValue +`.png`)
-        .setValue(selector, valueTosSet).saveScreenshot(`./reports/screenshots/validateValueInput_4_`+ expectedValue +`.png`)
+        //.setValue(selector, valueTosSet).saveScreenshot(`./reports/screenshots/validateValueInput_4_`+ expectedValue +`.png`)
+        .sendKeys(selector, valueTosSet).saveScreenshot(`./reports/screenshots/validateValueInput_4_`+ expectedValue +`.png`)
         .pause(500)
         .execute(function (selector) {
           const elem = document.querySelector(selector) as HTMLInputElement
