@@ -6,10 +6,10 @@ class ValidateValueInput extends EventEmitter {
     const browser = this.api
     browser.perform((done) => {
       browser
-        .click(selector).saveScreenshot('./reports/screenshots/validateValueInput.png')
-        .clearValue(selector).saveScreenshot('./reports/screenshots/validateValueInput1.png')
-        .clearValue(selector).saveScreenshot('./reports/screenshots/validateValueInput2.png')
-        .setValue(selector, valueTosSet).saveScreenshot('./reports/screenshots/validateValueInput3.png')
+        .click(selector).saveScreenshot(`./reports/screenshots/validateValueInput_`+ expectedValue +`.png`)
+        .clearValue(selector).saveScreenshot(`./reports/screenshots/validateValueInput_2_`+ expectedValue +`.png`)
+        .clearValue(selector).saveScreenshot(`./reports/screenshots/validateValueInput_3_`+ expectedValue +`.png`)
+        .setValue(selector, valueTosSet).saveScreenshot(`./reports/screenshots/validateValueInput_4_`+ expectedValue +`.png`)
         .pause(500)
         .execute(function (selector) {
           const elem = document.querySelector(selector) as HTMLInputElement
