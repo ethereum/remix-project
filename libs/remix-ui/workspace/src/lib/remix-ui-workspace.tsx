@@ -1123,7 +1123,7 @@ export function Workspace() {
                     contextMenuItems={global.fs.localhost.contextMenu.registeredMenuItems}
                     removedContextMenuItems={global.fs.localhost.contextMenu.removedMenuItems}
                     files={global.fs.localhost.files}
-                    flatTree={global.fs.browser.flatTree}
+                    flatTree={global.fs.localhost.flatTree}
                     fileState={[]}
                     workspaceState={state}
                     expandPath={global.fs.localhost.expandPath}

@@ -191,10 +191,10 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     console.log('FETCH_DIRECTORY_SUCCESS', payload)
     const startTime = new Date().getTime()
     const fd = fetchDirectoryContent(state, payload)
-    const flatTree = flattenTree(fd, state.browser.expandPath)
+    const flatTree = flattenTree(fd, state.mode === 'browser'? state.browser.expandPath : state.localhost.expandPath)
     const endTime = new Date().getTime()
  
-    console.log('fetchDirectoryContent tree', endTime - startTime, fd)
+    console.log('fetchDirectoryContent tree', endTime - startTime, fd, flatTree)
 
     return {
       ...state,
@@ -213,7 +213,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
         ...state.localhost,
         files:
             state.mode === 'localhost'
-              ? fetchDirectoryContent(state, payload)
+              ? fd
               : state.localhost.files,
         flatTree: state.mode === 'localhost' ? flatTree : state.localhost.flatTree,
         isRequestingDirectory: false,
@@ -266,9 +266,9 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     }
     const startTime = new Date().getTime()
     const fd = fetchWorkspaceDirectoryContent(state, payload)
-    const flatTree = flattenTree(fd, state.browser.expandPath)
+    const flatTree = flattenTree(fd, state.mode === 'browser'? state.browser.expandPath : state.localhost.expandPath)
     const endTime = new Date().getTime()
-    console.log('fetchDirectoryContent tree', endTime - startTime, fd)
+    console.log('fetchDirectoryContent tree', endTime - startTime, fd, flatTree)
 
     return {
       ...state,
@@ -454,7 +454,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'ADD_INPUT_FIELD': {
     const payload = action.payload
     const fd = fetchDirectoryContent(state, payload)
-    const flatTree = flattenTree(fd, state.browser.expandPath)
+    const flatTree = flattenTree(fd, state.mode === 'browser'? state.browser.expandPath : state.localhost.expandPath)
     return {
       ...state,
       browser: {
@@ -480,7 +480,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'REMOVE_INPUT_FIELD': {
     const payload = action.payload
     const fd = removeInputField(state, payload.path)
-    const flatTree = flattenTree(fd, state.browser.expandPath)
+    const flatTree = flattenTree(fd, state.mode === 'browser'? state.browser.expandPath : state.localhost.expandPath)
     return {
       ...state,
       browser: {
@@ -515,7 +515,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'FILE_RENAMED_SUCCESS': {
     const payload = action.payload
     const fd = fetchDirectoryContent(state, payload, payload.oldPath)
-    const flatTree = flattenTree(fd, state.browser.expandPath)
+    const flatTree = flattenTree(fd, state.mode === 'browser'? state.browser.expandPath : state.localhost.expandPath)
     return {
       ...state,
       browser: {
@@ -697,7 +697,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 
   case 'SET_EXPAND_PATH': {
     const payload = action.payload as string[]
-    const flatTree = flattenTree(state.browser.files, payload)
+    const flatTree = flattenTree(state.mode === 'browser' ? state.browser.files : state.localhost.files, payload)
     return {
       ...state,
       browser: {
