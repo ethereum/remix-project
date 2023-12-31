@@ -7,9 +7,8 @@ class ValidateValueInput extends EventEmitter {
     browser.perform((done) => {
       browser
         .click(selector).saveScreenshot(`./reports/screenshots/validateValueInput_`+ expectedValue +`.png`)
-        .sendKeys(selector, browser.Keys.CONTROL + 'a').saveScreenshot(`./reports/screenshots/validateValueInput_1_`+ expectedValue +`.png`)
-        .sendKeys(selector, browser.Keys.DELETE).saveScreenshot(`./reports/screenshots/validateValueInput_2_`+ expectedValue +`.png`)
-        //.setValue(selector, valueTosSet).saveScreenshot(`./reports/screenshots/validateValueInput_4_`+ expectedValue +`.png`)
+        .sendKeys(selector, browser.Keys.BACK_SPACE +  browser.Keys.BACK_SPACE +  browser.Keys.BACK_SPACE).saveScreenshot(`./reports/screenshots/validateValueInput_1_`+ expectedValue +`.png`)
+         //.setValue(selector, valueTosSet).saveScreenshot(`./reports/screenshots/validateValueInput_4_`+ expectedValue +`.png`)
         .sendKeys(selector, valueTosSet).saveScreenshot(`./reports/screenshots/validateValueInput_4_`+ expectedValue +`.png`)
         .pause(500)
         .execute(function (selector) {
