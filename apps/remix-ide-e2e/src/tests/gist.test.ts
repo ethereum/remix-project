@@ -38,7 +38,7 @@ module.exports = {
       .executeScriptInTerminal(`remix.loadgist('${gistid}')`)
       // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
       .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
-      .click(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
+      
       .openFile(`gist-${gistid}/README.txt`)
       // Remix publish to gist
       /* .click('*[data-id="fileExplorerNewFilepublishToGist"]')

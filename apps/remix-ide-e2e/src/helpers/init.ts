@@ -22,7 +22,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         .perform(done())
     })
     .verifyLoad()
-    .perform(() => {
+    .perform((done) => {
       //if (hideToolTips) {
         browser.execute(function () { // hide tooltips
           function addStyle(styleString) {
@@ -36,7 +36,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
             display:none !important;
           }
           `);
-        })
+        }, [], done())
       })
       .perform(() => {
         browser.execute(function () { 
