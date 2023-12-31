@@ -71,7 +71,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'run Remixd tests #flaky #group4': function (browser) {
+  'run Remixd tests #group4': function (browser) {
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
@@ -81,7 +81,7 @@ module.exports = {
         runTests(browser, done)
       })
   },
-  'Import from node_modules #flaky #group1': function (browser) {
+  'Import from node_modules #group1': function (browser) {
     /*
       when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
       remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
@@ -96,7 +96,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
       .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
   },
-  'Import from node_modules and reference a github import #flaky #group2': function (browser) {
+  'Import from node_modules and reference a github import #group2': function (browser) {
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
@@ -107,7 +107,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js') // open-zeppelin moved to pragma ^0.8.20
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
-  'Static Analysis run with remixd #flaky #group3': '' + function (browser) {
+  'Static Analysis run with remixd #group3': '' + function (browser) {
     browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
       .clickLaunchIcon('solidityStaticAnalysis')
     /*
@@ -139,7 +139,7 @@ module.exports = {
       .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
   },
 
-  'Should listen on compilation result from hardhat #flaky #group5': function (browser: NightwatchBrowser) {
+  'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
@@ -166,7 +166,7 @@ module.exports = {
 
   },
 
-  'Should load compilation result from hardhat when remixd connects #flaky #group6': function (browser: NightwatchBrowser) {
+  'Should load compilation result from hardhat when remixd connects #group6': function (browser: NightwatchBrowser) {
     // artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json has already been created
 
     browser
@@ -194,7 +194,7 @@ module.exports = {
 
   },
 
-  'Should listen on compilation result from foundry #flaky #group7': function (browser: NightwatchBrowser) {
+  'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
@@ -229,7 +229,7 @@ module.exports = {
 
   },
 
-  'Should listen on compilation result from truffle #flaky #group8': function (browser: NightwatchBrowser) {
+  'Should listen on compilation result from truffle #group8': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
