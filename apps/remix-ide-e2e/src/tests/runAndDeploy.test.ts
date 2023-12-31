@@ -22,7 +22,7 @@ module.exports = {
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
   },
 
-  'Should load run and deploy tab and check value validation #flaky #group1': function (browser: NightwatchBrowser) {
+  'Should load run and deploy tab and check value validation #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'DEPLOY & RUN TRANSACTIONS')
       .validateValueInput('*[data-id="dandrValue"]', ['9','9','9'], '999')
