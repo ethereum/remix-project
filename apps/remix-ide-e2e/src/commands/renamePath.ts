@@ -34,16 +34,8 @@ function renamePath (browser: NightwatchBrowser, path: string, newFileName: stri
   }, [path], function () {
     browser
       .click('#menuitemrename')
-      .perform((client, doneSetValue) => {
-        browser.execute(function (path, addvalue) {
-          document.querySelector('[data-path="' + path + '"]').innerHTML = addvalue
-        }, [path, newFileName], () => {
-          doneSetValue()
-        })
-      })
-      .pause(1000)
-      .click('div[data-id="remixIdeMainPanel"]') // focus out to save
-      .pause(2000)
+      .sendKeys('[data-input-path="' + path + '"]', newFileName)
+      .sendKeys('[data-input-path="' + path + '"]', browser.Keys.ENTER)
       .waitForElementNotPresent('[data-path="' + path + '"]')
       .waitForElementPresent('[data-path="' + renamedPath + '"]')
       .perform(() => {

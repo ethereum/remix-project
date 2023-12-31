@@ -32,7 +32,7 @@ module.exports = {
     browser
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]')
       .click('*[data-id="treeViewLitreeViewItem5_New_contract.sol"]')
-      .renamePath('5_New_contract.sol', '5_Renamed_Contract.sol', '5_Renamed_Contract.sol')
+      .renamePath('5_New_contract.sol', '5_Renamed_Contract', '5_Renamed_Contract.sol')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem5_Renamed_Contract.sol"]')
   },
 
