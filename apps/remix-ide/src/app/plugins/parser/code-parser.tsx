@@ -711,8 +711,8 @@ export class CodeParser extends Plugin {
     if ('documentation' in node && node.documentation && (node.documentation as any).text) {
       let text = ''
         ; (node.documentation as any).text.split('\n').forEach((line) => {
-          text += `${line.trim()}\n`
-        })
+        text += `${line.trim()}\n`
+      })
       return text
     }
   }
