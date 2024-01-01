@@ -105,7 +105,7 @@ class FSPluginClient extends ElectronBasePluginClient {
     })
     this.dataBatcher = new PluginEventDataBatcher(webContentsId)
     this.dataBatcher.on('flush', (data: any) => {
-      console.log('flush', data)
+      //console.log('flush', data)
       this.emit('eventGroup', data)
     })
   }
@@ -206,14 +206,14 @@ class FSPluginClient extends ElectronBasePluginClient {
     try {
       this.off('filePanel' as any, 'expandPathChanged')
       this.on('filePanel' as any, 'expandPathChanged', async (paths: string[]) => {
-        console.log('expandPathChanged', paths)
+        //console.log('expandPathChanged', paths)
         this.expandedPaths = ['.', ...paths] // add root
-        console.log(Object.keys(this.watchers))
+        //console.log(Object.keys(this.watchers))
         paths = paths.map((path) => this.fixPath(path))
         for (const path of paths) {
           if (!Object.keys(this.watchers).includes(path)) {
             this.watchers[path] = await this.watcherInit(path)
-            console.log('added watcher', path)
+            //console.log('added watcher', path)
           }
         }
        
@@ -222,12 +222,12 @@ class FSPluginClient extends ElectronBasePluginClient {
           if (!paths.includes(watcher)) {
             await this.watchers[watcher].close()
             delete this.watchers[watcher]
-            console.log('removed watcher', watcher)
+            //console.log('removed watcher', watcher)
           }
         }
       })
       this.watchers[this.workingDir] = await this.watcherInit(this.workingDir) // root
-      console.log('added root watcher', this.workingDir)
+      //console.log('added root watcher', this.workingDir)
     } catch (e) {
       console.log('error watching', e)
     }
@@ -271,7 +271,7 @@ class FSPluginClient extends ElectronBasePluginClient {
         try {
           const dirname = path.dirname(pathWithoutPrefix)
           if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
-            console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
+            //console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
             this.dataBatcher.write('change', eventName, pathWithoutPrefix)
           }
         } catch (e) {
@@ -281,9 +281,9 @@ class FSPluginClient extends ElectronBasePluginClient {
     } else {
       try {
         const dirname = path.dirname(pathWithoutPrefix)
-        console.log('check emitting', eventName, pathWithoutPrefix, this.expandedPaths, dirname)
+        //console.log('check emitting', eventName, pathWithoutPrefix, this.expandedPaths, dirname)
         if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
-          console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
+          //console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
           //this.emit('change', eventName, pathWithoutPrefix)
           this.dataBatcher.write('change', eventName, pathWithoutPrefix)
         }

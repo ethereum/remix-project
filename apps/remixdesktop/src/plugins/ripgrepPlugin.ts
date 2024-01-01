@@ -68,14 +68,14 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
       if (opts && opts.include) {
         for (const include of opts.include) {
           if (include !== '') {
-            globs.push('--glob=**/' + include)
+            globs.push('--glob=' + include)
           }
         }
       }
       if (opts && opts.exclude) {
         for (const exclude of opts.exclude) {
           if (exclude !== '') {
-            globs.push('--glob=!**/' + exclude)
+            globs.push('--glob=!=' + exclude)
           }
         }
       }

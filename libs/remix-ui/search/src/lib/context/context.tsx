@@ -39,8 +39,12 @@ export const SearchContext = createContext<SearchingStateInterface>(null)
 
 export const SearchProvider = ({ children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined, platform = undefined } = {}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const [files, setFiles] = useState([])
+  const [files, setFiles] = useState<{
+    files: string[],
+    timeStamp: number
+  }>(null)
   const clearSearchingTimeout = useRef(null)
+  const directoryUpdateCacheTimeStamp = useRef<number>(0)
   const value = {
     state,
     setFind: (value: string) => {
@@ -266,10 +270,8 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
     await value.reloadFile(file)
   }
 
-  const updateFiles = async () => {
-    setTimeout(async () => {
-      setFiles(await getDirectory('/', plugin))
-    }, 2000)
+  const updateDirectoryCacheTimeStamp = async () => {
+    directoryUpdateCacheTimeStamp.current = Date.now()
   }
 
   useEffect(() => {
@@ -277,7 +279,7 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
       value.setSearchResults(null)
       value.clearUndo()
       value.setCurrentWorkspace(workspace.name)
-      await updateFiles()
+      await updateDirectoryCacheTimeStamp()
     })
     plugin.on('fileManager', 'fileSaved', async (file) => {
       await reloadStateForFile(file)
@@ -286,15 +288,15 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
     plugin.on('fileManager', 'rootFolderChanged', async (file) => {
       const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
       if (workspace) value.setCurrentWorkspace(workspace.name)
-      await updateFiles()
+      await updateDirectoryCacheTimeStamp()
     })
 
     plugin.on('fs', 'workingDirChanged', async () => {
-      await updateFiles()
+      await updateDirectoryCacheTimeStamp()
     })
 
     plugin.on('fileManager', 'fileAdded', async (file) => {
-      await updateFiles()
+      await updateDirectoryCacheTimeStamp()
       await reloadStateForFile(file)
     })
     plugin.on('fileManager', 'currentFileChanged', async (file) => {
@@ -306,7 +308,7 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
         const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
         if (workspace && workspace.name) {
           value.setCurrentWorkspace(workspace.name)
-          await updateFiles()
+          await updateDirectoryCacheTimeStamp()
         }
       } catch (e) {
         console.log(e)
@@ -413,7 +415,16 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
             })
             value.setSearchResults(filteredFiles)
           } else {
-            const filteredFiles = files.filter(filePathFilter(pathFilter)).map((file) => {
+            let filesToSearch = files?.files
+            if(!files || files.timeStamp != directoryUpdateCacheTimeStamp.current) {
+              const newFiles = await getDirectory('/', plugin)
+              setFiles({
+                files: newFiles,
+                timeStamp: directoryUpdateCacheTimeStamp.current || Date.now()
+              })
+              filesToSearch = newFiles
+            }
+            const filteredFiles = filesToSearch.filter(filePathFilter(pathFilter)).map((file) => {
               const r: SearchResult = {
                 filename: file,
                 lines: [],
