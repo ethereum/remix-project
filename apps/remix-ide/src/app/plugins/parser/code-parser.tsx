@@ -1,14 +1,14 @@
 'use strict'
-import {Plugin} from '@remixproject/engine'
-import {sourceMappingDecoder} from '@remix-project/remix-debug'
-import {CompilerAbstract} from '@remix-project/remix-solidity'
-import {CompilationResult} from '@remix-project/remix-solidity'
+import { Plugin } from '@remixproject/engine'
+import { sourceMappingDecoder } from '@remix-project/remix-debug'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { CompilationResult } from '@remix-project/remix-solidity'
 import CodeParserGasService from './services/code-parser-gas-service'
 import CodeParserCompiler from './services/code-parser-compiler'
 import CodeParserAntlrService from './services/code-parser-antlr-service'
-import CodeParserImports, {CodeParserImportsData} from './services/code-parser-imports'
+import CodeParserImports, { CodeParserImportsData } from './services/code-parser-imports'
 import React from 'react'
-import {Profile} from '@remixproject/plugin-utils'
+import { Profile } from '@remixproject/plugin-utils'
 import {
   ContractDefinitionAstNode,
   EventDefinitionAstNode,
@@ -21,9 +21,9 @@ import {
   StructDefinitionAstNode,
   VariableDeclarationAstNode
 } from '@remix-project/remix-analyzer'
-import {lastCompilationResult, RemixApi} from '@remixproject/plugin-api'
-import {antlr} from './types'
-import {ParseResult} from './types/antlr-types'
+import { lastCompilationResult, RemixApi } from '@remixproject/plugin-api'
+import { antlr } from './types'
+import { ParseResult } from './types/antlr-types'
 
 const profile: Profile = {
   name: 'codeParser',
@@ -169,20 +169,14 @@ export class CodeParser extends Plugin {
 
     this.on('filePanel', 'setWorkspace', async () => {
       await this.call('fileDecorator', 'clearFileDecorators')
-      setTimeout(async () => {
-        await this.importService.setFileTree()}
-      , 3000)
+      await this.importService.updateDirectoryCacheTimeStamp()
     })
 
     this.on('fileManager', 'fileAdded', async () => {
-      setTimeout(async () => {
-        await this.importService.setFileTree()}
-      , 3000)
+      await this.importService.updateDirectoryCacheTimeStamp()
     })
     this.on('fileManager', 'fileRemoved', async () => {
-      setTimeout(async () => {
-        await this.importService.setFileTree()}
-      , 3000)
+      await this.importService.updateDirectoryCacheTimeStamp()
     })
 
     this.on('fileManager', 'currentFileChanged', async () => {
@@ -199,17 +193,17 @@ export class CodeParser extends Plugin {
     })
 
     this.on('config', 'configChanged', async (config) => {
-      if (config.key === 'settings/auto-completion' || 
-          config.key === 'settings/display-errors' || 
-          config.key === 'settings/show-gas') {
+      if (config.key === 'settings/auto-completion' ||
+        config.key === 'settings/display-errors' ||
+        config.key === 'settings/show-gas') {
         await this.reload()
       }
     })
 
     this.on('settings', 'configChanged', async (config) => {
-      if (config.key === 'settings/auto-completion' || 
-          config.key === 'settings/display-errors' || 
-          config.key === 'settings/show-gas') {
+      if (config.key === 'settings/auto-completion' ||
+        config.key === 'settings/display-errors' ||
+        config.key === 'settings/show-gas') {
         await this.reload()
       }
     })
@@ -382,7 +376,7 @@ export class CodeParser extends Plugin {
             } else if (visibility === 'private' || visibility === 'internal') {
               executionCost = estimationObj === null ? '-' : estimationObj.internal[fn]
             }
-            return {executionCost}
+            return { executionCost }
           } else {
             return {
               creationCost: estimationObj === null ? '-' : estimationObj.creation.totalCost,
@@ -538,9 +532,9 @@ export class CodeParser extends Plugin {
     if (nodeDefinition.ast && nodeDefinition.parser) {
       if (nodeDefinition.ast.name === nodeDefinition.parser.name && nodeDefinition.ast.nodeType === nodeDefinition.parser.type) {
         return nodeDefinition.ast
-      }else{
+      } else {
         // if there is a difference and the compiler has compiled correctly assume the ast node is the definition
-        if(this.compilerService.errorState === false){
+        if (this.compilerService.errorState === false) {
           return nodeDefinition.ast
         }
       }
@@ -716,9 +710,9 @@ export class CodeParser extends Plugin {
   async getNodeDocumentation(node: genericASTNode) {
     if ('documentation' in node && node.documentation && (node.documentation as any).text) {
       let text = ''
-      ;(node.documentation as any).text.split('\n').forEach((line) => {
-        text += `${line.trim()}\n`
-      })
+        ; (node.documentation as any).text.split('\n').forEach((line) => {
+          text += `${line.trim()}\n`
+        })
       return text
     }
   }

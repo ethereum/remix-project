@@ -5,12 +5,10 @@ import {Registry} from '@remix-project/remix-lib'
 
 export const getDirectory = async (dir: string, plugin: any) => {
   let result = []
-
   if (Registry.getInstance().get('platform').api.isDesktop()) {
     // only get path property of files
     result = []
   } else {
-
     const files = await plugin.call('fileManager', 'readdir', dir)
     const fileArray = normalize(files)
     for (const fi of fileArray) {

@@ -27,7 +27,7 @@ export const writeConfig = async (data: any) => {
   await createDefaultConfigLocations()
   const cache = readConfig()
   try {
-    console.log('write config file', data)
+    //console.log('write config file', data)
     fs.writeFileSync(cacheDir + '/remixdesktop.json', JSON.stringify({ ...cache, ...data }))
   } catch (e) {
     console.error('Can\'t write config file', e)
@@ -41,7 +41,7 @@ export const readConfig = async () => {
       // read the cache file
       const cache = fs.readFileSync(cacheDir + '/remixdesktop.json')
       const data = JSON.parse(cache.toString())
-      console.log('read config file', data)
+      //console.log('read config file', data)
       return data
     } catch (e) {
       console.error('Can\'t read config file', e)
