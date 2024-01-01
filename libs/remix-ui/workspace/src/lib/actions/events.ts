@@ -192,7 +192,6 @@ const fileAdded = async (filePath: string) => {
 const folderAdded = async (folderPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
   const path = extractParentFromKey(folderPath) || ROOT_PATH
-  console.log('folderAdded', path)
   if (isElectron()) {
     const isExpanded = await plugin.call('filePanel', 'isExpanded', path)
     if (!isExpanded) return

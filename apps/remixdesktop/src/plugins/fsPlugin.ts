@@ -45,7 +45,7 @@ export class FSPlugin extends ElectronBasePlugin {
         try {
           const stat = await fs.stat(folder)
           if (stat.isDirectory()) {
-            createWindow(folder)
+            // do nothing
           }
         } catch (e) {
           console.log('error opening folder', folder, e)
@@ -56,9 +56,8 @@ export class FSPlugin extends ElectronBasePlugin {
         const newFolders = openedFolders.filter((f: string) => !foldersToDelete.includes(f))
         this.call('electronconfig', 'writeConfig', {recentFolders: newFolders})
       }
-    } else {
-      createWindow()
     }
+    createWindow()
   }
 
   async removeCloseListener(): Promise<void> {

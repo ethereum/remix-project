@@ -138,7 +138,6 @@ export const fileKeySort = (fileTree: any) => {
   //const blankChildren = Object.keys(children).filter((key: string) => children[key].name === '')
 
   const keys = [...directories, ...fileKeys]
-  console.log('sorted keys', keys)
   // rebuild the fileTree using the keys
   const newFileTree = {}
   keys.forEach((key: string) => {

@@ -127,7 +127,6 @@ export const browserInitialState: BrowserState = {
 }
 
 export const browserReducer = (state = browserInitialState, action: Actions) => {
-  console.log('browserReducer', action)
   switch (action.type) {
   case 'SET_CURRENT_WORKSPACE': {
     const payload = action.payload
@@ -188,13 +187,8 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 
   case 'FETCH_DIRECTORY_SUCCESS': {
     const payload = action.payload
-    console.log('FETCH_DIRECTORY_SUCCESS', payload)
-    const startTime = new Date().getTime()
     const fd = fetchDirectoryContent(state, payload)
     const flatTree = flattenTree(fd, state.mode === 'browser'? state.browser.expandPath : state.localhost.expandPath)
-    const endTime = new Date().getTime()
- 
-    console.log('fetchDirectoryContent tree', endTime - startTime, fd, flatTree)
 
     return {
       ...state,
@@ -261,14 +255,8 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 
   case 'FETCH_WORKSPACE_DIRECTORY_SUCCESS': {
     const payload = action.payload
-    if(state.mode === 'browser'){
-      console.log('FETCH_WORKSPACE_DIRECTORY_SUCCESS', payload)
-    }
-    const startTime = new Date().getTime()
     const fd = fetchWorkspaceDirectoryContent(state, payload)
     const flatTree = flattenTree(fd, state.mode === 'browser'? state.browser.expandPath : state.localhost.expandPath)
-    const endTime = new Date().getTime()
-    console.log('fetchDirectoryContent tree', endTime - startTime, fd, flatTree)
 
     return {
       ...state,
@@ -346,7 +334,6 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     const payload = action.payload
     const fd = fileAdded(state, payload)
     const dir = extractParentFromKey(payload)
-    console.log('FILE_ADDED_SUCCESS', payload, dir)
     const browserExpandPath = state.mode === 'browser'  && !isElectron() ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
     const localhostExpandPath = state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
@@ -378,7 +365,6 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'FOLDER_ADDED_SUCCESS': {
     const payload = action.payload
     const fd = fetchDirectoryContent(state, payload)
-    console.log('FOLDER_ADDED_SUCCESS', payload)
     const browserExpandPath = state.mode === 'browser'  && !isElectron() ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
     const localhostExpandPath = state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
@@ -480,7 +466,6 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'REMOVE_INPUT_FIELD': {
     const payload = action.payload
     const fd = removeInputField(state, payload.path)
-    console.log('REMOVE_INPUT_FIELD', payload, fd)
     const flatTree = flattenTree(fd, state.mode === 'browser'? state.browser.expandPath : state.localhost.expandPath)
     return {
       ...state,
@@ -893,7 +878,6 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 }
 
 const flattenTree = (files, expandPath: string[]) =>{
-  console.log('flattenTree', files, expandPath)
   const flatTree = {}
   const mapChild = (file: FileType) => {
 
@@ -909,7 +893,6 @@ const flattenTree = (files, expandPath: string[]) =>{
 
     mapChild(files[ROOT_PATH][key])
   })
-  console.log('flat tree', flatTree)
   return flatTree
 }
 
@@ -967,7 +950,6 @@ const removeInputField = (
   let files =
     state.mode === 'browser' ? state.browser.files : state.localhost.files
   const root = ROOT_PATH
-  console.log('removeInputField', path, files, root)
   if (path === root) {
     delete files[root][path + '/' + 'blank']
     return files
@@ -1095,7 +1077,6 @@ const fetchWorkspaceDirectoryContent = (
   state: BrowserState,
   payload: {fileTree; path: string}
 ): {[x: string]: Record<string, FileType>} => {
-  console.log('fetchWorkspaceDirectoryContent', payload.fileTree)
   payload.fileTree = fileKeySort(payload.fileTree)
   const files = normalize(payload.fileTree, ROOT_PATH)
 
