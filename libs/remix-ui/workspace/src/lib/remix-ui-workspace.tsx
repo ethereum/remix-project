@@ -1055,7 +1055,7 @@ export function Workspace() {
                   <i className="fas fa-spinner fa-pulse fa-2x"></i>
                 </div>
               )}
-              {global.fs.mode === 'browser' && currentWorkspace !== NO_WORKSPACE && (
+              {!(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && global.fs.mode === 'browser' && currentWorkspace !== NO_WORKSPACE && (
                 <div className="h-100 remixui_treeview" data-id="filePanelFileExplorerTree">
                   <FileExplorer
                     fileState={global.fs.browser.fileState}
