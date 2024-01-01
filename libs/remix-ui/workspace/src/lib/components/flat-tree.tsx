@@ -102,10 +102,10 @@ export const FlatTree = (props: FlatTreeProps) => {
   }
 
   const handleContextMenu = async (e: any) => {
-    e.preventDefault()
-    e.stopPropagation()
     const target = await getEventTarget(e)
     if (target) {
+      e.preventDefault()
+      e.stopPropagation()
       props.handleContextMenu(e.pageX, e.pageY, target.path, target.content, target.type)
     }
   }

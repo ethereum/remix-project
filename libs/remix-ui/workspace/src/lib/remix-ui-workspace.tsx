@@ -912,7 +912,7 @@ export function Workspace() {
           handleContextMenu(e.pageX, e.pageY, ROOT_PATH, 'workspace', 'workspace')
         }}
       >
-        <div className="d-flex flex-column w-100 pb-4 mb-2 remixui_fileexplorer" data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
+        <div className="d-flex flex-column w-100 remixui_fileexplorer" data-id="remixUIWorkspaceExplorer" onClick={resetFocus}>
           <div className='mb-1'>
             <header>
               <div className="mx-2 my-2 d-flex flex-column">

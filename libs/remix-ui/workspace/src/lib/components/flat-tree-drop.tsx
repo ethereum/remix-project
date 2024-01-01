@@ -20,11 +20,17 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
 
   const onDrop = async (event: SyntheticEvent) => {
     event.preventDefault()
-    console.log('drop', event)
+
     const target = await getEventTarget(event)
-    const dragDestination = getFlatTreeItem(target.path)
-    console.log(getFlatTreeItem)
-    console.log('drop', target, dragDestination, dragSource)
+    let dragDestination: any
+    if(!target || !target.path) {
+      dragDestination = {
+        path: '/',
+        isDirectory: true
+      }
+    }else{
+      dragDestination = getFlatTreeItem(target.path)
+    }
 
     if (dragDestination.isDirectory) {
       if (dragSource.isDirectory) {
