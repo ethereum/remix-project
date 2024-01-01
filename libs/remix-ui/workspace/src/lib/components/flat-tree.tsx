@@ -87,9 +87,6 @@ export const FlatTree = (props: FlatTreeProps) => {
             ? 'bg-light border-no-shift'
             : ''
 
-  useEffect(() => {
-  }, [expandPath, focusEdit, focusElement])
-
   const getIndentLevelDiv = (path: string) => {
     // remove double slash
     path = path.replace(/\/\//g, '/')
