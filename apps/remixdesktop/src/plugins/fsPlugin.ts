@@ -35,7 +35,10 @@ export class FSPlugin extends ElectronBasePlugin {
   async onActivation(): Promise<void> {
     const config = await this.call('electronconfig' as any, 'readConfig')
     const openedFolders = (config && config.openedFolders) || []
-    this.call('electronconfig', 'writeConfig', {openedFolders: openedFolders})
+    const recentFolders = (config && config.recentFolders) || []
+    this.call('electronconfig', 'writeConfig', {...config, 
+      recentFolders: recentFolders,
+      openedFolders: openedFolders})
     const foldersToDelete: string[] = []
     if (openedFolders && openedFolders.length) {
       for (const folder of openedFolders) {
