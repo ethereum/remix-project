@@ -70,7 +70,6 @@ export const FlatTree = (props: FlatTreeProps) => {
   const isOnScreen = useOnScreen(props.treeRef)
 
   useEffect(() => {
-    console.log('is on screen', isOnScreen)
     if(isOnScreen) {
       setViewPortHeight()
     }
@@ -87,10 +86,6 @@ export const FlatTree = (props: FlatTreeProps) => {
           : props.focusContext.element === file.path && props.focusEdit.element !== file.path
             ? 'bg-light border-no-shift'
             : ''
-
-  useEffect(() => {
-    console.log('PROP flat tree changed', props.flatTree)
-  }, [props.flatTree])
 
   useEffect(() => {
   }, [expandPath, focusEdit, focusElement])
@@ -117,13 +112,11 @@ export const FlatTree = (props: FlatTreeProps) => {
 
   const onDragStart = async (event: SyntheticEvent) => {
     const target = await getEventTarget(event)
-    console.log(flatTree[target.path], target.path)
     setDragSource(flatTree[target.path])
     setIsDragging(true)
   }
 
   useEffect(() => {
-    console.log('drag source', dragSource)
     if (isDragging) {
       mouseTimer = {
         path: null,
@@ -134,11 +127,9 @@ export const FlatTree = (props: FlatTreeProps) => {
 
   const onDragEnd = (event: SyntheticEvent) => {
     setIsDragging(false)
-    console.log('drag end', event)
   }
 
   const getFlatTreeItem = (path: string) => {
-    console.log('get flat tree item', path, flatTree[path])
     return flatTree[path]
   }
 
@@ -153,11 +144,9 @@ export const FlatTree = (props: FlatTreeProps) => {
   }
 
   const onMouseMove = async (e: any) => {
-    ///console.log('mouse move', e)
     const target = await getEventTarget(e, true)
     if (target && target.path) {
       if (mouseTimer.path !== target.path) {
-        //console.log('set timer', target)
         setShowMouseOverTarget(false)
         mouseTimer = {
           path: target.path,

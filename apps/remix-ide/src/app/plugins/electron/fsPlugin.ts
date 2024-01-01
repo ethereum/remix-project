@@ -47,7 +47,6 @@ export class fsPlugin extends ElectronPlugin {
         return await this.call('fs', 'rmdir', path)
       },
       readdir: async (path: string) => {
-        console.log('readdir', path)
         path = fixPath(path)
         const files = await this.call('fs', 'readdir', path)
         return files
@@ -61,7 +60,6 @@ export class fsPlugin extends ElectronPlugin {
         return await this.call('fs', 'mkdir', path)
       },
       readFile: async (path: string, options) => {
-        console.log('readFile', path)
         try {
           path = fixPath(path)
           const file = await this.call('fs', 'readFile', path, options)

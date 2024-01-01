@@ -79,10 +79,6 @@ export function Workspace() {
   })
 
   useEffect(() => {
-    console.log("platform", platform)
-  },[platform])
-
-  useEffect(() => {
     if (canPaste) {
       addMenuItems([
         {
@@ -113,14 +109,6 @@ export function Workspace() {
       ])
     }
   }, [canPaste])
-
-  useEffect(() => {
-    console.log('WORKSPACE RENDER')
-  })
-
-  useEffect(() => {
-    console.log("workspace state")
-  },[currentWorkspace])
 
   useEffect(() => {
     let workspaceName = localStorage.getItem('currentWorkspace')
@@ -921,7 +909,6 @@ export function Workspace() {
         }}
         onContextMenu={(e) => {
           e.preventDefault()
-          console.log(e)
           handleContextMenu(e.pageX, e.pageY, ROOT_PATH, 'workspace', 'workspace')
         }}
       >

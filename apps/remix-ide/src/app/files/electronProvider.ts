@@ -20,9 +20,7 @@ export class ElectronProvider extends FileProvider {
       this.handleEvent(event, path)
     })
     this._appManager.on('fs', 'eventGroup', async (data) => {
-      console.log('eventGroup', data)
       for (const event of data) {
-        console.log('event', event)
         this.handleEvent(event.payload[0], event.payload[1])
       }
     })
@@ -56,7 +54,6 @@ export class ElectronProvider extends FileProvider {
   // isDirectory is already included
   // this is a more efficient version of the default implementation
   async resolveDirectory(path, cb) {
-    console.log('resolveDirectory', path)
     path = this.removePrefix(path)
     if (path.indexOf('/') !== 0) path = '/' + path
     try {
@@ -71,7 +68,6 @@ export class ElectronProvider extends FileProvider {
           // ^ ret does not accept path starting with '/'
         }
       }
-      console.log('resolveDirectory done')
       if (cb) cb(null, ret)
       return ret
     } catch (error) {

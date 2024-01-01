@@ -153,7 +153,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleClickFile = (path: string, type: WorkspaceElement) => {
-    console.log('handleClickFile', path, type)
     if (!state.ctrlKey) {
       props.dispatchHandleClickFile(path, type)
     } else {
@@ -195,7 +194,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       } else {
         expandPath = [...new Set(props.expandPath.filter((key) => key && typeof key === 'string' && !key.startsWith(path)))]
       }
-      console.log('handleClickFolder', path, type)
       props.dispatchSetFocusElement([{ key: path, type }])
       props.dispatchHandleExpandPath(expandPath)
     }
@@ -335,16 +333,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       )
     }
   }
-
-  useEffect(() => {
-    console.log('fe files changed', ROOT_PATH, files, flatTree)
-
-  }, [flatTree, files])
   
-  useEffect(() => {
-    console.log('FE RENDER', ROOT_PATH)
-  }, [])
-
   const handleTreeClick = (event: SyntheticEvent) => {
     let target = event.target as HTMLElement
     while (target && target.getAttribute && !target.getAttribute('data-path')) {
