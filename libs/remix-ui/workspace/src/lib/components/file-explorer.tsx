@@ -346,10 +346,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [])
 
   const handleTreeClick = (event: SyntheticEvent) => {
-    event.stopPropagation()
-    //console.log('tree click', event.target)
-
-
     let target = event.target as HTMLElement
     while (target && target.getAttribute && !target.getAttribute('data-path')) {
       target = target.parentElement
@@ -358,12 +354,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
       const path = target.getAttribute('data-path')
       const type = target.getAttribute('data-type')
       if (path && type === 'file') {
-        console.log('tree click', path)
-
+        event.stopPropagation()
         if (state.focusEdit.element !== path) handleClickFile(path, type)
        
       } else if (path && type === 'folder') {
-        console.log('tree click', path)
+        event.stopPropagation()
         if (state.focusEdit.element !== path) handleClickFolder(path, type)
         
       }
