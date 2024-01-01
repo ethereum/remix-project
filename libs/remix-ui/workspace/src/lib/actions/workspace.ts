@@ -140,7 +140,7 @@ export const createWorkspace = async (
     await plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
     await plugin.workspaceCreated(workspaceName)
 
-    if (isGitRepo && createCommit && false) {
+    if (isGitRepo && createCommit) {
       const name = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
       const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
@@ -182,8 +182,8 @@ export const createWorkspace = async (
     cb && cb(null, workspaceName)
     if (isGitRepo) {
       await checkGit()
-      //const isActive = await plugin.call('manager', 'isActive', 'dgit')
-      //if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
     }
     if (workspaceTemplateName === 'semaphore' || workspaceTemplateName === 'hashchecker' || workspaceTemplateName === 'rln') {
       const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
@@ -453,8 +453,8 @@ export const switchToWorkspace = async (name: string) => {
     await plugin.setWorkspace({ name, isLocalhost: false })
     const isGitRepo = await plugin.fileManager.isGitRepo()
     if (isGitRepo) {
-      //const isActive = await plugin.call('manager', 'isActive', 'dgit')
-      //if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
     }
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace({ name, isGitRepo }))
@@ -610,9 +610,9 @@ export const cloneRepository = async (url: string) => {
       dispatch(cloneRepositoryRequest())
       promise
         .then(async () => {
-          //const isActive = await plugin.call('manager', 'isActive', 'dgit')
+          const isActive = await plugin.call('manager', 'isActive', 'dgit')
 
-          //if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+          if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
           await fetchWorkspaceDirectory(ROOT_PATH)
           const workspacesPath = plugin.fileProviders.workspace.workspacesPath
           const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
@@ -648,7 +648,6 @@ export const cloneRepository = async (url: string) => {
 }
 
 export const checkGit = async () => {
-  return
   const isGitRepo = await plugin.fileManager.isGitRepo()
   const hasGitSubmodule = await plugin.fileManager.hasGitSubmodules()
   dispatch(setCurrentWorkspaceIsGitRepo(isGitRepo))
@@ -678,7 +677,6 @@ export const getRepositoryTitle = async (url: string) => {
 }
 
 export const getGitRepoBranches = async (workspacePath: string) => {
-  return []
   const gitConfig: { fs: IndexedDBStorage; dir: string } = {
     fs: window.remixFileSystemCallback,
     dir: addSlash(workspacePath),
@@ -688,7 +686,6 @@ export const getGitRepoBranches = async (workspacePath: string) => {
 }
 
 export const getGitRepoCurrentBranch = async (workspaceName: string) => {
-  return ''
   const gitConfig: { fs: IndexedDBStorage; dir: string } = {
     fs: window.remixFileSystemCallback,
     dir: addSlash(workspaceName),
@@ -698,9 +695,9 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
 }
 
 export const showAllBranches = async () => {
-  return
-  //const isActive = await plugin.call('manager', 'isActive', 'dgit')
-  //if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+
+  const isActive = await plugin.call('manager', 'isActive', 'dgit')
+  if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
   plugin.call('dgit', 'open', 'branches')
 }
@@ -900,7 +897,6 @@ export const removeRecentElectronFolder = async (path: string) => {
 }
 
 export const hasLocalChanges = async () => {
-  return []
   const filesStatus = await plugin.call('dGitProvider', 'status')
   const uncommittedFiles = getUncommittedFiles(filesStatus)
 
