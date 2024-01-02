@@ -1,14 +1,12 @@
-import React, { SyntheticEvent, startTransition, useEffect, useRef, useState, RefObject, useMemo } from 'react'
+import React, { SyntheticEvent, useEffect, useRef, useState, RefObject, useMemo } from 'react'
 import { Popover } from 'react-bootstrap'
 import { FileType, WorkspaceElement } from '../types'
-import { ROOT_PATH } from '../utils/constants'
 import { getPathIcon } from '@remix-ui/helper';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 import { FlatTreeItemInput } from './flat-tree-item-input';
 import { FlatTreeDrop } from './flat-tree-drop';
 import { getEventTarget } from '../utils/getEventTarget';
-import { fileDecoration } from '@remix-ui/file-decorators';
-import { focusElement } from '../actions/payload';
+import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators';
 
 export default function useOnScreen(ref: RefObject<HTMLElement>) {
 
@@ -142,6 +140,16 @@ export const FlatTree = (props: FlatTreeProps) => {
     }
   }
 
+  const getFileStateIcons = (file: FileType) => {
+    const state = fileState.find((state: fileDecoration) => {
+      if (state.path === file.path) return true
+      if (state.bubble && file.isDirectory && state.path.startsWith(file.path)) return true
+    })
+    if (state && state.fileStateLabelClass) {
+      return <FileDecorationIcons file={file} fileDecorations={fileState} />
+    }
+  }
+
   const onMouseMove = async (e: any) => {
     const target = await getEventTarget(e, true)
     if (target && target.path) {
@@ -224,7 +232,7 @@ export const FlatTree = (props: FlatTreeProps) => {
           <FlatTreeItemInput
             editModeOff={editModeOff}
             file={file} /> :
-          <div
+          <><div
             draggable={true}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
@@ -233,7 +241,10 @@ export const FlatTree = (props: FlatTreeProps) => {
             data-label-path={`${file.path}`}
             key={index}>
             {file.name}
+
           </div>
+            {getFileStateIcons(file)}
+          </>
         }
       </div>
     </li>)
