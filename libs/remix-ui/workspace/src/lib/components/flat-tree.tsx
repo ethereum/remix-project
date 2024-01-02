@@ -3,7 +3,7 @@ import { Popover } from 'react-bootstrap'
 import { FileType, WorkspaceElement } from '../types'
 import { ROOT_PATH } from '../utils/constants'
 import { getPathIcon } from '@remix-ui/helper';
-import { Virtuoso } from 'react-virtuoso'
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 import { FlatTreeItemInput } from './flat-tree-item-input';
 import { FlatTreeDrop } from './flat-tree-drop';
 import { getEventTarget } from '../utils/getEventTarget';
@@ -41,7 +41,7 @@ interface FlatTreeProps {
   moveFile: (dest: string, src: string) => void
   moveFolder: (dest: string, src: string) => void
   fileState: fileDecoration[]
-  
+
 }
 
 let mouseTimer: any = {
@@ -68,7 +68,7 @@ export const FlatTree = (props: FlatTreeProps) => {
   const ref = useRef(null)
   const [size, setSize] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
-  const virtuoso = useRef(null)
+  const virtuoso = useRef<VirtuosoHandle>(null)
   const isOnScreen = useOnScreen(containerRef)
 
   useEffect(() => {
@@ -177,7 +177,7 @@ export const FlatTree = (props: FlatTreeProps) => {
 
   const setViewPortHeight = () => {
     const boundingRect = containerRef.current.getBoundingClientRect()
-    setSize(boundingRect.height-40)
+    setSize(boundingRect.height - 40)
   }
 
 
@@ -191,6 +191,18 @@ export const FlatTree = (props: FlatTreeProps) => {
   useEffect(() => {
     setViewPortHeight()
   }, [containerRef.current])
+
+
+  useEffect(() => {
+    if (focusEdit && focusEdit.element) {
+
+      const index = flatTree[focusEdit.element] && Object.keys(flatTree).indexOf(focusEdit.element)
+      flatTree[focusEdit.element] && virtuoso.current.scrollIntoView({
+        index,
+        align: 'center'
+      })
+    }
+  }, [focusEdit])
 
 
   const Row = (index: number) => {
@@ -237,31 +249,31 @@ export const FlatTree = (props: FlatTreeProps) => {
         handleClickFolder={handleClickFolder}
         expandPath={expandPath}
       >
-        <div data-id="treeViewUltreeViewMenu" 
+        <div data-id="treeViewUltreeViewMenu"
           className='d-flex h-100 w-100'
-          onClick={handleTreeClick} 
-          onMouseLeave={onMouseLeave} 
-          onMouseMove={onMouseMove} 
+          onClick={handleTreeClick}
+          onMouseLeave={onMouseLeave}
+          onMouseMove={onMouseMove}
           onContextMenu={handleContextMenu}>
           {showMouseOverTarget && mouseOverTarget && !isDragging &&
-          <Popover id='popover-basic'
-            placement='top'
-            ref={ref}
-            className='popover'
-            style={
-              {
-                position: 'fixed',
-                top: `${mouseOverTarget.position.top}px`,
-                left: `${mouseOverTarget.position.left}px`,
-                minWidth: 'fit-content'
-              }
-            }>
-            <Popover.Content
-              className='text-wrap p-1 px-2 bg-secondary w-100'
-            >
-              {mouseOverTarget && mouseOverTarget.path}
-            </Popover.Content>
-          </Popover>
+            <Popover id='popover-basic'
+              placement='top'
+              ref={ref}
+              className='popover'
+              style={
+                {
+                  position: 'fixed',
+                  top: `${mouseOverTarget.position.top}px`,
+                  left: `${mouseOverTarget.position.left}px`,
+                  minWidth: 'fit-content'
+                }
+              }>
+              <Popover.Content
+                className='text-wrap p-1 px-2 bg-secondary w-100'
+              >
+                {mouseOverTarget && mouseOverTarget.path}
+              </Popover.Content>
+            </Popover>
           }
           <Virtuoso
             ref={virtuoso}
