@@ -228,22 +228,22 @@ export const FlatTree = (props: FlatTreeProps) => {
   }
 
   return (<>
-  <div ref={containerRef} className='h-100 pl-1'>
-    <FlatTreeDrop
-      dragSource={dragSource}
-      getFlatTreeItem={getFlatTreeItem}
-      moveFile={moveFile}
-      moveFolder={moveFolder}
-      handleClickFolder={handleClickFolder}
-      expandPath={expandPath}
-    >
-      <div data-id="treeViewUltreeViewMenu" 
-      className='d-flex h-100 w-100'
-      onClick={handleTreeClick} 
-      onMouseLeave={onMouseLeave} 
-      onMouseMove={onMouseMove} 
-      onContextMenu={handleContextMenu}>
-        {showMouseOverTarget && mouseOverTarget && !isDragging &&
+    <div ref={containerRef} className='h-100 pl-1'>
+      <FlatTreeDrop
+        dragSource={dragSource}
+        getFlatTreeItem={getFlatTreeItem}
+        moveFile={moveFile}
+        moveFolder={moveFolder}
+        handleClickFolder={handleClickFolder}
+        expandPath={expandPath}
+      >
+        <div data-id="treeViewUltreeViewMenu" 
+          className='d-flex h-100 w-100'
+          onClick={handleTreeClick} 
+          onMouseLeave={onMouseLeave} 
+          onMouseMove={onMouseMove} 
+          onContextMenu={handleContextMenu}>
+          {showMouseOverTarget && mouseOverTarget && !isDragging &&
           <Popover id='popover-basic'
             placement='top'
             ref={ref}
@@ -262,15 +262,15 @@ export const FlatTree = (props: FlatTreeProps) => {
               {mouseOverTarget && mouseOverTarget.path}
             </Popover.Content>
           </Popover>
-        }
-        <Virtuoso
-          ref={virtuoso}
-          style={{ height: `${size}px`, width: '100%' }}
-          totalCount={Object.keys(flatTree).length}
-          itemContent={index => Row(index)}
-        />
-      </div>
-    </FlatTreeDrop>
+          }
+          <Virtuoso
+            ref={virtuoso}
+            style={{ height: `${size}px`, width: '100%' }}
+            totalCount={Object.keys(flatTree).length}
+            itemContent={index => Row(index)}
+          />
+        </div>
+      </FlatTreeDrop>
     </div>
   </>)
 
