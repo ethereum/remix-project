@@ -68,7 +68,7 @@ export const FlatTree = (props: FlatTreeProps) => {
   const ref = useRef(null)
   const [size, setSize] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
-
+  const virtuoso = useRef(null)
   const isOnScreen = useOnScreen(containerRef)
 
   useEffect(() => {
@@ -196,8 +196,8 @@ export const FlatTree = (props: FlatTreeProps) => {
   const Row = (index: number) => {
     const node = Object.keys(flatTree)[index]
     const file = flatTree[node]
-    return (<div
-      className={`${labelClass(file)}`}
+    return (<li
+      className={`${labelClass(file)} li_tv`}
       onMouseOver={() => setHover(file.path)}
       onMouseOut={() => setHover(file.path)}
       data-type={file.isDirectory ? 'folder' : 'file'}
@@ -224,7 +224,7 @@ export const FlatTree = (props: FlatTreeProps) => {
           </div>
         }
       </div>
-    </div>)
+    </li>)
   }
 
   return (<>
@@ -264,6 +264,7 @@ export const FlatTree = (props: FlatTreeProps) => {
           </Popover>
         }
         <Virtuoso
+          ref={virtuoso}
           style={{ height: `${size}px`, width: '100%' }}
           totalCount={Object.keys(flatTree).length}
           itemContent={index => Row(index)}
