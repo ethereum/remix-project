@@ -2,9 +2,9 @@
 // Pull request number should be provided while running this script
 // It will use the reference branch same as the shared PR
 // To create a new PR, Github auth token with scope 'repo' needs to be provided
-// Command to run this script: fromPR=4369 authToken=abc123 node createPRToBeta.js
+// Command to run this script: fromPR=4369 authToken=abc123 npx ts-node createPRToBeta.ts
 
-const { Octokit } = require("octokit");
+import { Octokit, App } from "octokit"
 
 async function createPR(prNumber, baseBranch) {
     const octokit = new Octokit({
