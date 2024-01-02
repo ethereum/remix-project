@@ -365,52 +365,46 @@ export const FileExplorer = (props: FileExplorerProps) => {
         display: 'flex',
         flexDirection: 'column'
       }}
-      className="h-100"
+        className="h-100 ml-0 pl-1"
       >
-        <TreeView id="treeView">
-          <li key={`treeViewLiMenu`} data-id={`treeViewLiMenu`} className="li_tv">
-            <div
-              key={`treeViewDivMenu`}
-              data-id={`treeViewDivMenu`}
-              className={`d-flex flex-row align-items-center`}
-            >
-              <span className="w-100 pl-2 mt-1">
-                <div onClick={handleFileExplorerMenuClick}>
-                  <FileExplorerMenu
-                    title={''}
 
-                    menuItems={props.menuItems}
-                    createNewFile={handleNewFileInput}
-                    createNewFolder={handleNewFolderInput}
-                    publishToGist={publishToGist}
-                    uploadFile={uploadFile}
-                    uploadFolder={uploadFolder}
-                  />
-                </div>
-              </span>
-            </div>
-          </li>
-          <div style={{ flexGrow: 2 }}>
-            <div>
-              <FlatTree
-                treeRef={treeRef}
-                handleTreeClick={handleTreeClick}
-                focusEdit={state.focusEdit}
-                focusElement={props.focusElement}
-                focusContext={state.focusContext}
-                editModeOff={editModeOff}
-                files={files}
-                flatTree={flatTree}
-                fileState={fileState}
-                expandPath={props.expandPath}
-                handleContextMenu={handleContextMenu}
-                moveFile={handleFileMove}
-                moveFolder={handleFolderMove}
-                handleClickFolder={handleClickFolder}
-              />
-            </div>
+        <div key={`treeViewLiMenu`} data-id={`treeViewLiMenu`}>
+          <div
+            key={`treeViewDivMenu`}
+            data-id={`treeViewDivMenu`}
+            className={`d-flex flex-row align-items-center`}
+          >
+            <span className="w-100 pl-2 mt-1">
+              <div onClick={handleFileExplorerMenuClick}>
+                <FileExplorerMenu
+                  title={''}
+
+                  menuItems={props.menuItems}
+                  createNewFile={handleNewFileInput}
+                  createNewFolder={handleNewFolderInput}
+                  publishToGist={publishToGist}
+                  uploadFile={uploadFile}
+                  uploadFolder={uploadFolder}
+                />
+              </div>
+            </span>
           </div>
-        </TreeView>
+        </div>
+        <FlatTree
+          handleTreeClick={handleTreeClick}
+          focusEdit={state.focusEdit}
+          focusElement={props.focusElement}
+          focusContext={state.focusContext}
+          editModeOff={editModeOff}
+          files={files}
+          flatTree={flatTree}
+          fileState={fileState}
+          expandPath={props.expandPath}
+          handleContextMenu={handleContextMenu}
+          moveFile={handleFileMove}
+          moveFolder={handleFolderMove}
+          handleClickFolder={handleClickFolder}
+        />
       </div>
     </div>
   )

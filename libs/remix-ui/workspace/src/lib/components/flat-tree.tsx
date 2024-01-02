@@ -38,7 +38,6 @@ interface FlatTreeProps {
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
   handleTreeClick: (e: SyntheticEvent) => void
   handleClickFolder: (path: string, type: string) => void
-  treeRef: React.MutableRefObject<HTMLDivElement>
   moveFile: (dest: string, src: string) => void
   moveFolder: (dest: string, src: string) => void
   fileState: fileDecoration[]
@@ -68,8 +67,9 @@ export const FlatTree = (props: FlatTreeProps) => {
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const ref = useRef(null)
   const [size, setSize] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  const isOnScreen = useOnScreen(props.treeRef)
+  const isOnScreen = useOnScreen(containerRef)
 
   useEffect(() => {
     if (isOnScreen) {
@@ -176,8 +176,8 @@ export const FlatTree = (props: FlatTreeProps) => {
 
 
   const setViewPortHeight = () => {
-    const boundingRect = props.treeRef.current.getBoundingClientRect()
-    setSize(boundingRect.height - 100)
+    const boundingRect = containerRef.current.getBoundingClientRect()
+    setSize(boundingRect.height-40)
   }
 
 
@@ -190,13 +190,13 @@ export const FlatTree = (props: FlatTreeProps) => {
 
   useEffect(() => {
     setViewPortHeight()
-  }, [props.treeRef.current])
+  }, [containerRef.current])
 
 
   const Row = (index: number) => {
     const node = Object.keys(flatTree)[index]
     const file = flatTree[node]
-    return (<li
+    return (<div
       className={`${labelClass(file)}`}
       onMouseOver={() => setHover(file.path)}
       onMouseOut={() => setHover(file.path)}
@@ -207,7 +207,7 @@ export const FlatTree = (props: FlatTreeProps) => {
       <div data-id={`treeViewDivtreeViewItem${file.path}`} className={`d-flex flex-row align-items-center`}>
         {getIndentLevelDiv(file.path)}
 
-        <div className={`pr-2 pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : getPathIcon(file.path)} caret caret_tv`}></div>
+        <div className={`pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : `${getPathIcon(file.path)} pr-2 caret caret_tv`} `}></div>
         {focusEdit && file.path && focusEdit.element === file.path ?
           <FlatTreeItemInput
             editModeOff={editModeOff}
@@ -224,10 +224,11 @@ export const FlatTree = (props: FlatTreeProps) => {
           </div>
         }
       </div>
-    </li>)
+    </div>)
   }
 
   return (<>
+  <div ref={containerRef} className='h-100 pl-1'>
     <FlatTreeDrop
       dragSource={dragSource}
       getFlatTreeItem={getFlatTreeItem}
@@ -236,7 +237,12 @@ export const FlatTree = (props: FlatTreeProps) => {
       handleClickFolder={handleClickFolder}
       expandPath={expandPath}
     >
-      <div data-id="treeViewUltreeViewMenu" onClick={handleTreeClick} onMouseLeave={onMouseLeave} onMouseMove={onMouseMove} onContextMenu={handleContextMenu}>
+      <div data-id="treeViewUltreeViewMenu" 
+      className='d-flex h-100 w-100'
+      onClick={handleTreeClick} 
+      onMouseLeave={onMouseLeave} 
+      onMouseMove={onMouseMove} 
+      onContextMenu={handleContextMenu}>
         {showMouseOverTarget && mouseOverTarget && !isDragging &&
           <Popover id='popover-basic'
             placement='top'
@@ -258,12 +264,13 @@ export const FlatTree = (props: FlatTreeProps) => {
           </Popover>
         }
         <Virtuoso
-          style={{ height: `${size}px` }}
+          style={{ height: `${size}px`, width: '100%' }}
           totalCount={Object.keys(flatTree).length}
           itemContent={index => Row(index)}
         />
       </div>
     </FlatTreeDrop>
+    </div>
   </>)
 
 }
