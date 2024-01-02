@@ -4,13 +4,14 @@
 // To create a new PR, Github auth token with scope 'repo' needs to be provided
 // Command to run this script: fromPR=4369 authToken=abc123 npx ts-node createPRToBeta.ts
 
-import { Octokit, App } from "octokit"
+import { Octokit } from "octokit"
 
 async function createPR(prNumber, baseBranch) {
+  try {
     const octokit = new Octokit({
-        auth: process.env.authToken || ''
-      })
-      
+      auth: process.env.authToken || ''
+    })
+    
     const prData = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}', {
         owner: 'ethereum',
         repo: 'remix-project',
@@ -33,6 +34,10 @@ async function createPR(prNumber, baseBranch) {
     })
     
     console.log('Pull Request Created!!! See: ', response.data.html_url)
+
+  } catch (error) {
+    console.error('Error during PR creation: ', error.message)
+  }
 }
 
 createPR(process.env.fromPR, 'remix_beta')
