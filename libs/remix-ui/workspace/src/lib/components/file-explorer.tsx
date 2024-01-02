@@ -365,7 +365,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         display: 'flex',
         flexDirection: 'column'
       }}
-        className="h-100 ml-0 pl-1"
+      className="h-100 ml-0 pl-1"
       >
 
         <div key={`treeViewLiMenu`} data-id={`treeViewLiMenu`}>
