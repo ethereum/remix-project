@@ -50,13 +50,14 @@ export default function VyperCompile({result, theme, themeStyle}: VyperCompilePr
       eventKey: 'bytecode_runtime'
     }
   ]
+
   return (
     <>
       <Tabs id="result" activeKey={active} onSelect={(key: any) => setActive(key)} justify>
         {tabContent.map((content, index) => (
           <Tab eventKey={content.eventKey} title={content.tabHeadingText} as={'span'} key={`${index}-${content.eventKey}`}>
             <div className="d-flex flex-column w-75 justify-content-center mx-auto rounded-2">
-              <CopyToClipboard getContent={() => (content.eventKey !== 'abi' ? content.tabPayload : JSON.stringify(Object.values(result)[0]['abi']))}>
+              <CopyToClipboard getContent={() => (content.eventKey !== 'abi' ? content.tabPayload : JSON.stringify(result['abi']))}>
                 <Button variant="info" className="copy mt-3 ml-2" data-id={content.eventKey === 'abi' ? 'copy-abi' : ''}>
                   <span className="far fa-copy mr-2"></span>
                   {content.tabButtonText()}
