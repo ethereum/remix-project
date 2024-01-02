@@ -27,11 +27,7 @@ Testing is performed after the Feature Freeze on `remix-beta.ethereum.org`. `bui
 
 Once ready to run, it can be run using the Node.js: `node build-qa-doc.js`
 
-Find out the four release highlights and update in this file: `remix-project/apps/remix-ide/src/app/tabs/locales/en/homeReleaseDetails.json` along with the version in `title` string
-
-Update the GitHub release link in this file: `remix-project/libs/remix-ui/home-tab/src/lib/components/homeTabFeatured.tsx` at line 44 & 63
-
-This will set latest release details in the first slide of `Featured` section.
+Find out the latest release highlights and update in `releaseDetails.json` file along with the `version` string. Also, update release blog link under `moreLink` field. This will set latest release details in the slide of `Featured` section.
 
 ## Remix Project NPM packages publishing
 
@@ -58,7 +54,7 @@ Once these command run successfully, the version for each remix library will be 
  - Create and merge bump PR to master
  
 ## Remix IDE Release
-Make sure release highlights and full changelog link is updated to show them on Home tab.
+:point_right: Make sure release highlights and blog link are updated to show them on Home tab, Featured section.
 
 ### Part 1. Bump the version and update Beta
 
@@ -125,6 +121,7 @@ or individually:
  - `git pull origin master`
  - Create a new branch from `master`: `git checkout -b bumpDevVersion`
  - Bump the  package.json version, add the tag `-dev` if not already present.
+ - Update new feature freeze date under `freeze-date` in `.github/workflows/pr-reminder.yml` file
  - Create and merge PR to `master`
  
  

@@ -25,10 +25,8 @@ if (domains[window.location.hostname]) {
   _paq.push(['enableHeartBeatTimer']);
   if (!window.localStorage.getItem('config-v0.8:.remix.config') ||
     (window.localStorage.getItem('config-v0.8:.remix.config') && !window.localStorage.getItem('config-v0.8:.remix.config').includes('settings/matomo-analytics'))) {
-    _paq.push(['optUserOut'])
 
   } else {
-    _paq.push(['forgetUserOptOut'])
     // user has given consent to process their data
     _paq.push(['setConsentGiven'])
   }
