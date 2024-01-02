@@ -6,15 +6,17 @@
 
 import { Octokit } from "octokit"
 
-async function createPR(prNumber, baseBranch) {
+async function createPR (prNumber, baseBranch) {
   try {
     const octokit = new Octokit({
       auth: process.env.authToken || ''
     })
+    const owner = 'ethereum'
+    const repo = 'remix-project'
     
     const prData = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}', {
-        owner: 'ethereum',
-        repo: 'remix-project',
+        owner: owner,
+        repo: repo,
         pull_number: prNumber,
         headers: {
           'X-GitHub-Api-Version': '2022-11-28'
@@ -22,8 +24,8 @@ async function createPR(prNumber, baseBranch) {
       })
 
     const response = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
-      owner: 'ethereum',
-      repo: 'remix-project',
+      owner: owner,
+      repo: repo,
       title: prData.data.title + ' (for beta)',
       body: prData.data.body + ' (for beta)',
       head: prData.data.head.ref,
@@ -34,7 +36,7 @@ async function createPR(prNumber, baseBranch) {
     })
     
     console.log('Pull Request Created!!! See: ', response.data.html_url)
-
+    
   } catch (error) {
     console.error('Error during PR creation: ', error.message)
   }
