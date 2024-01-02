@@ -129,14 +129,14 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
 
   async getJsonBinData() {
     const lists = await this.getLists()
-    console.log('getJsonBinData', Date.now())
+    
     this.solJsonBinData = {
       baseURLWasm: 'http://localhost:' + (server.address() as any).port + '/compilers',
       baseURLBin: 'http://localhost:' + (server.address() as any).port + '/compilers',
       wasmList: lists.wasmData || [],
       binList: lists.binData || [],
     }
-    console.log('emit', Date.now())
+
     const localCompilers = await this.listCompilers()
     this.solJsonBinData.wasmList && (this.solJsonBinData.wasmList = this.solJsonBinData.wasmList.map((item) => {
       localCompilers.includes(item.path) ? (item.wasmURL = 'http://localhost:' + (server.address() as any).port + '/compilers/') && (item.isDownloaded=true) : (item.wasmURL = baseURLWasm) && (item.isDownloaded = false)

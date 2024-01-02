@@ -243,7 +243,7 @@ export const FlatTree = (props: FlatTreeProps) => {
             {file.name}
 
           </div>
-            {getFileStateIcons(file)}
+          {getFileStateIcons(file)}
           </>
         }
       </div>
