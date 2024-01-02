@@ -82,5 +82,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
 
   return (<div
     onDrop={onDrop} onDragOver={onDragOver}
+    className="d-flex h-100"
   >{props.children}</div>)
 }
