@@ -2,15 +2,18 @@
 // Pull request number should be provided while running this script
 // It will use the reference branch same as the shared PR
 // To create a new PR, Github auth token with scope 'repo' needs to be provided
-// Command to run this script: fromPR=4369 authToken=abc123 npx ts-node createPRToBeta.ts
+// Command to run this script: fromPR=4369 authToken=abc123 yarn run createPRToBeta
 
 import { Octokit } from "octokit"
 
 async function createPR (prNumber, baseBranch) {
   try {
+    if (!prNumber) throw new Error(`Please provide a PR number with 'fromPR' env variable`)
+
     const octokit = new Octokit({
       auth: process.env.authToken || ''
     })
+
     const owner = 'ethereum'
     const repo = 'remix-project'
     
@@ -36,7 +39,7 @@ async function createPR (prNumber, baseBranch) {
     })
     
     console.log('Pull Request Created!!! See: ', response.data.html_url)
-    
+
   } catch (error) {
     console.error('Error during PR creation: ', error.message)
   }
