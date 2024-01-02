@@ -60,6 +60,28 @@ module.exports = {
       })
   },
 
+  'Should copy abi after blind_auction compile #group1': function (browser: NightwatchBrowser) {
+    browser//.clickLaunchIcon('vyper')
+      .frame(0)
+      .click('[data-id="remote-compiler"]')
+      .click('[data-id="compile"]')
+      .waitForElementVisible({
+        selector:'[data-id="compilation-details"]',
+        timeout: 120000
+      })
+      .click('[data-id="compilation-details"]')
+      .frameParent()
+      .waitForElementVisible('[data-id="copy-abi"]')
+      .click('[data-id="copy-abi"]')
+      .execute(() => {
+        navigator.clipboard.readText()
+          .then((clippedText) => {
+            console.log('clippedText', clippedText)
+          })
+
+      })
+  },
+
   'Compile test contract and deploy to remix VM #group1': function (browser: NightwatchBrowser) {
     let contractAddress
     browser
