@@ -3,19 +3,49 @@ import { FileType } from '../types'
 import { getEventTarget } from '../utils/getEventTarget'
 import { extractParentFromKey } from '@remix-ui/helper'
 interface FlatTreeDropProps {
-    moveFile: (dest: string, src: string) => void
-    moveFolder: (dest: string, src: string) => void
-    getFlatTreeItem: (path: string) => FileType
-    dragSource: FileType
-    children: React.ReactNode
+  moveFile: (dest: string, src: string) => void
+  moveFolder: (dest: string, src: string) => void
+  getFlatTreeItem: (path: string) => FileType
+  handleClickFolder: (path: string, type: string) => void
+  dragSource: FileType
+  children: React.ReactNode
+  expandPath: string[]
 }
 export const FlatTreeDrop = (props: FlatTreeDropProps) => {
-  
-  const { getFlatTreeItem, dragSource, moveFile, moveFolder } = props
+
+  const { getFlatTreeItem, dragSource, moveFile, moveFolder, handleClickFolder, expandPath } = props
+  // delay timer
+  const [timer, setTimer] = useState<NodeJS.Timeout>()
+  // folder to open
+  const [folderToOpen, setFolderToOpen] = useState<string>()
+
+
   const onDragOver = async (e: SyntheticEvent) => {
-    //setShowMouseOverTarget(false)
     e.preventDefault()
     const target = await getEventTarget(e)
+
+    if (!target || !target.path) {
+      clearTimeout(timer)
+      setFolderToOpen(null)
+      return
+    }
+
+    const dragDestination = getFlatTreeItem(target.path)
+    if (dragDestination && !dragDestination.isDirectory) {
+      clearTimeout(timer)
+      setFolderToOpen(null)
+    }
+    if (dragDestination && dragDestination.isDirectory && !expandPath.includes(dragDestination.path) && folderToOpen !== dragDestination.path && props.handleClickFolder) {
+      
+      setFolderToOpen(dragDestination.path)
+      timer && clearTimeout(timer)
+      setTimer(
+        setTimeout(() => {
+          handleClickFolder(dragDestination.path, dragDestination.type)
+          setFolderToOpen(null)
+        }, 600)
+      )
+    }
   }
 
   const onDrop = async (event: SyntheticEvent) => {
@@ -23,12 +53,12 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
 
     const target = await getEventTarget(event)
     let dragDestination: any
-    if(!target || !target.path) {
+    if (!target || !target.path) {
       dragDestination = {
         path: '/',
         isDirectory: true
       }
-    }else{
+    } else {
       dragDestination = getFlatTreeItem(target.path)
     }
 
@@ -40,7 +70,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
       }
     } else {
       const path = extractParentFromKey(dragDestination.path) || '/'
-  
+
       if (dragSource.isDirectory) {
         moveFolder(path, dragSource.path)
       } else {
@@ -51,6 +81,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
 
 
   return (<div
-    onDrop={onDrop} onDragOver={onDragOver} 
+    onDrop={onDrop} onDragOver={onDragOver}
   >{props.children}</div>)
 }

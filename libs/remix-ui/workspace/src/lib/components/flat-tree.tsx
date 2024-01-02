@@ -37,10 +37,12 @@ interface FlatTreeProps {
   focusContext: { element: string; x: number; y: number; type: string }
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
   handleTreeClick: (e: SyntheticEvent) => void
+  handleClickFolder: (path: string, type: string) => void
   treeRef: React.MutableRefObject<HTMLDivElement>
   moveFile: (dest: string, src: string) => void
   moveFolder: (dest: string, src: string) => void
   fileState: fileDecoration[]
+  
 }
 
 let mouseTimer: any = {
@@ -49,7 +51,7 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement } = props
+  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder } = props
   //const [flatTree, setFlatTree] = useState<{ [x: string]: FileType }>({})
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
@@ -70,10 +72,10 @@ export const FlatTree = (props: FlatTreeProps) => {
   const isOnScreen = useOnScreen(props.treeRef)
 
   useEffect(() => {
-    if(isOnScreen) {
+    if (isOnScreen) {
       setViewPortHeight()
     }
-  },[isOnScreen])
+  }, [isOnScreen])
 
 
   const labelClass = (file: FileType) =>
@@ -191,7 +193,7 @@ export const FlatTree = (props: FlatTreeProps) => {
   }, [props.treeRef.current])
 
 
-  const Row = (index) => {
+  const Row = (index: number) => {
     const node = Object.keys(flatTree)[index]
     const file = flatTree[node]
     return (<li
@@ -207,9 +209,20 @@ export const FlatTree = (props: FlatTreeProps) => {
 
         <div className={`pr-2 pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : getPathIcon(file.path)} caret caret_tv`}></div>
         {focusEdit && file.path && focusEdit.element === file.path ?
-          <FlatTreeItemInput editModeOff={editModeOff} file={file} /> :
-          <div draggable={true} onDragStart={onDragStart} onDragEnd={onDragEnd} className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`} data-label-type={file.isDirectory ? 'folder' : 'file'} data-label-path={`${file.path}`} key={index}>{file.name}
-          </div>}
+          <FlatTreeItemInput
+            editModeOff={editModeOff}
+            file={file} /> :
+          <div
+            draggable={true}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
+            data-label-type={file.isDirectory ? 'folder' : 'file'}
+            data-label-path={`${file.path}`}
+            key={index}>
+            {file.name}
+          </div>
+        }
       </div>
     </li>)
   }
@@ -220,6 +233,8 @@ export const FlatTree = (props: FlatTreeProps) => {
       getFlatTreeItem={getFlatTreeItem}
       moveFile={moveFile}
       moveFolder={moveFolder}
+      handleClickFolder={handleClickFolder}
+      expandPath={expandPath}
     >
       <div data-id="treeViewUltreeViewMenu" onClick={handleTreeClick} onMouseLeave={onMouseLeave} onMouseMove={onMouseMove} onContextMenu={handleContextMenu}>
         {showMouseOverTarget && mouseOverTarget && !isDragging &&

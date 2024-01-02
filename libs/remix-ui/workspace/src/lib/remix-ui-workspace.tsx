@@ -1043,7 +1043,7 @@ export function Workspace() {
                 </div>
               )}
               {!(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && global.fs.mode === 'browser' && currentWorkspace !== NO_WORKSPACE && (
-                <div className="h-100 remixui_treeview" data-id="filePanelFileExplorerTree">
+                
                   <FileExplorer
                     fileState={global.fs.browser.fileState}
                     name={currentWorkspace}
@@ -1095,7 +1095,7 @@ export function Workspace() {
                     handleNewFolderInput={handleNewFolderInput}
                     dragStatus={dragStatus}
                   />
-                </div>
+    
               )}
               {global.fs.localhost.isRequestingLocalhost && (
                 <div className="text-center py-5">
@@ -1103,7 +1103,6 @@ export function Workspace() {
                 </div>
               )}
               {global.fs.mode === 'localhost' && global.fs.localhost.isSuccessfulLocalhost && (
-                <div className="h-100 filesystemexplorer remixui_treeview">
                   <FileExplorer
                     name="localhost"
                     menuItems={['createNewFile', 'createNewFolder']}
@@ -1155,7 +1154,6 @@ export function Workspace() {
                     handleNewFolderInput={handleNewFolderInput}
                     dragStatus={dragStatus}
                   />
-                </div>
               )}
             </div>
           </div>
