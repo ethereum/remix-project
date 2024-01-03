@@ -3,6 +3,7 @@ import path from 'path';
 
 
 export let isPackaged = false;
+export const version = app.getVersion();
 
 if (
   process.mainModule &&
@@ -95,6 +96,7 @@ import EditMenu from './menus/edit';
 import GitMenu from './menus/git';
 import ViewMenu from './menus/view';
 import TerminalMenu from './menus/terminal';
+import HelpMenu from './menus/help';
 import { execCommand } from './menus/commands';
 
 
@@ -110,6 +112,7 @@ const menu = [...(process.platform === 'darwin' ? [darwinMenu(commandKeys, execC
   ViewMenu(commandKeys, execCommand),
   TerminalMenu(commandKeys, execCommand),
   WindowMenu(commandKeys, execCommand, []),
+  HelpMenu(commandKeys, execCommand),
 ]
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
