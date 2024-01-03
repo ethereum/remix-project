@@ -84,7 +84,7 @@ const clientProfile: Profile = {
   name: 'fs',
   displayName: 'fs',
   description: 'fs',
-  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'openFolderInSameWindow', 'getRecentFolders', 'removeRecentFolder', 'openWindow', 'selectFolder', 'revealInExplorer', 'openInVSCode', 'openInVSCode'],
+  methods: ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'currentPath', 'getWorkingDir', 'watch', 'closeWatch', 'setWorkingDir', 'openFolder', 'openFolderInSameWindow', 'getRecentFolders', 'removeRecentFolder', 'openWindow', 'selectFolder', 'revealInExplorer', 'openInVSCode', 'openInVSCode', 'currentPath'],
 }
 
 class FSPluginClient extends ElectronBasePluginClient {
@@ -202,6 +202,10 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   async currentPath(): Promise<string> {
     return process.cwd()
+  }
+
+  async getWorkingDir(): Promise<string> {
+    return this.workingDir
   }
 
   async watch(): Promise<void> {

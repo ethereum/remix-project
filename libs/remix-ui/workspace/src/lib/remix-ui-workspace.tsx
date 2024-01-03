@@ -14,6 +14,7 @@ import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
+import { ElectronWorkspaceName } from './components/electron-workspace-name'
 
 
 const _paq = (window._paq = window._paq || [])
@@ -24,7 +25,6 @@ export function Workspace() {
   const platform = useContext(platformContext)
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
-  const ELECTRON = 'electron'
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
   const [selectedWorkspace, setSelectedWorkspace] = useState<{
     name: string
@@ -945,14 +945,17 @@ export function Workspace() {
                             showIconsMenu={showIconsMenu}
                             hideWorkspaceOptions={currentWorkspace === LOCALHOST}
                             hideLocalhostOptions={currentWorkspace === NO_WORKSPACE}
+                            hideFileOperations={(platform == appPlatformTypes.desktop)? (global.fs.browser.currentLocalFilePath && global.fs.browser.currentLocalFilePath !== ''? false:true):false}
                           />
                         </Dropdown.Menu>
                       </Dropdown>
                     </span>
                   ) : null}
                   <span className="d-flex">
-                    <label className="pl-2 form-check-label" style={{wordBreak: 'keep-all'}}>
-                      <FormattedMessage id='filePanel.workspace' />
+                    <label className="pl-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
+                      {(platform == appPlatformTypes.desktop) ? (
+                        <ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />
+                        ) : <FormattedMessage id='filePanel.workspace' />}
                     </label>
                   </span>                  
                 </div>

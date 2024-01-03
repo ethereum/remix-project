@@ -308,9 +308,16 @@ export const setGitConfig = (config: {username: string, token: string, email: st
   }
 }
 
-export const setElectronRecentFolders = (folders: string[]) => {
+export const setElectronRecentFolders = (folders: string[]): Action<'SET_ELECTRON_RECENT_FOLDERS'> => {
   return {
     type: 'SET_ELECTRON_RECENT_FOLDERS',
     payload: folders
+  }
+}
+
+export const setCurrentLocalFilePath = (path: string): Action<'SET_CURRENT_LOCAL_FILE_PATH'> => {
+  return {
+    type: 'SET_CURRENT_LOCAL_FILE_PATH',
+    payload: path
   }
 }
