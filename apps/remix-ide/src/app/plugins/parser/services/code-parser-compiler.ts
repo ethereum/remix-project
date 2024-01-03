@@ -225,20 +225,10 @@ export default class CodeParserCompiler {
     }
     for (const fileName of filesWithOutErrors) {
       const fileTarget = await this.plugin.call('fileManager', 'getPathFromUrl', fileName)
-      const decorator: fileDecoration = {
-        path: fileTarget.file,
-        isDirectory: false,
-        fileStateType: fileDecorationType.None,
-        fileStateLabelClass: '',
-        fileStateIconClass: '',
-        fileStateIcon: '',
-        text: '',
-        owner: 'code-parser',
-        bubble: false
-      }
-      decorators.push(decorator)
+     await this.plugin.call('fileDecorator', 'clearFileDecorators', fileTarget.file)
     }
-    await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
+    if(decorators.length > 0)
+      await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
     await this.plugin.call('editor', 'clearErrorMarkers', filesWithOutErrors)
 
   }
@@ -265,22 +255,8 @@ export default class CodeParserCompiler {
     const decorators: fileDecoration[] = []
     if (!sources) return
     for (const fileName of Object.keys(sources)) {
-      const decorator: fileDecoration = {
-        path: fileName,
-        isDirectory: false,
-        fileStateType: fileDecorationType.None,
-        fileStateLabelClass: '',
-        fileStateIconClass: '',
-        fileStateIcon: '',
-        text: '',
-        owner: 'code-parser',
-        bubble: false
-      }
-      decorators.push(decorator)
+      await this.plugin.call('fileDecorator', 'clearFileDecorators', fileName)
     }
-
-
-    await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
   }
 
   async getPositionForImportErrors(importedFileName: string, text: string) {
