@@ -145,7 +145,7 @@ export const FlatTree = (props: FlatTreeProps) => {
       if (state.path === file.path) return true
       if (state.bubble && file.isDirectory && state.path.startsWith(file.path)) return true
     })
-    if (state && state.fileStateLabelClass) {
+    if (state) {
       return <FileDecorationIcons file={file} fileDecorations={fileState} />
     }
   }
