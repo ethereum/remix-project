@@ -327,10 +327,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async clone(cmd: any) {
 
-    if (!this.workingDir || this.workingDir === '') {
-      throw new Error('No working directory')
-    }
-
     if (this.gitIsInstalled) {
       try{
         await gitProxy.clone(cmd.url, cmd.dir)
