@@ -225,7 +225,7 @@ export default class CodeParserCompiler {
     }
     for (const fileName of filesWithOutErrors) {
       const fileTarget = await this.plugin.call('fileManager', 'getPathFromUrl', fileName)
-     await this.plugin.call('fileDecorator', 'clearFileDecorators', fileTarget.file)
+      await this.plugin.call('fileDecorator', 'clearFileDecorators', fileTarget.file)
     }
     if(decorators.length > 0)
       await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
