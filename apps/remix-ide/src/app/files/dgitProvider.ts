@@ -425,9 +425,17 @@ class DGitProvider extends Plugin {
         dir: folder,
         input
       }
-      const result = await this.call('isogit', 'clone', cmd)
-      this.call('fs', 'openWindow', folder)
-      return result
+      this.call('terminal', 'logHtml', `Cloning ${input.url}... please wait...`)
+      try{
+        const result = await this.call('isogit', 'clone', cmd)
+        this.call('fs', 'openWindow', folder)
+        return result
+      }catch(e){
+        this.call('notification', 'alert', {
+          id: 'dgitAlert',
+          message: 'Unexpected error while cloning the repository: \n' + e.toString(),
+        })
+      }
     } else {
       const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
       if (!permission) return false
