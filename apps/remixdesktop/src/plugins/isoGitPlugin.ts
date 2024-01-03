@@ -59,6 +59,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
         this.workingDir = path
         this.gitIsInstalled = await gitProxy.version() ? true : false
       })
+      this.workingDir = await this.call('fs' as any, 'getWorkingDir')
       this.gitIsInstalled = await gitProxy.version() ? true : false
     })
   }
@@ -75,6 +76,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async status(cmd: any) {
+
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
 
 
     if (this.workingDir === '') {
@@ -117,6 +122,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async add(cmd: any) {
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
+
     const add = await git.add({
       ...await this.getGitConfig(),
       ...cmd
@@ -126,6 +135,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async rm(cmd: any) {
+
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
 
     const rm = await git.remove({
       ...await this.getGitConfig(),
@@ -137,6 +150,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async reset(cmd: any) {
 
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
+
     const reset = await git.resetIndex({
       ...await this.getGitConfig(),
       ...cmd
@@ -147,6 +164,9 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
 
   async commit(cmd: any) {
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
 
     if (this.gitIsInstalled) {
       const status = await gitProxy.commit(this.workingDir, cmd.message)
@@ -162,6 +182,14 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async init(input: any) {
+
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
+    if (this.gitIsInstalled) {
+      const status = await gitProxy.init(this.workingDir)
+      return status
+    }
     await git.init({
       ...await this.getGitConfig(),
       defaultBranch: (input && input.branch) || 'main'
@@ -169,7 +197,9 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async branch(cmd: any) {
-
+    if (!this.workingDir || this.workingDir === '') {
+      return null
+    }
     const branch = await git.branch({
       ...await this.getGitConfig(),
       ...cmd
@@ -179,7 +209,9 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async lsfiles(cmd: any) {
-
+    if (!this.workingDir || this.workingDir === '') {
+      return []
+    }
     const lsfiles = await git.listFiles({
       ...await this.getGitConfig(),
       ...cmd
@@ -188,6 +220,9 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async resolveref(cmd: any) {
+    if (!this.workingDir || this.workingDir === '') {
+      return null
+    }
 
     const resolveref = await git.resolveRef({
       ...await this.getGitConfig(),
@@ -200,6 +235,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async readblob(cmd: any) {
 
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
+
     const readblob = await git.readBlob({
       ...await this.getGitConfig(),
       ...cmd
@@ -209,6 +248,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async checkout(cmd: any) {
+
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
 
     const checkout = await git.checkout({
       ...await this.getGitConfig(),
@@ -220,7 +263,9 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async push(cmd: any) {
 
-
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
 
     if (this.gitIsInstalled) {
       await gitProxy.push(this.workingDir, cmd.remote, cmd.ref, cmd.remoteRef, cmd.force)
@@ -238,6 +283,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async pull(cmd: any) {
+
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
 
     if (this.gitIsInstalled) {
       await gitProxy.pull(this.workingDir, cmd.remote, cmd.ref, cmd.remoteRef)
@@ -257,6 +306,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async fetch(cmd: any) {
 
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
+
     if (this.gitIsInstalled) {
       await gitProxy.fetch(this.workingDir, cmd.remote, cmd.remoteRef)
 
@@ -274,7 +327,9 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async clone(cmd: any) {
 
-
+    if (!this.workingDir || this.workingDir === '') {
+      throw new Error('No working directory')
+    }
 
     if (this.gitIsInstalled) {
       try{
@@ -322,12 +377,18 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
 
   remotes = async () => {
+    if (!this.workingDir || this.workingDir === '') {
+      return []
+    }
     let remotes = []
     remotes = await git.listRemotes({ ...await this.getGitConfig() })
     return remotes
   }
 
   async currentbranch() {
+    if (!this.workingDir || this.workingDir === '') {
+      return ''
+    }
     try {
       const defaultConfig = await this.getGitConfig()
       const name = await git.currentBranch(defaultConfig)
@@ -340,6 +401,9 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
 
   async branches() {
+    if (!this.workingDir || this.workingDir === '') {
+      return []
+    }
     try {
       let cmd: any = { ...await this.getGitConfig() }
       const remotes = await this.remotes()

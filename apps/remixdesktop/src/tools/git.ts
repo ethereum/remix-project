@@ -57,10 +57,14 @@ export const gitProxy = {
 
     async commit(path: string, message: string) {
 
-        await execAsync(`git commit -m ${message}`, { cwd: path });
+        await execAsync(`git commit -m '${message}'`, { cwd: path });
         const { stdout, stderr } = await execAsync(`git rev-parse HEAD`, { cwd: path });
         return stdout;
 
+    },
+
+    async init(path: string) {
+        await execAsync(`git init`, { cwd: path });
     },
 
 

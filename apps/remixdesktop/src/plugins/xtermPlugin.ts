@@ -106,11 +106,13 @@ class XtermPluginClient extends ElectronBasePluginClient {
   workingDir: string = ''
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
-    this.onload(() => {
+    this.onload(async () => {
       this.emit('loaded')
       this.on('fs' as any, 'workingDirChanged', async (path: string) => {
         this.workingDir = path
       })
+      this.workingDir = await this.call('fs' as any, 'getWorkingDir')
+      console.log('workingDir', this.workingDir)
     })
   }
 
