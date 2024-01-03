@@ -303,6 +303,7 @@ export interface ActionPayloadTypes {
     email: string
   },
   SET_ELECTRON_RECENT_FOLDERS: string[]
+  SET_CURRENT_LOCAL_FILE_PATH: string
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {

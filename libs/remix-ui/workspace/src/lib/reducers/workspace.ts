@@ -35,6 +35,7 @@ export interface BrowserState {
     }
     fileState: fileDecoration[]
     recentFolders: string[]
+    currentLocalFilePath?: string
   }
   localhost: {
     sharedFolder: string
@@ -90,7 +91,8 @@ export const browserInitialState: BrowserState = {
       error: null
     },
     fileState: [],
-    recentFolders: []
+    recentFolders: [],
+    currentLocalFilePath: ''
   },
   localhost: {
     sharedFolder: '',
@@ -868,6 +870,17 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
       browser: {
         ...state.browser,
         recentFolders: payload
+      }
+    }
+  }
+
+  case 'SET_CURRENT_LOCAL_FILE_PATH': {
+    const payload: string = action.payload
+    return {
+      ...state,
+      browser: {
+        ...state.browser,
+        currentLocalFilePath: payload
       }
     }
   }

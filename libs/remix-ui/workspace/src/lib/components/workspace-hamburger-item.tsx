@@ -19,7 +19,7 @@ export function HamburgerMenuItem(props: HamburgerMenuItemProps) {
   const uid = 'workspace' + props.kind
   return (
     <>
-      {props.platforms.includes(platform)?(
+      {props.platforms.includes(platform) && !hideOption?(
         <Dropdown.Item>
           <CustomTooltip placement="right" tooltipId={uid + 'Tooltip'} tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id={'filePanel.workspace.' + props.kind} />}>
             <div

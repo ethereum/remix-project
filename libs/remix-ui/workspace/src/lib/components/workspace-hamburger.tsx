@@ -20,10 +20,11 @@ export interface HamburgerMenuProps {
   showIconsMenu: boolean
   hideWorkspaceOptions: boolean
   hideLocalhostOptions: boolean
+  hideFileOperations: boolean
 }
 
 export function HamburgerMenu(props: HamburgerMenuProps) {
-  const {showIconsMenu, hideWorkspaceOptions, hideLocalhostOptions} = props
+  const {showIconsMenu, hideWorkspaceOptions, hideLocalhostOptions, hideFileOperations} = props
   return (
     <>
       <HamburgerMenuItem
@@ -34,7 +35,17 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
           props.createWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}
-        platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
+        platforms={[appPlatformTypes.web]}
+      ></HamburgerMenuItem>
+      <HamburgerMenuItem
+        kind="create.desktop"
+        fa="far fa-plus"
+        hideOption={hideWorkspaceOptions}
+        actionOnClick={() => {
+          props.createWorkspace()
+          props.hideIconsMenu(!showIconsMenu)
+        }}
+        platforms={[appPlatformTypes.desktop]}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="clone"
@@ -111,7 +122,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       <HamburgerMenuItem
         kind="solghaction"
         fa="fa-kit fa-solidity-mono"
-        hideOption={hideWorkspaceOptions}
+        hideOption={hideWorkspaceOptions || hideFileOperations}
         actionOnClick={() => {
           props.addGithubAction()
           props.hideIconsMenu(!showIconsMenu)
@@ -121,7 +132,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       <HamburgerMenuItem
         kind="tssoltestghaction"
         fa="fab fa-js"
-        hideOption={hideWorkspaceOptions}
+        hideOption={hideWorkspaceOptions || hideFileOperations}
         actionOnClick={() => {
           props.addTsSolTestGithubAction()
           props.hideIconsMenu(!showIconsMenu)
@@ -131,7 +142,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       <HamburgerMenuItem
         kind="slitherghaction"
         fa="far fa-shield"
-        hideOption={hideWorkspaceOptions}
+        hideOption={hideWorkspaceOptions || hideFileOperations}
         actionOnClick={() => {
           props.addSlitherGithubAction()
           props.hideIconsMenu(!showIconsMenu)
@@ -142,7 +153,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       <HamburgerMenuItem
         kind="addscriptetherscan"
         fa="fa-kit fa-ts-logo"
-        hideOption={hideWorkspaceOptions}
+        hideOption={hideWorkspaceOptions || hideFileOperations}
         actionOnClick={() => {
           props.addHelperScripts('etherscan')
           props.hideIconsMenu(!showIconsMenu)
@@ -152,7 +163,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       <HamburgerMenuItem
         kind="addscriptdeployer"
         fa="fa-kit fa-ts-logo"
-        hideOption={hideWorkspaceOptions}
+        hideOption={hideWorkspaceOptions || hideFileOperations}
         actionOnClick={() => {
           props.addHelperScripts('deployer')
           props.hideIconsMenu(!showIconsMenu)

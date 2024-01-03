@@ -2,7 +2,7 @@ import React from 'react'
 import { extractNameFromKey, createNonClashingNameAsync } from '@remix-ui/helper'
 import Gists from 'gists'
 import { customAction } from '@remixproject/plugin-api'
-import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
+import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentLocalFilePath, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin, workspaceExists } from './workspace'
 import { QueryParams } from '@remix-project/remix-lib'
@@ -124,8 +124,14 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         plugin.call('notification', 'toast', `opening ${params.opendir}...`)
         await plugin.call('fs', 'setWorkingDir', params.opendir)
       }
-      plugin.setWorkspace({ name: 'electron', isLocalhost: false })
 
+      plugin.on('fs', 'workingDirChanged', async (dir) => {
+        dispatch(setCurrentLocalFilePath(dir))
+      })
+      const currentPath = await plugin.call('fs', 'getWorkingDir')
+      dispatch(setCurrentLocalFilePath(currentPath))
+      plugin.setWorkspace({ name: 'electron', isLocalhost: false })
+      
       dispatch(setCurrentWorkspace({ name: 'electron', isGitRepo: false }))
       electrOnProvider.init()
       listenOnProviderEvents(electrOnProvider)(dispatch)
