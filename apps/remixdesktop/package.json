@@ -1,6 +1,6 @@
 {
   "name": "remixdesktop",
-  "version": "0.0.1-Alpha",
+  "version": "0.0.2-Alpha",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
