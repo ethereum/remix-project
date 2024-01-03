@@ -415,7 +415,7 @@ class DGitProvider extends Plugin {
   async clone(input, workspaceName, workspaceExists = false) {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
-      const folder = await this.call('fs', 'selectFolder', null, 'Select or create a folder to clone the repository in')
+      const folder = await this.call('fs', 'selectFolder', null, 'Select or create a folder to clone the repository in', 'Select as Repository Destination')
       if (!folder) return false
       const cmd = {
         url: input.url,
