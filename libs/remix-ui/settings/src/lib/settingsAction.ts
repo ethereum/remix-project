@@ -43,9 +43,11 @@ export const useMatomoAnalytics = (config, checked, dispatch) => {
   config.set('settings/matomo-analytics', checked)
   dispatch({ type: 'useMatomoAnalytics', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
   if (checked) {
-    _paq.push(['forgetUserOptOut'])
+    // user has given consent to process their data
+    _paq.push(['setConsentGiven']);
   } else {
-    _paq.push(['optUserOut'])
+    // revoke tracking consent
+    _paq.push(['forgetConsentGiven']);
   }
 }
 

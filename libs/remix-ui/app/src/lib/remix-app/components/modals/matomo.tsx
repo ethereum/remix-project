@@ -61,14 +61,12 @@ const MatomoDialog = (props: MatomoDialogProps) => {
 
   const declineModal = async () => {
     settings.updateMatomoAnalyticsChoice(false)
-    _paq.push(['optUserOut'])
     // revoke tracking consent
     _paq.push(['forgetConsentGiven']);
     setVisible(false)
   }
 
   const handleModalOkClick = async () => {
-    _paq.push(['forgetUserOptOut'])
     // user has given consent to process their data
     _paq.push(['setConsentGiven']);
     settings.updateMatomoAnalyticsChoice(true)
