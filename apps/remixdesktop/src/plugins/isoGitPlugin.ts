@@ -54,11 +54,12 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   gitIsInstalled: boolean = false
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
-    this.onload(() => {
+    this.onload(async () => {
       this.on('fs' as any, 'workingDirChanged', async (path: string) => {
         this.workingDir = path
         this.gitIsInstalled = await gitProxy.version() ? true : false
       })
+      this.gitIsInstalled = await gitProxy.version() ? true : false
     })
   }
 
@@ -274,9 +275,13 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   async clone(cmd: any) {
 
 
-    if (this.gitIsInstalled) {
-      await gitProxy.clone(cmd.url, cmd.dir)
 
+    if (this.gitIsInstalled) {
+      try{
+        await gitProxy.clone(cmd.url, cmd.dir)
+      }catch(e){
+        throw e
+      }
     } else {
       try {
         const clone = await git.clone({
