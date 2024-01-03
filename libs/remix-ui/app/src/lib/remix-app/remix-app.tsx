@@ -123,7 +123,7 @@ const RemixApp = (props: IRemixAppUi) => {
       break
     }
     case UsageTypes.Advance: {
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'tutor'])
+      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'advanced'])
       break
     }
     case UsageTypes.Prototyper: {
