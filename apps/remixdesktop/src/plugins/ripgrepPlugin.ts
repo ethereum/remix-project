@@ -50,10 +50,11 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
 
-    this.onload(() => {
+    this.onload(async () => {
       this.on('fs' as any, 'workingDirChanged', async (path: string) => {
         this.workingDir = path
       })
+      this.workingDir = await this.call('fs' as any, 'getWorkingDir')
     })
   }
 

@@ -86,6 +86,10 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
       await checkGit()
     }
   })
+  plugin.on('fs', 'workingDirChanged', async (path: string) => {
+    await checkGit()
+  })
+  checkGit()
   getGitConfig()
 }
 

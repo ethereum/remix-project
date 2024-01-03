@@ -114,7 +114,9 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   // best for non recursive
   async readdir(path: string): Promise<string[]> {
-    if (this.workingDir === '') throw new Error('workingDir is not set')
+    if (this.workingDir === '') return new Promise((resolve, reject) => reject({
+      message: 'no working dir has been set'
+    }))
     // call node fs.readdir
     if (!path) return []
     const startTime = Date.now()

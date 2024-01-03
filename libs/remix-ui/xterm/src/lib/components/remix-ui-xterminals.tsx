@@ -69,6 +69,12 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         setTerminalsEnabled(true)
       })
 
+      const workingDir = await plugin.call('fs', 'getWorkingDir')
+      if(workingDir && workingDir !== '') {
+        setTerminalsEnabled(true)
+        setWorkingDir(workingDir)
+      }
+
       plugin.on('theme', 'themeChanged', async (theme) => {
         handleThemeChange(theme)
       })
