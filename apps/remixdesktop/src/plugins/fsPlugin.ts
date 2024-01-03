@@ -340,12 +340,13 @@ class FSPluginClient extends ElectronBasePluginClient {
     writeConfig(config)
   }
 
-  async selectFolder(path?: string, title?: string): Promise<string> {
+  async selectFolder(path?: string, title?: string, button?: string): Promise<string> {
     let dirs: string[] | undefined
     if (!path) {
       dirs = dialog.showOpenDialogSync(this.window, {
         properties: ['openDirectory', 'createDirectory', 'showHiddenFiles'],
         title: title || 'Select or create a folder',
+        buttonLabel: button || 'Select folder',
       })
     }
     path = dirs && dirs.length && dirs[0] ? dirs[0] : path

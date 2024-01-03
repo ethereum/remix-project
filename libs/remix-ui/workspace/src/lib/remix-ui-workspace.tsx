@@ -955,7 +955,7 @@ export function Workspace() {
                     <label className="pl-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
                       {(platform == appPlatformTypes.desktop) ? (
                         <ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />
-                        ) : <FormattedMessage id='filePanel.workspace' />}
+                      ) : <FormattedMessage id='filePanel.workspace' />}
                     </label>
                   </span>                  
                 </div>
