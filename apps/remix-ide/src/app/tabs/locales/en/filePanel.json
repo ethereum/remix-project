@@ -8,7 +8,7 @@
   "filePanel.backup": "Backup",
   "filePanel.restore": "Restore",
   "filePanel.workspace.create": "Create Workspace",
-  "filePanel.workspace.create.desktop": "Create Project in new Folder",
+  "filePanel.workspace.create.desktop": "Create project in new folder",
   "filePanel.workspace.rename": "Rename Workspace",
   "filePanel.workspace.delete": "Delete Workspace",
   "filePanel.workspace.deleteConfirm": "Are you sure to delete the current workspace?",
