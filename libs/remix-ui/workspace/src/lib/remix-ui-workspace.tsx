@@ -181,7 +181,7 @@ export function Workspace() {
   }
   const createWorkspace = () => {
     global.modal(
-      intl.formatMessage({id: 'filePanel.workspace.create'}),
+      intl.formatMessage({id: (platform !== appPlatformTypes.desktop)? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop'}),
       createModalMessage(),
       intl.formatMessage({id: (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder'}),
       onFinishCreateWorkspace,
@@ -328,7 +328,7 @@ export function Workspace() {
       await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName, opts, initGitRepo)
     } catch (e) {
       global.modal(
-        intl.formatMessage({id: 'filePanel.workspace.create'}),
+        intl.formatMessage({id:  (platform !== appPlatformTypes.desktop)? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop'}),
         e.message,
         intl.formatMessage({id: 'filePanel.ok'}),
         () => {},
