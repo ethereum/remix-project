@@ -17,15 +17,14 @@ if (domains[window.location.hostname]) {
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
   _paq.push(["setExcludedQueryParams", ["code","gist"]]);
   _paq.push(["setExcludedReferrers", ["etherscan.io"]]);
-  _paq.push(['enableJSErrorTracking']);
-  // require user tracking consent before processing data
-  _paq.push(['requireConsent']);
+  _paq.push(['enableJSErrorTracking']);  
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   _paq.push(['enableHeartBeatTimer']);
   if (!window.localStorage.getItem('config-v0.8:.remix.config') ||
     (window.localStorage.getItem('config-v0.8:.remix.config') && !window.localStorage.getItem('config-v0.8:.remix.config').includes('settings/matomo-analytics'))) {
-
+    // require user tracking consent before processing data
+    _paq.push(['requireConsent']);
   } else {
     // user has given consent to process their data
     _paq.push(['setConsentGiven'])
