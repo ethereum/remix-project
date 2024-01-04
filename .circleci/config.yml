@@ -125,7 +125,7 @@ jobs:
                 yarn add node-pty
                 yarn --ignore-optional
                 yarn add @remix-project/remix-ws-templates
-                yarn dist
+                PUBLISH_FOR_PULL_REQUEST=${PUBLISH_FOR_PULL_REQUEST} GH_TOKEN=${GH_TOKEN} yarn dist
                 rm -rf release/*-unpacked
         - save_cache:
             key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
