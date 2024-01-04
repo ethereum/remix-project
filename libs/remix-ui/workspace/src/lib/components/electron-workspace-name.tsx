@@ -1,5 +1,7 @@
 import { CustomTooltip } from "@remix-ui/helper"
-import React, { MouseEventHandler, useContext, useEffect, useState } from "react"
+import React from "react"
+import path from 'path'
+
 
 interface ElectronWorkspaceNameProps {
   path: string
@@ -7,29 +9,29 @@ interface ElectronWorkspaceNameProps {
 }
 
 export const ElectronWorkspaceName = (props: ElectronWorkspaceNameProps) => {
-  const { path } = props
+  const { path: dir } = props
   
-  const parsePath = (path: string) => {
-    const pathArray = path.split('/')
+  const parsePath = () => {    
+    const pathArray = dir.split(path.posix.sep)
     return pathArray[pathArray.length - 1]
   }
 
   const openInExplorer = () => {
     props.plugin.call('fs', 'revealInExplorer', {
-      path
-    })
+      path: [dir]
+    }, true)
   }
 
   return (
-    (path === undefined || path === '') ? <></> :
+    (dir === undefined || dir === '') ? <></> :
       <div className="d-flex align-items-baseline">
         <CustomTooltip
           placement="top"
           tooltipId="workspace-name"
           tooltipClasses="text-nowrap"
-          tooltipText={path}
+          tooltipText={dir}
         >
-          <div>{parsePath(path)}</div>
+          <div>{parsePath()}</div>
         </CustomTooltip>
         <CustomTooltip
           placement="top"

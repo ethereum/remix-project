@@ -96,7 +96,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     try {
       await fetchWorkspaceDirectory(path)
     } catch (err) {
-      console.error(err)
+      console.warn(err)
     }    
   }
 

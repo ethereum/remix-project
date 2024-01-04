@@ -21,6 +21,10 @@ const convertPathToPosix = (pathName: string): string => {
   return pathName.split(path.sep).join(path.posix.sep)
 }
 
+const convertPathToLocalFileSystem = (pathName: string): string => {
+  return pathName.split(path.posix.sep).join(path.sep)
+}
+
 const getBaseName = (pathName: string): string => {
   return path.basename(pathName)
 }
@@ -207,14 +211,15 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async getWorkingDir(): Promise<string> {
-    return this.workingDir
+    return convertPathToPosix(this.workingDir)
   }
 
   async watch(): Promise<void> {
     try {
-      this.off('filePanel' as any, 'expandPathChanged')
+      if(this.events && this.events.eventNames().includes('[filePanel] expandPathChanged')) {
+        this.off('filePanel' as any, 'expandPathChanged')
+      }
       this.on('filePanel' as any, 'expandPathChanged', async (paths: string[]) => {
-        //console.log('expandPathChanged', paths)
         this.expandedPaths = ['.', ...paths] // add root
         //console.log(Object.keys(this.watchers))
         paths = paths.map((path) => this.fixPath(path))
@@ -332,7 +337,9 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   async getRecentFolders(): Promise<string[]> {
     const config = await this.call('electronconfig' as any, 'readConfig')
-    return config.recentFolders || []
+    let folders: string[] = config.recentFolders || []
+    folders = folders.map((f: string) => convertPathToPosix(f))
+    return folders
   }
 
   async removeRecentFolder(path: string): Promise<void> {
@@ -398,8 +405,9 @@ class FSPluginClient extends ElectronBasePluginClient {
     await this.call('fileManager', 'closeAllFiles')
   }
 
-  async revealInExplorer(action: customAction): Promise<void> {
-    shell.showItemInFolder(this.fixPath(action.path[0]))
+  async revealInExplorer(action: customAction, isAbsolutePath: boolean = false): Promise<void> {
+    let path = isAbsolutePath? action.path[0] : this.fixPath(action.path[0])
+    shell.showItemInFolder(convertPathToLocalFileSystem(path))
   }
 
   async openInVSCode(action: customAction): Promise<void> {
@@ -412,6 +420,8 @@ class FSPluginClient extends ElectronBasePluginClient {
       if (path.startsWith('/')) {
         path = path.slice(1)
       }
+
+
     }
     path = this.workingDir + (!this.workingDir.endsWith('/') ? '/' : '') + path
     return path

@@ -124,10 +124,6 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
         plugin.call('notification', 'toast', `opening ${params.opendir}...`)
         await plugin.call('fs', 'setWorkingDir', params.opendir)
       }
-
-      plugin.on('fs', 'workingDirChanged', async (dir) => {
-        dispatch(setCurrentLocalFilePath(dir))
-      })
       const currentPath = await plugin.call('fs', 'getWorkingDir')
       dispatch(setCurrentLocalFilePath(currentPath))
       plugin.setWorkspace({ name: 'electron', isLocalhost: false })
