@@ -68,7 +68,13 @@
     "files": [
       "build/**/*"
     ],
-    "publish": ["github"],
+    "publish": [{
+      "provider": "github",
+      "owner": "bunsenstraat",
+      "repo": "remix-desktop",
+      "releaseType": "draft",
+      "publishAutoUpdate": true
+    }],
     "mac": {
       "category": "public.app-category.productivity",
       "target": [
@@ -99,9 +105,7 @@
     },
     "linux": {
       "target": [
-        "deb",
-        "snap",
-        "AppImage"
+        "deb"
       ],
       "category": "WebBrowser"
     },
