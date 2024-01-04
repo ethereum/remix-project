@@ -2,29 +2,15 @@ import { CustomTooltip } from '@remix-ui/helper'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { RunTab } from '../types/run-tab'
+import { extractCompilerVersion } from '../actions/account'
+import { RunTabState } from '../types'
 
 export type LowLevelInteractionIconProps = {
-  plugin: RunTab
+  plugin: RunTabState
 }
 
 export function LowLevelInteractionIcon (props: LowLevelInteractionIconProps) {
-  const [version, setVersion] = useState('')
-
-  useEffect(() => {
-    const listenForCompileFinished = async () => {
-      props.plugin.on('solidity', 'compilationFinished',
-        (file: string, source, languageVersion, data, input, version) => {
-          const versionUpdate = `v${version.split('+')[0]}` // remove commit hash
-          console.log(versionUpdate)
-          setVersion(versionUpdate)
-        })
-    }
-    listenForCompileFinished()
-
-    return () => {
-      props.plugin.off('solidity', 'compilationFinished')
-    }
-  }, [])
+  const [version, setVersion] = useState(props.plugin.compilerVersion ?? '')
 
   return (
     <>

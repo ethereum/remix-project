@@ -299,6 +299,8 @@ export function RunTabUI(props: RunTabProps) {
             isValidProxyAddress={isValidProxyAddress}
             isValidProxyUpgrade={isValidProxyUpgrade}
             proxy={runTab.proxy}
+            stateDispatch={dispatch}
+            runTabState={runTab}
           />
           <RecorderUI
             plugin={plugin}
@@ -322,7 +324,7 @@ export function RunTabUI(props: RunTabProps) {
             runTransactions={executeTransactions}
             sendValue={runTab.sendValue}
             getFuncABIInputs={getFuncABIValues}
-            plugin={props.plugin}
+            state={runTab}
           />
         </div>
       </div>
