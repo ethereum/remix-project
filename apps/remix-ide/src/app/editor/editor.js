@@ -208,8 +208,8 @@ class Editor extends Plugin {
       const paths = path.split('/')
       paths.pop()
       const fromPath = paths.join('/') // get current execution context path
-      for (const match of content.matchAll(/import\s+.*\s+from\s+(?:"(.*?)"|'(.*?)')/g)) {
-        let pathDep = match[2]
+      for (const match of content.matchAll(/import\s+(?:(?:\{[^{}]*\}|[^'";]+)\s+from\s+)?['"](@[\w-]+\/[\w-]+)['"];?/g)) {
+        let pathDep = match[1]
         if (pathDep.startsWith('./') || pathDep.startsWith('../')) pathDep = resolve(fromPath, pathDep)
         if (pathDep.startsWith('/')) pathDep = pathDep.substring(1)
         if (!pathDep.endsWith('.ts')) pathDep = pathDep + '.ts'
