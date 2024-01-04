@@ -1,0 +1,10 @@
+{
+    "version": "v0.38.0",
+    "title": "RELEASE HIGHLIGHTS",
+    "highlight1": "Alpha release for Solidity co-pilot",
+    "highlight2": "Define Solidity remappings in remappings.txt file",
+    "highlight3": "Run free function for any selected environment",
+    "highlight4": "New Circom ZKP templates: Hash Checker & Rate Limiting Nullifier",
+    "more": "Read More",
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-38-0-dccd551b6f1e"
+  }
