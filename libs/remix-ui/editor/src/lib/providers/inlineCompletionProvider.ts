@@ -70,7 +70,11 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     const generatedText = (result as any).output[0].generated_text as string
     // the generated text remove a space from the context...
-    const clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ').replace(word, '')
+    let clean = generatedText
+    if (generatedText.indexOf('@custom:dev-run-script./') !== -1) {
+      clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
+    }
+    clean = clean.replace(word, '')
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: clean
     };
