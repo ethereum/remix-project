@@ -3,30 +3,14 @@ import { ethers, BigNumber } from 'ethers'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const snarkjs = require('snarkjs');
 
-const logger = {
-  info: (...args) => console.log(...args),
-  debug: (...args) => console.log(...args)
-};
-
-/**
- * Creates a keccak256 hash of a message compatible with the SNARK scalar modulus.
- * @param message The message to be hashed.
- * @returns The message digest.
- */
-function hash(message: any): bigint {
-  message = BigNumber.from(message).toTwos(256).toHexString()
-  message = ethers.utils.zeroPad(message, 32)
-  return BigInt(ethers.utils.keccak256(message)) >> BigInt(8)
-}
-
 (async () => {
   try {
     // @ts-ignore
-    await remix.call('circuit-compiler', 'generateR1cs', 'circuits/semaphore.circom');
+    await remix.call('circuit-compiler', 'generateR1cs', 'circuits/instances/pubkey_membership.circom');
 
     const ptau_final = "https://ipfs-cluster.ethdevops.io/ipfs/QmTiT4eiYz5KF7gQrDsgfCSTRv3wBPYJ4bRN1MmTRshpnW";
     // @ts-ignore
-    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/semaphore.r1cs', true);
+    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/instances/.bin/pubkey_membership.r1cs', true);
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer);
     const zkey_0 = { type: "mem" };
