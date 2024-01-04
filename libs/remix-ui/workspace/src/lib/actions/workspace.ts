@@ -28,6 +28,7 @@ import {
   setGitConfig,
   setElectronRecentFolders,
   setCurrentWorkspaceHasGitSubmodules,
+  setCurrentLocalFilePath,
 } from './payload'
 import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 
@@ -86,7 +87,9 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
       await checkGit()
     }
   })
-  plugin.on('fs', 'workingDirChanged', async (path: string) => {
+  plugin.on('fs', 'workingDirChanged', async (dir: string) => {
+    console.log('workingDirChanged', dir)
+    dispatch(setCurrentLocalFilePath(dir))
     await checkGit()
   })
   checkGit()
@@ -368,7 +371,6 @@ export const fetchWorkspaceDirectory = async (path: string) => {
     provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) {
         reject(error)
-        console.error(error)
       }
       resolve(fileTree)
     })
@@ -546,11 +548,13 @@ export const uploadFolder = async (target, targetFolder: string, cb?: (err: Erro
 }
 
 export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[]> | undefined => {
+  console.log('getWorkspaces')
   try {
     const workspaces: { name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-
+      console.log('workspacesPath', workspacesPath)
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
+        
         if (error) {
           return reject(error)
         }
@@ -584,6 +588,7 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
         ).then((workspacesList) => resolve(workspacesList))
       })
     })
+    console.log('workspaces', workspaces)
     await plugin.setWorkspaces(workspaces)
     return workspaces
   } catch (e) {}
@@ -652,13 +657,15 @@ export const cloneRepository = async (url: string) => {
 }
 
 export const checkGit = async () => {
-  const isGitRepo = await plugin.fileManager.isGitRepo()
-  const hasGitSubmodule = await plugin.fileManager.hasGitSubmodules()
-  dispatch(setCurrentWorkspaceIsGitRepo(isGitRepo))
-  dispatch(setCurrentWorkspaceHasGitSubmodules(hasGitSubmodule))
-  await refreshBranches()
-  const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
-  dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
+  try {
+    const isGitRepo = await plugin.fileManager.isGitRepo()
+    const hasGitSubmodule = await plugin.fileManager.hasGitSubmodules()
+    dispatch(setCurrentWorkspaceIsGitRepo(isGitRepo))
+    dispatch(setCurrentWorkspaceHasGitSubmodules(hasGitSubmodule))
+    await refreshBranches()
+    const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
+    dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
+  } catch (e) {}
 }
 
 export const getRepositoryTitle = async (url: string) => {
