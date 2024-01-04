@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, Menu, MenuItem, utilityProcess } from 'electron';
+import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess } from 'electron';
 import path from 'path';
 
 
@@ -27,6 +27,10 @@ export const createWindow = async (dir?: string): Promise<void> => {
       preload: path.join(__dirname, 'preload.js')
     },
   });
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url); // Open URL in user's browser.
+    return { action: "deny" }; // Prevent the app from opening the URL.
+  })
   if (dir && dir.endsWith('/')) dir = dir.slice(0, -1)
   const params = dir ? `?opendir=${encodeURIComponent(dir)}` : '';
   // and load the index.html of the app.
