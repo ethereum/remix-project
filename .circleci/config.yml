@@ -218,7 +218,7 @@ jobs:
             yarn installRipGrepMacOXarm64
             PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --arm64
             yarn installRipGrepMacOXx64
-            USE_HARD_LINKS=false yarn dist --mac --x64
+            PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --x64
             rm -rf release/mac*
       - store_artifacts:
           path: apps/remixdesktop/release/
