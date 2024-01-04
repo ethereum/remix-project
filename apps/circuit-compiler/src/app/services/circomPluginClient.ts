@@ -53,7 +53,7 @@ export class CircomPluginClient extends PluginClient {
       // @ts-ignore
       fileContent = await this.call('fileManager', 'readFile', path)
     }
-    this.lastParsedFiles = await this.resolveDependencies(path, fileContent, { [path]: { content: fileContent, parent: null } })
+    this.lastParsedFiles = await this.resolveDependencies(path, fileContent)
     const parsedOutput = this.compiler.parse(path, this.lastParsedFiles)
 
     try {
