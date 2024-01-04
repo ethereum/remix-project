@@ -45,7 +45,7 @@ export type CompilationConfig = {
   version: string
 }
 
-export type PrimeValue = "bn128" | "bls12381" | "goldilocks"
+export type PrimeValue = "bn128" | "bls12381" | "goldilocks" | "grumpkin" | "pallas" | "vesta"
 
 export type CompilerFeedbackProps = {
   feedback: string | CompilerReport[],
@@ -76,7 +76,8 @@ export type FeedbackAlertProps = {
 
 export type ConfigurationsProps = {
   setPrimeValue: (prime: PrimeValue) => void,
-  primeValue: PrimeValue
+  primeValue: PrimeValue,
+  versionValue: string
 }
 
 export type CompileOptionsProps = {

@@ -5,15 +5,29 @@ const { task } = require('gulp');
 const fs = require('fs');
 const util = require('util');
 const promisifyExec = util.promisify(require('child_process').exec);
+const axios = require('axios');
 
 var packageJSON = require('./package.json');
 
 /**
- * @dev Task to create git tag using version from package.json and pushing this specific tag
+ * @dev Task to create git tag using version from package.json of remix_beta branch and pushing this specific tag
  */
-task('publishTag', async function () {
-    const tag = "v" + packageJSON.version
-    await promisifyExec(`git tag ${tag}; git push origin ${tag}`);
+task('publishTagfromBeta', async function () {
+    try {
+        let cmdOp = await promisifyExec(`git checkout remix_beta`)
+        console.log(cmdOp.stdout)
+        cmdOp = await promisifyExec(`git pull origin remix_beta`)
+        console.log(cmdOp.stdout)
+        const betaPackageJSON = fs.readFileSync(__dirname + '/package.json', 'utf8')
+        const tag = "v" + JSON.parse(betaPackageJSON).version
+        console.log(`Creating tag ${tag} from remix_beta branch`)
+        cmdOp = await promisifyExec(`git tag ${tag}`)
+        console.log(cmdOp.stdout)
+        cmdOp = await promisifyExec(`git push --tags`)
+        console.log(cmdOp.stdout)
+    }catch(error) {
+        console.error(error)
+    }
 });
 
 /**
@@ -62,3 +76,39 @@ task('syncLibVersions', async function () {
     })
     await Promise.resolve();
 });
+
+async function setBranchHead(branchName, head) {
+    try {
+        console.log(`Setting ${branchName} branch head to ${head}`)
+        let cmdOp = await promisifyExec(`git checkout ${branchName}`)
+        console.log(cmdOp.stdout)
+        cmdOp = await promisifyExec(`git pull origin ${branchName}`)
+        console.log(cmdOp.stdout)
+        cmdOp = await promisifyExec(`git reset --hard ${head}`)
+        console.log(cmdOp.stdout)
+        cmdOp = await promisifyExec(`git push -f origin ${branchName}`)
+        console.log(cmdOp.stdout)
+    }catch(error) {
+        console.error(error)
+    }
+}
+
+/*
+* @dev Task to set remix_beta branch up to date with master
+*/
+task('updateBetaToMaster', async function () {
+   const masterBranchDetails = await axios.get('https://api.github.com/repos/ethereum/remix-project/branches/master')
+   const masterBranchHead = masterBranchDetails.data.commit.sha
+   await setBranchHead('remix_beta', masterBranchHead)
+   await Promise.resolve();
+});
+
+/*
+* @dev Task to set remix_live branch up to date with remix_beta
+*/
+task('updateLiveToBeta', async function () {
+    const betaBranchDetails = await axios.get('https://api.github.com/repos/ethereum/remix-project/branches/remix_beta')
+    const betaBranchHead = betaBranchDetails.data.commit.sha
+    await setBranchHead('remix_live', betaBranchHead)
+    await Promise.resolve();
+ });

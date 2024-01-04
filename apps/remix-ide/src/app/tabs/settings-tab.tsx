@@ -92,11 +92,9 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.config.set('settings/matomo-analytics', isChecked)
     this.useMatomoAnalytics = isChecked
     if (!isChecked) {
-      _paq.push(['optUserOut'])
       // revoke tracking consent
       _paq.push(['forgetConsentGiven']);
     } else {
-      _paq.push(['forgetUserOptOut'])
       // user has given consent to process their data
       _paq.push(['setConsentGiven']);
     }
