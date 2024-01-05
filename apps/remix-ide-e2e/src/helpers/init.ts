@@ -24,6 +24,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         .perform(done())
     })
     .verifyLoad()
+    
     .perform(() => {
       if (hideToolTips) {
         browser.execute(function () { // hide tooltips
