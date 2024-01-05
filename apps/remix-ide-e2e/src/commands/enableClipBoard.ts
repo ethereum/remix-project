@@ -8,11 +8,23 @@ class EnableClipBoard extends EventEmitter {
       const chromeBrowser = (browser as any).chrome
       chromeBrowser.setPermission('clipboard-read', 'granted')
       chromeBrowser.setPermission('clipboard-write', 'granted')
-    }
-    if(browser.isFirefox()){
-      const firefoxBrowser = (browser as any).firefox
-      console.log('ff', firefoxBrowser)
-      //firefoxBrowser.setPreference('devtools.inspector.clipboardSource.allowedOrigins', 'http://localhost:8080')
+      // test it
+      browser.executeAsyncScript(function (done) {
+        navigator.clipboard.writeText('test').then(function () {
+          navigator.clipboard.readText().then(function (text) {
+            console.log('Pasted content: ', text)
+            done(text)
+          }).catch(function (err) {
+            console.error('Failed to read clipboard contents: ', err)
+            done()
+          })
+        }).catch(function (err) {
+          console.error('Failed to write to clipboard: ', err)
+          done()
+        })
+      }, [], function (result) {
+        browser.assert.ok((result as any).value === 'test', 'copy paste should work')
+      })
     }
     this.emit('complete')
     return this

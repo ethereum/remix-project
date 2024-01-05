@@ -40,6 +40,10 @@ export const FlatTreeItemInput = (props: FlatTreeItemInputProps) => {
     }
   }
 
+  const changeValue = (e: any) => {
+    setValue(e.target.value)
+  }
+
   useEffect(() => {
     ref.current.focus()
   },[])
@@ -55,7 +59,7 @@ export const FlatTreeItemInput = (props: FlatTreeItemInputProps) => {
     }}
     className='form-control p-0 ml-2 remixui_items' 
     onFocus={handleFocus} 
-    onChange={e => setValue(e.target.value)} 
+    onChange={changeValue} 
     defaultValue={file.name}>
   </input>)
 }
