@@ -91,6 +91,7 @@ module.exports = {
       .waitForElementPresent('[data-id="contextMenuItemcopy')
       .click('[data-id="contextMenuItemcopy"]')
       .rightClick('*[data-id="treeViewUltreeViewMenu"]')
+      .saveScreenshot('./reports/screenshot/file_explorer_context_menu.png')
       .click('*[data-id="contextMenuItempaste"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemCopy_README.txt"]', 7000)
   },
