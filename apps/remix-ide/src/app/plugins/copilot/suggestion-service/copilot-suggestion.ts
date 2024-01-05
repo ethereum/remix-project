@@ -1,5 +1,6 @@
 import {Plugin} from '@remixproject/engine'
 import {SuggestionService, SuggestOptions} from './suggestion-service'
+import axios, {AxiosResponse} from 'axios'
 //@ts-ignore
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
@@ -7,13 +8,14 @@ const profile = {
   name: 'copilot-suggestion',
   displayName: 'copilot-suggestion',
   description: 'Get Solidity suggestions in editor',
-  methods: ['suggest', 'init', 'uninstall', 'status', 'isActivate'],
+  methods: ['suggest', 'init', 'uninstall', 'status', 'isActivate', 'useRemoteService', 'discardRemoteService'],
   version: '0.1.0-alpha',
   maintainedBy: "Remix"
 }
 
 export class CopilotSuggestion extends Plugin {
   service: SuggestionService
+  remoteService: string
   context: string
   ready: boolean
   constructor() {
@@ -28,6 +30,14 @@ export class CopilotSuggestion extends Plugin {
     this.service.events.on('ready', (data) => {
       this.ready = true
     })
+  }
+
+  useRemoteService(service: string) {
+    this.remoteService = service
+  }
+
+  discardRemoteService() {
+    this.remoteService = null
   }
 
   status () {
@@ -54,7 +64,14 @@ export class CopilotSuggestion extends Plugin {
       temperature: temperature || 0,
       max_new_tokens: max_new_tokens || 0
     }
-    return this.service.suggest(this.context ? this.context + '\n\n' + content : content, options)
+
+    if (this.remoteService) {
+      const {data} = await axios.post(this.remoteService, {context: content, max_new_words: options.max_new_tokens, temperature: options.temperature})
+      const parsedData = JSON.parse(data).trimStart()
+      return {output: [{generated_text: parsedData}]}
+    } else {
+      return this.service.suggest(this.context ? this.context + '\n\n' + content : content, options)
+    }
   }
 
   async loadModeContent() {
