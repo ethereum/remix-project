@@ -1,8 +1,6 @@
 import { CustomTooltip } from '@remix-ui/helper'
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
-import { RunTab } from '../types/run-tab'
-import { extractCompilerVersion } from '../actions/account'
 import { RunTabState } from '../types'
 
 export type LowLevelInteractionIconProps = {
