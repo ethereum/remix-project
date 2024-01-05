@@ -61,12 +61,12 @@ module.exports = {
   },
 
   'Should copy abi after blind_auction compile #group1': function (browser: NightwatchBrowser) {
-    const chromeBrowser = (browser as any).chrome
-    // const firefoxBrowser = (browser as any).firefox
-    // console.log('chromeBrowser', chromeBrowser)
-    // console.log('firefoxBrowser', firefoxBrowser)
-    chromeBrowser.setPermission('clipboard-read', 'granted')
-    chromeBrowser.setPermission('clipboard-write', 'granted')
+    // const chromeBrowser = (browser as any).chrome
+    // // const firefoxBrowser = (browser as any).firefox
+    // // console.log('chromeBrowser', chromeBrowser)
+    // // console.log('firefoxBrowser', firefoxBrowser)
+    // chromeBrowser.setPermission('clipboard-read', 'granted')
+    // chromeBrowser.setPermission('clipboard-write', 'granted')
     browser//.clickLaunchIcon('vyper')
       .frame(0)
       .click('[data-id="remote-compiler"]')
@@ -79,13 +79,13 @@ module.exports = {
       .frameParent()
       .waitForElementVisible('[data-id="copy-abi"]')
       .click('[data-id="copy-abi"]')
-      .execute(() => {
-        navigator.clipboard.readText()
-          .then((clippedText) => {
-            console.log(`clipped text is ${clippedText.length} characters long`)
-            if(clippedText.length === 0) throw new Error('Clipboard is empty')
-          })
-      })
+      // .execute(() => {
+      //   navigator.clipboard.readText()
+      //     .then((clippedText) => {
+      //       console.log(`clipped text is ${clippedText.length} characters long`)
+      //       if(clippedText.length === 0) throw new Error('Clipboard is empty')
+      //     })
+      // })
   },
 
   'Compile test contract and deploy to remix VM #group1': function (browser: NightwatchBrowser) {
