@@ -84,7 +84,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME2.txt"]', 7000)
   },
   // file copy paste tests
-  'Should copy file and paste in root with right click and it will contain a new file #flaky #group1 ': function (browser: NightwatchBrowser) {
+  'Should copy file and paste in root with right click and it will contain a new file #group1 ': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('li[data-id="treeViewLitreeViewItemREADME.txt"]')
       .rightClick('li[data-id="treeViewLitreeViewItemREADME.txt"]')
