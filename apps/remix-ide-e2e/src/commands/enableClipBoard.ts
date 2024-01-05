@@ -4,7 +4,8 @@ import EventEmitter from 'events'
 class EnableClipBoard extends EventEmitter {
   command (this: NightwatchBrowser, remember:boolean, accept: boolean): NightwatchBrowser {
     const browser = this.api
-    if(browser.isChrome()){
+    
+    if(browser.browserName.indexOf('chrome') > -1){
       const chromeBrowser = (browser as any).chrome
       chromeBrowser.setPermission('clipboard-read', 'granted')
       chromeBrowser.setPermission('clipboard-write', 'granted')
