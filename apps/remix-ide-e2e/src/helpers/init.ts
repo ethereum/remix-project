@@ -22,8 +22,8 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         .perform(done())
     })
     .verifyLoad()
+    .enableClipBoard()
     .perform((done) => {
-      //if (hideToolTips) {
         browser.execute(function () { // hide tooltips
           function addStyle(styleString) {
             const style = document.createElement('style');
