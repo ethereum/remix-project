@@ -14,6 +14,7 @@ class EnableClipBoard extends EventEmitter {
       console.log('ff', firefoxBrowser)
       //firefoxBrowser.setPreference('devtools.inspector.clipboardSource.allowedOrigins', 'http://localhost:8080')
     }
+    this.emit('complete')
     return this
   }
 }
