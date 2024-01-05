@@ -61,7 +61,12 @@ module.exports = {
   },
 
   'Should copy abi after blind_auction compile #group1': function (browser: NightwatchBrowser) {
-    console.log(browser as any)
+    const chromeBrowser = (browser as any).chrome
+    // const firefoxBrowser = (browser as any).firefox
+    // console.log('chromeBrowser', chromeBrowser)
+    // console.log('firefoxBrowser', firefoxBrowser)
+    chromeBrowser.setPermission('clipboard-read', 'granted')
+    chromeBrowser.setPermission('clipboard-write', 'granted')
     browser//.clickLaunchIcon('vyper')
       .frame(0)
       .click('[data-id="remote-compiler"]')
@@ -77,9 +82,9 @@ module.exports = {
       .execute(() => {
         navigator.clipboard.readText()
           .then((clippedText) => {
-            console.log('clippedText', clippedText)
+            console.log(`clipped text is ${clippedText.length} characters long`)
+            if(clippedText.length === 0) throw new Error('Clipboard is empty')
           })
-
       })
   },
 
