@@ -120,6 +120,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
           return (
             <li
               id={`menuitem${item.name.toLowerCase()}`}
+              data-id={`contextMenuItem${item.id}`}
               key={key}
               className={className}
               onClick={() => {
@@ -139,6 +140,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
           return (
             <li
               id={`menuitem${item.name.toLowerCase()}`}
+              data-id={`contextMenuItem${item.id}`}
               key={key}
               className={className}
               onClick={() => {
@@ -156,6 +158,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
         return (
           <li
             id={`menuitem${item.name.toLowerCase()}`}
+            data-id={`contextMenuItem${item.id}`}
             key={key}
             className={className}
             onClick={(e) => {
