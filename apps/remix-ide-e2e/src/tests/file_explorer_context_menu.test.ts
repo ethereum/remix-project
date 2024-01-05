@@ -84,17 +84,6 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME2.txt"]', 7000)
   },
   // file copy paste tests
-  'Should copy file and paste in root with right click and it will contain a new file #group1 #flaky': function (browser: NightwatchBrowser) {
-    browser
-      .waitForElementVisible('li[data-id="treeViewLitreeViewItemREADME.txt"]')
-      .rightClick('li[data-id="treeViewLitreeViewItemREADME.txt"]')
-      .waitForElementPresent('[data-id="contextMenuItemcopy')
-      .click('[data-id="contextMenuItemcopy"]')
-      .rightClick('*[data-id="treeViewUltreeViewMenu"]')
-      .saveScreenshot('./reports/screenshot/file_explorer_context_menu.png')
-      .click('*[data-id="contextMenuItempaste"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemCopy_README.txt"]', 7000)
-  },
   'Should copy file and paste in contracts with right click and it will contain a new file #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('li[data-id="treeViewLitreeViewItemREADME.txt"]')
