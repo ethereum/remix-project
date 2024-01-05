@@ -70,6 +70,7 @@ declare module 'nightwatch' {
     switchEnvironment: (provider: string) => NightwatchBrowser
     connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
     waitForElementNotContainsText: (id: string, value: string, timeout: number = 10000) => NightwatchBrowser
+    enableClipBoard: () => NightwatchBrowser
   }
 
   export interface NightwatchBrowser {
