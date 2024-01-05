@@ -61,31 +61,35 @@ module.exports = {
   },
 
   'Should copy abi after blind_auction compile #group1': function (browser: NightwatchBrowser) {
-    // const chromeBrowser = (browser as any).chrome
-    // // const firefoxBrowser = (browser as any).firefox
-    // // console.log('chromeBrowser', chromeBrowser)
-    // // console.log('firefoxBrowser', firefoxBrowser)
-    // chromeBrowser.setPermission('clipboard-read', 'granted')
-    // chromeBrowser.setPermission('clipboard-write', 'granted')
-    browser//.clickLaunchIcon('vyper')
-      .frame(0)
-      .click('[data-id="remote-compiler"]')
-      .click('[data-id="compile"]')
-      .waitForElementVisible({
-        selector:'[data-id="compilation-details"]',
-        timeout: 120000
-      })
-      .click('[data-id="compilation-details"]')
-      .frameParent()
-      .waitForElementVisible('[data-id="copy-abi"]')
-      .click('[data-id="copy-abi"]')
-      // .execute(() => {
-      //   navigator.clipboard.readText()
-      //     .then((clippedText) => {
-      //       console.log(`clipped text is ${clippedText.length} characters long`)
-      //       if(clippedText.length === 0) throw new Error('Clipboard is empty')
-      //     })
-      // })
+    if (browser.browserName.indexOf('chrome') > -1) {
+      const chromeBrowser = (browser as any).chrome
+      chromeBrowser.setPermission('clipboard-read', 'granted')
+      chromeBrowser.setPermission('clipboard-write', 'granted')
+      browser
+        .frame(0)
+        .click('[data-id="remote-compiler"]')
+        .click('[data-id="compile"]')
+        .waitForElementVisible({
+          selector:'[data-id="compilation-details"]',
+          timeout: 120000
+        })
+        .click('[data-id="compilation-details"]')
+        .frameParent()
+        .waitForElementVisible('[data-id="copy-abi"]')
+        .click('[data-id="copy-abi"]')
+        .executeAsyncScript(function (done) {
+          navigator.clipboard.readText()
+            .then(function (clippedText) {
+              done(clippedText)
+            }).catch(function (error) {
+              console.log('Failed to read clipboard contents: ', error)
+              done()
+            })
+        }, [], function (result) {
+          console.log('clipboard result: ' + result)
+          browser.assert.ok((result as any).value.length > 1, 'abi copied to clipboard')
+        })
+    }
   },
 
   'Compile test contract and deploy to remix VM #group1': function (browser: NightwatchBrowser) {
