@@ -200,7 +200,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   return (<>
     <div className='xterm-panel-header bg-light'>
       <div className='xterm-panel-header-left p-1'>
-        <button className={`btn btn-sm btn-secondary mr-2 ${!showOutput ? 'xterm-btn-none' : 'xterm-btn-active'}`} onClick={selectOutput}>ouput</button>
+        <button className={`btn btn-sm btn-secondary mr-2 ${!showOutput ? 'xterm-btn-none' : 'xterm-btn-active'}`} onClick={selectOutput}>output</button>
         <button className={`btn btn-sm btn-secondary ${terminalsEnabled ? '' : 'd-none'} ${showOutput ? 'xterm-btn-none' : 'xterm-btn-active'}`} onClick={showTerminal}><span className="far fa-terminal border-0 ml-1"></span></button>
       </div>
       <div className={`xterm-panel-header-right  ${showOutput ? 'd-none' : ''}`}>
