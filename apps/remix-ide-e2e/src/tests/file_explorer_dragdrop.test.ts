@@ -12,7 +12,7 @@ module.exports = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done)
     },
-    'drag and drop file from root to contracts #group1 #flaky': function (browser: NightwatchBrowser) {
+    'drag and drop file from root to contracts #group1 ': function (browser: NightwatchBrowser) {
         if (checkBrowserIsChrome(browser)) {
             browser
                 .clickLaunchIcon('filePanel')
