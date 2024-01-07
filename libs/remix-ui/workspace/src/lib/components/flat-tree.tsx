@@ -49,7 +49,6 @@ let mouseTimer: any = {
 
 export const FlatTree = (props: FlatTreeProps) => {
   const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder } = props
-  //const [flatTree, setFlatTree] = useState<{ [x: string]: FileType }>({})
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
     path: string,
