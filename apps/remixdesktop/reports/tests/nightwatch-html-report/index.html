@@ -1,0 +1,200 @@
+  <head>
+    <title>Nightwatch Reporter</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+
+    <div id="wrap">
+      <div id="main">
+        <section id="navigation">
+          <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg">
+              <a class="navbar-brand" href="https://nightwatchjs.org" target="_blank"><div class="logo"></div></a>
+            </nav>
+          </div>
+        </section>
+        <section id="auxbar">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="auxcol col-md-4 align-items-center">
+                <div class="auxcontainer">
+                  <div class="auxbox autobox">
+                  </div>
+                </div>
+              </div>
+              <div class="auxcol col-md-4 align-items-center">
+                <div class="auxcontainer align-h-center">
+                  <h1>Nightwatch.js – <strong>Test Report</strong></h1>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <section id="sessions">
+          <div class="row">
+          <div class="col-md-12">
+          <div class="container-fluid">
+            
+                <div id="s1" class="sessionbox">
+                  
+      <div class="sessionbox-indicator indicator-error sessionbox-padding">
+        <div class="row">
+          <div class="col-md-1">
+            <div class="statusbadge statusbadge-error">Error</div>
+          </div>
+      
+      <div class="col-md-11 separator-l">
+        <div class="row sessionbox-head">
+          <div class="col-md-8">
+             xterm.test
+          </div>
+        </div>
+        <div id="tabs-s1" class="row sessionbox-tabs">
+          <div class="col-md-12">
+            <nav>
+              <div class="nav nav-tabs" id="nav-tab1" role="tablist">
+                <a class="nav-item nav-link active" id="nav-s1-t1-tab" data-bs-toggle="tab" href="#nav-s1-t1" role="tab" aria-controls="nav-s1-t1" aria-selected="true">Details</a>
+                <a class="nav-item nav-link" id="nav-s1-t3-tab" data-bs-toggle="tab" href="#nav-s1-t3" role="tab" aria-controls="nav-s1-t3" aria-selected="true">Raw HTTP Log</a>
+              </div>
+            </nav>
+
+            <div class="tab-content" id="nav-tab1Content">
+              <div class="tab-pane show active" id="nav-s1-t1" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="statgroup autobox">
+                      <div class="statbox autobox">
+                        <div class="label-sessionfull">Status</div>
+                        <div class="stat-sessionfull">PASSED</div>
+                      </div>
+                    </div>
+                    <div class="statgroup autobox">
+                     <div class="statbox autobox">
+                       <div class="label-sessionfull">Tests</div>
+                       <div class="stat-sessionfull">0</div>
+                     </div>
+                     <div class="statbox autobox">
+                      <div class="label-sessionfull">Failed</div>
+                      <div class="stat-sessionfull">0</div>
+                    </div>
+                    <div class="statbox autobox">
+                      <div class="label-sessionfull">Errors</div>
+                      <div class="stat-sessionfull">1</div>
+                    </div>
+                    <div class="statbox autobox">
+                      <div class="label-sessionfull">Module Path</div>
+                      <div class="stat-sessionfull">/build-e2e/remixdesktop/test/tests/app/xterm.test.js</div>
+                    </div>
+                    </div>
+                    <div class="statgroup autobox">
+                      <div class="statbox autobox">
+                        <div class="label-sessionfull">Duration</div>
+                        <div class="stat-sessionfull">0.000 secs</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tab-pane raw-http-log" id="nav-s1-t3" role="tabpanel" aria-labelledby="nav-contact-tab">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="raw-http-log code-sessionfull"><div style="margin-left: -15px;margin-top: 10px; background: #0c5460">  Request <b><span style="color:#0AA">POST /wd/hub/session  </span></b></div><div>{
+     desiredCapabilities: {
+       browserName: <span style="color:#0A0">&#39;chrome&#39;<span style="color:#FFF">,
+       javascriptEnabled: <span style="color:#A50">true<span style="color:#FFF">,
+       acceptSslCerts: <span style="color:#A50">true<span style="color:#FFF">,
+       <span style="color:#0A0">&#39;goog:chromeOptions&#39;<span style="color:#FFF">: {
+         binary: <span style="color:#0A0">&#39;release/linux-unpacked/remixdesktop --e2e-local&#39;<span style="color:#FFF">,
+         args: []
+       },
+       name: <span style="color:#0A0">&#39;Xterm Test&#39;<span style="color:#FFF">
+     },
+     capabilities: {
+       alwaysMatch: {
+         browserName: <span style="color:#0A0">&#39;chrome&#39;<span style="color:#FFF">,
+         <span style="color:#0A0">&#39;goog:chromeOptions&#39;<span style="color:#FFF">: {
+           binary: <span style="color:#0A0">&#39;release/linux-unpacked/remixdesktop --e2e-local&#39;<span style="color:#FFF">,
+           args: []
+         }
+       }
+     }
+  }</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></div><div style="margin-left: -15px;margin-top: 10px; background: #0c5460">  Response 500 POST /wd/hub/session (160ms)</div><div>{
+     value: {
+       error: <span style="color:#0A0">&#39;session not created&#39;<span style="color:#FFF">,
+       message: <span style="color:#0A0">&#39;Could not start a new session. Error while creating session with the driver service. Stopping driver service: Could not start a new session. Response code 500. Message: unknown error: no chrome binary at release/linux-unpacked/remixdesktop --e2e-local \n&#39;<span style="color:#FFF"> +
+         <span style="color:#0A0">&quot;Host info: host: &#39;Ubuntuns&#39;, ip: &#39;127.0.1.1&#39;\n&quot;<span style="color:#FFF"> +
+         <span style="color:#0A0">&quot;Build info: version: &#39;4.9.0&#39;, revision: &#39;d7057100a6&#39;\n&quot;<span style="color:#FFF"> +
+         <span style="color:#0A0">&quot;System info: os.name: &#39;Linux&#39;, os.arch: &#39;amd64&#39;, os.version: &#39;6.2.0-39-generic&#39;, java.version: &#39;11.0.21&#39;\n&quot;<span style="color:#FFF"> +
+         <span style="color:#0A0">&#39;Driver info: driver.version: unknown\n&#39;<span style="color:#FFF"> +
+         <span style="color:#0A0">&quot;Build info: version: &#39;4.9.0&#39;, revision: &#39;d7057100a6&#39;\n&quot;<span style="color:#FFF"> +
+         <span style="color:#0A0">&quot;System info: os.name: &#39;Linux&#39;, os.arch: &#39;amd64&#39;, os.version: &#39;6.2.0-39-generic&#39;, java.version: &#39;11.0.21&#39;\n&quot;<span style="color:#FFF"> +
+         <span style="color:#0A0">&#39;Driver info: driver.version: unknown&#39;<span style="color:#FFF">,
+       stacktrace: <span style="color:#0A0">&#39;&#39;<span style="color:#FFF">
+     }
+  }</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></div></div>
+                  </div>
+                </div>
+              </div>
+            
+            </div>
+
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div id="sessionfull-accordion">
+            
+             
+               <div class="card">
+      <div class="card-header" id="h2">
+        <h5 class="mb-0">
+          <button class="btn btn-link" style="background-image:none">
+            open app
+            <span class ="float-right">
+              <a href="#" class="btn btn-sm btn-secondary disabled" role="button" style="font-size: 0.65em">skipped</a>
+            </span>
+          </button>
+        </h5>
+    </div>
+</div>
+             
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+                
+          </div>
+          </div>
+         </div>
+        </section>
+      </div>
+    </div>
+
+    <section id="footer">
+      <div class="container-fluid">
+        <div class="row footerstarbg">
+          <div class="col-md-12">
+            <nav class="footer-box">
+              <div class="footer-links">
+                  <a class="cr" href="https://nightwatchjs.org" target="_blank">© 2022 Nightwatch.js</a>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="js/bootstrap.min.js"></script>
+  </body>

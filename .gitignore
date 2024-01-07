@@ -61,5 +61,6 @@ testem.log
 apps/remixdesktop/.webpack
 apps/remixdesktop/out
 apps/remixdesktop/release/
+apps/remixdesktop/build*/
 apps/remix-ide/src/assets/list.json
 apps/remix-ide/src/assets/esbuild.wasm

@@ -24,7 +24,7 @@ function addLocalPlugin (browser: NightwatchBrowser, profile: Profile & Location
 
   browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
     .execute(function () {
-      window.testmode = true
+      (window as any).testmode = true
     })
     .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
     .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
