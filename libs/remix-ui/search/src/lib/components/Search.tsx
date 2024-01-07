@@ -8,8 +8,6 @@ import {FindContainer} from './FindContainer'
 import {Undo} from './Undo'
 import { platformContext } from '@remix-ui/app'
 
-
-
 export const SearchTab = (props) => {
   const plugin = props.plugin
   const platform = useContext(platformContext)
