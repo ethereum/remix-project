@@ -1,6 +1,6 @@
 {
   "name": "remixdesktop",
-  "version": "0.0.7-Alpha",
+  "version": "0.0.8-Alpha",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
@@ -65,7 +65,7 @@
     "appId": "org.ethereum.remix-ide",
     "asar": true,
     "generateUpdatesFilesForAllChannels": true,
-    "icon": "assets/icon.png",
+    "icon": "assets",
     "files": [
       "build/**/*"
     ],
