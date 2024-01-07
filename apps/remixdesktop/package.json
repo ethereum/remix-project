@@ -87,6 +87,7 @@
           ]
         }
       ],
+      "icon": "assets/icon.png",
       "darkModeSupport": true
     },
     "dmg": {
@@ -102,7 +103,8 @@
     "win": {
       "target": [
         "nsis"
-      ]
+      ],
+      "icon": "assets/icon.png"
     },
     "linux": {
       "target": [
