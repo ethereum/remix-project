@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="1"
+            failures="0"
+            tests="0">
+
+  <testsuite name="xterm.test"
+    errors="1" failures="0" hostname="" id="" package="xterm.test" skipped="1"
+    tests="0" time="0.000" timestamp="">
+  
+
+  
+    <system-err>
+       An error occurred while creating a new Selenium Server session: [SessionNotCreatedError] Could not start a new session. Error while creating session with the driver service. Stopping driver service: Could not start a new session. Response code 500. Message: unknown error: no chrome binary at release/linux-unpacked/remixdesktop --e2e-local 
+Host info: host: &#39;Ubuntuns&#39;, ip: &#39;127.0.1.1&#39;
+Build info: version: &#39;4.9.0&#39;, revision: &#39;d7057100a6&#39;
+System info: os.name: &#39;Linux&#39;, os.arch: &#39;amd64&#39;, os.version: &#39;6.2.0-39-generic&#39;, java.version: &#39;11.0.21&#39;
+Driver info: driver.version: unknown
+Build info: version: &#39;4.9.0&#39;, revision: &#39;d7057100a6&#39;
+System info: os.name: &#39;Linux&#39;, os.arch: &#39;amd64&#39;, os.version: &#39;6.2.0-39-generic&#39;, java.version: &#39;11.0.21&#39;
+Driver info: driver.version: unknown
+    </system-err>
+  
+
+    
+    <error message="An error occurred while creating a new Selenium Server session: [SessionNotCreatedError] Could not start a new session. Error while creating session with the driver service. Stopping driver service: Could not start a new session. Response code 500. Message: unknown error: no chrome binary at release/linux-unpacked/remixdesktop --e2e-local 
+Host info: host: &#39;Ubuntuns&#39;, ip: &#39;127.0.1.1&#39;
+Build info: version: &#39;4.9.0&#39;, revision: &#39;d7057100a6&#39;
+System info: os.name: &#39;Linux&#39;, os.arch: &#39;amd64&#39;, os.version: &#39;6.2.0-39-generic&#39;, java.version: &#39;11.0.21&#39;
+Driver info: driver.version: unknown
+Build info: version: &#39;4.9.0&#39;, revision: &#39;d7057100a6&#39;
+System info: os.name: &#39;Linux&#39;, os.arch: &#39;amd64&#39;, os.version: &#39;6.2.0-39-generic&#39;, java.version: &#39;11.0.21&#39;
+Driver info: driver.version: unknown"><![CDATA[
+      SessionNotCreatedError: An error occurred while creating a new Selenium Server session: [SessionNotCreatedError] Could not start a new session. Error while creating session with the driver service. Stopping driver service: Could not start a new session. Response code 500. Message: unknown error: no chrome binary at release/linux-unpacked/remixdesktop --e2e-local 
+Host info: host: &#39;Ubuntuns&#39;, ip: &#39;127.0.1.1&#39;
+Build info: version: &#39;4.9.0&#39;, revision: &#39;d7057100a6&#39;
+System info: os.name: &#39;Linux&#39;, os.arch: &#39;amd64&#39;, os.version: &#39;6.2.0-39-generic&#39;, java.version: &#39;11.0.21&#39;
+Driver info: driver.version: unknown
+Build info: version: &#39;4.9.0&#39;, revision: &#39;d7057100a6&#39;
+System info: os.name: &#39;Linux&#39;, os.arch: &#39;amd64&#39;, os.version: &#39;6.2.0-39-generic&#39;, java.version: &#39;11.0.21&#39;
+Driver info: driver.version: unknown
+    at Object.throwDecodedError (/home/bunsen/code/remix-project/apps/remixdesktop/node_modules/selenium-webdriver/lib/error.js:522:15)
+    at parseHttpResponse (/home/bunsen/code/remix-project/apps/remixdesktop/node_modules/selenium-webdriver/lib/http.js:589:13)
+    at Executor.execute (/home/bunsen/code/remix-project/apps/remixdesktop/node_modules/selenium-webdriver/lib/http.js:514:28)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      ]]></error>  
+
+  
+    
+    <testcase
+      name="open app" classname="xterm.test">
+      <skipped />
+    </testcase>
+    
+  
+  </testsuite>
+</testsuites>
