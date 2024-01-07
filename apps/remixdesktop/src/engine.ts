@@ -36,8 +36,8 @@ ipcMain.handle('manager:activatePlugin', async (event, plugin) => {
   return await appManager.call(plugin, 'createClient', event.sender.id)
 })
 
-ipcMain.on('fs:openFolder', async (event) => {
-  fsPlugin.openFolder(event)
+ipcMain.on('fs:openFolder', async (event, path?) => {
+  fsPlugin.openFolder(event, path)
 })
 
 
