@@ -18,16 +18,15 @@ export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, 
         <OverlayTrigger 
           placement={placement}
           overlay={
-          <Popover id={`popover-positioned-${placement}`}>
-            <Popover.Content
-              id={!tooltipId ? `${tooltipText}Tooltip` : tooltipId}
-              style={{ minWidth: 'fit-content' }}
-              className={'text-wrap p-1 px-2 bg-secondary w-100' + tooltipClasses}>
-              {typeof tooltipText === 'string' ? <span className={'text-wrap p-1 px-2 bg-secondary ' + { tooltipTextClasses }}>{tooltipText}</span> : tooltipText}
-            </Popover.Content>
-          </Popover>
-
-        }>
+            <Popover id={`popover-positioned-${placement}`}>
+              <Popover.Content
+                id={!tooltipId ? `${tooltipText}Tooltip` : tooltipId}
+                style={{ minWidth: 'fit-content' }}
+                className={'text-wrap p-1 px-2 bg-secondary w-100' + tooltipClasses}>
+                {typeof tooltipText === 'string' ? <span className={'text-wrap p-1 px-2 bg-secondary ' + { tooltipTextClasses }}>{tooltipText}</span> : tooltipText}
+              </Popover.Content>
+            </Popover>
+          }>
           {children}
         </OverlayTrigger>
       </Fragment>
