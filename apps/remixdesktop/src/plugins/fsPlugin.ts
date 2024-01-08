@@ -32,7 +32,7 @@ const getBaseName = (pathName: string): string => {
 export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
   constructor() {
-    super(profile, clientProfile, FSPluginClient)
+    super(profile, clientProfile, FSPluginClientE2E)
     this.methods = [...super.methods, 'closeWatch', 'removeCloseListener']
   }
 
@@ -430,4 +430,44 @@ class FSPluginClient extends ElectronBasePluginClient {
   openWindow(path: string): void {
     createWindow(path)
   }
+}
+
+import os from 'os'
+export class FSPluginClientE2E extends FSPluginClient {
+  constructor(webContentsId: number, profile: Profile) {
+    super(webContentsId, profile)
+  }
+
+  async selectFolder(dir?: string, title?: string, button?: string): Promise<string> {
+    if (!dir) {
+      // create random directory on os homedir
+      const randomdir = path.join(os.homedir(), 'remix-tests' + Date.now().toString())
+      await fs.mkdir(randomdir)
+      return randomdir
+    }
+    if (!dir) return ''
+    return dir
+  }
+
+  async openFolder(dir?: string): Promise<void> {
+    dir = await this.selectFolder(dir)
+
+    await this.updateRecentFolders(dir)
+    await this.updateOpenedFolders(dir)
+    if (!dir) return
+    
+    this.openWindow(dir)
+  }
+
+  async openFolderInSameWindow(dir?: string): Promise<void> {
+    dir = await this.selectFolder(dir)
+    if (!dir) return
+    this.workingDir = dir
+    await this.updateRecentFolders(dir)
+    await this.updateOpenedFolders(dir)
+    this.window.setTitle(this.workingDir)
+    this.watch()
+    this.emit('workingDirChanged', dir)
+  }
+
 }
