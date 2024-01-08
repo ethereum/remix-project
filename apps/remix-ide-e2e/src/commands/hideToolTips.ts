@@ -17,7 +17,7 @@ class HideToolTips extends EventEmitter {
             .popover {
               display:none !important;
             }
-          )
+          `)
         }, [], done())
       })
       .perform((done) => {
