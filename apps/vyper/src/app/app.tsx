@@ -73,9 +73,9 @@ const App: React.FC = () => {
   return (
     <main id="vyper-plugin">
       <section>
-        <div className="px-3 w-100">
+        <div className="px-3 pt-3 mb-3 w-100">
           <CustomTooltip
-            placement="top"
+            placement="bottom"
             tooltipText="Clone vyper examples. Switch to the Vyper workspace to see the examples."
           >
             <Button data-id="add-repository" className="w-100 text-dark bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
@@ -83,7 +83,7 @@ const App: React.FC = () => {
             </Button>
           </CustomTooltip>
         </div>
-        <ToggleButtonGroup name="remote" onChange={setEnvironment} type="radio" value={state.environment}>
+        <ToggleButtonGroup name="remote" className="mb-3" onChange={setEnvironment} type="radio" value={state.environment}>
           <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
             Remote Compiler v0.3.10
           </ToggleButton>
@@ -92,8 +92,7 @@ const App: React.FC = () => {
           </ToggleButton>
         </ToggleButtonGroup>
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
-        <WarnRemote environment={state.environment} />
-        <div className="px-3 w-100" id="compile-btn">
+        <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
           <CompilerButton
             compilerUrl={compilerUrl()}
             contract={contract}
