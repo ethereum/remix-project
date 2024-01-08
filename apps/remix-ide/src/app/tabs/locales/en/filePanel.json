@@ -8,6 +8,7 @@
   "filePanel.restore": "Restore",
   "filePanel.workspace.create": "Create Workspace",
   "filePanel.workspace.rename": "Rename Workspace",
+  "filePanel.workspace.save_workspace": "Save Workspace",
   "filePanel.workspace.delete": "Delete Workspace",
   "filePanel.workspace.deleteConfirm": "Are you sure to delete the current workspace?",
   "filePanel.workspace.download": "Download Workspace",
@@ -129,5 +130,5 @@
   "filePanel.movingFolderFailed": "Moving Folder Failed",
   "filePanel.movingFolderFailedMsg": "Unexpected error while moving folder: {src}",
   "filePanel.workspaceActions": "Workspace actions",
-  "filePanel.saveCodeSample": "This code sample will not be persisted. Please click here to save this code as a persisted workspace."
+  "filePanel.saveCodeSample": "This code-sample workspace will not be persisted. Click here to save it."
 }

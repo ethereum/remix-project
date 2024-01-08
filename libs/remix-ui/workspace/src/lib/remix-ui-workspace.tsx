@@ -153,6 +153,17 @@ export function Workspace() {
     )
   }
 
+  const saveSampleCodeWorkspace = () => {
+    const workspaceName = global.plugin.getAvailableWorkspaceName('code-sample')
+    global.modal(
+      intl.formatMessage({id: 'filePanel.workspace.save_workspace'}),
+      renameModalMessage(workspaceName),
+      intl.formatMessage({id: 'filePanel.ok'}),
+      onFinishRenameWorkspace,
+      intl.formatMessage({id: 'filePanel.cancel'})
+    )
+  }
+
   const downloadCurrentWorkspace = () => {
     global.modal(
       intl.formatMessage({id: 'filePanel.workspace.download'}),
@@ -861,10 +872,10 @@ export function Workspace() {
     )
   }
 
-  const renameModalMessage = () => {
+  const renameModalMessage = (workspaceName?: string) => {
     return (
       <>
-        <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={currentWorkspace} ref={workspaceRenameInput} className="form-control" />
+        <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={workspaceName || currentWorkspace} ref={workspaceRenameInput} className="form-control" />
       </>
     )
   }
@@ -949,7 +960,7 @@ export function Workspace() {
                       tooltipClasses="text-nowrap"
                       tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
                     >
-                      <i onClick={() => renameCurrentWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
+                      <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
                     </CustomTooltip>}
                   </span>                  
                 </div>
