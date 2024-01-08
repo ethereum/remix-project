@@ -13,6 +13,7 @@ import ToggleButton from 'react-bootstrap/ToggleButton'
 import Button from 'react-bootstrap/Button'
 
 import './app.css'
+import { CustomTooltip } from '@remix-ui/helper'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -71,20 +72,16 @@ const App: React.FC = () => {
 
   return (
     <main id="vyper-plugin">
-      <header>
-        <div className="title">
-          <img src={'assets/logo.svg'} alt="Vyper logo" />
-          <h4>yper Compiler</h4>
-        </div>
-        <a rel="noopener noreferrer" href="https://github.com/ethereum/remix-project/tree/master/apps/vyper" target="_blank">
-          <i className="fab fa-github"></i>
-        </a>
-      </header>
       <section>
         <div className="px-3 w-100">
-          <Button data-id="add-repository" className="w-100 text-dark bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
+          <CustomTooltip
+            placement="top"
+            tooltipText="Clone vyper examples. Switch to the Vyper workspace to see the examples."
+          >
+            <Button data-id="add-repository" className="w-100 text-dark bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
             Clone Vyper examples repository
-          </Button>
+            </Button>
+          </CustomTooltip>
         </div>
         <ToggleButtonGroup name="remote" onChange={setEnvironment} type="radio" value={state.environment}>
           <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
