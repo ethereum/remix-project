@@ -949,7 +949,7 @@ export function Workspace() {
                       tooltipClasses="text-nowrap"
                       tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
                     >
-                      <i onClick={() => renameCurrentWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 mt-1" aria-hidden="true"></i>
+                      <i onClick={() => renameCurrentWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
                     </CustomTooltip>}
                   </span>                  
                 </div>
