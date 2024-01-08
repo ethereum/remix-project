@@ -30,7 +30,7 @@ const App: React.FC = () => {
   const [output, setOutput] = useState<any>({})
   const [state, setState] = useState<AppState>({
     status: 'idle',
-    environment: 'local',
+    environment: 'remote',
     localUrl: 'http://localhost:8000/'
   })
 
