@@ -80,7 +80,7 @@ export const Preload = (props: any) => {
     }
   }
 
-  useEffect(() => {
+  useEffect (() => {
     if(isElectron()){
       loadAppComponent()
       return
