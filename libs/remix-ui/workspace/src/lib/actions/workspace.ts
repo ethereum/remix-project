@@ -1,7 +1,8 @@
 import React from 'react'
 import { bufferToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
-import { TEMPLATE_METADATA, TEMPLATE_NAMES, TemplateType } from '../utils/constants'
+import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
+import { TemplateType } from '../utils/types'
 import axios, { AxiosResponse } from 'axios'
 import {
   addInputFieldSuccess,

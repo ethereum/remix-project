@@ -1,3 +1,4 @@
+import { TemplateType } from './types'
 export const ROOT_PATH = '/'
 export const solTestYml = `
 name: Running Solidity Unit Tests
@@ -109,11 +110,3 @@ export const TEMPLATE_METADATA: Record<string, TemplateType> = {
   }
 }
 
-export type TemplateType = {
-  type: 'git' | 'plugin'
-  url?: string
-  branch?: string
-  name?: string
-  endpoint?: string
-  params?: any[]
-}
