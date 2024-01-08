@@ -560,7 +560,6 @@ class FileManager extends Plugin {
         }
       }
     }
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRenamed', oldName, newName, isFolder)
   }
 
@@ -577,7 +576,6 @@ class FileManager extends Plugin {
   }
 
   async closeAllFiles() {
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('filesAllClosed')
     for (const file in this.openedFiles) {
       await this.closeFile(file)
@@ -588,10 +586,8 @@ class FileManager extends Plugin {
     delete this.openedFiles[name]
     if (!Object.keys(this.openedFiles).length) {
       this._deps.config.set('currentFile', '')
-      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('noFileSelected')
     }
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileClosed', name)
   }
 
@@ -614,7 +610,7 @@ class FileManager extends Plugin {
     return new Promise((resolve, reject) => {
       if (this.currentFile() === path) {
         const editorContent = this.editor.currentContent()
-        if(editorContent) resolve(editorContent)
+        if (editorContent) resolve(editorContent)
       }
       provider.get(path, (err, content) => {
         if (err) reject(err)
@@ -694,7 +690,6 @@ class FileManager extends Plugin {
     }
     this.editor.discard(path)
     delete this.openedFiles[path]
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRemoved', path)
     if (path === this._deps.config.get('currentFile')) {
       this.openFile(this._deps.config.get('currentFile'))
@@ -704,7 +699,6 @@ class FileManager extends Plugin {
   async unselectCurrentFile() {
     await this.saveCurrentFile()
     this._deps.config.set('currentFile', '')
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('noFileSelected')
   }
 
@@ -742,7 +736,6 @@ class FileManager extends Plugin {
       } else {
         await this.editor.open(file, content)
       }
-      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('currentFileChanged', file)
       return true
     }
@@ -783,7 +776,7 @@ class FileManager extends Plugin {
       return this._deps.filesProviders.localhost
     }
 
-    if(Registry.getInstance().get('platform').api.isDesktop()){
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
       return this._deps.filesProviders.electron
     }
     return this._deps.filesProviders.workspace
@@ -908,7 +901,7 @@ class FileManager extends Plugin {
   }
 
   currentWorkspace() {
-    if(Registry.getInstance().get('platform').api.isDesktop()){
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
       return ''
     }
 
@@ -988,7 +981,7 @@ class FileManager extends Plugin {
   /**
    * Moves a file to a new folder
    * @param {string} src path of the source file
-   * @param {string} dest path of the destrination file
+   * @param {string} dest path of the destination file
    * @returns {void}
    */
 
