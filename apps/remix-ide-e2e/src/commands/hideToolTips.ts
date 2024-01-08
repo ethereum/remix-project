@@ -13,12 +13,11 @@ class HideToolTips extends EventEmitter {
             style.textContent = styleString
             document.head.append(style)
           }
-
           addStyle(`
-                .popover {
-                  display:none !important;
-                }
-                `)
+            .popover {
+              display:none !important;
+            }
+          )
         }, [], done())
       })
       .perform((done) => {
