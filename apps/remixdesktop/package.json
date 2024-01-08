@@ -29,7 +29,7 @@
     "installRipGrepMacOXarm64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=arm64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
     "postinstall": "electron-builder install-app-deps",
     "selenium-install": "selenium-standalone install --drivers.chromiumedge.version=114.0.1788.0 --drivers.chrome.version=114.0.1788.0 --drivers.chrome.baseURL=https://chromedriver.storage.googleapis.com",
-    "selenium-start": "selenium-standalone start --config=./selenium.config.js",
+    "selenium": "selenium-standalone start --config=./selenium.config.js",
     "test:app:linuxlocal": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js --env=linuxlocal",
     "test:app:maclocal": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js --env=maclocal",
     "test:app:winlocal": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js --env=winlocal",
