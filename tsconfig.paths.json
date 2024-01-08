@@ -100,6 +100,9 @@
             "@remix-ui/solidity-compile-details": [
                 "libs/remix-ui/solidity-compile-details/src/index.ts"
             ],
+            "@remix-ui/vyper-compile-details": [
+              "libs/remix-ui/vyper-compile-details/src/index.ts"
+          ],
             "@remix-ui/solidity-compiler": [
                 "libs/remix-ui/solidity-compiler/src/index.ts"
             ],
