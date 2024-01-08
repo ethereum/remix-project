@@ -73,6 +73,7 @@ let requiredModules = [ // services + layout views + system views
   'codeFormatter',
   'solidityumlgen',
   'compilationDetails',
+  'vyperCompilationDetails',
   'contractflattener',
   'solidity-script',
   'openaigpt',
@@ -121,7 +122,8 @@ export function isNative(name) {
     'doc-gen',
     'doc-viewer',
     'circuit-compiler',
-    'compilationDetails'
+    'compilationDetails',
+    'vyperCompilationDetails'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
