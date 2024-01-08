@@ -45,7 +45,7 @@ export class RemixClient extends PluginClient {
       await this.call(
         'dGitProvider',
         'clone',
-        {url: 'https://github.com/vyperlang/vyper', token: null},
+        {url: 'https://github.com/vyperlang/vyper', token: null, branch: 'v0.3.10'},
         // @ts-ignore
         'vyper-lang'
       )
