@@ -76,10 +76,10 @@ export class FSPlugin extends ElectronBasePlugin {
     }
   }
 
-  openFolder(webContentsId: any): void {
+  openFolder(webContentsId: any, path?: string): void {
     const client = this.clients.find((c) => c.webContentsId === webContentsId)
     if (client) {
-      client.openFolder()
+      client.openFolder(path)
     }
   }
 }

@@ -88,7 +88,6 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
     }
   })
   plugin.on('fs', 'workingDirChanged', async (dir: string) => {
-    console.log('workingDirChanged', dir)
     dispatch(setCurrentLocalFilePath(dir))
     await checkGit()
   })
