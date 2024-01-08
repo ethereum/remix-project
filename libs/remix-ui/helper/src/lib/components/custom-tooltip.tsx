@@ -15,7 +15,9 @@ export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, 
   return (
     (!hide ? (
       <Fragment>
-        <OverlayTrigger overlay={
+        <OverlayTrigger 
+          placement={placement}
+          overlay={
           <Popover id={`popover-positioned-${placement}`}>
             <Popover.Content
               id={!tooltipId ? `${tooltipText}Tooltip` : tooltipId}
