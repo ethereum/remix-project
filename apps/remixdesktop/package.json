@@ -110,7 +110,8 @@
       "target": [
         "deb"
       ],
-      "category": "WebBrowser"
+      "category": "WebBrowser",
+      "icon": "assets"
     },
     "directories": {
       "output": "release"
