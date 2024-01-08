@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {VyperCompilationOutput, remixClient} from './utils'
+import {remixClient} from './utils'
 import {CompilationResult} from '@remixproject/plugin-api'
 
 // Components
@@ -22,17 +22,18 @@ interface AppState {
 }
 
 interface OutputMap {
-  [fileName: string]: VyperCompilationOutput
+  [fileName: string]: any
 }
 
 const App = () => {
   const [contract, setContract] = useState<string>()
-  const [output, setOutput] = useState<OutputMap>({})
+  const [output, setOutput] = useState<any>({})
   const [state, setState] = useState<AppState>({
     status: 'idle',
     environment: 'local',
-    localUrl: 'http://localhost:8000/compile'
+    localUrl: 'http://localhost:8000/'
   })
+
 
   useEffect(() => {
     async function start() {
@@ -61,7 +62,11 @@ const App = () => {
   }
 
   function compilerUrl() {
-    return state.environment === 'remote' ? 'https://vyper.remixproject.org/compile' : state.localUrl
+    return state.environment === 'remote' ? 'https://vyper2.remixproject.org/' : state.localUrl
+  }
+
+  function resetCompilerResultState() {
+    setOutput({})
   }
 
   return (
@@ -76,14 +81,14 @@ const App = () => {
         </a>
       </header>
       <section>
-        <div className="px-4 w-100">
-          <Button data-id="add-repository" className="w-100 text-dark w-100 bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
+        <div className="px-3 w-100">
+          <Button data-id="add-repository" className="w-100 text-dark bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
             Clone Vyper examples repository
           </Button>
         </div>
         <ToggleButtonGroup name="remote" onChange={setEnvironment} type="radio" value={state.environment}>
-          <ToggleButton id="remote-compiler" data-id="remote-compiler" variant="secondary" name="remote" value="remote">
-            Remote Compiler v0.2.16
+          <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
+            Remote Compiler v0.3.10
           </ToggleButton>
           <ToggleButton id="local-compiler" data-id="local-compiler" variant="secondary" name="local" value="local">
             Local Compiler
@@ -91,11 +96,23 @@ const App = () => {
         </ToggleButtonGroup>
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <WarnRemote environment={state.environment} />
-        <div className="px-4" id="compile-btn">
-          <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} />
+        <div className="px-3 w-100" id="compile-btn">
+          <CompilerButton
+            compilerUrl={compilerUrl()}
+            contract={contract}
+            setOutput={(name, update) => setOutput({...output, [name]: update})}
+            resetCompilerState={resetCompilerResultState}
+          />
         </div>
-        <article id="result" className="px-2">
-          <VyperResult output={contract ? output[contract] : undefined} />
+
+        <article id="result" className="px-2 mx-2 border-top mt-3">
+          {
+            output && Object.keys(output).length > 0 && output.status !== 'failed' ? (
+              <>
+                <VyperResult output={output} plugin={remixClient} />
+              </>
+            ) : null
+          }
         </article>
       </section>
     </main>

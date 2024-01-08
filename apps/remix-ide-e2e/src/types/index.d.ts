@@ -15,6 +15,7 @@ declare module 'nightwatch' {
     verifyContracts(compiledContractNames: string[], opts?: {wait: number; version?: string; runs?: string}): NightwatchBrowser
     selectAccount(account?: string): NightwatchBrowser
     clickFunction(fnFullName: string, expectedInput?: NightwatchClickFunctionExpectedInput): NightwatchBrowser
+    checkClipboard(): NightwatchBrowser
     testFunction(txHash: string, expectedInput: NightwatchTestFunctionExpectedInput): NightwatchBrowser
     goToVMTraceStep(step: number, incr?: number): NightwatchBrowser
     checkVariableDebug(id: string, debugValue: NightwatchCheckVariableDebugValue): NightwatchBrowser
