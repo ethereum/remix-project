@@ -50,7 +50,7 @@ export const FlatTreeItemInput = (props: FlatTreeItemInputProps) => {
 
   return(<input 
     onBlur={handleEditBlur}
-    data-id='/blank' 
+    data-id='fileExplorerTreeItemInput' 
     data-input-path = {file.path}
     onKeyDown={handleKeyDown} 
     ref={ref} 
