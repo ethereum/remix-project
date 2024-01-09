@@ -222,7 +222,9 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: W
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
   if ((await workspaceExists(workspaceName)) && template === 'remixDefault') throw new Error('workspace already exists')
   else if (metadata && metadata.type === 'git') {
+    dispatch(cloneRepositoryRequest())
     await plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, workspaceName)
+    dispatch(cloneRepositorySuccess())
   } else {
     const workspaceProvider = plugin.fileProviders.workspace
     await workspaceProvider.createWorkspace(workspaceName)
