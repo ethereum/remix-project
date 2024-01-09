@@ -17,10 +17,10 @@ module.exports = {
       .click('[data-id="contextMenuItemcopyFileName"]')
       .click('*[data-id="fileExplorerNewFilecreateNewFile"]')
       .pause(1000)
-      .waitForElementVisible('*[data-id$="/blank"] .remixui_items')
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.CONTROL + 'v')
+      .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.CONTROL + 'v')
       .pause(1000)
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME1.txt"]', 7000)
   },
   'Should copy file name and paste in another folder with new file button and it will contain a new file #group1 ': function (browser: NightwatchBrowser) {
@@ -32,10 +32,10 @@ module.exports = {
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .click('*[data-id="fileExplorerNewFilecreateNewFile"]')
       .pause(1000)
-      .waitForElementVisible('*[data-id$="/blank"] .remixui_items')
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.CONTROL + 'v')
+      .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.CONTROL + 'v')
       .pause(1000)
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/README.txt"]', 7000)
   },
   'Should copy file name and paste in another folder that has the same filename with new file button and it will contain a new file #group1 ': function (browser: NightwatchBrowser) {
@@ -47,10 +47,10 @@ module.exports = {
       .click('[data-id="treeViewLitreeViewItemcontracts"]')
       .click('*[data-id="fileExplorerNewFilecreateNewFile"]')
       .pause(1000)
-      .waitForElementVisible('*[data-id$="/blank"] .remixui_items')
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.CONTROL + 'v')
+      .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.CONTROL + 'v')
       .pause(1000)
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/README1.txt"]', 7000)
   },
   'Should copy file name and paste in root with right click and it will contain a new file #group1 ': function (browser: NightwatchBrowser) {
@@ -62,10 +62,10 @@ module.exports = {
       .rightClick('*[data-id="treeViewUltreeViewMenu"]')
       .click('*[data-id="contextMenuItemnewFile"]')
       .pause(1000)
-      .waitForElementVisible('*[data-id$="/blank"] .remixui_items')
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.CONTROL + 'v')
+      .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.CONTROL + 'v')
       .pause(1000)
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME2.txt"]', 7000)
   },
   'Should copy file name and paste in contracts with right click and it will contain a new file #group1 ': function (browser: NightwatchBrowser) {
@@ -77,10 +77,10 @@ module.exports = {
       .rightClick('*[data-id="treeViewLitreeViewItemcontracts"]')
       .click('*[data-id="contextMenuItemnewFile"]')
       .pause(1000)
-      .waitForElementVisible('*[data-id$="/blank"] .remixui_items')
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.CONTROL + 'v')
+      .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.CONTROL + 'v')
       .pause(1000)
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME2.txt"]', 7000)
   },
   // file copy paste tests

@@ -82,9 +82,9 @@ module.exports = {
                 .rightClick('li[data-id="treeViewLitreeViewItemscripts"]')
                 .waitForElementPresent('[data-id="contextMenuItemnewFolder')
                 .click('[data-id="contextMenuItemnewFolder')
-                .waitForElementVisible('*[data-id$="/blank"] .remixui_items')
-                .sendKeys('*[data-id$="/blank"] .remixui_items', 'nested')
-                .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+                .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
+                .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', 'nested')
+                .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
                 .findElement('*[data-id="treeViewLitreeViewItemscripts/nested"]', (el) => {
                     console.log((el as any).value.getId())
                     const id = (el as any).value.getId()
