@@ -8,12 +8,5 @@ export class electronConfig extends ElectronPlugin {
       description: 'electronconfig',
     })
     this.methods = []
-    
   }
-
-  onActivation(): void {
-
-  }
-
-
 }
