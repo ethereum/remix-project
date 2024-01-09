@@ -35,7 +35,7 @@ export default (
         }
       },
       {
-        label: 'Open Folder',
+        label: 'Open Folder in New Window',
         accelerator: commandKeys['folder:open'],
         click(item, focusedWindow) {
           execCommand('folder:open', focusedWindow);
