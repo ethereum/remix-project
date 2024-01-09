@@ -65,7 +65,7 @@ module.exports = {
       })
   },
 
-  'Should show and update balance for deployed contract on JavascriptVM #group3': function (browser: NightwatchBrowser) {
+  'Should show and update balance for deployed contract on JavascriptVM #group3 #flaky': function (browser: NightwatchBrowser) {
     let instanceAddress
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
