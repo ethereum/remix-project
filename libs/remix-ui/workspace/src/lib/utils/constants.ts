@@ -89,7 +89,6 @@ export const TEMPLATE_NAMES = {
   'breakthroughLabsUniswapv4Hooks': 'Breakthrough-Labs Uniswapv4Hooks',
   'uniswapV4Periphery': 'Uniswap v4 Periphery',
   'uniswapV4HookBookMultiSigSwapHook': 'Uniswap V4 HookBook MultiSigSwapHook',
-  'ecdsa': 'spartan-ecdsa'
 }
 
 export const TEMPLATE_METADATA: Record<string, TemplateType> = {
