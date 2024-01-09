@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef, useContext, ChangeEvent} from 'react' // eslint-disable-line
 import {FormattedMessage, useIntl} from 'react-intl'
 import {Dropdown} from 'react-bootstrap'
-import {CustomIconsToggle, CustomMenu, CustomToggle, extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
+import {CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
 import {FileExplorer} from './components/file-explorer' // eslint-disable-line
 import {FileSystemContext} from './contexts'
 import './css/remix-ui-workspace.css'
@@ -164,6 +164,17 @@ export function Workspace() {
     global.modal(
       intl.formatMessage({id: 'filePanel.workspace.rename'}),
       renameModalMessage(),
+      intl.formatMessage({id: 'filePanel.ok'}),
+      onFinishRenameWorkspace,
+      intl.formatMessage({id: 'filePanel.cancel'})
+    )
+  }
+
+  const saveSampleCodeWorkspace = () => {
+    const workspaceName = global.plugin.getAvailableWorkspaceName('code-sample')
+    global.modal(
+      intl.formatMessage({id: 'filePanel.workspace.save_workspace'}),
+      renameModalMessage(workspaceName),
       intl.formatMessage({id: 'filePanel.ok'}),
       onFinishRenameWorkspace,
       intl.formatMessage({id: 'filePanel.cancel'})
@@ -878,10 +889,10 @@ export function Workspace() {
     )
   }
 
-  const renameModalMessage = () => {
+  const renameModalMessage = (workspaceName?: string) => {
     return (
       <>
-        <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={currentWorkspace} ref={workspaceRenameInput} className="form-control" />
+        <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={workspaceName || currentWorkspace} ref={workspaceRenameInput} className="form-control" />
       </>
     )
   }
@@ -963,6 +974,14 @@ export function Workspace() {
                         <ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />
                       ) : <FormattedMessage id='filePanel.workspace' />}
                     </label>
+                    {selectedWorkspace && selectedWorkspace.name === 'code-sample' && <CustomTooltip
+                      placement="right"
+                      tooltipId="saveCodeSample"
+                      tooltipClasses="text-nowrap"
+                      tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
+                    >
+                      <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
+                    </CustomTooltip>}
                   </span>                  
                 </div>
                 <div className='mx-2'>
