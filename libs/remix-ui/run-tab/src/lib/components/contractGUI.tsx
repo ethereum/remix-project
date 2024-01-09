@@ -6,7 +6,6 @@ import {ContractGUIProps} from '../types'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import {CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenDate, shortenProxyAddress, unavailableProxyLayoutMsg, upgradeReportMsg} from '@remix-ui/helper'
 import {Dropdown} from 'react-bootstrap'
-import { extractCompilerVersion } from '../actions/account'
 
 const txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
@@ -174,7 +173,6 @@ export function ContractGUI(props: ContractGUIProps) {
   }
 
   const handleActionClick = async () => {
-    extractCompilerVersion(props.runTabState, props.dispatch)
     if (deployState.deploy) {
       const proxyInitializeString = getMultiValsString(initializeFields.current)
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])

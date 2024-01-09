@@ -225,8 +225,6 @@ export type MainnetPrompt = (
   ) => JSX.Element
 
 export interface ContractDropdownProps {
-  stateDispatch: React.Dispatch<any>,
-  runTabState: RunTabState,
   selectedAccount: string,
   exEnvironment: string,
   contracts: {
@@ -286,7 +284,6 @@ export interface RecorderProps {
 }
 
 export interface InstanceContainerProps {
-  state: RunTabState,
   instances: {
     instanceList: {
       contractData?: ContractData,
@@ -373,8 +370,6 @@ export interface ContractGUIProps {
   isValidProxyAddress?: (address: string) => Promise<boolean>,
   isValidProxyUpgrade?: (proxyAddress: string) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: boolean }>,
   modal?: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void
-  dispatch?: React.Dispatch<any>
-  runTabState?: RunTabState
 }
 export interface MainnetProps {
   network: Network,
@@ -402,7 +397,6 @@ export interface UdappProps {
     decodedResponse?: Record<number, any>,
     abi?: any
   },
-  state: RunTabState,
   context: 'memory' | 'blockchain',
   removeInstance: (index: number) => void,
   index: number,
