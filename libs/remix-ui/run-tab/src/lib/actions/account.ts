@@ -101,20 +101,3 @@ export const signMessageWithAddress = (plugin: RunTab, dispatch: React.Dispatch<
     dispatch(displayNotification('Signed Message', modalContent(msgHash, signedData), 'OK', null, () => {}, null))
   })
 }
-
-export const extractCompilerVersion = (runTab: RunTabState, dispatch: React.Dispatch<any>) =>
-{
-  const runtabState = Object.entries(runTab['contracts'] ?? {})
-  const contractList = runtabState[0] ?? {}
-  const contractNameHolder = runtabState[4] ?? ['currentName', '']
-  const contractName = contractNameHolder[1] ?? ''
-  const currentObj = contractList[1] ?? {}
-  const currObjDetails = currentObj[contractName as string] ?? {}
-  const currObjDetailsLength = currObjDetails.length -1
-  const alias = currObjDetails[currObjDetailsLength]['alias'] ?? ''
-  const serializeTarget = currObjDetails[currObjDetailsLength]?.compiler?.data?.contracts[contractName as string][alias]?.metadata ?? ''
-  const obj = (serializeTarget as string).length > 0 ? JSON.parse(serializeTarget) : {}
-  const version = obj?.compiler?.version ?? ''
-  const compilerVersion = `v${version?.split('+commit')[0]}` ?? 'v'
-  dispatch({ type: 'EXTRACT_COMPILER_VERSION', payload: {compilerVersion, runTab }})
-}

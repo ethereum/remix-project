@@ -39,7 +39,6 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           {props.instances.instanceList.map((instance, index) => {
             return (
               <UniversalDappUI
-                state={props.state}
                 key={index}
                 instance={instance}
                 context={props.getContext()}
