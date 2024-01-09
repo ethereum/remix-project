@@ -51,7 +51,7 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
   async showDetails(sentPayload: any) {
     const contractName = Object.entries(sentPayload).find(([key, value]) =>  key )
     await this.call('tabs', 'focus', 'vyperCompilationDetails')
-    this.profile.displayName = `${contractName}`
+    this.profile.displayName = `${contractName[0]}`
     this.payload = sentPayload
     const active = await this.call('theme', 'currentTheme')
     if (active.quality === 'dark') {
