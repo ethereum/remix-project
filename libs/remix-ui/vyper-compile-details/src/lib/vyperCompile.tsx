@@ -58,18 +58,22 @@ export default function VyperCompile({result, theme, themeStyle}: VyperCompilePr
           <Tab eventKey={content.eventKey} title={content.tabHeadingText} as={'span'} key={`${index}-${content.eventKey}`}>
             <div className="d-flex flex-column w-75 justify-content-center mx-auto rounded-2">
               <CopyToClipboard getContent={() => (content.eventKey !== 'abi' ? content.tabPayload : JSON.stringify(result['abi']))}>
-                <Button variant="info" className="copy mt-3 ml-2" data-id={content.eventKey === 'abi' ? 'copy-abi' : ''}>
+                <Button
+                  variant="info"
+                  className="copy mt-3 ml-2"
+                  data-id={content.eventKey === 'abi' ? 'copy-abi' : ''}
+                >
                   <span className="far fa-copy mr-2"></span>
                   {content.tabButtonText()}
                 </Button>
               </CopyToClipboard>
               {content.eventKey === 'abi' ? (
                 <div className="my-3">
-                  <JSONTree
+                  {JSON.stringify(content?.tabPayload)?.length > 1 ? <JSONTree
                     src={content.tabPayload as ABIDescription[]}
                     theme={theme}
                     style={themeStyle}
-                  />
+                  /> : null}
                 </div>
               ) : (
                 <div className="w-100 mt-2 p-2 mx-auto">
