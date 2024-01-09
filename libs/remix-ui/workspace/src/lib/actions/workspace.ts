@@ -2,6 +2,7 @@ import React from 'react'
 import { bufferToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
+import { TemplateType } from '../utils/types'
 import axios, { AxiosResponse } from 'axios'
 import {
   addInputFieldSuccess,
@@ -139,7 +140,8 @@ export const createWorkspace = async (
     return
   }
   await plugin.fileManager.closeAllFiles()
-  const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
+  const metadata = TEMPLATE_METADATA[workspaceTemplateName]
+  const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName, metadata)
   dispatch(createWorkspaceRequest())
   promise.then(async () => {
     dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
@@ -184,7 +186,18 @@ export const createWorkspace = async (
         }
       }
     }
-    if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
+    if (metadata && metadata.type === 'plugin') {      
+      plugin.call('notification', 'toast', 'Please wait while the workspace is being populated with the template.')
+      dispatch(cloneRepositoryRequest())
+      setTimeout(() => {
+        plugin.call(metadata.name, metadata.endpoint, ...metadata.params).then(() => {
+          dispatch(cloneRepositorySuccess())
+        }).catch((e) => {
+          dispatch(cloneRepositorySuccess())
+          plugin.call('notification', 'toast', 'error adding template ' + e.message || e)
+        })  
+      }, 5000)      
+    } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
     cb && cb(null, workspaceName)
     if (isGitRepo) {
       await checkGit()
@@ -204,12 +217,11 @@ export const createWorkspace = async (
   return promise
 }
 
-export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault') => {
-  const metadata = TEMPLATE_METADATA[template]
+export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault', metadata?: TemplateType) => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
   if ((await workspaceExists(workspaceName)) && template === 'remixDefault') throw new Error('workspace already exists')
-  else if (metadata) {
+  else if (metadata && metadata.type === 'git') {
     await plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, workspaceName)
   } else {
     const workspaceProvider = plugin.fileProviders.workspace

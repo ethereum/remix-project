@@ -774,13 +774,19 @@ export function Workspace() {
               {intl.formatMessage({id: 'filePanel.rln'})}
             </option>
           </optgroup>
-          <optgroup style={{fontSize: 'medium'}} label="Uniswap">
+          <optgroup style={{fontSize: 'medium'}} label="Uniswap V4">
             <option style={{fontSize: 'small'}} value="uniswapV4Periphery">
               {intl.formatMessage({id: 'filePanel.uniswapV4Periphery'})}
             </option>
             <option style={{fontSize: 'small'}} value="breakthroughLabsUniswapv4Hooks">
               {intl.formatMessage({id: 'filePanel.breakthroughLabsUniswapv4Hooks'})}
-            </option>           
+            </option> 
+
+            <option style={{fontSize: 'small'}} value="uniswapV4HookBookMultiSigSwapHook">
+              {intl.formatMessage({id: 'filePanel.uniswapV4HookBookMultiSigSwapHook'})}
+            </option>
+
+
           </optgroup>
         </select>
         <div id="ozcustomization" data-id="ozCustomization" ref={displayOzCustomRef} style={{display: 'none'}} className="mb-2">
