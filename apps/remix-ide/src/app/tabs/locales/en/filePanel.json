@@ -112,7 +112,6 @@
   "filePanel.semaphore": "Semaphore",
   "filePanel.hashchecker": "Hash Checker",
   "filePanel.rln": "Rate-Limiting Nullifier",
-  "filePanel.ecdsa": "ECDSA (Elliptic Curve Digital Signature Algorithm)",  
   "filePanel.breakthroughLabsUniswapv4Hooks": "Breakthrough-Labs Hooks",
   "filePanel.uniswapV4Periphery": "v4 Periphery",
   "filePanel.uniswapV4HookBookMultiSigSwapHook": "HookBook MultiSigSwapHook",

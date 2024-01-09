@@ -784,9 +784,6 @@ export function Workspace() {
             <option style={{fontSize: 'small'}} value="rln">
               {intl.formatMessage({id: 'filePanel.rln'})}
             </option>
-            <option style={{fontSize: 'small'}} value="ecdsa">
-              {intl.formatMessage({id: 'filePanel.ecdsa'})}
-            </option>
           </optgroup>
           <optgroup style={{fontSize: 'medium'}} label="Uniswap V4">
             <option style={{fontSize: 'small'}} value="uniswapV4Periphery">
