@@ -247,8 +247,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
               () => { }
             )
           } else {
-            console.log('createNewFile', joinPath(parentFolder, content))
-            console.log('createNewFolder', state.focusEdit)
             state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
             props.dispatchRemoveInputField(parentFolder)
           }
