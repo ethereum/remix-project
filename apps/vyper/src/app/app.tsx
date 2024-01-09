@@ -76,7 +76,7 @@ const App: React.FC = () => {
         <div className="px-3 pt-3 mb-3 w-100">
           <CustomTooltip
             placement="bottom"
-            tooltipText="Clone vyper examples. Switch to the Vyper workspace to see the examples."
+            tooltipText="Clone Vyper examples. Switch to the File Explorer to see the examples."
           >
             <Button data-id="add-repository" className="w-100 text-dark bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
             Clone Vyper examples repository
