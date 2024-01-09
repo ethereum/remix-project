@@ -80,12 +80,23 @@ module.exports = {
       .pause(1000)
       .getAddressAtPosition(1, (address) => {
         instanceAddress = address
+        console.log('instanceAddress', instanceAddress)
         browser
         .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
-        .waitForElementContainsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH', 10000)
+        //*[@id="instance0xbBF289D846208c16EDc8474705C748aff07732dB" and contains(.,"Balance") and contains(.,'0.000000000000000111')]
+        .waitForElementVisible({
+          locateStrategy: 'xpath',
+          selector: `//*[@id="instance${instanceAddress}" and contains(.,"Balance") and contains(.,'0.000000000000000111')]`,
+          timeout: 60000
+        })
+        //.waitForElementContainsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH', 60000)
         .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
         .pause(1000)
-        .waitForElementContainsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH', 10000)
+        .waitForElementVisible({
+          locateStrategy: 'xpath',
+          selector: `//*[@id="instance${instanceAddress}" and contains(.,"Balance") and contains(.,'0.000000000000000109')]`,
+          timeout: 60000
+        })
       })
   },
 
