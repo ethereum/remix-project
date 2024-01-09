@@ -32,7 +32,7 @@ export class TxRunnerWeb3 {
         tx.type = '0x2'
       } else {
         tx.gasPrice = toHex(BigInt(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei')))
-        tx.type = '0x1'
+        // tx.type = '0x1'
       }
     }
 

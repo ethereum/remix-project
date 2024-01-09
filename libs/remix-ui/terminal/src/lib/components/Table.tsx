@@ -36,6 +36,7 @@ const showTable = (opts, showTableHash) => {
     stringified = typeConversion.stringify(opts.logs.decoded)
   }
   const val = opts.val != null ? typeConversion.toInt(opts.val) : 0
+  const gasInt = opts.gas != null ? typeConversion.toInt(opts.gas) : 0
   return (
     <table className={`mt-1 mb-2 mr-4  align-self-center ${showTableHash.includes(opts.hash) ? 'active' : ''}`} id="txTable" data-id={`txLoggerTable${opts.hash}`}>
       <tbody>
@@ -119,7 +120,7 @@ const showTable = (opts, showTableHash) => {
               gas
             </td>
             <td className="remix_ui_terminal_td" data-id={`txLoggerTableGas${opts.hash}`} data-shared={`pair_${opts.hash}`}>
-              {opts.gas} gas
+              {gasInt} gas
               <CopyToClipboard content={opts.gas} />
             </td>
           </tr>
@@ -194,7 +195,7 @@ const showTable = (opts, showTableHash) => {
         {opts.val ? (
           <tr className="remix_ui_terminal_tr">
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
-              val
+              value
             </td>
             <td className="remix_ui_terminal_td" data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
               {val} wei
