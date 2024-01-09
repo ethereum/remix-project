@@ -22,7 +22,7 @@ export function setProvider (web3, url) {
 
 export function web3DebugNode (network) {
   const web3DebugNodes = {
-    Main: 'https://go.getblock.io/56f8bc5187aa4ac696348f67545acf38',
+    Main: 'https://eth-mainnet.g.alchemy.com/v2/7ivXx83e4oFEWUZDZy6UB5xPdIBrtQyy', // https://go.getblock.io/56f8bc5187aa4ac696348f67545acf38
     Holesky: 'https://go.getblock.io/7b91c53809fb49c787087e02ef84820b',
     Rinkeby: 'https://remix-rinkeby.ethdevops.io',
     Ropsten: 'https://remix-ropsten.ethdevops.io',

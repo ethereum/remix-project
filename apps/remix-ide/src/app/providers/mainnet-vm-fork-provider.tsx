@@ -18,7 +18,7 @@ export class MainnetForkVMProvider extends BasicVMProvider {
     )
     this.blockchain = blockchain
     this.fork = 'shanghai'
-    this.nodeUrl = 'https://go.getblock.io/56f8bc5187aa4ac696348f67545acf38'
+    this.nodeUrl = 'https://eth-mainnet.g.alchemy.com/v2/7ivXx83e4oFEWUZDZy6UB5xPdIBrtQyy'
     this.blockNumber = 'latest'
   }
 
