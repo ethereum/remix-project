@@ -13,6 +13,7 @@ import ToggleButton from 'react-bootstrap/ToggleButton'
 import Button from 'react-bootstrap/Button'
 
 import './app.css'
+import { CustomTooltip } from '@remix-ui/helper'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -30,7 +31,7 @@ const App: React.FC = () => {
   const [output, setOutput] = useState<any>({})
   const [state, setState] = useState<AppState>({
     status: 'idle',
-    environment: 'local',
+    environment: 'remote',
     localUrl: 'http://localhost:8000/'
   })
 
@@ -71,22 +72,18 @@ const App: React.FC = () => {
 
   return (
     <main id="vyper-plugin">
-      <header>
-        <div className="title">
-          <img src={'assets/logo.svg'} alt="Vyper logo" />
-          <h4>yper Compiler</h4>
-        </div>
-        <a rel="noopener noreferrer" href="https://github.com/ethereum/remix-project/tree/master/apps/vyper" target="_blank">
-          <i className="fab fa-github"></i>
-        </a>
-      </header>
       <section>
-        <div className="px-3 w-100">
-          <Button data-id="add-repository" className="w-100 text-dark bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
+        <div className="px-3 pt-3 mb-3 w-100">
+          <CustomTooltip
+            placement="bottom"
+            tooltipText="Clone Vyper examples. Switch to the File Explorer to see the examples."
+          >
+            <Button data-id="add-repository" className="w-100 text-dark bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
             Clone Vyper examples repository
-          </Button>
+            </Button>
+          </CustomTooltip>
         </div>
-        <ToggleButtonGroup name="remote" onChange={setEnvironment} type="radio" value={state.environment}>
+        <ToggleButtonGroup name="remote" className="mb-3" onChange={setEnvironment} type="radio" value={state.environment}>
           <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
             Remote Compiler v0.3.10
           </ToggleButton>
@@ -95,8 +92,7 @@ const App: React.FC = () => {
           </ToggleButton>
         </ToggleButtonGroup>
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
-        <WarnRemote environment={state.environment} />
-        <div className="px-3 w-100" id="compile-btn">
+        <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
           <CompilerButton
             compilerUrl={compilerUrl()}
             contract={contract}
