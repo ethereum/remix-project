@@ -57,6 +57,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         if (preloadPlugins) {
           initModules(browser, () => {
             browser
+              .pause(4000)
               .clickLaunchIcon('solidity')
               .waitForElementVisible('[for="autoCompile"]')
               .click('[for="autoCompile"]')

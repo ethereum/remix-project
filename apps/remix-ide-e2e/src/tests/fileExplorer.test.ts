@@ -112,6 +112,7 @@ module.exports = {
       .waitForElementVisible('[data-id="treeViewLitreeViewItemeditor.test.js"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemfileExplorer.test.js"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemgeneralSettings.test.js"]')
+      .end()
   },
 
   'Should add deep tree with buttons #group3': function (browser: NightwatchBrowser) {
@@ -157,6 +158,7 @@ module.exports = {
     .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', 'deep6')
     .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
     .waitForElementVisible('*[data-id="treeViewLitreeViewItemdeep5/deep6"]')
+    .end()
   }
 
 
