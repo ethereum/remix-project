@@ -8,6 +8,4 @@ export class electronTemplates extends ElectronPlugin {
       description: 'templates',
     })
   }
-  onActivation(): void {
-  } 
 }
