@@ -547,11 +547,9 @@ export const uploadFolder = async (target, targetFolder: string, cb?: (err: Erro
 }
 
 export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[]> | undefined => {
-  console.log('getWorkspaces')
   try {
     const workspaces: { name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-      console.log('workspacesPath', workspacesPath)
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         
         if (error) {
@@ -587,7 +585,6 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
         ).then((workspacesList) => resolve(workspacesList))
       })
     })
-    console.log('workspaces', workspaces)
     await plugin.setWorkspaces(workspaces)
     return workspaces
   } catch (e) {}
