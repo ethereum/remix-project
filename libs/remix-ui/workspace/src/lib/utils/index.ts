@@ -30,7 +30,7 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: '',
   group: 0
-},{
+}, {
   id: 'deleteAll',
   name: 'Delete All',
   type: ['folder', 'file'],
@@ -73,7 +73,7 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: '',
   group: 3
-},{
+}, {
   id: 'pushChangesToGist',
   name: 'Push changes to gist',
   type: ['gist'],
@@ -125,23 +125,24 @@ export const contextMenuActions: MenuItems = [{
 }]
 
 export const fileKeySort = (fileTree: any) => {
-  const directories = Object.keys(fileTree).filter((key: string) => fileTree[key].isDirectory)
+  const directories = Object.keys(fileTree).filter((key: string) => !key.includes('....blank') && fileTree[key].isDirectory)
 
-  // sort case insensitive
   directories.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
 
-  const fileKeys = Object.keys(fileTree).filter((key: string) => !fileTree[key].isDirectory)
-  // sort case insensitive
+  const fileKeys = Object.keys(fileTree).filter((key: string) => !key.includes('....blank') && !fileTree[key].isDirectory)
+
   fileKeys.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
+  // find the input elementfileTree
 
-  // find the children with a blank name
-  //const blankChildren = Object.keys(children).filter((key: string) => children[key].name === '')
-
+  const blank = Object.keys(fileTree).find((key: string) => key.includes('....blank'))
+  if (fileTree[blank]) {
+    fileKeys.push(blank)
+  }
   const keys = [...directories, ...fileKeys]
   // rebuild the fileTree using the keys
-  const newFileTree = {}
+  const newFileTree: FileType[] = []
   keys.forEach((key: string) => {
-    newFileTree[key] = fileTree[key]
+    newFileTree.push(fileTree[key])
   })
   return newFileTree
 }

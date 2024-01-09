@@ -645,7 +645,7 @@ export function Workspace() {
 
     await global.dispatchAddInputField(parentFolder, 'file')
     global.dispatchHandleExpandPath(expandPath)
-    editModeOn(parentFolder + '/blank', 'file', true)
+    editModeOn(parentFolder + '/....blank', 'file', true)
   }
 
   const handleNewFolderInput = async (parentFolder?: string) => {
@@ -655,7 +655,7 @@ export function Workspace() {
 
     await global.dispatchAddInputField(parentFolder, 'folder')
     global.dispatchHandleExpandPath(expandPath)
-    editModeOn(parentFolder + '/blank', 'folder', true)
+    editModeOn(parentFolder + '/....blank', 'folder', true)
   }
 
   const toggleDropdown = (isOpen: boolean) => {

@@ -276,8 +276,9 @@ export const createNewFile = async (path: string, rootDir: string) => {
   if (!createFile) {
     return dispatch(displayPopUp('Failed to create file ' + newName))
   } else {
-    const path = newName.indexOf(rootDir + '/') === 0 ? newName.replace(rootDir + '/', '') : newName
-
+    let path = newName.indexOf(rootDir + '/') === 0 ? newName.replace(rootDir + '/', '') : newName
+    // remove leading slash
+    path = path.indexOf('/') === 0 ? path.slice(1) : path
     await fileManager.open(path)
     setFocusElement([{ key: path, type: 'file' }])
   }
@@ -297,6 +298,8 @@ export const createNewFolder = async (path: string, rootDir: string) => {
   }
   await fileManager.mkdir(dirName)
   path = path.indexOf(rootDir + '/') === 0 ? path.replace(rootDir + '/', '') : path
+  // remove leading slash
+  path = path.indexOf('/') === 0 ? path.slice(1) : path
   dispatch(focusElement([{ key: path, type: 'folder' }]))
 }
 

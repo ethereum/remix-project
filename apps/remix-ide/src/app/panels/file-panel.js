@@ -250,6 +250,8 @@ module.exports = class Filepanel extends ViewPlugin {
 
   isExpanded(path) {
     if(path === '/') return true
+    // remove leading slash
+    path = path.replace(/^\/+/, '')
     return this.expandPath.includes(path)
   }
 
