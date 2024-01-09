@@ -27,7 +27,7 @@ export default function useOnScreen(ref: RefObject<HTMLElement>) {
 
 interface FlatTreeProps {
   files: { [x: string]: Record<string, FileType> },
-  flatTree: { [x: string]: FileType },
+  flatTree: FileType[],
   expandPath: string[],
   focusEdit: { element: string; type: string; isNew: boolean; lastEdit: string }
   editModeOff: (content: string) => void
@@ -202,9 +202,8 @@ export const FlatTree = (props: FlatTreeProps) => {
 
   useEffect(() => {
     if (focusEdit && focusEdit.element) {
-
-      const index = flatTree[focusEdit.element] && Object.keys(flatTree).indexOf(focusEdit.element)
-      flatTree[focusEdit.element] && virtuoso.current.scrollIntoView({
+      const index = flatTree.findIndex((item) => item.path === focusEdit.element)
+      index && virtuoso.current.scrollIntoView({
         index,
         align: 'center'
       })

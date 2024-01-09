@@ -5,7 +5,6 @@ class HideToolTips extends EventEmitter {
   command(this: NightwatchBrowser) {
     browser
       .perform((done) => {
-        //if (hideToolTips) {
         browser.execute(function () {
           // hide tooltips
           function addStyle(styleString) {
