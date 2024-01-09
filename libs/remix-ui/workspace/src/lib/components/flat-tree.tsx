@@ -108,7 +108,7 @@ export const FlatTree = (props: FlatTreeProps) => {
 
   const onDragStart = async (event: SyntheticEvent) => {
     const target = await getEventTarget(event)
-    setDragSource(flatTree[target.path])
+    setDragSource(flatTree.find((item) => item.path === target.path))
     setIsDragging(true)
   }
 
@@ -126,7 +126,7 @@ export const FlatTree = (props: FlatTreeProps) => {
   }
 
   const getFlatTreeItem = (path: string) => {
-    return flatTree[path]
+    return flatTree.find((item) => item.path === path)
   }
 
   const getFileStateClasses = (file: FileType) => {
