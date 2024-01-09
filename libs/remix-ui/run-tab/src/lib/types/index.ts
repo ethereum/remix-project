@@ -103,7 +103,8 @@ export interface RunTabState {
   remixdActivated: boolean,
   proxy: {
     deployments: { address: string, date: string, contractName: string }[]
-  }
+  },
+  compilerVersion?: string
 }
 
 export interface SettingsProps {
