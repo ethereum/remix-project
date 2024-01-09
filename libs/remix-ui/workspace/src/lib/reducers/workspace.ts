@@ -899,10 +899,10 @@ const flattenTree = (files, expandPath: string[]) =>{
     flatTree.push(file)
     
     if (file.isDirectory && file.child && expandPath && expandPath.find((path) => path === file.path || path.startsWith(file.path + '/')) ) {
-        const sorted = fileKeySort(file.child)
-        Object.keys(sorted).map((key) => {
-          mapChild(sorted[key])
-        })
+      const sorted = fileKeySort(file.child)
+      Object.keys(sorted).map((key) => {
+        mapChild(sorted[key])
+      })
     }
   }
   if(files){
