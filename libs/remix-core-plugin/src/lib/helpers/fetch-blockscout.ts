@@ -12,16 +12,6 @@ export const fetchContractFromBlockscout = async (plugin, endpoint, contractAddr
         if (!data.result[0].SourceCode || data.result[0].SourceCode === '') {
           throw new Error(`contract not verified on Blockscout ${endpoint} network`)
         }
-        // if (data.result[0].AdditionalSources
-        //   && Array.isArray(data.result[0].AdditionalSources)
-        //   && data.result[0].AdditionalSources.length > 0) {
-        //     let sourceCode = {
-        //       data.result[0].FileName
-        //     }
-        //   }
-        // if (data.result[0].SourceCode.startsWith('{')) {
-        //   data.result[0].SourceCode = JSON.parse(data.result[0].SourceCode.replace(/(?:\r\n|\r|\n)/g, '').replace(/^{{/, '{').replace(/}}$/, '}'))
-        // }
       }
     } else throw new Error('unable to retrieve contract data ' + data.message)
   } catch (e) {
