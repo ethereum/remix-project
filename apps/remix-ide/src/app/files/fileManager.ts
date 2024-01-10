@@ -251,7 +251,7 @@ class FileManager extends Plugin {
       throw new Error(e)
     }
   }
-  
+
   /**
    * Set the content of a specific file, does nnot rewrite file if it exists but creates a new unique name
    * @param {string} path path of the file
@@ -523,7 +523,7 @@ class FileManager extends Plugin {
     this._deps.electronExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.electronExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.electronExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
-    
+
     this.getCurrentFile = this.file
     this.getFile = this.readFile
     this.getFolder = this.readdir
@@ -726,7 +726,7 @@ class FileManager extends Plugin {
       }
       try {
         // This make sure dependencies are loaded in the editor context.
-        // This ensure monaco is aware of deps artifacts, so it can provide basic features like "go to" symbols.   
+        // This ensure monaco is aware of deps artifacts, so it can provide basic features like "go to" symbols.
         await this.editor.handleTypeScriptDependenciesOf(file, content, path => this.readFile(path), path => this.exists(path))
       } catch (e) {
         console.log('unable to handle TypeScript dependencies of', file)
@@ -970,7 +970,7 @@ class FileManager extends Plugin {
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
         return false
-      } 
+      }
       return true
     } catch (e) {
       console.log(e)
@@ -1033,7 +1033,7 @@ class FileManager extends Plugin {
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
         return false
-      } 
+      }
       await this.inDepthCopy(src, dest, dirName)
       await this.remove(src)
 

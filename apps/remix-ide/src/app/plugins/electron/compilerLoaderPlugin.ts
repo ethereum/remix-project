@@ -55,7 +55,7 @@ export class compilerLoaderPluginDesktop extends ElectronPlugin {
   }
 
   async onActivation(): Promise<void> {
-  
+
     this.on('solidity', 'loadingCompiler', async (url) => {
       await this.call('compilerloader', 'downloadCompiler', url)
     })

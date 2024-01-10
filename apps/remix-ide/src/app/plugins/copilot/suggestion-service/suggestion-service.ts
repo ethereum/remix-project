@@ -77,7 +77,7 @@ export class SuggestionService {
     })
   }
 
-  suggest (content: string, options: SuggestOptions)  {
+  suggest (content: string, options: SuggestOptions) {
     return new Promise((resolve, reject) => {
       if (this.current) return reject(new Error('already running'))
       const timespan = Date.now()

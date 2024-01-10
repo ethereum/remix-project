@@ -48,7 +48,7 @@ export class VMProvider {
             stamps[msg.data.stamp].reject(msg.data.error)
           } else {
             stamps[msg.data.stamp].resolve(msg.data.result)
-          }          
+          }
         } else if (msg.data.cmd === 'initiateResult') {
           if (!msg.data.error) {
             this.provider = {
@@ -57,7 +57,7 @@ export class VMProvider {
                   const stamp = Date.now() + incr
                   incr++
                   stamps[stamp] = { callback, resolve, reject }
-                  this.worker.postMessage({ cmd: 'sendAsync', query, stamp })              
+                  this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
                 })
               }
             }

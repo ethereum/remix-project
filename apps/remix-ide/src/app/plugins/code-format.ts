@@ -211,7 +211,6 @@ export class CodeFormat extends Plugin {
       }
 
 
-
       // merge options
       if (parsed) {
         options = {

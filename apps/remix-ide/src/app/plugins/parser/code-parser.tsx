@@ -524,8 +524,8 @@ export class CodeParser extends Plugin {
       nodeDefinition.parser = parserNodeDefinition
     }
 
-    /* if the AST node name & type is the same as the parser node name & type, 
-    / then we can assume that the AST node is the definition, 
+    /* if the AST node name & type is the same as the parser node name & type,
+    / then we can assume that the AST node is the definition,
     / because the parser will always return most nodes it can find even with an error in the code
     */
 

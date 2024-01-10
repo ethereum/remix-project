@@ -103,13 +103,13 @@ export default class CodeParserCompiler {
       if (data.sources && Object.keys(data.sources).length === 0) return
       this.plugin.compilerAbstract = new CompilerAbstract('soljson', data, source, input)
       this.errorState = false
-      
+
       this.plugin.nodeIndex = {
         declarations: {},
         flatReferences: {},
         nodesPerFile: {},
       }
-      
+
 
       this.plugin._buildIndex(data, source)
       // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository
@@ -120,7 +120,7 @@ export default class CodeParserCompiler {
       await this.plugin.gasService.showGasEstimates()
       this.plugin.emit('astFinished')
     }
-        
+
     this.compiler = new Compiler((url, cb) => this.plugin.call('contentImport', 'resolveAndSave', url, undefined).then((result) => cb(null, result)).catch((error) => cb(error.message)))
     this.compiler.event.register('compilationFinished', this.onAstFinished)
   }
@@ -128,8 +128,8 @@ export default class CodeParserCompiler {
   // COMPILER
 
   /**
-     * 
-     * @returns 
+     *
+     * @returns
      */
   async compile() {
     try {
@@ -149,7 +149,7 @@ export default class CodeParserCompiler {
         } else {
           this.compiler.set('remappings', [])
         }
-        
+
         const configFileContent = {
           "language": "Solidity",
           "settings": {

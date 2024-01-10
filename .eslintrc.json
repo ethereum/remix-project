@@ -57,7 +57,10 @@
         "indent": ["error", 2],
         "keyword-spacing": ["error", { "after": true, "before": true }],
         "array-bracket-spacing": ["error", "never"],
-        "object-curly-spacing": ["error", "always", { "arraysInObjects": false }]
+        "object-curly-spacing": ["error", "always", { "arraysInObjects": false }],
+        "no-trailing-spaces": "error",
+        "no-multi-spaces": "error",
+        "no-multiple-empty-lines": "error" 
       }
     },
     {

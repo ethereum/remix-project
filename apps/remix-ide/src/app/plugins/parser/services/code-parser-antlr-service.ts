@@ -117,8 +117,8 @@ export default class CodeParserAntlrService {
   /**
      * Tries to parse the current file or the given text and returns the AST
      * If the parsing fails it returns the last successful AST for this file
-     * @param text 
-     * @returns 
+     * @param text
+     * @returns
      */
   async setCurrentFileAST(text: string | null = null) {
     try {
@@ -149,7 +149,7 @@ export default class CodeParserAntlrService {
   /**
     * Lists the AST nodes from the current file parser
     * These nodes need to be changed to match the node types returned by the compiler
-    * @returns 
+    * @returns
     */
   async listAstNodes() {
     this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
@@ -203,9 +203,9 @@ export default class CodeParserAntlrService {
 
 
   /**
-     * 
-     * @param ast 
-     * @returns 
+     *
+     * @param ast
+     * @returns
      */
   async getLastNodeInLine(ast: string) {
     let lastNode: any

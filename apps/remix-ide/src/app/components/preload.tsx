@@ -177,8 +177,8 @@ export const Preload = (props: any) => {
         ) : null}
         {supported && !error && !showDownloader ? (
           <div>
-            <div className='text-center'>              
-              <i className="fas fa-spinner fa-spin fa-2x"></i>              
+            <div className='text-center'>
+              <i className="fas fa-spinner fa-spin fa-2x"></i>
             </div>
             { tip && <div className='remix_tips text-center mt-3'>
               <div><b>DID YOU KNOW</b></div>

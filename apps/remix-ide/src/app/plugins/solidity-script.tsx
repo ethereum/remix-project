@@ -81,20 +81,20 @@ export class SolidityScript extends Plugin {
       this.call('terminal', 'logHtml', e.message)
       return
     }
-    
+
     tx = {
       from: accounts[0],
       to: receipt.contractAddress,
       data: '0x69d4394b' // function remixRun() public
     }
-    let receiptCall 
-    
+    let receiptCall
+
     try {
       receiptCall = await web3.eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
     } catch (e) {
       this.call('terminal', 'logHtml', e.message)
       return
-    }   
+    }
 
     const hhlogs = await web3.remix.getHHLogsForTx(receiptCall.transactionHash)
 

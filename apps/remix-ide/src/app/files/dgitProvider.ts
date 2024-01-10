@@ -189,7 +189,7 @@ class DGitProvider extends Plugin {
           return newmodule.name === module.name
         })
       })
-  
+
       for (const module of toRemove) {
         const path = (await this.getGitConfig(module.path)).dir
         if (await window.remixFileSystem.exists(path)) {
@@ -268,7 +268,6 @@ class DGitProvider extends Plugin {
   }
 
   async currentbranch(config) {
-
 
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
@@ -530,7 +529,7 @@ class DGitProvider extends Plugin {
             this.call('terminal', 'logHtml', `Cloning submodule ${dir}...`)
             await git.clone(cmd)
             this.call('terminal', 'logHtml', `Cloned successfully submodule ${dir}...`)
-            
+
             const commitHash = await git.resolveRef({
               ...await this.getGitConfig(currentDir),
               ref: 'HEAD'
@@ -558,7 +557,7 @@ class DGitProvider extends Plugin {
                 ...await this.getGitConfig(dir),
                 ref: result[0]
               })
-              
+
               const log = await git.log({
                 ...await this.getGitConfig(dir),
               })
@@ -567,7 +566,7 @@ class DGitProvider extends Plugin {
                 this.call('terminal', 'log', {
                   type: 'error',
                   value: `Could not checkout submodule to ${result[0]}`
-                })} else {              
+                })} else {
                 this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
               }
             }

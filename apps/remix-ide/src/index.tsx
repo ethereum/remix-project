@@ -17,10 +17,10 @@ import { createRoot } from 'react-dom/client'
   } catch (e) {}
   const theme = new ThemeModule()
   theme.initTheme()
-  
+
   const container = document.getElementById('root');
   const root = createRoot(container)
-  if (container) {    
+  if (container) {
     root.render(<Preload root={root} />);
-  }  
+  }
 })()

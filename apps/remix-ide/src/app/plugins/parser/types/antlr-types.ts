@@ -674,8 +674,6 @@ export const astNodeTypes = [
 ] as const
 
 
-
-
 export const binaryOpValues = [
   '+',
   '-',
@@ -724,9 +722,5 @@ export const unaryOpValues = [
   '!',
 ] as const
 export type UnaryOp = typeof unaryOpValues[number]
-
-
-
-
 
 

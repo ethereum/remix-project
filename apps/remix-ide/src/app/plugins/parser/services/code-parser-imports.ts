@@ -37,9 +37,9 @@ export default class CodeParserImports {
           return !x.includes('mock')
         } else {
           return true
-        } 
+        }
       })
-            
+
     // get unique first words of the values in the array
     this.data.packages = [...new Set(this.data.modules.map(x => x.split('/')[0]))]
   }
@@ -79,7 +79,7 @@ export default class CodeParserImports {
         files = await this.plugin.call('fileManager', 'readdir', dir)
       }
     } catch (e) {}
-        
+
     const fileArray = this.normalize(files)
     for (const fi of fileArray) {
       if (fi) {
