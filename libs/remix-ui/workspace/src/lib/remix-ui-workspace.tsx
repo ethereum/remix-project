@@ -147,7 +147,7 @@ export function Workspace() {
     global.modal(
       intl.formatMessage({id: 'filePanel.workspace.rename'}),
       renameModalMessage(),
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({id: 'filePanel.save'}),
       onFinishRenameWorkspace,
       intl.formatMessage({id: 'filePanel.cancel'})
     )
@@ -158,7 +158,7 @@ export function Workspace() {
     global.modal(
       intl.formatMessage({id: 'filePanel.workspace.save_workspace'}),
       renameModalMessage(workspaceName),
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({id: 'filePanel.save'}),
       onFinishRenameWorkspace,
       intl.formatMessage({id: 'filePanel.cancel'})
     )
@@ -874,9 +874,10 @@ export function Workspace() {
 
   const renameModalMessage = (workspaceName?: string) => {
     return (
-      <>
+      <div className='d-flex flex-column'>
+        <label><FormattedMessage id="filePanel.name" /></label>
         <input type="text" data-id="modalDialogCustomPromptTextRename" defaultValue={workspaceName || currentWorkspace} ref={workspaceRenameInput} className="form-control" />
-      </>
+      </div>
     )
   }
 
