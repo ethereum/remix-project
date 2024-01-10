@@ -55,9 +55,16 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const electrOnProvider = filePanelPlugin.fileProviders.electron
     const params = queryParams.get() as UrlParametersType
     let editorMounted = false
+    let filePathToOpen = null
     let workspaces = []
     plugin.on('editor', 'editorMounted', async () => {
       editorMounted = true
+      if(filePathToOpen){
+        setTimeout(async () => {
+          await plugin.fileManager.openFile(filePathToOpen)
+          filePathToOpen = null
+        }, 1000)
+      }
     })
     if (!(Registry.getInstance().get('platform').api.isDesktop())) {
       workspaces = await getWorkspaces() || []
@@ -73,12 +80,12 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       const filePath = await loadWorkspacePreset('code-template')
-      plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {            
+      plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {        
         if (editorMounted){
           setTimeout(async () => {
-            await plugin.fileManager.openFile(filePath)}, 2000)
+            await plugin.fileManager.openFile(filePath)}, 1000)
         }else{
-          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+          filePathToOpen = filePath
         }
       })
     } else if (params.address) {
@@ -127,9 +134,9 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {            
             if (editorMounted){
               setTimeout(async () => {
-                await plugin.fileManager.openFile(filePath)}, 2000)
+                await plugin.fileManager.openFile(filePath)}, 1000)
             }else{
-              plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+              filePathToOpen = filePath
             }
           })
           plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '' : 's'} from ${foundOnNetworks.join(',')} network${foundOnNetworks.length === 1 ? '' : 's'} of Etherscan for contract address ${contractAddress} !!`)
