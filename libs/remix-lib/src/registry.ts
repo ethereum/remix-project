@@ -3,7 +3,7 @@ type registryEntry = {
     name: string
 }
 
-export default class Registry {
+export class Registry {
   private static instance: Registry;
   private state: any
 
@@ -29,7 +29,7 @@ export default class Registry {
     return server
   }
 
-  public get (name: string) {
+  public get (name: string): registryEntry {
     const state = this.state[name]
     if (!state) return
     const server = state.server

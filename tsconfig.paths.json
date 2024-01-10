@@ -159,7 +159,11 @@
             ],
             "@remixproject/walletconnect-plugin": [
                 "apps/walletconnect/src/index.ts"
-            ]
+            ],
+            "@remix-ui/xterm": [
+                "libs/remix-ui/xterm/src/index.ts"
+            ],
+
         }
     }
 }

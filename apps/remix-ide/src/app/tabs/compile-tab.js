@@ -21,7 +21,7 @@ const profile = {
   documentation: 'https://remix-ide.readthedocs.io/en/latest/compile.html',
   version: packageJson.version,
   maintainedBy: 'Remix',
-  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile', 'getCompilerState', 'getCompilerParameters', 'getCompiler']
+  methods: ['getCompilationResult', 'compile', 'compileWithParameters', 'setCompilerConfig', 'compileFile', 'getCompilerState', 'getCompilerQueryParameters', 'getCompiler']
 }
 
 // EditorApi:
@@ -138,7 +138,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     return this.compileTabLogic.compiler
   }
 
-  getCompilerParameters () {
+  getCompilerQueryParameters () {
     const params = this.queryParams.get()
     params.evmVersion = params.evmVersion === 'null' || params.evmVersion === 'undefined' ? null : params.evmVersion
     params.optimize = (params.optimize === 'false' || params.optimize === null || params.optimize === undefined) ? false : params.optimize
@@ -146,7 +146,7 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
     return params
   }
 
-  setCompilerParameters (params) {
+  setCompilerQueryParameters (params) {
     this.queryParams.update(params)
   }
 

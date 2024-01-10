@@ -3,7 +3,7 @@ import React from 'react' // eslint-disable-line
 import {ViewPlugin} from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import {RemixUiSettings} from '@remix-ui/settings' //eslint-disable-line
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 import {PluginViewWrapper} from '@remix-ui/helper'
 declare global {
   interface Window {

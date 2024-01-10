@@ -28,7 +28,6 @@ export const ResultItem = (props: ResultItemProps) => {
 
   useEffect(() => {
     if (props.file.forceReload) {
-      console.log('force reload')
       clearTimeout(reloadTimeOut.current)
       clearTimeout(loadTimeout.current)
       subscribed.current = true

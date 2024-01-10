@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "strictPropertyInitialization": false,
+    "strict": true,
+    "outDir": "build",
+    "rootDir": "./src/",
+    "noEmitOnError": true,
+    "typeRoots": ["node_modules/@types", "./types"]
+  }
+}

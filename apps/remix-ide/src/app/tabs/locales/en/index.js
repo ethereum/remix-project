@@ -10,6 +10,7 @@ import terminalJson from './terminal.json';
 import udappJson from './udapp.json';
 import solidityUnitTestingJson from './solidityUnitTesting.json';
 import permissionHandlerJson from './permissionHandler.json';
+import electronJson from './electron.json';
 import solUmlGenJson from './solUmlGen.json'
 import remixAppJson from './remixApp.json'
 import remixUiTabsJson from './remixUiTabs.json'
@@ -28,6 +29,7 @@ export default {
   ...udappJson,
   ...solidityUnitTestingJson,
   ...permissionHandlerJson,
+  ...electronJson,
   ...solUmlGenJson,
   ...remixAppJson,
   ...remixUiTabsJson,

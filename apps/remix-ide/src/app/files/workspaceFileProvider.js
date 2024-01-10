@@ -1,7 +1,7 @@
 'use strict'
 
 const EventManager = require('events')
-const FileProvider = require('./fileProvider')
+import FileProvider from "./fileProvider"
 
 class WorkspaceFileProvider extends FileProvider {
   constructor () {

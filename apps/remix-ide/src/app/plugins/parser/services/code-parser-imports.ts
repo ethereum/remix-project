@@ -1,22 +1,28 @@
 'use strict'
+import {Registry} from '@remix-project/remix-lib'
 import { CodeParser } from "../code-parser";
 
-export type CodeParserImportsData= {
+export type CodeParserImportsData = {
     files?: string[],
     modules?: string[],
     packages?: string[],
+    timestamp?: number
 }
 
 export default class CodeParserImports {
   plugin: CodeParser
 
   data: CodeParserImportsData = {}
+  directoryUpdateCacheTimeStamp = 0
   constructor(plugin: CodeParser) {
     this.plugin = plugin
     this.init()
   }
 
   async getImports(){
+    if(!this.data || !this.data.files || !this.data.timestamp || this.data.timestamp != this.directoryUpdateCacheTimeStamp){
+      await this.setFileTree()
+    }
     return this.data
   }
 
@@ -38,9 +44,31 @@ export default class CodeParserImports {
     this.data.packages = [...new Set(this.data.modules.map(x => x.split('/')[0]))]
   }
 
+  updateDirectoryCacheTimeStamp = async () => {
+    this.directoryUpdateCacheTimeStamp = Date.now()
+  }
+
   setFileTree = async () => {
-    this.data.files = await this.getDirectory('/')
-    this.data.files = this.data.files.filter(x => x.endsWith('.sol') && !x.startsWith('.deps') && !x.startsWith('.git'))
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
+      const search = {
+        path: '/',
+        include: ['**/*.sol', '**/*.vy', '**/*.py'],
+        exclude: [],
+        pattern: [],
+        matchCase: false,
+        useRegExp: false,
+        matchWholeWord: false,
+        maxResults: 10000
+      }
+
+      const files = await this.plugin.call('ripgrep', 'glob', search)
+      // only get path property of files
+      this.data.files = files.map((x) => x.path)
+    } else {
+      this.data.files = await this.getDirectory('/')
+      this.data.files = this.data.files.filter((x) => x.endsWith('.sol') && !x.startsWith('.deps') && !x.startsWith('.git'))
+    }
+    this.data.timestamp = this.directoryUpdateCacheTimeStamp || Date.now()
   }
 
   getDirectory = async (dir: string) => {

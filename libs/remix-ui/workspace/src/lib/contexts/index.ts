@@ -3,7 +3,7 @@ import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
 
 export const FileSystemContext = createContext<{
-  fs: BrowserState,
+  fs: any,
   plugin: any,
   modal:(title: string | JSX.Element, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   dispatchInitWorkspace:() => Promise<void>,
@@ -46,6 +46,9 @@ export const FileSystemContext = createContext<{
   dispatchCreateTsSolGithubAction: () => Promise<void>,
   dispatchCreateSlitherGithubAction: () => Promise<void>
   dispatchCreateHelperScripts: (script: string) => Promise<void>
+  dispatchOpenElectronFolder: (path: string) => Promise<void>
+  dispatchGetElectronRecentFolders: () => Promise<void>
+  dispatchRemoveRecentFolder: (path: string) => Promise<void>
   dispatchUpdateGitSubmodules: () => Promise<void>
     }>(null)
   

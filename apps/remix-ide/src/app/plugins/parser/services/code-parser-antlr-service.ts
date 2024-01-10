@@ -4,6 +4,7 @@ import { AstNode } from "@remix-project/remix-solidity"
 import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
 import { pathToFileURL } from 'url'
+import {Registry} from '@remix-project/remix-lib'
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
@@ -45,8 +46,8 @@ export default class CodeParserAntlrService {
     this.worker = new Worker(new URL('./antlr-worker', import.meta.url))
     this.worker.postMessage({
       cmd: 'load',
-      url: document.location.protocol + '//' + document.location.host + '/assets/js/parser/antlr.js',
-    });
+      url: Registry.getInstance().get('platform').api.isDesktop() ? 'assets/js/parser/antlr.js' : document.location.protocol + '//' + document.location.host + '/assets/js/parser/antlr.js',
+    })
     const self = this
 
     this.worker.addEventListener('message', function (ev) {
@@ -79,7 +80,7 @@ export default class CodeParserAntlrService {
           this.cache[file].parsingEnabled = false
         } else {
           this.cache[file].parsingEnabled = true
-        }              
+        }
       }
     }
   }
@@ -95,7 +96,6 @@ export default class CodeParserAntlrService {
   disableWorker() {
     clearInterval(this.workerTimer)
   }
-
 
   async parseWithWorker(text: string, file: string) {
     this.parserStartTime = Date.now()
@@ -284,5 +284,4 @@ export default class CodeParserAntlrService {
     const block = walkAst(blocks)
     return block
   }
-
 }

@@ -56,7 +56,7 @@ declare module 'nightwatch' {
     journalLastChild(val: string): NightwatchBrowser
     checkTerminalFilter(filter: string, test: string): NightwatchBrowser
     noWorkerErrorFor(version: string): NightwatchBrowser
-    validateValueInput(selector: string, valueTosSet: string, expectedValue: string): NightwatchBrowser
+    validateValueInput(selector: string, valueTosSet: string[], expectedValue: string): NightwatchBrowser
     checkAnnotations(type: string): NightwatchBrowser
     checkAnnotationsNotPresent(type: string): NightwatchBrowser
     getLastTransactionHash(callback: (hash: string) => void)
@@ -71,6 +71,8 @@ declare module 'nightwatch' {
     switchEnvironment: (provider: string) => NightwatchBrowser
     connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
     waitForElementNotContainsText: (id: string, value: string, timeout: number = 10000) => NightwatchBrowser
+    hideToolTips: (this: NightwatchBrowser) => NightwatchBrowser
+    enableClipBoard: () => NightwatchBrowser
   }
 
   export interface NightwatchBrowser {

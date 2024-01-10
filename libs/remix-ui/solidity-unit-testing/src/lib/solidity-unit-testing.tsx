@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, ReactElement } from 'react' // eslint-disable-line
+import React, { useState, useRef, useEffect, ReactElement, useContext } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import * as semver from 'semver'
 import { eachOfSeries } from 'async' // eslint-disable-line
@@ -9,6 +9,9 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { format } from 'util'
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
+
+
 
 const _paq = ((window as any)._paq = (window as any)._paq || []) // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -43,7 +46,7 @@ interface FinalResult {
 
 export const SolidityUnitTesting = (props: Record<string, any>) => {
   // eslint-disable-line @typescript-eslint/no-explicit-any
-
+  const platform = useContext(platformContext)
   const { helper, testTab, initialPath } = props
   const { testTabLogic } = testTab
 
@@ -172,10 +175,10 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
       return tmp ? tmp[1] : version
     }
 
-    testTab.fileManager.events.on('noFileSelected', async () => {
+    testTab.on('fileManager', 'noFileSelected', async () => {
       await updateForNewCurrent()
     })
-    testTab.fileManager.events.on('currentFileChanged', async (file: string) => {
+    testTab.on('fileManager', 'currentFileChanged', async (file: string) => {
       await updateForNewCurrent(file)
     })
     testTab.on('solidity', 'compilerLoaded', async (version: string, license: string) => {
@@ -611,7 +614,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
           currentCompilerUrl,
           evmVersion,
           optimize,
-          usingWorker: canUseWorker(currentVersion),
+          usingWorker: canUseWorker(currentVersion) || platform === appPlatformTypes.desktop,
           runs,
         }
         const deployCb = async (file: string, contractAddress: string) => {

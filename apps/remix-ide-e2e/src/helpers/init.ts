@@ -10,8 +10,6 @@ type LoadPlugin = {
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin, hideToolTips: boolean = true): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
-    //.switchBrowserTab(0)
-    
     .perform((done) => {
       if (!loadPlugin) return done()
       browser
@@ -24,8 +22,8 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         .perform(done())
     })
     .verifyLoad()
-    .perform(() => {
-      if (hideToolTips) {
+    .enableClipBoard()
+    .perform((done) => {
         browser.execute(function () { // hide tooltips
           function addStyle(styleString) {
             const style = document.createElement('style');
@@ -34,35 +32,42 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
           }
 
           addStyle(`
-            .bs-popover-right {
-              display:none !important;
-            }
-            .bs-popover-top {
-              display:none !important;
-            }
-            .bs-popover-left {
-              display:none !important;
-            }
-            .bs-popover-bottom {
-              display:none !important;
-            }
+          .popover {
+            display:none !important;
+          }
           `);
+        }, [], done())
+      })
+      .perform(() => {
+        browser.execute(function () { 
+          (window as any).logs = [];
+          (console as any).browserLog = console.log;
+          (console as any).browserError = console.error
+          console.log = function () {
+            (window as any).logs.push(JSON.stringify(arguments));
+            (console as any).browserLog(...arguments)
+          }
+          console.error = function () {
+            (window as any).logs.push(JSON.stringify(arguments));
+            (console as any).browserError(...arguments)
+          }
         })
-      }
-      if (preloadPlugins) {
-        initModules(browser, () => {
-          browser
-            .clickLaunchIcon('solidity')
-            .waitForElementVisible('[for="autoCompile"]')
-            .click('[for="autoCompile"]')
-            .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
-            .perform(() => { callback() })
-        })
-
-      } else {
-        callback()
-      }
-    })
+      })
+      .perform(() => {
+        if (preloadPlugins) {
+          initModules(browser, () => {
+            browser
+              .pause(4000)
+              .clickLaunchIcon('solidity')
+              .waitForElementVisible('[for="autoCompile"]')
+              .click('[for="autoCompile"]')
+              .verify.elementPresent('[data-id="compilerContainerAutoCompile"]:checked')
+              .perform(() => { callback() })
+          })
+        } else {
+          callback()
+        }
+      })
 }
 
 function initModules(browser: NightwatchBrowser, callback: VoidFunction) {

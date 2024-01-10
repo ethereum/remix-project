@@ -46,6 +46,9 @@ import {
   createTsSolGithubAction,
   createSlitherGithubAction,
   createHelperScripts,
+  openElectronFolder, 
+  getElectronRecentFolders, 
+  removeRecentElectronFolder,
   updateGitSubmodules
 } from '../actions'
 import {Modal, WorkspaceProps, WorkspaceTemplate} from '../types'
@@ -90,7 +93,11 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   }
 
   const dispatchFetchWorkspaceDirectory = async (path: string) => {
-    await fetchWorkspaceDirectory(path)
+    try {
+      await fetchWorkspaceDirectory(path)
+    } catch (err) {
+      console.warn(err)
+    }    
   }
 
   const dispatchSwitchToWorkspace = async (name: string) => {
@@ -225,6 +232,19 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createHelperScripts(script)
   }
 
+  const dispatchOpenElectronFolder = async (path: string) => {
+    await openElectronFolder(path)
+  }
+
+  const dispatchGetElectronRecentFolders = async () => {
+    await getElectronRecentFolders()
+  }
+
+  const dispatchRemoveRecentFolder = async (path: string) => {
+    await removeRecentElectronFolder(path)
+  }
+
+
   const dispatchUpdateGitSubmodules = async () => {
     await updateGitSubmodules()
   }
@@ -277,6 +297,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
       toast(fs.popup)
     }
   }, [fs.popup])
+
+  useEffect(() => {
+    plugin.expandPath = fs.browser.expandPath
+  },[fs.browser.expandPath])
 
   const handleHideModal = () => {
     setFocusModal((modal) => {
@@ -347,6 +371,9 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCreateTsSolGithubAction,
     dispatchCreateSlitherGithubAction,
     dispatchCreateHelperScripts,
+    dispatchOpenElectronFolder,
+    dispatchGetElectronRecentFolders,
+    dispatchRemoveRecentFolder,
     dispatchUpdateGitSubmodules
   }
   return (

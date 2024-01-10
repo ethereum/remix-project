@@ -91,15 +91,15 @@ module.exports = {
       })
   },
 
-  'Should load Etherscan verified contracts from URL "address" param)': function (browser: NightwatchBrowser) {
+  'Should load Etherscan verified contracts from URL "address" param) #group1': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#address=0xdac17f958d2ee523a2206206994597c13d831ec7')
       .refreshPage()
       .pause(7000)
       .currentWorkspaceIs('code-sample')
-      .assert.elementPresent('*[data-id=treeViewLitreeViewItemmainnet]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7/TetherToken.sol"]')
+      .waitForElementVisible('*[data-id=treeViewLitreeViewItemmainnet]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7/TetherToken.sol"]')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'contract TetherToken is Pausable, StandardToken, BlackList {') !== -1)
@@ -218,8 +218,10 @@ module.exports = {
 
       .clickLaunchIcon('solidity')
       .click('*[data-id="scConfigExpander"]')
-      .waitForElementVisible('#versionSelector option[data-id="selected"]')
-      .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.16+commit.07a7930e')
+      .waitForElementVisible({
+        selector: "//*[@data-id='selectedVersion' and contains(.,'0.8.16+commit.07a7930e')]",
+        locateStrategy: 'xpath'
+      })
       .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'istanbul')
       .assert.containsText('#compilierLanguageSelector option[data-id="selected"]', 'Yul')
       .verify.elementPresent('#optimize:checked')
@@ -229,14 +231,18 @@ module.exports = {
       .refreshPage()
 
       .clickLaunchIcon('solidity')
-      .waitForElementVisible('#versionSelector option[data-id="selected"]')
-      .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.7+commit.e28d00a7')
+      .waitForElementVisible({
+        selector: "//*[@data-id='selectedVersion' and contains(.,'0.8.7+commit.e28d00a7')]",
+        locateStrategy: 'xpath'
+      })
       .url('http://127.0.0.1:8080/#version=0.8.15+commit.e14f2714')
       .refreshPage()
       .pause(3000)
       .clickLaunchIcon('solidity')
-      .waitForElementVisible('#versionSelector option[data-id="selected"]')
-      .assert.containsText('#versionSelector option[data-id="selected"]', '0.8.15+commit.e14f2714')
+      .waitForElementVisible({
+        selector: "//*[@data-id='selectedVersion' and contains(.,'0.8.15+commit.e14f2714')]",
+        locateStrategy: 'xpath'
+      })
   },
 
   'Should load using compiler from link passed in remix URL #group3': function (browser: NightwatchBrowser) {
@@ -247,7 +253,10 @@ module.exports = {
       .clickLaunchIcon('solidity')
 
       .click('*[data-id="scConfigExpander"]')
-      .assert.containsText('#versionSelector option[data-id="selected"]', 'custom')
+      .waitForElementVisible({
+        selector: "//*[@data-id='selectedVersion' and contains(.,'custom')]",
+        locateStrategy: 'xpath'
+      })
       // default values
       .assert.containsText('#evmVersionSelector option[data-id="selected"]', 'default')
       .verify.elementPresent('#optimize')
@@ -261,12 +270,8 @@ module.exports = {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&url=https://raw.githubusercontent.com/EthVM/evm-source-verification/main/contracts/1/0x011e5846975c6463a8c6337eecf3cbf64e328884/input.json')
       .refreshPage()
-
-      .switchWorkspace('code-sample')
-      .openFile('@openzeppelin')
-      .openFile('@openzeppelin/contracts')
-      .openFile('@openzeppelin/contracts/access')
-      .openFile('@openzeppelin/contracts/access/AccessControl.sol')
+      .currentWorkspaceIs('code-sample')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItem@openzeppelin/contracts/access/AccessControl.sol"]')
       .openFile('contracts')
       .openFile('contracts/governance')
       .openFile('contracts/governance/UnionGovernor.sol')

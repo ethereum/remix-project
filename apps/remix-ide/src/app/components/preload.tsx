@@ -1,16 +1,17 @@
 import {RemixApp} from '@remix-ui/app'
 import axios from 'axios'
 import React, {useEffect, useRef, useState} from 'react'
-import {render} from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import * as packageJson from '../../../../../package.json'
 import {fileSystem, fileSystems} from '../files/fileSystem'
 import {indexedDBFileSystem} from '../files/filesystems/indexedDB'
 import {localStorageFS} from '../files/filesystems/localStorage'
 import {fileSystemUtility, migrationTestData} from '../files/filesystems/fileSystemUtility'
 import './styles/preload.css'
+import isElectron from 'is-electron'
 const _paq = (window._paq = window._paq || [])
 
-export const Preload = () => {
+export const Preload = (props: any) => {
   const [tip, setTip] = useState<string>('')
   const [supported, setSupported] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
@@ -34,12 +35,7 @@ export const Preload = () => {
       .then((AppComponent) => {
         const appComponent = new AppComponent.default()
         appComponent.run().then(() => {
-          render(
-            <>
-              <RemixApp app={appComponent} />
-            </>,
-            document.getElementById('root')
-          )
+          props.root.render(<RemixApp app={appComponent} />)
         })
       })
       .catch((err) => {
@@ -86,7 +82,11 @@ export const Preload = () => {
     }
   }
 
-  useEffect(() => {
+  useEffect (() => {
+    if(isElectron()){
+      loadAppComponent()
+      return
+    }
     async function loadStorage() {
       ;(await remixFileSystems.current.addFileSystem(remixIndexedDB.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'indexedDB not supported'])
       ;(await remixFileSystems.current.addFileSystem(localStorageFileSystem.current)) || _paq.push(['trackEvent', 'Storage', 'error', 'localstorage not supported'])

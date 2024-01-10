@@ -9,8 +9,8 @@ export class EtherscanPluginClient extends PluginClient {
 
   constructor() {
     super()
-    createClient(this)
     this.internalEvents = new EventManager()
+    createClient(this)
     this.onload()
   }
 

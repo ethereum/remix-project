@@ -2,10 +2,12 @@ import {PluginManager} from '@remixproject/engine'
 import {EventEmitter} from 'events'
 import {QueryParams} from '@remix-project/remix-lib'
 import {IframePlugin} from '@remixproject/engine-web'
+import {Registry} from '@remix-project/remix-lib'
+
 const _paq = (window._paq = window._paq || [])
 
 // requiredModule removes the plugin from the plugin manager list on UI
-const requiredModules = [ // services + layout views + system views
+let requiredModules = [ // services + layout views + system views
   'manager',
   'config',
   'compilerArtefacts',
@@ -80,6 +82,8 @@ const requiredModules = [ // services + layout views + system views
   'doc-gen'
 ]
 
+
+
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
@@ -144,6 +148,10 @@ export class RemixAppManager extends PluginManager {
     this.event = new EventEmitter()
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
+      requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep']
+    }
+    
   }
 
   async canActivatePlugin(from, to) {
@@ -269,7 +277,8 @@ export class RemixAppManager extends PluginManager {
       }
     }
 
-    return plugins.map((plugin) => {
+    return plugins.map(plugin => {
+      if (plugin.name === 'dgit' && Registry.getInstance().get('platform').api.isDesktop()) { plugin.url = 'https://dgit4-76cc9.web.app/' } // temporary fix
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
     })
@@ -320,6 +329,30 @@ export class RemixAppManager extends PluginManager {
       sticky: true,
       group: 7
     })
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
+      await this.call('filePanel', 'registerContextMenuItem', {
+        id: 'fs',
+        name: 'revealInExplorer',
+        label: navigator.userAgentData.platform.indexOf('mac') > -1 ? 'Reveal in Finder' : 'Reveal in Explorer',
+        type: ['folder', 'file'],
+        extension: [],
+        path: [],
+        pattern: [],
+        sticky: true,
+        group: 8
+      })
+      await this.call('filePanel', 'registerContextMenuItem', {
+        id: 'fs',
+        name: 'openInVSCode',
+        label: 'Open in VSCode',
+        type: ['folder', 'file'],
+        extension: [],
+        path: [],
+        pattern: [],
+        sticky: true,
+        group: 8
+      })
+    }
   }
 }
 

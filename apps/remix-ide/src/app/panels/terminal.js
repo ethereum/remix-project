@@ -3,17 +3,18 @@ import React from 'react' // eslint-disable-line
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import vm from 'vm'
 const EventManager = require('../../lib/events')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
+import { RemixUiXterminals } from '@remix-ui/xterm'
 
 
 const KONSOLES = []
 
-function register (api) { KONSOLES.push(api) }
+function register(api) { KONSOLES.push(api) }
 
 const profile = {
   displayName: 'Terminal',
@@ -25,7 +26,7 @@ const profile = {
 }
 
 class Terminal extends Plugin {
-  constructor (opts, api) {
+  constructor(opts, api) {
     super(profile)
     this.fileImport = new CompilerImports()
     this.event = new EventManager()
@@ -81,26 +82,26 @@ class Terminal extends Plugin {
       this.call('debugger', 'debug', hash)
     })
     this.dispatch = null
-    
+
   }
-  
+
 
   onActivation() {
     this.renderComponent()
   }
 
-  onDeactivation () {
+  onDeactivation() {
     this.off('scriptRunner', 'log')
     this.off('scriptRunner', 'info')
     this.off('scriptRunner', 'warn')
     this.off('scriptRunner', 'error')
   }
 
-  logHtml (html) {
+  logHtml(html) {
     this.terminalApi.logHtml(html)
   }
 
-  log (message, type) {
+  log(message, type) {
     this.terminalApi.log(message, type)
   }
 
@@ -108,18 +109,21 @@ class Terminal extends Plugin {
     this.dispatch = dispatch
   }
 
-  render () {
-    return <div id='terminal-view' className='panel' data-id='terminalContainer-view'><PluginViewWrapper plugin={this}/></div>
+  render() {
+    return <div id='terminal-view' className='panel' data-id='terminalContainer-view'><PluginViewWrapper plugin={this} /></div>
   }
 
   updateComponent(state) {
-    return <RemixUiTerminal
-      plugin={state.plugin}
-      onReady={state.onReady}
-    />
+    return (Registry.getInstance().get('platform').api.isDesktop()) ? <RemixUiXterminals onReady={state.onReady} plugin={state.plugin}>
+    </RemixUiXterminals>
+      : <RemixUiTerminal
+        plugin={state.plugin}
+        onReady={state.onReady}
+        visible={true}
+      />
   }
 
-  renderComponent () {
+  renderComponent() {
     const onReady = (api) => { this.terminalApi = api }
     this.dispatch({
       plugin: this,
@@ -127,7 +131,7 @@ class Terminal extends Plugin {
     })
   }
 
-  scroll2bottom () {
+  scroll2bottom() {
     setTimeout(function () {
       // do nothing.
     }, 0)
