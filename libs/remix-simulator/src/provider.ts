@@ -27,8 +27,13 @@ export interface JSONRPCResponsePayload {
 
 export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePayload) =>  void
 
+export type State = {
+  db: Map<string, Buffer>,
+  root: Buffer
+}
+
 export class Provider {
-  options: Record<string, string | number>
+  options: Record<string, string | number | State>
   vmContext
   Accounts
   Transactions
@@ -37,10 +42,10 @@ export class Provider {
   initialized: boolean
   pendingRequests: Array<any>
 
-  constructor (options: Record<string, string | number> = {}) {
+  constructor (options: Record<string, string | number | State> = {}) {
     this.options = options
     this.connected = true
-    this.vmContext = new VMContext(options['fork'] as string, options['nodeUrl'] as string, options['blockNumber'] as (number | 'latest'))
+    this.vmContext = new VMContext(options['fork'] as string, options['nodeUrl'] as string, options['blockNumber'] as (number | 'latest'), options['stateDb'] as State)
 
     this.Accounts = new Web3Accounts(this.vmContext)
     this.Transactions = new Transactions(this.vmContext)
@@ -166,6 +171,20 @@ class Web3TestPlugin extends Web3PluginBase {
     return this.requestManager.send({
       method: 'eth_registerCallId',
       params: [id]
+    })
+  }
+
+  public getStateTrieRoot() {
+    return this.requestManager.send({
+      method: 'eth_getStateTrieRoot',
+      params: []
+    })
+  }
+
+  public getStateDb() {
+    return this.requestManager.send({
+      method: 'eth_getStateDb',
+      params: []
     })
   }
 }

@@ -1,8 +1,10 @@
 import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
 import { fromWei, toBigInt } from 'web3-utils'
+import { Plugin } from '@remixproject/engine'
 import { privateToAddress, hashPersonalMessage, isHexString } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
 import { ExecutionContext } from '../execution-context'
+import { Blockchain } from '../blockchain'
 
 export class VMProvider {
   executionContext: ExecutionContext
@@ -12,9 +14,9 @@ export class VMProvider {
     sendAsync: (query: JSONRPCRequestPayload, callback: JSONRPCResponseCallback) => void
   }
   newAccountCallback: {[stamp: number]: (error: Error, address: string) => void}
-
-  constructor (executionContext: ExecutionContext) {
-
+  plugin: Plugin
+  constructor (executionContext: ExecutionContext, plugin: Plugin) {
+    this.plugin = plugin
     this.executionContext = executionContext
     this.worker = null
     this.provider = null
@@ -37,7 +39,7 @@ export class VMProvider {
     let incr = 0
     const stamps = {}
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       this.worker.addEventListener('message', (msg) => {
         if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
           if (stamps[msg.data.stamp].callback) {
@@ -76,7 +78,17 @@ export class VMProvider {
           }
         }
       })
-      this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), nodeUrl: provider?.options['nodeUrl'], blockNumber: provider?.options['blockNumber']})
+      let stateDb
+      if (await this.plugin.call('fileManager', 'exists', '.states/state.json')) {
+        stateDb = await this.plugin.call('fileManager', 'readFile', '.states/state.json')
+      }
+      this.worker.postMessage({
+        cmd: 'init',
+        fork: this.executionContext.getCurrentFork(),
+        nodeUrl: provider?.options['nodeUrl'],
+        blockNumber: provider?.options['blockNumber'],
+        stateDb
+      })
     })
   }
 
