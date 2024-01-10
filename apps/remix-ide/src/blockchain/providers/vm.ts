@@ -39,7 +39,7 @@ export class VMProvider {
     let incr = 0
     const stamps = {}
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       this.worker.addEventListener('message', (msg) => {
         if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
           if (stamps[msg.data.stamp].callback) {
@@ -78,17 +78,20 @@ export class VMProvider {
           }
         }
       })
-      let stateDb
-      if (await this.plugin.call('fileManager', 'exists', '.states/state.json')) {
-        stateDb = await this.plugin.call('fileManager', 'readFile', '.states/state.json')
+      const init = async () => {
+        let stateDb
+        if (await this.plugin.call('fileManager', 'exists', '.states/state.json')) {
+          stateDb = await this.plugin.call('fileManager', 'readFile', '.states/state.json')
+        }
+        this.worker.postMessage({
+          cmd: 'init',
+          fork: this.executionContext.getCurrentFork(),
+          nodeUrl: provider?.options['nodeUrl'],
+          blockNumber: provider?.options['blockNumber'],
+          stateDb
+        })
       }
-      this.worker.postMessage({
-        cmd: 'init',
-        fork: this.executionContext.getCurrentFork(),
-        nodeUrl: provider?.options['nodeUrl'],
-        blockNumber: provider?.options['blockNumber'],
-        stateDb
-      })
+      init()
     })
   }
 
