@@ -1,10 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {createContext, useReducer} from 'react'
-import {findLinesInStringWithMatch, getDirectory, replaceAllInFile, replaceTextInLine} from '../components/results/SearchHelper'
-import {SearchReducer} from '../reducers/Reducer'
-import {SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState, undoBufferRecord} from '../types'
-import {filePathFilter} from '@jsdevtools/file-path-filter'
-import {escapeRegExp} from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
+import { createContext, useReducer } from 'react'
+import { findLinesInStringWithMatch, getDirectory, replaceAllInFile, replaceTextInLine } from '../components/results/SearchHelper'
+import { SearchReducer } from '../reducers/Reducer'
+import { SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState, undoBufferRecord, SearchInWorkspaceOptions } from '../types'
+import { filePathFilter } from '@jsdevtools/file-path-filter'
+import { escapeRegExp } from 'lodash'
+import { appPlatformTypes } from '@remix-ui/app'
 
 export interface SearchingStateInterface {
   state: SearchState
@@ -36,10 +37,14 @@ export interface SearchingStateInterface {
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
 
-export const SearchProvider = ({children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined} = {}) => {
+export const SearchProvider = ({ children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined, platform = undefined } = {}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const [files, setFiles] = useState([])
+  const [files, setFiles] = useState<{
+    files: string[],
+    timeStamp: number
+  }>(null)
   const clearSearchingTimeout = useRef(null)
+  const directoryUpdateCacheTimeStamp = useRef<number>(0)
   const value = {
     state,
     setFind: (value: string) => {
@@ -148,7 +153,7 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
     updateCount: (count: number, file: string) => {
       dispatch({
         type: 'UPDATE_COUNT',
-        payload: {count, file}
+        payload: { count, file }
       })
     },
     setSearching(file: string) {
@@ -173,6 +178,7 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
     },
 
     findText: async (path: string) => {
+
       if (!plugin) return
       try {
         if (state.find.length < 1) return
@@ -264,12 +270,16 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
     await value.reloadFile(file)
   }
 
+  const updateDirectoryCacheTimeStamp = async () => {
+    directoryUpdateCacheTimeStamp.current = Date.now()
+  }
+
   useEffect(() => {
     plugin.on('filePanel', 'setWorkspace', async (workspace) => {
       value.setSearchResults(null)
       value.clearUndo()
       value.setCurrentWorkspace(workspace.name)
-      setFiles(await getDirectory('/', plugin))
+      await updateDirectoryCacheTimeStamp()
     })
     plugin.on('fileManager', 'fileSaved', async (file) => {
       await reloadStateForFile(file)
@@ -278,11 +288,15 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
     plugin.on('fileManager', 'rootFolderChanged', async (file) => {
       const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
       if (workspace) value.setCurrentWorkspace(workspace.name)
-      setFiles(await getDirectory('/', plugin))
+      await updateDirectoryCacheTimeStamp()
+    })
+
+    plugin.on('fs', 'workingDirChanged', async () => {
+      await updateDirectoryCacheTimeStamp()
     })
 
     plugin.on('fileManager', 'fileAdded', async (file) => {
-      setFiles(await getDirectory('/', plugin))
+      await updateDirectoryCacheTimeStamp()
       await reloadStateForFile(file)
     })
     plugin.on('fileManager', 'currentFileChanged', async (file) => {
@@ -294,16 +308,15 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
         const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
         if (workspace && workspace.name) {
           value.setCurrentWorkspace(workspace.name)
-          setFiles(await getDirectory('/', plugin))
+          await updateDirectoryCacheTimeStamp()
         }
       } catch (e) {
         console.log(e)
       }
     }
-    setTimeout(async () => {
-      await fetchWorkspace()
-    }, 500)
-
+    
+    fetchWorkspace()
+    
     return () => {
       plugin.off('fileManager', 'fileChanged')
       plugin.off('filePanel', 'setWorkspace')
@@ -366,7 +379,7 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
 
   useEffect(() => {
     if (state.find) {
-      ;(async () => {
+      ; (async () => {
         try {
           const pathFilter: any = {}
           if (state.include) {
@@ -375,18 +388,56 @@ export const SearchProvider = ({children = [], reducer = SearchReducer, initialS
           if (state.exclude) {
             pathFilter.exclude = setGlobalExpression(state.exclude)
           }
-          const filteredFiles = files.filter(filePathFilter(pathFilter)).map((file) => {
-            const r: SearchResult = {
-              filename: file,
-              lines: [],
-              path: file,
-              timeStamp: Date.now(),
-              forceReload: false,
-              count: 0
+
+          if (platform == appPlatformTypes.desktop) {
+            const search: SearchInWorkspaceOptions = {
+              path: '/',
+              pattern: state.find,
+              useRegExp: state.useRegExp,
+              matchCase: state.casesensitive,
+              matchWholeWord: state.matchWord,
+              include: pathFilter.include,
+              exclude: pathFilter.exclude
             }
-            return r
-          })
-          value.setSearchResults(filteredFiles)
+
+            const filesfromripgrep = await plugin.call('ripgrep', 'glob', search)
+
+            const filteredFiles = filesfromripgrep.map((file) => {
+              const r: SearchResult = {
+                filename: file.path,
+                lines: [],
+                path: file.path,
+                timeStamp: Date.now(),
+                forceReload: false,
+                count: 0
+              }
+              return r
+            })
+            value.setSearchResults(filteredFiles)
+          } else {
+            let filesToSearch = files?.files
+            if(!files || files.timeStamp != directoryUpdateCacheTimeStamp.current) {
+              const newFiles = await getDirectory('/', plugin)
+              setFiles({
+                files: newFiles,
+                timeStamp: directoryUpdateCacheTimeStamp.current || Date.now()
+              })
+              filesToSearch = newFiles
+            }
+            const filteredFiles = filesToSearch.filter(filePathFilter(pathFilter)).map((file) => {
+              const r: SearchResult = {
+                filename: file,
+                lines: [],
+                path: file,
+                timeStamp: Date.now(),
+                forceReload: false,
+                count: 0
+              }
+              return r
+            })
+            value.setSearchResults(filteredFiles)
+          }
+          
         } catch (e) {
           console.log(e)
         }

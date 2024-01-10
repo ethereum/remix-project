@@ -1,4 +1,4 @@
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 
 var remixLib = require('@remix-project/remix-lib')
 var EventsDecoder = remixLib.execution.EventsDecoder

@@ -1,7 +1,7 @@
 import React from 'react';
 import { compile, helper } from '@remix-project/remix-solidity'
 import { CompileTabLogic, parseContracts } from '@remix-ui/solidity-compiler' // eslint-disable-line
-import type { ConfigurationSettings } from '@remix-project/remix-lib'
+import type { ConfigurationSettings, iSolJsonBinData } from '@remix-project/remix-lib'
 
 export const CompilerApiMixin = (Base) => class extends Base {
   currentFile: string
@@ -16,6 +16,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   compileErrors: any
   compileTabLogic: CompileTabLogic
   configurationSettings: ConfigurationSettings
+  solJsonBinData: iSolJsonBinData
 
   onCurrentFileChanged: (fileName: string) => void
   // onResetResults: () => void
@@ -27,6 +28,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
   onContentChanged: () => void
   onFileClosed: (name: string) => void
   statusChanged: (data: { key: string, title?: string, type?: string }) => void
+  
+  setSolJsonBinData: (urls: iSolJsonBinData) => void
 
   initCompilerApi () {
     this.configurationSettings = null
@@ -277,6 +280,16 @@ export const CompilerApiMixin = (Base) => class extends Base {
     }
 
     this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
+
+    this.on('compilerloader', 'jsonBinDataLoaded', (urls: iSolJsonBinData) => {
+      try{
+        this.setSolJsonBinData(urls)
+      }catch(e){
+      }
+      this.solJsonBinData = urls
+    })
+    this.call('compilerloader', 'getJsonBinData')
+
 
     this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {
       this.compileErrors = data

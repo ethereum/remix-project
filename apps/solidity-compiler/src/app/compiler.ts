@@ -25,7 +25,7 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
     this.initCompilerApi()    
   }
 
-  getCompilerParameters () {
+  getCompilerQueryParameters () {
     const params = {
       runs: localStorage.getItem('runs') || defaultCompilerParameters.runs,
       optimize: localStorage.getItem('optimize') === 'true',
@@ -38,7 +38,7 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
     return params
   }
 
-  setCompilerParameters (params) {
+  setCompilerQueryParameters (params) {
     for (const key of Object.keys(params)) {
       localStorage.setItem(key, params[key])
     }

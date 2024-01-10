@@ -1,6 +1,7 @@
 /* global fetch */
 'use strict'
 import { Plugin } from '@remixproject/engine'
+import isElectron from 'is-electron'
 
 interface StringByString {
   [key: string]: string;
@@ -118,7 +119,7 @@ export class GistHandler extends Plugin {
         const path = element.replace(/\.\.\./g, '/')
         obj['/gist-' + gistId + '/' + path] = data.files[element]
       })
-      this.call('fileManager', 'setBatchFiles', obj, 'workspace', true, async (errorSavingFiles: any) => {
+      this.call('fileManager', 'setBatchFiles', obj, isElectron()? 'electron':'workspace', true, async (errorSavingFiles: any) => {
         if (errorSavingFiles) {
           const modalContent = {
             id: 'gisthandler',

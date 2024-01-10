@@ -1,18 +1,22 @@
-import React, {useEffect, useState, useRef, useReducer} from 'react' // eslint-disable-line
+import React, {useEffect, useState, useRef, useReducer, useContext} from 'react' // eslint-disable-line
 import {FormattedMessage, useIntl} from 'react-intl'
 import semver from 'semver'
 import {CompilerContainerProps} from './types'
 import {ConfigurationSettings} from '@remix-project/remix-lib'
 import {checkSpecialChars, CustomTooltip, extractNameFromKey} from '@remix-ui/helper'
-import {canUseWorker, baseURLBin, baseURLWasm, urlFromVersion, pathToURL} from '@remix-project/remix-solidity'
+import {canUseWorker, urlFromVersion, pathToURL} from '@remix-project/remix-solidity'
 import {compilerReducer, compilerInitialState} from './reducers/compiler'
-import {resetEditorMode, listenToEvents} from './actions/compiler'
+import {listenToEvents} from './actions/compiler'
 import {getValidLanguage} from '@remix-project/remix-solidity'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import {configFileContent} from './compilerConfiguration'
-import axios, {AxiosResponse} from 'axios'
+import { appPlatformTypes, platformContext, onLineContext } from '@remix-ui/app'
 
 import './css/style.css'
+
+import { CompilerDropdown } from './components/compiler-dropdown'
+
+
 const defaultPath = 'compiler_config.json'
 
 declare global {
@@ -24,6 +28,8 @@ declare global {
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 export const CompilerContainer = (props: CompilerContainerProps) => {
+  const online = useContext(onLineContext)
+  const platform = useContext(platformContext)
   const {
     api,
     compileTabLogic,
@@ -38,6 +44,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     workspaceName,
     configFilePath,
     setConfigFilePath,
+    solJsonBinData,
     //@ts-ignore
     pluginProps
   } = props // eslint-disable-line
@@ -50,8 +57,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     optimize: false,
     compileTimeout: null,
     timeout: 300,
-    allversions: [],
     customVersions: [],
+    downloaded: [],
     compilerLicense: null,
     selectedVersion: null,
     defaultVersion: 'soljson-v0.8.22+commit.4fc1097e.js', // this default version is defined: in makeMockCompiler (for browser test)
@@ -61,7 +68,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     language: 'Solidity',
     remappings: [],
     evmVersion: '',
-    createFileOnce: true
+    createFileOnce: true,
+    onlyDownloaded: false,
+    updatedVersionSelectorFromUrlQuery: false,
   })
   const [showFilePathInput, setShowFilePathInput] = useState<boolean>(false)
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
@@ -100,6 +109,16 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [state.useFileConfiguration])
 
   useEffect(() => {
+    if(online && state.onlyDownloaded){
+      // @ts-ignore
+      api.call('compilerloader','getJsonBinData')
+    }
+    setState((prevState) => {
+      return {...prevState, onlyDownloaded: !online}
+    })
+  },[online])
+
+  useEffect(() => {
     const listener = (event) => {
       if (configFilePathInput.current !== event.target && event.target.innerText !== 'Create') {
         setShowFilePathInput(false)
@@ -113,24 +132,36 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       document.removeEventListener('mousedown', listener)
       document.removeEventListener('touchstart', listener)
     }
-  })
+  }, [])
 
   useEffect(() => {
-    fetchAllVersion((allversions, selectedVersion, isURL) => {
-      setState((prevState) => {
-        return {...prevState, allversions}
-      })
-      if (isURL) _updateVersionSelector(state.defaultVersion, selectedVersion)
-      else {
+    if(!solJsonBinData) return
+    if(!state.updatedVersionSelectorFromUrlQuery && solJsonBinData.binList && solJsonBinData.binList.length) {
+      const versionFromQueryParameter = getSelectVersionFromQueryParam()
+      if (versionFromQueryParameter.isURL) _updateVersionSelector(state.defaultVersion, versionFromQueryParameter.selectedVersion)
+      else{
         setState((prevState) => {
-          return {...prevState, selectedVersion}
+          return {...prevState, selectedVersion: versionFromQueryParameter.selectedVersion}
         })
-        updateCurrentVersion(selectedVersion)
-        _updateVersionSelector(selectedVersion)
+        updateCurrentVersion(versionFromQueryParameter.selectedVersion)
+        _updateVersionSelector(versionFromQueryParameter.selectedVersion)
       }
-    })
-    const currentFileName = api.currentFile
+      setState((prevState) => {
+        return {...prevState, updatedVersionSelectorFromUrlQuery: true}
+      })
+    } else if(!solJsonBinData.binList || (solJsonBinData.binList && solJsonBinData.binList.length == 0)){
+      const version = 'builtin'
+      setState((prevState) => {
+        return {...prevState, selectedVersion: version}
+      })
+      updateCurrentVersion(version)
+      _updateVersionSelector(version, '', false)
+    }
+  }, [solJsonBinData])
 
+
+  useEffect(() => {
+    const currentFileName = api.currentFile
     currentFile(currentFileName)
     listenToEvents(compileTabLogic, api)(dispatch)
   }, [])
@@ -148,7 +179,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         setConfigFilePath(configFilePathSaved)
 
         setState((prevState) => {
-          const params = api.getCompilerParameters()
+          const params = api.getCompilerQueryParameters()
           const optimize = params.optimize
           const runs = params.runs as string
           const evmVersion = compileTabLogic.evmVersions.includes(params.evmVersion) ? params.evmVersion : 'default'
@@ -203,16 +234,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   useEffect(() => {
     if (compilerContainer.editor.mode) {
-      switch (compilerContainer.editor.mode) {
-      case 'sessionSwitched':
+      if (compilerContainer.editor.mode.startsWith('sessionSwitched')) {
         sessionSwitched()
-        resetEditorMode()(dispatch)
-        break
-      case 'contentChanged':
+        return
+      } else if (compilerContainer.editor.mode.startsWith('contentChanged')) {
         contentChanged()
-        resetEditorMode()(dispatch)
-        break
-      }
+        return
+      }      
     }
   }, [compilerContainer.editor.mode])
 
@@ -298,30 +326,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     return semver.coerce(version) ? semver.coerce(version).version : ''
   }
 
-  // fetching both normal and wasm builds and creating a [version, baseUrl] map
-  const fetchAllVersion = async (callback) => {
-    let selectedVersion, allVersionsWasm, isURL
-    let allVersions = [
-      {
-        path: 'builtin',
-        longVersion: 'latest local version - ' + state.defaultVersion
-      }
-    ]
-    // fetch normal builds
-    const binRes: AxiosResponse = await axios(`${baseURLBin}/list.json`)
-    // fetch wasm builds
-    const wasmRes: AxiosResponse = await axios(`${baseURLWasm}/list.json`)
-    if (binRes.status !== 200 && wasmRes.status !== 200) {
-      selectedVersion = 'builtin'
-      return callback(allVersions, selectedVersion)
-    }
+  const getSelectVersionFromQueryParam = () => {
+    let selectedVersion = state.defaultVersion
+    let isURL = false
     try {
-      const versions = binRes.data.builds.slice().reverse()
+      const versions = [...solJsonBinData.binList]
+      versions.reverse()
 
-      allVersions = [...allVersions, ...versions]
-      selectedVersion = state.defaultVersion
-      if (api.getCompilerParameters().version) {
-        const versionFromURL = api.getCompilerParameters().version
+      if (api.getCompilerQueryParameters().version) {
+        const versionFromURL = api.getCompilerQueryParameters().version
         // Check if version is a URL and corresponding filename starts with 'soljson'
         if (versionFromURL.startsWith('https://')) {
           const urlArr = versionFromURL.split('/')
@@ -337,29 +350,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           if (selectedVersionArr.length) selectedVersion = selectedVersionArr[0].path
         }
       }
-      if (wasmRes.status === 200) {
-        allVersionsWasm = wasmRes.data.builds.slice().reverse()
-      }
+    
     } catch (e) {
       tooltip(intl.formatMessage({id: 'solidity.tooltipText5'}) + e)
     }
-    // replace in allVersions those compiler builds which exist in allVersionsWasm with new once
-    if (allVersionsWasm && allVersions) {
-      allVersions.forEach((compiler, index) => {
-        const wasmIndex = allVersionsWasm.findIndex((wasmCompiler) => {
-          return wasmCompiler.longVersion === compiler.longVersion
-        })
-        const URLWasm: string = process && process.env && process.env['NX_WASM_URL'] ? process.env['NX_WASM_URL'] : baseURLWasm
-        const URLBin: string = process && process.env && process.env['NX_BIN_URL'] ? process.env['NX_BIN_URL'] : baseURLBin
-        if (wasmIndex !== -1) {
-          allVersions[index] = allVersionsWasm[wasmIndex]
-          pathToURL[compiler.path] = URLWasm
-        } else {
-          pathToURL[compiler.path] = URLBin
-        }
-      })
-    }
-    callback(allVersions, selectedVersion, isURL)
+
+    return {selectedVersion, isURL}
   }
 
   /**
@@ -378,15 +374,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   // Load solc compiler version according to pragma in contract file
   const _setCompilerVersionFromPragma = (filename: string) => {
-    if (!state.allversions) return
+    if (!solJsonBinData.selectorList) return
     api.readFile(filename).then((data) => {
       if (!data) return
       const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
       if (pragmaArr && pragmaArr.length === 1) {
         const pragmaStr = pragmaArr[0].replace('pragma solidity', '').trim()
         const pragma = pragmaStr.substring(0, pragmaStr.length - 1)
-        const releasedVersions = state.allversions.filter((obj) => !obj.prerelease).map((obj) => obj.version)
-        const allVersions = state.allversions.map((obj) => _retrieveVersion(obj.version))
+        const releasedVersions = solJsonBinData.selectorList.filter((obj) => !obj.prerelease).map((obj) => obj.version)
+        const allVersions = solJsonBinData.selectorList.map((obj) => _retrieveVersion(obj.version))
         const currentCompilerName = _retrieveVersion(state.selectedVersion)
         // contains only numbers part, for example '0.4.22'
         const pureVersion = _retrieveVersion()
@@ -398,7 +394,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         const isOfficial = allVersions.includes(currentCompilerName)
         if (isOfficial && !isInRange && !isNewestNightly) {
           const compilerToLoad = semver.maxSatisfying(releasedVersions, pragma)
-          const compilerPath = state.allversions.filter((obj) => !obj.prerelease && obj.version === compilerToLoad)[0].path
+          const compilerPath = solJsonBinData.selectorList.filter((obj) => !obj.prerelease && obj.version === compilerToLoad)[0].path
           if (state.selectedVersion !== compilerPath) {
             // @ts-ignore
             api.call('notification', 'toast', intl.formatMessage({id: 'solidity.toastMessage'}, {version: _retrieveVersion(compilerPath)}))
@@ -536,7 +532,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileTabLogic.runCompiler(externalCompType)
   }
 
-  const _updateVersionSelector = (version, customUrl = '') => {
+  const _updateVersionSelector = (version, customUrl = '', setQueryParameter = true) => {
     // update selectedversion of previous one got filtered out
     let selectedVersion = version
     if (!selectedVersion || !_shouldBeAdded(selectedVersion)) {
@@ -546,7 +542,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
     }
     updateCurrentVersion(selectedVersion)
-    api.setCompilerParameters({version: selectedVersion})
+    if(setQueryParameter)
+      api.setCompilerQueryParameters({version: selectedVersion})
     let url
 
     if (customUrl !== '') {
@@ -560,7 +557,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
       updateCurrentVersion(selectedVersion)
       url = customUrl
-      api.setCompilerParameters({version: selectedVersion})
+      if(setQueryParameter)
+        api.setCompilerQueryParameters({version: selectedVersion})
     } else {
       if (checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed, special chars not allowed.')
@@ -576,7 +574,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     // "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
     // resort to non-worker version in that case.
     if (selectedVersion === 'builtin') selectedVersion = state.defaultVersion
-    if (selectedVersion !== 'builtin' && canUseWorker(selectedVersion)) {
+    if (selectedVersion !== 'builtin' && (canUseWorker(selectedVersion) || platform === appPlatformTypes.desktop)) {
       compileTabLogic.compiler.loadVersion(true, url)
     } else {
       compileTabLogic.compiler.loadVersion(false, url)
@@ -630,6 +628,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }
 
   const handleLoadVersion = (value) => {
+    if(value !== 'builtin' && !pathToURL[value]) return
     setState((prevState) => {
       return {...prevState, selectedVersion: value, matomoAutocompileOnce: true}
     })
@@ -706,6 +705,14 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     })
   }
 
+  const handleOnlyDownloadedChange = (e) => {
+    const checked = e.target.checked
+    if (!checked) handleLoadVersion(state.defaultVersion)
+    setState((prevState) => {
+      return {...prevState, onlyDownloaded: checked}
+    })
+  }
+
   const handleLanguageChange = (value) => {
     compileTabLogic.setLanguage(value)
     state.autoCompile && compile()
@@ -765,6 +772,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             <label className="remixui_compilerLabel form-check-label" htmlFor="versionSelector">
               <FormattedMessage id="solidity.compiler" />
             </label>
+
             <CustomTooltip
               placement="bottom"
               tooltipId="promptCompilerTooltip"
@@ -781,36 +789,16 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
             >
               <span className="far fa-file-certificate border-0 p-0 ml-2" onClick={() => showCompilerLicense()}></span>
             </CustomTooltip>
-            <select
-              value={state.selectedVersion || state.defaultVersion}
-              onChange={(e) => handleLoadVersion(e.target.value)}
-              className="custom-select"
-              id="versionSelector"
-              disabled={state.allversions.length <= 0}
-            >
-              {state.allversions.length <= 0 && (
-                <option disabled data-id={state.selectedVersion === state.defaultVersion ? 'selected' : ''}>
-                  {state.defaultVersion}
-                </option>
-              )}
-              {state.allversions.length <= 0 && (
-                <option disabled data-id={state.selectedVersion === 'builtin' ? 'selected' : ''}>
-                  builtin
-                </option>
-              )}
-              {state.customVersions.map((url, i) => (
-                <option key={i} data-id={state.selectedVersion === url ? 'selected' : ''} value={url}>
-                  custom
-                </option>
-              ))}
-              {state.allversions.map((build, i) => {
-                return _shouldBeAdded(build.longVersion) ? (
-                  <option key={i} value={build.path} data-id={state.selectedVersion === build.path ? 'selected' : ''}>
-                    {build.longVersion}
-                  </option>
-                ) : null
-              })}
-            </select>
+            { solJsonBinData && solJsonBinData.selectorList && solJsonBinData.selectorList.length > 0 ? (
+              <CompilerDropdown
+                allversions={solJsonBinData.selectorList}
+                customVersions={state.customVersions}
+                selectedVersion={state.selectedVersion}
+                defaultVersion={state.defaultVersion}
+                handleLoadVersion={handleLoadVersion}
+                _shouldBeAdded={_shouldBeAdded}
+                onlyDownloaded={state.onlyDownloaded}
+              ></CompilerDropdown>):null}
           </div>
           <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
             <input className="mr-2 custom-control-input" id="nightlies" type="checkbox" onChange={handleNightliesChange} checked={state.includeNightlies} />
@@ -818,6 +806,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <FormattedMessage id="solidity.includeNightlyBuilds" />
             </label>
           </div>
+          {platform === appPlatformTypes.desktop ?     
+            <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
+              <input className="mr-2 custom-control-input" id="downloadedcompilers" type="checkbox" onChange={handleOnlyDownloadedChange} checked={state.onlyDownloaded} />
+              <label htmlFor="downloadedcompilers" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">
+                <FormattedMessage id="solidity.downloadedCompilers" />
+              </label>
+            </div>:null}
           <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
             <input
               className="remixui_autocompile custom-control-input"

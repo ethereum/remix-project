@@ -2,7 +2,22 @@ import React from 'react'
 import {AlertModal, AppModal} from '../interface'
 import {ModalInitialState} from '../state/modals'
 
-export const AppContext = React.createContext<any>(null)
+export type appProviderContextType = {
+  settings: any,
+  showMatamo: boolean,
+  showEnter: boolean,
+  appManager: any
+  modal: any
+}
+
+export enum appPlatformTypes  {
+  web = 'web',
+  desktop = 'desktop'
+}
+
+export const AppContext = React.createContext<appProviderContextType>(null)
+export const onLineContext = React.createContext<boolean>(null)
+export const platformContext = React.createContext<appPlatformTypes>(null)
 
 export interface dispatchModalInterface {
   modal: (data: AppModal) => void

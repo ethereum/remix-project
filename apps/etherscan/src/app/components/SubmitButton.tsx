@@ -8,7 +8,7 @@ interface Props {
   disable?: boolean
 }
 
-export const SubmitButton: React.FC<Props> = ({text, dataId, isSubmitting = false, disable = true}) => {
+export const SubmitButton = ({text, dataId, isSubmitting = false, disable = true}) => {
   return (
     <div>
       <button data-id={dataId} type="submit" className="btn btn-primary btn-block p-1 text-decoration-none" disabled={disable}>

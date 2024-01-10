@@ -1,10 +1,11 @@
-import React, {useRef, useEffect, useState} from 'react' // eslint-disable-line
+import React, {useRef, useEffect, useState, useContext} from 'react' // eslint-disable-line
 import {useIntl} from 'react-intl'
 import {action, FileExplorerContextMenuProps} from '../types'
 
 import '../css/file-explorer-context-menu.css'
 import {customAction} from '@remixproject/plugin-api'
 import UploadFile from './upload-file'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 
 declare global {
   interface Window {
@@ -14,6 +15,7 @@ declare global {
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => {
+  const platform = useContext(platformContext)
   const {
     actions,
     createNewFile,
@@ -82,10 +84,11 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   }
 
   const itemMatchesCondition = (item: action, itemType: string, itemPath: string) => {
-    if (item.type && Array.isArray(item.type) && item.type.findIndex((name) => name === itemType) !== -1) return true
-    else if (item.path && Array.isArray(item.path) && item.path.findIndex((key) => key === itemPath) !== -1) return true
-    else if (item.extension && Array.isArray(item.extension) && item.extension.findIndex((ext) => itemPath.endsWith(ext)) !== -1) return true
-    else if (item.pattern && Array.isArray(item.pattern) && item.pattern.filter((value) => itemPath.match(new RegExp(value))).length > 0) return true
+    if( platform === appPlatformTypes.desktop && item.platform && item.platform === appPlatformTypes.web) return false
+    else if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === itemType) !== -1)) return true
+    else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === itemPath) !== -1)) return true
+    else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => itemPath.endsWith(ext)) !== -1)) return true
+    else if (item.pattern && Array.isArray(item.pattern) && (item.pattern.filter(value => itemPath.match(new RegExp(value))).length > 0)) return true
     else return false
   }
 
@@ -117,6 +120,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
           return (
             <li
               id={`menuitem${item.name.toLowerCase()}`}
+              data-id={`contextMenuItem${item.id}`}
               key={key}
               className={className}
               onClick={() => {
@@ -136,6 +140,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
           return (
             <li
               id={`menuitem${item.name.toLowerCase()}`}
+              data-id={`contextMenuItem${item.id}`}
               key={key}
               className={className}
               onClick={() => {
@@ -153,6 +158,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
         return (
           <li
             id={`menuitem${item.name.toLowerCase()}`}
+            data-id={`contextMenuItem${item.id}`}
             key={key}
             className={className}
             onClick={(e) => {

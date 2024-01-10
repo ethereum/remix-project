@@ -225,18 +225,32 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
    * @private
    */
   async getAccountFromProvider(address: Address): Promise<Account> {
-    const accountData = await this.provider.send('eth_getProof', [
-      address.toString(),
-      [],
-      this.blockTag,
-    ])
-    const codeHash = accountData.codeHash === '0x0000000000000000000000000000000000000000000000000000000000000000' ? '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' : accountData.codeHash
-    const account = Account.fromAccountData({
-      balance: BigInt(accountData.balance),
-      nonce: BigInt(accountData.nonce),
-      codeHash: toBuffer(codeHash)
-      // storageRoot: toBuffer([]), // we have to remove this in order to force the creation of the Trie in the local state.
-    })
+    let accountData
+    try {
+      accountData = await this.provider.send('eth_getProof', [
+        address.toString(),
+        [],
+        this.blockTag,
+      ])
+    } catch (e) {
+      console.log(e)
+    }
+    let account
+    if (!accountData) {
+      account = Account.fromAccountData({
+        balance: BigInt(0),
+        nonce: BigInt(0),
+        codeHash: toBuffer('0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470')
+      })
+    } else {
+      const codeHash = accountData.codeHash === '0x0000000000000000000000000000000000000000000000000000000000000000' ? '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' : accountData.codeHash
+      account = Account.fromAccountData({
+        balance: BigInt(accountData.balance),
+        nonce: BigInt(accountData.nonce),
+        codeHash: toBuffer(codeHash)
+        // storageRoot: toBuffer([]), // we have to remove this in order to force the creation of the Trie in the local state.
+      })
+    }    
     return account
   }
 }

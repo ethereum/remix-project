@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
-import isElectron from 'is-electron'
 import {WebsocketPlugin} from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {version as remixdVersion} from '../../../../../libs/remixd/package.json'
 import {PluginManager} from '@remixproject/engine'
-import {AppModal, AlertModal} from '@remix-ui/app'
+import {AppModal, AlertModal, appPlatformTypes} from '@remix-ui/app'
+import {Registry} from '@remix-project/remix-lib'
 
 const LOCALHOST = ' - connect to localhost - '
 
@@ -50,6 +50,7 @@ export class RemixdHandle extends WebsocketPlugin {
   }
 
   async activate() {
+    console.trace('activate remixd')
     this.connectToLocalhost()
     return true
   }
@@ -111,7 +112,7 @@ export class RemixdHandle extends WebsocketPlugin {
     }
     if (this.localhostProvider.isConnected()) {
       this.deactivate()
-    } else if (!isElectron()) {
+    } else if (!(Registry.getInstance().get('platform').api.isDesktop())) {
       // warn the user only if he/she is in the browser context
       const mod: AppModal = {
         id: 'remixdConnect',

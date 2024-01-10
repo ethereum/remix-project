@@ -4,8 +4,7 @@ import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import Registry from '../state/registry'
-import { EventEmitter } from 'events'
+import {Registry} from '@remix-project/remix-lib'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
@@ -42,7 +41,6 @@ const createError = (err) => {
 class FileManager extends Plugin {
   mode: string
   openedFiles: any
-  events: EventEmitter
   editor: any
   _components: any
   appManager: RemixAppManager
@@ -56,7 +54,6 @@ class FileManager extends Plugin {
     super(profile)
     this.mode = 'browser'
     this.openedFiles = {} // list all opened files
-    this.events = new EventEmitter()
     this.editor = editor
     this._components = {}
     this._components.registry = Registry.getInstance()
@@ -155,8 +152,12 @@ class FileManager extends Plugin {
   refresh() {
     const provider = this.fileProviderOf('/')
     // emit rootFolderChanged so that File Explorer reloads the file tree
-    provider.event.emit('rootFolderChanged', provider.workspace || '/')
-    this.emit('rootFolderChanged', provider.workspace || '/')
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
+      provider.event.emit('refresh')
+    } else {
+      provider.event.emit('rootFolderChanged', provider.workspace || '/')
+      this.emit('rootFolderChanged', provider.workspace || '/')
+    }
   }
 
   /**
@@ -466,14 +467,13 @@ class FileManager extends Plugin {
 
       return new Promise((resolve, reject) => {
         const provider = this.fileProviderOf(path)
-
         provider.resolveDirectory(path, (error, filesProvider) => {
           if (error) reject(error)
           resolve(filesProvider)
         })
       })
     } catch (e) {
-      throw new Error(e)
+      return {}
     }
   }
 
@@ -500,7 +500,8 @@ class FileManager extends Plugin {
       browserExplorer: this._components.registry.get('fileproviders/browser').api,
       localhostExplorer: this._components.registry.get('fileproviders/localhost').api,
       workspaceExplorer: this._components.registry.get('fileproviders/workspace').api,
-      filesProviders: this._components.registry.get('fileproviders').api
+      filesProviders: this._components.registry.get('fileproviders').api,
+      electronExplorer: this._components.registry.get('fileproviders/electron').api,
     }
 
     this._deps.config.set('currentFile', '') // make sure we remove the current file from the previous session
@@ -518,6 +519,11 @@ class FileManager extends Plugin {
     this._deps.workspaceExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.workspaceExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
 
+    this._deps.electronExplorer.event.on('fileChanged', (path) => { this.fileChangedEvent(path) })
+    this._deps.electronExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
+    this._deps.electronExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
+    this._deps.electronExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
+    
     this.getCurrentFile = this.file
     this.getFile = this.readFile
     this.getFolder = this.readdir
@@ -554,9 +560,7 @@ class FileManager extends Plugin {
         }
       }
     }
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRenamed', oldName, newName, isFolder)
-    this.events.emit('fileRenamed', oldName, newName, isFolder)
   }
 
   currentFileProvider() {
@@ -572,9 +576,7 @@ class FileManager extends Plugin {
   }
 
   async closeAllFiles() {
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('filesAllClosed')
-    this.events.emit('filesAllClosed')
     for (const file in this.openedFiles) {
       await this.closeFile(file)
     }
@@ -584,13 +586,9 @@ class FileManager extends Plugin {
     delete this.openedFiles[name]
     if (!Object.keys(this.openedFiles).length) {
       this._deps.config.set('currentFile', '')
-      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
     }
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileClosed', name)
-    this.events.emit('fileClosed', name)
   }
 
   currentPath() {
@@ -610,7 +608,10 @@ class FileManager extends Plugin {
     if (!provider) throw createError({ code: 'ENOENT', message: `${path} not available` })
     // TODO: change provider to Promise
     return new Promise((resolve, reject) => {
-      if (this.currentFile() === path) return resolve(this.editor.currentContent())
+      if (this.currentFile() === path) {
+        const editorContent = this.editor.currentContent()
+        if (editorContent) resolve(editorContent)
+      }
       provider.get(path, (err, content) => {
         if (err) reject(err)
         resolve(content)
@@ -689,24 +690,21 @@ class FileManager extends Plugin {
     }
     this.editor.discard(path)
     delete this.openedFiles[path]
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRemoved', path)
-    this.events.emit('fileRemoved', path)
-    this.openFile(this._deps.config.get('currentFile'))
+    if (path === this._deps.config.get('currentFile')) {
+      this.openFile(this._deps.config.get('currentFile'))
+    }
   }
 
   async unselectCurrentFile() {
     await this.saveCurrentFile()
     this._deps.config.set('currentFile', '')
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('noFileSelected')
-    this.events.emit('noFileSelected')
   }
 
   async openFile(file?: string) {
     if (!file) {
       this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
     } else {
       file = this.normalize(file)
       const resolved = this.getPathFromUrl(file)
@@ -738,9 +736,7 @@ class FileManager extends Plugin {
       } else {
         await this.editor.open(file, content)
       }
-      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('currentFileChanged', file)
-      this.events.emit('currentFileChanged', file)
       return true
     }
   }
@@ -779,8 +775,9 @@ class FileManager extends Plugin {
     if (file.startsWith('localhost') || this.mode === 'localhost') {
       return this._deps.filesProviders.localhost
     }
-    if (file.startsWith('browser')) {
-      return this._deps.filesProviders.browser
+
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
+      return this._deps.filesProviders.electron
     }
     return this._deps.filesProviders.workspace
   }
@@ -904,6 +901,10 @@ class FileManager extends Plugin {
   }
 
   currentWorkspace() {
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
+      return ''
+    }
+
     if (this.mode !== 'localhost') {
       const file = this.currentFile() || ''
       const provider = this.fileProviderOf(file)
@@ -980,7 +981,7 @@ class FileManager extends Plugin {
   /**
    * Moves a file to a new folder
    * @param {string} src path of the source file
-   * @param {string} dest path of the destrination file
+   * @param {string} dest path of the destination file
    * @returns {void}
    */
 

@@ -1,7 +1,7 @@
 'use strict'
 
 const EventManager = require('events')
-const FileProvider = require('./fileProvider')
+import FileProvider from "./fileProvider"
 
 class WorkspaceFileProvider extends FileProvider {
   constructor () {
@@ -9,6 +9,13 @@ class WorkspaceFileProvider extends FileProvider {
     this.workspacesPath = '.workspaces'
     this.workspace = null
     this.event = new EventManager()
+
+    try {
+      // make sure "code-sample" has been removed
+      window.remixFileSystem.unlink(this.workspacesPath + '/code-sample')    
+    } catch (e) {
+      // we don't need to log error if this throws an error
+    }    
   }
 
   setWorkspace (workspace) {

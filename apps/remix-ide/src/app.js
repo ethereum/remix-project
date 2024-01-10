@@ -22,7 +22,7 @@ import {WalkthroughService} from './walkthroughService'
 
 import {OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler} from '@remix-project/core-plugin'
 
-import Registry from './app/state/registry'
+import {Registry} from '@remix-project/remix-lib'
 import {ConfigPlugin} from './app/plugins/config'
 import {StoragePlugin} from './app/plugins/storage'
 import {Layout} from './app/panels/layout'
@@ -43,19 +43,30 @@ import {Injected0ptimismProvider} from './app/providers/injected-optimism-provid
 import {InjectedArbitrumOneProvider} from './app/providers/injected-arbitrum-one-provider'
 import {InjectedEphemeryTestnetProvider} from './app/providers/injected-ephemery-testnet-provider'
 import {InjectedSKALEChaosTestnetProvider} from './app/providers/injected-skale-chaos-testnet-provider'
-import {FileDecorator} from './app/plugins/file-decorator'
-import {CodeFormat} from './app/plugins/code-format'
-import {SolidityUmlGen} from './app/plugins/solidity-umlgen'
+import { FileDecorator } from './app/plugins/file-decorator'
+import { CodeFormat } from './app/plugins/code-format'
+import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { CompilationDetailsPlugin } from './app/plugins/compile-details'
-import {ContractFlattener} from './app/plugins/contractFlattener'
+import { VyperCompilationDetailsPlugin } from './app/plugins/vyper-compilation-details'
+import { ContractFlattener } from './app/plugins/contractFlattener'
+import { TemplatesPlugin } from './app/plugins/remix-templates'
+import { fsPlugin } from './app/plugins/electron/fsPlugin'
+import { isoGitPlugin } from './app/plugins/electron/isoGitPlugin'
+import { electronConfig } from './app/plugins/electron/electronConfigPlugin'
+import { electronTemplates } from './app/plugins/electron/templatesPlugin'
+import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
+import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
+import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
+
 import {OpenAIGpt} from './app/plugins/openaigpt'
 
 const isElectron = require('is-electron')
 
 const remixLib = require('@remix-project/remix-lib')
 
-import {QueryParams} from '@remix-project/remix-lib'
-import {SearchPlugin} from './app/tabs/search'
+import { QueryParams } from '@remix-project/remix-lib'
+import { SearchPlugin } from './app/tabs/search'
+import { ElectronProvider } from './app/files/electronProvider'
 import { CopilotSuggestion } from './app/plugins/copilot/suggestion-service/copilot-suggestion'
 
 const Storage = remixLib.Storage
@@ -63,7 +74,8 @@ const RemixDProvider = require('./app/files/remixDProvider')
 const Config = require('./config')
 
 const FileManager = require('./app/files/fileManager')
-const FileProvider = require('./app/files/fileProvider')
+import FileProvider from "./app/files/fileProvider"
+import { appPlatformTypes } from '@remix-ui/app'
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 
@@ -79,8 +91,23 @@ const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const {TabProxy} = require('./app/panels/tab-proxy.js')
 
+
+export class platformApi {
+  get name () {
+    return isElectron() ? appPlatformTypes.desktop : appPlatformTypes.web
+  }
+  isDesktop () {
+    return isElectron()
+  }
+}
+
 class AppComponent {
   constructor() {
+    const PlatFormAPi = new platformApi()
+    Registry.getInstance().put({
+      api: PlatFormAPi,
+      name: 'platform'
+    })
     this.appManager = new RemixAppManager({})
     this.queryParams = new QueryParams()
     this._components = {}
@@ -109,10 +136,18 @@ class AppComponent {
       name: 'fileproviders/workspace'
     })
 
+    this._components.filesProviders.electron = new ElectronProvider(this.appManager)
+    Registry.getInstance().put({
+      api: this._components.filesProviders.electron,
+      name: 'fileproviders/electron'
+    })
+
     Registry.getInstance().put({
       api: this._components.filesProviders,
       name: 'fileproviders'
     })
+
+
   }
 
   async run() {
@@ -130,12 +165,14 @@ class AppComponent {
       'remix.ethereum.org': 23,
       '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
     }
-    
+
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
     this.showMatamo = matomoDomains[window.location.hostname] && !this.matomoConfAlreadySet
-    
+
     this.walkthroughService = new WalkthroughService(appManager)
+
+    this.platform = isElectron() ? 'desktop' : 'web'
 
     const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
     // workaround for Electron support
@@ -182,12 +219,15 @@ class AppComponent {
     //----- search
     const search = new SearchPlugin()
 
+    //---- templates
+    const templates = new TemplatesPlugin()
+
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 
     // ----------------- Compilation Details ----------------------------
     const compilationDetails = new CompilationDetailsPlugin(appManager)
-
+    const vyperCompilationDetails = new VyperCompilationDetailsPlugin(appManager)
     // ----------------- ContractFlattener ----------------------------
     const contractFlattener = new ContractFlattener()
 
@@ -267,6 +307,7 @@ class AppComponent {
 
     const permissionHandler = new PermissionHandlerPlugin()
 
+    
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -314,11 +355,32 @@ class AppComponent {
       search,
       solidityumlgen,
       compilationDetails,
+      vyperCompilationDetails,
       contractFlattener,
       solidityScript,
+      templates,
       openaigpt,
       copilotSuggestion
     ])
+
+    //---- fs plugin
+    if (isElectron()) {
+      const FSPlugin = new fsPlugin()
+      this.engine.register([FSPlugin])
+      const isoGit = new isoGitPlugin()
+      this.engine.register([isoGit])
+      const electronConfigPlugin = new electronConfig()
+      this.engine.register([electronConfigPlugin])
+      const templatesPlugin = new electronTemplates()
+      this.engine.register([templatesPlugin])
+      const xterm = new xtermPlugin()
+      this.engine.register([xterm])
+      const ripgrep = new ripgrepPlugin()
+      this.engine.register([ripgrep])
+    }
+
+    const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
+    this.engine.register([compilerloader])
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
@@ -398,6 +460,9 @@ class AppComponent {
     } catch (e) {
       console.log("couldn't register iframe plugins", e.message)
     }
+    if (isElectron()){
+      await this.appManager.activatePlugin(['fs'])
+    }
     await this.appManager.activatePlugin(['layout'])
     await this.appManager.activatePlugin(['notification'])
     await this.appManager.activatePlugin(['editor'])
@@ -426,19 +491,31 @@ class AppComponent {
       'blockchain',
       'fetchAndCompile',
       'contentImport',
-      'gistHandler'
+      'gistHandler',
+      'compilerloader'
     ])
     await this.appManager.activatePlugin(['settings'])
+
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
+    await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
+
+    if (isElectron()){
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep'])
+    }
+
+    this.appManager.on(
+      'filePanel',
+      'workspaceInitializationCompleted',
+      async () => {
+        // for e2e tests
+        const loadedElement = document.createElement('span')
+        loadedElement.setAttribute('data-id', 'workspaceloaded')
+        document.body.appendChild(loadedElement)
+        await this.appManager.registerContextMenuItems()
+      }
+    )
     await this.appManager.activatePlugin(['solidity-script', 'openaigpt'])
 
-    this.appManager.on('filePanel', 'workspaceInitializationCompleted', async () => {
-      // for e2e tests
-      const loadedElement = document.createElement('span')
-      loadedElement.setAttribute('data-id', 'workspaceloaded')
-      document.body.appendChild(loadedElement)
-      await this.appManager.registerContextMenuItems()
-    })
 
     await this.appManager.activatePlugin(['filePanel'])
     // Set workspace after initial activation
