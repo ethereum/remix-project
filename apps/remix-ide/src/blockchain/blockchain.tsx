@@ -904,11 +904,11 @@ export class Blockchain extends Plugin {
                 return bufferToHex(value)
               } else if (key === 'db') {
                 return value
-              } else {
-                return bufferToHex(value)           
+              } else if (key === '') {
+                return value           
               }
-              return value
-          }, '\t')
+              return bufferToHex(value)
+            }, '\t')
             this.call('fileManager', 'writeFile', '.states/state.json', stringifyed)
           }, 500)
         }
