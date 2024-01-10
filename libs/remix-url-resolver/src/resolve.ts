@@ -202,7 +202,6 @@ export class RemixURLResolver {
     return { content, cleanUrl: url }
   }
 
-
   getHandlers (): Handler[] {
     return [
       {
