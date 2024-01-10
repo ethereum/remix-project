@@ -7,6 +7,8 @@
   "filePanel.download": "Download",
   "filePanel.backup": "Backup",
   "filePanel.restore": "Restore",
+  "filePanel.name": "Name",
+  "filePanel.save": "Save",
   "filePanel.workspace.create": "Create Workspace",
   "filePanel.workspace.create.desktop": "Create project in new folder",
   "filePanel.workspace.rename": "Rename Workspace",
