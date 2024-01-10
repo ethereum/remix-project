@@ -149,7 +149,7 @@ export class HardhatClient extends PluginClient {
   listenOnHardHatFolder() {
     console.log('Hardhat artifacts folder doesn\'t exist... waiting for the compilation.')
     try {
-      if(this.watcher) this.watcher.close()
+      if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 2, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
       this.watcher.on('addDir', () => {
@@ -171,7 +171,7 @@ export class HardhatClient extends PluginClient {
   listenOnHardhatCompilation() {
     try {
       console.log('listening on Hardhat compilation...')
-      if(this.watcher) this.watcher.close()
+      if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.buildPath, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       this.watcher.on('change', async () => await this.triggerProcessArtifact())
       this.watcher.on('add', async () => await this.triggerProcessArtifact())

@@ -54,8 +54,6 @@ test('setup', function (t) {
 });
 
 
-
-
 test('Integration test thisLocal module', function (t: test.Test) {
   t.plan(testFiles.length)
   const module: any = modules.thisLocal

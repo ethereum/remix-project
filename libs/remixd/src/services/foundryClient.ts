@@ -52,7 +52,7 @@ export class FoundryClient extends PluginClient {
   listenOnFoundryFolder() {
     console.log('Foundry out folder doesn\'t exist... waiting for the compilation.')
     try {
-      if(this.watcher) this.watcher.close()
+      if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
       this.watcher.on('addDir', () => {
@@ -126,7 +126,7 @@ export class FoundryClient extends PluginClient {
       this.logTimeout = setTimeout(() => {
         // @ts-ignore
         this.call('terminal', 'log', { type: 'log', value: `receiving compilation result from Foundry` })
-        console.log('Syncing compilation result from Foundry')  
+        console.log('Syncing compilation result from Foundry')
       }, 1000)
 
     } catch (e) {
@@ -142,7 +142,7 @@ export class FoundryClient extends PluginClient {
 
   listenOnFoundryCompilation() {
     try {
-      if(this.watcher) this.watcher.close()
+      if (this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.cachePath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
       this.watcher.on('change', async () => await this.triggerProcessArtifact())
       this.watcher.on('add', async () => await this.triggerProcessArtifact())

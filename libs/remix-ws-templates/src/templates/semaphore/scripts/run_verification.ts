@@ -31,32 +31,32 @@ function hash(message: any): bigint {
     // @ts-ignore
     const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/semaphore.wasm', true);
     // @ts-ignore
-    const wasm = new Uint8Array(wasmBuffer);   
-     
+    const wasm = new Uint8Array(wasmBuffer);
+
     const zkey_final = {
       type: "mem",
       data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/build/zk_setup.txt')))
     }
-    const wtns = { type: "mem" };   
+    const wtns = { type: "mem" };
 
     const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/build/verification_key.json'))
-  
+
     // build list of identity commitments
     const secrets = []
     const identityCommitments = []
-    for (let k = 0; k < 2; k++) {      
+    for (let k = 0; k < 2; k++) {
       const identityTrapdoor = BigInt(ethers.utils.hexlify(ethers.utils.randomBytes(32)))
       const identityNullifier = BigInt(ethers.utils.hexlify(ethers.utils.randomBytes(32)))
-      secrets.push({identityTrapdoor, identityNullifier})
-  
+      secrets.push({ identityTrapdoor, identityNullifier })
+
       const secret = poseidon([identityNullifier, identityTrapdoor])
       const identityCommitment = poseidon([secret])
       identityCommitments.push(identityCommitment)
     }
     //console.log('incremental tree', identityCommitments.map((x) => x.toString()))
-    
+
     let tree
-  
+
     try {
       tree = new IncrementalMerkleTree(poseidon, 20, BigInt(0), 2, identityCommitments) // Binary tree.
     } catch (e) {
@@ -66,11 +66,11 @@ function hash(message: any): bigint {
     const index = tree.indexOf(identityCommitments[0])
 
     console.log(index.toString())
-  
+
     const proof1 = tree.createProof(0)
 
     console.log('prepare signals for id ', identityCommitments[0].toString(), tree.indexOf(identityCommitments[0]), proof1.siblings.map((x)=> x.toString()))
-    
+
     const signals = {
       identityTrapdoor: secrets[0].identityTrapdoor,
       identityNullifier: secrets[0].identityNullifier,
@@ -79,23 +79,22 @@ function hash(message: any): bigint {
       externalNullifier: hash(42),
       signalHash: hash(ethers.utils.formatBytes32String("Hello World"))
     }
-    
+
     console.log('calculate')
     await snarkjs.wtns.calculate(signals, wasm, wtns);
-    
+
     console.log('check')
     await snarkjs.wtns.check(r1cs, wtns, logger);
-    
+
 
     console.log('prove')
     const { proof, publicSignals } = await snarkjs.groth16.prove(zkey_final, wtns);
-    
+
     const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof, logger);
     console.log('zk proof validity', verified);
     proof1.root.toString() === publicSignals[0] ? console.log('merkle proof valid') : console.log('merkle proof invalid')
 
-    
-    
+
   } catch (e) {
     console.error(e.message)
   }

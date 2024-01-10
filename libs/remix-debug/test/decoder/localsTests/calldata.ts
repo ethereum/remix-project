@@ -30,8 +30,8 @@ module.exports = async function (st, privateKey, contractBytecode, compilationRe
         const traceManager = new TraceManager({ web3 })
         const codeManager = new CodeManager(traceManager)
         codeManager.clear()
-        const solidityProxy = new SolidityProxy({ 
-          getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
+        const solidityProxy = new SolidityProxy({
+          getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager),
           getCode: codeManager.getCode.bind(codeManager),
           compilationResult: () => compilationResult
         })
@@ -54,7 +54,7 @@ module.exports = async function (st, privateKey, contractBytecode, compilationRe
         callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
           helper.decodeLocals(st, 140, traceManager, callTree, function (locals) {
             try {
-              const expected = {"p":{"value":"45","type":"uint256"},"foo":{"length":"1","value":[{"value":"3","type":"uint8"}],"type":"uint8[1]"},"boo":{"length":"1","value":[{"length":"2","value":[{"value":"R","type":"string"},{"value":"T","type":"string"}],"type":"string[2]"}],"type":"string[2][1]"}}
+              const expected = { "p":{ "value":"45","type":"uint256" },"foo":{ "length":"1","value":[{ "value":"3","type":"uint8" }],"type":"uint8[1]" },"boo":{ "length":"1","value":[{ "length":"2","value":[{ "value":"R","type":"string" },{ "value":"T","type":"string" }],"type":"string[2]" }],"type":"string[2][1]" } }
               st.deepEqual(locals, expected)
             } catch (e) {
               st.fail(e.message)
@@ -62,7 +62,7 @@ module.exports = async function (st, privateKey, contractBytecode, compilationRe
             resolve({})
           })
         })
-        
+
 
         traceManager.resolveTrace(tx).then(() => {
           debuggerEvent.trigger('newTraceLoaded', [traceManager.trace])

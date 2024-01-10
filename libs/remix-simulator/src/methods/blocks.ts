@@ -59,7 +59,7 @@ export class Blocks {
           nonce: bigIntToHex(tx.nonce),
           transactionIndex: this.TX_INDEX,
           value: bigIntToHex(tx.value),
-          to: receipt.to ?  receipt.to : null
+          to: receipt.to ? receipt.to : null
         }
       }
     })
@@ -113,7 +113,7 @@ export class Blocks {
           nonce: bigIntToHex(tx.nonce),
           transactionIndex: this.TX_INDEX,
           value: bigIntToHex(tx.value),
-          to: receipt.to ?  receipt.to : null
+          to: receipt.to ? receipt.to : null
         }
       }
     })

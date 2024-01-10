@@ -23,7 +23,7 @@ export class LogsManager {
       web3.eth.getTransactionReceipt(txHash, (_error, receipt) => {
         for (const log of receipt.logs) {
           this.oldLogs.push({ type: 'block', blockNumber, block, tx, log, txNumber: i, receipt })
-          const subscriptions = this.getSubscriptionsFor({ type: 'block', blockNumber, block, tx, log, receipt})
+          const subscriptions = this.getSubscriptionsFor({ type: 'block', blockNumber, block, tx, log, receipt })
           for (const subscriptionId of subscriptions) {
             const result = {
               logIndex: '0x1', // 1
@@ -75,7 +75,7 @@ export class LogsManager {
       const subscriptionParams = this.subscriptions[subscriptionId]
       const [queryType, queryFilter] = subscriptionParams
 
-      if (this.eventMatchesFilter(changeEvent, queryType, queryFilter || { topics: [] })) {
+      if (this.eventMatchesFilter(changeEvent, queryType, queryFilter || { topics: []})) {
         matchedSubscriptions.push(subscriptionId)
       }
     }
@@ -134,7 +134,7 @@ export class LogsManager {
     const tracking = this.filterTracking[filterId]
 
     if (logsOnly || filterType === 'filter') {
-      return this.getLogsFor(params || { topics: [] })
+      return this.getLogsFor(params || { topics: []})
     }
     if (filterType === 'block') {
       const blocks = this.oldLogs.filter(x => x.type === 'block').filter(x => tracking.block === undefined || x.blockNumber >= tracking.block)

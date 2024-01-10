@@ -6,7 +6,7 @@ import { default as StatRunner } from '../../src/solidity-analyzer'
 import solc from 'solc';
 import { CompilationResult, AnalysisReportObj, AnalysisReport } from '../../src/types'
 import { checksEffectsInteraction } from '../../src/solidity-analyzer/modules/'
-const {compilerInput  } = helpers.compiler
+const { compilerInput } = helpers.compiler
 const folder: string = 'solidity-v0.5'
 
 let compiler

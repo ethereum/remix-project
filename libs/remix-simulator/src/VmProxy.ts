@@ -1,11 +1,11 @@
-import {  util } from '@remix-project/remix-lib'
+import { util } from '@remix-project/remix-lib'
 const { toHexPaddedString, formatMemory } = util
 import { helpers } from '@remix-project/remix-lib'
-const  { normalizeHexAddress } = helpers.ui
+const { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs, hash } from '@remix-project/remix-lib'
 import { toChecksumAddress, bufferToHex, Address, toBuffer } from '@ethereumjs/util'
-import utils, {toBigInt} from 'web3-utils'
-import {isBigInt} from 'web3-validator'
+import utils, { toBigInt } from 'web3-utils'
+import { isBigInt } from 'web3-validator'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
 import type { StateManager } from '@ethereumjs/statemanager'

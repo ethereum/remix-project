@@ -155,7 +155,7 @@ export class TraceManager {
         return stack.map(el => toHexPaddedString(el))
       } else {
         // it's an object coming from the VM.
-        // for performance reasons, 
+        // for performance reasons,
         // we don't turn the stack coming from the VM into an array when the tx is executed
         // but now when the app needs it.
         const stack = []

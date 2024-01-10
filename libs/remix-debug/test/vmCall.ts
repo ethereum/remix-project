@@ -1,5 +1,5 @@
 'use strict'
-import { extendWeb3 } from '../src/init' 
+import { extendWeb3 } from '../src/init'
 import { Address } from '@ethereumjs/util'
 import { Web3 } from 'web3';
 const { Provider } = require('@remix-project/remix-simulator')

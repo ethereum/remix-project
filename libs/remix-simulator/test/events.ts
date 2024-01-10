@@ -79,8 +79,8 @@ pragma solidity >=0.7.0 <0.9.0;
 
 import "hardhat/console.sol";
 
-contract test {   
-    event testEvent(uint indexed value); 
+contract test {
+    event testEvent(uint indexed value);
     function set(Owner p) public  {
         p.changeOwner(address(this));
         emit testEvent(123);
@@ -118,5 +118,5 @@ contract Owner {
     function getOwner() external view returns (address) {
         return owner;
     }
-} 
+}
 */

@@ -240,7 +240,7 @@ export function getinputParameters (value) {
 export function compareByteCode (code1, code2) {
   if (code1 === code2) return true
   if (code2 === '0x') return false // abstract contract. see comment
-  if (code1 === '0x00' || code2 === '0x00' && code1 !== code2) return false  // // This can be removed some time once YUL returns correct bytecode
+  if (code1 === '0x00' || code2 === '0x00' && code1 !== code2) return false // // This can be removed some time once YUL returns correct bytecode
 
   if (code2.substr(2, 46) === '7300000000000000000000000000000000000000003014') {
     // testing the following signature: PUSH20 00..00 ADDRESS EQ
@@ -255,7 +255,7 @@ export function compareByteCode (code1, code2) {
   }
 
   code1 = removeImmutableReference(code1, code2)
-  code1 = extractinputParameters(code1)  
+  code1 = extractinputParameters(code1)
   code1 = extractSwarmHash(code1)
   code1 = extractcborMetadata(code1)
   code2 = extractinputParameters(code2)
@@ -267,7 +267,7 @@ export function compareByteCode (code1, code2) {
       // if the length isn't the same, we have an issue with extracting the metadata hash.
       const minLength = code1.length > code2.length ? code2.length: code1.length
       code1 = code1.substr(0, minLength - 10)
-      code2 = code2.substr(0, minLength - 10) 
+      code2 = code2.substr(0, minLength - 10)
     }
     const compare = stringSimilarity.compareTwoStrings(code1, code2)
     return compare == 1
