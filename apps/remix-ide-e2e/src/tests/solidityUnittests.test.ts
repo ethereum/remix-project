@@ -210,7 +210,6 @@ module.exports = {
     browser
       .waitForElementPresent('*[data-id="verticalIconsKindfilePanel"]')
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
       .clickLaunchIcon('solidityUnitTesting')
       .pause(2000)

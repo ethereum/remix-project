@@ -10,10 +10,11 @@ import {
 } from 'file-saver'
 import http from 'isomorphic-git/http/web'
 
-const JSZip = require('jszip')
-const path = require('path')
-const FormData = require('form-data')
-const axios = require('axios')
+import JSZip from 'jszip'
+import path from 'path'
+import FormData from 'form-data'
+import axios from 'axios'
+import {Registry} from '@remix-project/remix-lib'
 
 const profile = {
   name: 'dGitProvider',
@@ -21,11 +22,17 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'updateSubmodules'],
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'version', 'updateSubmodules'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
-  constructor () {
+  ipfsconfig: { host: string; port: number; protocol: string; ipfsurl: string }
+  globalIPFSConfig: { host: string; port: number; protocol: string; ipfsurl: string }
+  remixIPFS: { host: string; port: number; protocol: string; ipfsurl: string }
+  ipfsSources: any[]
+  ipfs: any
+  filesToSend: any[]
+  constructor() {
     super(profile)
     this.ipfsconfig = {
       host: 'jqgt.remixproject.org',
@@ -48,7 +55,15 @@ class DGitProvider extends Plugin {
     this.ipfsSources = [this.remixIPFS, this.globalIPFSConfig, this.ipfsconfig]
   }
 
-  async getGitConfig (dir = '') {
+  async getGitConfig(dir = '') {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      return {
+        fs: window.remixFileSystem,
+        dir: '/'
+      }
+    }
+
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
 
     if (!workspace) return
@@ -58,7 +73,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async parseInput (input) {
+  async parseInput(input) {
     return {
       corsProxy: 'https://corsproxy.remixproject.org/',
       http,
@@ -73,7 +88,15 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async init (input) {
+  async init(input?) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      await this.call('isogit', 'init', {
+        defaultBranch: (input && input.branch) || 'main'
+      })
+      this.emit('init')
+      return
+    }
+
     await git.init({
       ...await this.getGitConfig(),
       defaultBranch: (input && input.branch) || 'main'
@@ -81,74 +104,140 @@ class DGitProvider extends Plugin {
     this.emit('init')
   }
 
-  async status (cmd) {
+  async version() {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      return await this.call('isogit', 'version')
+    }
+
+    const version = 'built-in'
+    return version
+  }
+
+  async status(cmd) {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      const status = await this.call('isogit', 'status', cmd)
+
+      return status
+    }
+
+
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
     })
+
     return status
   }
 
-  async add (cmd) {
-    await git.add({
-      ...await this.getGitConfig(),
-      ...cmd
-    })
+  async add(cmd) {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      await this.call('isogit', 'add', cmd)
+    } else {
+      await git.add({
+        ...await this.getGitConfig(),
+        ...cmd
+      })
+    }
+
     this.emit('add')
   }
 
-  async rm (cmd) {
-    await git.remove({
-      ...await this.getGitConfig(),
-      ...cmd
-    })
+  async rm(cmd) {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      await this.call('isogit', 'rm', cmd)
+    } else {
+      await git.remove({
+        ...await this.getGitConfig(),
+        ...cmd
+      })
+      this.emit('rm')
+
+    }
   }
 
-  async checkout (cmd, refresh = true) {
-    const gitmodules = await this.parseGitmodules() || []
-    await git.checkout({
-      ...await this.getGitConfig(),
-      ...cmd
-    })
-    const newgitmodules = await this.parseGitmodules() || []
-    // find the difference between the two gitmodule versions
-    const toRemove = gitmodules.filter((module) => {
-      return !newgitmodules.find((newmodule) => {
-        return newmodule.name === module.name
-      })
-    })
+  async reset(cmd) {
 
-    for (const module of toRemove) {
-      const path = (await this.getGitConfig(module.path)).dir
-      if (await window.remixFileSystem.exists(path)) {
-        const stat = await window.remixFileSystem.stat(path)
-        try {
-          if (stat.isDirectory()) {
-            await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      await this.call('isogit', 'reset', cmd)
+    } else {
+      await git.resetIndex({
+        ...await this.getGitConfig(),
+        ...cmd
+      })
+      this.emit('rm')
+
+    }
+  }
+
+  async checkout(cmd, refresh = true) {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      await this.call('isogit', 'checkout', cmd)
+    } else {
+      const gitmodules = await this.parseGitmodules() || []
+      await git.checkout({
+        ...await this.getGitConfig(),
+        ...cmd
+      })
+      const newgitmodules = await this.parseGitmodules() || []
+      // find the difference between the two gitmodule versions
+      const toRemove = gitmodules.filter((module) => {
+        return !newgitmodules.find((newmodule) => {
+          return newmodule.name === module.name
+        })
+      })
+  
+      for (const module of toRemove) {
+        const path = (await this.getGitConfig(module.path)).dir
+        if (await window.remixFileSystem.exists(path)) {
+          const stat = await window.remixFileSystem.stat(path)
+          try {
+            if (stat.isDirectory()) {
+              await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
+            }
+          } catch (e) {
+            // do nothing
           }
-        } catch (e) {
-          // do nothing
         }
       }
     }
-
-    if (refresh)
+    if (refresh) {
       setTimeout(async () => {
         await this.call('fileManager', 'refresh')
       }, 1000)
+    }
 
     this.emit('checkout')
   }
 
-  async log (cmd) {
+  async log(cmd) {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      const status = await this.call('isogit', 'log', {
+        ...cmd,
+        depth: 10
+      })
+
+      return status
+    }
+
+
     const status = await git.log({
       ...await this.getGitConfig(),
-      ...cmd
+      ...cmd,
+      depth: 10
     })
     return status
   }
 
-  async remotes (config) {
+  async remotes(config) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      return await this.call('isogit', 'remotes', config)
+    }
+
     let remotes = []
     try {
       remotes = await git.listRemotes({ ...config ? config : await this.getGitConfig() })
@@ -158,11 +247,17 @@ class DGitProvider extends Plugin {
     return remotes
   }
 
-  async branch (cmd, refresh = true) {
-    const status = await git.branch({
-      ...await this.getGitConfig(),
-      ...cmd
-    })
+  async branch(cmd, refresh = true) {
+
+    let status
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      status = await this.call('isogit', 'branch', cmd)
+    } else {
+      status = await git.branch({
+        ...await this.getGitConfig(),
+        ...cmd
+      })
+    }
     if (refresh) {
       setTimeout(async () => {
         await this.call('fileManager', 'refresh')
@@ -172,7 +267,14 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async currentbranch (config) {
+  async currentbranch(config) {
+
+
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      return await this.call('isogit', 'currentbranch')
+    }
+
     try {
       const defaultConfig = await this.getGitConfig()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
@@ -184,7 +286,12 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async branches (config) {
+  async branches(config) {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      return await this.call('isogit', 'branches')
+    }
+
     try {
       const defaultConfig = await this.getGitConfig()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
@@ -202,21 +309,39 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async commit (cmd) {
-    await this.init()
-    try {
-      const sha = await git.commit({
-        ...await this.getGitConfig(),
-        ...cmd
-      })
-      this.emit('commit')
-      return sha
-    } catch (e) {
-      throw new Error(e)
+  async commit(cmd) {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      try {
+        await this.call('isogit', 'init')
+        const sha = await this.call('isogit', 'commit', cmd)
+        this.emit('commit')
+        return sha
+      } catch (e) {
+        throw new Error(e)
+      }
+    } else {
+
+      await this.init()
+      try {
+        const sha = await git.commit({
+          ...await this.getGitConfig(),
+          ...cmd
+        })
+        this.emit('commit')
+        return sha
+      } catch (e) {
+        throw new Error(e)
+      }
     }
   }
 
-  async lsfiles (cmd) {
+  async lsfiles(cmd) {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      return await this.call('isogit', 'lsfiles', cmd)
+    }
+
     const filesInStaging = await git.listFiles({
       ...await this.getGitConfig(),
       ...cmd
@@ -224,7 +349,12 @@ class DGitProvider extends Plugin {
     return filesInStaging
   }
 
-  async resolveref (cmd) {
+  async resolveref(cmd) {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      return await this.call('isogit', 'resolveref', cmd)
+    }
+
     const oid = await git.resolveRef({
       ...await this.getGitConfig(),
       ...cmd
@@ -232,22 +362,27 @@ class DGitProvider extends Plugin {
     return oid
   }
 
-  async readblob (cmd) {
+  async readblob(cmd) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      const readBlobResult = await this.call('isogit', 'readblob', cmd)
+      return readBlobResult
+    }
     const readBlobResult = await git.readBlob({
       ...await this.getGitConfig(),
       ...cmd
     })
+
     return readBlobResult
   }
 
-  async setIpfsConfig (config) {
+  async setIpfsConfig(config) {
     this.ipfsconfig = config
     return new Promise((resolve) => {
       resolve(this.checkIpfsConfig())
     })
   }
 
-  async checkIpfsConfig (config) {
+  async checkIpfsConfig(config?) {
     this.ipfs = IpfsHttpClient(config || this.ipfsconfig)
     try {
       await this.ipfs.config.getAll()
@@ -257,40 +392,73 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async addremote (input) {
+  async addremote(input) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      await this.call('isogit', 'addremote', { url: input.url, remote: input.remote })
+      return
+    }
     await git.addRemote({ ...await this.getGitConfig(), url: input.url, remote: input.remote })
   }
 
-  async delremote (input) {
+  async delremote(input) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      await this.call('isogit', 'delremote', { remote: input.remote })
+      return
+    }
     await git.deleteRemote({ ...await this.getGitConfig(), remote: input.remote })
   }
 
-  async localStorageUsed () {
+  async localStorageUsed() {
     return this.calculateLocalStorage()
   }
 
-  async clone (input, workspaceName, workspaceExists = false) {
-    const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
-    if (!permission) return false
-    if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
-    if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
-    const cmd = {
-      url: input.url,
-      singleBranch: input.singleBranch,
-      ref: input.branch,
-      depth: input.depth || 10,
-      ...await this.parseInput(input),
-      ...await this.getGitConfig()
+  async clone(input, workspaceName, workspaceExists = false) {
+
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      const folder = await this.call('fs', 'selectFolder', null, 'Select or create a folder to clone the repository in', 'Select as Repository Destination')
+      if (!folder) return false
+      const cmd = {
+        url: input.url,
+        singleBranch: input.singleBranch,
+        ref: input.branch,
+        depth: input.depth || 10,
+        dir: folder,
+        input
+      }
+      this.call('terminal', 'logHtml', `Cloning ${input.url}... please wait...`)
+      try{
+        const result = await this.call('isogit', 'clone', cmd)
+        this.call('fs', 'openWindow', folder)
+        return result
+      }catch(e){
+        this.call('notification', 'alert', {
+          id: 'dgitAlert',
+          message: 'Unexpected error while cloning the repository: \n' + e.toString(),
+        })
+      }
+    } else {
+      const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
+      if (!permission) return false
+      if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
+      if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
+      const cmd = {
+        url: input.url,
+        singleBranch: input.singleBranch,
+        ref: input.branch,
+        depth: input.depth || 10,
+        ...await this.parseInput(input),
+        ...await this.getGitConfig()
+      }
+      this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
+      const result = await git.clone(cmd)
+      if (!workspaceExists) {
+        setTimeout(async () => {
+          await this.call('fileManager', 'refresh')
+        }, 1000)
+      }
+      this.emit('clone')
+      return result
     }
-    this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
-    const result = await git.clone(cmd)
-    if (!workspaceExists) {
-      setTimeout(async () => {
-        await this.call('fileManager', 'refresh')
-      }, 1000)
-    }
-    this.emit('clone')
-    return result
   }
 
   async parseGitmodules (dir = '') {
@@ -298,8 +466,8 @@ class DGitProvider extends Plugin {
       const gitmodules = await this.call('fileManager', 'readFile', path.join(dir, '.gitmodules'))
       if (gitmodules) {
         const lines = gitmodules.split('\n')
-        let currentModule = {}
-        let modules = []
+        let currentModule:any = {}
+        const modules = []
         for (let line of lines) {
           line = line.trim()
           if (line.startsWith('[')) {
@@ -331,7 +499,7 @@ class DGitProvider extends Plugin {
       this.call('terminal', 'logHtml', `Found ${(gitmodules && gitmodules.length) || 0} submodules in ${currentDir || '/'}`)
       //parse gitmodules
       if (gitmodules) {
-        for (let module of gitmodules) {
+        for (const module of gitmodules) {
           const dir = path.join(currentDir, module.path)
           const targetPath = (await this.getGitConfig(dir)).dir
           if (await window.remixFileSystem.exists(targetPath)) {
@@ -345,7 +513,7 @@ class DGitProvider extends Plugin {
             }
           }
         }
-        for (let module of gitmodules) {
+        for (const module of gitmodules) {
           const dir = path.join(currentDir, module.path)
           // if url contains git@github.com: convert it
           if(module.url && module.url.startsWith('git@github.com:')) {
@@ -434,13 +602,25 @@ class DGitProvider extends Plugin {
         name: input.name,
         email: input.email
       },
-      ...await this.parseInput(input),
-      ...await this.getGitConfig()
+      input,
     }
-    return await git.push(cmd)
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      return await this.call('isogit', 'push', cmd)
+    } else {
+
+      const cmd2 = {
+        ...cmd,
+        ...await this.parseInput(input),
+      }
+      return await git.push({
+        ...await this.getGitConfig(),
+        ...cmd2
+      })
+
+    }
   }
 
-  async pull (input) {
+  async pull(input) {
     const cmd = {
       ref: input.ref,
       remoteRef: input.remoteRef,
@@ -449,17 +629,29 @@ class DGitProvider extends Plugin {
         email: input.email
       },
       remote: input.remote,
-      ...await this.parseInput(input),
-      ...await this.getGitConfig()
+      input,
     }
-    const result = await git.pull(cmd)
+    let result
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      result = await this.call('isogit', 'pull', cmd)
+    }
+    else {
+      const cmd2 = {
+        ...cmd,
+        ...await this.parseInput(input),
+      }
+      result = await git.pull({
+        ...await this.getGitConfig(),
+        ...cmd2
+      })
+    }
     setTimeout(async () => {
       await this.call('fileManager', 'refresh')
     }, 1000)
     return result
   }
 
-  async fetch (input) {
+  async fetch(input) {
     const cmd = {
       ref: input.ref,
       remoteRef: input.remoteRef,
@@ -468,17 +660,28 @@ class DGitProvider extends Plugin {
         email: input.email
       },
       remote: input.remote,
-      ...await this.parseInput(input),
-      ...await this.getGitConfig()
+      input
     }
-    const result = await git.fetch(cmd)
+    let result
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      result = await this.call('isogit', 'fetch', cmd)
+    } else {
+      const cmd2 = {
+        ...cmd,
+        ...await this.parseInput(input),
+      }
+      result = await git.fetch({
+        ...await this.getGitConfig(),
+        ...cmd2
+      })
+    }
     setTimeout(async () => {
       await this.call('fileManager', 'refresh')
     }, 1000)
     return result
   }
 
-  async export (config) {
+  async export(config) {
     if (!this.checkIpfsConfig(config)) return false
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
@@ -498,7 +701,7 @@ class DGitProvider extends Plugin {
     return r.cid.string
   }
 
-  async pin (pinataApiKey, pinataSecretApiKey) {
+  async pin(pinataApiKey, pinataSecretApiKey) {
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
     this.filesToSend = []
@@ -551,21 +754,21 @@ class DGitProvider extends Plugin {
         .post(url, data, {
           maxBodyLength: 'Infinity',
           headers: {
-            'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+            'Content-Type': `multipart/form-data; boundary=${(data as any)._boundary}`,
             pinata_api_key: pinataApiKey,
             pinata_secret_api_key: pinataSecretApiKey
           }
-        }).catch((e) => {
+        } as any).catch((e) => {
           console.log(e)
         })
       // also commit to remix IPFS for availability after pinning to Pinata
-      return await this.export(this.remixIPFS) || result.data.IpfsHash
+      return await this.export(this.remixIPFS) || (result as any).data.IpfsHash
     } catch (error) {
       throw new Error(error)
     }
   }
 
-  async pinList (pinataApiKey, pinataSecretApiKey) {
+  async pinList(pinataApiKey, pinataSecretApiKey) {
     const url = 'https://api.pinata.cloud/data/pinList?status=pinned'
     try {
       const result = await axios
@@ -575,16 +778,16 @@ class DGitProvider extends Plugin {
             pinata_api_key: pinataApiKey,
             pinata_secret_api_key: pinataSecretApiKey
           }
-        }).catch((e) => {
+        } as any).catch((e) => {
           console.log('Pinata unreachable')
         })
-      return result.data
+      return (result as any).data
     } catch (error) {
       throw new Error(error)
     }
   }
 
-  async unPin (pinataApiKey, pinataSecretApiKey, hashToUnpin) {
+  async unPin(pinataApiKey, pinataSecretApiKey, hashToUnpin) {
     const url = `https://api.pinata.cloud/pinning/unpin/${hashToUnpin}`
     try {
       await axios
@@ -600,7 +803,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async importIPFSFiles (config, cid, workspace) {
+  async importIPFSFiles(config, cid, workspace) {
     const ipfs = IpfsHttpClient(config)
     let result = false
     try {
@@ -629,9 +832,9 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  calculateLocalStorage () {
-    var _lsTotal = 0
-    var _xLen; var _x
+  calculateLocalStorage() {
+    let _lsTotal = 0
+    let _xLen; let _x
     for (_x in localStorage) {
       // eslint-disable-next-line no-prototype-builtins
       if (!localStorage.hasOwnProperty(_x)) {
@@ -643,10 +846,10 @@ class DGitProvider extends Plugin {
     return (_lsTotal / 1024).toFixed(2)
   }
 
-  async import (cmd) {
+  async import(cmd) {
     const permission = await this.askUserPermission('import', 'Import multiple files into your workspaces.')
     if (!permission) return false
-    if (this.calculateLocalStorage() > 10000) throw new Error('The local storage of the browser is full.')
+    if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
     const cid = cmd.cid
     await this.call('filePanel', 'createWorkspace', `workspace_${Date.now()}`, true)
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
@@ -662,13 +865,13 @@ class DGitProvider extends Plugin {
     if (!result) throw new Error(`Cannot pull files from IPFS at ${cid}`)
   }
 
-  async getItem (name) {
+  async getItem(name) {
     if (typeof window !== 'undefined') {
       return window.localStorage.getItem(name)
     }
   }
 
-  async setItem (name, content) {
+  async setItem(name, content) {
     try {
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(name, content)
@@ -680,7 +883,7 @@ class DGitProvider extends Plugin {
     return true
   }
 
-  async zip () {
+  async zip() {
     const zip = new JSZip()
     const workspace = await this.call('filePanel', 'getCurrentWorkspace')
     const files = await this.getDirectory('/')
@@ -697,7 +900,7 @@ class DGitProvider extends Plugin {
       })
   }
 
-  async createDirectories (strdirectories) {
+  async createDirectories(strdirectories) {
     const ignore = ['.', '/.', '']
     if (ignore.indexOf(strdirectories) > -1) return false
     const directories = strdirectories.split('/')
@@ -715,7 +918,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async getDirectory (dir) {
+  async getDirectory(dir) {
     let result = []
     const files = await this.call('fileManager', 'readdir', dir)
     const fileArray = normalize(files)
@@ -739,7 +942,7 @@ class DGitProvider extends Plugin {
 }
 
 const addSlash = (file) => {
-  if (!file.startsWith('/'))file = '/' + file
+  if (!file.startsWith('/')) file = '/' + file
   return file
 }
 

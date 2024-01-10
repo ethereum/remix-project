@@ -82,8 +82,11 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
       deleteSavedWorkspace(deletedName)
     })
     return () => {
-      plugin.off('filePanel', 'setWorkspace')
-      plugin.off('filePanel', 'workspaceDeleted')
+      try {
+        plugin.off('filePanel', 'setWorkspace')
+        plugin.off('filePanel', 'workspaceDeleted')
+      } catch (e) {
+      }
     }
   }, [plugin])
 

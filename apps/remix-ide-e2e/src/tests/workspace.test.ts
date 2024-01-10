@@ -555,6 +555,9 @@ module.exports = {
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .waitForElementVisible('[data-id="PermissionHandler-modal-footer-ok-react"]', 300000)
       .click('[data-id="PermissionHandler-modal-footer-ok-react"]')
+      // click on lib to close it
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemlib"]')
+      .click('*[data-id="treeViewLitreeViewItemlib"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc/MULTI_SIG"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc/MULTI_SIG/MultiSigSwapHook.sol"]')

@@ -94,7 +94,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const intl = useIntl()
 
   const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    messagesEndRef.current && messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
   }
 
   useEffect(() => {
@@ -579,63 +579,64 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
 
   return (
-    <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel" ref={panelRef}>
-      <div className="remix_ui_terminal_bar d-flex">
-        <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
-          <CustomTooltip
-            placement="top"
-            tooltipId="terminalToggle"
-            tooltipClasses="text-nowrap"
-            tooltipText={isOpen ? <FormattedMessage id="terminal.hideTerminal" /> : <FormattedMessage id="terminal.showTerminal" />}
-          >
-            <i
-              className={`mx-2 remix_ui_terminal_toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`}
-              data-id="terminalToggleIcon"
-              onClick={handleToggleTerminal}
-            ></i>
-          </CustomTooltip>
-          <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole}>
-            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.clearConsole" />}>
-              <i className="fas fa-ban" aria-hidden="true"></i>
+    ( !props.visible? <></>: 
+      <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel" ref={panelRef}>
+        <div className="remix_ui_terminal_bar d-flex">
+          <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
+            <CustomTooltip
+              placement="top"
+              tooltipId="terminalToggle"
+              tooltipClasses="text-nowrap"
+              tooltipText={isOpen ? <FormattedMessage id="terminal.hideTerminal" /> : <FormattedMessage id="terminal.showTerminal" />}
+            >
+              <i
+                className={`mx-2 remix_ui_terminal_toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`}
+                data-id="terminalToggleIcon"
+                onClick={handleToggleTerminal}
+              ></i>
             </CustomTooltip>
-          </div>
-          <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
-            <div className="mx-2">0</div>
-          </CustomTooltip>
-          <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
-            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
-              <input className="custom-control-input" id="listenNetworkCheck" onChange={listenOnNetwork} type="checkbox" />
+            <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole}>
+              <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.clearConsole" />}>
+                <i className="fas fa-ban" aria-hidden="true"></i>
+              </CustomTooltip>
+            </div>
+            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
+              <div className="mx-2">0</div>
             </CustomTooltip>
-            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
-              <label
-                className="form-check-label custom-control-label text-nowrap"
-                style={{ paddingTop: '0.125rem' }}
-                htmlFor="listenNetworkCheck"
-                data-id="listenNetworkCheckInput"
-              >
-                <FormattedMessage id="terminal.listen" />
-              </label>
-            </CustomTooltip>
-          </div>
-          <div className="remix_ui_terminal_search d-flex align-items-center h-100">
-            <i className="remix_ui_terminal_searchIcon d-flex align-items-center justify-content-center fas fa-search bg-light" aria-hidden="true"></i>
-            <input
-              onChange={(event) => setSearchInput(event.target.value.trim())}
-              type="text"
-              className="remix_ui_terminal_filter border form-control"
-              id="searchInput"
-              placeholder={intl.formatMessage({ id: 'terminal.search' })}
-              data-id="terminalInputSearch"
-            />
+            <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
+              <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
+                <input className="custom-control-input" id="listenNetworkCheck" onChange={listenOnNetwork} type="checkbox" />
+              </CustomTooltip>
+              <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
+                <label
+                  className="form-check-label custom-control-label text-nowrap"
+                  style={{ paddingTop: '0.125rem' }}
+                  htmlFor="listenNetworkCheck"
+                  data-id="listenNetworkCheckInput"
+                >
+                  <FormattedMessage id="terminal.listen" />
+                </label>
+              </CustomTooltip>
+            </div>
+            <div className="remix_ui_terminal_search d-flex align-items-center h-100">
+              <i className="remix_ui_terminal_searchIcon d-flex align-items-center justify-content-center fas fa-search bg-light" aria-hidden="true"></i>
+              <input
+                onChange={(event) => setSearchInput(event.target.value.trim())}
+                type="text"
+                className="remix_ui_terminal_filter border form-control"
+                id="searchInput"
+                placeholder={intl.formatMessage({ id: 'terminal.search' })}
+                data-id="terminalInputSearch"
+              />
+            </div>
           </div>
         </div>
-      </div>
-      <div tabIndex={-1} className="remix_ui_terminal_container d-flex h-100 m-0 flex-column" data-id="terminalContainer">
-        {handleAutoComplete()}
-        <div className="position-relative d-flex flex-column-reverse h-100">
-          <div id="journal" className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0" data-id="terminalJournal">
-            {!clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version} />}
-            {newstate.journalBlocks &&
+        <div tabIndex={-1} className="remix_ui_terminal_container d-flex h-100 m-0 flex-column" data-id="terminalContainer">
+          {handleAutoComplete()}
+          <div className="position-relative d-flex flex-column-reverse h-100">
+            <div id="journal" className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0" data-id="terminalJournal">
+              {!clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version} />}
+              {newstate.journalBlocks &&
               newstate.journalBlocks.map((x, index) => {
                 if (x.name === EMPTY_BLOCK) {
                   return (
@@ -772,41 +773,41 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   }
                 }
               })}
-            <div ref={messagesEndRef} />
-          </div>
-          {isOpen && (
-            <div id="terminalCli" data-id="terminalCli" className="remix_ui_terminal_cli position-absolute w-100" onClick={focusinput}>
-              <span className="remix_ui_terminal_prompt blink mx-1 font-weight-bold text-dark">{'>'}</span>
-              <input
-                className="remix_ui_terminal_input ml-1 text-dark text-break border-0"
-                ref={inputEl}
-                spellCheck="false"
-                contentEditable="true"
-                id="terminalCliInput"
-                data-id="terminalCliInput"
-                onChange={(event) => onChange(event)}
-                onKeyDown={(event) => handleKeyDown(event)}
-                value={autoCompletState.userInput}
-                onPaste={handlePaste}
-              ></input>
+              <div ref={messagesEndRef} />
             </div>
-          )}
+            {isOpen && (
+              <div id="terminalCli" data-id="terminalCli" className="remix_ui_terminal_cli position-absolute w-100" onClick={focusinput}>
+                <span className="remix_ui_terminal_prompt blink mx-1 font-weight-bold text-dark">{'>'}</span>
+                <input
+                  className="remix_ui_terminal_input ml-1 text-dark text-break border-0"
+                  ref={inputEl}
+                  spellCheck="false"
+                  contentEditable="true"
+                  id="terminalCliInput"
+                  data-id="terminalCliInput"
+                  onChange={(event) => onChange(event)}
+                  onKeyDown={(event) => handleKeyDown(event)}
+                  value={autoCompletState.userInput}
+                  onPaste={handlePaste}
+                ></input>
+              </div>
+            )}
+          </div>
         </div>
+        <ModalDialog
+          id="terminal"
+          title={modalState.title}
+          message={modalState.message}
+          hide={modalState.hide}
+          okLabel={modalState.okLabel}
+          cancelLabel={modalState.cancelLabel}
+          cancelFn={modalState.cancelFn}
+          handleHide={handleHideModal}
+        />
+        {toaster && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg1'})} />}
+        {toastProvider.show && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg2'}, {fileName: toastProvider.fileName})} />}
       </div>
-      <ModalDialog
-        id="terminal"
-        title={modalState.title}
-        message={modalState.message}
-        hide={modalState.hide}
-        okLabel={modalState.okLabel}
-        cancelLabel={modalState.cancelLabel}
-        cancelFn={modalState.cancelFn}
-        handleHide={handleHideModal}
-      />
-      {toaster && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg1'})} />}
-      {toastProvider.show && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg2'}, {fileName: toastProvider.fileName})} />}
-    </div>
-  )
+    ))
 }
 
 const typewrite = (elementsRef, message, callback) => {  

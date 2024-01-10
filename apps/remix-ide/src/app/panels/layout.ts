@@ -100,7 +100,8 @@ export class Layout extends Plugin {
 
   minimize (name: string, minimized:boolean): void {
     this.panels[name].minimized = minimized
-    this.event.emit('change', null)
+    this.event.emit('change', this.panels)
+    this.emit('change', this.panels)
   }
 
   async maximiseSidePanel () {

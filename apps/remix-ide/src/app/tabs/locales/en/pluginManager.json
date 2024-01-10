@@ -39,5 +39,6 @@
   "pluginManager.deactivatePlugin": "Deactivate {pluginName}",
   "pluginManager.activatePlugin": "Activate {pluginName}",
   "pluginManager.search": "Search",
-  "pluginManager.managePluginsPermissions": "Manage plugins Permissions"
+  "pluginManager.managePluginsPermissions": "Manage plugins Permissions",
+  "pluginManager.UnavailableOffline": "Unavailable Offline"
 }

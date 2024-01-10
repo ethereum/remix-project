@@ -15,25 +15,27 @@ const versionData = {
 }
 
 const loadLocalSolJson = async () => {
-  // execute apps/remix-ide/ci/downloadsoljson.sh
-  const child = require('child_process').execSync('bash ./apps/remix-ide/ci/downloadsoljson.sh', {encoding: 'utf8', cwd: process.cwd(), shell: true})
+  //execute apps/remix-ide/ci/downloadsoljson.sh
+  const child = require('child_process').execSync('bash ' + __dirname + '/ci/downloadsoljson.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
   // show output
-  console.log(child)
+  //console.log(child)
 }
 
-fs.writeFileSync('./apps/remix-ide/src/assets/version.json', JSON.stringify(versionData))
+fs.writeFileSync(__dirname + '/src/assets/version.json', JSON.stringify(versionData))
+
 
 loadLocalSolJson()
 
-const project = fs.readFileSync('./apps/remix-ide/project.json', 'utf8')
+const project = fs.readFileSync(__dirname + '/project.json', 'utf8')
 
 const implicitDependencies = JSON.parse(project).implicitDependencies
 
 const copyPatterns = implicitDependencies.map((dep) => {
   try {
     fs.statSync(__dirname + `/../../dist/apps/${dep}`).isDirectory()
-    return {from: `../../dist/apps/${dep}`, to: `plugins/${dep}`}
-  } catch (e) {
+    return { from: __dirname + `/../../dist/apps/${dep}`, to: `plugins/${dep}` }
+  }
+  catch (e) {
     console.log('error', e)
     return false
   }
@@ -75,8 +77,21 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     solc: 'solc'
   }
 
+  // uncomment this to enable react profiling
+  /*
+  config.resolve.alias = {
+    ...config.resolve.alias,
+    'react-dom$': 'react-dom/profiling',
+  }
+  */
+
+
   // add public path
-  config.output.publicPath = '/'
+  if(process.env.NX_DESKTOP_FROM_DIST){
+    config.output.publicPath = './'
+  }else{
+    config.output.publicPath = '/'
+  }
 
   // set filename
   config.output.filename = `[name].${versionData.version}.${versionData.timestamp}.js`
@@ -127,12 +142,17 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     new CssMinimizerPlugin()
   ]
 
+  // minify code
+  if(process.env.NX_DESKTOP_FROM_DIST)
+    config.optimization.minimize = true
+
   config.watchOptions = {
     ignored: /node_modules/
   }
 
-  return config
-})
+  console.log('config', process.env.NX_DESKTOP_FROM_DIST)
+  return config;
+});
 
 class CopyFileAfterBuild {
   apply(compiler) {

@@ -26,7 +26,7 @@ interface OutputMap {
   [fileName: string]: any
 }
 
-const App: React.FC = () => {
+const App = () => {
   const [contract, setContract] = useState<string>()
   const [output, setOutput] = useState<any>({})
   const [state, setState] = useState<AppState>({
@@ -87,7 +87,7 @@ const App: React.FC = () => {
           <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
             Remote Compiler
           </ToggleButton>
-          <ToggleButton data-id="local-compiler" variant="secondary" name="local" value="local">
+          <ToggleButton id="local-compiler" data-id="local-compiler" variant="secondary" name="local" value="local">
             Local Compiler
           </ToggleButton>
         </ToggleButtonGroup>

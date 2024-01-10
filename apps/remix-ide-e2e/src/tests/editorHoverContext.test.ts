@@ -15,9 +15,9 @@ const checkEditorHoverContent = (browser: NightwatchBrowser, path: string, expec
 module.exports = {
     '@disabled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        init(browser, done, 'http://127.0.0.1:8080', false)
+        init(browser, done, 'http://127.0.0.1:8080', false, null, true)
     },
-    'Should load the test file': function (browser: NightwatchBrowser) {
+    'Should load the test file #group1': function (browser: NightwatchBrowser) {
         browser.openFile('contracts')
             .openFile('contracts/3_Ballot.sol')
             .waitForElementVisible('#editorView')
@@ -86,7 +86,7 @@ module.exports = {
         const expectedContent = 'StructDefinition'
         checkEditorHoverContent(browser, path, expectedContent)
     },
-    'Add token file': function (browser: NightwatchBrowser) {
+    'Add token file #group1': function (browser: NightwatchBrowser) {
         browser
         .clickLaunchIcon('solidity')
         .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js')

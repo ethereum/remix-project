@@ -2,7 +2,8 @@ import { Plugin } from '@remixproject/engine'
 import { EventEmitter } from 'events'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as packageJson from '../../../../../package.json'
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
+const isElectron = require('is-electron')
 const _paq = window._paq = window._paq || []
 
 //sol2uml dot files cannot work with css variables so hex values for colors are used
@@ -43,7 +44,7 @@ const profile = {
 }
 
 export class ThemeModule extends Plugin {
-  constructor () {
+  constructor() {
     super(profile)
     this.events = new EventEmitter()
     this._deps = {
@@ -53,7 +54,7 @@ export class ThemeModule extends Plugin {
     themes.map((theme) => {
       this.themes[theme.name.toLocaleLowerCase()] = {
         ...theme,
-        url: window.location.origin + ( window.location.pathname.startsWith('/address/') || window.location.pathname.endsWith('.sol') ? '/' : window.location.pathname ) + theme.url
+        url: isElectron() ? theme.url : window.location.origin + (window.location.pathname.startsWith('/address/') || window.location.pathname.endsWith('.sol') ? '/' : window.location.pathname) + theme.url
       }
     })
     this._paq = _paq
@@ -71,22 +72,26 @@ export class ThemeModule extends Plugin {
   /** Return the active theme
    * @return {{ name: string, quality: string, url: string }} - The active theme
   */
-  currentTheme () {
+  currentTheme() {
+    if (isElectron()) {
+      const theme = 'https://remix.ethereum.org/' + this.themes[this.active].url.replace(/\\/g, '/').replace(/\/\//g, '/').replace(/\/$/g, '')
+      return { ...this.themes[this.active], url: theme }
+    }
     return this.themes[this.active]
   }
 
   /** Returns all themes as an array */
-  getThemes () {
+  getThemes() {
     return Object.keys(this.themes).map(key => this.themes[key])
   }
 
   /**
    * Init the theme
    */
-  initTheme (callback) { // callback is setTimeOut in app.js which is always passed
+  initTheme(callback) { // callback is setTimeOut in app.js which is always passed
     if (callback) this.initCallback = callback
     if (this.active) {
-      document.getElementById('theme-link') ? document.getElementById('theme-link').remove():null
+      document.getElementById('theme-link') ? document.getElementById('theme-link').remove() : null
       const nextTheme = this.themes[this.active] // Theme
       document.documentElement.style.setProperty('--theme', nextTheme.quality)
 
@@ -98,6 +103,7 @@ export class ThemeModule extends Plugin {
         if (callback) callback()
       })
       document.head.insertBefore(theme, document.head.firstChild)
+      //if (callback) callback()
     }
   }
 
@@ -115,7 +121,7 @@ export class ThemeModule extends Plugin {
     _paq.push(['trackEvent', 'themeModule', 'switchTo', next])
     const nextTheme = this.themes[next] // Theme
     if (!this.forced) this._deps.config.set('settings/theme', next)
-    document.getElementById('theme-link') ? document.getElementById('theme-link').remove():null
+    document.getElementById('theme-link') ? document.getElementById('theme-link').remove() : null
 
     const theme = document.createElement('link')
     theme.setAttribute('rel', 'stylesheet')
@@ -129,15 +135,21 @@ export class ThemeModule extends Plugin {
     document.documentElement.style.setProperty('--theme', nextTheme.quality)
     if (themeName) this.active = themeName
     // TODO: Only keep `this.emit` (issue#2210)
-    this.emit('themeChanged', nextTheme)
-    this.events.emit('themeChanged', nextTheme)
+    if (isElectron()) {
+      const theme = 'https://remix.ethereum.org/' + nextTheme.url.replace(/\\/g, '/').replace(/\/\//g, '/').replace(/\/$/g, '')
+      this.emit('themeChanged', { ...nextTheme, url: theme })
+      this.events.emit('themeChanged', { ...nextTheme, url: theme })
+    } else {
+      this.emit('themeChanged', nextTheme)
+      this.events.emit('themeChanged', nextTheme)
+    }
   }
 
   /**
    * fixes the invertion for images since this should be adjusted when we switch between dark/light qualified themes
    * @param {element} [image] - the dom element which invert should be fixed to increase visibility
    */
-  fixInvert (image) {
+  fixInvert(image) {
     const invert = this.currentTheme().quality === 'dark' ? 1 : 0
     if (image) {
       image.style.filter = `invert(${invert})`

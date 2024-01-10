@@ -1,7 +1,7 @@
 import { use } from 'chai'
 import React, { useEffect } from 'react'
 import { Fragment } from 'react'
-import { OverlayTrigger, Popover } from 'react-bootstrap'
+import { OverlayTrigger, Popover, Tooltip } from 'react-bootstrap'
 import { CustomTooltipType } from '../../types/customtooltip'
 
 export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, tooltipText, tooltipTextClasses, delay, hide }: CustomTooltipType) {
@@ -18,7 +18,6 @@ export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, 
         <OverlayTrigger
           placement={placement}
           overlay={
-
             <Popover id={`popover-positioned-${placement}`}>
               <Popover.Content
                 id={!tooltipId ? `${tooltipText}Tooltip` : tooltipId}
@@ -28,15 +27,13 @@ export function CustomTooltip({ children, placement, tooltipId, tooltipClasses, 
                 {typeof tooltipText === 'string' ? <span className={'text-wrap p-1 px-2 bg-secondary ' + { tooltipTextClasses }}>{tooltipText}</span> : tooltipText}
               </Popover.Content>
             </Popover>
-          }
-          delay={delay}
-        >
+          }>
           {children}
         </OverlayTrigger>
       </Fragment>
     ) : (
       <Fragment>
-        {children}
+        <>{children}</>
       </Fragment>
     ))
   )
