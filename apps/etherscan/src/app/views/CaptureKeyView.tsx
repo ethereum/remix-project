@@ -22,14 +22,12 @@ export const CaptureKeyView: React.FC = () => {
                 const errors = {} as any
                 if (!values.apiKey) {
                   errors.apiKey = 'Required'
-                } else if (values.apiKey.length !== 34) {
-                  errors.apiKey = 'API key should be 34 characters long'
                 }
                 return errors
               }}
               onSubmit={(values) => {
                 const apiKey = values.apiKey
-                if (apiKey.length === 34) {
+                if (apiKey.length > 0) {
                   setAPIKey(values.apiKey)
                   navigate(location && location.state ? location.state : '/')
                 }
@@ -39,12 +37,7 @@ export const CaptureKeyView: React.FC = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="form-group mb-2">
                     <label htmlFor="apikey">API Key</label>
-                    <Field
-                      className={errors.apiKey && touched.apiKey ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'}
-                      type="password"
-                      name="apiKey"
-                      placeholder="e.g. GM1T20XY6JGSAPWKDCYZ7B2FJXKTJRFVGZ"
-                    />
+                    <Field className={errors.apiKey && touched.apiKey ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'} type="password" name="apiKey" placeholder="e.g. GM1T20XY6JGSAPWKDCYZ7B2FJXKTJRFVGZ" />
                     <ErrorMessage className="invalid-feedback" name="apiKey" component="div" />
                   </div>
 
