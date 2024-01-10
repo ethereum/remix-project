@@ -1,4 +1,5 @@
 import { Provider } from '@remix-project/remix-simulator'
+import {toBuffer} from '@ethereumjs/util'
 
 let provider: Provider = null
 self.onmessage = (e: MessageEvent) => {
@@ -6,7 +7,12 @@ self.onmessage = (e: MessageEvent) => {
   switch (data.cmd) {
   case 'init': 
   {
-    provider = new Provider({ fork: data.fork, nodeUrl: data.nodeUrl, blockNumber: data.blockNumber })
+    if (data.stateDb) {
+      data.stateDb = JSON.parse(data.stateDb)
+      data.stateDb.root = toBuffer(data.stateDb.root)
+      data.stateDb.db = new Map(Object.entries(data.stateDb.db))
+    }
+    provider = new Provider({ fork: data.fork, nodeUrl: data.nodeUrl, blockNumber: data.blockNumber, stateDb: data.stateDb })
     provider.init().then(() => {
       self.postMessage({
         cmd: 'initiateResult',
