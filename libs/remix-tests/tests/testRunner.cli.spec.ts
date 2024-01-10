@@ -21,7 +21,6 @@ describe('testRunner: remix-tests CLI', function(){
     }
   }
 
-
   describe('test various CLI options', function() {
     it('remix-tests version', () => {
       const res = spawnSync(executablePath, ['-V'])
@@ -76,7 +75,6 @@ Commands:
       expect(res.stdout.toString().trim()).to.match(/Message: okFailTest fails/)
 
     })
-
 
     it('remix-tests running a test file with custom compiler version', () => {
       const res = spawnSync(executablePath, ['--compiler', '0.7.4', resolve(__dirname + '/examples_0/assert_ok_test.sol')])

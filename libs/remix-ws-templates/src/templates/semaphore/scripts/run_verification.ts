@@ -86,14 +86,12 @@ function hash(message: any): bigint {
     console.log('check')
     await snarkjs.wtns.check(r1cs, wtns, logger);
 
-
     console.log('prove')
     const { proof, publicSignals } = await snarkjs.groth16.prove(zkey_final, wtns);
 
     const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof, logger);
     console.log('zk proof validity', verified);
     proof1.root.toString() === publicSignals[0] ? console.log('merkle proof valid') : console.log('merkle proof invalid')
-
 
   } catch (e) {
     console.error(e.message)

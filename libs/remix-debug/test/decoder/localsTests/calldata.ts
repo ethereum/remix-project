@@ -63,7 +63,6 @@ module.exports = async function (st, privateKey, contractBytecode, compilationRe
           })
         })
 
-
         traceManager.resolveTrace(tx).then(() => {
           debuggerEvent.trigger('newTraceLoaded', [traceManager.trace])
         }).catch((error) => {

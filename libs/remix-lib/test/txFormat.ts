@@ -45,7 +45,6 @@ function testWithInput (st, params, expected) {
   }, () => {}, () => {})
 }
 
-
 tape('ContractStringParameters - (TxFormat.buildData) - format string input parameters', function (t) {
   let output = compiler.compile(compilerInput(stringContract))
   output = JSON.parse(output)

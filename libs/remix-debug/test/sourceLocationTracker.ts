@@ -54,7 +54,6 @@ tape('SourceLocationTracker', function (t) {
 
     traceManager.resolveTrace(tx).then(async () => {
 
-
       try {
         // with debugWithGeneratedSources: false
         const sourceLocationTracker = new SourceLocationTracker(codeManager, { debugWithGeneratedSources: false })

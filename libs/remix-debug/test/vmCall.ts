@@ -4,7 +4,6 @@ import { Address } from '@ethereumjs/util'
 import { Web3 } from 'web3';
 const { Provider } = require('@remix-project/remix-simulator')
 
-
 async function getWeb3 () {
   const remixSimulatorProvider = new Provider({ fork: 'berlin' })
   await remixSimulatorProvider.init()

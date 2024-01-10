@@ -180,7 +180,6 @@ node['ast'].ast = {
   src: '0:233:0'
 }
 
-
 node['source'] = `contract test { 
     int x; 
     

@@ -6,7 +6,6 @@ const { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignmen
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess, contractDefinition, funcDefForComplexParams } = require('./astBlocks')
 
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const compiledContractObj = require('./compilationDetails/CompiledContractObj.json')
 function escapeRegExp (str) {

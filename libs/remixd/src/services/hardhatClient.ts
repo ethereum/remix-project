@@ -143,7 +143,6 @@ export class HardhatClient extends PluginClient {
       }
     }, 1000)
 
-
   }
 
   listenOnHardHatFolder() {

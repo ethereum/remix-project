@@ -193,7 +193,6 @@ export class FoundryClient extends PluginClient {
       console.log('\x1b[32m%s\x1b[0m', 'sources input not found, please update Foundry to the latest version.')
     }
 
-
     compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
     // extract data
     if (!compilationResultPart.output['sources'][contentJSON.ast.absolutePath]) compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {}
