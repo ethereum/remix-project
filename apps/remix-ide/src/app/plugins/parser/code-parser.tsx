@@ -544,7 +544,6 @@ export class CodeParser extends Plugin {
       return nodeDefinition.ast
     }
 
-
     return nodeDefinition.parser
 
   }

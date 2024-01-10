@@ -5,7 +5,6 @@ import EventManager from 'events'
 import { Storage } from '@remix-project/remix-lib'
 import pathModule from 'path'
 
-
 export default class FileProvider {
   event: any
   type: any

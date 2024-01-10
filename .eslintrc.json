@@ -60,7 +60,7 @@
         "object-curly-spacing": ["error", "always", { "arraysInObjects": false }],
         "no-trailing-spaces": "error",
         "no-multi-spaces": "error",
-        "no-multiple-empty-lines": "error" 
+        "no-multiple-empty-lines": ["error" , { "max": 1}]
       }
     },
     {

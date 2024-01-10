@@ -121,7 +121,6 @@ class DGitProvider extends Plugin {
       return status
     }
 
-
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
@@ -224,7 +223,6 @@ class DGitProvider extends Plugin {
       return status
     }
 
-
     const status = await git.log({
       ...await this.getGitConfig(),
       ...cmd,
@@ -268,7 +266,6 @@ class DGitProvider extends Plugin {
   }
 
   async currentbranch(config) {
-
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'currentbranch')

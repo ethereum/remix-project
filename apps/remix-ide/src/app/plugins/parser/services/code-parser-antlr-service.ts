@@ -201,7 +201,6 @@ export default class CodeParserAntlrService {
     return nodes
   }
 
-
   /**
      *
      * @param ast

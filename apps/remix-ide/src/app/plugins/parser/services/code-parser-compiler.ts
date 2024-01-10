@@ -75,7 +75,6 @@ export default class CodeParserCompiler {
                 length: error.sourceLocation.end - error.sourceLocation.start
               }, lineBreaks)
 
-
               const filePath = error.sourceLocation.file
               const fileTarget = await this.plugin.call('fileManager', 'getUrlFromPath', filePath)
 
@@ -109,7 +108,6 @@ export default class CodeParserCompiler {
         flatReferences: {},
         nodesPerFile: {},
       }
-
 
       this.plugin._buildIndex(data, source)
       // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository

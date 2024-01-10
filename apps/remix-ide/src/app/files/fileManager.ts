@@ -927,7 +927,6 @@ class FileManager extends Plugin {
     return exists
   }
 
-
   async moveFileIsAllowed (src: string, dest: string) {
     try {
       src = this.normalize(src)

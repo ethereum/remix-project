@@ -33,7 +33,6 @@ export default class CodeParserGasService {
 
   }
 
-
   async showGasEstimates() {
     const showGasConfig = await this.plugin.call('config', 'getAppParameter', 'show-gas')
     if (!showGasConfig) {
@@ -72,10 +71,8 @@ export default class CodeParserGasService {
 
         this.plugin.call('editor', 'addLineText', linetext, estimate.range.fileName)
 
-
       }
     }
   }
-
 
 }
