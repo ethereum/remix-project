@@ -98,8 +98,6 @@ module.exports = {
       .pause(7000)
       .currentWorkspaceIs('code-sample')
       .waitForElementVisible('*[data-id=treeViewLitreeViewItemmainnet]')
-      .click('*[data-id=treeViewLitreeViewItemmainnet]')
-      .click('*[data-id=treeViewLitreeViewItemmainnet]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
       .click('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7/TetherToken.sol"]')
