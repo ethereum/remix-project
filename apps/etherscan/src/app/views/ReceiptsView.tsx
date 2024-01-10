@@ -13,9 +13,10 @@ interface FormValues {
   receiptGuid: string
 }
 
-export const ReceiptsView: React.FC = () => {
+export const ReceiptsView = () => {
   const [results, setResults] = useState({succeed: false, message: ''})
   const [isProxyContractReceipt, setIsProxyContractReceipt] = useState(false)
+  const context = React.useContext(AppContext)
 
   const onGetReceiptStatus = async (values: FormValues, clientInstance: any, apiKey: string) => {
     try {
@@ -48,88 +49,82 @@ export const ReceiptsView: React.FC = () => {
     }
   }
 
-  return (
-    <AppContext.Consumer>
-      {({apiKey, clientInstance, receipts, setReceipts}) => {
-        return !apiKey ? (
-          <Navigate
-            to={{
-              pathname: '/settings'
-            }}
-          />
-        ) : (
-          <div>
-            <Formik
-              initialValues={{receiptGuid: ''}}
-              validate={(values) => {
-                const errors = {} as any
-                if (!values.receiptGuid) {
-                  errors.receiptGuid = 'Required'
-                }
-                return errors
-              }}
-              onSubmit={(values) => onGetReceiptStatus(values, clientInstance, apiKey)}
-            >
-              {({errors, touched, handleSubmit, handleChange}) => (
-                <form onSubmit={handleSubmit}>
-                  <div className="form-group mb-2">
-                    <label htmlFor="receiptGuid">Receipt GUID</label>
-                    <Field
-                      className={errors.receiptGuid && touched.receiptGuid ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'}
-                      type="text"
-                      name="receiptGuid"
-                    />
-                    <ErrorMessage className="invalid-feedback" name="receiptGuid" component="div" />
-                  </div>
-
-                  <div className="d-flex mb-2 custom-control custom-checkbox">
-                    <Field
-                      className="custom-control-input"
-                      type="checkbox"
-                      name="isProxyReceipt"
-                      id="isProxyReceipt"
-                      onChange={async (e) => {
-                        handleChange(e)
-                        if (e.target.checked) setIsProxyContractReceipt(true)
-                        else setIsProxyContractReceipt(false)
-                      }}
-                    />
-                    <label className="form-check-label custom-control-label" htmlFor="isProxyReceipt">
-                      It's a proxy contract GUID
-                    </label>
-                  </div>
-                  <SubmitButton text="Check" disable={!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
-                </form>
-              )}
-            </Formik>
-
-            <div
-              className={results['succeed'] ? 'text-success mt-3 text-center' : 'text-danger mt-3 text-center'}
-              dangerouslySetInnerHTML={{
-                __html: results.message ? results.message : ''
-              }}
-            />
-
-            <ReceiptsTable receipts={receipts} />
-            <br />
-            <CustomTooltip tooltipText="Clear the list of receipts" tooltipId="etherscan-clear-receipts" placement="bottom">
-              <Button
-                className="btn-sm"
-                onClick={() => {
-                  setReceipts([])
-                }}
-              >
-                Clear
-              </Button>
-            </CustomTooltip>
-          </div>
-        )
+  return !context.apiKey ? (
+    <Navigate
+      to={{
+        pathname: '/settings'
       }}
-    </AppContext.Consumer>
+    />
+  ) : (
+    <div>
+      <Formik
+        initialValues={{receiptGuid: ''}}
+        validate={(values) => {
+          const errors = {} as any
+          if (!values.receiptGuid) {
+            errors.receiptGuid = 'Required'
+          }
+          return errors
+        }}
+        onSubmit={(values) => onGetReceiptStatus(values, context.clientInstance, context.apiKey)}
+      >
+        {({errors, touched, handleSubmit, handleChange}) => (
+          <form onSubmit={handleSubmit}>
+            <div className="form-group mb-2">
+              <label htmlFor="receiptGuid">Receipt GUID</label>
+              <Field
+                className={errors.receiptGuid && touched.receiptGuid ? 'form-control form-control-sm is-invalid' : 'form-control form-control-sm'}
+                type="text"
+                name="receiptGuid"
+              />
+              <ErrorMessage className="invalid-feedback" name="receiptGuid" component="div" />
+            </div>
+
+            <div className="d-flex mb-2 custom-control custom-checkbox">
+              <Field
+                className="custom-control-input"
+                type="checkbox"
+                name="isProxyReceipt"
+                id="isProxyReceipt"
+                onChange={async (e) => {
+                  handleChange(e)
+                  if (e.target.checked) setIsProxyContractReceipt(true)
+                  else setIsProxyContractReceipt(false)
+                }}
+              />
+              <label className="form-check-label custom-control-label" htmlFor="isProxyReceipt">
+                It's a proxy contract GUID
+              </label>
+            </div>
+            <SubmitButton dataId={null} text="Check" disable={!touched.receiptGuid || (touched.receiptGuid && errors.receiptGuid) ? true : false} />
+          </form>
+        )}
+      </Formik>
+
+      <div
+        className={results['succeed'] ? 'text-success mt-3 text-center' : 'text-danger mt-3 text-center'}
+        dangerouslySetInnerHTML={{
+          __html: results.message ? results.message : ''
+        }}
+      />
+
+      <ReceiptsTable receipts={context.receipts} />
+      <br />
+      <CustomTooltip tooltipText="Clear the list of receipts" tooltipId="etherscan-clear-receipts" placement="bottom">
+        <Button
+          className="btn-sm"
+          onClick={() => {
+            context.setReceipts([])
+          }}
+        >
+          Clear
+        </Button>
+      </CustomTooltip>
+    </div>
   )
 }
 
-const ReceiptsTable: React.FC<{receipts: Receipt[]}> = ({receipts}) => {
+const ReceiptsTable = ({receipts}) => {
   return (
     <div className="table-responsive">
       <h6>Receipts</h6>

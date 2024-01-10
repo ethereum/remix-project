@@ -1,5 +1,5 @@
 'use strict'
-const FileProvider = require('./fileProvider')
+import FileProvider from "./fileProvider"
 
 module.exports = class RemixDProvider extends FileProvider {
   constructor (appManager) {

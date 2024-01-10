@@ -27,7 +27,7 @@ export class ExternalHttpProvider extends AbstractProvider {
             values={{
               a: (chunks) => (
                 <a href="https://geth.ethereum.org/docs/rpc/server" target="_blank" rel="noreferrer">
-                  {chunks}
+                  <>{chunks}</>
                 </a>
               )
             }}
@@ -39,7 +39,7 @@ export class ExternalHttpProvider extends AbstractProvider {
             values={{
               a: (chunks) => (
                 <a href="https://geth.ethereum.org/getting-started/dev-mode" target="_blank" rel="noreferrer">
-                  {chunks}
+                  <>{chunks}</>
                 </a>
               )
             }}
@@ -49,7 +49,7 @@ export class ExternalHttpProvider extends AbstractProvider {
           </div>
           <br />
           <br />
-          <FormattedMessage id="udapp.externalHttpProviderText3" values={{b: (chunks) => <b>{chunks}</b>}} />
+          <FormattedMessage id="udapp.externalHttpProviderText3" values={{b: (chunks) => <b><>{chunks}</></b>}} />
           <br />
           <br />
           <FormattedMessage

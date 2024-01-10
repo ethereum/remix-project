@@ -1,18 +1,24 @@
 import { EOL } from 'os'
 import { SearchResultLineLine } from '../../types'
+import {Registry} from '@remix-project/remix-lib'
 
 
 export const getDirectory = async (dir: string, plugin: any) => {
   let result = []
-  const files = await plugin.call('fileManager', 'readdir', dir)
-  const fileArray = normalize(files)
-  for (const fi of fileArray) {
-    if (fi) {
-      const type = fi.data.isDirectory
-      if (type === true) {
-        result = [...result, ...(await getDirectory(`${fi.filename}`, plugin))]
-      } else {
-        result = [...result, fi.filename]
+  if (Registry.getInstance().get('platform').api.isDesktop()) {
+    // only get path property of files
+    result = []
+  } else {
+    const files = await plugin.call('fileManager', 'readdir', dir)
+    const fileArray = normalize(files)
+    for (const fi of fileArray) {
+      if (fi) {
+        const type = fi.data.isDirectory
+        if (type === true) {
+          result = [...result, ...(await getDirectory(`${fi.filename}`, plugin))]
+        } else {
+          result = [...result, fi.filename]
+        }
       }
     }
   }
@@ -92,7 +98,7 @@ function getEOL(text) {
   return u > w ? '\n' : '\r\n';
 }
 
-export const replaceAllInFile = (string: string, re:RegExp, newText: string) => {
+export const replaceAllInFile = (string: string, re: RegExp, newText: string) => {
   return string.replace(re, newText)
 }
 

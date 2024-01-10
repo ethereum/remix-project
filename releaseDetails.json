@@ -1,10 +1,10 @@
 {
-    "version": "v0.38.0",
+    "version": "v0.40.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Alpha release for Solidity co-pilot",
-    "highlight2": "Define Solidity remappings in remappings.txt file",
-    "highlight3": "Run free function for any selected environment",
-    "highlight4": "New Circom ZKP templates: Hash Checker & Rate Limiting Nullifier",
+    "highlight1": "Circom v2.1.6 support",
+    "highlight2": "Improved & stable support for Vyper development",
+    "highlight3": "New workspace template: Uniswap HookBook MultiSigSwapHook",
+    "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-38-0-dccd551b6f1e"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-40-0-17668192db64"
   }

@@ -104,7 +104,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     }
   })
 
-  plugin.fileManager.events.on('currentFileChanged', (currentFile: string) => {
+  plugin.on('fileManager', 'currentFileChanged', (currentFile: string) => {
     if (/.(.abi)$/.exec(currentFile)) {
       dispatch(setLoadType('abi'))
     } else if (/.(.sol)$/.exec(currentFile) ||

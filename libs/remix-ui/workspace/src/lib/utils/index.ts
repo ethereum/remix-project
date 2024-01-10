@@ -1,3 +1,4 @@
+import { appPlatformTypes } from '@remix-ui/app'
 import { FileType } from '@remix-ui/file-decorators'
 import { WorkspaceProps, MenuItems } from '../types'
 
@@ -29,7 +30,7 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: '',
   group: 0
-},{
+}, {
   id: 'deleteAll',
   name: 'Delete All',
   type: ['folder', 'file'],
@@ -63,7 +64,8 @@ export const contextMenuActions: MenuItems = [{
   type: ['file', 'folder', 'workspace'],
   multiselect: false,
   label: '',
-  group: 2
+  group: 2,
+  platform: appPlatformTypes.web
 }, {
   id: 'run',
   name: 'Run',
@@ -71,41 +73,46 @@ export const contextMenuActions: MenuItems = [{
   multiselect: false,
   label: '',
   group: 3
-},{
+}, {
   id: 'pushChangesToGist',
   name: 'Push changes to gist',
   type: ['gist'],
   multiselect: false,
   label: '',
-  group: 4
+  group: 4,
+  platform: appPlatformTypes.web
 }, {
   id: 'publishFolderToGist',
   name: 'Publish folder to gist',
   type: ['folder'],
   multiselect: false,
   label: '',
-  group: 4
+  group: 4,
+  platform: appPlatformTypes.web
 }, {
   id: 'publishFileToGist',
   name: 'Publish file to gist',
   type: ['file'],
   multiselect: false,
   label: '',
-  group: 4
+  group: 4,
+  platform: appPlatformTypes.web
 }, {
   id: 'uploadFile',
   name: 'Load a Local File',
   type: ['folder', 'gist', 'workspace'],
   multiselect: false,
   label: 'Load a Local File',
-  group: 4
+  group: 4,
+  platform: appPlatformTypes.web
 }, {
   id: 'publishToGist',
   name: 'Push changes to gist',
   type: ['folder', 'gist'],
   multiselect: false,
   label: 'Publish all to Gist',
-  group: 4
+  group: 4,
+  platform: appPlatformTypes.web
 },
 {
   id: 'publishWorkspace',
@@ -113,22 +120,29 @@ export const contextMenuActions: MenuItems = [{
   type: ['workspace'],
   multiselect: false,
   label: '',
-  group: 4
+  group: 4,
+  platform: appPlatformTypes.web
 }]
 
-export const fileKeySort = (children: FileType[]): string[] => {
-  const directories = Object.keys(children).filter((key: string) => children[key].isDirectory && children[key].name !== '')
+export const fileKeySort = (fileTree: any) => {
+  const directories = Object.keys(fileTree).filter((key: string) => !key.includes('....blank') && fileTree[key].isDirectory)
 
-  // sort case insensitive
   directories.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
 
-  const fileKeys = Object.keys(children).filter((key: string) => !children[key].isDirectory && children[key].name !== '')
-  // sort case insensitive
+  const fileKeys = Object.keys(fileTree).filter((key: string) => !key.includes('....blank') && !fileTree[key].isDirectory)
+
   fileKeys.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
+  // find the input elementfileTree
 
-  // find the children with a blank name
-  const blankChildren = Object.keys(children).filter((key: string) => children[key].name === '')
-
-  const keys = [...directories, ...fileKeys, ...blankChildren]
-  return keys
+  const blank = Object.keys(fileTree).find((key: string) => key.includes('....blank'))
+  if (fileTree[blank]) {
+    fileKeys.push(blank)
+  }
+  const keys = [...directories, ...fileKeys]
+  // rebuild the fileTree using the keys
+  const newFileTree: FileType[] = []
+  keys.forEach((key: string) => {
+    newFileTree.push(fileTree[key])
+  })
+  return newFileTree
 }

@@ -85,7 +85,11 @@ export const reducerActions = (models = initialState, action: Action) => {
   case 'SET_FONTSIZE': {
     if (!editor) return models
     const size = action.payload.size
-    editor.updateOptions({ fontSize: size })
+    if (size === 1) {
+      editor.trigger('keyboard', 'editor.action.fontZoomIn', {});
+    } else{
+      editor.trigger('keyboard', 'editor.action.fontZoomOut', {});
+    }
     return models
   }
   case 'SET_WORDWRAP': {

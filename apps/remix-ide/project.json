@@ -39,6 +39,13 @@
           "generateIndexHtml": true,
           "extractCss": false,
           "vendorChunk": false
+        },
+        "desktop": {
+          "optimization": false,
+          "generateIndexHtml": true,
+          "extractCss": false,
+          "vendorChunk": false,
+          "baseHref": "./"
         }
       }
     },

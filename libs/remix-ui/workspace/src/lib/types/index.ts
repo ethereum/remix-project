@@ -4,8 +4,10 @@ import { customAction } from '@remixproject/plugin-api'
 import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
+import { appPlatformTypes } from '@remix-ui/app'
+import { Placement } from 'react-bootstrap/esm/Overlay'
 
-export type action = { name: string, type?: Array<WorkspaceElement>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number }
+export type action = { name: string, type?: Array<WorkspaceElement>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number, platform?: appPlatformTypes }
 export interface JSONStandardInput {
   language: 'Solidity'
   settings?: any
@@ -17,7 +19,7 @@ export interface JSONStandardInput {
   }
 }
 export type MenuItems = action[]
-export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore' | 'hashchecker' | 'rln' | 'breakthroughLabsUniswapv4Hooks' | 'uniswapV4Periphery'
+export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore' | 'hashchecker' | 'rln' | 'breakthroughLabsUniswapv4Hooks' | 'uniswapV4Periphery' | 'uniswapV4HookBookMultiSigSwapHook'
 export interface WorkspaceProps {
   plugin: FilePanelType
 }
@@ -73,6 +75,7 @@ export interface FilePanelType extends ViewPlugin {
   initialWorkspace: string
   resetNewFile: () => void
   getWorkspaces: () => string[]
+  expandPath: string[]
 }
 
 /* eslint-disable-next-line */
@@ -82,6 +85,7 @@ export interface FileExplorerProps {
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
+    flatTree: FileType[],
     workspaceState: WorkSpaceState,
     fileState: fileDecoration[],
     expandPath: string[],
@@ -127,7 +131,7 @@ export interface FileExplorerProps {
     handleNewFolderInput: (parentFolder?: string) => Promise<void>
     dragStatus: (status: boolean) => void
 }
-type Placement = import('react-overlays/usePopper').Placement
+
 export interface FileExplorerMenuProps {
   title: string
   menuItems: string[]
@@ -297,7 +301,9 @@ export interface ActionPayloadTypes {
     username: string;
     token: string;
     email: string
-  }
+  },
+  SET_ELECTRON_RECENT_FOLDERS: string[]
+  SET_CURRENT_LOCAL_FILE_PATH: string
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {

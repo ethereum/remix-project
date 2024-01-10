@@ -24,6 +24,8 @@ export function UniversalDappUI(props: UdappProps) {
   const [evmBC, setEvmBC] = useState(null)
   const [instanceBalance, setInstanceBalance] = useState(0)
 
+  const getVersion = () => window.location.href.split('=')[5].split('+')[0].split('-')[1]
+
   useEffect(() => {
     if (!props.instance.abi) {
       const abi = txHelper.sortAbiFunction(props.instance.contractData.abi)
@@ -285,7 +287,7 @@ export function UniversalDappUI(props: UdappProps) {
               <FormattedMessage id="udapp.lowLevelInteractions" />
             </div>
             <CustomTooltip placement={'bottom-end'} tooltipClasses="text-wrap" tooltipId="receiveEthDocstoolTip" tooltipText={<FormattedMessage id="udapp.tooltipText8" />}>
-              <a href="https://solidity.readthedocs.io/en/v0.6.2/contracts.html#receive-ether-function" target="_blank" rel="noreferrer">
+              <a href={`https://solidity.readthedocs.io/en/${getVersion()}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
                 <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
               </a>
             </CustomTooltip>

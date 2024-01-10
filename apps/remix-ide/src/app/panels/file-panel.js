@@ -3,8 +3,9 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import { FileSystemProvider } from '@remix-ui/workspace' // eslint-disable-line
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 import { RemixdHandle } from '../plugins/remixd-handle'
+import {PluginViewWrapper} from '@remix-ui/helper'
 const { HardhatHandle } = require('../files/hardhat-handle.js')
 const { FoundryHandle } = require('../files/foundry-handle.js')
 const { TruffleHandle } = require('../files/truffle-handle.js')
@@ -42,6 +43,9 @@ const profile = {
     'registerContextMenuItem',
     'renameWorkspace',
     'deleteWorkspace',
+    'loadTemplate', 
+    'clone',
+    'isExpanded',
   ],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
@@ -70,14 +74,32 @@ module.exports = class Filepanel extends ViewPlugin {
     this.workspaces = []
     this.appManager = appManager
     this.currentWorkspaceMetadata = null
+
+    this.expandPath = []
+  }
+
+  setDispatch(dispatch) {
+    this.dispatch = dispatch
+    this.renderComponent()
   }
 
   render() {
     return (
       <div id="fileExplorerView">
-        <FileSystemProvider plugin={this} />
+        <PluginViewWrapper plugin={this} />
       </div>
     )
+  }
+  updateComponent(state) {
+    return (
+      <FileSystemProvider plugin={state.plugin} />
+    )
+  }
+
+  renderComponent() {
+    this.dispatch({
+      plugin: this,
+    })
   }
 
   /**
@@ -95,10 +117,8 @@ module.exports = class Filepanel extends ViewPlugin {
    */
   registerContextMenuItem(item) {
     return new Promise((resolve, reject) => {
-      this.emit('registerContextMenuItemReducerEvent', item, (err, data) => {
-        if (err) reject(err)
-        else resolve(data)
-      })
+      this.emit('registerContextMenuItemReducerEvent', item)
+      resolve(item)
     })
   }
 
@@ -119,10 +139,10 @@ module.exports = class Filepanel extends ViewPlugin {
     return this.workspaces
   }
 
-  getAvailableWorkspaceName(name) {
+  getAvailableWorkspaceName(name) {    
     if (!this.workspaces) return name
     let index = 1
-    let workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)
+    let workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)    
     while (workspace) {
       index++
       workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)
@@ -180,6 +200,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   saveRecent(workspaceName) {
+    if (workspaceName === 'code-sample') return
     if (!localStorage.getItem('recentWorkspaces')) {
       localStorage.setItem('recentWorkspaces', JSON.stringify([ workspaceName ]))
     } else {
@@ -227,5 +248,13 @@ module.exports = class Filepanel extends ViewPlugin {
   workspaceCreated(workspace) {
     this.emit('workspaceCreated', workspace)
   }
+
+  isExpanded(path) {
+    if(path === '/') return true
+    // remove leading slash
+    path = path.replace(/^\/+/, '')
+    return this.expandPath.includes(path)
+  }
+
   /** end section */
 }

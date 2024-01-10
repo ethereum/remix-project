@@ -45,7 +45,7 @@ export class RemixClient extends PluginClient {
       await this.call(
         'dGitProvider',
         'clone',
-        {url: 'https://github.com/vyperlang/vyper', token: null},
+        {url: 'https://github.com/vyperlang/vyper', token: null, branch: 'v0.3.10'},
         // @ts-ignore
         'vyper-lang'
       )
@@ -64,6 +64,13 @@ export class RemixClient extends PluginClient {
   /** Update the status of the plugin in remix */
   changeStatus(status: Status) {
     this.client.emit('statusChanged', status)
+  }
+
+  checkActiveTheme() {
+    const active = this.client.call('theme', 'currentTheme')
+    if (active === 'dark') {
+      return 'monokai' as any
+    }
   }
 
   /** Highlight a part of the editor */

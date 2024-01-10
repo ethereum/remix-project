@@ -50,7 +50,6 @@ export class Compiler {
       if (success && this.state.compilationStartTime) {
         this.event.trigger('compilationDuration', [(new Date().getTime()) - this.state.compilationStartTime])
       }
-      this.state.compilationStartTime = null
     })
 
     this.event.register('compilationStarted', () => {
@@ -83,7 +82,7 @@ export class Compiler {
    */
 
   internalCompile(files: Source, missingInputs?: string[], timeStamp?: number): void {
-    if(timeStamp != this.state.compilationStartTime && this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger ) {
+    if(timeStamp < this.state.compilationStartTime && this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger ) {
       return
     }
     this.gatherImports(files, missingInputs, (error, input) => {
@@ -294,7 +293,7 @@ export class Compiler {
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
       const data: MessageFromWorker = msg.data
-      if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp !== this.state.compilationStartTime) {
+      if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp < this.state.compilationStartTime) {
         // drop message from previous compilation
         return
       }
