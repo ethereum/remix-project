@@ -1,8 +1,8 @@
 import React from 'react' // eslint-disable-line
-import {format} from 'util'
-import {Plugin} from '@remixproject/engine'
-import {compile} from '@remix-project/remix-solidity'
-import {Transaction} from 'web3-types'
+import { format } from 'util'
+import { Plugin } from '@remixproject/engine'
+import { compile } from '@remix-project/remix-solidity'
+import { Transaction } from 'web3-types'
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 const profile = {
@@ -37,7 +37,7 @@ export class SolidityScript extends Plugin {
               ${functionName}();
           }
       }`
-    const targets = {'script.sol': {content}}
+    const targets = { 'script.sol': { content } }
 
     // compile
     const compilation = await compile(targets, params, async (url, cb) => {

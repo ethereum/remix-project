@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import './index.css'
-import {ThemeModule} from './app/tabs/theme-module'
-import {Preload} from './app/components/preload'
+import { ThemeModule } from './app/tabs/theme-module'
+import { Preload } from './app/components/preload'
 import Config from './config'
-import {Registry} from '@remix-project/remix-lib'
-import {Storage} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
+import { Storage } from '@remix-project/remix-lib'
 
 import { createRoot } from 'react-dom/client'
 
@@ -13,7 +13,7 @@ import { createRoot } from 'react-dom/client'
   try {
     const configStorage = new Storage('config-v0.8:')
     const config = new Config(configStorage)
-    Registry.getInstance().put({api: config, name: 'config'})
+    Registry.getInstance().put({ api: config, name: 'config' })
   } catch (e) {}
   const theme = new ThemeModule()
   theme.initTheme()

@@ -1,7 +1,7 @@
 import { ElectronPlugin } from '@remixproject/engine-electron';
 import { Plugin } from '@remixproject/engine';
 import { baseURLBin, baseURLWasm } from '@remix-project/remix-solidity'
-import axios, {AxiosResponse} from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { iSolJsonBinData } from '@remix-project/remix-lib'
 
 const profile = {

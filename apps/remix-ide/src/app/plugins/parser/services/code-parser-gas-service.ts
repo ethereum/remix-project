@@ -36,14 +36,14 @@ export default class CodeParserGasService {
 
   async showGasEstimates() {
     const showGasConfig = await this.plugin.call('config', 'getAppParameter', 'show-gas')
-    if(!showGasConfig) {
+    if (!showGasConfig) {
       await this.plugin.call('editor', 'discardLineTexts')
       return
     }
     this.plugin.currentFile = await this.plugin.call('fileManager', 'file')
     // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository
     const extractedFiledNodes =  await this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract as unknown as lastCompilationResult)
-    if(extractedFiledNodes) {
+    if (extractedFiledNodes) {
       this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = extractedFiledNodes
     }
 

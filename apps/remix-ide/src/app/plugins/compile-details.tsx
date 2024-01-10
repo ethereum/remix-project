@@ -1,6 +1,6 @@
 import React from 'react'
 import { ViewPlugin } from '@remixproject/engine-web'
-import {PluginViewWrapper} from '@remix-ui/helper'
+import { PluginViewWrapper } from '@remix-ui/helper'
 import { RemixAppManager } from '../../remixAppManager'
 import { RemixUiCompileDetails } from '@remix-ui/solidity-compile-details'
 

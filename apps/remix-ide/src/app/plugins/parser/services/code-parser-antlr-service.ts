@@ -4,7 +4,7 @@ import { AstNode } from "@remix-project/remix-solidity"
 import { CodeParser } from "../code-parser"
 import { antlr } from '../types'
 import { pathToFileURL } from 'url'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 
 const SolidityParser = (window as any).SolidityParser = (window as any).SolidityParser || []
 
@@ -247,7 +247,7 @@ export default class CodeParserAntlrService {
       try {
         const startTime = Date.now()
         const blocks = (SolidityParser as any).parseBlock(fileContent, { loc: true, range: true, tolerant: true })
-        if(this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].blockDurations){
+        if (this.cache[this.plugin.currentFile] && this.cache[this.plugin.currentFile].blockDurations){
           this.cache[this.plugin.currentFile].blockDurations = [...this.cache[this.plugin.currentFile].blockDurations.slice(-this.parserThresholdSampleAmount), Date.now() - startTime]
           this.setFileParsingState(this.plugin.currentFile)
         }

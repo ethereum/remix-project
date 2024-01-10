@@ -4,7 +4,7 @@ import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
@@ -265,11 +265,11 @@ class FileManager extends Plugin {
       if (await this.exists(path)) {
         const newPath = await helper.createNonClashingNameAsync(path, this)
         const content = await this.setFileContent(newPath, data)
-        return {newContent: content, newPath}
+        return { newContent: content, newPath }
       } else {
         const ret = await this.setFileContent(path, data)
         this.emit('fileAdded', path)
-        return {newContent: ret, newpath: path}
+        return { newContent: ret, newpath: path }
       }
     } catch (e) {
       throw new Error(e)

@@ -1,12 +1,12 @@
-import {RemixApp} from '@remix-ui/app'
+import { RemixApp } from '@remix-ui/app'
 import axios from 'axios'
-import React, {useEffect, useRef, useState} from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import * as packageJson from '../../../../../package.json'
-import {fileSystem, fileSystems} from '../files/fileSystem'
-import {indexedDBFileSystem} from '../files/filesystems/indexedDB'
-import {localStorageFS} from '../files/filesystems/localStorage'
-import {fileSystemUtility, migrationTestData} from '../files/filesystems/fileSystemUtility'
+import { fileSystem, fileSystems } from '../files/fileSystem'
+import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
+import { localStorageFS } from '../files/filesystems/localStorage'
+import { fileSystemUtility, migrationTestData } from '../files/filesystems/fileSystemUtility'
 import './styles/preload.css'
 import isElectron from 'is-electron'
 const _paq = (window._paq = window._paq || [])
@@ -83,7 +83,7 @@ export const Preload = (props: any) => {
   }
 
   useEffect (() => {
-    if(isElectron()){
+    if (isElectron()){
       loadAppComponent()
       return
     }

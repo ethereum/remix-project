@@ -54,7 +54,10 @@
         "react-hooks/exhaustive-deps": "off",
         "array-callback-return": "off",
         "prefer-spread": "off",
-        "indent": ["error", 2]
+        "indent": ["error", 2],
+        "keyword-spacing": ["error", { "after": true, "before": true }],
+        "array-bracket-spacing": ["error", "never"],
+        "object-curly-spacing": ["error", "always", { "arraysInObjects": false }]
       }
     },
     {

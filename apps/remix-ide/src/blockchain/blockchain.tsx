@@ -1,20 +1,20 @@
 import React from 'react' // eslint-disable-line
-import {fromWei, toBigInt, toWei} from 'web3-utils'
-import {Plugin} from '@remixproject/engine'
-import {toBuffer, addHexPrefix} from '@ethereumjs/util'
-import {EventEmitter} from 'events'
-import {format} from 'util'
-import {ExecutionContext} from './execution-context'
+import { fromWei, toBigInt, toWei } from 'web3-utils'
+import { Plugin } from '@remixproject/engine'
+import { toBuffer, addHexPrefix } from '@ethereumjs/util'
+import { EventEmitter } from 'events'
+import { format } from 'util'
+import { ExecutionContext } from './execution-context'
 import Config from '../config'
-import {VMProvider} from './providers/vm'
-import {InjectedProvider} from './providers/injected'
-import {NodeProvider} from './providers/node'
-import {execution, EventManager, helpers} from '@remix-project/remix-lib'
-import {etherScanLink} from './helper'
-import {logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString} from '@remix-ui/helper'
-const {txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper} = execution
-const {txResultHelper} = helpers
-const {resultToRemixTx} = txResultHelper
+import { VMProvider } from './providers/vm'
+import { InjectedProvider } from './providers/injected'
+import { NodeProvider } from './providers/node'
+import { execution, EventManager, helpers } from '@remix-project/remix-lib'
+import { etherScanLink } from './helper'
+import { logBuilder, cancelUpgradeMsg, cancelProxyMsg, addressToString } from '@remix-ui/helper'
+const { txFormat, txExecution, typeConversion, txListener: Txlistener, TxRunner, TxRunnerWeb3, txHelper } = execution
+const { txResultHelper } = helpers
+const { resultToRemixTx } = txResultHelper
 import * as packageJson from '../../../../package.json'
 
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
@@ -90,7 +90,7 @@ export class Blockchain extends Plugin {
     this.txRunner = new TxRunner(web3Runner, {})
 
     this.networkcallid = 0
-    this.networkStatus = {network: {name: ' - ', id: ' - '}}
+    this.networkStatus = { network: { name: ' - ', id: ' - ' } }
     this.setupEvents()
     this.setupProviders()
   }
@@ -105,21 +105,21 @@ export class Blockchain extends Plugin {
     this.active = true
     this.on('injected', 'chainChanged', () => {
       this.detectNetwork((error, network) => {
-        this.networkStatus = {network, error}
+        this.networkStatus = { network, error }
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
 
     this.on('injected-trustwallet', 'chainChanged', () => {
       this.detectNetwork((error, network) => {
-        this.networkStatus = {network, error}
+        this.networkStatus = { network, error }
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
 
     this.on('walletconnect', 'chainChanged', () => {
       this.detectNetwork((error, network) => {
-        this.networkStatus = {network, error}
+        this.networkStatus = { network, error }
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
@@ -138,7 +138,7 @@ export class Blockchain extends Plugin {
       await this.resetEnvironment()
       this._triggerEvent('contextChanged', [context])
       this.detectNetwork((error, network) => {
-        this.networkStatus = {network, error}
+        this.networkStatus = { network, error }
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     })
@@ -153,7 +153,7 @@ export class Blockchain extends Plugin {
 
     setInterval(() => {
       this.detectNetwork((error, network) => {
-        this.networkStatus = {network, error}
+        this.networkStatus = { network, error }
         this._triggerEvent('networkStatus', [this.networkStatus])
       })
     }, 30000)
@@ -195,7 +195,7 @@ export class Blockchain extends Plugin {
   }
 
   deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
-    const {continueCb, promptCb, statusCb, finalCb} = callbacks
+    const { continueCb, promptCb, statusCb, finalCb } = callbacks
     const constructor = selectedContract.getConstructorInterface()
     txFormat.buildData(
       selectedContract.name,
@@ -221,7 +221,7 @@ export class Blockchain extends Plugin {
   }
 
   deployContractWithLibrary(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
-    const {continueCb, promptCb, statusCb, finalCb} = callbacks
+    const { continueCb, promptCb, statusCb, finalCb } = callbacks
     const constructor = selectedContract.getConstructorInterface()
     txFormat.encodeConstructorCallAndLinkLibraries(
       selectedContract.object,
@@ -263,7 +263,7 @@ export class Blockchain extends Plugin {
   }
 
   async runProxyTx(proxyData, implementationContractObject) {
-    const args = {useCall: false, data: proxyData}
+    const args = { useCall: false, data: proxyData }
     let networkInfo
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       networkInfo = network
@@ -314,7 +314,7 @@ export class Blockchain extends Plugin {
   }
 
   async runUpgradeTx(proxyAddress, data, newImplementationContractObject) {
-    const args = {useCall: false, data, to: proxyAddress}
+    const args = { useCall: false, data, to: proxyAddress }
     let networkInfo
     const confirmationCb = (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       // continue using original authorization given by user
@@ -342,7 +342,7 @@ export class Blockchain extends Plugin {
   }
 
   async saveDeployedContractStorageLayout(contractObject, proxyAddress, networkInfo) {
-    const {contractName, implementationAddress} = contractObject
+    const { contractName, implementationAddress } = contractObject
     const networkName = networkInfo.name === 'custom' ? networkInfo.name + '-' + networkInfo.id : networkInfo.name
     const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
     // TODO: make deploys folder read only.
@@ -442,7 +442,7 @@ export class Blockchain extends Plugin {
       data.contractABI = selectedContract.abi
     }
 
-    this.runTx({data: data, useCall: false}, confirmationCb, continueCb, promptCb, (error, txResult, address) => {
+    this.runTx({ data: data, useCall: false }, confirmationCb, continueCb, promptCb, (error, txResult, address) => {
       if (error) {
         return finalCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
       }
@@ -594,7 +594,7 @@ export class Blockchain extends Plugin {
           data.contract = contract
         }
         const useCall = funABI.stateMutability === 'view' || funABI.stateMutability === 'pure'
-        this.runTx({to: address, data, useCall}, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
+        this.runTx({ to: address, data, useCall }, confirmationCb, continueCb, promptCb, (error, txResult, _address, returnValue) => {
           if (error) {
             return logCallback(`${logMsg} errored: ${error.message ? error.message : error}`)
           }
@@ -867,7 +867,7 @@ export class Blockchain extends Plugin {
             const eventName = tx.useCall ? 'callExecuted' : 'transactionExecuted'
 
             this._triggerEvent(eventName, [error, tx.from, tx.to, tx.data, tx.useCall, result, timestamp, payLoad])
-            return resolve({result, tx})
+            return resolve({ result, tx })
           })
         } catch (err) {
           return reject(err)

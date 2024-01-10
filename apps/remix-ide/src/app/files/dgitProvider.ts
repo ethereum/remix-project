@@ -14,7 +14,7 @@ import JSZip from 'jszip'
 import path from 'path'
 import FormData from 'form-data'
 import axios from 'axios'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 
 const profile = {
   name: 'dGitProvider',
@@ -426,11 +426,11 @@ class DGitProvider extends Plugin {
         input
       }
       this.call('terminal', 'logHtml', `Cloning ${input.url}... please wait...`)
-      try{
+      try {
         const result = await this.call('isogit', 'clone', cmd)
         this.call('fs', 'openWindow', folder)
         return result
-      }catch(e){
+      } catch (e){
         this.call('notification', 'alert', {
           id: 'dgitAlert',
           message: 'Unexpected error while cloning the repository: \n' + e.toString(),
@@ -516,7 +516,7 @@ class DGitProvider extends Plugin {
         for (const module of gitmodules) {
           const dir = path.join(currentDir, module.path)
           // if url contains git@github.com: convert it
-          if(module.url && module.url.startsWith('git@github.com:')) {
+          if (module.url && module.url.startsWith('git@github.com:')) {
             module.url = module.url.replace('git@github.com:', 'https://github.com/')
           }
           try {
@@ -540,12 +540,12 @@ class DGitProvider extends Plugin {
               ...await this.getGitConfig(currentDir),
               trees: [git.TREE({ ref: commitHash })],
               map: async function (filepath, [A]) {
-                if(filepath === module.path) {
+                if (filepath === module.path) {
                   return await A.oid()
                 }
               }
             })
-            if(result && result.length) {
+            if (result && result.length) {
               this.call('terminal', 'logHtml', `Checking out submodule ${dir} to ${result[0]} in directory ${dir}`)
               await git.fetch({
                 ...await this.parseInput(input),
@@ -563,7 +563,7 @@ class DGitProvider extends Plugin {
                 ...await this.getGitConfig(dir),
               })
 
-              if(log[0].oid !== result[0]) {
+              if (log[0].oid !== result[0]) {
                 this.call('terminal', 'log', {
                   type: 'error',
                   value: `Could not checkout submodule to ${result[0]}`

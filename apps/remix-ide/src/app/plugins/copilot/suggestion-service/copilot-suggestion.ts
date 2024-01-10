@@ -1,6 +1,6 @@
-import {Plugin} from '@remixproject/engine'
-import {SuggestionService, SuggestOptions} from './suggestion-service'
-import axios, {AxiosResponse} from 'axios'
+import { Plugin } from '@remixproject/engine'
+import { SuggestionService, SuggestOptions } from './suggestion-service'
+import axios, { AxiosResponse } from 'axios'
 //@ts-ignore
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
@@ -54,7 +54,7 @@ export class CopilotSuggestion extends Plugin {
   }
 
   async suggest(content: string) {
-    if (!await this.call('settings', 'get', 'settings/copilot/suggest/activate')) return { output: [{ generated_text: ''}]}
+    if (!await this.call('settings', 'get', 'settings/copilot/suggest/activate')) return { output: [{ generated_text: '' }]}
 
     const max_new_tokens = await this.call('settings', 'get', 'settings/copilot/suggest/max_new_tokens')
     const temperature = await this.call('settings', 'get', 'settings/copilot/suggest/temperature')
@@ -66,9 +66,9 @@ export class CopilotSuggestion extends Plugin {
     }
 
     if (this.remoteService) {
-      const {data} = await axios.post(this.remoteService, {context: content, max_new_words: options.max_new_tokens, temperature: options.temperature})
+      const { data } = await axios.post(this.remoteService, { context: content, max_new_words: options.max_new_tokens, temperature: options.temperature })
       const parsedData = JSON.parse(data).trimStart()
-      return {output: [{generated_text: parsedData}]}
+      return { output: [{ generated_text: parsedData }]}
     } else {
       return this.service.suggest(this.context ? this.context + '\n\n' + content : content, options)
     }
