@@ -85,7 +85,7 @@ const App: React.FC = () => {
         </div>
         <ToggleButtonGroup name="remote" className="mb-3" onChange={setEnvironment} type="radio" value={state.environment}>
           <ToggleButton data-id="remote-compiler" variant="secondary" name="remote" value="remote">
-            Remote Compiler v0.3.10
+            Remote Compiler
           </ToggleButton>
           <ToggleButton data-id="local-compiler" variant="secondary" name="local" value="local">
             Local Compiler
