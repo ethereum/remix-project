@@ -54,7 +54,11 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const localhostProvider = filePanelPlugin.fileProviders.localhost
     const electrOnProvider = filePanelPlugin.fileProviders.electron
     const params = queryParams.get() as UrlParametersType
+    let editorMounted = false
     let workspaces = []
+    plugin.on('editor', 'editorMounted', async () => {
+      editorMounted = true
+    })
     if (!(Registry.getInstance().get('platform').api.isDesktop())) {
       workspaces = await getWorkspaces() || []
       dispatch(setWorkspaces(workspaces))
@@ -69,7 +73,14 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       const filePath = await loadWorkspacePreset('code-template')
-      plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+      plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {            
+        if (editorMounted){
+          setTimeout(async () => {
+            await plugin.fileManager.openFile(filePath)}, 2000)
+        }else{
+          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+        }
+      })
     } else if (params.address) {
       if (params.address.startsWith('0x') && params.address.length === 42) {
         const contractAddress = params.address
@@ -112,7 +123,15 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             for (filePath in data.compilationTargets)
               await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
           }
-          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+
+          plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {            
+            if (editorMounted){
+              setTimeout(async () => {
+                await plugin.fileManager.openFile(filePath)}, 2000)
+            }else{
+              plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+            }
+          })
           plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '' : 's'} from ${foundOnNetworks.join(',')} network${foundOnNetworks.length === 1 ? '' : 's'} of Etherscan for contract address ${contractAddress} !!`)
         } catch (error) {
           await basicWorkspaceInit(workspaces, workspaceProvider)
