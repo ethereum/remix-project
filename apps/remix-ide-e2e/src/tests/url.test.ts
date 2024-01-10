@@ -270,6 +270,7 @@ module.exports = {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&url=https://raw.githubusercontent.com/EthVM/evm-source-verification/main/contracts/1/0x011e5846975c6463a8c6337eecf3cbf64e328884/input.json')
       .refreshPage()
+      .currentWorkspaceIs('code-sample')
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItem@openzeppelin/contracts/access/AccessControl.sol"]')
       .openFile('contracts')
       .openFile('contracts/governance')
