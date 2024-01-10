@@ -2,7 +2,7 @@
 'use strict'
 import { Cache } from '@ethereumjs/statemanager/dist/cache'
 import { hash } from '@remix-project/remix-lib'
-import { bufferToHex, Account, toBuffer, bufferToBigInt} from '@ethereumjs/util'
+import { bufferToHex, Account, toBuffer, bufferToBigInt, bigIntToHex } from '@ethereumjs/util'
 import { keccak256 } from 'ethereum-cryptography/keccak'
 import type { Address } from '@ethereumjs/util'
 import { decode } from 'rlp'
@@ -13,7 +13,7 @@ import { VmProxy } from './VmProxy'
 import { VM } from '@ethereumjs/vm'
 import type { BigIntLike } from '@ethereumjs/util'
 import { Common, ConsensusType } from '@ethereumjs/common'
-import { Trie } from '@ethereumjs/trie'
+import { Trie, MapDB, DB } from '@ethereumjs/trie'
 import { DefaultStateManager, StateManager, EthersStateManager, EthersStateManagerOpts } from '@ethereumjs/statemanager'
 import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
 import { EVM } from '@ethereumjs/evm'
@@ -21,7 +21,7 @@ import { EEI } from '@ethereumjs/vm'
 import { Blockchain } from '@ethereumjs/blockchain'
 import { Block } from '@ethereumjs/block'
 import { Transaction } from '@ethereumjs/tx'
-import { bigIntToHex } from '@ethereumjs/util'
+import { State } from './provider'
 
 /**
  * Options for constructing a {@link StateManager}.
@@ -40,14 +40,47 @@ export interface DefaultStateManagerOpts {
   prefixCodeHashes?: boolean
 }
 
+class RemixMapDb extends MapDB {
+  async get(key: Buffer): Promise<Buffer | null> {
+    // the remix db contains stringified values (in order to save space),
+    // that's why we need to convert the hex string to the native type that the Trie understands.
+    let value = await super.get(key)
+    if (typeof value === 'string') {
+      value = toBuffer(value)
+    }
+    return value
+  }
+
+  copy(): DB {
+    return new RemixMapDb(this._database)
+  }
+}
+
 /*
   extend vm state manager and instanciate VM
 */
 class StateManagerCommonStorageDump extends DefaultStateManager {
   keyHashes: { [key: string]: string }
-  constructor (opts: DefaultStateManagerOpts = {}) {
+  internalTree: Trie
+  db: MapDB
+  stateDb: State
+  constructor (opts: DefaultStateManagerOpts = {}, stateDb?: State) {
+    const db = new RemixMapDb(stateDb ? stateDb.db: null)
+    const trie = new Trie({ useKeyHashing: true, db, root: stateDb ? stateDb.root : null })
+    opts = { trie, ...opts }
     super(opts)
+    this.stateDb = stateDb
+    this.internalTree = trie
+    this.db = db
     this.keyHashes = {}
+  }
+
+  getTrie () {
+    return this.internalTree
+  }
+
+  getDb () {
+    return this.db
   }
 
   putContractStorage (address, key, value) {
@@ -58,7 +91,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   copy(): StateManagerCommonStorageDump {
     const copyState =  new StateManagerCommonStorageDump({
       trie: this._trie.copy(false),
-    })
+    }, this.stateDb)
     copyState.keyHashes = this.keyHashes
     return copyState
   }
@@ -100,9 +133,9 @@ export interface CustomEthersStateManagerOpts {
 class CustomEthersStateManager extends StateManagerCommonStorageDump {
   private provider: ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
   private blockTag: string
-
-  constructor(opts: CustomEthersStateManagerOpts) {
-    super(opts)
+  constructor(opts: CustomEthersStateManagerOpts, stateDb?: State) {
+    super(opts, stateDb)
+    this.stateDb = stateDb
     if (typeof opts.provider === 'string') {
       this.provider = new ethers.providers.StaticJsonRpcProvider(opts.provider)
     } else if (opts.provider instanceof ethers.providers.JsonRpcProvider) {
@@ -154,7 +187,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
       provider: this.provider,
       blockTag: this.blockTag,
       trie: this._trie.copy(false),
-    })
+    }, this.stateDb)
     return newState
   }
 
@@ -258,7 +291,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
 export type CurrentVm = {
   vm: VM,
   web3vm: VmProxy,
-  stateManager: StateManager,
+  stateManager: StateManagerCommonStorageDump,
   common: Common
 }
 
@@ -298,12 +331,14 @@ export class VMContext {
   exeResults: Record<string, Transaction>
   nodeUrl: string
   blockNumber: number | 'latest'
+  stateDb: any
 
-  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest') {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: any) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'merge'
     this.nodeUrl = nodeUrl
+    this.stateDb = stateDb
     this.blockNumber = blockNumber
     this.blocks = {}
     this.latestBlockNumber = "0x0"
@@ -318,7 +353,7 @@ export class VMContext {
   }
 
   async createVm (hardfork) {
-    let stateManager: StateManager
+    let stateManager: StateManagerCommonStorageDump
     if (this.nodeUrl) {
       let block = this.blockNumber
       if (this.blockNumber === 'latest') {
@@ -327,17 +362,17 @@ export class VMContext {
         stateManager = new CustomEthersStateManager({
           provider: this.nodeUrl,
           blockTag: '0x' + block.toString(16)
-        })
+        }, this.stateDb)
         this.blockNumber = block
       } else {
         stateManager = new CustomEthersStateManager({
           provider: this.nodeUrl,
           blockTag: '0x' + this.blockNumber.toString(16)
-        })
+        }, this.stateDb)
       }
       
     } else
-      stateManager = new StateManagerCommonStorageDump()
+      stateManager = new StateManagerCommonStorageDump(null, this.stateDb)
 
     const consensusType = hardfork === 'berlin' || hardfork === 'london' ? ConsensusType.ProofOfWork : ConsensusType.ProofOfStake
     const difficulty = consensusType === ConsensusType.ProofOfStake ? 0 : 69762765929000

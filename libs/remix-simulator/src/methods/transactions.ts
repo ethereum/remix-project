@@ -4,7 +4,7 @@ import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
 import { ethers } from 'ethers'
 import { VMexecutionResult } from '@remix-project/remix-lib'
-import { RunTxResult } from '@ethereumjs/vm'
+import { VMContext } from '../vm-context'
 import { Log, EvmError } from '@ethereumjs/evm'
 const TxRunnerVM = execution.TxRunnerVM
 const TxRunner = execution.TxRunner
@@ -19,7 +19,7 @@ export type VMExecResult = {
 }
 
 export class Transactions {
-  vmContext
+  vmContext: VMContext
   accounts
   tags
   txRunnerVMInstance
@@ -74,7 +74,9 @@ export class Transactions {
       eth_getExecutionResultFromSimulator: this.eth_getExecutionResultFromSimulator.bind(this),
       eth_getHHLogsForTx: this.eth_getHHLogsForTx.bind(this),
       eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this),
-      eth_registerCallId: this.eth_registerCallId.bind(this)
+      eth_registerCallId: this.eth_registerCallId.bind(this),
+      eth_getStateTrieRoot: this.eth_getStateTrieRoot.bind(this),
+      eth_getStateDb: this.eth_getStateDb.bind(this)
     }
   }
 
@@ -196,6 +198,14 @@ export class Transactions {
   eth_registerCallId (payload, cb) {
     this.comingCallId = payload.params[0]
     cb()
+  }
+
+  eth_getStateTrieRoot (_, cb) {
+    cb(null, this.vmContext.currentVm.stateManager.getTrie().root())
+  }
+
+  eth_getStateDb (_, cb) {
+    cb(null, this.vmContext.currentVm.stateManager.getDb())
   }
 
   eth_call (payload, cb) {

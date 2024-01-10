@@ -1,7 +1,7 @@
 import React from 'react' // eslint-disable-line
 import {fromWei, toBigInt, toWei} from 'web3-utils'
 import {Plugin} from '@remixproject/engine'
-import {toBuffer, addHexPrefix} from '@ethereumjs/util'
+import {toBuffer, addHexPrefix, bufferToHex} from '@ethereumjs/util'
 import {EventEmitter} from 'events'
 import {format} from 'util'
 import {ExecutionContext} from './execution-context'
@@ -164,7 +164,7 @@ export class Blockchain extends Plugin {
   }
 
   setupProviders() {
-    const vmProvider = new VMProvider(this.executionContext)
+    const vmProvider = new VMProvider(this.executionContext, this)
     this.providers = {}
     this.providers['vm'] = vmProvider
     this.providers.injected = new InjectedProvider(this.executionContext)
@@ -677,7 +677,7 @@ export class Blockchain extends Plugin {
               view on etherscan
             </a>
           )
-        }
+        } 
       })
     })
     this.txRunner = new TxRunner(web3Runner, {})
@@ -889,8 +889,31 @@ export class Blockchain extends Plugin {
       let execResult
       let returnValue = null
       if (isVM) {
-        const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
+        if (!tx.useCall) {
+          // TODO: this won't save the state for transactions executed outside of the UI (dor instande from a script execution).
+          setTimeout(async() => {
+            const root = await this.web3().remix.getStateTrieRoot()
+            const db = await this.web3().remix.getStateDb()
+            const state = {
+              root,
+              db: Object.fromEntries(db._database)
+            }
+            console.log('saving', state)
+            const stringifyed = JSON.stringify(state, (key, value) => {
+              if (key === 'root') {
+                return bufferToHex(value)
+              } else if (key === 'db') {
+                return value
+              } else {
+                return bufferToHex(value)           
+              }
+              return value
+          }, '\t')
+            this.call('fileManager', 'writeFile', '.states/state.json', stringifyed)
+          }, 500)
+        }
 
+        const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
         if (hhlogs && hhlogs.length) {
           const finalLogs = (
             <div>
