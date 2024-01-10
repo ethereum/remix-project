@@ -91,7 +91,7 @@ module.exports = {
       })
   },
 
-  'Should load Etherscan verified contracts from URL "address" param)': function (browser: NightwatchBrowser) {
+  'Should load Etherscan verified contracts from URL "address" param) #group1': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#address=0xdac17f958d2ee523a2206206994597c13d831ec7')
       .refreshPage()
@@ -270,12 +270,8 @@ module.exports = {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&url=https://raw.githubusercontent.com/EthVM/evm-source-verification/main/contracts/1/0x011e5846975c6463a8c6337eecf3cbf64e328884/input.json')
       .refreshPage()
-
       .switchWorkspace('code-sample')
-      .openFile('@openzeppelin')
-      .openFile('@openzeppelin/contracts')
-      .openFile('@openzeppelin/contracts/access')
-      .openFile('@openzeppelin/contracts/access/AccessControl.sol')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItem@openzeppelin/contracts/access/AccessControl.sol"]')
       .openFile('contracts')
       .openFile('contracts/governance')
       .openFile('contracts/governance/UnionGovernor.sol')
