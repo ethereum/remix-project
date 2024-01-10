@@ -1,5 +1,6 @@
 {
   "terminal.listen": "listen on all transactions",
+  "terminal.listenVM": "Listen on all transactions is disabled for VM environment",
   "terminal.listenTitle": "If checked Remix will listen on all transactions mined in the current environment and not only transactions created by you",
   "terminal.search": "Search with transaction hash or address",
   "terminal.used": "used",

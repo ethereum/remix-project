@@ -8,6 +8,8 @@ import { Chevron } from './components/Chevron'
 import { IconRecord } from './types'
 import { onLineContext } from '@remix-ui/app'
 import { CustomTooltip } from '@remix-ui/helper'
+import {Registry} from '@remix-project/remix-lib'
+
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: Plugin
   icons: IconRecord[]
@@ -109,29 +111,31 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
           />
         </div>
         <div className="remixui_default-icons-container border-0">
-          {scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight ? (
+          { scrollableRef.current && scrollableRef.current.scrollHeight > scrollableRef.current.clientHeight ? (
             <Chevron divElementRef={scrollableRef} direction="down" cssRule={'fa fa-chevron-down remixui_icon-chevron my-0'} />
-          ) : null}
+          ) : null }
           <IconList
             theme={theme}
             icons={icons.filter((p) => p.profile.name === 'settings' || p.profile.name === 'pluginManager')}
             verticalIconsPlugin={verticalIconsPlugin}
             itemContextAction={itemContextAction}
           />
-          {online ?
-            <CustomTooltip
-              placement="top"
-              tooltipText={'You are online'}
-            >
-              <i className="fa-solid fa-wifi text-success p-2"></i>
-            </CustomTooltip>
-            :
-            <CustomTooltip
-              placement="top"
-              tooltipText={'You are offline'}
-            >
-              <i className="fa-solid fa-wifi-exclamation text-danger p-2"></i>
-            </CustomTooltip>}
+          { Registry.getInstance().get('platform').api.isDesktop() ? (
+            online ? (
+              <CustomTooltip
+                placement="top"
+                tooltipText={'You are online'}
+              >
+                <i className="fa-solid fa-wifi text-success p-2"></i>
+              </CustomTooltip>)
+              :
+              (<CustomTooltip
+                placement="top"
+                tooltipText={'You are offline'}
+              >
+                <i className="fa-solid fa-wifi-exclamation text-danger p-2"></i>
+              </CustomTooltip>)
+          ) : null }
         </div>
       </div>
     </div>
