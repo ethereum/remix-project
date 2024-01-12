@@ -9,7 +9,7 @@ import {
 
 /**
  * @dev Get function name using method signature
- * @param signature siganture
+ * @param signature signature
  * @param methodIdentifiers Object containing all methods identifier
  */
 
@@ -72,7 +72,7 @@ function isNodeTypeIn (node: AstNode, typesList: string[]): boolean {
 
 /**
  * @dev Get overrided sender provided using natspec
- * @param userdoc method user documentaion
+ * @param userdoc method user documentation
  * @param signature signature
  * @param methodIdentifiers Object containing all methods identifier
  */
@@ -86,7 +86,7 @@ function getOverridedSender (userdoc: UserDocumentation, signature: string, meth
 
 /**
  * @dev Get value provided using natspec
- * @param userdoc method user documentaion
+ * @param userdoc method user documentation
  * @param signature signature
  * @param methodIdentifiers Object containing all methods identifier
  */
