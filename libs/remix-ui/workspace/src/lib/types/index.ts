@@ -165,6 +165,7 @@ export interface FileExplorerContextMenuProps {
   copy?: (path: string, type: string) => void
   paste?: (destination: string, type: string) => void
   copyFileName?: (path: string, type: string) => void
+  copyShareURL?: (path: string, type: string) => void
   copyPath?: (path: string, type: string) => void
   generateUml?: (path: string) => Promise<void>
   uploadFile?: (target: EventTarget & HTMLInputElement) => void
