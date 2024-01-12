@@ -89,7 +89,7 @@ RemixProject/IDE
 ## browser test
 
 a PR (https://github.com/ethereum/remix-ide/pull/1961) is waiting for merging @yann
-It iwll be followed by other PRs, aiming to improve process of writting browser tests.
+It will be followed by other PRs, aiming to improve process of writing browser tests.
 
 ## desktop version
 
