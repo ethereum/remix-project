@@ -62,7 +62,7 @@ export class Mapping extends RefType {
 }
 
 function getMappingLocation (key, position) {
-  // mapping storage location decribed at http://solidity.readthedocs.io/en/develop/miscellaneous.html#layout-of-state-variables-in-storage
+  // mapping storage location described at http://solidity.readthedocs.io/en/develop/miscellaneous.html#layout-of-state-variables-in-storage
   // > the value corresponding to a mapping key k is located at keccak256(k . p) where . is concatenation.
 
   // key should be a hex string, and position an int
