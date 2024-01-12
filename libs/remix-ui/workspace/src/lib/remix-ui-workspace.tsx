@@ -535,6 +535,13 @@ export function Workspace() {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleCopyShareURLClick = (path: string, _type: string) => {
+    const fileName = extractNameFromKey(path)
+    console.log('handleCopyShareURLClick---->', fileName)
+    // navigator.clipboard.writeText(fileName)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCopyFilePathClick = (path: string, _type: string) => {
     navigator.clipboard.writeText(path)
   }
@@ -1300,6 +1307,7 @@ export function Workspace() {
           paste={handlePasteClick}
           copyFileName={handleCopyFileNameClick}
           copyPath={handleCopyFilePathClick}
+          copyShareURL={handleCopyShareURLClick}
           emit={emitContextMenuEvent}
           pageX={state.focusContext.x}
           pageY={state.focusContext.y}
