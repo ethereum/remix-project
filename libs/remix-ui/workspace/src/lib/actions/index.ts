@@ -211,7 +211,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       } else {
         _paq.push(['trackEvent', 'Storage', 'error', `Workspace in localstorage not found: ${localStorage.getItem("currentWorkspace")}`])
         await basicWorkspaceInit(workspaces, workspaceProvider)
-      }
+      } 
     } else {
       await basicWorkspaceInit(workspaces, workspaceProvider)
     }
