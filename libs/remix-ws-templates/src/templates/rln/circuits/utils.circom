@@ -1,9 +1,9 @@
 pragma circom 2.1.0;
 
-include "circomlib/poseidon.circom";
-include "circomlib/mux1.circom";
-include "circomlib/bitify.circom";
-include "circomlib/comparators.circom";
+include "circomlib/circuits/poseidon.circom";
+include "circomlib/circuits/mux1.circom";
+include "circomlib/circuits/bitify.circom";
+include "circomlib/circuits/comparators.circom";
 
 template MerkleTreeInclusionProof(DEPTH) {
     signal input leaf;

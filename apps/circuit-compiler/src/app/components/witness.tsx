@@ -9,9 +9,16 @@ export function WitnessSection ({ plugin, signalInputs, status }: {plugin: Circo
   const [witnessValues, setWitnessValues] = useState<Record<string, string>>({})
 
   const handleSignalInput = (e: any) => {
+    let value = e.target.value
+
+    try {
+      value = JSON.parse(value)
+    } catch (e) {
+      // do nothing
+    }
     setWitnessValues({
       ...witnessValues,
-      [e.target.name]: e.target.value
+      [e.target.name]: value
     })
   }
 
