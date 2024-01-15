@@ -35,7 +35,7 @@ export const fetchContractFromBlockscout = async (plugin, endpoint, contractAddr
       }
     }
 
-    for (let [file, source] of Object.entries(sources)) {
+    for (let [file, source] of Object.entries(sources)) { // eslint-disable-line
       file = file.replace('browser/', '') // should be fixed in the remix IDE end.
       file = file.replace(/^\//g, '') // remove first slash.
       if (await plugin.call('contentImport', 'isExternalUrl', file)) {
