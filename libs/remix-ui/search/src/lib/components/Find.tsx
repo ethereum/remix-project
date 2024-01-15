@@ -50,7 +50,7 @@ export const Find = () => {
             >
               <div
                 data-id="search_case_sensitive"
-                className={`monaco-custom-checkbox codicon codicon-case-sensitive ${state.casesensitive ? 'checked' : ''}`}
+                className={`monaco-custom-checkbox codicon codicon-case-sensitive mx-2 ${state.casesensitive ? 'checked' : ''}`}
                 role="checkbox"
                 aria-checked="false"
                 aria-label="Match Case"
@@ -70,7 +70,7 @@ export const Find = () => {
             >
               <div
                 data-id="search_whole_word"
-                className={`monaco-custom-checkbox codicon codicon-whole-word ${state.matchWord ? 'checked' : ''}`}
+                className={`monaco-custom-checkbox codicon codicon-whole-word mr-2 ${state.matchWord ? 'checked' : ''}`}
                 role="checkbox"
                 aria-checked="false"
                 aria-label="Match Whole Word"
