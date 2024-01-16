@@ -105,6 +105,7 @@ export interface FileExplorerProps {
     dispatchUploadFile: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
     dispatchUploadFolder: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
     dispatchCopyFile: (src: string, dest: string) => Promise<void>,
+    dispatchCopyShareURL: (path:string) => Promise<void>,
     dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
     dispatchRunScript: (path: string) => Promise<void>,
     dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,

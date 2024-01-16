@@ -536,8 +536,8 @@ export function Workspace() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCopyShareURLClick = (path: string, _type: string) => {
-    const fileName = extractNameFromKey(path)
-    console.log('handleCopyShareURLClick---->', fileName)
+    console.log('path---->', path)
+    global.dispatchCopyShareURL(path)
     // navigator.clipboard.writeText(fileName)
   }
 
@@ -1105,6 +1105,7 @@ export function Workspace() {
                   dispatchUploadFile={global.dispatchUploadFile}
                   dispatchUploadFolder={global.dispatchUploadFolder}
                   dispatchCopyFile={global.dispatchCopyFile}
+                  dispatchCopyShareURL={global.dispatchCopyShareURL}
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
                   dispatchRunScript={global.dispatchRunScript}
@@ -1164,6 +1165,7 @@ export function Workspace() {
                   dispatchUploadFile={global.dispatchUploadFile}
                   dispatchUploadFolder={global.dispatchUploadFolder}
                   dispatchCopyFile={global.dispatchCopyFile}
+                  dispatchCopyShareURL={global.dispatchCopyShareURL}
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
                   dispatchRunScript={global.dispatchRunScript}

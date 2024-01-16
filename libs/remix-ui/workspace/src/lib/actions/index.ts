@@ -376,6 +376,19 @@ export const copyFile = async (src: string, dest: string) => {
   }
 }
 
+export const copyShareURL = async (path: string) => {
+  const fileManager = plugin.fileManager
+
+  try {
+    const fileContent = await fileManager.readFile(path)
+    console.log('fileContent------>', fileContent)
+    const base64Content = btoa(fileContent)
+    console.log('base64Content------>', base64Content)
+  } catch (error) {
+    dispatch(displayPopUp('Oops! An error ocurred while performing copyFile operation.' + error))
+  }
+}
+
 export const copyFolder = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 
