@@ -91,7 +91,7 @@ function HomeTabTitle() {
                 openLink('https://twitter.com/EthereumRemix')
                 _paq.push(['trackEvent', 'hometab', 'socialMedia', 'twitter'])
               }}
-              className="border-0 px-1 h-100 btn fab fa-twitter"
+              className="border-0 px-1 h-100 btn fab fa-x-twitter"
             ></button>
           </CustomTooltip>
           <CustomTooltip
@@ -106,7 +106,7 @@ function HomeTabTitle() {
                 openLink('https://www.linkedin.com/company/ethereum-remix/')
                 _paq.push(['trackEvent', 'hometab', 'socialmedia', 'linkedin'])
               }}
-              className="border-0 px-1 h-100 btn fa fa-linkedin"
+              className="border-0 px-1 h-100 btn fab fa-linkedin"
             ></button>
           </CustomTooltip>
           <CustomTooltip
