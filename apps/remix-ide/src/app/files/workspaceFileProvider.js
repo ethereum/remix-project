@@ -12,7 +12,7 @@ class WorkspaceFileProvider extends FileProvider {
 
     try {
       // make sure "code-sample" has been removed
-      window.remixFileSystem.exist(this.workspacesPath + '/code-sample').then((exist) => {
+      window.remixFileSystem.exists(this.workspacesPath + '/code-sample').then((exist) => {
         if (exist) window.remixFileSystem.unlink(this.workspacesPath + '/code-sample').catch((e) => {
           console.log(e)
         })
