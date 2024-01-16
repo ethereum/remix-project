@@ -21,7 +21,6 @@ class WorkspaceFileProvider extends FileProvider {
       })     
     } catch (e) {
       // we don't need to log error if this throws an error
-      console.log(e)
     }    
   }
 
