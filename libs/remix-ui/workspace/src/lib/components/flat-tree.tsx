@@ -11,11 +11,9 @@ import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators';
 export default function useOnScreen(ref: RefObject<HTMLElement>) {
 
   const [isIntersecting, setIntersecting] = useState(false)
-
   const observer = useMemo(() => new IntersectionObserver(
     ([entry]) => setIntersecting(entry.isIntersecting)
   ), [ref])
-
 
   useEffect(() => {
     observer.observe(ref.current)
@@ -24,7 +22,6 @@ export default function useOnScreen(ref: RefObject<HTMLElement>) {
 
   return isIntersecting
 }
-
 interface FlatTreeProps {
   files: { [x: string]: Record<string, FileType> },
   flatTree: FileType[],
@@ -39,7 +36,6 @@ interface FlatTreeProps {
   moveFile: (dest: string, src: string) => void
   moveFolder: (dest: string, src: string) => void
   fileState: fileDecoration[]
-
 }
 
 let mouseTimer: any = {
@@ -63,17 +59,8 @@ export const FlatTree = (props: FlatTreeProps) => {
   const [dragSource, setDragSource] = useState<FileType>()
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const ref = useRef(null)
-  const [size, setSize] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const virtuoso = useRef<VirtuosoHandle>(null)
-  const isOnScreen = useOnScreen(containerRef)
-
-  useEffect(() => {
-    if (isOnScreen) {
-      setViewPortHeight()
-    }
-  }, [isOnScreen])
-
 
   const labelClass = (file: FileType) =>
     props.focusEdit.element === file.path
@@ -181,25 +168,6 @@ export const FlatTree = (props: FlatTreeProps) => {
     setShowMouseOverTarget(false)
   }
 
-
-  const setViewPortHeight = () => {
-    const boundingRect = containerRef.current.getBoundingClientRect()
-    setSize(boundingRect.height - 40)
-  }
-
-
-  useEffect(() => {
-    window.addEventListener('resize', setViewPortHeight)
-    return () => {
-      window.removeEventListener('resize', setViewPortHeight)
-    }
-  }, [])
-
-  useEffect(() => {
-    setViewPortHeight()
-  }, [containerRef.current])
-
-
   useEffect(() => {
     if (focusEdit && focusEdit.element) {
       const index = flatTree.findIndex((item) => item.path === focusEdit.element)
@@ -259,12 +227,12 @@ export const FlatTree = (props: FlatTreeProps) => {
         expandPath={expandPath}
       >
         <div data-id="treeViewUltreeViewMenu"
-          className='d-flex h-100 w-100'
+          className='d-flex h-100 w-100 pb-2'
           onClick={handleTreeClick}
           onMouseLeave={onMouseLeave}
           onMouseMove={onMouseMove}
           onContextMenu={handleContextMenu}>
-          {showMouseOverTarget && mouseOverTarget && !isDragging &&
+          { showMouseOverTarget && mouseOverTarget && !isDragging &&
             <Popover id='popover-basic'
               placement='top'
               ref={ref}
@@ -277,16 +245,14 @@ export const FlatTree = (props: FlatTreeProps) => {
                   minWidth: 'fit-content'
                 }
               }>
-              <Popover.Content
-                className='text-wrap p-1 px-2 bg-secondary w-100'
-              >
+              <Popover.Content className='text-wrap p-1 px-2 bg-secondary w-100'>
                 {mouseOverTarget && mouseOverTarget.path}
               </Popover.Content>
             </Popover>
           }
           <Virtuoso
             ref={virtuoso}
-            style={{ height: `${size}px`, width: '100%' }}
+            style={{ height: `100%`, width: '100%' }}
             totalCount={Object.keys(flatTree).length}
             itemContent={index => Row(index)}
           />
@@ -294,5 +260,4 @@ export const FlatTree = (props: FlatTreeProps) => {
       </FlatTreeDrop>
     </div>
   </>)
-
 }
