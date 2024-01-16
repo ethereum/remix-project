@@ -213,7 +213,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
                 copyPath(path, type)
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copyPath'])
                 break
-              case 'Copy Share URL':
+              case 'Copy share URL':
                 copyShareURL(path, type)
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copyShareURL'])
                 break

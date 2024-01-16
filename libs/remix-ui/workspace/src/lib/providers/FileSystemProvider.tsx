@@ -20,6 +20,7 @@ import {
   renamePath,
   downloadPath,
   copyFile,
+  copyShareURL,
   copyFolder,
   runScript,
   emitContextMenuEvent,
@@ -154,6 +155,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchCopyFile = async (src: string, dest: string) => {
     await copyFile(src, dest)
+  }
+
+  const dispatchCopyShareURL = async (path: string) => {
+    await copyShareURL(path)
   }
 
   const dispatchCopyFolder = async (src: string, dest: string) => {
@@ -352,6 +357,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchRenamePath,
     dispatchDownloadPath,
     dispatchCopyFile,
+    dispatchCopyShareURL,
     dispatchCopyFolder,
     dispatchRunScript,
     dispatchEmitContextMenuEvent,
