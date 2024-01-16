@@ -16,7 +16,9 @@ class WorkspaceFileProvider extends FileProvider {
         if (exist) window.remixFileSystem.unlink(this.workspacesPath + '/code-sample').catch((e) => {
           console.log(e)
         })
-      })      
+      }).catch((e) => {
+        console.log(e)
+      })     
     } catch (e) {
       // we don't need to log error if this throws an error
     }    
