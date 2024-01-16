@@ -34,6 +34,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
         e.stopPropagation()
         if (document.activeElement !== this) {
           !window.testmode && handleHide()
+          if (props.cancelFn) props.cancelFn()
         }
       }
     }
