@@ -12,7 +12,9 @@ export function WitnessSection ({ plugin, signalInputs, status }: {plugin: Circo
     let value = e.target.value
 
     try {
-      value = JSON.parse(JSON.stringify(value, (key, value) => typeof value === 'bigint' ? value.toString() : value))
+      value = JSON.parse(value)
+
+      if (!Array.isArray(value)) throw new Error('Invalid JSON')
     } catch (e) {
       // do nothing
     }
