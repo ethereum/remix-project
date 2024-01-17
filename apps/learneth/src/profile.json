@@ -9,7 +9,7 @@
     "addRepository"
   ],
   "kind": "none",
-  "icon": "plugins/learneth/assets/Font_Awesome_5_solid_book-reader.svg",
+  "icon": "plugins/learneth/assets/learneth.webp",
   "location": "sidePanel",
   "url": "plugins/learneth/index.html",
   "repo": "https://github.com/ethereum/remix-project/tree/master/apps/learneth",
