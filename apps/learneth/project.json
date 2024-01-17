@@ -46,7 +46,7 @@
       "configurations": {
         "development": {
           "buildTarget": "learneth:build:development",
-          "port": 2023
+          "port": 2024
         },
         "production": {
           "buildTarget": "learneth:build:production"
