@@ -1,0 +1,58 @@
+{
+  "name": "learneth",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/learneth/src",
+  "projectType": "application",
+  "implicitDependencies": [],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/learneth",
+        "index": "apps/learneth/src/index.html",
+        "baseHref": "./",
+        "main": "apps/learneth/src/main.tsx",
+        "polyfills": "apps/learneth/src/polyfills.ts",
+        "tsConfig": "apps/learneth/tsconfig.app.json",
+        "assets": ["apps/learneth/src/profile.json", "apps/learneth/src/assets/Font_Awesome_5_solid_book-reader.svg"],
+        "styles": ["apps/learneth/src/index.css"],
+        "scripts": [],
+        "webpackConfig": "apps/learneth/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/learneth/src/environments/environment.ts",
+              "with": "apps/learneth/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "learneth:build",
+        "hmr": true,
+        "baseHref": "/"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "learneth:build:development",
+          "port": 2023
+        },
+        "production": {
+          "buildTarget": "learneth:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}

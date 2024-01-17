@@ -1,0 +1,23 @@
+.description-collapsed{
+  height: 0px;
+  overflow: hidden;
+  word-wrap: break-word;
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+.tag{
+  display: inline;
+}
+
+.arrow-icon{
+  width: 12px;
+  display: inline-block;
+}
+
+.workshop-link {
+  text-decoration: none;
+}
+.workshop-link:hover {
+  text-decoration: underline;
+}
