@@ -1,43 +1,44 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Markdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import BackButton from '../../components/BackButton';
-import { useAppSelector, useAppDispatch } from '../../redux/hooks';
-import './index.scss';
+import React, {useEffect} from 'react'
+import {useLocation, useNavigate} from 'react-router-dom'
+import Markdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
+import BackButton from '../../components/BackButton'
+import {useAppSelector, useAppDispatch} from '../../redux/hooks'
+import './index.scss'
 
 function StepDetailPage() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const queryParams = new URLSearchParams(location.search);
-  const id = queryParams.get('id') as string;
-  const stepId = Number(queryParams.get('stepId'));
+  const navigate = useNavigate()
+  const location = useLocation()
+  const dispatch = useAppDispatch()
+  const queryParams = new URLSearchParams(location.search)
+  const id = queryParams.get('id') as string
+  const stepId = Number(queryParams.get('stepId'))
   const {
-    workshop: { detail, selectedId },
-    remixide: { errorLoadingFile, errors, success },
-  } = useAppSelector((state: any) => state);
-  const entity = detail[selectedId].entities[id];
-  const steps = entity.steps;
-  const step = steps[stepId];
-  console.log(step);
+    workshop: {detail, selectedId},
+    remixide: {errorLoadingFile, errors, success},
+  } = useAppSelector((state: any) => state)
+  const entity = detail[selectedId].entities[id]
+  const steps = entity.steps
+  const step = steps[stepId]
+  console.log(step)
 
   useEffect(() => {
     dispatch({
       type: 'remixide/displayFile',
       payload: step,
-    });
+    })
     dispatch({
       type: 'remixide/save',
-      payload: { errors: [], success: false },
-    });
-    window.scrollTo(0, 0);
-  }, [step]);
+      payload: {errors: [], success: false},
+    })
+    window.scrollTo(0, 0)
+  }, [step])
 
   useEffect(() => {
     if (errors.length > 0 || success) {
-      window.scrollTo(0, document.documentElement.scrollHeight);
+      window.scrollTo(0, document.documentElement.scrollHeight)
     }
-  }, [errors, success]);
+  }, [errors, success])
 
   return (
     <>
@@ -57,7 +58,7 @@ function StepDetailPage() {
               dispatch({
                 type: 'remixide/displayFile',
                 payload: step,
-              });
+              })
             }}
           >
             Load the file
@@ -71,9 +72,7 @@ function StepDetailPage() {
         </>
       )}
       <div className="container-fluid">
-        <Markdown rehypePlugins={[rehypeRaw]}>
-          {step.markdown?.content}
-        </Markdown>
+        <Markdown rehypePlugins={[rehypeRaw]}>{step.markdown?.content}</Markdown>
       </div>
       {step.test?.content ? (
         <>
@@ -85,7 +84,7 @@ function StepDetailPage() {
                   dispatch({
                     type: 'remixide/displayFile',
                     payload: step,
-                  });
+                  })
                 }}
               >
                 Load the file
@@ -100,7 +99,7 @@ function StepDetailPage() {
                         dispatch({
                           type: 'remixide/testStep',
                           payload: step,
-                        });
+                        })
                       }}
                     >
                       Check Answer
@@ -112,7 +111,7 @@ function StepDetailPage() {
                           dispatch({
                             type: 'remixide/showAnswer',
                             payload: step,
-                          });
+                          })
                         }}
                       >
                         Show answer
@@ -126,11 +125,7 @@ function StepDetailPage() {
                         <button
                           className="nav-item rounded-0 nav-link btn btn-success test"
                           onClick={() => {
-                            navigate(
-                              stepId === steps.length - 1
-                                ? `/list?id=${id}`
-                                : `/detail?id=${id}&stepId=${stepId + 1}`,
-                            );
+                            navigate(stepId === steps.length - 1 ? `/list?id=${id}` : `/detail?id=${id}&stepId=${stepId + 1}`)
                           }}
                         >
                           Next
@@ -142,7 +137,7 @@ function StepDetailPage() {
                               dispatch({
                                 type: 'remixide/showAnswer',
                                 payload: step,
-                              });
+                              })
                             }}
                           >
                             Show answer
@@ -159,11 +154,7 @@ function StepDetailPage() {
             <button
               className="w-100 rounded-0 nav-item nav-link btn btn-success"
               onClick={() => {
-                navigate(
-                  stepId === steps.length - 1
-                    ? `/list?id=${id}`
-                    : `/detail?id=${id}&stepId=${stepId + 1}`,
-                );
+                navigate(stepId === steps.length - 1 ? `/list?id=${id}` : `/detail?id=${id}&stepId=${stepId + 1}`)
               }}
             >
               Next
@@ -171,28 +162,19 @@ function StepDetailPage() {
           )}
           <div id="errors">
             {success && (
-              <div
-                className="alert rounded-0 alert-success mb-0 mt-0"
-                role="alert"
-              >
+              <div className="alert rounded-0 alert-success mb-0 mt-0" role="alert">
                 Well done! No errors.
               </div>
             )}
             {errors.length > 0 && (
               <>
                 {!success && (
-                  <div
-                    className="alert rounded-0 alert-danger mb-0 mt-0"
-                    role="alert"
-                  >
+                  <div className="alert rounded-0 alert-danger mb-0 mt-0" role="alert">
                     Errors
                   </div>
                 )}
                 {errors.map((error: string, index: number) => (
-                  <div
-                    key={index}
-                    className="alert rounded-0 alert-warning mb-0 mt-0"
-                  >
+                  <div key={index} className="alert rounded-0 alert-warning mb-0 mt-0">
                     {error}
                   </div>
                 ))}
@@ -210,7 +192,7 @@ function StepDetailPage() {
                   dispatch({
                     type: 'remixide/showAnswer',
                     payload: step,
-                  });
+                  })
                 }}
               >
                 Show answer
@@ -221,7 +203,7 @@ function StepDetailPage() {
             <button
               className="w-100 btn btn-success"
               onClick={() => {
-                navigate(`/detail?id=${id}&stepId=${stepId + 1}`);
+                navigate(`/detail?id=${id}&stepId=${stepId + 1}`)
               }}
             >
               Next
@@ -231,7 +213,7 @@ function StepDetailPage() {
             <button
               className="w-100 btn btn-success"
               onClick={() => {
-                navigate(`/list?id=${id}`);
+                navigate(`/list?id=${id}`)
               }}
             >
               Finish tutorial
@@ -240,7 +222,7 @@ function StepDetailPage() {
         </>
       )}
     </>
-  );
+  )
 }
 
-export default StepDetailPage;
+export default StepDetailPage
