@@ -38,9 +38,6 @@ function App() {
           plugin.parse(path, content)
         }
       })
-      plugin.on('filePanel', 'setWorkspace', async () => {
-        dispatch({ type: 'SET_FILE_PATH', payload: '' })
-      })
       setIsPluginActivated(true)
     })
 
@@ -103,10 +100,10 @@ function App() {
       (async () => {
         if (appState.autoCompile) await compileCircuit(plugin, appState)
       })()
+      dispatch({ type: 'SET_SIGNAL_INPUTS', payload: [] })
+      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
     }
-    dispatch({ type: 'SET_SIGNAL_INPUTS', payload: [] })
-    dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
-    dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
   }, [appState.filePath])
 
   const setCurrentLocale = async () => {
