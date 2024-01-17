@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Link, useNavigate} from 'react-router-dom'
+import {Link, useLocation, useNavigate} from 'react-router-dom'
 import {Button, Modal, Tooltip, OverlayTrigger} from 'react-bootstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faHome, faBars, faChevronLeft, faChevronRight} from '@fortawesome/free-solid-svg-icons'
@@ -8,6 +8,7 @@ import './index.scss'
 
 function BackButton({entity}: any) {
   const navigate = useNavigate()
+  const location = useLocation()
   const [show, setShow] = useState(false)
   // const theme = useAppSelector((state) => state.remixide.theme)
   const isDetailPage = location.pathname === '/detail'

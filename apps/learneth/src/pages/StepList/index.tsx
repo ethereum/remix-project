@@ -1,16 +1,17 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Markdown from 'react-markdown';
-import BackButton from '../../components/BackButton';
-import SlideIn from '../../components/SlideIn';
-import { useAppSelector } from '../../redux/hooks';
-import './index.scss';
+import React from 'react'
+import {Link, useLocation} from 'react-router-dom'
+import Markdown from 'react-markdown'
+import BackButton from '../../components/BackButton'
+import SlideIn from '../../components/SlideIn'
+import {useAppSelector} from '../../redux/hooks'
+import './index.scss'
 
 function StepListPage(): JSX.Element {
-  const queryParams = new URLSearchParams(location.search);
-  const id = queryParams.get('id') as string;
-  const { detail, selectedId } = useAppSelector((state) => state.workshop);
-  const entity = detail[selectedId].entities[id];
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const id = queryParams.get('id') as string
+  const {detail, selectedId} = useAppSelector((state) => state.workshop)
+  const entity = detail[selectedId].entities[id]
 
   return (
     <>
@@ -27,18 +28,14 @@ function StepListPage(): JSX.Element {
       <SlideIn>
         <article className="list-group m-3">
           {entity.steps.map((step: any, i: number) => (
-            <Link
-              key={i}
-              to={`/detail?id=${id}&stepId=${i}`}
-              className="rounded-0 btn btn-light border-bottom text-left steplink"
-            >
+            <Link key={i} to={`/detail?id=${id}&stepId=${i}`} className="rounded-0 btn btn-light border-bottom text-left steplink">
               {step.name} »
             </Link>
           ))}
         </article>
       </SlideIn>
     </>
-  );
+  )
 }
 
-export default StepListPage;
+export default StepListPage
