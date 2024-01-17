@@ -1,0 +1,136 @@
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faChevronRight,
+  faChevronDown,
+  faPlayCircle,
+} from '@fortawesome/free-solid-svg-icons';
+import Markdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import RepoImporter from '../../components/RepoImporter';
+import './index.css';
+
+function HomePage(): JSX.Element {
+  const [openKeys, setOpenKeys] = React.useState<string[]>([]);
+
+  const isOpen = (key: string) => openKeys.includes(key);
+  const handleClick = (key: string) => {
+    setOpenKeys(
+      isOpen(key)
+        ? openKeys.filter((item) => item !== key)
+        : [...openKeys, key],
+    );
+  };
+
+  const dispatch = useAppDispatch();
+  const { list, detail, selectedId } = useAppSelector(
+    (state) => state.workshop,
+  );
+
+  const selectedRepo = detail[selectedId];
+
+  const levelMap: any = {
+    1: 'Beginner',
+    2: 'Intermediate',
+    3: 'Advanced',
+  };
+
+  useEffect(() => {
+    dispatch({
+      type: 'workshop/init',
+    });
+  }, []);
+
+  return (
+    <div className="App">
+      <RepoImporter list={list} selectedRepo={selectedRepo || {}} />
+      {selectedRepo && (
+        <div className="container-fluid">
+          {Object.keys(selectedRepo.group).map((level) => (
+            <div key={level}>
+              <div className="mb-2 border-bottom small">{levelMap[level]}:</div>
+              {selectedRepo.group[level].map((item: any) => (
+                <div key={item.id}>
+                  <div>
+                    <a
+                      href="#"
+                      className="arrow-icon"
+                      onClick={() => {
+                        handleClick(item.id);
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        size="xs"
+                        icon={isOpen(item.id) ? faChevronDown : faChevronRight}
+                      />
+                    </a>
+                    <a
+                      href="#"
+                      className="workshop-link"
+                      onClick={() => {
+                        handleClick(item.id);
+                      }}
+                    >
+                      {selectedRepo.entities[item.id].name}
+                    </a>
+                    <Link
+                      to={`/list?id=${item.id}`}
+                      className="text-decoration-none float-right"
+                    >
+                      <FontAwesomeIcon icon={faPlayCircle} size="lg" />
+                    </Link>
+                  </div>
+                  <div
+                    className={`container-fluid bg-light pt-3 mt-2 ${
+                      isOpen(item.id) ? '' : 'description-collapsed'
+                    }`}
+                  >
+                    {levelMap[level] && (
+                      <p className="tag pt-2 pr-1 font-weight-bold small text-uppercase">
+                        {levelMap[level]}
+                      </p>
+                    )}
+
+                    {selectedRepo.entities[item.id].metadata.data.tags?.map(
+                      (tag: string) => (
+                        <p
+                          key={tag}
+                          className="tag pr-1 font-weight-bold small text-uppercase"
+                        >
+                          {tag}
+                        </p>
+                      ),
+                    )}
+
+                    {selectedRepo.entities[item.id].steps && (
+                      <div className="d-none">
+                        {selectedRepo.entities[item.id].steps.length} step(s)
+                      </div>
+                    )}
+
+                    <div className="workshop-list_description pb-3 pt-3">
+                      <Markdown
+                        rehypePlugins={[rehypeRaw]}
+                        remarkPlugins={[remarkGfm]}
+                      >
+                        {selectedRepo.entities[item.id].description?.content}
+                      </Markdown>
+                    </div>
+
+                    <div className="actions"></div>
+                  </div>
+                  <div className="mb-3"></div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default HomePage;
