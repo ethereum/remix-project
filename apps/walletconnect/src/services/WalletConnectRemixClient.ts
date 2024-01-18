@@ -1,7 +1,6 @@
 import {PluginClient} from '@remixproject/plugin'
 import {createClient} from '@remixproject/plugin-webview'
-import {w3mConnectors, w3mProvider} from '@web3modal/ethereum'
-import {createConfig, configureChains} from 'wagmi'
+import {defaultWagmiConfig, createWeb3Modal} from '@web3modal/wagmi/react'
 import {
   arbitrum,
   arbitrumGoerli,
@@ -12,15 +11,18 @@ import {
   optimismGoerli,
   Chain,
   goerli,
-  sepolia
+  sepolia,
+  ronin,
+  saigon
 } from 'viem/chains'
-import {EthereumClient} from '@web3modal/ethereum'
 import EventManager from 'events'
-import {PROJECT_ID} from './constant'
+import {PROJECT_ID as projectId, METADATA as metadata} from './constant'
+import { Config, disconnect, getAccount, watchAccount } from '@wagmi/core'
+import { EIP1193Provider, RequestArguments } from '../types'
 
 export class WalletConnectRemixClient extends PluginClient {
-  wagmiConfig
-  ethereumClient: EthereumClient
+  web3modal: ReturnType<typeof createWeb3Modal>
+  wagmiConfig: Config
   chains: Chain[]
   currentChain: number
   internalEvents: EventManager
@@ -45,9 +47,9 @@ export class WalletConnectRemixClient extends PluginClient {
     console.log('initializing walletconnect plugin...')
   }
 
-  async initClient() {
+  initClient() {
     try {
-      this.chains = [
+      const chains = [
         mainnet,
         arbitrum,
         arbitrumGoerli,
@@ -56,62 +58,64 @@ export class WalletConnectRemixClient extends PluginClient {
         optimism,
         optimismGoerli,
         goerli,
-        sepolia
-      ]
-      const {publicClient} = configureChains(this.chains, [
-        w3mProvider({projectId: PROJECT_ID})
-      ], {
-        pollingInterval: 5000
+        sepolia,
+        ronin,
+        saigon
+      ] as [Chain, ...Chain[]]
+
+      const wagmiConfig = defaultWagmiConfig({
+        chains,
+        projectId,
+        metadata,
+        //ssr: true
       })
 
-      this.wagmiConfig = createConfig({
-        autoConnect: false,
-        connectors: w3mConnectors({projectId: PROJECT_ID, chains: this.chains}),
-        publicClient
-      })
-      this.ethereumClient = new EthereumClient(this.wagmiConfig, this.chains)
+      this.web3modal = createWeb3Modal({ wagmiConfig, projectId, chains })
+      this.wagmiConfig = wagmiConfig
+      this.chains = chains
     } catch (e) {
       return console.error('Could not get a wallet connection', e)
     }
   }
 
   subscribeToEvents() {
-    this.wagmiConfig.subscribe((event) => {
-      if (event.status === 'connected') {
-        if (event.data.account !== this.currentAcount) {
-          this.currentAcount = event.data.account
-          this.emit('accountsChanged', [event.data.account])          
+    watchAccount(this.wagmiConfig, {
+      onChange(account) {
+        if(account.isConnected){
+          if (account.address !== this.currentAcount) {
+            this.currentAcount = account.address
+            this.emit('accountsChanged', [account.address])          
+          }
+          if (this.currentChain !== account.chainId) {
+            this.currentChain = account.chainId
+            this.emit('chainChanged', account.chainId)
+          }
+        }else{
+          this.emit('accountsChanged', [])
+          this.currentAcount = ''
+          this.emit('chainChanged', 0)
+          this.currentChain = 0
         }
-        if (this.currentChain !== event.data.chain.id) {
-          this.currentChain = event.data.chain.id
-          this.emit('chainChanged', event.data.chain.id)
-        }
-      } else if (event.status === 'disconnected') {
-        this.emit('accountsChanged', [])
-        this.currentAcount = ''
-        this.emit('chainChanged', 0)
-        this.currentChain = 0
-      }
+      },
     })
     this.on('theme', 'themeChanged', (theme: any) => {
-      this.internalEvents.emit('themeChanged', theme.quality)
+      this.web3modal.setThemeMode(theme.quality)
     })
   }
 
-  async sendAsync(data: {method: string; params: string; id: string}) {
-    if (this.wagmiConfig.status === 'connected') {
+  async sendAsync(data: RequestArguments) {
+    const account = getAccount(this.wagmiConfig)
+    if (account.isConnected) {
       if (data.method === 'eth_accounts') {
         return {
           jsonrpc: '2.0',
-          result: [this.wagmiConfig.data.account],
+          result: [account.address],
           id: data.id
         }
       } else {
-        const provider = await this.wagmiConfig.connector.getProvider({
-          chainId: this.wagmiConfig.data.chain.id
-        })
+        const provider = await account.connector.getProvider() as EIP1193Provider
 
-        if (provider.isMetaMask) {
+        if (provider) {
           return new Promise((resolve) => {
             provider.sendAsync(data, (error, response) => {
               if (error) {
@@ -156,6 +160,6 @@ export class WalletConnectRemixClient extends PluginClient {
 
   async deactivate() {
     console.log('deactivating walletconnect plugin...')
-    await this.ethereumClient.disconnect()
+    await disconnect(this.wagmiConfig)
   }
 }
