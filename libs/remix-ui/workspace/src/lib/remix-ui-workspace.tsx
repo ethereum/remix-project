@@ -791,8 +791,8 @@ export function Workspace() {
             </option>
           </optgroup>
           <optgroup style={{fontSize: 'medium'}} label="Uniswap V4">
-            <option style={{fontSize: 'small'}} value="uniswapV4Periphery">
-              {intl.formatMessage({id: 'filePanel.uniswapV4Periphery'})}
+            <option style={{fontSize: 'small'}} value="uniswapV4Template">
+              {intl.formatMessage({id: 'filePanel.uniswapV4Template'})}
             </option>
             <option style={{fontSize: 'small'}} value="breakthroughLabsUniswapv4Hooks">
               {intl.formatMessage({id: 'filePanel.breakthroughLabsUniswapv4Hooks'})}

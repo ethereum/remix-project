@@ -370,14 +370,14 @@ module.exports = {
 
    // GIT WORKSPACE E2E STARTS
 
-   'Should create a git workspace (uniswapV4Periphery) #group4': function (browser: NightwatchBrowser) {
+   'Should create a git workspace (uniswapV4Template) #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=uniswapV4Periphery]')
+      .click('select[id="wstemplate"] option[value=uniswapV4Template]')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
