@@ -125,6 +125,7 @@ export const contextMenuActions: MenuItems = [{
 }]
 
 export const fileKeySort = (fileTree: any) => {
+  fileTree = fileTree || {}
   const directories = Object.keys(fileTree).filter((key: string) => !key.includes('....blank') && fileTree[key].isDirectory)
 
   directories.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
