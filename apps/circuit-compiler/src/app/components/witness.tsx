@@ -4,6 +4,7 @@ import { CompilerStatus } from "../types";
 import { computeWitness } from "../actions";
 import { useState } from "react";
 import type { CircomPluginClient } from "../services/circomPluginClient";
+import * as remixLib from '@remix-project/remix-lib'
 
 export function WitnessSection ({ plugin, signalInputs, status }: {plugin: CircomPluginClient, signalInputs: string[], status: CompilerStatus}) {
   const [witnessValues, setWitnessValues] = useState<Record<string, string>>({})
@@ -12,18 +13,7 @@ export function WitnessSection ({ plugin, signalInputs, status }: {plugin: Circo
     let value = e.target.value
 
     try {
-      value = JSON.parse(JSON.stringify(value, (key, value) => {
-        if (typeof value === 'bigint') {
-          return value.toString()
-        } else {
-          try {
-            const parsedValue = JSON.parse(value)
-          
-            return Array.isArray(parsedValue) ? parsedValue : value
-          } catch (e) {
-            return value
-          }
-        }}))
+      value = remixLib.execution.txFormat.parseFunctionParams(value)
     } catch (e) {
       // do nothing
     }
