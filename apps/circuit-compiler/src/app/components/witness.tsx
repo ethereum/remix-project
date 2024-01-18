@@ -19,7 +19,7 @@ export function WitnessSection ({ plugin, signalInputs, status }: {plugin: Circo
     }
     setWitnessValues({
       ...witnessValues,
-      [e.target.name]: value
+      [e.target.name]: value[0]
     })
   }
 
