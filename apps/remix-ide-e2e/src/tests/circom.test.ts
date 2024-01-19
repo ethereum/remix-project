@@ -8,7 +8,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Should create semaphore workspace template #group1 #group2 #group3 #group4 #flaky': function (browser: NightwatchBrowser) {
+  'Should create semaphore workspace template #group1 #group2 #group3 #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
@@ -27,7 +27,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
   },
-  'Should compile a simple circuit using editor play button #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should compile a simple circuit using editor play button #group1': function (browser: NightwatchBrowser) {
     browser
       .click('[data-id="treeViewLitreeViewItemcircuits/simple.circom"]')
       .waitForElementPresent('[data-path="Semaphore - 1/circuits/simple.circom"]')
@@ -38,7 +38,7 @@ module.exports = {
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
   },
-  'Should compute a witness for a simple circuit #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should compute a witness for a simple circuit #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('circuit-compiler')
       .frame(0)
@@ -82,7 +82,7 @@ module.exports = {
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.r1cs"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.r1cs"]')
   },
-  'Should compile a simple circuit using CTRL + S from the editor #group3 #flaky': function (browser: NightwatchBrowser) {
+  'Should compile a simple circuit using CTRL + S from the editor #group3': function (browser: NightwatchBrowser) {
     browser
       .click('[data-id="treeViewLitreeViewItemcircuits/simple.circom"]')
       .waitForElementPresent('[data-path="Semaphore - 1/circuits/simple.circom"]')
