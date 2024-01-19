@@ -41,7 +41,7 @@ export interface DefaultStateManagerOpts {
 }
 
 /*
-  extend vm state manager and instanciate VM
+  extend vm state manager and instantiate VM
 */
 class StateManagerCommonStorageDump extends DefaultStateManager {
   keyHashes: { [key: string]: string }
