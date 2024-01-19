@@ -32,6 +32,8 @@ module.exports = {
       .click('[data-id="treeViewLitreeViewItemcircuits/simple.circom"]')
       .waitForElementPresent('[data-path="Semaphore - 1/circuits/simple.circom"]')
       .waitForElementVisible('[data-path="Semaphore - 1/circuits/simple.circom"]')
+      .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
+      .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
@@ -85,6 +87,8 @@ module.exports = {
       .click('[data-id="treeViewLitreeViewItemcircuits/simple.circom"]')
       .waitForElementPresent('[data-path="Semaphore - 1/circuits/simple.circom"]')
       .waitForElementVisible('[data-path="Semaphore - 1/circuits/simple.circom"]')
+      .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
+      .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .perform(function () {
         const actions = this.actions({async: true})
 
