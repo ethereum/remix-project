@@ -84,7 +84,7 @@ class Recorder extends Plugin {
       const rawAddress = txResult.receipt.contractAddress
       if (!rawAddress) return // not a contract creation
       const address = addressToString(rawAddress)
-      // save back created addresses for the convertion from tokens to real adresses
+      // save back created addresses for the conversion from tokens to real adresses
       this.data._createdContracts[address] = timestamp
       this.data._createdContractsReverse[timestamp] = address
     })
@@ -279,7 +279,7 @@ class Recorder extends Plugin {
           }
           if (rawAddress) {
             const address = addressToString(rawAddress)
-            // save back created addresses for the convertion from tokens to real adresses
+            // save back created addresses for the conversion from tokens to real adresses
             this.data._createdContracts[address] = tx.timestamp
             this.data._createdContractsReverse[tx.timestamp] = address
             newContractFn(abi, address, record.contractName)
