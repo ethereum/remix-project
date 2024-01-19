@@ -295,7 +295,7 @@ module.exports = {
       .click('[data-id="treeViewDivtreeViewItemrecursive/plugins"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive/plugins/build"]')
   },
-  'When switching branches the submodules should dissappear #group4': function (browser: NightwatchBrowser) {
+  'When switching branches the submodules should disappear #group4': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
     .click('[data-id="workspaceGitBranchesDropdown"]')
