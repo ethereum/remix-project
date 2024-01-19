@@ -36,7 +36,7 @@ const MatomoDialog = (props: MatomoDialogProps) => {
         <p>
           For more info, see:{' '}
           <a href="https://medium.com/p/66ef69e14931/" target="_blank" rel="noreferrer">
-            Matomo Analyitcs on Remix iDE
+            Matomo Analytics on Remix iDE
           </a>
           .
         </p>
