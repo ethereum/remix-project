@@ -6308,22 +6308,17 @@
     "@types/selenium-webdriver" "*"
     devtools-protocol "^0.0.1025565"
 
-"@types/node@*", "@types/node@18.16.1":
-  version "18.16.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.1.tgz#5db121e9c5352925bb1f1b892c4ae620e3526799"
-  integrity sha512-DZxSZWXxFfOlx7k7Rv4LAyiMroaxa3Ly/7OOzZO8cBNho0YzAi4qlbrx8W27JGqG57IgR/6J7r+nOJWw6kcvZA==
-
-"@types/node@>= 8":
-  version "8.9.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.9.5.tgz#162b864bc70be077e6db212b322754917929e976"
-  integrity sha512-jRHfWsvyMtXdbhnz5CVHxaBgnV6duZnPlQuRSo/dm/GnmikNcmZhxIES4E9OZjUmQ8C+HCl4KJux+cXN/ErGDQ==
-
-"@types/node@>=13.7.0":
+"@types/node@*", "@types/node@>= 8", "@types/node@>=13.7.0":
   version "20.9.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.9.0.tgz#bfcdc230583aeb891cf51e73cfdaacdd8deae298"
   integrity sha512-nekiGu2NDb1BcVofVcEKMIwzlx4NjHlcjhoxxKBNLtz15Y1z7MYf549DFvkHSId02Ax6kGwWntIBPC3l/JZcmw==
   dependencies:
     undici-types "~5.26.4"
+
+"@types/node@18.16.1":
+  version "18.16.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.1.tgz#5db121e9c5352925bb1f1b892c4ae620e3526799"
+  integrity sha512-DZxSZWXxFfOlx7k7Rv4LAyiMroaxa3Ly/7OOzZO8cBNho0YzAi4qlbrx8W27JGqG57IgR/6J7r+nOJWw6kcvZA==
 
 "@types/node@^12.12.54":
   version "12.20.55"
@@ -12808,9 +12803,9 @@ electron-to-chromium@^1.4.251:
   integrity sha512-AZ6ZRkucHOQT8wke50MktxtmcWZr67kE17X/nAXFf62NIdMdgY6xfsaJD5Szoy84lnkuPWH+4tTNE3s2+bPCiw==
 
 electron@^24.4.0:
-  version "24.4.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-24.4.0.tgz#48d05561dab6a5835ec1a3a96852797f69824eea"
-  integrity sha512-A9YzLHRUA+HfYVf2daNv0jPXNCWShgcgcTaGntrZRGynQLEhDTbti9Lfmq2tjRKoEgXZ7qj+aJFw+tJZsT/Cfw==
+  version "24.8.5"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-24.8.5.tgz#795e13670f89de927bc4e40fd2a64ff7f9f7c3b6"
+  integrity sha512-CWSF0CrD1XhxyoXUcCcEoJB8orMTHuOrkj2s87XU11vjgVJHhzhCBh9TVqhMQt7U6TtcGYa5kDIiLRekxJRaRA==
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^18.11.18"
