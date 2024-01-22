@@ -58,6 +58,29 @@ export function Container () {
     circuitApp.dispatch({ type: 'SET_HIDE_WARNINGS', payload: value })
   }
 
+  const askGPT = async (error: string, location?: string) => {
+    if (location) {
+      const fullPathLocation = await circuitApp.plugin.resolveReportPath(location)
+      const content = await circuitApp.plugin.call('fileManager', 'readFile', fullPathLocation)
+      const message = `
+        solidity code: ${content}
+        error message: ${error}
+        explain why the error occurred and how to fix it.
+        `
+      // @ts-ignore
+      await circuitApp.plugin.call('openaigpt', 'message', message)
+    } else if(error) {
+      const message = `
+        error message: ${error}
+        explain why the error occurred and how to fix it.
+        `
+      // @ts-ignore
+      await circuitApp.plugin.call('openaigpt', 'message', message)
+    } else {
+      console.error('unable to askGtp, no message provided')
+    }
+  }
+
   return (
     <section>
       <article>
@@ -86,7 +109,7 @@ export function Container () {
               </WitnessToggler>
             </RenderIf>
             <RenderIf condition={(circuitApp.appState.status !== 'compiling') && (circuitApp.appState.status !== 'computing') && (circuitApp.appState.status !== 'generating')}>
-              <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} />
+              <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
             </RenderIf>
           </div>
         </div>
