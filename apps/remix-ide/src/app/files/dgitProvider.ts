@@ -808,7 +808,8 @@ class DGitProvider extends Plugin {
     let result = false
     try {
       const data = ipfs.get(cid, { timeout: 60000 })
-      for await (const file of data) {
+      for await (const fileBuf of data) {
+        const file = JSON.parse((Buffer.from(fileBuf).toString()))
         if (file.path) result = true
         file.path = file.path.replace(cid, '')
         if (!file.content) {
