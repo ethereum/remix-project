@@ -258,8 +258,10 @@ module.exports = {
 
   'Should clone a repository with submodules #group4': function (browser: NightwatchBrowser) {
     browser
-    .captureBrowserConsoleLogs((event) => {
+    .captureBrowserExceptions((event) => {
       console.log('>>> Exception:', event);
+    }).captureBrowserConsoleLogs((event) => {
+      console.log('>>> Console:', event);
     })
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('[data-id="workspaceMenuDropdown"]')
