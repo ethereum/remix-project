@@ -258,7 +258,7 @@ module.exports = {
 
   'Should clone a repository with submodules #group4': function (browser: NightwatchBrowser) {
     browser
-    .captureBrowserExceptions((event) => {
+    .captureBrowserConsoleLogs((event) => {
       console.log('>>> Exception:', event);
     })
       .clickLaunchIcon('filePanel')
