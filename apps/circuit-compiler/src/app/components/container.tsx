@@ -69,7 +69,7 @@ export function Container () {
         const message = `
           solidity code: ${content}
           error message: ${error}
-          context: ${JSON.stringify(report, null, 2)}
+          full circom error: ${JSON.stringify(report, null, 2)}
           explain why the error occurred and how to fix it.
           `
         // @ts-ignore
@@ -77,7 +77,7 @@ export function Container () {
       } else {
         const message = `
           error message: ${error}
-          context: ${JSON.stringify(report, null, 2)}
+          full circom error: ${JSON.stringify(report, null, 2)}
           explain why the error occurred and how to fix it.
           `
         // @ts-ignore
@@ -87,7 +87,7 @@ export function Container () {
       const error = report.message
       const message = `
       error message: ${error}
-      context: ${JSON.stringify(report, null, 2)}
+      full circom error: ${JSON.stringify(report, null, 2)}
       explain why the error occurred and how to fix it.
       `
       // @ts-ignore
