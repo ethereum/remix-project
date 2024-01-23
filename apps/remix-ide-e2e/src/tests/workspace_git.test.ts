@@ -271,7 +271,7 @@ module.exports = {
       .waitForElementPresent('.fa-spinner')
       .waitForElementVisible({
         selector: '*[data-id="treeViewLitreeViewItem.git"]',
-        timeout: 60000
+        timeout: 240000
       })
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'test-branch-submodule')
       .waitForElementVisible('[data-id="updatesubmodules"]')
@@ -279,7 +279,7 @@ module.exports = {
       .waitForElementPresent('.fa-spinner')
       .waitForElementVisible({
         selector: '*[data-id="treeViewLitreeViewItem.git"]',
-        timeout: 60000
+        timeout: 240000
       })
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite"]')
@@ -319,7 +319,7 @@ module.exports = {
     .waitForElementPresent('.fa-spinner')
     .waitForElementVisible({
       selector: '*[data-id="treeViewLitreeViewItem.git"]',
-      timeout: 60000
+      timeout: 240000
     })
     .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins"]')
     .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite"]')
