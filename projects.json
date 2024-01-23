@@ -4717,7 +4717,7 @@
               "deps": [
                 "npm:@remixproject/engine",
                 "npm:isomorphic-git",
-                "npm:ipfs-http-client",
+                "npm:kubo-rpc-client",
                 "npm:file-saver",
                 "npm:jszip",
                 "npm:form-data",
@@ -7672,7 +7672,7 @@
               "file": "libs/remix-ui/publish-to-storage/src/lib/publishToIPFS.tsx",
               "hash": "0280f66fcdbbdf44869097891bae27b948e68523",
               "deps": [
-                "npm:ipfs-http-client"
+                "npm:kubo-rpc-client"
               ]
             },
             {

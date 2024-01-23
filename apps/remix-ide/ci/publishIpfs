@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const IpfsHttpClient = require('ipfs-http-client')
+import { create } from 'kubo-rpc-client'
 const { globSource } = IpfsHttpClient
 const folder = process.cwd() + '/dist/apps/remix-ide';
 
@@ -10,7 +10,7 @@ const folder = process.cwd() + '/dist/apps/remix-ide';
   const projectSecret = process.argv[3]
   const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
 
-  const ipfs = IpfsHttpClient({ port: 5001, host, protocol: 'https', headers: {
+  const ipfs = create({ port: 5001, host, protocol: 'https', headers: {
     authorization: auth
   } })
   try {

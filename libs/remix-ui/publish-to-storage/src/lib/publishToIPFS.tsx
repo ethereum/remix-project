@@ -1,14 +1,14 @@
-import IpfsHttpClient from 'ipfs-http-client'
+import { create } from 'kubo-rpc-client'
 
 let ipfsNodes = []
 
 export const publishToIPFS = async (contract, api) => {
-  ipfsNodes = [IpfsHttpClient({host: 'ipfs.infura.io', port: 5001, protocol: 'https'})]
+  ipfsNodes = [create({host: 'ipfs.infura.io', port: 5001, protocol: 'https'})]
   if (api.config.get('settings/ipfs-url')) {
     const auth = api.config.get('settings/ipfs-project-id')
       ? 'Basic ' + Buffer.from(api.config.get('settings/ipfs-project-id') + ':' + api.config.get('settings/ipfs-project-secret')).toString('base64')
       : null
-    const ipfs = IpfsHttpClient({
+    const ipfs = create({
       host: api.config.get('settings/ipfs-url'),
       port: api.config.get('settings/ipfs-port'),
       protocol: api.config.get('settings/ipfs-protocol'),

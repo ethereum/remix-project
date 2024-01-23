@@ -4,7 +4,7 @@ import {
   Plugin
 } from '@remixproject/engine'
 import git from 'isomorphic-git'
-import IpfsHttpClient from 'ipfs-http-client'
+import { create, IPFSHTTPClient } from 'kubo-rpc-client'
 import {
   saveAs
 } from 'file-saver'
@@ -30,7 +30,7 @@ class DGitProvider extends Plugin {
   globalIPFSConfig: { host: string; port: number; protocol: string; ipfsurl: string }
   remixIPFS: { host: string; port: number; protocol: string; ipfsurl: string }
   ipfsSources: any[]
-  ipfs: any
+  ipfs: IPFSHTTPClient
   filesToSend: any[]
   constructor() {
     super(profile)
@@ -383,7 +383,7 @@ class DGitProvider extends Plugin {
   }
 
   async checkIpfsConfig(config?) {
-    this.ipfs = IpfsHttpClient(config || this.ipfsconfig)
+    this.ipfs = create(config || this.ipfsconfig)
     try {
       await this.ipfs.config.getAll()
       return true
@@ -804,7 +804,7 @@ class DGitProvider extends Plugin {
   }
 
   async importIPFSFiles(config, cid, workspace) {
-    const ipfs = IpfsHttpClient(config)
+    const ipfs: IPFSHTTPClient = create(config)
     let result = false
     try {
       const data = ipfs.get(cid, { timeout: 60000 })
