@@ -10537,9 +10537,10 @@ circom_runtime@0.1.22:
   dependencies:
     ffjavascript "0.2.57"
 
-"circom_wasm@https://github.com/ioedeveloper/circom_wasm.git":
-  version "0.2.0"
-  resolved "https://github.com/ioedeveloper/circom_wasm.git#e558f8a449ac12151e735c6923c65f33b9b953ff"
+circom_wasm@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/circom_wasm/-/circom_wasm-0.2.1.tgz#11eeceb497c03461676b3bc21d7d71ac3310dd58"
+  integrity sha512-57Xhg3nUcQX+aMr+sH8XyxklpPgAWohjGkaEbiJDv3UiUveFAB2pOFOOE4whoMm7mjxKbO4n4mVs1oC031ApQQ==
 
 circular-json@^0.3.0:
   version "0.3.3"
