@@ -130,11 +130,11 @@ export class CircomPluginClient extends PluginClient {
     if (parseErrors && (parseErrors.length > 0)) {
       if (parseErrors[0].type === 'Error') {
         this.internalEvents.emit('circuit_parsing_errored', parseErrors, filePathToId)
-        // @ts-ignore
-        this.call('terminal', 'log', { type: 'error', value: 'previous errors were found' })
+        this.logCompilerReport(parseErrors)
         return
       } else if (parseErrors[0].type === 'Warning') {
         this.internalEvents.emit('circuit_parsing_warning', parseErrors, filePathToId)
+        this.logCompilerReport(parseErrors)
       }
     } else {
       this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
@@ -151,8 +151,7 @@ export class CircomPluginClient extends PluginClient {
     if (circuitProgram.length < 1) {
       const circuitErrors = circuitApi.report()
 
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'error', value: 'previous errors were found' })
+      this.logCompilerReport(circuitErrors)
       throw new Error(circuitErrors)
     } else {
       this.lastCompiledFile = path
@@ -189,11 +188,11 @@ export class CircomPluginClient extends PluginClient {
     if (parseErrors && (parseErrors.length > 0)) {
       if (parseErrors[0].type === 'Error') {
         this.internalEvents.emit('circuit_parsing_errored', parseErrors)
-        // @ts-ignore
-        this.call('terminal', 'log', { type: 'error', value: 'previous errors were found' })
+        this.logCompilerReport(parseErrors)
         return
       } else if (parseErrors[0].type === 'Warning') {
         this.internalEvents.emit('circuit_parsing_warning', parseErrors)
+        this.logCompilerReport(parseErrors)
       }
     } else {
       this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
@@ -210,8 +209,7 @@ export class CircomPluginClient extends PluginClient {
     if (r1csProgram.length < 1) {
       const r1csErrors = r1csApi.report()
 
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'error', value: 'previous errors were found' })
+      this.logCompilerReport(r1csErrors)
       throw new Error(r1csErrors)
     } else {
       this.internalEvents.emit('circuit_generating_r1cs_done')
@@ -394,5 +392,11 @@ export class CircomPluginClient extends PluginClient {
         }
       }
     }
+  }
+
+  async logCompilerReport (report: CompilerReport[]): Promise<void> {
+    this.call('terminal', 'log', { type: 'log', value: JSON.stringify(report, null, 2) })
+    if (report[0].type === 'Error') this.call('terminal', 'log', { type: 'error', value: 'previous errors were found' })
+    if (report[0].type === 'Warning') this.call('terminal', 'log', { type: 'log', value: 'previous warnings were found' })
   }
 }
