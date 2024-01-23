@@ -348,7 +348,6 @@
     "hardhat": "^2.14.0",
     "https-browserify": "^1.0.0",
     "husky": "^8.0.0",
-    "ipfs-http-client": "^47.0.1",
     "ipfs-mini": "^1.1.5",
     "is-electron": "^2.2.0",
     "javascript-serialize": "^1.6.1",
