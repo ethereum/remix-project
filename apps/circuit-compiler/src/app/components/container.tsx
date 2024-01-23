@@ -59,7 +59,6 @@ export function Container () {
   }
 
   const askGPT = async (report: CompilerReport) => {
-    circuitApp.appState.filePathToId[report.labels[0].file_id], circuitApp.appState.filePathToId[report.labels[0].message]
     if (report.labels.length > 0) {
       const location = circuitApp.appState.filePathToId[report.labels[0].file_id]
       const error = report.labels[0].message
