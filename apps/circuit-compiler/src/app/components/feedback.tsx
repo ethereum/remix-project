@@ -17,8 +17,8 @@ export function CompilerFeedback ({ feedback, filePathToId, hideWarnings, openEr
     }
   }
 
-  const handleAskGPT = (message: string, location?: string) => {
-    askGPT(message, location)
+  const handleAskGPT = (report: CompilerReport) => {
+    askGPT(report)
   }
 
   return (
@@ -47,7 +47,7 @@ export function CompilerFeedback ({ feedback, filePathToId, hideWarnings, openEr
                       <FeedbackAlert
                         message={response.message}
                         location={ response.labels[0] ? response.labels[0].message + ` ${filePathToId[response.labels[0].file_id]}:${response.labels[0].range.start}:${response.labels[0].range.end}` : null}
-                        askGPT={ () => handleAskGPT(filePathToId[response.labels[0].file_id], filePathToId[response.labels[0].message]) } />
+                        askGPT={ () => handleAskGPT(response) } />
                     </div>
                   </RenderIf>
                   <RenderIf condition={(response.type === 'Warning') && !hideWarnings}>
@@ -55,7 +55,7 @@ export function CompilerFeedback ({ feedback, filePathToId, hideWarnings, openEr
                       <FeedbackAlert
                         message={response.message}
                         location={null}
-                        askGPT={() => { handleAskGPT(response.message) }} />
+                        askGPT={() => { handleAskGPT(response) }} />
                     </div>
                   </RenderIf>
                 </div>

@@ -10,7 +10,7 @@ import { CircuitActions } from './actions'
 import { WitnessToggler } from './witnessToggler'
 import { WitnessSection } from './witness'
 import { CompilerFeedback } from './feedback'
-import { PrimeValue } from '../types'
+import { CompilerReport, PrimeValue } from '../types'
 
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
@@ -58,26 +58,41 @@ export function Container () {
     circuitApp.dispatch({ type: 'SET_HIDE_WARNINGS', payload: value })
   }
 
-  const askGPT = async (error: string, location?: string) => {
-    if (location) {
-      const fullPathLocation = await circuitApp.plugin.resolveReportPath(location)
-      const content = await circuitApp.plugin.call('fileManager', 'readFile', fullPathLocation)
-      const message = `
-        solidity code: ${content}
-        error message: ${error}
-        explain why the error occurred and how to fix it.
-        `
-      // @ts-ignore
-      await circuitApp.plugin.call('openaigpt', 'message', message)
-    } else if(error) {
-      const message = `
-        error message: ${error}
-        explain why the error occurred and how to fix it.
-        `
-      // @ts-ignore
-      await circuitApp.plugin.call('openaigpt', 'message', message)
+  const askGPT = async (report: CompilerReport) => {
+    circuitApp.appState.filePathToId[report.labels[0].file_id], circuitApp.appState.filePathToId[report.labels[0].message]
+    if (report.labels.length > 0) {
+      const location = circuitApp.appState.filePathToId[report.labels[0].file_id]
+      const error = report.labels[0].message
+
+      if (location) {
+        const fullPathLocation = await circuitApp.plugin.resolveReportPath(location)
+        const content = await circuitApp.plugin.call('fileManager', 'readFile', fullPathLocation)
+        const message = `
+          solidity code: ${content}
+          error message: ${error}
+          context: ${JSON.stringify(report, null, 2)}
+          explain why the error occurred and how to fix it.
+          `
+        // @ts-ignore
+        await circuitApp.plugin.call('openaigpt', 'message', message)
+      } else {
+        const message = `
+          error message: ${error}
+          context: ${JSON.stringify(report, null, 2)}
+          explain why the error occurred and how to fix it.
+          `
+        // @ts-ignore
+        await circuitApp.plugin.call('openaigpt', 'message', message)
+      }
     } else {
-      console.error('unable to askGtp, no message provided')
+      const error = report.message
+      const message = `
+      error message: ${error}
+      context: ${JSON.stringify(report, null, 2)}
+      explain why the error occurred and how to fix it.
+      `
+      // @ts-ignore
+      await circuitApp.plugin.call('openaigpt', 'message', message)
     }
   }
 
