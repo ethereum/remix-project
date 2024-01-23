@@ -52,7 +52,7 @@ export type CompilerFeedbackProps = {
   filePathToId: Record<string, string>,
   openErrorLocation: (location: string, startRange: string) => void,
   hideWarnings: boolean,
-  askGPT: (message: string, location?: string) => void
+  askGPT: (report: CompilerReport) => void
 }
 
 export type CompilerReport = {
