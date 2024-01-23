@@ -698,7 +698,7 @@ class DGitProvider extends Plugin {
       wrapWithDirectory: true
     }
     const r = await this.ipfs.add(this.filesToSend, addOptions)
-    return r.cid.string
+    return r.cid.toString()
   }
 
   async pin(pinataApiKey, pinataSecretApiKey) {
