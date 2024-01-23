@@ -250,7 +250,7 @@ jobs:
       SM_CLIENT_CERT_FILE: 'C:\Certificate_pkcs12.p12'
       Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
       SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
-      RemixSetupExe: 'C:\Users\circleci\remix-project\release\Remix IDE Setup 0.0.11-Alpha.exe'
+      RemixSetupExe: 'C:\Users\circleci\remix-project\release\Remix-IDE.exe'
         
   build-remixdesktop-mac:
     macos:
