@@ -197,6 +197,7 @@
     "jspdf": "^2.5.1",
     "jszip": "^3.6.0",
     "just-once": "^2.2.0",
+    "kubo-rpc-client": "^3.0.2",
     "latest-version": "^5.1.0",
     "merge": "^2.1.1",
     "npm-install-version": "^6.0.2",
