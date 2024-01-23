@@ -88,7 +88,8 @@
         }
       ],
       "icon": "assets/icon.png",
-      "darkModeSupport": true
+      "darkModeSupport": true,
+      "artifactName": "${productName}.${ext}"
     },
     "dmg": {
       "writeUpdateInfo": false
@@ -104,7 +105,8 @@
       "target": [
         "nsis"
       ],
-      "icon": "assets/icon.png"
+      "icon": "assets/icon.png",
+      "artifactName": "${productName}.${ext}"
     },
     "linux": {
       "target": [
