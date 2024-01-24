@@ -150,8 +150,9 @@ module.exports = {
     'Load Gist from URL and verify truncated files are loaded #group3': function (browser: NightwatchBrowser) {
       const gistId = '1b179bf1b92c8b0664b4cbe61774e15d'
       browser
-        .url('http://127.0.0.1:8080/#' + gistId)
+        .url('http://127.0.0.1:8080/#' + gistId)        
         .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
+        .clickLaunchIcon('filePanel')
         .waitForElementVisible(`div[data-path='default_workspace/gist-${gistId}/README.txt']`)
         .openFile(`gist-${gistId}/scripts/deploy_with_ethers.ts`)
         .getEditorValue((content) => {
