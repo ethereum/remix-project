@@ -91,7 +91,6 @@
       "darkModeSupport": true
     },
     "dmg": {
-      "writeUpdateInfo": false
     },
     "nsis": {
       "createDesktopShortcut": "always",
