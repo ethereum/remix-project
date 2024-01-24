@@ -123,14 +123,18 @@ export class CircomPluginClient extends PluginClient {
 
   async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
     this.internalEvents.emit('circuit_compiling_start')
+    // @ts-ignore
+    this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
     const [parseErrors, filePathToId] = await this.parse(path)
 
     if (parseErrors && (parseErrors.length > 0)) {
       if (parseErrors[0].type === 'Error') {
         this.internalEvents.emit('circuit_parsing_errored', parseErrors, filePathToId)
+        this.logCompilerReport(parseErrors)
         return
       } else if (parseErrors[0].type === 'Warning') {
         this.internalEvents.emit('circuit_parsing_warning', parseErrors, filePathToId)
+        this.logCompilerReport(parseErrors)
       }
     } else {
       this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
@@ -147,6 +151,7 @@ export class CircomPluginClient extends PluginClient {
     if (circuitProgram.length < 1) {
       const circuitErrors = circuitApi.report()
 
+      this.logCompilerReport(circuitErrors)
       throw new Error(circuitErrors)
     } else {
       this.lastCompiledFile = path
@@ -166,19 +171,28 @@ export class CircomPluginClient extends PluginClient {
       } else {
         this.internalEvents.emit('circuit_compiling_done', [])
       }
+      circuitApi.log().map(log => {
+        log && this.call('terminal', 'log', { type: 'log', value: log })  
+      })
+      // @ts-ignore
+      this.call('terminal', 'log', { type: 'typewritersuccess', value: 'Everything went okay, circom safe' })
     }
   }
 
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
     this.internalEvents.emit('circuit_generating_r1cs_start')
+    // @ts-ignore
+    this.call('terminal', 'log', { type: 'log', value: 'Generating R1CS for ' + path })
     const [parseErrors, filePathToId] = await this.parse(path)
 
     if (parseErrors && (parseErrors.length > 0)) {
       if (parseErrors[0].type === 'Error') {
         this.internalEvents.emit('circuit_parsing_errored', parseErrors)
+        this.logCompilerReport(parseErrors)
         return
       } else if (parseErrors[0].type === 'Warning') {
         this.internalEvents.emit('circuit_parsing_warning', parseErrors)
+        this.logCompilerReport(parseErrors)
       }
     } else {
       this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
@@ -195,6 +209,7 @@ export class CircomPluginClient extends PluginClient {
     if (r1csProgram.length < 1) {
       const r1csErrors = r1csApi.report()
 
+      this.logCompilerReport(r1csErrors)
       throw new Error(r1csErrors)
     } else {
       this.internalEvents.emit('circuit_generating_r1cs_done')
@@ -203,6 +218,11 @@ export class CircomPluginClient extends PluginClient {
   
       // @ts-ignore
       await this.call('fileManager', 'writeFile', writePath, r1csProgram, true)
+      r1csApi.log().map(log => {
+        log && this.call('terminal', 'log', { type: 'log', value: log })  
+      })
+      // @ts-ignore
+      this.call('terminal', 'log', { type: 'typewritersuccess', value: 'Everything went okay, circom safe' })
     }
   }
 
@@ -372,5 +392,11 @@ export class CircomPluginClient extends PluginClient {
         }
       }
     }
+  }
+
+  async logCompilerReport (report: CompilerReport[]): Promise<void> {
+    this.call('terminal', 'log', { type: 'log', value: JSON.stringify(report, null, 2) })
+    if (report[0].type === 'Error') this.call('terminal', 'log', { type: 'error', value: 'previous errors were found' })
+    if (report[0].type === 'Warning') this.call('terminal', 'log', { type: 'log', value: 'previous warnings were found' })
   }
 }
