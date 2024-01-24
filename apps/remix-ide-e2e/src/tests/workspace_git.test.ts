@@ -282,7 +282,7 @@ module.exports = {
         timeout: 240000,
         abortOnFailure: false,
         suppressNotFoundErrors: true
-      }).getBrowserLogs().end()
+      }).getBrowserLogs()
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive"]')
