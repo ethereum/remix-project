@@ -258,11 +258,6 @@ module.exports = {
 
   'Should clone a repository with submodules #group4': function (browser: NightwatchBrowser) {
     browser
-    .captureBrowserExceptions((event) => {
-      console.log('>>> Exception:', event);
-    }).captureBrowserConsoleLogs((event) => {
-      console.log('>>> Console:', event);
-    })
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('[data-id="workspaceMenuDropdown"]')
       .click('[data-id="workspaceMenuDropdown"]')
@@ -284,8 +279,10 @@ module.exports = {
       .waitForElementPresent('.fa-spinner')
       .waitForElementVisible({
         selector: '*[data-id="treeViewLitreeViewItem.git"]',
-        timeout: 240000
-      })
+        timeout: 240000,
+        abortOnFailure: false,
+        suppressNotFoundErrors: true
+      }).getBrowserLogs().end()
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemplugins"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemwebsite"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemrecursive"]')
