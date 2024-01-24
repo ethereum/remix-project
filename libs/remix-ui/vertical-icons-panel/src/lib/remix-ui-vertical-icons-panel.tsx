@@ -8,7 +8,7 @@ import { Chevron } from './components/Chevron'
 import { IconRecord } from './types'
 import { onLineContext } from '@remix-ui/app'
 import { CustomTooltip } from '@remix-ui/helper'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: Plugin
@@ -28,6 +28,7 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
   const [theme, setTheme] = useState<string>('dark')
   const online = useContext(onLineContext)
 
+  console.log("registry = ", Registry)
   const evaluateScrollability = () => {
     dispatchScrollAction({
       type: 'resize',

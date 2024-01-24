@@ -9,6 +9,14 @@ import { FormattedMessage } from 'react-intl'
 export interface RemixUiXterminalsProps {
   plugin: ElectronPlugin
   onReady: (api: any) => void
+  xTerminalAPI: xTerminalAPIType
+}
+
+export type xTerminalAPIType = {
+  clearTerminal: () => any
+  createTerminal: (shell?: string) => any
+  closeTerminal: () => void
+  shells: () => Promise<any>
 }
 
 export interface xtermState {
@@ -22,7 +30,7 @@ export interface xtermState {
 export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   const [terminals, setTerminals] = useState<xtermState[]>([])
   const [workingDir, setWorkingDir] = useState<string>('')
-  const [showOutput, setShowOutput] = useState<boolean>(true)
+  const [switchToRemixTerminal, setSwitchToRemixTerminal] = useState<boolean>(true)
   const [theme, setTheme] = useState<any>(themeCollection[0])
   const [terminalsEnabled, setTerminalsEnabled] = useState<boolean>(false)
   const [shells, setShells] = useState<string[]>([])
@@ -41,13 +49,13 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
           if (removed.length > 0)
             removed[removed.length - 1].hidden = false
           if (removed.length === 0)
-            setShowOutput(true)
+            setSwitchToRemixTerminal(true)
           return [...removed]
         })
       })
 
       plugin.on('xterm', 'new', async (pid: number) => {
-        setShowOutput(false)
+        setSwitchToRemixTerminal(false)
         setTerminals(prevState => {
           // set all to hidden
           prevState.forEach(xtermState => {
@@ -70,7 +78,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
       })
 
       const workingDir = await plugin.call('fs', 'getWorkingDir')
-      if(workingDir && workingDir !== '') {
+      if (workingDir && workingDir !== '') {
         setTerminalsEnabled(true)
         setWorkingDir(workingDir)
       }
@@ -106,7 +114,6 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
     })
   }
 
-
   const writeToTerminal = (data: string, pid: number) => {
     setTerminals(prevState => {
       const terminal = prevState.find(xtermState => xtermState.pid === pid)
@@ -129,12 +136,13 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
     plugin.call('xterm', 'resize', event, pid)
   }
 
-
-  const createTerminal = async (shell?: string) => {
+  props.xTerminalAPI.createTerminal = async (shell?: string) => {
+    console.log('shells ')
     const shells = await plugin.call('xterm', 'getShells')
+    console.log('shells ', shells)
     setShells(shells)
     const pid = await plugin.call('xterm', 'createTerminal', workingDir, shell)
-    setShowOutput(false)
+    setSwitchToRemixTerminal(false)
     setTerminals(prevState => {
       // set all to hidden
       prevState.forEach(xtermState => {
@@ -174,93 +182,49 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
     })
   }
 
-  const closeTerminal = () => {
+  props.xTerminalAPI.closeTerminal = () => {
     const pid = terminals.find(xtermState => xtermState.hidden === false).pid
     if (pid)
       plugin.call('xterm', 'closeTerminal', pid)
   }
+  props.xTerminalAPI.shells = async() => {
+    return await plugin.call('xterm', 'getShells')
+  }
 
   const selectOutput = () => {
     props.plugin.call('layout', 'minimize', props.plugin.profile.name, false)
-    setShowOutput(true)
+    setSwitchToRemixTerminal(true)
   }
 
   const showTerminal = () => {
-    setShowOutput(false)
+    setSwitchToRemixTerminal(false)
     props.plugin.call('layout', 'minimize', props.plugin.profile.name, false)
-    if (terminals.length === 0) createTerminal()
+    if (terminals.length === 0) props.xTerminalAPI.createTerminal()
   }
 
-  const clearTerminal = () => {
+  props.xTerminalAPI.clearTerminal = () => {
     const terminal = terminals.find(xtermState => xtermState.hidden === false)
     if (terminal && terminal.ref && terminal.ref.terminal)
       terminal.ref.terminal.clear()
   }
 
   return (<>
-    <div className='xterm-panel-header bg-light'>
-      <div className='xterm-panel-header-left p-1'>
-        <button className={`btn btn-sm btn-secondary mr-2 ${!showOutput ? 'xterm-btn-none' : 'xterm-btn-active'}`} onClick={selectOutput}>output</button>
-        <button className={`btn btn-sm btn-secondary ${terminalsEnabled ? '' : 'd-none'} ${showOutput ? 'xterm-btn-none' : 'xterm-btn-active'}`} onClick={showTerminal}><span className="far fa-terminal border-0 ml-1"></span></button>
-      </div>
-      <div className={`xterm-panel-header-right  ${showOutput ? 'd-none' : ''}`}>
-
-        <Dropdown as={ButtonGroup}>
-          <button className="btn btn-sm btn-secondary mr-2" onClick={async () => clearTerminal()}>
-            <CustomTooltip tooltipText={<FormattedMessage id='xterm.clear' defaultMessage='Clear terminal' />}>
-              <span className="far fa-ban border-0 p-0 m-0"></span>
-            </CustomTooltip>
-          </button>
-          <button className="btn btn-sm btn-secondary" onClick={async () => createTerminal()}>
-            <CustomTooltip tooltipText={<FormattedMessage id='xterm.new' defaultMessage='New terminal' />}>
-              <span className="far fa-plus border-0 p-0 m-0"></span>
-            </CustomTooltip>
-          </button>
-
-
-          <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
-
-          <Dropdown.Menu className='custom-dropdown-items remixui_menuwidth'>
-            {shells.map((shell, index) => {
-              return (<Dropdown.Item key={index} onClick={async () => await createTerminal(shell)}>{shell}</Dropdown.Item>)
-            })}
-          </Dropdown.Menu>
-        </Dropdown>
-        <button className="btn ml-2 btn-sm btn-secondary" onClick={closeTerminal}>
-          <CustomTooltip tooltipText={<FormattedMessage id='xterm.close' defaultMessage='Close terminal' />}>
-            <span className="far fa-trash border-0 ml-1"></span>
-          </CustomTooltip>
-        </button>
-      </div>
-    </div>
-
-    <RemixUiTerminal
-      plugin={props.plugin}
-      onReady={props.onReady}
-      visible={showOutput}
-    />
-
     <div className='remix-ui-xterminals-container'>
-      <>
-
-        <div className={`remix-ui-xterminals-section ${showOutput ? 'd-none' : 'd-flex'} `}>
-          {terminals.map((xtermState) => {
-            return (
-              <div className={`h-100 xterm-terminal ${xtermState.hidden ? 'hide-xterm' : 'show-xterm'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
-                <RemixUiXterm theme={theme} setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} resize={resize} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
-              </div>
-            )
+      <div className={`remix-ui-xterminals-section ${switchToRemixTerminal ? 'd-none' : 'd-flex'} `}>
+        {terminals.map((xtermState) => {
+          return (
+            <div className={`h-100 xterm-terminal ${xtermState.hidden ? 'hide-xterm' : 'show-xterm'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
+              <RemixUiXterm theme={theme} setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} resize={resize} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
+            </div>
+          )
+        })}
+        <div className='remix-ui-xterminals-buttons border-left'>
+          {terminals.map((xtermState, index) => {
+            return (<button key={index} onClick={async () => selectTerminal(xtermState)} className={`btn btn-sm mt-2 btn-secondary ${xtermState.hidden ? 'xterm-btn-none' : 'xterm-btn-active'}`}><span className="fa fa-terminal border-0 p-0 m-0"></span></button>)
           })}
-          <div className='remix-ui-xterminals-buttons border-left'>
-            {terminals.map((xtermState, index) => {
-              return (<button key={index} onClick={async () => selectTerminal(xtermState)} className={`btn btn-sm mt-2 btn-secondary ${xtermState.hidden ? 'xterm-btn-none' : 'xterm-btn-active'}`}><span className="fa fa-terminal border-0 p-0 m-0"></span></button>)
-            })}
-          </div>
         </div>
-      </>
+      </div>
     </div>
-
-
   </>)
 }
 

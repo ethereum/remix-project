@@ -1,15 +1,19 @@
 /* global Node, requestAnimationFrame */   // eslint-disable-line
 import React from 'react' // eslint-disable-line
+import { useState } from 'react';
 import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import vm from 'vm'
 const EventManager = require('../../lib/events')
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
-import { RemixUiXterminals } from '@remix-ui/xterm'
+import { xTerminalAPI, RemixUiXterminals } from '@remix-ui/xterm'
+import { CustomTooltip } from '@remix-ui/helper'
+import { FormattedMessage } from 'react-intl'
+import { ButtonGroup, Dropdown} from 'react-bootstrap'
 
 
 const KONSOLES = []
@@ -73,6 +77,8 @@ class Terminal extends Plugin {
     this._INDEX.allMain = []
     this._INDEX.commands = {}
     this._INDEX.commandsMain = {}
+    // to be implemented by the react component remix-ui-xterminals
+    this.xApi = {}
     if (opts.shell) this._shell = opts.shell // ???
     register(this)
     this.event.register('debuggingRequested', async (hash) => {
@@ -82,9 +88,7 @@ class Terminal extends Plugin {
       this.call('debugger', 'debug', hash)
     })
     this.dispatch = null
-
   }
-
 
   onActivation() {
     this.renderComponent()
@@ -113,21 +117,77 @@ class Terminal extends Plugin {
     return <div id='terminal-view' className='panel' data-id='terminalContainer-view'><PluginViewWrapper plugin={this} /></div>
   }
 
+
   updateComponent(state) {
-    return (Registry.getInstance().get('platform').api.isDesktop()) ? <RemixUiXterminals onReady={state.onReady} plugin={state.plugin}>
-    </RemixUiXterminals>
-      : <RemixUiTerminal
-        plugin={state.plugin}
-        onReady={state.onReady}
-        visible={true}
-      />
+    return <div className='d-flex flex-column'>
+      <div id="remic-ui-terminal-header" className='d-flex flex-row justify-content-between'>
+        <div id="remix-ui-terminal-title-left" className='d-flex flex-row p-1'>
+          <button
+            className={`btn btn-sm btn-secondary mr-2 ${!state.onReady ? ' disable ' : null} ${!state.switchToRemixTerminal ? '' : 'border border-top'}`}
+            onClick={() => { state.switchToRemixTerminal = true }}
+          >
+            Output
+          </button>
+          <button
+            className={`btn btn-sm btn-secondary ${state.switchToRemixTerminal ? '' : 'border border-top'}`}
+            onClick={() => { state.switchToRemixTerminal = false }}
+          >
+            <span className="far fa-terminal border-0 ml-1"></span>
+          </button>
+        </div>
+        <div id="remix-ui-terminal-title-right">
+          {!state.switchToRemixTerminal ?
+            <div className={`xterm-panel-header-right`}>
+              <Dropdown as={ButtonGroup}>
+                <button className="btn btn-sm btn-secondary mr-2" onClick={async () => this.xApi.clearTerminal()}>
+                  <CustomTooltip tooltipText={<FormattedMessage id='xterm.clear' defaultMessage='Clear terminal' />}>
+                    <span className="far fa-ban border-0 p-0 m-0"></span>
+                  </CustomTooltip>
+                </button>
+                <button className="btn btn-sm btn-secondary" onClick={async () => this.xApi.createTerminal()}>
+                  <CustomTooltip tooltipText={<FormattedMessage id='xterm.new' defaultMessage='New terminal' />}>
+                    <span className="far fa-plus border-0 p-0 m-0"></span>
+                  </CustomTooltip>
+                </button>
+                <Dropdown.Toggle split variant="secondary" id="dropdown-split-basic" />
+                <Dropdown.Menu className='custom-dropdown-items remixui_menuwidth'>
+                  {state.api.shells && state.api.shells().map((shell, index) => {
+                    return (<Dropdown.Item key={index} onClick={async () => await state.api.createTerminal(shell)}>{shell}</Dropdown.Item>)
+                  })}
+                </Dropdown.Menu>
+              </Dropdown>
+              <button className="btn ml-2 btn-sm btn-secondary" onClick={state.api.closeTerminal}>
+                <CustomTooltip tooltipText={<FormattedMessage id='xterm.close' defaultMessage='Close terminal' />}>
+                  <span className="far fa-trash border-0 ml-1"></span>
+                </CustomTooltip>
+              </button>
+            </div> : null
+          }
+        </div>
+      </div>
+      { state.switchToRemixTerminal ?
+        <RemixUiTerminal
+          plugin={state.plugin}
+          onReady={state.onReady}
+          visible={state.switchToRemixTerminal} // to be removed
+        />
+        : <RemixUiXterminals
+          xTerminalAPI={state.api}
+          plugin={state.plugin}
+          visible={true}
+          onReady={state.onReady} 
+        />
+      }
+    </div>
   }
 
   renderComponent() {
     const onReady = (api) => { this.terminalApi = api }
     this.dispatch({
+      api: this.xApi,
       plugin: this,
-      onReady: onReady
+      onReady: onReady,
+      switchToRemixTerminal: false
     })
   }
 

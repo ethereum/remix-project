@@ -5,8 +5,6 @@ import { FormattedMessage } from "react-intl"
 import '../css/electron-menu.css'
 import { CustomTooltip } from '@remix-ui/helper'
 
-
-
 export const ElectronMenu = () => {
   const platform = useContext(platformContext)
   const global = useContext(FileSystemContext)
@@ -53,7 +51,6 @@ export const ElectronMenu = () => {
                           }}
                           className="fas fa-times recentfolder_delete pr-2"
                         >
-
                         </i>
                       </div>
                     </CustomTooltip>
