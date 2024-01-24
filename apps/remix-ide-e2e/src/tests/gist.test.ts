@@ -145,6 +145,17 @@ module.exports = {
       .openFile(`gist-${testData.validGistId}/README.txt`)
       .waitForElementVisible(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt']`)
       .assert.containsText(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
-      .end()
-  }
+    },
+
+    'Load Gist from URL and verify truncated files are loaded #group3': function (browser: NightwatchBrowser) {
+      const gistId = '1b179bf1b92c8b0664b4cbe61774e15d'
+      browser
+        .url('http://127.0.0.1:8080/#' + gistId)
+        .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
+        .waitForElementVisible(`div[data-path='default_workspace/gist-${gistId}/README.txt']`)
+        .openFile(`gist-${gistId}/scripts/deploy_with_ethers.ts`)
+        .getEditorValue((content) => {
+          browser.assert.ok(content !== '')
+        })
+      }
 }
