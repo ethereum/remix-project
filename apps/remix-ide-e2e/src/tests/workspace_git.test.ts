@@ -309,7 +309,7 @@ module.exports = {
       .click('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2/submodule2.ts"]')
   },
-  'When switching branches the submodules should disappear #flaky #group4': function (browser: NightwatchBrowser) {
+  'When switching branches the submodules should disappear #group4': function (browser: NightwatchBrowser) {
     browser
     .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
     .click('[data-id="workspaceGitBranchesDropdown"]')
