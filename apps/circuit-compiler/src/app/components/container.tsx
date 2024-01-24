@@ -67,7 +67,7 @@ export function Container () {
         const fullPathLocation = await circuitApp.plugin.resolveReportPath(location)
         const content = await circuitApp.plugin.call('fileManager', 'readFile', fullPathLocation)
         const message = `
-          solidity code: ${content}
+          circom code: ${content}
           error message: ${error}
           full circom error: ${JSON.stringify(report, null, 2)}
           explain why the error occurred and how to fix it.
