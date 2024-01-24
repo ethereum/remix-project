@@ -124,13 +124,27 @@ class Terminal extends Plugin {
         <div id="remix-ui-terminal-title-left" className='d-flex flex-row p-1'>
           <button
             className={`btn btn-sm btn-secondary mr-2 ${!state.onReady ? ' disable ' : null} ${!state.switchToRemixTerminal ? '' : 'border border-top'}`}
-            onClick={() => { state.switchToRemixTerminal = true }}
+            onClick={() => { 
+              this.dispatch({
+                api: state.api,
+                plugin: state.plugin,
+                onReady: state.onReady,
+                switchToRemixTerminal: true
+              })
+            }}
           >
             Output
           </button>
           <button
             className={`btn btn-sm btn-secondary ${state.switchToRemixTerminal ? '' : 'border border-top'}`}
-            onClick={() => { state.switchToRemixTerminal = false }}
+            onClick={() => {
+              this.dispatch({
+                api: state.api,
+                plugin: state.plugin,
+                onReady: state.onReady,
+                switchToRemixTerminal: false
+              })
+            }}
           >
             <span className="far fa-terminal border-0 ml-1"></span>
           </button>
