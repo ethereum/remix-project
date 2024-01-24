@@ -91,6 +91,7 @@
       "darkModeSupport": true
     },
     "dmg": {
+      "writeUpdateInfo": true
     },
     "nsis": {
       "createDesktopShortcut": "always",
@@ -105,9 +106,14 @@
       ],
       "icon": "assets/icon.png"
     },
+    "deb": {
+      
+    },
     "linux": {
       "target": [
-        "deb"
+        "deb",
+        "snap",
+        "AppImage"
       ],
       "category": "WebBrowser",
       "icon": "assets"
