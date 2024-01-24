@@ -10,7 +10,7 @@ import { CircuitActions } from './actions'
 import { WitnessToggler } from './witnessToggler'
 import { WitnessSection } from './witness'
 import { CompilerFeedback } from './feedback'
-import { PrimeValue } from '../types'
+import { CompilerReport, PrimeValue } from '../types'
 
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
@@ -58,6 +58,43 @@ export function Container () {
     circuitApp.dispatch({ type: 'SET_HIDE_WARNINGS', payload: value })
   }
 
+  const askGPT = async (report: CompilerReport) => {
+    if (report.labels.length > 0) {
+      const location = circuitApp.appState.filePathToId[report.labels[0].file_id]
+      const error = report.labels[0].message
+
+      if (location) {
+        const fullPathLocation = await circuitApp.plugin.resolveReportPath(location)
+        const content = await circuitApp.plugin.call('fileManager', 'readFile', fullPathLocation)
+        const message = `
+          circom code: ${content}
+          error message: ${error}
+          full circom error: ${JSON.stringify(report, null, 2)}
+          explain why the error occurred and how to fix it.
+          `
+        // @ts-ignore
+        await circuitApp.plugin.call('openaigpt', 'message', message)
+      } else {
+        const message = `
+          error message: ${error}
+          full circom error: ${JSON.stringify(report, null, 2)}
+          explain why the error occurred and how to fix it.
+          `
+        // @ts-ignore
+        await circuitApp.plugin.call('openaigpt', 'message', message)
+      }
+    } else {
+      const error = report.message
+      const message = `
+      error message: ${error}
+      full circom error: ${JSON.stringify(report, null, 2)}
+      explain why the error occurred and how to fix it.
+      `
+      // @ts-ignore
+      await circuitApp.plugin.call('openaigpt', 'message', message)
+    }
+  }
+
   return (
     <section>
       <article>
@@ -86,7 +123,7 @@ export function Container () {
               </WitnessToggler>
             </RenderIf>
             <RenderIf condition={(circuitApp.appState.status !== 'compiling') && (circuitApp.appState.status !== 'computing') && (circuitApp.appState.status !== 'generating')}>
-              <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} />
+              <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
             </RenderIf>
           </div>
         </div>
