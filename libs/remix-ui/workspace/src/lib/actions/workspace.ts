@@ -308,11 +308,22 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       }
       const obj = {}
 
-      Object.keys(data.files).forEach((element) => {
+      for (const [element] of Object.entries(data.files)) {
         const path = element.replace(/\.\.\./g, '/')
+        let value
+        if (data.files[element].truncated) {
+          const response: AxiosResponse = await axios.get(data.files[element].raw_url)
+          value = { content: response.data }
+          console.log(data.files[element], response)
+        } else {
+          value = { content: data.files[element].content }
+        }
 
-        obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
-      })
+        if (data.files[element].type === 'application/json') {
+          obj['/' + 'gist-' + gistId + '/' + path] = { content: JSON.stringify(value.content, null, '\t') }
+        } else
+          obj['/' + 'gist-' + gistId + '/' + path] = value
+      }
       plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
         if (errorLoadingFile) {
           dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
