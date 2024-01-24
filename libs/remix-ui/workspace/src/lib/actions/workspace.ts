@@ -314,7 +314,6 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         if (data.files[element].truncated) {
           const response: AxiosResponse = await axios.get(data.files[element].raw_url)
           value = { content: response.data }
-          console.log(data.files[element], response)
         } else {
           value = { content: data.files[element].content }
         }
