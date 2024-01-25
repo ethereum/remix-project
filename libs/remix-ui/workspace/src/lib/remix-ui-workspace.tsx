@@ -536,9 +536,7 @@ export function Workspace() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCopyShareURLClick = (path: string, _type: string) => {
-    console.log('path---->', path)
     global.dispatchCopyShareURL(path)
-    // navigator.clipboard.writeText(fileName)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
