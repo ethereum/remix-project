@@ -22,6 +22,7 @@ let plugin, dispatch: React.Dispatch<Actions>
 export type UrlParametersType = {
   gist: string,
   code: string,
+  shareCode: string,
   url: string,
   address: string
   opendir: string,
@@ -75,7 +76,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
-    } else if (params.code || params.url) {
+    } else if (params.code || params.url || params.shareCode) {
       await createWorkspaceTemplate('code-sample', 'code-template')
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
