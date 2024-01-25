@@ -150,7 +150,7 @@ module.exports = {
     'Load Gist from URL and verify truncated files are loaded #group3': function (browser: NightwatchBrowser) {
       const gistId = '1b179bf1b92c8b0664b4cbe61774e15d'
       browser
-        .url('http://127.0.0.1:8080/#gist=' + gistId)
+        .url('http://127.0.0.1:8080/#gist=' + gistId) // loading the gist
         .refreshPage()
         .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
         .waitForElementVisible(`#fileExplorerView li[data-path='gist-${gistId}/README.txt']`, 30000)
@@ -158,5 +158,10 @@ module.exports = {
         .getEditorValue((content) => {
           browser.assert.ok(content !== '')
         })
+        .rightClickCustom(`li[data-path='gist-${gistId}'] div`) // saving the gist
+        .click('[data-id="contextMenuItempublishFolderToGist"]')
+        .modalFooterOKClick('fileSystem')
+        .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+        .assert.containsText('*[data-shared="tooltipPopup"]', 'Saving gist (' + gistId + ') ...')        
       }
 }
