@@ -317,6 +317,8 @@ jobs:
           command: |
             rm -rf ~/remix-project/apps/remixdesktop/release/.icon*
             rm -rf ~/remix-project/apps/remixdesktop/release/builder*
+            rm -rf ~/remix-project/apps/remixdesktop/release/*.blockmap
+            rm -rf ~/remix-project/apps/remixdesktop/release/_.*
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-mac
@@ -332,6 +334,7 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
+      - checkout
       - attach_workspace:
           at: .
   lint:
