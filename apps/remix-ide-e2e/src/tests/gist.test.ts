@@ -153,7 +153,7 @@ module.exports = {
         .url('http://127.0.0.1:8080/#gist=' + gistId)
         .refreshPage()
         .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
-        .waitForElementVisible(`div[data-path='code-sample/gist-${gistId}/README.txt']`, 30000)
+        .waitForElementVisible(`#fileExplorerView li[data-path='gist-${gistId}/README.txt']`, 30000)
         .openFile(`gist-${gistId}/scripts/deploy_with_ethers.ts`)
         .getEditorValue((content) => {
           browser.assert.ok(content !== '')
