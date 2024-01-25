@@ -395,7 +395,7 @@ export const copyShareURL = async (path: string) => {
     })
 
     const fileContent = await fileManager.readFile(path)
-    let result = await ipfs.add(fileContent)
+    const result = await ipfs.add(fileContent)
     const hash = result.cid.string
     const shareUrl = `${window.location.origin}/#shareCode=${hash}`
     navigator.clipboard.writeText(shareUrl)
