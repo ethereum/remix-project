@@ -125,7 +125,7 @@ jobs:
                 yarn add node-pty
                 yarn --ignore-optional
                 yarn add @remix-project/remix-ws-templates
-                PUBLISH_FOR_PULL_REQUEST='true' yarn dist
+                yarn dist
                 rm -rf release/*-unpacked
         - save_cache:
             key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
@@ -134,6 +134,10 @@ jobs:
         - store_artifacts:
             path: apps/remixdesktop/release/
             destination: remixdesktop-linux
+        - persist_to_workspace:
+            root: apps/remixdesktop
+            paths:
+              - "release"
 
   build-remixdesktop-windows:
     executor:
@@ -169,7 +173,7 @@ jobs:
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
               yarn
-              PUBLISH_FOR_PULL_REQUEST='true' yarn dist
+              yarn dist
               rm -rf release/*-unpacked
       - save_cache:
           key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
@@ -246,6 +250,10 @@ jobs:
       - store_artifacts:
           path: ~/remix-project/release/
           destination: remixdesktop-windows
+      - persist_to_workspace:
+          root: ~/remix-project/
+          paths:
+            - "release"
     environment:
       SM_CLIENT_CERT_FILE: 'C:\Certificate_pkcs12.p12'
       Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
@@ -289,14 +297,27 @@ jobs:
             cd apps/remixdesktop
             yarn
             yarn installRipGrepMacOXarm64
-            PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --arm64
+            USE_HARD_LINKS=false yarn dist --mac --arm64
             yarn installRipGrepMacOXx64
-            PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --x64
+            USE_HARD_LINKS=false yarn dist --mac --x64
             rm -rf release/mac*
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-mac
+      - persist_to_workspace:
+          root: apps/remixdesktop
+          paths:
+            - "release"
     
+  uploadartifacts:
+    docker:
+      - image: cimg/node:20.0.0-browsers
+    resource_class:
+      xlarge
+    working_directory: ~/remix-project
+    steps:
+      - attach_workspace:
+          at: .
   lint:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -531,6 +552,11 @@ workflows:
       - build-remixdesktop-linux:
           requires:
             - build-desktop
+      - uploadartifacts:
+          requires:
+            - build-remixdesktop-mac
+            - sign-remixdesktop-windows
+            - build-remixdesktop-linux
       - build-plugin:
           matrix:
             parameters:
