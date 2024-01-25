@@ -131,6 +131,11 @@ jobs:
             key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
             paths:
               - apps/remixdesktop/node_modules
+        - run:
+            name: "remove unnecessary files"
+            command: |
+              rm -rf ~/remix-project/apps/remixdesktop/release/.icon*
+              rm -rf ~/remix-project/apps/remixdesktop/release/builder*
         - store_artifacts:
             path: apps/remixdesktop/release/
             destination: remixdesktop-linux
@@ -247,6 +252,12 @@ jobs:
               echo 'Verification failed'
               exit 1
             }
+      - run:
+          name: "remove unnecessary files"
+          shell: bash.exe
+          command: |
+            rm -rf ~/remix-project/release/.icon*
+            rm -rf ~/remix-project/release/builder*
       - store_artifacts:
           path: ~/remix-project/release/
           destination: remixdesktop-windows
@@ -301,6 +312,11 @@ jobs:
             yarn installRipGrepMacOXx64
             USE_HARD_LINKS=false yarn dist --mac --x64
             rm -rf release/mac*
+      - run:
+          name: "remove unnecessary files"
+          command: |
+            rm -rf ~/remix-project/apps/remixdesktop/release/.icon*
+            rm -rf ~/remix-project/apps/remixdesktop/release/builder*
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-mac
