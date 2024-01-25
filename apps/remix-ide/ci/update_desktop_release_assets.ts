@@ -1,65 +1,77 @@
 import { Octokit } from 'octokit'
+import * as fs from 'fs'
+import * as path from 'path'
 
 const owner = 'bunsenstraat'
 const repo = 'remix-desktop'
 const headers = {
-    'X-GitHub-Api-Version': '2022-11-28'
+  'X-GitHub-Api-Version': '2022-11-28'
 }
 
 const octokit = new Octokit({
-    auth: process.env.GH_TOKEN
+  auth: process.env.GH_TOKEN
 })
 
 
 async function getAllReleases() {
-    const releases = await octokit.request('GET /repos/{owner}/{repo}/releases', {
-        owner: owner,
-        repo: repo,
-        headers: headers
-    })
-    return releases.data
+  const releases = await octokit.request('GET /repos/{owner}/{repo}/releases', {
+    owner: owner,
+    repo: repo,
+    headers: headers
+  })
+  return releases.data
 }
 
 async function getVersionFromPackageJson() {
-    const packageJson = require(__dirname + '/../../../apps/remixdesktop/package.json')
-    return packageJson.version
+  // ignore ts error
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const packageJson = require(__dirname + '/../../../apps/remixdesktop/package.json')
+  return packageJson.version
 }
 
 async function getReleaseByTag(tag_name: string) {
-    const releases = await octokit.request('GET /repos/{owner}/{repo}/releases/tags/{tag}', {
-        owner: owner,
-        repo: repo,
-        tag: tag_name,
-        headers: headers
-    })
-    return releases.data
+  const releases = await octokit.request('GET /repos/{owner}/{repo}/releases/tags/{tag}', {
+    owner: owner,
+    repo: repo,
+    tag: tag_name,
+    headers: headers
+  })
+  return releases.data
 }
 
 async function getReleaseAssets(release_id: number) {
-    const assets = await octokit.request('GET /repos/{owner}/{repo}/releases/{release_id}/assets', {
-        owner: owner,
-        repo: repo,
-        release_id: release_id,
-        headers: headers
-    })
+  const assets = await octokit.request('GET /repos/{owner}/{repo}/releases/{release_id}/assets', {
+    owner: owner,
+    repo: repo,
+    release_id: release_id,
+    headers: headers
+  })
 
-    for (const asset of assets.data) {
-        console.log(asset.name)
-    }
+  for (const asset of assets.data) {
+    console.log(asset.name)
+  }
 
 }
+
+async function readReleaseFilesFromLocalDirectory() {
+  const directoryPath = path.join(__dirname, '../../../release')
+  const files = fs.readdirSync(directoryPath)
+  console.log(files)
+}
+
 
 async function main() {
-    const version = await getVersionFromPackageJson()
-    console.log(version)
-    const release = await getReleaseByTag('v' + version)
-    console.log(release)
-    if(!release.draft) {
-        console.log('Release is not a draft')
-        return
-    }
+  const version = await getVersionFromPackageJson()
+  console.log(version)
+  const release = await getReleaseByTag('v' + version)
+  console.log(release)
+  if (!release.draft) {
+    console.log('Release is not a draft')
+    return
+  }
 }
 
-main()
+//main()
+readReleaseFilesFromLocalDirectory()
 console.log(process.env.GH_TOKEN)
 //getReleaseAssets()
