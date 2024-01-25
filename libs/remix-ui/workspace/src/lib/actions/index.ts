@@ -226,8 +226,11 @@ export type SolidityConfiguration = {
 export const publishToGist = async (path?: string, type?: string) => {
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = path || '/'
-  const id = type === 'gist' ? extractNameFromKey(path).split('-')[1] : null
+  
   try {
+    const name = extractNameFromKey(path)
+    const id = name && name.startsWith('gist-') ? name.split('-')[1] : null
+
     const packaged = await packageGistFiles(folder)
     // check for token
     const config = plugin.registry.get('config').api
