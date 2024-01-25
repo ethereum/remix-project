@@ -260,7 +260,6 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         await workspaceProvider.set(path, content)
       }
       if (params.shareCode) {
-        console.log('inside params.shareCode------>', params.shareCode)
         const host = '127.0.0.1'
         const port = 5001
         const protocol = 'http'
