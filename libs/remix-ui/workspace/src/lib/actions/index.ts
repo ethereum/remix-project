@@ -5,11 +5,11 @@ import { customAction } from '@remixproject/plugin-api'
 import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentLocalFilePath, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin, workspaceExists } from './workspace'
-import { QueryParams } from '@remix-project/remix-lib'
+import { QueryParams, Registry } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
 import { Actions, FileTree } from '../types'
-import {Registry} from '@remix-project/remix-lib'
+import IpfsHttpClient from 'ipfs-http-client'
 
 export * from './events'
 export * from './workspace'
@@ -380,12 +380,28 @@ export const copyShareURL = async (path: string) => {
   const fileManager = plugin.fileManager
 
   try {
+    const host = '127.0.0.1'
+    const port = 5001
+    const protocol = 'http'
+    // const projectId = ''
+    // const projectSecret = ''
+    // const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+
+    const ipfs = IpfsHttpClient({ port, host, protocol
+      , headers: {
+        // authorization: auth
+      } 
+    })
+
     const fileContent = await fileManager.readFile(path)
-    console.log('fileContent------>', fileContent)
     const base64Content = btoa(fileContent)
-    console.log('base64Content------>', base64Content)
+
+    let result = await ipfs.add(base64Content)
+    const hash = result.cid.string
+    const shareUrl = `${window.location.origin}/#shareCode=${hash}`
+    console.log('share url---->', shareUrl)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyFile operation.' + error))
+    dispatch(displayPopUp('Oops! An error ocurred while performing copyShareURL operation.' + error))
   }
 }
 
