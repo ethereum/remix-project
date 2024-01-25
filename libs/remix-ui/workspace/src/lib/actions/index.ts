@@ -399,7 +399,7 @@ export const copyShareURL = async (path: string) => {
     let result = await ipfs.add(base64Content)
     const hash = result.cid.string
     const shareUrl = `${window.location.origin}/#shareCode=${hash}`
-    console.log('share url---->', shareUrl)
+    navigator.clipboard.writeText(shareUrl)
   } catch (error) {
     dispatch(displayPopUp('Oops! An error ocurred while performing copyShareURL operation.' + error))
   }
