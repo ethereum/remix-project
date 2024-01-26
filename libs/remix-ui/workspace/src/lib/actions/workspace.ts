@@ -268,9 +268,9 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         // const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
 
         const ipfs = IpfsHttpClient({ port, host, protocol
-          , headers: {
+          // , headers: {
             // authorization: auth
-          } 
+          // } 
         })
         const hashed = bufferToHex(hash.keccakFromString(params.shareCode))
 
