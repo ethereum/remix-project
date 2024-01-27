@@ -66,9 +66,7 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
   }
 
   async onActivation(): Promise<void> {
-    console.log('onActivation', 'CompilerLoaderPluginClient')
     this.onload(() => {
-      console.log('onload', 'CompilerLoaderPluginClient')
       this.emit('loaded')
     })
   }
