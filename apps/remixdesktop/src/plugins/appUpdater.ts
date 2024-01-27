@@ -80,7 +80,7 @@ class AppUpdaterPluginClient extends ElectronBasePluginClient {
     console.log('checkForUpdates')
     this.call('terminal', 'log', {
       type: 'log',
-      value: 'Checking for updates...' + autoUpdater.getFeedURL() + autoUpdater.currentVersion,
+      value: 'Checking for updates...' + autoUpdater.currentVersion,
     })
     autoUpdater.checkForUpdates()
   }
