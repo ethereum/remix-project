@@ -1,6 +1,6 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-import { autoUpdater } from "electron"
+import { autoUpdater } from "electron-updater"
 
 const profile = {
   displayName: 'appUpdater',
@@ -80,7 +80,7 @@ class AppUpdaterPluginClient extends ElectronBasePluginClient {
     console.log('checkForUpdates')
     this.call('terminal', 'log', {
       type: 'log',
-      value: 'Checking for updates...',
+      value: 'Checking for updates...' + autoUpdater.getFeedURL() + autoUpdater.currentVersion,
     })
     autoUpdater.checkForUpdates()
   }
