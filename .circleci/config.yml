@@ -337,6 +337,13 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - run: 
+          name: "Upload Artifacts"
+          command: npx ts-node apps/remix-ide/ci/update_desktop_release_assets.ts
   lint:
     docker:
       - image: cimg/node:20.0.0-browsers
