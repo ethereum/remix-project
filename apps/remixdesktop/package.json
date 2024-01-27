@@ -1,6 +1,6 @@
 {
   "name": "remixdesktop",
-  "version": "0.0.12-Alpha",
+  "version": "0.0.13-Alpha",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
@@ -52,6 +52,7 @@
     "axios": "^1.6.1",
     "byline": "^5.0.0",
     "chokidar": "^3.5.3",
+    "electron-updater": "^6.1.7",
     "express": "^4.18.2",
     "isomorphic-git": "^1.24.2",
     "node-pty": "^0.10.1",
@@ -69,13 +70,15 @@
     "files": [
       "build/**/*"
     ],
-    "publish": [{
-      "provider": "github",
-      "owner": "bunsenstraat",
-      "repo": "remix-desktop",
-      "releaseType": "draft",
-      "publishAutoUpdate": true
-    }],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "bunsenstraat",
+        "repo": "remix-desktop",
+        "releaseType": "draft",
+        "publishAutoUpdate": true
+      }
+    ],
     "mac": {
       "category": "public.app-category.productivity",
       "target": [
@@ -107,9 +110,7 @@
       "icon": "assets/icon.png",
       "artifactName": "${productName}.${ext}"
     },
-    "deb": {
-      
-    },
+    "deb": {},
     "linux": {
       "target": [
         "deb",
