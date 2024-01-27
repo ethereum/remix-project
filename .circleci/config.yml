@@ -258,6 +258,7 @@ jobs:
           command: |
             rm -rf ~/remix-project/release/.icon*
             rm -rf ~/remix-project/release/builder*
+            cp ~/remix-project/release/Remix\ IDE.exe ~/remix-project/release/Remix\ IDE\ Setup.exe
       - store_artifacts:
           path: ~/remix-project/release/
           destination: remixdesktop-windows
