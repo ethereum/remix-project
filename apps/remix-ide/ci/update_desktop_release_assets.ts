@@ -23,7 +23,7 @@ async function getAllReleases() {
 
 async function uploadReleaseAsset(release, name, file) {
   const upload_url = release.upload_url
-  console.log(upload_url)
+  console.log(`Uploading ${name} to ${upload_url}`)
   octokit.request({
     method: "POST",
     url: upload_url,
