@@ -1,6 +1,6 @@
 {
   "name": "remixdesktop",
-  "version": "0.0.13-Alpha",
+  "version": "0.0.14-Alpha",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
@@ -62,7 +62,7 @@
     "@remix-project/remix-ws-templates": "^1.0.27"
   },
   "build": {
-    "productName": "Remix IDE",
+    "productName": "Remix-Desktop",
     "appId": "org.ethereum.remix-ide",
     "asar": true,
     "generateUpdatesFilesForAllChannels": true,
@@ -100,7 +100,7 @@
       "createDesktopShortcut": "always",
       "allowToChangeInstallationDirectory": true,
       "oneClick": false,
-      "shortcutName": "Remix IDE",
+      "shortcutName": "Remix Desktop",
       "differentialPackage": false
     },
     "win": {
