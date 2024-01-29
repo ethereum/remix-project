@@ -72,7 +72,7 @@ async function main() {
     console.log('No release found.')
     // create release
     console.log(`Creating release ${version}`)
-    release = await octokit.request('POST /repos/{owner}/{repo}/releases', {
+    const r = await octokit.request('POST /repos/{owner}/{repo}/releases', {
       owner: owner,
       repo: repo,
       tag_name: `v${version}`,
@@ -80,6 +80,7 @@ async function main() {
       draft: true,
       headers: headers,
     })
+    release = r.data
   }
 
   let files = await readReleaseFilesFromLocalDirectory()
