@@ -382,13 +382,11 @@ module.exports = {
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .openFile('contracts')
-      .openFile('contracts/hooks')
-      .openFile('contracts/hooks/examples')
-      .openFile('contracts/hooks/examples/FullRange.sol')
+      .openFile('src')
+      .openFile('src/Counter.sol')
       .pause(1000)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`contract FullRange is BaseHook`) !== -1,
+        browser.assert.ok(content.indexOf(`contract Counter is BaseHook {`) !== -1,
           'Incorrect content')
       })
   }, 
