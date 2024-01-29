@@ -1,6 +1,6 @@
 {
   "name": "remixdesktop",
-  "version": "0.0.14-Alpha",
+  "version": "0.0.13-Alpha",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
@@ -30,7 +30,6 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "@electron/rebuild": "^3.2.13",
     "@types/byline": "^4.2.35",
     "@types/express": "^4.17.21",
     "cross-env": "^7.0.3",
