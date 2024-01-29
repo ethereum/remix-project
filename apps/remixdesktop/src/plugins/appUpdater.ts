@@ -16,6 +16,7 @@ export class AppUpdaterPlugin extends ElectronBasePlugin {
     this.methods = [...super.methods]
 
     autoUpdater.autoDownload = false
+    autoUpdater.disableDifferentialDownload = true
     autoUpdater.on('checking-for-update', () => {
       console.log('Checking for update...');
       this.sendToLog('Checking for update...')
