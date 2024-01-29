@@ -31,7 +31,7 @@ async function test (st, privateKey) {
   let compilationResults = new CompilerAbstract('json', output, sources)
   console.log('intLocalTest')
   await intLocalTest(st, privateKey, output.contracts['test.sol']['intLocal'].evm.bytecode.object, compilationResults, intLocal.contract)
-  
+
   output = compiler.compile(compilerInput(miscLocal.contract))
   output = JSON.parse(output)
   sources = {
@@ -41,7 +41,7 @@ async function test (st, privateKey) {
   compilationResults = new CompilerAbstract('json', output, sources)
   console.log('miscLocalTest')
   await miscLocalTest(st, privateKey, output.contracts['test.sol']['miscLocal'].evm.bytecode.object, compilationResults, miscLocal.contract)
-  
+
   output = compiler.compile(compilerInput(miscLocal.contract))
   output = JSON.parse(output)
   sources = {
@@ -51,7 +51,7 @@ async function test (st, privateKey) {
   compilationResults = new CompilerAbstract('json', output, sources)
   console.log('misc2LocalTest')
   await misc2LocalTest(st, privateKey, output.contracts['test.sol']['miscLocal2'].evm.bytecode.object, compilationResults, miscLocal.contract)
-  
+
   output = compiler.compile(compilerInput(structArrayLocal.contract))
   output = JSON.parse(output)
   sources = {

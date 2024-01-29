@@ -7,7 +7,7 @@ tape('TraceManager', function (t) {
   let traceManager
 
   t.test('TraceManager.init', function (st) {
-    traceManager = new TraceManager({web3: web3Test})
+    traceManager = new TraceManager({ web3: web3Test })
     st.end()
   })
 

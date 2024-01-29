@@ -82,7 +82,7 @@ export class Compiler {
    */
 
   internalCompile(files: Source, missingInputs?: string[], timeStamp?: number): void {
-    if(timeStamp < this.state.compilationStartTime && this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger ) {
+    if (timeStamp < this.state.compilationStartTime && this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger ) {
       return
     }
     this.gatherImports(files, missingInputs, (error, input) => {

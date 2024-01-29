@@ -22,7 +22,7 @@ class Server {
 
   start (host, port) {
     const wsApp = expressWs(app)
-    
+
     app.use(cors())
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())

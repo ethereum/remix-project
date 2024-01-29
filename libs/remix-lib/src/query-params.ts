@@ -1,6 +1,6 @@
 'use strict'
 
-export class QueryParams  {
+export class QueryParams {
 
   update (params) {
     const currentParams = this.get()

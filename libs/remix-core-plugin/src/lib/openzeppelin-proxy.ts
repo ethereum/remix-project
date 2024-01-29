@@ -88,7 +88,7 @@ export class OpenZeppelinProxy extends Plugin {
   }
 
   async deployUUPSProxy(implAddress: string, _data: string, implementationContractObject): Promise<void> {
-    
+
     const args = [implAddress, _data]
     const constructorData = await this.blockchain.getEncodedParams(args, UUPSfunAbi)
     const proxyName = 'ERC1967Proxy'
@@ -109,7 +109,7 @@ export class OpenZeppelinProxy extends Plugin {
       data.dataHex = UUPSBytecode + constructorData.replace('0x', '')
       data.funAbi = UUPSfunAbi
       this.call('terminal', 'logHtml', `Deploying ERC1967 < 5.0.0 as proxy...`)
-    }else{
+    } else {
       this.call('terminal', 'logHtml', `Deploying ERC1967 >= 5.0.0 as proxy...`)
     }
     // re-use implementation contract's ABI for UI display in udapp and change name to proxy name.

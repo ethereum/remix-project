@@ -6,7 +6,7 @@ import * as assert from 'assert'
 
 describe('Transactions', () => {
   before(async function () {
-    const provider = new Provider({ fork: 'shanghai'})
+    const provider = new Provider({ fork: 'shanghai' })
     await provider.init()
     web3.setProvider(provider as any)
   })

@@ -2,7 +2,7 @@
 'use strict'
 import { Cache } from '@ethereumjs/statemanager/dist/cache'
 import { hash } from '@remix-project/remix-lib'
-import { bufferToHex, Account, toBuffer, bufferToBigInt} from '@ethereumjs/util'
+import { bufferToHex, Account, toBuffer, bufferToBigInt } from '@ethereumjs/util'
 import { keccak256 } from 'ethereum-cryptography/keccak'
 import type { Address } from '@ethereumjs/util'
 import { decode } from 'rlp'
@@ -56,7 +56,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   }
 
   copy(): StateManagerCommonStorageDump {
-    const copyState =  new StateManagerCommonStorageDump({
+    const copyState = new StateManagerCommonStorageDump({
       trie: this._trie.copy(false),
     })
     copyState.keyHashes = this.keyHashes
@@ -125,7 +125,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
         const ac = Account.fromRlpSerializedAccount(rlp)
         return ac
       } else {
-        const ac =  await this.getAccountFromProvider(address)
+        const ac = await this.getAccountFromProvider(address)
         return ac
       }
     }
@@ -250,7 +250,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
         codeHash: toBuffer(codeHash)
         // storageRoot: toBuffer([]), // we have to remove this in order to force the creation of the Trie in the local state.
       })
-    }    
+    }
     return account
   }
 }
@@ -266,7 +266,7 @@ export class VMCommon extends Common {
 
   /**
    * Override "setHardforkByBlockNumber" to disable updating the original fork state
-   * 
+   *
    * @param blockNumber
    * @param td
    * @param timestamp
@@ -294,7 +294,7 @@ export class VMContext {
   txByHash: Record<string, Transaction>
   currentVm: CurrentVm
   web3vm: VmProxy
-  logsManager: any // LogsManager 
+  logsManager: any // LogsManager
   exeResults: Record<string, Transaction>
   nodeUrl: string
   blockNumber: number | 'latest'
@@ -335,7 +335,7 @@ export class VMContext {
           blockTag: '0x' + this.blockNumber.toString(16)
         })
       }
-      
+
     } else
       stateManager = new StateManagerCommonStorageDump()
 
@@ -356,7 +356,7 @@ export class VMContext {
     const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
     const eei = new EEI(stateManager, common, blockchain)
     const evm = new EVM({ common, eei, allowUnlimitedContractSize: true })
-    
+
     const vm = await VM.create({
       common,
       activatePrecompiles: true,

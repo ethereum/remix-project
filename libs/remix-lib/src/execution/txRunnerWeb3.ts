@@ -2,7 +2,7 @@
 import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import Web3 from 'web3'
-import {toBigInt, toHex} from 'web3-utils'
+import { toBigInt, toHex } from 'web3-utils'
 
 export class TxRunnerWeb3 {
   event
@@ -65,9 +65,9 @@ export class TxRunnerWeb3 {
       promptCb(
         async (value) => {
           try {
-            const res = await (this.getWeb3() as any).eth.personal.sendTransaction({...tx, value}, { checkRevertBeforeSending: false, ignoreGasPricing: true })
+            const res = await (this.getWeb3() as any).eth.personal.sendTransaction({ ...tx, value }, { checkRevertBeforeSending: false, ignoreGasPricing: true })
             cb(null, res.transactionHash)
-          } catch (e)  {
+          } catch (e) {
             console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
             // in case the receipt is available, we consider that only the execution failed but the transaction went through.
             // So we don't consider this to be an error.
@@ -81,9 +81,9 @@ export class TxRunnerWeb3 {
       )
     } else {
       try {
-        const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true})
+        const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
         cb(null, res.transactionHash)
-      } catch (e)  {
+      } catch (e) {
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
         // in case the receipt is available, we consider that only the execution failed but the transaction went through.
         // So we don't consider this to be an error.
@@ -122,7 +122,7 @@ export class TxRunnerWeb3 {
         console.log(errNetWork)
         return
       }
-      const txCopy =  { ...tx, type: undefined, maxFeePerGas: undefined, gasPrice: undefined }
+      const txCopy = { ...tx, type: undefined, maxFeePerGas: undefined, gasPrice: undefined }
       if (network && network.lastBlock) {
         if (network.lastBlock.baseFeePerGas) {
           // the sending stack (web3.js / metamask need to have the type defined)

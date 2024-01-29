@@ -109,7 +109,7 @@ describe('testRunner', () => {
         it('should return contract content of given github path', () => {
           const expt: object = {
             cleanUrl: 'ethereum/remix-project/libs/remix-url-resolver/tests/example_1/greeter.sol',
-            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'}),
+            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8' }),
             type: 'github'
           }
           assert.deepEqual(results, expt)
@@ -139,7 +139,7 @@ describe('testRunner', () => {
         it('should return contract content of given github path', () => {
           const expt: object = {
             cleanUrl: 'ethereum/remix-project/libs/remix-url-resolver/tests/example_1/greeter.sol',
-            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'}) + '\n',
+            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8' }) + '\n',
             type: 'github'
           }
           assert.deepEqual(results, expt)
@@ -169,7 +169,7 @@ describe('testRunner', () => {
         it('should return contract content of given github path', () => {
           const expt: object = {
             cleanUrl: 'ethereum/remix-project/libs/remix-url-resolver/tests/example_1/greeter.sol',
-            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'}),
+            content: fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8' }),
             type: 'github'
           }
           assert.deepEqual(results, expt)
@@ -257,7 +257,7 @@ describe('testRunner', () => {
           assert.equal(Object.keys(results).length, 3)
         })
         it('should return contract content from IPFS url', () => {
-          const content = fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8'})
+          const content = fs.readFileSync(__dirname + '/example_1/greeter.sol', { encoding: 'utf8' })
           const expt: object = {
             content: content,
             cleanUrl: 'QmcuCKyokk9Z6f65ADAADNiS2R2xCjfRkv7mYBSWDwtA7M',

@@ -1,9 +1,9 @@
 import React from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {Plugin} from '@remixproject/engine'
-import {AppModal} from '@remix-ui/app'
-import {PermissionHandlerDialog, PermissionHandlerValue} from '@remix-ui/permission-handler'
-import {Profile} from '@remixproject/plugin-utils'
+import { FormattedMessage } from 'react-intl'
+import { Plugin } from '@remixproject/engine'
+import { AppModal } from '@remix-ui/app'
+import { PermissionHandlerDialog, PermissionHandlerValue } from '@remix-ui/permission-handler'
+import { Profile } from '@remixproject/plugin-utils'
 
 const profile = {
   name: 'permissionhandler',
@@ -89,7 +89,7 @@ export class PermissionHandlerPlugin extends Plugin {
         if (!this.permissions[to.name][method][from.name]) return this.openPermission(from, to, method, message, sensitiveCall)
       }
 
-      const {allow, hash} = sensitiveCall ? this.sessionPermissions[to.name][method][from.name] : this.permissions[to.name][method][from.name]
+      const { allow, hash } = sensitiveCall ? this.sessionPermissions[to.name][method][from.name] : this.permissions[to.name][method][from.name]
       if (!allow) {
         const warning = this.notAllowWarning(from, to, method)
         const warnEl =
@@ -97,9 +97,9 @@ export class PermissionHandlerPlugin extends Plugin {
           <span>{ warning }</span>
           <div className='d-flex flex-row'>
             <span onClick={()=>{}}>To change the permission go to </span>
-            <span className='px-2' style={{fontWeight: 'bolder'}}>Plugin Manager</span>
-            <img alt="" id="permissionModalImagesFrom" src="/assets/img/pluginManager.webp" style={{height: '1rem', width: '1rem'}} />
-            <span className='pl-1' style={{fontWeight: 'bolder'}}> / Permissions</span>
+            <span className='px-2' style={{ fontWeight: 'bolder' }}>Plugin Manager</span>
+            <img alt="" id="permissionModalImagesFrom" src="/assets/img/pluginManager.webp" style={{ height: '1rem', width: '1rem' }} />
+            <span className='pl-1' style={{ fontWeight: 'bolder' }}> / Permissions</span>
           </div>
         </div>
         this.call('notification', 'toast', warnEl)
@@ -130,7 +130,7 @@ export class PermissionHandlerPlugin extends Plugin {
     }
     const modal: AppModal = {
       id: 'PermissionHandler',
-      title: <FormattedMessage id="permissionHandler.permissionNeededFor" values={{to: to.displayName || to.name}} />,
+      title: <FormattedMessage id="permissionHandler.permissionNeededFor" values={{ to: to.displayName || to.name }} />,
       message: <PermissionHandlerDialog plugin={this} theme={await this.getTheme()} value={value}></PermissionHandlerDialog>,
       okLabel: <FormattedMessage id="permissionHandler.accept" />,
       cancelLabel: <FormattedMessage id="permissionHandler.decline" />

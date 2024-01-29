@@ -1,7 +1,7 @@
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {AbstractProvider} from './abstract-provider'
+import { FormattedMessage } from 'react-intl'
+import { AbstractProvider } from './abstract-provider'
 
 const profile = {
   name: 'basic-http-provider',
@@ -49,7 +49,7 @@ export class ExternalHttpProvider extends AbstractProvider {
           </div>
           <br />
           <br />
-          <FormattedMessage id="udapp.externalHttpProviderText3" values={{b: (chunks) => <b><>{chunks}</></b>}} />
+          <FormattedMessage id="udapp.externalHttpProviderText3" values={{ b: (chunks) => <b><>{chunks}</></b> }} />
           <br />
           <br />
           <FormattedMessage

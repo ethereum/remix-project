@@ -32,7 +32,7 @@ export class DebuggerSolidityState {
     }
 
     if (this.stepManager.currentStepIndex !== index) return
-    
+
     if (!this.storageResolver) {
       return
     }

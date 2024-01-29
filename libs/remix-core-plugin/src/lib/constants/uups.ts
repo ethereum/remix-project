@@ -140,7 +140,6 @@ export const UUPSupgradeAbi = {
   "type": "function"
 }
 
-
 export const UUPSupgradeToAndCallAbi = {
   "inputs": [
     {

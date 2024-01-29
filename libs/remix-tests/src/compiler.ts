@@ -25,7 +25,7 @@ export function writeTestAccountsContract (accounts: string[]) {
     body += `return accounts[index];`
   } else {
     body = `return address(0);`
-  }  
+  }
   return testAccountContract.replace('>accounts<', body)
 }
 
@@ -91,7 +91,7 @@ export function compileFileOrFiles (filename: string, isDirectory: boolean, opts
   const filepath: string = (isDirectory ? filename : path.dirname(filename))
   const importsCallback = (url, cb) => {
     try {
-      if(fs.existsSync(url)) cb(null, fs.readFileSync(url, 'utf-8'))
+      if (fs.existsSync(url)) cb(null, fs.readFileSync(url, 'utf-8'))
       else {
         const urlResolver = new RemixURLResolver()
         urlResolver.resolve(url).then((result) => cb(null, result.content)).catch((error) => cb(error.message))

@@ -11,4 +11,4 @@ module.exports = {
       uint p = 45;
     }
   }
-`}
+` }

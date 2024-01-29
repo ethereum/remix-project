@@ -59,7 +59,7 @@ const EXEC_RESULT = {
 }
 
 const EXEC_RESULT_ERROR = {
-  exceptionError: 'this is an error'  
+  exceptionError: 'this is an error'
 }
 
 tape('converts node transaction result to RemixTx', function (t) {

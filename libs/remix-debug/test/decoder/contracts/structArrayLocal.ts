@@ -81,4 +81,4 @@ contract structArrayLocal {
         arrayStruct.c = enumdef.three;
     }
 }
-`}
+` }

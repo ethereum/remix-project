@@ -275,12 +275,12 @@ export class RemixdClient extends PluginClient {
     })
     this.watcher.on('unlink', async (f: string) => {
       if (this.isLoaded) {
-        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)    
+        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), false)
       }
     })
     this.watcher.on('unlinkDir', async (f: string) => {
       if (this.isLoaded) {
-        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)    
+        this.emit('removed', utils.relativePath(f, this.currentSharedFolder), true)
       }
     })
   }

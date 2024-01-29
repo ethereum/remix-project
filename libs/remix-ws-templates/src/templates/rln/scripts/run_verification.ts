@@ -45,13 +45,13 @@ function hashNullifier(message: any): bigint {
 async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
   console.log('calculate')
   await snarkjs.wtns.calculate(signals, wasm, wtns);
-  
+
   console.log('check')
-  await snarkjs.wtns.check(r1cs, wtns, logger);  
+  await snarkjs.wtns.check(r1cs, wtns, logger);
 
   console.log('prove')
   const { proof, publicSignals } = await snarkjs.groth16.prove(zkey_final, wtns);
-  
+
   const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof, logger);
   console.log('zk proof validity', verified);
   return {
@@ -70,33 +70,33 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
     // @ts-ignore
     const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.wasm', true);
     // @ts-ignore
-    const wasm = new Uint8Array(wasmBuffer);   
-     
+    const wasm = new Uint8Array(wasmBuffer);
+
     const zkey_final = {
       type: "mem",
       data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/build/zk_setup.txt')))
     }
-    const wtns = { type: "mem" };   
+    const wtns = { type: "mem" };
 
     const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/build/verification_key.json'))
-  
+
     // build list of identity commitments
     const secrets = []
     const identityCommitments = []
     const rateCommitments = []
     const userMessageLimit = 0x2
-    for (let k = 0; k < 2; k++) {      
+    for (let k = 0; k < 2; k++) {
       const identitySecret = BigInt(ethers.utils.hexlify(ethers.utils.randomBytes(32)))
       secrets.push(identitySecret)
-  
+
       const identityCommitment = poseidon([identitySecret])
       const rateCommitment = poseidon([identityCommitment, userMessageLimit])
       identityCommitments.push(identityCommitment)
       rateCommitments.push(rateCommitment)
     }
-    
+
     let tree
-  
+
     try {
       tree = new IncrementalMerkleTree(poseidon, 20, BigInt(0), 2, rateCommitments) // Binary tree.
     } catch (e) {

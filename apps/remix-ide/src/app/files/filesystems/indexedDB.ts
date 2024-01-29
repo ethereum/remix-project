@@ -47,7 +47,6 @@ export class IndexedDBStorage extends LightningFS {
   }
 }
 
-
 export class indexedDBFileSystem extends fileSystem {
   constructor() {
     super()

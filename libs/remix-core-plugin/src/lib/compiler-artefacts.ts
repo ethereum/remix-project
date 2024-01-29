@@ -78,9 +78,9 @@ export class CompilerArtefacts extends Plugin {
       saveCompilationPerFileResult(file, source, languageVersion, data)
     })
   }
-  
+
   /**
-   * Get artefacts for last compiled contract 
+   * Get artefacts for last compiled contract
    * * @returns last compiled contract compiler abstract
    */
   getLastCompilationResult () {
@@ -120,14 +120,14 @@ export class CompilerArtefacts extends Plugin {
 
   /**
    * Get a particular contract output/artefacts from a compiler output of a Solidity file compilation
-   * @param compilerOutput compiler output 
+   * @param compilerOutput compiler output
    * @param contractName contract name
    * @returns arefacts object, with fully qualified name (e.g; contracts/1_Storage.sol:Storage) as key
    */
   _getAllContractArtefactsfromOutput (compilerOutput, contractName) {
     const contractArtefacts = {}
     for (const filename in compilerOutput) {
-      if(Object.keys(compilerOutput[filename]).includes(contractName)) contractArtefacts[filename + ':' + contractName] = compilerOutput[filename][contractName]
+      if (Object.keys(compilerOutput[filename]).includes(contractName)) contractArtefacts[filename + ':' + contractName] = compilerOutput[filename][contractName]
     }
     return contractArtefacts
   }
@@ -141,10 +141,10 @@ export class CompilerArtefacts extends Plugin {
    */
   async _populateAllContractArtefactsFromFE (path, contractName, contractArtefacts) {
     const dirList = await this.call('fileManager', 'dirList', path)
-    if(dirList && dirList.length) {
+    if (dirList && dirList.length) {
       for (const dirPath of dirList) {
         // check if directory contains an 'artifacts' folder and a 'build-info' folder inside 'artifacts'
-        if(dirPath === path + '/artifacts' && await this.call('fileManager', 'exists', dirPath + '/build-info')) {
+        if (dirPath === path + '/artifacts' && await this.call('fileManager', 'exists', dirPath + '/build-info')) {
           const buildFileList = await this.call('fileManager', 'fileList', dirPath + '/build-info')
           // process each build-info file to populate the artefacts for contractName
           for (const buildFile of buildFileList) {
@@ -156,13 +156,13 @@ export class CompilerArtefacts extends Plugin {
             Object.assign(contractArtefacts, artefacts)
           }
         } else await this._populateAllContractArtefactsFromFE (dirPath, contractName, contractArtefacts)
-      } 
+      }
     } else return
   }
 
   /**
    * Get artefacts for a contract (called by script-runner)
-   * @param name contract name or fully qualified name i.e. <filename>:<contractname> e.g: contracts/1_Storage.sol:Storage 
+   * @param name contract name or fully qualified name i.e. <filename>:<contractname> e.g: contracts/1_Storage.sol:Storage
    * @returns artefacts for the contract
    */
   async getArtefactsByContractName (name) {
@@ -173,12 +173,12 @@ export class CompilerArtefacts extends Plugin {
       const nameArr = fullyQualifiedName.split(':')
       const filename = nameArr[0]
       const contract = nameArr[1]
-      if(Object.keys(contractsDataByFilename).includes(filename) && contractsDataByFilename[filename][contract]) 
+      if (Object.keys(contractsDataByFilename).includes(filename) && contractsDataByFilename[filename][contract])
         return contractsDataByFilename[filename][contract]
       else {
         const allContractsData = {}
         await this._populateAllContractArtefactsFromFE ('contracts', contract, allContractsData)
-        if(allContractsData[fullyQualifiedName]) return { fullyQualifiedName, artefact: allContractsData[fullyQualifiedName]}
+        if (allContractsData[fullyQualifiedName]) return { fullyQualifiedName, artefact: allContractsData[fullyQualifiedName] }
         else throw new Error(`Could not find artifacts for ${fullyQualifiedName}. Compile contract to generate artifacts.`)
       }
     } else {

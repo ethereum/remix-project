@@ -44,7 +44,7 @@ export class CompilerImports extends Plugin {
         return {}
       }
     })
-    
+
   }
 
   onActivation(): void {
@@ -155,7 +155,7 @@ export class CompilerImports extends Plugin {
       if (targetPath && this.currentRequest) {
         const canCall = await this.askUserPermission('resolveAndSave', 'This action will update the path ' + targetPath)
         if (!canCall) throw new Error('No permission to update ' + targetPath)
-      }      
+      }
       const provider = await this.call('fileManager', 'getProviderOf', url)
       if (provider) {
         if (provider.type === 'localhost' && !provider.isConnected()) {

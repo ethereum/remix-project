@@ -78,7 +78,7 @@ export class fsPlugin extends ElectronPlugin {
         try {
           path = fixPath(path)
           const stat = await this.call('fs', 'stat', path)
-          if(!stat) return undefined
+          if (!stat) return undefined
           stat.isDirectory = () => stat.isDirectoryValue
           stat.isFile = () => !stat.isDirectoryValue
           return stat
@@ -90,7 +90,7 @@ export class fsPlugin extends ElectronPlugin {
         try {
           path = fixPath(path)
           const stat = await this.call('fs', 'lstat', path)
-          if(!stat) return undefined
+          if (!stat) return undefined
           stat.isDirectory = () => stat.isDirectoryValue
           stat.isFile = () => !stat.isDirectoryValue
           return stat
@@ -116,7 +116,7 @@ export class fsPlugin extends ElectronPlugin {
       await this.call('fileManager', 'refresh')
     })
     this.on('fs', 'error', async (error: string) => {
-      if(error === 'ENOSPC'){
+      if (error === 'ENOSPC'){
         this.call('notification', 'alert', {
           id: 'fsError',
           message: 'Cannot watch file changes. There are too many files in your project.'

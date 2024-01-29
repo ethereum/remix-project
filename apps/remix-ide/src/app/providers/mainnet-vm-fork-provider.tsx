@@ -1,5 +1,5 @@
 import * as packageJson from '../../../../../package.json'
-import {BasicVMProvider} from './vm-provider'
+import { BasicVMProvider } from './vm-provider'
 
 export class MainnetForkVMProvider extends BasicVMProvider {
   nodeUrl: string

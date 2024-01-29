@@ -24,7 +24,6 @@ interface Token {
     }
 }
 
-
 interface Location {
     start: {
         line: number
@@ -594,7 +593,6 @@ export type Statement =
 type ASTMap<U> = { [K in ASTNodeTypeString]: U extends { type: K } ? U : never }
 type ASTTypeMap = ASTMap<ASTNode>
 
-
 export const astNodeTypes = [
   'SourceUnit',
   'PragmaDirective',
@@ -673,9 +671,6 @@ export const astNodeTypes = [
   'InvalidNode'
 ] as const
 
-
-
-
 export const binaryOpValues = [
   '+',
   '-',
@@ -724,9 +719,4 @@ export const unaryOpValues = [
   '!',
 ] as const
 export type UnaryOp = typeof unaryOpValues[number]
-
-
-
-
-
 

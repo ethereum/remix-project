@@ -4,7 +4,7 @@ let provider: Provider = null
 self.onmessage = (e: MessageEvent) => {
   const data = e.data
   switch (data.cmd) {
-  case 'init': 
+  case 'init':
   {
     provider = new Provider({ fork: data.fork, nodeUrl: data.nodeUrl, blockNumber: data.blockNumber })
     provider.init().then(() => {
@@ -40,7 +40,7 @@ self.onmessage = (e: MessageEvent) => {
         stamp: data.stamp
       })
     }
-      
+
     break
   }
   case 'addAccount':
@@ -48,7 +48,7 @@ self.onmessage = (e: MessageEvent) => {
     if (provider) {
       provider.Accounts._addAccount(data.privateKey, data.balance)
     }
-      
+
     break
   }
   case 'newAccount':
@@ -67,11 +67,11 @@ self.onmessage = (e: MessageEvent) => {
             result: address,
             stamp: data.stamp
           })
-        }          
+        }
       })
     }
-      
+
     break
-  }  
+  }
   }
 }

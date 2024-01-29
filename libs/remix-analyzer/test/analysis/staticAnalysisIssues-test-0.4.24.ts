@@ -29,11 +29,11 @@ test('staticAnalysisIssues.functionParameterPassingError', function (t) {
   const res: CompilationResult = compile('functionParameters.sol')
   const Module: any = checksEffectsInteraction
   const statRunner: StatRunner = new StatRunner()
-  
+
   t.doesNotThrow(() => {
-    statRunner.runWithModuleList(res, [{ name: new Module().name, mod: new Module()}])
+    statRunner.runWithModuleList(res, [{ name: new Module().name, mod: new Module() }])
   }, 'Analysis should not throw')
 
-  const reports = statRunner.runWithModuleList(res, [{ name: new Module().name, mod: new Module()}])
+  const reports = statRunner.runWithModuleList(res, [{ name: new Module().name, mod: new Module() }])
   t.ok(!reports.some((mod: AnalysisReport) => mod.report.some((rep: AnalysisReportObj) => rep.warning.includes('INTERNAL ERROR')), 'Should not have internal errors'))
 })

@@ -158,7 +158,7 @@ export class Transactions {
     this.vmContext.web3().flagNextAsDoNotRecordEvmSteps()
     processTx(this.txRunnerInstance, payload, true, (error, value: VMexecutionResult) => {
       if (error) return cb(error)
-      const result: any = value.result      
+      const result: any = value.result
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
         try {
           const msg = `0x${result.execResult.returnValue.toString('hex') || '0'}`
