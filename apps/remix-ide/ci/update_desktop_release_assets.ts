@@ -1,6 +1,8 @@
 import {Octokit} from 'octokit'
 import * as fs from 'fs'
 import * as path from 'path'
+import YAML from 'yaml'
+import crypto from 'crypto'
 
 const owner = 'bunsenstraat'
 const repo = 'remix-desktop'
@@ -58,6 +60,33 @@ async function removeAsset(asset) {
   })
 }
 
+async function hashFile(file): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const hash = crypto.createHash('sha512').setEncoding('base64');
+    // hash.on('error', reject).setEncoding(encoding);
+    fs.createReadStream(
+      file,
+      Object.assign({}, {}, {
+        highWaterMark: 1024 * 1024,
+        /* better to use more memory but hash faster */
+      })
+    )
+      .on('error', reject)
+      .on('end', () => {
+        hash.end();
+        console.log('hash done');
+        console.log(hash.read());
+        resolve(hash.digest('base64'));
+      })
+      .pipe(
+        hash,
+        {
+          end: false,
+        }
+      );
+  });
+}
+
 async function main() {
   const allReleases = await getAllReleases()
   const version = await getVersionFromPackageJson()
@@ -81,6 +110,60 @@ async function main() {
       headers: headers,
     })
     release = r.data
+  }
+
+
+  let ymlFiles = await readReleaseFilesFromLocalDirectory()
+  ymlFiles = ymlFiles.filter((file) => file.endsWith('.yml') && file.startsWith('latest'))
+
+  console.log(`Found ${ymlFiles.length} yml files to upload`)
+
+  // read and parse yml latest files
+  // the yml files contain the sha512 hash and file size of the executable
+  // we need to recalculate the hash and file size of the executable
+  // and update the yml files
+  // this is because the executable is resigned after the yml files are created
+  for (const file of ymlFiles) {
+    const content = fs.readFileSync(path.join(__dirname, '../../../release', file), 'utf8')
+    const parsed = YAML.parse(content)
+    const hashes:{
+      url: string,
+      sha512: string,
+      size: number
+    }[] = []
+    if(parsed.files) {
+      console.log(`Found`, parsed.files)
+      for (const f of parsed.files) {
+        const executable = f.url
+        const exists = fs.existsSync(path.join(__dirname, '../../../release', executable))
+        if (!exists) {
+          console.log(`File ${executable} does not exist on local fs. Skipping...`)
+          continue
+        }else{
+          console.log(`File ${executable} exists on local fs. Recalculating hash...`)
+          // calculate sha512 hash of executable
+          const hash:string = await hashFile(path.join(__dirname, '../../../release', executable))
+          console.log(hash)
+          // calculate file size of executable
+          const stats = fs.statSync(path.join(__dirname, '../../../release', executable))
+          const fileSizeInBytes = stats.size
+          console.log(fileSizeInBytes)
+          hashes.push({
+            url: executable,
+            sha512: hash,
+            size: fileSizeInBytes
+          })
+          if(parsed.path === executable) {
+            parsed.sha512 = hash
+            parsed.size = fileSizeInBytes
+          }
+        }
+      }
+    }
+    console.log(hashes)
+    parsed.files = hashes
+    const newYml = YAML.stringify(parsed)
+    fs.writeFileSync(path.join(__dirname, '../../../release', file), newYml)
   }
 
   let files = await readReleaseFilesFromLocalDirectory()
