@@ -1,6 +1,6 @@
 {
   "name": "remixdesktop",
-  "version": "0.0.16-Alpha",
+  "version": "0.0.17-Alpha",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
@@ -51,7 +51,7 @@
     "axios": "^1.6.1",
     "byline": "^5.0.0",
     "chokidar": "^3.5.3",
-    "electron-updater": "^6.1.7",
+    "electron-updater": "^6.1.8",
     "express": "^4.18.2",
     "isomorphic-git": "^1.24.2",
     "node-pty": "^0.10.1",
