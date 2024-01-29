@@ -6,7 +6,7 @@ import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryR
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin, workspaceExists } from './workspace'
 import { QueryParams } from '@remix-project/remix-lib'
-import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
+import { fetchContractFromEtherscan, fetchContractFromBlockscout } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
 import isElectron  from 'is-electron'
 import { Actions, FileTree } from '../types'
@@ -23,7 +23,8 @@ export type UrlParametersType = {
   gist: string,
   code: string,
   url: string,
-  address: string
+  address: string,
+  blockscout: string
 }
 
 const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
@@ -65,6 +66,33 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       const filePath = await loadWorkspacePreset('code-template')
       plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+    } else if (params.address && params.blockscout) {
+      if (params.address.startsWith('0x') && params.address.length === 42 && params.blockscout.length > 0) {
+        const contractAddress = params.address
+        const blockscoutUrl = params.blockscout
+        plugin.call('notification', 'toast', `Looking for contract verified on ${blockscoutUrl} for contract address ${contractAddress} .....`)
+        let data
+        let count = 0
+        try {
+          const workspaceName = 'code-sample'
+          let filePath
+          const target = `/${blockscoutUrl}/${contractAddress}`
+
+          data = await fetchContractFromBlockscout(plugin, blockscoutUrl, contractAddress, target, false)
+          if (await workspaceExists(workspaceName)) workspaceProvider.setWorkspace(workspaceName)
+          else await createWorkspaceTemplate(workspaceName, 'code-template')
+          plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+          dispatch(setCurrentWorkspace({ name: workspaceName, isGitRepo: false }))
+          count = count + (Object.keys(data.compilationTargets)).length
+          for (filePath in data.compilationTargets)
+            await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+
+          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+          plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '': 's'} from ${blockscoutUrl} network for contract address ${contractAddress} !!`)
+        } catch (error) {
+          await basicWorkspaceInit(workspaces, workspaceProvider)
+        }
+      } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else if (params.address) {
       if (params.address.startsWith('0x') && params.address.length === 42) {
         const contractAddress = params.address
