@@ -35,7 +35,7 @@ export class AppUpdaterPlugin extends ElectronBasePlugin {
     })
     autoUpdater.on('error', (err) => {
       console.log('Error in auto-updater. ' + err);
-      this.sendToLog('Error in auto-updater. ' + err)
+      this.sendToLog('Cannot find updates...')
     })
     autoUpdater.on('download-progress', (progressObj) => {
       let log_message = "Download speed: " + progressObj.bytesPerSecond;
