@@ -386,7 +386,7 @@ module.exports = {
       .openFile('src/Counter.sol')
       .pause(1000)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`contract Counter is BaseHook {`) !== -1,
+        browser.assert.ok(content.indexOf(`contract Counter is BaseHook { `) !== -1,
           'Incorrect content')
       })
   }, 
