@@ -33,7 +33,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
       if (!e.currentTarget.contains(e.relatedTarget)) {
         e.stopPropagation()
         if (document.activeElement !== this) {
-          !window.testmode && handleHide()
+          // !window.testmode && handleHide()
         }
       }
     }

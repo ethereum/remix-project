@@ -71,12 +71,15 @@ module.exports = {
 
   'Should connect a local plugin #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
+    /*
       .execute(function () {
         window.testmode = true
       })
+      */
       .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
       .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
+      // .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
+      .pause(5000)
       .waitForElementVisible('*[data-id="localPluginName"]')
       .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', testData.pluginName)
       .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
