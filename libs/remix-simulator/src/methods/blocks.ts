@@ -1,6 +1,6 @@
 import { toHex } from 'web3-utils'
 import { VMContext } from '../vm-context'
-import { bigIntToHex } from '@ethereumjs/util'
+import { bigIntToHex, bytesToHex } from '@ethereumjs/util'
 
 export class Blocks {
   vmContext: VMContext
@@ -43,12 +43,12 @@ export class Blocks {
     }
 
     const transactions = block.transactions.map((t) => {
-      const hash = '0x' + t.hash().toString('hex')
+      const hash = bytesToHex(t.hash())
       const tx = this.vmContext.txByHash[hash]
       const receipt = this.vmContext.currentVm.web3vm.txsReceipt[hash]
       if (receipt) {
         return {
-          blockHash: '0x' + block.hash().toString('hex'),
+          blockHash: bytesToHex(block.hash()),
           blockNumber: bigIntToHex(block.header.number),
           from: receipt.from,
           gas: bigIntToHex(receipt.gas),
@@ -89,7 +89,7 @@ export class Blocks {
 
   toHex (value) {
     if (!value) return '0x0'
-    const v = value.toString('hex')
+    const v = bytesToHex(value)
     return ((v === '0x' || v === '') ? '0x0' : ('0x' + v))
   }
 
@@ -97,12 +97,12 @@ export class Blocks {
     const block = this.vmContext.blocks[payload.params[0]]
 
     const transactions = block.transactions.map((t) => {
-      const hash = '0x' + t.hash().toString('hex')
+      const hash = bytesToHex(t.hash())
       const tx = this.vmContext.txByHash[hash]
       const receipt = this.vmContext.currentVm.web3vm.txsReceipt[hash]
       if (receipt) {
         return {
-          blockHash: '0x' + block.hash().toString('hex'),
+          blockHash: bytesToHex(block.hash()),
           blockNumber: bigIntToHex(block.header.number),
           from: receipt.from,
           gas: toHex(receipt.gas),

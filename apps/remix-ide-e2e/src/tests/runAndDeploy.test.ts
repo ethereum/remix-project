@@ -33,7 +33,7 @@ module.exports = {
 
   'Should sign message using account key #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="settingsRemixRunSignMsg"]')
-      .switchEnvironment('vm-merge')
+      .switchEnvironment('vm-paris')
       .pause(2000)
       .click('*[data-id="settingsRemixRunSignMsg"]')
       .pause(2000)
@@ -266,7 +266,7 @@ module.exports = {
       .openFile('.states/vm-shanghai/state.json')
       .getEditorValue((content) => {
         browser
-          .assert.ok(content.includes('"latestBlockNumber": "0x02"'), 'State is saved')
+          .assert.ok(content.includes('"latestBlockNumber": "0x2"'), 'State is saved')
       })
   },
 
@@ -303,7 +303,7 @@ module.exports = {
       .pause(100000)
       .getEditorValue((content) => {
         browser
-          .assert.ok(content.includes('"latestBlockNumber": "0x01"'), 'State is saved')
+          .assert.ok(content.includes('"latestBlockNumber": "0x1"'), 'State is saved')
       })
   },
 
@@ -324,7 +324,7 @@ module.exports = {
       .openFile('.states/vm-shanghai/state.json')
       .getEditorValue((content) => {
         browser
-          .assert.ok(content.includes('"latestBlockNumber": "0x02"'), 'State is unchanged')
+          .assert.ok(content.includes('"latestBlockNumber": "0x2"'), 'State is unchanged')
       })
       .end()
   }

@@ -1,12 +1,12 @@
 'use strict'
-import { bufferToHex } from '@ethereumjs/util'
+import { bytesToHex } from '@ethereumjs/util'
 import { isHexString } from 'ethjs-util'
 
 function convertToPrefixedHex (input) {
   if (input === undefined || input === null || isHexString(input)) {
     return input
   } else if (Buffer.isBuffer(input)) {
-    return bufferToHex(input)
+    return bytesToHex(input)
   }
   return '0x' + input.toString(16)
 }

@@ -1,8 +1,7 @@
 import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
 import { fromWei, toBigInt } from 'web3-utils'
-import { privateToAddress, hashPersonalMessage, isHexString } from '@ethereumjs/util'
+import { privateToAddress, hashPersonalMessage, isHexString, bytesToHex } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
-import {toBuffer} from '@ethereumjs/util'
 import { ExecutionContext } from '../execution-context'
 
 export class VMProvider {
@@ -110,7 +109,7 @@ export class VMProvider {
     const { privateKey, balance } = newAccount
     this.worker.postMessage({ cmd: 'addAccount', privateKey: privateKey, balance })
     const privKey = Buffer.from(privateKey, 'hex')
-    return '0x' + privateToAddress(privKey).toString('hex')
+    return bytesToHex(privateToAddress(privKey))
   }
 
   newAccount (_passwordPromptCb, cb) {
@@ -133,7 +132,7 @@ export class VMProvider {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
     this.web3.eth.sign(message, account)
-      .then(signedData => cb(null, '0x' + messageHash.toString('hex'), signedData))
+      .then(signedData => cb(null, bytesToHex(messageHash), signedData))
       .catch(error => cb(error))
   }
 
