@@ -44,7 +44,7 @@ export function isSSTOREInstruction (step) {
 }
 
 export function isSHA3Instruction (step) {
-  return step.op === 'SHA3'
+  return step.op === 'SHA3' || step.op === 'KECCAK256'
 }
 
 export function newContextStorage (step) {

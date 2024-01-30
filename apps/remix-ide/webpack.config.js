@@ -6,7 +6,7 @@ const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-const axios = require('axios')
+const rustbnWasm = require('rustbn-wasm')
 
 const versionData = {
   version: version,
@@ -68,13 +68,15 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     readline: false,
     child_process: false,
     buffer: require.resolve('buffer/'),
-    vm: require.resolve('vm-browserify')
+    vm: require.resolve('vm-browserify'),
+    'rustbn-wasm': require.resolve('rustbn-wasm')
   }
 
   // add externals
   config.externals = {
     ...config.externals,
-    solc: 'solc'
+    solc: 'solc',
+    'rustbn-wasm': rustbnWasm
   }
 
   // uncomment this to enable react profiling
@@ -113,6 +115,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
       process: 'process/browser',
+      'rustbn-wasm': 'rustbn-wasm'
     })
   )
 
