@@ -27,6 +27,7 @@ export const FileSystemContext = createContext<{
   dispatchRenamePath: (oldPath: string, newPath: string) => Promise<void>,
   dispatchDownloadPath: (path:string) => Promise<void>,
   dispatchCopyFile: (src: string, dest: string) => Promise<void>,
+  dispatchCopyShareURL: (path: string) => Promise<void>,
   dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
   dispatchRunScript: (path: string) => Promise<void>,
   dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,

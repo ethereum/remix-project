@@ -105,6 +105,7 @@ export interface FileExplorerProps {
     dispatchUploadFile: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
     dispatchUploadFolder: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
     dispatchCopyFile: (src: string, dest: string) => Promise<void>,
+    dispatchCopyShareURL: (path:string) => Promise<void>,
     dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
     dispatchRunScript: (path: string) => Promise<void>,
     dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
@@ -165,6 +166,7 @@ export interface FileExplorerContextMenuProps {
   copy?: (path: string, type: string) => void
   paste?: (destination: string, type: string) => void
   copyFileName?: (path: string, type: string) => void
+  copyShareURL?: (path: string, type: string) => void
   copyPath?: (path: string, type: string) => void
   generateUml?: (path: string) => Promise<void>
   uploadFile?: (target: EventTarget & HTMLInputElement) => void

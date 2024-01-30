@@ -151,7 +151,7 @@ export interface CompilerInputOptions {
     remappings?: string[]
 }
 
-export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'berlin' | 'london' | 'paris' | null
+export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'berlin' | 'london' | 'paris' | 'shanghai' | 'cancun' | null
 
 export type Language = 'Solidity' | 'Yul'
 
