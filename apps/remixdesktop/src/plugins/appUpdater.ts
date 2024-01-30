@@ -16,6 +16,7 @@ export class AppUpdaterPlugin extends ElectronBasePlugin {
     this.methods = [...super.methods]
 
     autoUpdater.autoDownload = false
+    autoUpdater.disableDifferentialDownload = false
 
     autoUpdater.on('checking-for-update', () => {
       console.log('Checking for update...');
@@ -99,7 +100,7 @@ class AppUpdaterPluginClient extends ElectronBasePluginClient {
   }
 
   async install(): Promise<void> {
-    autoUpdater.quitAndInstall()
+    autoUpdater.quitAndInstall(true, true)
   }
 
   async checkForUpdates(): Promise<void> {
