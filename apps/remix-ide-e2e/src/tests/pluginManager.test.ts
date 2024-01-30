@@ -17,7 +17,7 @@ module.exports = {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
 
-  'Should Load Plugin Manager': function (browser: NightwatchBrowser) {
+  'Should Load Plugin Manager #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .pause(3000)
       .click('*[plugin="pluginManager"]')
@@ -26,7 +26,7 @@ module.exports = {
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'PLUGIN MANAGER')
   },
 
-  'Should Search for plugins': function (browser: NightwatchBrowser) {
+  'Should Search for plugins #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentSearchInput"]')
       .keys('debugger')
@@ -45,7 +45,7 @@ module.exports = {
       .keys(browser.Keys.BACK_SPACE)
   },
 
-  'Should activate plugins': function (browser: NightwatchBrowser) {
+  'Should activate plugins #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentPluginManager"]')
       .scrollAndClick('*[data-id="pluginManagerComponentActivateButtondebugger"]')
@@ -57,7 +57,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonZoKrates"]', 60000)
   },
 
-  'Should deactivate plugins': function (browser: NightwatchBrowser) {
+  'Should deactivate plugins #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentPluginManager"]')
       .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]', 60000)
@@ -69,7 +69,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]', 60000)
   },
 
-  'Should connect a local plugin': function (browser: NightwatchBrowser) {
+  'Should connect a local plugin #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .execute(function () {
         window.testmode = true
@@ -87,7 +87,7 @@ module.exports = {
       .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react')
   },
 
-  'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {
+  'Should display error message for creating already existing plugin #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
       .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
@@ -107,7 +107,7 @@ module.exports = {
       .assert.containsText('*[data-shared="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
   },
 
-  'Should load back installed plugins after reload': function (browser: NightwatchBrowser) {
+  'Should load back installed plugins after reload #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]',3000)
       .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
