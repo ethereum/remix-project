@@ -28,6 +28,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
     publishFolderToGist,
     copy,
     copyFileName,
+    copyShareURL,
     copyPath,
     paste,
     runScript,
@@ -206,11 +207,15 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
                 break
               case 'Copy name':
                 copyFileName(path, type)
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copyName'])
                 break
               case 'Copy path':
                 copyPath(path, type)
-                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copy'])
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copyPath'])
+                break
+              case 'Copy share URL':
+                copyShareURL(path, type)
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'copyShareURL'])
                 break
               case 'Paste':
                 paste(path, type)

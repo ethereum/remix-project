@@ -535,6 +535,11 @@ export function Workspace() {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleCopyShareURLClick = (path: string, _type: string) => {
+    global.dispatchCopyShareURL(path)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCopyFilePathClick = (path: string, _type: string) => {
     navigator.clipboard.writeText(path)
   }
@@ -1098,6 +1103,7 @@ export function Workspace() {
                   dispatchUploadFile={global.dispatchUploadFile}
                   dispatchUploadFolder={global.dispatchUploadFolder}
                   dispatchCopyFile={global.dispatchCopyFile}
+                  dispatchCopyShareURL={global.dispatchCopyShareURL}
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
                   dispatchRunScript={global.dispatchRunScript}
@@ -1157,6 +1163,7 @@ export function Workspace() {
                   dispatchUploadFile={global.dispatchUploadFile}
                   dispatchUploadFolder={global.dispatchUploadFolder}
                   dispatchCopyFile={global.dispatchCopyFile}
+                  dispatchCopyShareURL={global.dispatchCopyShareURL}
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
                   dispatchRunScript={global.dispatchRunScript}
@@ -1300,6 +1307,7 @@ export function Workspace() {
           paste={handlePasteClick}
           copyFileName={handleCopyFileNameClick}
           copyPath={handleCopyFilePathClick}
+          copyShareURL={handleCopyShareURLClick}
           emit={emitContextMenuEvent}
           pageX={state.focusContext.x}
           pageY={state.focusContext.y}

@@ -59,6 +59,13 @@ export const contextMenuActions: MenuItems = [{
   label: '',
   group: 1
 }, {
+//   id: 'copyShareURL',
+//   name: 'Copy share URL',
+//   type: ['file'],
+//   multiselect: false,
+//   label: '',
+//   group: 1
+// }, {
   id: 'download',
   name: 'Download',
   type: ['file', 'folder', 'workspace'],
