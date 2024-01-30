@@ -113,7 +113,7 @@
   "filePanel.hashchecker": "Hash Checker",
   "filePanel.rln": "Rate-Limiting Nullifier",
   "filePanel.breakthroughLabsUniswapv4Hooks": "Breakthrough-Labs Hooks",
-  "filePanel.uniswapV4Periphery": "v4 Periphery",
+  "filePanel.uniswapV4Template": "v4 Template",
   "filePanel.uniswapV4HookBookMultiSigSwapHook": "HookBook MultiSigSwapHook",
   "filePanel.transparent": "Transparent",
   "filePanel.initGitRepoTitle": "Check option to initialize workspace as a new git repository",
