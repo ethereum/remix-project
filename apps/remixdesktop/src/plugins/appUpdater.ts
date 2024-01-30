@@ -1,6 +1,7 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
 import { autoUpdater } from "electron-updater"
+import { app } from 'electron';
 
 const profile = {
   displayName: 'appUpdater',
@@ -100,7 +101,8 @@ class AppUpdaterPluginClient extends ElectronBasePluginClient {
   }
 
   async install(): Promise<void> {
-    autoUpdater.quitAndInstall(true, true)
+    autoUpdater.quitAndInstall()
+    app.exit()
   }
 
   async checkForUpdates(): Promise<void> {
