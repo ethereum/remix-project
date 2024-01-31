@@ -1,37 +1,13 @@
-import debuggerJson from './debugger.json';
-import filePanelJson from './filePanel.json';
-import homeJson from './home.json';
-import panelJson from './panel.json';
-import pluginManagerJson from './pluginManager.json';
-import searchJson from './search.json';
-import settingsJson from './settings.json';
-import solidityJson from './solidity.json';
-import terminalJson from './terminal.json';
-import udappJson from './udapp.json';
-import solidityUnitTestingJson from './solidityUnitTesting.json';
-import permissionHandlerJson from './permissionHandler.json';
-import electronJson from './electron.json';
-import solUmlGenJson from './solUmlGen.json'
-import remixAppJson from './remixApp.json'
-import remixUiTabsJson from './remixUiTabs.json'
-import circuitJson from './circuit.json';
+function readAndCombineJsonFiles() {
+  const dataContext = require.context('./', true, /\.json$/)
 
-export default {
-  ...debuggerJson,
-  ...filePanelJson,
-  ...homeJson,
-  ...panelJson,
-  ...pluginManagerJson,
-  ...searchJson,
-  ...settingsJson,
-  ...solidityJson,
-  ...terminalJson,
-  ...udappJson,
-  ...solidityUnitTestingJson,
-  ...permissionHandlerJson,
-  ...electronJson,
-  ...solUmlGenJson,
-  ...remixAppJson,
-  ...remixUiTabsJson,
-  ...circuitJson
+  let combinedData = {}
+  dataContext.keys().forEach((key) => {
+    const jsonData = dataContext(key)
+    combinedData = {...combinedData, ...jsonData}
+  })
+
+  return combinedData
 }
+
+export default readAndCombineJsonFiles()

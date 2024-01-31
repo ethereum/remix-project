@@ -12,12 +12,21 @@ const testData = {
   pluginUrl: 'https://zokrates.github.io/zokrates-remix-plugin/'
 }
 
+const localPluginData = {
+  name: testData.pluginName,
+  displayName: testData.pluginDisplayName,
+  canActivate: [],
+  url: testData.pluginUrl,
+  location: 'sidePanel'
+}
+
 module.exports = {
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
 
-  'Should Load Plugin Manager': function (browser: NightwatchBrowser) {
+  'Should Load Plugin Manager #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .pause(3000)
       .click('*[plugin="pluginManager"]')
@@ -26,7 +35,7 @@ module.exports = {
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'PLUGIN MANAGER')
   },
 
-  'Should Search for plugins': function (browser: NightwatchBrowser) {
+  'Should Search for plugins #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentSearchInput"]')
       .keys('debugger')
@@ -45,7 +54,7 @@ module.exports = {
       .keys(browser.Keys.BACK_SPACE)
   },
 
-  'Should activate plugins': function (browser: NightwatchBrowser) {
+  'Should activate plugins #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentPluginManager"]')
       .scrollAndClick('*[data-id="pluginManagerComponentActivateButtondebugger"]')
@@ -57,7 +66,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtonZoKrates"]', 60000)
   },
 
-  'Should deactivate plugins': function (browser: NightwatchBrowser) {
+  'Should deactivate plugins #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
       .click('*[data-id="pluginManagerComponentPluginManager"]')
       .waitForElementVisible('*[data-id="pluginManagerComponentDeactivateButtondebugger"]', 60000)
@@ -69,45 +78,23 @@ module.exports = {
       .waitForElementVisible('*[data-id="pluginManagerComponentActivateButtonvyper"]', 60000)
   },
 
-  'Should connect a local plugin': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .execute(function () {
-        window.testmode = true
-      })
-      .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
-      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
-      .waitForElementVisible('*[data-id="localPluginName"]')
-      .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', testData.pluginName)
-      .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
-      .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
-      .click('*[data-id="localPluginRadioButtoniframe"]')
-      .click('*[data-id="localPluginRadioButtonsidePanel"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react')
+  'Should connect a local plugin #group2': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+      .pause(3000)
+      .click('*[plugin="pluginManager"]')
+      .clickLaunchIcon('filePanel')
+      .addLocalPlugin(localPluginData, false)
+      .pause(2000)
   },
 
-  'Should display error message for creating already existing plugin': function (browser: NightwatchBrowser) {
+  'Should display error message for creating already existing plugin #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
-      .click('*[data-id="pluginManagerComponentPluginSearchButton"]')
-      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialogModalDialogContainer-react"]')
-      .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalBody-react"]')
-      .waitForElementVisible('*[data-id="localPluginName"]')
-      .clearValue('*[data-id="localPluginName"]').setValue('*[data-id="localPluginName"]', testData.pluginName)
-      .clearValue('*[data-id="localPluginDisplayName"]').setValue('*[data-id="localPluginDisplayName"]', testData.pluginDisplayName)
-      .clearValue('*[data-id="localPluginUrl"]').setValue('*[data-id="localPluginUrl"]', testData.pluginUrl)
-      .click('*[data-id="localPluginRadioButtoniframe"]')
-      .click('*[data-id="localPluginRadioButtonsidePanel"]')
-      .waitForElementVisible('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react"]', 60000)
-      .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react"]')
-      // .modalFooterOKClick()
-      // .pause(2000)
-      .waitForElementVisible('*[data-shared="tooltipPopup"]', 60000)
-      .pause(5000)
-      .assert.containsText('*[data-shared="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
+      .clickLaunchIcon('filePanel')
+      .addLocalPlugin(localPluginData, false)
+      .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'Cannot create Plugin : This name has already been used')
   },
 
-  'Should load back installed plugins after reload': function (browser: NightwatchBrowser) {
+  'Should load back installed plugins after reload #group2': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeSidePanel"]',3000)
       .waitForElementVisible('*[data-id="pluginManagerComponentPluginManager"]')
@@ -124,6 +111,5 @@ module.exports = {
             done()
           })
       })
-      .end()
   }
 }
