@@ -32,7 +32,7 @@ function ActivePluginCard({profile, buttonText, deactivatePlugin}: PluginCardPro
                   tooltipClasses="text-nowrap"
                   tooltipText={<FormattedMessage id="pluginManager.maintainedExternally" />}
                 >
-                  <i aria-hidden="true" className="px-1 text-success fa-circle-exclamation"></i>
+                  <i aria-hidden="true" className="px-1 text-warning far fa-exclamation-circle"></i>
                 </CustomTooltip>)
               }
               {profile.documentation && (
