@@ -4,13 +4,13 @@ import { FormattedMessage } from 'react-intl'
 import { ROOT_PATH } from '../utils/constants'
 
 export type FileHoverIconsProps = {
-  hover: boolean
-  isEditable: boolean
+  hover?: boolean
+  isEditable?: boolean
   file: any
-  handleNewFolderOp: any
-  handleNewFileOp: any
-  renamePathOp: any
-  deletePathOp: any
+  handleNewFolderOp?: any
+  handleNewFileOp?: any
+  renamePathOp?: any
+  deletePathOp?: any
 }
 
 export function FileHoverIcons(props: FileHoverIconsProps) {
