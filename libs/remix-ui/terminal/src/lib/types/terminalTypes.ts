@@ -30,4 +30,12 @@ export interface RemixUiTerminalProps {
     plugin: any,
     onReady: (api: any) => void,
     visible: boolean,
+    ruiTerminalAPI: ruiTerminalAPIType
+}
+
+export type ruiTerminalAPIType = {
+  handleClearConsole: () => void
+  listenOnNetwork: (e: any) => void
+  isVM: () => boolean
+  setSearchInput: (s: string) => void
 }

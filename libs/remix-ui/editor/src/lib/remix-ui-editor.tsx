@@ -150,7 +150,7 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
   \t\t\t\t\t\t\t\tGitter: https://gitter.im/ethereum/remix\n
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
-  \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
+  \t\t\t\t\t\t\t\tX: https://x.com/ethereumremix\n
   `
   const pasteCodeRef = useRef(false)
   const editorRef = useRef(null)

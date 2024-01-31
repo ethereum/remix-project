@@ -398,7 +398,15 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   /* end of block content that gets rendered from script Runner */
 
-  const handleClearConsole = () => {
+  props.ruiTerminalAPI.isVM = () => {
+    return isVM
+  }
+
+  props.ruiTerminalAPI.setSearchInput = (searchInput: string) => {
+    setSearchInput(searchInput)
+  }
+
+  props.ruiTerminalAPI.handleClearConsole = () => {
     setClearConsole(true)
     typeWriterIndexes.current = []
     dispatch({ type: 'clearconsole', payload: [] })
@@ -406,7 +414,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
   /* start of autoComplete */
 
-  const listenOnNetwork = (e: any) => {
+  props.ruiTerminalAPI.listenOnNetwork = (e: any) => {
     const isListening = e.target.checked
     listenOnNetworkAction(props.plugin, isListening)
   }
@@ -561,10 +569,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }))
   }
 
-  const handleToggleTerminal = () => {
-    setIsOpen(!isOpen)
-    props.plugin.call('layout', 'minimize', props.plugin.profile.name, isOpen)
-  }
+
 
   useEffect(() => {
     ;(async () => {
@@ -586,67 +591,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   return (
     ( !props.visible? <></>: 
       <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel" ref={panelRef}>
-        <div className="remix_ui_terminal_bar d-flex">
-          <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
-            <CustomTooltip
-              placement="top"
-              tooltipId="terminalToggle"
-              tooltipClasses="text-nowrap"
-              tooltipText={isOpen ? <FormattedMessage id="terminal.hideTerminal" /> : <FormattedMessage id="terminal.showTerminal" />}
-            >
-              <i
-                className={`mx-2 remix_ui_terminal_toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`}
-                data-id="terminalToggleIcon"
-                onClick={handleToggleTerminal}
-              ></i>
-            </CustomTooltip>
-            <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole}>
-              <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.clearConsole" />}>
-                <i className="fas fa-ban" aria-hidden="true"></i>
-              </CustomTooltip>
-            </div>
-            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
-              <div className="mx-2">0</div>
-            </CustomTooltip>
-            <CustomTooltip
-              placement="top"
-              tooltipId="terminalClear"
-              tooltipClasses="text-nowrap"
-              tooltipText={intl.formatMessage({ id: isVM ? 'terminal.listenVM' : 'terminal.listenTitle'})}
-            >
-              <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
-                <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
-                  <input
-                    className="custom-control-input"
-                    id="listenNetworkCheck"
-                    onChange={listenOnNetwork}
-                    type="checkbox"
-                    disabled={isVM}
-                  />
-                </CustomTooltip>
-                <label
-                  className="form-check-label custom-control-label text-nowrap"
-                  style={{ paddingTop: '0.125rem' }}
-                  htmlFor="listenNetworkCheck"
-                  data-id="listenNetworkCheckInput"
-                >
-                  <FormattedMessage id="terminal.listen" />
-                </label>
-              </div>
-            </CustomTooltip>
-            <div className="remix_ui_terminal_search d-flex align-items-center h-100">
-              <i className="remix_ui_terminal_searchIcon d-flex align-items-center justify-content-center fas fa-search bg-light" aria-hidden="true"></i>
-              <input
-                onChange={(event) => setSearchInput(event.target.value.trim())}
-                type="text"
-                className="remix_ui_terminal_filter border form-control"
-                id="searchInput"
-                placeholder={intl.formatMessage({ id: 'terminal.search' })}
-                data-id="terminalInputSearch"
-              />
-            </div>
-          </div>
-        </div>
         <div tabIndex={-1} className="remix_ui_terminal_container d-flex h-100 m-0 flex-column" data-id="terminalContainer">
           {handleAutoComplete()}
           <div className="position-relative d-flex flex-column-reverse h-100">

@@ -137,9 +137,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   }
 
   props.xTerminalAPI.createTerminal = async (shell?: string) => {
-    console.log('shells ')
     const shells = await plugin.call('xterm', 'getShells')
-    console.log('shells ', shells)
     setShells(shells)
     const pid = await plugin.call('xterm', 'createTerminal', workingDir, shell)
     setSwitchToRemixTerminal(false)
@@ -188,7 +186,8 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
       plugin.call('xterm', 'closeTerminal', pid)
   }
   props.xTerminalAPI.shells = async() => {
-    return await plugin.call('xterm', 'getShells')
+    return shells
+    //return await plugin.call('xterm', 'getShells')
   }
 
   const selectOutput = () => {
