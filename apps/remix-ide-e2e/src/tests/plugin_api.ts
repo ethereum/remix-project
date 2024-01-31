@@ -167,7 +167,7 @@ module.exports = {
   },
 
   'Should connect a local plugin': function (browser: NightwatchBrowser) {
-    browser.addLocalPlugin(localPluginData)
+    browser.addLocalPlugin(localPluginData, true)
       // @ts-ignore
       .frame(0).useXpath()
   },

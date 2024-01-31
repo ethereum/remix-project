@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react' //eslint-disable-line
+import {useIntl} from 'react-intl'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import {helper} from '@remix-project/remix-solidity'
 import './renderer.css'
@@ -11,6 +12,7 @@ interface RendererProps {
 }
 
 export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
+  const intl = useIntl()
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState({
     useSpan: false,
@@ -72,11 +74,7 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
   const askGtp = async () => {
     try {
       const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
-      const message = `
-      solidity code: ${content}
-      error message: ${messageText}
-      explain why the error occurred and how to fix it.
-      `
+      const message = intl.formatMessage({id: 'solidity.openaigptMessage'}, {content, messageText})
       await plugin.call('openaigpt', 'message', message)
       _paq.push(['trackEvent', 'ai', 'openai', 'explainSolidityError'])
     } catch (err) {

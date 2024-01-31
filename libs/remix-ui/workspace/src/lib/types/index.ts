@@ -19,7 +19,7 @@ export interface JSONStandardInput {
   }
 }
 export type MenuItems = action[]
-export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore' | 'hashchecker' | 'rln' | 'breakthroughLabsUniswapv4Hooks' | 'uniswapV4Periphery' | 'uniswapV4HookBookMultiSigSwapHook'
+export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore' | 'hashchecker' | 'rln' | 'breakthroughLabsUniswapv4Hooks' | 'uniswapV4Template' | 'uniswapV4HookBookMultiSigSwapHook'
 export interface WorkspaceProps {
   plugin: FilePanelType
 }
