@@ -7,6 +7,7 @@ import { FlatTreeItemInput } from './flat-tree-item-input';
 import { FlatTreeDrop } from './flat-tree-drop';
 import { getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators';
+import { FileHoverIcons } from './file-explorer-hovericons';
 
 export default function useOnScreen(ref: RefObject<HTMLElement>) {
 
@@ -209,7 +210,9 @@ export const FlatTree = (props: FlatTreeProps) => {
             {file.name}
 
           </div>
-          {getFileStateIcons(file)}
+          <div className="d-flex flex-row gap-1">
+            <div><FileHoverIcons file={file} /></div>{getFileStateIcons(file)}
+          </div>
           </>
         }
       </div>
