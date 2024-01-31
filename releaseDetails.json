@@ -1,10 +1,10 @@
 {
-    "version": "v0.40.0",
+    "version": "v0.42.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Circom v2.1.6 support",
-    "highlight2": "Improved & stable support for Vyper development",
-    "highlight3": "New workspace template: Uniswap HookBook MultiSigSwapHook",
+    "highlight1": "Ask GPT for circom ZKP compiler errors/warnings",
+    "highlight2": "Default Solidity compiler set to 0.8.24 with support of 'Cancun' EVM",
+    "highlight3": "Workspace Template 'Uniswap v4 Periphery' renamed to 'Uniswap v4 Template'",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-40-0-17668192db64"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-42-0-56ec48a49ae0"
   }
