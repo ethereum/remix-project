@@ -17,7 +17,7 @@ function ActivePluginCard({profile, buttonText, deactivatePlugin}: PluginCardPro
           <h6 className="remixui_displayName plugin-name">
             <div>
               {profile.displayName || profile.name}
-              {profile?.maintainedBy?.toLowerCase() == 'remix' ?
+              {profile?.maintainedBy?.toLowerCase() == 'remix' ? (
                 <CustomTooltip
                   placement="right"
                   tooltipId="pluginManagerActiveTitleByRemix"
@@ -25,15 +25,16 @@ function ActivePluginCard({profile, buttonText, deactivatePlugin}: PluginCardPro
                   tooltipText={<FormattedMessage id="pluginManager.maintainedByRemix" />}
                 >
                   <i aria-hidden="true" className="px-1 text-success fas fa-check"></i>
-                </CustomTooltip>
-                : <CustomTooltip
+                </CustomTooltip>)
+                : (<CustomTooltip
                   placement="right"
                   tooltipId="pluginManagerActiveTitleExternally"
                   tooltipClasses="text-nowrap"
                   tooltipText={<FormattedMessage id="pluginManager.maintainedExternally" />}
                 >
                   <i aria-hidden="true" className="px-1 text-success fa-circle-exclamation"></i>
-                </CustomTooltip>}
+                </CustomTooltip>)
+              }
               {profile.documentation && (
                 <CustomTooltip
                   placement="right"
