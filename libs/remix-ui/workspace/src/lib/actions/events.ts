@@ -54,7 +54,6 @@ export const listenOnPluginEvents = (filePanelPlugin) => {
   })
 
   plugin.on('fileManager', 'rootFolderChanged', async (path: string) => {
-    console.log('rootFolderChanged', path)
     rootFolderChanged(path)
   })
 
