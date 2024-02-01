@@ -33,7 +33,7 @@
   "pluginManager.ok": "OK",
   "pluginManager.cancel": "Cancel",
   "pluginManager.maintainedByRemix": "Maintained by Remix",
-  "pluginManager.maintainedExternally": "Be aware that the plugin is not maintained by Remix",
+  "pluginManager.maintainedExternally": "Not maintained by Remix",
   "pluginManager.linkToDoc": "Link to documentation",
   "pluginManager.versionAlpha": "Version Alpha",
   "pluginManager.versionBeta": "Version Beta",
