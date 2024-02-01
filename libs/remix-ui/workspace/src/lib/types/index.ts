@@ -130,6 +130,7 @@ export interface FileExplorerProps {
     toGist: (path?: string, type?: string) => void
     handleNewFileInput: (parentFolder?: string) => Promise<void>
     handleNewFolderInput: (parentFolder?: string) => Promise<void>
+    deletePath?: (path: string[]) => Promise<void>
     dragStatus: (status: boolean) => void
 }
 

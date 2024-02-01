@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, SyntheticEvent, useTransition } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, SyntheticEvent } from 'react' // eslint-disable-line
 import { useIntl } from 'react-intl'
 import { TreeView } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
@@ -27,12 +27,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
     handleContextMenu,
     handleNewFileInput,
     handleNewFolderInput,
+    deletePath,
     uploadFile,
     uploadFolder,
     fileState
   } = props
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
-  const [isPending, startTransition] = useTransition();
+  // const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -404,6 +405,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           moveFile={handleFileMove}
           moveFolder={handleFolderMove}
           handleClickFolder={handleClickFolder}
+          createNewFile={handleNewFileInput}
+          createNewFolder={handleNewFolderInput}
         />
       </div>
     </div>
