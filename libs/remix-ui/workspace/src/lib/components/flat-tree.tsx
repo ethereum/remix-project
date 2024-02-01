@@ -215,7 +215,7 @@ export const FlatTree = (props: FlatTreeProps) => {
             {file.name}
 
           </div>
-          <div className="d-flex flex-row gap-1">
+          <div className="d-flex flex-row align-items-center">
             <div>
               <FileHoverIcons file={file} />
             </div> {getFileStateIcons(file)}
