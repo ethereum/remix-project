@@ -17,7 +17,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
 
   return (
     <>
-      {(!props.hover && !props.isEditable) && <div className="d-flex flex-row align-items-center" style={{ marginLeft: '6rem' }}>
+      {(props.hover && !props.isEditable) && <div className="d-flex flex-row align-items-center" style={{ marginLeft: '6rem' }}>
         {
           props.file.isDirectory ? (
             <>

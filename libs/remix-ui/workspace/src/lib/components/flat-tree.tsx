@@ -217,7 +217,11 @@ export const FlatTree = (props: FlatTreeProps) => {
           </div>
           <div className="d-flex flex-row align-items-center">
             <div>
-              <FileHoverIcons file={file} />
+              <FileHoverIcons
+                file={file}
+                isEditable={focusEdit && file.path && focusEdit.element === file.path}
+                hover={hover.length > 0}
+              />
             </div> {getFileStateIcons(file)}
           </div>
           </>
