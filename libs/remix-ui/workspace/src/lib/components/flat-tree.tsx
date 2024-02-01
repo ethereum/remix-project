@@ -8,6 +8,7 @@ import { FlatTreeDrop } from './flat-tree-drop';
 import { getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators';
 import { FileHoverIcons } from './file-explorer-hovericons';
+import { deletePath } from '../actions';
 
 export default function useOnScreen(ref: RefObject<HTMLElement>) {
 
@@ -37,6 +38,10 @@ interface FlatTreeProps {
   moveFile: (dest: string, src: string) => void
   moveFolder: (dest: string, src: string) => void
   fileState: fileDecoration[]
+  createNewFile?: any
+  createNewFolder?: any
+  deletePath?: (path: string | string[]) => void | Promise<void>
+  renamePath?: (path: string, newName: string) => void | Promise<void>
 }
 
 let mouseTimer: any = {
@@ -45,7 +50,7 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder } = props
+  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder, deletePath, renamePath } = props
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
     path: string,
@@ -211,7 +216,9 @@ export const FlatTree = (props: FlatTreeProps) => {
 
           </div>
           <div className="d-flex flex-row gap-1">
-            <div><FileHoverIcons file={file} /></div>{getFileStateIcons(file)}
+            <div>
+              <FileHoverIcons file={file} />
+            </div> {getFileStateIcons(file)}
           </div>
           </>
         }
