@@ -42,7 +42,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       const ask = split[split.length - 2].trimStart()
       if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
         // use the code generation model
-        const {data} = await axios.post('https://gpt-chat.remixproject.org/infer', {comment: ask.replace('///', '')})
+
+        const {data} = await this.props.plugin.call('solcoder_completion', 'message', ask)
         const parsedData = JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: parsedData
@@ -60,21 +61,9 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     if (token.isCancellationRequested) {
       return
     }
-
-    let result
-    try {
-      result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
-    } catch (err) {
-      return
-    }
-
     const generatedText = (result as any).output[0].generated_text as string
-    // the generated text remove a space from the context...
     let clean = generatedText
-    if (generatedText.indexOf('@custom:dev-run-script./') !== -1) {
-      clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
-    }
-    clean = clean.replace(word, '')
+
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: clean
     };

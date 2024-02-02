@@ -1,6 +1,6 @@
 import EventEmitter from 'events'
 
-export type SuggestOptions = { max_new_tokens: number, temperature: number, top_k: number, do_sample: boolean }
+export type SuggestOptions = { max_new_tokens: number, temperature: number, top_k: number, top_p:number, do_sample: boolean, stream_result:boolean}
 
 export class SuggestionService {
   worker: Worker

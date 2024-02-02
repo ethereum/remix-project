@@ -8,7 +8,7 @@ const profile = {
   name: 'copilot-suggestion',
   displayName: 'copilot-suggestion',
   description: 'Get Solidity suggestions in editor',
-  methods: ['suggest', 'init', 'uninstall', 'status', 'isActivate', 'useRemoteService', 'discardRemoteService'],
+  methods: ['suggest', 'init', 'uninstall', 'status', 'isActivate', 'useRemoteService', 'discardRemoteService', 'useconfig'],
   version: '0.1.0-alpha',
   maintainedBy: "Remix"
 }
@@ -18,6 +18,7 @@ export class CopilotSuggestion extends Plugin {
   remoteService: string
   context: string
   ready: boolean
+  config: { [id: string]: string }
   constructor() {
     super(profile)
     this.service = new SuggestionService()
@@ -30,10 +31,15 @@ export class CopilotSuggestion extends Plugin {
     this.service.events.on('ready', (data) => {
       this.ready = true
     })
+    this.config = {}
   }
 
   useRemoteService(service: string) {
     this.remoteService = service
+  }
+
+  useconfig(config ){
+    this.config = config
   }
 
   discardRemoteService() {
@@ -61,12 +67,16 @@ export class CopilotSuggestion extends Plugin {
     const options: SuggestOptions = {
       do_sample: false,
       top_k: 0,
+      top_p: 0,
+      stream_result: false,
       temperature: temperature || 0,
       max_new_tokens: max_new_tokens || 0
     }
 
     if (this.remoteService) {
-      const {data} = await axios.post(this.remoteService, {context: content, max_new_words: options.max_new_tokens, temperature: options.temperature})
+      let confs = {context: content, max_new_words: options.max_new_tokens, temperature: options.temperature}
+      // confs = {confs, ...this.config}
+      const {data} = await axios.post(this.remoteService, confs)
       const parsedData = JSON.parse(data).trimStart()
       return {output: [{generated_text: parsedData}]}
     } else {
