@@ -21,8 +21,10 @@ export const createCircuit = async (entryPoint: string, apiKey: string) => {
         if (file === entryPoint) continue
         files.push(new File([deps[file]], file))
     }
-    
+
+    console.log(`creating circuit "${entryPoint}"...`)
     const circuitProject = await client.createCircuit(files)
+    console.log(`circuit created ${circuitProject.circuit_id}`)
     return circuitProject
 }
 
@@ -34,7 +36,9 @@ export const createCircuit = async (entryPoint: string, apiKey: string) => {
  */
 export const proveCircuit = async (circuitId: string, signals:  { [id: string]: string }, apiKey: string) => {
     client.authorize({ apiKey })
+    console.log(`proving circuit ${circuitId}...`)
     const proof = await client.proveCircuit(circuitId, JSON.stringify(signals))
+    console.log(`proof id: ${proof.proof_id}`)
     return proof
 }
 
