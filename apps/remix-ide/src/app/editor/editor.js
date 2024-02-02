@@ -52,7 +52,8 @@ class Editor extends Plugin {
       cairo: 'cairo',
       ts: 'typescript',
       move: 'move',
-      circom: 'circom'
+      circom: 'circom',
+      nr: 'rust'
     }
 
     this.activated = false
