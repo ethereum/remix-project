@@ -34,6 +34,8 @@
   "filePanel.tssoltestghaction": "Mocha Chai Test Workflow",
   "filePanel.workspace.addscriptetherscan": "Adds scripts which can be used to interact with the Etherscan API",
   "filePanel.addscriptetherscan": "Add Etherscan scripts",
+  "filePanel.workspace.addscriptsindri": "Adds scripts for interacting with Sindri, a zk proof generation remote service",
+  "filePanel.addscriptsindri": "Add Sindri ZK scripts",
   "filePanel.workspace.addscriptdeployer": "Adds scripts which can be used to deploy contracts",
   "filePanel.addscriptdeployer": "Add contract deployer scripts",
   "filePanel.workspace.slitherghaction": "Adds a preset yml file to run slither analysis on github actions CI",

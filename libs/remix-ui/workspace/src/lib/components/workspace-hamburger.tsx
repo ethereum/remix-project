@@ -155,7 +155,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
         fa="fa-kit fa-ts-logo"
         hideOption={hideWorkspaceOptions || hideFileOperations}
         actionOnClick={() => {
-          props.addHelperScripts('etherscan')
+          props.addHelperScripts('etherscanScripts')
           props.hideIconsMenu(!showIconsMenu)
         }}
         platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
@@ -165,7 +165,17 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
         fa="fa-kit fa-ts-logo"
         hideOption={hideWorkspaceOptions || hideFileOperations}
         actionOnClick={() => {
-          props.addHelperScripts('deployer')
+          props.addHelperScripts('contractDeployerScripts')
+          props.hideIconsMenu(!showIconsMenu)
+        }}
+        platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
+      ></HamburgerMenuItem>
+      <HamburgerMenuItem
+        kind="addscriptsindri"
+        fa="fa-kit fa-ts-logo"
+        hideOption={hideWorkspaceOptions || hideFileOperations}
+        actionOnClick={() => {
+          props.addHelperScripts('sindriScripts')
           props.hideIconsMenu(!showIconsMenu)
         }}
         platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
