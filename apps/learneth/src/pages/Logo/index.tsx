@@ -1,7 +1,5 @@
 import React, {useEffect} from 'react'
 import {useAppDispatch} from '../../redux/hooks'
-import logo from '../../assets/logo-background.svg'
-import './index.css'
 
 const LogoPage: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -12,8 +10,8 @@ const LogoPage: React.FC = () => {
 
   return (
     <div>
-      <div className="remixLogo">
-        <img src={logo} />
+      <div>
+        <img className="w-100" src="https://remix.ethereum.org/assets/img/remixLogo.webp" />
       </div>
     </div>
   )
