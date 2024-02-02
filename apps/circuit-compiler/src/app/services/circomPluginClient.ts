@@ -54,6 +54,7 @@ export class CircomPluginClient extends PluginClient {
       fileContent = await this.call('fileManager', 'readFile', path)
     }
     this.lastParsedFiles = await this.resolveDependencies(path, fileContent)
+    console.log(this.lastParsedFiles)
     const parsedOutput = this.compiler.parse(path, this.lastParsedFiles)
 
     try {
@@ -313,7 +314,7 @@ export class CircomPluginClient extends PluginClient {
         if (path.indexOf('https://') === 0) {
           // Regular expression to match include statements and make deps imports uniform
           const includeRegex = /include "(.+?)";/g
-          const replacement = 'include "circomlib/circuits/$1";'
+          const replacement = 'include "/circomlib/circuits/$1";'
 
           dependencyContent = dependencyContent.replace(includeRegex, replacement)
         } else {
@@ -321,7 +322,7 @@ export class CircomPluginClient extends PluginClient {
           // if include is not absolute, resolve it using the parent path of the current file opened in editor
             const absIncludePath = pathModule.resolve('/' + filePath.slice(0, filePath.lastIndexOf('/')), '/' + path)
 
-            output[filePath] = output[filePath].replace(`${include}`, `${absIncludePath}`)
+            output[filePath] = output[filePath].replace(`${include}`, `/${absIncludePath}`)
             include = absIncludePath
           }
         }
@@ -333,7 +334,7 @@ export class CircomPluginClient extends PluginClient {
           absFilePath = include.startsWith('circomlib') ? absFilePath.substring(1) : absFilePath
           if (!blackPath.includes(absFilePath)) {
             if(!includeName.startsWith('circomlib')) {
-              dependencyContent = dependencyContent.replace(`${includeName}`, `${absFilePath}`)
+              dependencyContent = dependencyContent.replace(`${includeName}`, `/${absFilePath}`)
               return absFilePath
             }
             return includeName
