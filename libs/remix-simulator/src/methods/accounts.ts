@@ -71,7 +71,8 @@ export class Web3Accounts {
     return {
       eth_accounts: this.eth_accounts.bind(this),
       eth_getBalance: this.eth_getBalance.bind(this),
-      eth_sign: this.eth_sign.bind(this)
+      eth_sign: this.eth_sign.bind(this),
+      eth_chainId: this.eth_chainId.bind(this)
     }
   }
 
@@ -102,5 +103,9 @@ export class Web3Accounts {
     const data = account.sign(message)
 
     cb(null, data.signature)
+  }
+
+  eth_chainId (_payload, cb) {
+    return cb(null, 1337)
   }
 }
