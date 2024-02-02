@@ -1,14 +1,14 @@
-import { type ModelType } from '../store';
+import {type ModelType} from '../store'
 
 const Model: ModelType = {
   namespace: 'loading',
-  state: { screen: true },
+  state: {screen: true},
   reducers: {
-    save(state, { payload }) {
-      return { ...state, ...payload };
+    save(state, {payload}) {
+      return {...state, ...payload}
     },
   },
   effects: {},
-};
+}
 
-export default Model;
+export default Model
