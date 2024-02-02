@@ -42,7 +42,7 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
-import { contractDeployerScripts, etherscanScripts } from '@remix-project/remix-ws-templates'
+import * as templates from '@remix-project/remix-ws-templates'
 
 declare global {
   interface Window {
@@ -867,13 +867,9 @@ export const createSlitherGithubAction = async () => {
   plugin.call('fileManager', 'open', path)
 }
 
-const scriptsRef = {
-  deployer: contractDeployerScripts,
-  etherscan: etherscanScripts,
-}
 export const createHelperScripts = async (script: string) => {
-  if (!scriptsRef[script]) return
-  await scriptsRef[script](plugin)
+  if (!templates[script]) return
+  await templates[script](plugin)
   plugin.call('notification', 'toast', 'scripts added in the "scripts" folder')
 }
 
