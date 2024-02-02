@@ -1,48 +1,38 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faChevronRight,
-  faChevronDown,
-  faPlayCircle,
-} from '@fortawesome/free-solid-svg-icons';
-import Markdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import RepoImporter from '../../components/RepoImporter';
-import './index.css';
+import React, {useEffect} from 'react'
+import {Link} from 'react-router-dom'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faChevronRight, faChevronDown, faPlayCircle} from '@fortawesome/free-solid-svg-icons'
+import Markdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
+import remarkGfm from 'remark-gfm'
+import {useAppDispatch, useAppSelector} from '../../redux/hooks'
+import RepoImporter from '../../components/RepoImporter'
+import './index.css'
 
 function HomePage(): JSX.Element {
-  const [openKeys, setOpenKeys] = React.useState<string[]>([]);
+  const [openKeys, setOpenKeys] = React.useState<string[]>([])
 
-  const isOpen = (key: string) => openKeys.includes(key);
+  const isOpen = (key: string) => openKeys.includes(key)
   const handleClick = (key: string) => {
-    setOpenKeys(
-      isOpen(key)
-        ? openKeys.filter((item) => item !== key)
-        : [...openKeys, key],
-    );
-  };
+    setOpenKeys(isOpen(key) ? openKeys.filter((item) => item !== key) : [...openKeys, key])
+  }
 
-  const dispatch = useAppDispatch();
-  const { list, detail, selectedId } = useAppSelector(
-    (state) => state.workshop,
-  );
+  const dispatch = useAppDispatch()
+  const {list, detail, selectedId} = useAppSelector((state) => state.workshop)
 
-  const selectedRepo = detail[selectedId];
+  const selectedRepo = detail[selectedId]
 
   const levelMap: any = {
     1: 'Beginner',
     2: 'Intermediate',
     3: 'Advanced',
-  };
+  }
 
   useEffect(() => {
     dispatch({
       type: 'workshop/init',
-    });
-  }, []);
+    })
+  }, [])
 
   return (
     <div className="App">
@@ -59,63 +49,37 @@ function HomePage(): JSX.Element {
                       href="#"
                       className="arrow-icon"
                       onClick={() => {
-                        handleClick(item.id);
+                        handleClick(item.id)
                       }}
                     >
-                      <FontAwesomeIcon
-                        size="xs"
-                        icon={isOpen(item.id) ? faChevronDown : faChevronRight}
-                      />
+                      <FontAwesomeIcon size="xs" icon={isOpen(item.id) ? faChevronDown : faChevronRight} />
                     </a>
                     <a
                       href="#"
                       className="workshop-link"
                       onClick={() => {
-                        handleClick(item.id);
+                        handleClick(item.id)
                       }}
                     >
                       {selectedRepo.entities[item.id].name}
                     </a>
-                    <Link
-                      to={`/list?id=${item.id}`}
-                      className="text-decoration-none float-right"
-                    >
+                    <Link to={`/list?id=${item.id}`} className="text-decoration-none float-right">
                       <FontAwesomeIcon icon={faPlayCircle} size="lg" />
                     </Link>
                   </div>
-                  <div
-                    className={`container-fluid bg-light pt-3 mt-2 ${
-                      isOpen(item.id) ? '' : 'description-collapsed'
-                    }`}
-                  >
-                    {levelMap[level] && (
-                      <p className="tag pt-2 pr-1 font-weight-bold small text-uppercase">
-                        {levelMap[level]}
+                  <div className={`container-fluid bg-light pt-3 mt-2 ${isOpen(item.id) ? '' : 'description-collapsed'}`}>
+                    {levelMap[level] && <p className="tag pt-2 pr-1 font-weight-bold small text-uppercase">{levelMap[level]}</p>}
+
+                    {selectedRepo.entities[item.id].metadata.data.tags?.map((tag: string) => (
+                      <p key={tag} className="tag pr-1 font-weight-bold small text-uppercase">
+                        {tag}
                       </p>
-                    )}
+                    ))}
 
-                    {selectedRepo.entities[item.id].metadata.data.tags?.map(
-                      (tag: string) => (
-                        <p
-                          key={tag}
-                          className="tag pr-1 font-weight-bold small text-uppercase"
-                        >
-                          {tag}
-                        </p>
-                      ),
-                    )}
-
-                    {selectedRepo.entities[item.id].steps && (
-                      <div className="d-none">
-                        {selectedRepo.entities[item.id].steps.length} step(s)
-                      </div>
-                    )}
+                    {selectedRepo.entities[item.id].steps && <div className="d-none">{selectedRepo.entities[item.id].steps.length} step(s)</div>}
 
                     <div className="workshop-list_description pb-3 pt-3">
-                      <Markdown
-                        rehypePlugins={[rehypeRaw]}
-                        remarkPlugins={[remarkGfm]}
-                      >
+                      <Markdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
                         {selectedRepo.entities[item.id].description?.content}
                       </Markdown>
                     </div>
@@ -130,7 +94,7 @@ function HomePage(): JSX.Element {
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default HomePage;
+export default HomePage

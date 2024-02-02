@@ -1,50 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  Dropdown,
-  Form,
-  Tooltip,
-  OverlayTrigger,
-} from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faQuestionCircle,
-  faInfoCircle,
-  faChevronRight,
-  faChevronDown,
-} from '@fortawesome/free-solid-svg-icons';
-import { useAppDispatch } from '../../redux/hooks';
-import './index.css';
+import React, {useState, useEffect} from 'react'
+import {Button, Dropdown, Form, Tooltip, OverlayTrigger} from 'react-bootstrap'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faQuestionCircle, faInfoCircle, faChevronRight, faChevronDown} from '@fortawesome/free-solid-svg-icons'
+import {useAppDispatch} from '../../redux/hooks'
+import './index.css'
 
-function RepoImporter({ list, selectedRepo }: any): JSX.Element {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState('');
-  const [branch, setBranch] = useState('');
-  const dispatch = useAppDispatch();
+function RepoImporter({list, selectedRepo}: any): JSX.Element {
+  const [open, setOpen] = useState(false)
+  const [name, setName] = useState('')
+  const [branch, setBranch] = useState('')
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    setName(selectedRepo.name);
-    setBranch(selectedRepo.branch);
-  }, [selectedRepo]);
+    setName(selectedRepo.name)
+    setBranch(selectedRepo.branch)
+  }, [selectedRepo])
 
   const panelChange = () => {
-    setOpen(!open);
-  };
+    setOpen(!open)
+  }
 
-  const selectRepo = (repo: { name: string; branch: string }) => {
-    dispatch({ type: 'workshop/loadRepo', payload: repo });
-  };
+  const selectRepo = (repo: {name: string; branch: string}) => {
+    dispatch({type: 'workshop/loadRepo', payload: repo})
+  }
 
-  const importRepo = (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-    dispatch({ type: 'workshop/loadRepo', payload: { name, branch } });
-  };
+  const importRepo = (event: {preventDefault: () => void}) => {
+    event.preventDefault()
+    dispatch({type: 'workshop/loadRepo', payload: {name, branch}})
+  }
 
   const resetAll = () => {
-    dispatch({ type: 'workshop/resetAll' });
-    setName('');
-    setBranch('');
-  };
+    dispatch({type: 'workshop/resetAll'})
+    setName('')
+    setBranch('')
+  }
 
   return (
     <>
@@ -52,24 +41,13 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
         <div className="container-fluid mb-3 small mt-3">
           Tutorials from:
           <h4 className="mb-1">{selectedRepo.name}</h4>
-          <span className="">
-            Date modified:{' '}
-            {new Date(selectedRepo.datemodified).toLocaleString()}
-          </span>
+          <span className="">Date modified: {new Date(selectedRepo.datemodified).toLocaleString()}</span>
         </div>
       )}
 
-      <div
-        onClick={panelChange}
-        style={{ cursor: 'pointer' }}
-        className="container-fluid d-flex mb-3 small"
-      >
+      <div onClick={panelChange} style={{cursor: 'pointer'}} className="container-fluid d-flex mb-3 small">
         <div className="d-flex pr-2 pl-2">
-          <FontAwesomeIcon
-            className="arrow-icon pt-1"
-            size="xs"
-            icon={open ? faChevronDown : faChevronRight}
-          />
+          <FontAwesomeIcon className="arrow-icon pt-1" size="xs" icon={open ? faChevronDown : faChevronRight} />
         </div>
         <div className="d-flex">Import another tutorial repo</div>
       </div>
@@ -77,10 +55,7 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
       {open && (
         <div className="container-fluid">
           <Dropdown className="w-100">
-            <Dropdown.Toggle
-              className="btn btn-secondary w-100"
-              id="dropdownBasic1"
-            >
+            <Dropdown.Toggle className="btn btn-secondary w-100" id="dropdownBasic1">
               Select a repo
             </Dropdown.Toggle>
             <Dropdown.Menu className="w-100">
@@ -88,7 +63,7 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
                 <Dropdown.Item
                   key={`${item.name}/${item.branch}`}
                   onClick={() => {
-                    selectRepo(item);
+                    selectRepo(item)
                   }}
                 >
                   {item.name}-{item.branch}
@@ -96,11 +71,7 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-          <div
-            onClick={resetAll}
-            className="small mb-3"
-            style={{ cursor: 'pointer' }}
-          >
+          <div onClick={resetAll} className="small mb-3" style={{cursor: 'pointer'}}>
             reset list
           </div>
         </div>
@@ -113,19 +84,14 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
               <Form.Label className="mr-2" htmlFor="name">
                 REPO
               </Form.Label>
-              <OverlayTrigger
-                placement="right"
-                overlay={
-                  <Tooltip id="tooltip-right">ie username/repository</Tooltip>
-                }
-              >
+              <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">ie username/repository</Tooltip>}>
                 <FontAwesomeIcon icon={faQuestionCircle} />
               </OverlayTrigger>
               <Form.Control
                 id="name"
                 required
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setName(e.target.value)
                 }}
                 value={name}
               />
@@ -134,24 +100,15 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
                 id="branch"
                 required
                 onChange={(e) => {
-                  setBranch(e.target.value);
+                  setBranch(e.target.value)
                 }}
                 value={branch}
               />
             </Form.Group>
-            <Button
-              className="btn btn-success start w-100"
-              type="submit"
-              disabled={!name || !branch}
-            >
+            <Button className="btn btn-success start w-100" type="submit" disabled={!name || !branch}>
               Import {name}
             </Button>
-            <a
-              href="https://github.com/bunsenstraat/remix-learneth-plugin/blob/master/README.md"
-              className="d-none"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href="https://github.com/bunsenstraat/remix-learneth-plugin/blob/master/README.md" className="d-none" target="_blank" rel="noreferrer">
               <FontAwesomeIcon icon={faInfoCircle} /> how to setup your repo
             </a>
           </Form>
@@ -159,7 +116,7 @@ function RepoImporter({ list, selectedRepo }: any): JSX.Element {
         <hr />
       </div>
     </>
-  );
+  )
 }
 
-export default RepoImporter;
+export default RepoImporter
