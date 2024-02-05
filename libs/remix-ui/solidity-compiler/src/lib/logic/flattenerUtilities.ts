@@ -1,8 +1,9 @@
 const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm;
 const SPDX_SOLIDITY_REGEX = /^\s*\/\/ SPDX-License-Identifier:.*$/gm;
 
-export function getDependencyGraph(ast, target) {
+export function getDependencyGraph(ast, target: string) {
   const graph = tsort();
+  console.log(graph, target, ast)
   const visited = {};
   visited[target] = 1;
   _traverse(graph, visited, ast, target);
@@ -12,23 +13,25 @@ export function getDependencyGraph(ast, target) {
 export function concatSourceFiles(files: any[], sources: any) {
   let concat = '';
   for (const file of files) {
-    const source = sources[file].content;
+    const source = sources[file] && sources[file]['content'] && sources[file]['content'].length > 0 ? sources[file]['content'] : '';
     const sourceWithoutImport = source.replace(IMPORT_SOLIDITY_REGEX, '');
     const sourceWithoutSPDX = sourceWithoutImport.replace(SPDX_SOLIDITY_REGEX, '');
     concat += `\n// File: ${file}\n\n`;
     concat += sourceWithoutSPDX;
   }
+  console.log(concat)
   return concat;
 }
 
 function _traverse(graph, visited, ast, name) {
   let currentAst = null
-  currentAst = ast[name].ast
+  console.log(ast)
+  currentAst = ast
   const dependencies = _getDependencies(currentAst);
   for (const dependency of dependencies) {
     const path = resolve(name, dependency);
     if (path in visited) {
-      // continue; // fixes wrong ordering of source in flattened file
+      continue; // fixes wrong ordering of source in flattened file
     }
     visited[path] = 1;
     graph.add(name, path);
@@ -38,7 +41,7 @@ function _traverse(graph, visited, ast, name) {
 
 function _getDependencies(ast) {
   const dependencies = ast?.nodes
-    .filter(node => node?.nodeType === 'ImportDirective')
+    ?.filter(node => node?.nodeType === 'ImportDirective')
     .map(node => node?.file);
   return dependencies;
 }
@@ -48,7 +51,6 @@ function _getDependencies(ast) {
 
 function tsort(initial?: any) {
   const graph = new Graph();
-
   if (initial) {
     initial.forEach(function (entry) {
       Graph.prototype.add.apply(graph, entry);

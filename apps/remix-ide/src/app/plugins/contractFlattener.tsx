@@ -51,7 +51,7 @@ export class ContractFlattener extends Plugin {
     const appendage = '_flattened.sol'
     const normalized = normalizeContractPath(filePath)
     const path = `${normalized[normalized.length - 2]}${appendage}`
-    const ast = data.sources
+    const ast = data.sources[filePath].ast
     let dependencyGraph
     let sorted
     let result
