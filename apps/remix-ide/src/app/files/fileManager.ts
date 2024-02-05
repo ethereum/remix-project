@@ -24,7 +24,7 @@ const profile = {
   methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'writeFileNoRewrite',
     'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
     'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
-    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule'
+    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson'
   ],
   kind: 'file-system'
 }
@@ -1040,6 +1040,14 @@ class FileManager extends Plugin {
     } catch (e) {
       throw new Error(e)
     }
+  }
+
+  async copyFolderToJson(folder: string) {
+    const provider = this.currentFileProvider()
+    if (provider && provider.copyFolderToJson) {
+      return await provider.copyFolderToJson(folder)
+    }
+    throw new Error('copyFolderToJson not available')    
   }
 }
 
