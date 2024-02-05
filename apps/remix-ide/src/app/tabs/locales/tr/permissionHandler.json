@@ -1,0 +1,13 @@
+{
+"permissionHandler.allPermissionsReset": "Tüm izinler sıfırlandı.",
+"permissionHandler.rememberText": "değişti ve",
+"permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} \"{to}\ konumundan \"{method}\" öğesine erişmek istiyor,"
+"permissionHandler.description": "Açıklama",
+"permissionHandler.noDescriptionProvided": "Açıklama sağlanmadı",
+"permissionHandler.makeSureYouTrustThisPlugin": "Bu çağrıyı işlemekten önce bu eklentiye güvendiğinizden emin olun. Bu özel çağrı için bu seçeneği hatırlamaya karar verirseniz, değer yalnızca geçerli oturum için saklanacaktır.",
+"permissionHandler.rememberThisChoice": "Bu seçimi hatırla",
+"permissionHandler.resetAllPermissions": "Tüm izinleri sıfırla",
+"permissionHandler.permissionNeededFor": "{to} için gerekli izin",
+"permissionHandler.accept": "Kabul et",
+"permissionHandler.decline": "Reddet"
+}

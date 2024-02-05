@@ -1,0 +1,7 @@
+{
+"remixUiTabs.tooltipText1": "Komut dosyasını çalıştır (CTRL + SHIFT + S)",
+"remixUiTabs.tooltipText2": "Derle (CTRL + S)",
+"remixUiTabs.tooltipText3": ".sol veya .yul dosyasını derlemek veya .ts veya .js dosyasını seçip çalıştırmak için dosyayı seçin",
+"remixUiTabs.zoomOut": "Uzaklaştır",
+"remixUiTabs.zoomIn": "Yaklaştır"
+}

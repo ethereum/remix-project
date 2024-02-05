@@ -1,0 +1,10 @@
+{
+  "solUmlGen.pngDownload": "PNG olarak İndir",
+  "solUmlGen.pdfDownload": "PDF olarak İndir",
+  "solUmlGen.pngDownloadTooltip": "UML diyagramını PNG dosyası olarak indir",
+  "solUmlGen.pdfDownloadTooltip": "UML diyagramını PDF dosyası olarak indir",
+  "solUmlGen.text1": "Sözleşmenizi UML Diyagramı olarak görüntülemek için",
+  "solUmlGen.text2": "Sözleşme dosyanıza sağ tıklayın",
+  "solUmlGen.clickOn": "Üzerine tıklayın",
+  "solUmlGen.generateUML": "UML Oluştur"
+}

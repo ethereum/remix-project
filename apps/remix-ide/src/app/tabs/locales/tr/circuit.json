@@ -1,0 +1,15 @@
+{
+"circuit.compiler": "Derleyici",
+"circuit.autoCompile": "Otomatik derleme",
+"circuit.hideWarnings": "Uyarıları gizle",
+"circuit.advancedConfigurations": "Gelişmiş konfigürasyonlar",
+"circuit.compilerConfiguration": "Derleyici konfigürasyonu",
+"circuit.prime": "Prime",
+"circuit.useConfigurationFile": "Konfigürasyon dosyasını kullan",
+"circuit.compile": "Derle",
+"circuit.noFileSelected": "dosya seçilmedi",
+"circuit.generateR1cs": "R1CS Oluştur",
+"circuit.computeWitness": "Tanık Hesapla",
+"circuit.signalInput": "Sinyal Girişi",
+"circuit.compute": "Hesapla"
+}

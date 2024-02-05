@@ -1,0 +1,10 @@
+{
+"panel.author": "Yazar",
+"panel.maintainedBy": "Bakımını Yapan",
+"panel.documentation": "Belgeleme",
+"panel.description": "Açıklama",
+"panel.maintainedByRemix": "Remix Tarafından Bakımı Yapılan",
+"panel.pluginInfo": "Eklenti Bilgisi",
+"panel.linkToDoc": "Belgeleme Bağlantısı",
+"panel.makeAnissue": "Sorun Oluştur"
+}
