@@ -1,0 +1,20 @@
+{
+  "remixApp.scrollToSeeAllTabs": "Scroll to see all tabs",
+  "remixApp.alert": "Alert",
+  "remixApp.ok": "OK",
+  "remixApp.enterText1": "Welcome to Remix IDE",
+  "remixApp.enterText2": "In order to understand your needs better, we would like to know how you typically use Remix",
+  "remixApp.enterText3": "Learning - discovering web3 development",
+  "remixApp.enterText4": "Prototyping - trying out concepts and techniques",
+  "remixApp.enterText5": "Developing  projects - Remix as your main dev tool",
+  "remixApp.enterText6": "Production - only deployments",
+  "remixApp.matomoText1": "An Opt-in version of <a>Matomo</a>, an open source data analytics platform is being used to improve Remix IDE.",
+  "remixApp.matomoText2": "We realize that our users have sensitive information in their code and that their privacy - your privacy - must be protected.",
+  "remixApp.matomoText3": "All data collected through Matomo is stored on our own server - no data is ever given to third parties.",
+  "remixApp.matomoText4": "We do not collect nor store any personally identifiable information (PII).",
+  "remixApp.matomoText5": "For more info, see: <a>Matomo Analytics on Remix iDE</a>.",
+  "remixApp.matomoText6": "You can change your choice in the Settings panel anytime.",
+  "remixApp.matomoTitle": "Help us to improve Remix IDE",
+  "remixApp.accept": "Accept",
+  "remixApp.decline": "Decline"
+}
