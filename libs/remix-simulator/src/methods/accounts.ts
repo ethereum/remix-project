@@ -106,6 +106,6 @@ export class Web3Accounts {
   }
 
   eth_chainId (_payload, cb) {
-    return cb(null, 1337)
+    return cb(null, '0x539') // 0x539 is hex of 1337
   }
 }
