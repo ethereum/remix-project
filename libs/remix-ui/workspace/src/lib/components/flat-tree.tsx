@@ -184,50 +184,60 @@ export const FlatTree = (props: FlatTreeProps) => {
     }
   }, [focusEdit])
 
+  const [onMouseEnter, setOnMouseEnter] = useState(false)
 
   const Row = (index: number) => {
     const node = Object.keys(flatTree)[index]
     const file = flatTree[node]
-    return (<li
-      className={`${labelClass(file)} li_tv`}
-      onMouseOver={() => setHover(file.path)}
-      onMouseOut={() => setHover(file.path)}
-      data-type={file.isDirectory ? 'folder' : 'file'}
-      data-path={`${file.path}`}
-      data-id={`treeViewLitreeViewItem${file.path}`}
-    >
-      <div data-id={`treeViewDivtreeViewItem${file.path}`} className={`d-flex flex-row align-items-center`}>
-        {getIndentLevelDiv(file.path)}
+    return (
+      <li
+        className={`${labelClass(file)} li_tv`}
+        onMouseOver={(e) => {
+          console.log(e)
+          setHover(file.path)
+        }}
+        onMouseOut={() => {
+          setHover(file.path)
+        }}
+        data-type={file.isDirectory ? 'folder' : 'file'}
+        data-path={`${file.path}`}
+        data-id={`treeViewLitreeViewItem${file.path}`}
+        onMouseEnter={() => setOnMouseEnter(true)}
+        onMouseLeave={() => setOnMouseEnter(false)}
+      >
+        <div data-id={`treeViewDivtreeViewItem${file.path}`} className={`d-flex flex-row align-items-center`}>
+          {getIndentLevelDiv(file.path)}
 
-        <div className={`pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : `${getPathIcon(file.path)} pr-2 caret caret_tv`} `}></div>
-        {focusEdit && file.path && focusEdit.element === file.path ?
-          <FlatTreeItemInput
-            editModeOff={editModeOff}
-            file={file} /> :
-          <><div
-            draggable={true}
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
-            className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
-            data-label-type={file.isDirectory ? 'folder' : 'file'}
-            data-label-path={`${file.path}`}
-            key={index}>
-            {file.name}
+          <div className={`pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : `${getPathIcon(file.path)} pr-2 caret caret_tv`} `}></div>
+          {focusEdit && file.path && focusEdit.element === file.path ?
+            <FlatTreeItemInput
+              editModeOff={editModeOff}
+              file={file} /> :
+            <><div
+              draggable={true}
+              onDragStart={onDragStart}
+              onDragEnd={onDragEnd}
+              className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
+              data-label-type={file.isDirectory ? 'folder' : 'file'}
+              data-label-path={`${file.path}`}
+              key={index}>
+              {file.name}
 
-          </div>
-          <div className="d-flex flex-row align-items-center">
-            <div>
-              <FileHoverIcons
-                file={file}
-                isEditable={focusEdit && file.path && focusEdit.element === file.path}
-                hover={hover.length > 0}
-              />
-            </div> {getFileStateIcons(file)}
-          </div>
-          </>
-        }
-      </div>
-    </li>)
+            </div>
+            <div className="d-flex flex-row align-items-center">
+              {!onMouseEnter && (
+                <div>
+                  <FileHoverIcons
+                    file={file}
+                    isEditable={true}
+                  />
+                </div>)}
+              {getFileStateIcons(file)}
+            </div>
+            </>
+          }
+        </div>
+      </li>)
   }
 
   return (<>
