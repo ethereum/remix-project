@@ -4,7 +4,6 @@ import { FormattedMessage } from 'react-intl'
 import { ROOT_PATH } from '../utils/constants'
 
 export type FileHoverIconsProps = {
-  hover?: boolean
   isEditable?: boolean
   file: any
   handleNewFolderOp?: any
@@ -17,7 +16,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
 
   return (
     <>
-      {(props.hover && !props.isEditable) && <div className="d-flex flex-row align-items-center" style={{ marginLeft: '6rem' }}>
+      {<div className="d-flex flex-row align-items-center" style={{ marginLeft: '6rem' }}>
         {
           props.file.isDirectory ? (
             <>
