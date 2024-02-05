@@ -8,11 +8,13 @@ import zhJson from './locales/zh'
 import esJson from './locales/es'
 import frJson from './locales/fr'
 import itJson from './locales/it'
+import trJson from './locales/tr'
 const _paq = window._paq = window._paq || []
 
 const locales = [
   { code: 'zh', name: 'Chinese Simplified', localeName: '简体中文', messages: zhJson },
   { code: 'en', name: 'English', localeName: 'English', messages: enJson },
+  { code: 'tr', name: 'Turkish', localeName: 'Türkçe', messages: trJson },
   { code: 'fr', name: 'French', localeName: 'Français', messages: frJson },
   { code: 'it', name: 'Italian', localeName: 'Italiano', messages: itJson },
   { code: 'es', name: 'Spanish', localeName: 'Español', messages: esJson }
