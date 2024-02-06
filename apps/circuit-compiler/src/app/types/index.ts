@@ -1,6 +1,6 @@
 import { compiler_list } from 'circom_wasm'
 import {Dispatch} from 'react'
-import { CircomPluginClient } from '../services/circomPluginClient'
+import type { CircomPluginClient } from '../services/circomPluginClient'
 
 export type CompilerStatus = "compiling" | "generating" | "computing" | "idle" | "errored" | "warning"
 export interface ICircuitAppContext {
@@ -51,7 +51,8 @@ export type CompilerFeedbackProps = {
   feedback: string | CompilerReport[],
   filePathToId: Record<string, string>,
   openErrorLocation: (location: string, startRange: string) => void,
-  hideWarnings: boolean
+  hideWarnings: boolean,
+  askGPT: (report: CompilerReport) => void
 }
 
 export type CompilerReport = {
@@ -71,7 +72,8 @@ export type CompilerReport = {
 
 export type FeedbackAlertProps = {
   message: string,
-  location: string
+  location: string,
+  askGPT: () => void
 }
 
 export type ConfigurationsProps = {

@@ -61,7 +61,7 @@ declare module 'nightwatch' {
     checkAnnotationsNotPresent(type: string): NightwatchBrowser
     getLastTransactionHash(callback: (hash: string) => void)
     currentWorkspaceIs(name: string): NightwatchBrowser
-    addLocalPlugin(this: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile): NightwatchBrowser
+    addLocalPlugin(this: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile, focus: boolean): NightwatchBrowser
     acceptAndRemember(this: NightwatchBrowser, remember: boolean, accept: boolean): NightwatchBrowser
     clearConsole(this: NightwatchBrowser): NightwatchBrowser
     clearTransactions(this: NightwatchBrowser): NightwatchBrowser

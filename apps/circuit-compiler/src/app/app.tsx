@@ -29,8 +29,6 @@ function App() {
         if (filePath.endsWith('.circom')) {
           dispatch({ type: 'SET_FILE_PATH', payload: filePath })
           plugin.parse(filePath)
-        } else {
-          dispatch({ type: 'SET_FILE_PATH', payload: '' })
         }
       })
       // @ts-ignore
@@ -102,6 +100,9 @@ function App() {
       (async () => {
         if (appState.autoCompile) await compileCircuit(plugin, appState)
       })()
+      dispatch({ type: 'SET_SIGNAL_INPUTS', payload: [] })
+      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
     }
   }, [appState.filePath])
 

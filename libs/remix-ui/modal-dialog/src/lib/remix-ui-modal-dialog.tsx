@@ -26,24 +26,25 @@ export const ModalDialog = (props: ModalDialogProps) => {
   useEffect(() => {
     calledHideFunctionOnce.current = props.hide
     modal.current.focus()
-  }, [props.hide])
 
-  useEffect(() => {
-    function handleBlur(e) {
-      if (!e.currentTarget.contains(e.relatedTarget)) {
-        e.stopPropagation()
-        if (document.activeElement !== this) {
-          !window.testmode && handleHide()
-        }
-      }
-    }
     if (modal.current) {
+      modal.current.removeEventListener('blur', handleBlur)
       modal.current.addEventListener('blur', handleBlur)
     }
     return () => {
       modal.current && modal.current.removeEventListener('blur', handleBlur)
     }
-  }, [modal.current])
+  }, [props.hide])
+
+  function handleBlur(e) {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      e.stopPropagation()
+      if (document.activeElement !== this) {
+        !window.testmode && handleHide()
+        !window.testmode && props.cancelFn && props.cancelFn()
+      }
+    }
+  }
 
   const modalKeyEvent = (keyCode) => {
     if (keyCode === 27) {

@@ -59,6 +59,13 @@ export const contextMenuActions: MenuItems = [{
   label: '',
   group: 1
 }, {
+//   id: 'copyShareURL',
+//   name: 'Copy share URL',
+//   type: ['file'],
+//   multiselect: false,
+//   label: '',
+//   group: 1
+// }, {
   id: 'download',
   name: 'Download',
   type: ['file', 'folder', 'workspace'],
@@ -125,6 +132,7 @@ export const contextMenuActions: MenuItems = [{
 }]
 
 export const fileKeySort = (fileTree: any) => {
+  fileTree = fileTree || {}
   const directories = Object.keys(fileTree).filter((key: string) => !key.includes('....blank') && fileTree[key].isDirectory)
 
   directories.sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()))
