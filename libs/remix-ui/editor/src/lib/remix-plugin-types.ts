@@ -226,7 +226,7 @@ declare interface CondensedCompilationInput {
     optimize: boolean
     /** e.g: 0.6.8+commit.0bbfe453 */
     version: string
-    evmVersion?: 'paris' | 'berlin' | 'istanbul' | 'petersburg' | 'constantinople' | 'byzantium' | 'spuriousDragon' | 'tangerineWhistle' | 'homestead'
+    evmVersion?: 'cancun' | 'shanghai' | 'paris' | 'berlin' | 'istanbul' | 'petersburg' | 'constantinople' | 'byzantium' | 'spuriousDragon' | 'tangerineWhistle' | 'homestead'
 }
 
 declare interface ContentImport {

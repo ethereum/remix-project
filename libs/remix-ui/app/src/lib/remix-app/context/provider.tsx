@@ -1,10 +1,17 @@
 import React, {useReducer} from 'react'
+import {useIntl, IntlShape} from 'react-intl'
 import {modalActionTypes} from '../actions/modals'
 import {AlertModal, AppModal} from '../interface'
 import {modalReducer} from '../reducer/modals'
 import {ModalInitialState} from '../state/modals'
 import {ModalTypes} from '../types'
 import {AppContext, dispatchModalContext, modalContext, platformContext, onLineContext} from './context'
+
+declare global {
+  interface Window {
+    _intl: IntlShape
+  }
+}
 
 export const ModalProvider = ({children = [], reducer = modalReducer, initialState = ModalInitialState} = {}) => {
   const [{modals, toasters, focusModal, focusToaster}, dispatch] = useReducer(reducer, initialState)
@@ -43,9 +50,9 @@ export const ModalProvider = ({children = [], reducer = modalReducer, initialSta
   const alert = (modalData: AlertModal) => {
     return modal({
       id: modalData.id,
-      title: modalData.title || 'Alert',
+      title: modalData.title || window._intl.formatMessage({id: 'remixApp.alert'}),
       message: modalData.message || modalData.title,
-      okLabel: 'OK',
+      okLabel: window._intl.formatMessage({id: 'remixApp.ok'}),
       okFn: (value?: any) => {},
       cancelLabel: '',
       cancelFn: () => {}
@@ -81,6 +88,7 @@ export const ModalProvider = ({children = [], reducer = modalReducer, initialSta
 }
 
 export const AppProvider = ({children = [], value = {}} = null) => {
+  window._intl = useIntl()
   return (
     <AppContext.Provider value={value}>
       <ModalProvider>

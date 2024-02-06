@@ -5,11 +5,11 @@ import { customAction } from '@remixproject/plugin-api'
 import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentLocalFilePath, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin, workspaceExists } from './workspace'
-import { QueryParams } from '@remix-project/remix-lib'
+import { QueryParams, Registry } from '@remix-project/remix-lib'
 import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
 import { Actions, FileTree } from '../types'
-import {Registry} from '@remix-project/remix-lib'
+import IpfsHttpClient from 'ipfs-http-client'
 
 export * from './events'
 export * from './workspace'
@@ -22,6 +22,7 @@ let plugin, dispatch: React.Dispatch<Actions>
 export type UrlParametersType = {
   gist: string,
   code: string,
+  shareCode: string,
   url: string,
   address: string
   opendir: string,
@@ -75,7 +76,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
-    } else if (params.code || params.url) {
+    } else if (params.code || params.url || params.shareCode) {
       await createWorkspaceTemplate('code-sample', 'code-template')
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
@@ -226,8 +227,11 @@ export type SolidityConfiguration = {
 export const publishToGist = async (path?: string, type?: string) => {
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = path || '/'
-  const id = type === 'gist' ? extractNameFromKey(path).split('-')[1] : null
+  
   try {
+    const name = extractNameFromKey(path)
+    const id = name && name.startsWith('gist-') ? name.split('-')[1] : null
+
     const packaged = await packageGistFiles(folder)
     // check for token
     const config = plugin.registry.get('config').api
@@ -373,6 +377,33 @@ export const copyFile = async (src: string, dest: string) => {
   }
 }
 
+export const copyShareURL = async (path: string) => {
+  const fileManager = plugin.fileManager
+
+  try {
+    const host = '127.0.0.1'
+    const port = 5001
+    const protocol = 'http'
+    // const projectId = ''
+    // const projectSecret = ''
+    // const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+
+    const ipfs = IpfsHttpClient({ port, host, protocol
+      , headers: {
+        // authorization: auth
+      } 
+    })
+
+    const fileContent = await fileManager.readFile(path)
+    const result = await ipfs.add(fileContent)
+    const hash = result.cid.string
+    const shareUrl = `${window.location.origin}/#shareCode=${hash}`
+    navigator.clipboard.writeText(shareUrl)
+  } catch (error) {
+    dispatch(displayPopUp('Oops! An error ocurred while performing copyShareURL operation.' + error))
+  }
+}
+
 export const copyFolder = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 
@@ -402,6 +433,7 @@ export const handleClickFile = async (path: string, type: 'file' | 'folder' | 'g
   if (type === 'file' && path.endsWith('.md')) {
     // just opening the preview
     await plugin.call('doc-viewer' as any, 'viewDocs', [path])
+    plugin.call('tabs' as any, 'focus', 'doc-viewer')
   } else {
     await plugin.fileManager.open(path)
     dispatch(focusElement([{ key: path, type }]))

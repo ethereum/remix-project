@@ -17,7 +17,7 @@ import { extractStateVariables } from './solidity-decoder/stateDecoder'
   * - SolidityProxy - Basically used to extract state variable from AST
   * - Breakpoint Manager - Used to add / remove / jumpto breakpoint
   * - InternalCallTree - Used to retrieved local variables
-  * - StorageResolver - Help resolving the storage accross different steps
+  * - StorageResolver - Help resolving the storage across different steps
   *
   * @param {Map} opts  -  { function compilationResult } //
   */

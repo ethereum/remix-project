@@ -3,6 +3,7 @@ import { bufferToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
 import { TemplateType } from '../utils/types'
+import IpfsHttpClient from 'ipfs-http-client'
 import axios, { AxiosResponse } from 'axios'
 import {
   addInputFieldSuccess,
@@ -234,6 +235,7 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: W
 export type UrlParametersType = {
   gist: string
   code: string
+  shareCode: string
   url: string
   language: string
 }
@@ -255,6 +257,30 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
 
         path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
         content = atob(decodeURIComponent(params.code))
+        await workspaceProvider.set(path, content)
+      }
+      if (params.shareCode) {
+        const host = '127.0.0.1'
+        const port = 5001
+        const protocol = 'http'
+        // const projectId = ''
+        // const projectSecret = ''
+        // const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+
+        const ipfs = IpfsHttpClient({ port, host, protocol
+          , headers: {
+            // authorization: auth
+          } 
+        })
+        const hashed = bufferToHex(hash.keccakFromString(params.shareCode))
+
+        path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
+        const fileData = ipfs.get(params.shareCode)
+        for await (const file of fileData) {
+          const fileContent = []
+          for await (const chunk of file.content) fileContent.push(chunk)
+          content = Buffer.concat(fileContent).toString()
+        }
         await workspaceProvider.set(path, content)
       }
       if (params.url) {
@@ -308,11 +334,21 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       }
       const obj = {}
 
-      Object.keys(data.files).forEach((element) => {
+      for (const [element] of Object.entries(data.files)) {
         const path = element.replace(/\.\.\./g, '/')
+        let value
+        if (data.files[element].truncated) {
+          const response: AxiosResponse = await axios.get(data.files[element].raw_url)
+          value = { content: response.data }
+        } else {
+          value = { content: data.files[element].content }
+        }
 
-        obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
-      })
+        if (data.files[element].type === 'application/json') {
+          obj['/' + 'gist-' + gistId + '/' + path] = { content: JSON.stringify(value.content, null, '\t') }
+        } else
+          obj['/' + 'gist-' + gistId + '/' + path] = value
+      }
       plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
         if (errorLoadingFile) {
           dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
