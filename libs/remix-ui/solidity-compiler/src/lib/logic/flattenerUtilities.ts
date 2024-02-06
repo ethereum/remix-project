@@ -9,7 +9,7 @@ export function getDependencyGraph(ast, target: string) {
   return graph;
 }
 
-export function concatSourceFiles(files: any[], sources: any) {
+export function concatSourceFiles(files: string[], sources: any) {
   let concat = '';
   for (const file of files) {
     const source = sources[file] && sources[file]['content'] && sources[file]['content'].length > 0 ? sources[file]['content'] : '';
@@ -22,6 +22,7 @@ export function concatSourceFiles(files: any[], sources: any) {
 }
 
 function _traverse(graph, visited, ast, name) {
+  // console.log(name, ast, visited, graph)
   let currentAst = null
   currentAst = ast
   const dependencies = _getDependencies(currentAst);
@@ -39,7 +40,7 @@ function _traverse(graph, visited, ast, name) {
 function _getDependencies(ast) {
   const dependencies = ast?.nodes
     ?.filter(node => node?.nodeType === 'ImportDirective')
-    .map(node => node?.file);
+    .map(node => node?.absolutePath);
   return dependencies;
 }
 
