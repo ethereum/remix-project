@@ -3,7 +3,6 @@ const SPDX_SOLIDITY_REGEX = /^\s*\/\/ SPDX-License-Identifier:.*$/gm;
 
 export function getDependencyGraph(ast, target: string) {
   const graph = tsort();
-  console.log(graph, target, ast)
   const visited = {};
   visited[target] = 1;
   _traverse(graph, visited, ast, target);
@@ -19,13 +18,11 @@ export function concatSourceFiles(files: any[], sources: any) {
     concat += `\n// File: ${file}\n\n`;
     concat += sourceWithoutSPDX;
   }
-  console.log(concat)
   return concat;
 }
 
 function _traverse(graph, visited, ast, name) {
   let currentAst = null
-  console.log(ast)
   currentAst = ast
   const dependencies = _getDependencies(currentAst);
   for (const dependency of dependencies) {
