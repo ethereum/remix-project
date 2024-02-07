@@ -2,7 +2,7 @@ import { shortenAddress } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
-import { RunTabState } from "../types"
+import { toChecksumAddress } from '@ethereumjs/util'
 
 export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
@@ -37,8 +37,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
 
       if (provider === 'injected') {
         const selectedAddress = plugin.blockchain.getInjectedWeb3Address()
-
-        if (!(Object.keys(loadedAccounts).includes(selectedAddress))) setAccount(dispatch, null)
+        if (!(Object.keys(loadedAccounts).includes(toChecksumAddress(selectedAddress)))) setAccount(dispatch, null)
       }
       dispatch(fetchAccountsListSuccess(loadedAccounts))
     }).catch((e) => {

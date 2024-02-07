@@ -18,7 +18,9 @@ export function AccountUI(props: AccountProps) {
   const intl = useIntl()
 
   useEffect(() => {
-    if (!selectedAccount && accounts.length > 0) props.setAccount(accounts[0])
+    if ((!selectedAccount || !accounts.includes(selectedAccount)) && accounts.length > 0) {
+      props.setAccount(accounts[0])
+    }
   }, [accounts, selectedAccount])
 
   useEffect(() => {
