@@ -44,6 +44,7 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
       content = getContent && getContent()
       copyData()
     }
+    e.stopPropagation()
     e.preventDefault()
   }
 

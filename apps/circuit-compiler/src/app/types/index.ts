@@ -72,7 +72,6 @@ export type CompilerReport = {
 
 export type FeedbackAlertProps = {
   message: string,
-  location: string,
   askGPT: () => void
 }
 
