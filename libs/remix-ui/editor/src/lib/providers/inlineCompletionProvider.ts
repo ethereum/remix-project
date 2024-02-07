@@ -43,8 +43,9 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
         // use the code generation model
 
-        const {data} = await this.props.plugin.call('solcoder_completion', 'message', ask)
-        const parsedData = JSON.parse(data).trimStart()
+        const data = await this.props.plugin.call('solcoder', 'code_completion', word)
+        console.log("received solcoder data", data)
+        const parsedData = data[0].trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: parsedData
         };

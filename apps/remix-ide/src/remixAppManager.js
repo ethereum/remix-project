@@ -77,6 +77,7 @@ let requiredModules = [ // services + layout views + system views
   'contractflattener',
   'solidity-script',
   'openaigpt',
+  'solcoder',
   'home',
   'doc-viewer',
   'doc-gen',
