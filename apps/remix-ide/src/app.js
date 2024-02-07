@@ -59,7 +59,7 @@ import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 
 import {OpenAIGpt} from './app/plugins/openaigpt'
-import {SolCodeComp} from './app/plugins/solcode_completion'
+import {SolCoder} from './app/plugins/solcoderAI'
 
 const isElectron = require('is-electron')
 
@@ -234,7 +234,7 @@ class AppComponent {
 
     // ----------------- AI --------------------------------------
     const openaigpt = new OpenAIGpt()
-    const solcodercomp = new SolCodeComp()
+    const solcoder = new SolCoder()
     const copilotSuggestion = new CopilotSuggestion()
 
     // ----------------- import content service ------------------------
@@ -362,7 +362,7 @@ class AppComponent {
       solidityScript,
       templates,
       openaigpt,
-      solcodercomp,
+      solcoder,
       copilotSuggestion
     ])
 
@@ -518,7 +518,7 @@ class AppComponent {
       }
     )
     await this.appManager.activatePlugin(['solidity-script', 'openaigpt'])
-    await this.appManager.activatePlugin(['solcodercomp'])
+    await this.appManager.activatePlugin(['solcoder'])
 
     
 
