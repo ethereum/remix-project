@@ -152,7 +152,7 @@
     "@remixproject/plugin-ws": "0.3.42",
     "@ricarso/react-image-magnifiers": "^1.9.0",
     "@types/nightwatch": "^2.3.1",
-    "@web3modal/ethers5": "^4.0.0",
+    "@web3modal/ethers5": "^4.0.1",
     "@xenova/transformers": "^2.7.0",
     "ansi-gray": "^0.1.1",
     "assert": "^2.1.0",
