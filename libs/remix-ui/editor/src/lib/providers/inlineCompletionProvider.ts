@@ -8,9 +8,11 @@ const result: string = ''
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
   props: EditorUIProps
   monaco: any
+  running:boolean
   constructor(props: any, monaco: any) {
     this.props = props
     this.monaco = monaco
+    this.running = false
   }
 
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
@@ -40,14 +42,16 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       const split = word.split('\n')
       if (split.length < 2) return
       const ask = split[split.length - 2].trimStart()
-      if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
+      if (split[split.length - 1].trim() === '' && ask.startsWith('///') && (!this.running)) {
         // use the code generation model, only take max 1000 word as context 
-        const data = await this.props.plugin.call('solcoder', 'code_completion', word.split(" ").slice(-1000).join(" "))
+        this.running = true
+        const data = await this.props.plugin.call('solcoder', 'code_completion', word)
         console.log("solcoder completion data", data)
         const parsedData = data[0].trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: parsedData
         };
+        this.running =false
         return {
           items: [item],
           enableForwardStability: true
@@ -64,7 +68,10 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     let result
     try {
-      result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
+      if (!this.running){
+        result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
+        this.running = true
+      }
     } catch (err) {
       return
     }
@@ -76,6 +83,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: clean
     };
+    this.running=false
 
     // abort if there is a signal
     if (token.isCancellationRequested) {
