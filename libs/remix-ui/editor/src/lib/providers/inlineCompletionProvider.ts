@@ -28,7 +28,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: position.column,
     });
 
-    if (!word.endsWith(' ') && !word.endsWith('\n') && !word.endsWith(';') && !word.endsWith('.')) {
+    if (!word.endsWith(' ') && !word.endsWith('\n') && !word.endsWith(';') && !word.endsWith('.') && !word.endsWith('(') && word.split('\n').at(-1).trimStart().startsWith('//')) {
       return;
     }
 
@@ -69,10 +69,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     let result
     try {
-      if (word.split('\n').at(-1).trimStart().startsWith('//')){
-        return // disable completion on comment -> current lie
-      }else if (!this.running){
-        console.log('last line', word.split('\n').at(-1))
+      if (!this.running){
         result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
         this.running = true
       }
