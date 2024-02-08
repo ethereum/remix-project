@@ -1,0 +1,4 @@
+# Files to exclude from Sindri circuit uploads (uses `.gitignore` syntax).
+/.deps/
+/scripts/
+/templates/
