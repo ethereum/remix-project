@@ -1,6 +1,6 @@
 export const sindriScripts = async (plugin) => {
   await plugin.call('fileManager', 'writeFile',
-    'scripts/sindri/sindri.ts' ,
+    'scripts/sindri/index.ts' ,
     // @ts-ignore
     (await import('!!raw-loader!./sindri.ts')).default)
 
