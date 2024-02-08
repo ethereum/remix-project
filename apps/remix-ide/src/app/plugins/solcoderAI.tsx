@@ -74,31 +74,30 @@ export class SolCoder extends Plugin {
     try {
       result = await(
         await fetch(this.api_url.concat("code_completion"), {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({"data": !options? [
-          prompt, // string  in 'context_code' Textbox component	
-          "", // string  in 'comment' Textbox component		
-          false, // boolean  in 'stream_result' Checkbox component		
-          200, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component		
-          0.9, // number (numeric value between 0.01 and 1) in 'temperature' Slider component		
-          0.90, // number (numeric value between 0 and 1) in 'top_p' Slider component		
-          50, // number (numeric value between 1 and 200) in 'top_k' Slider component
-        ] : [
-          prompt,
-          "",
-          options.stream_result,
-          options.max_new_tokens,
-          options.temperature,
-          options.top_p,
-          options.top_k
-        ]
-      }),
-    })
-    ).json()
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({"data": !options? [
+            prompt, // string  in 'context_code' Textbox component	
+            "", // string  in 'comment' Textbox component		
+            false, // boolean  in 'stream_result' Checkbox component		
+            200, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component		
+            0.9, // number (numeric value between 0.01 and 1) in 'temperature' Slider component		
+            0.90, // number (numeric value between 0 and 1) in 'top_p' Slider component		
+            50, // number (numeric value between 1 and 200) in 'top_k' Slider component
+          ] : [
+            prompt,
+            "",
+            options.stream_result,
+            options.max_new_tokens,
+            options.temperature,
+            options.top_p,
+            options.top_k
+          ]}),
+        })
+      ).json()
 
       return result.data
     } catch (e) {

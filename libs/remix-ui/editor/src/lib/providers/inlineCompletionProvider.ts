@@ -82,7 +82,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     }
 
     const generatedText = (result as any).output[0].generated_text as string
-    let clean = generatedText
+    const clean = generatedText
     console.log('solcoder inline data:\n', clean)
 
     const item: monacoTypes.languages.InlineCompletion = {
