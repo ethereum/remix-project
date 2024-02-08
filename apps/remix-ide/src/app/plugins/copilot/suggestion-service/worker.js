@@ -3,7 +3,6 @@ import { pipeline, env } from '@xenova/transformers';
 
 env.allowLocalModels = true;
 
-const instance = null
 /**
  * This class uses the Singleton pattern to ensure that only one instance of the pipeline is loaded.
  */
