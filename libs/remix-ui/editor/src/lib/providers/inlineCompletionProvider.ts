@@ -1,6 +1,7 @@
 /* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
 import axios, {AxiosResponse} from 'axios'
+import { slice } from 'lodash';
 const controller = new AbortController();
 const { signal } = controller;
 const result: string = ''
@@ -68,11 +69,15 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     let result
     try {
-      if (!this.running){
+      if (word.split('\n').at(-1).trimStart().startsWith('//')){
+        return // disable completion on comment -> current lie
+      }else if (!this.running){
+        console.log('last line', word.split('\n').at(-1))
         result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
         this.running = true
       }
     } catch (err) {
+      this.running=false
       return
     }
 

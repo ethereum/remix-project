@@ -13,8 +13,10 @@ const profile = {
 }
 
 export class SolCoder extends Plugin {
+  api_url: string
   constructor() {
     super(profile)
+    this.api_url = "https://hkfll35zthu6e2-7861.proxy.runpod.net/api/"
   }
 
   async code_generation(prompt): Promise<any> {
@@ -23,7 +25,7 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-            await fetch("https://hkfll35zthu6e2-7861.proxy.runpod.net/api/code_generation", {
+            await fetch(this.api_url.concat("code_generation"), {
             method: 'POST',
             headers: {
               Accept: 'application/json',
@@ -45,7 +47,7 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-            await fetch("https://hkfll35zthu6e2-7861.proxy.runpod.net/api/solidity_answer", {
+            await fetch(this.api_url.concat("solidity_answer"), {
             method: 'POST',
             headers: {
               Accept: 'application/json',
@@ -71,7 +73,7 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-            await fetch("https://hkfll35zthu6e2-7861.proxy.runpod.net/api/code_completion", {
+            await fetch(this.api_url.concat("code_completion"), {
             method: 'POST',
             headers: {
               Accept: 'application/json',
