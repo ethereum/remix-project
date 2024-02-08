@@ -41,10 +41,9 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       if (split.length < 2) return
       const ask = split[split.length - 2].trimStart()
       if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
-        // use the code generation model
-
-        const data = await this.props.plugin.call('solcoder', 'code_completion', word)
-        console.log("received solcoder data", data)
+        // use the code generation model, only take max 1000 word as context 
+        const data = await this.props.plugin.call('solcoder', 'code_completion', word.split(" ").slice(-1000).join(" "))
+        console.log("solcoder completion data", data)
         const parsedData = data[0].trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: parsedData
@@ -62,8 +61,17 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     if (token.isCancellationRequested) {
       return
     }
+
+    let result
+    try {
+      result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
+    } catch (err) {
+      return
+    }
+
     const generatedText = (result as any).output[0].generated_text as string
     let clean = generatedText
+    console.log('solcoder inline data:\n', clean)
 
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: clean

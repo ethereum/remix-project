@@ -1,6 +1,10 @@
 import EventEmitter from 'events'
 
-export type SuggestOptions = { max_new_tokens: number, temperature: number, top_k: number, top_p:number, do_sample: boolean, stream_result:boolean}
+export type SuggestOptions = { max_new_tokens: number, 
+                               temperature: number, 
+                               top_k: number,
+                               top_p:number, 
+                               stream_result:boolean}
 
 export class SuggestionService {
   worker: Worker
@@ -89,7 +93,6 @@ export class SuggestionService {
         max_new_tokens: options.max_new_tokens,
         temperature: options.temperature,
         top_k: options.top_k,
-        do_sample: options.do_sample
       })
       this.responses[timespan] = (error, result) => {
         if (error) return reject(error)
