@@ -239,9 +239,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         call('terminal', 'log',{ type: 'warn', value: `> ${script}` })
         await call('openaigpt', 'message', script)
         _paq.push(['trackEvent', 'ai', 'openai', 'askFromTerminal'])
-      } else if (script.trim().startsWith('gpt-sol')) {
+      } else if (script.trim().startsWith('sol-gpt')) {
         call('terminal', 'log',{ type: 'warn', value: `> ${script}` })
-        await call('solcoder', 'code_generation', script)
+        await call('solcoder', 'solidity_answer', script)
         _paq.push(['trackEvent', 'ai', 'solcoder', 'askFromTerminal'])
       }else {
         await call('scriptRunner', 'execute', script)
