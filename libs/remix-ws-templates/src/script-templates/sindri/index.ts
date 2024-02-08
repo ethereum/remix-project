@@ -4,15 +4,10 @@ export const sindriScripts = async (plugin) => {
     // @ts-ignore
     (await import('!!raw-loader!./sindri.ts')).default)
 
+  const existingFiles = await plugin.call('fileManager', 'readdir', '')
+
   // Only write out the `.sindriignore` file if it doesn't already exist.
-  let sindriIgnoreExists: boolean
-  try {
-    await plugin.call('fileManager', 'readFile', './.sindriignore')
-    sindriIgnoreExists = true
-  } catch {
-    sindriIgnoreExists = false
-  }
-  if (!sindriIgnoreExists) {
+  if (!('.sindriignore' in existingFiles)) {
     await plugin.call('fileManager', 'writeFile',
       '.sindriignore',
       // @ts-ignore
@@ -20,14 +15,7 @@ export const sindriScripts = async (plugin) => {
   }
 
   // Only write out the `sindri.json` file if it doesn't already exist.
-  let sindriJsonExists: boolean
-  try {
-    await plugin.call('fileManager', 'readFile', './sindri.json')
-    sindriJsonExists = true
-  } catch {
-    sindriJsonExists = false
-  }
-  if (!sindriJsonExists) {
+  if (!('sindri.json' in existingFiles)) {
     await plugin.call('fileManager', 'writeFile',
       'sindri.json',
       // @ts-ignore
