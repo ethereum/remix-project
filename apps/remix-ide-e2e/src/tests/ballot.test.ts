@@ -121,6 +121,7 @@ module.exports = {
       .pause(10000)
       .clearValue('input[placeholder="bytes32[] proposalNames"]')
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
+      .pause(2000)
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
       .click('*[data-id="terminalClearConsole"]')
