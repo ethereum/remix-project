@@ -25,15 +25,15 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-            await fetch(this.api_url.concat("code_generation"), {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({"data":[prompt,false,1000,0.2,0.8,50]}),
-          })
-        ).json()
+        await fetch(this.api_url.concat("code_generation"), {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({"data":[prompt,false,1000,0.2,0.8,50]}),
+        })
+      ).json()
       return result.data[0]
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
@@ -47,15 +47,15 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-            await fetch(this.api_url.concat("solidity_answer"), {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({"data":[prompt,false,1000,0.9,0.8,50]}),
-          })
-        ).json()
+        await fetch(this.api_url.concat("solidity_answer"), {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({"data":[prompt,false,1000,0.9,0.8,50]}),
+        })
+      ).json()
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
@@ -73,32 +73,32 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-            await fetch(this.api_url.concat("code_completion"), {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({"data": !options? [
-                                        prompt, // string  in 'context_code' Textbox component	
-                                        "", // string  in 'comment' Textbox component		
-                                        false, // boolean  in 'stream_result' Checkbox component		
-                                        200, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component		
-                                        0.9, // number (numeric value between 0.01 and 1) in 'temperature' Slider component		
-                                        0.90, // number (numeric value between 0 and 1) in 'top_p' Slider component		
-                                        50, // number (numeric value between 1 and 200) in 'top_k' Slider component
-                                  ] : [
-                                    prompt,
-                                    "",
-                                    options.stream_result,
-                                    options.max_new_tokens,
-                                    options.temperature,
-                                    options.top_p,
-                                    options.top_k
-                                  ]
-                                }),
-          })
-        ).json()
+        await fetch(this.api_url.concat("code_completion"), {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({"data": !options? [
+          prompt, // string  in 'context_code' Textbox component	
+          "", // string  in 'comment' Textbox component		
+          false, // boolean  in 'stream_result' Checkbox component		
+          200, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component		
+          0.9, // number (numeric value between 0.01 and 1) in 'temperature' Slider component		
+          0.90, // number (numeric value between 0 and 1) in 'top_p' Slider component		
+          50, // number (numeric value between 1 and 200) in 'top_k' Slider component
+        ] : [
+          prompt,
+          "",
+          options.stream_result,
+          options.max_new_tokens,
+          options.temperature,
+          options.top_p,
+          options.top_k
+        ]
+      }),
+    })
+    ).json()
 
       return result.data
     } catch (e) {
