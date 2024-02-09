@@ -97,7 +97,7 @@ module.exports = {
       .pause(10000)
       .clearValue('input[placeholder="uint8 _numProposals"]')
       .setValue('input[placeholder="uint8 _numProposals"]', '2')
-      .pause(5000)
+      .pause(15000)
       .click('*[data-id="Deploy - transact (not payable)"]')
       .clickInstance(0)
       .click('*[data-id="terminalClearConsole"]')
