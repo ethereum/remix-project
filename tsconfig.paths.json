@@ -163,7 +163,9 @@
             "@remix-ui/xterm": [
                 "libs/remix-ui/xterm/src/index.ts"
             ],
-
+            "@remix-ui/git": [
+                "libs/remix-ui/git/src/index.ts"
+            ]
         }
     }
 }
