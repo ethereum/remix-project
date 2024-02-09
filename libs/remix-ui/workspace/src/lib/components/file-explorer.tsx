@@ -405,8 +405,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
           moveFile={handleFileMove}
           moveFolder={handleFolderMove}
           handleClickFolder={handleClickFolder}
-          createNewFile={handleNewFileInput}
-          createNewFolder={handleNewFolderInput}
+          createNewFile={props.createNewFile}
+          createNewFolder={props.createNewFolder}
+          deletePath={deletePath}
+          renamePath={renamePath}
+          editModeOn={props.editModeOn}
         />
       </div>
     </div>
