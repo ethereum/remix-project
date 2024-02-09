@@ -15,6 +15,8 @@ import path from 'path'
 import FormData from 'form-data'
 import axios from 'axios'
 import {Registry} from '@remix-project/remix-lib'
+import { Octokit, App } from "octokit";
+import { commitChange, GitHubUser, RateLimit } from '@remix-ui/git'
 
 const profile = {
   name: 'dGitProvider',
@@ -22,7 +24,8 @@ const profile = {
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'version', 'updateSubmodules'],
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'version', 'updateSubmodules'
+    , 'getGitHubUser', 'remotebranches', 'remotecommits', 'repositories', 'getCommitChanges'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -231,6 +234,60 @@ class DGitProvider extends Plugin {
       depth: 10
     })
     return status
+  }
+
+  async getCommitChanges(commitHash1, commitHash2): Promise<commitChange[]> {
+    //console.log([git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
+    const result: commitChange[] = await git.walk({
+      ...await this.getGitConfig(),
+      trees: [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })],
+      map: async function (filepath, [A, B]) {
+        // ignore directories
+
+        //console.log(filepath, A, B)
+
+        if (filepath === '.') {
+          return
+        }
+        try {
+          if ((A && await A.type()) === 'tree' || B && (await B.type()) === 'tree') {
+            return
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        // generate ids
+        const Aoid = A && await A.oid() || undefined
+        const Boid = B && await B.oid() || undefined
+
+        const commitChange: Partial<commitChange> = {
+          hashModified: commitHash1,
+          hashOriginal: commitHash2,
+          path: filepath,
+        }
+
+        // determine modification type
+        if (Aoid !== Boid) {
+          commitChange.type = "modified"
+        }
+        if (Aoid === undefined) {
+          commitChange.type = "deleted"
+        }
+        if (Boid === undefined) {
+          commitChange.type = "added"
+        }
+        if (Aoid === undefined && Boid === undefined) {
+          commitChange.type = "unknown"
+        }
+        if (commitChange.type)
+          return commitChange
+        else
+          return undefined
+      },
+    })
+    //console.log(result)
+    return result
   }
 
   async remotes(config) {
@@ -939,6 +996,87 @@ class DGitProvider extends Plugin {
     }
     return result
   }
+
+  // OCTOKIT FEATURES
+
+  async remotebranches(input: { owner: string, repo: string, token: string }) {
+    console.log(input)
+   
+    const octokit = new Octokit({
+      auth: input.token
+    })
+
+    const data = await octokit.request('GET /repos/{owner}/{repo}/branches{?protected,per_page,page}', {
+      owner: input.owner,
+      repo: input.repo,
+      per_page: 100
+    })
+    console.log(data)
+    return data.data
+  }
+
+  async getGitHubUser(input: { token: string }): Promise<{
+    user: GitHubUser,
+    ratelimit: RateLimit
+  }> {
+    const octokit = new Octokit({
+      auth: input.token
+    })
+
+    const ratelimit = await octokit.request('GET /rate_limit', {
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    })
+    // epoch timestamp to local date time
+    const localResetTime = ratelimit.data.rate.reset * 1000
+    const localResetTimeString = new Date(localResetTime).toLocaleString()
+
+
+    console.log('rate limit', localResetTimeString)
+
+    const user = await octokit.request('GET /user')
+
+    return {
+      user: user.data,
+      ratelimit: ratelimit.data
+    }
+  }
+
+  async remotecommits(input: { owner: string, repo: string, token: string, branch: string, length: number }): Promise<Endpoints["GET /repos/{owner}/{repo}/commits"]["response"]["data"]> {
+    const octokit = new Octokit({
+      auth: input.token
+    })
+
+    const data = await octokit.request('GET /repos/{owner}/{repo}/commits', {
+      owner: input.owner,
+      repo: input.repo,
+      sha: input.branch,
+      per_page: input.length
+    })
+
+
+    return data.data
+  }
+
+  async repositories(input: { token: string }) {
+    const octokit = new Octokit({
+      auth: input.token
+    })
+
+    const data = await octokit.request('GET /user/repos{?visibility,affiliation,type,sort,direction,per_page,page,since,before}', {
+      sort: "pushed",
+      direction: "desc",
+      per_page: 100,
+      affiliation: "owner,collaborator"
+    })
+
+
+    octokit
+
+    return data.data
+  }
+
 }
 
 const addSlash = (file) => {
