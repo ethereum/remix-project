@@ -153,7 +153,7 @@ export class RemixAppManager extends PluginManager {
     if (Registry.getInstance().get('platform').api.isDesktop()) {
       requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep']
     }
-    
+
   }
 
   async canActivatePlugin(from, to) {
@@ -326,6 +326,17 @@ export class RemixAppManager extends PluginManager {
       label: 'Generate Docs',
       type: [],
       extension: ['.sol'],
+      path: [],
+      pattern: [],
+      sticky: true,
+      group: 7
+    })
+    await this.call('filePanel', 'registerContextMenuItem', {
+      id: 'vyper',
+      name: 'vyperCompileCustomAction',
+      label: 'Compile vyper',
+      type: [],
+      extension: ['.vy'],
       path: [],
       pattern: [],
       sticky: true,

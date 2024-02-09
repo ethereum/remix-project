@@ -1,4 +1,4 @@
-import {HighlightPosition, CompilationResult, RemixApi} from '@remixproject/plugin-api'
+import {HighlightPosition, CompilationResult, RemixApi, customAction} from '@remixproject/plugin-api'
 import {Api, Status} from '@remixproject/plugin-utils'
 import {createClient} from '@remixproject/plugin-webview'
 import {PluginClient} from '@remixproject/plugin'
@@ -24,6 +24,10 @@ export class RemixClient extends PluginClient {
     this.client.on('fileManager', 'noFileSelected', async () => {
       cb()
     })
+  }
+
+  async vyperCompileCustomAction(action: customAction) {
+    console.log('vyperCompileCustomAction', action)
   }
 
   /** Load Ballot contract example into the file manager */
