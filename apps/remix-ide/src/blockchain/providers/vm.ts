@@ -97,7 +97,8 @@ export class VMProvider {
 
   async getBalanceInEther (address) {
     const balance = await this.web3.eth.getBalance(address, undefined, { number: FMT_NUMBER.HEX, bytes: FMT_BYTES.HEX })
-    return fromWei(toBigInt(balance).toString(10), 'ether')
+    const balInString = toBigInt(balance).toString(10)
+    return balInString === '0' ? balInString : fromWei(balInString, 'ether')
   }
 
   getGasPrice (cb) {
