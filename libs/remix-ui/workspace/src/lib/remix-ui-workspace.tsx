@@ -1129,6 +1129,10 @@ export function Workspace() {
                   handleNewFileInput={handleNewFileInput}
                   handleNewFolderInput={handleNewFolderInput}
                   dragStatus={dragStatus}
+                  createNewFile={handleNewFileInput}
+                  createNewFolder={handleNewFolderInput}
+                  deletePath={deletePath}
+                  renamePath={editModeOn}
                 />
 
               )}
@@ -1188,7 +1192,10 @@ export function Workspace() {
                   editModeOn={editModeOn}
                   handleNewFileInput={handleNewFileInput}
                   handleNewFolderInput={handleNewFolderInput}
+                  createNewFile={handleNewFileInput}
+                  createNewFolder={handleNewFolderInput}
                   deletePath={deletePath}
+                  renamePath={editModeOn}
                   dragStatus={dragStatus}
                 />
               )}

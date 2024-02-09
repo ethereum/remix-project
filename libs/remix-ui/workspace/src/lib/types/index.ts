@@ -131,6 +131,9 @@ export interface FileExplorerProps {
     handleNewFileInput: (parentFolder?: string) => Promise<void>
     handleNewFolderInput: (parentFolder?: string) => Promise<void>
     deletePath?: (path: string[]) => Promise<void>
+    createNewFile:(parentFolder?: string) => Promise<void>
+    createNewFolder:(parentFolder?: string) => Promise<void>
+    renamePath:(path: string, type: string, isNew?: boolean) => void
     dragStatus: (status: boolean) => void
 }
 

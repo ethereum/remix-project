@@ -8,8 +8,8 @@ export type FileHoverIconsProps = {
   file: any
   handleNewFolderOp?: any
   handleNewFileOp?: any
-  renamePathOp?: any
-  deletePathOp?: any
+  renamePathOp?: (path: string, newName: string) => void | Promise<void>
+  deletePathOp?: (path: string | string[]) => void | Promise<void>
 }
 
 export function FileHoverIcons(props: FileHoverIconsProps) {
@@ -31,9 +31,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
                 className="far fa-folder fa-1x remixui_icons_space remixui_icons"
                 onClick={async (e) => {
                   e.stopPropagation()
-                  console.log(props)
                   await props.handleNewFolderOp(props.file.path)
-                  console.log('clicked on folder icon')
                 }}
               ></span>
               {/* </CustomTooltip> */}
@@ -49,7 +47,6 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
                 onClick={async (e) => {
                   e.stopPropagation()
                   await props.handleNewFileOp(props.file.path)
-                  console.log('clicked on file icon')
                 }}
               ></span>
               {/* </CustomTooltip> */}
@@ -67,10 +64,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
           className="far fa-pen fa-1x remixui_icons remixui_icons_space"
           onClick={async (e) => {
             e.stopPropagation()
-            console.log(props)
-            console.log(e)
             await props.renamePathOp(props.file.path, props.file.type)
-            console.log('clicked on edit icon')
           }}
         ></span>
         {/* </CustomTooltip> */}
@@ -85,9 +79,6 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
           className="far fa-trash fa-1x remixui_icons remixui_icons_space"
           onClick={async (e) => {
             e.stopPropagation()
-            console.log(props)
-            console.log(e)
-            console.log('clicked on trash icon')
             await props.deletePathOp(props.file.path)
           }}
         ></span>

@@ -41,7 +41,8 @@ interface FlatTreeProps {
   createNewFile?: any
   createNewFolder?: any
   deletePath?: (path: string | string[]) => void | Promise<void>
-  renamePath?: (path: string, newName: string) => void | Promise<void>
+  renamePath?: (path: string, type: string, isNew?: boolean) => void
+  editModeOn?: (path: string, type: string, isNew?: boolean) => void
 }
 
 let mouseTimer: any = {
@@ -184,7 +185,19 @@ export const FlatTree = (props: FlatTreeProps) => {
     }
   }, [focusEdit])
 
-  const [onMouseEnter, setOnMouseEnter] = useState(false)
+  const showIcons = (file: FileType) =>
+    file.path === hover ? (
+      <div>
+        <FileHoverIcons
+          file={file}
+          isEditable={true}
+          renamePathOp={props.editModeOn}
+          deletePathOp={deletePath}
+          handleNewFileOp={props.createNewFile}
+          handleNewFolderOp={props.createNewFolder}
+        />
+      </div>
+    ) : null
 
   const Row = (index: number) => {
     const node = Object.keys(flatTree)[index]
@@ -193,17 +206,14 @@ export const FlatTree = (props: FlatTreeProps) => {
       <li
         className={`${labelClass(file)} li_tv`}
         onMouseOver={(e) => {
-          console.log(e)
           setHover(file.path)
         }}
         onMouseOut={() => {
-          setHover(file.path)
+          setHover('')
         }}
         data-type={file.isDirectory ? 'folder' : 'file'}
         data-path={`${file.path}`}
         data-id={`treeViewLitreeViewItem${file.path}`}
-        onMouseEnter={() => setOnMouseEnter(true)}
-        onMouseLeave={() => setOnMouseEnter(false)}
       >
         <div data-id={`treeViewDivtreeViewItem${file.path}`} className={`d-flex flex-row align-items-center`}>
           {getIndentLevelDiv(file.path)}
@@ -222,16 +232,9 @@ export const FlatTree = (props: FlatTreeProps) => {
               data-label-path={`${file.path}`}
               key={index}>
               {file.name}
-
             </div>
             <div className="d-flex flex-row align-items-center">
-              {!onMouseEnter && (
-                <div>
-                  <FileHoverIcons
-                    file={file}
-                    isEditable={true}
-                  />
-                </div>)}
+              {showIcons(file)}
               {getFileStateIcons(file)}
             </div>
             </>
