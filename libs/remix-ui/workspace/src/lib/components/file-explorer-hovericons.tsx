@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { CustomTooltip } from '@remix-ui/helper'
 import { FormattedMessage } from 'react-intl'
-import { ROOT_PATH } from '../utils/constants'
 
 export type FileHoverIconsProps = {
   isEditable?: boolean
@@ -20,69 +19,69 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
         {
           props.file.isDirectory ? (
             <>
-              {/* <CustomTooltip
+              <CustomTooltip
                 placement="right-start"
                 delay={{show: 1000, hide: 0}}
                 tooltipText={<FormattedMessage id="filePanel.edit" />}
                 tooltipId={`filePanel.edit.${props.file.path}`}
                 tooltipClasses="text-nowrap"
-              > */}
-              <span
-                className="far fa-folder fa-1x remixui_icons_space remixui_icons"
-                onClick={async (e) => {
-                  e.stopPropagation()
-                  await props.handleNewFolderOp(props.file.path)
-                }}
-              ></span>
-              {/* </CustomTooltip> */}
-              {/* <CustomTooltip
+              >
+                <span
+                  className="far fa-folder fa-1x remixui_icons_space remixui_icons"
+                  onClick={async (e) => {
+                    e.stopPropagation()
+                    await props.handleNewFolderOp(props.file.path)
+                  }}
+                ></span>
+              </CustomTooltip>
+              <CustomTooltip
                 placement="right-start"
                 delay={{show: 1000, hide: 0}}
                 tooltipText={<FormattedMessage id="fileExplorer.edit" />}
                 tooltipId={`fileExplorer.edit.${props.file.path}`}
                 tooltipClasses="text-nowrap"
-              > */}
-              <span
-                className="far fa-file fa-1x remixui_icons remixui_icons_space"
-                onClick={async (e) => {
-                  e.stopPropagation()
-                  await props.handleNewFileOp(props.file.path)
-                }}
-              ></span>
-              {/* </CustomTooltip> */}
+              >
+                <span
+                  className="far fa-file fa-1x remixui_icons remixui_icons_space"
+                  onClick={async (e) => {
+                    e.stopPropagation()
+                    await props.handleNewFileOp(props.file.path)
+                  }}
+                ></span>
+              </CustomTooltip>
             </>
           ) : null
         }
-        {/* <CustomTooltip
+        <CustomTooltip
           placement="right-start"
           delay={{show: 1000, hide: 0}}
           tooltipText={<FormattedMessage id="fileExplorer.edit" />}
           tooltipId={`fileExplorer.edit.${props.file.path}`}
           tooltipClasses="text-nowrap"
-        > */}
-        <span
-          className="far fa-pen fa-1x remixui_icons remixui_icons_space"
-          onClick={async (e) => {
-            e.stopPropagation()
-            await props.renamePathOp(props.file.path, props.file.type)
-          }}
-        ></span>
-        {/* </CustomTooltip> */}
-        {/* <CustomTooltip
+        >
+          <span
+            className="far fa-pen fa-1x remixui_icons remixui_icons_space"
+            onClick={async (e) => {
+              e.stopPropagation()
+              await props.renamePathOp(props.file.path, props.file.type)
+            }}
+          ></span>
+        </CustomTooltip>
+        <CustomTooltip
           placement="right-start"
           delay={{show: 1000, hide: 0}}
           tooltipText={<FormattedMessage id="fileExplorer.edit" />}
           tooltipId={`fileExplorer.edit.${props.file.path}`}
           tooltipClasses="text-nowrap"
-        > */}
-        <span
-          className="far fa-trash fa-1x remixui_icons remixui_icons_space"
-          onClick={async (e) => {
-            e.stopPropagation()
-            await props.deletePathOp(props.file.path)
-          }}
-        ></span>
-        {/* </CustomTooltip> */}
+        >
+          <span
+            className="far fa-trash fa-1x remixui_icons remixui_icons_space"
+            onClick={async (e) => {
+              e.stopPropagation()
+              await props.deletePathOp(props.file.path)
+            }}
+          ></span>
+        </CustomTooltip>
       </div>
       }
     </>
