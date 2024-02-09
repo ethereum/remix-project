@@ -20,10 +20,10 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
           props.file.isDirectory ? (
             <>
               <CustomTooltip
-                placement="right-start"
+                placement="bottom"
                 delay={{show: 1000, hide: 0}}
-                tooltipText={<FormattedMessage id="filePanel.edit" />}
-                tooltipId={`filePanel.edit.${props.file.path}`}
+                tooltipText={<FormattedMessage id="filePanel.createNewFolder" />}
+                tooltipId={`filePanel.createNewFolder.${props.file.path}`}
                 tooltipClasses="text-nowrap"
               >
                 <span
@@ -35,10 +35,10 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
                 ></span>
               </CustomTooltip>
               <CustomTooltip
-                placement="right-start"
+                placement="bottom"
                 delay={{show: 1000, hide: 0}}
-                tooltipText={<FormattedMessage id="fileExplorer.edit" />}
-                tooltipId={`fileExplorer.edit.${props.file.path}`}
+                tooltipText={<FormattedMessage id="filePanel.createNewFile" />}
+                tooltipId={`fileExplorer.createNewFile.${props.file.path}`}
                 tooltipClasses="text-nowrap"
               >
                 <span
@@ -53,10 +53,10 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
           ) : null
         }
         <CustomTooltip
-          placement="right-start"
+          placement="bottom"
           delay={{show: 1000, hide: 0}}
-          tooltipText={<FormattedMessage id="fileExplorer.edit" />}
-          tooltipId={`fileExplorer.edit.${props.file.path}`}
+          tooltipText={<FormattedMessage id="filePanel.rename" />}
+          tooltipId={`filePanel.rename.${props.file.path}`}
           tooltipClasses="text-nowrap"
         >
           <span
@@ -68,10 +68,10 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
           ></span>
         </CustomTooltip>
         <CustomTooltip
-          placement="right-start"
+          placement="bottom"
           delay={{show: 1000, hide: 0}}
-          tooltipText={<FormattedMessage id="fileExplorer.edit" />}
-          tooltipId={`fileExplorer.edit.${props.file.path}`}
+          tooltipText={<FormattedMessage id="filePanel.deleteItem" />}
+          tooltipId={`filePanel.deleteItem.${props.file.path}`}
           tooltipClasses="text-nowrap"
         >
           <span
