@@ -34,6 +34,7 @@ export const scanAPIurls = {
   44787: 'https://api-alfajores.celoscan.io/api',
   2888: 'https://api-testnet.bobascan.com/api',
   84531: 'https://api-goerli.basescan.org/api',
+  84532: "https://api-sepolia.basescan.org/api",
   1442: 'https://api-testnet-zkevm.polygonscan.com/api',
   59140: 'https://api-testnet.lineascan.build/api',
 }
