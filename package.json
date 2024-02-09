@@ -215,6 +215,7 @@
     "react-markdown": "^8.0.5",
     "react-multi-carousel": "^2.8.2",
     "react-router-dom": "^6.16.0",
+    "react-select": "^5.8.0",
     "react-tabs": "^6.0.2",
     "react-virtualized": "^9.22.5",
     "react-virtuoso": "^4.6.2",
