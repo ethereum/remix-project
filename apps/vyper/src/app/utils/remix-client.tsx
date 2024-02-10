@@ -2,11 +2,22 @@ import {HighlightPosition, CompilationResult, RemixApi, customAction} from '@rem
 import {Api, Status} from '@remixproject/plugin-utils'
 import {createClient} from '@remixproject/plugin-webview'
 import {PluginClient} from '@remixproject/plugin'
-import {Contract} from './compiler'
+import {Contract, compileContract} from './compiler'
 import {ExampleContract} from '../components/VyperResult'
+import EventEmitter from 'events'
 
+
+export type VyperComplierAddress = 'https://vyper2.remixproject.org/' | 'http://localhost:8000/'
 export class RemixClient extends PluginClient {
   private client = createClient<Api, Readonly<RemixApi>>(this)
+  compilerUrl: VyperComplierAddress = 'https://vyper2.remixproject.org/'
+  compilerOutput: any
+  eventEmitter = new EventEmitter()
+
+  constructor() {
+    super()
+    this.compilerOutput = {}
+  }
 
   loaded() {
     return this.client.onload()
@@ -26,8 +37,16 @@ export class RemixClient extends PluginClient {
     })
   }
 
+  resetCompilerState() {
+    this.compilerOutput = {}
+    this.eventEmitter.emit('resetCompilerState', {})
+  }
+
   async vyperCompileCustomAction(action: customAction) {
-    console.log('vyperCompileCustomAction', action)
+    //read selected contract from file explorer and create contract type
+    const contract = await this.getContract()
+    //compile contract
+    await compileContract(contract.name, this.compilerUrl)
   }
 
   /** Load Ballot contract example into the file manager */
