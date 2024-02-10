@@ -102,7 +102,7 @@ const App = () => {
             placement="bottom"
             tooltipText="Clone Vyper examples. Switch to the File Explorer to see the examples."
           >
-            <Button data-id="add-repository" className="w-100 text-dark bg-light btn-outline-primary " onClick={() => remixClient.cloneVyperRepo()}>
+            <Button data-id="add-repository" className="w-100 text-dark bg-light btn-secondary" onClick={() => remixClient.cloneVyperRepo()}>
             Clone Vyper examples repository
             </Button>
           </CustomTooltip>
