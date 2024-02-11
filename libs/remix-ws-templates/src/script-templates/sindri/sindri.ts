@@ -1,6 +1,7 @@
-import client from 'sindri'
+import sindriClient from 'sindri'
+import type {CircuitInfoResponse, ProofInfoResponse} from 'sindri'
 
-client.logLevel = 'info'
+sindriClient.logLevel = 'info'
 
 const authorize = async () => {
   try {
@@ -8,7 +9,7 @@ const authorize = async () => {
     if (!apiKey) {
       throw new Error('Missing API key.')
     }
-    client.authorize({apiKey})
+    sindriClient.authorize({apiKey})
   } catch {
     const message = 'No Sindri API key found. Please add your API key in the settings tab.'
     await remix.call('notification', 'toast', message)
@@ -29,10 +30,12 @@ const normalizePath = (path: string): string => {
 }
 
 /**
- * Compile the given circuit
- * @returns {Circuit} compiled circuit
+ * Compile the circuit.
+ *
+ * @param {string | string[] | null} tags - The tag or tags to use when compiling the circuit.
+ * @returns {CircuitInfoResponse} compiled circuit
  */
-export const createCircuit = async () => {
+export const compile = async (tags: string | string[] | null = ['latest']): CircuitInfoResponse => {
   authorize()
   const sindriManifest = await getSindriManifest()
 
@@ -67,23 +70,24 @@ export const createCircuit = async () => {
 
   console.log(`creating circuit "${sindriManifest.name}"...`)
   const files = Object.values(filesByPath)
-  const circuitProject = await client.createCircuit(files)
+  const circuitProject = await sindriClient.createCircuit(files, tags)
   console.log(`circuit created ${circuitProject.circuit_id}`)
   return circuitProject
 }
 
 /**
- * Generate a proof against the given circuit
- * @param {Object} signals - input signals
- * @returns {Proof} generated proof
+ * Generate a proof against the circuit.
+ *
+ * @param {Object} signals - Input signals for the circuit.
+ * @returns {ProofInfoResponse} The generated proof.
  */
-export const proveCircuit = async (signals: {[id: string]: string}) => {
+export const proveCircuit = async (signals: {[id: string]: string}): ProofInfoResponse => {
   authorize()
   const sindriManifest = await getSindriManifest()
 
   const circuitName = sindriManifest.name
   console.log(`proving circuit "${circuitName}"...`)
-  const proof = await client.proveCircuit(circuitName, JSON.stringify(signals))
+  const proof = await sindriClient.proveCircuit(circuitName, JSON.stringify(signals))
   console.log(`proof id: ${proof.proof_id}`)
   return proof
 }
