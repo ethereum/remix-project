@@ -62,8 +62,10 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
     const circuitPath = normalizePath(sindriManifest.circuitPath || 'circuit.circom')
     const circuitContent = await remix.call('fileManager', 'readFile', circuitPath)
     const dependencies: {[path: string]: string} = await remix.call('circuit-compiler' as any, 'resolveDependencies', circuitPath, circuitContent)
-    Object.entries(dependencies).forEach(([rawPath, content]) => {
+    Object.entries(dependencies).forEach(([rawPath, rawContent]) => {
+      // Convert absolute file paths to paths relative to the project root.
       const path = normalizePath(rawPath)
+      const content = path.endsWith('.circom') ? rawContent.replace(/^\s*include\s+"\/([^"]+)"\s*;\s*$/gm, 'include "$1";') : rawContent
       filesByPath[path] = new File([content], path)
     })
   }
