@@ -4,6 +4,16 @@ export const sindriScripts = async (plugin) => {
     // @ts-ignore
     (await import('!!raw-loader!./utils.ts')).default)
 
+  await plugin.call('fileManager', 'writeFile',
+    'scripts/sindri/run_compile.ts' ,
+    // @ts-ignore
+    (await import('!!raw-loader!./run_compile.ts')).default)
+
+  await plugin.call('fileManager', 'writeFile',
+    'scripts/sindri/run_prove.ts' ,
+    // @ts-ignore
+    (await import('!!raw-loader!./run_prove.ts')).default)
+
   const existingFiles = await plugin.call('fileManager', 'readdir', '')
 
   // Only write out the `.sindriignore` file if it doesn't already exist.
