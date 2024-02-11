@@ -1,5 +1,7 @@
 import client from 'sindri'
 
+client.logLevel = 'info'
+
 const authorize = async () => {
   try {
     const apiKey = await remix.call('settings', 'get', 'settings/sindri-access-token')
