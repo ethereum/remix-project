@@ -68,11 +68,15 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
     })
   }
 
-  console.log(`creating circuit "${sindriManifest.name}"...`)
+  console.log(`Compiling circuit "${sindriManifest.name}"...`)
   const files = Object.values(filesByPath)
-  const circuitProject = await sindriClient.createCircuit(files, tags)
-  console.log(`circuit created ${circuitProject.circuit_id}`)
-  return circuitProject
+  const circuitResponse = await sindriClient.createCircuit(files, tags)
+  if (circuitResponse.status === 'Ready') {
+    console.log(`Circuit compiled successfully, circuit id: ${circuitResponse.circuit_id}`)
+  } else {
+    console.error('Circuit compilation failed:', circuitResponse.error || 'Unknown error')
+  }
+  return circuitResponse
 }
 
 /**
@@ -81,13 +85,28 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
  * @param {Object} signals - Input signals for the circuit.
  * @returns {ProofInfoResponse} The generated proof.
  */
-export const proveCircuit = async (signals: {[id: string]: string}): ProofInfoResponse => {
+export const prove = async (signals: {[id: string]: number | string}): ProofInfoResponse => {
   authorize()
   const sindriManifest = await getSindriManifest()
 
   const circuitName = sindriManifest.name
-  console.log(`proving circuit "${circuitName}"...`)
-  const proof = await sindriClient.proveCircuit(circuitName, JSON.stringify(signals))
-  console.log(`proof id: ${proof.proof_id}`)
-  return proof
+  console.log(`Proving circuit "${circuitName}"...`)
+  try {
+    const proofResponse = await sindriClient.proveCircuit(circuitName, JSON.stringify(signals))
+    if (proofResponse.status === 'Ready') {
+      console.log(`Proof generated successfully, proof id: ${proofResponse.proof_id}`)
+    } else {
+      console.error('Proof generation failed:', proofResponse.error || 'Unknown error')
+    }
+    return proofResponse
+  } catch (error) {
+    if ('status' in error && error.status === 404) {
+      const message = `No compiled circuit "${circuitName}" found, have you successfully compiled the circuit?`
+      console.error(message)
+      throw new Error(message)
+    } else {
+      console.error('Unknown error occurred.')
+      throw error
+    }
+  }
 }
