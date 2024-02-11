@@ -1,6 +1,6 @@
 {
   "$schema": "https://sindri.app/api/v1/sindri-manifest-schema.json",
-  "name": "circom-circuit",
+  "name": "semaphore",
   "circuitPath": "./circuits/semaphore.circom",
   "circuitType": "circom",
   "curve": "bn254",
