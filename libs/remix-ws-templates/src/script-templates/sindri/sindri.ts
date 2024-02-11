@@ -1,5 +1,19 @@
 import client from 'sindri'
 
+const authorize = async () => {
+  try {
+    const apiKey = await remix.call('settings', 'get', 'settings/sindri-access-token')
+    if (!apiKey) {
+      throw new Error('Missing API key.')
+    }
+    client.authorize({apiKey})
+  } catch {
+    const message = 'No Sindri API key found. Please add your API key in the settings tab.'
+    await remix.call('notification', 'toast', message)
+    throw new Error(message)
+  }
+}
+
 const getSindriManifest = async () => {
   const sindriJson = await remix.call('fileManager', 'readFile', `sindri.json`)
   return JSON.parse(sindriJson)
@@ -14,12 +28,11 @@ const normalizePath = (path: string): string => {
 
 /**
  * Compile the given circuit
- * @param {string} apiKey - sindri API key
  * @returns {Circuit} compiled circuit
  */
-export const createCircuit = async (apiKey: string) => {
+export const createCircuit = async () => {
+  authorize()
   const sindriManifest = await getSindriManifest()
-  client.authorize({apiKey})
 
   // Create a map from file paths to `File` objects for all files in the workspace.
   const filesByPath: {[path: string]: File} = {}
@@ -50,7 +63,7 @@ export const createCircuit = async (apiKey: string) => {
     })
   }
 
-  console.log(`creating circuit "${entryPoint}"...`)
+  console.log(`creating circuit "${sindriManifest.name}"...`)
   const files = Object.values(filesByPath)
   const circuitProject = await client.createCircuit(files)
   console.log(`circuit created ${circuitProject.circuit_id}`)
@@ -60,12 +73,11 @@ export const createCircuit = async (apiKey: string) => {
 /**
  * Generate a proof against the given circuit
  * @param {Object} signals - input signals
- * @param {string} apiKey - sindri API key
  * @returns {Proof} generated proof
  */
-export const proveCircuit = async (signals: {[id: string]: string}, apiKey: string) => {
+export const proveCircuit = async (signals: {[id: string]: string}) => {
+  authorize()
   const sindriManifest = await getSindriManifest()
-  client.authorize({apiKey})
 
   const circuitName = sindriManifest.name
   console.log(`proving circuit "${circuitName}"...`)
