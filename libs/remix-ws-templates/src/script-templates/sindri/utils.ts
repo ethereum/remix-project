@@ -36,7 +36,7 @@ const normalizePath = (path: string): string => {
  * @returns {CircuitInfoResponse} compiled circuit
  */
 export const compile = async (tags: string | string[] | null = ['latest']): CircuitInfoResponse => {
-  authorize()
+  await authorize()
   const sindriManifest = await getSindriManifest()
 
   // Create a map from file paths to `File` objects for all files in the workspace.
@@ -73,13 +73,24 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
 
   console.log(`Compiling circuit "${sindriManifest.name}"...`)
   const files = Object.values(filesByPath)
-  const circuitResponse = await sindriClient.createCircuit(files, tags)
-  if (circuitResponse.status === 'Ready') {
-    console.log(`Circuit compiled successfully, circuit id: ${circuitResponse.circuit_id}`)
-  } else {
-    console.error('Circuit compilation failed:', circuitResponse.error || 'Unknown error')
+  try {
+    const circuitResponse = await sindriClient.createCircuit(files, tags)
+    if (circuitResponse.status === 'Ready') {
+      console.log(`Circuit compiled successfully, circuit id: ${circuitResponse.circuit_id}`)
+    } else {
+      console.error('Circuit compilation failed:', circuitResponse.error || 'Unknown error')
+    }
+    return circuitResponse
+  } catch (error) {
+    if ('status' in error && error.status === 401) {
+      const message = 'Sindri API key authentication failed, please check that your key is correct in the settings.'
+      console.error(message)
+      throw new Error(message)
+    } else {
+      console.error('Unknown error occurred.')
+      throw error
+    }
   }
-  return circuitResponse
 }
 
 /**
@@ -89,7 +100,7 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
  * @returns {ProofInfoResponse} The generated proof.
  */
 export const prove = async (signals: {[id: string]: number | string}): ProofInfoResponse => {
-  authorize()
+  await authorize()
   const sindriManifest = await getSindriManifest()
 
   const circuitName = sindriManifest.name
@@ -103,7 +114,11 @@ export const prove = async (signals: {[id: string]: number | string}): ProofInfo
     }
     return proofResponse
   } catch (error) {
-    if ('status' in error && error.status === 404) {
+    if ('status' in error && error.status === 401) {
+      const message = 'Sindri API key authentication failed, please check that your key is correct in the settings.'
+      console.error(message)
+      throw new Error(message)
+    } else if ('status' in error && error.status === 404) {
       const message = `No compiled circuit "${circuitName}" found, have you successfully compiled the circuit?`
       console.error(message)
       throw new Error(message)
