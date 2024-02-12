@@ -53,13 +53,10 @@ module.exports = {
           console.log((el as any).value.getId())
           const id = (el as any).value.getId()
           browser
-            .waitForElementVisible('li[data-id="treeViewLitreeViewItemscripts"]')
+            .waitForElementVisible('div[data-id="treeViewDivDraggableItemscripts"]')
             .dragAndDrop('div[data-id="treeViewDivDraggableItemscripts"]', id)
-            .pause()
             .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-            .pause()
             .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-            .pause()
             .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/scripts"]')
         })
     }
