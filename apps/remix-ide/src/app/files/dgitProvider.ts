@@ -15,7 +15,9 @@ import path from 'path'
 import FormData from 'form-data'
 import axios from 'axios'
 import {Registry} from '@remix-project/remix-lib'
-import { Octokit, App } from "octokit";
+import { Octokit, App } from "octokit"
+import { OctokitResponse } from '@octokit/types'
+import { Endpoints } from "@octokit/types"
 import { commitChange, GitHubUser, RateLimit } from '@remix-ui/git'
 
 const profile = {
@@ -1047,6 +1049,8 @@ class DGitProvider extends Plugin {
     const octokit = new Octokit({
       auth: input.token
     })
+
+  
 
     const data = await octokit.request('GET /repos/{owner}/{repo}/commits', {
       owner: input.owner,
