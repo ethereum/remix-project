@@ -12,7 +12,7 @@ export type FileHoverIconsProps = {
 }
 
 export function FileHoverIcons(props: FileHoverIconsProps) {
-
+  const [mouseOver, setMouseOver] = useState(false)
   return (
     <>
       {<div className="d-flex flex-row align-items-center">
@@ -32,6 +32,9 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
                     e.stopPropagation()
                     await props.handleNewFolderOp(props.file.path)
                   }}
+                  style={{ cursor: mouseOver ? 'pointer' : 'default' }}
+                  onMouseEnter={(e) => setMouseOver(true)}
+                  onMouseLeave={(e) => setMouseOver(false)}
                 ></span>
               </CustomTooltip>
               <CustomTooltip
@@ -47,6 +50,9 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
                     e.stopPropagation()
                     await props.handleNewFileOp(props.file.path)
                   }}
+                  style={{ cursor: mouseOver ? 'pointer' : 'default' }}
+                  onMouseEnter={(e) => setMouseOver(true)}
+                  onMouseLeave={(e) => setMouseOver(false)}
                 ></span>
               </CustomTooltip>
             </>
@@ -65,6 +71,9 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
               e.stopPropagation()
               await props.renamePathOp(props.file.path, props.file.type)
             }}
+            style={{ cursor: mouseOver ? 'pointer' : 'default' }}
+            onMouseEnter={(e) => setMouseOver(true)}
+            onMouseLeave={(e) => setMouseOver(false)}
           ></span>
         </CustomTooltip>
         <CustomTooltip
@@ -80,6 +89,9 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
               e.stopPropagation()
               await props.deletePathOp(props.file.path)
             }}
+            style={{ cursor: mouseOver ? 'pointer' : 'default' }}
+            onMouseEnter={(e) => setMouseOver(true)}
+            onMouseLeave={(e) => setMouseOver(false)}
           ></span>
         </CustomTooltip>
       </div>
