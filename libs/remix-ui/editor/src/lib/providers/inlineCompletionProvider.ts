@@ -71,9 +71,9 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     if (word.split('\n').at(-1).trimStart().startsWith('//') || 
         word.split('\n').at(-1).trimStart().startsWith('/*') ||
-        word.split('\n').at(-1).trimStart().startsWith('*') ||
-        word.split('\n').at(-1).trimStart().startsWith('*/')
-        ){
+        word.split('\n').at(-1).trimStart().startsWith('*')  ||
+        word.split('\n').at(-1).trimStart().startsWith('*/') ||
+        this.running){
       return; // do not do completion on single and multiline comment
     }
 

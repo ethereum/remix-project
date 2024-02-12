@@ -1,5 +1,5 @@
 import { Plugin } from '@remixproject/engine'
-import {SuggestOptions} from './copilot/suggestion-service/suggestion-service'
+import {SuggestOptions} from './copilot/suggestion-service/copilot-suggestion'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -38,7 +38,7 @@ export class SolCoder extends Plugin {
     return result.data[0]
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
-      return
+      return [""]
     }finally {
       this.emit("aiInferingDone")
     }
@@ -62,7 +62,7 @@ export class SolCoder extends Plugin {
       ).json()
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
-      return
+      return [""]
     }finally {
       this.emit("aiInferingDone")
     }
@@ -109,7 +109,7 @@ export class SolCoder extends Plugin {
       return result.data
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
-      return
+      return [""]
     } finally {
       this.emit("aiInferingDone")
     }

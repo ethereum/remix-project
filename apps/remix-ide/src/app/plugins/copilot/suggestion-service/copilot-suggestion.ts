@@ -1,6 +1,10 @@
 import {Plugin} from '@remixproject/engine'
-import {SuggestionService, SuggestOptions} from './suggestion-service'
-import axios, {AxiosResponse} from 'axios'
+export type SuggestOptions = { max_new_tokens: number, 
+  temperature: number, 
+  top_k: number,
+  top_p:number, 
+  stream_result:boolean}
+
 //@ts-ignore
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
@@ -8,31 +12,16 @@ const profile = {
   name: 'copilot-suggestion',
   displayName: 'copilot-suggestion',
   description: 'Get Solidity suggestions in editor',
-  methods: ['suggest', 'init', 'uninstall', 'status', 'isActivate', 'discardRemoteService', 'useconfig'],
+  methods: ['suggest', 'status', 'isActivate'],
   version: '0.1.0-alpha',
   maintainedBy: "Remix"
 }
 
 export class CopilotSuggestion extends Plugin {
-  service: SuggestionService
-  context: string
   ready: boolean
-  config: { [id: string]: string }
   constructor() {
     super(profile)
-    this.service = new SuggestionService()
-    this.context = ''
     this.ready = true // always ready for service
-    this.config = {}
-  }
-
-
-  useconfig(config ){
-    this.config = config
-  }
-
-  discardRemoteService() {
-    this.ready = false
   }
 
   status () {
@@ -83,11 +72,4 @@ export class CopilotSuggestion extends Plugin {
     return importsContent
   }
 
-  async init() {
-    return this.service.init()
-  }
-
-  async uninstall() {
-    this.service.terminate()
-  }
 }

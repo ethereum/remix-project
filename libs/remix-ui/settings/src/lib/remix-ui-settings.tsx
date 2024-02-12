@@ -132,18 +132,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const onchangeCopilotActivate = async (event) => {
     if (!event.target.checked) {
       copilotActivate(props.config, event.target.checked, dispatch)
-      props.plugin.call('copilot-suggestion', 'uninstall')
       return
     } 
     if (await props.plugin.call('copilot-suggestion', 'status')) {
       copilotActivate(props.config, true, dispatch)          
     } else {
-      props.plugin.call('copilot-suggestion', 'uninstall')
       copilotActivate(props.config, false, dispatch)
     }
-
-    props.plugin.call('copilot-suggestion', 'init')
-    
   }
 
   const onchangeCopilotMaxNewToken = (event) => {
@@ -421,7 +416,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     copilotTemperatureValue = 0.5
   }
 
-  if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
   const copilotSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
