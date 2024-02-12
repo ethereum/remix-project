@@ -646,14 +646,18 @@ export class Blockchain extends Plugin {
   }
 
   async loadContext(context: string) {
-    const contextExists = await this.call('fileManager', 'exists', `.states/${context}/state.json`)
+    const saveEvmState = this.config.get('settings/save-env-state')
+    
+    if (saveEvmState) {
+      const contextExists = await this.call('fileManager', 'exists', `.states/${context}/state.json`)
 
-    if (contextExists) {
-      const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
-
-      await this.getCurrentProvider().resetEnvironment(stateDb)
-    } else {
-      await this.getCurrentProvider().resetEnvironment()
+      if (contextExists) {
+        const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
+  
+        await this.getCurrentProvider().resetEnvironment(stateDb)
+      } else {
+        await this.getCurrentProvider().resetEnvironment()
+      }
     }
 
     // TODO: most params here can be refactored away in txRunner
