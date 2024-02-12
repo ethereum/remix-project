@@ -186,7 +186,7 @@ export const FlatTree = (props: FlatTreeProps) => {
   }, [focusEdit])
 
   const showIcons = (file: FileType) =>
-    file.path === hover ? (
+    file.path === hover && !isDragging ? (
       <div>
         <FileHoverIcons
           file={file}
@@ -224,6 +224,7 @@ export const FlatTree = (props: FlatTreeProps) => {
               editModeOff={editModeOff}
               file={file} /> :
             <><div
+              data-id={`treeViewDivDraggableItem${file.path}`}
               draggable={true}
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}

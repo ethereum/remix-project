@@ -61,7 +61,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     } else {
       dragDestination = getFlatTreeItem(target.path)
     }
-
+    console.log(dragDestination)
     if (dragDestination.isDirectory) {
       if (dragSource.isDirectory) {
         moveFolder(dragDestination.path, dragSource.path)
