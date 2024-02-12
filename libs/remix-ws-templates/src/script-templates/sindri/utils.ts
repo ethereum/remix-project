@@ -11,7 +11,7 @@ const authorize = async () => {
     }
     sindriClient.authorize({apiKey})
   } catch {
-    const message = 'No Sindri API key found. Please add your API key in the settings tab.'
+    const message = 'No Sindri API key found. Please click the gear in the lower left corner to open the settings page, and add your API key under "Sindri Credentials".'
     await remix.call('notification', 'toast', message)
     throw new Error(message)
   }
