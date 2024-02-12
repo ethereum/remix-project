@@ -32,8 +32,16 @@ export type State = {
   root: Buffer
 }
 
+export type ProviderOptions = {
+  fork: string,
+  nodeUrl: string,
+  blockNumber: number | 'latest',
+  stateDb: State,
+  logDetails?: boolean
+}
+
 export class Provider {
-  options: Record<string, string | number | State>
+  options: ProviderOptions
   vmContext
   Accounts
   Transactions
@@ -42,10 +50,10 @@ export class Provider {
   initialized: boolean
   pendingRequests: Array<any>
 
-  constructor (options: Record<string, string | number | State> = {}) {
+  constructor (options: ProviderOptions = {} as ProviderOptions) {
     this.options = options
     this.connected = true
-    this.vmContext = new VMContext(options['fork'] as string, options['nodeUrl'] as string, options['blockNumber'] as (number | 'latest'), options['stateDb'] as State)
+    this.vmContext = new VMContext(options['fork'], options['nodeUrl'], options['blockNumber'], options['stateDb'])
 
     this.Accounts = new Web3Accounts(this.vmContext)
     this.Transactions = new Transactions(this.vmContext)

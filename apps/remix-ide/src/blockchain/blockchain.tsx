@@ -1,7 +1,7 @@
 import React from 'react' // eslint-disable-line
 import {fromWei, toBigInt, toWei} from 'web3-utils'
 import {Plugin} from '@remixproject/engine'
-import {toBuffer, addHexPrefix, bufferToHex} from '@ethereumjs/util'
+import {toBuffer, addHexPrefix} from '@ethereumjs/util'
 import {EventEmitter} from 'events'
 import {format} from 'util'
 import {ExecutionContext} from './execution-context'
@@ -135,7 +135,9 @@ export class Blockchain extends Plugin {
 
   setupEvents() {
     this.executionContext.event.register('contextChanged', async (context) => {
-      await this.resetEnvironment()
+      console.log('context changed', context)
+      // reset environment to last known state of the context
+      await this.loadContext(context)
       this._triggerEvent('contextChanged', [context])
       this.detectNetwork((error, network) => {
         this.networkStatus = {network, error}
@@ -164,7 +166,7 @@ export class Blockchain extends Plugin {
   }
 
   setupProviders() {
-    const vmProvider = new VMProvider(this.executionContext, this)
+    const vmProvider = new VMProvider(this.executionContext)
     this.providers = {}
     this.providers['vm'] = vmProvider
     this.providers.injected = new InjectedProvider(this.executionContext)
@@ -643,8 +645,16 @@ export class Blockchain extends Plugin {
     })
   }
 
-  async resetEnvironment() {
-    await this.getCurrentProvider().resetEnvironment()
+  async loadContext(context: string) {
+    const contextExists = await this.call('fileManager', 'exists', '.context')
+    if (contextExists) {
+      const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
+
+      await this.getCurrentProvider().loadContext(stateDb)
+    } else {
+      await this.getCurrentProvider().resetEnvironment()
+    }
+
     // TODO: most params here can be refactored away in txRunner
     const web3Runner = new TxRunnerWeb3(
       {
@@ -890,27 +900,9 @@ export class Blockchain extends Plugin {
       let returnValue = null
       if (isVM) {
         if (!tx.useCall) {
-          // TODO: this won't save the state for transactions executed outside of the UI (dor instande from a script execution).
-          setTimeout(async() => {
-            const root = await this.web3().remix.getStateTrieRoot()
-            const db = await this.web3().remix.getStateDb()
-            const state = {
-              root,
-              db: Object.fromEntries(db._database)
-            }
-            console.log('saving', state)
-            const stringifyed = JSON.stringify(state, (key, value) => {
-              if (key === 'root') {
-                return bufferToHex(value)
-              } else if (key === 'db') {
-                return value
-              } else if (key === '') {
-                return value           
-              }
-              return bufferToHex(value)
-            }, '\t')
-            this.call('fileManager', 'writeFile', '.states/state.json', stringifyed)
-          }, 500)
+          await this.executionContext.getStateDetails().then((state) => {
+            this.call('fileManager', 'writeFile', `.states/${this.executionContext.getProvider()}/state.json`, state)
+          })
         }
 
         const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)

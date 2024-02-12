@@ -61,6 +61,7 @@ export class Blockchain extends Plugin<any, any> {
   /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
   startListening(txlistener: any): void;
   resetEnvironment(): Promise<void>;
+  loadContext(): Promise<void>;
   /**
      * Create a VM Account
      * @param {{privateKey: string, balance: string}} newAccount The new account to create

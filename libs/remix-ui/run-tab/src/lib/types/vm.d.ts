@@ -4,6 +4,7 @@ declare class VMProvider {
   executionContext: any;
   getAccounts(cb: any): void;
   resetEnvironment(): Promise<void>;
+  loadEnvironment(stringifiedStateDb: string): Promise<void>;
   accounts: any;
   RemixSimulatorProvider: any;
   web3: any;
