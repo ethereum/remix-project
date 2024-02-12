@@ -302,7 +302,6 @@ export function ContractGUI(props: ContractGUIProps) {
               data-id={buttonOptions.dataId}
               data-title={buttonOptions.title}
               disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !== '' && basicInput === '')}
-              style={{pointerEvents: 'none'}}
             >
               {title}
             </button>
