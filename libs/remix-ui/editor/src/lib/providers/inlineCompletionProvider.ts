@@ -2,6 +2,8 @@
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
 import axios, {AxiosResponse} from 'axios'
 import { slice } from 'lodash';
+const _paq = (window._paq = window._paq || [])
+
 const controller = new AbortController();
 const { signal } = controller;
 const result: string = ''
@@ -27,6 +29,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endLineNumber: position.lineNumber,
       endColumn: position.column,
     });
+
     
     if (!word.endsWith(' ') &&
       !word.endsWith('\n') &&
@@ -65,6 +68,15 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     } catch (e) {
       console.error(e)
     }   
+
+    if (word.split('\n').at(-1).trimStart().startsWith('//') || 
+        word.split('\n').at(-1).trimStart().startsWith('/*') ||
+        word.split('\n').at(-1).trimStart().startsWith('*') ||
+        word.split('\n').at(-1).trimStart().startsWith('*/')
+        ){
+      return; // do not do completion on single and multiline comment
+    }
+
     
     // abort if there is a signal
     if (token.isCancellationRequested) {
