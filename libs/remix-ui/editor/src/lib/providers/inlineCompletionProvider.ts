@@ -27,8 +27,12 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endLineNumber: position.lineNumber,
       endColumn: position.column,
     });
-
-    if (!word.endsWith(' ') && !word.endsWith('\n') && !word.endsWith(';') && !word.endsWith('.') && !word.endsWith('(') && word.endsWith('}') && word.split('\n').at(-1).trimStart().startsWith('//')) {
+    
+    if (!word.endsWith(', ') &&
+      !word.endsWith('\n') &&
+      !word.endsWith(';') && 
+      !word.endsWith('.') && 
+      !word.endsWith('(')) {
       return;
     }
 
