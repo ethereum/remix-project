@@ -646,11 +646,12 @@ export class Blockchain extends Plugin {
   }
 
   async loadContext(context: string) {
-    const contextExists = await this.call('fileManager', 'exists', '.context')
+    const contextExists = await this.call('fileManager', 'exists', `.states/${context}/state.json`)
+
     if (contextExists) {
       const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
 
-      await this.getCurrentProvider().loadContext(stateDb)
+      await this.getCurrentProvider().resetEnvironment(stateDb)
     } else {
       await this.getCurrentProvider().resetEnvironment()
     }
