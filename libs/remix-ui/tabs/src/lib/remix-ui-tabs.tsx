@@ -203,6 +203,40 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className="fad fa-play"></i>
             </CustomTooltip>
           </button>
+          <button
+            data-id="play-editor"
+            className="btn text-success py-0"
+            disabled={!(tabsState.currentExt === 'sol' )}
+            onClick={async () => {
+              const path = active().substr(active().indexOf('/') + 1, active().length)
+              const content = await props.plugin.call('fileManager', 'readFile', path)
+              if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
+                await props.plugin.call('scriptRunner', 'execute', content, path)
+                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+              } else if (tabsState.currentExt === 'sol') {
+                await props.plugin.call('solcoder', 'solidity_answer', content)
+                _paq.push(['trackEvent', 'ai', 'solcoder', 'explain_file'])
+              }
+            }}
+          >
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="overlay-tooltip-run-script"
+              tooltipText={
+                <span>
+                  {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
+                    <FormattedMessage id="remixUiTabs.tooltipText1" />
+                  ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' ? (
+                    <FormattedMessage id="remixUiTabs.tooltipText2" />
+                  ) : (
+                    <FormattedMessage id="remixUiTabs.tooltipText3" />
+                  )}
+                </span>
+              }
+            >
+              <i className="fad fa-play"></i>
+            </CustomTooltip>
+          </button>
           <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
             <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" onClick={() => props.onZoomOut()}></span>
           </CustomTooltip>
