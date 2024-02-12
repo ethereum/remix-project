@@ -20,6 +20,7 @@ export class SolCoder extends Plugin {
   }
 
   async code_generation(prompt): Promise<any> {
+    this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
     this.call('terminal', 'log', 'Waiting for Solcoder answer...')
     let result
@@ -34,14 +35,17 @@ export class SolCoder extends Plugin {
           body: JSON.stringify({"data":[prompt,false,1000,0.2,0.8,50]}),
         })
       ).json()
-      return result.data[0]
+    return result.data[0]
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
+    }finally {
+      this.emit("aiInferingDone")
     }
   }
 
   async solidity_answer(prompt): Promise<any> {
+    this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
     this.call('terminal', 'log', 'Waiting for Solcoder answer...')
     let result
@@ -59,6 +63,8 @@ export class SolCoder extends Plugin {
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
+    }finally {
+      this.emit("aiInferingDone")
     }
     if (result) {
       this.call('terminal', 'log', { type: 'typewriterwarning', value: result.data[0]})
@@ -70,6 +76,7 @@ export class SolCoder extends Plugin {
 
 
   async code_completion(prompt, options:SuggestOptions=null): Promise<any> {
+    this.emit("aiInfering")
     let result
     try {
       result = await(
@@ -103,6 +110,8 @@ export class SolCoder extends Plugin {
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
+    } finally {
+      this.emit("aiInferingDone")
     }
   }
 
