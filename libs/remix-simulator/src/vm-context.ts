@@ -331,9 +331,9 @@ export class VMContext {
   exeResults: Record<string, Transaction>
   nodeUrl: string
   blockNumber: number | 'latest'
-  stateDb: any
+  stateDb: State
 
-  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: any) {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'merge'
