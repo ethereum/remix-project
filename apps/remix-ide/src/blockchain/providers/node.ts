@@ -33,10 +33,6 @@ export class NodeProvider {
     /* Do nothing. */
   }
 
-  async loadContext (context) {
-    /* Do nothing. */
-  }
-
   async getBalanceInEther (address) {
     const balance = await this.executionContext.web3().eth.getBalance(address)
     const balInString = balance.toString(10)

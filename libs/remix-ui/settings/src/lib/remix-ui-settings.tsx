@@ -19,7 +19,8 @@ import {
   saveIpfsSettingsToast,
   useAutoCompletion,
   useShowGasInEditor,
-  useDisplayErrors
+  useDisplayErrors,
+  saveEnvState
 } from './settingsAction'
 import {initialState, toastInitialState, toastReducer, settingReducer} from './settingsReducer'
 import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
@@ -69,6 +70,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
     const useShowGas = props.config.get('settings/show-gas')
     if (useShowGas === null || useShowGas === undefined) useShowGasInEditor(props.config, true, dispatch)
+
+    const enableSaveEnvState = props.config.get('settings/save-evm-state')
+    if (enableSaveEnvState === null || enableSaveEnvState === undefined) saveEnvState(props.config, true, dispatch)
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
@@ -200,6 +204,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     useDisplayErrors(props.config, event.target.checked, dispatch)
   }
 
+  const onchangeSaveEnvState= (event) => {
+    console.log('saveEnvState', event.target.checked)
+    saveEnvState(props.config, event.target.checked, dispatch)
+  }
+
   const getTextClass = (key) => {
     if (props.config.get(key)) {
       return textDark
@@ -217,6 +226,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isAutoCompleteChecked = props.config.get('settings/auto-completion') || false
     const isShowGasInEditorChecked = props.config.get('settings/show-gas') || false
     const displayErrorsChecked = props.config.get('settings/display-errors') || false
+    const isSaveEnvStateChecked = props.config.get('settings/save-env-state') || false
     return (
       <div className="$border-top">
         <div className="d-flex justify-content-end pr-4">
@@ -331,6 +341,18 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               <a target="_blank" href="https://matomo.org/free-software">
                 Matomo
               </a>
+            </label>
+          </div>
+          <div className="custom-control custom-checkbox mb-1">
+            <input onChange={onchangeSaveEnvState} id="settingsEnableSaveEnvState" type="checkbox" className="custom-control-input" checked={isSaveEnvStateChecked} />
+            <label
+              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/save-env-state')}`}
+              data-id="settingsEnableSaveEnvStateLabel"
+              htmlFor="settingsEnableSaveEnvState"
+            >
+              <span>
+                <FormattedMessage id="settings.enableSaveEnvState" />
+              </span>
             </label>
           </div>
         </div>

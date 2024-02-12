@@ -29,44 +29,63 @@ export class VMProvider {
       })
   }
 
-  async resetEnvironment () {
-    if (this.worker) {
-      const provider = this.executionContext.getProviderObject()
-
-      this.worker.postMessage({
-        cmd: 'init',
-        fork: this.executionContext.getCurrentFork(),
-        nodeUrl: provider?.options['nodeUrl'],
-        blockNumber: provider?.options['blockNumber']
-      })
-    } else {
-      this.worker = new Worker(new URL('./worker-vm', import.meta.url))
-      this.setWorkerEventListeners(this.worker)
-      const provider = this.executionContext.getProviderObject()
-
-      this.worker.postMessage({
-        cmd: 'init',
-        fork: this.executionContext.getCurrentFork(),
-        nodeUrl: provider?.options['nodeUrl'],
-        blockNumber: provider?.options['blockNumber']
-      })
-    }
-  }
-
-  async loadContext (stringifiedStateDb: string) {
+  async resetEnvironment (stringifiedStateDb?: string) {
     if (this.worker) this.worker.terminate()
     this.worker = new Worker(new URL('./worker-vm', import.meta.url))
-    this.setWorkerEventListeners(this.worker)
     const provider = this.executionContext.getProviderObject()
 
-    this.worker.postMessage({
-      cmd: 'init',
-      fork: this.executionContext.getCurrentFork(),
-      nodeUrl: provider?.options['nodeUrl'],
-      blockNumber: provider?.options['blockNumber'],
-      stateDb: stringifiedStateDb
+    let incr = 0
+    const stamps = {}
+
+    return new Promise((resolve, reject) => {
+      this.worker.addEventListener('message', (msg) => {
+        if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
+          if (stamps[msg.data.stamp].callback) {
+            stamps[msg.data.stamp].callback(msg.data.error, msg.data.result)
+            return
+          }
+          if (msg.data.error) {
+            stamps[msg.data.stamp].reject(msg.data.error)
+          } else {
+            stamps[msg.data.stamp].resolve(msg.data.result)
+          }          
+        } else if (msg.data.cmd === 'initiateResult') {
+          if (!msg.data.error) {
+            this.provider = {
+              sendAsync: (query, callback) => {
+                return new Promise((resolve, reject) => {
+                  const stamp = Date.now() + incr
+                  incr++
+                  stamps[stamp] = { callback, resolve, reject }
+                  this.worker.postMessage({ cmd: 'sendAsync', query, stamp })              
+                })
+              }
+            }
+            this.web3 = new Web3(this.provider as LegacySendAsyncProvider)
+            this.web3.setConfig({ defaultTransactionType: '0x0' })
+            extend(this.web3)
+            this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
+            resolve({})
+          } else {
+            reject(new Error(msg.data.error))
+          }
+        } else if (msg.data.cmd === 'newAccountResult') {
+          if (this.newAccountCallback[msg.data.stamp]) {
+            this.newAccountCallback[msg.data.stamp](msg.data.error, msg.data.result)
+            delete this.newAccountCallback[msg.data.stamp]
+          }
+        }
+      })
+      this.worker.postMessage({
+        cmd: 'init',
+        fork: this.executionContext.getCurrentFork(),
+        nodeUrl: provider?.options['nodeUrl'],
+        blockNumber: provider?.options['blockNumber'],
+        stateDb: stringifiedStateDb
+      })
     })
   }
+
 
   // TODO: is still here because of the plugin API
   // can be removed later when we update the API
@@ -105,48 +124,50 @@ export class VMProvider {
     return this.executionContext.getProvider()
   }
 
-  private setWorkerEventListeners (worker: Worker) {
-    if (!worker) throw new Error('Worker not initialized')
-    let incr = 0
-    const stamps = {}
-
-    worker.addEventListener('message', (msg) => {
-      if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
-        if (stamps[msg.data.stamp].callback) {
-          stamps[msg.data.stamp].callback(msg.data.error, msg.data.result)
-          return
-        }
-        if (msg.data.error) {
-          stamps[msg.data.stamp].reject(msg.data.error)
-        } else {
-          stamps[msg.data.stamp].resolve(msg.data.result)
-        }          
-      } else if (msg.data.cmd === 'initiateResult') {
-        if (!msg.data.error) {
-          this.provider = {
-            sendAsync: (query, callback) => {
-              return new Promise((resolve, reject) => {
-                const stamp = Date.now() + incr
-                incr++
-                stamps[stamp] = { callback, resolve, reject }
-                worker.postMessage({ cmd: 'sendAsync', query, stamp })              
-              })
-            }
+  private async setWorkerEventListeners () {
+    return new Promise((resolve, reject) => {
+      if (!this.worker) throw new Error('Worker not initialized')
+      let incr = 0
+      const stamps = {}
+  
+      this.worker.addEventListener('message', (msg) => {
+        if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
+          if (stamps[msg.data.stamp].callback) {
+            stamps[msg.data.stamp].callback(msg.data.error, msg.data.result)
+            return
           }
-          this.web3 = new Web3(this.provider as LegacySendAsyncProvider)
-          this.web3.setConfig({ defaultTransactionType: '0x0' })
-          extend(this.web3)
-          this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
-        } else {
-          console.error(msg.data.error)
-          throw new Error(msg.data.error)
+          if (msg.data.error) {
+            stamps[msg.data.stamp].reject(msg.data.error)
+          } else {
+            stamps[msg.data.stamp].resolve(msg.data.result)
+          }          
+        } else if (msg.data.cmd === 'initiateResult') {
+          if (!msg.data.error) {
+            this.provider = {
+              sendAsync: (query, callback) => {
+                return new Promise((resolve, reject) => {
+                  const stamp = Date.now() + incr
+                  incr++
+                  stamps[stamp] = { callback, resolve, reject }
+                  this.worker.postMessage({ cmd: 'sendAsync', query, stamp })              
+                })
+              }
+            }
+            this.web3 = new Web3(this.provider as LegacySendAsyncProvider)
+            this.web3.setConfig({ defaultTransactionType: '0x0' })
+            extend(this.web3)
+            this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
+            resolve({})
+          } else {
+            reject(new Error(msg.data.error))
+          }
+        } else if (msg.data.cmd === 'newAccountResult') {
+          if (this.newAccountCallback[msg.data.stamp]) {
+            this.newAccountCallback[msg.data.stamp](msg.data.error, msg.data.result)
+            delete this.newAccountCallback[msg.data.stamp]
+          }
         }
-      } else if (msg.data.cmd === 'newAccountResult') {
-        if (this.newAccountCallback[msg.data.stamp]) {
-          this.newAccountCallback[msg.data.stamp](msg.data.error, msg.data.result)
-          delete this.newAccountCallback[msg.data.stamp]
-        }
-      }
+      })
     })
   }
 }

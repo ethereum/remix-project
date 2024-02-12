@@ -36,5 +36,6 @@
   "settings.port": "PORTA",
   "settings.projectID": "ID PROGETTO",
   "settings.projectSecret": "SEGRETO DEL PROGETTO",
-  "settings.analyticsInRemix": "Analytics nella Remix IDE"
+  "settings.analyticsInRemix": "Analytics nella Remix IDE",
+  "settings.enableSaveEnvState": "Salva lo stato dell'ambiente di distribuzione"
 }
