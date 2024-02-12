@@ -15,7 +15,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
 
   return (
     <>
-      {<div className="d-flex flex-row align-items-center" style={{ marginLeft: '6rem' }}>
+      {<div className="d-flex flex-row align-items-center">
         {
           props.file.isDirectory ? (
             <>
