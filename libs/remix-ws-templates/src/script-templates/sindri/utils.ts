@@ -65,7 +65,8 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
     Object.entries(dependencies).forEach(([rawPath, rawContent]) => {
       // Convert absolute file paths to paths relative to the project root.
       const path = normalizePath(rawPath)
-      const content = path.endsWith('.circom') ? rawContent.replace(/^\s*include\s+"\/([^"]+)"\s*;\s*$/gm, 'include "$1";') : rawContent
+      // Removes any leading `/`s from Circom `include` paths to make them relative to the root.
+      const content = path.endsWith('.circom') ? rawContent.replace(/^\s*include\s+"\/+([^"]+)"\s*;\s*$/gm, 'include "$1";') : rawContent
       filesByPath[path] = new File([content], path)
     })
   }
