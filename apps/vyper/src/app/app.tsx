@@ -28,7 +28,7 @@ interface OutputMap {
 
 const App = () => {
   const [contract, setContract] = useState<string>()
-  const [output, setOutput] = useState<any>({})
+  const [output, setOutput] = useState<any>(remixClient.compilerOutput)
   const [state, setState] = useState<AppState>({
     status: 'idle',
     environment: 'remote',
@@ -53,6 +53,30 @@ const App = () => {
     start()
   }, [])
 
+  useEffect(() => {
+    remixClient.eventEmitter.on('resetCompilerState', () => {
+      resetCompilerResultState()
+    })
+
+    return () => {
+      remixClient.eventEmitter.off('resetCompilerState', () => {
+        resetCompilerResultState()
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    remixClient.eventEmitter.on('setOutput', (payload) => {
+      setOutput(payload)
+    })
+
+    return () => {
+      remixClient.eventEmitter.off('setOutput', (payload) => {
+        setOutput(payload)
+      })
+    }
+  }, [])
+
   /** Update the environment state value */
   function setEnvironment(environment: 'local' | 'remote') {
     setState({...state, environment})
@@ -67,7 +91,7 @@ const App = () => {
   }
 
   function resetCompilerResultState() {
-    setOutput({})
+    setOutput(remixClient.compilerOutput)
   }
 
   return (
