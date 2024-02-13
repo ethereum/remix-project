@@ -35,7 +35,7 @@ export class SolCoder extends Plugin {
           body: JSON.stringify({"data":[prompt,false,1000,0.2,0.8,50]}),
         })
       ).json()
-    return result.data[0]
+      return result.data[0]
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return [""]
