@@ -37,7 +37,7 @@ export class TxRunnerVM {
     // has a default for now for backwards compatibility
     this.getVMObject = getVMObject
     this.commonContext = this.getVMObject().common
-    this.blockNumber = blockNumber || 0
+    this.blockNumber = blockNumber || 0 // TODO: this should be set to the fetched block number count
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
     this.queusTxs = []
@@ -125,7 +125,10 @@ export class TxRunnerVM {
         this.blockNumber = this.blockNumber + 1
         this.blockParentHash = block.hash()
         this.runBlockInVm(tx, block, (err, result) => {
-          if (!err) this.getVMObject().vm.blockchain.putBlock(block)  // look at putBlock for saving blocks
+          if (!err) {
+            this.getVMObject().vm.blockchain.putBlock(block)
+            this.blocks.push(block.serialize())
+          }
           callback(err, result)
         })
       } else {
