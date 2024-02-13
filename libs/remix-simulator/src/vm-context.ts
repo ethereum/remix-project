@@ -332,8 +332,9 @@ export class VMContext {
   nodeUrl: string
   blockNumber: number | 'latest'
   stateDb: State
+  blocksData: Block[]
 
-  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State) {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: Block[]) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'merge'
@@ -346,6 +347,7 @@ export class VMContext {
     this.txByHash = {}
     this.exeResults = {}
     this.logsManager = new LogsManager()
+    this.blocksData = blocksData
   }
 
   async init () {
@@ -387,8 +389,13 @@ export class VMContext {
         gasLimit: 8000000
       }
     }, { common, hardforkByBlockNumber: false, hardforkByTTD: undefined })
+    let blockchain
 
-    const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
+    if (Array.isArray(this.blocksData) && this.blocksData.length > 0) {
+      blockchain = await Blockchain.fromBlocksData(this.blocksData, { common, validateBlocks: false, validateConsensus: false })
+    } else {
+      blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
+    }
     const eei = new EEI(stateManager, common, blockchain)
     const evm = new EVM({ common, eei, allowUnlimitedContractSize: true })
     
