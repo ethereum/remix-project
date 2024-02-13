@@ -8,6 +8,7 @@ import {CustomTooltip} from '@remix-ui/helper'
 
 export function AccountUI(props: AccountProps) {
   const {selectedAccount, loadedAccounts} = props.accounts
+  const {selectExEnv, personalMode} = props
   const accounts = Object.keys(loadedAccounts)
   const [plusOpt, setPlusOpt] = useState({
     classList: '',
@@ -18,13 +19,14 @@ export function AccountUI(props: AccountProps) {
   const intl = useIntl()
 
   useEffect(() => {
-    if ((!selectedAccount || !accounts.includes(selectedAccount)) && accounts.length > 0) {
+    if (accounts.length > 0 && !accounts.includes(selectedAccount)) {
       props.setAccount(accounts[0])
     }
   }, [accounts, selectedAccount])
 
   useEffect(() => {
-    switch (props.selectExEnv) {
+    props.setAccount('')
+    switch (selectExEnv) {
     case 'injected':
       setPlusOpt({
         classList: 'udapp_disableMouseEvents',
@@ -61,7 +63,7 @@ export function AccountUI(props: AccountProps) {
       break
 
     case 'web3':
-      if (!props.personalMode) {
+      if (!personalMode) {
         setPlusOpt({
           classList: 'disableMouseEvents',
           title: intl.formatMessage({id: 'udapp.web3Title'})
@@ -77,11 +79,10 @@ export function AccountUI(props: AccountProps) {
     default:
       setPlusOpt({
         classList: 'disableMouseEvents',
-        title: intl.formatMessage({id: 'udapp.defaultTitle'}, {selectExEnv: props.selectExEnv})
+        title: intl.formatMessage({id: 'udapp.defaultTitle'}, {selectExEnv})
       })
     }
-    // this._deps.config.get('settings/personal-mode')
-  }, [props.selectExEnv, props.personalMode])
+  }, [selectExEnv, personalMode])
 
   const newAccount = () => {
     props.createNewBlockchainAccount(passphraseCreationPrompt())
@@ -92,7 +93,7 @@ export function AccountUI(props: AccountProps) {
       return props.tooltip(intl.formatMessage({id: 'udapp.tooltipText1'}))
     }
 
-    if (props.selectExEnv === 'web3') {
+    if (selectExEnv === 'web3') {
       return props.modal(
         intl.formatMessage({id: 'udapp.modalTitle1'}),
         <PassphrasePrompt message={intl.formatMessage({id: 'udapp.modalMessage1'})} setPassphrase={props.setPassphrase} />,
