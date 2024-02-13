@@ -20,7 +20,7 @@ declare global {
 }
 
 const _paq = window._paq = window._paq || []  //eslint-disable-line
-let plugin: RunTab, dispatch: React.Dispatch<any>
+let plugin: RunTab, dispatch: React.Dispatch<any> = () => {}
 
 export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispatch<any>) => {
   plugin = udapp
