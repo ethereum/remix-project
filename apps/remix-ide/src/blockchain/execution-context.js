@@ -7,12 +7,14 @@ const _paq = window._paq = window._paq || []
 
 let web3
 
+const config  = { defaultTransactionType: '0x0' }
 if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
   var injectedProvider = window.ethereum
   web3 = new Web3(injectedProvider)
 } else {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 }
+web3.eth.setConfig(config)
 
 /*
   trigger contextChanged, web3EndpointChanged
@@ -36,7 +38,7 @@ export class ExecutionContext {
   init (config) {
     this.executionContext = 'vm-shanghai'
     this.event.trigger('contextChanged', [this.executionContext])
-  }  
+  }
 
   getProvider () {
     return this.executionContext
@@ -59,6 +61,7 @@ export class ExecutionContext {
   }
 
   setWeb3 (context, web3) {
+    web3.setConfig(config)
     this.customWeb3[context] = web3
   }
 
@@ -74,7 +77,7 @@ export class ExecutionContext {
       if (!web3.currentProvider) {
         return callback('No provider set')
       }
-      web3.eth.net.getId((err, id) => {
+      const cb = (err, id) => {
         let name = null
         if (err) name = 'Unknown'
         // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
@@ -86,16 +89,16 @@ export class ExecutionContext {
         else if (id === 11155111) name = 'Sepolia'
         else name = 'Custom'
 
-        if (id === '1') {
-          web3.eth.getBlock(0, (error, block) => {
-            if (error) console.log('cant query first block')
+        if (id === 1) {
+          web3.eth.getBlock(0).then((block) => {
             if (block && block.hash !== this.mainNetGenesisHash) name = 'Custom'
             callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
-          })
+          }).catch((error) => callback(error))
         } else {
           callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
         }
-      })
+      }
+      web3.eth.net.getId().then(id=>cb(null,parseInt(id))).catch(err=>cb(err))
     }
   }
 
@@ -117,7 +120,7 @@ export class ExecutionContext {
   internalWeb3 () {
     return web3
   }
-  
+
   setContext (context, endPointUrl, confirmCb, infoCb) {
     this.executionContext = context
     this.executionContextChange(context, endPointUrl, confirmCb, infoCb, null)
@@ -128,9 +131,9 @@ export class ExecutionContext {
     const context = value.context
     if (!cb) cb = () => { /* Do nothing. */ }
     if (!confirmCb) confirmCb = () => { /* Do nothing. */ }
-    if (!infoCb) infoCb = () => { /* Do nothing. */ }    
+    if (!infoCb) infoCb = () => { /* Do nothing. */ }
     if (this.customNetWorks[context]) {
-      var network = this.customNetWorks[context]      
+      var network = this.customNetWorks[context]
       await network.init()
       this.currentFork = network.fork
       this.executionContext = context
@@ -156,7 +159,7 @@ export class ExecutionContext {
       try {
         const block = await web3.eth.getBlock('latest')
         // we can't use the blockGasLimit cause the next blocks could have a lower limit : https://github.com/ethereum/remix/issues/506
-        this.blockGasLimit = (block && block.gasLimit) ? Math.floor(block.gasLimit - (5 * block.gasLimit) / 1024) : this.blockGasLimitDefault
+        this.blockGasLimit = (block && block.gasLimit) ? Math.floor(web3.utils.toNumber(block.gasLimit) - (5 * web3.utils.toNumber(block.gasLimit) / 1024)) : web3.utils.toNumber(this.blockGasLimitDefault)
         this.lastBlock = block
         try {
           this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)

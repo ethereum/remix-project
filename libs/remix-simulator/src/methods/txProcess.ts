@@ -35,7 +35,7 @@ function createContract (payload, from, data, value, gasLimit, txRunner, callbac
 }
 
 export function processTx (txRunnerInstance, payload, isCall, callback) {
-  let { from, to, data, value, gas } = payload.params[0] // eslint-disable-line
+  let { from, to, data, input, value, gas } = payload.params[0] // eslint-disable-line
   gas = gas || 3000000
 
   const callbacks = {
@@ -54,10 +54,10 @@ export function processTx (txRunnerInstance, payload, isCall, callback) {
   }
 
   if (isCall) {
-    runCall(payload, from, to, data, value, gas, txRunnerInstance, callbacks, callback)
+    runCall(payload, from, to, data||input, value, gas, txRunnerInstance, callbacks, callback)
   } else if (to) {
-    runTx(payload, from, to, data, value, gas, txRunnerInstance, callbacks, callback)
+    runTx(payload, from, to, data||input, value, gas, txRunnerInstance, callbacks, callback)
   } else {
-    createContract(payload, from, data, value, gas, txRunnerInstance, callbacks, callback)
+    createContract(payload, from, data||input, value, gas, txRunnerInstance, callbacks, callback)
   }
 }

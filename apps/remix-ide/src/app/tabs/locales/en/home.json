@@ -1,4 +1,5 @@
 {
+  "home.home": "Home",
   "home.scamAlert": "Scam Alert",
   "home.scamAlertText": "The only URL Remix uses is remix.ethereum.org",
   "home.scamAlertText2": "Beware of online videos promoting \"liquidity front runner bots\"",
@@ -18,9 +19,9 @@
   "home.betaTestingText2": "Help us beta test releases now and get a handle on new features!",
   "home.betaTestingMore": "Sign up",
   "home.featuredPlugins": "Featured Plugins",
-  "home.solidityPluginDesc": "Compile, test and analyse smart contract.",
+  "home.solidityPluginDesc": "Compile, test, and analyze smart contracts.",
   "home.cookbookDesc": "Find smart contracts, solidity libraries, and discover protocols.",
-  "home.codeAnalyizerPluginDesc": "Analyze your code using Remix, Sohint and Sslither",
+  "home.codeAnalyizerPluginDesc": "Analyze your code using Remix, Solhint and Slither.",
   "home.starkNetPluginDesc": "Compile and deploy contracts with Cairo, a native language for StarkNet.",
   "home.solhintPluginDesc": "Solhint is an open source project for linting Solidity code.",
   "home.sourcifyPluginDesc": "Solidity contract and metadata verification service.",
@@ -47,7 +48,7 @@
   "home.remixTwitterProfile": "Remix Twitter Profile",
   "home.remixLinkedinProfile": "Remix Linkedin Profile",
   "home.remixMediumPosts": "Remix Medium Posts",
-  "home.remixGitterChannel": "Join us on Discord",
+  "home.joinUsOnDiscord": "Join us on Discord",
   "home.nativeIDE": "The Native IDE for Web3 Development.",
   "home.website": "Website",
   "home.documentation": "Documentation",
@@ -56,8 +57,14 @@
   "home.searchDocumentation": "Search Documentation",
   "home.files": "Files",
   "home.newFile": "New File",
+  "home.startCoding": "Start Coding",
+  "home.startCodingPlayground": "Open a playground for prototyping and simple learning",
   "home.openFile": "Open File",
-  "home.connectToLocalhost": "Access File System",
+  "home.openFileTooltip": "Open a File from your File System",
+  "home.accessFileSystem": "Access File System",
   "home.loadFrom": "Load from",
-  "home.resources": "Resources"
+  "home.resources": "Resources",
+  "home.connectToLocalhost": "Connect to Localhost",
+  "home.seeAllTutorials": "See all tutorials",
+  "home.maintainedByRemix": "Maintained by Remix"
 }

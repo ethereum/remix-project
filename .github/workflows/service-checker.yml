@@ -1,0 +1,14 @@
+name: Service Checker
+
+on:
+  schedule:
+    - cron: "0 0-23/4 * * 0-6"
+  workflow_dispatch:
+
+jobs:
+  pr-reviews-reminder:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: Aniket-Engg/pr-reviews-reminder-action@master
+      with:
+        sc-webhook-url: ${{ secrets.SERVICECHECKER_WEBHOOK_URL }}

@@ -203,7 +203,9 @@ export function inputParametersExtraction () {
 }
 
 export function extractcborMetadata (value) {
-  return value.replace(cborEncodedValueExtraction(), '')
+  const cbor = value.match(cborEncodedValueExtraction())
+  if (cbor && cbor[0]) value = value.replace(cbor[0], '')
+  return value
 }
 
 export function extractSwarmHash (value) {
@@ -214,7 +216,9 @@ export function extractSwarmHash (value) {
 }
 
 export function extractinputParameters (value) {
-  return value.replace(inputParametersExtraction(), '')
+  const inputsParam = getinputParameters(value)
+  if (inputsParam) value = value.replace(inputsParam, '')
+  return value
 }
 
 export function getinputParameters (value) {
@@ -222,7 +226,7 @@ export function getinputParameters (value) {
   if (regex && regex[1]) {
     return regex[1]
   } else
-      return ''
+    return ''
 }
 
 /**
@@ -236,6 +240,7 @@ export function getinputParameters (value) {
 export function compareByteCode (code1, code2) {
   if (code1 === code2) return true
   if (code2 === '0x') return false // abstract contract. see comment
+  if (code1 === '0x00' || code2 === '0x00' && code1 !== code2) return false  // // This can be removed some time once YUL returns correct bytecode
 
   if (code2.substr(2, 46) === '7300000000000000000000000000000000000000003014') {
     // testing the following signature: PUSH20 00..00 ADDRESS EQ

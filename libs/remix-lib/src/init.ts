@@ -1,54 +1,47 @@
 'use strict'
-import Web3 from 'web3'
+import Web3, { Web3PluginBase } from 'web3'
+import {toNumber} from 'web3-utils'
+
+export function extendWeb3 (web3) {
+  if(!web3.debug){
+    web3.registerPlugin(new Web3DebugPlugin())
+  }
+}
 
 export function loadWeb3 (url = 'http://localhost:8545') {
   const web3 = new Web3()
   web3.setProvider(new Web3.providers.HttpProvider(url))
-  extend(web3)
+  extendWeb3(web3)
   return web3
 }
 
-export function extendWeb3 (web3) {
-  extend(web3)
-}
+class Web3DebugPlugin extends Web3PluginBase {
+  public pluginNamespace = 'debug'
 
-export function extend (web3) {
-  if (!web3.extend) {
-    return
-  }
-  // DEBUG
-  const methods = []
-  if (!(web3.debug && web3.debug.preimage)) {
-    methods.push(new web3.extend.Method({
-      name: 'preimage',
-      call: 'debug_preimage',
-      inputFormatter: [null],
-      params: 1
-    }))
-  }
-
-  if (!(web3.debug && web3.debug.traceTransaction)) {
-    methods.push(new web3.extend.Method({
-      name: 'traceTransaction',
-      call: 'debug_traceTransaction',
-      inputFormatter: [null, null],
-      params: 2
-    }))
-  }
-
-  if (!(web3.debug && web3.debug.storageRangeAt)) {
-    methods.push(new web3.extend.Method({
-      name: 'storageRangeAt',
-      call: 'debug_storageRangeAt',
-      inputFormatter: [null, null, null, null, null],
-      params: 5
-    }))
-  }
-  if (methods.length > 0) {
-    web3.extend({
-      property: 'debug',
-      methods: methods,
-      properties: []
+  public preimage(key, cb) {
+    this.requestManager.send({
+      method: 'debug_preimage',
+      params: [key]
     })
+      .then(result => cb(null, result))
+      .catch(error => cb(error))
+  }
+
+  public traceTransaction(txHash, options, cb) {
+    this.requestManager.send({
+      method: 'debug_traceTransaction',
+      params: [txHash, options]
+    })
+      .then(result => cb(null, result))
+      .catch(error => cb(error))
+  }
+
+  public storageRangeAt(txBlockHash, txIndex, address, start, maxSize, cb) {
+    this.requestManager.send({
+      method: 'debug_storageRangeAt',
+      params: [txBlockHash, toNumber(txIndex), address, start, maxSize]
+    })
+      .then(result => cb(null, result))
+      .catch(error => cb(error))
   }
 }

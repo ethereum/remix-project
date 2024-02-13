@@ -5,7 +5,7 @@ export enum fileDecorationType {
     None = 'NONE'
   }
 
-  export type fileDecoration = {
+export type fileDecoration = {
     path: string,
     isDirectory: boolean,
     fileStateType: fileDecorationType,
@@ -20,7 +20,7 @@ export enum fileDecorationType {
     comment?: string[] | string
   }
 
-  export interface FileType {
+export interface FileType {
     path: string,
     name?: string,
     isDirectory?: boolean,

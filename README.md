@@ -12,7 +12,7 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/ethereum/remix-project?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
 [![Awesome Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/ethereum/awesome-remix)
 ![GitHub](https://img.shields.io/github/license/ethereum/remix-project)
-[![Gitter Chat](https://img.shields.io/badge/Gitter%20-chat-brightgreen?style=plastic&logo=gitter)](https://gitter.im/ethereum/remix)
+[![Discord](https://img.shields.io/badge/join-discord-brightgreen.svg?style=flat&logo=discord)](https://discord.gg/mh9hFCKkEq)
 [![Twitter Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=twitter&color=green)](https://twitter.com/ethereumremix)
 
 </div>
@@ -63,14 +63,13 @@ yarn global add nx
 ```bash
 git clone https://github.com/ethereum/remix-project.git
 ```
-* Build `remix-project`:
-```bash
-cd remix-project
-yarn install
-yarn run build:libs // Build remix libs
-nx build
-nx serve
-```
+* Build and Run `remix-project`:
+
+1. Move to project directory: `cd remix-project`
+2. Install dependencies: `yarn install` or simply run `yarn`
+3. Build Remix libraries: `yarn run build:libs`
+4. Build Remix project: `yarn build`
+5. Build and run project server: `yarn serve`. Optionally, run `yarn serve:hot` to enable hot module reload for frontend updates.
 
 Open `http://127.0.0.1:8080` in your browser to load Remix IDE locally.
 
@@ -151,7 +150,7 @@ To run the Selenium tests via Nightwatch:
 
  - Install Selenium for the first time: `yarn run selenium-install`
  - Run a selenium server: `yarn run selenium`
- - Build & Serve Remix: `nx serve`
+ - Build & Serve Remix: `yarn serve`
  - Run all the end-to-end tests:
 
     for Firefox: `yarn run nightwatch_local_firefox`, or 
@@ -165,7 +164,7 @@ To run the Selenium tests via Nightwatch:
         
 **NOTE:**
 
-- **The `ballot` tests suite** requires running `ganache-cli` locally.
+- **The `ballot` tests suite** requires running `ganache` locally.
 
 - **The `remixd` tests suite** requires running `remixd` locally.
 
@@ -280,10 +279,11 @@ parameters:
     default: true
 ```
 
-
 ## Important Links
 
+- Official website: https://remix-project.org
 - Official documentation: https://remix-ide.readthedocs.io/en/latest/
-- Curated list of Remix resources, tutorials etc.: https://github.com/ethereum/awesome-remix
+- Curated list of Remix resources: https://github.com/ethereum/awesome-remix
 - Medium: https://medium.com/remix-ide
 - Twitter: https://twitter.com/ethereumremix
+- Join Discord: https://discord.gg/mh9hFCKkEq

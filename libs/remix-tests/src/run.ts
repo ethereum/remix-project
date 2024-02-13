@@ -127,10 +127,9 @@ commander
       nodeUrl: options.nodeUrl || null,
       blockNumber: options.blockNumber || null
     }
-    const web3 = new Web3()
     const provider: any = new Provider(providerConfig)
     await provider.init()
-    web3.setProvider(provider)
+    const web3 = new Web3(provider)
     extend(web3)
     runTestFiles(path.resolve(file_path), isDirectory, web3, compilerConfig, (error, totalPassing, totalFailing) => {
       if (error) process.exit(1)

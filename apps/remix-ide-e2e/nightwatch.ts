@@ -7,7 +7,7 @@ module.exports = {
   globals_path: '',
 
   test_settings: {
-    default: {
+    'default': {
       selenium_port: 4444,
       selenium_host: 'localhost',
       globals: {
@@ -23,28 +23,29 @@ module.exports = {
       exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.test.js', 'dist/apps/remix-ide-e2e/src/tests/pluginManager.test.ts']
     },
 
-    chrome: {
+    'chrome': {
       desiredCapabilities: {
-        browserName: 'chrome',
-        javascriptEnabled: true,
-        acceptSslCerts: true,
+        'browserName': 'chrome',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', 
-          'start-fullscreen', 
-          '--no-sandbox', 
-          '--headless', 
-          '--verbose',
-          "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+          args: [
+            'window-size=2560,1440',
+            'start-fullscreen',
+            '--no-sandbox',
+            '--headless',
+            '--verbose',
+            '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
           ]
         }
       }
     },
 
-    chromeDesktop: {
+    'chromeDesktop': {
       desiredCapabilities: {
-        browserName: 'chrome',
-        javascriptEnabled: true,
-        acceptSslCerts: true,
+        'browserName': 'chrome',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
         'goog:chromeOptions': {
           args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox']
         }
@@ -53,40 +54,33 @@ module.exports = {
 
     'chrome-runAndDeploy': {
       desiredCapabilities: {
-        browserName: 'chrome',
-        javascriptEnabled: true,
-        acceptSslCerts: true,
+        'browserName': 'chrome',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
         'goog:chromeOptions': {
           args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose']
         }
       }
     },
 
-    firefoxDesktop: {
+    'firefoxDesktop': {
       desiredCapabilities: {
-        browserName: 'firefox',
-        javascriptEnabled: true,
-        acceptSslCerts: true,
+        'browserName': 'firefox',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
         'moz:firefoxOptions': {
-          args: [
-            '-width=2560',
-            '-height=1440'
-          ]
+          args: ['-width=2560', '-height=1440']
         }
       }
     },
 
-    firefox: {
+    'firefox': {
       desiredCapabilities: {
-        browserName: 'firefox',
-        javascriptEnabled: true,
-        acceptSslCerts: true,
+        'browserName': 'firefox',
+        'javascriptEnabled': true,
+        'acceptSslCerts': true,
         'moz:firefoxOptions': {
-          args: [
-            '-headless',
-            '-width=2560',
-            '-height=1440'
-          ]
+          args: ['-headless', '-width=2560', '-height=1440']
         }
       }
     }

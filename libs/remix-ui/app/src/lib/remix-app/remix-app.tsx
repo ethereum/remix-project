@@ -2,29 +2,42 @@ import React, { useEffect, useRef, useState } from 'react'
 import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
+import EnterDialog from './components/modals/enter'
 import OriginWarning from './components/modals/origin-warning'
 import DragBar from './components/dragbar/dragbar'
 import { AppProvider } from './context/provider'
 import AppDialogs from './components/modals/dialogs'
 import DialogViewPlugin from './components/modals/dialogViewPlugin'
-import { AppContext } from './context/context'
-import { IntlProvider } from 'react-intl'
-import { CustomTooltip } from '@remix-ui/helper';
+import { appProviderContextType, onLineContext, platformContext } from './context/context'
+import { FormattedMessage, IntlProvider } from 'react-intl'
+import { CustomTooltip } from '@remix-ui/helper'
+import { UsageTypes } from './types'
+
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+const _paq = (window._paq = window._paq || [])
 
 interface IRemixAppUi {
   app: any
 }
-
 const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
+  const [showEnterDialog, setShowEnterDialog] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [maximiseTrigger, setMaximiseTrigger] = useState<number>(0)
   const [resetTrigger, setResetTrigger] = useState<number>(0)
-  const [locale, setLocale] = useState<{ code:string; messages:any }>({ code:'en', messages:{} });
+  const [online, setOnline] = useState<boolean>(true)
+  const [locale, setLocale] = useState<{ code: string; messages: any }>({
+    code: 'en',
+    messages: {}
+  })
   const sidePanelRef = useRef(null)
 
   useEffect(() => {
-    async function activateApp () {
+    async function activateApp() {
       props.app.themeModule.initTheme(() => {
         setAppReady(true)
         props.app.activate()
@@ -35,11 +48,24 @@ const RemixApp = (props: IRemixAppUi) => {
     if (props.app) {
       activateApp()
     }
+    const hadUsageTypeAsked = localStorage.getItem('hadUsageTypeAsked')
+    if (props.app.showMatamo) {
+      // if matomo dialog is displayed, it will take care of calling "setShowEnterDialog",
+      // if the user approves matomo tracking.
+      // so "showEnterDialog" stays false
+    } else {
+      // if matomo dialog isn't displayed, we show the "enter dialog" only if:
+      //  - it wasn't already set
+      //  - (and) if user has given consent
+      if (!hadUsageTypeAsked && props.app.matomoCurrentSetting) {
+        setShowEnterDialog(true)
+      }
+    }
   }, [])
 
-  function setListeners () {
+  function setListeners() {
     props.app.sidePanel.events.on('toggle', () => {
-      setHideSidePanel(prev => {
+      setHideSidePanel((prev) => {
         return !prev
       })
     })
@@ -55,54 +81,111 @@ const RemixApp = (props: IRemixAppUi) => {
     })
 
     props.app.layout.event.on('maximisesidepanel', () => {
-      setMaximiseTrigger(prev => {
+      setMaximiseTrigger((prev) => {
         return prev + 1
       })
     })
 
     props.app.layout.event.on('resetsidepanel', () => {
-      setResetTrigger(prev => {
+      setResetTrigger((prev) => {
         return prev + 1
       })
     })
     props.app.localeModule.events.on('localeChanged', (nextLocale) => {
       setLocale(nextLocale)
     })
+
+    setInterval(() => {
+      setOnline(window.navigator.onLine)
+    }, 1000)
   }
 
-  const value = {
+  const value: appProviderContextType = {
     settings: props.app.settings,
     showMatamo: props.app.showMatamo,
     appManager: props.app.appManager,
-    modal: props.app.notification,
-    layout: props.app.layout
+    showEnter: props.app.showEnter,
+    modal: props.app.notification
+  }
+
+  const handleUserChosenType = async (type) => {
+    setShowEnterDialog(false)
+    localStorage.setItem('hadUsageTypeAsked', type)
+
+    // Use the type to setup the UI accordingly
+    switch (type) {
+    case UsageTypes.Beginner: {
+      await props.app.appManager.call('manager', 'activatePlugin', 'LearnEth')
+      await props.app.appManager.call('walkthrough', 'start')
+      // const wName = 'Playground'
+      // const workspaces = await props.app.appManager.call('filePanel', 'getWorkspaces')
+      // if (!workspaces.find((workspace) => workspace.name === wName)) {
+      //   await props.app.appManager.call('filePanel', 'createWorkspace', wName, 'playground')
+      // }
+      // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
+
+      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
+      break
+    }
+    case UsageTypes.Advance: {
+      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'advanced'])
+      break
+    }
+    case UsageTypes.Prototyper: {
+      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'prototyper'])
+      break
+    }
+    case UsageTypes.Production: {
+      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'production'])
+      break
+    }
+    default: throw new Error()
+    }
+
   }
 
   return (
     //@ts-ignore
     <IntlProvider locale={locale.code} messages={locale.messages}>
-      <AppProvider value={value}>
-        <OriginWarning></OriginWarning>
-        <MatomoDialog hide={!appReady}></MatomoDialog>
-        <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-          <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">{props.app.menuicons.render()}</div>
-          <div ref={sidePanelRef} id="side-panel" data-id="remixIdeSidePanel" className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}>{props.app.sidePanel.render()}</div>
-          <DragBar resetTrigger={resetTrigger} maximiseTrigger={maximiseTrigger} minWidth={285} refObject={sidePanelRef} hidden={hideSidePanel} setHideStatus={setHideSidePanel}></DragBar>
-          <div id="main-panel" data-id="remixIdeMainPanel" className='mainpanel d-flex'>
-            <RemixUIMainPanel Context={AppContext}></RemixUIMainPanel>
-            <CustomTooltip
-              placement="bottom"
-              tooltipId="overlay-tooltip-all-tabs"
-              tooltipText="Scroll to see all tabs"
-            >
-              <div className='remix-ui-tabs_end remix-bg-opacity position-absolute position-fixed'></div>
-            </CustomTooltip>
-          </div>
-        </div>
-        <div>{props.app.hiddenPanel.render()}</div>
-        <AppDialogs></AppDialogs>
-        <DialogViewPlugin></DialogViewPlugin>
-      </AppProvider>
+      <platformContext.Provider value={props.app.platform}>
+        <onLineContext.Provider value={online}>
+          <AppProvider value={value}>
+            <OriginWarning></OriginWarning>
+            <MatomoDialog hide={!appReady} okFn={() => setShowEnterDialog(true)}></MatomoDialog>
+            {showEnterDialog && <EnterDialog handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>}
+            <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
+              <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
+                {props.app.menuicons.render()}
+              </div>
+              <div
+                ref={sidePanelRef}
+                id="side-panel"
+                data-id="remixIdeSidePanel"
+                className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}
+              >
+                {props.app.sidePanel.render()}
+              </div>
+              <DragBar
+                resetTrigger={resetTrigger}
+                maximiseTrigger={maximiseTrigger}
+                minWidth={285}
+                refObject={sidePanelRef}
+                hidden={hideSidePanel}
+                setHideStatus={setHideSidePanel}
+              ></DragBar>
+              <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
+                <RemixUIMainPanel layout={props.app.layout}></RemixUIMainPanel>
+                <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-all-tabs" tooltipText={<FormattedMessage id="remixApp.scrollToSeeAllTabs" />}>
+                  <div className="remix-ui-tabs_end remix-bg-opacity position-absolute position-fixed"></div>
+                </CustomTooltip>
+              </div>
+            </div>
+            <div>{props.app.hiddenPanel.render()}</div>
+            <AppDialogs></AppDialogs>
+            <DialogViewPlugin></DialogViewPlugin>
+          </AppProvider>
+        </onLineContext.Provider>
+      </platformContext.Provider>
     </IntlProvider>
   )
 }

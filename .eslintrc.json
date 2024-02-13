@@ -29,7 +29,8 @@
               }
             ]
           }
-        ]
+        ],
+        "keyword-spacing": "error"
       }
     },
     {
@@ -47,7 +48,13 @@
         "eslint-disable-next-line no-empty": "off",
         "no-empty": "off",
         "jsx-a11y/anchor-is-valid": "off",
-        "@typescript-eslint/no-inferrable-types": "off"
+        "@typescript-eslint/no-inferrable-types": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "array-callback-return": "off",
+        "prefer-spread": "off",
+        "indent": ["error", 2]
       }
     },
     {
@@ -58,7 +65,9 @@
       "extends": [
         "plugin:@nrwl/nx/javascript"
       ],
-      "rules": {}
+      "rules": {
+        "indent": ["error", 2]
+      }
     }
   ],
   "globals": {

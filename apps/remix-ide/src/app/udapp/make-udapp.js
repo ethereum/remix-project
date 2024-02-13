@@ -1,4 +1,4 @@
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 
 var remixLib = require('@remix-project/remix-lib')
 var EventsDecoder = remixLib.execution.EventsDecoder
@@ -10,13 +10,21 @@ export function makeUdapp (blockchain, compilersArtefacts, logHtmlCallback) {
     if (_transactionReceipts[tx.hash]) {
       return cb(null, _transactionReceipts[tx.hash])
     }
-    blockchain.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
+    let res = blockchain.web3().eth.getTransactionReceipt(tx.hash, (error, receipt) => {
       if (error) {
         return cb(error)
       }
       _transactionReceipts[tx.hash] = receipt
       cb(null, receipt)
     })
+    if(res && typeof res.then ==='function'){
+      res.then((receipt)=>{
+        _transactionReceipts[tx.hash] = receipt
+        cb(null, receipt)
+      }).catch((error)=>{
+        cb(error)
+      })
+    }
   }
 
   const txlistener = blockchain.getTxListener({

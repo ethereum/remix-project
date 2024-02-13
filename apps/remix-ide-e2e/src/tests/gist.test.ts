@@ -30,15 +30,15 @@ module.exports = {
       .waitForElementVisible('*[data-id="fileExplorerNewFilecreateNewFolder"]')
       .click('[data-id="fileExplorerNewFilecreateNewFolder"]')
       .pause(1000)
-      .waitForElementVisible('*[data-id$="/blank"]')
-      .sendKeys('*[data-id$="/blank"] .remixui_items', 'Browser_Tests')
-      .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+      .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', 'Browser_Tests')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemBrowser_Tests"]')
       .addFile('File.sol', { content: '' })
       .executeScriptInTerminal(`remix.loadgist('${gistid}')`)
       // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
       .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
-      .click(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
+      
       .openFile(`gist-${gistid}/README.txt`)
       // Remix publish to gist
       /* .click('*[data-id="fileExplorerNewFilepublishToGist"]')
@@ -145,6 +145,23 @@ module.exports = {
       .openFile(`gist-${testData.validGistId}/README.txt`)
       .waitForElementVisible(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt']`)
       .assert.containsText(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
-      .end()
-  }
+    },
+
+    'Load Gist from URL and verify truncated files are loaded #group3': function (browser: NightwatchBrowser) {
+      const gistId = '1b179bf1b92c8b0664b4cbe61774e15d'
+      browser
+        .url('http://127.0.0.1:8080/#gist=' + gistId) // loading the gist
+        .refreshPage()
+        .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
+        .waitForElementVisible(`#fileExplorerView li[data-path='gist-${gistId}/README.txt']`, 30000)
+        .openFile(`gist-${gistId}/scripts/deploy_with_ethers.ts`)
+        .getEditorValue((content) => {
+          browser.assert.ok(content !== '')
+        })
+        .rightClickCustom(`li[data-path='gist-${gistId}'] div`) // saving the gist
+        .click('[data-id="contextMenuItempublishFolderToGist"]')
+        .modalFooterOKClick('fileSystem')
+        .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+        .assert.containsText('*[data-shared="tooltipPopup"]', 'Saving gist (' + gistId + ') ...')        
+      }
 }

@@ -9,7 +9,7 @@ import { CompileTabLogic } from '@remix-ui/solidity-compiler'
 const defaultCompilerParameters = {
   runs: '200',
   optimize: false,
-  version: 'soljson-v0.8.18+commit.87f61d96',
+  version: 'soljson-v0.8.24+commit.e11b9ed9',
   evmVersion: null, // compiler default
   language: 'Solidity',
   useFileConfiguration: false,
@@ -25,7 +25,7 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
     this.initCompilerApi()    
   }
 
-  getCompilerParameters () {
+  getCompilerQueryParameters () {
     const params = {
       runs: localStorage.getItem('runs') || defaultCompilerParameters.runs,
       optimize: localStorage.getItem('optimize') === 'true',
@@ -38,7 +38,7 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
     return params
   }
 
-  setCompilerParameters (params) {
+  setCompilerQueryParameters (params) {
     for (const key of Object.keys(params)) {
       localStorage.setItem(key, params[key])
     }

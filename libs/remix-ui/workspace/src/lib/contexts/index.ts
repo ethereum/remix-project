@@ -3,7 +3,7 @@ import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
 
 export const FileSystemContext = createContext<{
-  fs: BrowserState,
+  fs: any,
   plugin: any,
   modal:(title: string | JSX.Element, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
   dispatchInitWorkspace:() => Promise<void>,
@@ -27,6 +27,7 @@ export const FileSystemContext = createContext<{
   dispatchRenamePath: (oldPath: string, newPath: string) => Promise<void>,
   dispatchDownloadPath: (path:string) => Promise<void>,
   dispatchCopyFile: (src: string, dest: string) => Promise<void>,
+  dispatchCopyShareURL: (path: string) => Promise<void>,
   dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
   dispatchRunScript: (path: string) => Promise<void>,
   dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
@@ -46,6 +47,10 @@ export const FileSystemContext = createContext<{
   dispatchCreateTsSolGithubAction: () => Promise<void>,
   dispatchCreateSlitherGithubAction: () => Promise<void>
   dispatchCreateHelperScripts: (script: string) => Promise<void>
-}>(null)
+  dispatchOpenElectronFolder: (path: string) => Promise<void>
+  dispatchGetElectronRecentFolders: () => Promise<void>
+  dispatchRemoveRecentFolder: (path: string) => Promise<void>
+  dispatchUpdateGitSubmodules: () => Promise<void>
+    }>(null)
   
     

@@ -41,7 +41,7 @@ export interface DefaultStateManagerOpts {
 }
 
 /*
-  extend vm state manager and instanciate VM
+  extend vm state manager and instantiate VM
 */
 class StateManagerCommonStorageDump extends DefaultStateManager {
   keyHashes: { [key: string]: string }
@@ -71,7 +71,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
           const stream = trie.createReadStream()
 
           stream.on('data', (val) => {
-            const value = decode(val.value)
+            const value: any = decode(val.value)
             storage['0x' + val.key.toString('hex')] = {
               key: this.keyHashes[val.key.toString('hex')],
               value: '0x' + value.toString('hex')
@@ -225,17 +225,32 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
    * @private
    */
   async getAccountFromProvider(address: Address): Promise<Account> {
-    const accountData = await this.provider.send('eth_getProof', [
-      address.toString(),
-      [],
-      this.blockTag,
-    ])
-    const account = Account.fromAccountData({
-      balance: BigInt(accountData.balance),
-      nonce: BigInt(accountData.nonce),
-      codeHash: toBuffer(accountData.codeHash)
-      // storageRoot: toBuffer([]), // we have to remove this in order to force the creation of the Trie in the local state.
-    })
+    let accountData
+    try {
+      accountData = await this.provider.send('eth_getProof', [
+        address.toString(),
+        [],
+        this.blockTag,
+      ])
+    } catch (e) {
+      console.log(e)
+    }
+    let account
+    if (!accountData) {
+      account = Account.fromAccountData({
+        balance: BigInt(0),
+        nonce: BigInt(0),
+        codeHash: toBuffer('0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470')
+      })
+    } else {
+      const codeHash = accountData.codeHash === '0x0000000000000000000000000000000000000000000000000000000000000000' ? '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' : accountData.codeHash
+      account = Account.fromAccountData({
+        balance: BigInt(accountData.balance),
+        nonce: BigInt(accountData.nonce),
+        codeHash: toBuffer(codeHash)
+        // storageRoot: toBuffer([]), // we have to remove this in order to force the creation of the Trie in the local state.
+      })
+    }    
     return account
   }
 }
@@ -313,6 +328,7 @@ export class VMContext {
           provider: this.nodeUrl,
           blockTag: '0x' + block.toString(16)
         })
+        this.blockNumber = block
       } else {
         stateManager = new CustomEthersStateManager({
           provider: this.nodeUrl,
@@ -374,7 +390,7 @@ export class VMContext {
     return this.currentVm
   }
 
-  addBlock (block: Block, genesis?: boolean) {
+  addBlock (block: Block, genesis?: boolean, isCall?: boolean) {
     let blockNumber = bigIntToHex(block.header.number)
     if (blockNumber === '0x') {
       blockNumber = '0x0'
@@ -384,7 +400,7 @@ export class VMContext {
     this.blocks[blockNumber] = block
     this.latestBlockNumber = blockNumber
 
-    if (!genesis) this.logsManager.checkBlock(blockNumber, block, this.web3())
+    if (!isCall && !genesis) this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
   trackTx (txHash, block, tx) {

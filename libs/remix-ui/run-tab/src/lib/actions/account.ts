@@ -1,7 +1,8 @@
 import { shortenAddress } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
-import { displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setExternalEndpoint, setMatchPassphrase, setPassphrase } from "./payload"
+import { displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
+import { RunTabState } from "../types"
 
 export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
@@ -31,7 +32,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
       for (const account of accounts) {
         const balance = await plugin.blockchain.getBalanceInEther(account)
         loadedAccounts[account] =  shortenAddress(account, balance)
-      }     
+      }
       const provider = plugin.blockchain.getProvider()
 
       if (provider === 'injected') {
@@ -50,7 +51,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
 
 export const setFinalContext = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   dispatch(fetchAccountsListRequest())
-  // set the final context. Cause it is possible that this is not the one we've originaly selected
+  // set the final context. Cause it is possible that this is not the one we've originally selected
   const value = _getProviderDropdownValue(plugin)
 
   setExecEnv(dispatch, value)

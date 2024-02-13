@@ -1,5 +1,6 @@
 import { eachOf } from 'async'
 import { randomBytes } from 'crypto'
+import { toChecksumAddress } from '@ethereumjs/util'
 
 export class LogsManager {
   notificationCallbacks
@@ -19,12 +20,10 @@ export class LogsManager {
   checkBlock (blockNumber, block, web3) {
     eachOf(block.transactions, (tx: any, i, next) => {
       const txHash = '0x' + tx.hash().toString('hex')
-
       web3.eth.getTransactionReceipt(txHash, (_error, receipt) => {
         for (const log of receipt.logs) {
-          this.oldLogs.push({ type: 'block', blockNumber, block, tx, log, txNumber: i })
-          const subscriptions = this.getSubscriptionsFor({ type: 'block', blockNumber, block, tx, log })
-
+          this.oldLogs.push({ type: 'block', blockNumber, block, tx, log, txNumber: i, receipt })
+          const subscriptions = this.getSubscriptionsFor({ type: 'block', blockNumber, block, tx, log, receipt})
           for (const subscriptionId of subscriptions) {
             const result = {
               logIndex: '0x1', // 1
@@ -55,15 +54,18 @@ export class LogsManager {
     if (queryFilter.topics.filter((logTopic) => changeEvent.log.topics.indexOf(logTopic) >= 0).length === 0) return false
 
     if (queryType === 'logs') {
-      const fromBlock = queryFilter.fromBlock || '0x0'
-      const toBlock = queryFilter.toBlock || this.oldLogs.length ? this.oldLogs[this.oldLogs.length - 1].blockNumber : '0x0'
-      if ((queryFilter.address === (changeEvent.tx.to || '').toString()) || queryFilter.address === (changeEvent.tx.getSenderAddress().toString())) {
-        if ((parseInt(toBlock) >= parseInt(changeEvent.blockNumber)) && (parseInt(fromBlock) <= parseInt(changeEvent.blockNumber))) {
+      const fromBlock = parseInt(queryFilter.fromBlock || '0x0')
+      let toBlock
+      if (queryFilter.toBlock === 'latest' || !queryFilter.toBlock) toBlock = Number.MAX_VALUE
+      else toBlock = parseInt(queryFilter.toBlock)
+      const targetAddress = toChecksumAddress(queryFilter.address)
+      if ((toBlock >= parseInt(changeEvent.blockNumber)) && (fromBlock <= parseInt(changeEvent.blockNumber))) {
+        if (changeEvent.log && changeEvent.log.address === targetAddress) {
           return true
         }
       }
+      return false
     }
-
     return false
   }
 

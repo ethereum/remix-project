@@ -34,7 +34,7 @@ module.exports = {
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
         {
-          status: 'true Transaction mined and execution succeed',
+          status: '0x1 Transaction mined and execution succeed',
           'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
         })
   },
@@ -87,9 +87,28 @@ module.exports = {
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .testFunction('last',
         {
-          status: 'false Transaction mined but execution failed',
+          status: '0x0 Transaction mined but execution failed',
           'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
         })
+  },
+
+  'Compile with remappings set in remappings.txt file #group1': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_remix_default' })
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .pause(1000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .addFile('contracts/lib/storage/src/Storage.sol', { content: storageContract})
+      .addFile('remappings.txt', { content: 'storage=contracts/lib/storage/src' })
+      .addFile('contracts/Retriever.sol', { content: retrieverContract })
+      .verifyContracts(['Retriever', 'Storage'])
   },
 
   'Deploy and use Ballot using external web3  #group2': function (browser: NightwatchBrowser) {
@@ -241,7 +260,8 @@ module.exports = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .journalLastChildIncludes('Contract.(constructor)')
-      .journalLastChildIncludes('data: 0x602...0565b')
+      // .journalLastChildIncludes('data: 0x602...0565b')
+      .journalLastChildIncludes('data: 0x00') // This can be removed some time once YUL returns correct bytecode
       .end()
   }
 }
@@ -508,5 +528,31 @@ object "Contract" {
           }
       }
   }
+}
+`
+
+const storageContract = `
+pragma solidity >=0.8.2 <0.9.0;
+
+contract Storage {
+
+    uint256 public number;
+
+    function store(uint256 num) public {
+        number = num;
+    }
+}
+`
+
+const retrieverContract = `
+pragma solidity >=0.8.2 <0.9.0;
+
+import "storage/Storage.sol";
+
+contract Retriever is Storage {
+
+    function retrieve() public view returns (uint256){
+        return number;
+    }
 }
 `

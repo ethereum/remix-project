@@ -6,7 +6,7 @@ export interface Location {
   file: number; // Would it be clearer to call this a file index?
 }
 
-// This is intended to be compatibile with VScode's Position.
+// This is intended to be compatible with VScode's Position.
 // However it is pretty common with other things too.
 // Note: File index is missing here
 export interface LineColPosition {
@@ -14,7 +14,7 @@ export interface LineColPosition {
   readonly character: number;
 }
 
-// This is intended to be compatibile with vscode's Range
+// This is intended to be compatible with vscode's Range
 // However it is pretty common with other things too.
 // Note: File index is missing here
 export interface LineColRange {

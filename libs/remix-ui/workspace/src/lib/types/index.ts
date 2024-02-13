@@ -4,20 +4,22 @@ import { customAction } from '@remixproject/plugin-api'
 import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
+import { appPlatformTypes } from '@remix-ui/app'
+import { Placement } from 'react-bootstrap/esm/Overlay'
 
-export type action = { name: string, type?: Array<'folder' | 'gist' | 'file' | 'workspace'>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number }
+export type action = { name: string, type?: Array<WorkspaceElement>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number, platform?: appPlatformTypes }
 export interface JSONStandardInput {
-  language: "Solidity";
-  settings?: any,
+  language: 'Solidity'
+  settings?: any
   sources: {
     [globalName: string]: {
-      keccak256?: string;
-      content: string;
-    },
-  };
+      keccak256?: string
+      content: string
+    }
+  }
 }
 export type MenuItems = action[]
-export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721'
+export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore' | 'hashchecker' | 'rln' | 'breakthroughLabsUniswapv4Hooks' | 'uniswapV4Template' | 'uniswapV4HookBookMultiSigSwapHook'
 export interface WorkspaceProps {
   plugin: FilePanelType
 }
@@ -38,42 +40,43 @@ export interface Modal {
 }
 
 export interface FileType {
-  path: string,
-  name: string,
-  isDirectory: boolean,
-  type: 'folder' | 'file' | 'gist',
+  path: string
+  name: string
+  isDirectory: boolean
+  type: 'folder' | 'file' | 'gist'
   child?: File[]
 }
 
 export interface FilePanelType extends ViewPlugin {
-    setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void,
-    createWorkspace: (name: string, workspaceTemplateName: string) => void,
-    renameWorkspace: (oldName: string, newName: string) => void
-    compileContractForUml: (path: string) => void
-    workspaceRenamed: ({ name }) => void,
-    workspaceCreated: ({ name }) => void,
-    workspaceDeleted: ({ name }) => void,
-    workspace?: any // workspace provider,
-    browser?: any // browser provider
-    localhost?: any // localhost provider
-    fileManager? : any
-    appManager: RemixAppManager
-    registry?: any // registry
-    pluginApi?: any
-    request: {
-      createWorkspace: () => void,
-      setWorkspace: (workspaceName: string) => void,
-      createNewFile: () => void,
-      uploadFile: (target: EventTarget & HTMLInputElement) => void,
-      getCurrentWorkspace: () => void
-    } // api request,
-    workspaces: any,
-    registeredMenuItems: MenuItems // menu items
-    removedMenuItems: MenuItems
-    initialWorkspace: string,
-    resetNewFile: () => void,
-    getWorkspaces: () => string[]
-  }
+  setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void
+  createWorkspace: (name: string, workspaceTemplateName: string) => void
+  renameWorkspace: (oldName: string, newName: string) => void
+  compileContractForUml: (path: string) => void
+  workspaceRenamed: ({ name }) => void
+  workspaceCreated: ({ name }) => void
+  workspaceDeleted: ({ name }) => void
+  workspace?: any // workspace provider,
+  browser?: any // browser provider
+  localhost?: any // localhost provider
+  fileManager?: any
+  appManager: RemixAppManager
+  registry?: any // registry
+  pluginApi?: any
+  request: {
+    createWorkspace: () => void
+    setWorkspace: (workspaceName: string) => void
+    createNewFile: () => void
+    uploadFile: (target: EventTarget & HTMLInputElement) => void
+    getCurrentWorkspace: () => void
+  } // api request,
+  workspaces: any
+  registeredMenuItems: MenuItems // menu items
+  removedMenuItems: MenuItems
+  initialWorkspace: string
+  resetNewFile: () => void
+  getWorkspaces: () => string[]
+  expandPath: string[]
+}
 
 /* eslint-disable-next-line */
 export interface FileExplorerProps {
@@ -82,13 +85,14 @@ export interface FileExplorerProps {
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
+    flatTree: FileType[],
     workspaceState: WorkSpaceState,
     fileState: fileDecoration[],
     expandPath: string[],
     focusEdit: string,
     hideIconsMenu: React.Dispatch<React.SetStateAction<boolean>>,
     showIconsMenu: boolean,
-    focusElement: { key: string, type: 'file' | 'folder' | 'gist' }[],
+    focusElement: { key: string, type: WorkspaceElement }[],
     dispatchCreateNewFile: (path: string, rootDir: string) => Promise<void>,
     // eslint-disable-next-line no-undef
     modal:(title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => void,
@@ -101,12 +105,13 @@ export interface FileExplorerProps {
     dispatchUploadFile: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
     dispatchUploadFolder: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
     dispatchCopyFile: (src: string, dest: string) => Promise<void>,
+    dispatchCopyShareURL: (path:string) => Promise<void>,
     dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
     dispatchRunScript: (path: string) => Promise<void>,
     dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
     dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
-    dispatchHandleClickFile: (path: string, type: 'file' | 'folder' | 'gist') => Promise<void>,
-    dispatchSetFocusElement: (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => Promise<void>,
+    dispatchHandleClickFile: (path: string, type: WorkspaceElement) => Promise<void>,
+    dispatchSetFocusElement: (elements: { key: string, type: WorkspaceElement }[]) => Promise<void>,
     dispatchFetchDirectory:(path: string) => Promise<void>,
     dispatchRemoveInputField:(path: string) => Promise<void>,
     dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
@@ -114,7 +119,7 @@ export interface FileExplorerProps {
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
     dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
     handlePasteClick: (dest: string, destType: string) => void
-    handleCopyClick: (path: string, type: 'folder' | 'gist' | 'file' | 'workspace') => void
+    handleCopyClick: (path: string, type: WorkspaceElement) => void
     addMenuItems: (items: MenuItems) => void
     removeMenuItems: (items: MenuItems) => void
     handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
@@ -125,44 +130,46 @@ export interface FileExplorerProps {
     toGist: (path?: string, type?: string) => void
     handleNewFileInput: (parentFolder?: string) => Promise<void>
     handleNewFolderInput: (parentFolder?: string) => Promise<void>
+    dragStatus: (status: boolean) => void
 }
-type Placement = import('react-overlays/usePopper').Placement
+
 export interface FileExplorerMenuProps {
-    title: string,
-    menuItems: string[],
-    createNewFile: (folder?: string) => void,
-    createNewFolder: (parentFolder?: string) => void,
-    publishToGist: (path?: string) => void,
-    uploadFile: (target: EventTarget & HTMLInputElement) => void
-    uploadFolder: (target: EventTarget & HTMLInputElement) => void
-    tooltipPlacement?: Placement
+  title: string
+  menuItems: string[]
+  createNewFile: (folder?: string) => void
+  createNewFolder: (parentFolder?: string) => void
+  publishToGist: (path?: string) => void
+  uploadFile: (target: EventTarget & HTMLInputElement) => void
+  uploadFolder: (target: EventTarget & HTMLInputElement) => void
+  tooltipPlacement?: Placement
 }
 export interface FileExplorerContextMenuProps {
-    actions: action[],
-    createNewFile: (folder?: string) => void,
-    createNewFolder: (parentFolder?: string) => void,
-    deletePath: (path: string | string[]) => void,
-    renamePath: (path: string, type: string) => void,
-    downloadPath: (path: string) => void,
-    hideContextMenu: () => void,
-    publishToGist?: (path?: string, type?: string) => void,
-    pushChangesToGist?: (path?: string, type?: string) => void,
-    publishFolderToGist?: (path?: string, type?: string) => void,
-    publishFileToGist?: (path?: string, type?: string) => void,
-    runScript?: (path: string) => void,
-    emit?: (cmd: customAction) => void,
-    pageX: number,
-    pageY: number,
-    path: string,
-    type: string,
-    focus: {key:string, type:string}[],
-    onMouseOver?: (...args) => void,
-    copy?: (path: string, type: string) => void,
-    paste?: (destination: string, type: string) => void
-    copyFileName?: (path: string, type: string) => void
-    copyPath?: (path: string, type: string) => void
-    generateUml?: (path: string) => Promise<void>
-    uploadFile?: (target: EventTarget & HTMLInputElement) => void
+  actions: action[]
+  createNewFile: (folder?: string) => void
+  createNewFolder: (parentFolder?: string) => void
+  deletePath: (path: string | string[]) => void
+  renamePath: (path: string, type: string) => void
+  downloadPath: (path: string) => void
+  hideContextMenu: () => void
+  publishToGist?: (path?: string, type?: string) => void
+  pushChangesToGist?: (path?: string, type?: string) => void
+  publishFolderToGist?: (path?: string, type?: string) => void
+  publishFileToGist?: (path?: string, type?: string) => void
+  runScript?: (path: string) => void
+  emit?: (cmd: customAction) => void
+  pageX: number
+  pageY: number
+  path: string
+  type: string
+  focus: { key: string; type: string }[]
+  onMouseOver?: (...args) => void
+  copy?: (path: string, type: string) => void
+  paste?: (destination: string, type: string) => void
+  copyFileName?: (path: string, type: string) => void
+  copyShareURL?: (path: string, type: string) => void
+  copyPath?: (path: string, type: string) => void
+  generateUml?: (path: string) => Promise<void>
+  uploadFile?: (target: EventTarget & HTMLInputElement) => void
 }
 
 export interface WorkSpaceState {
@@ -171,7 +178,7 @@ export interface WorkSpaceState {
     actions: {
       id: string
       name: string
-      type?: Array<'folder' | 'gist' | 'file' | 'workspace'>
+      type?: Array<WorkspaceElement>
       path?: string[]
       extension?: string[]
       pattern?: string[]
@@ -190,9 +197,10 @@ export interface WorkSpaceState {
     showContextMenu: boolean
     reservedKeywords: string[]
     copyElement: CopyElementType[]
-  }
+    dragStatus: boolean
+}
 
-export type  FileFocusContextType = {
+export type FileFocusContextType = {
   element: string
   x: number
   y: number
@@ -201,5 +209,110 @@ export type  FileFocusContextType = {
 
 export type CopyElementType = {
   key: string
-  type: 'folder' | 'gist' | 'file' | 'workspace'
+  type: WorkspaceElement
 }
+
+export type FileTree = {
+  [x: string]: {
+    isDirectory: boolean
+  }
+}
+
+export interface ActionPayloadTypes {
+  SET_CURRENT_WORKSPACE: {
+    name: string
+    isGitRepo: boolean
+    branches?: {remote: string | undefined; name: string}[]
+    currentBranch?: string
+  },
+  SET_WORKSPACES: {
+    name: string
+    isGitRepo: boolean
+    branches?: {remote: string | undefined; name: string}[]
+    currentBranch?: string
+  }[],
+  SET_MODE: 'browser' | 'localhost',
+  FETCH_DIRECTORY_REQUEST: undefined | null,
+  FETCH_DIRECTORY_SUCCESS: { path: string; fileTree: FileTree },
+  FETCH_DIRECTORY_ERROR: string,
+  FETCH_WORKSPACE_DIRECTORY_REQUEST: undefined | null,
+  FETCH_WORKSPACE_DIRECTORY_SUCCESS: { path: string; fileTree: FileTree },
+  FETCH_WORKSPACE_DIRECTORY_ERROR: string,
+  DISPLAY_NOTIFICATION: {
+    title: string
+    message: string
+    actionOk: () => void
+    actionCancel: () => void
+    labelOk: string
+    labelCancel: string
+  },
+  HIDE_NOTIFICATION: undefined | null,
+  FILE_ADDED_SUCCESS: string,
+  FOLDER_ADDED_SUCCESS: {
+    path: string
+    folderPath: string
+    fileTree: FileTree
+  },
+  FILE_REMOVED_SUCCESS: string,
+  ROOT_FOLDER_CHANGED: string,
+  ADD_INPUT_FIELD: {
+    path: string
+    fileTree: FileTree
+    type: 'file' | 'folder'
+  },
+  REMOVE_INPUT_FIELD: { path: string; },
+  SET_READ_ONLY_MODE: boolean,
+  FILE_RENAMED_SUCCESS: {
+    path: string
+    oldPath: string
+    fileTree: FileTree
+  },
+  CREATE_WORKSPACE_REQUEST: undefined | null,
+  CREATE_WORKSPACE_SUCCESS: {
+    name: string
+    isGitRepo: boolean
+    branches?: { remote: string | undefined; name: string }[]
+    currentBranch?: string
+  },
+  CREATE_WORKSPACE_ERROR: string,
+  RENAME_WORKSPACE: { oldName: string; workspaceName: string },
+  DELETE_WORKSPACE: string,
+  DISPLAY_POPUP_MESSAGE: string,
+  HIDE_POPUP_MESSAGE: undefined | null,
+  SET_FOCUS_ELEMENT: {
+    key: string
+    type: WorkspaceElement
+  }[],
+  REMOVE_FOCUS_ELEMENT: string,
+  SET_CONTEXT_MENU_ITEM: action,
+  REMOVE_CONTEXT_MENU_ITEM: { name: string },
+  SET_EXPAND_PATH: string[],
+  LOAD_LOCALHOST_REQUEST: undefined | null,
+  LOAD_LOCALHOST_SUCCESS: undefined | null,
+  LOAD_LOCALHOST_ERROR: string,
+  CLONE_REPOSITORY_REQUEST: undefined | null,
+  CLONE_REPOSITORY_SUCCESS: undefined | null,
+  CLONE_REPOSITORY_FAILED: undefined | null,
+  FS_INITIALIZATION_COMPLETED: undefined | null,
+  SET_FILE_DECORATION_SUCCESS: fileDecoration[],
+  SET_CURRENT_WORKSPACE_BRANCHES: { remote: string | undefined; name: string }[],
+  SET_CURRENT_WORKSPACE_CURRENT_BRANCH: string,
+  SET_CURRENT_WORKSPACE_IS_GITREPO: boolean,
+  SET_CURRENT_WORKSPACE_HAS_GIT_SUBMODULES: boolean,
+  SET_GIT_CONFIG: {
+    username: string;
+    token: string;
+    email: string
+  },
+  SET_ELECTRON_RECENT_FOLDERS: string[]
+  SET_CURRENT_LOCAL_FILE_PATH: string
+}
+
+export interface Action<T extends keyof ActionPayloadTypes> {
+  type: T,
+  payload: ActionPayloadTypes[T]
+}
+
+export type Actions = {[A in keyof ActionPayloadTypes]: Action<A>}[keyof ActionPayloadTypes]
+
+export type WorkspaceElement = 'folder' | 'gist' | 'file' | 'workspace'

@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-astwalker",
-  "version": "0.0.56",
+  "version": "0.0.71",
   "description": "Tool to walk through Solidity AST",
   "main": "src/index.js",
   "scripts": {
@@ -37,7 +37,7 @@
     "@ethereumjs/tx": "^4.1.1",
     "@ethereumjs/util": "^8.0.5",
     "@ethereumjs/vm": "^6.4.1",
-    "@remix-project/remix-lib": "^0.5.32",
+    "@remix-project/remix-lib": "^0.5.48",
     "@types/tape": "^4.2.33",
     "async": "^2.6.2",
     "ethers": "^5.4.2",
@@ -47,12 +47,12 @@
     "tape": "^4.10.1",
     "ts-node": "^8.0.3",
     "typescript": "^3.4.3",
-    "web3": "^1.5.1"
+    "web3": "^4.1.1"
   },
   "devDependencies": {
     "tap-spec": "^5.0.0"
   },
   "typings": "src/index.d.ts",
-  "gitHead": "18a9b1f4e6ec1fc94d2a81d0157d72b742daf620",
+  "gitHead": "24416dcc55a6c0d26ee589ec10e4fce98daf2aca",
   "types": "./src/index.d.ts"
 }

@@ -183,7 +183,7 @@ tape('ContractParameters - (TxFormat.buildData) - link Libraries', function (t) 
 
 function testLinkLibrary (st, fakeDeployedContracts, callbackDeployLibraries) {
   const deployMsg = ['creation of library test.sol:lib1 pending...',
-  'creation of library test.sol:lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2 pending...']
+    'creation of library test.sol:lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2 pending...']
   txFormat.buildData('testContractLinkLibrary', context.contract, context.output.contracts, true, context.contract.abi[0], '', (error, data) => {
     if (error) { return st.fail(error) }
     console.log(data)
@@ -212,7 +212,7 @@ function testLinkLibrary2 (st, callbackDeployLibraries) {
   const data = '608060405234801561001057600080fd5b506101e2806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c80636d4ce63c14610030575b600080fd5b61003861003a565b005b73f7a10e525d4b168f45f74db1b61f63d3e7619e116344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b15801561007e57600080fd5b505af4158015610092573d6000803e3d6000fd5b5050505073f7a10e525d4b168f45f74db1b61f63d3e7619e336344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b1580156100da57600080fd5b505af41580156100ee573d6000803e3d6000fd5b5050505073f7a10e525d4b168f45f74db1b61f63d3e7619e336344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b15801561013657600080fd5b505af415801561014a573d6000803e3d6000fd5b5050505073f7a10e525d4b168f45f74db1b61f63d3e7619e116344733ae16040518163ffffffff1660e01b815260040160006040518083038186803b15801561019257600080fd5b505af41580156101a6573d6000803e3d6000fd5b5050505056fea264697066735822122007784c53df7f324243100f6642d889a08a88831c3811dd13eebe3163b7eb2e5464736f6c63430006000033'
 
   const deployMsg = ['creation of library test.sol:lib1 pending...',
-  'creation of library test.sol:lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2 pending...']
+    'creation of library test.sol:lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2_lib2 pending...']
   txFormat.encodeConstructorCallAndLinkLibraries(context.contract, '', context.contract.abi[0], librariesReference, context.contract.evm.bytecode.linkReferences, (error, result) => {
     console.log(error, result)
     st.equal(data, result.dataHex)

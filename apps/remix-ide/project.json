@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/remix-ide/src",
   "projectType": "application",
-  "implicitDependencies": ["doc-gen", "doc-viewer", "etherscan", "vyper", "solhint", "walletconnect"],
+  "implicitDependencies": ["doc-gen", "doc-viewer", "etherscan", "vyper", "solhint", "walletconnect", "circuit-compiler"],
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
@@ -39,6 +39,13 @@
           "generateIndexHtml": true,
           "extractCss": false,
           "vendorChunk": false
+        },
+        "desktop": {
+          "optimization": false,
+          "generateIndexHtml": true,
+          "extractCss": false,
+          "vendorChunk": false,
+          "baseHref": "./"
         }
       }
     },

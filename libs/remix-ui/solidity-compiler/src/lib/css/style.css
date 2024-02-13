@@ -182,7 +182,7 @@
 }
 
 .remixui_solidityCompileAndRunButton {
-  width: 94%;  
+  width: 94%;
 }
 
 @keyframes spin {
@@ -213,7 +213,7 @@
   -o-animation: bounce 2s infinite linear;
   -webkit-animation: bounce 2s infinite linear;
   animation: bounce 2s infinite linear;
-} 
+}
 
 @-webkit-keyframes bounce {
     0% { top: 0; }
@@ -244,4 +244,9 @@
     50% { top: -0.2em; }
     70% { top: -0.3em; }
     100% { top: 0; }
+}
+
+#compileDetails {
+  margin: 15px;
+  padding: 15px;
 }

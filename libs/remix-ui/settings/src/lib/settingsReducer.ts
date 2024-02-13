@@ -41,95 +41,140 @@ export const initialState = {
       name: 'displayErrors',
       isChecked: true,
       textClass: textSecondary
+    },
+    {
+      name: 'copilot/suggest/activate',
+      isChecked: false,
+      textClass: textSecondary
+    },
+    {
+      name: 'copilot/suggest/max_new_tokens',
+      value: 5,
+      textClass: textSecondary
+    },
+    {
+      name: 'copilot/suggest/temperature',
+      value: 0.5,
+      textClass: textSecondary
     }
   ]
 }
 
 export const settingReducer = (state, action) => {
   switch (action.type) {
-    case 'contractMetadata':
-      state.elementState.map(element => {
-        if (element.name === 'contractMetadata') {
-          element.isChecked = action.payload.isChecked
-          element.textClass = action.payload.textClass
-        }
-      })
-      return {
-        ...state
+  case 'contractMetadata':
+    state.elementState.map(element => {
+      if (element.name === 'contractMetadata') {
+        element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
       }
-    case 'ethereumVM':
-      state.elementState.map(element => {
-        if (element.name === 'ethereumVM') {
-          element.isChecked = action.payload.isChecked
-          element.textClass = action.payload.textClass
-        }
-      })
-      return {
-        ...state
+    })
+    return {
+      ...state
+    }
+  case 'ethereumVM':
+    state.elementState.map(element => {
+      if (element.name === 'ethereumVM') {
+        element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
       }
-    case 'textWrap':
-      state.elementState.map(element => {
-        if (element.name === 'textWrap') {
-          element.isChecked = action.payload.isChecked
-          element.textClass = action.payload.textClass
-        }
-      })
-      return {
-        ...state
+    })
+    return {
+      ...state
+    }
+  case 'textWrap':
+    state.elementState.map(element => {
+      if (element.name === 'textWrap') {
+        element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
       }
-    case 'personal':
-      state.elementState.map(element => {
-        if (element.name === 'personal') {
-          element.isChecked = action.payload.isChecked
-          element.textClass = action.payload.textClass
-        }
-      })
-      return {
-        ...state
+    })
+    return {
+      ...state
+    }
+  case 'personal':
+    state.elementState.map(element => {
+      if (element.name === 'personal') {
+        element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
       }
-    case 'useMatomoAnalytics':
-      state.elementState.map(element => {
-        if (element.name === 'useMatomoAnalytics') {
-          element.isChecked = action.payload.isChecked
-          element.textClass = action.payload.textClass
-        }
-      })
-      return {
-        ...state
+    })
+    return {
+      ...state
+    }
+  case 'useMatomoAnalytics':
+    state.elementState.map(element => {
+      if (element.name === 'useMatomoAnalytics') {
+        element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
       }
+    })
+    return {
+      ...state
+    }
     
-    case 'useAutoCompletion':
-      state.elementState.map(element => {
-        if (element.name === 'useAutoCompletion') {
-          element.isChecked = action.payload.isChecked
-          element.textClass = action.payload.textClass
-        }
-      })
-      return {
-        ...state
+  case 'useAutoCompletion':
+    state.elementState.map(element => {
+      if (element.name === 'useAutoCompletion') {
+        element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
       }
-      case 'displayErrors':
-        state.elementState.map(element => {
-          if (element.name === 'displayErrors') {
-            element.isChecked = action.payload.isChecked
-            element.textClass = action.payload.textClass
-          }
-        })
-        return {
-          ...state
-        }
-    case 'useShowGasInEditor':
-      state.elementState.map(element => {
-        if (element.name === 'useShowGasInEditor') {
-          element.isChecked = action.payload.isChecked
-          element.textClass = action.payload.textClass
-        }
-      })
-      return {
-        ...state
+    })
+    return {
+      ...state
+    }
+  case 'displayErrors':
+    state.elementState.map(element => {
+      if (element.name === 'displayErrors') {
+        element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
       }
-    default:
-      return initialState
+    })
+    return {
+      ...state
+    }
+  case 'useShowGasInEditor':
+    state.elementState.map(element => {
+      if (element.name === 'useShowGasInEditor') {
+        element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
+      }
+    })
+    return {
+      ...state
+    }
+  case 'copilot/suggest/activate':
+    state.elementState.map(element => {
+      if (element.name === 'copilot/suggest/activate') {
+        element.isChecked = action.payload.isChecked
+        element.textClass = action.payload.textClass
+      }
+    })
+    return {
+      ...state
+    }
+  case 'copilot/suggest/max_new_tokens':
+    state.elementState.map(element => {
+      if (element.name === 'copilot/suggest/max_new_tokens') {
+        element.value = action.payload.value
+        element.textClass = action.payload.textClass
+      }
+    })
+    return {
+      ...state
+    }
+  case 'copilot/suggest/temperature':
+    state.elementState.map(element => {
+      if (element.name === 'useShowGasInEditor') {
+        element.value = action.payload.value
+        element.textClass = action.payload.textClass
+      }
+    })
+    return {
+      ...state
+    }
+  default:
+    return initialState
   }
   
 }
@@ -140,11 +185,11 @@ export const toastInitialState = {
 
 export const toastReducer = (state, action) => {
   switch (action.type) {
-    case 'save' :
-      return { ...state, message: action.payload.message }
-    case 'removed' :
-      return { ...state, message: action.payload.message }
-    default :
-      return { ...state, message: '' }
+  case 'save' :
+    return { ...state, message: action.payload.message }
+  case 'removed' :
+    return { ...state, message: action.payload.message }
+  default :
+    return { ...state, message: '' }
   }
 }

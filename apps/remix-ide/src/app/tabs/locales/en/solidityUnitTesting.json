@@ -31,5 +31,11 @@
   "solidityUnitTesting.assertion": "Assertion",
   "solidityUnitTesting.expectedValueShouldBe": "Expected value should be",
   "solidityUnitTesting.receivedValue": "Received value",
-  "solidityUnitTesting.skippingTheRemainingTests": "Skipping the remaining tests of the function."
+  "solidityUnitTesting.skippingTheRemainingTests": "Skipping the remaining tests of the function.",
+  "solidityUnitTesting.toasterMsg": "Folder created successfully",
+  "solidityUnitTesting.tooltipText1": "At least one contract test failed",
+  "solidityUnitTesting.tooltipText2": "All contract tests passed",
+  "solidityUnitTesting.tooltipText3": "Start debugging",
+  "solidityUnitTesting.fail": "FAIL",
+  "solidityUnitTesting.pass": "PASS"
 }

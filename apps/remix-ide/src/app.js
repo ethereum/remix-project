@@ -1,50 +1,64 @@
 'use strict'
-import { RunTab, makeUdapp } from './app/udapp'
-import { RemixEngine } from './remixEngine'
-import { RemixAppManager } from './remixAppManager'
-import { ThemeModule } from './app/tabs/theme-module'
-import { LocaleModule } from './app/tabs/locale-module'
-import { NetworkModule } from './app/tabs/network-module'
-import { Web3ProviderModule } from './app/tabs/web3-provider'
-import { CompileAndRun } from './app/tabs/compile-and-run'
-import { SidePanel } from './app/components/side-panel'
-import { HiddenPanel } from './app/components/hidden-panel'
-import { VerticalIcons } from './app/components/vertical-icons'
-import { LandingPage } from './app/ui/landing-page/landing-page'
-import { MainPanel } from './app/components/main-panel'
-import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
-import { AstWalker } from '@remix-project/remix-astwalker'
-import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
-import { CodeParser } from './app/plugins/parser/code-parser'
-import { SolidityScript } from './app/plugins/solidity-script'
+import {RunTab, makeUdapp} from './app/udapp'
+import {RemixEngine} from './remixEngine'
+import {RemixAppManager} from './remixAppManager'
+import {ThemeModule} from './app/tabs/theme-module'
+import {LocaleModule} from './app/tabs/locale-module'
+import {NetworkModule} from './app/tabs/network-module'
+import {Web3ProviderModule} from './app/tabs/web3-provider'
+import {CompileAndRun} from './app/tabs/compile-and-run'
+import {SidePanel} from './app/components/side-panel'
+import {HiddenPanel} from './app/components/hidden-panel'
+import {VerticalIcons} from './app/components/vertical-icons'
+import {LandingPage} from './app/ui/landing-page/landing-page'
+import {MainPanel} from './app/components/main-panel'
+import {PermissionHandlerPlugin} from './app/plugins/permission-handler-plugin'
+import {AstWalker} from '@remix-project/remix-astwalker'
+import {LinkLibraries, DeployLibraries, OpenZeppelinProxy} from '@remix-project/core-plugin'
+import {CodeParser} from './app/plugins/parser/code-parser'
+import {SolidityScript} from './app/plugins/solidity-script'
 
-import { WalkthroughService } from './walkthroughService'
+import {WalkthroughService} from './walkthroughService'
 
-import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
+import {OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler} from '@remix-project/core-plugin'
 
-import Registry from './app/state/registry'
-import { ConfigPlugin } from './app/plugins/config'
-import { StoragePlugin } from './app/plugins/storage'
-import { Layout } from './app/panels/layout'
-import { NotificationPlugin } from './app/plugins/notification'
-import { Blockchain } from './blockchain/blockchain'
-import { MergeVMProvider, LondonVMProvider, BerlinVMProvider, ShanghaiVMProvider } from './app/providers/vm-provider'
-import { MainnetForkVMProvider } from './app/providers/mainnet-vm-fork-provider'
-import { SepoliaForkVMProvider } from './app/providers/sepolia-vm-fork-provider'
-import { GoerliForkVMProvider } from './app/providers/goerli-vm-fork-provider'
-import { CustomForkVMProvider } from './app/providers/custom-vm-fork-provider'
-import { HardhatProvider } from './app/providers/hardhat-provider'
-import { GanacheProvider } from './app/providers/ganache-provider'
-import { FoundryProvider } from './app/providers/foundry-provider'
-import { ExternalHttpProvider } from './app/providers/external-http-provider'
-import { InjectedProviderDefault } from './app/providers/injected-provider-default'
-import { InjectedProviderTrustWallet } from './app/providers/injected-provider-trustwallet'
-import { Injected0ptimismProvider } from './app/providers/injected-optimism-provider'
-import { InjectedArbitrumOneProvider } from './app/providers/injected-arbitrum-one-provider'
+import {Registry} from '@remix-project/remix-lib'
+import {ConfigPlugin} from './app/plugins/config'
+import {StoragePlugin} from './app/plugins/storage'
+import {Layout} from './app/panels/layout'
+import {NotificationPlugin} from './app/plugins/notification'
+import {Blockchain} from './blockchain/blockchain'
+import {MergeVMProvider, LondonVMProvider, BerlinVMProvider, ShanghaiVMProvider} from './app/providers/vm-provider'
+import {MainnetForkVMProvider} from './app/providers/mainnet-vm-fork-provider'
+import {SepoliaForkVMProvider} from './app/providers/sepolia-vm-fork-provider'
+import {GoerliForkVMProvider} from './app/providers/goerli-vm-fork-provider'
+import {CustomForkVMProvider} from './app/providers/custom-vm-fork-provider'
+import {HardhatProvider} from './app/providers/hardhat-provider'
+import {GanacheProvider} from './app/providers/ganache-provider'
+import {FoundryProvider} from './app/providers/foundry-provider'
+import {ExternalHttpProvider} from './app/providers/external-http-provider'
+import {InjectedProviderDefault} from './app/providers/injected-provider-default'
+import {InjectedProviderTrustWallet} from './app/providers/injected-provider-trustwallet'
+import {Injected0ptimismProvider} from './app/providers/injected-optimism-provider'
+import {InjectedArbitrumOneProvider} from './app/providers/injected-arbitrum-one-provider'
+import {InjectedEphemeryTestnetProvider} from './app/providers/injected-ephemery-testnet-provider'
+import {InjectedSKALEChaosTestnetProvider} from './app/providers/injected-skale-chaos-testnet-provider'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
+import { CompilationDetailsPlugin } from './app/plugins/compile-details'
+import { VyperCompilationDetailsPlugin } from './app/plugins/vyper-compilation-details'
 import { ContractFlattener } from './app/plugins/contractFlattener'
+import { TemplatesPlugin } from './app/plugins/remix-templates'
+import { fsPlugin } from './app/plugins/electron/fsPlugin'
+import { isoGitPlugin } from './app/plugins/electron/isoGitPlugin'
+import { electronConfig } from './app/plugins/electron/electronConfigPlugin'
+import { electronTemplates } from './app/plugins/electron/templatesPlugin'
+import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
+import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
+import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
+
+import {OpenAIGpt} from './app/plugins/openaigpt'
 
 const isElectron = require('is-electron')
 
@@ -52,13 +66,16 @@ const remixLib = require('@remix-project/remix-lib')
 
 import { QueryParams } from '@remix-project/remix-lib'
 import { SearchPlugin } from './app/tabs/search'
+import { ElectronProvider } from './app/files/electronProvider'
+import { CopilotSuggestion } from './app/plugins/copilot/suggestion-service/copilot-suggestion'
 
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
 const Config = require('./config')
 
 const FileManager = require('./app/files/fileManager')
-const FileProvider = require('./app/files/fileProvider')
+import FileProvider from "./app/files/fileProvider"
+import { appPlatformTypes } from '@remix-ui/app'
 const DGitProvider = require('./app/files/dgitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 
@@ -67,15 +84,30 @@ const PluginManagerComponent = require('./app/components/plugin-manager-componen
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
 const AnalysisTab = require('./app/tabs/analysis-tab')
-const { DebuggerTab } = require('./app/tabs/debugger-tab')
+const {DebuggerTab} = require('./app/tabs/debugger-tab')
 const TestTab = require('./app/tabs/test-tab')
 const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
-const { TabProxy } = require('./app/panels/tab-proxy.js')
+const {TabProxy} = require('./app/panels/tab-proxy.js')
+
+
+export class platformApi {
+  get name () {
+    return isElectron() ? appPlatformTypes.desktop : appPlatformTypes.web
+  }
+  isDesktop () {
+    return isElectron()
+  }
+}
 
 class AppComponent {
   constructor() {
+    const PlatFormAPi = new platformApi()
+    Registry.getInstance().put({
+      api: PlatFormAPi,
+      name: 'platform'
+    })
     this.appManager = new RemixAppManager({})
     this.queryParams = new QueryParams()
     this._components = {}
@@ -84,7 +116,7 @@ class AppComponent {
 
     // load app config
     const config = new Config(configStorage)
-    Registry.getInstance().put({ api: config, name: 'config' })
+    Registry.getInstance().put({api: config, name: 'config'})
 
     // load file system
     this._components.filesProviders = {}
@@ -93,9 +125,7 @@ class AppComponent {
       api: this._components.filesProviders.browser,
       name: 'fileproviders/browser'
     })
-    this._components.filesProviders.localhost = new RemixDProvider(
-      this.appManager
-    )
+    this._components.filesProviders.localhost = new RemixDProvider(this.appManager)
     Registry.getInstance().put({
       api: this._components.filesProviders.localhost,
       name: 'fileproviders/localhost'
@@ -106,10 +136,18 @@ class AppComponent {
       name: 'fileproviders/workspace'
     })
 
+    this._components.filesProviders.electron = new ElectronProvider(this.appManager)
+    Registry.getInstance().put({
+      api: this._components.filesProviders.electron,
+      name: 'fileproviders/electron'
+    })
+
     Registry.getInstance().put({
       api: this._components.filesProviders,
       name: 'fileproviders'
     })
+
+
   }
 
   async run() {
@@ -119,7 +157,7 @@ class AppComponent {
     this.panels = {}
     this.workspace = pluginLoader.get()
     this.engine = new RemixEngine()
-    this.engine.register(appManager);
+    this.engine.register(appManager)
 
     const matomoDomains = {
       'remix-alpha.ethereum.org': 27,
@@ -127,15 +165,14 @@ class AppComponent {
       'remix.ethereum.org': 23,
       '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
     }
-    this.showMatamo =
-      matomoDomains[window.location.hostname] &&
-      !Registry.getInstance()
-        .get('config')
-        .api.exists('settings/matomo-analytics')
-    this.walkthroughService = new WalkthroughService(
-      appManager,
-      this.showMatamo
-    )
+
+    this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
+    this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
+    this.showMatamo = matomoDomains[window.location.hostname] && !this.matomoConfAlreadySet
+
+    this.walkthroughService = new WalkthroughService(appManager)
+
+    this.platform = isElectron() ? 'desktop' : 'web'
 
     const hosts = ['127.0.0.1:8080', '192.168.0.101:8080', 'localhost:8080']
     // workaround for Electron support
@@ -153,19 +190,20 @@ class AppComponent {
     this.themeModule = new ThemeModule()
     // ----------------- locale service ---------------------------------
     this.localeModule = new LocaleModule()
-    Registry.getInstance().put({ api: this.themeModule, name: 'themeModule' })
-    Registry.getInstance().put({ api: this.localeModule, name: 'localeModule' })
+    Registry.getInstance().put({api: this.themeModule, name: 'themeModule'})
+    Registry.getInstance().put({api: this.localeModule, name: 'localeModule'})
 
     // ----------------- editor service ----------------------------
     const editor = new Editor() // wrapper around ace editor
-    Registry.getInstance().put({ api: editor, name: 'editor' })
-    editor.event.register('requiringToSaveCurrentfile', () =>
+    Registry.getInstance().put({api: editor, name: 'editor'})
+    editor.event.register('requiringToSaveCurrentfile', (currentFile) => {
       fileManager.saveCurrentFile()
-    )
+      if (currentFile.endsWith('.circom')) this.appManager.activatePlugin(['circuit-compiler'])
+    })
 
     // ----------------- fileManager service ----------------------------
     const fileManager = new FileManager(editor, appManager)
-    Registry.getInstance().put({ api: fileManager, name: 'filemanager' })
+    Registry.getInstance().put({api: fileManager, name: 'filemanager'})
     // ----------------- dGit provider ---------------------------------
     const dGitProvider = new DGitProvider()
 
@@ -181,11 +219,21 @@ class AppComponent {
     //----- search
     const search = new SearchPlugin()
 
+    //---- templates
+    const templates = new TemplatesPlugin()
+
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 
+    // ----------------- Compilation Details ----------------------------
+    const compilationDetails = new CompilationDetailsPlugin(appManager)
+    const vyperCompilationDetails = new VyperCompilationDetailsPlugin(appManager)
     // ----------------- ContractFlattener ----------------------------
     const contractFlattener = new ContractFlattener()
+
+    // ----------------- AI --------------------------------------
+    const openaigpt = new OpenAIGpt()
+    const copilotSuggestion = new CopilotSuggestion()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -220,9 +268,11 @@ class AppComponent {
     const foundryProvider = new FoundryProvider(blockchain)
     const externalHttpProvider = new ExternalHttpProvider(blockchain)
     const trustWalletInjectedProvider = new InjectedProviderTrustWallet()
-    const defaultInjectedProvider = new InjectedProviderDefault
+    const defaultInjectedProvider = new InjectedProviderDefault()
     const injected0ptimismProvider = new Injected0ptimismProvider()
     const injectedArbitrumOneProvider = new InjectedArbitrumOneProvider()
+    const injectedEphemeryTestnetProvider = new InjectedEphemeryTestnetProvider()
+    const injectedSKALEChaosTestnetProvider = new InjectedSKALEChaosTestnetProvider()
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
@@ -232,11 +282,11 @@ class AppComponent {
     // ----------------- run script after each compilation results -----------
     const compileAndRun = new CompileAndRun()
     // -------------------Terminal----------------------------------------
-    makeUdapp(blockchain, compilersArtefacts, domEl => terminal.logHtml(domEl))
+    makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
     const terminal = new Terminal(
-      { appManager, blockchain },
+      {appManager, blockchain},
       {
-        getPosition: event => {
+        getPosition: (event) => {
           const limitUp = 36
           const limitDown = 20
           const height = window.innerHeight
@@ -257,6 +307,7 @@ class AppComponent {
 
     const permissionHandler = new PermissionHandlerPlugin()
 
+    
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -298,16 +349,42 @@ class AppComponent {
       trustWalletInjectedProvider,
       injected0ptimismProvider,
       injectedArbitrumOneProvider,
+      injectedEphemeryTestnetProvider,
+      injectedSKALEChaosTestnetProvider,
       this.walkthroughService,
       search,
       solidityumlgen,
+      compilationDetails,
+      vyperCompilationDetails,
       contractFlattener,
-      solidityScript
+      solidityScript,
+      templates,
+      openaigpt,
+      copilotSuggestion
     ])
+
+    //---- fs plugin
+    if (isElectron()) {
+      const FSPlugin = new fsPlugin()
+      this.engine.register([FSPlugin])
+      const isoGit = new isoGitPlugin()
+      this.engine.register([isoGit])
+      const electronConfigPlugin = new electronConfig()
+      this.engine.register([electronConfigPlugin])
+      const templatesPlugin = new electronTemplates()
+      this.engine.register([templatesPlugin])
+      const xterm = new xtermPlugin()
+      this.engine.register([xterm])
+      const ripgrep = new ripgrepPlugin()
+      this.engine.register([ripgrep])
+    }
+
+    const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
+    this.engine.register([compilerloader])
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
-    Registry.getInstance().put({ api: this.mainview, name: 'mainview' })
+    Registry.getInstance().put({api: this.mainview, name: 'mainview'})
     const tabProxy = new TabProxy(fileManager, editor)
     this.engine.register([appPanel, tabProxy])
 
@@ -316,42 +393,18 @@ class AppComponent {
     this.sidePanel = new SidePanel()
     this.hiddenPanel = new HiddenPanel()
 
-    const pluginManagerComponent = new PluginManagerComponent(
-      appManager,
-      this.engine
-    )
+    const pluginManagerComponent = new PluginManagerComponent(appManager, this.engine)
     const filePanel = new FilePanel(appManager)
-    const landingPage = new LandingPage(
-      appManager,
-      this.menuicons,
-      fileManager,
-      filePanel,
-      contentImport
-    )
-    this.settings = new SettingsTab(
-      Registry.getInstance().get('config').api,
-      editor,
-      appManager
-    )
+    const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
+    this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor, appManager)
 
-    this.engine.register([
-      this.menuicons,
-      landingPage,
-      this.hiddenPanel,
-      this.sidePanel,
-      filePanel,
-      pluginManagerComponent,
-      this.settings
-    ])
+    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, filePanel, pluginManagerComponent, this.settings])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
     const openZeppelinProxy = new OpenZeppelinProxy(blockchain)
     const linkLibraries = new LinkLibraries(blockchain)
     const deployLibraries = new DeployLibraries(blockchain)
-    const compileTab = new CompileTab(
-      Registry.getInstance().get('config').api,
-      Registry.getInstance().get('filemanager').api
-    )
+    const compileTab = new CompileTab(Registry.getInstance().get('config').api, Registry.getInstance().get('filemanager').api)
     const run = new RunTab(
       blockchain,
       Registry.getInstance().get('config').api,
@@ -391,10 +444,10 @@ class AppComponent {
     ])
 
     this.layout.panels = {
-      tabs: { plugin: tabProxy, active: true },
-      editor: { plugin: editor, active: true },
-      main: { plugin: appPanel, active: false },
-      terminal: { plugin: terminal, active: true, minimized: false }
+      tabs: {plugin: tabProxy, active: true},
+      editor: {plugin: editor, active: true},
+      main: {plugin: appPanel, active: false},
+      terminal: {plugin: terminal, active: true, minimized: false}
     }
   }
 
@@ -407,18 +460,48 @@ class AppComponent {
     } catch (e) {
       console.log("couldn't register iframe plugins", e.message)
     }
+    if (isElectron()){
+      await this.appManager.activatePlugin(['fs'])
+    }
     await this.appManager.activatePlugin(['layout'])
     await this.appManager.activatePlugin(['notification'])
     await this.appManager.activatePlugin(['editor'])
-    await this.appManager.activatePlugin(['permissionhandler', 'theme', 'locale', 'fileManager', 'compilerMetadata', 'compilerArtefacts', 'network', 'web3Provider', 'offsetToLineColumnConverter'])
+    await this.appManager.activatePlugin([
+      'permissionhandler',
+      'theme',
+      'locale',
+      'fileManager',
+      'compilerMetadata',
+      'compilerArtefacts',
+      'network',
+      'web3Provider',
+      'offsetToLineColumnConverter'
+    ])
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
-    await this.appManager.activatePlugin(['hiddenPanel', 'pluginManager', 'codeParser', 'codeFormatter', 'fileDecorator', 'terminal', 'blockchain', 'fetchAndCompile', 'contentImport', 'gistHandler'])
+    await this.appManager.activatePlugin([
+      'hiddenPanel',
+      'pluginManager',
+      'codeParser',
+      'codeFormatter',
+      'fileDecorator',
+      'terminal',
+      'blockchain',
+      'fetchAndCompile',
+      'contentImport',
+      'gistHandler',
+      'compilerloader'
+    ])
     await this.appManager.activatePlugin(['settings'])
+
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
-    await this.appManager.activatePlugin(['solidity-script'])
+    await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
+
+    if (isElectron()){
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep'])
+    }
 
     this.appManager.on(
       'filePanel',
@@ -431,6 +514,8 @@ class AppComponent {
         await this.appManager.registerContextMenuItems()
       }
     )
+    await this.appManager.activatePlugin(['solidity-script', 'openaigpt'])
+
 
     await this.appManager.activatePlugin(['filePanel'])
     // Set workspace after initial activation
@@ -441,9 +526,7 @@ class AppComponent {
           .then(async () => {
             try {
               if (params.deactivate) {
-                await this.appManager.deactivatePlugin(
-                  params.deactivate.split(',')
-                )
+                await this.appManager.deactivatePlugin(params.deactivate.split(','))
               }
             } catch (e) {
               console.log(e)
@@ -453,10 +536,7 @@ class AppComponent {
               this.menuicons.select('solidity')
             } else {
               // If plugins are loaded from the URL params, we focus on the last one.
-              if (
-                this.appManager.pluginLoader.current === 'queryParams' &&
-                this.workspace.length > 0
-              ) {
+              if (this.appManager.pluginLoader.current === 'queryParams' && this.workspace.length > 0) {
                 this.menuicons.select(this.workspace[this.workspace.length - 1])
               } else {
                 this.appManager.call('tabs', 'focus', 'home')
@@ -473,17 +553,13 @@ class AppComponent {
             }
 
             if (params.calls) {
-              const calls = params.calls.split("///");
+              const calls = params.calls.split('///')
 
               // call all functions in the list, one after the other
               for (const call of calls) {
-                const callDetails = call.split("//");
+                const callDetails = call.split('//')
                 if (callDetails.length > 1) {
-                  this.appManager.call(
-                    "notification",
-                    "toast",
-                    `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`
-                  );
+                  this.appManager.call('notification', 'toast', `initiating ${callDetails[0]} and calling "${callDetails[1]}" ...`)
 
                   // @todo(remove the timeout when activatePlugin is on 0.3.0)
                   try {

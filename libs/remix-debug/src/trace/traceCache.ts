@@ -102,11 +102,13 @@ export class TraceCache {
   }
 
   pushContractCreationFromMemory (index, token, trace, lastMemoryChange) {
+    const toHexString = arr => Array.from(arr, i => (i as any).toString(16).padStart(2, "0")).join("")
     const memory = trace[lastMemoryChange].memory
     const stack = trace[index].stack
     const offset = 2 * parseInt(toHexPaddedString(stack[stack.length - 2]), 16)
     const size = 2 * parseInt(toHexPaddedString(stack[stack.length - 3]), 16)
-    this.contractCreation[token] = '0x' + memory.join('').substr(offset, size)
+    const memoryHex = toHexString(memory)
+    this.contractCreation[token] = '0x' + memoryHex.substr(offset, size)
   }
 
   pushContractCreation (token, code) {

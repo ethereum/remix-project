@@ -1,26 +1,47 @@
-import React, { useState, useEffect, useReducer } from 'react' // eslint-disable-line
-import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
-import { DropdownPanelProps, ExtractData, ExtractFunc } from '../../types' // eslint-disable-line
-import { CopyToClipboard } from '@remix-ui/clipboard' // eslint-disable-line
-import { initialState, reducer } from '../../reducers/calldata'
+import React, {useState, useEffect, useReducer} from 'react' // eslint-disable-line
+import {useIntl} from 'react-intl'
+import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
+import {DropdownPanelProps, ExtractData, ExtractFunc} from '../../types' // eslint-disable-line
+import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
+import {initialState, reducer} from '../../reducers/calldata'
+import {isBigInt} from 'web3-validator'
 import './styles/dropdown-panel.css'
 
 export const DropdownPanel = (props: DropdownPanelProps) => {
+  const intl = useIntl()
   const [calldataObj, dispatch] = useReducer(reducer, initialState)
-  const { dropdownName, className, dropdownMessage, calldata, header, loading, extractFunc, formatSelfFunc, registerEvent, triggerEvent, loadMoreEvent, loadMoreCompletedEvent, headStyle, bodyStyle, hexHighlight } = props
+  const {
+    dropdownName,
+    className,
+    dropdownMessage,
+    calldata,
+    header,
+    loading,
+    extractFunc,
+    formatSelfFunc,
+    registerEvent,
+    handleExpandFunc,
+    formatClassNamesFunc,
+    triggerEvent,
+    loadMoreEvent,
+    loadMoreCompletedEvent,
+    headStyle,
+    bodyStyle,
+    hexHighlight
+  } = props
   const extractDataDefault: ExtractFunc = (item, parent?) => {
     const ret: ExtractData = {}
 
     if (item instanceof Array) {
       ret.children = item.map((item, index) => {
-        return { key: index, value: item }
+        return {key: index, value: item}
       })
       ret.self = 'Array'
       ret.isNode = true
       ret.isLeaf = false
     } else if (item instanceof Object) {
       ret.children = Object.keys(item).map((key) => {
-        return { key: key, value: item[key] }
+        return {key: key, value: item[key]}
       })
       ret.self = 'Object'
       ret.isNode = true
@@ -35,14 +56,27 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   }
   const formatSelfDefault = (key: string | number, data: ExtractData) => {
     let value
-    if (hexHighlight && typeof (data.self) === 'string') {
+    if (isBigInt(data.self)) data.self = data.self.toString()
+    if (hexHighlight && typeof data.self === 'string') {
       const isHex = data.self.startsWith('0x') || hexHighlight
       if (isHex) {
         const regex = /^(0+)(.*)/g
         const split = regex.exec(data.self.replace('0x', ''))
         if (split && split[1]) {
-          value = (<span><span className="m-0 label_value">0x</span><span className="m-0 label_value">{split[1]}</span>{ split[2] && <span className="m-0 label_value font-weight-bold text-dark">{split[2]}</span> }</span>)
-        } else value = (<span><span className="m-0 label_value">0x</span><span className="m-0 label_value font-weight-bold text-dark">{data.self.replace('0x', '')}</span></span>)
+          value = (
+            <span>
+              <span className="m-0 label_value">0x</span>
+              <span className="m-0 label_value">{split[1]}</span>
+              {split[2] && <span className="m-0 label_value font-weight-bold text-dark">{split[2]}</span>}
+            </span>
+          )
+        } else
+          value = (
+            <span>
+              <span className="m-0 label_value">0x</span>
+              <span className="m-0 label_value font-weight-bold text-dark">{data.self.replace('0x', '')}</span>
+            </span>
+          )
       } else value = <span className="m-0 label_value">{data.self}</span>
     } else value = <span className="m-0 label_value">{data.self}</span>
     return (
@@ -56,7 +90,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     header: '',
     toggleDropdown: true,
     message: {
-      innerText: 'No data available.',
+      innerText: intl.formatMessage({id: 'debugger.noDataAvailable'}),
       display: 'block'
     },
     dropdownContent: {
@@ -74,13 +108,14 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   })
 
   useEffect(() => {
-    registerEvent && registerEvent(loadMoreCompletedEvent, (updatedCalldata) => {
-      dispatch({ type: 'UPDATE_CALLDATA_SUCCESS', payload: updatedCalldata })
-    })
+    registerEvent &&
+      registerEvent(loadMoreCompletedEvent, (updatedCalldata) => {
+        dispatch({type: 'UPDATE_CALLDATA_SUCCESS', payload: updatedCalldata})
+      })
   }, [])
 
   useEffect(() => {
-    dispatch({ type: 'FETCH_CALLDATA_SUCCESS', payload: calldata })
+    dispatch({type: 'FETCH_CALLDATA_SUCCESS', payload: calldata})
   }, [calldata])
 
   useEffect(() => {
@@ -96,25 +131,25 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   }, [loading])
 
   const handleToggle = () => {
-    setState(prevState => {
+    setState((prevState) => {
       return {
         ...prevState,
         toggleDropdown: !prevState.toggleDropdown
       }
     })
-  }
+  };
 
-  const handleExpand = (keyPath) => {
+  const handleExpand = handleExpandFunc || function (keyPath) {
     if (!state.expandPath.includes(keyPath)) {
       state.expandPath.push(keyPath)
     } else {
-      state.expandPath = state.expandPath.filter(path => !path.startsWith(keyPath))
+      state.expandPath = state.expandPath.filter((path) => !path.startsWith(keyPath))
     }
   }
 
   const message = (message) => {
     if (message === state.message.innerText) return
-    setState(prevState => {
+    setState((prevState) => {
       return {
         ...prevState,
         message: {
@@ -127,7 +162,7 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   }
 
   const setLoading = () => {
-    setState(prevState => {
+    setState((prevState) => {
       return {
         ...prevState,
         message: {
@@ -150,7 +185,11 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
     if (calldata && Array.isArray(calldata) && calldata.length === 0) isEmpty = true
     else if (calldata && Object.keys(calldata).length === 0 && calldata.constructor === Object) isEmpty = true
 
-    setState(prevState => {
+    setState((prevState) => {
+      const copiableContent = JSON.stringify(calldata, (key, value) => {
+        if (isBigInt(value)) value = value.toString()
+        return value
+      }, '\t').replace(/0xNaN/g, '0x0')
       return {
         ...prevState,
         dropdownContent: {
@@ -158,9 +197,9 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
           display: 'block'
         },
         // replace 0xNaN with 0x0
-        copiableContent: JSON.stringify(calldata, null, '\t').replace(/0xNaN/g, '0x0'),
+        copiableContent,
         message: {
-          innerText: isEmpty ? 'No data available' : '',
+          innerText: isEmpty ? intl.formatMessage({id: 'debugger.noDataAvailable'}) : '',
           display: isEmpty ? 'block' : 'none'
         },
         updating: false,
@@ -173,48 +212,74 @@ export const DropdownPanel = (props: DropdownPanelProps) => {
   const renderData = (item: ExtractData, parent, key: string | number, keyPath: string) => {
     const data = extractFunc ? extractFunc(item, parent) : extractDataDefault(item, parent)
     const children = (data.children || []).map((child) => {
-      return (
-        renderData(child.value, data, child.key, keyPath + '/' + child.key)
-      )
+      return renderData(child.value, data, child.key, keyPath + '/' + child.key)
     })
 
     if (children && children.length > 0) {
       return (
-        <TreeViewItem id={`treeViewItem${key}`} key={keyPath} label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)} onClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)}>
+        <TreeViewItem
+          id={`treeViewItem${key}`}
+          key={keyPath}
+          label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)}
+          onClick={() => handleExpand(keyPath)}
+          expand={state.expandPath.includes(keyPath)}
+          labelClass={formatClassNamesFunc && formatClassNamesFunc(key, data)}
+        >
           <TreeView id={`treeView${key}`} key={keyPath}>
             {children}
-            {data.hasNext && <TreeViewItem id={'treeViewLoadMore'} data-id={'treeViewLoadMore'} className="cursor_pointer" label="Load more" onClick={() => { triggerEvent(loadMoreEvent, [data.cursor]) }} />}
+            {data.hasNext && (
+              <TreeViewItem
+                id={'treeViewLoadMore'}
+                data-id={'treeViewLoadMore'}
+                className="cursor_pointer"
+                label={intl.formatMessage({id: 'debugger.loadMore'})}
+                onClick={() => {
+                  triggerEvent(loadMoreEvent, [data.cursor])
+                }}
+              />
+            )}
           </TreeView>
         </TreeViewItem>
       )
     } else {
-      return <TreeViewItem id={key.toString()} key={keyPath} label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)} onClick={() => handleExpand(keyPath)} expand={state.expandPath.includes(keyPath)} />
+      return (
+        <TreeViewItem
+          id={key.toString()}
+          key={keyPath}
+          label={formatSelfFunc ? formatSelfFunc(key, data) : formatSelfDefault(key, data)}
+          onClick={() => handleExpand(keyPath)}
+          expand={state.expandPath.includes(keyPath)}
+          labelClass={formatClassNamesFunc && formatClassNamesFunc(key, data)}
+        />
+      )
     }
   }
 
   const uniquePanelName = dropdownName.split(' ').join('')
 
   return (
-    <div className={className + " border rounded px-1 mt-1 bg-light"}>
+    <div className={className + ' border rounded px-1 mt-1 bg-light'}>
       <div className="py-0 px-1 title" style={headStyle}>
         <div className={state.toggleDropdown ? 'icon fas fa-caret-down' : 'icon fas fa-caret-right'} onClick={handleToggle}></div>
-        <div className="name" data-id={`dropdownPanel${uniquePanelName}`} onClick={handleToggle}>{dropdownName}</div><span className="nameDetail" onClick={handleToggle}>{header}</span>
-        <CopyToClipboard content={state.copiableContent} data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`} />
-      </div>
-      <div className='dropdownpanel' style={{ display: state.toggleDropdown ? 'block' : 'none' }}>
-        <i className="refresh fas fa-sync" style={{ display: state.updating ? 'inline-block' : 'none' }} aria-hidden="true"></i>
-        <div className='dropdowncontent pb-2' style={{ display: state.dropdownContent.display, ...bodyStyle }}>
-          {
-            state.data &&
-            <TreeView id="treeView">
-              {
-                Object.keys(state.data).map((innerkey) => renderData(state.data[innerkey], state.data, innerkey, innerkey))
-              }
-            </TreeView>
-          }
+        <div className="name" data-id={`dropdownPanel${uniquePanelName}`} onClick={handleToggle}>
+          {dropdownName}
         </div>
-        <div className='dropdownrawcontent' hidden={true}>{state.copiableContent}</div>
-        <div className='message' style={{ display: state.message.display }}>{state.message.innerText}</div>
+        <span className="nameDetail" onClick={handleToggle}>
+          {header}
+        </span>
+        <CopyToClipboard tip={intl.formatMessage({id: 'debugger.copy'})} content={state.copiableContent} data-id={`dropdownPanelCopyToClipboard${uniquePanelName}`} />
+      </div>
+      <div className="dropdownpanel" style={{display: state.toggleDropdown ? 'block' : 'none'}}>
+        <i className="refresh fas fa-sync" style={{display: state.updating ? 'inline-block' : 'none'}} aria-hidden="true"></i>
+        <div className="dropdowncontent pb-2" style={{display: state.dropdownContent.display, ...bodyStyle}}>
+          {state.data && <TreeView id="treeView">{Object.keys(state.data).map((innerkey) => renderData(state.data[innerkey], state.data, innerkey, innerkey))}</TreeView>}
+        </div>
+        <div className="dropdownrawcontent" hidden={true}>
+          {state.copiableContent}
+        </div>
+        <div className="message" style={{display: state.message.display}}>
+          {state.message.innerText}
+        </div>
       </div>
     </div>
   )

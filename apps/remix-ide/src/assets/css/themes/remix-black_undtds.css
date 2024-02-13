@@ -2096,6 +2096,7 @@ textarea.form-control.is-invalid {
   }
 }
 .btn {
+  cursor: pointer;
   display: inline-block;
   font-weight: 400;
   color: #d5d5d5;
@@ -2127,6 +2128,7 @@ textarea.form-control.is-invalid {
 .btn.disabled,
 .btn:disabled {
   opacity: 0.65;
+  cursor: not-allowed
 }
 a.btn.disabled,
 fieldset:disabled a.btn {
@@ -2149,7 +2151,7 @@ fieldset:disabled a.btn {
 .btn-primary.disabled,
 .btn-primary:disabled {
   color: #d5d5d5;
-  background-color: #153844;
+  background-color: #327b96;
   border-color: #007aa6;
 }
 .btn-primary:not(:disabled):not(.disabled).active,
@@ -3371,8 +3373,8 @@ input[type="submit"].btn-block {
   background-image: none;
 }
 .custom-select:disabled {
-  color: #272626;
-  background-color: ##222225;
+  color: #bdbed1;
+  background-color: #222225;
 }
 .custom-select::-ms-expand {
   display: none;
@@ -5630,7 +5632,7 @@ a.close.disabled {
   vertical-align: text-top !important;
 }
 .bg-primary {
-  background-color: #28282D !important;
+  background-color: var(--primary) !important;
 }
 a.bg-primary:focus,
 a.bg-primary:hover,

@@ -76,8 +76,8 @@
   text-align: left;
 }
 .remixui_home_cursorStyle {
-  cursor: pointer;
-  font-size: 0.8rem;
+  cursor: pointer;  
+  font-weight: 900;
 }
 .remixui_home_envButton {
   width: 220px;
@@ -102,10 +102,15 @@
   right: 180px;
 }
 .remixui_home_maintainedLabel {
-  top: 120px;
+  top: 118px;
   right: 180px;
 }
 
 .remixui_home_carouselText {
   font-size: rfs-fluid-value(1rem);
+}
+
+.langSelectorbg {
+  background-color: var(--body-bg);
+  color: var(--text);
 }

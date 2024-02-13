@@ -284,19 +284,19 @@ template {
     color:#fff
 }
 .h1,h1 {
-    font-size:4rem
-}
-.h2,h2 {
     font-size:3rem
 }
-.h3,h3 {
+.h2,h2 {
     font-size:2.5rem
 }
-.h4,h4 {
+.h3,h3 {
     font-size:2rem
 }
+.h4,h4 {
+    font-size:1.6rem
+}
 .h5,h5 {
-    font-size:1.5rem
+    font-size:1.3rem
 }
 .h6,h6 {
     font-size:.875rem
@@ -2119,6 +2119,7 @@ textarea.form-control {
 
 }
 .btn {
+    cursor: pointer;;
     display:inline-block;
     font-weight:400;
     color:#adafae;
@@ -2151,7 +2152,8 @@ textarea.form-control {
     box-shadow:0 0 0 .2rem rgba(42,159,214,.25)
 }
 .btn.disabled,.btn:disabled {
-    opacity:.65
+    opacity:.65;
+    cursor: not-allowed;
 }
 .btn:not(:disabled):not(.disabled) {
     cursor:pointer
@@ -2176,9 +2178,9 @@ a.btn.disabled,fieldset:disabled a.btn {
     box-shadow:0 0 0 .2rem rgba(74,173,220,.5)
 }
 .btn-primary.disabled,.btn-primary:disabled {
-    color:#fff;
-    background-color:#2a9fd6;
-    border-color:#2a9fd6
+  color: #a6bdcd;
+  background-color: #327b96;
+  border-color: #327b96;
 }
 .btn-primary:not(:disabled):not(.disabled).active,.btn-primary:not(:disabled):not(.disabled):active,.show>.btn-primary.dropdown-toggle {
     color:#fff;
@@ -3929,7 +3931,8 @@ input[type=button].btn-block,input[type=reset].btn-block,input[type=submit].btn-
     padding:1.25rem
 }
 .card-title {
-    margin-bottom:.75rem
+    margin-bottom:.75rem;
+    color: var(--text);
 }
 .card-subtitle {
     margin-top:-.375rem;
@@ -4419,9 +4422,9 @@ a.badge-dark.focus,a.badge-dark:focus {
     color:#311141
 }
 .alert-warning {
-    color:#854700;
-    background-color:#ffe7cc;
-    border-color:#ffdeb8
+    color: #fff;
+    background-color: #ffe7cc;
+    border-color: #ffdeb8
 }
 .alert-warning hr {
     border-top-color:#ffd29f

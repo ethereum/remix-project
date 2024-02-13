@@ -427,7 +427,7 @@ function getLibraryCallMemberName (funcCall: FunctionCallAstNode): string {
  *    function baz() {
  *      bar(10) => foo.bar(uint)
  * @func {ASTNode} function call node
- * @func {ASTNode} contract defintion
+ * @func {ASTNode} contract definition
  * @return {string} full qualified identifier for the function call
  */
 function getFullQualifiedFunctionCallIdent (contract: ContractDefinitionAstNode, func: FunctionCallAstNode): string {
@@ -468,8 +468,8 @@ function isStatement (node: any): boolean {
 // #################### Complex Node Identification
 
 /**
- * True if function defintion has function body
- * @funcNode {ASTNode} function defintion node
+ * True if function definition has function body
+ * @funcNode {ASTNode} function definition node
  * @return {bool}
  */
 function hasFunctionBody (funcNode: FunctionDefinitionAstNode): boolean {
@@ -630,7 +630,7 @@ function isStateVariable (name: string, stateVariables: VariableDeclarationAstNo
 }
 
 /**
- * True if is function defintion that is flaged as constant
+ * True if is function definition that is flaged as constant
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
@@ -648,7 +648,7 @@ function isVariableTurnedIntoGetter (varDeclNode: VariableDeclarationAstNode): b
 }
 
 /**
- * True if is function defintion has payable modifier
+ * True if is function definition has payable modifier
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
@@ -743,7 +743,7 @@ function isFullyImplementedContract (node: ContractDefinitionAstNode): boolean {
 }
 
 /**
- * True if it is a library contract defintion
+ * True if it is a library contract definition
  * @node {ASTNode} some AstNode
  * @return {bool}
  */

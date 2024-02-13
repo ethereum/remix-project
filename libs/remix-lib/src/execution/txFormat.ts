@@ -134,21 +134,21 @@ export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi,
 */
 export function linkLibraries (contract, linkLibraries, linkReferences, callback) {
   let bytecodeToDeploy = contract.evm.bytecode.object
-    if (bytecodeToDeploy.indexOf('_') >= 0) {
-      if (linkLibraries && linkReferences) {
-        for (const libFile in linkLibraries) {
-          for (const lib in linkLibraries[libFile]) {
-            const address = linkLibraries[libFile][lib]
-            if (!isValidAddress(address)) return callback(address + ' is not a valid address. Please check the provided address is valid.')
-            bytecodeToDeploy = linkLibraryStandardFromlinkReferences(lib, address.replace('0x', ''), bytecodeToDeploy, linkReferences)
-          }
+  if (bytecodeToDeploy.indexOf('_') >= 0) {
+    if (linkLibraries && linkReferences) {
+      for (const libFile in linkLibraries) {
+        for (const lib in linkLibraries[libFile]) {
+          const address = linkLibraries[libFile][lib]
+          if (!isValidAddress(address)) return callback(address + ' is not a valid address. Please check the provided address is valid.')
+          bytecodeToDeploy = linkLibraryStandardFromlinkReferences(lib, address.replace('0x', ''), bytecodeToDeploy, linkReferences)
         }
       }
     }
-    if (bytecodeToDeploy.indexOf('_') >= 0) {
-      return callback('Failed to link some libraries')
-    }
-    return callback(null, bytecodeToDeploy)
+  }
+  if (bytecodeToDeploy.indexOf('_') >= 0) {
+    return callback('Failed to link some libraries')
+  }
+  return callback(null, bytecodeToDeploy)
 }
 
 /**
@@ -459,7 +459,7 @@ export function parseFunctionParams (params) {
       args.push(parseFunctionParams(params.substring(i + 1, j)))
       i = j - 1
     } else if (params.charAt(i) === ',' || i === params.length - 1) { // , or end of string
-       // if startIndex >= 0, it means a parameter was being parsed, it can be first or other parameter
+      // if startIndex >= 0, it means a parameter was being parsed, it can be first or other parameter
       if (startIndex >= 0) {
         let param = params.substring(startIndex, i === params.length - 1 ? undefined : i)
         param = normalizeParam(param)

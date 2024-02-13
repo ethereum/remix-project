@@ -3,10 +3,9 @@ const { toHexPaddedString, formatMemory } = util
 import { helpers } from '@remix-project/remix-lib'
 const  { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs, hash } from '@remix-project/remix-lib'
-import BN from 'bn.js'
-import { isBigNumber } from 'web3-utils'
 import { toChecksumAddress, bufferToHex, Address, toBuffer } from '@ethereumjs/util'
-import utils from 'web3-utils'
+import utils, {toBigInt} from 'web3-utils'
+import {isBigInt} from 'web3-validator'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
 import type { StateManager } from '@ethereumjs/statemanager'
@@ -47,7 +46,7 @@ export class VmProxy {
   stateCopy: StateManager
   flagDoNotRecordEVMSteps: boolean
   lastMemoryUpdate: Array<string>
-  
+
   constructor (vmContext: VMContext) {
     this.vmContext = vmContext
     this.stateCopy
@@ -84,7 +83,7 @@ export class VmProxy {
     this.fromDecimal = (...args) => utils.fromDecimal.apply(this, args)
     this.fromWei = (...args) => utils.fromWei.apply(this, args)
     this.toWei = (...args) => utils.toWei.apply(this, args)
-    this.toBigNumber = (...args) => utils.toBN.apply(this, args)
+    this.toBigNumber = (...args) => toBigInt.apply(this, args)
     this.isAddress = (...args) => utils.isAddress.apply(this, args)
     this.utils = utils
     this.txsMapBlock = {}
@@ -176,13 +175,14 @@ export class VmProxy {
       const topics = []
       if (log[1].length > 0) {
         for (const k in log[1]) {
+          // @ts-ignore
           topics.push('0x' + log[1][k].toString('hex'))
         }
       } else {
         topics.push('0x')
       }
       logs.push({
-        address: '0x' + log[0].toString('hex'),
+        address: toChecksumAddress('0x' + log[0].toString('hex')),
         data: '0x' + log[2].toString('hex'),
         topics: topics,
         rawVMResponse: log
@@ -278,7 +278,8 @@ export class VmProxy {
         }
         let consoleArgs = iface.decodeFunctionData(functionDesc, payload)
         consoleArgs = consoleArgs.map((value) => {
-          if (isBigNumber(value)) {
+          // Copied from: https://github.com/web3/web3.js/blob/e68194bdc590d811d4bf66dde12f99659861a110/packages/web3-utils/src/utils.js#L48C10-L48C10
+          if (value && ((value.constructor && value.constructor.name === 'BigNumber') || isBigInt(value))) {
             return value.toString()
           }
           return value
@@ -347,7 +348,7 @@ export class VmProxy {
   getStorageAt (address: string, position: string, blockNumber: string, cb) {
     // we don't use the range params here
     address = toChecksumAddress(address)
-    
+
     blockNumber = blockNumber === 'latest' ? this.vmContext.latestBlockNumber : blockNumber
 
     const block = this.vmContext.blocks[blockNumber]
@@ -425,10 +426,10 @@ export class VmProxy {
   getSha3Input (stack, memory) {
     const memoryStart = toHexPaddedString(stack[stack.length - 1])
     const memoryLength = toHexPaddedString(stack[stack.length - 2])
-    const memStartDec = (new BN(memoryStart.replace('0x', ''), 16)).toString(10)
+    const memStartDec = toBigInt(memoryStart).toString(10)
     const memoryStartInt = parseInt(memStartDec) * 2
-    const memLengthDec = (new BN(memoryLength.replace('0x', ''), 16).toString(10))
-    const memoryLengthInt = parseInt(memLengthDec) * 2
+    const memLengthDec = toBigInt(memoryLength).toString(10)
+    const memoryLengthInt = parseInt(memLengthDec.toString()) * 2
 
     let i = Math.floor(memoryStartInt / 32)
     const maxIndex = Math.floor(memoryLengthInt / 32) + i

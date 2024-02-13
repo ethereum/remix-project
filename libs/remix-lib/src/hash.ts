@@ -10,22 +10,22 @@ import { toBuffer, setLengthLeft, isHexString } from '@ethereumjs/util'
  */
 export const keccak = function(a: Buffer, bits: number = 256): Buffer {
   assertIsBuffer(a)
-	switch (bits) {
-    case 224: {
-      return toBuffer(keccak224(a))
-    }
-    case 256: {
-      return toBuffer(k256(a))
-    }
-    case 384: {
-      return toBuffer(keccak384(a))
-    }
-    case 512: {
-      return toBuffer(keccak512(a))
-    }
-    default: {
-      throw new Error(`Invald algorithm: keccak${bits}`)
-    }
+  switch (bits) {
+  case 224: {
+    return toBuffer(keccak224(a))
+  }
+  case 256: {
+    return toBuffer(k256(a))
+  }
+  case 384: {
+    return toBuffer(keccak384(a))
+  }
+  case 512: {
+    return toBuffer(keccak512(a))
+  }
+  default: {
+    throw new Error(`Invald algorithm: keccak${bits}`)
+  }
   }
 }
 
@@ -158,7 +158,7 @@ export const ripemd160FromArray = function(a: number[], padded: boolean): Buffer
  * @param a The input data
  */
 export const rlphash = function(a: Input): Buffer {
-  return keccak(encode(a))
+  return keccak(Buffer.from(encode(a)))
 }
 
 /**

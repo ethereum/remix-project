@@ -172,7 +172,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"29")]',
       })
-      .goToVMTraceStep(7453)
+      .goToVMTraceStep(5453)
       .waitForElementPresent('*[data-id="treeViewDivtreeViewItemarray"]')
       .click('*[data-id="treeViewDivtreeViewItemarray"]')
       .waitForElementPresent('*[data-id="treeViewDivtreeViewLoadMore"]')
@@ -210,7 +210,7 @@ module.exports = {
       .addFile('test_jsGetTrace.js', { content: jsGetTrace })
       .executeScriptInTerminal('remix.exeCurrent()')
       .pause(3000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x575f","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', '{"gas":"0x5752","return":"0x0000000000000000000000000000000000000000000000000000000000000000","structLogs":', 60000)
   },
   // depends on Should debug using generated sources
   'Should call the debugger api: debug #group4': function (browser: NightwatchBrowser) {
@@ -261,7 +261,7 @@ module.exports = {
       .goToVMTraceStep(79)
       .waitForElementVisible('*[data-id="debugGoToRevert"]', 60000)
       .click('*[data-id="debugGoToRevert"]')
-      .waitForElementContainsText('*[data-id="asmitems"] div[selected="selected"]', '117 REVERT')
+      .waitForElementContainsText('*[data-id="asmitems"] div[selected="selected"]', '114 REVERT')
   }
 }
 
@@ -495,7 +495,7 @@ const localVariable_step717_ABIEncoder = { // eslint-disable-line
 
 const jsGetTrace = `(async () => {
   try {
-      const result = await remix.call('debugger', 'getTrace', '0x65f0813753462414f9a91f0aabea946188327995f54b893b63a8d7ff186cfca3')
+      const result = await remix.call('debugger', 'getTrace', '0x00a9f5b1ac2c9cb93e5890ea86c81efbd36b619ef2378136ef74d8c6171ddda6')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)
@@ -504,7 +504,7 @@ const jsGetTrace = `(async () => {
 
 const jsDebug = `(async () => {
   try {
-      const result = await remix.call('debugger', 'debug', '0x65f0813753462414f9a91f0aabea946188327995f54b893b63a8d7ff186cfca3')
+      const result = await remix.call('debugger', 'debug', '0x00a9f5b1ac2c9cb93e5890ea86c81efbd36b619ef2378136ef74d8c6171ddda6')
       console.log('result ', result)
   } catch (e) {
       console.log(e.message)

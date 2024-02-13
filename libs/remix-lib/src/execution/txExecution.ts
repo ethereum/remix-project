@@ -54,10 +54,11 @@ export function callFunction (from, to, data, value, gasLimit, funAbi, txRunner,
 /**
   * check if the vm has errored
   *
-  * @param {Object} execResult    - execution result given by the VM
+  * @param {Object} execResult    - execution result given by the VM, contain errorMessage and errorDate
+  * @param {Object} compiledContracts - Object containing contract compilation details
   * @return {Object} -  { error: true/false, message: DOMNode }
   */
-export function checkVMError (execResult, compiledContracts) {
+export function checkError (execResult, compiledContracts) {
   const errorCode = {
     OUT_OF_GAS: 'out of gas',
     STACK_UNDERFLOW: 'stack underflow',
@@ -75,20 +76,20 @@ export function checkVMError (execResult, compiledContracts) {
     error: false,
     message: ''
   }
-  if (!execResult.exceptionError) {
+  if (!execResult.errorMessage) {
     return ret
   }
-  const exceptionError = execResult.exceptionError.error || ''
-  const error = `VM error: ${exceptionError}.\n`
-  let msg
-  if (exceptionError === errorCode.INVALID_OPCODE) {
-    msg = '\t\n\tThe execution might have thrown.\n'
+  const exceptionError = execResult.errorMessage || ''
+  const error = `Error occured: ${execResult.errorMessage}.\n`
+  let msg = ''
+  if (exceptionError.includes(errorCode.INVALID_OPCODE)) {
+    msg = '\t\n\tThe execution might have thrown OR the EVM version used by the selected environment is not compatible with the compiler EVM version.\n'
     ret.error = true
   } else if (exceptionError === errorCode.OUT_OF_GAS) {
     msg = '\tThe transaction ran out of gas. Please increase the Gas Limit.\n'
     ret.error = true
-  } else if (exceptionError === errorCode.REVERT) {
-    const returnData = execResult.returnValue
+  } else if (exceptionError === errorCode.REVERT || exceptionError === 'execution reverted') {
+    const returnData = execResult.errorData || '0x00000000'
     const returnDataHex = returnData.slice(2, 10)
     let customError
     if (compiledContracts) {

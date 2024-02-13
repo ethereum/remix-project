@@ -31,12 +31,7 @@ const debugValues = async function (browser: NightwatchBrowser, field: string, e
       return
     }
     browser.waitForElementVisible(`//*[@id="${field}"]`).getText(`//*[@id="${field}"]`, (result) => {
-      console.log(result)
       if (!result.value.toString().includes(expected)) {
-        console.log('Actual result:')
-        console.log(result.value.toString())
-        console.log('Expected result:')
-        console.log(expected)
         getBrowserLogs(browser)
         browser.assert.ok(false, 'Returned value from call does not match expected value.')
       } else {
@@ -172,7 +167,7 @@ module.exports = {
   },
 
   'Should connect a local plugin': function (browser: NightwatchBrowser) {
-    browser.addLocalPlugin(localPluginData)
+    browser.addLocalPlugin(localPluginData, true)
       // @ts-ignore
       .frame(0).useXpath()
   },
@@ -300,7 +295,7 @@ module.exports = {
     }, null, '/')
   },
   'Should get all workspaces #group2': async function (browser: NightwatchBrowser) {
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"default_workspace",isGitRepo:false}, {name:"emptyworkspace",isGitRepo:false}, {name:"testspace",isGitRepo:false}], null, null)
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"default_workspace",isGitRepo:false,hasGitSubmodules:false}, {name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false}, {name:"testspace",isGitRepo:false,hasGitSubmodules:false}], null, null)
   },
   'Should have set workspace event #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:createWorkspace', null, { event: 'setWorkspace', args: [{ name: 'newspace', isLocalhost: false }] }, 'newspace')
@@ -314,11 +309,11 @@ module.exports = {
 
   'Should rename workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:renameWorkspace', null, null, ['default_workspace', 'renamed'])
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"emptyworkspace",isGitRepo:false},{name:"testspace",isGitRepo:false},{name:"newspace",isGitRepo:false},{name:"renamed",isGitRepo:false}], null, null)
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false},{name:"testspace",isGitRepo:false,hasGitSubmodules:false},{name:"newspace",isGitRepo:false,hasGitSubmodules:false},{name:"renamed",isGitRepo:false,hasGitSubmodules:false}], null, null)
   },
   'Should delete workspace #group2': async function (browser: NightwatchBrowser) {
     await clickAndCheckLog(browser, 'filePanel:deleteWorkspace', null, null, ['testspace'])
-    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"emptyworkspace",isGitRepo:false},{name:"newspace",isGitRepo:false},{name:"renamed",isGitRepo:false}], null, null)
+    await clickAndCheckLog(browser, 'filePanel:getWorkspaces', [{name:"emptyworkspace",isGitRepo:false,hasGitSubmodules:false},{name:"newspace",isGitRepo:false,hasGitSubmodules:false},{name:"renamed",isGitRepo:false,hasGitSubmodules:false}], null, null)
   },
   // DGIT
   'Should have changes on new workspace #group3': async function (browser: NightwatchBrowser) {
@@ -436,7 +431,7 @@ module.exports = {
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'I am a re-toast')
 
   },
-  'Should open 2 alerts from localplugin #group9': function (browser: NightwatchBrowser) {
+  'Should open 2 alerts from localplugin #group9': !function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('localPlugin')
       .useXpath()

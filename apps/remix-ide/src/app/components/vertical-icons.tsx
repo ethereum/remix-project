@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import packageJson from '../../../../../package.json'
-import { Plugin } from '@remixproject/engine'
-import { EventEmitter } from 'events'
-import { IconRecord, RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
-import { Profile } from '@remixproject/plugin-utils'
-import { PluginViewWrapper } from '@remix-ui/helper'
+import {Plugin} from '@remixproject/engine'
+import {EventEmitter} from 'events'
+import {IconRecord, RemixUiVerticalIconsPanel} from '@remix-ui/vertical-icons-panel'
+import {Profile} from '@remixproject/plugin-utils'
+import {PluginViewWrapper} from '@remix-ui/helper'
 
 const profile = {
   name: 'menuicons',
@@ -16,49 +16,58 @@ const profile = {
   events: ['toggleContent', 'showContent']
 }
 
+const toMaximize = ['LearnEth']
+
 export class VerticalIcons extends Plugin {
   events: EventEmitter
   htmlElement: HTMLDivElement
   icons: Record<string, IconRecord> = {}
   dispatch: React.Dispatch<any> = () => {}
-  constructor () {
+  constructor() {
     super(profile)
     this.events = new EventEmitter()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'icon-panel')
   }
 
-  renderComponent () {
-    const fixedOrder = ['filePanel', 'search', 'solidity','udapp', 'debugger', 'solidityStaticAnalysis', 'solidityUnitTesting', 'pluginManager']
+  renderComponent() {
+    const fixedOrder = ['filePanel', 'search', 'solidity', 'udapp', 'debugger', 'solidityStaticAnalysis', 'solidityUnitTesting', 'pluginManager']
 
-    const divived = Object.values(this.icons).map((value) => { return {
-      ...value,
-      isRequired: fixedOrder.indexOf(value.profile.name) > -1
-    }}).sort((a,b) => {
-      return a.timestamp - b.timestamp
-    })
+    const divived = Object.values(this.icons)
+      .map((value) => {
+        return {
+          ...value,
+          isRequired: fixedOrder.indexOf(value.profile.name) > -1
+        }
+      })
+      .sort((a, b) => {
+        return a.timestamp - b.timestamp
+      })
 
-    const required = divived.filter((value) => value.isRequired).sort((a,b) => {
-      return fixedOrder.indexOf(a.profile.name) - fixedOrder.indexOf(b.profile.name)
-    })
+    const required = divived
+      .filter((value) => value.isRequired)
+      .sort((a, b) => {
+        return fixedOrder.indexOf(a.profile.name) - fixedOrder.indexOf(b.profile.name)
+      })
 
     const sorted: IconRecord[] = [
       ...required,
-      ...divived.filter((value) => { return !value.isRequired })
+      ...divived.filter((value) => {
+        return !value.isRequired
+      })
     ]
 
     this.dispatch({
       verticalIconsPlugin: this,
       icons: sorted
     })
-
   }
 
-  setDispatch (dispatch: React.Dispatch<any>) {
+  setDispatch(dispatch: React.Dispatch<any>) {
     this.dispatch = dispatch
   }
 
-  onActivation () {
+  onActivation() {
     this.renderComponent()
     this.on('sidePanel', 'focusChanged', (name: string) => {
       Object.keys(this.icons).map((o) => {
@@ -69,7 +78,7 @@ export class VerticalIcons extends Plugin {
     })
   }
 
-  async linkContent (profile: Profile) {
+  async linkContent(profile: Profile) {
     if (!profile.icon) return
     if (!profile.kind) profile.kind = 'none'
     this.icons[profile.name] = {
@@ -81,7 +90,7 @@ export class VerticalIcons extends Plugin {
     this.renderComponent()
   }
 
-  unlinkContent (profile: Profile) {
+  unlinkContent(profile: Profile) {
     delete this.icons[profile.name]
     this.renderComponent()
   }
@@ -95,32 +104,36 @@ export class VerticalIcons extends Plugin {
    * Set an icon as active
    * @param {string} name Name of profile of the module to activate
    */
-  select (name: string) {
+  select(name: string) {
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('showContent', name)
     this.events.emit('showContent', name)
+    if (toMaximize.includes(name)) {
+      setTimeout(_ => {
+        this.call('layout', 'maximiseSidePanel')
+      }, 500)
+    }
   }
 
   /**
    * Toggles the side panel for plugin
    * @param {string} name Name of profile of the module to activate
    */
-  toggle (name: string) {
+  toggle(name: string) {
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('toggleContent', name)
     this.events.emit('toggleContent', name)
   }
 
-  updateComponent(state: any){
-    return  <RemixUiVerticalIconsPanel
-    verticalIconsPlugin={state.verticalIconsPlugin}
-    icons={state.icons}
-    />
+  updateComponent(state: any) {
+    return <RemixUiVerticalIconsPanel verticalIconsPlugin={state.verticalIconsPlugin} icons={state.icons} />
   }
 
-  render() {      
+  render() {
     return (
-      <div id='icon-panel'><PluginViewWrapper plugin={this} /></div>
-    );
+      <div id="icon-panel">
+        <PluginViewWrapper plugin={this} />
+      </div>
+    )
   }
 }

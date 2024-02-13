@@ -1,16 +1,17 @@
 'use strict'
 
-import { NightwatchBrowser } from 'nightwatch'
+import {NightwatchBrowser} from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
   '@disabled': true,
-  before: function (browser: NightwatchBrowser, done: VoidFunction) {
+  'before': function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', true)
   },
 
   'Should zoom in editor #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
+    browser
+      .waitForElementVisible('div[data-id="mainPanelPluginsContainer"]')
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('div[data-id="filePanelFileExplorerTree"]')
       .openFile('contracts')
@@ -19,69 +20,85 @@ module.exports = {
       .checkElementStyle('.view-lines', 'font-size', '14px')
       .click('*[data-id="tabProxyZoomIn"]')
       .click('*[data-id="tabProxyZoomIn"]')
-      .checkElementStyle('.view-lines', 'font-size', '16px')
+      .checkElementStyle('.view-lines', 'font-size', '16.8px')
   },
 
   'Should zoom out editor #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('#editorView')
-      .checkElementStyle('.view-lines', 'font-size', '16px')
+    browser
+      .waitForElementVisible('#editorView')
+      .checkElementStyle('.view-lines', 'font-size', '16.8px')
       .click('*[data-id="tabProxyZoomOut"]')
       .click('*[data-id="tabProxyZoomOut"]')
       .checkElementStyle('.view-lines', 'font-size', '14px')
   },
 
   'Should display compile error in editor #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('#editorView')
+    browser
+      .waitForElementVisible('#editorView')
       .setEditorValue(storageContractWithError + 'error')
       .pause(2000)
-      .waitForElementVisible('.margin-view-overlays .fa-exclamation-square', 120000)
-      .checkAnnotations('fa-exclamation-square', 29) // error
+      .waitForElementVisible('.glyph-margin-widgets .fa-exclamation-square', 120000)
+      .checkAnnotations('fa-exclamation-square') // error
       .clickLaunchIcon('udapp')
       .checkAnnotationsNotPresent('fa-exclamation-square') // error
       .clickLaunchIcon('solidity')
-      .checkAnnotations('fa-exclamation-square', 29) // error
+      .checkAnnotations('fa-exclamation-square') // error
   },
 
-  'Should minimize and maximize codeblock in editor #group1': '' + function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('#editorView')
-      .waitForElementVisible('.ace_open')
-      .click('.ace_start:nth-of-type(1)')
-      .waitForElementVisible('.ace_closed')
-      .click('.ace_start:nth-of-type(1)')
-      .waitForElementVisible('.ace_open')
-  },
+  'Should minimize and maximize codeblock in editor #group1':
+    '' +
+    function (browser: NightwatchBrowser) {
+      browser
+        .waitForElementVisible('#editorView')
+        .waitForElementVisible('.ace_open')
+        .click('.ace_start:nth-of-type(1)')
+        .waitForElementVisible('.ace_closed')
+        .click('.ace_start:nth-of-type(1)')
+        .waitForElementVisible('.ace_open')
+    },
 
   'Should add breakpoint to editor #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('#editorView')
-      .waitForElementNotPresent('.margin-view-overlays .fa-circle')
-      .execute(() => {
-        (window as any).addRemixBreakpoint(1)
-      }, [], () => {})
-      .waitForElementVisible('.margin-view-overlays .fa-circle')
-  },
-
-  'Should load syntax highlighter for ace light theme #group1': '' + function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('#editorView')
-      .checkElementStyle('.ace_keyword', 'color', aceThemes.light.keyword)
-      .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.light.comment)
-      .checkElementStyle('.ace_function', 'color', aceThemes.light.function)
-      .checkElementStyle('.ace_variable', 'color', aceThemes.light.variable)
-  },
-
-  'Should load syntax highlighter for ace dark theme #group1': '' + function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
-      .click('*[data-id="verticalIconsKindsettings"]')
-      .waitForElementVisible('*[data-id="settingsTabThemeLabelDark"]')
-      .click('*[data-id="settingsTabThemeLabelDark"]')
-      .pause(2000)
+    browser
       .waitForElementVisible('#editorView')
-    /* @todo(#2863) ch for class and not colors
+      .waitForElementNotPresent('.glyph-margin-widgets .fa-circle')
+      .execute(
+        () => {
+          ;(window as any).addRemixBreakpoint(1)
+        },
+        [],
+        () => {}
+      )
+      .waitForElementVisible('.glyph-margin-widgets .fa-circle')
+  },
+
+  'Should load syntax highlighter for ace light theme #group1':
+    '' +
+    function (browser: NightwatchBrowser) {
+      browser
+        .waitForElementVisible('#editorView')
+        .checkElementStyle('.ace_keyword', 'color', aceThemes.light.keyword)
+        .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.light.comment)
+        .checkElementStyle('.ace_function', 'color', aceThemes.light.function)
+        .checkElementStyle('.ace_variable', 'color', aceThemes.light.variable)
+    },
+
+  'Should load syntax highlighter for ace dark theme #group1':
+    '' +
+    function (browser: NightwatchBrowser) {
+      browser
+        .waitForElementVisible('*[data-id="verticalIconsKindsettings"]')
+        .click('*[data-id="verticalIconsKindsettings"]')
+        .waitForElementVisible('*[data-id="settingsTabThemeLabelDark"]')
+        .click('*[data-id="settingsTabThemeLabelDark"]')
+        .pause(2000)
+        .waitForElementVisible('#editorView')
+      /* @todo(#2863) ch for class and not colors
     .checkElementStyle('.ace_keyword', 'color', aceThemes.dark.keyword)
     .checkElementStyle('.ace_comment.ace_doc', 'color', aceThemes.dark.comment)
     .checkElementStyle('.ace_function', 'color', aceThemes.dark.function)
     .checkElementStyle('.ace_variable', 'color', aceThemes.dark.variable)
     */
-  },
+    },
 
   'Should highlight source code #group1': function (browser: NightwatchBrowser) {
     // include all files here because switching between plugins in side-panel removes highlight
@@ -101,22 +118,26 @@ module.exports = {
       .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
   },
 
-  'Should remove 1 highlight from source code #group1': '' + function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveSourcehighlightScript.js"]')
-      .click('li[data-id="treeViewLitreeViewItemremoveSourcehighlightScript.js"]')
-      .pause(2000)
-      .executeScriptInTerminal('remix.exeCurrent()')
-      .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts"]')
-      .click('li[data-id="treeViewLitreeViewItemcontracts"]')
-      .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
-      .click('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
-      .waitForElementNotPresent('.highlightLine33', 60000)
-      .checkElementStyle('.highlightLine41', 'background-color', 'rgb(52, 152, 219)')
-      .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
-  },
+  'Should remove 1 highlight from source code #group1':
+    '' +
+    function (browser: NightwatchBrowser) {
+      browser
+        .waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveSourcehighlightScript.js"]')
+        .click('li[data-id="treeViewLitreeViewItemremoveSourcehighlightScript.js"]')
+        .pause(2000)
+        .executeScriptInTerminal('remix.exeCurrent()')
+        .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts"]')
+        .click('li[data-id="treeViewLitreeViewItemcontracts"]')
+        .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
+        .click('li[data-id="treeViewLitreeViewItemcontracts/3_Ballot.sol"]')
+        .waitForElementNotPresent('.highlightLine33', 60000)
+        .checkElementStyle('.highlightLine41', 'background-color', 'rgb(52, 152, 219)')
+        .checkElementStyle('.highlightLine51', 'background-color', 'rgb(52, 152, 219)')
+    },
 
   'Should remove all highlights from source code #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
+    browser
+      .waitForElementVisible('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
       .click('li[data-id="treeViewLitreeViewItemremoveAllSourcehighlightScript.js"]')
       .pause(2000)
       .executeScriptInTerminal('remix.exeCurrent()')
@@ -126,8 +147,7 @@ module.exports = {
       .waitForElementNotPresent('.highlightLine33', 60000)
       .waitForElementNotPresent('.highlightLine41', 60000)
       .waitForElementNotPresent('.highlightLine51', 60000)
-  },
-
+  }
 }
 
 const aceThemes = {
@@ -233,5 +253,3 @@ contract Storage {
         return number;
     }
 }`
-
-

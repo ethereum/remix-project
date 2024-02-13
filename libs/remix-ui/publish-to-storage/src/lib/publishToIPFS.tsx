@@ -3,11 +3,11 @@ import IpfsHttpClient from 'ipfs-http-client'
 let ipfsNodes = []
 
 export const publishToIPFS = async (contract, api) => {
-  ipfsNodes = [
-    IpfsHttpClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
-  ]
+  ipfsNodes = [IpfsHttpClient({host: 'ipfs.infura.io', port: 5001, protocol: 'https'})]
   if (api.config.get('settings/ipfs-url')) {
-    const auth = api.config.get('settings/ipfs-project-id') ? 'Basic ' + Buffer.from(api.config.get('settings/ipfs-project-id') + ':' + api.config.get('settings/ipfs-project-secret')).toString('base64') : null
+    const auth = api.config.get('settings/ipfs-project-id')
+      ? 'Basic ' + Buffer.from(api.config.get('settings/ipfs-project-id') + ':' + api.config.get('settings/ipfs-project-secret')).toString('base64')
+      : null
     const ipfs = IpfsHttpClient({
       host: api.config.get('settings/ipfs-url'),
       port: api.config.get('settings/ipfs-port'),
@@ -22,7 +22,7 @@ export const publishToIPFS = async (contract, api) => {
   // gather list of files to publish
   const sources = []
   let metadata
-  const item = { content: null, hash: null }
+  const item = {content: null, hash: null}
   const uploaded = []
 
   try {
@@ -35,58 +35,65 @@ export const publishToIPFS = async (contract, api) => {
     throw new Error('No metadata')
   }
 
-  await Promise.all(Object.keys(metadata.sources).map(fileName => {
-    return new Promise((resolve, reject) => {
-      // find hash
-      let hash = null
-      try {
-        // we try extract the hash defined in the metadata.json
-        // in order to check if the hash that we get after publishing is the same as the one located in metadata.json
-        // if it's not the same, we throw "hash mismatch between solidity bytecode and uploaded content"
-        // if we don't find the hash in the metadata.json, the check is not done.
-        //
-        // TODO: refactor this with publishOnSwarm
-        if (metadata.sources[fileName].urls) {
-          metadata.sources[fileName].urls.forEach(url => {
-            if (url.includes('ipfs')) hash = url.match('dweb:/ipfs/(.+)')[1]
-          })
+  await Promise.all(
+    Object.keys(metadata.sources).map((fileName) => {
+      return new Promise((resolve, reject) => {
+        // find hash
+        let hash = null
+        try {
+          // we try extract the hash defined in the metadata.json
+          // in order to check if the hash that we get after publishing is the same as the one located in metadata.json
+          // if it's not the same, we throw "hash mismatch between solidity bytecode and uploaded content"
+          // if we don't find the hash in the metadata.json, the check is not done.
+          //
+          // TODO: refactor this with publishOnSwarm
+          if (metadata.sources[fileName].urls) {
+            metadata.sources[fileName].urls.forEach((url) => {
+              if (url.includes('ipfs')) hash = url.match('dweb:/ipfs/(.+)')[1]
+            })
+          }
+        } catch (e) {
+          return reject(new Error('Error while extracting the hash from metadata.json'))
         }
-      } catch (e) {
-        return reject(new Error('Error while extracting the hash from metadata.json'))
-      }
 
-      api.readFile(fileName).then((content) => {
-        sources.push({
-          content: content,
-          hash: hash,
-          filename: fileName
-        })
-        resolve({
-          content: content,
-          hash: hash,
-          filename: fileName
-        })
-      }).catch((error) => {
-        console.log(error)
-        reject(error)
+        api
+          .readFile(fileName)
+          .then((content) => {
+            sources.push({
+              content: content,
+              hash: hash,
+              filename: fileName
+            })
+            resolve({
+              content: content,
+              hash: hash,
+              filename: fileName
+            })
+          })
+          .catch((error) => {
+            console.log(error)
+            reject(error)
+          })
       })
     })
-  }))
+  )
   // publish the list of sources in order, fail if any failed
-  await Promise.all(sources.map(async (item) => {
-    try {
-      const result = await ipfsVerifiedPublish(item.content, item.hash, api)
+  await Promise.all(
+    sources.map(async (item) => {
       try {
-        item.hash = result.url.match('dweb:/ipfs/(.+)')[1]
-      } catch (e) {
-        item.hash = '<Metadata inconsistency> - ' + item.fileName
+        const result = await ipfsVerifiedPublish(item.content, item.hash, api)
+        try {
+          item.hash = result.url.match('dweb:/ipfs/(.+)')[1]
+        } catch (e) {
+          item.hash = '<Metadata inconsistency> - ' + item.fileName
+        }
+        item.output = result
+        uploaded.push(item)
+      } catch (error) {
+        throw new Error(error)
       }
-      item.output = result
-      uploaded.push(item)
-    } catch (error) {
-      throw new Error(error)
-    }
-  }))
+    })
+  )
   const metadataContent = JSON.stringify(metadata, null, '\t')
 
   try {
@@ -108,7 +115,7 @@ export const publishToIPFS = async (contract, api) => {
     throw new Error(error)
   }
 
-  return { uploaded, item }
+  return {uploaded, item}
 }
 
 const ipfsVerifiedPublish = async (content, expectedHash, api) => {
@@ -116,10 +123,14 @@ const ipfsVerifiedPublish = async (content, expectedHash, api) => {
     const results = await severalGatewaysPush(content)
     const hash: any = (results as any).path
     if (expectedHash && hash !== expectedHash) {
-      return { message: 'hash mismatch between solidity bytecode and uploaded content.', url: 'dweb:/ipfs/' + hash, hash }
+      return {
+        message: 'hash mismatch between solidity bytecode and uploaded content.',
+        url: 'dweb:/ipfs/' + hash,
+        hash
+      }
     } else {
       api.writeFile('ipfs/' + hash, content)
-      return { message: 'ok', url: 'dweb:/ipfs/' + hash, hash }
+      return {message: 'ok', url: 'dweb:/ipfs/' + hash, hash}
     }
   } catch (error) {
     throw new Error(error)
@@ -127,7 +138,7 @@ const ipfsVerifiedPublish = async (content, expectedHash, api) => {
 }
 
 const severalGatewaysPush = (content) => {
-  const invert = p => new Promise((resolve, reject) => p.then(reject).catch(resolve)) // Invert res and rej
+  const invert = (p) => new Promise((resolve, reject) => p.then(reject).catch(resolve)) // Invert res and rej
   const promises = ipfsNodes.map((node) => invert(node.add(content)))
 
   return invert(Promise.all(promises))

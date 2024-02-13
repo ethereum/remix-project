@@ -1,5 +1,6 @@
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
+import {isBigInt} from 'web3-validator'
 
 export const profile = {
   name: 'web3Provider',
@@ -8,6 +9,11 @@ export const profile = {
   methods: ['sendAsync'],
   version: packageJson.version,
   kind: 'provider'
+}
+
+const replacer = (key, value) => {
+  if (isBigInt(value)) value = value.toString()
+  return value
 }
 
 export class Web3ProviderModule extends Plugin {
@@ -23,12 +29,11 @@ export class Web3ProviderModule extends Plugin {
   sendAsync(payload) {
 
     return new Promise((resolve, reject) => {
-      this.askUserPermission('sendAsync', `Calling ${payload.method} with parameters ${JSON.stringify(payload.params, null, '\t')}`).then(
+      this.askUserPermission('sendAsync', `Calling ${payload.method} with parameters ${JSON.stringify(payload.params, replacer, '\t')}`).then(
         async (result) => {
           if (result) {
             const provider = this.blockchain.web3().currentProvider
-            // see https://github.com/ethereum/web3.js/pull/1018/files#diff-d25786686c1053b786cc2626dc6e048675050593c0ebaafbf0814e1996f22022R129
-            provider[provider.sendAsync ? 'sendAsync' : 'send'](payload, async (error, message) => {
+            const resultFn = async (error, message) => {
               if (error) {
                 // Handle 'The method "debug_traceTransaction" does not exist / is not available.' error
                 if(error.message && error.code && error.code === -32601) {
@@ -55,13 +60,18 @@ export class Web3ProviderModule extends Plugin {
                 }
               }
               resolve(message)
-            })
+            }
+            try {
+              resultFn(null, await provider.sendAsync(payload))
+            } catch (e) {
+              resultFn(e.error ? new Error(e.error) : new Error(e))
+            }
           } else {
             reject(new Error('User denied permission'))
           }
         }).catch((e) => {
-          reject(e)
-        })
+        reject(e)
+      })
     })
   }
 

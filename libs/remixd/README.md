@@ -17,7 +17,7 @@ More details are explained in the [documentation](https://remix-ide.readthedocs.
 
 NOTE: When the remixd NPM module is installed, it also installs [Slither](https://github.com/crytic/slither), [solc-select](https://github.com/crytic/solc-select#quickstart) and sets [solc](https://docs.soliditylang.org/en/latest/installing-solidity.html) to latest version i.e. 0.8.15 currently.
 
-ALSO NOTE: Python3.6+ (pip3) needs to already be installed on the System. In case of any discrepany, Slither can also installed along with other dependencies using command:
+ALSO NOTE: Python3.6+ (pip3) needs to already be installed on the System. In case of any discrepancy, Slither can also be installed along with other dependencies using the command:
 ```
 > remixd -i slither
 ``` 

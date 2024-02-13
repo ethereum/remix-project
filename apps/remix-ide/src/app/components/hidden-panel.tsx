@@ -1,9 +1,9 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import { AbstractPanel } from './panel'
+import {AbstractPanel} from './panel'
 import * as packageJson from '../../../../../package.json'
-import { RemixPluginPanel } from '@remix-ui/panel'
-import { PluginViewWrapper } from '@remix-ui/helper'
+import {RemixPluginPanel} from '@remix-ui/panel'
+import {PluginViewWrapper} from '@remix-ui/helper'
 
 const profile = {
   name: 'hiddenPanel',
@@ -16,35 +16,37 @@ const profile = {
 export class HiddenPanel extends AbstractPanel {
   el: HTMLElement
   dispatch: React.Dispatch<any> = () => {}
-  constructor () {
+  constructor() {
     super(profile)
     this.el = document.createElement('div')
     this.el.setAttribute('class', 'pluginsContainer')
   }
 
-  addView (profile: any, view: any): void {
+  addView(profile: any, view: any): void {
     super.removeView(profile)
     super.addView(profile, view)
     this.renderComponent()
   }
 
-  updateComponent (state: any) {
-    return <RemixPluginPanel header={<></>} plugins={state.plugins}/>
+  updateComponent(state: any) {
+    return <RemixPluginPanel header={<></>} plugins={state.plugins} />
   }
 
-  setDispatch (dispatch: React.Dispatch<any>) {
+  setDispatch(dispatch: React.Dispatch<any>) {
     this.dispatch = dispatch
   }
 
-  render() {      
+  render() {
     return (
-      <div className='pluginsContainer'><PluginViewWrapper plugin={this} /></div>
-    );
+      <div className="pluginsContainer">
+        <PluginViewWrapper plugin={this} />
+      </div>
+    )
   }
 
-  renderComponent () {
+  renderComponent() {
     this.dispatch({
-      plugins: this.plugins,
+      plugins: this.plugins
     })
   }
 }

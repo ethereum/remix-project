@@ -27,6 +27,7 @@ if [ ! -d "./apps/remix-ide/src/assets/js/soljson" ]; then
     mkdir ./apps/remix-ide/src/assets/js/soljson
 fi
 cp ./apps/remix-ide/src/assets/js/soljson.js ./apps/remix-ide/src/assets/js/soljson/$url
+cp list.json ./apps/remix-ide/src/assets/list.json
 
 # remove list.json
 rm list.json

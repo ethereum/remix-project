@@ -1,4 +1,4 @@
-import { ICompilerApi, ConfigurationSettings } from '@remix-project/remix-lib'
+import { ICompilerApi, ConfigurationSettings, iSolJsonBinData } from '@remix-project/remix-lib'
 import { CompileTabLogic } from '../logic/compileTabLogic'
 export type onCurrentFileChanged = (fileName: string) => void
 
@@ -8,6 +8,7 @@ export interface SolidityCompilerProps {
 
 export interface CompilerContainerProps {
   api: ICompilerApi,
+  pluginProps: SolidityCompilerProps,
   compileTabLogic: CompileTabLogic,
   isHardhatProject: boolean,
   isTruffleProject: boolean,
@@ -19,8 +20,11 @@ export interface CompilerContainerProps {
   updateCurrentVersion: any,
   configurationSettings: ConfigurationSettings,
   configFilePath: string,
-  setConfigFilePath: (path: string) => void
+  setConfigFilePath: (path: string) => void,
+  solJsonBinData: iSolJsonBinData
 }
+
+
 export interface ContractSelectionProps {
   api: ICompilerApi,
   compiledFileName: string,
@@ -52,3 +56,7 @@ export interface CompilationDetails {
 export interface ContractsFile {
  [currentFile: string]: CompilationDetails
 }
+
+export type ContractPropertyName = 'compilerInput' | 'name' | 'metadata' | 'bytecode' | 'abi' | 'storageLayout'
+  | 'web3Deploy' | 'metadataHash' | 'functionHashes' | 'gasEstimates' | 'devdoc' | 'userdoc' | 'Runtime Bytecode'
+  | 'Assembly'

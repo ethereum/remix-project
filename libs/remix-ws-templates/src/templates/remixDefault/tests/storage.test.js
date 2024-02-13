@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // Right click on the script name and hit "Run" to execute
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
@@ -7,10 +8,10 @@ describe("Storage", function () {
     const Storage = await ethers.getContractFactory("Storage");
     const storage = await Storage.deploy();
     await storage.deployed();
-    console.log('storage deployed at:'+ storage.address)
+    console.log("storage deployed at:" + storage.address);
     expect((await storage.retrieve()).toNumber()).to.equal(0);
   });
-   it("test updating and retrieving updated value", async function () {
+  it("test updating and retrieving updated value", async function () {
     const Storage = await ethers.getContractFactory("Storage");
     const storage = await Storage.deploy();
     await storage.deployed();

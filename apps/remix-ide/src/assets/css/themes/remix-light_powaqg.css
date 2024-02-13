@@ -2310,6 +2310,7 @@ textarea.form-control.is-invalid {
 }
 
 .btn {
+  cursor: pointer;
   display: inline-block;
   font-weight: 400;
   color: #2e3145;
@@ -2342,6 +2343,7 @@ textarea.form-control.is-invalid {
 .btn.disabled,
 .btn:disabled {
   opacity: 0.7;
+  cursor: not-allowed;
 }
 
 a.btn.disabled,
@@ -2384,8 +2386,8 @@ fieldset:disabled a.btn {
 
 .btn-secondary {
   color: #fff;
-  background-color: #a8b3bc;
-  border-color: #a8b3bc;
+  background-color: #8b98a3;
+  border-color: #8b98a3;
 }
 .btn-secondary:hover {
   color: #fff;
@@ -2399,8 +2401,8 @@ fieldset:disabled a.btn {
 .btn-secondary.disabled,
 .btn-secondary:disabled {
   color: #fff;
-  background-color: #a8b3bc;
-  border-color: #a8b3bc;
+  background-color: #8b98a3;
+  border-color: #8b98a3;
 }
 .btn-secondary:not(:disabled):not(.disabled):active,
 .btn-secondary:not(:disabled):not(.disabled).active,
@@ -2654,13 +2656,13 @@ fieldset:disabled a.btn {
 }
 
 .btn-outline-secondary {
-  color: #a8b3bc;
-  border-color: #a8b3bc;
+  color: #8b98a3;
+  border-color: #8b98a3;
 }
 .btn-outline-secondary:hover {
   color: #fff;
-  background-color: #a8b3bc;
-  border-color: #a8b3bc;
+  background-color: #8b98a3;
+  border-color: #8b98a3;
 }
 .btn-outline-secondary:focus,
 .btn-outline-secondary.focus {
@@ -2668,15 +2670,15 @@ fieldset:disabled a.btn {
 }
 .btn-outline-secondary.disabled,
 .btn-outline-secondary:disabled {
-  color: #a8b3bc;
+  color: #8b98a3;
   background-color: transparent;
 }
 .btn-outline-secondary:not(:disabled):not(.disabled):active,
 .btn-outline-secondary:not(:disabled):not(.disabled).active,
 .show > .btn-outline-secondary.dropdown-toggle {
   color: #fff;
-  background-color: #a8b3bc;
-  border-color: #a8b3bc;
+  background-color: #8b98a3;
+  border-color: #8b98a3;
 }
 .btn-outline-secondary:not(:disabled):not(.disabled):active:focus,
 .btn-outline-secondary:not(:disabled):not(.disabled).active:focus,
@@ -4367,6 +4369,7 @@ input[type="button"].btn-block {
 
 .card-title {
   margin-bottom: 0.75rem;
+  color: var(--text);
 }
 
 .card-subtitle {
@@ -4728,7 +4731,7 @@ a.badge-primary.focus {
 
 .badge-secondary {
   color: #fff;
-  background-color: #a8b3bc;
+  background-color: #8b98a3;
 }
 a.badge-secondary:hover,
 a.badge-secondary:focus {
@@ -6268,7 +6271,7 @@ button.bg-dark:focus {
 }
 
 .border-secondary {
-  border-color: #a8b3bc !important;
+  border-color: #8b98a3 !important;
 }
 
 .border-success {
@@ -9305,7 +9308,7 @@ a.text-primary:focus {
 }
 
 .text-secondary {
-  color: #a8b3bc !important;
+  color: #8b98a3 !important;
 }
 
 a.text-secondary:hover,

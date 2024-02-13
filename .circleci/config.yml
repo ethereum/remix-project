@@ -5,7 +5,8 @@ parameters:
     type: boolean
     default: false
 orbs:
-  browser-tools: circleci/browser-tools@1.4.1
+  browser-tools: circleci/browser-tools@1.4.4
+  win: circleci/windows@5.0
 jobs:
   build:
     docker:
@@ -28,9 +29,9 @@ jobs:
           name: Build
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build:production
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NX_NPM_URL=http://127.0.0.1:9090/ yarn build:production
             else
-              NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NPM_URL=http://localhost:9090/ yarn build
+              NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NX_NPM_URL=http://127.0.0.1:9090/ yarn build
             fi
       - run: yarn run build:e2e
       
@@ -50,6 +51,32 @@ jobs:
           paths:
             - "persist"
 
+  build-desktop:
+    docker:
+      - image: cimg/node:20.0.0-browsers
+
+    resource_class:
+      xlarge
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - save_cache:
+          key: v1-deps-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          name: Build
+          command: |
+             yarn build:desktop
+      - run: mkdir persist && zip -0 -r persist/desktopbuild.zip dist/apps/remix-ide
+      - persist_to_workspace:
+          root: .
+          paths:
+            - "persist"
 
   build-plugin:
       docker:
@@ -77,6 +104,199 @@ jobs:
             paths:
               - "persist"
 
+  build-remixdesktop-linux:
+      machine:
+        image: ubuntu-2004:current
+      resource_class:
+        xlarge
+      working_directory: ~/remix-project
+      steps:
+        - run: ldd --version
+        - checkout
+        - attach_workspace:
+            at: .
+        - run: unzip ./persist/desktopbuild.zip
+        - run: 
+            command: |
+                node -v
+                mkdir apps/remixdesktop/build
+                cp -r dist/apps/remix-ide apps/remixdesktop/build
+                cd apps/remixdesktop/
+                yarn add node-pty
+                yarn --ignore-optional
+                yarn add @remix-project/remix-ws-templates
+                PUBLISH_FOR_PULL_REQUEST='true' yarn dist
+                rm -rf release/*-unpacked
+        - save_cache:
+            key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+            paths:
+              - apps/remixdesktop/node_modules
+        - store_artifacts:
+            path: apps/remixdesktop/release/
+            destination: remixdesktop-linux
+
+  build-remixdesktop-windows:
+    executor:
+      name: win/default # executor type
+      size: xlarge # can be medium, large, xlarge, 2xlarge
+      shell: bash.exe
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: unzip ./persist/desktopbuild.zip
+      - restore_cache:
+          key: node-20-windows-v3
+      - run: 
+          command: |
+            nvm install 20.0.0
+            nvm use 20.0.0
+            node -v
+            npx -v
+            npm install --global yarn
+            yarn -v 
+      - save_cache:
+          key: node-20-windows-v3
+          paths:
+            - /ProgramData/nvm/v20.0.0
+      - restore_cache:
+          keys:
+            - remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+      - run: 
+          command: |
+              mkdir apps/remixdesktop/build
+              cp -r dist/apps/remix-ide apps/remixdesktop/build
+              cd apps/remixdesktop/
+              yarn
+              PUBLISH_FOR_PULL_REQUEST='true' yarn dist
+              rm -rf release/*-unpacked
+      - save_cache:
+          key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+          paths:
+            - apps/remixdesktop/node_modules
+      - persist_to_workspace:
+            root: apps/remixdesktop
+            paths:
+              - "release"
+  # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
+  sign-remixdesktop-windows:
+    executor: win/default # executor type
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - attach_workspace:
+         at: .
+      - run:
+          name: "Certificate-Setup"
+          shell: powershell.exe
+          command: |
+            cd C:\
+            New-Item C:\CERT_FILE.p12.b64
+            Set-Content -Path C:\CERT_FILE.p12.b64 -Value $env:SM_CLIENT_CERT_FILE_B64
+            certutil -decode CERT_FILE.p12.b64 Certificate_pkcs12.p12
+            cat Certificate_pkcs12.p12
+      - restore_cache:
+          name: Restore smtools-windows-x64.msi
+          keys:
+            - dl-smtools-windows-x64.msi
+      - run:
+          name: "Client-Tool-Download"
+          shell: powershell.exe 
+          command: |
+            cd C:\
+            if (Test-Path 'c:\smtools-windows-x64.msi') {              
+              echo 'File exists, skipping download...'
+            } else {
+              echo 'Downloading smtools-windows-x64.msi ...'
+              curl.exe -X GET  https://one.digicert.com/signingmanager/api-ui/v1/releases/smtools-windows-x64.msi/download -H "x-api-key:$env:SM_API_KEY" -o smtools-windows-x64.msi
+            }
+      - save_cache:
+          key: dl-smtools-windows-x64.msi
+          paths:
+            - c:\smtools-windows-x64.msi
+      - run:
+          name: "Client-Tool-Setup"
+          shell: powershell.exe 
+          command: |
+            cd C:\
+            msiexec.exe /i smtools-windows-x64.msi /quiet /qn | Wait-Process
+            & $env:SSM\smksp_cert_sync.exe
+            & $env:SSM\smctl.exe healthcheck
+      - run:
+          name: "Find Signtool"
+          shell: powershell.exe
+          command: |
+            Get-ChildItem -Path 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit' -Filter signtool.exe -Recurse
+      - run:
+          name: "Signtool-Signing"
+          shell: powershell.exe
+          command: |
+            & $env:Signtool sign /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $env:RemixSetupExe
+      - run:
+          name: "Signtool-Verification"
+          shell: powershell.exe
+          command: |
+            $verify_output = $(& $env:Signtool verify /v /pa $env:RemixSetupExe)
+            echo ${verify_output}
+            if (!$verify_output.Contains("Number of files successfully Verified: 1")) {
+              echo 'Verification failed'
+              exit 1
+            }
+      - store_artifacts:
+          path: ~/remix-project/release/
+          destination: remixdesktop-windows
+    environment:
+      SM_CLIENT_CERT_FILE: 'C:\Certificate_pkcs12.p12'
+      Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
+      SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
+      RemixSetupExe: 'C:\Users\circleci\remix-project\release\Remix IDE.exe'
+        
+  build-remixdesktop-mac:
+    macos:
+      xcode: 14.2.0
+    resource_class:
+        macos.m1.large.gen1
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: unzip ./persist/desktopbuild.zip
+      - run: 
+          command: |
+            ls -la dist/apps/remix-ide
+            nvm install 20.0.0
+            nvm use 20.0.0
+      - restore_cache:
+          keys:
+            - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
+      - run: 
+          command: |
+            nvm use 20.0.0
+            cd apps/remixdesktop && yarn
+            yarn add @remix-project/remix-ws-templates
+      - save_cache:
+          key: remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
+          paths:
+            - apps/remixdesktop/node_modules
+      # use USE_HARD_LINK=false https://github.com/electron-userland/electron-builder/issues/3179
+      - run: 
+          command: |
+            nvm use 20.0.0
+            mkdir apps/remixdesktop/build
+            cp -r dist/apps/remix-ide apps/remixdesktop/build
+            cd apps/remixdesktop
+            yarn
+            yarn installRipGrepMacOXarm64
+            PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --arm64
+            yarn installRipGrepMacOXx64
+            PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --x64
+            rm -rf release/mac*
+      - store_artifacts:
+          path: apps/remixdesktop/release/
+          destination: remixdesktop-mac
+    
   lint:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -144,8 +364,9 @@ jobs:
             - browser-tools/install-browser-tools:
                 install-firefox: false
                 install-chrome: true
+                install-chromedriver: false
                 install-geckodriver: false
-                install-chromedriver: true
+            - install-chromedriver-custom-linux
             - run: google-chrome --version
             - run: chromedriver --version
             - run: rm LICENSE.chromedriver 2> /dev/null || true
@@ -165,9 +386,14 @@ jobs:
           at: .
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-
+      - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
       - run: ls -la ./dist/apps/remix-ide/assets/js
       - run: yarn run selenium-install || yarn run selenium-install
+      - when:
+          condition:
+              equal: [ "chrome", << parameters.browser >> ]
+          steps:
+            - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
       - run:
           name: Start Selenium
           command: yarn run selenium
@@ -202,7 +428,8 @@ jobs:
           install-firefox: false
           install-chrome: true
           install-geckodriver: false
-          install-chromedriver: true
+          install-chromedriver: false
+      - install-chromedriver-custom-linux
       - run: google-chrome --version
       - run: chromedriver --version
       - run: rm LICENSE.chromedriver 2> /dev/null || true
@@ -213,6 +440,7 @@ jobs:
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: yarn run selenium-install || yarn run selenium-install
+      - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
       - run:
           name: Start Selenium
           command: yarn run selenium
@@ -287,6 +515,22 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
+      - build-desktop:
+          filters:
+            branches:
+              only: ['master', /.*desktop.*/]
+      - build-remixdesktop-mac:
+          requires:
+            - build-desktop
+      - build-remixdesktop-windows:
+          requires:
+            - build-desktop
+      - sign-remixdesktop-windows:
+          requires:
+            - build-remixdesktop-windows
+      - build-remixdesktop-linux:
+          requires:
+            - build-desktop
       - build-plugin:
           matrix:
             parameters:
@@ -367,3 +611,35 @@ workflows:
               only: remix_beta
 
 # VS Code Extension Version: 1.5.1
+commands:
+  install-chromedriver-custom-linux:
+    description: Custom script to install chromedriver with better version support for linux
+    steps:
+      - run:
+          name: install-chromedriver-custom-linux
+          command: |
+            google-chrome --version > version.txt
+            VERSION=$(grep -Eo '[0-9]+\.' < version.txt | head -1)
+            # CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url' | tr -d '"')
+            CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json' | jq --arg v "$VERSION" '.versions[] | select(.version | startswith($v)) | .downloads.chromedriver[] | select(.platform == "linux64") | .url' | tail -n1 | tr -d '"')
+            echo $CHROMEDRIVER_URL
+            ZIPFILEPATH="/tmp/chromedriver.zip"
+            echo "Downloading from $CHROMEDRIVER_URL"
+            curl -f --silent $CHROMEDRIVER_URL > "$ZIPFILEPATH"
+
+            BINFILEPATH="$HOME/bin/chromedriver-linux"
+            echo "Extracting to $BINFILEPATH"
+            unzip -p "$ZIPFILEPATH" chromedriver-linux64/chromedriver > "$BINFILEPATH"
+
+            echo Setting execute flag
+            chmod +x "$BINFILEPATH"
+
+            echo Updating symlink
+            ln -nfs "$BINFILEPATH" ~/bin/chromedriver
+
+            echo Removing ZIP file
+            rm "$ZIPFILEPATH"
+            rm version.txt
+
+            echo Done
+            chromedriver -v

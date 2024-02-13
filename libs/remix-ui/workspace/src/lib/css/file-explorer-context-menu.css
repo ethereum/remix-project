@@ -11,8 +11,6 @@
 }
 .remixui_liitem
 {
-  padding: 2px;
-  padding-left: 6px;
   cursor: pointer;
   color: var(--text-dark);
   background-color: var(--light);

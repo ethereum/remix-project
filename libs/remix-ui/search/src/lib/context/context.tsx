@@ -1,22 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createContext, useReducer } from 'react'
-import {
-  findLinesInStringWithMatch,
-  getDirectory,
-  replaceAllInFile,
-  replaceTextInLine
-} from '../components/results/SearchHelper'
+import { findLinesInStringWithMatch, getDirectory, replaceAllInFile, replaceTextInLine } from '../components/results/SearchHelper'
 import { SearchReducer } from '../reducers/Reducer'
-import {
-  SearchState,
-  SearchResult,
-  SearchResultLine,
-  SearchResultLineLine,
-  SearchingInitialState,
-  undoBufferRecord
-} from '../types'
+import { SearchState, SearchResult, SearchResultLine, SearchResultLineLine, SearchingInitialState, undoBufferRecord, SearchInWorkspaceOptions } from '../types'
 import { filePathFilter } from '@jsdevtools/file-path-filter'
 import { escapeRegExp } from 'lodash'
+import { appPlatformTypes } from '@remix-ui/app'
 
 export interface SearchingStateInterface {
   state: SearchState
@@ -31,10 +20,7 @@ export interface SearchingStateInterface {
   setSearchResults: (value: SearchResult[]) => void
   findText: (path: string) => Promise<SearchResultLine[]>
   hightLightInPath: (result: SearchResult, line: SearchResultLineLine) => void
-  replaceText: (
-    result: SearchResult,
-    line: SearchResultLineLine
-  ) => Promise<void>
+  replaceText: (result: SearchResult, line: SearchResultLineLine) => Promise<void>
   reloadFile: (file: string) => void
   toggleCaseSensitive: () => void
   toggleMatchWholeWord: () => void
@@ -51,15 +37,14 @@ export interface SearchingStateInterface {
 
 export const SearchContext = createContext<SearchingStateInterface>(null)
 
-export const SearchProvider = ({
-  children = [],
-  reducer = SearchReducer,
-  initialState = SearchingInitialState,
-  plugin = undefined
-} = {}) => {
+export const SearchProvider = ({ children = [], reducer = SearchReducer, initialState = SearchingInitialState, plugin = undefined, platform = undefined } = {}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const [files, setFiles] = useState([])
+  const [files, setFiles] = useState<{
+    files: string[],
+    timeStamp: number
+  }>(null)
   const clearSearchingTimeout = useRef(null)
+  const directoryUpdateCacheTimeStamp = useRef<number>(0)
   const value = {
     state,
     setFind: (value: string) => {
@@ -193,15 +178,13 @@ export const SearchProvider = ({
     },
 
     findText: async (path: string) => {
+
       if (!plugin) return
       try {
         if (state.find.length < 1) return
         value.setSearching(path)
         const text = await plugin.call('fileManager', 'readFile', path)
-        const result: SearchResultLine[] = findLinesInStringWithMatch(
-          text,
-          createRegExFromFind()
-        )
+        const result: SearchResultLine[] = findLinesInStringWithMatch(text, createRegExFromFind())
         clearTimeout(clearSearchingTimeout.current)
         clearSearchingTimeout.current = setTimeout(() => value.setSearching(null), 500)
         return result
@@ -211,30 +194,16 @@ export const SearchProvider = ({
         // do nothing
       }
     },
-    hightLightInPath: async (
-      result: SearchResult,
-      line: SearchResultLineLine
-    ) => {
+    hightLightInPath: async (result: SearchResult, line: SearchResultLineLine) => {
       await plugin.call('editor', 'discardHighlight')
       await plugin.call('editor', 'highlight', line.position, result.path)
-      await plugin.call(
-        'editor',
-        'revealRange',
-        line.position.start.line,
-        line.position.start.column,
-        line.position.end.line,
-        line.position.end.column
-      )
+      await plugin.call('editor', 'revealRange', line.position.start.line, line.position.start.column, line.position.end.line, line.position.end.column)
     },
     replaceText: async (result: SearchResult, line: SearchResultLineLine) => {
       try {
         await plugin.call('editor', 'discardHighlight')
         await plugin.call('editor', 'highlight', line.position, result.path)
-        const content = await plugin.call(
-          'fileManager',
-          'readFile',
-          result.path
-        )
+        const content = await plugin.call('fileManager', 'readFile', result.path)
         const replaced = replaceTextInLine(content, line, state.replace)
         await plugin.call('fileManager', 'setFile', result.path, replaced)
         setUndoState(content, replaced, result.path)
@@ -245,11 +214,7 @@ export const SearchProvider = ({
     replaceAllInFile: async (result: SearchResult) => {
       await plugin.call('editor', 'discardHighlight')
       const content = await plugin.call('fileManager', 'readFile', result.path)
-      const replaced = replaceAllInFile(
-        content,
-        createRegExFromFind(),
-        state.replace
-      )
+      const replaced = replaceAllInFile(content, createRegExFromFind(), state.replace)
       await plugin.call('fileManager', 'setFile', result.path, replaced)
       await plugin.call('fileManager', 'open', result.path)
       setUndoState(content, replaced, result.path)
@@ -269,12 +234,7 @@ export const SearchProvider = ({
       if (buffer.newContent !== content) {
         throw new Error('Can not undo replace, file has been changed.')
       }
-      await plugin.call(
-        'fileManager',
-        'setFile',
-        buffer.path,
-        buffer.oldContent
-      )
+      await plugin.call('fileManager', 'setFile', buffer.path, buffer.oldContent)
       await plugin.call('fileManager', 'open', buffer.path)
     },
     clearUndo: () => {
@@ -310,28 +270,36 @@ export const SearchProvider = ({
     await value.reloadFile(file)
   }
 
+  const updateDirectoryCacheTimeStamp = async () => {
+    directoryUpdateCacheTimeStamp.current = Date.now()
+  }
+
   useEffect(() => {
-    plugin.on('filePanel', 'setWorkspace', async workspace => {
+    plugin.on('filePanel', 'setWorkspace', async (workspace) => {
       value.setSearchResults(null)
       value.clearUndo()
       value.setCurrentWorkspace(workspace.name)
-      setFiles(await getDirectory('/', plugin))
+      await updateDirectoryCacheTimeStamp()
     })
-    plugin.on('fileManager', 'fileSaved', async file => {
+    plugin.on('fileManager', 'fileSaved', async (file) => {
       await reloadStateForFile(file)
       await checkUndoState(file)
     })
-    plugin.on('fileManager', 'rootFolderChanged', async file => {
+    plugin.on('fileManager', 'rootFolderChanged', async (file) => {
       const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
       if (workspace) value.setCurrentWorkspace(workspace.name)
-      setFiles(await getDirectory('/', plugin))
+      await updateDirectoryCacheTimeStamp()
     })
 
-    plugin.on('fileManager', 'fileAdded', async file => {
-      setFiles(await getDirectory('/', plugin))
+    plugin.on('fs', 'workingDirChanged', async () => {
+      await updateDirectoryCacheTimeStamp()
+    })
+
+    plugin.on('fileManager', 'fileAdded', async (file) => {
+      await updateDirectoryCacheTimeStamp()
       await reloadStateForFile(file)
     })
-    plugin.on('fileManager', 'currentFileChanged', async file => {
+    plugin.on('fileManager', 'currentFileChanged', async (file) => {
       value.setCurrentFile(file)
       await checkUndoState(file)
     })
@@ -340,17 +308,15 @@ export const SearchProvider = ({
         const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
         if (workspace && workspace.name) {
           value.setCurrentWorkspace(workspace.name)
-          setFiles(await getDirectory('/', plugin))
+          await updateDirectoryCacheTimeStamp()
         }
       } catch (e) {
         console.log(e)
       }
     }
-    setTimeout(async () => {
-      await fetchWorkspace()
-    }, 500)
-
-
+    
+    fetchWorkspace()
+    
     return () => {
       plugin.off('fileManager', 'fileChanged')
       plugin.off('filePanel', 'setWorkspace')
@@ -360,11 +326,10 @@ export const SearchProvider = ({
   //*.sol, **/*.txt, contracts/*
   const setGlobalExpression = (paths: string) => {
     const results = []
-    paths.split(',').forEach(path => {
+    paths.split(',').forEach((path) => {
       path = path.trim()
       if (path.startsWith('*.')) path = path.replace(/(\*\.)/g, '**/*.')
-      if (path.endsWith('/*') && !path.endsWith('/**/*'))
-        path = path.replace(/(\*)/g, '**/*.*')
+      if (path.endsWith('/*') && !path.endsWith('/**/*')) path = path.replace(/(\*)/g, '**/*.*')
       results.push(path)
     })
     return results
@@ -381,11 +346,7 @@ export const SearchProvider = ({
     }
   }
 
-  const setUndoState = async (
-    oldContent: string,
-    newContent: string,
-    path: string
-  ) => {
+  const setUndoState = async (oldContent: string, newContent: string, path: string) => {
     const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
     const undo = {
       oldContent,
@@ -418,7 +379,7 @@ export const SearchProvider = ({
 
   useEffect(() => {
     if (state.find) {
-      (async () => {
+      ; (async () => {
         try {
           const pathFilter: any = {}
           if (state.include) {
@@ -427,9 +388,43 @@ export const SearchProvider = ({
           if (state.exclude) {
             pathFilter.exclude = setGlobalExpression(state.exclude)
           }
-          const filteredFiles = files
-            .filter(filePathFilter(pathFilter))
-            .map(file => {
+
+          if (platform == appPlatformTypes.desktop) {
+            const search: SearchInWorkspaceOptions = {
+              path: '/',
+              pattern: state.find,
+              useRegExp: state.useRegExp,
+              matchCase: state.casesensitive,
+              matchWholeWord: state.matchWord,
+              include: pathFilter.include,
+              exclude: pathFilter.exclude
+            }
+
+            const filesfromripgrep = await plugin.call('ripgrep', 'glob', search)
+
+            const filteredFiles = filesfromripgrep.map((file) => {
+              const r: SearchResult = {
+                filename: file.path,
+                lines: [],
+                path: file.path,
+                timeStamp: Date.now(),
+                forceReload: false,
+                count: 0
+              }
+              return r
+            })
+            value.setSearchResults(filteredFiles)
+          } else {
+            let filesToSearch = files?.files
+            if(!files || files.timeStamp != directoryUpdateCacheTimeStamp.current) {
+              const newFiles = await getDirectory('/', plugin)
+              setFiles({
+                files: newFiles,
+                timeStamp: directoryUpdateCacheTimeStamp.current || Date.now()
+              })
+              filesToSearch = newFiles
+            }
+            const filteredFiles = filesToSearch.filter(filePathFilter(pathFilter)).map((file) => {
               const r: SearchResult = {
                 filename: file,
                 lines: [],
@@ -440,7 +435,9 @@ export const SearchProvider = ({
               }
               return r
             })
-          value.setSearchResults(filteredFiles)
+            value.setSearchResults(filteredFiles)
+          }
+          
         } catch (e) {
           console.log(e)
         }

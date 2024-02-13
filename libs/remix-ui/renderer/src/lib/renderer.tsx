@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from 'react' //eslint-disable-line
-import { CopyToClipboard } from '@remix-ui/clipboard'
-import { helper } from '@remix-project/remix-solidity'
+import React, {useEffect, useState} from 'react' //eslint-disable-line
+import {useIntl} from 'react-intl'
+import {CopyToClipboard} from '@remix-ui/clipboard'
+import {helper} from '@remix-project/remix-solidity'
 import './renderer.css'
+const _paq = (window._paq = window._paq || [])
+
 interface RendererProps {
-  message: any;
-  opt?: any,
-  plugin: any,
+  message: any
+  opt?: any
+  plugin: any
 }
 
-export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
+export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
+  const intl = useIntl()
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState({
     useSpan: false,
@@ -43,8 +47,6 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     setClassList(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
   }, [message, opt])
 
-  
-
   const handleErrorClick = (opt) => {
     if (opt.click) {
       opt.click(message)
@@ -58,7 +60,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
   }
 
   const _errorClick = async (errFile, errLine, errCol) => {
-    if (errFile !== await plugin.call('config', 'getAppParameter', 'currentFile')) {
+    if (errFile !== (await plugin.call('config', 'getAppParameter', 'currentFile'))) {
       // TODO: refactor with this._components.contextView.jumpTo
       if (await plugin.call('fileManager', 'exists', errFile)) {
         await plugin.call('fileManager', 'open', errFile)
@@ -69,19 +71,40 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     }
   }
 
+  const askGtp = async () => {
+    try {
+      const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
+      const message = intl.formatMessage({id: 'solidity.openaigptMessage'}, {content, messageText})
+      await plugin.call('openaigpt', 'message', message)
+      _paq.push(['trackEvent', 'ai', 'openai', 'explainSolidityError'])
+    } catch (err) {
+      console.error('unable to askGtp')
+      console.error(err)
+    }
+  }
+
   return (
     <>
-      {
-        messageText && !close && (
-          <div className={`remixui_sol ${editorOptions.type} ${classList}`} data-id={editorOptions.errFile} onClick={() => handleErrorClick(editorOptions)}>
-            { editorOptions.useSpan ? <span> { messageText } </span> : <pre><span>{ messageText }</span></pre> }
-            <div className="close" data-id="renderer" onClick={handleClose}>
-              <i className="fas fa-times"></i>
-            </div>
-            <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={"top"} />
+      {messageText && !close && (
+        <div className={`remixui_sol ${editorOptions.type} ${classList}`} data-id={editorOptions.errFile} onClick={() => handleErrorClick(editorOptions)}>
+          {editorOptions.useSpan ? (
+            <span> {messageText} </span>
+          ) : (
+            <pre>
+              <span>{messageText}</span>
+            </pre>
+          )}
+          <div className="close" data-id="renderer" onClick={handleClose}>
+            <i className="fas fa-times"></i>
           </div>
-        )
-      }
+          <div className="d-flex pt-1 flex-row-reverse">
+            <span className="ml-3 pt-1 py-1" >
+              <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
+            </span>
+            <span className="border border-success text-success btn-sm" onClick={() => { askGtp() }}>ASK GPT</span>
+          </div>
+        </div>
+      )}
     </>
   )
 }

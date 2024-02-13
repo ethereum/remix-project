@@ -1,6 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { Web3 } from 'web3'
+import IpcProvider from 'web3-providers-ipc'
 
 export const profile = {
   name: 'network',
@@ -18,10 +19,16 @@ export class NetworkModule extends Plugin {
   constructor (blockchain) {
     super(profile)
     this.blockchain = blockchain
+
     // TODO: See with remix-lib to make sementic coherent
     this.blockchain.event.register('contextChanged', (provider) => {
       this.emit('providerChanged', provider)
     })
+  }
+
+  onActivation () {
+    // emit the initial provider type
+    this.emit('providerChanged', this.blockchain.getProvider)
   }
 
   /** Return the current network provider (web3, vm, injected) */
@@ -49,11 +56,11 @@ export class NetworkModule extends Plugin {
 
   /** Add a custom network to the list of available networks */
   addNetwork (network) { // { name, url }
-    const provider = network.url === 'ipc' ? new Web3.providers.IpcProvider() : new Web3.providers.HttpProvider(network.url)
+    const provider = network.url === 'ipc' ? new IpcProvider() : new Web3.providers.HttpProvider(network.url)
     this.blockchain.addProvider({ name: network.name, provider })
   }
 
-  /** Remove a network to the list of availble networks */
+  /** Remove a network to the list of available networks */
   removeNetwork (name) {
     this.blockchain.removeProvider(name)
   }

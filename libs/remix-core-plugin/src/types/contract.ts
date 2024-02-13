@@ -191,7 +191,7 @@ export interface ContractSources {
     }
   }
 
-  export interface NetworkDeploymentFile {
+export interface NetworkDeploymentFile {
         id: string,
         network: string,
         deployments: {
@@ -204,7 +204,7 @@ export interface ContractSources {
         }[]
   }
 
-  export interface SolcBuildFile {
+export interface SolcBuildFile {
     solcInput: SolcInput,
     solcOutput: SolcOutput
   }

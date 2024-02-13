@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import { hashPersonalMessage } from '@ethereumjs/util'
+import { hashPersonalMessage, isHexString } from '@ethereumjs/util'
 import { ExecutionContext } from '../execution-context'
 
 export class InjectedProvider {
@@ -10,17 +10,21 @@ export class InjectedProvider {
   }
 
   getAccounts (cb) {
-    return this.executionContext.web3().eth.getAccounts(cb)
+    return this.executionContext.web3().eth.getAccounts()
+      .then(accounts => cb(null, accounts))
+      .catch(err => {
+        cb(err.message)
+      })
   }
 
   newAccount (passwordPromptCb, cb) {
     passwordPromptCb((passphrase) => {
-      this.executionContext.web3().eth.personal.newAccount(passphrase, cb)
+      this.executionContext.web3().eth.personal.newAccount(passphrase).then((result) => cb(null, result)).catch(error => cb(error))
     })
   }
 
   async resetEnvironment () {
-     /* Do nothing. */ 
+    /* Do nothing. */
   }
 
   async getBalanceInEther (address) {
@@ -29,15 +33,16 @@ export class InjectedProvider {
   }
 
   getGasPrice (cb) {
-    this.executionContext.web3().eth.getGasPrice(cb)
+    this.executionContext.web3().eth.getGasPrice().then((result => cb(null, result)))
   }
 
   signMessage (message, account, _passphrase, cb) {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
-      this.executionContext.web3().eth.personal.sign(message, account, (error, signedData) => {
+      message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
+      this.executionContext.web3().eth.personal.sign(message, account).then((error, signedData) => {
         cb(error, '0x' + messageHash.toString('hex'), signedData)
-      })
+      }).catch((error => cb(error)))
     } catch (e) {
       cb(e.message)
     }

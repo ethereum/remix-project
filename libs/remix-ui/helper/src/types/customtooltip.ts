@@ -9,4 +9,5 @@ export type CustomTooltipType = {
   tooltipText: string | JSX.Element,
   tooltipTextClasses?: string
   delay?: OverlayDelay
+  hide?: boolean
 }

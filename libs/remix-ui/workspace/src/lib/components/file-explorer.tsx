@@ -1,27 +1,47 @@
-import React, { useEffect, useState, useRef, SyntheticEvent } from 'react' // eslint-disable-line
-import { TreeView, TreeViewItem } from '@remix-ui/tree-view' // eslint-disable-line
+import React, { useEffect, useState, useRef, SyntheticEvent, useTransition } from 'react' // eslint-disable-line
+import { useIntl } from 'react-intl'
+import { TreeView } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
 import { FileExplorerContextMenu } from './file-explorer-context-menu' // eslint-disable-line
-import { FileExplorerProps, WorkSpaceState } from '../types'
+import { FileExplorerProps, FileType, WorkSpaceState, WorkspaceElement } from '../types'
 
 import '../css/file-explorer.css'
-import { checkSpecialChars, extractNameFromKey, extractParentFromKey, joinPath } from '@remix-ui/helper'
+import { checkSpecialChars, extractNameFromKey, extractParentFromKey, getPathIcon, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FileRender } from './file-render'
-import { Drag } from "@remix-ui/drag-n-drop"
 import { ROOT_PATH } from '../utils/constants'
+import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
+import { FlatTree } from './flat-tree'
 
 export const FileExplorer = (props: FileExplorerProps) => {
-  const { name, contextMenuItems, removedContextMenuItems, files, workspaceState, toGist, addMenuItems, 
-    removeMenuItems, handleContextMenu, handleNewFileInput, handleNewFolderInput, uploadFile, uploadFolder, fileState } = props
-  const [state, setState] = useState<WorkSpaceState>( workspaceState)
+  const intl = useIntl()
+  const {
+    name,
+    contextMenuItems,
+    removedContextMenuItems,
+    files,
+    flatTree,
+    workspaceState,
+    toGist,
+    addMenuItems,
+    removeMenuItems,
+    handleContextMenu,
+    handleNewFileInput,
+    handleNewFolderInput,
+    uploadFile,
+    uploadFolder,
+    fileState
+  } = props
+  const [state, setState] = useState<WorkSpaceState>(workspaceState)
+  const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
-  
+
   useEffect(() => {
     if (contextMenuItems) {
       addMenuItems(contextMenuItems)
     }
   }, [contextMenuItems])
+
+
 
   useEffect(() => {
     if (removedContextMenuItems) {
@@ -31,8 +51,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     if (props.focusEdit) {
-      setState(prevState => {
-        return { ...prevState, focusEdit: { element: props.focusEdit, type: 'file', isNew: true, lastEdit: null } }
+      setState((prevState) => {
+        return {
+          ...prevState,
+          focusEdit: {
+            element: props.focusEdit,
+            type: 'file',
+            isNew: true,
+            lastEdit: null
+          }
+        }
       })
     }
   }, [props.focusEdit])
@@ -45,21 +73,21 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (treeRef.current) {
       const keyPressHandler = (e: KeyboardEvent) => {
         if (e.shiftKey) {
-          setState(prevState => {
+          setState((prevState) => {
             return { ...prevState, ctrlKey: true }
           })
         }
       }
-  
+
       const keyUpHandler = (e: KeyboardEvent) => {
         if (!e.shiftKey) {
-          setState(prevState => {
+          setState((prevState) => {
             return { ...prevState, ctrlKey: false }
           })
         }
       }
       const targetDocument = treeRef.current
-  
+
       targetDocument.addEventListener('keydown', keyPressHandler)
       targetDocument.addEventListener('keyup', keyUpHandler)
       return () => {
@@ -70,7 +98,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [treeRef.current])
 
   const hasReservedKeyword = (content: string): boolean => {
-    if (state.reservedKeywords.findIndex(value => content.startsWith(value)) !== -1) return true
+    if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
     else return false
   }
 
@@ -78,7 +106,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchCreateNewFile(newFilePath, ROOT_PATH)
     } catch (error) {
-      return props.modal('File Creation Failed', typeof error === 'string' ? error : error.message, 'Close', async () => {})
+      return props.modal(
+        intl.formatMessage({ id: 'filePanel.fileCreationFailed' }),
+        typeof error === 'string' ? error : error.message,
+        intl.formatMessage({ id: 'filePanel.close' }),
+        async () => { }
+      )
     }
   }
 
@@ -86,7 +119,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchCreateNewFolder(newFolderPath, ROOT_PATH)
     } catch (e) {
-      return props.modal('Folder Creation Failed', typeof e === 'string' ? e : e.message, 'Close', async () => {})
+      return props.modal(
+        intl.formatMessage({ id: 'filePanel.folderCreationFailed' }),
+        typeof e === 'string' ? e : e.message,
+        intl.formatMessage({ id: 'filePanel.close' }),
+        async () => { }
+      )
     }
   }
 
@@ -94,25 +132,38 @@ export const FileExplorer = (props: FileExplorerProps) => {
     try {
       props.dispatchRenamePath(oldPath, newPath)
     } catch (error) {
-      props.modal('Rename File Failed', 'Unexpected error while renaming: ' + typeof error === 'string' ? error : error.message, 'Close', async () => {})
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.renameFileFailed' }),
+        intl.formatMessage({ id: 'filePanel.renameFileFailedMsg' }, { error: typeof error === 'string' ? error : error.message }),
+        intl.formatMessage({ id: 'filePanel.close' }),
+        async () => { }
+      )
     }
   }
 
   const publishToGist = (path?: string, type?: string) => {
-    props.modal('Create a public gist', `Are you sure you want to anonymously publish all your files in the ${name} workspace as a public gist on github.com?`, 'OK', () => toGist(path, type), 'Cancel', () => {})
+    props.modal(
+      intl.formatMessage({ id: 'filePanel.createPublicGist' }),
+      intl.formatMessage({ id: 'filePanel.createPublicGistMsg4' }, { name }),
+      intl.formatMessage({ id: 'filePanel.ok' }),
+      () => toGist(path, type),
+      intl.formatMessage({ id: 'filePanel.cancel' }),
+      () => { }
+    )
   }
 
-
-  const handleClickFile = (path: string, type: 'folder' | 'file' | 'gist') => {
+  const handleClickFile = (path: string, type: WorkspaceElement) => {
     if (!state.ctrlKey) {
       props.dispatchHandleClickFile(path, type)
     } else {
-      if (props.focusElement.findIndex(item => item.key === path) !== -1) {
-        const focusElement = props.focusElement.filter(item => item.key !== path)
+      if (props.focusElement.findIndex((item) => item.key === path) !== -1) {
+        const focusElement = props.focusElement.filter((item) => item.key !== path)
 
         props.dispatchSetFocusElement(focusElement)
       } else {
-        const nonRootFocus = props.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+        const nonRootFocus = props.focusElement.filter((el) => {
+          return !(el.key === '' && el.type === 'folder')
+        })
 
         nonRootFocus.push({ key: path, type })
         props.dispatchSetFocusElement(nonRootFocus)
@@ -122,12 +173,14 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const handleClickFolder = async (path: string, type: 'folder' | 'file' | 'gist') => {
     if (state.ctrlKey) {
-      if (props.focusElement.findIndex(item => item.key === path) !== -1) {
-        const focusElement = props.focusElement.filter(item => item.key !== path)
+      if (props.focusElement.findIndex((item) => item.key === path) !== -1) {
+        const focusElement = props.focusElement.filter((item) => item.key !== path)
 
         props.dispatchSetFocusElement(focusElement)
       } else {
-        const nonRootFocus = props.focusElement.filter((el) => { return !(el.key === '' && el.type === 'folder') })
+        const nonRootFocus = props.focusElement.filter((el) => {
+          return !(el.key === '' && el.type === 'folder')
+        })
 
         nonRootFocus.push({ key: path, type })
         props.dispatchSetFocusElement(nonRootFocus)
@@ -139,9 +192,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
         expandPath = [...new Set([...props.expandPath, path])]
         props.dispatchFetchDirectory(path)
       } else {
-        expandPath = [...new Set(props.expandPath.filter(key => key && (typeof key === 'string') && !key.startsWith(path)))]
+        expandPath = [...new Set(props.expandPath.filter((key) => key && typeof key === 'string' && !key.startsWith(path)))]
       }
-
       props.dispatchSetFocusElement([{ key: path, type }])
       props.dispatchHandleExpandPath(expandPath)
     }
@@ -151,37 +203,61 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (typeof content === 'string') content = content.trim()
     const parentFolder = extractParentFromKey(state.focusEdit.element)
 
-    if (!content || (content.trim() === '')) {
+    if (!content || content.trim() === '') {
       if (state.focusEdit.isNew) {
         props.dispatchRemoveInputField(parentFolder)
-        setState(prevState => {
-          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+        setState((prevState) => {
+          return {
+            ...prevState,
+            focusEdit: { element: null, isNew: false, type: '', lastEdit: '' }
+          }
         })
       } else {
-        setState(prevState => {
-          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+        setState((prevState) => {
+          return {
+            ...prevState,
+            focusEdit: { element: null, isNew: false, type: '', lastEdit: '' }
+          }
         })
       }
     } else {
-      if (state.focusEdit.lastEdit === content) {
-        return setState(prevState => {
-          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+      if (state.focusEdit.lastEdit === content && state.focusEdit.isNew === false) {
+        return setState((prevState) => {
+          return {
+            ...prevState,
+            focusEdit: { element: null, isNew: false, type: '', lastEdit: '' }
+          }
         })
       }
       if (checkSpecialChars(content)) {
-        props.modal('Validation Error', 'Special characters are not allowed', 'OK', () => {})
+        props.modal(
+          intl.formatMessage({ id: 'filePanel.validationError' }),
+          intl.formatMessage({ id: 'filePanel.validationErrorMsg' }),
+          intl.formatMessage({ id: 'filePanel.ok' }),
+          () => { }
+        )
       } else {
         if (state.focusEdit.isNew) {
           if (hasReservedKeyword(content)) {
             props.dispatchRemoveInputField(parentFolder)
-            props.modal('Reserved Keyword', `File name contains Remix reserved keywords. '${content}'`, 'Close', () => {})
+            props.modal(
+              intl.formatMessage({ id: 'filePanel.reservedKeyword' }),
+              intl.formatMessage({ id: 'filePanel.reservedKeywordMsg' }, { content }),
+              intl.formatMessage({ id: 'filePanel.close' }),
+              () => { }
+            )
           } else {
             state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
             props.dispatchRemoveInputField(parentFolder)
           }
         } else {
           if (hasReservedKeyword(content)) {
-            props.modal('Reserved Keyword', `File name contains Remix reserved keywords. '${content}'`, 'Close', () => {})
+            props.modal(
+              intl.formatMessage({ id: 'filePanel.reservedKeyword' }),
+              intl.formatMessage({ id: 'filePanel.reservedKeywordMsg' }, { content }),
+              intl.formatMessage({ id: 'filePanel.close' }),
+              () => { }
+            )
           } else {
             if (state.focusEdit.element) {
               const oldPath: string = state.focusEdit.element
@@ -192,14 +268,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
             }
           }
         }
-        setState(prevState => {
-          return { ...prevState, focusEdit: { element: null, isNew: false, type: '', lastEdit: '' } }
+        setState((prevState) => {
+          return {
+            ...prevState,
+            focusEdit: { element: null, isNew: false, type: '', lastEdit: '' }
+          }
         })
       }
     }
   }
 
-  
   const handleFileExplorerMenuClick = (e: SyntheticEvent) => {
     e.stopPropagation()
     if (e && (e.target as any).getAttribute('data-id') === 'fileExplorerUploadFileuploadFile') return // we don't want to let propagate the input of type file
@@ -209,74 +287,126 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (!props.expandPath.includes(ROOT_PATH)) {
       expandPath = [ROOT_PATH, ...new Set([...props.expandPath])]
     } else {
-      expandPath = [...new Set(props.expandPath.filter(key => key && (typeof key === 'string')))]
+      expandPath = [...new Set(props.expandPath.filter((key) => key && typeof key === 'string'))]
     }
     props.dispatchHandleExpandPath(expandPath)
   }
 
-  const handleFileMove = (dest: string, src: string) => {
+  const handleFileMove = async (dest: string, src: string) => {
+    if (await moveFileIsAllowed(src, dest) === false) return
     try {
-      props.dispatchMoveFile(src, dest)
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.moveFile' }),
+        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
+        intl.formatMessage({ id: 'filePanel.yes' }),
+        () => props.dispatchMoveFile(src, dest),
+        intl.formatMessage({ id: 'filePanel.cancel' }),
+        () => { }
+      )
     } catch (error) {
-      props.modal('Moving File Failed', 'Unexpected error while moving file: ' + src, 'Close', async () => {})
-    }   
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.movingFileFailed' }),
+        intl.formatMessage({ id: 'filePanel.movingFileFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
+        async () => { }
+      )
+    }
   }
 
-  const handleFolderMove = (dest: string, src: string) => {
+  const handleFolderMove = async (dest: string, src: string) => {
+    if (await moveFolderIsAllowed(src, dest) === false) return
     try {
-      props.dispatchMoveFolder(src, dest)
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.moveFile' }),
+        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
+        intl.formatMessage({ id: 'filePanel.yes' }),
+        () => props.dispatchMoveFolder(src, dest),
+        intl.formatMessage({ id: 'filePanel.cancel' }),
+        () => { }
+      )
     } catch (error) {
-      props.modal('Moving Folder Failed', 'Unexpected error while moving folder: ' + src, 'Close', async () => {})
-    }   
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.movingFolderFailed' }),
+        intl.formatMessage({ id: 'filePanel.movingFolderFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
+        async () => { }
+      )
+    }
   }
+
+  const handleTreeClick = (event: SyntheticEvent) => {
+    let target = event.target as HTMLElement
+    while (target && target.getAttribute && !target.getAttribute('data-path')) {
+      target = target.parentElement
+    }
+    if (target && target.getAttribute) {
+      const path = target.getAttribute('data-path')
+      const type = target.getAttribute('data-type')
+      if (path && type === 'file') {
+        event.stopPropagation()
+        if (state.focusEdit.element !== path) handleClickFile(path, type)
+
+      } else if (path && type === 'folder') {
+        event.stopPropagation()
+        if (state.focusEdit.element !== path) handleClickFolder(path, type)
+
+      }
+      if (props.showIconsMenu === true) props.hideIconsMenu(!props.showIconsMenu)
+    }
+
+  }
+
+
 
   return (
-    <Drag onFileMoved={handleFileMove} onFolderMoved={handleFolderMove}>
-    <div ref={treeRef} tabIndex={0} style={{ outline: "none" }}>
-      <TreeView id='treeView'>
-        <TreeViewItem id="treeViewItem"
-          controlBehaviour={true}
-          label={
-            <div onClick={handleFileExplorerMenuClick}>
-              <FileExplorerMenu
-                title={''}
-                menuItems={props.menuItems}
-                createNewFile={handleNewFileInput}
-                createNewFolder={handleNewFolderInput}
-                publishToGist={publishToGist}
-                uploadFile={uploadFile}
-                uploadFolder={uploadFolder}
-              />
-            </div>
-          }
-          expand={true}>
-          <div className='pb-4 mb-4'>
-            <TreeView id='treeViewMenu'>
-              {
-                files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key, index) => <FileRender
-                file={files[ROOT_PATH][key]}
-                fileDecorations={fileState}
-                index={index}
-                focusContext={state.focusContext}
-                focusEdit={state.focusEdit}
-                focusElement={props.focusElement}
-                ctrlKey={state.ctrlKey}
-                expandPath={props.expandPath}
-                editModeOff={editModeOff}
-                handleClickFile={handleClickFile}
-                handleClickFolder={handleClickFolder}
-                handleContextMenu={handleContextMenu}
-                key={index}
-                showIconsMenu={props.showIconsMenu}
-                hideIconsMenu={props.hideIconsMenu}
-              />)
-              }
-            </TreeView>
+    <div className="h-100 remixui_treeview" data-id="filePanelFileExplorerTree">
+      <div ref={treeRef} tabIndex={0} style={{
+        outline: 'none',
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+      className="h-100 ml-0 pl-1"
+      >
+
+        <div key={`treeViewLiMenu`} data-id={`treeViewLiMenu`}>
+          <div
+            key={`treeViewDivMenu`}
+            data-id={`treeViewDivMenu`}
+            className={`d-flex flex-row align-items-center`}
+          >
+            <span className="w-100 pl-2 mt-1">
+              <div onClick={handleFileExplorerMenuClick}>
+                <FileExplorerMenu
+                  title={''}
+
+                  menuItems={props.menuItems}
+                  createNewFile={handleNewFileInput}
+                  createNewFolder={handleNewFolderInput}
+                  publishToGist={publishToGist}
+                  uploadFile={uploadFile}
+                  uploadFolder={uploadFolder}
+                />
+              </div>
+            </span>
           </div>
-        </TreeViewItem>
-      </TreeView>
+        </div>
+        <FlatTree
+          handleTreeClick={handleTreeClick}
+          focusEdit={state.focusEdit}
+          focusElement={props.focusElement}
+          focusContext={state.focusContext}
+          editModeOff={editModeOff}
+          files={files}
+          flatTree={flatTree}
+          fileState={fileState}
+          expandPath={props.expandPath}
+          handleContextMenu={handleContextMenu}
+          moveFile={handleFileMove}
+          moveFolder={handleFolderMove}
+          handleClickFolder={handleClickFolder}
+        />
+      </div>
     </div>
-    </Drag>
   )
 }
 

@@ -1,20 +1,37 @@
-import { NightwatchBrowser, NightwatchClickFunctionExpectedInput } from 'nightwatch'
+import {
+  NightwatchBrowser,
+  NightwatchClickFunctionExpectedInput
+} from 'nightwatch'
 import EventEmitter from 'events'
 
 class ClickFunction extends EventEmitter {
-  command (this: NightwatchBrowser, fnFullName: string, expectedInput?: NightwatchClickFunctionExpectedInput): NightwatchBrowser {
-    this.api.waitForElementPresent('.instance button[data-title="' + fnFullName + '"]')
+  command(
+    this: NightwatchBrowser,
+    fnFullName: string,
+    expectedInput?: NightwatchClickFunctionExpectedInput
+  ): NightwatchBrowser {
+    this.api
+      .waitForElementPresent('.instance *[data-title="' + fnFullName + '"]')
       .perform(function (client, done) {
-        client.execute(function () {
-          document.querySelector('#runTabView').scrollTop = document.querySelector('#runTabView').scrollHeight
-        }, [], function () {
-          if (expectedInput) {
-            client.setValue('#runTabView input[data-title="' + expectedInput.types + '"]', expectedInput.values, _ => _)
+        client.execute(
+          function () {
+            document.querySelector('#runTabView').scrollTop =
+              document.querySelector('#runTabView').scrollHeight
+          },
+          [],
+          function () {
+            if (expectedInput) {
+              client.setValue(
+                '#runTabView input[data-title="' + expectedInput.types + '"]',
+                expectedInput.values,
+                (_) => _
+              )
+            }
+            done()
           }
-          done()
-        })
+        )
       })
-      .scrollAndClick('.instance button[data-title="' + fnFullName + '"]')
+      .scrollAndClick('.instance *[data-title="' + fnFullName + '"]')
       .pause(2000)
       .perform(() => {
         this.emit('complete')

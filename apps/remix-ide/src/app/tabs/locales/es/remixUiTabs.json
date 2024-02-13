@@ -1,0 +1,7 @@
+{
+  "remixUiTabs.tooltipText1": "Ejecutar script (CTRL + SHIFT + S)",
+  "remixUiTabs.tooltipText2": "Compilar CTRL + S",
+  "remixUiTabs.tooltipText3": "Seleccione el archivo .sol o .yul para compilar o un archivo .ts o .js y ejecútelo",
+  "remixUiTabs.zoomOut": "Alejar",
+  "remixUiTabs.zoomIn": "Acercar"
+}

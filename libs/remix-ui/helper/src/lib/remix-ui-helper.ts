@@ -73,14 +73,15 @@ export const getPathIcon = (path: string) => {
   return path.endsWith('.txt')
     ? 'far fa-file-alt' : path.endsWith('.md')
       ? 'fab fa-markdown' : path.endsWith('.sol')
-        ? 'fak fa-solidity-mono' : path.endsWith('.js')
+        ? 'fa-kit fa-solidity-mono' : path.endsWith('.js')
           ? 'fab fa-js' : path.endsWith('.json')
             ? 'small fas fa-brackets-curly' : path.endsWith('.vy')
-              ? 'small fak fa-vyper2' : path.endsWith('.lex')
-                ? 'fak fa-lexon' : path.endsWith('ts')
-                  ? 'small fak fa-ts-logo' : path.endsWith('.tsc')
-                   ? 'fad fa-brackets-curly' : path.endsWith('.cairo')
-                     ? 'small fak fa-cairo' : 'far fa-file'
+              ? 'small fa-kit fa-vyper2' : path.endsWith('.lex')
+                ? 'fa-kit fa-lexon' : path.endsWith('ts')
+                  ? 'small fa-kit fa-ts-logo' : path.endsWith('.tsc')
+                    ? 'fad fa-brackets-curly' : path.endsWith('.cairo')
+                      ? 'small fa-kit fa-cairo' : path.endsWith('.circom')
+                        ? 'fa-kit fa-circom' : 'far fa-file'
 }
 
 export const isNumeric = (value) => {

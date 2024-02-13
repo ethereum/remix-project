@@ -13,7 +13,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText'],
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText', 'getPositionAt'],
 }
 
 class Editor extends Plugin {
@@ -51,7 +51,8 @@ class Editor extends Plugin {
       rs: 'rust',
       cairo: 'cairo',
       ts: 'typescript',
-      move: 'move'
+      move: 'move',
+      circom: 'circom'
     }
 
     this.activated = false
@@ -99,8 +100,8 @@ class Editor extends Plugin {
       this.ref.clearDecorationsByPlugin = (filePath, plugin, typeOfDecoration) => this.clearDecorationsByPlugin(filePath, plugin, typeOfDecoration)      
       this.ref.keepDecorationsFor = (name, typeOfDecoration) => this.keepDecorationsFor(name, typeOfDecoration)
     }} id='editorView'>
-        <PluginViewWrapper plugin={this} />
-      </div>
+      <PluginViewWrapper plugin={this} />
+    </div>
   }
 
   renderComponent () {
@@ -174,8 +175,8 @@ class Editor extends Plugin {
     }
 
     this.saveTimeout = window.setTimeout(() => {
-      this.triggerEvent('contentChanged', [])
-      this.triggerEvent('requiringToSaveCurrentfile', [])
+      this.triggerEvent('contentChanged', [currentFile, input])
+      this.triggerEvent('requiringToSaveCurrentfile', [currentFile])
     }, 500)
   }
 
@@ -293,7 +294,7 @@ class Editor extends Plugin {
    * Get the text in the current session, if any.
    * @param {string} url Address of the content to retrieve.
    */
-   getText (url) {
+  getText (url) {
     if (this.sessions[url]) {
       return this.sessions[url].getValue()
     }
@@ -401,10 +402,7 @@ class Editor extends Plugin {
    */
   editorFontSize (incr) {
     if (!this.activated) return
-    const newSize = this.api.getFontSize() + incr
-    if (newSize >= 6) {
-      this.emit('setFontSize', newSize)
-    }
+    this.emit('setFontSize', incr)
   }
 
   /**
@@ -577,6 +575,10 @@ class Editor extends Plugin {
     for (const session in this.sessions) {
       this.clearDecorationsByPlugin(session, from, 'lineTextPerFile', this.registeredDecorations, this.currentDecorations)
     }
+  }
+
+  getPositionAt(offset) {
+    return this.api.getPositionAt(offset)
   }
 }
 

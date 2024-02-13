@@ -1,8 +1,8 @@
 'use strict'
 import { extendWeb3 } from '../src/init' 
 import { Address } from '@ethereumjs/util'
+import { Web3 } from 'web3';
 const { Provider } = require('@remix-project/remix-simulator')
-const Web3 = require('web3')
 
 
 async function getWeb3 () {
@@ -23,7 +23,7 @@ async function sendTx (web3, from, to, value, data, cb) {
       value,
       data,
       gas: 7000000
-    })
+    }, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
     cb(null, receipt.transactionHash)
     return receipt.transactionHash
   } catch (e) {

@@ -14,9 +14,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     const self = this
     this.web3Provider = {
       sendAsync (payload, callback) {
-        self.call('web3Provider', 'sendAsync', payload)
-          .then(result => callback(null, result))
-          .catch(e => callback(e))
+        return self.call('web3Provider', 'sendAsync', payload)
       }
     }
     this._web3 = new Web3(this.web3Provider)
@@ -49,16 +47,16 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     await this.call('editor', 'highlight', lineColumnPos, path, '', { focus: true })
     const label = `${stepDetail.op} costs ${stepDetail.gasCost} gas - this line costs ${lineGasCost} gas - ${stepDetail.gas} gas left`
     const linetext: lineText = {
-        content: label,
-        position: lineColumnPos,
-        hide: false,
-        className: 'text-muted small',
-        afterContentClassName: 'text-muted small fas fa-gas-pump pl-4',
-        from: 'debugger',
-        hoverMessage: [{
-            value: label,
-        },
-        ],
+      content: label,
+      position: lineColumnPos,
+      hide: false,
+      className: 'text-muted small',
+      afterContentClassName: 'text-muted small fas fa-gas-pump pl-4',
+      from: 'debugger',
+      hoverMessage: [{
+        value: label,
+      },
+      ],
     }
     await this.call('editor', 'addLineText' as any, linetext, path)
   }
@@ -163,7 +161,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     else this._web3 = this.initialWeb3
     init.extendWeb3(this._web3)
     if (this.onDebugRequestedListener) {
-      this.onDebugRequestedListener(hash, web3).then((debuggerBackend) => {
+      this.onDebugRequestedListener(hash, this._web3).then((debuggerBackend) => {
         this.debuggerBackend = debuggerBackend
       })
     }

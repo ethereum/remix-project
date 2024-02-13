@@ -1,10 +1,10 @@
 import { default as test} from "tape"
 import * as common from '../../src/solidity-analyzer/modules/staticAnalysisCommon'
 const { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignment, abiNamespaceCallNodes,
-    inlineAssembly, unaryOperation, nowAst, blockTimestamp, stateVariableContractNode,
-    functionDefinition, requireCall, selfdestruct, storageVariableNodes, dynamicDeleteUnaryOp,
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess, contractDefinition, funcDefForComplexParams } = require('./astBlocks')
+  inlineAssembly, unaryOperation, nowAst, blockTimestamp, stateVariableContractNode,
+  functionDefinition, requireCall, selfdestruct, storageVariableNodes, dynamicDeleteUnaryOp,
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess, contractDefinition, funcDefForComplexParams } = require('./astBlocks')
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -40,11 +40,11 @@ test('staticAnalysisCommon.helpers.buildFunctionSignature', function (t) {
     'function (bytes memory) payable returns (bool,bytes memory)',
     'check fixed call type')
 
-t.equal(common.lowLevelCallTypes['CALL-0.4'].type,
+  t.equal(common.lowLevelCallTypes['CALL-0.4'].type,
     'function () payable returns (bool)',
     'check fixed call type for versions before 0.5.0')
 
-t.equal(common.lowLevelCallTypes.CALLCODE.type,
+  t.equal(common.lowLevelCallTypes.CALLCODE.type,
     'function () payable returns (bool)',
     'check fixed callcode type')
 
@@ -56,7 +56,7 @@ t.equal(common.lowLevelCallTypes.CALLCODE.type,
     'function (bytes memory) returns (bool,bytes memory)',
     'check fixed delegatecall type')
 
-t.equal(common.lowLevelCallTypes['DELEGATECALL-0.4'].type,
+  t.equal(common.lowLevelCallTypes['DELEGATECALL-0.4'].type,
     'function () returns (bool)',
     'check fixed delegatecall type for version before 0.5.0')
 })
@@ -141,18 +141,18 @@ test('staticAnalysisCommon.helpers.expressionTypeDescription', function (t) {
 test('staticAnalysisCommon.getType', function (t) {
   t.plan(3)
   const node =  { "argumentTypes": null,
-                  "id": 3,
-                  "name": "a",
-                  "nodeType": "Identifier",
-                  "overloadedDeclarations": [],
-                  "referencedDeclaration": 22,
-                  "src": "52:1:0",
-                  "typeDescriptions":
+    "id": 3,
+    "name": "a",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": 22,
+    "src": "52:1:0",
+    "typeDescriptions":
                   {
                     "typeIdentifier": "t_uint256",
                     "typeString": "uint256"
                   }
-                }
+  }
   t.ok(common.getType(blockHashAccess) === 'bytes32', 'gettype should work for different nodes')
   t.ok(common.getType(node) === 'uint256', 'gettype should work for different nodes')
   t.ok(common.getType(assignment) === 'uint256', 'gettype should work for different nodes')

@@ -1,11 +1,11 @@
 
 # Team best practices
 
-This document aims to address contibutors best practices of the following repositories:
+This document aims to address contributors best practices of the following repositories:
  - remix-ide https://github.com/ethereum/remix-project
  - remix-plugin https://github.com/ethereum/remix-plugin
 
-This document is not in its final version, **a team meeting which aim to address new/old best practices, feedback, workflows, all kind of issues related to how the team work together occurs every 2 weeks.**
+This document is not in its final version, **a team meeting which aims to address new/old best practices, feedback, workflows, all kind of issues related to how the team work together occurs every 2 weeks.**
 This document link to other specialised best practices (like coding best practices).
 
 Related links:
@@ -32,22 +32,22 @@ Related links:
  
  - Daily standup (1pm CET - 11am GMT) for taking care of the current issues.
  
- - A regular standup - each Tuesday (3pm CET - 1pm GMT) - which aim to 
+ - A regular standup - each Tuesday (3pm CET - 1pm GMT) - which aims to 
     - Update every contributor on what others are doing.
     - Update the prioritised issues / PRs list.
     - Address little issues (possibly related to the current ongoing milestone).
     - High level demo, explanation about specific points of the codebase or Ethereum related things.
 
- - A milestone standup - scheduled before the beginning of each milestone, roughly on a monthly basis - which aim to define what will be included in the **next milestone** and who will work on what. This standup also help to set a clear long term vision.
+ - A milestone standup - scheduled before the beginning of each milestone, roughly on a monthly basis - which aims to define what will be included in the **next milestone** and who will work on what. This standup also help to set a clear long term vision.
  
- - A retrospective standup - after each releases - which aim to talk about **best practices in general**: what is good, what is bad, how we can improve workflows.
+ - A retrospective standup - after each releases - which aims to talk about **best practices in general**: what is good, what is bad, how we can improve workflows.
 
- - A tour standup - Just after a release or whenever it is needed - which aim to demo, **explain in details** features, bug fixes or any part of the codebase.
+ - A tour standup - Just after a release or whenever it is needed - which aims to demo, **explain in details** features, bug fixes or any part of the codebase.
  
  
  ### 2) Group meetings:
  
- - When a story / bug fix is divided in parts, there should be a kickstart meeting with all the developers involved, so that all the devs have an good overview / understanding on:
+ - When a story / bug fix is divided in parts, there should be a kickstart meeting with all the developers involved, so that all the devs have a good overview / understanding on:
      - How the story fits into the Ethereum tech.
      - How the backend (if any) works / will work (could be a smart contract).
      - How the frontend works / will work.
@@ -72,7 +72,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 
 - Prioritised list of PRs / issues are tracked in a GitHub Project, Remix IDE issues are managed by a prioritized backlog.
 - Every story can be executed by a single developer or a group of 2 or more developers (depending on the size and complexity)
-- Each dev should take the part he/she feels the most confortable with.
+- Each dev should take the part he/she feels the most comfortable with.
 - Later progress and discussion is updated directly on the issue or pull request (github).
 - When a developer or team decides on the story they want to work on (at the start of milestone for instance), they assign themselves to the issue. 
 - Documentation update should be done together with the story, or an issue with the label "documentation" has to be created.
@@ -106,7 +106,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
     Your feedback will often be better received if you pose it in the form of a question.
 
  - Pull request should be reviewed to comply to coding best practices.
- - You should take the responsability of the PR you are reviewing.
+ - You should take the responsibility of the PR you are reviewing.
  - You should make sure the app is viable after the PR is being merged.
  - You should make sure the PR is correctly tested (e2e tests, unit tests)
  - Ideally You should have enough knowledge to be able to fix related bugs.
@@ -195,21 +195,21 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 ### release process:
 
  - We release an `x.0.0` if there's a fundamental change in our UX design, which means users will need to readapt the way they use the app
- - after a week finishes, we publish/release a new version as **remix-beta.ethereum.org** and inform users so early adopters can test. after another week, when then next finished work is released as **remix-beta.ethereum.org**, the previous one becomes **remix.ethereum.org** and all users can start using it
+ - after a week finishes, we publish/release a new version as **remix-beta.ethereum.org** and inform users so early adopters can test. after another week, when the next finished work is released as **remix-beta.ethereum.org**, the previous one becomes **remix.ethereum.org** and all users can start using it
  - a bot to automatically notify users about upcoming features on all channels whenever **remix-beta.ethereum.org** is updated
  - in case it's a major version increase - this announcement should be specially marked so ppl can check early instead of being confronted with drastic changes when **remix.ethereum.org** updates
 ### maintenance:
  - Setting up a "bug" time where we each take a bug for which:
-     - We feel confortable to deal with
+     - We feel comfortable to deal with
      or
-     - We don't feel confortable but interested in fixing it - that will need the help of another dev
+     - We don't feel comfortable but interested in fixing it - that will need the help of another dev
 ### documentation:
  - We set up a special day where we address all the necessary documentation work in a team effort.
  - Change to markdown or gitbook
 
 ### support:
  - Remix channel - we rotate and each day one or two are responsible for support (It would also be important to know for those of us who are contracted, how this can be billed.). If they don't know the answer they ping team member who they think could answer. That team member checks the support chat that day only if she/he is mentioned.
- - We should have a FAQ where basic answer are written down so we can drop the link regularly in the channel
+ - We should have a FAQ where basic answers are written down so we can drop the link regularly in the channel
  - People should be pointed to the appropriate `best practice.md` files by team members
 
 ### code best practices:

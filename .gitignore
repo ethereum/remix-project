@@ -57,3 +57,10 @@ testem.log
 .DS_Store
 .vscode/settings.json
 .vscode/launch.json
+
+apps/remixdesktop/.webpack
+apps/remixdesktop/out
+apps/remixdesktop/release/
+apps/remix-ide/src/assets/list.json
+apps/remix-ide/src/assets/esbuild.wasm
+apps/remixdesktop/build*

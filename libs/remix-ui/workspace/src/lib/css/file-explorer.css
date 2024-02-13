@@ -1,6 +1,6 @@
 .remixui_label {
     margin-top        : 4px;
-    user-select: none;
+    user-select       : none;
 }
 .remixui_leaf {
     overflow          : hidden;
@@ -8,7 +8,7 @@
     width             : 90%;
     margin-bottom     : 0px;
 }
-.remixui_fileexplorer       {
+.remixui_fileexplorer {
     box-sizing        : border-box;
     user-select       : none;
 }
@@ -16,40 +16,44 @@ input[type="file"] {
     display: none;
 }
 .remixui_folder,
-.remixui_file               {
+.remixui_file {
     font-size         : 14px;
     cursor            : pointer;
 }
 .remixui_file               {
     padding           : 4px;
 }
-.remixui_newFile i          {
+.remixui_menuItem i {
     cursor            : pointer;
 }
-.remixui_newFile:hover    {
+.remixui_menuItem:hover {
     transform         : scale(1.3);
 }
-.remixui_menu               {
+.remixui_menu {
     margin-left       : 20px;
 }
 .remixui_items              {
-    display           : inline
+    display           : inline;
+    white-space       : nowrap;
+    overflow          : hidden;
+    text-overflow     : ellipsis;
+    max-width         : 90%;
 }
 .remixui_remove             {
     margin-left       : auto;
     padding-left      : 5px;
     padding-right     : 5px;
 }
-.remixui_activeMode         {
+.remixui_activeMode {
     display           : flex;
     width             : 100%;
     margin-right      : 10px;
     padding-right     : 19px;
 }
-.remixui_activeMode > div   {
+.remixui_activeMode > div {
     min-width         : 10px;
 }
-ul                  {
+ul {
     padding           : 0;
 }
 

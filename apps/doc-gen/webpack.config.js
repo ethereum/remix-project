@@ -1,19 +1,19 @@
 const { composePlugins, withNx } = require('@nrwl/webpack')
 const { withReact } = require('@nrwl/react')
 const webpack = require('webpack')
-const TerserPlugin = require("terser-webpack-plugin")
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
+const TerserPlugin = require('terser-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 
 // Nx plugins for webpack.
-module.exports = composePlugins(withNx(), withReact(), (config) => {
+module.exports = composePlugins(withNx(), withReact(), config => {
   // Update the webpack config as needed here.
   // e.g. `config.plugins.push(new MyPlugin())`
 
   // add fallback for node modules
   config.resolve.fallback = {
     ...config.resolve.fallback,
-    "path": require.resolve("path-browserify"),
-    "fs": false,
+    path: require.resolve('path-browserify'),
+    fs: false,
   }
 
   // add externals
@@ -24,9 +24,8 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
 
   config.module.rules.push({
     test: /\.hbs$/,
-    type: 'asset/source'
+    type: 'asset/source',
   })
-
 
   // add public path
   config.output.publicPath = '/'
@@ -38,16 +37,14 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       url: ['url', 'URL'],
       process: 'process/browser',
     }),
-    new webpack.DefinePlugin({
-      
-    }),
+    new webpack.DefinePlugin({}),
   )
 
   // souce-map loader
   config.module.rules.push({
     test: /\.js$/,
-    use: ["source-map-loader"],
-    enforce: "pre"
+    use: ['source-map-loader'],
+    enforce: 'pre',
   })
 
   config.ignoreWarnings = [/Failed to parse source map/] // ignore source-map-loader warnings
@@ -67,7 +64,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       extractComments: false,
     }),
     new CssMinimizerPlugin(),
-  ];
+  ]
 
-  return config;
+  return config
 })

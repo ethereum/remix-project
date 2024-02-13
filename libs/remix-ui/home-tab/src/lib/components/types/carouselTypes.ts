@@ -56,7 +56,7 @@ export interface CarouselProps {
   // for example, customTransition="all .5"  then put transitionDuration as 500.
   // this is needed for the resizing to work.
   focusOnSelect?: boolean;
-  additionalTransfrom?: number; // this is only used if you want to add additional transfrom to the current transform
+  additionalTransfrom?: number; // this is only used if you want to add additional transform to the current transform
   pauseOnHover?: boolean;
   shouldResetAutoplay?: boolean;
   rewind?: boolean;
@@ -113,4 +113,11 @@ export default class Carousel extends React.Component<CarouselProps> {
   onMove: boolean;
   direction: Direction;
   containerRef: React.RefObject<HTMLDivElement>;
+}
+
+export type localeLang = {
+  code: string
+  localeName: string
+  messages: { [key: string]: string }
+  name: string
 }

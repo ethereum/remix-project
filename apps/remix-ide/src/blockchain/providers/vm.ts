@@ -1,6 +1,6 @@
-import Web3 from 'web3'
-import { privateToAddress, hashPersonalMessage } from '@ethereumjs/util'
-import BN from 'bn.js'
+import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
+import { fromWei, toBigInt } from 'web3-utils'
+import { privateToAddress, hashPersonalMessage, isHexString } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
 import { ExecutionContext } from '../execution-context'
 
@@ -14,6 +14,7 @@ export class VMProvider {
   newAccountCallback: {[stamp: number]: (error: Error, address: string) => void}
 
   constructor (executionContext: ExecutionContext) {
+
     this.executionContext = executionContext
     this.worker = null
     this.provider = null
@@ -21,12 +22,11 @@ export class VMProvider {
   }
 
   getAccounts (cb) {
-    this.web3.eth.getAccounts((err, accounts) => {
-      if (err) {
-        return cb('No accounts?')
-      }
-      return cb(null, accounts)
-    })
+    this.web3.eth.getAccounts()
+      .then(accounts => cb(null, accounts))
+      .catch(err => {
+        cb('No accounts?')
+      })
   }
 
   async resetEnvironment () {
@@ -36,22 +36,33 @@ export class VMProvider {
 
     let incr = 0
     const stamps = {}
-    
-    return new Promise((resolve, reject) => { 
+
+    return new Promise((resolve, reject) => {
       this.worker.addEventListener('message', (msg) => {
         if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
-          stamps[msg.data.stamp](msg.data.error, msg.data.result)
+          if (stamps[msg.data.stamp].callback) {
+            stamps[msg.data.stamp].callback(msg.data.error, msg.data.result)
+            return
+          }
+          if (msg.data.error) {
+            stamps[msg.data.stamp].reject(msg.data.error)
+          } else {
+            stamps[msg.data.stamp].resolve(msg.data.result)
+          }          
         } else if (msg.data.cmd === 'initiateResult') {
           if (!msg.data.error) {
             this.provider = {
               sendAsync: (query, callback) => {
-                const stamp = Date.now() + incr
-                incr++
-                stamps[stamp] = callback
-                this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
+                return new Promise((resolve, reject) => {
+                  const stamp = Date.now() + incr
+                  incr++
+                  stamps[stamp] = { callback, resolve, reject }
+                  this.worker.postMessage({ cmd: 'sendAsync', query, stamp })              
+                })
               }
             }
-            this.web3 = new Web3(this.provider)
+            this.web3 = new Web3(this.provider as LegacySendAsyncProvider)
+            this.web3.setConfig({ defaultTransactionType: '0x0' })
             extend(this.web3)
             this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
             resolve({})
@@ -59,12 +70,12 @@ export class VMProvider {
             reject(new Error(msg.data.error))
           }
         } else if (msg.data.cmd === 'newAccountResult') {
-        if (this.newAccountCallback[msg.data.stamp]) {
-          this.newAccountCallback[msg.data.stamp](msg.data.error, msg.data.result)
-          delete this.newAccountCallback[msg.data.stamp]
+          if (this.newAccountCallback[msg.data.stamp]) {
+            this.newAccountCallback[msg.data.stamp](msg.data.error, msg.data.result)
+            delete this.newAccountCallback[msg.data.stamp]
+          }
         }
-      }
-    })
+      })
       this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), nodeUrl: provider?.options['nodeUrl'], blockNumber: provider?.options['blockNumber']})
     })
   }
@@ -85,22 +96,20 @@ export class VMProvider {
   }
 
   async getBalanceInEther (address) {
-    const balance = await this.web3.eth.getBalance(address)
-    return Web3.utils.fromWei(new BN(balance).toString(10), 'ether')
+    const balance = await this.web3.eth.getBalance(address, undefined, { number: FMT_NUMBER.HEX, bytes: FMT_BYTES.HEX })
+    return fromWei(toBigInt(balance).toString(10), 'ether')
   }
 
   getGasPrice (cb) {
-    this.web3.eth.getGasPrice(cb)
+    this.web3.eth.getGasPrice().then((result => cb(null, result))).catch((error) => cb(error))
   }
 
   signMessage (message, account, _passphrase, cb) {
     const messageHash = hashPersonalMessage(Buffer.from(message))
-    this.web3.eth.sign(message, account, (error, signedData) => {
-      if (error) {
-        return cb(error)
-      }
-      cb(null, '0x' + messageHash.toString('hex'), signedData)
-    })
+    message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
+    this.web3.eth.sign(message, account)
+      .then(signedData => cb(null, '0x' + messageHash.toString('hex'), signedData))
+      .catch(error => cb(error))
   }
 
   getProvider () {

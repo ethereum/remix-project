@@ -31,28 +31,28 @@ const logFmt = winston.format.printf((info) => {
 })
 
 class Log {
-    logger: Logger;
-    constructor () {
-      this.logger = winston.createLogger({
-        level: 'info',
-        transports: [new winston.transports.Console()],
-        format: winston.format.combine(
-          winston.format.colorize({ all: true }),
-          logFmt
-        )
-      })
-    }
+  logger: Logger;
+  constructor () {
+    this.logger = winston.createLogger({
+      level: 'info',
+      transports: [new winston.transports.Console()],
+      format: winston.format.combine(
+        winston.format.colorize({ all: true }),
+        logFmt
+      )
+    })
+  }
 
-    setVerbosity (v: LoggerOptions['level']): void {
-      this.logger.configure({
-        level: v,
-        transports: [new winston.transports.Console()],
-        format: winston.format.combine(
-          winston.format.colorize({ all: true }),
-          logFmt
-        )
-      })
-    }
+  setVerbosity (v: LoggerOptions['level']): void {
+    this.logger.configure({
+      level: v,
+      transports: [new winston.transports.Console()],
+      format: winston.format.combine(
+        winston.format.colorize({ all: true }),
+        logFmt
+      )
+    })
+  }
 }
 
 export default Log

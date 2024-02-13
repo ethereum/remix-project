@@ -22,5 +22,19 @@
   "settings.themes": "主题",
   "settings.locales": "语言",
   "settings.swarm": "Swarm 设置",
-  "settings.ipfs": "IPFS 设置"
+  "settings.ipfs": "IPFS 设置",
+  "settings.token": "令牌",
+  "settings.copy": "复制",
+  "settings.deleteEtherscanToken": "删除 Etherscan 令牌",
+  "settings.username": "用户名",
+  "settings.email": "邮箱",
+  "settings.deleteGithubCredentials": "删除 Github 证书",
+  "settings.privateBeeAddress": "私有蜜蜂地址",
+  "settings.postageStampID": "邮票 ID",
+  "settings.host": "主机",
+  "settings.protocol": "协议",
+  "settings.port": "端口",
+  "settings.projectID": "项目 ID",
+  "settings.projectSecret": "项目密钥",
+  "settings.analyticsInRemix": "Remix IDE 中的分析功能"
 }

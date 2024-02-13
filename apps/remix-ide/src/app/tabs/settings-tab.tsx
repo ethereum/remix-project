@@ -1,10 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react' // eslint-disable-line
-import { ViewPlugin } from '@remixproject/engine-web'
+import {ViewPlugin} from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
-import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
-import Registry from '../state/registry'
-import { PluginViewWrapper } from '@remix-ui/helper'
+import {RemixUiSettings} from '@remix-ui/settings' //eslint-disable-line
+import {Registry} from '@remix-project/remix-lib'
+import {PluginViewWrapper} from '@remix-ui/helper'
+declare global {
+  interface Window {
+    _paq: any
+  }
+}
+const _paq = (window._paq = window._paq || [])
 
 const profile = {
   name: 'settings',
@@ -18,7 +24,7 @@ const profile = {
   documentation: 'https://remix-ide.readthedocs.io/en/latest/settings.html',
   version: packageJson.version,
   permission: true,
-  maintainedBy: "Remix"
+  maintainedBy: 'Remix'
 }
 
 module.exports = class SettingsTab extends ViewPlugin {
@@ -31,7 +37,7 @@ module.exports = class SettingsTab extends ViewPlugin {
   element: HTMLDivElement
   public useMatomoAnalytics: any
   dispatch: React.Dispatch<any> = () => {}
-  constructor (config, editor) {
+  constructor(config, editor) {
     super(profile)
     this.config = config
     this.config.events.on('configChanged', (changedConfig) => {
@@ -47,39 +53,51 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.useMatomoAnalytics = null
   }
 
-  setDispatch (dispatch: React.Dispatch<any>) {
+  setDispatch(dispatch: React.Dispatch<any>) {
     this.dispatch = dispatch
     this.renderComponent()
   }
 
   render() {
-    return <div id='settingsTab'>
-      <PluginViewWrapper plugin={this} />
-    </div>
+    return (
+      <div id="settingsTab">
+        <PluginViewWrapper plugin={this} />
+      </div>
+    )
   }
 
-  updateComponent(state: any){
-    return <RemixUiSettings
-      config={state.config}
-      editor={state.editor}
-      _deps={state._deps}
-      useMatomoAnalytics={state.useMatomoAnalytics}
-      themeModule = {state._deps.themeModule}
-      localeModule={state._deps.localeModule}
-    />
+  updateComponent(state: any) {
+    return (
+      <RemixUiSettings
+        plugin={this}
+        config={state.config}
+        editor={state.editor}
+        _deps={state._deps}
+        useMatomoAnalytics={state.useMatomoAnalytics}
+        themeModule={state._deps.themeModule}
+        localeModule={state._deps.localeModule}
+      />
+    )
   }
 
-  renderComponent () {
+  renderComponent() {
     this.dispatch(this)
   }
 
-  get (key) {
+  get(key) {
     return this.config.get(key)
   }
 
-  updateMatomoAnalyticsChoice (isChecked) {
+  updateMatomoAnalyticsChoice(isChecked) {
     this.config.set('settings/matomo-analytics', isChecked)
     this.useMatomoAnalytics = isChecked
+    if (!isChecked) {
+      // revoke tracking consent
+      _paq.push(['forgetConsentGiven']);
+    } else {
+      // user has given consent to process their data
+      _paq.push(['setConsentGiven']);
+    }
     this.dispatch({
       ...this
     })

@@ -333,7 +333,7 @@ module.exports = {
       .click('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .pause(1000)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`contract MyToken is Initializable, ERC1155Upgradeable, OwnableUpgradeable, PausableUpgradeable, ERC1155BurnableUpgradeable, UUPSUpgradeable {`) !== -1,
+        browser.assert.ok(content.indexOf(`contract MyToken is Initializable, ERC1155Upgradeable, OwnableUpgradeable, ERC1155PausableUpgradeable, ERC1155BurnableUpgradeable, UUPSUpgradeable {`) !== -1,
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
@@ -381,6 +381,35 @@ module.exports = {
           'Incorrect content')
       })
     // No test file is added in upgradeable contract template
+  },
+  'Should create circom zkp hashchecker workspace #group1': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=hashchecker]')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .pause(100)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/calculate_hash.circom"]')
+      .click('*[data-id="treeViewLitreeViewItemcircuits/calculate_hash.circom"]')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`template CalculateHash() {`) !== -1,
+          'Incorrect content')
+      })
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/run_setup.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/run_verification.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
+      .click('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`contract Groth16Verifier {`) !== -1,
+          'Incorrect content')
+      })
   },
 
   // WORKSPACE TEMPLATES E2E END
@@ -509,6 +538,29 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .currentWorkspaceIs('default_workspace')
 
+  },
+
+  'Should create a cookbook workspace #group3': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=uniswapV4HookBookMultiSigSwapHook]')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'multisig cookbook' })
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .waitForElementVisible('[data-id="PermissionHandler-modal-footer-ok-react"]', 300000)
+      .click('[data-id="PermissionHandler-modal-footer-ok-react"]')
+      // click on lib to close it
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemlib"]')
+      .click('*[data-id="treeViewLitreeViewItemlib"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc/MULTI_SIG"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc/MULTI_SIG/MultiSigSwapHook.sol"]')
   },
 
   tearDown: sauce

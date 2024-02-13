@@ -26,14 +26,19 @@ program
   .option('-c, --coinbase [coinbase]', 'specify coinbase', '0x0000000000000000000000000000000000000000')
   .option('--rpc', 'run rpc server only', true)
   .option('--details', 'display payloads for every requests and their responses', false)
-  .action(() => {
+  .action((option) => {
+    console.log('coinbase: ', option.coinbase)
+    console.log('rpc: ', option.rpc)
+    console.log('details: ', option.details)
+    console.log('host: ', option.ip)
+    console.log('port: ', option.port)
     const Server = require('../src/server')
     const server = new Server({
-      coinbase: program.coinbase,
-      rpc: program.rpc,
-      logDetails: program.details
+      coinbase: option.coinbase,
+      rpc: option.rpc,
+      logDetails: option.details
     })
-    server.start(program.host, program.port)
+    server.start(option.ip, option.port)
   })
 
 program.parse(process.argv)

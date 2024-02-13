@@ -17,23 +17,22 @@ if (domains[window.location.hostname]) {
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
   _paq.push(["setExcludedQueryParams", ["code","gist"]]);
   _paq.push(["setExcludedReferrers", ["etherscan.io"]]);
-  _paq.push(['disableCookies']);
   _paq.push(['enableJSErrorTracking']);
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   _paq.push(['enableHeartBeatTimer']);
   if (!window.localStorage.getItem('config-v0.8:.remix.config') ||
     (window.localStorage.getItem('config-v0.8:.remix.config') && !window.localStorage.getItem('config-v0.8:.remix.config').includes('settings/matomo-analytics'))) {
-    _paq.push(['optUserOut'])
+    // require user tracking consent before processing data
+    _paq.push(['requireConsent']);
+  } else {
+    // user has given consent to process their data
+    _paq.push(['setConsentGiven'])
   }
   (function () {
     var u = "https://ethereumfoundation.matomo.cloud/";
     _paq.push(['setTrackerUrl', u + 'matomo.php']);
     _paq.push(['setSiteId', domains[window.location.hostname]]);
-    // Send all of the Remix tracking data to the secondary Matomo server (the EF one).
-    var secondaryTracker = 'https://matomo.ethereum.org/matomo.php';
-    var secondaryWebsiteId = domainsSecondaryTracker[window.location.hostname];
-    _paq.push(['addTracker', secondaryTracker, secondaryWebsiteId]);    
     var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
     g.async = true; g.src = '//cdn.matomo.cloud/ethereumfoundation.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g,s);
   })()
@@ -42,17 +41,17 @@ if (domains[window.location.hostname]) {
 function isElectron() {
   // Renderer process
   if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process.type === 'renderer') {
-      return true
+    return true
   }
 
   // Main process
   if (typeof process !== 'undefined' && typeof process.versions === 'object' && !!process.versions.electron) {
-      return true
+    return true
   }
 
   // Detect the user agent when the `nodeIntegration` option is set to false
   if (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) {
-      return true
+    return true
   }
 
   return false

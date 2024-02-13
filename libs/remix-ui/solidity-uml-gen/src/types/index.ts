@@ -16,7 +16,6 @@ export interface ISolidityUmlGen extends ViewPlugin {
     showUmlDiagram(path: string, svgPayload: string): void
     updateComponent(state: any): JSX.Element
     setDispatch(dispatch: React.Dispatch<any>): void
-    mangleSvgPayload(svgPayload: string) : Promise<string>
     generateCustomAction(action: customAction): Promise<void>
     flattenContract (source: any, filePath: string, data: any): Promise<string>
     hideSpinner(): void
@@ -27,5 +26,5 @@ export interface ISolidityUmlGen extends ViewPlugin {
 
 export type ThemeQualityType = { name: string, quality: 'light' | 'dark', url: string }
 
-export type ThemeSummary = { themeName: string, backgroundColor: string, textColor?: string,
+export type ThemeSummary = { name: string, quality: 'light' | 'dark', url: string, backgroundColor: string, textColor?: string,
 shapeColor?: string, fillColor?: string }

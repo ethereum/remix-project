@@ -1,6 +1,6 @@
 import async from 'async'
 import { execution } from '@remix-project/remix-lib'
-import Web3 from 'web3'
+import Web3, { FMT_BYTES, FMT_NUMBER } from 'web3'
 import { compilationInterface } from './types'
 
 /**
@@ -58,7 +58,7 @@ export function deployAll (compileResult: compilationInterface, web3: Web3, test
     },
     function deployContracts (contractsToDeploy: string[], next) {
       const deployRunner = (deployObject, contractObject, contractName, filename, callback) => {
-        deployObject.estimateGas().then((gasValue) => {
+        deployObject.estimateGas(undefined, { number: FMT_NUMBER.NUMBER, bytes: FMT_BYTES.HEX }).then((gasValue) => {
           const gasBase = Math.ceil(gasValue * 1.2)
           const gas = withDoubleGas ? gasBase * 2 : gasBase
           deployObject.send({

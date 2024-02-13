@@ -1,0 +1,121 @@
+{
+  "name": "remixdesktop",
+  "version": "0.0.11-Alpha",
+  "main": "build/main.js",
+  "license": "MIT",
+  "type": "commonjs",
+  "description": "Remix IDE Desktop",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bunsenstraat/remix-desktop.git"
+  },
+  "author": {
+    "name": "Remix Team",
+    "email": "remix@ethereum.org"
+  },
+  "bugs": {
+    "url": "https://github.com/ethereum/remix-project/issues"
+  },
+  "homepage": "https://github.com/ethereum/remix-project#readme",
+  "appId": "org.ethereum.remixdesktop",
+  "mac": {
+    "category": "public.app-category.productivity"
+  },
+  "scripts": {
+    "start:dev": "tsc && cp -R node_modules/yarn build/tools/ &&  cross-env NODE_ENV=development electron --inspect=5858 .",
+    "start:production": "tsc &&  && cp -R node_modules/yarn build/tools/ && cross-env NODE_ENV=production electron .",
+    "dist": "tsc && cp -R node_modules/yarn build/tools/ && electron-builder",
+    "installRipGrepMacOXx64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=x64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
+    "installRipGrepMacOXarm64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=arm64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.2.13",
+    "@types/byline": "^4.2.35",
+    "@types/express": "^4.17.21",
+    "cross-env": "^7.0.3",
+    "electron": "^25.0.1",
+    "electron-builder": "^23.6.0",
+    "electron-devtools-installer": "^3.2.0",
+    "typescript": "^5.1.3",
+    "yarn": "^1.22.21"
+  },
+  "dependencies": {
+    "@remix-project/remix-url-resolver": "^0.0.65",
+    "@remixproject/engine": "0.3.41",
+    "@remixproject/engine-electron": "0.3.41",
+    "@remixproject/plugin": "0.3.41",
+    "@remixproject/plugin-api": "^0.3.38",
+    "@remixproject/plugin-electron": "0.3.41",
+    "@vscode/ripgrep": "^1.15.6",
+    "add": "^2.0.6",
+    "axios": "^1.6.1",
+    "byline": "^5.0.0",
+    "chokidar": "^3.5.3",
+    "express": "^4.18.2",
+    "isomorphic-git": "^1.24.2",
+    "node-pty": "^0.10.1",
+    "semver": "^7.5.4"
+  },
+  "optionalDependencies": {
+    "@remix-project/remix-ws-templates": "^1.0.27"
+  },
+  "build": {
+    "productName": "Remix IDE",
+    "appId": "org.ethereum.remix-ide",
+    "asar": true,
+    "generateUpdatesFilesForAllChannels": true,
+    "icon": "assets",
+    "files": [
+      "build/**/*"
+    ],
+    "publish": [{
+      "provider": "github",
+      "owner": "bunsenstraat",
+      "repo": "remix-desktop",
+      "releaseType": "draft",
+      "publishAutoUpdate": true
+    }],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "darkModeSupport": true
+    },
+    "dmg": {
+      "writeUpdateInfo": false
+    },
+    "nsis": {
+      "createDesktopShortcut": "always",
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "shortcutName": "Remix IDE",
+      "differentialPackage": false
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icon.png",
+      "artifactName": "${productName}.${ext}"
+    },
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "category": "WebBrowser",
+      "icon": "assets"
+    },
+    "directories": {
+      "output": "release"
+    }
+  }
+}

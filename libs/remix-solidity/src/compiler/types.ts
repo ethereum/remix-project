@@ -147,10 +147,11 @@ export interface CompilerInputOptions {
         [fileName: string]: Record<string, string>
     },
     evmVersion?: EVMVersion,
-    language?: Language
+    language?: Language,
+    remappings?: string[]
 }
 
-export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'berlin' | 'london' | 'paris' | null
+export type EVMVersion = 'homestead' | 'tangerineWhistle' | 'spuriousDragon' | 'byzantium' | 'constantinople' | 'petersburg' | 'istanbul' | 'berlin' | 'london' | 'paris' | 'shanghai' | 'cancun' | null
 
 export type Language = 'Solidity' | 'Yul'
 
@@ -160,7 +161,7 @@ export enum CompilerRetriggerMode {
 }
 
 export interface CompilerState {
-    compileJSON: ((input: SourceWithTarget) => void) | null,
+    compileJSON: ((input: SourceWithTarget, timeStamp?:  number) => void) | null,
     worker: any,
     currentVersion: string| null| undefined,
     compilerLicense: string| null
@@ -168,6 +169,7 @@ export interface CompilerState {
     runs: number
     evmVersion: EVMVersion| null,
     language: Language,
+    remappings: string[]
     compilationStartTime: number| null,
     target: string | null,
     useFileConfiguration: boolean,
@@ -502,6 +504,6 @@ export interface BytecodeObject {
     }
   }
 
-  export interface EsWebWorkerHandlerInterface {
+export interface EsWebWorkerHandlerInterface {
     getWorker(): Worker
   }

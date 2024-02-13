@@ -10,6 +10,7 @@ import { methods as netMethods } from './methods/net'
 import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
 import { VMContext } from './vm-context'
+import { Web3PluginBase } from 'web3'
 
 export interface JSONRPCRequestPayload {
   params: any[];
@@ -59,7 +60,7 @@ export class Provider {
     this.pendingRequests = []
     await this.vmContext.init()
     await this.Accounts.resetAccounts()
-    this.Transactions.init(this.Accounts.accounts)
+    this.Transactions.init(this.Accounts.accounts, this.vmContext.blockNumber)
     this.initialized = true
     if (this.pendingRequests.length > 0) {
       this.pendingRequests.map((req) => {
@@ -69,7 +70,7 @@ export class Provider {
     }
   }
 
-  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
+  _send(payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
     // log.info('payload method is ', payload.method) // commented because, this floods the IDE console
     if (!this.initialized) {
       this.pendingRequests.push({ payload, callback })
@@ -95,8 +96,23 @@ export class Provider {
     callback(new Error('unknown method ' + payload.method))
   }
 
+  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
+    return new Promise((resolve,reject)=>{
+      const cb = (err, result) => {
+        if(typeof callback==='function'){
+          callback(err,result)
+        }
+        if(err){
+          return reject(err)
+        }
+        return resolve(result)
+      }
+      this._send(payload, cb)
+    })
+  }
+
   send (payload, callback) {
-    this.sendAsync(payload, callback || function () {})
+    return this.sendAsync(payload,callback)
   }
 
   isConnected () {
@@ -117,43 +133,39 @@ export class Provider {
 }
 
 export function extend (web3) {
-  if (!web3.extend) {
-    return
+  if(!web3.remix){
+    web3.registerPlugin(new Web3TestPlugin())
   }
-  // DEBUG
-  const methods = []
-  if (!(web3.eth && web3.eth.getExecutionResultFromSimulator)) {
-    methods.push(new web3.extend.Method({
-      name: 'getExecutionResultFromSimulator',
-      call: 'eth_getExecutionResultFromSimulator',
-      inputFormatter: [null],
-      params: 1
-    }))
+}
+
+class Web3TestPlugin extends Web3PluginBase {
+  public pluginNamespace = 'remix'
+
+  public getExecutionResultFromSimulator(transactionHash) {
+    return this.requestManager.send({
+      method: 'eth_getExecutionResultFromSimulator',
+      params: [transactionHash]
+    })
   }
 
-  if (!(web3.eth && web3.eth.getHHLogsForTx)) {
-    methods.push(new web3.extend.Method({
-      name: 'getHHLogsForTx',
-      call: 'eth_getHHLogsForTx',
-      inputFormatter: [null],
-      params: 1
-    }))
+  public getHHLogsForTx(transactionHash) {
+    return this.requestManager.send({
+      method: 'eth_getHHLogsForTx',
+      params: [transactionHash]
+    })
   }
 
-  if (!(web3.eth && web3.eth.getHashFromTagBySimulator)) {
-    methods.push(new web3.extend.Method({
-      name: 'getHashFromTagBySimulator',
-      call: 'eth_getHashFromTagBySimulator',
-      inputFormatter: [null],
-      params: 1
-    }))
+  public getHashFromTagBySimulator(timestamp) {
+    return this.requestManager.send({
+      method: 'eth_getHashFromTagBySimulator',
+      params: [timestamp]
+    })
   }
 
-  if (methods.length > 0) {
-    web3.extend({
-      property: 'eth',
-      methods: methods,
-      properties: []
+  public registerCallId(id) {
+    return this.requestManager.send({
+      method: 'eth_registerCallId',
+      params: [id]
     })
   }
 }

@@ -28,4 +28,3 @@ export class DebuggerClientApi extends DebuggerApiMixin(PluginClient) {
   onStartDebugging: (debuggerBackend: any) => void // called when debug starts
   onStopDebugging: () => void // called when debug stops
 }
-

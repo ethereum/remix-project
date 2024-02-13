@@ -32,6 +32,7 @@ export class Compiler {
       runs: 200,
       evmVersion: null,
       language: 'Solidity',
+      remappings: [],
       compilationStartTime: null,
       target: null,
       useFileConfiguration: false,
@@ -49,7 +50,6 @@ export class Compiler {
       if (success && this.state.compilationStartTime) {
         this.event.trigger('compilationDuration', [(new Date().getTime()) - this.state.compilationStartTime])
       }
-      this.state.compilationStartTime = null
     })
 
     this.event.register('compilationStarted', () => {
@@ -81,12 +81,15 @@ export class Compiler {
    * @param missingInputs missing import file path list
    */
 
-  internalCompile(files: Source, missingInputs?: string[]): void {
+  internalCompile(files: Source, missingInputs?: string[], timeStamp?: number): void {
+    if(timeStamp < this.state.compilationStartTime && this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger ) {
+      return
+    }
     this.gatherImports(files, missingInputs, (error, input) => {
       if (error) {
         this.state.lastCompilationResult = null
         this.event.trigger('compilationFinished', [false, { error: { formattedMessage: error, severity: 'error' } }, files, input, this.state.currentVersion])
-      } else if (this.state.compileJSON && input) { this.state.compileJSON(input) }
+      } else if (this.state.compileJSON && input) { this.state.compileJSON(input, timeStamp) }
     })
   }
 
@@ -100,7 +103,7 @@ export class Compiler {
     this.state.target = target
     this.state.compilationStartTime = new Date().getTime()
     this.event.trigger('compilationStarted', [])
-    this.internalCompile(files)
+    this.internalCompile(files, null, this.state.compilationStartTime)
   }
 
   /**
@@ -157,7 +160,7 @@ export class Compiler {
    * @param source Source
    */
 
-  onCompilationFinished(data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?: string, version?: string): void {
+  onCompilationFinished(data: CompilationResult, missingInputs?: string[], source?: SourceWithTarget, input?: string, version?: string, timeStamp?: number): void {
     let noFatalErrors = true // ie warnings are ok
 
     const checkIfFatalError = (error: CompilationError) => {
@@ -173,7 +176,7 @@ export class Compiler {
       this.event.trigger('compilationFinished', [false, data, source, input, version])
     } else if (missingInputs !== undefined && missingInputs.length > 0 && source && source.sources) {
       // try compiling again with the new set of inputs
-      this.internalCompile(source.sources, missingInputs)
+      this.internalCompile(source.sources, missingInputs, timeStamp)
     } else {
       data = this.updateInterface(data)
       if (source) {
@@ -210,12 +213,11 @@ export class Compiler {
           let input = ""
           try {
             if (source && source.sources) {
-              const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
-
+              const { optimize, runs, evmVersion, language, remappings, useFileConfiguration, configFileContent } = this.state
               if (useFileConfiguration) {
                 input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
               } else {
-                input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+                input = compilerInput(source.sources, { optimize, runs, evmVersion, language, remappings })
               }
 
               result = JSON.parse(remoteCompiler.compile(input, { import: missingInputsCallback }))
@@ -291,31 +293,32 @@ export class Compiler {
 
     this.state.worker.addEventListener('message', (msg: Record<'data', MessageFromWorker>) => {
       const data: MessageFromWorker = msg.data
-      if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp !== this.state.compilationStartTime) {
+      if (this.state.compilerRetriggerMode == CompilerRetriggerMode.retrigger && data.timestamp < this.state.compilationStartTime) {
+        // drop message from previous compilation
         return
       }
       switch (data.cmd) {
-        case 'versionLoaded':
-          if (data.data) this.onCompilerLoaded(data.data, data.license)
-          break
-        case 'compiled':
-          {
-            let result: CompilationResult
-            if (data.data && data.job !== undefined && data.job >= 0) {
-              try {
-                result = JSON.parse(data.data)
-              } catch (exception) {
-                result = { error: { formattedMessage: 'Invalid JSON output from the compiler: ' + exception } }
-              }
-              let sources: SourceWithTarget = {}
-              if (data.job in jobs !== undefined) {
-                sources = jobs[data.job].sources
-                delete jobs[data.job]
-              }
-              this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion)
-            }
-            break
+      case 'versionLoaded':
+        if (data.data) this.onCompilerLoaded(data.data, data.license)
+        break
+      case 'compiled':
+      {
+        let result: CompilationResult
+        if (data.data && data.job !== undefined && data.job >= 0) {
+          try {
+            result = JSON.parse(data.data)
+          } catch (exception) {
+            result = { error: { formattedMessage: 'Invalid JSON output from the compiler: ' + exception } }
           }
+          let sources: SourceWithTarget = {}
+          if (data.job in jobs !== undefined) {
+            sources = jobs[data.job].sources
+            delete jobs[data.job]
+          }
+          this.onCompilationFinished(result, data.missingInputs, sources, data.input, this.state.currentVersion, data.timestamp)
+        }
+        break
+      }
       }
 
     })
@@ -325,29 +328,31 @@ export class Compiler {
       this.onCompilationFinished({ error: { formattedMessage } })
     })
 
-    this.state.compileJSON = (source: SourceWithTarget) => {
+    this.state.compileJSON = (source: SourceWithTarget, timeStamp: number) => {
       if (source && source.sources) {
-        const { optimize, runs, evmVersion, language, useFileConfiguration, configFileContent } = this.state
+        const { optimize, runs, evmVersion, language, remappings, useFileConfiguration, configFileContent } = this.state
         jobs.push({ sources: source })
         let input = ""
 
         try {
           if (useFileConfiguration) {
-            input = compilerInputForConfigFile(source.sources, JSON.parse(configFileContent))
+            const compilerInput = JSON.parse(configFileContent)
+            if (compilerInput.settings.remappings?.length) compilerInput.settings.remappings.push(...remappings)
+            else compilerInput.settings.remappings = remappings
+            input = compilerInputForConfigFile(source.sources, compilerInput)
           } else {
-            input = compilerInput(source.sources, { optimize, runs, evmVersion, language })
+            input = compilerInput(source.sources, { optimize, runs, evmVersion, language, remappings })
           }
         } catch (exception) {
           this.onCompilationFinished({ error: { formattedMessage: exception.message } }, [], source, "", this.state.currentVersion)
           return
         }
 
-
         this.state.worker.postMessage({
           cmd: 'compile',
           job: jobs.length - 1,
           input: input,
-          timestamp: this.state.compilationStartTime
+          timestamp: timeStamp
         })
       }
     }
@@ -367,20 +372,6 @@ export class Compiler {
 
   gatherImports(files: Source, importHints?: string[], cb?: gatherImportsCallbackInterface): void {
     importHints = importHints || []
-    // FIXME: This will only match imports if the file begins with one '.'
-    // It should tokenize by lines and check each.
-    const importRegex = /^\s*import\s*['"]([^'"]+)['"];/g
-    for (const fileName in files) {
-      let match: RegExpExecArray | null
-      while ((match = importRegex.exec(files[fileName].content))) {
-        let importFilePath = match[1]
-        if (importFilePath.startsWith('./')) {
-          const path: RegExpExecArray | null = /(.*\/).*/.exec(fileName)
-          importFilePath = path ? importFilePath.replace('./', path[1]) : importFilePath.slice(2)
-        }
-        if (!importHints.includes(importFilePath)) importHints.push(importFilePath)
-      }
-    }
     while (importHints.length > 0) {
       const m: string = importHints.pop() as string
       if (m && m in files) continue

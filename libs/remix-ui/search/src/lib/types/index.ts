@@ -69,25 +69,60 @@ export interface SearchState {
 }
 
 export const SearchingInitialState: SearchState = {
-    find: '',
-    replace: '',
-    include: '',
-    exclude: '',
-    replaceEnabled: false,
-    searchResults: [],
-    casesensitive: false,
-    matchWord: false,
-    useRegExp: false,
-    replaceWithOutConfirmation: false,
-    timeStamp: 0,
-    count: 0,
-    fileCount: 0,
-    maxFiles: 5000,
-    maxLines: 5000,
-    clipped: false,
-    undoBuffer: null,
-    currentFile: '',
-    workspace: '',
-    searching: null,
-    run: false,
+  find: '',
+  replace: '',
+  include: '',
+  exclude: '',
+  replaceEnabled: false,
+  searchResults: [],
+  casesensitive: false,
+  matchWord: false,
+  useRegExp: false,
+  replaceWithOutConfirmation: false,
+  timeStamp: 0,
+  count: 0,
+  fileCount: 0,
+  maxFiles: 5000,
+  maxLines: 5000,
+  clipped: false,
+  undoBuffer: null,
+  currentFile: '',
+  workspace: '',
+  searching: null,
+  run: false,
+}
+
+
+
+export interface SearchInWorkspaceOptions {
+	pattern: string
+	path: string
+  /**
+   * Maximum number of results to return.  Defaults to unlimited.
+   */
+  maxResults?: number
+  /**
+   * Search case sensitively if true.
+   */
+  matchCase?: boolean
+  /**
+   * Search whole words only if true.
+   */
+  matchWholeWord?: boolean
+  /**
+   * Use regular expressions for search if true.
+   */
+  useRegExp?: boolean
+  /**
+   * Include all .gitignored and hidden files.
+   */
+  includeIgnored?: boolean
+  /**
+   * Glob pattern for matching files and directories to include the search.
+   */
+  include?: string[]
+  /**
+   * Glob pattern for matching files and directories to exclude the search.
+   */
+  exclude?: string[]
 }

@@ -5,7 +5,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
 import { bleach } from '@remix-ui/helper'
-import { compilationFinishedToastMsg, compilingToastMsg, localCompilationToastMsg, notFoundToastMsg, sourceVerificationNotAvailableToastMsg } from '@remix-ui/helper'
+import { compilationFinishedToastMsg, compilingToastMsg, notFoundToastMsg, sourceVerificationNotAvailableToastMsg } from '@remix-ui/helper'
 const css = require('./styles/debugger-tab-styles')
 
 const profile = {
@@ -86,9 +86,9 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
         'timestamp': block.timestamp,
       }
       if (block.baseFeePerGas) {
-        blockContext['basefee'] = Web3.utils.toBN(block.baseFeePerGas).toString(10) + ` Wei (${block.baseFeePerGas})`
+        blockContext['basefee'] = Web3.utils.toBigInt(block.baseFeePerGas).toString(10) + ` Wei (${block.baseFeePerGas})`
       }
-      const msg = {     
+      const msg = {
         'sender': tx.from,
         'sig': tx.input.substring(0, 10),
         'value': tx.value + ' Wei'
@@ -97,7 +97,7 @@ export class DebuggerTab extends DebuggerApiMixin(ViewPlugin) {
       const txOrigin = {
         'origin': tx.from
       }
-      
+
       return {
         block: blockContext,
         msg,

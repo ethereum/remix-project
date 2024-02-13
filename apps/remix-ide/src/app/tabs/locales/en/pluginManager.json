@@ -19,6 +19,10 @@
   "pluginManager.localForm.sidePanel": "Side Panel",
   "pluginManager.localForm.mainPanel": "Main Panel",
   "pluginManager.localForm.none": "None",
+  "pluginManager.localForm.methods": "Methods",
+  "pluginManager.localForm.pluginNames": "Plugin names",
+  "pluginManager.localForm.ok": "OK",
+  "pluginManager.localForm.cancel": "Cancel",
   "pluginManager.Permissions": "Permissions",
   "pluginManager.permissions": "permissions",
   "pluginManager.pluginManagerPermissions": "Plugin Manager Permissions",
@@ -27,5 +31,15 @@
   "pluginManager.allow": "Allow",
   "pluginManager.toCall": "to call",
   "pluginManager.ok": "OK",
-  "pluginManager.cancel": "Cancel"
+  "pluginManager.cancel": "Cancel",
+  "pluginManager.maintainedByRemix": "Maintained by Remix",
+  "pluginManager.maintainedExternally": "Not maintained by Remix",
+  "pluginManager.linkToDoc": "Link to documentation",
+  "pluginManager.versionAlpha": "Version Alpha",
+  "pluginManager.versionBeta": "Version Beta",
+  "pluginManager.deactivatePlugin": "Deactivate {pluginName}",
+  "pluginManager.activatePlugin": "Activate {pluginName}",
+  "pluginManager.search": "Search",
+  "pluginManager.managePluginsPermissions": "Manage plugins Permissions",
+  "pluginManager.UnavailableOffline": "Unavailable Offline"
 }

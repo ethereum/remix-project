@@ -1,40 +1,31 @@
-import React from "react"
+import React from 'react'
 
-import { Navigate } from "react-router-dom"
+import {Navigate} from 'react-router-dom'
 
-import { AppContext } from "../AppContext"
-import { Receipt } from "../types"
+import {AppContext} from '../AppContext'
+import {Receipt} from '../types'
 
-import { VerifyView } from "./VerifyView"
+import {VerifyView} from './VerifyView'
 
-export const HomeView: React.FC = () => {
-  return (
-    <AppContext.Consumer>
-      {({ apiKey, clientInstance, setReceipts, receipts, contracts }) => {
-        if (!apiKey && clientInstance && clientInstance.call) {
-          clientInstance.call('sidePanel' as any, 'currentFocus').then((current) => {
-            if (current === 'etherscan') clientInstance.call('notification' as any, 'toast', 'Please add API key to continue')
-          })
-        }
-        return !apiKey ? (
-          <Navigate
-            to={{
-              pathname: "/settings"
-            }}
-          />
-        ) : (
-          <VerifyView
-            contracts={contracts}
-            client={clientInstance}
-            apiKey={apiKey}
-            onVerifiedContract={(receipt: Receipt) => {
-              const newReceipts = [...receipts, receipt]
-              setReceipts(newReceipts)
-            }}
-          />
-        )
-      }
-    }
-    </AppContext.Consumer>
+export const HomeView = () => {
+  const context = React.useContext(AppContext)
+  
+  return !context.apiKey ? (
+    <Navigate
+      to={{
+        pathname: '/settings'
+      }}
+    />
+  ) : (
+    <VerifyView
+      contracts={context.contracts}
+      client={context.clientInstance}
+      apiKey={context.apiKey}
+      onVerifiedContract={(receipt: Receipt) => {
+        const newReceipts = [...context.receipts, receipt]
+        context.setReceipts(newReceipts)
+      }}
+      networkName={context.networkName}
+    />
   )
 }

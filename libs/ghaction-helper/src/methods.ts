@@ -11,12 +11,14 @@ const providerConfig = {
   blockNumber: global.blockNumber || null
 }
 
+const config  = { defaultTransactionType: '0x0' }
 global.remixProvider = new Provider(providerConfig)
 global.remixProvider.init()
 global.web3Provider = new ethers.providers.Web3Provider(global.remixProvider)
 global.provider = global.web3Provider
 global.ethereum = global.web3Provider
 global.web3 = new Web3(global.web3Provider)
+global.web3.eth.setConfig(config)
 
 const isFactoryOptions = (signerOrOptions: any) => {
   if (!signerOrOptions || signerOrOptions === undefined || signerOrOptions instanceof ethers.Signer) return false
@@ -198,7 +200,7 @@ const getContractAt = async (contractNameOrABI: ethers.ContractInterface, addres
     if (result) {
       return new ethers.Contract(address, result.abi, signer || provider.getSigner())
     } else {
-            throw new Error('Contract artifacts not found')
+      throw new Error('Contract artifacts not found')
     }
   } else {
     return new ethers.Contract(address, contractNameOrABI, signer || provider.getSigner())

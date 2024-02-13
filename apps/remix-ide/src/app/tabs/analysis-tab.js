@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import { EventEmitter } from 'events'
 import {RemixUiStaticAnalyser} from '@remix-ui/static-analyser' // eslint-disable-line
 import * as packageJson from '../../../../../package.json'
-import Registry from '../state/registry'
+import {Registry} from '@remix-project/remix-lib'
 import { PluginViewWrapper } from '@remix-ui/helper'
 
 var EventManager = require('../../lib/events')
@@ -14,7 +14,7 @@ const profile = {
   methods: [],
   events: [],
   icon: 'assets/img/staticAnalysis.webp',
-  description: 'Checks the contract code for security vulnerabilities and bad practices.',
+  description: 'Analyze your code using Remix, Solhint and Slither.',
   kind: 'analysis',
   location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/static_analysis.html',
@@ -38,6 +38,9 @@ class AnalysisTab extends ViewPlugin {
     }
     this.dispatch = null
     this.hints = []
+    this.basicEnabled = false
+    this.solhintEnabled = false
+    this.slitherEnabled = false
   }
 
   async onActivation () {
@@ -49,16 +52,15 @@ class AnalysisTab extends ViewPlugin {
 
     this.event.register('staticAnaysisWarning', (count) => {
       let payloadType = ''
-      const error = this.hints.find(hint => hint.type === 'error')
-      const warning = this.hints.find(hints => hints.type === 'warning')
-      if (error) {
+      const error = this.hints?.find(hint => hint.type === 'error')
+      if (error && this.solhintEnabled) {
         payloadType = 'error'
       } else {
         payloadType = 'warning'
       }
 
       if (count > 0) {
-        this.emit('statusChanged', { key: count, title: payloadType === 'error' ? `You have some problem${count === 1 ? '' : 's'}` : 'You have some warnings', type: payloadType })
+        this.emit('statusChanged', { key: count, title: payloadType === 'error' ? `You have ${count} problem${count === 1 ? '' : 's'}` : `You have ${count} warnings`, type: payloadType })
       } else if (count === 0) {
         this.emit('statusChanged', { key: 'succeed', title: 'no warnings or errors', type: 'success' })
       } else {
@@ -79,10 +81,10 @@ class AnalysisTab extends ViewPlugin {
 
   updateComponent(state) {
     return  <RemixUiStaticAnalyser
-    registry={state.registry}
-    analysisModule={state.analysisModule}
-    event={state.event}
-  />
+      registry={state.registry}
+      analysisModule={state.analysisModule}
+      event={state.event}
+    />
   }
 
   renderComponent () {
