@@ -94,7 +94,6 @@ module.exports = {
       .connectToExternalHttpProvider('http://localhost:8545', 'Custom')
       .clickLaunchIcon('solidity')
       .clickLaunchIcon('udapp')
-      .pause(2000)
       .clearValue('input[placeholder="uint8 _numProposals"]')
       .setValue('input[placeholder="uint8 _numProposals"]', '2')
       .click('*[data-id="Deploy - transact (not payable)"]')
