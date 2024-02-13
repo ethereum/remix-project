@@ -11,6 +11,7 @@ interface RemixUiVyperCompileDetailsProps {
 
 export function RemixUiVyperCompileDetails({ payload, theme, themeStyle }: RemixUiVyperCompileDetailsProps) {
   const compileResult = payload['compileResult'] ?? {}
+  console.log('compileResult', compileResult, payload)
   const bcode = compileResult.bytecode ? compileResult.bytecode.object : ''
   const runtimeBcode = compileResult.runtimeBytecode ? compileResult.runtimeBytecode.object : ''
   const ir = compileResult.ir

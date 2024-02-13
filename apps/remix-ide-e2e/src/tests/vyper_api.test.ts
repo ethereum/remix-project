@@ -41,6 +41,25 @@ module.exports = {
       .openFile('examples/auctions/blind_auction.vy')
   },
 
+  'Context menu click to compile blind_auction should succeed #group1': function (browser: NightwatchBrowser) {
+    browser.clickLaunchIcon('vyper')
+      // @ts-ignore
+      .frame(0)
+      .click('[data-id="remote-compiler"]')
+      .click('[data-id="compile"]')
+      .waitForElementVisible({
+        selector:'[data-id="compilation-details"]',
+        timeout: 120000
+      })
+      .click('[data-id="compilation-details"]')
+      .frameParent()
+      .waitForElementVisible('[data-id="copy-abi"]')
+      .waitForElementVisible({
+        selector: "//*[@class='variable-value' and contains(.,'highestBidder')]",
+        locateStrategy: 'xpath',
+      })
+  },
+
   'Compile blind_auction should success #group1': function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('vyper')
       // @ts-ignore
