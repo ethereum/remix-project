@@ -204,19 +204,20 @@ export const TabsUI = (props: TabsUIProps) => {
             </CustomTooltip>
           </button>
           <button
-            data-id="play-editor"
+            data-id="explain-editor"
+            id='explain_btn'
             className="btn text-success py-0"
             disabled={!(tabsState.currentExt === 'sol' )}
             onClick={async () => {
               const path = active().substr(active().indexOf('/') + 1, active().length)
               const content = await props.plugin.call('fileManager', 'readFile', path)
-              if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
-                await props.plugin.call('scriptRunner', 'execute', content, path)
-                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              } else if (tabsState.currentExt === 'sol') {
-                await props.plugin.call('solcoder', 'solidity_answer', content)
+              if (tabsState.currentExt === 'sol') {
+                (document.getElementById('explain_btn') as HTMLButtonElement).disabled = true;
+                const result = await props.plugin.call('solcoder', 'code_explaining', content)
                 _paq.push(['trackEvent', 'ai', 'solcoder', 'explain_file'])
               }
+              (document.getElementById('explain_btn') as HTMLButtonElement).disabled = false;
+
             }}
           >
             <CustomTooltip
@@ -224,19 +225,21 @@ export const TabsUI = (props: TabsUIProps) => {
               tooltipId="overlay-tooltip-run-script"
               tooltipText={
                 <span>
-                  {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
-                    <FormattedMessage id="remixUiTabs.tooltipText1" />
-                  ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' ? (
-                    <FormattedMessage id="remixUiTabs.tooltipText2" />
+                  {tabsState.currentExt === 'sol'? (
+                    <FormattedMessage id="remixUiTabs.tooltipText5" />
                   ) : (
-                    <FormattedMessage id="remixUiTabs.tooltipText3" />
+                    <FormattedMessage id="remixUiTabs.tooltipText4" />
                   )}
                 </span>
               }
             >
-              <i className="fad fa-play"></i>
+              <i className="fa-solid fa-message-exclamation"></i>
             </CustomTooltip>
           </button>
+          <script>
+            const button = document.querySelector('#button');
+
+          </script>
           <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
             <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" onClick={() => props.onZoomOut()}></span>
           </CustomTooltip>

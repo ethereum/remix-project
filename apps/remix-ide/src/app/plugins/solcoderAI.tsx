@@ -7,7 +7,7 @@ const profile = {
   name: 'solcoder',
   displayName: 'solcoder',
   description: 'solcoder',
-  methods: ['code_generation', 'code_completion', "solidity_answer"],
+  methods: ['code_generation', 'code_completion', "solidity_answer", "code_explaining"],
   events: [],
   maintainedBy: 'Remix',
 }
@@ -74,6 +74,33 @@ export class SolCoder extends Plugin {
 
   }
 
+  async code_explaining(prompt): Promise<any> {
+    this.emit("aiInfering")
+    this.call('layout', 'maximizeTerminal')
+    this.call('terminal', 'log', 'Waiting for Solcoder answer...')
+    let result
+    try {
+      result = await(
+        await fetch(this.api_url.concat("code_explaining"), {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({"data":[prompt,false,2000,0.9,0.8,50]}),
+        })
+      ).json()
+      if (result) {
+        this.call('terminal', 'log', { type: 'typewriterwarning', value: result.data[0]})
+      }
+      return result.data[0]
+    } catch (e) {
+      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
+      return
+    }finally {
+      this.emit("aiInferingDone")
+    }
+  }
 
   async code_completion(prompt, options:SuggestOptions=null): Promise<any> {
     this.emit("aiInfering")
