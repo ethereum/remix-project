@@ -1,5 +1,8 @@
 import { ABIDescription} from '@remixproject/plugin-api'
 import axios from 'axios'
+import { remixClient } from './remix-client'
+import _ from 'lodash'
+
 
 export interface Contract {
   name: string
@@ -167,6 +170,130 @@ export function toStandardOutput(fileName: string, compilationResult: any): any 
     }
   }
 }
+
+
+export async function compileContract(contract: string, compilerUrl: string, setOutput?: any) {
+  remixClient.eventEmitter.emit('resetCompilerState', {})
+
+  try {
+    // await remixClient.discardHighlight()
+    let _contract: any
+    try {
+      _contract = await remixClient.getContract()
+    } catch (e: any) {
+      if (setOutput === null || setOutput === undefined) {
+        const compileResult = {
+          status: 'failed',
+          message: e.message
+        }
+        const compileResultKey = ''
+        remixClient.eventEmitter.emit('setOutput', { compileResultKey, compileResult })
+      } else {
+        setOutput('', {status: 'failed', message: e.message})
+      }
+      return
+    }
+    remixClient.changeStatus({
+      key: 'loading',
+      type: 'info',
+      title: 'Compiling'
+    })
+    let output
+    try {
+      output = await compile(compilerUrl, _contract)
+    } catch (e: any) {
+      remixClient.changeStatus({
+        key: 'failed',
+        type: 'error',
+        title: e.message
+      })
+      return
+    }
+    const compileReturnType = () => {
+      const t: any = toStandardOutput(contract, output)
+      const temp = _.merge(t['contracts'][contract])
+      const normal = normalizeContractPath(contract)[2]
+      const abi = temp[normal]['abi']
+      const evm = _.merge(temp[normal]['evm'])
+      const dpb = evm.deployedBytecode
+      const runtimeBytecode = evm.bytecode
+      const methodIdentifiers = evm.methodIdentifiers
+
+      const result = {
+        contractName: normal,
+        abi: abi,
+        bytecode: dpb,
+        runtimeBytecode: runtimeBytecode,
+        ir: '',
+        methodIdentifiers: methodIdentifiers
+      }
+      return result
+    }
+
+    // ERROR
+    if (isCompilationError(output)) {
+      const line = output.line
+      if (line) {
+        const lineColumnPos = {
+          start: {line: line - 1, column: 10},
+          end: {line: line - 1, column: 10}
+        }
+        // remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
+      } else {
+        const regex = output?.message?.match(/line ((\d+):(\d+))+/g)
+        const errors = output?.message?.split(/line ((\d+):(\d+))+/g) // extract error message
+        if (regex) {
+          let errorIndex = 0
+          regex.map((errorLocation) => {
+            const location = errorLocation?.replace('line ', '').split(':')
+            let message = errors[errorIndex]
+            errorIndex = errorIndex + 4
+            if (message && message?.split('\n\n').length > 0) {
+              try {
+                message = message?.split('\n\n')[message.split('\n\n').length - 1]
+              } catch (e) {}
+            }
+            if (location?.length > 0) {
+              const lineColumnPos = {
+                start: {line: parseInt(location[0]) - 1, column: 10},
+                end: {line: parseInt(location[0]) - 1, column: 10}
+              }
+              // remixClient.highlight(lineColumnPos as any, _contract.name, message)
+            }
+          })
+        }
+      }
+      throw new Error(output.message)
+    }
+    // SUCCESS
+    // remixClient.discardHighlight()
+    remixClient.changeStatus({
+      key: 'succeed',
+      type: 'success',
+      title: 'success'
+    })
+
+    const data = toStandardOutput(_contract.name, output)
+    remixClient.compilationFinish(_contract.name, _contract.content, data)
+    if (setOutput === null || setOutput === undefined) {
+      const contractName = _contract['name']
+      const compileResult = compileReturnType()
+      remixClient.eventEmitter.emit('setOutput', { contractName, compileResult })
+    } else {
+      setOutput(_contract.name, compileReturnType())
+    }
+  } catch (err: any) {
+    remixClient.changeStatus({
+      key: 'failed',
+      type: 'error',
+      title: err.message
+    })
+  }
+}
+
+
+
+
 export type StandardOutput = {
   sources: {
     [fileName: string]: {
