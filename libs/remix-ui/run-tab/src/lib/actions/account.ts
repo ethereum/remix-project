@@ -23,9 +23,8 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
       if (!accounts) accounts = []
 
       const loadedAccounts = {}
-
       
-     for (const account of accounts) {
+      for (const account of accounts) {
         const balance = await plugin.blockchain.getBalanceInEther(account)
         loadedAccounts[account] =  shortenAddress(account, balance)
       }
