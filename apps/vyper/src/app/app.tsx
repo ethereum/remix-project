@@ -97,6 +97,15 @@ const App = () => {
 
   return (
     <main id="vyper-plugin">
+      <header>
+        <div className="title">
+          <img src={'assets/logo.svg'} alt="Vyper logo" />
+          <h4>yper Compiler</h4>
+        </div>
+        <a rel="noopener noreferrer" href="https://github.com/ethereum/remix-project/tree/master/apps/vyper" target="_blank">
+          <i className="fab fa-github"></i>
+        </a>
+      </header>
       <section>
         <div className="px-3 pt-3 mb-3 w-100">
           <CustomTooltip
