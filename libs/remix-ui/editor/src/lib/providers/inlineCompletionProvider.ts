@@ -54,7 +54,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         // use the code generation model, only take max 1000 word as context 
         this.running = true
         const data = await this.props.plugin.call('solcoder', 'code_completion', word)
-        console.log("solcoder completion data", data)
+        _paq.push(['trackEvent', 'ai', 'solcoder', 'CodeCompletionOnComment'])
         const parsedData = data[0].trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: parsedData
@@ -87,6 +87,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     try {
       if (!this.running){
         result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
+        _paq.push(['trackEvent', 'ai', 'solcoder', 'CodeSuggestion'])
         this.running = true
       }
     } catch (err) {
@@ -96,7 +97,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     const generatedText = (result as any).output[0].generated_text as string
     const clean = generatedText
-    console.log('solcoder inline data:\n', clean)
 
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: clean

@@ -660,7 +660,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
             </div>
             {aiLoading && <div className="text-center py-5 ml-5">
                   <i className="fas fa-spinner fa-pulse fa-2x"></i>
-                  <span className="position-absolute">AI Running</span> 
+                  <span> AI Running ...</span> 
             </div>}
             
           </div>
