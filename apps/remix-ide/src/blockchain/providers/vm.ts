@@ -1,10 +1,8 @@
 import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
 import { fromWei, toBigInt } from 'web3-utils'
-import { Plugin } from '@remixproject/engine'
 import { privateToAddress, hashPersonalMessage, isHexString } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
 import { ExecutionContext } from '../execution-context'
-import { Blockchain } from '../blockchain'
 
 export class VMProvider {
   executionContext: ExecutionContext
@@ -122,52 +120,5 @@ export class VMProvider {
 
   getProvider () {
     return this.executionContext.getProvider()
-  }
-
-  private async setWorkerEventListeners () {
-    return new Promise((resolve, reject) => {
-      if (!this.worker) throw new Error('Worker not initialized')
-      let incr = 0
-      const stamps = {}
-  
-      this.worker.addEventListener('message', (msg) => {
-        if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
-          if (stamps[msg.data.stamp].callback) {
-            stamps[msg.data.stamp].callback(msg.data.error, msg.data.result)
-            return
-          }
-          if (msg.data.error) {
-            stamps[msg.data.stamp].reject(msg.data.error)
-          } else {
-            stamps[msg.data.stamp].resolve(msg.data.result)
-          }          
-        } else if (msg.data.cmd === 'initiateResult') {
-          if (!msg.data.error) {
-            this.provider = {
-              sendAsync: (query, callback) => {
-                return new Promise((resolve, reject) => {
-                  const stamp = Date.now() + incr
-                  incr++
-                  stamps[stamp] = { callback, resolve, reject }
-                  this.worker.postMessage({ cmd: 'sendAsync', query, stamp })              
-                })
-              }
-            }
-            this.web3 = new Web3(this.provider as LegacySendAsyncProvider)
-            this.web3.setConfig({ defaultTransactionType: '0x0' })
-            extend(this.web3)
-            this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)
-            resolve({})
-          } else {
-            reject(new Error(msg.data.error))
-          }
-        } else if (msg.data.cmd === 'newAccountResult') {
-          if (this.newAccountCallback[msg.data.stamp]) {
-            this.newAccountCallback[msg.data.stamp](msg.data.error, msg.data.result)
-            delete this.newAccountCallback[msg.data.stamp]
-          }
-        }
-      })
-    })
   }
 }
