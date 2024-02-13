@@ -45,24 +45,22 @@ function HomePage(): JSX.Element {
               {selectedRepo.group[level].map((item: any) => (
                 <div key={item.id}>
                   <div>
-                    <a
-                      href="#"
+                    <span
                       className="arrow-icon"
                       onClick={() => {
                         handleClick(item.id)
                       }}
                     >
                       <FontAwesomeIcon size="xs" icon={isOpen(item.id) ? faChevronDown : faChevronRight} />
-                    </a>
-                    <a
-                      href="#"
+                    </span>
+                    <span
                       className="workshop-link"
                       onClick={() => {
                         handleClick(item.id)
                       }}
                     >
                       {selectedRepo.entities[item.id].name}
-                    </a>
+                    </span>
                     <Link to={`/list?id=${item.id}`} className="text-decoration-none float-right">
                       <FontAwesomeIcon icon={faPlayCircle} size="lg" />
                     </Link>

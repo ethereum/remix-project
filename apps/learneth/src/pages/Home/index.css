@@ -13,10 +13,11 @@
 .arrow-icon{
   width: 12px;
   display: inline-block;
+  cursor: pointer;
 }
 
 .workshop-link {
-  text-decoration: none;
+  cursor: pointer;
 }
 .workshop-link:hover {
   text-decoration: underline;
