@@ -1,5 +1,6 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import { customAction } from '@remixproject/plugin-api'
+import type {CompilerInput} from '@remix-project/remix-solidity'
 import React from 'react'
 
 export interface ISolidityUmlGen extends ViewPlugin {
@@ -17,7 +18,7 @@ export interface ISolidityUmlGen extends ViewPlugin {
     updateComponent(state: any): JSX.Element
     setDispatch(dispatch: React.Dispatch<any>): void
     generateCustomAction(action: customAction): Promise<void>
-    flattenContract (source: any, filePath: string, data: any): Promise<string>
+    flattenContract (source: any, filePath: string, data: any, input: CompilerInput): Promise<string>
     hideSpinner(): void
     renderComponent (): void
     triggerGenerateUml: boolean
