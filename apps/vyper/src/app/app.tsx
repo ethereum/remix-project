@@ -117,16 +117,6 @@ const App = () => {
             </Button>
           </CustomTooltip>
         </div>
-        {/* <ToggleButtonGroup name="remote" className="mb-3" onChange={setEnvironment} type="radio" value={state.environment}> */}
-        {/* <ToggleButton
-            data-id="remote-compiler"
-            variant="secondary"
-            name="remote"
-            value="remote"
-            style={{ cursor: state.environment === 'remote' ? 'default' : 'pointer' }}
-          >
-            Remote Compiler
-          </ToggleButton> */}
         <Form>
           <div className="d-flex flex-row gap-5 mb-3 mt-2">
             <Form.Check
@@ -135,6 +125,7 @@ const App = () => {
               type="radio"
               value={state.environment}
               checked={state.environment === 'remote'}
+              onChange={() => setEnvironment('remote')}
               label="Remote Compiler"
               style={{ cursor: state.environment === 'remote' ? 'default' : 'pointer' }}
               className="d-flex mr-4"
@@ -147,22 +138,12 @@ const App = () => {
               type="radio"
               name="local"
               value={state.environment}
+              onChange={() => setEnvironment('local')}
               label="Local Compiler"
               style={{ cursor: state.environment === 'local' ? 'default' : 'pointer' }}
             />
           </div>
         </Form>
-        {/* <ToggleButton
-          id="local-compiler"
-          data-id="local-compiler"
-          variant="secondary"
-          name="local"
-          value="local"
-          style={{ cursor: state.environment === 'local' ? 'default' : 'pointer' }}
-        >
-            Local Compiler
-        </ToggleButton> */}
-        {/* </ToggleButtonGroup> */}
         <span className="px-3 mt-1 mb-1 small text-warning">Specify the compiler version & EVM version in the .vy file</span>
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
