@@ -33,7 +33,6 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
-    updateAccountBalances(plugin, dispatch)
   })
 
   plugin.blockchain.event.register('networkStatus', ({ error, network }) => {
