@@ -18,18 +18,14 @@ export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Disp
 export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   try {
     dispatch(fetchAccountsListRequest())
-    const promise = plugin.blockchain.getAccounts()
+    try {
+      let accounts = await plugin.blockchain.getAccounts()
+      if (!accounts) accounts = []
 
-    promise.then(async (accounts: string[]) => {
       const loadedAccounts = {}
 
-      if (!accounts) accounts = []
-      // allSettled is undefined..
-      // so the current promise (all) will finish when:
-      // - all the promises resolve
-      // - at least one reject
-      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
-      for (const account of accounts) {
+      
+     for (const account of accounts) {
         const balance = await plugin.blockchain.getBalanceInEther(account)
         loadedAccounts[account] =  shortenAddress(account, balance)
       }
@@ -40,9 +36,9 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
         if (!(Object.keys(loadedAccounts).includes(toChecksumAddress(selectedAddress)))) setAccount(dispatch, null)
       }
       dispatch(fetchAccountsListSuccess(loadedAccounts))
-    }).catch((e) => {
+    } catch (e) {
       dispatch(fetchAccountsListFailed(e.message))
-    })
+    }
   } catch (e) {
     dispatch(displayPopUp(`Cannot get account list: ${e}`))
   }
