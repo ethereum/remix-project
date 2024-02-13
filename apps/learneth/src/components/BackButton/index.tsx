@@ -1,8 +1,6 @@
 import React, {useState} from 'react'
 import {Link, useLocation, useNavigate} from 'react-router-dom'
 import {Button, Modal, Tooltip, OverlayTrigger} from 'react-bootstrap'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faHome, faBars, faChevronLeft, faChevronRight} from '@fortawesome/free-solid-svg-icons'
 import './index.scss'
 
 function BackButton({entity}: any) {
@@ -25,14 +23,14 @@ function BackButton({entity}: any) {
             role="button"
           >
             <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">Leave tutorial</Tooltip>}>
-              <FontAwesomeIcon className="pl-1" icon={faHome} />
+              <i className="fas fa-home pl-1" />
             </OverlayTrigger>
           </div>
         </li>
         {isDetailPage && (
           <li className="nav-item">
             <Link className="btn" to={`/list?id=${entity.id}`} title="Tutorial menu">
-              <FontAwesomeIcon icon={faBars} />
+              <i className="fas fa-bars" />
             </Link>
           </li>
         )}
@@ -41,13 +39,13 @@ function BackButton({entity}: any) {
         <form className="form-inline">
           {stepId > 0 && (
             <Link to={`/detail?id=${entity.id}&stepId=${stepId - 1}`}>
-              <FontAwesomeIcon className="pr-1" icon={faChevronLeft} />
+              <i className="fas fa-chevron-left pr-1" />
             </Link>
           )}
           {stepId + 1}/{entity && <div className="">{entity.steps.length}</div>}
           {stepId < entity.steps.length - 1 && (
             <Link to={`/detail?id=${entity.id}&stepId=${stepId + 1}`}>
-              <FontAwesomeIcon className="pl-1" icon={faChevronRight} />
+              <i className="fas fa-chevron-right pl-1" />
             </Link>
           )}
         </form>
