@@ -41,7 +41,7 @@ interface FlatTreeProps {
   createNewFile?: any
   createNewFolder?: any
   deletePath?: (path: string | string[]) => void | Promise<void>
-  renamePath?: (path: string, type: string, isNew?: boolean) => void
+  renamePath?: (path: string, type: string) => void
   editModeOn?: (path: string, type: string, isNew?: boolean) => void
 }
 
