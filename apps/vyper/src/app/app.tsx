@@ -15,6 +15,7 @@ import Button from 'react-bootstrap/Button'
 import './app.css'
 import { CustomTooltip } from '@remix-ui/helper'
 import { Form } from 'react-bootstrap'
+import { CompileErrorCard } from './components/CompileErrorCard'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -68,6 +69,9 @@ const App = () => {
 
   useEffect(() => {
     remixClient.eventEmitter.on('setOutput', (payload) => {
+      if (payload.status === 'failed') {
+        console.error('Error in the compiler', payload)
+      }
       setOutput(payload)
     })
 
@@ -95,6 +99,7 @@ const App = () => {
     setOutput(remixClient.compilerOutput)
   }
 
+  console.log('output', output)
   return (
     <main id="vyper-plugin">
       <header>
@@ -161,7 +166,7 @@ const App = () => {
               <>
                 <VyperResult output={output} plugin={remixClient} />
               </>
-            ) : null
+            ) : output.status === 'failed' ? <CompileErrorCard output={output} /> : null
           }
         </article>
       </section>
