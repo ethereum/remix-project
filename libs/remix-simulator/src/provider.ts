@@ -195,4 +195,11 @@ class Web3TestPlugin extends Web3PluginBase {
       params: []
     })
   }
+
+  public getBlocksData() {
+    return this.requestManager.send({
+      method: 'eth_getBlocksData',
+      params: []
+    })
+  }
 }

@@ -59,7 +59,7 @@ export class Transactions {
     this.txRunnerInstance = new TxRunner(this.txRunnerVMInstance, {})
     this.txRunnerInstance.vmaccounts = accounts
   }
-
+ 
   methods () {
     return {
       eth_sendTransaction: this.eth_sendTransaction.bind(this),
@@ -76,7 +76,8 @@ export class Transactions {
       eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this),
       eth_registerCallId: this.eth_registerCallId.bind(this),
       eth_getStateTrieRoot: this.eth_getStateTrieRoot.bind(this),
-      eth_getStateDb: this.eth_getStateDb.bind(this)
+      eth_getStateDb: this.eth_getStateDb.bind(this),
+      eth_getBlocksData: this.eth_getBlocksData.bind(this)
     }
   }
 
@@ -206,6 +207,13 @@ export class Transactions {
 
   eth_getStateDb (_, cb) {
     cb(null, this.vmContext.currentVm.stateManager.getDb())
+  }
+
+  eth_getBlocksData (_, cb) {
+    cb(null, {
+      blocks: this.txRunnerVMInstance.blocks,
+      latestBlockNumber: this.txRunnerVMInstance.blockNumber
+    })
   }
 
   eth_call (payload, cb) {
