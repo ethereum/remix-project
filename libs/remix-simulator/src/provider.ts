@@ -11,6 +11,7 @@ import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
 import { VMContext } from './vm-context'
 import { Web3PluginBase } from 'web3'
+import { Block } from '@ethereumjs/block'
 
 export interface JSONRPCRequestPayload {
   params: any[];
@@ -36,8 +37,9 @@ export type ProviderOptions = {
   fork: string,
   nodeUrl: string,
   blockNumber: number | 'latest',
-  stateDb: State,
+  stateDb?: State,
   logDetails?: boolean
+  blocks?: Block[]
 }
 
 export class Provider {
@@ -53,7 +55,7 @@ export class Provider {
   constructor (options: ProviderOptions = {} as ProviderOptions) {
     this.options = options
     this.connected = true
-    this.vmContext = new VMContext(options['fork'], options['nodeUrl'], options['blockNumber'], options['stateDb'])
+    this.vmContext = new VMContext(options['fork'], options['nodeUrl'], options['blockNumber'], options['stateDb'], options['blocks'])
 
     this.Accounts = new Web3Accounts(this.vmContext)
     this.Transactions = new Transactions(this.vmContext)
@@ -73,7 +75,7 @@ export class Provider {
     this.pendingRequests = []
     await this.vmContext.init()
     await this.Accounts.resetAccounts()
-    this.Transactions.init(this.Accounts.accounts, this.vmContext.blockNumber)
+    this.Transactions.init(this.Accounts.accounts, this.vmContext.blockNumber, this.vmContext.blocks)
     this.initialized = true
     if (this.pendingRequests.length > 0) {
       this.pendingRequests.map((req) => {

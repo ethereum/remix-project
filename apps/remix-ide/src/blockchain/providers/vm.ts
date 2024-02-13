@@ -2,6 +2,8 @@ import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
 import { fromWei, toBigInt } from 'web3-utils'
 import { privateToAddress, hashPersonalMessage, isHexString } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
+import {toBuffer} from '@ethereumjs/util'
+import { Block } from '@ethereumjs/block'
 import { ExecutionContext } from '../execution-context'
 
 export class VMProvider {
@@ -27,7 +29,7 @@ export class VMProvider {
       })
   }
 
-  async resetEnvironment (stringifiedStateDb?: string) {
+  async resetEnvironment (stringifiedState?: string) {
     if (this.worker) this.worker.terminate()
     this.worker = new Worker(new URL('./worker-vm', import.meta.url))
     const provider = this.executionContext.getProviderObject()
@@ -74,13 +76,35 @@ export class VMProvider {
           }
         }
       })
-      this.worker.postMessage({
-        cmd: 'init',
-        fork: this.executionContext.getCurrentFork(),
-        nodeUrl: provider?.options['nodeUrl'],
-        blockNumber: provider?.options['blockNumber'],
-        stateDb: stringifiedStateDb
-      })
+      if (stringifiedState) {
+        try {
+          const blockchainState = JSON.parse(stringifiedState)
+          const blocks: Block[] = blockchainState.blocks.map(block => Block.fromRLPSerializedBlock(toBuffer(block)))
+          const blockNumber = toBigInt(blockchainState.latestBlockNumber).toString(10)
+          const stateDb = { 
+            root: toBuffer(blockchainState.root),
+            db: new Map(Object.entries(blockchainState.db))
+          }
+
+          this.worker.postMessage({
+            cmd: 'init',
+            fork: this.executionContext.getCurrentFork(),
+            nodeUrl: provider?.options['nodeUrl'],
+            blockNumber,
+            stateDb,
+            blocks
+          })
+        } catch (e) {
+          console.error(e)
+        }
+      } else {
+        this.worker.postMessage({
+          cmd: 'init',
+          fork: this.executionContext.getCurrentFork(),
+          nodeUrl: provider?.options['nodeUrl'],
+          blockNumber: provider?.options['blockNumber']
+        })
+      }
     })
   }
 
