@@ -1,7 +1,5 @@
 import React, {useState, useEffect} from 'react'
 import {Button, Dropdown, Form, Tooltip, OverlayTrigger} from 'react-bootstrap'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faQuestionCircle, faInfoCircle, faChevronRight, faChevronDown} from '@fortawesome/free-solid-svg-icons'
 import {useAppDispatch} from '../../redux/hooks'
 import './index.css'
 
@@ -47,7 +45,7 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
 
       <div onClick={panelChange} style={{cursor: 'pointer'}} className="container-fluid d-flex mb-3 small">
         <div className="d-flex pr-2 pl-2">
-          <FontAwesomeIcon className="arrow-icon pt-1" size="xs" icon={open ? faChevronDown : faChevronRight} />
+          <i className={`arrow-icon pt-1 fas fa-xs ${open ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
         </div>
         <div className="d-flex">Import another tutorial repo</div>
       </div>
@@ -85,7 +83,7 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
                 REPO
               </Form.Label>
               <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">ie username/repository</Tooltip>}>
-                <FontAwesomeIcon icon={faQuestionCircle} />
+                <i className="fas fa-question-circle" />
               </OverlayTrigger>
               <Form.Control
                 id="name"
@@ -109,7 +107,7 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
               Import {name}
             </Button>
             <a href="https://github.com/bunsenstraat/remix-learneth-plugin/blob/master/README.md" className="d-none" target="_blank" rel="noreferrer">
-              <FontAwesomeIcon icon={faInfoCircle} /> how to setup your repo
+              <i className="fas fa-info-circle" /> how to setup your repo
             </a>
           </Form>
         )}

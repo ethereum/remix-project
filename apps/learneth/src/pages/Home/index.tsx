@@ -1,7 +1,5 @@
 import React, {useEffect} from 'react'
 import {Link} from 'react-router-dom'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faChevronRight, faChevronDown, faPlayCircle} from '@fortawesome/free-solid-svg-icons'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
@@ -51,7 +49,7 @@ function HomePage(): JSX.Element {
                         handleClick(item.id)
                       }}
                     >
-                      <FontAwesomeIcon size="xs" icon={isOpen(item.id) ? faChevronDown : faChevronRight} />
+                      <i className={`fas fa-xs ${isOpen(item.id) ? 'fa-chevron-down' : 'fa-chevron-right'}`} />
                     </span>
                     <span
                       className="workshop-link"
@@ -62,7 +60,7 @@ function HomePage(): JSX.Element {
                       {selectedRepo.entities[item.id].name}
                     </span>
                     <Link to={`/list?id=${item.id}`} className="text-decoration-none float-right">
-                      <FontAwesomeIcon icon={faPlayCircle} size="lg" />
+                      <i className="fas fa-play-circle fa-lg" />
                     </Link>
                   </div>
                   <div className={`container-fluid bg-light pt-3 mt-2 ${isOpen(item.id) ? '' : 'description-collapsed'}`}>
