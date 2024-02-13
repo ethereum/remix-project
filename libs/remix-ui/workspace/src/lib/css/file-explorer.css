@@ -69,7 +69,3 @@ ul {
 .remixui_icons:hover {
     color: var(--text);
 }
-
-.remixui_icons_space {
-    margin-right: 8px;
-}
