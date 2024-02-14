@@ -25,11 +25,12 @@ const getSindriManifest = async () => {
 /**
  * Create a map of file paths to `File` objects for either all or a subset of files in the workspace.
  *
- * @param {RegExp | null} pathRegex - A regular expression to limit the included files to those
+ * @param {RegExp | null} includeRegex - A regular expression to limit the included files to those
  * whose paths match. If not specified, then all paths are included.
+ * @param {RegExp | null} excludeRegex - A regular expression to exclude files whose paths match.
  * @returns {Promise<{[path: string]: File}>} A map of file paths to `File` objects.
  */
-export const getWorkspaceFilesByPath = async (pathRegex: RegExp | null = null): Promise<{[path: string]: File}> => {
+const getWorkspaceFilesByPath = async (includeRegex: RegExp | null = null, excludeRegex: RegExp | null = null): Promise<{[path: string]: File}> => {
   const filesByPath: {[path: string]: File} = {}
   interface Workspace {
     children?: Workspace
@@ -39,7 +40,7 @@ export const getWorkspaceFilesByPath = async (pathRegex: RegExp | null = null): 
   const childQueue: Array<[string, Workspace]> = Object.entries(workspace)
   while (childQueue.length > 0) {
     const [path, child] = childQueue.pop()
-    if ('content' in child && (pathRegex === null || pathRegex.test(path))) {
+    if ('content' in child && (includeRegex === null || includeRegex.test(path)) && (excludeRegex === null || !excludeRegex.test(path))) {
       filesByPath[path] = new File([child.content], path)
     }
     if ('children' in child) {
@@ -67,7 +68,7 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
   const sindriManifest = await getSindriManifest()
 
   // Create a map from file paths to `File` objects for all files in the workspace.
-  const filesByPath = await getWorkspaceFilesByPath()
+  const filesByPath = await getWorkspaceFilesByPath(null, /^\.deps\//)
 
   // Merge any of the circuit's resolved dependencies into the files at their expected import paths.
   if (sindriManifest.circuitType === 'circom') {
