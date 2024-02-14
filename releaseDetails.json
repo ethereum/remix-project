@@ -1,10 +1,10 @@
 {
-    "version": "v0.42.0",
+    "version": "v0.43.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Ask GPT for circom ZKP compiler errors/warnings",
-    "highlight2": "Default Solidity compiler set to 0.8.24 with support of 'Cancun' EVM",
-    "highlight3": "Workspace Template 'Uniswap v4 Periphery' renamed to 'Uniswap v4 Template'",
+    "highlight1": "File Explorer and Vyper compiler comes with a better user interface",
+    "highlight2": "Update Wallet Connect to the latest version",
+    "highlight3": "",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-42-0-56ec48a49ae0"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-43-0-1150e59a81df?source=friends_link&sk=4965f88ef43b297c4350f3a749083cfb"
   }
