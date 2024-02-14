@@ -18,7 +18,5 @@ export default async () => {
     'LICENSE-MIT': (await import('!!raw-loader!./LICENSE-MIT')).default,
     // @ts-ignore
     'README.md': (await import('raw-loader!./README.md')).default,
-    // @ts-ignore
-    'sindri.json': (await import('./sindri.json.raw!=!raw-loader!./sindri.json')).default,
   }
 }
