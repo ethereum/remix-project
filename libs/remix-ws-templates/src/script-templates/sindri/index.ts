@@ -46,33 +46,31 @@ export const sindriScripts = async (plugin: any) => {
     // For now, we only support Circom.
 
     // Infer manifest properties from the existing files in the workspace.
-    switch (sindriManifest.circuitType) {
-      case 'circom':
-        // Try to find the best `.circom` source file to use as the main component.
-        // First, we limit ourselves to `.circom` files.
-        const circomPathsAndContents = await Promise.all(
-          Object.entries(existingFilesByPath)
-            .filter(([path]) => /\.circom$/i.test(path))
-            .map(async ([path, file]) => [path, await file.text()])
-        )
-        // Now we apply some heuristics to find the "best" file.
-        const circomCircuitPath =
-          circomPathsAndContents
-            .map(([path, content]) => ({
-              content,
-              hasMainComponent: !!/^[ \t\f]*component[ \t\f]+main[^\n\r]*;[ \t\f]*$/m.test(content),
-              // These files are the entrypoints to the Remix Circom templates, so we give them a boost if there are multiple main components.
-              isTemplateEntrypoint: !!['calculate_hash.circom', 'rln.circom', 'semaphore.circom'].includes(path.split('/').pop() ?? ''),
-              path,
-            }))
-            .sort((a, b) => {
-              if (a.hasMainComponent !== b.hasMainComponent) return +b.hasMainComponent - +a.hasMainComponent
-              if (a.isTemplateEntrypoint !== b.isTemplateEntrypoint) return +b.isTemplateEntrypoint - +a.isTemplateEntrypoint
-              return a.path.localeCompare(b.path)
-            })
-            .map(({path}) => path)[0] || './circuit.circom'
-        sindriManifest.circuitPath = circomCircuitPath
-        break
+    if (sindriManifest.circuitType === 'circom') {
+      // Try to find the best `.circom` source file to use as the main component.
+      // First, we limit ourselves to `.circom` files.
+      const circomPathsAndContents = await Promise.all(
+        Object.entries(existingFilesByPath)
+          .filter(([path]) => /\.circom$/i.test(path))
+          .map(async ([path, file]) => [path, await file.text()])
+      )
+      // Now we apply some heuristics to find the "best" file.
+      const circomCircuitPath =
+        circomPathsAndContents
+          .map(([path, content]) => ({
+            content,
+            hasMainComponent: !!/^[ \t\f]*component[ \t\f]+main[^\n\r]*;[ \t\f]*$/m.test(content),
+            // These files are the entrypoints to the Remix Circom templates, so we give them a boost if there are multiple main components.
+            isTemplateEntrypoint: !!['calculate_hash.circom', 'rln.circom', 'semaphore.circom'].includes(path.split('/').pop() ?? ''),
+            path,
+          }))
+          .sort((a, b) => {
+            if (a.hasMainComponent !== b.hasMainComponent) return +b.hasMainComponent - +a.hasMainComponent
+            if (a.isTemplateEntrypoint !== b.isTemplateEntrypoint) return +b.isTemplateEntrypoint - +a.isTemplateEntrypoint
+            return a.path.localeCompare(b.path)
+          })
+          .map(({path}) => path)[0] || './circuit.circom'
+      sindriManifest.circuitPath = circomCircuitPath
     }
 
     // Derive the circuit name from the workspace name.
