@@ -75,15 +75,14 @@ export const sindriScripts = async (plugin: any) => {
         break
     }
 
+    // Derive the circuit name from the workspace name.
     const {name: workspaceName} = await plugin.call('filePanel', 'getCurrentWorkspace')
     sindriManifest.name =
       workspaceName
         .replace(/\s*-+\s*\d*$/, '')
         .replace(/[^a-zA-Z0-9]+/g, '-')
-        .replace(/^[^a-zA-Z]+/, '') || `my-${sindriManifest.circuitType}-circuit`
-
-    // Remove any unsupported characters from the circuit name.
-    sindriManifest.name = (sindriManifest.name || '').replace(/[^-a-zA-Z0-9_]+/g, '-')
+        .replace(/^[^a-zA-Z]+/, '')
+        .toLowerCase() || `my-${sindriManifest.circuitType}-circuit`
 
     // Write out the modified manifest file.
     writeIfNotExists('sindri.json', JSON.stringify(sindriManifest, null, 2))
