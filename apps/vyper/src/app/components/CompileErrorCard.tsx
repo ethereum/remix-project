@@ -6,10 +6,10 @@ export function CompileErrorCard(props: any) {
       <i className="fas fa-exclamation-circle text-danger"></i>
       <span
         data-id="error-message"
-        className=""
+        className="text-center"
         style={{
           overflowX: 'hidden',
-          textOverflow: 'ellipsis'
+          textOverflow: 'ellipsis',
         }}
       >
         {props.output.message.trim()}
