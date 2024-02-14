@@ -408,8 +408,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           createNewFile={props.createNewFile}
           createNewFolder={props.createNewFolder}
           deletePath={deletePath}
-          renamePath={renamePath}
-          editModeOn={props.editModeOn}
+          editPath={props.editModeOn}
         />
       </div>
     </div>

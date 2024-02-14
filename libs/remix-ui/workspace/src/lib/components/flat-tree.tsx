@@ -41,8 +41,7 @@ interface FlatTreeProps {
   createNewFile?: any
   createNewFolder?: any
   deletePath?: (path: string | string[]) => void | Promise<void>
-  renamePath?: (path: string, type: string) => void
-  editModeOn?: (path: string, type: string, isNew?: boolean) => void
+  editPath?: (path: string, type: string, isNew?: boolean) => void
 }
 
 let mouseTimer: any = {
@@ -51,7 +50,7 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder, deletePath, renamePath } = props
+  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder, deletePath, editPath } = props
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
     path: string,
@@ -190,8 +189,7 @@ export const FlatTree = (props: FlatTreeProps) => {
       <div>
         <FileHoverIcons
           file={file}
-          isEditable={true}
-          renamePathOp={props.editModeOn}
+          renamePathOp={props.editPath}
           deletePathOp={deletePath}
           handleNewFileOp={props.createNewFile}
           handleNewFolderOp={props.createNewFolder}

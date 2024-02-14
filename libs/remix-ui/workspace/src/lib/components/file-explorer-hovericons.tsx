@@ -3,11 +3,10 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { FormattedMessage } from 'react-intl'
 
 export type FileHoverIconsProps = {
-  isEditable?: boolean
   file: any
   handleNewFolderOp?: any
   handleNewFileOp?: any
-  renamePathOp?: (path: string, type: string) => void
+  renamePathOp?: (path: string, type: string, isNew?: boolean) => void
   deletePathOp?: (path: string | string[]) => void | Promise<void>
 }
 
@@ -67,9 +66,9 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
         >
           <span
             className="far fa-pen fa-1x remixui_icons mr-2"
-            onClick={async (e) => {
+            onClick={(e) => {
               e.stopPropagation()
-              await props.renamePathOp(props.file.path, props.file.type)
+              props.renamePathOp(props.file.path, props.file.type)
             }}
             style={{ cursor: mouseOver ? 'pointer' : 'default' }}
             onMouseEnter={(e) => setMouseOver(true)}
