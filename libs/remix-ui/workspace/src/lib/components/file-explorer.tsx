@@ -131,6 +131,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const renamePath = async (oldPath: string, newPath: string) => {
     try {
+      if (oldPath === newPath) return
       props.dispatchRenamePath(oldPath, newPath)
     } catch (error) {
       props.modal(
