@@ -98,7 +98,6 @@ const App = () => {
     setOutput(remixClient.compilerOutput)
   }
 
-  console.log('output', output)
   return (
     <main id="vyper-plugin">
       <header>
