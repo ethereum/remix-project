@@ -796,7 +796,7 @@ export function Workspace() {
             </option>
             <option style={{fontSize: 'small'}} value="breakthroughLabsUniswapv4Hooks">
               {intl.formatMessage({id: 'filePanel.breakthroughLabsUniswapv4Hooks'})}
-            </option> 
+            </option>
 
             <option style={{fontSize: 'small'}} value="uniswapV4HookBookMultiSigSwapHook">
               {intl.formatMessage({id: 'filePanel.uniswapV4HookBookMultiSigSwapHook'})}
@@ -988,7 +988,7 @@ export function Workspace() {
                     >
                       <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
                     </CustomTooltip>}
-                  </span>                  
+                  </span>
                 </div>
                 <div className='mx-2'>
                   {(platform !== appPlatformTypes.desktop) ? (
@@ -1063,7 +1063,7 @@ export function Workspace() {
               </div>
             </header>
           </div>
-          <ElectronMenu></ElectronMenu>     
+          <ElectronMenu></ElectronMenu>
           <div
             className="h-100 remixui_fileExplorerTree"
             onFocus={() => {
@@ -1077,7 +1077,7 @@ export function Workspace() {
                 </div>
               )}
               {!(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && global.fs.mode === 'browser' && currentWorkspace !== NO_WORKSPACE && (
-                
+
                 <FileExplorer
                   fileState={global.fs.browser.fileState}
                   name={currentWorkspace}
@@ -1129,8 +1129,12 @@ export function Workspace() {
                   handleNewFileInput={handleNewFileInput}
                   handleNewFolderInput={handleNewFolderInput}
                   dragStatus={dragStatus}
+                  createNewFile={handleNewFileInput}
+                  createNewFolder={handleNewFolderInput}
+                  deletePath={deletePath}
+                  renamePath={editModeOn}
                 />
-    
+
               )}
               {global.fs.localhost.isRequestingLocalhost && (
                 <div className="text-center py-5">
@@ -1188,6 +1192,10 @@ export function Workspace() {
                   editModeOn={editModeOn}
                   handleNewFileInput={handleNewFileInput}
                   handleNewFolderInput={handleNewFolderInput}
+                  createNewFile={handleNewFileInput}
+                  createNewFolder={handleNewFolderInput}
+                  deletePath={deletePath}
+                  renamePath={editModeOn}
                   dragStatus={dragStatus}
                 />
               )}
@@ -1199,11 +1207,11 @@ export function Workspace() {
         <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
           <div className="d-flex justify-space-between p-1">
             <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
-            {selectedWorkspace.hasGitSubmodules? 
+            {selectedWorkspace.hasGitSubmodules?
               <div className="pt-1 mr-1">
                 {global.fs.browser.isRequestingCloning ? <div style={{ height: 30 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div>  :
                   <div style={{ height: 30 }} onClick={updateSubModules} data-id='updatesubmodules' className='btn btn-sm border text-muted small'>update submodules</div>}
-              </div>  
+              </div>
               : null}
             <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
               <Dropdown style={{height: 30, minWidth: 80}} onToggle={toggleBranches} show={showBranches} drop={'up'}>
