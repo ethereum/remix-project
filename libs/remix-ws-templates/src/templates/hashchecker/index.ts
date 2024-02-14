@@ -10,7 +10,5 @@ export default async () => {
     'templates/groth16_verifier.sol.ejs': (await import('!!raw-loader!./templates/groth16_verifier.sol.ejs')).default,
     // @ts-ignore
     'README.md': (await import('raw-loader!./README.md')).default,
-    // @ts-ignore
-    'sindri.json': (await import('./sindri.json.raw!=!raw-loader!./sindri.json')).default,
   }
 }
