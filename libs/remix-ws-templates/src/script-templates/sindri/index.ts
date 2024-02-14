@@ -19,7 +19,7 @@ const getWorkspaceFilesByPath = async (plugin: any, pathRegex: RegExp | null = n
 }
 
 export const sindriScripts = async (plugin: any) => {
-  // Load in all of the Sindri or Circom-related files in the workspace.
+  // Load in all of the Sindri or circuit-related files in the workspace.
   const existingFilesByPath = await getWorkspaceFilesByPath(plugin, /sindri|\.circom$/i)
   const writeIfNotExists = async (path: string, content: string) => {
     if (!(path in existingFilesByPath)) {
@@ -41,6 +41,9 @@ export const sindriScripts = async (plugin: any) => {
   if (!('sindri.json' in existingFilesByPath)) {
     // @ts-ignore
     const sindriManifest = (await import('./sindri.json')).default
+
+    // TODO: We can try to infer the circuit framework here from the project contents.
+    // For now, we only support Circom.
 
     // Infer manifest properties from the existing files in the workspace.
     switch (sindriManifest.circuitType) {
