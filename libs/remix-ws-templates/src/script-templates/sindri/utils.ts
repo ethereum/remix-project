@@ -67,7 +67,7 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
   const sindriManifest = await getSindriManifest()
 
   // Create a map from file paths to `File` objects for all files in the workspace.
-  const filesByPath = getWorkspaceFilesByPath()
+  const filesByPath = await getWorkspaceFilesByPath()
 
   // Merge any of the circuit's resolved dependencies into the files at their expected import paths.
   if (sindriManifest.circuitType === 'circom') {
