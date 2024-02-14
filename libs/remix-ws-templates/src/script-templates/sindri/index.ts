@@ -68,17 +68,16 @@ export const sindriScripts = async (plugin: any) => {
               return a.path.localeCompare(b.path)
             })
             .map(({path}) => path)[0] || './circuit.circom'
-
-        // Use the basename of the circuit path as the circuit name.
-        const circomCircuitName =
-          circomCircuitPath
-            .split('/')
-            .pop()
-            .replace(/\.circom$/i, '') || 'my-circom-circuit'
-        sindriManifest.name = circomCircuitName
         sindriManifest.circuitPath = circomCircuitPath
         break
     }
+
+    const {name: workspaceName} = await plugin.call('filePanel', 'getCurrentWorkspace')
+    sindriManifest.name =
+      workspaceName
+        .replace(/\s*-+\s*\d*$/, '')
+        .replace(/[^a-zA-Z0-9]+/g, '-')
+        .replace(/^[^a-zA-Z]+/, '') || `my-${sindriManifest.circuitType}-circuit`
 
     // Remove any unsupported characters from the circuit name.
     sindriManifest.name = (sindriManifest.name || '').replace(/[^-a-zA-Z0-9_]+/g, '-')
