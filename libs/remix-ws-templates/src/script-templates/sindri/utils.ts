@@ -22,6 +22,33 @@ const getSindriManifest = async () => {
   return JSON.parse(sindriJson)
 }
 
+/**
+ * Create a map of file paths to `File` objects for either all or a subset of files in the workspace.
+ *
+ * @param {RegExp | null} pathRegex - A regular expression to limit the included files to those
+ * whose paths match. If not specified, then all paths are included.
+ * @returns {Promise<{[path: string]: File}>} A map of file paths to `File` objects.
+ */
+export const getWorkspaceFilesByPath = async (pathRegex: RegExp | null = null): Promise<{[path: string]: File}> => {
+  const filesByPath: {[path: string]: File} = {}
+  interface Workspace {
+    children?: Workspace
+    content?: string
+  }
+  const workspace: Workspace = await remix.call('fileManager', 'copyFolderToJson', '/')
+  const childQueue: Array<[string, Workspace]> = Object.entries(workspace)
+  while (childQueue.length > 0) {
+    const [path, child] = childQueue.pop()
+    if ('content' in child && (pathRegex === null || pathRegex.test(path))) {
+      filesByPath[path] = new File([child.content], path)
+    }
+    if ('children' in child) {
+      childQueue.push(...Object.entries(child.children))
+    }
+  }
+  return filesByPath
+}
+
 const normalizePath = (path: string): string => {
   while (path.startsWith('/') || path.startsWith('./')) {
     path = path.replace(/^(\.\/|\/)/, '')
@@ -40,22 +67,7 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
   const sindriManifest = await getSindriManifest()
 
   // Create a map from file paths to `File` objects for all files in the workspace.
-  const filesByPath: {[path: string]: File} = {}
-  interface Workspace {
-    children?: Workspace
-    content?: string
-  }
-  const workspace: Workspace = await remix.call('fileManager', 'copyFolderToJson', '/')
-  const childQueue: Array<[string, Workspace]> = Object.entries(workspace)
-  while (childQueue.length > 0) {
-    const [path, child] = childQueue.pop()
-    if ('content' in child) {
-      filesByPath[path] = new File([child.content], path)
-    }
-    if ('children' in child) {
-      childQueue.push(...Object.entries(child.children))
-    }
-  }
+  const filesByPath = getWorkspaceFilesByPath()
 
   // Merge any of the circuit's resolved dependencies into the files at their expected import paths.
   if (sindriManifest.circuitType === 'circom') {
