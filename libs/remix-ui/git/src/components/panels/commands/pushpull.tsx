@@ -97,9 +97,9 @@ export const PushPull = () => {
 
 
       <div className="btn-group w-100" role="group" aria-label="Basic example">
-        <button type="button" onClick={async () => push()} className="btn btn-primary mr-1">Push</button>
-        <button type="button" onClick={async () => pull()} className="btn btn-primary">Pull</button>
-
+   
+        <button type="button" onClick={async () => pull()} className="btn btn-primary mr-1">Pull</button>
+        <button type="button" onClick={async () => push()} className="btn btn-primary">Push</button>
       </div>
 
 

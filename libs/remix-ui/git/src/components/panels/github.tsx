@@ -13,7 +13,7 @@ export const GitHubAuth = () => {
   const [gitHubResponse, setGitHubResponse] = React.useState<any>(null)
   const [authorized, setAuthorized] = React.useState<boolean>(false)
 
-  
+  const client_id = 'Iv1.12fc02c69c512462'// 'e90cf20e6cafa2fd71ea'
   
   const getDeviceCodeFromGitHub = async () => {
 
@@ -23,7 +23,7 @@ export const GitHubAuth = () => {
       method: 'post',
       url: 'http://0.0.0.0:3000/github.com/login/device/code',
       data: {
-        client_id: 'Iv1.12fc02c69c512462'
+        client_id // : 'Iv1.12fc02c69c512462'
       },
       headers: {
         'Content-Type': 'application/json',
@@ -44,9 +44,9 @@ export const GitHubAuth = () => {
       method: 'post',
       url: 'http://0.0.0.0:3000/github.com/login/oauth/access_token',
       data: {
-        client_id: 'Iv1.12fc02c69c512462',
+        client_id,// : 'Iv1.12fc02c69c512462',
         device_code: gitHubResponse.device_code,
-        grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
+        grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
       },
       headers: {
         'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export const GitHubAuth = () => {
       {(context.gitHubUser && context.gitHubUser.login) ? null :
         <button className='btn btn-primary mt-1 w-100' onClick={async () => {
           getDeviceCodeFromGitHub();
-        }}>Login in with github</button>
+        }}>Sign in with GitHub</button>
       }
       {gitHubResponse && !authorized &&
         <div className="pt-2">
@@ -120,7 +120,7 @@ export const GitHubAuth = () => {
         <div className="pt-2">
           <button className='btn btn-primary mt-1 w-100' onClick={async () => {
             disconnect()
-          }}>Disconnect</button>
+          }}>Sign out</button>
         </div>: null
       }
       {

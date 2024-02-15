@@ -41,13 +41,15 @@ export const GitHubCredentials = () => {
 
   return (
     <>
-      <div className="input-group text-secondary mb-0 h6">
-        <input type="text" className="form-control" name='githubToken' />
+    <hr></hr>
+      <label className="pr-1">Manual Configuration</label>
+      <div className="input-group text-secondary mb-1 h6">
+        <input type="text" placeholder="GitHub token" className="form-control" name='githubToken' />
         <div className="input-group-append">
           <CopyToClipboard content={''} data-id='copyToClipboardCopyIcon' className='far fa-copy ml-1 p-2 mt-1' direction={"top"} />
         </div>
       </div>
-      <input name='githubUsername' onChange={e => handleChangeUserNameState(e.target.value)} value={githubUsername} className="form-control mb-2" placeholder="GitHub username" type="text" id="githubUsername" />
+      <input name='githubUsername' onChange={e => handleChangeUserNameState(e.target.value)} value={githubUsername} className="form-control mb-1" placeholder="GitHub username" type="text" id="githubUsername" />
       <input name='githubEmail' onChange={e => handleChangeEmailState(e.target.value)} value={githubEmail} className="form-control mb-1" placeholder="GitHub email" type="text" id="githubEmail" />
       <hr />
     </>

@@ -337,7 +337,7 @@ const tokenWarning = async () => {
       title: 'No GitHub token set',
       id: 'no-token-set',
     }
-    plugin.call('notification', 'alert', modalContent)
+    //plugin.call('notification', 'alert', modalContent)
     return false;
   } else {
     return token;

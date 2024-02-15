@@ -32,16 +32,16 @@ export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => 
                 {
                     activePanel === eventKey ?
                         <span className='d-flex justify-content-end align-items-center w-25'>
-                            <CustomTooltip tooltipText={<FormattedMessage id="Push" />}>
-                                <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowUp} className="" /></button>
-                            </CustomTooltip>
-                            <CustomTooltip tooltipText={<FormattedMessage id="Pull" />}>
+                            <CustomTooltip tooltipText={<FormattedMessage id="git.pull" />}>
                                 <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowDown} className="" /></button>
                             </CustomTooltip>
-                            <CustomTooltip tooltipText={<FormattedMessage id="Sync changes" />}>
+                            <CustomTooltip tooltipText={<FormattedMessage id="git.push" />}>
+                                <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowUp} className="" /></button>
+                            </CustomTooltip>
+                            <CustomTooltip tooltipText={<FormattedMessage id="git.sync" />}>
                                 <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowsUpDown} className="" /></button>
                             </CustomTooltip>
-                            <CustomTooltip tooltipText={<FormattedMessage id="Refresh" />}>
+                            <CustomTooltip tooltipText={<FormattedMessage id="git.refresh" />}>
                                 <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowRotateRight} className="" /></button>
                             </CustomTooltip>
 
