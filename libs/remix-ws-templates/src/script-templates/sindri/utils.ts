@@ -22,34 +22,6 @@ const getSindriManifest = async () => {
   return JSON.parse(sindriJson)
 }
 
-/**
- * Create a map of file paths to `File` objects for either all or a subset of files in the workspace.
- *
- * @param {RegExp | null} includeRegex - A regular expression to limit the included files to those
- * whose paths match. If not specified, then all paths are included.
- * @param {RegExp | null} excludeRegex - A regular expression to exclude files whose paths match.
- * @returns {Promise<{[path: string]: File}>} A map of file paths to `File` objects.
- */
-const getWorkspaceFilesByPath = async (includeRegex: RegExp | null = null, excludeRegex: RegExp | null = null): Promise<{[path: string]: File}> => {
-  const filesByPath: {[path: string]: File} = {}
-  interface Workspace {
-    children?: Workspace
-    content?: string
-  }
-  const workspace: Workspace = await remix.call('fileManager', 'copyFolderToJson', '/')
-  const childQueue: Array<[string, Workspace]> = Object.entries(workspace)
-  while (childQueue.length > 0) {
-    const [path, child] = childQueue.pop()
-    if ('content' in child && (includeRegex === null || includeRegex.test(path)) && (excludeRegex === null || !excludeRegex.test(path))) {
-      filesByPath[path] = new File([child.content], path)
-    }
-    if ('children' in child) {
-      childQueue.push(...Object.entries(child.children))
-    }
-  }
-  return filesByPath
-}
-
 const normalizePath = (path: string): string => {
   while (path.startsWith('/') || path.startsWith('./')) {
     path = path.replace(/^(\.\/|\/)/, '')
@@ -67,8 +39,27 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
   await authorize()
   const sindriManifest = await getSindriManifest()
 
-  // Create a map from file paths to `File` objects for all files in the workspace.
-  const filesByPath = await getWorkspaceFilesByPath(null, /^\.deps\//)
+  // Create a map from file paths to `File` objects for (almost) all files in the workspace.
+  // We exclude `.deps/` files because these are resolved to more intuitive locations so they can
+  // be used by the circuit without specifying a complex import path. We'll merge the dependencies
+  // into the files at their expected import paths in a later step.
+  const excludeRegex = /^\.deps\//
+  const filesByPath: {[path: string]: File} = {}
+  interface Workspace {
+    children?: Workspace
+    content?: string
+  }
+  const workspace: Workspace = await remix.call('fileManager', 'copyFolderToJson', '/')
+  const childQueue: Array<[string, Workspace]> = Object.entries(workspace)
+  while (childQueue.length > 0) {
+    const [path, child] = childQueue.pop()
+    if ('content' in child && !excludeRegex.test(path)) {
+      filesByPath[path] = new File([child.content], path)
+    }
+    if ('children' in child) {
+      childQueue.push(...Object.entries(child.children))
+    }
+  }
 
   // Merge any of the circuit's resolved dependencies into the files at their expected import paths.
   if (sindriManifest.circuitType === 'circom') {
