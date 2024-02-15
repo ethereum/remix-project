@@ -90,7 +90,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   // terminal dragable
   const panelRef = useRef(null)
-  const terminalMenu = useRef(null)
 
   const intl = useIntl()
 

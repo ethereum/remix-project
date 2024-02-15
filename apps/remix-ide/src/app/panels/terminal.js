@@ -13,9 +13,7 @@ import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-l
 import { RemixUiXterminals } from '@remix-ui/xterm'
 import { TerminalTitle } from './components/terminal-title'
 
-
 const KONSOLES = []
-
 
 function register(api) { KONSOLES.push(api) }
 
@@ -118,13 +116,13 @@ class Terminal extends Plugin {
 
   updateComponent(state) {
     return <div className='d-flex flex-column'>
-      <TerminalTitle
+      { <TerminalTitle
         ruiAPI={state.ruiAPI}
         xAPI={state.xAPI}
         onReady={state.onReady}
         plugin={state.plugin}
       >
-      </TerminalTitle>
+      </TerminalTitle> }
       { state.switchToRemixTerminal ?
         <RemixUiTerminal
           ruiTerminalAPI={state.ruiAPI}
@@ -150,7 +148,7 @@ class Terminal extends Plugin {
       ruiAPI: this.ruiApi,
       plugin: this,
       onReady: onReady,
-      switchToRemixTerminal: false
+      switchToRemixTerminal: true
     })
   }
 
