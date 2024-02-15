@@ -28,6 +28,7 @@ import {RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
 import {FormattedMessage, useIntl} from 'react-intl'
 import {GithubSettings} from './github-settings'
 import {EtherscanSettings} from './etherscan-settings'
+import {SindriSettings} from './sindri-settings'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -596,6 +597,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
         }}
         removeToken={() => {
           removeTokenToast(props.config, dispatchToast, 'etherscan-access-token')
+        }}
+        config={props.config}
+      />
+      <SindriSettings
+        saveToken={(sindriToken: string) => {
+          saveTokenToast(props.config, dispatchToast, sindriToken, 'sindri-access-token')
+        }}
+        removeToken={() => {
+          removeTokenToast(props.config, dispatchToast, 'sindri-access-token')
         }}
         config={props.config}
       />
