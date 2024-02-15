@@ -9,6 +9,6 @@ export default async () => {
     // @ts-ignore
     'templates/groth16_verifier.sol.ejs': (await import('!!raw-loader!./templates/groth16_verifier.sol.ejs')).default,
     // @ts-ignore
-    'README.md': (await import('raw-loader!./README.md')).default,
+    'README.md': (await import('raw-loader!./README.md')).default
   }
 }
