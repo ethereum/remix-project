@@ -73,7 +73,12 @@ export const compile = async (tags: string | string[] | null = ['latest']): Circ
   // Merge any of the circuit's resolved dependencies into the files at their expected import paths.
   if (sindriManifest.circuitType === 'circom') {
     const circuitPath = normalizePath(sindriManifest.circuitPath || 'circuit.circom')
-    const circuitContent = await remix.call('fileManager', 'readFile', circuitPath)
+    let circuitContent: string
+    try {
+      circuitContent = await remix.call('fileManager', 'readFile', circuitPath)
+    } catch (error) {
+      console.error(`No circuit file found at "${circuitPath}", try setting "circuitPath" in "sindri.json".`)
+    }
     const dependencies: {[path: string]: string} = await remix.call('circuit-compiler' as any, 'resolveDependencies', circuitPath, circuitContent)
     Object.entries(dependencies).forEach(([rawPath, rawContent]) => {
       // Convert absolute file paths to paths relative to the project root.
