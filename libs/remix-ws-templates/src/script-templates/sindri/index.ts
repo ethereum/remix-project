@@ -31,11 +31,13 @@ export const sindriScripts = async (plugin: any) => {
   // @ts-ignore
   await writeIfNotExists('scripts/.sindriignore', (await import('!!raw-loader!./.sindriignore')).default)
   // @ts-ignore
-  await writeIfNotExists('scripts/sindri/utils.ts', (await import('!!raw-loader!./utils.ts')).default)
+  await writeIfNotExists('scripts/sindri/README.md', (await import('!!raw-loader!./README.md')).default)
   // @ts-ignore
   await writeIfNotExists('scripts/sindri/run_compile.ts', (await import('!!raw-loader!./run_compile.ts')).default)
   // @ts-ignore
   await writeIfNotExists('scripts/sindri/run_prove.ts', (await import('!!raw-loader!./run_prove.ts')).default)
+  // @ts-ignore
+  await writeIfNotExists('scripts/sindri/utils.ts', (await import('!!raw-loader!./utils.ts')).default)
 
   // Only write out the `sindri.json` file if it doesn't already exist.
   if (!('sindri.json' in existingFilesByPath)) {
@@ -85,4 +87,8 @@ export const sindriScripts = async (plugin: any) => {
     // Write out the modified manifest file.
     writeIfNotExists('sindri.json', JSON.stringify(sindriManifest, null, 2))
   }
+
+  // Open the README file in the editor.
+  await plugin.call('doc-viewer' as any, 'viewDocs', ["scripts/sindri/README.md"])
+  plugin.call('tabs' as any, 'focus', 'doc-viewer')
 }
