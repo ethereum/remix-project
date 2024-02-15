@@ -17,6 +17,6 @@ export default async () => {
     // @ts-ignore
     'LICENSE-MIT': (await import('!!raw-loader!./LICENSE-MIT')).default,
     // @ts-ignore
-    'README.md': (await import('raw-loader!./README.md')).default,
+    'README.md': (await import('raw-loader!./README.md')).default
   }
 }
