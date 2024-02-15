@@ -222,3 +222,11 @@ html, body, #root, main {
   margin: 15px;
   padding: 15px;
 }
+
+.cursor-status {
+
+}
+
+.cursor-status :hover {
+  cursor: pointer;
+}
