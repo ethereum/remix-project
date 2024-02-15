@@ -110,7 +110,7 @@ const App = () => {
         </div>
         <Form>
           <div className="d-flex flex-row gap-5 mb-3 mt-2">
-            <Form.Check inline data-id="remote-compiler" type="radio" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} label="Remote Compiler" style={{cursor: state.environment === 'remote' ? 'default' : 'pointer'}} className="d-flex mr-4" />
+            <Form.Check inline id="remote-compiler" data-id="remote-compiler" type="radio" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} label="Remote Compiler" style={{cursor: state.environment === 'remote' ? 'default' : 'pointer'}} className="d-flex mr-4" />
             <Form.Check inline id="local-compiler" data-id="local-compiler" checked={state.environment === 'local'} type="radio" name="local" value={state.environment} onChange={() => setEnvironment('local')} label="Local Compiler" style={{cursor: state.environment === 'local' ? 'default' : 'pointer'}} />
           </div>
         </Form>
