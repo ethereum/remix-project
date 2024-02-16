@@ -29,7 +29,7 @@ export const sindriScripts = async (plugin: any) => {
 
   // Write out all of the static files if they don't exist.
   // @ts-ignore
-  await writeIfNotExists('scripts/.sindriignore', (await import('!!raw-loader!./.sindriignore')).default)
+  await writeIfNotExists('.sindriignore', (await import('!!raw-loader!./.sindriignore')).default)
   // @ts-ignore
   await writeIfNotExists('scripts/sindri/README.md', (await import('!!raw-loader!./README.md')).default)
   // @ts-ignore
