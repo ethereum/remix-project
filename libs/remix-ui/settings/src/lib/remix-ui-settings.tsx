@@ -36,6 +36,7 @@ export interface RemixUiSettingsProps {
   editor: any
   _deps: any
   useMatomoAnalytics: boolean
+  useCopilot: boolean
   themeModule: ThemeModule
   localeModule: LocaleModule
 }
