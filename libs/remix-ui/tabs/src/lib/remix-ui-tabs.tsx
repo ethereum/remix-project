@@ -62,6 +62,7 @@ export const TabsUI = (props: TabsUIProps) => {
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
+  const [ai_switch, setAI_switch] = useState<boolean>(true)
 
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
@@ -206,7 +207,7 @@ export const TabsUI = (props: TabsUIProps) => {
           <button
             data-id="explain-editor"
             id='explain_btn'
-            className="btn text-success py-0"
+            className="btn py-0"
             disabled={!(tabsState.currentExt === 'sol' )}
             onClick={async () => {
               const path = active().substr(active().indexOf('/') + 1, active().length)
@@ -222,7 +223,7 @@ export const TabsUI = (props: TabsUIProps) => {
           >
             <CustomTooltip
               placement="bottom"
-              tooltipId="overlay-tooltip-run-script"
+              tooltipId="overlay-tooltip-explaination"
               tooltipText={
                 <span>
                   {tabsState.currentExt === 'sol'? (
@@ -234,6 +235,28 @@ export const TabsUI = (props: TabsUIProps) => {
               }
             >
               <i className="fa-solid fa-message-exclamation"></i>
+            </CustomTooltip>
+          </button>
+          <button
+            data-id="remix_ai_switch"
+            id='remix_ai_switch'
+            className="btn ai-switch py-0"
+            disabled={!(tabsState.currentExt === 'sol' )}
+            onClick={async () => {
+              await props.plugin.call('settings', 'updateCopilotChoice', ai_switch)
+              setAI_switch(!ai_switch)
+            }}
+          >
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="overlay-tooltip-copilot"
+              tooltipText={
+                <span>
+                  <FormattedMessage id="remixUiTabs.tooltipText6" />
+                </span>
+              }
+            >
+              <i className= {ai_switch ? "fa-solid fa-toggle-on" :"fa-solid fa-toggle-off"}></i>
             </CustomTooltip>
           </button>
           <script>
