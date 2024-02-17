@@ -298,7 +298,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
             }
             return Object.keys(standardInput.sources)[0]
           } else {
-            // preserve JSON whitepsace if this isn't a Solidity compiler output file
+            // preserve JSON whitepsace if this isn't a Solidity compiler JSON-input-output file
             content = data.content
             await workspaceProvider.set(path, content)
           }
