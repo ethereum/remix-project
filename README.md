@@ -53,14 +53,17 @@ Note: It contains the latest supported version of Solidity available at the time
     "node": "^20.0.0",
     "npm": "^6.14.15"
   }
-```
+```"engines": {
+    "node": "^20.0.0",
+    "npm": "^6.14.15"
+  }yarn global add nx
 * Install [Nx CLI](https://nx.dev/using-nx/nx-cli) globally to enable running **nx executable commands**.
 ```bash
 yarn global add nx
-```
+```https://github.com/ethereum/remix-project.git
 * Clone the GitHub repository (`wget` need to be installed first):
 
-```bash
+```bashgit clone https://github.com/ethereum/remix-project.git
 git clone https://github.com/ethereum/remix-project.git
 ```
 * Build and Run `remix-project`:
@@ -97,16 +100,16 @@ Prerequisites:
 
 If you want to run the latest changes that are merged into the master branch then run:
 
-```
+```https://github.com/ethereum/remix-project.git
 docker pull remixproject/remix-ide:latest
 docker run -p 8080:80 remixproject/remix-ide:latest
 ```
-
+yarn run build:production
 If you want to run the latest remix-live release run.
-```
+```yarn run build:production
 docker pull remixproject/remix-ide:remix_live
 docker run -p 8080:80 remixproject/remix-ide:remix_live
-```
+```yarn run serve:production
 
 ### Run with docker-compose:
 
