@@ -345,9 +345,9 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         }
 
         if (data.files[element].type === 'application/json') {
-          obj['/' + 'gist-' + gistId + '/' + path] = { content: JSON.stringify(value.content, null, '\t') }
+          obj['/' + path] = { content: JSON.stringify(value.content, null, '\t') }
         } else
-          obj['/' + 'gist-' + gistId + '/' + path] = value
+          obj['/' + path] = value
       }
       plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
         if (errorLoadingFile) {

@@ -72,9 +72,10 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       dispatch(setWorkspaces(workspaces))
     }
     if (params.gist) {
-      await createWorkspaceTemplate('code-sample', 'gist-template')
-      plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
+      const name = 'gist ' + params.gist
+      await createWorkspaceTemplate(name, 'gist-template')
+      plugin.setWorkspace({ name, isLocalhost: false })
+      dispatch(setCurrentWorkspace({ name, isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
     } else if (params.code || params.url || params.shareCode) {
       await createWorkspaceTemplate('code-sample', 'code-template')
@@ -229,8 +230,8 @@ export const publishToGist = async (path?: string, type?: string) => {
   const folder = path || '/'
   
   try {
-    const name = extractNameFromKey(path)
-    const id = name && name.startsWith('gist-') ? name.split('-')[1] : null
+    const name = await plugin.call('filePanel', 'getCurrentWorkspace')
+    const id = name && name.startsWith('gist ') ? name.split(' ')[1] : null
 
     const packaged = await packageGistFiles(folder)
     // check for token
