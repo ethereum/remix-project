@@ -181,7 +181,7 @@ function HomeTabTitle() {
           className="border form-control border-right-0"
           id="homeTabSearchInput"
           placeholder={intl.formatMessage({id: 'home.searchDocumentation'})}
-          data-id="terminalInputSearch"
+          data-id="terminalInputSearchHome"
         />
         <button
           className="form-control border d-flex align-items-center p-2 justify-content-center fas fa-search bg-light"
