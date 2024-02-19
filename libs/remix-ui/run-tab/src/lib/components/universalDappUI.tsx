@@ -136,7 +136,7 @@ export function UniversalDappUI(props: UdappProps) {
       }
     }
     objToSave[env][network.id].push(props.instance)
-    localStorage.setItem('savedContracts', JSON.stringify({ instance: objToSave, savedAt: Date.now()}))
+    localStorage.setItem('savedContracts', JSON.stringify(objToSave))
   }
 
   const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
