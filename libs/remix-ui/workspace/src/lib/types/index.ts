@@ -56,6 +56,15 @@ export type WorkspaceMetadata = {
   isGist: string
 }
 
+export type TemplateType = {
+  type: 'git' | 'plugin'
+  url?: string
+  branch?: string
+  name?: string
+  endpoint?: string
+  params?: any[]
+}
+
 export interface FilePanelType extends ViewPlugin {
   setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void
   createWorkspace: (name: string, workspaceTemplateName: string) => void

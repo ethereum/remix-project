@@ -2,7 +2,7 @@ import React from 'react'
 import { bufferToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
-import { TemplateType } from '../utils/types'
+import { TemplateType } from '../types'
 import IpfsHttpClient from 'ipfs-http-client'
 import axios, { AxiosResponse } from 'axios'
 import {
