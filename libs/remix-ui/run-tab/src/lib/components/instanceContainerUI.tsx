@@ -19,6 +19,14 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
       <div className="d-flex justify-content-between align-items-center pl-2 mb-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
           <label className="udapp_deployedContracts">
+            <FormattedMessage id="udapp.savedContracts" />
+          </label>
+        </CustomTooltip>
+      </div>
+
+      <div className="d-flex justify-content-between align-items-center pl-2 mb-2">
+        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
+          <label className="udapp_deployedContracts">
             <FormattedMessage id="udapp.deployedContracts" />
           </label>
         </CustomTooltip>
