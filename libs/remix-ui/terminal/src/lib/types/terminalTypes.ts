@@ -26,6 +26,8 @@ export const CLEAR_CONSOLE = 'clearconsole'
 export const TOGGLE = 'toggle'
 export const LISTEN_ON_NETWORK = 'listenOnNetWork'
 export const CMD_HISTORY = 'cmdHistory'
+export const SEARCH = 'search'
+export const SET_ISVM = 'setIsVM'
 
 export interface RemixUiTerminalProps {
     plugin: any,
