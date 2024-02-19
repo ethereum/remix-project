@@ -9,7 +9,7 @@ import './css/remix-ui-workspace.css'
 import {ROOT_PATH, TEMPLATE_NAMES} from './utils/constants'
 import {HamburgerMenu} from './components/workspace-hamburger'
 
-import {MenuItems, WorkSpaceState} from './types'
+import {MenuItems, WorkSpaceState, WorkspaceMetadata} from './types'
 import {contextMenuActions} from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
@@ -27,14 +27,7 @@ export function Workspace() {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
-  const [selectedWorkspace, setSelectedWorkspace] = useState<{
-    name: string
-    isGitRepo: boolean
-    hasGitSubmodules?: boolean
-    branches?: {remote: any; name: string}[]
-    currentBranch?: string
-    isGist: string
-  }>(null)
+  const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceMetadata>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const [showIconsMenu, hideIconsMenu] = useState<boolean>(false)
   const [showBranches, setShowBranches] = useState<boolean>(false)
@@ -952,6 +945,7 @@ export function Workspace() {
                         ></Dropdown.Toggle>
                         <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className="custom-dropdown-items remixui_menuwidth" rootCloseEvent="click">
                           <HamburgerMenu
+                            selectedWorkspace={selectedWorkspace}
                             createWorkspace={createWorkspace}
                             renameCurrentWorkspace={renameCurrentWorkspace}
                             downloadCurrentWorkspace={downloadCurrentWorkspace}
