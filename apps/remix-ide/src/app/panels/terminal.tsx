@@ -142,12 +142,12 @@ class Terminal extends Plugin {
   }
 
   updateComponent(state) {
-    return (Registry.getInstance().get('platform').api.isDesktop()) ? <RemixUiXterminals onReady={state.onReady} plugin={state.plugin}/>
-      : <RemixUITerminalWrapper
+    return(
+      <RemixUITerminalWrapper
         plugin={state.plugin}
         onReady={state.onReady}
         visible={true}
-      />
+      />)
   }
 
   renderComponent() {
