@@ -399,6 +399,7 @@ export interface UdappProps {
     abi?: any
   },
   context: 'memory' | 'blockchain',
+  isSavedContract?: boolean
   removeInstance: (index: number) => void,
   index: number,
   gasEstimationPrompt: (msg: string) => JSX.Element,

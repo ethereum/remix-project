@@ -136,7 +136,7 @@ export function UniversalDappUI(props: UdappProps) {
       }
     }
     objToSave[env][network.id].push(props.instance)
-    localStorage.setItem('savedContracts', JSON.stringify(objToSave))
+    localStorage.setItem('savedContracts', JSON.stringify({ instance: objToSave, savedAt: Date.now()}))
   }
 
   const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
@@ -254,11 +254,11 @@ export function UniversalDappUI(props: UdappProps) {
           <div className="btn" style={{padding: '0.15rem'}}>
             <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
           </div>
-          <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+          { !props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSaveTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText14" />}>
               <i className="far fa-save p-2" aria-hidden="true" data-id="universalDappUiUdappSave" onClick={saveContract}></i>
             </CustomTooltip>
-          </div>
+          </div> ) : null }
         </div>
         
         <CustomTooltip placement="right" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
