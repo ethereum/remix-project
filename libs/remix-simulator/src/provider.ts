@@ -39,7 +39,7 @@ export type ProviderOptions = {
   blockNumber: number | 'latest',
   stateDb?: State,
   logDetails?: boolean
-  blocks?: Block[]
+  blocks?: string[]
 }
 
 export class Provider {
@@ -75,7 +75,7 @@ export class Provider {
     this.pendingRequests = []
     await this.vmContext.init()
     await this.Accounts.resetAccounts()
-    this.Transactions.init(this.Accounts.accounts, this.vmContext.blockNumber, this.vmContext.blocks)
+    this.Transactions.init(this.Accounts.accounts, this.vmContext.serializedBlocks)
     this.initialized = true
     if (this.pendingRequests.length > 0) {
       this.pendingRequests.map((req) => {
