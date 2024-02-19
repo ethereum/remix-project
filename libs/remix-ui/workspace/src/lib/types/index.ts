@@ -47,6 +47,15 @@ export interface FileType {
   child?: File[]
 }
 
+export type WorkspaceMetadata = {
+  name: string
+  isGitRepo: boolean
+  hasGitSubmodules?: boolean
+  branches?: {remote: any; name: string}[]
+  currentBranch?: string
+  isGist: string
+}
+
 export interface FilePanelType extends ViewPlugin {
   setWorkspace: ({ name, isLocalhost }, setEvent: boolean) => void
   createWorkspace: (name: string, workspaceTemplateName: string) => void

@@ -2,8 +2,10 @@ import { appPlatformTypes } from '@remix-ui/app'
 import React from 'react'
 import {Dropdown} from 'react-bootstrap'
 import {HamburgerMenuItem, HamburgerSubMenuItem} from './workspace-hamburger-item'
+import { WorkspaceMetadata } from '../types'
 
 export interface HamburgerMenuProps {
+  selectedWorkspace: WorkspaceMetadata
   createWorkspace: () => void
   renameCurrentWorkspace: () => void
   downloadCurrentWorkspace: () => void
@@ -25,7 +27,7 @@ export interface HamburgerMenuProps {
 }
 
 export function HamburgerMenu(props: HamburgerMenuProps) {
-  const {showIconsMenu, hideWorkspaceOptions, hideLocalhostOptions, hideFileOperations} = props
+  const {showIconsMenu, hideWorkspaceOptions, hideLocalhostOptions, hideFileOperations, selectedWorkspace} = props
   return (
     <>
       <HamburgerMenuItem
@@ -90,7 +92,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       ></HamburgerMenuItem>
       <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{pointerEvents: 'none'}} />
       <HamburgerMenuItem
-        kind="publishToGist"
+        kind={selectedWorkspace.isGist ? "updateGist" : "publishToGist"}
         fa="fab fa-github"
         hideOption={hideWorkspaceOptions || hideLocalhostOptions}
         actionOnClick={() => {
