@@ -9,19 +9,4 @@ export const createTerminal = async (shell: string = '', plugin: Plugin, working
   dispatch({ type: 'HIDE_ALL_TERMINALS', payload: null })
   dispatch({ type: 'ADD_TERMINAL', payload: { pid, queue: '', timeStamp: Date.now(), ref: null, hidden: false } })
 
-  /*
-  setTerminals(prevState => {
-    // set all to hidden
-    prevState.forEach(xtermState => {
-      xtermState.hidden = true
-    })
-    return [...prevState, {
-      pid: pid,
-      queue: '',
-      timeStamp: Date.now(),
-      ref: null,
-      hidden: false
-    }]
-  })
-  */
 }
