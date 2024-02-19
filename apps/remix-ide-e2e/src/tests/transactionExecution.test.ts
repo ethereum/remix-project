@@ -150,6 +150,14 @@ module.exports = {
       .click('*[data-id="deployAndRunClearInstances"]')
   },
 
+  'Should filter displayed transactions #group2': function (browser: NightwatchBrowser) {
+    browser
+      // it should contain: 0xd9145CCE52D386f254917e481eB44e9943F39138
+      .checkTerminalFilter('0xd9145CCE52D386f254917e481eB44e9943F39138', '0xd9145CCE52D386f254917e481eB44e9943F39138', false)
+      // it should not contain: 0xd9145CCE52D386f254917e481eB44e9943F39140 (it ends with 40)
+      .checkTerminalFilter('0xd9145CCE52D386f254917e481eB44e9943F39140', '0xd9145CCE52D386f254917e481eB44e9943F39138', true)
+  },
+
   'Should Compile and Deploy a contract which define a custom error, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
     browser.testContracts('customError.sol', sources[4]['customError.sol'], ['C'])
       .clickLaunchIcon('udapp')
