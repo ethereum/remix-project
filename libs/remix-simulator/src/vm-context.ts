@@ -66,7 +66,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   stateDb: State
   constructor (opts: DefaultStateManagerOpts = {}, stateDb?: State) {
     const db = new RemixMapDb(stateDb ? stateDb.db: null)
-    const trie = new Trie({ useKeyHashing: true, db, root: stateDb ? stateDb.root : null })
+    const trie = new Trie({ useKeyHashing: true, db, useRootPersistence: true})
     opts = { trie, ...opts }
     super(opts)
     this.stateDb = stateDb
@@ -332,9 +332,10 @@ export class VMContext {
   nodeUrl: string
   blockNumber: number | 'latest'
   stateDb: State
-  blocksData: Block[]
+  rawBlocks: string[]
+  serializedBlocks: Buffer[]
 
-  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: Block[]) {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[]) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
     this.currentFork = fork || 'merge'
@@ -347,7 +348,8 @@ export class VMContext {
     this.txByHash = {}
     this.exeResults = {}
     this.logsManager = new LogsManager()
-    this.blocksData = blocksData
+    this.rawBlocks = blocksData
+    this.serializedBlocks = []
   }
 
   async init () {
@@ -380,7 +382,13 @@ export class VMContext {
     const difficulty = consensusType === ConsensusType.ProofOfStake ? 0 : 69762765929000
 
     const common = new VMCommon({ chain: 'mainnet', hardfork })
-    const genesisBlock: Block = Block.fromBlockData({
+    const blocks = (this.rawBlocks || []).map(block => {
+      const serializedBlock = toBuffer(block)
+
+      this.serializedBlocks.push(serializedBlock)
+      return Block.fromRLPSerializedBlock(serializedBlock, { common })
+    })
+    const genesisBlock: Block = blocks.length > 0 && (blocks[0] || {}).isGenesis ? blocks[0] : Block.fromBlockData({
       header: {
         timestamp: (new Date().getTime() / 1000 | 0),
         number: 0,
@@ -389,13 +397,7 @@ export class VMContext {
         gasLimit: 8000000
       }
     }, { common, hardforkByBlockNumber: false, hardforkByTTD: undefined })
-    let blockchain
-
-    if (Array.isArray(this.blocksData) && this.blocksData.length > 0) {
-      blockchain = await Blockchain.fromBlocksData(this.blocksData, { common, validateBlocks: false, validateConsensus: false })
-    } else {
-      blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
-    }
+    const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
     const eei = new EEI(stateManager, common, blockchain)
     const evm = new EVM({ common, eei, allowUnlimitedContractSize: true })
     
@@ -407,13 +409,17 @@ export class VMContext {
       blockchain,
       evm
     })
-
     // VmProxy and VMContext are very intricated.
     // VmProxy is used to track the EVM execution (to listen on opcode execution, in order for instance to generate the VM trace)
     const web3vm = new VmProxy(this)
     web3vm.setVM(vm)
     this.addBlock(genesisBlock, true)
-    return { vm, web3vm, stateManager, common }
+    if (blocks.length > 0) blocks.splice(0, 1)
+    blocks.forEach(block => {
+      blockchain.putBlock(block)
+      this.addBlock(block, false, false, web3vm)
+    })
+    return { vm, web3vm, stateManager, common, blocks }
   }
 
   getCurrentFork () {
@@ -432,7 +438,7 @@ export class VMContext {
     return this.currentVm
   }
 
-  addBlock (block: Block, genesis?: boolean, isCall?: boolean) {
+  addBlock (block: Block, genesis?: boolean, isCall?: boolean, web3vm?: VmProxy) {
     let blockNumber = bigIntToHex(block.header.number)
     if (blockNumber === '0x') {
       blockNumber = '0x0'
@@ -442,7 +448,8 @@ export class VMContext {
     this.blocks[blockNumber] = block
     this.latestBlockNumber = blockNumber
 
-    if (!isCall && !genesis) this.logsManager.checkBlock(blockNumber, block, this.web3())
+    if (!isCall && !genesis && web3vm) this.logsManager.checkBlock(blockNumber, block, web3vm)
+    if (!isCall && !genesis && !web3vm) this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
   trackTx (txHash, block, tx) {

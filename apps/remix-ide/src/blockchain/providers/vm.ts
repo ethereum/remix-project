@@ -3,7 +3,6 @@ import { fromWei, toBigInt } from 'web3-utils'
 import { privateToAddress, hashPersonalMessage, isHexString } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
 import {toBuffer} from '@ethereumjs/util'
-import { Block } from '@ethereumjs/block'
 import { ExecutionContext } from '../execution-context'
 
 export class VMProvider {
@@ -79,8 +78,7 @@ export class VMProvider {
       if (stringifiedState) {
         try {
           const blockchainState = JSON.parse(stringifiedState)
-          const blocks: Block[] = blockchainState.blocks.map(block => Block.fromRLPSerializedBlock(toBuffer(block)))
-          const blockNumber = toBigInt(blockchainState.latestBlockNumber).toString(10)
+          const blockNumber = parseInt(blockchainState.latestBlockNumber, 16)
           const stateDb = { 
             root: toBuffer(blockchainState.root),
             db: new Map(Object.entries(blockchainState.db))
@@ -92,7 +90,7 @@ export class VMProvider {
             nodeUrl: provider?.options['nodeUrl'],
             blockNumber,
             stateDb,
-            blocks
+            blocks: blockchainState.blocks
           })
         } catch (e) {
           console.error(e)
