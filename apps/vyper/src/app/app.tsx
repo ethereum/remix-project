@@ -110,10 +110,10 @@ const App = () => {
         </div>
         <Form>
           <div className="d-flex flex-row gap-5 mb-3 mt-2">
-            <Form.Check inline id="remote-compiler" data-id="remote-compiler" type="radio" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} label="Remote Compiler" className={`${state.environment === 'remote' ? `d-flex mr-4 cursor-status` : 'd-flex mr-4'}`}
+            <Form.Check inline id="remote-compiler" data-id="remote-compiler" type="radio" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} label="Remote Compiler" className={`${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`}
             />
             <Form.Check inline id="local-compiler" data-id="local-compiler" checked={state.environment === 'local'} type="radio" name="local" value={state.environment} onChange={() => setEnvironment('local')} label="Local Compiler"
-              className={`${state.environment === 'local' ? `cursor-status` : ''}`}/>
+              className={`${state.environment === 'local' ? '' : `cursor-status`}`}/>
           </div>
         </Form>
         <span className="px-3 mt-1 mb-1 small text-warning">Specify the compiler version & EVM version in the .vy file</span>
