@@ -23,6 +23,7 @@ export const WARN = 'warn'
 export const ERROR = 'error'
 export const SCRIPT = 'script'
 export const CLEAR_CONSOLE = 'clearconsole'
+export const TOGGLE = 'toggle'
 export const LISTEN_ON_NETWORK = 'listenOnNetWork'
 export const CMD_HISTORY = 'cmdHistory'
 
