@@ -11,12 +11,15 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
 
   useEffect(() => {
     const fetchSavedContracts = async () => {
-      let allSavedContracts = JSON.parse(localStorage.getItem('savedContracts'))
-      const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-      network.id = network.id.trim() // For VM, id is ' - '
-      const env = await props.plugin.call('blockchain', 'getProvider')
-      if (allSavedContracts && allSavedContracts[env] && allSavedContracts[env][network.id]) {
-        savedContractForCurrentEnv.current = allSavedContracts[env][network.id]
+      let allSavedContracts = localStorage.getItem('savedContracts')
+      if (allSavedContracts) {
+        const savedContracts = JSON.parse(allSavedContracts)
+        const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
+        network.id = network.id.trim() // For VM, id is ' - '
+        const env = await props.plugin.call('blockchain', 'getProvider')
+        if (savedContracts[env] && savedContracts[env][network.id]) {
+          savedContractForCurrentEnv.current = savedContracts[env][network.id]
+        }
       }
    }
  

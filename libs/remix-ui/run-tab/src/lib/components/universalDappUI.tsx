@@ -121,16 +121,19 @@ export function UniversalDappUI(props: UdappProps) {
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
     // const contractToSave = {name: props.instance.contractData.name, address, abi: props.instance.contractData.abi, networkName: network.name}
     let savedContracts = localStorage.getItem('savedContracts')
-    let objToSave = JSON.parse(savedContracts)
-    if (!objToSave) {
+    let objToSave
+    if (!savedContracts) {
       objToSave = {}
       objToSave[env] = {}
       objToSave[env][network.id] = []
-    } else if (!objToSave[env]) {
-      objToSave[env] = {}
-      objToSave[env][network.id] = []
-    } else if (!objToSave[env][network.id]) {
-      objToSave[env][network.id] = []
+    } else {
+      objToSave = JSON.parse(savedContracts)
+      if (!objToSave[env]) {
+        objToSave[env] = {}
+        objToSave[env][network.id] = []
+      } else if (!objToSave[env][network.id]) {
+        objToSave[env][network.id] = []
+      }
     }
     objToSave[env][network.id].push(props.instance)
     localStorage.setItem('savedContracts', JSON.stringify(objToSave))
