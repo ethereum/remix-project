@@ -43,7 +43,7 @@ export interface FileType {
   path: string
   name: string
   isDirectory: boolean
-  type: 'folder' | 'file' | 'gist'
+  type: 'folder' | 'file'
   child?: File[]
 }
 
@@ -319,4 +319,4 @@ export interface Action<T extends keyof ActionPayloadTypes> {
 
 export type Actions = {[A in keyof ActionPayloadTypes]: Action<A>}[keyof ActionPayloadTypes]
 
-export type WorkspaceElement = 'folder' | 'gist' | 'file' | 'workspace'
+export type WorkspaceElement = 'folder' | 'file' | 'workspace'

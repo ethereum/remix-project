@@ -133,7 +133,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createNewFile(path, rootDir)
   }
 
-  const dispatchSetFocusElement = async (elements: {key: string; type: 'file' | 'folder' | 'gist'}[]) => {
+  const dispatchSetFocusElement = async (elements: {key: string; type: 'file' | 'folder' }[]) => {
     await setFocusElement(elements)
   }
 
@@ -173,7 +173,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await emitContextMenuEvent(cmd)
   }
 
-  const dispatchHandleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
+  const dispatchHandleClickFile = async (path: string, type: 'file' | 'folder' ) => {
     await handleClickFile(path, type)
   }
 

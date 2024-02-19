@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef, useContext, ChangeEvent} from 'react
 import {FormattedMessage, useIntl} from 'react-intl'
 import {Dropdown} from 'react-bootstrap'
 import {CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
+import {CopyToClipboard} from '@remix-ui/clipboard'
 import {FileExplorer} from './components/file-explorer' // eslint-disable-line
 import {FileSystemContext} from './contexts'
 import './css/remix-ui-workspace.css'
@@ -438,7 +439,7 @@ export function Workspace() {
     }
   }
 
-  const handleCopyClick = (path: string, type: 'folder' | 'gist' | 'file' | 'workspace') => {
+  const handleCopyClick = (path: string, type: 'folder' | 'file' | 'workspace') => {
     setState((prevState) => {
       return {...prevState, copyElement: [{key: path, type}]}
     })
@@ -507,7 +508,6 @@ export function Workspace() {
     const focusElement = global.fs.focusElement
     if (focusElement[0]) {
       if (focusElement[0].type === 'folder' && focusElement[0].key) return focusElement[0].key
-      else if (focusElement[0].type === 'gist' && focusElement[0].key) return focusElement[0].key
       else if (focusElement[0].type === 'file' && focusElement[0].key) return extractParentFromKey(focusElement[0].key) ? extractParentFromKey(focusElement[0].key) : ROOT_PATH
       else return ROOT_PATH
     }
@@ -988,6 +988,12 @@ export function Workspace() {
                     >
                       <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
                     </CustomTooltip>}
+
+                    {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
+                      <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{fontSize: '1.1rem', cursor: 'pointer'}} ></i>
+                    </CopyToClipboard>
+                    }
+
                   </span>
                 </div>
                 <div className='mx-2'>

@@ -4,7 +4,7 @@ export interface FileType {
   path: string,
   name: string,
   isDirectory: boolean,
-  type: 'folder' | 'file' | 'gist',
+  type: 'folder' | 'file',
   child?: File[]
 }
 
