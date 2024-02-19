@@ -37,9 +37,9 @@ module.exports = {
       .addFile('File.sol', { content: '' })
       .executeScriptInTerminal(`remix.loadgist('${gistid}')`)
       // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
-      .waitForElementVisible(`[data-id="treeViewLitreeViewItemgist-${gistid}"]`)
+      .waitForElementVisible(`[data-id="treeViewLitreeViewItemREADME.txt"]`)
       
-      .openFile(`gist-${gistid}/README.txt`)
+      .openFile(`README.txt`)
       // Remix publish to gist
       /* .click('*[data-id="fileExplorerNewFilepublishToGist"]')
          .pause(2000)
@@ -142,9 +142,9 @@ module.exports = {
       .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', testData.validGistId)
       .modalFooterOKClick('gisthandler')
       .pause(10000)
-      .openFile(`gist-${testData.validGistId}/README.txt`)
-      .waitForElementVisible(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt']`)
-      .assert.containsText(`div[data-path='default_workspace/gist-${testData.validGistId}/README.txt'] > span`, 'README.txt')
+      .openFile(`README.txt`)
+      .waitForElementVisible(`div[data-path='default_workspace/README.txt']`)
+      .assert.containsText(`div[data-path='default_workspace/README.txt'] > span`, 'README.txt')
     },
 
     'Load Gist from URL and verify truncated files are loaded #group3': function (browser: NightwatchBrowser) {
@@ -153,13 +153,12 @@ module.exports = {
         .url('http://127.0.0.1:8080/#gist=' + gistId) // loading the gist
         .refreshPage()
         .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
-        .waitForElementVisible(`#fileExplorerView li[data-path='gist-${gistId}/README.txt']`, 30000)
-        .openFile(`gist-${gistId}/scripts/deploy_with_ethers.ts`)
+        .waitForElementVisible(`#fileExplorerView li[data-path='README.txt']`, 30000)
+        .openFile(`scripts/deploy_with_ethers.ts`)
         .getEditorValue((content) => {
           browser.assert.ok(content !== '')
         })
-        .rightClickCustom(`li[data-path='gist-${gistId}'] div`) // saving the gist
-        .click('[data-id="contextMenuItempublishFolderToGist"]')
+        .click('*[data-id="fileExplorerNewFileupdateGist"]')
         .modalFooterOKClick('fileSystem')
         .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
         .assert.containsText('*[data-shared="tooltipPopup"]', 'Saving gist (' + gistId + ') ...')        
