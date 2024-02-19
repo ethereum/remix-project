@@ -117,8 +117,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await deleteAllWorkspaces()
   }
 
-  const dispatchPublishToGist = async (path?: string, type?: string) => {
-    await publishToGist(path, type)
+  const dispatchPublishToGist = async (path?: string) => {
+    await publishToGist(path)
   }
 
   const dispatchUploadFile = async (target?: SyntheticEvent, targetFolder?: string) => {

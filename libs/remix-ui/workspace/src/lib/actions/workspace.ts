@@ -609,6 +609,7 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
           Object.keys(items)
             .filter((item) => items[item].isDirectory)
             .map(async (folder) => {
+              const name = folder.replace(workspacesPath + '/', '')
               const isGitRepo: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.git')
               const hasGitSubmodules: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.gitmodules')
               if (isGitRepo) {
@@ -618,17 +619,20 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
                 branches = await getGitRepoBranches(folder)
                 currentBranch = await getGitRepoCurrentBranch(folder)
                 return {
-                  name: folder.replace(workspacesPath + '/', ''),
+                  name,
                   isGitRepo,
                   branches,
                   currentBranch,
-                  hasGitSubmodules
+                  hasGitSubmodules,
+                  isGist: null
                 }
               } else {
+                const gistId = await plugin.call('filePanel', 'isGist', name)
                 return {
-                  name: folder.replace(workspacesPath + '/', ''),
+                  name,
                   isGitRepo,
-                  hasGitSubmodules
+                  hasGitSubmodules,
+                  isGist: gistId
                 }
               }
             })

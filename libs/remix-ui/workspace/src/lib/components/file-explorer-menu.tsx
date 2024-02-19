@@ -34,6 +34,13 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         platforms:[appPlatformTypes.web]
       },
       {
+        action: 'updateGist',
+        title: 'Update the cdddurrent gist',
+        icon: 'fab fa-github',
+        placement: 'bottom-start',
+        platforms:[appPlatformTypes.web]
+      },
+      {
         action: 'uploadFile',
         title: 'Upload files into current workspace',
         icon: 'far fa-upload',
@@ -46,13 +53,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         icon: 'far fa-folder-upload',
         placement: 'top',
         platforms:[appPlatformTypes.web]
-      },
-      {
-        action: 'updateGist',
-        title: 'Update the current [gist] explorer',
-        icon: 'fab fa-github',
-        placement: 'bottom-start',
-        platforms:[appPlatformTypes.web]
       }
     ].filter(
       (item) =>
@@ -64,16 +64,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     actions: {}
   })
   const enableDirUpload = {directory: '', webkitdirectory: ''}
-
-  useEffect(() => {
-    const actions = {
-      updateGist: () => {}
-    }
-
-    setState((prevState) => {
-      return {...prevState, actions}
-    })
-  }, [])
 
   return (
     (!global.fs.browser.isSuccessfulWorkspace ? null :
@@ -165,7 +155,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                         props.createNewFile()
                       } else if (action === 'createNewFolder') {
                         props.createNewFolder()
-                      } else if (action === 'publishToGist') {
+                      } else if (action === 'publishToGist' || action == 'updateGist') {
                         props.publishToGist()
                       } else {
                         state.actions[action]()
