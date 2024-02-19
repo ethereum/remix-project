@@ -1,13 +1,12 @@
 import { CustomTooltip } from '@remix-ui/helper'
-import React, { useState, useEffect, useReducer, useRef, useContext } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useRef, useContext } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
+import { listenOnNetworkAction } from '../actions/terminalAction'
 import { TerminalContext } from '../context/context'
-import { initialState, registerCommandReducer } from '../reducers/terminalReducer'
 import { RemixUiTerminalProps } from '../types/terminalTypes'
 
 export const RemixUITerminalBar = (props: RemixUiTerminalProps) => {
   const { newstate: state, dispatch } = useContext(TerminalContext)
-  const [isVM, setIsVM] = useState(false)
   const intl = useIntl()
   const terminalMenu = useRef(null)
 
@@ -28,11 +27,12 @@ export const RemixUITerminalBar = (props: RemixUiTerminalProps) => {
   }
 
   function listenOnNetwork(event: any): void {
-    throw new Error('Function not implemented.')
+    const isListening = event.target.checked
+    listenOnNetworkAction(props.plugin, isListening)
   }
 
   function setSearchInput(arg0: string): void {
-    throw new Error('Function not implemented.')
+    dispatch({ type: 'search', payload: arg0 })
   }
 
   return (<>
@@ -62,7 +62,7 @@ export const RemixUITerminalBar = (props: RemixUiTerminalProps) => {
           placement="top"
           tooltipId="terminalClear"
           tooltipClasses="text-nowrap"
-          tooltipText={intl.formatMessage({ id: isVM ? 'terminal.listenVM' : 'terminal.listenTitle' })}
+          tooltipText={intl.formatMessage({ id: state.isVM ? 'terminal.listenVM' : 'terminal.listenTitle' })}
         >
           <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
             <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
@@ -71,7 +71,7 @@ export const RemixUITerminalBar = (props: RemixUiTerminalProps) => {
                 id="listenNetworkCheck"
                 onChange={listenOnNetwork}
                 type="checkbox"
-                disabled={isVM}
+                disabled={state.isVM}
               />
             </CustomTooltip>
             <label
