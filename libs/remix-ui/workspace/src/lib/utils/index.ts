@@ -1,18 +1,18 @@
 import { appPlatformTypes } from '@remix-ui/app'
 import { FileType } from '@remix-ui/file-decorators'
-import { WorkspaceProps, MenuItems } from '../types'
+import { MenuItems } from '../types'
 
 export const contextMenuActions: MenuItems = [{
   id: 'newFile',
   name: 'New File',
-  type: ['folder', 'gist', 'workspace'],
+  type: ['folder', 'workspace'],
   multiselect: false,
   label: '',
   group: 0
 }, {
   id: 'newFolder',
   name: 'New Folder',
-  type: ['folder', 'gist', 'workspace'],
+  type: ['folder', 'workspace'],
   multiselect: false,
   label: '',
   group: 0
@@ -26,7 +26,7 @@ export const contextMenuActions: MenuItems = [{
 }, {
   id: 'delete',
   name: 'Delete',
-  type: ['file', 'folder', 'gist'],
+  type: ['file', 'folder'],
   multiselect: false,
   label: '',
   group: 0
@@ -81,14 +81,6 @@ export const contextMenuActions: MenuItems = [{
   label: '',
   group: 3
 }, {
-  id: 'pushChangesToGist',
-  name: 'Push changes to gist',
-  type: ['gist'],
-  multiselect: false,
-  label: '',
-  group: 4,
-  platform: appPlatformTypes.web
-}, {
   id: 'publishFolderToGist',
   name: 'Publish folder to gist',
   type: ['folder'],
@@ -107,7 +99,7 @@ export const contextMenuActions: MenuItems = [{
 }, {
   id: 'uploadFile',
   name: 'Load a Local File',
-  type: ['folder', 'gist', 'workspace'],
+  type: ['folder', 'workspace'],
   multiselect: false,
   label: 'Load a Local File',
   group: 4,

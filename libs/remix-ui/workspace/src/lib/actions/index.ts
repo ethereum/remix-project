@@ -320,7 +320,7 @@ export const createNewFile = async (path: string, rootDir: string) => {
   }
 }
 
-export const setFocusElement = async (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => {
+export const setFocusElement = async (elements: { key: string, type: 'file' | 'folder' }[]) => {
   dispatch(focusElement(elements))
 }
 
@@ -435,7 +435,7 @@ export const emitContextMenuEvent = async (cmd: customAction) => {
   await plugin.call(cmd.id, cmd.name, cmd)
 }
 
-export const handleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
+export const handleClickFile = async (path: string, type: 'file' | 'folder' ) => {
   if (type === 'file' && path.endsWith('.md')) {
     // just opening the preview
     await plugin.call('doc-viewer' as any, 'viewDocs', [path])
