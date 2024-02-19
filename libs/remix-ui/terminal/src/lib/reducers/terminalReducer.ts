@@ -1,4 +1,4 @@
-import {CLEAR_CONSOLE, CMD_HISTORY, EMPTY_BLOCK, ERROR, HTML, INFO, KNOWN_TRANSACTION, LISTEN_ON_NETWORK, LOG, TYPEWRITERLOG, TYPEWRITERWARNING, TYPEWRITERSUCCESS, NEW_TRANSACTION, SCRIPT, UNKNOWN_TRANSACTION, WARN, TOGGLE} from '../types/terminalTypes'
+import {CLEAR_CONSOLE, CMD_HISTORY, EMPTY_BLOCK, ERROR, HTML, INFO, KNOWN_TRANSACTION, LISTEN_ON_NETWORK, LOG, TYPEWRITERLOG, TYPEWRITERWARNING, TYPEWRITERSUCCESS, NEW_TRANSACTION, SCRIPT, UNKNOWN_TRANSACTION, WARN, TOGGLE, SEARCH, SET_ISVM} from '../types/terminalTypes'
 
 export const initialState = {
   journalBlocks: [],
@@ -20,6 +20,9 @@ export const initialState = {
   _INDEXcommandsMain: {},
   message: [],
   isOpen: true,
+  searchInput: '',
+  clearConsole: false,
+  isVM: true
 }
 
 export const registerCommandReducer = (state, action) => {
@@ -71,6 +74,13 @@ export const registerCommandReducer = (state, action) => {
       return {
         ...state,
         ...state.journalBlocks.splice(0),
+        clearConsole: true,
+      }
+
+    case SEARCH:
+      return {
+        ...state,
+        searchInput: action.payload,
       }
 
     case TOGGLE:
@@ -78,10 +88,17 @@ export const registerCommandReducer = (state, action) => {
         ...state,
         isOpen: !state.isOpen,
       }
+
     case LISTEN_ON_NETWORK:
       return {
         ...state,
         journalBlocks: initialState.journalBlocks.push({message: action.payload.message, style: 'text-log'}),
+      }
+
+    case SET_ISVM:
+      return {
+        ...state,
+        isVM: action.payload,
       }
     default:
       return {state}

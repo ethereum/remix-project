@@ -26,7 +26,7 @@ import RenderUnKnownTransactions from './components/RenderUnknownTransactions' /
 import RenderCall from './components/RenderCall' // eslint-disable-line
 import RenderKnownTransactions from './components/RenderKnownTransactions' // eslint-disable-line
 import parse from 'html-react-parser'
-import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION } from './types/terminalTypes'
+import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, SET_ISVM, UNKNOWN_TRANSACTION } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
 import { TerminalContext } from './context/context'
 const _paq = (window._paq = window._paq || [])
@@ -59,7 +59,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     handleHide: () => {},
   })
 
-  const [clearConsole, setClearConsole] = useState(false)
   const [isVM, setIsVM] = useState(false)
   const [paste, setPaste] = useState(false)
   const [storage, setStorage] = useState<any>(null)
@@ -81,7 +80,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     commandHistoryIndex: 0,
   })
 
-  const [searchInput, setSearchInput] = useState('')
   const [showTableHash, setShowTableHash] = useState([])
 
   // terminal inputRef
@@ -101,7 +99,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   useEffect(() => {
     props.plugin.on('network', 'providerChanged', (provider) => {
-      setIsVM(provider.startsWith('vm-'))
+      dispatch({ type: SET_ISVM, payload: provider.startsWith('vm-') })
     })
 
     props.onReady({
@@ -402,20 +400,17 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
+  useEffect(() => {
+    console.log('clearConsole change', newstate.clearConsole)
+    if(newstate.clearConsole){
+      typeWriterIndexes.current = []
+      inputEl.current.focus()
+    }
+  },[newstate.clearConsole])
+
   /* end of block content that gets rendered from script Runner */
 
-  const handleClearConsole = () => {
-    setClearConsole(true)
-    typeWriterIndexes.current = []
-    dispatch({ type: 'clearconsole', payload: [] })
-    inputEl.current.focus()
-  }
   /* start of autoComplete */
-
-  const listenOnNetwork = (e: any) => {
-    const isListening = e.target.checked
-    listenOnNetworkAction(props.plugin, isListening)
-  }
 
   const onChange = (event: any) => {
     event.preventDefault()
@@ -597,7 +592,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           {handleAutoComplete()}
           <div className="position-relative d-flex flex-column-reverse h-100">
             <div id="journal" className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0" data-id="terminalJournal">
-              {!clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version} />}
+              {!newstate.clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version} />}
               {newstate.journalBlocks &&
               newstate.journalBlocks.map((x, index) => {
                 if (x.name === EMPTY_BLOCK) {
@@ -612,7 +607,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   )
                 } else if (x.name === UNKNOWN_TRANSACTION) {
                   return x.message
-                    .filter((x) => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || x.tx.to.includes(searchInput))
+                    .filter((x) => x.tx.hash.includes(newstate.searchInput) || x.tx.from.includes(newstate.searchInput) || x.tx.to.includes(newstate.searchInput))
                     .map((trans) => {
                       return (
                         <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
