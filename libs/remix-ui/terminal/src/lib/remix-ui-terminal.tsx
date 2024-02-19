@@ -28,7 +28,7 @@ import RenderKnownTransactions from './components/RenderKnownTransactions' // es
 import parse from 'html-react-parser'
 import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, SET_ISVM, UNKNOWN_TRANSACTION } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
-import { TerminalContext } from './context/context'
+import { TerminalContext } from './context'
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
@@ -41,7 +41,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
   const [isOpen, setIsOpen] = useState<boolean>(true)
-  const { newstate, dispatch } = useContext(TerminalContext)
+  const { terminalState, dispatch } = useContext(TerminalContext)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
   const [toaster, setToaster] = useState(false)
@@ -130,10 +130,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   // events
   useEffect(() => {
     initListeningOnNetwork(props.plugin, scriptRunnerDispatch)
-    registerLogScriptRunnerAction(on, 'log', newstate.commands, scriptRunnerDispatch)
-    registerInfoScriptRunnerAction(on, 'info', newstate.commands, scriptRunnerDispatch)
-    registerWarnScriptRunnerAction(on, 'warn', newstate.commands, scriptRunnerDispatch)
-    registerErrorScriptRunnerAction(on, 'error', newstate.commands, scriptRunnerDispatch)
+    registerLogScriptRunnerAction(on, 'log', terminalState.commands, scriptRunnerDispatch)
+    registerInfoScriptRunnerAction(on, 'info', terminalState.commands, scriptRunnerDispatch)
+    registerWarnScriptRunnerAction(on, 'warn', terminalState.commands, scriptRunnerDispatch)
+    registerErrorScriptRunnerAction(on, 'error', terminalState.commands, scriptRunnerDispatch)
     registerCommandAction('html', _blocksRenderer('html'), { activate: true }, dispatch)
     registerCommandAction('log', _blocksRenderer('log'), { activate: true }, dispatch)
     registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
@@ -155,13 +155,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }, [autoCompletState.text])
 
   useEffect(() => {
-    console.log('newstate.journalBlocks change', newstate.journalBlocks)
-  }, [newstate])
-
-  useEffect(() => {
     scrollToBottom()
-    console.log('newstate.journalBlocks.length', newstate.journalBlocks)
-  }, [newstate.journalBlocks.length, toaster])
+  }, [terminalState.journalBlocks.length, toaster])
 
   function execute(file, cb) {
     function _execute(content, cb) {
@@ -170,7 +165,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         if (cb) cb()
         return
       }
-      newstate.commands.script(content)
+      terminalState.commands.script(content)
     }
 
     if (typeof file === 'undefined') {
@@ -306,7 +301,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         const script = autoCompletState.userInput.trim() // inputEl.current.innerText.trim()
         if (script.length) {
           cmdHistoryDispatch({ type: 'cmdHistory', payload: { script } })
-          newstate.commands.script(wrapScript(script))
+          terminalState.commands.script(wrapScript(script))
         }
         setAutoCompleteState((prevState) => ({ ...prevState, userInput: '' }))
         inputEl.current.innerText = ''
@@ -316,11 +311,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           showSuggestions: false,
         }))
       }
-    } else if (newstate._commandHistory.length && event.which === 38 && !autoCompletState.showSuggestions && autoCompletState.userInput === '') {
+    } else if (terminalState._commandHistory.length && event.which === 38 && !autoCompletState.showSuggestions && autoCompletState.userInput === '') {
       event.preventDefault()
       setAutoCompleteState((prevState) => ({
         ...prevState,
-        userInput: newstate._commandHistory[0],
+        userInput: terminalState._commandHistory[0],
       }))
     } else if (event.which === 38 && autoCompletState.showSuggestions) {
       event.preventDefault()
@@ -401,12 +396,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
-    console.log('clearConsole change', newstate.clearConsole)
-    if(newstate.clearConsole){
+    if(terminalState.clearConsole){
       typeWriterIndexes.current = []
       inputEl.current.focus()
     }
-  },[newstate.clearConsole])
+  },[terminalState.clearConsole])
 
   /* end of block content that gets rendered from script Runner */
 
@@ -592,9 +586,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           {handleAutoComplete()}
           <div className="position-relative d-flex flex-column-reverse h-100">
             <div id="journal" className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0" data-id="terminalJournal">
-              {!newstate.clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version} />}
-              {newstate.journalBlocks &&
-              newstate.journalBlocks.map((x, index) => {
+              {!terminalState.clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version} />}
+              {terminalState.journalBlocks &&
+              terminalState.journalBlocks.map((x, index) => {
                 if (x.name === EMPTY_BLOCK) {
                   return (
                     <div className={classNameBlock} data-id="block" key={index}>
@@ -607,7 +601,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   )
                 } else if (x.name === UNKNOWN_TRANSACTION) {
                   return x.message
-                    .filter((x) => x.tx.hash.includes(newstate.searchInput) || x.tx.from.includes(newstate.searchInput) || x.tx.to.includes(newstate.searchInput))
+                    .filter((x) => x.tx.hash.includes(terminalState.searchInput) || x.tx.from.includes(terminalState.searchInput) || x.tx.to.includes(terminalState.searchInput))
                     .map((trans) => {
                       return (
                         <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
