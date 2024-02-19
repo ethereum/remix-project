@@ -1,6 +1,6 @@
 /* global Node, requestAnimationFrame */   // eslint-disable-line
 import React from 'react' // eslint-disable-line
-import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
+import { RemixUiTerminal, RemixUITerminalWrapper } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import {Registry} from '@remix-project/remix-lib'
@@ -26,6 +26,34 @@ const profile = {
 }
 
 class Terminal extends Plugin {
+  fileImport: CompilerImports
+  event: any
+  globalRegistry: Registry
+  element: HTMLDivElement
+  eventsDecoder: any
+  txListener: any
+  _deps: { fileManager: any; editor: any; compilersArtefacts: any; offsetToLineColumnConverter: any }
+  commandHelp: { 'remix.loadgist(id)': string; 'remix.loadurl(url)': string; 'remix.execute(filepath)': string; 'remix.exeCurrent()': string; 'remix.help()': string }
+  blockchain: any
+  vm: typeof vm
+  _api: any
+  _opts: any
+  config: any
+  version: string
+  data: {
+    lineLength: any // ????
+    session: any[]; activeFilters: { commands: {}; input: string }; filterFns: {}
+  }
+  _view: { el: any; bar: any; input: any; term: any; journal: any; cli: any }
+  _components: {}
+  _commands: {}
+  commands: {}
+  _JOURNAL: any[]
+  _jobs: any[]
+  _INDEX: any
+  _shell: any
+  dispatch: any
+  terminalApi: any
   constructor(opts, api) {
     super(profile)
     this.fileImport = new CompilerImports()
@@ -114,9 +142,8 @@ class Terminal extends Plugin {
   }
 
   updateComponent(state) {
-    return (Registry.getInstance().get('platform').api.isDesktop()) ? <RemixUiXterminals onReady={state.onReady} plugin={state.plugin}>
-    </RemixUiXterminals>
-      : <RemixUiTerminal
+    return (Registry.getInstance().get('platform').api.isDesktop()) ? <RemixUiXterminals onReady={state.onReady} plugin={state.plugin}/>
+      : <RemixUITerminalWrapper
         plugin={state.plugin}
         onReady={state.onReady}
         visible={true}
