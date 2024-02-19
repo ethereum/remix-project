@@ -116,10 +116,10 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const saveContract = async() => {
-    const address = ethJSUtil.toChecksumAddress(props.instance.address)
+    // const address = ethJSUtil.toChecksumAddress(props.instance.address)
     const env = await props.plugin.call('blockchain', 'getProvider')
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-    const contractToSave = {name: props.instance.contractData.name, address, abi: props.instance.contractData.abi, networkName: network.name}
+    // const contractToSave = {name: props.instance.contractData.name, address, abi: props.instance.contractData.abi, networkName: network.name}
     let savedContracts = localStorage.getItem('savedContracts')
     let objToSave = JSON.parse(savedContracts)
     if (!objToSave) {
@@ -132,7 +132,7 @@ export function UniversalDappUI(props: UdappProps) {
     } else if (!objToSave[env][network.id]) {
       objToSave[env][network.id] = []
     }
-    objToSave[env][network.id].push(contractToSave)
+    objToSave[env][network.id].push(props.instance)
     localStorage.setItem('savedContracts', JSON.stringify(objToSave))
   }
 
