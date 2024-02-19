@@ -225,14 +225,19 @@ export type SolidityConfiguration = {
   runs: string
 }
 
-export const publishToGist = async (path?: string, type?: string) => {
+export const publishToGist = async (path?: string) => {
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = path || '/'
   
   try {
-    const name = await plugin.call('filePanel', 'getCurrentWorkspace')
-    const id = name && name.startsWith('gist ') ? name.split(' ')[1] : null
-
+    let id
+    if (path) {
+      // check if the current folder is a gist folder
+      id = await plugin.call('filePanel', 'isGist', extractNameFromKey(path))
+    } else {
+      // check if the current workspace is a gist workspace
+      id = await plugin.call('filePanel', 'isGist')
+    }
     const packaged = await packageGistFiles(folder)
     // check for token
     const config = plugin.registry.get('config').api
@@ -520,11 +525,6 @@ const packageGistFiles = async (directory) => {
           await workspaceProvider.copyFolderToJson(directory, ({ path, content }) => {
             if (/^\s+$/.test(content) || !content.length) {
               content = '// this line is added to create a gist. Empty file is not allowed.'
-            }
-            if (path.indexOf('gist-') === 0) {
-              path = path.split('/')
-              path.shift()
-              path = path.join('/')
             }
             path = path.replace(/\//g, '...')
             ret[path] = { content }

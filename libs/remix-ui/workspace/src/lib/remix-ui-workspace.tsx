@@ -32,6 +32,7 @@ export function Workspace() {
     hasGitSubmodules?: boolean
     branches?: {remote: any; name: string}[]
     currentBranch?: string
+    isGist: string
   }>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const [showIconsMenu, hideIconsMenu] = useState<boolean>(false)
@@ -73,7 +74,7 @@ export function Workspace() {
     },
     mouseOverElement: null,
     showContextMenu: false,
-    reservedKeywords: [ROOT_PATH, 'gist-'],
+    reservedKeywords: [ROOT_PATH],
     copyElement: [],
     dragStatus: false
   })
@@ -922,7 +923,6 @@ export function Workspace() {
       </>
     )
   }
-
   return (
     <div className="d-flex flex-column justify-content-between h-100">
       <div
@@ -1077,11 +1077,10 @@ export function Workspace() {
                 </div>
               )}
               {!(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && global.fs.mode === 'browser' && currentWorkspace !== NO_WORKSPACE && (
-
                 <FileExplorer
                   fileState={global.fs.browser.fileState}
                   name={currentWorkspace}
-                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '']}
+                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '']}
                   contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                   removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                   files={global.fs.browser.files}

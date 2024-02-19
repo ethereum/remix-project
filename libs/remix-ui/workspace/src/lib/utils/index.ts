@@ -112,16 +112,7 @@ export const contextMenuActions: MenuItems = [{
   label: 'Load a Local File',
   group: 4,
   platform: appPlatformTypes.web
-}, {
-  id: 'publishToGist',
-  name: 'Push changes to gist',
-  type: ['folder', 'gist'],
-  multiselect: false,
-  label: 'Publish all to Gist',
-  group: 4,
-  platform: appPlatformTypes.web
-},
-{
+},{
   id: 'publishWorkspace',
   name: 'Publish Workspace to Gist',
   type: ['workspace'],
