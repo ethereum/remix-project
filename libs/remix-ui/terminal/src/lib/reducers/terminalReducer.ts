@@ -1,4 +1,4 @@
-import {CLEAR_CONSOLE, CMD_HISTORY, EMPTY_BLOCK, ERROR, HTML, INFO, KNOWN_TRANSACTION, LISTEN_ON_NETWORK, LOG, TYPEWRITERLOG, TYPEWRITERWARNING, TYPEWRITERSUCCESS, NEW_TRANSACTION, SCRIPT, UNKNOWN_TRANSACTION, WARN, TOGGLE, SEARCH, SET_ISVM} from '../types/terminalTypes'
+import {CLEAR_CONSOLE, CMD_HISTORY, EMPTY_BLOCK, ERROR, HTML, INFO, KNOWN_TRANSACTION, LISTEN_ON_NETWORK, LOG, TYPEWRITERLOG, TYPEWRITERWARNING, TYPEWRITERSUCCESS, NEW_TRANSACTION, SCRIPT, UNKNOWN_TRANSACTION, WARN, TOGGLE, SEARCH, SET_ISVM, SET_OPEN} from '../types/terminalTypes'
 
 export const initialState = {
   journalBlocks: [],
@@ -87,6 +87,12 @@ export const registerCommandReducer = (state, action) => {
       return {
         ...state,
         isOpen: !state.isOpen,
+      }
+
+    case SET_OPEN:
+      return {
+        ...state,
+        isOpen: action.payload,
       }
 
     case LISTEN_ON_NETWORK:
