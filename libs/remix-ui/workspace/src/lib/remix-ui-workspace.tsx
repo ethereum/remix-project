@@ -957,6 +957,7 @@ export function Workspace() {
                             downloadCurrentWorkspace={downloadCurrentWorkspace}
                             deleteCurrentWorkspace={deleteCurrentWorkspace}
                             deleteAllWorkspaces={deleteAllWorkspaces}
+                            pushChangesToGist={pushChangesToGist}
                             cloneGitRepository={cloneGitRepository}
                             downloadWorkspaces={downloadWorkspaces}
                             restoreBackup={restoreBackup}
