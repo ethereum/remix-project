@@ -155,10 +155,10 @@ export interface FileExplorerContextMenuProps {
   renamePath: (path: string, type: string) => void
   downloadPath: (path: string) => void
   hideContextMenu: () => void
-  publishToGist?: (path?: string, type?: string) => void
-  pushChangesToGist?: (path?: string, type?: string) => void
-  publishFolderToGist?: (path?: string, type?: string) => void
-  publishFileToGist?: (path?: string, type?: string) => void
+  publishToGist?: (path?: string) => void
+  pushChangesToGist?: (path?: string) => void
+  publishFolderToGist?: (path?: string) => void
+  publishFileToGist?: (path?: string) => void
   runScript?: (path: string) => void
   emit?: (cmd: customAction) => void
   pageX: number

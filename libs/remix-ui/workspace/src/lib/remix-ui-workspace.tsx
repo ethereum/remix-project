@@ -571,34 +571,34 @@ export function Workspace() {
     }
   }
 
-  const pushChangesToGist = (path?: string, type?: string) => {
+  const pushChangesToGist = (path?: string) => {
     global.modal(
       intl.formatMessage({id: 'filePanel.createPublicGist'}),
       intl.formatMessage({id: 'filePanel.createPublicGistMsg1'}),
       intl.formatMessage({id: 'filePanel.ok'}),
-      () => toGist(path, type),
+      () => toGist(path),
       intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
   }
 
-  const publishFolderToGist = (path?: string, type?: string) => {
+  const publishFolderToGist = (path?: string) => {
     global.modal(
       intl.formatMessage({id: 'filePanel.createPublicGist'}),
       intl.formatMessage({id: 'filePanel.createPublicGistMsg2'}, {path}),
       intl.formatMessage({id: 'filePanel.ok'}),
-      () => toGist(path, type),
+      () => toGist(path),
       intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
   }
 
-  const publishFileToGist = (path?: string, type?: string) => {
+  const publishFileToGist = (path?: string) => {
     global.modal(
       intl.formatMessage({id: 'filePanel.createPublicGist'}),
       intl.formatMessage({id: 'filePanel.createPublicGistMsg3'}, {path}),
       intl.formatMessage({id: 'filePanel.ok'}),
-      () => toGist(path, type),
+      () => toGist(path),
       intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
@@ -633,8 +633,8 @@ export function Workspace() {
     )
   }
 
-  const toGist = (path?: string, type?: string) => {
-    global.dispatchPublishToGist(path, type)
+  const toGist = (path?: string) => {
+    global.dispatchPublishToGist(path)
   }
 
   const editModeOn = (path: string, type: string, isNew = false) => {
