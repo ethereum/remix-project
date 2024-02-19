@@ -34,7 +34,6 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
       })
 
       plugin.on('xterm', 'new', async (pid: number) => {
-        console.log('new terminal')
         dispatchXterm({ type: 'SHOW_OUTPUT', payload: false })
         dispatchXterm({ type: 'ADD_TERMINAL', payload: { pid, queue: '', timeStamp: Date.now(), ref: null, hidden: false } })
       })
