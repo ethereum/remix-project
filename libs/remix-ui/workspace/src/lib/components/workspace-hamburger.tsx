@@ -9,6 +9,7 @@ export interface HamburgerMenuProps {
   downloadCurrentWorkspace: () => void
   deleteCurrentWorkspace: () => void
   deleteAllWorkspaces: () => void
+  pushChangesToGist: () => void
   cloneGitRepository: () => void
   downloadWorkspaces: () => void
   restoreBackup: () => void
@@ -83,6 +84,17 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
         hideOption={hideWorkspaceOptions || hideLocalhostOptions}
         actionOnClick={() => {
           props.deleteCurrentWorkspace()
+          props.hideIconsMenu(!showIconsMenu)
+        }}
+        platforms={[appPlatformTypes.web]}
+      ></HamburgerMenuItem>
+      <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{pointerEvents: 'none'}} />
+      <HamburgerMenuItem
+        kind="publishToGist"
+        fa="fab fa-github"
+        hideOption={hideWorkspaceOptions || hideLocalhostOptions}
+        actionOnClick={() => {
+          props.pushChangesToGist()
           props.hideIconsMenu(!showIconsMenu)
         }}
         platforms={[appPlatformTypes.web]}

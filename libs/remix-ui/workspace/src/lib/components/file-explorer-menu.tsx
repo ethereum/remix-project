@@ -27,20 +27,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         platforms:[appPlatformTypes.web, appPlatformTypes.desktop]
       },
       {
-        action: 'publishToGist',
-        title: 'Publish current workspace to GitHub gist',
-        icon: 'fab fa-github',
-        placement: 'top',
-        platforms:[appPlatformTypes.web]
-      },
-      {
-        action: 'updateGist',
-        title: 'Update the cdddurrent gist',
-        icon: 'fab fa-github',
-        placement: 'bottom-start',
-        platforms:[appPlatformTypes.web]
-      },
-      {
         action: 'uploadFile',
         title: 'Upload files into current workspace',
         icon: 'far fa-upload',
