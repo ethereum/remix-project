@@ -15,17 +15,15 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
       if (allSavedContracts) {
         const savedContracts = JSON.parse(allSavedContracts)
         const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-        network.id = network.id.trim() // For VM, id is ' - '
+        if(network.id === ' - ') network.id = network.id.trim() // For VM, id is ' - '
         const env = await props.plugin.call('blockchain', 'getProvider')
         if (savedContracts[env] && savedContracts[env][network.id]) {
           savedContractForCurrentEnv.current = savedContracts[env][network.id]
         }
       }
    }
- 
    fetchSavedContracts()
-
-  }, [])
+  }, [props.plugin.REACT_API.networkName])
 
   const clearInstance = () => {
     props.clearInstances()
@@ -50,6 +48,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 <UniversalDappUI
                   key={index}
                   instance={instance}
+                  isSavedContract={true}
                   context={props.getContext()}
                   removeInstance={props.removeInstance}
                   index={index}
@@ -70,7 +69,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           </span>
         )}
 
-      <div className="d-flex justify-content-between align-items-center pl-2 mb-2">
+      <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-3">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
           <label className="udapp_deployedContracts">
             <FormattedMessage id="udapp.deployedContracts" />
