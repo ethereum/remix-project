@@ -312,6 +312,7 @@ export function RunTabUI(props: RunTabProps) {
             currentFile={currentfile}
           />
           <InstanceContainerUI
+            plugin={plugin}
             instances={runTab.instances}
             clearInstances={removeInstances}
             removeInstance={removeSingleInstance}
