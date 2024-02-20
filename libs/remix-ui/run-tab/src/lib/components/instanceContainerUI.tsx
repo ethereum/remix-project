@@ -96,6 +96,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
               <UniversalDappUI
                 key={index}
                 instance={instance}
+                isSavedContract={false}
                 context={props.getContext()}
                 removeInstance={props.removeInstance}
                 index={index}

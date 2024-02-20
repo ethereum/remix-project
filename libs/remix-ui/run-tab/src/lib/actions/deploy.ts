@@ -282,6 +282,7 @@ export const runTransactions = (
   plugin: RunTab,
   dispatch: React.Dispatch<any>,
   instanceIndex: number,
+  isSavedContract: boolean,
   lookupOnly: boolean,
   funcABI: FuncABI,
   inputsValues: string,
@@ -318,7 +319,7 @@ export const runTransactions = (
     (returnValue) => {
       const response = txFormat.decodeResponse(returnValue, funcABI)
 
-      dispatch(setDecodedResponse(instanceIndex, response, funcIndex))
+      dispatch(setDecodedResponse(instanceIndex, response, funcIndex, isSavedContract))
     },
     (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       confirmationHandler(plugin, dispatch, mainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb)

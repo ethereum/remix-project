@@ -145,6 +145,7 @@ export function UniversalDappUI(props: UdappProps) {
 
     props.runTransactions(
       props.index,
+      props.isSavedContract,
       lookupOnly,
       funcABI,
       inputsValues,
