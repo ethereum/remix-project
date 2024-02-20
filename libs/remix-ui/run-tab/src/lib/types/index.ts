@@ -96,6 +96,17 @@ export interface RunTabState {
     }[],
     error: string
   },
+  savedInstances: {
+    instanceList: {
+      contractData?: ContractData,
+      address: string,
+      balance?: number,
+      name: string,
+      decodedResponse?: Record<number, any>,
+      abi?: any
+    }[],
+    error: string
+  },
   recorder: {
     pathToScenario: string,
     transactionCount: number
@@ -285,6 +296,17 @@ export interface RecorderProps {
 
 export interface InstanceContainerProps {
   instances: {
+    instanceList: {
+      contractData?: ContractData,
+      address: string,
+      balance?: number,
+      name: string,
+      decodedResponse?: Record<number, any>,
+      abi?: any
+    }[],
+    error: string
+  },
+  savedInstances: {
     instanceList: {
       contractData?: ContractData,
       address: string,
