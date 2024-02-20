@@ -42,7 +42,7 @@ export class RemixClient extends PluginClient {
     this.eventEmitter.emit('resetCompilerState', {})
   }
 
-  async vyperCompileCustomAction(action: customAction) {
+  async vyperCompileCustomAction(action?: customAction) {
     //read selected contract from file explorer and create contract type
     const contract = await this.getContract()
     //compile contract
