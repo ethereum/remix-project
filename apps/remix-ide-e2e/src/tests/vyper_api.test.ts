@@ -67,7 +67,6 @@ module.exports = {
     browser
       // @ts-ignore
       .frame(0)
-      .click('[data-id="remote-compiler"]')
       .click('[data-id="compile"]')
       .waitForElementVisible({
         selector:'[data-id="compilation-details"]',
@@ -89,7 +88,6 @@ module.exports = {
       chromeBrowser.setPermission('clipboard-write', 'granted')
       browser
         .frame(0)
-        .click('[data-id="remote-compiler"]')
         .click('[data-id="compile"]')
         .waitForElementVisible({
           selector:'[data-id="compilation-details"]',
