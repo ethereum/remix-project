@@ -122,7 +122,7 @@ export function UniversalDappUI(props: UdappProps) {
   const saveContract = async() => {
     const env = await props.plugin.call('blockchain', 'getProvider')
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-    let savedContracts = localStorage.getItem('savedContracts')
+    const savedContracts = localStorage.getItem('savedContracts')
     let objToSave
     if (!savedContracts) {
       objToSave = {}
@@ -266,11 +266,11 @@ export function UniversalDappUI(props: UdappProps) {
         
         { !props.isSavedContract ? 
           ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
-              <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
+            <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
           </CustomTooltip> ) :
           ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnsave" />}>
-              <i className="udapp_closeIcon m-1 far fa-trash-alt align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={unsave}></i>
-            </CustomTooltip> )}
+            <i className="udapp_closeIcon m-1 far fa-trash-alt align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={unsave}></i>
+          </CustomTooltip> )}
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
