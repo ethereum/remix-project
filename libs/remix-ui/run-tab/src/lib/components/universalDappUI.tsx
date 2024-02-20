@@ -115,6 +115,10 @@ export function UniversalDappUI(props: UdappProps) {
     props.removeInstance(props.index)
   }
 
+  const unsave = () => {
+    console.log('unsave is clicked')
+  }
+
   const saveContract = async() => {
     // const address = ethJSUtil.toChecksumAddress(props.instance.address)
     const env = await props.plugin.call('blockchain', 'getProvider')
@@ -262,9 +266,13 @@ export function UniversalDappUI(props: UdappProps) {
           </div> ) : null }
         </div>
         
-        <CustomTooltip placement="right" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
-          <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
-        </CustomTooltip>
+        { !props.isSavedContract ? 
+          ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
+              <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
+          </CustomTooltip> ) :
+          ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnsave" />}>
+              <i className="udapp_closeIcon m-1 far fa-trash-alt align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={unsave}></i>
+            </CustomTooltip> )}
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
