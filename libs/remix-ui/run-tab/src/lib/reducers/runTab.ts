@@ -538,26 +538,29 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case SET_DECODED_RESPONSE: {
-    const payload: { instanceIndex: number, funcIndex: number, response: any } = action.payload
-    return {
-      ...state,
-      instances: {
-        ...state.instances,
-        instanceList: state.instances.instanceList.map((instance, index) => {
-          console.log('indexxxxx=====>', index)
-          if (payload.instanceIndex === index) instance.decodedResponse[payload.funcIndex] = payload.response
-          return instance
-        })
-      },
-      savedInstances: {
-        ...state.savedInstances,
-        instanceList: state.savedInstances.instanceList.map((instance, index) => {
-          console.log('indexxxxx==saved===>', index)
-          if (payload.instanceIndex === index) instance.decodedResponse[payload.funcIndex] = payload.response
-          return instance
-        })
+    const payload: { instanceIndex: number, funcIndex: number, response: any, isSavedContract: boolean } = action.payload
+    if (action.payload.isSavedContract)
+      return {
+        ...state,
+        savedInstances: {
+          ...state.savedInstances,
+          instanceList: state.savedInstances.instanceList.map((instance, index) => {
+            if (payload.instanceIndex === index) instance.decodedResponse[payload.funcIndex] = payload.response
+            return instance
+          })
+        }
       }
-    }
+    else
+      return {
+        ...state,
+        instances: {
+          ...state.instances,
+          instanceList: state.instances.instanceList.map((instance, index) => {
+            if (payload.instanceIndex === index) instance.decodedResponse[payload.funcIndex] = payload.response
+            return instance
+          })
+        }
+      }
   }
 
   case SET_PATH_TO_SCENARIO: {
