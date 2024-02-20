@@ -702,7 +702,7 @@ export const cloneRepository = async (url: string) => {
           plugin.call('notification', 'modal', cloneModal)
         })
     } catch (e) {
-      dispatch(displayPopUp('An error occured: ' + e))
+      dispatch(displayPopUp('An error occurred: ' + e))
     }
   }
 }

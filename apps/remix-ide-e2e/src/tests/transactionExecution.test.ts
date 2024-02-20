@@ -42,7 +42,7 @@ module.exports = {
       .clickLaunchIcon('udapp')
       .click('.udapp_contractActionsContainerSingle > div')
       .clickInstance(0)
-      .clickFunction('retunValues1 - transact (not payable)')
+      .clickFunction('returnValues1 - transact (not payable)')
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
@@ -53,7 +53,7 @@ module.exports = {
             3: 'address: _a 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c'
           }
         })
-      .clickFunction('retunValues2 - transact (not payable)')
+      .clickFunction('returnValues2 - transact (not payable)')
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
@@ -70,7 +70,7 @@ module.exports = {
             9: 'bytes32: _b32 0x0325235325325235325235325235320000000000000000000000000000000000'
           }
         }).pause(500)
-      .clickFunction('retunValues3 - transact (not payable)')
+      .clickFunction('returnValues3 - transact (not payable)')
       .testFunction('last',
         {
           status: '0x1 Transaction mined and execution succeed',
@@ -312,10 +312,10 @@ const sources = [
       contract TestContract { function f() public returns (uint) { return 8; }
       function g() public returns (uint, string memory, bool, uint) {
         uint payment = 345;
-        bool payed = true;
+        bool paid = true;
         string memory comment = "comment_comment_";
         uint month = 4;
-        return (payment, comment, payed, month); } }`
+        return (payment, comment, paid, month); } }`
     }
   },
   {
@@ -323,14 +323,14 @@ const sources = [
       content: `
   contract testReturnValues {
     enum ActionChoices { GoLeft, GoRight, GoStraight, SitStill }
-    function retunValues1 () public returns (bool _b, uint _u, int _i, address _a)  {
+    function returnValues1 () public returns (bool _b, uint _u, int _i, address _a)  {
         _b = true;
         _u = 345;
         _i = -345;
         _a = msg.sender;
     }
 
-    function retunValues2 () public returns (bytes1 _b, bytes2 _b2, bytes3 _b3, bytes memory _blit, bytes5 _b5, bytes6 _b6, string memory _str, bytes7 _b7, bytes22 _b22, bytes32 _b32)  {
+    function returnValues2 () public returns (bytes1 _b, bytes2 _b2, bytes3 _b3, bytes memory _blit, bytes5 _b5, bytes6 _b6, string memory _str, bytes7 _b7, bytes22 _b22, bytes32 _b32)  {
         _b = 0x12;
         _b2 = 0x1223;
         _b5 = hex"043245";
@@ -342,7 +342,7 @@ const sources = [
         _str = "this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string _ this is a long string";
     }
 
-    function retunValues3 () public returns (ActionChoices _en, int[5][] memory _a1)  {
+    function returnValues3 () public returns (ActionChoices _en, int[5][] memory _a1)  {
        _en = ActionChoices.GoStraight;
        int[5][] memory a = new int[5][](3);
        a[0] = [int(1),-45,-78,56,60];

@@ -71,13 +71,13 @@ function isNodeTypeIn (node: AstNode, typesList: string[]): boolean {
 }
 
 /**
- * @dev Get overrided sender provided using natspec
+ * @dev Get overridden sender provided using natspec
  * @param userdoc method user documentation
  * @param signature signature
  * @param methodIdentifiers Object containing all methods identifier
  */
 
-function getOverridedSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>): string | null {
+function getOverriddenSender (userdoc: UserDocumentation, signature: string, methodIdentifiers: Record <string, string>): string | null {
   const fullName: string | null = getFunctionFullName(signature, methodIdentifiers)
   const senderRegex = /#sender: account-+(\d)/g
   const accountIndex: RegExpExecArray | null = fullName && userdoc.methods[fullName] ? senderRegex.exec(userdoc.methods[fullName].notice) : null
@@ -236,7 +236,7 @@ export function runTest (testName: string, testObject: any, contractDetails: Com
     let sender: string | null = null
     let hhLogs
     if (func.signature) {
-      sender = getOverridedSender(contractDetails.userdoc, func.signature, contractDetails.evm.methodIdentifiers)
+      sender = getOverriddenSender(contractDetails.userdoc, func.signature, contractDetails.evm.methodIdentifiers)
       if (opts.accounts && sender) {
         sender = opts.accounts[sender]
       }

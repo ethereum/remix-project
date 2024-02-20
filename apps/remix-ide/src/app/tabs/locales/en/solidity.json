@@ -46,7 +46,7 @@
   "solidity.compileIconAttribute": "compiler is loading, please wait a few moments.",
   "solidity.compilerLicense": "Compiler License",
   "solidity.compilerLicenseMsg1": "Compiler is loading. License will be displayed once compiler is loaded",
-  "solidity.compilerLicenseMsg2": "Could not retreive license for selected compiler version",
+  "solidity.compilerLicenseMsg2": "Could not retrieve license for selected compiler version",
   "solidity.compilerLicenseMsg3": "License not available",
   "solidity.seeCompilerLicense": "See compiler license",
 
@@ -69,7 +69,7 @@
   "solidity.Assembly": "Assembly opcodes describing the contract including corresponding solidity source code",
   "solidity.Opcodes": "Assembly opcodes describing the contract",
   "solidity.name": "Name of the compiled contract",
-  "solidity.metadata": "Contains all informations related to the compilation",
+  "solidity.metadata": "Contains all information related to the compilation",
   "solidity.bytecode": "Bytecode being executed during contract creation",
   "solidity.abi": "ABI: describing all the functions (input/output params, scope, ...)",
   "solidity.web3Deploy": "Copy/paste this code to any JavaScript/Web3 console to deploy this contract",

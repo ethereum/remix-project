@@ -114,7 +114,7 @@ export class RemixClient extends PluginClient {
     await this.client.call('editor', 'addAnnotation', annotation, name)
   }
 
-  /** Remove current Hightlight */
+  /** Remove current Highlight */
   async discardHighlight() {
     await this.client.call('editor', 'discardHighlight')
     await this.client.call('editor', 'clearAnnotations')

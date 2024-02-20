@@ -3355,7 +3355,7 @@
               "id": 1818,
               "nodeType": "StructuredDocumentation",
               "src": "361:227:1",
-              "text": "@dev Compute the address a contract will be deployed at for a given deployer address and nonce\n @notice adapated from Solmate implementation (https://github.com/transmissions11/solmate/blob/main/src/utils/LibRLP.sol)"
+              "text": "@dev Compute the address a contract will be deployed at for a given deployer address and nonce\n @notice adapted from Solmate implementation (https://github.com/transmissions11/solmate/blob/main/src/utils/LibRLP.sol)"
             },
             "implemented": true,
             "kind": "function",
