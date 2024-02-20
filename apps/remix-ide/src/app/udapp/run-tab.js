@@ -29,6 +29,7 @@ const profile = {
     'setEnvironmentMode',
     'clearAllInstances',
     'addInstance',
+    'addSavedInstance',
     'resolveContractAndAddInstance'
   ]
 }
@@ -81,6 +82,10 @@ export class RunTab extends ViewPlugin {
 
   addInstance(address, abi, name) {
     this.emit('addInstanceReducer', address, abi, name)
+  }
+
+  addSavedInstance(address, abi, name) {
+    this.emit('addSavedInstanceReducer', address, abi, name)
   }
 
   createVMAccount(newAccount) {
