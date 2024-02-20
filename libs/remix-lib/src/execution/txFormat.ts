@@ -409,7 +409,7 @@ export function decodeResponse (response, fnabi) {
         const name = fnabi.outputs[i].name
         json[i] = outputTypes[i] + ': ' + (name ? name + ' ' + decodedObj[i] : decodedObj[i])
       }
-
+      
       return json
     } catch (e) {
       return { error: 'Failed to decode output: ' + e }

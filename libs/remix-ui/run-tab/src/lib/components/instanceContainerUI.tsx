@@ -7,7 +7,6 @@ import { UniversalDappUI } from './universalDappUI'
 
 export function InstanceContainerUI(props: InstanceContainerProps) {
   const { instanceList } = props.instances
-  let savedContractForCurrentEnv = useRef([])
 
   useEffect(() => {
     const fetchSavedContracts = async () => {
@@ -18,7 +17,10 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         if(network.id === ' - ') network.id = network.id.trim() // For VM, id is ' - '
         const env = await props.plugin.call('blockchain', 'getProvider')
         if (savedContracts[env] && savedContracts[env][network.id]) {
-          savedContractForCurrentEnv.current = savedContracts[env][network.id]
+          const instances = savedContracts[env][network.id]
+          console.log('instance--->', instances)
+          for (const inst of instances)
+            await props.plugin.call('udapp', 'addSavedInstance', inst.address, inst.contractData.abi, inst.name)
         }
       }
    }
@@ -40,10 +42,10 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           </label>
         </CustomTooltip>
       </div>
-        {savedContractForCurrentEnv.current.length > 0 ? (
+        {props.savedInstances.instanceList.length > 0 ? (
           <div>
             {' '}
-            {savedContractForCurrentEnv.current.map((instance, index) => {
+            {props.savedInstances.instanceList.map((instance, index) => {
               return (
                 <UniversalDappUI
                   key={index}
