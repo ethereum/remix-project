@@ -18,6 +18,7 @@ import './app.css'
 import {CustomTooltip} from '@remix-ui/helper'
 import { Form} from 'react-bootstrap'
 import {CompileErrorCard} from './components/CompileErrorCard'
+import CustomAccordionToggle from './components/CustomAccordionToggle'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -38,7 +39,6 @@ const App = () => {
     environment: 'remote',
     localUrl: 'http://localhost:8000/',
   })
-  const [toggleAccordion, setToggleAccordion] = useState(false)
 
   useEffect(() => {
     async function start() {
@@ -100,9 +100,9 @@ const App = () => {
   function resetCompilerResultState() {
     setOutput(remixClient.compilerOutput)
   }
-  const toggleAccordionHandler = () => {
-    setToggleAccordion(!toggleAccordion)
-  }
+
+  const [toggleAccordion, setToggleAccordion] = useState(false)
+
 
   return (
     <main id="vyper-plugin">
@@ -114,14 +114,17 @@ const App = () => {
             </Button>
           </CustomTooltip>
         </div>
-        <Accordion className="border-0 w-100">
-          <Card className="border-0">
-            <Accordion.Toggle as={Card.Header} variant="link" eventKey="0" >
-              <span className="">Advanced Compiler Settings</span>
-              <i className={toggleAccordion ? 'fas fa-angle-right' : 'fas fa-angle-down'}></i>
-            </Accordion.Toggle>
+        <Accordion className="border-0 w-100 mb-3 accordion-background">
+          <div className="border-0">
+            <div className="pl-3">
+              <CustomAccordionToggle eventKey="0">
+                <span className="">Advanced Compiler Settings</span>
+              </CustomAccordionToggle>
+              {/* <i className={toggleAccordion ? 'fas fa-angle-right' : 'fas fa-angle-down'}></i> */}
+              <span className="fas fa-angle-right"></span>
+            </div>
             <Accordion.Collapse eventKey="0">
-              <Card.Body>
+              <div className="pl-3 pt-3 border-top-0">
                 <Form>
                   <div className="d-flex flex-row gap-5 mb-3 mt-2">
                     <Form.Check inline id="remote-compiler" data-id="remote-compiler" type="radio" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} label="Remote Compiler" className={`${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`}
@@ -130,9 +133,9 @@ const App = () => {
                       className={`${state.environment === 'local' ? '' : `cursor-status`}`}/>
                   </div>
                 </Form>
-              </Card.Body>
+              </div>
             </Accordion.Collapse>
-          </Card>
+          </div>
         </Accordion>
         <span className="px-3 mt-1 mb-1 small text-warning">Specify the compiler version & EVM version in the .vy file</span>
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
