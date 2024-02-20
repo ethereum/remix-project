@@ -181,15 +181,11 @@ export async function compileContract(contract: string, compilerUrl: string, set
     try {
       _contract = await remixClient.getContract()
     } catch (e: any) {
-      // if (setOutput === null || setOutput === undefined) {
-      const compileResult = {
+      const errorGettingContract = {
         status: 'failed',
         message: e.message
       }
-      remixClient.eventEmitter.emit('setOutput', compileResult)
-      // } else {
-      //   setOutput('', {status: 'failed', message: e.message})
-      // }
+      remixClient.eventEmitter.emit('setOutput', errorGettingContract)
       return
     }
     remixClient.changeStatus({
@@ -200,7 +196,6 @@ export async function compileContract(contract: string, compilerUrl: string, set
     let output
     try {
       output = await compile(compilerUrl, _contract)
-      console.log('checking compile result', output)
       remixClient.eventEmitter.emit('setOutput', output)
     } catch (e: any) {
       remixClient.changeStatus({
@@ -208,8 +203,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
         type: 'error',
         title: `${e.message} debugging`
       })
-      // setOutput !== null || setOutput !== undefined && setOutput('', {status: 'failed', message: e.message})
-      remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: e.message})
+      remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: e.message, title: 'Error compiling...'})
       return
     }
     const compileReturnType = () => {
@@ -278,12 +272,12 @@ export async function compileContract(contract: string, compilerUrl: string, set
 
     const data = toStandardOutput(_contract.name, output)
     remixClient.compilationFinish(_contract.name, _contract.content, data)
+    const contractName = _contract['name']
+    const compileResult = compileReturnType()
     if (setOutput === null || setOutput === undefined) {
-      const contractName = _contract['name']
-      const compileResult = compileReturnType()
       remixClient.eventEmitter.emit('setOutput', { contractName, compileResult })
     } else {
-      setOutput(_contract.name, compileReturnType())
+      remixClient.eventEmitter.emit('setOutput', { contractName, compileResult })
     }
   } catch (err: any) {
     remixClient.changeStatus({
