@@ -120,10 +120,8 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const saveContract = async() => {
-    // const address = ethJSUtil.toChecksumAddress(props.instance.address)
     const env = await props.plugin.call('blockchain', 'getProvider')
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-    // const contractToSave = {name: props.instance.contractData.name, address, abi: props.instance.contractData.abi, networkName: network.name}
     let savedContracts = localStorage.getItem('savedContracts')
     let objToSave
     if (!savedContracts) {
