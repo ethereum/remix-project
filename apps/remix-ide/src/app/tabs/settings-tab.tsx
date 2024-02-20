@@ -52,7 +52,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'settingsTab')
     this.useMatomoAnalytics = null
-    this.useCopilot = null
+    this.useCopilot = false
   }
 
   setDispatch(dispatch: React.Dispatch<any>) {

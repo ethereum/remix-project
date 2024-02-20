@@ -34,12 +34,12 @@ self.addEventListener('message', async (event) => {
   if (cmd === 'init') {
     // Retrieve the code-completion pipeline. When called for the first time,
     // this will load the pipeline and save it for future use.
-    // CodeCompletionPipeline.model = model
-    // await CodeCompletionPipeline.getInstance(x => {
-    //   // We also add a progress callback to the pipeline so that we can
-    //   // track model loading.
-    //   self.postMessage(x);
-    // });
+    CodeCompletionPipeline.model = model
+    await CodeCompletionPipeline.getInstance(x => {
+      // We also add a progress callback to the pipeline so that we can
+      // track model loading.
+      self.postMessage(x);
+    });
     return
   }
 
@@ -47,8 +47,8 @@ self.addEventListener('message', async (event) => {
     // Send the output back to the main thread
     self.postMessage({
       id,
-      status: 'info',
-      message: 'model not longer supported'
+      status: 'error',
+      message: 'model not yet loaded'
     });  
   }
 

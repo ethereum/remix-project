@@ -8,31 +8,36 @@ const profile = {
   name: 'copilot-suggestion',
   displayName: 'copilot-suggestion',
   description: 'Get Solidity suggestions in editor',
-  methods: ['suggest', 'init', 'uninstall', 'status', 'isActivate', 'discardRemoteService', 'useconfig'],
+  methods: ['suggest', 'init', 'uninstall', 'status', 'isActivate', 'useRemoteService', 'discardRemoteService'],
   version: '0.1.0-alpha',
   maintainedBy: "Remix"
 }
 
 export class CopilotSuggestion extends Plugin {
   service: SuggestionService
+  remoteService: string
   context: string
   ready: boolean
-  config: { [id: string]: string }
   constructor() {
     super(profile)
     this.service = new SuggestionService()
     this.context = ''
-    this.ready = true // always ready for service
-    this.config = {}
+    this.service.events.on('progress', (data) => {
+      this.emit('loading', data)
+    })
+    this.service.events.on('done', (data) => {
+    })
+    this.service.events.on('ready', (data) => {
+      this.ready = true
+    })
   }
 
-
-  useconfig(config ){
-    this.config = config
+  useRemoteService(service: string) {
+    this.remoteService = service
   }
 
   discardRemoteService() {
-    this.ready = false
+    this.remoteService = null
   }
 
   status () {
@@ -54,19 +59,20 @@ export class CopilotSuggestion extends Plugin {
     const max_new_tokens = await this.call('settings', 'get', 'settings/copilot/suggest/max_new_tokens')
     const temperature = await this.call('settings', 'get', 'settings/copilot/suggest/temperature')
     const options: SuggestOptions = {
+      do_sample: true,
       top_k: 50,
-      top_p: 0.92,
+      top_p: 0.92, 
       stream_result: false,
-      temperature: temperature || 0.9,
+      temperature: temperature || 0,
       max_new_tokens: max_new_tokens || 0
     }
 
-    if (this.ready){
-      const data = await this.call('solcoder', 'code_completion', content.split(" ").slice(-1000).join(" "), options)
-      const parsedData = data[0].trimStart()
+    if (this.remoteService) {
+      const {data} = await axios.post(this.remoteService, {context: content, max_new_words: options.max_new_tokens, temperature: options.temperature})
+      const parsedData = JSON.parse(data).trimStart()
       return {output: [{generated_text: parsedData}]}
-    }else{
-      return
+    } else {
+      return this.service.suggest(this.context ? this.context + '\n\n' + content : content, options)
     }
   }
 
