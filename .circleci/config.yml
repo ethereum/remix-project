@@ -388,7 +388,7 @@ jobs:
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
       - run: ls -la ./dist/apps/remix-ide/assets/js
-      - run: yarn run selenium-install || yarn run selenium-install
+      - run: yarn run selenium-install --singleDriverInstall=firefox
       - when:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
@@ -439,7 +439,7 @@ jobs:
       - run: unzip ./persist/dist.zip
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-      - run: yarn run selenium-install || yarn run selenium-install
+      - run: yarn run selenium-install --singleDriverInstall=firefox
       - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
       - run:
           name: Start Selenium
