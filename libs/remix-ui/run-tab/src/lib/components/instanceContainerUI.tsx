@@ -10,7 +10,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
 
   useEffect(() => {
     const fetchSavedContracts = async () => {
-      let allSavedContracts = localStorage.getItem('savedContracts')
+      const allSavedContracts = localStorage.getItem('savedContracts')
       if (allSavedContracts) {
         const savedContracts = JSON.parse(allSavedContracts)
         const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
@@ -22,8 +22,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             await props.plugin.call('udapp', 'addSavedInstance', inst.address, inst.contractData.abi, inst.name)
         }
       }
-   }
-   fetchSavedContracts()
+    }
+    fetchSavedContracts()
   }, [props.plugin.REACT_API.networkName])
 
   const clearInstance = () => {
@@ -39,34 +39,34 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           </label>
         </CustomTooltip>
       </div>
-        {props.savedInstances.instanceList.length > 0 ? (
-          <div>
-            {' '}
-            {props.savedInstances.instanceList.map((instance, index) => {
-              return (
-                <UniversalDappUI
-                  key={index}
-                  instance={instance}
-                  isSavedContract={true}
-                  context={props.getContext()}
-                  removeInstance={props.removeInstance}
-                  index={index}
-                  gasEstimationPrompt={props.gasEstimationPrompt}
-                  passphrasePrompt={props.passphrasePrompt}
-                  mainnetPrompt={props.mainnetPrompt}
-                  runTransactions={props.runTransactions}
-                  sendValue={props.sendValue}
-                  getFuncABIInputs={props.getFuncABIInputs}
-                  plugin={props.plugin}
-                />
-              )
-            })}
-          </div>
-        ) : (
-          <span className="mx-2 mt-3 alert alert-warning" data-id="NoSavedInstanceText" role="alert">
-            <FormattedMessage id="udapp.NoSavedInstanceText" />
-          </span>
-        )}
+      {props.savedInstances.instanceList.length > 0 ? (
+        <div>
+          {' '}
+          {props.savedInstances.instanceList.map((instance, index) => {
+            return (
+              <UniversalDappUI
+                key={index}
+                instance={instance}
+                isSavedContract={true}
+                context={props.getContext()}
+                removeInstance={props.removeInstance}
+                index={index}
+                gasEstimationPrompt={props.gasEstimationPrompt}
+                passphrasePrompt={props.passphrasePrompt}
+                mainnetPrompt={props.mainnetPrompt}
+                runTransactions={props.runTransactions}
+                sendValue={props.sendValue}
+                getFuncABIInputs={props.getFuncABIInputs}
+                plugin={props.plugin}
+              />
+            )
+          })}
+        </div>
+      ) : (
+        <span className="mx-2 mt-3 alert alert-warning" data-id="NoSavedInstanceText" role="alert">
+          <FormattedMessage id="udapp.NoSavedInstanceText" />
+        </span>
+      )}
 
       <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-3">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
