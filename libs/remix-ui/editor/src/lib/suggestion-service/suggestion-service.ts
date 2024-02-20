@@ -7,7 +7,7 @@ export class SuggestionService {
   constructor() {
     console.log('SuggestionService instanciate worker')
     this.worker = new Worker(new URL('./worker.js', import.meta.url), {
-        type: 'module'
+      type: 'module'
     });
     this.init()
     this.events = new EventEmitter()
@@ -17,46 +17,46 @@ export class SuggestionService {
   async init() {
     const onMessageReceived = (e) => {
       switch (e.data.status) {
-        case 'initiate':
-          console.log(e.data)
-          this.events.emit(e.data.status, e.data)
-          // Model file start load: add a new progress item to the list.
-          break;
+      case 'initiate':
+        console.log(e.data)
+        this.events.emit(e.data.status, e.data)
+        // Model file start load: add a new progress item to the list.
+        break;
 
-        case 'progress':
-          this.events.emit(e.data.status, e.data)
-          console.log(e.data)
-          // Model file progress: update one of the progress items.
-          break;
+      case 'progress':
+        this.events.emit(e.data.status, e.data)
+        console.log(e.data)
+        // Model file progress: update one of the progress items.
+        break;
 
-        case 'done':
-          this.events.emit(e.data.status, e.data)
-          console.log(e.data)
-          // Model file loaded: remove the progress item from the list.
-          break;
+      case 'done':
+        this.events.emit(e.data.status, e.data)
+        console.log(e.data)
+        // Model file loaded: remove the progress item from the list.
+        break;
 
-        case 'ready':
-          this.events.emit(e.data.status, e.data)
-          console.log(e.data)
-          // Pipeline ready: the worker is ready to accept messages.
-          break;
+      case 'ready':
+        this.events.emit(e.data.status, e.data)
+        console.log(e.data)
+        // Pipeline ready: the worker is ready to accept messages.
+        break;
 
-        case 'update':
-          this.events.emit(e.data.status, e.data)
-          console.log(e.data)
-          // Generation update: update the output text.
-          break;
+      case 'update':
+        this.events.emit(e.data.status, e.data)
+        console.log(e.data)
+        // Generation update: update the output text.
+        break;
 
-        case 'complete':
-          console.log(e.data)
-          if (this.responses[e.data.id]) {
-            this.responses[e.data.id](null, e.data)
-          } else {
-            console.log('no callback for', e.data)
-          }
-          
-          // Generation complete: re-enable the "Generate" button
-          break;
+      case 'complete':
+        console.log(e.data)
+        if (this.responses[e.data.id]) {
+          this.responses[e.data.id](null, e.data)
+        } else {
+          console.log('no callback for', e.data)
+        }
+        
+        // Generation complete: re-enable the "Generate" button
+        break;
       }
     };
 
