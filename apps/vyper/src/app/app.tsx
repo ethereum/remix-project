@@ -114,14 +114,14 @@ const App = () => {
             </Button>
           </CustomTooltip>
         </div>
+
         <Accordion className="border-0 w-100 mb-3 accordion-background">
           <div className="border-0">
-            <div className="pl-3">
+            <div className="pl-3 d-flex flex-row justify-content-between">
               <CustomAccordionToggle eventKey="0">
                 <span className="">Advanced Compiler Settings</span>
               </CustomAccordionToggle>
-              {/* <i className={toggleAccordion ? 'fas fa-angle-right' : 'fas fa-angle-down'}></i> */}
-              <span className="fas fa-angle-right"></span>
+              {/* <i className={toggleAccordion ? 'far fa-angle-right' : 'far fa-angle-down'}></i> */}
             </div>
             <Accordion.Collapse eventKey="0">
               <div className="pl-3 pt-3 border-top-0">
@@ -137,7 +137,7 @@ const App = () => {
             </Accordion.Collapse>
           </div>
         </Accordion>
-        <span className="px-3 mt-1 mb-1 small text-warning">Specify the compiler version & EVM version in the .vy file</span>
+        <span className="px-3 mt-1 mb-1 small text-warning">Specify the <a className="text-warning" target="_blank" href="https://">compiler version</a> & <a className="text-warning" href="http://docs.vyperlang.org/en/stable/compiling-a-contract.html#setting-the-target-evm-version" target="_blank" rel="noopener noreferrer">EVM version</a> in the .vy file.</span>
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
           <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} resetCompilerState={resetCompilerResultState} />

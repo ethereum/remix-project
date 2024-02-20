@@ -1,5 +1,4 @@
-import React, { useContext, useState } from 'react'
-import { AccordionContext } from 'react-bootstrap'
+import React, { useState } from 'react'
 import { useAccordionToggle } from 'react-bootstrap/AccordionToggle'
 
 export type CustomAccordionToggleProps = {
@@ -10,18 +9,17 @@ export type CustomAccordionToggleProps = {
 
 export default function CustomAccordionToggle({ children, eventKey }: CustomAccordionToggleProps) {
   const [toggleAccordion, setToggleAccordion] = useState(false)
-  // <i className={toggleAccordion ? 'fas fa-angle-right' : 'fas fa-angle-down'}></i>
 
   const decoratedOnClick = useAccordionToggle(eventKey, () =>
     setToggleAccordion(!toggleAccordion)
   )
-
 
   return (
     <div
       onClick={decoratedOnClick}
     >
       {children}
+      <i className={toggleAccordion ? 'far fa-angle-right' : 'far fa-angle-down'}></i>
     </div>
   )
 }
