@@ -72,6 +72,8 @@
 
   "udapp.savedContracts": "Saved Contracts",
   "udapp.NoSavedInstanceText": "Currently you have no saved contracts to interact with.",
+  "udapp.tooltipTextUnsave": "Delete from saved list",
+
 
 
   "udapp._comment_recorderCardUI.tsx": "libs/remix-ui/run-tab/src/lib/components/recorderCardUI.tsx",
