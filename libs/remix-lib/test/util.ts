@@ -55,12 +55,12 @@ tape('util.groupBy on valid input', function (t) {
   t.deepEqual(result, expectedResult)
 })
 
-tape('util.concatWithSeperator valid output', function (t) {
+tape('util.concatWithSeparator valid output', function (t) {
   t.plan(4)
-  t.notEqual(util.concatWithSeperator(['a', 'b', 'c'], ','), 'a, b, c', 'Concat with comma should not produce spaces')
-  t.equal(util.concatWithSeperator(['a', 'b', 'c'], ','), 'a,b,c', 'Concat with comma should not produce spaces')
-  t.equal(util.concatWithSeperator(['a', 'b', 'c'], ', '), 'a, b, c', 'Concat with comma space should not produce trailing comma')
-  t.equal(util.concatWithSeperator(['a', 'b', 'c'], '+'), 'a+b+c', 'Concat with plus')
+  t.notEqual(util.concatWithSeparator(['a', 'b', 'c'], ','), 'a, b, c', 'Concat with comma should not produce spaces')
+  t.equal(util.concatWithSeparator(['a', 'b', 'c'], ','), 'a,b,c', 'Concat with comma should not produce spaces')
+  t.equal(util.concatWithSeparator(['a', 'b', 'c'], ', '), 'a, b, c', 'Concat with comma space should not produce trailing comma')
+  t.equal(util.concatWithSeparator(['a', 'b', 'c'], '+'), 'a+b+c', 'Concat with plus')
 })
 
 tape('util.escapeRegExp', function (t) {

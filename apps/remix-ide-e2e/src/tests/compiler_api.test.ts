@@ -18,7 +18,7 @@ module.exports = {
     return sources
   },
 
-  'Should compile using "compileWithParamaters" API #group1': function (browser: NightwatchBrowser) {
+  'Should compile using "compileWithParameters" API #group1': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsCompile.js', { content: jsCompile })
       .executeScriptInTerminal('remix.exeCurrent()')
@@ -26,7 +26,7 @@ module.exports = {
       .click('*[data-id="terminalClearConsole"]')
   },
 
-  'Should compile using "compileWithParamaters" API with optimization On #group2': function (browser: NightwatchBrowser) {
+  'Should compile using "compileWithParameters" API with optimization On #group2': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsCompileWithOptimization.js', { content: jsCompileWithOptimization })
       .executeScriptInTerminal('remix.exeCurrent()')
@@ -34,7 +34,7 @@ module.exports = {
       .click('*[data-id="terminalClearConsole"]')
   },
 
-  'Should compile using "compileWithParamaters" API with optimization off check default runs #group3': function (browser: NightwatchBrowser) {
+  'Should compile using "compileWithParameters" API with optimization off check default runs #group3': function (browser: NightwatchBrowser) {
     browser
       .addFile('test_jsCompileWithOptimizationDefault.js', { content: jsCompileWithOptimizationDefault })
       .executeScriptInTerminal('remix.exeCurrent()')
@@ -65,7 +65,7 @@ const simpleContract = `pragma solidity >=0.4.22 <0.9.1;
 
 /**
 * @title Storage
-* @dev Store & retreive value in a variable
+* @dev Store & retrieve value in a variable
 */
 contract StorageTestUpdateConfiguration {
 
@@ -83,7 +83,7 @@ contract StorageTestUpdateConfiguration {
    * @dev Return value 
    * @return value of 'number'
    */
-  function retreive() public view returns (uint256){
+  function retrieve() public view returns (uint256){
       return number;
   }
 }

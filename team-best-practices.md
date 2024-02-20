@@ -104,7 +104,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
     Your feedback will often be better received if you pose it in the form of a question.
 
  - Pull request should be reviewed to comply to coding best practices.
- - You should take the responsability of the PR you are reviewing.
+ - You should take the responsibility of the PR you are reviewing.
  - You should make sure the app is viable after the PR is being merged.
  - You should make sure the PR is correctly tested (e2e tests, unit tests)
  - Ideally You should have enough knowledge to be able to fix related bugs.
@@ -136,7 +136,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
    - agree on a release date (which can be earlier 1 week after the meeting and not later than 4 weeks after the meeting.
    - add issues that are eligible to get in the release.
    - remove issues that aren't doable in time or represent a risk.
-   - plan for asking feedback about new features (in social medias).
+   - plan for asking feedback about new features (in social media).
 
 ---
 
@@ -177,7 +177,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 ### 3) Documentation:
 
 - The documentation is done / updated just after the feature / release in a team effort.
-- Documentation work is filable as a github issue.
+- Documentation work is fileable as a github issue.
 - It is encouraged to find and link associated doc produced by the community (blog posts, videos, tutorials, ...)
 
 ---

@@ -369,7 +369,7 @@ export const downloadPath = async (path: string) => {
   try {
     await fileManager.download(path)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while downloading.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while downloading.' + error))
   }
 }
 
@@ -379,7 +379,7 @@ export const copyFile = async (src: string, dest: string) => {
   try {
     await fileManager.copyFile(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyFile operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyFile operation.' + error))
   }
 }
 
@@ -406,7 +406,7 @@ export const copyShareURL = async (path: string) => {
     const shareUrl = `${window.location.origin}/#shareCode=${hash}`
     navigator.clipboard.writeText(shareUrl)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyShareURL operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyShareURL operation.' + error))
   }
 }
 
@@ -416,7 +416,7 @@ export const copyFolder = async (src: string, dest: string) => {
   try {
     await fileManager.copyDir(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyDir operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyDir operation.' + error))
   }
 }
 
@@ -508,7 +508,7 @@ const packageGistFiles = async (directory) => {
     if (isFile) {
       try {
         workspaceProvider.get(directory, (error, content) => {
-          if (error) throw new Error('An error ocurred while getting file content. ' + directory)
+          if (error) throw new Error('An error occurred while getting file content. ' + directory)
           if (/^\s+$/.test(content) || !content.length) {
             content = '// this line is added to create a gist. Empty file is not allowed.'
           }
@@ -596,7 +596,7 @@ export const moveFile = async (src: string, dest: string) => {
   try {
     await fileManager.moveFile(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing moveFile operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing moveFile operation.' + error))
   }
 }
 
@@ -606,7 +606,7 @@ export const moveFolder = async (src: string, dest: string) => {
   try {
     await fileManager.moveDir(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing moveDir operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing moveDir operation.' + error))
   }
 }
 

@@ -411,8 +411,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const isSolFileSelected = (currentFile = '') => {
     if (!currentFile) currentFile = api.currentFile
     if (!currentFile) return false
-    const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
-    return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
+    const extension = currentFile.substr(currentFile.length - 3, currentFile.length)
+    return extension.toLowerCase() === 'sol' || extension.toLowerCase() === 'yul'
   }
 
   const sessionSwitched = () => {

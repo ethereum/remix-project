@@ -20,5 +20,5 @@
   "search.no": "No",
   "search.loading": "Loading",
   "search.text1": "showing {count} results in {fileCount} files",
-  "search.text2": "Too many resuls to display...{br}Please narrow down your search."
+  "search.text2": "Too many results to display...{br}Please narrow down your search."
 }

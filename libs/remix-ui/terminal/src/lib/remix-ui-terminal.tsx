@@ -88,7 +88,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const messagesEndRef = useRef(null)
   const typeWriterIndexes = useRef([])
 
-  // terminal dragable
+  // terminal draggable
   const panelRef = useRef(null)
   const terminalMenu = useRef(null)
 

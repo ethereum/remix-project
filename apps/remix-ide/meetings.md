@@ -21,8 +21,8 @@ we move the documentation to the remix-ide repository
 
 ## medium post policy
 
-Any post that relates to Ethereum could be put in the remix plublication.
-Although that is not mandatory and left up to the writter.
+Any post that relates to Ethereum could be put in the remix publication.
+Although that is not mandatory and left up to the writer.
 
 ## guided tour
 
@@ -32,7 +32,7 @@ It will work as a native plugin, started by default.
 Each other native plugin can request a guided tour with:
 `this.call('guidedtour', 'start', 'debugger')`
 Other type of plugin may be able to the native plugin guided tour but we won't push this if the integration is not working out of the box. 
-We rather update the remix-plugin doc saying that `guided tour framework name` is the prefferred one.
+We rather update the remix-plugin doc saying that `guided tour framework name` is the preferred one.
 
 ## web site
 
@@ -49,7 +49,7 @@ it will be set of file:
  - solidity contract
  - test contract
 
-we only support md for now and move to supporting other format if needded.
+we only support md for now and move to supporting other format if needed.
 It requires the "test" native plugin to extend its API.
 @rob/@francois are managing that.
 
