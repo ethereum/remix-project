@@ -74,7 +74,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     if (generatedText.indexOf('@custom:dev-run-script./') !== -1) {
       clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
     }
-    clean = clean.replace(word, '')
+    clean = clean.replace(word, '') 
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: clean
     };
