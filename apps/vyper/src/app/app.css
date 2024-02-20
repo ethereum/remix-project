@@ -230,3 +230,11 @@ html, body, #root, main {
 .cursor-status :hover {
   cursor: pointer;
 }
+
+.accordion-background {
+  background-color: var(--body-bg);
+}
+
+.accordion-background:hover {
+  cursor: pointer;
+}
