@@ -38,6 +38,7 @@ const App = () => {
     environment: 'remote',
     localUrl: 'http://localhost:8000/',
   })
+  const [toggleAccordion, setToggleAccordion] = useState(false)
 
   useEffect(() => {
     async function start() {
@@ -99,6 +100,9 @@ const App = () => {
   function resetCompilerResultState() {
     setOutput(remixClient.compilerOutput)
   }
+  const toggleAccordionHandler = () => {
+    setToggleAccordion(!toggleAccordion)
+  }
 
   return (
     <main id="vyper-plugin">
@@ -110,25 +114,24 @@ const App = () => {
             </Button>
           </CustomTooltip>
         </div>
-        <Accordion>
-          <Card>
-            <Card.Header>
-              <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                <span className="text-primary">Advanced Compiler Settings</span>
-              </Accordion.Toggle>
-              <Accordion.Collapse eventKey="0">
-                <Card.Body>
-                  <Form>
-                    <div className="d-flex flex-row gap-5 mb-3 mt-2">
-                      <Form.Check inline id="remote-compiler" data-id="remote-compiler" type="radio" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} label="Remote Compiler" className={`${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`}
-                      />
-                      <Form.Check inline id="local-compiler" data-id="local-compiler" checked={state.environment === 'local'} type="radio" name="local" value={state.environment} onChange={() => setEnvironment('local')} label="Local Compiler"
-                        className={`${state.environment === 'local' ? '' : `cursor-status`}`}/>
-                    </div>
-                  </Form>
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card.Header>
+        <Accordion className="border-0 w-100">
+          <Card className="border-0">
+            <Accordion.Toggle as={Card.Header} variant="link" eventKey="0" >
+              <span className="">Advanced Compiler Settings</span>
+              <i className={toggleAccordion ? 'fas fa-angle-right' : 'fas fa-angle-down'}></i>
+            </Accordion.Toggle>
+            <Accordion.Collapse eventKey="0">
+              <Card.Body>
+                <Form>
+                  <div className="d-flex flex-row gap-5 mb-3 mt-2">
+                    <Form.Check inline id="remote-compiler" data-id="remote-compiler" type="radio" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} label="Remote Compiler" className={`${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`}
+                    />
+                    <Form.Check inline id="local-compiler" data-id="local-compiler" checked={state.environment === 'local'} type="radio" name="local" value={state.environment} onChange={() => setEnvironment('local')} label="Local Compiler"
+                      className={`${state.environment === 'local' ? '' : `cursor-status`}`}/>
+                  </div>
+                </Form>
+              </Card.Body>
+            </Accordion.Collapse>
           </Card>
         </Accordion>
         <span className="px-3 mt-1 mb-1 small text-warning">Specify the compiler version & EVM version in the .vy file</span>
