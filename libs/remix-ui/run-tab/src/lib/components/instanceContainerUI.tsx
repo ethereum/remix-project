@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import { CustomTooltip } from '@remix-ui/helper'
-import React, {useState, useEffect, useRef} from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
+import React, {useEffect} from 'react'
+import { FormattedMessage } from 'react-intl'
 import { InstanceContainerProps } from '../types'
 import { UniversalDappUI } from './universalDappUI'
 
@@ -14,11 +14,10 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
       if (allSavedContracts) {
         const savedContracts = JSON.parse(allSavedContracts)
         const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-        if(network.id === ' - ') network.id = network.id.trim() // For VM, id is ' - '
+        if (network.id === ' - ') network.id = network.id.trim() // For VM, id is ' - '
         const env = await props.plugin.call('blockchain', 'getProvider')
         if (savedContracts[env] && savedContracts[env][network.id]) {
           const instances = savedContracts[env][network.id]
-          console.log('instance--->', instances)
           for (const inst of instances)
             await props.plugin.call('udapp', 'addSavedInstance', inst.address, inst.contractData.abi, inst.name)
         }
@@ -30,8 +29,6 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
   const clearInstance = () => {
     props.clearInstances()
   }
-
-  const intl = useIntl()
 
   return (
     <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
