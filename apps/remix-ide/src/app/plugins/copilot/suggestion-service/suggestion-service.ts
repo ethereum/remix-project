@@ -1,7 +1,8 @@
 import EventEmitter from 'events'
 
 export type SuggestOptions = { max_new_tokens: number, 
-                               temperature: number, 
+                               temperature: number,
+                               do_sample:boolean
                                top_k: number,
                                top_p:number, 
                                stream_result:boolean}
@@ -16,6 +17,7 @@ export class SuggestionService {
     this.worker = new Worker(new URL('./worker.js', import.meta.url), {
       type: 'module'
     });
+    this.init()
     this.events = new EventEmitter()
     this.responses = {}
     this.current

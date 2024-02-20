@@ -136,15 +136,49 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       props.plugin.call('copilot-suggestion', 'uninstall')
       return
     } 
-    if (await props.plugin.call('copilot-suggestion', 'status')) {
-      copilotActivate(props.config, true, dispatch)          
-    } else {
-      props.plugin.call('copilot-suggestion', 'uninstall')
-      copilotActivate(props.config, false, dispatch)
-    }
 
-    props.plugin.call('copilot-suggestion', 'init')
-    
+  const message = <div>Please wait while the copilot is downloaded. <span ref={copilotDownload}>0</span>/100 .</div>
+    props.plugin.on('copilot-suggestion', 'loading', (data) => {
+     if (!copilotDownload.current) return
+     const loaded = ((data.loaded / data.total) * 100).toString()
+     const dot = loaded.match(/(.*)\./g)
+     copilotDownload.current.innerText = dot ? dot[0].replace('.', '') : loaded
+  })
+  const modalActivate: AppModal = {
+    id: 'loadcopilotActivate',
+    title: 'Download Solidity copilot',
+    modalType: ModalTypes.default,
+    okLabel: 'Close',
+    message,
+    okFn: async() => {
+      props.plugin.off('copilot-suggestion', 'loading')
+      if (await props.plugin.call('copilot-suggestion', 'status')) {
+        copilotActivate(props.config, true, dispatch)          
+      } else {
+        props.plugin.call('copilot-suggestion', 'uninstall')
+        copilotActivate(props.config, false, dispatch)
+      }
+    },
+    hideFn: async () => {
+      props.plugin.off('copilot-suggestion', 'loading')
+      if (await props.plugin.call('copilot-suggestion', 'status')) {
+        copilotActivate(props.config, true, dispatch)          
+      } else {
+        props.plugin.call('copilot-suggestion', 'uninstall')
+        copilotActivate(props.config, false, dispatch)
+      }
+    }
+  }
+
+  if (await props.plugin.call('copilot-suggestion', 'status')) {
+    copilotActivate(props.config, true, dispatch)          
+  } else {
+    props.plugin.call('copilot-suggestion', 'uninstall')
+    copilotActivate(props.config, false, dispatch)
+  }
+
+  props.plugin.call('copilot-suggestion', 'init')
+  props.plugin.call('notification', 'modal', modalActivate)
   }
 
   const onchangeCopilotMaxNewToken = (event) => {

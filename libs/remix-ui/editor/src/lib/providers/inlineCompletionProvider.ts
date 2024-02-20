@@ -31,7 +31,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     });
 
     
-    if (!word.endsWith('\n') &&
+    if (!word.endsWith(' ') &&
       !word.endsWith(';') && 
       !word.endsWith('.') && 
       !word.endsWith('(')) {
@@ -94,8 +94,12 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     }
 
     const generatedText = (result as any).output[0].generated_text as string
-    const clean = generatedText
+    let clean = generatedText
     console.log('solcoder inline data:\n', clean)
+    if (generatedText.indexOf('@custom:dev-run-script./') !== -1) {
+      clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
+    }
+    clean = clean.replace(word, '')
 
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: clean
