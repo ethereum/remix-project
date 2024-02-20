@@ -38,7 +38,7 @@ module.exports = {
       .executeScriptInTerminal(`remix.loadgist('${gistid}')`)
       // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
       .waitForElementVisible(`[data-id="treeViewLitreeViewItemREADME.txt"]`)
-      
+
       .openFile(`README.txt`)
       // Remix publish to gist
       /* .click('*[data-id="fileExplorerNewFilepublishToGist"]')
@@ -111,7 +111,7 @@ module.exports = {
       .click('[data-id="settingsTabRemoveGistToken"]')
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
-      .click('*[data-id="workspacepublishToGist"]')      
+      .click('*[data-id="workspacepublishToGist"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(10000)
@@ -160,9 +160,9 @@ module.exports = {
           browser.assert.ok(content.indexOf('contract Owner {') !== -1)
         })
         .click('*[data-id="workspacesMenuDropdown"]')
-        .click('*[data-id="workspacepublishToGist"]')      
+        .click('*[data-id="workspacepublishToGist"]')
         .modalFooterOKClick('fileSystem')
         .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
-        .assert.containsText('*[data-shared="tooltipPopup"]', 'Saving gist (' + gistId + ') ...')        
+        .assert.containsText('*[data-shared="tooltipPopup"]', 'Saving gist (' + gistId + ') ...')
       }
 }
