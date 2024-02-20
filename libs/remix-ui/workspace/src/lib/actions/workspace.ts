@@ -627,12 +627,11 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
                   isGist: null
                 }
               } else {
-                const gistId = await plugin.call('filePanel', 'isGist', name)
                 return {
                   name,
                   isGitRepo,
                   hasGitSubmodules,
-                  isGist: gistId
+                  isGist: plugin.isGist(name) // plugin is filePanel
                 }
               }
             })
