@@ -250,13 +250,14 @@ export const clearAllInstances = () => {
   }
 }
 
-export const setDecodedResponse = (instanceIndex: number, response, funcIndex?: number) => {
+export const setDecodedResponse = (instanceIndex: number, response, funcIndex?: number, isSavedContract?: boolean) => {
   return {
     type: SET_DECODED_RESPONSE,
     payload: {
       instanceIndex,
       funcIndex,
-      response
+      response,
+      isSavedContract
     }
   }
 }

@@ -322,6 +322,7 @@ export interface InstanceContainerProps {
   getContext: () => 'memory' | 'blockchain',
   runTransactions: (
     instanceIndex: number,
+    isSavedContract: boolean,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
@@ -429,6 +430,7 @@ export interface UdappProps {
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   runTransactions: (
     instanceIndex: number,
+    isSavedContract: boolean,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
