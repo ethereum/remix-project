@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { isArray } from 'lodash'
 import Editor, { loader, Monaco } from '@monaco-editor/react'
 import { AlertModal } from '@remix-ui/app'
-import { QueryParams } from '@remix-project/remix-lib'
+import { ConsoleLogs, QueryParams } from '@remix-project/remix-lib'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
 import { solidityTokensProvider, solidityLanguageConfig } from './syntaxes/solidity'
 import { cairoTokensProvider, cairoLanguageConfig } from './syntaxes/cairo'
@@ -741,6 +741,24 @@ export const EditorUI = (props: EditorUIProps) => {
       },
     }
 
+    let solgptExplainFunctionAction
+    const executeSolgptExplainFunctionAction = {
+      id: 'explainFunction',
+      label: intl.formatMessage({id: 'editor.explainFunctionSol'}),
+      contextMenuOrder: 1, // choose the order
+      contextMenuGroupId: 'sol-gtp', // create a new grouping
+      keybindings: [],
+      run: async () => {
+        const file = await props.plugin.call('fileManager', 'getCurrentFile')
+        const content = await props.plugin.call('fileManager', 'readFile', file)
+        const selectedCode = editor.getModel().getValueInRange(editor.getSelection())
+
+        await props.plugin.call('solcoder', 'code_explaining', selectedCode)
+        _paq.push(['trackEvent', 'ai', 'solcoder', 'explainFunction'])
+      },
+    }
+
+
     const freeFunctionCondition = editor.createContextKey('freeFunctionCondition', false)
     let freeFunctionAction
     const executeFreeFunctionAction = {
@@ -775,6 +793,7 @@ export const EditorUI = (props: EditorUIProps) => {
     freeFunctionAction = editor.addAction(executeFreeFunctionAction)
     gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
     gptExplainFunctionAction = editor.addAction(executegptExplainFunctionAction)
+    solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
 
     // we have to add the command because the menu action isn't always available (see onContextMenuHandlerForFreeFunction)
     editor.addCommand(monacoRef.current.KeyMod.Shift | monacoRef.current.KeyMod.Alt | monacoRef.current.KeyCode.KeyR, () => executeFreeFunctionAction.run())
@@ -794,6 +813,10 @@ export const EditorUI = (props: EditorUIProps) => {
         gptExplainFunctionAction.dispose()
         gptExplainFunctionAction = null
       }
+      if (solgptExplainFunctionAction) {
+        solgptExplainFunctionAction.dispose()
+        solgptExplainFunctionAction = null
+      }
 
       const file = await props.plugin.call('fileManager', 'getCurrentFile')
       if (!file.endsWith('.sol')) {
@@ -811,8 +834,11 @@ export const EditorUI = (props: EditorUIProps) => {
         currentFunction.current = functionImpl.name
         executeGptGenerateDocumentationAction.label = intl.formatMessage({id: 'editor.generateDocumentation2'}, {name: functionImpl.name})
         gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
-        executegptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunction2'}, {name: functionImpl.name})
+        executegptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunction'}, {name: functionImpl.name})
         gptExplainFunctionAction = editor.addAction(executegptExplainFunctionAction)
+      }else{
+        executeSolgptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunctionSol'})
+        solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
       }
       freeFunctionCondition.set(!!freeFunctionNode)
     }

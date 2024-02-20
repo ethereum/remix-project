@@ -62,7 +62,7 @@ export const TabsUI = (props: TabsUIProps) => {
   const currentIndexRef = useRef(-1)
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
-  const [ai_switch, setAI_switch] = useState<boolean>(true)
+  const [ai_switch, setAI_switch] = useState<boolean>(false)
 
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
