@@ -181,7 +181,7 @@ function getFunctionCallType (func: FunctionCallAstNode): string {
 /**
  * Get the variable name written to by a effect node, except for inline assembly because there is no information to find out where we write to. Trows if not a effect node or is inlineassmbly.
  * Example: x = 10; => x
- * @effectNode {ASTNode} Assignmnet node
+ * @effectNode {ASTNode} Assignment node
  * @return {string} variable name written to
  */
 function getEffectedVariableName (effectNode: AssignmentAstNode | UnaryOperationAstNode): string {
@@ -439,8 +439,8 @@ function getFullQualifiedFunctionCallIdent (contract: ContractDefinitionAstNode,
   else throw new Error('staticAnalysisCommon.js: Can not get function name from non function call node')
 }
 
-function getFullQuallyfiedFuncDefinitionIdent (contract: ContractDefinitionAstNode, func: FunctionDefinitionAstNode, paramTypes: any[]): string {
-  return getContractName(contract) + '.' + getFunctionDefinitionName(func) + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
+function getFullQualifiedFuncDefinitionIdent (contract: ContractDefinitionAstNode, func: FunctionDefinitionAstNode, paramTypes: any[]): string {
+  return getContractName(contract) + '.' + getFunctionDefinitionName(func) + '(' + util.concatWithSeparator(paramTypes, ',') + ')'
 }
 
 function getUnAssignedTopLevelBinOps (subScope: BlockAstNode | IfStatementAstNode | WhileStatementAstNode | ForStatementAstNode): ExpressionStatementAstNode[] {
@@ -630,7 +630,7 @@ function isStateVariable (name: string, stateVariables: VariableDeclarationAstNo
 }
 
 /**
- * True if is function definition that is flaged as constant
+ * True if is function definition that is flagged as constant
  * @node {ASTNode} some AstNode
  * @return {bool}
  */
@@ -639,7 +639,7 @@ function isConstantFunction (node: FunctionDefinitionAstNode): boolean {
 }
 
 /**
-* True if variable decalaration is converted into a getter method
+* True if variable declaration is converted into a getter method
  * @node {ASTNode} variable declaration AstNode
  * @return {bool}
  */
@@ -1059,11 +1059,11 @@ function findFirstSubNodeLTR (node: any, type: string): any {
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function buildFunctionSignature (paramTypes: any[], returnTypes: any[], isPayable: boolean, additionalMods?: any): string {
-  return 'function (' + util.concatWithSeperator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((additionalMods) ? ' ' + additionalMods : '') + ((returnTypes.length) ? ' returns (' + util.concatWithSeperator(returnTypes, ',') + ')' : '')
+  return 'function (' + util.concatWithSeparator(paramTypes, ',') + ')' + ((isPayable) ? ' payable' : '') + ((additionalMods) ? ' ' + additionalMods : '') + ((returnTypes.length) ? ' returns (' + util.concatWithSeparator(returnTypes, ',') + ')' : '')
 }
 
 function buildAbiSignature (funName: string, paramTypes: any[]): string {
-  return funName + '(' + util.concatWithSeperator(paramTypes, ',') + ')'
+  return funName + '(' + util.concatWithSeparator(paramTypes, ',') + ')'
 }
 
 // To create the method signature similar to contract.evm.gasEstimates.external object
@@ -1157,7 +1157,7 @@ export {
   getLibraryCallContractName,
   getLibraryCallMemberName,
   getFullQualifiedFunctionCallIdent,
-  getFullQuallyfiedFuncDefinitionIdent,
+  getFullQualifiedFuncDefinitionIdent as getFullQualifiedFuncDefinitionIdent,
   getStateVariableDeclarationsFromContractNode,
   getFunctionOrModifierDefinitionParameterPart,
   getFunctionDefinitionReturnParameterPart,

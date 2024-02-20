@@ -9828,7 +9828,7 @@ declare namespace monaco.languages.typescript {
      */
     getFormattingEditsAfterKeystroke(
       fileName: string,
-      postion: number,
+      position: number,
       ch: string,
       options: any
     ): Promise<any[]>
@@ -9838,7 +9838,7 @@ declare namespace monaco.languages.typescript {
      */
     findRenameLocations(
       fileName: string,
-      positon: number,
+      position: number,
       findInStrings: boolean,
       findInComments: boolean,
       providePrefixAndSuffixTextForRename: boolean
@@ -9848,7 +9848,7 @@ declare namespace monaco.languages.typescript {
      * @param options `typescript.RenameInfoOptions`
      * @returns `Promise<typescript.RenameInfo>`
      */
-    getRenameInfo(fileName: string, positon: number, options: any): Promise<any>
+    getRenameInfo(fileName: string, position: number, options: any): Promise<any>
     /**
      * Get transpiled output for the given file.
      * @returns `typescript.EmitOutput`

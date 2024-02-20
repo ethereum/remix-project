@@ -35,7 +35,7 @@ type errorMarker = {
 }
 export default class CodeParserCompiler {
   plugin: CodeParser
-  compiler: any // used to compile the current file seperately from the main compiler
+  compiler: any // used to compile the current file separately from the main compiler
   onAstFinished: (success: any, data: CompilationResult, source: CompilationSourceCode, input: any, version: any) => Promise<void>;
   errorState: boolean;
   gastEstimateTimeOut: any

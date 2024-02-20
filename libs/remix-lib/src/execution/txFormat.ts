@@ -32,7 +32,7 @@ export function encodeData (funABI, values, contractbyteCode) {
 /**
 * encode function / constructor parameters
 *
-* @param {Object} params    - input paramater of the function to call
+* @param {Object} params    - input parameter of the function to call
 * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
 * @param {Function} callback    - callback
 */
@@ -94,7 +94,7 @@ export function encodeParams (params, funAbi, callback?) {
 /**
 * encode function call (function id + encoded parameters)
 *
-* @param {Object} params    - input paramater of the function to call
+* @param {Object} params    - input parameter of the function to call
 * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
 * @param {Function} callback    - callback
 */
@@ -108,8 +108,8 @@ export function encodeFunctionCall (params, funAbi, callback) {
 /**
 * encode constructor creation and link with provided libraries if needed
 *
-* @param {Object} contract    - input paramater of the function to call
-* @param {Object} params    - input paramater of the function to call
+* @param {Object} contract    - input parameter of the function to call
+* @param {Object} params    - input parameter of the function to call
 * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
 * @param {Object} linkLibraries    - contains {linkReferences} object which list all the addresses to be linked
 * @param {Object} linkReferences    - given by the compiler, contains the proper linkReferences
@@ -127,7 +127,7 @@ export function encodeConstructorCallAndLinkLibraries (contract, params, funAbi,
 /**
 * link with provided libraries if needed
 *
-* @param {Object} contract    - input paramater of the function to call
+* @param {Object} contract    - input parameter of the function to call
 * @param {Object} linkLibraries    - contains {linkReferences} object which list all the addresses to be linked
 * @param {Object} linkReferences    - given by the compiler, contains the proper linkReferences
 * @param {Function} callback    - callback
@@ -152,12 +152,12 @@ export function linkLibraries (contract, linkLibraries, linkReferences, callback
 }
 
 /**
-* encode constructor creation and deploy librairies if needed
+* encode constructor creation and deploy libraries if needed
 *
 * @param {String} contractName    - current contract name
-* @param {Object} contract    - input paramater of the function to call
+* @param {Object} contract    - input parameter of the function to call
 * @param {Object} contracts    - map of all compiled contracts.
-* @param {Object} params    - input paramater of the function to call
+* @param {Object} params    - input parameter of the function to call
 * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
 * @param {Function} callback    - callback
 * @param {Function} callbackStep  - callbackStep
@@ -195,7 +195,7 @@ export function encodeConstructorCallAndDeployLibraries (contractName, contract,
 * @param {Object} contracts    - map of all compiled contracts.
 * @param {Bool} isConstructor    - isConstructor.
 * @param {Object} funAbi    - abi definition of the function to call. null if building data for the ctor.
-* @param {Object} params    - input paramater of the function to call
+* @param {Object} params    - input parameter of the function to call
 * @param {Function} callback    - callback
 * @param {Function} callbackStep  - callbackStep
 * @param {Function} callbackDeployLibrary  - callbackDeployLibrary
@@ -399,7 +399,7 @@ export function decodeResponse (response, fnabi) {
         const type = fnabi.outputs[i].type
         outputTypes.push(type.indexOf('tuple') === 0 ? makeFullTypeDefinition(fnabi.outputs[i]) : type)
       }
-      if (!response || !response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
+      if (!response || !response.length) response = new Uint8Array(32 * fnabi.outputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not enough data
       // decode data
       const abiCoder = new ethers.utils.AbiCoder()
       const decodedObj = abiCoder.decode(outputTypes, response)

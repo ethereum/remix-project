@@ -29,7 +29,7 @@ const css = csjs`
   .heading {
     margin-bottom: 0;
   }
-  .explaination {
+  .explanation {
     margin-top: 3px;
     margin-bottom: 3px;
   }

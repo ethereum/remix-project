@@ -375,7 +375,7 @@ export class TxListener {
 
   _decodeInputParams (data, abi) {
     data = toBuffer(addHexPrefix(data))
-    if (!data.length) data = new Uint8Array(32 * abi.inputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not engouh data
+    if (!data.length) data = new Uint8Array(32 * abi.inputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not enough data
 
     const inputTypes = []
     for (let i = 0; i < abi.inputs.length; i++) {
