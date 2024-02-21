@@ -70,7 +70,6 @@ export const registerCommandReducer = (state, action) => {
         data: Object.assign(initialState.data, action.payload.data),
       }
     case CLEAR_CONSOLE:
-      console.log('clear console', state)
       return {
         ...state,
         ...state.journalBlocks.splice(0),
