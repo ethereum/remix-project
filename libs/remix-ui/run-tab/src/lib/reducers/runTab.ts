@@ -516,15 +516,24 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case REMOVE_INSTANCE: {
-    const payload: number = action.payload
+    const payload: { index: number, isSavedContract: boolean } = action.payload
 
-    return {
-      ...state,
-      instances: {
-        ...state.instances,
-        instanceList: state.instances.instanceList.filter((_, index) => index !== payload)
+    if (payload.isSavedContract)
+      return {
+        ...state,
+        savedInstances: {
+          ...state.savedInstances,
+          instanceList: state.savedInstances.instanceList.filter((_, index) => index !== payload.index)
+        }
       }
-    }
+    else
+      return {
+        ...state,
+        instances: {
+          ...state.instances,
+          instanceList: state.instances.instanceList.filter((_, index) => index !== payload.index)
+        }
+      }
   }
 
   case CLEAR_INSTANCES: {

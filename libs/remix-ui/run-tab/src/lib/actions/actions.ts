@@ -75,8 +75,8 @@ export const addSavedInstance = (dispatch: React.Dispatch<any>, instance: { cont
   dispatch(addNewSavedInstance(instance))
 }
 
-export const removeInstance = (dispatch: React.Dispatch<any>, index: number) => {
-  dispatch(removeExistingInstance(index))
+export const removeInstance = (dispatch: React.Dispatch<any>, index: number, isSavedContract: boolean) => {
+  dispatch(removeExistingInstance(index, isSavedContract))
 }
 
 export const clearInstances = (dispatch: React.Dispatch<any>) => {
