@@ -111,12 +111,17 @@ export function UniversalDappUI(props: UdappProps) {
     setToggleExpander(!toggleExpander)
   }
 
-  const remove = () => {
-    props.removeInstance(props.index)
-  }
-
-  const unsave = () => {
-    console.log('unsave is clicked')
+  const remove = async() => {
+    if (props.isSavedContract) {
+      const env = await props.plugin.call('blockchain', 'getProvider')
+      const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
+      const savedContracts = localStorage.getItem('savedContracts')
+      const savedContractsJson = JSON.parse(savedContracts)
+      const instanceIndex = savedContractsJson[env][network.id].findIndex(instance => instance.address === props.instance.address)
+      delete savedContractsJson[env][network.id][instanceIndex]
+      localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson))
+    }
+    props.removeInstance(props.index, props.isSavedContract)
   }
 
   const saveContract = async() => {
@@ -268,8 +273,8 @@ export function UniversalDappUI(props: UdappProps) {
           ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
             <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
           </CustomTooltip> ) :
-          ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnsave" />}>
-            <i className="udapp_closeIcon m-1 far fa-trash-alt align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={unsave}></i>
+          ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnsaveTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnsave" />}>
+            <i className="udapp_closeIcon m-1 far fa-trash-alt align-self-center" aria-hidden="true" data-id="universalDappUiUdappUnsave" onClick={remove}></i>
           </CustomTooltip> )}
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
