@@ -26,12 +26,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
     dispatch({ type: 'search', payload: arg0 })
   }
 
-  return (<>
-    <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole}>
-      <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.clearConsole" />}>
-        <i className="fas fa-ban" aria-hidden="true"></i>
-      </CustomTooltip>
-    </div>
+  return (<div className='d-flex flex-row align-items-center'>
     <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
       <div className="mx-2">0</div>
     </CustomTooltip>
@@ -72,5 +67,10 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
         data-id="terminalInputSearch"
       />
     </div>
-  </>)
+    <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole}>
+      <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.clearConsole" />}>
+        <i className="fas fa-ban" aria-hidden="true"></i>
+      </CustomTooltip>
+    </div>
+  </div>)
 }
