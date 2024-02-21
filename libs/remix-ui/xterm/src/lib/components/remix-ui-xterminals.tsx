@@ -141,13 +141,21 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   }, [xtermState.showOutput])
 
   return (<>
-    <div style={{ flexGrow: 1 }} className='d-flex flex-row h-100'>
+    { !xtermState.showOutput && <div style={{ flexGrow: 1 }} className='d-flex flex-row h-100'>
       <>
-        { xtermState.showOutput && <div className={`flex-row w-100 h-100 d-flex`}>
+        { !xtermState.showOutput && <div className={`flex-row w-100 h-100 d-flex`}>
           {terminals.map((xtermState) => {
             return (
               <div className={`h-100 w-100 ${xtermState.hidden ? 'd-none' : 'd-block'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
-                <RemixUiXterm theme={theme} setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} resize={resize} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
+                <RemixUiXterm
+                  theme={theme}
+                  setTerminalRef={setTerminalRef}
+                  timeStamp={xtermState.timeStamp}
+                  send={send}
+                  resize={resize}
+                  pid={xtermState.pid}
+                  plugin={plugin}
+                ></RemixUiXterm>
               </div>
             )
           })}
@@ -156,7 +164,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
               return (<button
                 key={index}
                 onClick={async () => selectTerminal(xtermState)}
-                className={`btn btn-sm mt-2 ${xtermState.hidden ? 'border border-secondary' : 'btn-secondary'}`}
+                className={`btn btn-sm m-1 p-1 px-2 ${xtermState.hidden ? 'border border-secondary' : 'btn-secondary'}`}
               >
                 <span className="fa fa-terminal border-0 p-0 m-0"></span>
               </button>)
@@ -165,7 +173,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         </div>
         }
       </>
-    </div>
+    </div>}
   </>)
 }
 

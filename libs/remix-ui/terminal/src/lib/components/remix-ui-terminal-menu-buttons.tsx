@@ -1,6 +1,8 @@
 import React, { useContext, useEffect } from 'react' // eslint-disable-line
 import { TerminalContext } from '../context'
 import { RemixUiTerminalProps, SET_OPEN } from '../types/terminalTypes'
+import './remix-ui-terminal-menu-buttons.css'
+
 export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
   const { xtermState, dispatchXterm, terminalState, dispatch } = useContext(TerminalContext)
 
@@ -18,10 +20,10 @@ export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
 
   return (
     <div className='d-flex flex-row align-items-center'>
-      <button id="tabOutput" className={`btn btn-sm border-secondary mr-2 border ${!xtermState.showOutput ? 'd-none' : ' btn-secondary'}`} onClick={selectOutput}>
+      <button id="tabOutput" className={`xtermButton btn btn-sm border-secondary mr-2 border ${!xtermState.showOutput ? '' : 'd-flex btn-secondary'}`} onClick={selectOutput}>
         Output
       </button>
-      <button id="tabXTerm" className={`btn btn-sm border-secondary ${xtermState.terminalsEnabled ? 'btn-secondary' : 'd-none'}`} onClick={showTerminal}>
+      <button id="tabXTerm" className={`xtermButton btn btn-sm border-secondary ${xtermState.terminalsEnabled ? 'd-block' : 'd-none'}  ${xtermState.showOutput ? 'd-none' : 'btn-secondary'}`} onClick={showTerminal}>
         <span className="far fa-terminal border-0 ml-1"></span>
       </button>
     </div>

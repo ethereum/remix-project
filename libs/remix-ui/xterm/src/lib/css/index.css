@@ -1,3 +1,4 @@
 .xterm-panel-left {
-  overflow: scroll;
+  overflow-y: scroll;
+  margin-bottom: 2.1rem;
 }
