@@ -556,11 +556,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }))
   }
 
-  const handleToggleTerminal = () => {
-    setIsOpen(!isOpen)
-    props.plugin.call('layout', 'minimize', props.plugin.profile.name, isOpen)
-  }
-
   useEffect(() => {
     ;(async () => {
       const storage = await props.plugin.call('storage', 'formatString', await props.plugin.call('storage', 'getStorage'))
