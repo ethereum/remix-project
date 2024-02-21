@@ -143,8 +143,8 @@ module.exports = {
       .modalFooterOKClick('gisthandler')
       .pause(10000)
       .openFile(`README.txt`)
-      .waitForElementVisible(`div[data-path='default_workspace/README.txt']`)
-      .assert.containsText(`div[data-path='default_workspace/README.txt'] > span`, 'README.txt')
+      .waitForElementVisible(`div[data-path='gist ${testData.validGistId}/README.txt']`)
+      .assert.containsText(`div[data-path='gist ${testData.validGistId}/README.txt'] > span`, 'README.txt')
     },
 
     'Load Gist from URL and verify truncated files are loaded #group3': function (browser: NightwatchBrowser) {
@@ -152,6 +152,7 @@ module.exports = {
       browser
         .url('http://127.0.0.1:8080/#gist=' + gistId) // loading the gist
         .refreshPage()
+        .currentWorkspaceIs('gist ' + gistId)
         .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
         .waitForElementVisible(`#fileExplorerView li[data-path='contracts']`, 30000)
         .openFile(`contracts/2_Owner.sol`)
