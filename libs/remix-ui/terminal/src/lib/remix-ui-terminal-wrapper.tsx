@@ -23,10 +23,10 @@ export const RemixUITerminalWrapper = (props: RemixUiTerminalProps) => {
       <RemixUITerminalBar {...props} />
       {platform !== appPlatformTypes.desktop && <RemixUiTerminal {...props} />}
       {platform === appPlatformTypes.desktop &&
-                <>
-                  <RemixUiTerminal visible={xtermState.showOutput} plugin={props.plugin} onReady={props.onReady} />
-                  <RemixUiXterminals {...props} />
-                </>
+        <>
+          <RemixUiTerminal visible={xtermState.showOutput} plugin={props.plugin} onReady={props.onReady} />
+          <RemixUiXterminals {...props} />
+        </>
       }
     </TerminalContext.Provider>
   </>)
