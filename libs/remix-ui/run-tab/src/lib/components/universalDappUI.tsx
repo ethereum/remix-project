@@ -119,6 +119,7 @@ export function UniversalDappUI(props: UdappProps) {
       const savedContractsJson = JSON.parse(savedContracts)
       const instanceIndex = savedContractsJson[env][network.id].findIndex(instance => instance.address === props.instance.address)
       delete savedContractsJson[env][network.id][instanceIndex]
+      savedContractsJson[env][network.id].filter(Boolean) // To remove null entries
       localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson))
     }
     props.removeInstance(props.index, props.isSavedContract)
