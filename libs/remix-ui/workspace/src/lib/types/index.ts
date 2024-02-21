@@ -43,8 +43,26 @@ export interface FileType {
   path: string
   name: string
   isDirectory: boolean
-  type: 'folder' | 'file' | 'gist'
+  type: 'folder' | 'file'
   child?: File[]
+}
+
+export type WorkspaceMetadata = {
+  name: string
+  isGitRepo: boolean
+  hasGitSubmodules?: boolean
+  branches?: {remote: any; name: string}[]
+  currentBranch?: string
+  isGist: string
+}
+
+export type TemplateType = {
+  type: 'git' | 'plugin'
+  url?: string
+  branch?: string
+  name?: string
+  endpoint?: string
+  params?: any[]
 }
 
 export interface FilePanelType extends ViewPlugin {
@@ -155,10 +173,10 @@ export interface FileExplorerContextMenuProps {
   renamePath: (path: string, type: string) => void
   downloadPath: (path: string) => void
   hideContextMenu: () => void
-  publishToGist?: (path?: string, type?: string) => void
-  pushChangesToGist?: (path?: string, type?: string) => void
-  publishFolderToGist?: (path?: string, type?: string) => void
-  publishFileToGist?: (path?: string, type?: string) => void
+  publishToGist?: (path?: string) => void
+  pushChangesToGist?: (path?: string) => void
+  publishFolderToGist?: (path?: string) => void
+  publishFileToGist?: (path?: string) => void
   runScript?: (path: string) => void
   emit?: (cmd: customAction) => void
   pageX: number
@@ -319,4 +337,4 @@ export interface Action<T extends keyof ActionPayloadTypes> {
 
 export type Actions = {[A in keyof ActionPayloadTypes]: Action<A>}[keyof ActionPayloadTypes]
 
-export type WorkspaceElement = 'folder' | 'gist' | 'file' | 'workspace'
+export type WorkspaceElement = 'folder' | 'file' | 'workspace'

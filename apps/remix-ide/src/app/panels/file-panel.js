@@ -46,6 +46,7 @@ const profile = {
     'loadTemplate', 
     'clone',
     'isExpanded',
+    'isGist'
   ],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
@@ -129,6 +130,20 @@ module.exports = class Filepanel extends ViewPlugin {
         else resolve(data)
       })
     })
+  }
+
+  /**
+   * return the gist id if the current workspace is a gist workspace, otherwise returns null
+   * @argument {String} workspaceName - the name of the workspace to check against. default to the current workspace.
+   * @returns {string} gist id or null
+   */
+  isGist (workspaceName) {
+    workspaceName = workspaceName || this.currentWorkspaceMetadata && this.currentWorkspaceMetadata.name
+    const isGist = workspaceName.startsWith('gist')
+    if (isGist) {
+      return workspaceName.split(' ')[1]
+    }
+    return null
   }
 
   getCurrentWorkspace() {
