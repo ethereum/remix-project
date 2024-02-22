@@ -84,8 +84,8 @@ export class RunTab extends ViewPlugin {
     this.emit('addInstanceReducer', address, abi, name)
   }
 
-  addSavedInstance(address, abi, name) {
-    this.emit('addSavedInstanceReducer', address, abi, name)
+  addSavedInstance(address, abi, name, savedOn) {
+    this.emit('addSavedInstanceReducer', address, abi, name, savedOn)
   }
 
   createVMAccount(newAccount) {

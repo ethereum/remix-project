@@ -230,7 +230,7 @@ export const addNewInstance = (instance: { contractData?: ContractData, address:
   }
 }
 
-export const addNewSavedInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any }) => {
+export const addNewSavedInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any, savedOn?: number }) => {
   return {
     type: ADD_SAVED_INSTANCE,
     payload: instance

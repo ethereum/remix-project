@@ -52,6 +52,7 @@ export function UniversalDappUI(props: UdappProps) {
   }, [props.instance.contractData])
 
   useEffect(() => {
+    console.log('props====>', props)
     if (props.instance.balance) {
       setInstanceBalance(props.instance.balance)
     }
@@ -142,10 +143,11 @@ export function UniversalDappUI(props: UdappProps) {
         objToSave[env][network.id] = []
       }
     }
+    props.instance.savedOn = Date.now()
     objToSave[env][network.id].push(props.instance)
     localStorage.setItem('savedContracts', JSON.stringify(objToSave))
     // Add contract to saved contracts list on UI
-    await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.contractData.abi, props.instance.name)
+    await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.contractData.abi, props.instance.name, props.instance.savedOn)
     // Remove contract from deployed contracts list on UI
     props.removeInstance(props.index, false)
   }
@@ -288,6 +290,13 @@ export function UniversalDappUI(props: UdappProps) {
               <FormattedMessage id="udapp.balance" />: {instanceBalance} ETH
             </label>
           </div>
+          { props.isSavedContract && props.instance.savedOn ? (
+            <div className="d-flex" data-id="instanceContractSavedOn">
+              <label>
+                <FormattedMessage id="udapp.savedOn" />: {(new Date(props.instance.savedOn)).toUTCString()}
+              </label>
+            </div>
+          ) : null }
           {contractABI &&
             contractABI.map((funcABI, index) => {
               if (funcABI.type !== 'function') return null
