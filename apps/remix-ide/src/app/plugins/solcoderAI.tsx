@@ -16,7 +16,7 @@ export class SolCoder extends Plugin {
   api_url: string
   constructor() {
     super(profile)
-    this.api_url = "https://hkfll35zthu6e2-7861.proxy.runpod.net/api/"
+    this.api_url = "https://solcoder.remixproject.org"
   }
 
   async code_generation(prompt): Promise<any> {
@@ -26,13 +26,13 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-        await fetch(this.api_url.concat("code_generation"), {
+        await fetch(this.api_url, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt,false,1000,0.2,0.8,50]}),
+          body: JSON.stringify({"data":[prompt, "code_generation", false,1000,0.2,0.8,50]}),
         })
       ).json()
       return result.data[0]
@@ -51,13 +51,13 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-        await fetch(this.api_url.concat("solidity_answer"), {
+        await fetch(this.api_url, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt,false,1000,0.9,0.8,50]}),
+          body: JSON.stringify({"data":[prompt, "solidity_answer", false,1000,0.9,0.8,50]}),
         })
       ).json()
     } catch (e) {
@@ -81,13 +81,13 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-        await fetch(this.api_url.concat("code_explaining"), {
+        await fetch(this.api_url, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt,false,2000,0.9,0.8,50]}),
+          body: JSON.stringify({"data":[prompt, "code_explaining", false,2000,0.9,0.8,50]}),
         })
       ).json()
       if (result) {
@@ -107,7 +107,7 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-        await fetch(this.api_url.concat("code_completion"), {
+        await fetch(this.api_url, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -115,6 +115,7 @@ export class SolCoder extends Plugin {
           },
           body: JSON.stringify({"data": !options? [
             prompt, // string  in 'context_code' Textbox component	
+            "code_completion",
             "", // string  in 'comment' Textbox component		
             false, // boolean  in 'stream_result' Checkbox component		
             200, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component		
@@ -123,6 +124,7 @@ export class SolCoder extends Plugin {
             50, // number (numeric value between 1 and 200) in 'top_k' Slider component
           ] : [
             prompt,
+            "code_completion",
             "",
             options.stream_result,
             options.max_new_tokens,
