@@ -40,7 +40,7 @@ export const xtermReducer = (state = xTerminInitialState, action: Actions) => {
       ...state,
       terminals: state.terminals.map(terminal => ({ ...terminal, hidden: true }))
     }
-  case 'REMOVE_TERMINAL':
+  case 'REMOVE_TERMINAL': {
     const removed = state.terminals.filter(xtermState => xtermState.pid !== action.payload)
     if (removed.length > 0)
       removed[removed.length - 1].hidden = false
@@ -48,6 +48,7 @@ export const xtermReducer = (state = xTerminInitialState, action: Actions) => {
       ...state,
       terminals: removed
     }
+  }
   case 'ADD_SHELLS':
     return {
       ...state,
