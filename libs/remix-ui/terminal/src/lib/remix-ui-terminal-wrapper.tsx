@@ -8,26 +8,26 @@ import RemixUiTerminal from './remix-ui-terminal'
 import { RemixUiTerminalProps } from './types/terminalTypes'
 
 export const RemixUITerminalWrapper = (props: RemixUiTerminalProps) => {
-    const [terminalState, dispatch] = useReducer(registerCommandReducer, initialState)
-    const [xtermState, dispatchXterm] = useReducer(xtermReducer, xTerminInitialState)
-    const platform = useContext(platformContext)
-    const providerState = {
-        terminalState,
-        dispatch,
-        xtermState,
-        dispatchXterm
-    }
+  const [terminalState, dispatch] = useReducer(registerCommandReducer, initialState)
+  const [xtermState, dispatchXterm] = useReducer(xtermReducer, xTerminInitialState)
+  const platform = useContext(platformContext)
+  const providerState = {
+    terminalState,
+    dispatch,
+    xtermState,
+    dispatchXterm
+  }
 
-    return (<>
-        <TerminalContext.Provider value={providerState}>
-            <RemixUITerminalBar {...props} />
-            {platform !== appPlatformTypes.desktop && <RemixUiTerminal {...props} />}
-            {platform === appPlatformTypes.desktop &&
+  return (<>
+    <TerminalContext.Provider value={providerState}>
+      <RemixUITerminalBar {...props} />
+      {platform !== appPlatformTypes.desktop && <RemixUiTerminal {...props} />}
+      {platform === appPlatformTypes.desktop &&
                 <>
-                    <RemixUiTerminal visible={xtermState.showOutput} plugin={props.plugin} onReady={props.onReady} />
-                    <RemixUiXterminals {...props} />
+                  <RemixUiTerminal visible={xtermState.showOutput} plugin={props.plugin} onReady={props.onReady} />
+                  <RemixUiXterminals {...props} />
                 </>
-            }
-        </TerminalContext.Provider>
-    </>)
+      }
+    </TerminalContext.Provider>
+  </>)
 }
