@@ -83,8 +83,8 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     addInstance(dispatch, { abi, address, name })
   })
 
-  plugin.on('udapp', 'addSavedInstanceReducer', (address, abi, name, savedOn) => {
-    addSavedInstance(dispatch, { abi, address, name, savedOn })
+  plugin.on('udapp', 'addSavedInstanceReducer', (address, abi, name, savedOn, filePath) => {
+    addSavedInstance(dispatch, { abi, address, name, savedOn, filePath})
   })
 
   plugin.on('filePanel', 'setWorkspace', () => {
