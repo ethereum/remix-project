@@ -6,7 +6,7 @@ import * as packageJson from '../../../../../package.json'
 import {Registry} from '@remix-project/remix-lib'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import vm from 'vm'
-const EventManager = require('../../lib/events')
+import EventManager from '../../lib/events'
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
 import { RemixUiXterminals } from '@remix-ui/xterm'
