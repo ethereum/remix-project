@@ -315,7 +315,8 @@ export interface InstanceContainerProps {
       name: string,
       decodedResponse?: Record<number, any>,
       abi?: any,
-      savedOn?: number
+      savedOn?: number,
+      filePath?: string
     }[],
     error: string
   },
@@ -422,7 +423,8 @@ export interface UdappProps {
     name: string,
     decodedResponse?: Record<number, any>,
     abi?: any,
-    savedOn?: number
+    savedOn?: number,
+    filePath?: string
   },
   context: 'memory' | 'blockchain',
   isSavedContract?: boolean
