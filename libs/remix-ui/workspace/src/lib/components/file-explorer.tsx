@@ -143,12 +143,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const publishToGist = (path?: string, type?: string) => {
+  const publishToGist = (path?: string) => {
     props.modal(
       intl.formatMessage({ id: 'filePanel.createPublicGist' }),
       intl.formatMessage({ id: 'filePanel.createPublicGistMsg4' }, { name }),
       intl.formatMessage({ id: 'filePanel.ok' }),
-      () => toGist(path, type),
+      () => toGist(path),
       intl.formatMessage({ id: 'filePanel.cancel' }),
       () => { }
     )
@@ -173,7 +173,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleClickFolder = async (path: string, type: 'folder' | 'file' | 'gist') => {
+  const handleClickFolder = async (path: string, type: 'folder' | 'file' ) => {
     if (state.ctrlKey) {
       if (props.focusElement.findIndex((item) => item.key === path) !== -1) {
         const focusElement = props.focusElement.filter((item) => item.key !== path)
