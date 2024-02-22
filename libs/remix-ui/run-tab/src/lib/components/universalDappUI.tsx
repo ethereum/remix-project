@@ -59,6 +59,7 @@ export function UniversalDappUI(props: UdappProps) {
   }, [props.instance.balance])
 
   useEffect(() => {
+    console.log('props--->', props.instance)
     const getEnv = async () => {
       env.current = await props.plugin.call('blockchain', 'getProvider')
     }
@@ -134,6 +135,8 @@ export function UniversalDappUI(props: UdappProps) {
 
   const saveContract = async() => {
     const env = await props.plugin.call('blockchain', 'getProvider')
+    const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
+    console.log('workspace--->', workspace)
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
     const savedContracts = localStorage.getItem('savedContracts')
     let objToSave
@@ -151,10 +154,11 @@ export function UniversalDappUI(props: UdappProps) {
       }
     }
     props.instance.savedOn = Date.now()
+    props.instance.filePath = `${workspace.name}/${props.instance.contractData.contract.file}`
     objToSave[env][network.id].push(props.instance)
     localStorage.setItem('savedContracts', JSON.stringify(objToSave))
     // Add contract to saved contracts list on UI
-    await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.contractData.abi, props.instance.name, props.instance.savedOn)
+    await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.contractData.abi, props.instance.name, props.instance.savedOn, props.instance.filePath)
     // Remove contract from deployed contracts list on UI
     props.removeInstance(props.index, false)
   }
@@ -294,13 +298,20 @@ export function UniversalDappUI(props: UdappProps) {
         <div className="udapp_contractActionsContainer">
           <div className="d-flex" data-id="instanceContractBal">
             <label>
-              <FormattedMessage id="udapp.balance" />: {instanceBalance} ETH
+              <b><FormattedMessage id="udapp.balance" />:</b> {instanceBalance} ETH
             </label>
           </div>
           { props.isSavedContract && props.instance.savedOn ? (
             <div className="d-flex" data-id="instanceContractSavedOn">
               <label>
-                <FormattedMessage id="udapp.savedOn" />: {(new Date(props.instance.savedOn)).toUTCString()}
+                <b><FormattedMessage id="udapp.savedOn" />:</b> {(new Date(props.instance.savedOn)).toUTCString()}
+              </label>
+            </div>
+          ) : null }
+          { props.isSavedContract && props.instance.filePath ? (
+            <div className="d-flex" data-id="instanceContractFilePath">
+              <label>
+                <b><FormattedMessage id="udapp.filePath" />:</b> {props.instance.filePath}
               </label>
             </div>
           ) : null }

@@ -74,9 +74,7 @@
   "udapp.NoSavedInstanceText": "Currently you have no saved contracts to interact with.",
   "udapp.tooltipTextUnsave": "Delete from saved list",
   "udapp.savedOn": "Saved On",
-
-
-
+  "udapp.filePath": "File Path",
 
   "udapp._comment_recorderCardUI.tsx": "libs/remix-ui/run-tab/src/lib/components/recorderCardUI.tsx",
   "udapp.transactionsRecorded": "Transactions recorded",
