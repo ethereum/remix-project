@@ -59,7 +59,6 @@ export function UniversalDappUI(props: UdappProps) {
   }, [props.instance.balance])
 
   useEffect(() => {
-    console.log('props--->', props.instance)
     const getEnv = async () => {
       env.current = await props.plugin.call('blockchain', 'getProvider')
     }
@@ -128,7 +127,7 @@ export function UniversalDappUI(props: UdappProps) {
       const savedContractsJson = JSON.parse(savedContracts)
       const instanceIndex = savedContractsJson[env][network.id].findIndex(instance => instance && instance.address === props.instance.address)
       delete savedContractsJson[env][network.id][instanceIndex]
-      localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson))
+      localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson[env][network.id].filter(Boolean)))
     }
     props.removeInstance(props.index, props.isSavedContract)
   }
@@ -136,7 +135,6 @@ export function UniversalDappUI(props: UdappProps) {
   const saveContract = async() => {
     const env = await props.plugin.call('blockchain', 'getProvider')
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
-    console.log('workspace--->', workspace)
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
     const savedContracts = localStorage.getItem('savedContracts')
     let objToSave
