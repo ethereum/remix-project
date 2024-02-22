@@ -52,7 +52,6 @@ export function UniversalDappUI(props: UdappProps) {
   }, [props.instance.contractData])
 
   useEffect(() => {
-    console.log('props====>', props)
     if (props.instance.balance) {
       setInstanceBalance(props.instance.balance)
     }
