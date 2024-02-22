@@ -42,12 +42,12 @@ class Terminal extends Plugin {
   version: string
   data: {
     lineLength: any // ????
-    session: any[]; activeFilters: { commands: {}; input: string }; filterFns: {}
+    session: any[]; activeFilters: { commands: any; input: string }; filterFns: any
   }
   _view: { el: any; bar: any; input: any; term: any; journal: any; cli: any }
-  _components: {}
-  _commands: {}
-  commands: {}
+  _components: any
+  _commands: any
+  commands: any
   _JOURNAL: any[]
   _jobs: any[]
   _INDEX: any
@@ -103,7 +103,7 @@ class Terminal extends Plugin {
     this._INDEX.commandsMain = {}
     if (opts.shell) this._shell = opts.shell // ???
     register(this)
-    this.event.register('debuggingRequested', async (hash) => {
+    this.event.register('debuggingRequested', async (hash: any) => {
       // TODO should probably be in the run module
       if (!await this._opts.appManager.isActive('debugger')) await this._opts.appManager.activatePlugin('debugger')
       this.call('menuicons', 'select', 'debugger')
