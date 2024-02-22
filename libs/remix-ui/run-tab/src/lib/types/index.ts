@@ -103,7 +103,8 @@ export interface RunTabState {
       balance?: number,
       name: string,
       decodedResponse?: Record<number, any>,
-      abi?: any
+      abi?: any,
+      savedOn?: number
     }[],
     error: string
   },
@@ -313,7 +314,8 @@ export interface InstanceContainerProps {
       balance?: number,
       name: string,
       decodedResponse?: Record<number, any>,
-      abi?: any
+      abi?: any,
+      savedOn?: number
     }[],
     error: string
   },
@@ -419,7 +421,8 @@ export interface UdappProps {
     balance?: number,
     name: string,
     decodedResponse?: Record<number, any>,
-    abi?: any
+    abi?: any,
+    savedOn?: number
   },
   context: 'memory' | 'blockchain',
   isSavedContract?: boolean
