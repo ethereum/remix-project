@@ -21,7 +21,7 @@ export function CompileErrorCard(props: any) {
       >
         {props.output.message.trim()}
       </span>
-      <div className="d-flex flex-column pt-3 align-items-end mb-2">
+      {/* <div className="d-flex flex-column pt-3 align-items-end mb-2">
         <div>
           <span className="border border-success text-success btn-sm" onClick={() => props.askGpt(props.output.message)}>
             Ask GPT
@@ -30,7 +30,7 @@ export function CompileErrorCard(props: any) {
             <CopyToClipboard content={props.output.message} className={`p-0 m-0 far fa-copy alert alert-danger`} direction={'top'} />
           </span>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }
