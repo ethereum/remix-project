@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 
 import {remixClient} from './utils'
 import {CompilationResult} from '@remixproject/plugin-api'
@@ -16,7 +16,7 @@ import Card from 'react-bootstrap/Card'
 
 import './app.css'
 import {CustomTooltip} from '@remix-ui/helper'
-import { Form} from 'react-bootstrap'
+import {Form} from 'react-bootstrap'
 import {CompileErrorCard} from './components/CompileErrorCard'
 import CustomAccordionToggle from './components/CustomAccordionToggle'
 
@@ -39,6 +39,8 @@ const App = () => {
     environment: 'remote',
     localUrl: 'http://localhost:8000/',
   })
+
+  const spinnerIcon = useRef(null)
 
   useEffect(() => {
     async function start() {
@@ -101,8 +103,14 @@ const App = () => {
     setOutput(remixClient.compilerOutput)
   }
 
-  const [toggleAccordion, setToggleAccordion] = useState(false)
+  const startingCompilation = () => {
+    if (!spinnerIcon.current) return
+    spinnerIcon.current.setAttribute('title', 'compiling...')
+    spinnerIcon.current.classList.remove('remixui_bouncingIcon')
+    spinnerIcon.current.classList.add('remixui_spinningIcon')
+  }
 
+  const [toggleAccordion, setToggleAccordion] = useState(false)
 
   return (
     <main id="vyper-plugin">
@@ -117,39 +125,46 @@ const App = () => {
 
         <Accordion className="border-0 w-100 mb-3 accordion-background">
           <div className="border-0">
-            <div className="pl-3 d-flex flex-row justify-content-between">
+            <div className="">
               <CustomAccordionToggle eventKey="0">
                 <span className="">Advanced Compiler Settings</span>
               </CustomAccordionToggle>
-              {/* <i className={toggleAccordion ? 'far fa-angle-right' : 'far fa-angle-down'}></i> */}
             </div>
             <Accordion.Collapse eventKey="0">
               <div className="pl-3 pt-3 border-top-0">
                 <Form>
                   <div className="d-flex flex-row gap-5 mb-3 mt-2">
-                    <Form.Check inline id="remote-compiler" data-id="remote-compiler" type="radio" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} label="Remote Compiler" className={`${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`}
-                    />
-                    <Form.Check inline id="local-compiler" data-id="local-compiler" checked={state.environment === 'local'} type="radio" name="local" value={state.environment} onChange={() => setEnvironment('local')} label="Local Compiler"
-                      className={`${state.environment === 'local' ? '' : `cursor-status`}`}/>
+                    <Form.Check inline id="remote-compiler" data-id="remote-compiler" type="radio" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} label="Remote Compiler" className={`${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`} />
+                    <Form.Check inline id="local-compiler" data-id="local-compiler" checked={state.environment === 'local'} type="radio" name="local" value={state.environment} onChange={() => setEnvironment('local')} label="Local Compiler" className={`${state.environment === 'local' ? '' : `cursor-status`}`} />
                   </div>
                 </Form>
               </div>
             </Accordion.Collapse>
           </div>
         </Accordion>
-        <span className="px-3 mt-1 mb-1 small text-warning">Specify the <a className="text-warning" target="_blank" href="https://">compiler version</a> & <a className="text-warning" href="http://docs.vyperlang.org/en/stable/compiling-a-contract.html#setting-the-target-evm-version" target="_blank" rel="noopener noreferrer">EVM version</a> in the .vy file.</span>
+        <span className="px-3 mt-1 mb-1 small text-warning">
+          Specify the{' '}
+          <a className="text-warning" target="_blank" href="https://">
+            compiler version
+          </a>{' '}
+          &{' '}
+          <a className="text-warning" href="http://docs.vyperlang.org/en/stable/compiling-a-contract.html#setting-the-target-evm-version" target="_blank" rel="noopener noreferrer">
+            EVM version
+          </a>{' '}
+          in the .vy file.
+        </span>
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
           <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} resetCompilerState={resetCompilerResultState} />
         </div>
 
-        <article id="result" className="px-2 mx-2 border-top mt-3">
+        <article id="result" className="p-4 mx-3 border-top mt-2">
           {output && Object.keys(output).length > 0 && output.status !== 'failed' ? (
             <>
               <VyperResult output={output} plugin={remixClient} />
             </>
           ) : output.status === 'failed' ? (
-            <CompileErrorCard output={output} />
+            <CompileErrorCard output={output} askGpt={remixClient.askGpt} />
           ) : null}
         </article>
       </section>
