@@ -17,9 +17,10 @@ export default function CustomAccordionToggle({ children, eventKey }: CustomAcco
   return (
     <div
       onClick={decoratedOnClick}
+      className="d-flex flex-row justify-content-between align-items-center mx-3"
     >
       {children}
-      <i className={toggleAccordion ? 'far fa-angle-right' : 'far fa-angle-down'}></i>
+      <i className={toggleAccordion ? 'far fa-angle-down' : 'far fa-angle-right'}></i>
     </div>
   )
 }
