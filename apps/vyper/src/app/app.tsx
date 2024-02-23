@@ -76,6 +76,7 @@ const App = () => {
       if (payload.status === 'failed') {
         console.error('Error in the compiler', payload)
       }
+      console.log('setOutput', payload)
       setOutput(payload)
     })
 
