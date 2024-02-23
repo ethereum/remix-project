@@ -17,10 +17,12 @@ export function RemixUiVyperCompileDetails({ payload, theme, themeStyle }: Remix
   const ir = compileResult.ir
   const methodIdentifiers= compileResult.methodIdentifiers
   const abi= compileResult.abi
+  const compilerVersion = compileResult?.version ?? ''
+  const emvVersion = compileResult?.evmVersion ?? ''
   return (
     <>
       <VyperCompile
-        result={{bytecode: bcode, bytecodeRuntime: runtimeBcode, ir: ir, methodIdentifiers: methodIdentifiers, abi: abi}}
+        result={{bytecode: bcode, bytecodeRuntime: runtimeBcode, ir: ir, methodIdentifiers: methodIdentifiers, abi: abi, compilerVersion: compilerVersion, evmVersion: emvVersion}}
         theme={theme}
         themeStyle={themeStyle}
       />
