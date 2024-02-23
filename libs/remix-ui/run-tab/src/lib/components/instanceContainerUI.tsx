@@ -17,8 +17,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         if (allSavedContracts) {
           const savedContracts = JSON.parse(allSavedContracts)
           const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-          if (savedContracts[env.current] && savedContracts[env.current][network.id]) {
-            const instances = savedContracts[env.current][network.id]
+          if (savedContracts && savedContracts[network.id]) {
+            const instances = savedContracts[network.id]
             for (const inst of instances)
               if (inst) await props.plugin.call('udapp', 'addSavedInstance', inst.address, inst.contractData.abi, inst.name, inst.savedOn, inst.filePath)
           }

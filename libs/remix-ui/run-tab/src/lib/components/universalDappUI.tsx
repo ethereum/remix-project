@@ -121,39 +121,34 @@ export function UniversalDappUI(props: UdappProps) {
 
   const remove = async() => {
     if (props.isSavedContract) {
-      const env = await props.plugin.call('blockchain', 'getProvider')
       const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
       const savedContracts = localStorage.getItem('savedContracts')
       const savedContractsJson = JSON.parse(savedContracts)
-      const instanceIndex = savedContractsJson[env][network.id].findIndex(instance => instance && instance.address === props.instance.address)
-      delete savedContractsJson[env][network.id][instanceIndex]
-      localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson[env][network.id].filter(Boolean)))
+      const instanceIndex = savedContractsJson[network.id].findIndex(instance => instance && instance.address === props.instance.address)
+      delete savedContractsJson[network.id][instanceIndex]
+      savedContractsJson[network.id] = savedContractsJson[network.id].filter(Boolean)
+      localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson))
     }
     props.removeInstance(props.index, props.isSavedContract)
   }
 
   const saveContract = async() => {
-    const env = await props.plugin.call('blockchain', 'getProvider')
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
     const savedContracts = localStorage.getItem('savedContracts')
     let objToSave
     if (!savedContracts) {
       objToSave = {}
-      objToSave[env] = {}
-      objToSave[env][network.id] = []
+      objToSave[network.id] = []
     } else {
       objToSave = JSON.parse(savedContracts)
-      if (!objToSave[env]) {
-        objToSave[env] = {}
-        objToSave[env][network.id] = []
-      } else if (!objToSave[env][network.id]) {
-        objToSave[env][network.id] = []
+      if (!objToSave[network.id]) {
+        objToSave[network.id] = []
       }
     }
     props.instance.savedOn = Date.now()
     props.instance.filePath = `${workspace.name}/${props.instance.contractData.contract.file}`
-    objToSave[env][network.id].push(props.instance)
+    objToSave[network.id].push(props.instance)
     localStorage.setItem('savedContracts', JSON.stringify(objToSave))
     // Add contract to saved contracts list on UI
     await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.contractData.abi, props.instance.name, props.instance.savedOn, props.instance.filePath)
