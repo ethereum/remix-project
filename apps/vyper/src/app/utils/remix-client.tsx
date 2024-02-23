@@ -60,6 +60,15 @@ export class RemixClient extends PluginClient {
     }
   }
 
+  async askGpt(message: string) {
+    try {
+      await this.client.call('openaigpt', 'message', message)
+    } catch (err) {
+      console.error('unable to askGpt')
+      console.error(err)
+    }
+  }
+
   async cloneVyperRepo() {
     try {
       // @ts-ignore
