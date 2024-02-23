@@ -128,3 +128,10 @@ export const setBranchCommits =({branch, commits}) => {
         payload: { branch, commits }
     }
 }
+
+export const setGItHubToken = (token: string) => {
+    return {
+        type: 'SET_GITHUB_ACCESS_TOKEN',
+        payload: token
+    }
+}

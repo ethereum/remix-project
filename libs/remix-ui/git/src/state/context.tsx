@@ -8,9 +8,9 @@ export interface gitActions  {
     rm(path: string): Promise<void>
     commit(message: string): Promise<any>
     addall(): Promise<void>
-    //push(): Promise<void>
-    //pull(): Promise<void>
-    //fetch(): Promise<void>
+    push(remote?: string, ref?: string, remoteRef?: string, force?: boolean): Promise<void>
+    pull(remote?: string, ref?: string, remoteRef?: string): Promise<void>
+    fetch(remote?: string, ref?: string, remoteRef?: string): Promise<void>
     repositories(): Promise<any>
     checkoutfile(file: string): Promise<void>
     checkout(cmd: any): Promise<void>
@@ -34,6 +34,16 @@ export interface pluginActions {
     openFile(path: string): Promise<void>
     openDiff(change: commitChange): Promise<void>
     saveToken(token: string): Promise<void>
+    saveGitHubCredentials({
+        username,
+        email,
+        token
+    }): Promise<void>
+    getGitHubCredentials(): Promise<{
+        username: string
+        email: string
+        token: string
+    }>
 }
 
 export const pluginActionsContext = React.createContext<pluginActions>(null)

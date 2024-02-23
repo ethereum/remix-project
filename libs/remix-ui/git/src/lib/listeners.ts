@@ -1,7 +1,7 @@
 
 import { ViewPlugin } from "@remixproject/engine-web";
 import React from "react";
-import { setCanUseApp, setLoading, setRepoName } from "../state/gitpayload";
+import { setCanUseApp, setLoading, setRepoName, setGItHubToken } from "../state/gitpayload";
 import { gitActionDispatch } from "../types";
 import { diffFiles, getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
 
@@ -102,7 +102,7 @@ export const getGitConfig = async () => {
     const email = await plugin.call('settings', 'get', 'settings/github-email')
     const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
     const config = { username, email, token }
-    //dispatch(setGitConfig(config))
+    gitDispatch(setGItHubToken(config.token))
     return config
 }
 

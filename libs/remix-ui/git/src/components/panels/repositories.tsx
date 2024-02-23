@@ -5,6 +5,7 @@ import { repository } from "../../types";
 import { gitPluginContext } from "../gitui";
 import Select from 'react-select'
 import { selectStyles, selectTheme } from "../../types/styles";
+import { TokenWarning } from "./tokenWarning";
 
 interface RepositoriesProps {
   cloneDepth?: number
@@ -24,12 +25,17 @@ export const Repositories = (props: RepositoriesProps) => {
 
   useEffect(() => {
     console.log('context', context.repositories)
-    // map context.repositories to options
-    const options = context.repositories && context.repositories.length > 0 && context.repositories.map(repo => {
-      return { value: repo.id, label: repo.full_name }
-    })
+    if (context.repositories && context.repositories.length > 0) {
+      // map context.repositories to options
+      const options = context.repositories && context.repositories.length > 0 && context.repositories.map(repo => {
+        return { value: repo.id, label: repo.full_name }
+      })
+      setRepoOptions(options)
+    } else {
+      setRepoOptions(null)
+      setShow(false)
+    }
     setLoading(false)
-    setRepoOptions(options)
 
   }, [context.repositories])
 
@@ -93,6 +99,7 @@ export const Repositories = (props: RepositoriesProps) => {
   
   return (
     <>
+      <TokenWarning/>
       <Button onClick={fetchRepositories} className="w-100 mt-1">
         <i className="fab fa-github mr-1"></i>Fetch Repositories from GitHub
       </Button>

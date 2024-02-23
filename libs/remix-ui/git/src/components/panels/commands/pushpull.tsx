@@ -50,11 +50,11 @@ export const PushPull = () => {
   }
 
   const push = async () => {
-    //gitservice.push(currentRemote, branch || '', remoteBranch, force)
+    actions.push()
   }
 
   const pull = async () => {
-    //gitservice.pull(currentRemote, branch || '', remoteBranch)
+    actions.pull()
   }
 
 

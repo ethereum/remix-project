@@ -39,6 +39,7 @@ export type loaderState = {
     remotes: boolean
     commits: boolean
     sourcecontrol: boolean
+    plugin: boolean
 }
 
 export type commitChangeTypes = {  
@@ -125,7 +126,8 @@ export const defaultLoaderState: loaderState = {
     branches: false,
     commits: false,
     sourcecontrol: false,
-    remotes: false
+    remotes: false,
+    plugin: false
 }
 
 export type fileStatusResult = {
@@ -211,4 +213,9 @@ export interface setBranchCommitsAction {
     }
 }
 
-export type gitActionDispatch = setUpstreamAction | setBranchCommitsAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export interface setTokenAction {
+    type: string,
+    payload: string
+}
+
+export type gitActionDispatch = setTokenAction | setUpstreamAction | setBranchCommitsAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

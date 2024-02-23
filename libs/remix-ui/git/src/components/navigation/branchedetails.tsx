@@ -1,4 +1,4 @@
-import { faCaretUp, faCaretDown, faCaretRight, faArrowUp, faArrowDown, faArrowRotateRight, faArrowsUpDown, faGlobe, faCheckCircle, faToggleOff, faToggleOn } from "@fortawesome/free-solid-svg-icons";
+import { faCaretUp, faCaretDown, faCaretRight, faArrowUp, faArrowDown, faArrowRotateRight, faArrowsUpDown, faGlobe, faCheckCircle, faToggleOff, faToggleOn, faSync } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
 import { branch } from "../../types";
@@ -44,8 +44,10 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
           :
           <FontAwesomeIcon className='ml-auto mr-1 pointer' icon={faToggleOn} onClick={() => checkout(branch)}></FontAwesomeIcon>
         }
-        <FontAwesomeIcon className='ml-auto pointer' icon={faArrowsUpDown} onClick={() => checkout(branch)}></FontAwesomeIcon>
-        {branch.remote?.url && <FontAwesomeIcon className='ml-2 pointer' icon={faGlobe} onClick={() => openRemote()}></FontAwesomeIcon>}
+
+        {branch.remote?.url && <>
+          <FontAwesomeIcon className='ml-auto pointer' icon={faSync} onClick={() => checkout(branch)}></FontAwesomeIcon>
+          <FontAwesomeIcon className='ml-2 pointer' icon={faGlobe} onClick={() => openRemote()}></FontAwesomeIcon></>}
       </div>
     </>
   );

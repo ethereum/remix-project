@@ -14,22 +14,27 @@ import JSZip from 'jszip'
 import path from 'path'
 import FormData from 'form-data'
 import axios from 'axios'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 import { Octokit, App } from "octokit"
 import { OctokitResponse } from '@octokit/types'
 import { Endpoints } from "@octokit/types"
 import { IndexedDBStorage } from './filesystems/indexedDB'
 import { GitHubUser, RateLimit, branch, commitChange, remote } from '@remix-ui/git'
+import { LibraryProfile, StatusEvents } from '@remixproject/plugin-utils'
+import { ITerminal } from '@remixproject/plugin-api/src/lib/terminal'
+
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; remixFileSystem: any; }
 }
-const profile = {
+
+
+const profile: LibraryProfile = {
   name: 'dGitProvider',
   displayName: 'Decentralized git',
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
-  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'version', 'updateSubmodules'
+  methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pull', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'version', 'updateSubmodules'
     , 'getGitHubUser', 'remotebranches', 'remotecommits', 'repositories', 'getCommitChanges'],
   kind: 'file-system'
 }
@@ -63,7 +68,7 @@ class DGitProvider extends Plugin {
     this.ipfsSources = [this.remixIPFS, this.globalIPFSConfig, this.ipfsconfig]
   }
 
-  async getGitConfig(dir = '') {
+  async addIsomorphicGitConfigFS(dir = '') {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return {
@@ -81,19 +86,47 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async parseInput(input) {
+  async addIsomorphicGitConfig(input) {
+    const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
     return {
       corsProxy: 'https://corsproxy.remixproject.org/',
       http,
       onAuth: url => {
         url
         const auth = {
-          username: input.token,
+          username: input.token || token,
           password: ''
         }
         return auth
       }
     }
+  }
+
+  async getCommandUser(input) {
+    const author = {
+      name: '',
+      email: ''
+    }
+    if (input && input.name && input.email) {
+      author.name = input.name
+      author.email = input.email
+    } else {
+      const username = await this.call('config' as any, 'getAppParameter', 'settings/github-user-name')
+      const email = await this.call('config' as any, 'getAppParameter', 'settings/github-email')
+      const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
+      if (username && email) {
+        author.name = username
+        author.email = email
+      } else if (token) {
+        console.log('token', token)
+        const gitHubUser = await this.getGitHubUser({ token })
+        console.log('gitHubUser', gitHubUser)
+        if (gitHubUser) {
+          author.name = gitHubUser.user.login
+        }
+      }
+    }
+    return author
   }
 
   async init(input?) {
@@ -106,7 +139,7 @@ class DGitProvider extends Plugin {
     }
 
     await git.init({
-      ...await this.getGitConfig(),
+      ...await this.addIsomorphicGitConfigFS(),
       defaultBranch: (input && input.branch) || 'main'
     })
     this.emit('init')
@@ -131,7 +164,7 @@ class DGitProvider extends Plugin {
 
 
     const status = await git.statusMatrix({
-      ...await this.getGitConfig(),
+      ...await this.addIsomorphicGitConfigFS(),
       ...cmd
     })
 
@@ -144,7 +177,7 @@ class DGitProvider extends Plugin {
       await this.call('isogit', 'add', cmd)
     } else {
       await git.add({
-        ...await this.getGitConfig(),
+        ...await this.addIsomorphicGitConfigFS(),
         ...cmd
       })
     }
@@ -158,7 +191,7 @@ class DGitProvider extends Plugin {
       await this.call('isogit', 'rm', cmd)
     } else {
       await git.remove({
-        ...await this.getGitConfig(),
+        ...await this.addIsomorphicGitConfigFS(),
         ...cmd
       })
       this.emit('rm')
@@ -172,7 +205,7 @@ class DGitProvider extends Plugin {
       await this.call('isogit', 'reset', cmd)
     } else {
       await git.resetIndex({
-        ...await this.getGitConfig(),
+        ...await this.addIsomorphicGitConfigFS(),
         ...cmd
       })
       this.emit('rm')
@@ -187,7 +220,7 @@ class DGitProvider extends Plugin {
     } else {
       const gitmodules = await this.parseGitmodules() || []
       await git.checkout({
-        ...await this.getGitConfig(),
+        ...await this.addIsomorphicGitConfigFS(),
         ...cmd
       })
       const newgitmodules = await this.parseGitmodules() || []
@@ -197,14 +230,14 @@ class DGitProvider extends Plugin {
           return newmodule.name === module.name
         })
       })
-  
+
       for (const module of toRemove) {
-        const path = (await this.getGitConfig(module.path)).dir
+        const path = (await this.addIsomorphicGitConfigFS(module.path)).dir
         if (await window.remixFileSystem.exists(path)) {
           const stat = await window.remixFileSystem.stat(path)
           try {
             if (stat.isDirectory()) {
-              await window.remixFileSystem.unlink((await this.getGitConfig(module.path)).dir)
+              await window.remixFileSystem.unlink((await this.addIsomorphicGitConfigFS(module.path)).dir)
             }
           } catch (e) {
             // do nothing
@@ -234,7 +267,7 @@ class DGitProvider extends Plugin {
 
 
     const status = await git.log({
-      ...await this.getGitConfig(),
+      ...await this.addIsomorphicGitConfigFS(),
       ...cmd,
       depth: 10
     })
@@ -244,7 +277,7 @@ class DGitProvider extends Plugin {
   async getCommitChanges(commitHash1, commitHash2): Promise<commitChange[]> {
     //console.log([git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
     const result: commitChange[] = await git.walk({
-      ...await this.getGitConfig(),
+      ...await this.addIsomorphicGitConfigFS(),
       trees: [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })],
       map: async function (filepath, [A, B]) {
         // ignore directories
@@ -300,9 +333,9 @@ class DGitProvider extends Plugin {
       return await this.call('isogit', 'remotes', config)
     }
 
-    let remotes = []
+    let remotes: remote[] = []
     try {
-      remotes = await git.listRemotes({ ...config ? config : await this.getGitConfig() })
+      remotes = await git.listRemotes({ ...config ? config : await this.addIsomorphicGitConfigFS() })
     } catch (e) {
       // do nothing
     }
@@ -316,7 +349,7 @@ class DGitProvider extends Plugin {
       status = await this.call('isogit', 'branch', cmd)
     } else {
       status = await git.branch({
-        ...await this.getGitConfig(),
+        ...await this.addIsomorphicGitConfigFS(),
         ...cmd
       })
     }
@@ -331,14 +364,12 @@ class DGitProvider extends Plugin {
 
   async currentbranch(config) {
 
-
-
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'currentbranch')
     }
 
     try {
-      const defaultConfig = await this.getGitConfig()
+      const defaultConfig = await this.addIsomorphicGitConfigFS()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
       const name = await git.currentBranch(cmd)
       console.log('current branch', name)
@@ -348,8 +379,7 @@ class DGitProvider extends Plugin {
           ...defaultConfig,
           path: `branch.${name}.remote`
         })
-        if (remoteName)
-        {
+        if (remoteName) {
           const remoteUrl = await git.getConfig({
             ...defaultConfig,
             path: `remote.${remoteName}.url`
@@ -377,14 +407,14 @@ class DGitProvider extends Plugin {
     }
 
     try {
-      const defaultConfig = await this.getGitConfig()
+      const defaultConfig = await this.addIsomorphicGitConfigFS()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
       const remotes = await this.remotes(config)
-      let branches = []
+      let branches: branch[] = []
       branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
       for (const remote of remotes) {
         cmd.remote = remote.remote
-        const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote.remote, name: branch } })
+        const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote, name: branch } })
         branches = [...branches, ...remotebranches]
       }
       return branches
@@ -409,7 +439,7 @@ class DGitProvider extends Plugin {
       await this.init()
       try {
         const sha = await git.commit({
-          ...await this.getGitConfig(),
+          ...await this.addIsomorphicGitConfigFS(),
           ...cmd
         })
         this.emit('commit')
@@ -427,7 +457,7 @@ class DGitProvider extends Plugin {
     }
 
     const filesInStaging = await git.listFiles({
-      ...await this.getGitConfig(),
+      ...await this.addIsomorphicGitConfigFS(),
       ...cmd
     })
     return filesInStaging
@@ -440,7 +470,7 @@ class DGitProvider extends Plugin {
     }
 
     const oid = await git.resolveRef({
-      ...await this.getGitConfig(),
+      ...await this.addIsomorphicGitConfigFS(),
       ...cmd
     })
     return oid
@@ -452,7 +482,7 @@ class DGitProvider extends Plugin {
       return readBlobResult
     }
     const readBlobResult = await git.readBlob({
-      ...await this.getGitConfig(),
+      ...await this.addIsomorphicGitConfigFS(),
       ...cmd
     })
 
@@ -481,7 +511,7 @@ class DGitProvider extends Plugin {
       await this.call('isogit', 'addremote', { url: input.url, remote: input.remote })
       return
     }
-    await git.addRemote({ ...await this.getGitConfig(), url: input.url, remote: input.remote })
+    await git.addRemote({ ...await this.addIsomorphicGitConfigFS(), url: input.url, remote: input.remote })
   }
 
   async delremote(input) {
@@ -489,7 +519,7 @@ class DGitProvider extends Plugin {
       await this.call('isogit', 'delremote', { remote: input.remote })
       return
     }
-    await git.deleteRemote({ ...await this.getGitConfig(), remote: input.remote })
+    await git.deleteRemote({ ...await this.addIsomorphicGitConfigFS(), remote: input.remote })
   }
 
   async localStorageUsed() {
@@ -510,11 +540,11 @@ class DGitProvider extends Plugin {
         input
       }
       this.call('terminal', 'logHtml', `Cloning ${input.url}... please wait...`)
-      try{
+      try {
         const result = await this.call('isogit', 'clone', cmd)
         this.call('fs', 'openWindow', folder)
         return result
-      }catch(e){
+      } catch (e) {
         this.call('notification', 'alert', {
           id: 'dgitAlert',
           message: 'Unexpected error while cloning the repository: \n' + e.toString(),
@@ -530,8 +560,8 @@ class DGitProvider extends Plugin {
         singleBranch: input.singleBranch,
         ref: input.branch,
         depth: input.depth || 10,
-        ...await this.parseInput(input),
-        ...await this.getGitConfig()
+        ...await this.addIsomorphicGitConfig(input),
+        ...await this.addIsomorphicGitConfigFS()
       }
       this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
       const result = await git.clone(cmd)
@@ -545,12 +575,12 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async parseGitmodules (dir = '') {
+  async parseGitmodules(dir = '') {
     try {
       const gitmodules = await this.call('fileManager', 'readFile', path.join(dir, '.gitmodules'))
       if (gitmodules) {
         const lines = gitmodules.split('\n')
-        let currentModule:any = {}
+        let currentModule: any = {}
         const modules = []
         for (let line of lines) {
           line = line.trim()
@@ -585,7 +615,7 @@ class DGitProvider extends Plugin {
       if (gitmodules) {
         for (const module of gitmodules) {
           const dir = path.join(currentDir, module.path)
-          const targetPath = (await this.getGitConfig(dir)).dir
+          const targetPath = (await this.addIsomorphicGitConfigFS(dir)).dir
           if (await window.remixFileSystem.exists(targetPath)) {
             const stat = await window.remixFileSystem.stat(targetPath)
             try {
@@ -600,7 +630,7 @@ class DGitProvider extends Plugin {
         for (const module of gitmodules) {
           const dir = path.join(currentDir, module.path)
           // if url contains git@github.com: convert it
-          if(module.url && module.url.startsWith('git@github.com:')) {
+          if (module.url && module.url.startsWith('git@github.com:')) {
             module.url = module.url.replace('git@github.com:', 'https://github.com/')
           }
           try {
@@ -608,51 +638,52 @@ class DGitProvider extends Plugin {
               url: module.url,
               singleBranch: true,
               depth: 1,
-              ...await this.parseInput(input),
-              ...await this.getGitConfig(dir)
+              ...await this.addIsomorphicGitConfig(input),
+              ...await this.addIsomorphicGitConfigFS(dir)
             }
             this.call('terminal', 'logHtml', `Cloning submodule ${dir}...`)
             await git.clone(cmd)
             this.call('terminal', 'logHtml', `Cloned successfully submodule ${dir}...`)
-            
+
             const commitHash = await git.resolveRef({
-              ...await this.getGitConfig(currentDir),
+              ...await this.addIsomorphicGitConfigFS(currentDir),
               ref: 'HEAD'
             })
 
             const result = await git.walk({
-              ...await this.getGitConfig(currentDir),
+              ...await this.addIsomorphicGitConfigFS(currentDir),
               trees: [git.TREE({ ref: commitHash })],
               map: async function (filepath, [A]) {
-                if(filepath === module.path) {
+                if (filepath === module.path) {
                   return await A.oid()
                 }
               }
             })
-            if(result && result.length) {
+            if (result && result.length) {
               this.call('terminal', 'logHtml', `Checking out submodule ${dir} to ${result[0]} in directory ${dir}`)
               await git.fetch({
-                ...await this.parseInput(input),
-                ...await this.getGitConfig(dir),
+                ...await this.addIsomorphicGitConfig(input),
+                ...await this.addIsomorphicGitConfigFS(dir),
                 singleBranch: true,
                 ref: result[0]
               })
 
               await git.checkout({
-                ...await this.getGitConfig(dir),
+                ...await this.addIsomorphicGitConfigFS(dir),
                 ref: result[0]
               })
-              
+
               const log = await git.log({
-                ...await this.getGitConfig(dir),
+                ...await this.addIsomorphicGitConfigFS(dir),
               })
 
-              if(log[0].oid !== result[0]) {
+              if (log[0].oid !== result[0]) {
                 this.call('terminal', 'log', {
                   type: 'error',
                   value: `Could not checkout submodule to ${result[0]}`
-                })} else {              
-                this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
+                })
+              } else {
+                this.call('terminal', 'logHtml', `Checked out submodule ${dir} to ${result[0]}`)
               }
             }
 
@@ -682,10 +713,7 @@ class DGitProvider extends Plugin {
       ref: input.ref,
       remoteRef: input.remoteRef,
       remote: input.remote,
-      author: {
-        name: input.name,
-        email: input.email
-      },
+      author: await this.getCommandUser(input),
       input,
     }
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
@@ -694,12 +722,14 @@ class DGitProvider extends Plugin {
 
       const cmd2 = {
         ...cmd,
-        ...await this.parseInput(input),
+        ...await this.addIsomorphicGitConfig(input),
       }
-      return await git.push({
-        ...await this.getGitConfig(),
+      const result = await git.push({
+        ...await this.addIsomorphicGitConfigFS(),
         ...cmd2
       })
+      console.log('push result', result)
+      return result
 
     }
   }
@@ -708,10 +738,7 @@ class DGitProvider extends Plugin {
     const cmd = {
       ref: input.ref,
       remoteRef: input.remoteRef,
-      author: {
-        name: input.name,
-        email: input.email
-      },
+      author: await this.getCommandUser(input),
       remote: input.remote,
       input,
     }
@@ -722,13 +749,14 @@ class DGitProvider extends Plugin {
     else {
       const cmd2 = {
         ...cmd,
-        ...await this.parseInput(input),
+        ...await this.addIsomorphicGitConfig(input),
       }
       result = await git.pull({
-        ...await this.getGitConfig(),
+        ...await this.addIsomorphicGitConfigFS(),
         ...cmd2
       })
     }
+    console.log('pull result', result)
     setTimeout(async () => {
       await this.call('fileManager', 'refresh')
     }, 1000)
@@ -739,10 +767,7 @@ class DGitProvider extends Plugin {
     const cmd = {
       ref: input.ref,
       remoteRef: input.remoteRef,
-      author: {
-        name: input.name,
-        email: input.email
-      },
+      author: await this.getCommandUser(input),
       remote: input.remote,
       input
     }
@@ -752,13 +777,19 @@ class DGitProvider extends Plugin {
     } else {
       const cmd2 = {
         ...cmd,
-        ...await this.parseInput(input),
+        ...await this.addIsomorphicGitConfig(input),
       }
       result = await git.fetch({
-        ...await this.getGitConfig(),
+        ...await this.addIsomorphicGitConfigFS(),
+        ...cmd2
+      })
+      console.log('fetch result', result)
+      console.log({
+        ...await this.addIsomorphicGitConfigFS(),
         ...cmd2
       })
     }
+
     setTimeout(async () => {
       await this.call('fileManager', 'refresh')
     }, 1000)
@@ -926,7 +957,7 @@ class DGitProvider extends Plugin {
 
   async remotebranches(input: { owner: string, repo: string, token: string }) {
     console.log(input)
-   
+
     const octokit = new Octokit({
       auth: input.token
     })
@@ -973,13 +1004,13 @@ class DGitProvider extends Plugin {
       auth: input.token
     })
 
-  
+
 
     const data = await octokit.request('GET /repos/{owner}/{repo}/commits', {
       owner: input.owner,
       repo: input.repo,
       sha: input.branch,
-      per_page: input.length
+      per_page: 100
     })
 
 
@@ -991,15 +1022,15 @@ class DGitProvider extends Plugin {
     const octokit = new Octokit({
       auth: input.token
     })
-    
+
     console.log('octokit', input.token)
 
     const data = await octokit.request('GET /user/repos', {
-      per_page: 100,
-      page: 1
+      per_page: 200,
+      page: 2
     })
 
-   console.log(data.data)
+    console.log(data.data)
     return data.data
   }
 

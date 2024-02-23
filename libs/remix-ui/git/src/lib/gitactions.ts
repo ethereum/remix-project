@@ -2,13 +2,17 @@ import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { fileStatus, fileStatusMerge, setBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream } from "../state/gitpayload";
-import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType } from '../types';
+import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
 import { gitActionsContext } from "../state/context";
 import { gitPluginContext } from "../components/gitui";
 import { setFileDecorators } from "./pluginActions";
+import { IDgitSystem, IRemixApi, RemixApi } from "@remixproject/plugin-api";
+import { Plugin } from "@remixproject/engine";
+import { AnyMxRecord } from "dns";
+import { StatusEvents } from "@remixproject/plugin-utils";
 
 export const fileStatuses = [
   ["new,untracked", 0, 2, 0], // new, untracked
@@ -32,13 +36,48 @@ const statusmatrix: statusMatrixType[] = fileStatuses.map((x: any) => {
     status: x,
   };
 });
+/*
+interface customDGitSystem extends IDgitSystem{
+  events: StatusEvents,
+  methods: {
+    getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
+    getBranchCommits(branch: branch): Promise<ReadCommitResult[]>
+    fetchBranch(branch: branch): Promise<any>
+    remotebranches(owner: string, repo: string): Promise<branch[]>
+    remoteCommits(url: string, branch: string, length: number): Promise<ReadCommitResult[]>
+    repositories(token: string): Promise<any>
+    clone(url: string, branch: string, depth: number, singleBranch: boolean): Promise<any>
+    getGitHubUser(token: string): Promise<{ user: GitHubUser, ratelimit: RateLimit }>
+    saveGitHubCredentials(credentials: { username: string, email: string, token: string }): Promise<any>
+    getGitHubCredentials(): Promise<{ username: string, email: string, token: string }>
+    currentbranch(): Promise<branch>
+  }
+}
 
-let plugin: ViewPlugin, dispatch: React.Dispatch<gitActionDispatch>
+interface notificationSystem {
+  methods: {
+    toast(message: string): void
+    alert(message: {
+      title: string,
+      type: string
+    }): void
+    modal(modal: AlertModal): void
+  },
+  events: StatusEvents
+}
 
+interface customApi extends IRemixApi {
+  dGitProvider: customDGitSystem
+  notification: notificationSystem
+}
+*/
 
-export const setPlugin = (p: ViewPlugin, dispatcher: React.Dispatch<gitActionDispatch>) => {
+let plugin: Plugin, dispatch: React.Dispatch<gitActionDispatch>
+
+export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatch>) => {
   plugin = p
   dispatch = dispatcher
+  console.log('setPlugin')
 }
 
 export const getBranches = async () => {
@@ -101,7 +140,6 @@ export const gitlog = async () => {
   }
   dispatch(setCommits(commits))
   await showCurrentBranch()
-  await getGitHubUser()
 }
 
 export const showCurrentBranch = async () => {
@@ -133,7 +171,13 @@ export const currentBranch = async () => {
   // eslint-disable-next-line no-useless-catch
   try {
     const branch: branch =
-      (await plugin.call("dGitProvider", "currentbranch")) || "";
+      (await plugin.call("dGitProvider", "currentbranch")) || {
+        name: "",
+        remote: {
+          remote: "",
+          url: "",
+        },
+      };
     return branch;
   } catch (e) {
     throw e;
@@ -329,15 +373,36 @@ export const clone = async (url: string, branch: string, depth: number, singleBr
   dispatch(setLoading(false))
 }
 
+export const fetch = async(remote?: string, ref?: string, remoteRef?: string) => {
+  try {
+    await plugin.call('dGitProvider' as any, 'fetch', { remote, ref, remoteRef })
+    await gitlog()
+    await getBranches()
+  } catch (e: any) {
+    await parseError(e)
+  }
+}
+
+export const pull =  async(remote?: string, ref?: string, remoteRef?: string) => {
+  try {
+    await plugin.call('dGitProvider' as any, 'pull', { remote, ref, remoteRef })
+    await gitlog()
+  } catch (e: any) {
+    await parseError(e)
+  }
+}
+
+export const push = async(remote?: string, ref?: string, remoteRef?: string, force?: boolean) => {
+  try {
+    await plugin.call('dGitProvider' as any, 'push', { remote, ref, remoteRef, force })
+  } catch (e: any) {
+    await parseError(e)
+  }
+}
+
 const tokenWarning = async () => {
   const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
   if (!token) {
-    const modalContent: AlertModal = {
-      message: 'Please set a token first in the GitHub settings of REMIX',
-      title: 'No GitHub token set',
-      id: 'no-token-set',
-    }
-    //plugin.call('notification', 'alert', modalContent)
     return false;
   } else {
     return token;
@@ -384,15 +449,18 @@ const parseError = async (e: any) => {
   }
 }
 
-
-
-
 export const repositories = async () => {
   try {
     const token = await tokenWarning();
     if (token) {
       const repos = await plugin.call('dGitProvider' as any, 'repositories', { token });
       dispatch(setRepos(repos))
+    } else {
+      plugin.call('notification', 'alert', {
+        title: 'Error getting repositories',
+        message: `Please check your GitHub token in the GitHub settings. It needs to have access to the repositories.`
+      })
+      dispatch(setRepos([]))
     }
   } catch (e) {
     console.log(e)
@@ -400,6 +468,7 @@ export const repositories = async () => {
       title: 'Error getting repositories',
       message: `${e.message}: Please check your GitHub token in the GitHub settings.`
     })
+    dispatch(setRepos([]))
   }
 }
 
@@ -409,6 +478,12 @@ export const remoteBranches = async (owner: string, repo: string) => {
     if (token) {
       const branches = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo });
       dispatch(setRemoteBranches(branches))
+    } else {
+      plugin.call('notification', 'alert', {
+        title: 'Error getting branches',
+        message: `Please check your GitHub token in the GitHub settings. It needs to have access to the branches.`
+      })
+      dispatch(setRemoteBranches([]))
     }
   } catch (e) {
     console.log(e)
@@ -416,27 +491,33 @@ export const remoteBranches = async (owner: string, repo: string) => {
       title: 'Error',
       message: e.message
     })
+    dispatch(setRemoteBranches([]))
   }
 }
 
 export const remoteCommits = async (url: string, branch: string, length: number) => {
   const urlParts = url.split("/");
-  
+
   console.log(urlParts, 'urlParts')
   // check if it's github
-  if(!urlParts[urlParts.length - 3].includes('github')) {
+  if (!urlParts[urlParts.length - 3].includes('github')) {
     return
   }
-  
+
   const owner = urlParts[urlParts.length - 2];
   const repo = urlParts[urlParts.length - 1].split(".")[0];
-  
+
   try {
     const token = await tokenWarning();
     if (token) {
       console.log(token, owner, repo, branch, length)
       const commits = await plugin.call('dGitProvider' as any, 'remotecommits', { token, owner, repo, branch, length });
       console.log(commits, 'remote commits')
+    } else {
+      plugin.call('notification', 'alert', {
+        title: 'Error getting commits',
+        message: `Please check your GitHub token in the GitHub settings. It needs to have access to the commits.`
+      })
     }
   } catch (e) {
     console.log(e)
@@ -447,7 +528,34 @@ export const remoteCommits = async (url: string, branch: string, length: number)
   }
 }
 
+export const saveGitHubCredentials = async (credentials: { username: string, email: string, token: string }) => {
+  try {
+    await plugin.call('config' as any, 'setAppParameter', 'settings/github-user-name', credentials.username)
+    await plugin.call('config' as any, 'setAppParameter', 'settings/github-email', credentials.email)
+    await plugin.call('config' as any, 'setAppParameter', 'settings/gist-access-token', credentials.token)
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const getGitHubCredentials = async () => {
+  if (!plugin) return
+  try {
+    const username = await plugin.call('config' as any, 'getAppParameter', 'settings/github-user-name')
+    const email = await plugin.call('config' as any, 'getAppParameter', 'settings/github-email')
+    const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
+    return {
+      username,
+      email,
+      token
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 export const getGitHubUser = async () => {
+  if (!plugin) return
   try {
     const token = await tokenWarning();
     if (token) {
@@ -460,6 +568,8 @@ export const getGitHubUser = async () => {
 
       dispatch(setGitHubUser(data.user))
       dispatch(setRateLimit(data.ratelimit))
+    } else {
+      dispatch(setGitHubUser(null))
     }
   } catch (e) {
     console.log(e)
@@ -611,6 +721,7 @@ export const getBranchCommits = async (branch: branch) => {
     })
     console.log(commits)
     dispatch(setBranchCommits({ branch, commits }))
+    await fetchBranch(branch)
     return commits
   } catch (e) {
     console.log(e)

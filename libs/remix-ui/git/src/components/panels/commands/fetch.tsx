@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { gitActionsContext } from "../../../state/context";
 
 
 export const Fetch = () => {
-
+  const actions = React.useContext(gitActionsContext)
   const fetch = async () => {
-    //gitservice.fetch(currentRemote, '', '')
+    await actions.fetch()
   }
 
 
