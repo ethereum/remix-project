@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, getGitHubUser, getBranches, getRemotes, remoteCommits } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, getGitHubUser, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentials, fetch, pull, push } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
@@ -45,6 +45,7 @@ export const GitUI = (props: IGitUi) => {
   useEffect(() => {
     setCallBacks(plugin, gitDispatch, loaderDispatch)
     setPlugin(plugin, gitDispatch, loaderDispatch)
+    loaderDispatch({ type: 'plugin', payload: true })
     console.log(props)
   }, [])
 
@@ -71,7 +72,7 @@ export const GitUI = (props: IGitUi) => {
 
     async function updatestate(){
       console.log('updatestate', gitState)
-      if(gitState.currentBranch.remote.url){
+      if(gitState.currentBranch && gitState.currentBranch.remote && gitState.currentBranch.remote.url){
         remoteCommits(gitState.currentBranch.remote.url, gitState.currentBranch.name, 1)
       }
     }
@@ -100,7 +101,10 @@ export const GitUI = (props: IGitUi) => {
     setUpstreamRemote,
     getGitHubUser,
     getBranches,
-    getRemotes
+    getRemotes,
+    fetch,
+    pull,
+    push
   }
 
   const pluginActionsProviderValue = {
@@ -108,7 +112,9 @@ export const GitUI = (props: IGitUi) => {
     loadFiles,
     openFile,
     openDiff,
-    saveToken
+    saveToken,
+    saveGitHubCredentials,
+    getGitHubCredentials
   }
 
   return (
