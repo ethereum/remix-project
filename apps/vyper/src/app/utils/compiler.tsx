@@ -204,7 +204,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
  * @param compilationResult Result returned by the compiler
  */
 export function toStandardOutput(fileName: string, compilationResult: any): any {
-  console.log(compilationResult)
   const contractName = normalizeContractPath(fileName)[2]
   const compiledAbi = compilationResult['contractTypes'][contractName].abi
   const deployedBytecode = compilationResult['contractTypes'][contractName].deploymentBytecode.bytecode.replace('0x', '')
@@ -294,8 +293,6 @@ export async function compileContract(contract: string, compilerUrl: string, set
     })
 
     const data = toStandardOutput(_contract.name, output)
-    console.log('data', data)
-    console.log('what is the shape of my output', output)
     remixClient.compilationFinish(_contract.name, _contract.content, data)
     const contractName = _contract['name']
     const compileResult = compileReturnType(output, contractName)
