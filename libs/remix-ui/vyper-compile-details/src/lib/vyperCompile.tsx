@@ -10,12 +10,14 @@ const _paq = (window._paq = window._paq || [])
 export interface VyperCompilationResult {
   status?: 'success'
   bytecode: string
-  bytecodeRuntime: string
+  bytecodeRuntime: string | 'bytecode_runtime'
   abi: ABIDescription[]
   ir: string
   methodIdentifiers: {
     [method: string]: string
   }
+  compilerVersion: string
+  evmVersion: string
 }
 
 export interface VyperCompileProps {
@@ -24,15 +26,27 @@ export interface VyperCompileProps {
   themeStyle?: any
 }
 
+type tabContentType = {
+  tabHeadingText: string
+  tabPayload: string | ABIDescription[]
+  tabMemberType: keyof VyperCompilationResult | string
+  tabButtonText: () => string
+  eventKey: string
+  version?: string
+  evmVersion?: string
+}
+
 export default function VyperCompile({result, theme, themeStyle}: VyperCompileProps) {
   const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
-  const tabContent = [
+  const tabContent: tabContentType[] = [
     {
       tabHeadingText: 'ABI',
       tabPayload: result.abi,
       tabMemberType: 'abi',
       tabButtonText: () => 'Copy ABI',
-      eventKey: 'abi'
+      eventKey: 'abi',
+      version: result.compilerVersion,
+      evmVersion: result.evmVersion
     },
     {
       tabHeadingText: 'Bytecode',
@@ -69,7 +83,7 @@ export default function VyperCompile({result, theme, themeStyle}: VyperCompilePr
               {content.eventKey === 'abi' ? (
                 <div className="my-3">
                   {JSON.stringify(content?.tabPayload)?.length > 1 ? <JSONTree
-                    src={content.tabPayload as ABIDescription[]}
+                    src={{...content.tabPayload as ABIDescription[], evmVersion: content.evmVersion, version: content.version  } }
                     theme={theme}
                     style={themeStyle}
                   /> : null}
