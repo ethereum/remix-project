@@ -373,7 +373,7 @@ export const clone = async (url: string, branch: string, depth: number, singleBr
   dispatch(setLoading(false))
 }
 
-export const fetch = async(remote?: string, ref?: string, remoteRef?: string) => {
+export const fetch = async (remote?: string, ref?: string, remoteRef?: string) => {
   try {
     await plugin.call('dGitProvider' as any, 'fetch', { remote, ref, remoteRef })
     await gitlog()
@@ -383,7 +383,7 @@ export const fetch = async(remote?: string, ref?: string, remoteRef?: string) =>
   }
 }
 
-export const pull =  async(remote?: string, ref?: string, remoteRef?: string) => {
+export const pull = async (remote?: string, ref?: string, remoteRef?: string) => {
   try {
     await plugin.call('dGitProvider' as any, 'pull', { remote, ref, remoteRef })
     await gitlog()
@@ -392,7 +392,7 @@ export const pull =  async(remote?: string, ref?: string, remoteRef?: string) =>
   }
 }
 
-export const push = async(remote?: string, ref?: string, remoteRef?: string, force?: boolean) => {
+export const push = async (remote?: string, ref?: string, remoteRef?: string, force?: boolean) => {
   try {
     await plugin.call('dGitProvider' as any, 'push', { remote, ref, remoteRef, force })
   } catch (e: any) {
@@ -643,8 +643,6 @@ export const diff = async (commitChange: commitChange) => {
   }
 
 
-
-
   /*
   const fullfilename = args; // $(args[0].currentTarget).data('file')
   try {
@@ -706,23 +704,58 @@ export const fetchBranch = async (branch: branch) => {
     remote: branch.remote.remote,
     depth: 10
   })
-  const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
+  const remoteCommits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
     ref: r.fetchHead
   })
-  console.log(r, commits)
-  dispatch(setBranchCommits({ branch, commits }))
+  console.log(r, remoteCommits)
+  let localCommits: ReadCommitResult[] = []
+  try {
+
+    localCommits = await plugin.call('dGitProvider', 'log', {
+      ref: branch.name,
+    })
+    console.log(r, localCommits)
+  } catch (e) { }
+
+  const remoteCommitsThatAreNotLocal: ReadCommitResult[] = remoteCommits.filter((commit) => {
+    return !localCommits.find((localCommit) => localCommit.oid === commit.oid)
+  }
+  )
+  console.log(remoteCommitsThatAreNotLocal)
+  const mergeCommits = remoteCommitsThatAreNotLocal.map((commit) => {
+    return {
+      ...commit,
+      remote: true
+    }
+  }).concat(localCommits.map((commit) => {
+    return {
+      ...commit,
+      remote: false
+    }
+  }
+  ))
+  // sort by date
+  mergeCommits.sort((a, b) => {
+    return new Date(b.commit.committer.timestamp).getTime() - new Date(a.commit.committer.timestamp).getTime()
+  })
+
+  console.log(mergeCommits)
+  //console.log(r, commits)
+  dispatch(setBranchCommits({ branch, commits: mergeCommits }))
 }
 
 export const getBranchCommits = async (branch: branch) => {
   try {
     console.log(branch)
-    const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
-      ref: branch.name,
-    })
-    console.log(commits)
-    dispatch(setBranchCommits({ branch, commits }))
-    await fetchBranch(branch)
-    return commits
+    if (!branch.remote) {
+      const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
+        ref: branch.name,
+      })
+      console.log(commits)
+      dispatch(setBranchCommits({ branch, commits }))
+    } else {
+      await fetchBranch(branch)
+    }
   } catch (e) {
     console.log(e)
     await fetchBranch(branch)
