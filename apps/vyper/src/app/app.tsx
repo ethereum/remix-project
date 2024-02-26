@@ -143,6 +143,7 @@ const App = () => {
             </Accordion.Collapse>
           </div>
         </Accordion>
+        <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <span className="px-3 mt-1 mb-1 small text-warning">
           Specify the{' '}
           <a className="text-warning" target="_blank" href="https://">
@@ -154,7 +155,6 @@ const App = () => {
           </a>{' '}
           in the .vy file.
         </span>
-        <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
           <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} resetCompilerState={resetCompilerResultState} />
         </div>
