@@ -234,7 +234,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 </span>
               }
             >
-              <i className="fa-solid fa-message-exclamation"></i>
+              <i className="fa-solid text-dark fa-message-exclamation"></i>
             </CustomTooltip>
           </button>
           <button
@@ -256,7 +256,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 </span>
               }
             >
-              <i className= {ai_switch ? "fa-solid fa-toggle-on" :"fa-solid fa-toggle-off"}></i>
+              <i className= {ai_switch ? "fa-solid text-success fa-toggle-on" :"fa-solid text-dark fa-toggle-off"}></i>
             </CustomTooltip>
           </button>
           <script>

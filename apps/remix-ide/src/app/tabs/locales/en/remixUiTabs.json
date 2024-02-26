@@ -2,9 +2,9 @@
   "remixUiTabs.tooltipText1": "Run script (CTRL + SHIFT + S)",
   "remixUiTabs.tooltipText2": "Compile CTRL + S",
   "remixUiTabs.tooltipText3": "Select .sol or .yul file to compile or a .ts or .js file and run it",
-  "remixUiTabs.tooltipText4": "Select .sol file to explain with AI",
-  "remixUiTabs.tooltipText5": "Explain the contract/s in current file",
-  "remixUiTabs.tooltipText6": "AI Copilot",
+  "remixUiTabs.tooltipText4": "Select .sol file to explain with AI [BETA]",
+  "remixUiTabs.tooltipText5": "Explain the contract/s in current file [BETA]",
+  "remixUiTabs.tooltipText6": "AI Copilot [BETA]",
   "remixUiTabs.zoomOut": "Zoom out",
   "remixUiTabs.zoomIn": "Zoom in"
 }
