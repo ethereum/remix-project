@@ -1,4 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react'
+import {FormattedMessage} from 'react-intl'
 import {AppContext} from '../../context/context'
 import {UsageTypes} from '../../types'
 import { type } from 'os'
@@ -30,19 +31,19 @@ const EnterDialog = (props: EnterDialogProps) => {
           }}
         >
           <div className="modal-header d-flex flex-column">
-            <h3 className='text-dark'>Welcome to Remix IDE</h3>
+            <h3 className='text-dark'><FormattedMessage id="remixApp.enterText1" /></h3>
             <div className='d-flex flex-row pt-2'>
               <h6 className="modal-title text-dark" data-id={`EnterModalDialogModalTitle-react`}>
-                In order to understand your needs better, we would like to know how you typically use Remix
+                <FormattedMessage id="remixApp.enterText2" />
               </h6>
               <i className="text-dark fal fa-door-open text-center" style={{minWidth: "100px", fontSize: "xxx-large"}}></i>
             </div>
           </div>
           <div className="modal-body text-break remixModalBody d-flex flex-column p-3 justify-content-between" data-id={`EnterModalDialogModalBody-react`}>
-            <button className="btn btn-secondary text-left" data-id="beginnerbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Beginner)}}>Learning - discovering web3 development</button>
-            <button className="btn btn-secondary my-1 text-left" data-id="prototyperbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Prototyper)}}>Prototyping - trying out concepts and techniques</button>
-            <button className="btn btn-secondary text-left" data-id="advanceUserbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Advance)}}>Developing  projects - Remix as your main dev tool</button>
-            <button className="btn btn-secondary mt-1 text-left" data-id="productionbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Production)}}>Production - only deployments</button>
+            <button className="btn btn-secondary text-left" data-id="beginnerbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Beginner)}}><FormattedMessage id="remixApp.enterText3" /></button>
+            <button className="btn btn-secondary my-1 text-left" data-id="prototyperbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Prototyper)}}><FormattedMessage id="remixApp.enterText4" /></button>
+            <button className="btn btn-secondary text-left" data-id="advanceUserbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Advance)}}><FormattedMessage id="remixApp.enterText5" /></button>
+            <button className="btn btn-secondary mt-1 text-left" data-id="productionbtn" style={{minWidth: "100px"}} onClick={() => {enterAs(UsageTypes.Production)}}><FormattedMessage id="remixApp.enterText6" /></button>
           </div>
         </div>
       </div>

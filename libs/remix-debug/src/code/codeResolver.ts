@@ -10,8 +10,8 @@ export class CodeResolver {
 
   constructor ({ getCode, fork }) {
     this.getCode = getCode
-    this.bytecodeByAddress = {} // bytes code by contract addesses
-    this.instructionsByAddress = {} // assembly items instructions list by contract addesses
+    this.bytecodeByAddress = {} // bytes code by contract addresses
+    this.instructionsByAddress = {} // assembly items instructions list by contract addresses
     this.instructionsIndexByBytesOffset = {} // mapping between bytes offset and instructions index.
     this.fork = fork
   }

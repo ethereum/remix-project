@@ -2,7 +2,8 @@ import React from 'react'
 import { bufferToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
-import { TemplateType } from '../utils/types'
+import { TemplateType } from '../types'
+import IpfsHttpClient from 'ipfs-http-client'
 import axios, { AxiosResponse } from 'axios'
 import {
   addInputFieldSuccess,
@@ -235,6 +236,7 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: W
 export type UrlParametersType = {
   gist: string
   code: string
+  shareCode: string
   url: string
   language: string
 }
@@ -258,6 +260,30 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         content = atob(decodeURIComponent(params.code))
         await workspaceProvider.set(path, content)
       }
+      if (params.shareCode) {
+        const host = '127.0.0.1'
+        const port = 5001
+        const protocol = 'http'
+        // const projectId = ''
+        // const projectSecret = ''
+        // const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+
+        const ipfs = IpfsHttpClient({ port, host, protocol
+          , headers: {
+            // authorization: auth
+          } 
+        })
+        const hashed = bufferToHex(hash.keccakFromString(params.shareCode))
+
+        path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
+        const fileData = ipfs.get(params.shareCode)
+        for await (const file of fileData) {
+          const fileContent = []
+          for await (const chunk of file.content) fileContent.push(chunk)
+          content = Buffer.concat(fileContent).toString()
+        }
+        await workspaceProvider.set(path, content)
+      }
       if (params.url) {
         const data = await plugin.call('contentImport', 'resolve', params.url)
 
@@ -273,7 +299,9 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
             }
             return Object.keys(standardInput.sources)[0]
           } else {
-            await workspaceProvider.set(path, JSON.stringify(content))
+            // preserve JSON whitepsace if this isn't a Solidity compiler JSON-input-output file
+            content = data.content
+            await workspaceProvider.set(path, content)
           }
         } catch (e) {
           console.log(e)
@@ -309,11 +337,21 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       }
       const obj = {}
 
-      Object.keys(data.files).forEach((element) => {
+      for (const [element] of Object.entries(data.files)) {
         const path = element.replace(/\.\.\./g, '/')
+        let value
+        if (data.files[element].truncated) {
+          const response: AxiosResponse = await axios.get(data.files[element].raw_url)
+          value = { content: response.data }
+        } else {
+          value = { content: data.files[element].content }
+        }
 
-        obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
-      })
+        if (data.files[element].type === 'application/json') {
+          obj['/' + path] = { content: JSON.stringify(value.content, null, '\t') }
+        } else
+          obj['/' + path] = value
+      }
       plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
         if (errorLoadingFile) {
           dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
@@ -574,6 +612,7 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
           Object.keys(items)
             .filter((item) => items[item].isDirectory)
             .map(async (folder) => {
+              const name = folder.replace(workspacesPath + '/', '')
               const isGitRepo: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.git')
               const hasGitSubmodules: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.gitmodules')
               if (isGitRepo) {
@@ -583,17 +622,19 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
                 branches = await getGitRepoBranches(folder)
                 currentBranch = await getGitRepoCurrentBranch(folder)
                 return {
-                  name: folder.replace(workspacesPath + '/', ''),
+                  name,
                   isGitRepo,
                   branches,
                   currentBranch,
-                  hasGitSubmodules
+                  hasGitSubmodules,
+                  isGist: null
                 }
               } else {
                 return {
-                  name: folder.replace(workspacesPath + '/', ''),
+                  name,
                   isGitRepo,
-                  hasGitSubmodules
+                  hasGitSubmodules,
+                  isGist: plugin.isGist(name) // plugin is filePanel
                 }
               }
             })
@@ -662,7 +703,7 @@ export const cloneRepository = async (url: string) => {
           plugin.call('notification', 'modal', cloneModal)
         })
     } catch (e) {
-      dispatch(displayPopUp('An error occured: ' + e))
+      dispatch(displayPopUp('An error occurred: ' + e))
     }
   }
 }

@@ -20,6 +20,7 @@ import {
   renamePath,
   downloadPath,
   copyFile,
+  copyShareURL,
   copyFolder,
   runScript,
   emitContextMenuEvent,
@@ -116,8 +117,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await deleteAllWorkspaces()
   }
 
-  const dispatchPublishToGist = async (path?: string, type?: string) => {
-    await publishToGist(path, type)
+  const dispatchPublishToGist = async (path?: string) => {
+    await publishToGist(path)
   }
 
   const dispatchUploadFile = async (target?: SyntheticEvent, targetFolder?: string) => {
@@ -132,7 +133,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createNewFile(path, rootDir)
   }
 
-  const dispatchSetFocusElement = async (elements: {key: string; type: 'file' | 'folder' | 'gist'}[]) => {
+  const dispatchSetFocusElement = async (elements: {key: string; type: 'file' | 'folder' }[]) => {
     await setFocusElement(elements)
   }
 
@@ -156,6 +157,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await copyFile(src, dest)
   }
 
+  const dispatchCopyShareURL = async (path: string) => {
+    await copyShareURL(path)
+  }
+
   const dispatchCopyFolder = async (src: string, dest: string) => {
     await copyFolder(src, dest)
   }
@@ -168,7 +173,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await emitContextMenuEvent(cmd)
   }
 
-  const dispatchHandleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
+  const dispatchHandleClickFile = async (path: string, type: 'file' | 'folder' ) => {
     await handleClickFile(path, type)
   }
 
@@ -352,6 +357,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchRenamePath,
     dispatchDownloadPath,
     dispatchCopyFile,
+    dispatchCopyShareURL,
     dispatchCopyFolder,
     dispatchRunScript,
     dispatchEmitContextMenuEvent,

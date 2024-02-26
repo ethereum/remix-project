@@ -209,7 +209,7 @@ module.exports = {
       .expect.element('[data-id="workspaceGit-newLocalBranch"]').text.to.contain('✓ ')
   },
 
-  'Should checkout to an exisiting local branch #group3': function (browser: NightwatchBrowser) {
+  'Should checkout to an existing local branch #group3': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[data-id="custom-dropdown-menu"]')
       .waitForElementPresent('[data-id="workspaceGitInput"]')
@@ -239,7 +239,7 @@ module.exports = {
       .expect.element('[data-id="workspaceGit-main"]').text.to.contain('✓ ')
   },
 
-  'Should force checkout to a branch with exisiting local changes #group3': function (browser: NightwatchBrowser) {
+  'Should force checkout to a branch with existing local changes #group3': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[data-id="workspaceGit-dev"]')
       .click('[data-id="workspaceGit-dev"]')
@@ -370,25 +370,23 @@ module.exports = {
 
    // GIT WORKSPACE E2E STARTS
 
-   'Should create a git workspace (uniswapV4Periphery) #group4': function (browser: NightwatchBrowser) {
+   'Should create a git workspace (uniswapV4Template) #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=uniswapV4Periphery]')
+      .click('select[id="wstemplate"] option[value=uniswapV4Template]')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .openFile('contracts')
-      .openFile('contracts/hooks')
-      .openFile('contracts/hooks/examples')
-      .openFile('contracts/hooks/examples/FullRange.sol')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
+      .openFile('src')
+      .openFile('src/Counter.sol')
       .pause(1000)
       .getEditorValue((content) => {
-        browser.assert.ok(content.indexOf(`contract FullRange is BaseHook`) !== -1,
+        browser.assert.ok(content.indexOf(`contract Counter is BaseHook {`) !== -1,
           'Incorrect content')
       })
   }, 

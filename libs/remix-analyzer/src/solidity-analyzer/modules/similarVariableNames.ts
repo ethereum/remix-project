@@ -1,5 +1,5 @@
 import category from './categories'
-import { getDeclaredVariableName, getFullQuallyfiedFuncDefinitionIdent } from './staticAnalysisCommon'
+import { getDeclaredVariableName, getFullQualifiedFuncDefinitionIdent } from './staticAnalysisCommon'
 import algorithm from './algorithmCategories'
 import AbstractAst from './abstractAstView'
 import { get } from 'fast-levenshtein'
@@ -35,7 +35,7 @@ export default class similarVariableNames implements AnalyzerModule {
 
     contracts.forEach((contract) => {
       contract.functions.forEach((func) => {
-        const funcName: string = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+        const funcName: string = getFullQualifiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
         let hasModifiersComments = ''
         if (hasModifiers) {
           hasModifiersComments = 'Note: Modifiers are currently not considered by this static analysis.'

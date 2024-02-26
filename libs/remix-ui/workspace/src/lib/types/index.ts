@@ -19,7 +19,7 @@ export interface JSONStandardInput {
   }
 }
 export type MenuItems = action[]
-export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore' | 'hashchecker' | 'rln' | 'breakthroughLabsUniswapv4Hooks' | 'uniswapV4Periphery' | 'uniswapV4HookBookMultiSigSwapHook'
+export type WorkspaceTemplate = 'gist-template' | 'code-template' | 'remixDefault' | 'blank' | 'ozerc20' | 'zeroxErc20' | 'ozerc721' | 'playground' | 'semaphore' | 'hashchecker' | 'rln' | 'breakthroughLabsUniswapv4Hooks' | 'uniswapV4Template' | 'uniswapV4HookBookMultiSigSwapHook'
 export interface WorkspaceProps {
   plugin: FilePanelType
 }
@@ -43,8 +43,26 @@ export interface FileType {
   path: string
   name: string
   isDirectory: boolean
-  type: 'folder' | 'file' | 'gist'
+  type: 'folder' | 'file'
   child?: File[]
+}
+
+export type WorkspaceMetadata = {
+  name: string
+  isGitRepo: boolean
+  hasGitSubmodules?: boolean
+  branches?: {remote: any; name: string}[]
+  currentBranch?: string
+  isGist: string
+}
+
+export type TemplateType = {
+  type: 'git' | 'plugin'
+  url?: string
+  branch?: string
+  name?: string
+  endpoint?: string
+  params?: any[]
 }
 
 export interface FilePanelType extends ViewPlugin {
@@ -105,6 +123,7 @@ export interface FileExplorerProps {
     dispatchUploadFile: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
     dispatchUploadFolder: (target?: React.SyntheticEvent, targetFolder?: string) => Promise<void>,
     dispatchCopyFile: (src: string, dest: string) => Promise<void>,
+    dispatchCopyShareURL: (path:string) => Promise<void>,
     dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
     dispatchRunScript: (path: string) => Promise<void>,
     dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
@@ -129,6 +148,10 @@ export interface FileExplorerProps {
     toGist: (path?: string, type?: string) => void
     handleNewFileInput: (parentFolder?: string) => Promise<void>
     handleNewFolderInput: (parentFolder?: string) => Promise<void>
+    deletePath?: (path: string[]) => Promise<void>
+    createNewFile:(parentFolder?: string) => Promise<void>
+    createNewFolder:(parentFolder?: string) => Promise<void>
+    renamePath:(path: string, type: string, isNew?: boolean) => void
     dragStatus: (status: boolean) => void
 }
 
@@ -150,10 +173,10 @@ export interface FileExplorerContextMenuProps {
   renamePath: (path: string, type: string) => void
   downloadPath: (path: string) => void
   hideContextMenu: () => void
-  publishToGist?: (path?: string, type?: string) => void
-  pushChangesToGist?: (path?: string, type?: string) => void
-  publishFolderToGist?: (path?: string, type?: string) => void
-  publishFileToGist?: (path?: string, type?: string) => void
+  publishToGist?: (path?: string) => void
+  pushChangesToGist?: (path?: string) => void
+  publishFolderToGist?: (path?: string) => void
+  publishFileToGist?: (path?: string) => void
   runScript?: (path: string) => void
   emit?: (cmd: customAction) => void
   pageX: number
@@ -165,6 +188,7 @@ export interface FileExplorerContextMenuProps {
   copy?: (path: string, type: string) => void
   paste?: (destination: string, type: string) => void
   copyFileName?: (path: string, type: string) => void
+  copyShareURL?: (path: string, type: string) => void
   copyPath?: (path: string, type: string) => void
   generateUml?: (path: string) => Promise<void>
   uploadFile?: (target: EventTarget & HTMLInputElement) => void
@@ -313,4 +337,4 @@ export interface Action<T extends keyof ActionPayloadTypes> {
 
 export type Actions = {[A in keyof ActionPayloadTypes]: Action<A>}[keyof ActionPayloadTypes]
 
-export type WorkspaceElement = 'folder' | 'gist' | 'file' | 'workspace'
+export type WorkspaceElement = 'folder' | 'file' | 'workspace'

@@ -3,9 +3,9 @@ import EventEmitter from 'events'
 import { ExternalProfile, LocationProfile, Profile } from '@remixproject/plugin-utils'
 
 class AddLocalPlugin extends EventEmitter {
-  command (this: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile): NightwatchBrowser {
+  command (this: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile, focus: boolean): NightwatchBrowser {
     this.api.perform((done) => {
-      addLocalPlugin(this.api, profile, () => {
+      addLocalPlugin(this.api, profile, focus, () => {
         done()
         this.emit('complete')
       })
@@ -14,7 +14,7 @@ class AddLocalPlugin extends EventEmitter {
   }
 }
 
-function addLocalPlugin (browser: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile, callback: VoidFunction) {
+function addLocalPlugin (browser: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile, focus: boolean, callback: VoidFunction) {
   browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
     .pause(3000).element('css selector', '*[data-id="pluginManagerComponentPluginManager"]', function (result) {
       if (result.status === 0) {
@@ -38,8 +38,13 @@ function addLocalPlugin (browser: NightwatchBrowser, profile: Profile & Location
     .click(profile.location === 'sidePanel' ? '*[data-id="localPluginRadioButtonsidePanel"]' : '*[data-id="localPluginRadioButtonmainPanel"]')
     .click('*[data-id="pluginManagerLocalPluginModalDialogModalDialogModalFooter-react"]')
     .click('*[data-id="pluginManagerLocalPluginModalDialog-modal-footer-ok-react')
-    .waitForElementVisible('[data-id="verticalIconsKindlocalPlugin"]')
-    .click('[data-id="verticalIconsKindlocalPlugin"]')
+    .perform((done) => {
+      if (focus) {
+        browser.waitForElementVisible(`[data-id="verticalIconsKind${profile.name}"]`)
+        .click(`[data-id="verticalIconsKind${profile.name}"]`)
+      }
+      done()
+    })    
     .perform(function () { callback() })
 }
 

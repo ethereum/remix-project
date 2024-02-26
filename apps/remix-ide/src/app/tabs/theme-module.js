@@ -146,7 +146,7 @@ export class ThemeModule extends Plugin {
   }
 
   /**
-   * fixes the invertion for images since this should be adjusted when we switch between dark/light qualified themes
+   * fixes the inversion for images since this should be adjusted when we switch between dark/light qualified themes
    * @param {element} [image] - the dom element which invert should be fixed to increase visibility
    */
   fixInvert(image) {

@@ -2,13 +2,14 @@ import React, {useState, useEffect, useRef, useContext, ChangeEvent} from 'react
 import {FormattedMessage, useIntl} from 'react-intl'
 import {Dropdown} from 'react-bootstrap'
 import {CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
+import {CopyToClipboard} from '@remix-ui/clipboard'
 import {FileExplorer} from './components/file-explorer' // eslint-disable-line
 import {FileSystemContext} from './contexts'
 import './css/remix-ui-workspace.css'
 import {ROOT_PATH, TEMPLATE_NAMES} from './utils/constants'
 import {HamburgerMenu} from './components/workspace-hamburger'
 
-import {MenuItems, WorkSpaceState} from './types'
+import {MenuItems, WorkSpaceState, WorkspaceMetadata} from './types'
 import {contextMenuActions} from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
@@ -26,13 +27,7 @@ export function Workspace() {
   const LOCALHOST = ' - connect to localhost - '
   const NO_WORKSPACE = ' - none - '
   const [currentWorkspace, setCurrentWorkspace] = useState<string>(NO_WORKSPACE)
-  const [selectedWorkspace, setSelectedWorkspace] = useState<{
-    name: string
-    isGitRepo: boolean
-    hasGitSubmodules?: boolean
-    branches?: {remote: any; name: string}[]
-    currentBranch?: string
-  }>(null)
+  const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceMetadata>(null)
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const [showIconsMenu, hideIconsMenu] = useState<boolean>(false)
   const [showBranches, setShowBranches] = useState<boolean>(false)
@@ -73,7 +68,7 @@ export function Workspace() {
     },
     mouseOverElement: null,
     showContextMenu: false,
-    reservedKeywords: [ROOT_PATH, 'gist-'],
+    reservedKeywords: [ROOT_PATH],
     copyElement: [],
     dragStatus: false
   })
@@ -437,7 +432,7 @@ export function Workspace() {
     }
   }
 
-  const handleCopyClick = (path: string, type: 'folder' | 'gist' | 'file' | 'workspace') => {
+  const handleCopyClick = (path: string, type: 'folder' | 'file' | 'workspace') => {
     setState((prevState) => {
       return {...prevState, copyElement: [{key: path, type}]}
     })
@@ -506,7 +501,6 @@ export function Workspace() {
     const focusElement = global.fs.focusElement
     if (focusElement[0]) {
       if (focusElement[0].type === 'folder' && focusElement[0].key) return focusElement[0].key
-      else if (focusElement[0].type === 'gist' && focusElement[0].key) return focusElement[0].key
       else if (focusElement[0].type === 'file' && focusElement[0].key) return extractParentFromKey(focusElement[0].key) ? extractParentFromKey(focusElement[0].key) : ROOT_PATH
       else return ROOT_PATH
     }
@@ -532,6 +526,11 @@ export function Workspace() {
   const handleCopyFileNameClick = (path: string, _type: string) => {
     const fileName = extractNameFromKey(path)
     navigator.clipboard.writeText(fileName)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleCopyShareURLClick = (path: string, _type: string) => {
+    global.dispatchCopyShareURL(path)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -565,34 +564,34 @@ export function Workspace() {
     }
   }
 
-  const pushChangesToGist = (path?: string, type?: string) => {
+  const pushChangesToGist = (path?: string) => {
     global.modal(
       intl.formatMessage({id: 'filePanel.createPublicGist'}),
       intl.formatMessage({id: 'filePanel.createPublicGistMsg1'}),
       intl.formatMessage({id: 'filePanel.ok'}),
-      () => toGist(path, type),
+      () => toGist(path),
       intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
   }
 
-  const publishFolderToGist = (path?: string, type?: string) => {
+  const publishFolderToGist = (path?: string) => {
     global.modal(
       intl.formatMessage({id: 'filePanel.createPublicGist'}),
       intl.formatMessage({id: 'filePanel.createPublicGistMsg2'}, {path}),
       intl.formatMessage({id: 'filePanel.ok'}),
-      () => toGist(path, type),
+      () => toGist(path),
       intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
   }
 
-  const publishFileToGist = (path?: string, type?: string) => {
+  const publishFileToGist = (path?: string) => {
     global.modal(
       intl.formatMessage({id: 'filePanel.createPublicGist'}),
       intl.formatMessage({id: 'filePanel.createPublicGistMsg3'}, {path}),
       intl.formatMessage({id: 'filePanel.ok'}),
-      () => toGist(path, type),
+      () => toGist(path),
       intl.formatMessage({id: 'filePanel.cancel'}),
       () => {}
     )
@@ -627,8 +626,8 @@ export function Workspace() {
     )
   }
 
-  const toGist = (path?: string, type?: string) => {
-    global.dispatchPublishToGist(path, type)
+  const toGist = (path?: string) => {
+    global.dispatchPublishToGist(path)
   }
 
   const editModeOn = (path: string, type: string, isNew = false) => {
@@ -786,12 +785,12 @@ export function Workspace() {
             </option>
           </optgroup>
           <optgroup style={{fontSize: 'medium'}} label="Uniswap V4">
-            <option style={{fontSize: 'small'}} value="uniswapV4Periphery">
-              {intl.formatMessage({id: 'filePanel.uniswapV4Periphery'})}
+            <option style={{fontSize: 'small'}} value="uniswapV4Template">
+              {intl.formatMessage({id: 'filePanel.uniswapV4Template'})}
             </option>
             <option style={{fontSize: 'small'}} value="breakthroughLabsUniswapv4Hooks">
               {intl.formatMessage({id: 'filePanel.breakthroughLabsUniswapv4Hooks'})}
-            </option> 
+            </option>
 
             <option style={{fontSize: 'small'}} value="uniswapV4HookBookMultiSigSwapHook">
               {intl.formatMessage({id: 'filePanel.uniswapV4HookBookMultiSigSwapHook'})}
@@ -917,7 +916,6 @@ export function Workspace() {
       </>
     )
   }
-
   return (
     <div className="d-flex flex-column justify-content-between h-100">
       <div
@@ -947,11 +945,13 @@ export function Workspace() {
                         ></Dropdown.Toggle>
                         <Dropdown.Menu as={CustomMenu} data-id="wsdropdownMenu" className="custom-dropdown-items remixui_menuwidth" rootCloseEvent="click">
                           <HamburgerMenu
+                            selectedWorkspace={selectedWorkspace}
                             createWorkspace={createWorkspace}
                             renameCurrentWorkspace={renameCurrentWorkspace}
                             downloadCurrentWorkspace={downloadCurrentWorkspace}
                             deleteCurrentWorkspace={deleteCurrentWorkspace}
                             deleteAllWorkspaces={deleteAllWorkspaces}
+                            pushChangesToGist={pushChangesToGist}
                             cloneGitRepository={cloneGitRepository}
                             downloadWorkspaces={downloadWorkspaces}
                             restoreBackup={restoreBackup}
@@ -983,7 +983,13 @@ export function Workspace() {
                     >
                       <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
                     </CustomTooltip>}
-                  </span>                  
+
+                    {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
+                      <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{fontSize: '1.1rem', cursor: 'pointer'}} ></i>
+                    </CopyToClipboard>
+                    }
+
+                  </span>
                 </div>
                 <div className='mx-2'>
                   {(platform !== appPlatformTypes.desktop) ? (
@@ -1058,7 +1064,7 @@ export function Workspace() {
               </div>
             </header>
           </div>
-          <ElectronMenu></ElectronMenu>     
+          <ElectronMenu></ElectronMenu>
           <div
             className="h-100 remixui_fileExplorerTree"
             onFocus={() => {
@@ -1072,11 +1078,10 @@ export function Workspace() {
                 </div>
               )}
               {!(global.fs.browser.isRequestingWorkspace || global.fs.browser.isRequestingCloning) && global.fs.mode === 'browser' && currentWorkspace !== NO_WORKSPACE && (
-                
                 <FileExplorer
                   fileState={global.fs.browser.fileState}
                   name={currentWorkspace}
-                  menuItems={['createNewFile', 'createNewFolder', 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '']}
+                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '']}
                   contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                   removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                   files={global.fs.browser.files}
@@ -1098,6 +1103,7 @@ export function Workspace() {
                   dispatchUploadFile={global.dispatchUploadFile}
                   dispatchUploadFolder={global.dispatchUploadFolder}
                   dispatchCopyFile={global.dispatchCopyFile}
+                  dispatchCopyShareURL={global.dispatchCopyShareURL}
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
                   dispatchRunScript={global.dispatchRunScript}
@@ -1123,8 +1129,12 @@ export function Workspace() {
                   handleNewFileInput={handleNewFileInput}
                   handleNewFolderInput={handleNewFolderInput}
                   dragStatus={dragStatus}
+                  createNewFile={handleNewFileInput}
+                  createNewFolder={handleNewFolderInput}
+                  deletePath={deletePath}
+                  renamePath={editModeOn}
                 />
-    
+
               )}
               {global.fs.localhost.isRequestingLocalhost && (
                 <div className="text-center py-5">
@@ -1157,6 +1167,7 @@ export function Workspace() {
                   dispatchUploadFile={global.dispatchUploadFile}
                   dispatchUploadFolder={global.dispatchUploadFolder}
                   dispatchCopyFile={global.dispatchCopyFile}
+                  dispatchCopyShareURL={global.dispatchCopyShareURL}
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
                   dispatchRunScript={global.dispatchRunScript}
@@ -1181,6 +1192,10 @@ export function Workspace() {
                   editModeOn={editModeOn}
                   handleNewFileInput={handleNewFileInput}
                   handleNewFolderInput={handleNewFolderInput}
+                  createNewFile={handleNewFileInput}
+                  createNewFolder={handleNewFolderInput}
+                  deletePath={deletePath}
+                  renamePath={editModeOn}
                   dragStatus={dragStatus}
                 />
               )}
@@ -1192,11 +1207,11 @@ export function Workspace() {
         <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
           <div className="d-flex justify-space-between p-1">
             <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
-            {selectedWorkspace.hasGitSubmodules? 
+            {selectedWorkspace.hasGitSubmodules?
               <div className="pt-1 mr-1">
                 {global.fs.browser.isRequestingCloning ? <div style={{ height: 30 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div>  :
                   <div style={{ height: 30 }} onClick={updateSubModules} data-id='updatesubmodules' className='btn btn-sm border text-muted small'>update submodules</div>}
-              </div>  
+              </div>
               : null}
             <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
               <Dropdown style={{height: 30, minWidth: 80}} onToggle={toggleBranches} show={showBranches} drop={'up'}>
@@ -1300,6 +1315,7 @@ export function Workspace() {
           paste={handlePasteClick}
           copyFileName={handleCopyFileNameClick}
           copyPath={handleCopyFilePathClick}
+          copyShareURL={handleCopyShareURLClick}
           emit={emitContextMenuEvent}
           pageX={state.focusContext.x}
           pageY={state.focusContext.y}
