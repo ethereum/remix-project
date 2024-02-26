@@ -72,7 +72,7 @@
 
   "udapp.savedContracts": "Saved Contracts",
   "udapp.NoSavedInstanceText": "Currently you have no saved contracts to interact with.",
-  "udapp.tooltipTextUnsave": "Delete from saved list",
+  "udapp.tooltipTextUnsave": "Unsave & move to Deployed Contracts list",
   "udapp.savedOn": "Saved On",
   "udapp.filePath": "File Path",
 
@@ -105,7 +105,7 @@
 
   "udapp._comment_universalDappUI.tsx": "libs/remix-ui/run-tab/src/lib/components/universalDappUI.tsx",
   "udapp.tooltipText7": "Remove from the list",
-  "udapp.tooltipText14": "Save contract",
+  "udapp.tooltipText14": "Save & move to Saved Contracts list",
   "udapp.tooltipText8": "Click for docs about using 'receive'/'fallback'",
   "udapp.tooltipText9": "The Calldata to send to fallback function of the contract.",
   "udapp.tooltipText10": "Send data to contract.",
