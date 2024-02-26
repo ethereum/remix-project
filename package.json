@@ -402,7 +402,7 @@
     "timers-browserify": "^2.0.12",
     "ts-node": "10.9.1",
     "tslint": "~6.0.0",
-    "typescript": "^5.3.3",
+    "typescript": "^4.8.4",
     "uglify-js": "^2.8.16",
     "url": "^0.11.0",
     "vm-browserify": "^1.1.2",
