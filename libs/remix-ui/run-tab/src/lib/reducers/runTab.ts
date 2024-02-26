@@ -523,6 +523,10 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         savedInstances: {
           ...state.savedInstances,
           instanceList: state.savedInstances.instanceList.filter((_, index) => index !== payload.index)
+        },
+        instances: {
+          ...state.instances,
+          instanceList: [...state.instances.instanceList, state.savedInstances.instanceList[payload.index]]
         }
       }
     else
