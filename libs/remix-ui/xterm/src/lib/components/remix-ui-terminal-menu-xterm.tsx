@@ -33,7 +33,6 @@ export const RemixUIXtermMenu = (props: RemixUiTerminalProps) => {
         </CustomTooltip>
       </div>
       <div className=''>
-        {xtermState.shells.length}
         <CustomTooltip tooltipText={<FormattedMessage id='xterm.shells' defaultMessage='Shells' />}>
           <Dropdown as={ButtonGroup}>
             <Dropdown.Toggle split variant="" id="dropdown-split-basic" />
