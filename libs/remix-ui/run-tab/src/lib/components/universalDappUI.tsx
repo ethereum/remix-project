@@ -278,9 +278,9 @@ export function UniversalDappUI(props: UdappProps) {
             </CustomTooltip>
           </div> ) : null }
         </div>
-          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={ !props.isSavedContract ? (<FormattedMessage id="udapp.tooltipText7" />) : (<FormattedMessage id="udapp.tooltipTextUnsave" />)}>
-            <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
-          </CustomTooltip>
+        <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={ !props.isSavedContract ? (<FormattedMessage id="udapp.tooltipText7" />) : (<FormattedMessage id="udapp.tooltipTextUnsave" />)}>
+          <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
+        </CustomTooltip>
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
