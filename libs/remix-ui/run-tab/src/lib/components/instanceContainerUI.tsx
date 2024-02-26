@@ -21,7 +21,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           if (savedContracts && savedContracts[network.id]) {
             const instances = savedContracts[network.id]
             for (const inst of instances)
-              if (inst) await props.plugin.call('udapp', 'addSavedInstance', inst.address, inst.contractData.abi, inst.name, inst.savedOn, inst.filePath)
+              if (inst) await props.plugin.call('udapp', 'addSavedInstance', inst.address, inst.abi || inst.contractData.abi, inst.name, inst.savedOn, inst.filePath)
           }
         }
       }
