@@ -872,7 +872,7 @@ export const createSlitherGithubAction = async () => {
 export const createHelperScripts = async (script: string) => {
   if (!templates[script]) return
   await templates[script](plugin)
-  plugin.call('notification', 'toast', 'scripts added in the "scripts" folder')
+  plugin.call('notification', 'toast', `'${script}' added to the workspace.`)
 }
 
 export const updateGitSubmodules = async () => {
