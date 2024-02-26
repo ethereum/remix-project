@@ -76,10 +76,6 @@ const App = () => {
 
   useEffect(() => {
     remixClient.eventEmitter.on('setOutput', (payload) => {
-      if (payload.status === 'failed') {
-        console.error('Error in the compiler', payload)
-      }
-      console.log('setOutput', payload)
       setOutput(payload)
     })
 
