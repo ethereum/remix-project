@@ -46,7 +46,10 @@ const App = () => {
     async function start() {
       try {
         await remixClient.loaded()
-        remixClient.onFileChange((name) => setContract(name))
+        remixClient.onFileChange((name) => {
+          setOutput({})
+          setContract(name)
+        })
         remixClient.onNoFileSelected(() => setContract(''))
       } catch (err) {
         console.log(err)
@@ -146,7 +149,7 @@ const App = () => {
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <span className="px-3 mt-1 mb-1 small text-warning">
           Specify the{' '}
-          <a className="text-warning" target="_blank" href="https://">
+          <a className="text-warning" target="_blank" href="https://remix-ide.readthedocs.io/en/latest/vyper.html#specify-vyper-version">
             compiler version
           </a>{' '}
           &{' '}
