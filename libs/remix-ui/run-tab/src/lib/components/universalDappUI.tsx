@@ -147,11 +147,11 @@ export function UniversalDappUI(props: UdappProps) {
       }
     }
     props.instance.savedOn = Date.now()
-    props.instance.filePath = `${workspace.name}/${props.instance.contractData.contract.file}`
+    props.instance.filePath = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
     objToSave[network.id].push(props.instance)
     localStorage.setItem('savedContracts', JSON.stringify(objToSave))
     // Add contract to saved contracts list on UI
-    await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.contractData.abi, props.instance.name, props.instance.savedOn, props.instance.filePath)
+    await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.abi || props.instance.contractData.abi, props.instance.name, props.instance.savedOn, props.instance.filePath)
     // Remove contract from deployed contracts list on UI
     props.removeInstance(props.index, false)
   }
@@ -278,14 +278,9 @@ export function UniversalDappUI(props: UdappProps) {
             </CustomTooltip>
           </div> ) : null }
         </div>
-        
-        { !props.isSavedContract ? 
-          ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
+          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={ !props.isSavedContract ? (<FormattedMessage id="udapp.tooltipText7" />) : (<FormattedMessage id="udapp.tooltipTextUnsave" />)}>
             <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
-          </CustomTooltip> ) :
-          ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnsaveTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnsave" />}>
-            <i className="udapp_closeIcon m-1 far fa-trash-alt align-self-center" aria-hidden="true" data-id="universalDappUiUdappUnsave" onClick={remove}></i>
-          </CustomTooltip> )}
+          </CustomTooltip>
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
