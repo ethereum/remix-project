@@ -2973,6 +2973,11 @@
     semiver "^1.1.0"
     ws "^8.13.0"
 
+"@huggingface/jinja@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@huggingface/jinja/-/jinja-0.1.3.tgz#202cc080bcca92cb7c89e179a084a598cbfe35e0"
+  integrity sha512-9KsiorsdIK8+7VmlamAT7Uh90zxAhC/SeKaKc80v58JhtPYuwaJpmR/ST7XAUxrHAFqHTCoTH5aJnJDwSL6xIQ==
+
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.10.tgz#5a3ffe32cc9306365fb3fd572596cd602d5e12d2"
@@ -7449,11 +7454,12 @@
   resolved "https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-1.7.0.tgz#e1993689ac42d2b16e9194376cfb6753f6254db1"
   integrity sha512-oxnCNGj88fL+xzV+dacXs44HcDwf1ovs3AuEzvP7mqXw7fQntqIhQ1BRmynh4qEKQSSSRSWVyXRjmTbZIX9V2Q==
 
-"@xenova/transformers@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@xenova/transformers/-/transformers-2.7.0.tgz#0aabc8700d32ed8e28f6aa61abf8653f62fb1678"
-  integrity sha512-py5RqZt9lL/FFUT5X6St+TOSBoVaEmDETI98lK9ApEOvlWeX4bTS2nMQDFe3nFMpv24+wllhmPw2Www/f/ubJA==
+"@xenova/transformers@^2.15.0":
+  version "2.15.1"
+  resolved "https://registry.yarnpkg.com/@xenova/transformers/-/transformers-2.15.1.tgz#ef8dd5a8ab373da9d17109c709ded4947203da98"
+  integrity sha512-HX3kUZbr9v90PS/D2SyffGiFYQ6wQMbzwC1uLuCOA6nRSFOdr0TDnOTxfjS0RB6Phn6ThCTE1vX4n+NUsuobQg==
   dependencies:
+    "@huggingface/jinja" "^0.1.3"
     onnxruntime-web "1.14.0"
     sharp "^0.32.0"
   optionalDependencies:
