@@ -120,7 +120,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   useEffect(() => {
     if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
-  }, [props.useMatomoAnalytics])
+  }, [props.useMatomoAnalytics])  
+
+  useEffect(() => {
+    if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
+  }, [props.useCopilot])
 
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
