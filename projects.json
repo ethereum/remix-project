@@ -8113,6 +8113,14 @@
               ]
             },
             {
+              "file": "libs/remix-ui/settings/src/lib/sindri-settings.tsx",
+              "hash": "f25473fcac87f3e7aa8be1828ea446b1b261fc66",
+              "deps": [
+                "npm:react",
+                "npm:react-intl"
+              ]
+            },
+            {
               "file": "libs/remix-ui/settings/src/lib/remix-ui-settings.css",
               "hash": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
             },
