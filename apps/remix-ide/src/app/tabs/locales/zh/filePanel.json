@@ -86,7 +86,7 @@
   "filePanel.copyFolderFailed": "复制文件夹失败",
   "filePanel.copyFolderFailedMsg": "复制文件夹时出现意外错误：{src}",
   "filePanel.runScriptFailed": "执行脚本失败",
-  "filePanel.createPublicGist": "创建一个公开的 gist",
+  "filePanel.createPublicGist": "发布到公共 gist",
   "filePanel.createPublicGistMsg1": "您确定要将更改推送到 github.com 上的远程 gist 文件吗？",
   "filePanel.createPublicGistMsg2": "您确定要在 github.com 上以匿名方式将 {path} 文件夹中的所有文件发布为公开的 gist？",
   "filePanel.createPublicGistMsg3": "您确定要将 {path} 文件匿名发布为 github.com 上的公开 gist？",
