@@ -4,6 +4,12 @@ import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react
 import {AppModal, AlertModal, ModalTypes} from '@remix-ui/app'
 import {labels, textDark, textSecondary} from './constants'
 
+enum CONSENT {
+  GIVEN = 0,
+  NOT_GIVEN,
+  NOT_ASKED
+}
+
 import './remix-ui-settings.css'
 import {
   generateContractMetadat,
@@ -56,6 +62,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
   const copilotDownload = useRef(null)
 
+  let consentGivenForAI = CONSENT.NOT_ASKED
   const intl = useIntl()
   const initValue = () => {
     const metadataConfig = props.config.get('settings/generate-contract-metadata')
@@ -72,7 +79,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
-
+  
   useEffect(() => {
     const token = props.config.get('settings/' + labels['gist'].key)
     if (token) {
@@ -123,9 +130,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }, [props.useMatomoAnalytics])  
 
   useEffect(() => {
+    console.log("useEffect on useCopilot")
     if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
+    if (props.useCopilot) {
+      const a = async () => await onchangeCopilotActivate()
+    }
+    console.log("useEffect on useCopilot finish")
   }, [props.useCopilot])
-
+  
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
   }
@@ -134,9 +146,10 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
   }
 
-  const onchangeCopilotActivate = async (event) => {
-    if (!event.target.checked) {
-      copilotActivate(props.config, event.target.checked, dispatch)
+  const onchangeCopilotActivate = async () => {
+    console.log("onchangeCopilotActivate ", props.useCopilot)
+    if (!props.useCopilot) {
+      copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('copilot-suggestion', 'uninstall')
       return
     } 
@@ -148,30 +161,45 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       const dot = loaded.match(/(.*)\./g)
       copilotDownload.current.innerText = dot ? dot[0].replace('.', '') : loaded
     })
+    const startCopilot = async () => {
+      await props.plugin.call('copilot-suggestion', 'init')
+      props.plugin.off('copilot-suggestion', 'loading')
+      if (await props.plugin.call('copilot-suggestion', 'status')) {
+        copilotActivate(props.config, true, dispatch)          
+      } else {
+        props.plugin.call('copilot-suggestion', 'uninstall')
+        copilotActivate(props.config, false, dispatch)
+      }
+    }
     const modalActivate: AppModal = {
       id: 'loadcopilotActivate',
       title: 'Download Solidity copilot',
       modalType: ModalTypes.default,
-      okLabel: 'Close',
+      okLabel: 'OK',
+      //cancelLabel: 'Cancel',
       message,
       okFn: async() => {
-        props.plugin.off('copilot-suggestion', 'loading')
-        if (await props.plugin.call('copilot-suggestion', 'status')) {
-          copilotActivate(props.config, true, dispatch)          
-        } else {
-          props.plugin.call('copilot-suggestion', 'uninstall')
-          copilotActivate(props.config, false, dispatch)
-        }
+        consentGivenForAI = CONSENT.GIVEN
+        startCopilot()
       },
       hideFn: async () => {
+        consentGivenForAI = CONSENT.NOT_GIVEN
         props.plugin.off('copilot-suggestion', 'loading')
-        if (await props.plugin.call('copilot-suggestion', 'status')) {
-          copilotActivate(props.config, true, dispatch)          
-        } else {
-          props.plugin.call('copilot-suggestion', 'uninstall')
-          copilotActivate(props.config, false, dispatch)
-        }
+        // if (await props.plugin.call('copilot-suggestion', 'status')) {
+        //   copilotActivate(props.config, true, dispatch)          
+        // } else {
+        //   props.plugin.call('copilot-suggestion', 'uninstall')
+        //   copilotActivate(props.config, false, dispatch)
+        // }
       }
+    }
+    
+    if (consentGivenForAI === CONSENT.NOT_ASKED) {
+      props.plugin.call('notification', 'modal', modalActivate)
+    } else if (consentGivenForAI === CONSENT.GIVEN) {
+      startCopilot()
+    } else {
+      // NOT_GIVEN
     }
 
     if (await props.plugin.call('copilot-suggestion', 'status')) {
@@ -180,10 +208,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       props.plugin.call('copilot-suggestion', 'uninstall')
       copilotActivate(props.config, false, dispatch)
     }
-
-    props.plugin.call('copilot-suggestion', 'init')
-    props.plugin.call('notification', 'modal', modalActivate)
-  }
+ }
 
   const onchangeCopilotMaxNewToken = (event) => {
     copilotMaxNewToken(props.config, parseInt(event.target.value), dispatch)
@@ -460,26 +485,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     copilotTemperatureValue = 0.5
   }
 
-  if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
+  //if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
   const copilotSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">
           <FormattedMessage id="settings.copilot" />
         </h6>
-
-        <div className="pt-2 mb-0">
-          <div className="text-secondary mb-0 h6">
-            <div>
-              <div className="custom-control custom-checkbox mb-1">
-                <input onChange={onchangeCopilotActivate} id="copilot-activate" type="checkbox" className="custom-control-input" checked={isCopilotActivated} />
-                <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/copilot/suggest/activate')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.copilot.activate" />
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <div className="pt-2 mb-0">
           <div className="text-secondary mb-0 h6">

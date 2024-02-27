@@ -267,7 +267,7 @@ export const TabsUI = (props: TabsUIProps) => {
               className="btn ai-switch text-ai pl-2 pr-0 py-0 d-flex"
               disabled={!(tabsState.currentExt === 'sol' )}
               onClick={async () => {
-                await props.plugin.call('settings', 'updateCopilotChoice', ai_switch)
+                await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
                 setAI_switch(!ai_switch)
               }}
             >
