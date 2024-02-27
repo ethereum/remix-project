@@ -72,9 +72,10 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       dispatch(setWorkspaces(workspaces))
     }
     if (params.gist) {
-      await createWorkspaceTemplate('code-sample', 'gist-template')
-      plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
+      const name = 'gist ' + params.gist
+      await createWorkspaceTemplate(name, 'gist-template')
+      plugin.setWorkspace({ name, isLocalhost: false })
+      dispatch(setCurrentWorkspace({ name, isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
     } else if (params.code || params.url || params.shareCode) {
       await createWorkspaceTemplate('code-sample', 'code-template')
@@ -224,14 +225,19 @@ export type SolidityConfiguration = {
   runs: string
 }
 
-export const publishToGist = async (path?: string, type?: string) => {
+export const publishToGist = async (path?: string) => {
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = path || '/'
   
   try {
-    const name = extractNameFromKey(path)
-    const id = name && name.startsWith('gist-') ? name.split('-')[1] : null
-
+    let id
+    if (path) {
+      // check if the current folder is a gist folder
+      id = await plugin.call('filePanel', 'isGist', extractNameFromKey(path))
+    } else {
+      // check if the current workspace is a gist workspace
+      id = await plugin.call('filePanel', 'isGist')
+    }
     const packaged = await packageGistFiles(folder)
     // check for token
     const config = plugin.registry.get('config').api
@@ -314,7 +320,7 @@ export const createNewFile = async (path: string, rootDir: string) => {
   }
 }
 
-export const setFocusElement = async (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => {
+export const setFocusElement = async (elements: { key: string, type: 'file' | 'folder' }[]) => {
   dispatch(focusElement(elements))
 }
 
@@ -363,7 +369,7 @@ export const downloadPath = async (path: string) => {
   try {
     await fileManager.download(path)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while downloading.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while downloading.' + error))
   }
 }
 
@@ -373,7 +379,7 @@ export const copyFile = async (src: string, dest: string) => {
   try {
     await fileManager.copyFile(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyFile operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyFile operation.' + error))
   }
 }
 
@@ -400,7 +406,7 @@ export const copyShareURL = async (path: string) => {
     const shareUrl = `${window.location.origin}/#shareCode=${hash}`
     navigator.clipboard.writeText(shareUrl)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyShareURL operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyShareURL operation.' + error))
   }
 }
 
@@ -410,7 +416,7 @@ export const copyFolder = async (src: string, dest: string) => {
   try {
     await fileManager.copyDir(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyDir operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyDir operation.' + error))
   }
 }
 
@@ -429,7 +435,7 @@ export const emitContextMenuEvent = async (cmd: customAction) => {
   await plugin.call(cmd.id, cmd.name, cmd)
 }
 
-export const handleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
+export const handleClickFile = async (path: string, type: 'file' | 'folder' ) => {
   if (type === 'file' && path.endsWith('.md')) {
     // just opening the preview
     await plugin.call('doc-viewer' as any, 'viewDocs', [path])
@@ -502,7 +508,7 @@ const packageGistFiles = async (directory) => {
     if (isFile) {
       try {
         workspaceProvider.get(directory, (error, content) => {
-          if (error) throw new Error('An error ocurred while getting file content. ' + directory)
+          if (error) throw new Error('An error occurred while getting file content. ' + directory)
           if (/^\s+$/.test(content) || !content.length) {
             content = '// this line is added to create a gist. Empty file is not allowed.'
           }
@@ -519,11 +525,6 @@ const packageGistFiles = async (directory) => {
           await workspaceProvider.copyFolderToJson(directory, ({ path, content }) => {
             if (/^\s+$/.test(content) || !content.length) {
               content = '// this line is added to create a gist. Empty file is not allowed.'
-            }
-            if (path.indexOf('gist-') === 0) {
-              path = path.split('/')
-              path.shift()
-              path = path.join('/')
             }
             path = path.replace(/\//g, '...')
             ret[path] = { content }
@@ -595,7 +596,7 @@ export const moveFile = async (src: string, dest: string) => {
   try {
     await fileManager.moveFile(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing moveFile operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing moveFile operation.' + error))
   }
 }
 
@@ -605,7 +606,7 @@ export const moveFolder = async (src: string, dest: string) => {
   try {
     await fileManager.moveDir(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing moveDir operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing moveDir operation.' + error))
   }
 }
 

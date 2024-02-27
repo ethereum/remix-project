@@ -54,7 +54,7 @@ declare module 'nightwatch' {
     notContainsText(cssSelector: string, text: string): NightwatchBrowser
     sendLowLevelTx(address: string, value: string, callData: string): NightwatchBrowser
     journalLastChild(val: string): NightwatchBrowser
-    checkTerminalFilter(filter: string, test: string): NightwatchBrowser
+    checkTerminalFilter(filter: string, test: string, notContain: boolean): NightwatchBrowser
     noWorkerErrorFor(version: string): NightwatchBrowser
     validateValueInput(selector: string, valueTosSet: string[], expectedValue: string): NightwatchBrowser
     checkAnnotations(type: string): NightwatchBrowser

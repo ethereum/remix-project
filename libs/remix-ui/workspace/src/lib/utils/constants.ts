@@ -1,4 +1,4 @@
-import { TemplateType } from './types'
+import { TemplateType } from '../types'
 export const ROOT_PATH = '/'
 export const solTestYml = `
 name: Running Solidity Unit Tests

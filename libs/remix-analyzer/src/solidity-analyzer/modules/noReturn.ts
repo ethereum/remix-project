@@ -1,5 +1,5 @@
 import category from './categories'
-import { hasFunctionBody, getFullQuallyfiedFuncDefinitionIdent, getEffectedVariableName } from './staticAnalysisCommon'
+import { hasFunctionBody, getFullQualifiedFuncDefinitionIdent, getEffectedVariableName } from './staticAnalysisCommon'
 import algorithm from './algorithmCategories'
 import AbstractAst from './abstractAstView'
 import {
@@ -28,7 +28,7 @@ export default class noReturn implements AnalyzerModule {
 
     contracts.forEach((contract: ContractHLAst) => {
       contract.functions.filter((func: FunctionHLAst) => hasFunctionBody(func.node)).forEach((func: FunctionHLAst) => {
-        const funcName: string = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+        const funcName: string = getFullQualifiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
         if (this.hasNamedAndUnnamedReturns(func)) {
           warnings.push({
             warning: `${funcName}: Mixing of named and unnamed return parameters is not advised.`,

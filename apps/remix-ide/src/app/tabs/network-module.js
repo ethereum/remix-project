@@ -20,7 +20,7 @@ export class NetworkModule extends Plugin {
     super(profile)
     this.blockchain = blockchain
 
-    // TODO: See with remix-lib to make sementic coherent
+    // TODO: See with remix-lib to make semantic coherent
     this.blockchain.event.register('contextChanged', (provider) => {
       this.emit('providerChanged', provider)
     })

@@ -1,6 +1,7 @@
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import {isBigInt} from 'web3-validator'
+import { addressToString } from "@remix-ui/helper"
 
 export const profile = {
   name: 'web3Provider',
@@ -54,8 +55,13 @@ export class Web3ProviderModule extends Plugin {
                       console.log('receipt available but contract address not present', receipt)
                       return
                     }
-                    const contractData = await this.call('compilerArtefacts', 'getContractDataFromAddress', receipt.contractAddress)
-                    if (contractData) this.call('udapp', 'addInstance', receipt.contractAddress, contractData.contract.abi, contractData.name)
+                    const contractAddressStr = addressToString(receipt.contractAddress)
+                    const contractData = await this.call('compilerArtefacts', 'getContractDataFromAddress', contractAddressStr)
+                    if (contractData) {
+                      this.call('udapp', 'addInstance', contractAddressStr, contractData.contract.abi, contractData.name)
+                      const data = await this.call('compilerArtefacts', 'getCompilerAbstract', contractData.file)
+                      await this.call('compilerArtefacts', 'addResolvedContract', contractAddressStr, data)
+                    }
                   }, 50)
                 }
               }

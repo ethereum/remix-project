@@ -24,7 +24,7 @@ export const keccak = function(a: Buffer, bits: number = 256): Buffer {
     return toBuffer(keccak512(a))
   }
   default: {
-    throw new Error(`Invald algorithm: keccak${bits}`)
+    throw new Error(`Invalid algorithm: keccak${bits}`)
   }
   }
 }

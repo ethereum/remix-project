@@ -1,0 +1,19 @@
+/* You can add global styles to this file, and also import other style files */
+
+
+h1{
+  font-size: 1.2rem !important;
+  font-weight: 700;
+}
+h2{
+  font-size: 1rem !important;
+  font-weight: 700;
+}
+h3{
+  font-size: 1rem !important;
+}
+
+p {
+  font-size: 0.9rem;
+}
+

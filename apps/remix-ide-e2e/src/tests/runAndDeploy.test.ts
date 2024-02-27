@@ -202,7 +202,7 @@ module.exports = {
   },
 
   /*
-   * This test is using 3 differents services:
+   * This test is using 3 different services:
    * - Metamask for getting the transaction
    * - Source Verifier service for fetching the contract code
    * - Ropsten node for retrieving the trace and storage

@@ -17,6 +17,7 @@ export interface BrowserState {
         name: string
       }[]
       currentBranch?: string
+      isGist: string
     }[]
     files: {[x: string]: Record<string, FileType>}
     flatTree: FileType[]
@@ -150,7 +151,6 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 
   case 'SET_WORKSPACES': {
     const payload = action.payload
-
     return {
       ...state,
       browser: {
@@ -986,8 +986,7 @@ const removeInputField = (
         isDirectory: true,
         path,
         name: extractNameFromKey(path),
-        type:
-          extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
+        type: 'folder',
         child: prevFiles ? prevFiles.child : {}
       },
       Object
@@ -1117,8 +1116,7 @@ const normalize = (
         path,
         name: extractNameFromKey(path),
         isDirectory: filesList[key].isDirectory,
-        type:
-          extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder'
+        type: 'folder'
       }
     } else {
       files[extractNameFromKey(key)] = {

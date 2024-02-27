@@ -286,11 +286,11 @@ test('staticAnalysisCommon.getFullQualifiedFunctionCallIdent', function (t) {
   t.throws(() => common.getFullQualifiedFunctionCallIdent(contractDefinition, assignment), new RegExp('staticAnalysisCommon.js: Can not get function name from non function call node'), 'throws on wrong type')
 })
 
-test('staticAnalysisCommon.getFullQuallyfiedFuncDefinitionIdent', function (t) {
+test('staticAnalysisCommon.getFullQualifiedFuncDefinitionIdent', function (t) {
   t.plan(3)
-  t.ok(common.getFullQuallyfiedFuncDefinitionIdent(contractDefinition, functionDefinition, ['uint256', 'bool']) === 'C.f(uint256,bool)', 'creates right signature')
-  t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(contractDefinition, parameterFunctionCall, ['uint256', 'bool']), new RegExp('staticAnalysisCommon.js: not a FunctionDefinition Node'), 'throws on wrong nodes')
-  t.throws(() => common.getFullQuallyfiedFuncDefinitionIdent(parameterFunctionCall, functionDefinition, ['uint256', 'bool']), new RegExp('staticAnalysisCommon.js: not a ContractDefinition Node'), 'throws on wrong nodes')
+  t.ok(common.getFullQualifiedFuncDefinitionIdent(contractDefinition, functionDefinition, ['uint256', 'bool']) === 'C.f(uint256,bool)', 'creates right signature')
+  t.throws(() => common.getFullQualifiedFuncDefinitionIdent(contractDefinition, parameterFunctionCall, ['uint256', 'bool']), new RegExp('staticAnalysisCommon.js: not a FunctionDefinition Node'), 'throws on wrong nodes')
+  t.throws(() => common.getFullQualifiedFuncDefinitionIdent(parameterFunctionCall, functionDefinition, ['uint256', 'bool']), new RegExp('staticAnalysisCommon.js: not a ContractDefinition Node'), 'throws on wrong nodes')
 })
 
 test('staticAnalysisCommon.getSplittedTypeDesc', function (t) {
