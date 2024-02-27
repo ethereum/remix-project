@@ -36,7 +36,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
   return (
     <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
       { env.current && env.current === 'injected' ? (
-        <div className="d-flex justify-content-between align-items-center pl-2 mb-2">
+        <div className="d-flex justify-content-between align-items-center pl-2">
           <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
             <label className="udapp_deployedContracts">
               <FormattedMessage id="udapp.savedContracts" />
@@ -68,13 +68,13 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             })}
           </div>
         ) : (
-          <span className="mx-2 mt-3 alert alert-warning" data-id="NoSavedInstanceText" role="alert">
+          <span className="mx-2 mt-2 text-dark" data-id="NoSavedInstanceText">
             <FormattedMessage id="udapp.NoSavedInstanceText" />
           </span>
         )
       ) :  null }
 
-      <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-3">
+      <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
           <label className="udapp_deployedContracts">
             <FormattedMessage id="udapp.deployedContracts" />
