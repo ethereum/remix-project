@@ -22,7 +22,7 @@ export class SolCoder extends Plugin {
   async code_generation(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', 'Waiting for Solcoder answer...')
+    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Waiting for Solcoder answer...'})
     let result
     try {
       result = await(
@@ -47,7 +47,7 @@ export class SolCoder extends Plugin {
   async solidity_answer(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', 'Waiting for Solcoder answer...')
+    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Waiting for Solcoder answer...'})
     let result
     try {
       result = await(
@@ -77,7 +77,7 @@ export class SolCoder extends Plugin {
   async code_explaining(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', 'Waiting for Solcoder answer...')
+    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Waiting for Solcoder answer...'})
     let result
     try {
       result = await(

@@ -101,7 +101,20 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
             <span className="ml-3 pt-1 py-1" >
               <CopyToClipboard content={messageText} className={` p-0 m-0 far fa-copy ${classList}`} direction={'top'} />
             </span>
-            <span className="border border-success text-success btn-sm" onClick={() => { askGtp() }}>ASK GPT</span>
+            <span
+              className="position-relative text-ai text-sm pl-0 pr-2"
+              style={{fontSize: "x-small", alignSelf: "end"}}
+            >
+              AI
+            </span>
+            <span
+              className="button border text-ai btn-sm"
+              onClick={() => { askGtp() }}
+              style={{borderColor: "var(--ai)"}}
+            >
+              ASK GPT
+            </span>
+            
           </div>
         </div>
       )}

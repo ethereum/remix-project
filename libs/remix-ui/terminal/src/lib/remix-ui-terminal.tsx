@@ -44,7 +44,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
   const [toaster, setToaster] = useState(false)
-  const [aiLoading, setAILoading] = useState(false)
   const [toastProvider, setToastProvider] = useState({
     show: false,
     fileName: '',
@@ -102,14 +101,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   useEffect(() => {
     props.plugin.on('network', 'providerChanged', (provider) => {
       setIsVM(provider.startsWith('vm-'))
-    })
-
-    props.plugin.on('solcoder', 'aiInfering', () => {
-      setAILoading(true)
-    })
-
-    props.plugin.on('solcoder', 'aiInferingDone', () => {
-      setAILoading(false)
     })
 
     props.onReady({
@@ -658,11 +649,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 data-id="terminalInputSearch"
               />
             </div>
-            {aiLoading && <div className="text-center py-5 ml-5">
-              <i className="fas fa-spinner fa-pulse fa-2x"></i>
-              <span> AI Running ...</span> 
-            </div>}
-            
           </div>
         </div>
         <div tabIndex={-1} className="remix_ui_terminal_container d-flex h-100 m-0 flex-column" data-id="terminalContainer">
