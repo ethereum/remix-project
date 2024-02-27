@@ -90,7 +90,7 @@ let requiredModules = [ // services + layout views + system views
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'etherscan', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler']
+const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'etherscan', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'learneth']
 
 const sensitiveCalls = {
   fileManager: ['writeFile', 'copyFile', 'rename', 'copyDir'],
@@ -154,7 +154,7 @@ export class RemixAppManager extends PluginManager {
     if (Registry.getInstance().get('platform').api.isDesktop()) {
       requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep']
     }
-    
+
   }
 
   async canActivatePlugin(from, to) {
@@ -327,6 +327,17 @@ export class RemixAppManager extends PluginManager {
       label: 'Generate Docs',
       type: [],
       extension: ['.sol'],
+      path: [],
+      pattern: [],
+      sticky: true,
+      group: 7
+    })
+    await this.call('filePanel', 'registerContextMenuItem', {
+      id: 'vyper',
+      name: 'vyperCompileCustomAction',
+      label: 'Compile for Vyper',
+      type: [],
+      extension: ['.vy'],
       path: [],
       pattern: [],
       sticky: true,

@@ -7,6 +7,8 @@ import { FlatTreeItemInput } from './flat-tree-item-input';
 import { FlatTreeDrop } from './flat-tree-drop';
 import { getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators';
+import { FileHoverIcons } from './file-explorer-hovericons';
+import { deletePath } from '../actions';
 
 export default function useOnScreen(ref: RefObject<HTMLElement>) {
 
@@ -36,6 +38,10 @@ interface FlatTreeProps {
   moveFile: (dest: string, src: string) => void
   moveFolder: (dest: string, src: string) => void
   fileState: fileDecoration[]
+  createNewFile?: any
+  createNewFolder?: any
+  deletePath?: (path: string | string[]) => void | Promise<void>
+  editPath?: (path: string, type: string, isNew?: boolean) => void
 }
 
 let mouseTimer: any = {
@@ -44,7 +50,7 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder } = props
+  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder, deletePath, editPath } = props
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
     path: string,
@@ -178,42 +184,62 @@ export const FlatTree = (props: FlatTreeProps) => {
     }
   }, [focusEdit])
 
+  const showIcons = (file: FileType) =>
+    file.path === hover && !isDragging ? (
+      <div>
+        <FileHoverIcons
+          file={file}
+          renamePathOp={props.editPath}
+          deletePathOp={deletePath}
+          handleNewFileOp={props.createNewFile}
+          handleNewFolderOp={props.createNewFolder}
+        />
+      </div>
+    ) : null
 
   const Row = (index: number) => {
     const node = Object.keys(flatTree)[index]
     const file = flatTree[node]
-    return (<li
-      className={`${labelClass(file)} li_tv`}
-      onMouseOver={() => setHover(file.path)}
-      onMouseOut={() => setHover(file.path)}
-      data-type={file.isDirectory ? 'folder' : 'file'}
-      data-path={`${file.path}`}
-      data-id={`treeViewLitreeViewItem${file.path}`}
-    >
-      <div data-id={`treeViewDivtreeViewItem${file.path}`} className={`d-flex flex-row align-items-center`}>
-        {getIndentLevelDiv(file.path)}
+    return (
+      <li
+        className={`${labelClass(file)} li_tv`}
+        onMouseOver={(e) => {
+          setHover(file.path)
+        }}
+        onMouseOut={() => {
+          setHover('')
+        }}
+        data-type={file.isDirectory ? 'folder' : 'file'}
+        data-path={`${file.path}`}
+        data-id={`treeViewLitreeViewItem${file.path}`}
+      >
+        <div data-id={`treeViewDivtreeViewItem${file.path}`} className={`d-flex flex-row align-items-center`}>
+          {getIndentLevelDiv(file.path)}
 
-        <div className={`pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : `${getPathIcon(file.path)} pr-2 caret caret_tv`} `}></div>
-        {focusEdit && file.path && focusEdit.element === file.path ?
-          <FlatTreeItemInput
-            editModeOff={editModeOff}
-            file={file} /> :
-          <><div
-            draggable={true}
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
-            className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
-            data-label-type={file.isDirectory ? 'folder' : 'file'}
-            data-label-path={`${file.path}`}
-            key={index}>
-            {file.name}
-
-          </div>
-          {getFileStateIcons(file)}
-          </>
-        }
-      </div>
-    </li>)
+          <div className={`pl-2 ${file.isDirectory ? expandPath && expandPath.includes(file.path) ? 'fa fa-folder-open' : 'fa fa-folder' : `${getPathIcon(file.path)} pr-2 caret caret_tv`} `}></div>
+          {focusEdit && file.path && focusEdit.element === file.path ?
+            <FlatTreeItemInput
+              editModeOff={editModeOff}
+              file={file} /> :
+            <><div
+              data-id={`treeViewDivDraggableItem${file.path}`}
+              draggable={true}
+              onDragStart={onDragStart}
+              onDragEnd={onDragEnd}
+              className={`ml-1 pl-2 text-nowrap remixui_leaf ${getFileStateClasses(file)}`}
+              data-label-type={file.isDirectory ? 'folder' : 'file'}
+              data-label-path={`${file.path}`}
+              key={index}>
+              {file.name}
+            </div>
+            <div className="d-flex flex-row align-items-center">
+              {showIcons(file)}
+              {getFileStateIcons(file)}
+            </div>
+            </>
+          }
+        </div>
+      </li>)
   }
 
   return (<>

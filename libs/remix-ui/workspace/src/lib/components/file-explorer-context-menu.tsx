@@ -187,15 +187,15 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
                 break
               case 'Push changes to gist':
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'pushToChangesoGist'])
-                pushChangesToGist(path, type)
+                pushChangesToGist(path)
                 break
               case 'Publish folder to gist':
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFolderToGist'])
-                publishFolderToGist(path, type)
+                publishFolderToGist(path)
                 break
               case 'Publish file to gist':
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFileToGist'])
-                publishFileToGist(path, type)
+                publishFileToGist(path)
                 break
               case 'Run':
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'runScript'])
@@ -227,7 +227,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
                 break
               case 'Publish Workspace to Gist':
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishWorkspace'])
-                publishFolderToGist(path, type)
+                publishFolderToGist(path)
                 break
               default:
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', `${item.id}/${item.name}`])

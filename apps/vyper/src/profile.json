@@ -1,7 +1,7 @@
 {
   "name": "vyper",
-  "displayName": "Vyper Plugin",
-  "methods": ["getCompilationResult", "compile"],
+  "displayName": "Vyper",
+  "methods": ["getCompilationResult", "compile", "vyperCompileCustomAction"],
   "url": "https://ipfs-cluster.ethdevops.io/ipfs/QmbmPzUg7ghTKcF2eo64zm1k1LKdibYfqYmiqXkHKXks8r",
   "documentation": "https://remix-ide.readthedocs.io/en/latest/plugin_list.html",
   "description": "Compile vyper contracts",

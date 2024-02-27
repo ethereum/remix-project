@@ -10,12 +10,13 @@ interface RemixUiVyperCompileDetailsProps {
 }
 
 export function RemixUiVyperCompileDetails({ payload, theme, themeStyle }: RemixUiVyperCompileDetailsProps) {
-  const dpayload = Object.values(payload) as any ?? {}
-  const bcode = dpayload[0].bytecode ? dpayload[0].bytecode.object : ''
-  const runtimeBcode = dpayload[0].runtimeBytecode ? dpayload[0].runtimeBytecode.object : ''
-  const ir = dpayload[0].ir
-  const methodIdentifiers= dpayload[0].methodIdentifiers
-  const abi= dpayload[0].abi
+  const compileResult = payload['compileResult'] ?? {}
+  console.log('compileResult', compileResult, payload)
+  const bcode = compileResult.bytecode ? compileResult.bytecode.object : ''
+  const runtimeBcode = compileResult.runtimeBytecode ? compileResult.runtimeBytecode.object : ''
+  const ir = compileResult.ir
+  const methodIdentifiers= compileResult.methodIdentifiers
+  const abi= compileResult.abi
   return (
     <>
       <VyperCompile

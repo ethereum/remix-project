@@ -2,7 +2,7 @@ import React from 'react'
 import { bufferToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
-import { TemplateType } from '../utils/types'
+import { TemplateType } from '../types'
 import IpfsHttpClient from 'ipfs-http-client'
 import axios, { AxiosResponse } from 'axios'
 import {
@@ -298,7 +298,9 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
             }
             return Object.keys(standardInput.sources)[0]
           } else {
-            await workspaceProvider.set(path, JSON.stringify(content))
+            // preserve JSON whitepsace if this isn't a Solidity compiler JSON-input-output file
+            content = data.content
+            await workspaceProvider.set(path, content)
           }
         } catch (e) {
           console.log(e)
@@ -345,9 +347,9 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         }
 
         if (data.files[element].type === 'application/json') {
-          obj['/' + 'gist-' + gistId + '/' + path] = { content: JSON.stringify(value.content, null, '\t') }
+          obj['/' + path] = { content: JSON.stringify(value.content, null, '\t') }
         } else
-          obj['/' + 'gist-' + gistId + '/' + path] = value
+          obj['/' + path] = value
       }
       plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
         if (errorLoadingFile) {
@@ -609,6 +611,7 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
           Object.keys(items)
             .filter((item) => items[item].isDirectory)
             .map(async (folder) => {
+              const name = folder.replace(workspacesPath + '/', '')
               const isGitRepo: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.git')
               const hasGitSubmodules: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.gitmodules')
               if (isGitRepo) {
@@ -618,17 +621,19 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
                 branches = await getGitRepoBranches(folder)
                 currentBranch = await getGitRepoCurrentBranch(folder)
                 return {
-                  name: folder.replace(workspacesPath + '/', ''),
+                  name,
                   isGitRepo,
                   branches,
                   currentBranch,
-                  hasGitSubmodules
+                  hasGitSubmodules,
+                  isGist: null
                 }
               } else {
                 return {
-                  name: folder.replace(workspacesPath + '/', ''),
+                  name,
                   isGitRepo,
-                  hasGitSubmodules
+                  hasGitSubmodules,
+                  isGist: plugin.isGist(name) // plugin is filePanel
                 }
               }
             })
@@ -697,7 +702,7 @@ export const cloneRepository = async (url: string) => {
           plugin.call('notification', 'modal', cloneModal)
         })
     } catch (e) {
-      dispatch(displayPopUp('An error occured: ' + e))
+      dispatch(displayPopUp('An error occurred: ' + e))
     }
   }
 }
