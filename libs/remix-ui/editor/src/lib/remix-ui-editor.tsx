@@ -743,10 +743,10 @@ export const EditorUI = (props: EditorUIProps) => {
 
     let solgptExplainFunctionAction
     const executeSolgptExplainFunctionAction = {
-      id: 'explainFunction',
+      id: 'explainCode',
       label: intl.formatMessage({id: 'editor.explainFunctionSol'}),
       contextMenuOrder: 1, // choose the order
-      contextMenuGroupId: 'sol-gtp', // create a new grouping
+      contextMenuGroupId: 'gtp', // create a new grouping
       keybindings: [],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
@@ -831,11 +831,15 @@ export const EditorUI = (props: EditorUIProps) => {
       }
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
+        console.log('functionImpl', functionImpl)
         currentFunction.current = functionImpl.name
         executeGptGenerateDocumentationAction.label = intl.formatMessage({id: 'editor.generateDocumentation2'}, {name: functionImpl.name})
         gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
-        executegptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunction'}, {name: functionImpl.name})
+        executegptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunction2'}, {name: functionImpl.name})
         gptExplainFunctionAction = editor.addAction(executegptExplainFunctionAction)
+
+        executeSolgptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunctionSol'})
+        solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
       }else{
         executeSolgptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunctionSol'})
         solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
