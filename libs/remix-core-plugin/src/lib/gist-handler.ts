@@ -120,7 +120,7 @@ export class GistHandler extends Plugin {
       if (found) {        
         await this.call('notification', 'alert', {
           id: 'gistAlert',
-          message: `workspace "${gistIdWorkspace}" already exist`,
+          message: `workspace "${gistIdWorkspace}" already exists`,
         })
         return
       }
