@@ -17,7 +17,7 @@ export class SuggestionService {
     this.worker = new Worker(new URL('./worker.js', import.meta.url), {
       type: 'module'
     });
-    this.init()
+    //this.init()
     this.events = new EventEmitter()
     this.responses = {}
     this.current

@@ -157,7 +157,7 @@
     "@ricarso/react-image-magnifiers": "^1.9.0",
     "@types/nightwatch": "^2.3.1",
     "@web3modal/ethers5": "^4.0.1",
-    "@xenova/transformers": "^2.7.0",
+    "@xenova/transformers": "^2.15.0",
     "ansi-gray": "^0.1.1",
     "assert": "^2.1.0",
     "async": "^2.6.2",
