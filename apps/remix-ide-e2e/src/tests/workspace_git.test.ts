@@ -209,7 +209,7 @@ module.exports = {
       .expect.element('[data-id="workspaceGit-newLocalBranch"]').text.to.contain('✓ ')
   },
 
-  'Should checkout to an exisiting local branch #group3': function (browser: NightwatchBrowser) {
+  'Should checkout to an existing local branch #group3': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[data-id="custom-dropdown-menu"]')
       .waitForElementPresent('[data-id="workspaceGitInput"]')
@@ -239,7 +239,7 @@ module.exports = {
       .expect.element('[data-id="workspaceGit-main"]').text.to.contain('✓ ')
   },
 
-  'Should force checkout to a branch with exisiting local changes #group3': function (browser: NightwatchBrowser) {
+  'Should force checkout to a branch with existing local changes #group3': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[data-id="workspaceGit-dev"]')
       .click('[data-id="workspaceGit-dev"]')

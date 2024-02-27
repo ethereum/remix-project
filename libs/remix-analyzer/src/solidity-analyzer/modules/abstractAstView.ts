@@ -22,7 +22,7 @@ export default class abstractAstView {
     file2: import "file1" as x; contract c{}
     therefore we have two contracts with the same name c. At the moment this is not handled because alias name "x" is not
     available in the current AST implementation thus can not be resolved.
-    Additionally the fullQuallified function names e.g. [contractName].[functionName](param1Type, param2Type, ... ) must be prefixed to
+    Additionally the fullQualified function names e.g. [contractName].[functionName](param1Type, param2Type, ... ) must be prefixed to
     fully support this and when inheritance is resolved it must include alias resolving e.g x.c = file1.c
   */
   multipleContractsWithSameName = false
@@ -36,14 +36,14 @@ export default class abstractAstView {
  *  "functions": [
  *    {
  *      "node": {},                // actual AST Node of the function
- *      "relevantNodes": [],       // AST nodes in the function that are relevant for the anlysis of this function
+ *      "relevantNodes": [],       // AST nodes in the function that are relevant for the analysis of this function
  *      "modifierInvocations": [], // Modifier invocation AST nodes that are applied on this function
  *      "localVariables": [],      // Local variable declaration nodes
  *      "parameters": []           // Parameter types of the function in order of definition
  *      "returns": []              // list of return vars as { type: ... , name: ... }
  *    }
  *  ],
- *  "modifiers": [],              // Modifiers definded by the contract, format similar to functions
+ *  "modifiers": [],              // Modifiers defined by the contract, format similar to functions
  *  "inheritsFrom": [],           // Names of contract this one inherits from in order of definition
  *  "stateVariables": []          // AST nodes of all State variables
  * }
@@ -130,7 +130,7 @@ export default class abstractAstView {
       if (inheritsFrom) {
         currentContract.stateVariables = currentContract.stateVariables.concat(inheritsFrom.stateVariables)
       } else {
-        console.log('abstractAstView.js: could not find contract defintion inherited from ' + inheritsFromName)
+        console.log('abstractAstView.js: could not find contract definition inherited from ' + inheritsFromName)
       }
     })
   }
@@ -138,7 +138,7 @@ export default class abstractAstView {
   private setCurrentContract (contract: ContractHLAst): void {
     const name: string = getContractName(contract.node)
     if (this.contracts.map((c: ContractHLAst) => getContractName(c.node)).filter((n) => n === name).length > 0) {
-      console.log('abstractAstView.js: two or more contracts with the same name dectected, import aliases not supported at the moment')
+      console.log('abstractAstView.js: two or more contracts with the same name detected, import aliases not supported at the moment')
       this.multipleContractsWithSameName = true
     }
     this.currentContractIndex = (this.contracts.push(contract) - 1)

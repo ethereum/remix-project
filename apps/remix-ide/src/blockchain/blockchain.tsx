@@ -526,7 +526,7 @@ export class Blockchain extends Plugin {
   }
 
   /**
-   * return the fork name applied to the current envionment
+   * return the fork name applied to the current environment
    * @return {String} - fork name
    */
   getCurrentFork() {
@@ -619,7 +619,7 @@ export class Blockchain extends Plugin {
     return this.executionContext.isVM() ? 'memory' : 'blockchain'
   }
 
-  // NOTE: the config is only needed because exectuionContext.init does
+  // NOTE: the config is only needed because executionContext.init does
   async resetAndInit(config: Config, transactionContextAPI: TransactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
     this.executionContext.init(config)

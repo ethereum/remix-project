@@ -40,8 +40,8 @@ export function tryConvertAsciiFormat (memorySlot) {
  * @param {Object} css3 - css inline declaration
  * @param {Object} ...
  * @return {String} css inline style
- *                  if the key start with * the value is direcly appended to the inline style (which should be already inline style formatted)
- *                  used if multiple occurences of the same key is needed
+ *                  if the key start with * the value is directly appended to the inline style (which should be already inline style formatted)
+ *                  used if multiple occurrences of the same key is needed
  */
 export function formatCss (css1, css2) {
   let ret = ''

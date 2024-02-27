@@ -20,7 +20,7 @@ declare global {
 }
 
 const _paq = window._paq = window._paq || []  //eslint-disable-line
-let plugin: RunTab, dispatch: React.Dispatch<any>
+let plugin: RunTab, dispatch: React.Dispatch<any> = () => {}
 
 export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispatch<any>) => {
   plugin = udapp
@@ -48,9 +48,9 @@ export const setGasPriceStatus = (status: boolean) => updateGasPriceStatus(dispa
 export const setMaxFee = (fee: string) => updateMaxFee(dispatch, fee)
 export const setMaxPriorityFee = (fee: string) => updateMaxPriorityFee(dispatch, fee)
 export const removeInstances = () => clearInstances(dispatch)
-export const removeSingleInstance = (index: number) => removeInstance(dispatch, index)
+export const removeSingleInstance = (index: number, isSavedContract: boolean) => removeInstance(dispatch, index, isSavedContract)
 export const getExecutionContext = () => getContext(plugin)
-export const executeTransactions = (instanceIndex: number, lookupOnly: boolean, funcABI: FuncABI, inputsValues: string, contractName: string, contractABI, contract, address, logMsg:string, mainnetPrompt: MainnetPrompt, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, funcIndex?: number) => runTransactions(plugin, dispatch, instanceIndex, lookupOnly, funcABI, inputsValues, contractName, contractABI, contract, address, logMsg, mainnetPrompt, gasEstimationPrompt, passphrasePrompt, funcIndex)
+export const executeTransactions = (instanceIndex: number, isSavedContract: boolean, lookupOnly: boolean, funcABI: FuncABI, inputsValues: string, contractName: string, contractABI, contract, address, logMsg:string, mainnetPrompt: MainnetPrompt, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, funcIndex?: number) => runTransactions(plugin, dispatch, instanceIndex, isSavedContract, lookupOnly, funcABI, inputsValues, contractName, contractABI, contract, address, logMsg, mainnetPrompt, gasEstimationPrompt, passphrasePrompt, funcIndex)
 export const loadFromAddress = (contract: ContractData, address: string) => loadAddress(plugin, dispatch, contract, address)
 export const storeNewScenario = async (prompt: (msg: string, defaultValue: string) => JSX.Element) => storeScenario(plugin, dispatch, prompt)
 export const runScenario = (liveMode: boolean, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => runCurrentScenario(liveMode, plugin, dispatch, gasEstimationPrompt, passphrasePrompt, confirmDialogContent)

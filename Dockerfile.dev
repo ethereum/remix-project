@@ -1,4 +1,4 @@
-# This dockerfile is to build each branch seperately (for dev purposes)
+# This dockerfile is to build each branch separately (for dev purposes)
 FROM node:10
 # Create Remix user, don't use root!
 # RUN yes | adduser --disabled-password remix && mkdir /app

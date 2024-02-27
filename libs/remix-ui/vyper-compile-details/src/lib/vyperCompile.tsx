@@ -25,7 +25,6 @@ export interface VyperCompileProps {
 }
 
 export default function VyperCompile({result, theme, themeStyle}: VyperCompileProps) {
-
   const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
   const tabContent = [
     {

@@ -3,7 +3,7 @@
 import { FunctionHLAst, ContractHLAst, FunctionCallGraph, ContractCallGraph, Context, FunctionCallAstNode } from '../../types'
 import {
   isLocalCallGraphRelevantNode, isExternalDirectCall, getFullQualifiedFunctionCallIdent,
-  getFullQuallyfiedFuncDefinitionIdent, getContractName
+  getFullQualifiedFuncDefinitionIdent as getFullQualifiedFuncDefinitionIdent, getContractName
 } from './staticAnalysisCommon'
 
 type filterNodesFunction = (node: FunctionCallAstNode) => boolean
@@ -39,7 +39,7 @@ function buildLocalFuncCallGraphInternal (functions: FunctionHLAst[], nodeFilter
  *    }
  *  },
  *  "foo": {
- *    "contract": {...},           // Contract node as definded in abstractAstView.js
+ *    "contract": {...},           // Contract node as defined in abstractAstView.js
  *    "functions": {}             // map from full qualified function name to func node
  *  }
  * }
@@ -52,7 +52,7 @@ export function buildGlobalFuncCallGraph (contracts: ContractHLAst[]): Record<st
   contracts.forEach((contract: ContractHLAst) => {
     const filterNodes: filterNodesFunction = (node: FunctionCallAstNode) => { return isLocalCallGraphRelevantNode(node) || isExternalDirectCall(node) }
     const getNodeIdent: NodeIdentFunction = (node: FunctionCallAstNode) => { return getFullQualifiedFunctionCallIdent(contract.node, node) }
-    const getFunDefIdent: FunDefIdentFunction = (funcDef: FunctionHLAst) => { return getFullQuallyfiedFuncDefinitionIdent(contract.node, funcDef.node, funcDef.parameters) }
+    const getFunDefIdent: FunDefIdentFunction = (funcDef: FunctionHLAst) => { return getFullQualifiedFuncDefinitionIdent(contract.node, funcDef.node, funcDef.parameters) }
 
     callGraph[getContractName(contract.node)] = { contract: contract, functions: buildLocalFuncCallGraphInternal(contract.functions, filterNodes, getNodeIdent, getFunDefIdent) }
   })

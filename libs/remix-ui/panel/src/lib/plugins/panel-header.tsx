@@ -35,11 +35,14 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         </h6>
         <div className="d-flex flex-row">
           <div className="d-flex flex-row">
-            {plugin?.profile?.maintainedBy?.toLowerCase() === 'remix' && (
+            {plugin?.profile?.maintainedBy?.toLowerCase() === 'remix' ? (
               <CustomTooltip placement="right-end" tooltipId="maintainedByTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.maintainedByRemix" />}>
                 <i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check"></i>
-              </CustomTooltip>
-            )}
+              </CustomTooltip>)
+              : (<CustomTooltip placement="right-end" tooltipId="maintainedExternally" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
+                <i aria-hidden="true" className="mt-1 px-1 text-warning far fa-exclamation-circle"></i>
+              </CustomTooltip>)
+            }
           </div>
           <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id="swapitHeaderInfoSectionId" onClick={toggleClass}>
             <CustomTooltip placement="right-end" tooltipText={<FormattedMessage id="panel.pluginInfo" />} tooltipId="pluginInfoTooltip" tooltipClasses="text-nowrap">

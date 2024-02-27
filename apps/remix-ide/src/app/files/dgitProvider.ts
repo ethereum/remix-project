@@ -577,7 +577,7 @@ class DGitProvider extends Plugin {
               dir
             })
           } catch (e) {
-            this.call('terminal', 'log', { type: 'error', value: `[Cloning]: Error occured! ${e}` })
+            this.call('terminal', 'log', { type: 'error', value: `[Cloning]: Error occurred! ${e}` })
             console.log(e)
           }
         }
@@ -587,7 +587,7 @@ class DGitProvider extends Plugin {
         }, 1000)
       }
     } catch (e) {
-      this.call('terminal', 'log', { type: 'error', value: `[Cloning]: Error occured! ${e}` })
+      this.call('terminal', 'log', { type: 'error', value: `[Cloning]: Error occurred! ${e}` })
       // do nothing
     }
   }
