@@ -96,7 +96,7 @@
   "filePanel.copyFolderFailed": "Copy Folder Failed",
   "filePanel.copyFolderFailedMsg": "Unexpected error while copying folder: {src}",
   "filePanel.runScriptFailed": "Run script failed",
-  "filePanel.createPublicGist": "Create a public gist",
+  "filePanel.createPublicGist": "Publish to a public gist",
   "filePanel.createPublicGistMsg1": "Are you sure you want to push changes to remote gist file on github.com?",
   "filePanel.createPublicGistMsg2": "Are you sure you want to anonymously publish all your files in the {path} folder as a public gist on github.com?",
   "filePanel.createPublicGistMsg3": "Are you sure you want to anonymously publish {path} file as a public gist on github.com?",
