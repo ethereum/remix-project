@@ -30,12 +30,12 @@ export class FetchAndCompile extends Plugin {
   }
 
   /**
-   * Fetch compiliation metadata from source-Verify from a given @arg contractAddress - https://github.com/ethereum/source-verify
+   * Fetch compilation metadata from source-Verify from a given @arg contractAddress - https://github.com/ethereum/source-verify
    * Put the artifacts in the file explorer
    * Compile the code using Solidity compiler
    * Returns compilation data
    *
-   * @param {string} contractAddress - Address of the contrac to resolve
+   * @param {string} contractAddress - Address of the contract to resolve
    * @param {string} deployedBytecode - deployedBytecode of the contract
    * @param {string} targetPath - Folder where to save the compilation arfefacts
    * @return {CompilerAbstract} - compilation data targeting the given @arg contractAddress
@@ -72,7 +72,7 @@ export class FetchAndCompile extends Plugin {
         compilationTargets,
         settings,
         async (url, cb) => {
-          // we first try to resolve the content from the compilation target using a more appropiate path
+          // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
           if (compilationTargets[path] && compilationTargets[path].content) {
             return cb(null, compilationTargets[path].content)
@@ -100,7 +100,7 @@ export class FetchAndCompile extends Plugin {
         compilationTargets,
         settings,
         async (url, cb) => {
-          // we first try to resolve the content from the compilation target using a more appropiate path
+          // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
           if (compilationTargets[path] && compilationTargets[path].content) {
             return cb(null, compilationTargets[path].content)
@@ -183,7 +183,7 @@ export class FetchAndCompile extends Plugin {
         compilationTargets,
         settings,
         async (url, cb) => {
-          // we first try to resolve the content from the compilation target using a more appropiate path
+          // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
           if (compilationTargets[path] && compilationTargets[path].content) {
             return cb(null, compilationTargets[path].content)

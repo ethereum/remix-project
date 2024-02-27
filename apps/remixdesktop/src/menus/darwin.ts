@@ -1,4 +1,4 @@
-// This menu label is overrided by OSX to be the appName
+// This menu label is overridden by OSX to be the appName
 // The label is set to appName here so it matches actual behavior
 import {app, BrowserWindow, MenuItemConstructorOptions} from 'electron';
 

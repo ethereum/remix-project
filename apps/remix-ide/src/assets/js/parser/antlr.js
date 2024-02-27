@@ -21298,9 +21298,9 @@ var SolidityParser = (() => {
         Dependents2[Dependents2["ANCESTORS"] = 3] = "ANCESTORS";
         Dependents2[Dependents2["DESCENDANTS"] = 4] = "DESCENDANTS";
         Dependents2[Dependents2["SIBLINGS"] = 5] = "SIBLINGS";
-        Dependents2[Dependents2["PRECEEDING_SIBLINGS"] = 6] = "PRECEEDING_SIBLINGS";
+        Dependents2[Dependents2["PRECEDING_SIBLINGS"] = 6] = "PRECEDING_SIBLINGS";
         Dependents2[Dependents2["FOLLOWING_SIBLINGS"] = 7] = "FOLLOWING_SIBLINGS";
-        Dependents2[Dependents2["PRECEEDING"] = 8] = "PRECEEDING";
+        Dependents2[Dependents2["PRECEDING"] = 8] = "PRECEDING";
         Dependents2[Dependents2["FOLLOWING"] = 9] = "FOLLOWING";
       })(Dependents = exports.Dependents || (exports.Dependents = {}));
     }
@@ -33949,7 +33949,7 @@ var SolidityParser = (() => {
     _toText(ctx) {
       const text = ctx.text;
       if (text === void 0) {
-        throw new Error("Assertion error: text should never be undefiend");
+        throw new Error("Assertion error: text should never be undefined");
       }
       return text;
     }

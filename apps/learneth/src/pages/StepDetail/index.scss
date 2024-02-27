@@ -1,0 +1,54 @@
+step-view {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+header, footer {
+  padding: 10px 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.errorloadingspacer{
+  padding-top: 44px;
+
+}
+
+.title{
+  pointer-events: none;
+}
+
+h1 {
+  text-align: left;
+  font-size: 1.2rem !important;
+  word-break: break-word;
+}
+
+markdown {
+  display: block;
+  flex: 1;
+  overflow: auto;
+  padding: 0px;
+
+  h1 {
+    font-size: 1.2rem !important;
+  }
+
+  h2 {
+    font-size: 1rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
+
+  h4 {
+    font-size: 1rem;
+  }
+}
+
+

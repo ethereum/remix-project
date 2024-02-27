@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, startTransition, useEffect, useRef, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import { FileType } from '../types'
 import { getEventTarget } from '../utils/getEventTarget'
 import { extractParentFromKey } from '@remix-ui/helper'
@@ -23,7 +23,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
   const onDragOver = async (e: SyntheticEvent) => {
     e.preventDefault()
     const target = await getEventTarget(e)
-
     if (!target || !target.path) {
       clearTimeout(timer)
       setFolderToOpen(null)
@@ -36,7 +35,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
       setFolderToOpen(null)
     }
     if (dragDestination && dragDestination.isDirectory && !expandPath.includes(dragDestination.path) && folderToOpen !== dragDestination.path && props.handleClickFolder) {
-      
+
       setFolderToOpen(dragDestination.path)
       timer && clearTimeout(timer)
       setTimer(
@@ -61,7 +60,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     } else {
       dragDestination = getFlatTreeItem(target.path)
     }
-
     if (dragDestination.isDirectory) {
       if (dragSource.isDirectory) {
         moveFolder(dragDestination.path, dragSource.path)

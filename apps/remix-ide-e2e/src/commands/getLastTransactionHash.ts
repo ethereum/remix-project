@@ -15,7 +15,7 @@ class GetLastTransactionHash extends EventEmitter {
 }
 
 function getLastTransactionHash (browser: NightwatchBrowser, callback: (hash: string) => void) {
-  browser.waitForElementPresent('*[data-shared="universalDappUiInstance"]')
+  browser.waitForElementPresent('*[data-id="terminalJournal"]')
     .execute(function () {
       const deployedContracts = document.querySelectorAll('*[data-id="terminalJournal"] > div')
       for (let i = deployedContracts.length - 1; i >= 0; i--) {

@@ -10,6 +10,7 @@ import {
   listenOnNetworkAction,
   initListeningOnNetwork,
 } from './actions/terminalAction'
+import { isBigInt } from 'web3-validator'
 import { initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
 import { getKeyOf, getValueOf, Objectfilter, matched } from './utils/utils'
 import { allCommands, allPrograms } from './commands' // eslint-disable-line
@@ -88,7 +89,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const messagesEndRef = useRef(null)
   const typeWriterIndexes = useRef([])
 
-  // terminal dragable
+  // terminal draggable
   const panelRef = useRef(null)
   const terminalMenu = useRef(null)
 
@@ -587,6 +588,22 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
 
+  const replacer = (key, value) => {
+    if (isBigInt(value)) value = value.toString()
+    if (typeof value === 'function') value = value.toString()
+    return value
+  }
+
+  const includeSearch = (x, searchInput) => {
+    try {
+      const value = JSON.stringify(x, replacer)
+      return value.indexOf(searchInput) !== -1 || value.indexOf(searchInput.toLowerCase()) !== -1
+    } catch (e) {
+      console.error(e)
+      return true
+    }    
+  }
+
   return (
     ( !props.visible? <></>: 
       <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel" ref={panelRef}>
@@ -646,7 +663,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                 className="remix_ui_terminal_filter border form-control"
                 id="searchInput"
                 placeholder={intl.formatMessage({ id: 'terminal.search' })}
-                data-id="terminalInputSearch"
+                data-id="terminalInputSearchTerminal"
               />
             </div>
           </div>
@@ -670,7 +687,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   )
                 } else if (x.name === UNKNOWN_TRANSACTION) {
                   return x.message
-                    .filter((x) => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || x.tx.to.includes(searchInput))
+                    .filter((x) => includeSearch(x, searchInput))
                     .map((trans) => {
                       return (
                         <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
@@ -691,38 +708,41 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                       )
                     })
                 } else if (x.name === KNOWN_TRANSACTION) {
-                  return x.message.map((trans) => {
-                    return (
-                      <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
-                        {trans.tx.isCall ? (
-                          <RenderCall
-                            tx={trans.tx}
-                            resolvedData={trans.resolvedData}
-                            logs={trans.logs}
-                            index={index}
-                            plugin={props.plugin}
-                            showTableHash={showTableHash}
-                            txDetails={txDetails}
-                            modal={modal}
-                          />
-                        ) : (
-                          <RenderKnownTransactions
-                            tx={trans.tx}
-                            receipt={trans.receipt}
-                            resolvedData={trans.resolvedData}
-                            logs={trans.logs}
-                            index={index}
-                            plugin={props.plugin}
-                            showTableHash={showTableHash}
-                            txDetails={txDetails}
-                            modal={modal}
-                            provider={x.provider}
-                          />
-                        )}
-                      </div>
-                    )
-                  })
+                  return x.message
+                    .filter((x) => includeSearch(x, searchInput))
+                    .map((trans) => {
+                      return (
+                        <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
+                          {trans.tx.isCall ? (
+                            <RenderCall
+                              tx={trans.tx}
+                              resolvedData={trans.resolvedData}
+                              logs={trans.logs}
+                              index={index}
+                              plugin={props.plugin}
+                              showTableHash={showTableHash}
+                              txDetails={txDetails}
+                              modal={modal}
+                            />
+                          ) : (
+                            <RenderKnownTransactions
+                              tx={trans.tx}
+                              receipt={trans.receipt}
+                              resolvedData={trans.resolvedData}
+                              logs={trans.logs}
+                              index={index}
+                              plugin={props.plugin}
+                              showTableHash={showTableHash}
+                              txDetails={txDetails}
+                              modal={modal}
+                              provider={x.provider}
+                            />
+                          )}
+                        </div>
+                      )
+                    })
                 } else if (Array.isArray(x.message)) {
+                  if (searchInput !== '') return []
                   return x.message.map((msg, i) => {
                     // strictly check condition on 0, false, except undefined, NaN.
                     // if you type `undefined`, terminal automatically throws error, it's error message: "undefined" is not valid JSON

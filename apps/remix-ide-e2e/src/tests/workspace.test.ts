@@ -501,7 +501,7 @@ module.exports = {
       .pause(2000)
   },
 
-  'Should change the current workspace in localstorage to a non existant value, reload the page and see the workspace created #group2': function (browser: NightwatchBrowser) {
+  'Should change the current workspace in localstorage to a non existent value, reload the page and see the workspace created #group2': function (browser: NightwatchBrowser) {
     browser
       .execute(function () {
         localStorage.setItem('currentWorkspace', 'non_existing_workspace')

@@ -45,7 +45,7 @@ export class CompilationDetailsPlugin extends ViewPlugin {
   async showDetails(sentPayload: any) {
     await this.call('tabs', 'focus', 'compilationDetails')
     setTimeout(() => {
-      // TODO: use the react API to render when the tab is focused and tbe plugin in the view.
+      // TODO: use the react API to render when the tab is focused and the plugin in the view.
       this.payload = sentPayload
       this.renderComponent()
     }, 2000)
