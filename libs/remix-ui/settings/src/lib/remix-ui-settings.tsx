@@ -4,12 +4,6 @@ import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react
 import {AppModal, AlertModal, ModalTypes} from '@remix-ui/app'
 import {labels, textDark, textSecondary} from './constants'
 
-enum CONSENT {
-  GIVEN = 0,
-  NOT_GIVEN,
-  NOT_ASKED
-}
-let consentGivenForAI = CONSENT.NOT_ASKED
 
 import './remix-ui-settings.css'
 import {
@@ -213,15 +207,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (await props.plugin.call('copilot-suggestion', 'status')) {
 >>>>>>> f63484701 (removed user consens)
       copilotActivate(props.config, true, dispatch)          
-    }else {
+    } else {
       startCopilot()
     }
   }
 
- useEffect(() => {
-  if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
-  onchangeCopilotActivate()
-}, [props.useCopilot])
+  useEffect(() => {
+    if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
+    onchangeCopilotActivate()
+  }, [props.useCopilot])
 
 
   const onchangeCopilotMaxNewToken = (event) => {
