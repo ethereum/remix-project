@@ -131,11 +131,17 @@ const App = () => {
               </CustomAccordionToggle>
             </div>
             <Accordion.Collapse eventKey="0">
-              <div className="pl-3 pt-3 border-top-0">
+              <div className="pt-2">
                 <Form>
-                  <div className="d-flex flex-row gap-5 mb-3 mt-2">
-                    <Form.Check inline id="remote-compiler" data-id="remote-compiler" type="radio" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} label="Remote Compiler" className={`${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`} />
-                    <Form.Check inline id="local-compiler" data-id="local-compiler" checked={state.environment === 'local'} type="radio" name="local" value={state.environment} onChange={() => setEnvironment('local')} label="Local Compiler" className={`${state.environment === 'local' ? '' : `cursor-status`}`} />
+                  <div className="d-flex flex-row justify-content-around mb-1 mt-2">
+                    <div className={`custom-control custom-radio ${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`}>
+                      <input type="radio" id="remote-compiler" data-id="remote-compiler" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} className={`custom-control-input  ${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`} />
+                      <label htmlFor="remote-compiler" className="form-check-label custom-control-label">Remote Compiler</label>
+                    </div>
+                    <div className={`custom-control custom-radio ${state.environment === 'local' ? '' : `cursor-status`}`}>
+                      <input id="local-compiler" data-id="local-compiler" checked={state.environment === 'local'} type="radio" name="local" value={state.environment} onChange={() => setEnvironment('local')} className={`custom-control-input  ${state.environment === 'local' ? '' : `cursor-status`}`} />
+                      <label htmlFor="local-compiler" className="form-check-label custom-control-label">Local Compiler</label>
+                    </div>
                   </div>
                 </Form>
               </div>
