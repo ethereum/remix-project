@@ -131,8 +131,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
   }
 
-  const onchangeCopilotActivate = async () => {
-    console.log("onchangeCopilotActivate ", props.useCopilot)
+  const onchangeCopilotActivate = () => {
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('copilot-suggestion', 'uninstall')
@@ -166,7 +165,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
     onchangeCopilotActivate()
   }, [props.useCopilot])
-
 
   const onchangeCopilotMaxNewToken = (event) => {
     copilotMaxNewToken(props.config, parseInt(event.target.value), dispatch)
