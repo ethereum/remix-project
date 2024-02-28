@@ -307,12 +307,14 @@ jobs:
           name: Notarize the app
           command: |
             cd apps/remixdesktop
+            xcrun notarytool store-credentials "notarytool-password"
+               --apple-id ${APPLE_ID}
+               --team-id ${CSC_NAME}
+               --password ${APPLE_ID_PASSWORD}
             # Assuming your app is packaged as a dmg or zip for notarization
             xcrun notarytool submit 'release/Remix IDE-0.0.11-Alpha.dmg' \
-              --keychain-profile "AC_PASSWORD" \
-              --wait \
-              --apple-id ${APPLE_ID} \
-              --password ${APPLE_ID_PASSWORD}
+              --keychain-profile "notarytool-password" \
+              --wait
       - run:
           name: Staple the app
           command: |
