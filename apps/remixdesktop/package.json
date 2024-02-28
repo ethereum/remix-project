@@ -30,6 +30,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
+    "@electron/notarize": "^2.3.0",
     "@electron/rebuild": "^3.2.13",
     "@types/byline": "^4.2.35",
     "@types/express": "^4.17.21",
@@ -69,13 +70,15 @@
     "files": [
       "build/**/*"
     ],
-    "publish": [{
-      "provider": "github",
-      "owner": "bunsenstraat",
-      "repo": "remix-desktop",
-      "releaseType": "draft",
-      "publishAutoUpdate": true
-    }],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "bunsenstraat",
+        "repo": "remix-desktop",
+        "releaseType": "draft",
+        "publishAutoUpdate": true
+      }
+    ],
     "mac": {
       "category": "public.app-category.productivity",
       "target": [
@@ -88,10 +91,15 @@
         }
       ],
       "icon": "assets/icon.png",
-      "darkModeSupport": true
+      "darkModeSupport": true,
+      "hardenedRuntime" : true,
+      "gatekeeperAssess": false,
+      "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist"
     },
     "dmg": {
-      "writeUpdateInfo": false
+      "writeUpdateInfo": false,
+      "sign": false
     },
     "nsis": {
       "createDesktopShortcut": "always",
