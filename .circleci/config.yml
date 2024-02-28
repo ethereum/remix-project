@@ -311,6 +311,7 @@ jobs:
             security create-keychain -p ci-password build.keychain
             security default-keychain -s build.keychain
             security unlock-keychain -p ci-password build.keychain
+            security import apple_certificate.p12 -k build.keychain -T /usr/bin/codesign
 
   lint:
     docker:
