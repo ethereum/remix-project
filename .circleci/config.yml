@@ -306,6 +306,7 @@ jobs:
       - run:
           name: Notarize the app
           command: |
+            cd apps/remixdesktop
             # Assuming your app is packaged as a dmg or zip for notarization
             xcrun notarytool submit 'release/Remix IDE-0.0.11-Alpha.dmg' \
               --keychain-profile "AC_PASSWORD" \
