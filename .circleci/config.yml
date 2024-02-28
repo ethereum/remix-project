@@ -271,6 +271,7 @@ jobs:
             security unlock-keychain -p ci-password build.keychain
             security import /tmp/certificate.p12 -k build.keychain -P $APPLE_CERTIFICATE_PASSWORD -T /usr/bin/codesign
             security set-key-partition-list -S apple-tool:,apple: -s -k ci-password build.keychain
+            security find-identity -v -p codesigning
       - run: unzip ./persist/desktopbuild.zip
       - run: 
           command: |
