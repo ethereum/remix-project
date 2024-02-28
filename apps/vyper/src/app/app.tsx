@@ -149,7 +149,7 @@ const App = () => {
           </div>
         </Accordion>
         <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
-        <span className="px-3 mt-1 mb-1 small text-warning">
+        <span className="px-3 mt-3 mb-3 small text-warning">
           Specify the{' '}
           <a className="text-warning" target="_blank" href="https://remix-ide.readthedocs.io/en/latest/vyper.html#specify-vyper-version">
             compiler version

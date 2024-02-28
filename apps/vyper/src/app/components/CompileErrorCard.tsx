@@ -5,11 +5,8 @@ export function CompileErrorCard(props: any) {
   return (
     <div
       id="vyperErrorResult"
-      className=" d-flex flex-column p-2 alert alert-danger error vyper-compile-error"
+      className=" d-flex flex-column p-2 alert alert-danger error vyper-compile-error vyper-panel-width"
       title={props.output?.title}
-      style={{
-        width: '94%'
-      }}
     >
       <span
         data-id="error-message"
