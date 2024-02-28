@@ -2,7 +2,7 @@ name: PRs reviews reminder
 
 on:
   schedule:
-    - cron: "0 8-17/8 * * 1-5"
+    - cron: "0 8 * * 1-5"
   workflow_dispatch:
 
 jobs:
