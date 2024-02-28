@@ -133,7 +133,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     console.log("useEffect on useCopilot")
     if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
     if (props.useCopilot) {
-      const a = async () => await onchangeCopilotActivate()
+      onchangeCopilotActivate()
     }
     console.log("useEffect on useCopilot finish")
   }, [props.useCopilot])
@@ -146,7 +146,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
   }
 
-  const onchangeCopilotActivate = async () => {
+  const onchangeCopilotActivate = () => {
     console.log("onchangeCopilotActivate ", props.useCopilot)
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
@@ -175,8 +175,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       id: 'loadcopilotActivate',
       title: 'Download Solidity copilot',
       modalType: ModalTypes.default,
-      okLabel: 'OK',
-      //cancelLabel: 'Cancel',
+      okLabel: 'Hide',
+      cancelLabel: 'Cancel',
       message,
       okFn: async() => {
         consentGivenForAI = CONSENT.GIVEN
@@ -195,6 +195,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     }
     
     if (consentGivenForAI === CONSENT.NOT_ASKED) {
+      console.log("CONSENT.NOT_ASKED modal")
       props.plugin.call('notification', 'modal', modalActivate)
     } else if (consentGivenForAI === CONSENT.GIVEN) {
       startCopilot()
@@ -202,13 +203,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       // NOT_GIVEN
     }
 
-    if (await props.plugin.call('copilot-suggestion', 'status')) {
+    if (props.plugin.call('copilot-suggestion', 'status')) {
       copilotActivate(props.config, true, dispatch)          
     } else {
       props.plugin.call('copilot-suggestion', 'uninstall')
       copilotActivate(props.config, false, dispatch)
     }
- }
+  }
 
   const onchangeCopilotMaxNewToken = (event) => {
     copilotMaxNewToken(props.config, parseInt(event.target.value), dispatch)
