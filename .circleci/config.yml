@@ -309,6 +309,7 @@ jobs:
             cd apps/remixdesktop
             xcrun notarytool store-credentials "notarytool-password" \
                --apple-id ${APPLE_ID} \
+               --team-id ${APPLE_TEAM_ID} \
                --password ${APPLE_ID_PASSWORD}
             # Assuming your app is packaged as a dmg or zip for notarization
             xcrun notarytool submit 'release/Remix IDE-0.0.11-Alpha.dmg' \
