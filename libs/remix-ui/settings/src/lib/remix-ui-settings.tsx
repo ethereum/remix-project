@@ -9,6 +9,7 @@ enum CONSENT {
   NOT_GIVEN,
   NOT_ASKED
 }
+let consentGivenForAI = CONSENT.NOT_ASKED
 
 import './remix-ui-settings.css'
 import {
@@ -62,7 +63,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
   const copilotDownload = useRef(null)
 
-  let consentGivenForAI = CONSENT.NOT_ASKED
   const intl = useIntl()
   const initValue = () => {
     const metadataConfig = props.config.get('settings/generate-contract-metadata')
@@ -129,15 +129,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
   }, [props.useMatomoAnalytics])  
 
-  useEffect(() => {
-    console.log("useEffect on useCopilot")
-    if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
-    if (props.useCopilot) {
-      const a = async () => await onchangeCopilotActivate()
-    }
-    console.log("useEffect on useCopilot finish")
-  }, [props.useCopilot])
-  
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
   }
@@ -151,64 +142,37 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('copilot-suggestion', 'uninstall')
+      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity copilot deactivated` })
       return
     } 
 
-    const message = <div>Please wait while the copilot is downloaded. <span ref={copilotDownload}>0</span>/100 .</div>
     props.plugin.on('copilot-suggestion', 'loading', (data) => {
-      if (!copilotDownload.current) return
-      const loaded = ((data.loaded / data.total) * 100).toString()
-      const dot = loaded.match(/(.*)\./g)
-      copilotDownload.current.innerText = dot ? dot[0].replace('.', '') : loaded
+      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `loading Solidity copilot: ${(data.loaded / data.total) * 100}% done.` })
     })
     const startCopilot = async () => {
       await props.plugin.call('copilot-suggestion', 'init')
-      props.plugin.off('copilot-suggestion', 'loading')
       if (await props.plugin.call('copilot-suggestion', 'status')) {
         copilotActivate(props.config, true, dispatch)          
-      } else {
-        props.plugin.call('copilot-suggestion', 'uninstall')
-        copilotActivate(props.config, false, dispatch)
-      }
+      } 
     }
-    const modalActivate: AppModal = {
-      id: 'loadcopilotActivate',
-      title: 'Download Solidity copilot',
-      modalType: ModalTypes.default,
-      okLabel: 'OK',
-      //cancelLabel: 'Cancel',
-      message,
-      okFn: async() => {
-        consentGivenForAI = CONSENT.GIVEN
-        startCopilot()
-      },
-      hideFn: async () => {
-        consentGivenForAI = CONSENT.NOT_GIVEN
-        props.plugin.off('copilot-suggestion', 'loading')
-        // if (await props.plugin.call('copilot-suggestion', 'status')) {
-        //   copilotActivate(props.config, true, dispatch)          
-        // } else {
-        //   props.plugin.call('copilot-suggestion', 'uninstall')
-        //   copilotActivate(props.config, false, dispatch)
-        // }
-      }
-    }
-    
-    if (consentGivenForAI === CONSENT.NOT_ASKED) {
-      props.plugin.call('notification', 'modal', modalActivate)
-    } else if (consentGivenForAI === CONSENT.GIVEN) {
-      startCopilot()
-    } else {
-      // NOT_GIVEN
-    }
+
+    props.plugin.on('copilot-suggestion', 'ready', (data) => { 
+      copilotActivate(props.config, true, dispatch)  
+      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity Copilot activated` })
+    })
 
     if (await props.plugin.call('copilot-suggestion', 'status')) {
       copilotActivate(props.config, true, dispatch)          
-    } else {
-      props.plugin.call('copilot-suggestion', 'uninstall')
-      copilotActivate(props.config, false, dispatch)
+    }else {
+      startCopilot()
     }
  }
+
+ useEffect(() => {
+  if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
+  onchangeCopilotActivate()
+}, [props.useCopilot])
+
 
   const onchangeCopilotMaxNewToken = (event) => {
     copilotMaxNewToken(props.config, parseInt(event.target.value), dispatch)
