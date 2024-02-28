@@ -1,7 +1,8 @@
 import React from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
+import { gql } from './../../../types';
 
-const GET_COMMITS = gql`
+const GET_COMMITS = gql(/* GraphQL */`
   query GetCommits($name: String!, $owner: String!, $cursor: String, $limit: Int = 10) {
     repository(name: $name, owner: $owner) {
       ref(qualifiedName: "master") {
@@ -28,7 +29,7 @@ const GET_COMMITS = gql`
       }
     }
   }
-`;
+`);
 
 
 export const BranchCommits = ({ owner, name }) => {
@@ -38,7 +39,7 @@ export const BranchCommits = ({ owner, name }) => {
 
   if (loading) return <p>Loading...</p>;
 
-  const { edges, pageInfo } = data.repository.ref.target.history;
+  const { edges, pageInfo } = (data.repository.ref.target.__typename === "Commit")? data.repository.ref.target.history : { edges: [], pageInfo: { endCursor: null, hasNextPage: false } };
 
   const loadNextPage= ()=>{
     fetchMore({
@@ -46,10 +47,10 @@ export const BranchCommits = ({ owner, name }) => {
         cursor: pageInfo.endCursor,
       },
       updateQuery: (prevResult, { fetchMoreResult }) => {
-        const newEdges = fetchMoreResult.repository.ref.target.history.edges;
-        const pageInfo = fetchMoreResult.repository.ref.target.history.pageInfo;
-
-        return newEdges.length
+        const newEdges = (fetchMoreResult.repository.ref.target.__typename === "Commit"? fetchMoreResult.repository.ref.target.history.edges : [])
+        const pageInfo = (fetchMoreResult.repository.ref.target.__typename === "Commit"? fetchMoreResult.repository.ref.target.history.pageInfo : {})
+        
+        return newEdges.length && prevResult.repository.ref.target.__typename === "Commit"
           ? {
               repository: {
                 __typename: prevResult.repository.__typename,
@@ -65,7 +66,7 @@ export const BranchCommits = ({ owner, name }) => {
                   },
                 },
               },
-            }
+            } as any
           : prevResult;
       },
     });
@@ -73,7 +74,6 @@ export const BranchCommits = ({ owner, name }) => {
 
   return (
     <div>
-      <h3>Commits</h3>
       <ul>
         {edges.map(({ node }) => (
           <li key={node.oid}>

@@ -2,9 +2,18 @@ import { faCaretUp, faCaretDown, faCaretRight, faArrowUp, faArrowDown, faArrowRo
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
 import { CommitSummary } from "../panels/commits/commitsummary";
+import { ReadCommitResult } from "isomorphic-git"
 
-export const CommitDetailsNavigation = ({ eventKey, activePanel, callback, commit, checkout }) => {
+interface CommitDetailsNavigationProps  {
+    commit: ReadCommitResult,
+    checkout: (oid: string) => void
+    eventKey: string
+    activePanel: string
+    callback: (eventKey: string) => void
+}
 
+export const CommitDetailsNavigation = (props: CommitDetailsNavigationProps) => {
+    const { commit, checkout, eventKey, activePanel, callback } = props;
     const handleClick = () => {
         if (!callback) return
         if (activePanel === eventKey) {
@@ -19,7 +28,7 @@ export const CommitDetailsNavigation = ({ eventKey, activePanel, callback, commi
                 {
                     activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
                 }
-
+                
                 <CommitSummary commit={commit} checkout={checkout}></CommitSummary>
             </div>
         </>
