@@ -298,20 +298,19 @@ jobs:
           destination: remixdesktop-mac
     
   sign_macos:
-    build-remixdesktop-mac:
-      macos:
-        xcode: 14.2.0
-      resource_class:
-          macos.m1.large.gen1
-      working_directory: ~/remix-project
-      steps:
-        - run:
-            name: Install Apple Certificate
-            command: |
-              echo $APPLE_CERTIFICATE | base64 --decode > apple_certificate.p12
-              security create-keychain -p ci-password build.keychain
-              security default-keychain -s build.keychain
-              security unlock-keychain -p ci-password build.keychain
+    macos:
+      xcode: 14.2.0
+    resource_class:
+        macos.m1.large.gen1
+    working_directory: ~/remix-project
+    steps:
+      - run:
+          name: Install Apple Certificate
+          command: |
+            echo $APPLE_CERTIFICATE | base64 --decode > apple_certificate.p12
+            security create-keychain -p ci-password build.keychain
+            security default-keychain -s build.keychain
+            security unlock-keychain -p ci-password build.keychain
 
   lint:
     docker:
