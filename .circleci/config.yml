@@ -303,27 +303,23 @@ jobs:
             yarn installRipGrepMacOXx64
             PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --x64
             rm -rf release/mac*
+      - run:
+          name: Notarize the app
+          command: |
+            # Assuming your app is packaged as a dmg or zip for notarization
+            xcrun notarytool submit release/Remix IDE-0.0.11-Alpha.dmg \
+              --keychain-profile "AC_PASSWORD" \
+              --wait \
+              --apple-id ${APPLE_ID} \
+              --password ${APPLE_ID_PASSWORD}
+      - run:
+          name: Staple the app
+          command: |
+            xcrun stapler staple release/Remix IDE-0.0.11-Alpha.dmg
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-mac
     
-  sign_macos:
-    macos:
-      xcode: 14.2.0
-    resource_class:
-        macos.m1.large.gen1
-    working_directory: ~/remix-project
-    steps:
-      - run:
-          name: Install Apple Certificate
-          command: |
-            echo $APPLE_CERTIFICATE_BASE64 | base64 --decode > /tmp/certificate.p12
-            security create-keychain -p ci-password build.keychain
-            security default-keychain -s build.keychain
-            security unlock-keychain -p ci-password build.keychain
-            security import /tmp/certificate.p12 -k build.keychain -P $APPLE_CERTIFICATE_PASSWORD -T /usr/bin/codesign
-            security set-key-partition-list -S apple-tool:,apple: -s -k ci-password build.keychain
-
   lint:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -551,7 +547,6 @@ workflows:
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
-      - sign_macos
       - build
       - build-desktop:
           filters:
