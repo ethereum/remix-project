@@ -1,6 +1,5 @@
-import React from 'react';
-import { useQuery } from '@apollo/client';
-import { gql } from './../../../types';
+import React, { useEffect } from 'react';
+import { gql, useQuery } from '@apollo/client';
 
 const GET_COMMITS = gql(/* GraphQL */`
   query GetCommits($name: String!, $owner: String!, $cursor: String, $limit: Int = 10) {
@@ -17,9 +16,22 @@ const GET_COMMITS = gql(/* GraphQL */`
                 node {
                   oid
                   messageHeadline
+                  message
+                  committedDate
                   author {
                     name
+                    email
                     date
+                  }
+                  parents(first: 1) {
+                    edges {
+                      node {
+                        oid
+                      }
+                    }
+                  }
+                  tree {
+                    oid
                   }
                 }
               }
@@ -75,11 +87,14 @@ export const BranchCommits = ({ owner, name }) => {
   return (
     <div>
       <ul>
-        {edges.map(({ node }) => (
+        {edges.map(({ node }) => {
+          console.log(node)
+          return(
           <li key={node.oid}>
             <p>{node.messageHeadline} - {node.author.name} ({new Date(node.author.date).toLocaleDateString()})</p>
           </li>
-        ))}
+          )
+          })}
       </ul>
       {pageInfo.hasNextPage && (
         <button

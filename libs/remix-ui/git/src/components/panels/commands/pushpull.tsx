@@ -59,7 +59,7 @@ export const PushPull = () => {
 
 
   useEffect(() => {
-    console.log('context', context.repositories)
+    console.log('context repositories', context.repositories)
     // map context.repositories to options
     const localBranches = context.branches && context.branches.length > 0 && context.branches
       .filter(branch => !branch.remote)

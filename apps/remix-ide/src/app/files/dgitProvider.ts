@@ -1004,17 +1004,52 @@ class DGitProvider extends Plugin {
       auth: input.token
     })
 
-
-
-    const data = await octokit.request('GET /repos/{owner}/{repo}/commits', {
+    const response = await octokit.request('GET /repos/{owner}/{repo}/commits', {
       owner: input.owner,
       repo: input.repo,
       sha: input.branch,
-      per_page: 100
+      per_page: 10
     })
+    const readCommitResults = []
+    for (const githubApiCommit of response.data) {
+      const readCommitResult = {
+        oid: githubApiCommit.sha,
+        commit: {
+          author: {
+            name: githubApiCommit.commit.author.name,
+            email: githubApiCommit.commit.author.email,
+            timestamp: new Date(githubApiCommit.commit.author.date).getTime() / 1000,
+            timezoneOffset: new Date(githubApiCommit.commit.author.date).getTimezoneOffset()
+          },
+          committer: {
+            name: githubApiCommit.commit.committer.name,
+            email: githubApiCommit.commit.committer.email,
+            timestamp: new Date(githubApiCommit.commit.committer.date).getTime() / 1000,
+            timezoneOffset: new Date(githubApiCommit.commit.committer.date).getTimezoneOffset()
+          },
+          message: githubApiCommit.commit.message,
+          tree: githubApiCommit.commit.tree.sha,
+          parent: githubApiCommit.parents.map(parent => parent.sha)
+        },
+        payload: '' // You may need to reconstruct the commit object in Git's format if necessary
+      }
+      readCommitResults.push(readCommitResult)
+    }
 
+    console.log(readCommitResults)
 
-    return data.data
+    // Check for the Link header to determine pagination
+    const linkHeader = response.headers.link;
+
+    let hasNextPage = false;
+    if (linkHeader) {
+      // A simple check for the presence of a 'next' relation in the Link header
+      hasNextPage = linkHeader.includes('rel="next"');
+    }
+
+    console.log("Has next page:", hasNextPage);
+
+    return readCommitResults
   }
 
   async repositories(input: { token: string }) {

@@ -23,7 +23,7 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
   useEffect(() => {
     if (activePanel === "0") {
       console.log('GET BRANCH COMMITS', branch)
-      //actions.getBranchCommits(branch)
+      actions.getBranchCommits(branch)
     }
   }, [activePanel])
 
@@ -48,14 +48,14 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
     <BrancheDetailsNavigation checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
     <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
       <div className="ml-1">
-        {/* {context.branchCommits && Object.entries(context.branchCommits).map(([key, value]) => {
+        {context.branchCommits && Object.entries(context.branchCommits).map(([key, value]) => {
           if(key == branch.name){
             return value.map((commit, index) => {
               return(<CommitDetails key={index} checkout={checkoutCommit} commit={commit}></CommitDetails>)
             })
           }
-        })} */}
-        <BranchCommits owner={'ethereum'} name={'remix-project'}/>
+        })}
+        
 
       </div>
     </Accordion.Collapse>

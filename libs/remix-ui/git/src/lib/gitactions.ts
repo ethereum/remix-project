@@ -697,6 +697,11 @@ export const getCommitChanges = async (oid1: string, oid2: string) => {
 }
 
 export const fetchBranch = async (branch: branch) => {
+  const token = await tokenWarning();
+  const rc = await plugin.call('dGitProvider' as any, 'remotecommits', { token, owner:'bunsenstraat', repo:'empty', branch:'main', length });
+  console.log(rc, 'remote commits from octokit')
+  dispatch(setBranchCommits({ branch, commits: rc }))
+  return
   const r = await plugin.call('dGitProvider', 'fetch', {
     ref: branch.name,
     remoteRef: branch.name,
@@ -704,6 +709,8 @@ export const fetchBranch = async (branch: branch) => {
     remote: branch.remote.remote,
     depth: 10
   })
+  console.log(branch)
+
   const remoteCommits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
     ref: r.fetchHead
   })

@@ -18,6 +18,7 @@ export const CommitDetails = (props: CommitDetailsProps) => {
   const [activePanel, setActivePanel] = useState<string>("");
 
   useEffect(() => {
+    console.log(commit)
     if (activePanel === "0") {
       console.log(commit.oid, commit.commit.parent)
       actions.getCommitChanges(commit.oid, commit.commit.parent[0])
