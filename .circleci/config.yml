@@ -317,7 +317,6 @@ jobs:
             xcrun notarytool submit 'release/Remix IDE-0.0.11-Alpha.dmg' \
               --keychain-profile "notarytool-password" \
               --wait
-                    - run:
       - run:
           name: Notarize the app
           command: |
