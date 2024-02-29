@@ -264,7 +264,7 @@ export function UniversalDappUI(props: UdappProps) {
           <div className="btn" style={{padding: '0.15rem'}}>
             <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
           </div>
-          { !props.isSavedContract || (props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+          { !props.isSavedContract || !(props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSaveTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText14" />}>
               <i className="far fa-save p-2" aria-hidden="true" data-id="universalDappUiUdappSave" onClick={saveContract}></i>
             </CustomTooltip>
