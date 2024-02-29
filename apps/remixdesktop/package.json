@@ -98,8 +98,8 @@
       "entitlementsInherit": "entitlements.mac.plist"
     },
     "dmg": {
-      "writeUpdateInfo": false,
-      "sign": false
+      "writeUpdateInfo": true,
+      "sign": true
     },
     "nsis": {
       "createDesktopShortcut": "always",
