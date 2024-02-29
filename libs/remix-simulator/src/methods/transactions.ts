@@ -75,7 +75,6 @@ export class Transactions {
       eth_getHHLogsForTx: this.eth_getHHLogsForTx.bind(this),
       eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this),
       eth_registerCallId: this.eth_registerCallId.bind(this),
-      eth_getStateTrieRoot: this.eth_getStateTrieRoot.bind(this),
       eth_getStateDb: this.eth_getStateDb.bind(this),
       eth_getBlocksData: this.eth_getBlocksData.bind(this)
     }
@@ -199,10 +198,6 @@ export class Transactions {
   eth_registerCallId (payload, cb) {
     this.comingCallId = payload.params[0]
     cb()
-  }
-
-  eth_getStateTrieRoot (_, cb) {
-    cb(null, this.vmContext.currentVm.stateManager.getTrie().root())
   }
 
   eth_getStateDb (_, cb) {

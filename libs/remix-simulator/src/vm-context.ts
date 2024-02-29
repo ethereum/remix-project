@@ -13,7 +13,7 @@ import { VmProxy } from './VmProxy'
 import { VM } from '@ethereumjs/vm'
 import type { BigIntLike } from '@ethereumjs/util'
 import { Common, ConsensusType } from '@ethereumjs/common'
-import { Trie, MapDB, DB } from '@ethereumjs/trie'
+import { Trie, MapDB } from '@ethereumjs/trie'
 import { DefaultStateManager, StateManager, EthersStateManager, EthersStateManagerOpts } from '@ethereumjs/statemanager'
 import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
 import { EVM } from '@ethereumjs/evm'
@@ -40,47 +40,19 @@ export interface DefaultStateManagerOpts {
   prefixCodeHashes?: boolean
 }
 
-class RemixMapDb extends MapDB {
-  async get(key: Buffer): Promise<Buffer | null> {
-    // the remix db contains stringified values (in order to save space),
-    // that's why we need to convert the hex string to the native type that the Trie understands.
-    let value = await super.get(key)
-    if (typeof value === 'string') {
-      value = toBuffer(value)
-    }
-    return value
-  }
-
-  copy(): DB {
-    return new RemixMapDb(this._database)
-  }
-}
-
 /*
   extend vm state manager and instantiate VM
 */
 class StateManagerCommonStorageDump extends DefaultStateManager {
   keyHashes: { [key: string]: string }
-  internalTree: Trie
-  db: MapDB
-  stateDb: State
-  constructor (opts: DefaultStateManagerOpts = {}, stateDb?: State) {
-    const db = new RemixMapDb(stateDb ? stateDb.db: null)
-    const trie = new Trie({ useKeyHashing: true, db, useRootPersistence: true})
-    opts = { trie, ...opts }
+  constructor (opts: DefaultStateManagerOpts = {}) {
     super(opts)
-    this.stateDb = stateDb
-    this.internalTree = trie
-    this.db = db
     this.keyHashes = {}
   }
 
-  getTrie () {
-    return this.internalTree
-  }
-
   getDb () {
-    return this.db
+    // @ts-ignore
+    return this._trie.database().db
   }
 
   putContractStorage (address, key, value) {
@@ -91,7 +63,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   copy(): StateManagerCommonStorageDump {
     const copyState =  new StateManagerCommonStorageDump({
       trie: this._trie.copy(false),
-    }, this.stateDb)
+    })
     copyState.keyHashes = this.keyHashes
     return copyState
   }
@@ -133,9 +105,8 @@ export interface CustomEthersStateManagerOpts {
 class CustomEthersStateManager extends StateManagerCommonStorageDump {
   private provider: ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
   private blockTag: string
-  constructor(opts: CustomEthersStateManagerOpts, stateDb?: State) {
-    super(opts, stateDb)
-    this.stateDb = stateDb
+  constructor(opts: CustomEthersStateManagerOpts) {
+    super(opts)
     if (typeof opts.provider === 'string') {
       this.provider = new ethers.providers.StaticJsonRpcProvider(opts.provider)
     } else if (opts.provider instanceof ethers.providers.JsonRpcProvider) {
@@ -187,7 +158,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
       provider: this.provider,
       blockTag: this.blockTag,
       trie: this._trie.copy(false),
-    }, this.stateDb)
+    })
     return newState
   }
 
@@ -366,17 +337,21 @@ export class VMContext {
         stateManager = new CustomEthersStateManager({
           provider: this.nodeUrl,
           blockTag: '0x' + block.toString(16)
-        }, this.stateDb)
+        })
         this.blockNumber = block
       } else {
         stateManager = new CustomEthersStateManager({
           provider: this.nodeUrl,
           blockTag: '0x' + this.blockNumber.toString(16)
-        }, this.stateDb)
+        })
       }
+    } else{
+      const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, toBuffer(v)])) : new Map()
+      const mapDb = new MapDB(db)
+      const trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
       
-    } else
-      stateManager = new StateManagerCommonStorageDump(null, this.stateDb)
+      stateManager = new StateManagerCommonStorageDump({ trie })
+    }
 
     const consensusType = hardfork === 'berlin' || hardfork === 'london' ? ConsensusType.ProofOfWork : ConsensusType.ProofOfStake
     const difficulty = consensusType === ConsensusType.ProofOfStake ? 0 : 69762765929000

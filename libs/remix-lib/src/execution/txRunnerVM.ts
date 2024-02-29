@@ -51,9 +51,9 @@ export class TxRunnerVM {
 
     const vm = this.getVMObject().vm
     if (Array.isArray(blocks) && (blocks || []).length > 0) {
-      const block = Block.fromRLPSerializedBlock(blocks[blocks.length - 1], { common: this.commonContext })
+      const lastBlock = Block.fromRLPSerializedBlock(blocks[blocks.length - 1], { common: this.commonContext })
 
-      this.blockParentHash = block.hash()
+      this.blockParentHash = lastBlock.hash()
       this.blocks = blocks
     } else {
       this.blockParentHash = vm.blockchain.genesisBlock.hash()
@@ -113,7 +113,6 @@ export class TxRunnerVM {
       const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
       const difficulties = [69762765929000, 70762765929000, 71762765929000]
       const difficulty = this.commonContext.consensusType() === ConsensusType.ProofOfStake ? 0 : difficulties[this.blockNumber % difficulties.length]
-
       const blocknumber = this.blocks.length
       const block = Block.fromBlockData({
         header: {
