@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import { CustomTooltip } from '@remix-ui/helper'
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useRef} from 'react'
 import { FormattedMessage } from 'react-intl'
 import { InstanceContainerProps } from '../types'
 import { UniversalDappUI } from './universalDappUI'

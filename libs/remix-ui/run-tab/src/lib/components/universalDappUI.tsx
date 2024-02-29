@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState, useRef} from 'react'
+import React, {useEffect, useState} from 'react'
 import {FormattedMessage, useIntl} from 'react-intl'
 import {UdappProps} from '../types'
 import {FuncABI} from '@remix-project/core-plugin'
@@ -23,7 +23,6 @@ export function UniversalDappUI(props: UdappProps) {
   const [calldataValue, setCalldataValue] = useState<string>('')
   const [evmBC, setEvmBC] = useState(null)
   const [instanceBalance, setInstanceBalance] = useState(0)
-  // const env = useRef()
 
   const getVersion = () => window.location.href.split('=')[5].split('+')[0].split('-')[1]
 
@@ -57,14 +56,6 @@ export function UniversalDappUI(props: UdappProps) {
       setInstanceBalance(props.instance.balance)
     }
   }, [props.instance.balance])
-
-  // useEffect(() => {
-  //   console.log('props----->', props)
-  //   const getEnv = async () => {
-  //     env.current = await props.plugin.call('blockchain', 'getProvider')
-  //   }
-  //   getEnv()
-  // }, [props.plugin.REACT_API.selectExEnv])
 
   const sendData = () => {
     setLlIError('')
