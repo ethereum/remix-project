@@ -208,19 +208,15 @@ export class ExecutionContext {
 
   async getStateDetails() {
     // TODO: this won't save the state for transactions executed outside of the UI (for instance from a script execution).
-    const root = await this.web3().remix.getStateTrieRoot()
     const db = await this.web3().remix.getStateDb()
     const blocksData = await this.web3().remix.getBlocksData()
     const state = {
-      root,
       db: Object.fromEntries(db._database),
       blocks: blocksData.blocks,
       latestBlockNumber: blocksData.latestBlockNumber
     }
     const stringifyed = JSON.stringify(state, (key, value) => {
-      if (key === 'root') {
-        return bufferToHex(value)
-      } else if (key === 'db') {
+      if (key === 'db') {
         return value
       } else if (key === 'blocks') {
         return value.map(block => bufferToHex(block))

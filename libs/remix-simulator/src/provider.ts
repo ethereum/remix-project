@@ -28,10 +28,7 @@ export interface JSONRPCResponsePayload {
 
 export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePayload) =>  void
 
-export type State = {
-  db: Map<string, Buffer>,
-  root: Buffer
-}
+export type State = Record<string, string>
 
 export type ProviderOptions = {
   fork: string,
@@ -181,13 +178,6 @@ class Web3TestPlugin extends Web3PluginBase {
     return this.requestManager.send({
       method: 'eth_registerCallId',
       params: [id]
-    })
-  }
-
-  public getStateTrieRoot() {
-    return this.requestManager.send({
-      method: 'eth_getStateTrieRoot',
-      params: []
     })
   }
 

@@ -79,10 +79,7 @@ export class VMProvider {
         try {
           const blockchainState = JSON.parse(stringifiedState)
           const blockNumber = parseInt(blockchainState.latestBlockNumber, 16)
-          const stateDb = { 
-            root: toBuffer(blockchainState.root),
-            db: new Map(Object.entries(blockchainState.db))
-          }
+          const stateDb = blockchainState.db
 
           this.worker.postMessage({
             cmd: 'init',
