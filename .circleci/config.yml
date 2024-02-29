@@ -302,7 +302,6 @@ jobs:
             PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --arm64
             yarn installRipGrepMacOXx64
             PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --x64
-            rm -rf release/mac*
       - run:
           name: Notarize the app
           command: |
@@ -318,6 +317,7 @@ jobs:
       - run:
           name: Staple the app
           command: |
+            cd apps/remixdesktop
             xcrun stapler staple 'release/Remix IDE-0.0.11-Alpha.dmg'
       - store_artifacts:
           path: apps/remixdesktop/release/
