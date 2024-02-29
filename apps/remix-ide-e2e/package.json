@@ -6,7 +6,7 @@
     "npm": "^6.14.15"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/contracts": "^5.0.2",
     "@openzeppelin/contracts-upgradeable": "^5.0.0",
     "@openzeppelin/upgrades-core": "^1.30.0",
     "@openzeppelin/wizard": "^0.4.0",
