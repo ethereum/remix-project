@@ -292,7 +292,7 @@ export function UniversalDappUI(props: UdappProps) {
           { props.isSavedContract && props.instance.savedOn ? (
             <div className="d-flex" data-id="instanceContractSavedOn">
               <label>
-                <b><FormattedMessage id="udapp.savedOn" />:</b> {(new Date(props.instance.savedOn)).toUTCString()}
+                <b><FormattedMessage id="udapp.savedOn" />:</b> {(new Date(props.instance.savedOn)).toLocaleString()}
               </label>
             </div>
           ) : null }
