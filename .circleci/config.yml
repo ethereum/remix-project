@@ -321,6 +321,7 @@ jobs:
       - run:
           name: Staple the app
           command: |
+            cd apps/remixdesktop
             xcrun stapler staple 'release/Remix IDE-0.0.11-Alpha.dmg'
       - store_artifacts:
           path: apps/remixdesktop/release/
