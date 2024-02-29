@@ -1,18 +1,19 @@
 // eslint-disable-next-line no-use-before-define
 import { CustomTooltip } from '@remix-ui/helper'
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import { FormattedMessage } from 'react-intl'
 import { InstanceContainerProps } from '../types'
 import { UniversalDappUI } from './universalDappUI'
 
 export function InstanceContainerUI(props: InstanceContainerProps) {
   const { instanceList } = props.instances
-  const env = useRef()
+  const enableSave = useRef(false)
 
   useEffect(() => {
     const fetchSavedContracts = async () => {
-      env.current = await props.plugin.call('blockchain', 'getProvider')
-      if(env.current && env.current === 'injected') {
+      if (props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) enableSave.current = false
+      else enableSave.current = true
+      if (enableSave.current) {
         const allSavedContracts = localStorage.getItem('savedContracts')
         if (allSavedContracts) {
           await props.plugin.call('udapp', 'clearAllSavedInstances')
@@ -27,7 +28,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
       }
     }
     fetchSavedContracts()
-  }, [props.plugin.REACT_API.networkName])
+  }, [props.plugin.REACT_API.selectExEnv, props.plugin.REACT_API.networkName])
 
   const clearInstance = () => {
     props.clearInstances()
@@ -35,7 +36,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
 
   return (
     <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
-      { env.current && env.current === 'injected' ? (
+      { enableSave.current ? (
         <div className="d-flex justify-content-between align-items-center pl-2">
           <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
             <label className="udapp_deployedContracts">
@@ -43,7 +44,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             </label>
           </CustomTooltip>
         </div>) : null }
-      { env.current && env.current === 'injected' ? (
+      { enableSave.current ? (
         props.savedInstances.instanceList.length > 0 ? (
           <div>
             {' '}
