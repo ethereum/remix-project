@@ -318,6 +318,7 @@ jobs:
               --keychain-profile "notarytool-password" \
               --wait
                     - run:
+      - run:
           name: Notarize the app
           command: |
             cd apps/remixdesktop
