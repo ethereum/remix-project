@@ -170,7 +170,7 @@ const App = () => {
               <VyperResult output={output} plugin={remixClient} />
             </>
           ) : output.status === 'failed' ? (
-            <CompileErrorCard output={output} askGpt={remixClient.askGpt} />
+            <CompileErrorCard output={output} plugin={remixClient} />
           ) : null}
         </article>
       </section>
