@@ -269,6 +269,9 @@ jobs:
             security create-keychain -p ci-password build.keychain
             security default-keychain -s build.keychain
             security unlock-keychain -p ci-password build.keychain
+            curl -o DeveloperIDG2CA.cer "https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer"
+            sudo security import DeveloperIDG2CA.cer -k /Library/Keychains/System.keychain -T /usr/bin/codesign
+            sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain DeveloperIDG2CA.cer
             security import /tmp/certificate.p12 -k build.keychain -P $APPLE_CERTIFICATE_PASSWORD -T /usr/bin/codesign
             security set-key-partition-list -S apple-tool:,apple: -s -k ci-password build.keychain
             security find-identity -v -p codesigning
