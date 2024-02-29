@@ -5,5 +5,5 @@
   "circuitType": "circom",
   "curve": "bn254",
   "provingScheme": "groth16",
-  "witnessCompiler": "c++"
+  "witnessCompiler": "wasm"
 }
