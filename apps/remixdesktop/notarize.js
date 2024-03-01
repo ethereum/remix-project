@@ -14,11 +14,13 @@ exports.default = async function notarizing(context) {
 
   console.log(appName);
 
-  await notarize({
+  const r = await notarize({
     appBundleId: 'org.ethereum.remix-ide', // Your app's bundle ID
     appPath: `${appOutDir}/${appName}.app`, // Path to your .app
     appleId: process.env.APPLE_ID, // Your Apple ID
     appleIdPassword: process.env.APPLE_ID_PASSWORD, // App-specific password
     teamId: process.env.APPLE_TEAM_ID, // Your Apple Developer team ID (optional)
   });
+
+  console.log(r);
 };
