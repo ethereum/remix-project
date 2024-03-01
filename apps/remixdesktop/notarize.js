@@ -12,8 +12,10 @@ exports.default = async function notarizing(context) {
 
   const appName = context.packager.appInfo.productFilename;
 
+  console.log(appName);
+
   await notarize({
-    appBundleId: 'com.example.yourapp', // Your app's bundle ID
+    appBundleId: 'org.ethereum.remix-ide', // Your app's bundle ID
     appPath: `${appOutDir}/${appName}.app`, // Path to your .app
     appleId: process.env.APPLE_ID, // Your Apple ID
     appleIdPassword: process.env.APPLE_ID_PASSWORD, // App-specific password
