@@ -132,7 +132,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
 
   const onchangeCopilotActivate = async () => {
-    console.log("onchangeCopilotActivate ", props.useCopilot)
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('copilot-suggestion', 'uninstall')
@@ -439,8 +438,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
   let copilotTemperatureValue = (props.config.get('settings/copilot/suggest/temperature')) * 100
   if (!copilotTemperatureValue) {
-    props.config.set('settings/copilot/suggest/temperature', 0.5)
-    copilotTemperatureValue = 0.5
+    props.config.set('settings/copilot/suggest/temperature', 0.9)
+    copilotTemperatureValue = 0.9
   }
 
   //if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
