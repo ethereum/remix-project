@@ -266,13 +266,17 @@ export function UniversalDappUI(props: UdappProps) {
           </div>
           { props.isSavedContract || !(props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSaveTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText14" />}>
-              <i className="far fa-save p-2" aria-hidden="true" data-id="universalDappUiUdappSave" onClick={saveContract}></i>
+              <i className="far fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappSave" onClick={saveContract}></i>
             </CustomTooltip>
           </div> ) : null }
         </div>
-        <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={ !props.isSavedContract ? (<FormattedMessage id="udapp.tooltipText7" />) : (<FormattedMessage id="udapp.tooltipTextUnsave" />)}>
+        { !props.isSavedContract ? (<CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
           <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
-        </CustomTooltip>
+        </CustomTooltip>) :
+        ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
+          <i className="udapp_closeIcon m-1 far fa-trash align-self-center" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={remove}></i>
+        </CustomTooltip> )
+        }
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
