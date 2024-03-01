@@ -73,6 +73,7 @@
   "udapp.savedContracts": "Pinned Contracts",
   "udapp.NoSavedInstanceText": "No pinned contracts found.",
   "udapp.tooltipTextDelete": "Delete contract",
+  "udapp.tooltipTextUnpin": "Unpin contract",
   "udapp.savedOn": "Pinned On",
   "udapp.filePath": "File Path",
 
