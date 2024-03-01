@@ -70,6 +70,7 @@
     "files": [
       "build/**/*"
     ],
+    "afterSign": "notarize.js",
     "publish": [
       {
         "provider": "github",
@@ -96,7 +97,6 @@
       "gatekeeperAssess": false,
       "entitlements": "entitlements.mac.plist",
       "entitlementsInherit": "entitlements.mac.plist",
-      "afterSign": "notarize.js"
     },
     "dmg": {
       "writeUpdateInfo": true,
