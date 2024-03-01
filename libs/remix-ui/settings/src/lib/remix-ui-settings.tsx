@@ -4,6 +4,12 @@ import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react
 import {AppModal, AlertModal, ModalTypes} from '@remix-ui/app'
 import {labels, textDark, textSecondary} from './constants'
 
+enum CONSENT {
+  GIVEN = 0,
+  NOT_GIVEN,
+  NOT_ASKED
+}
+let consentGivenForAI = CONSENT.NOT_ASKED
 
 import './remix-ui-settings.css'
 import {
@@ -123,15 +129,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
   }, [props.useMatomoAnalytics])  
 
-  useEffect(() => {
-    console.log("useEffect on useCopilot")
-    if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
-    if (props.useCopilot) {
-      onchangeCopilotActivate()
-    }
-    console.log("useEffect on useCopilot finish")
-  }, [props.useCopilot])
-  
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
   }
@@ -142,6 +139,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   const onchangeCopilotActivate = () => {
     console.log("onchangeCopilotActivate ", props.useCopilot)
+  const onchangeCopilotActivate = async () => {
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('copilot-suggestion', 'uninstall')
@@ -156,46 +154,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       await props.plugin.call('copilot-suggestion', 'init')
       if (await props.plugin.call('copilot-suggestion', 'status')) {
         copilotActivate(props.config, true, dispatch)          
-<<<<<<< HEAD
-      } else {
-        props.plugin.call('copilot-suggestion', 'uninstall')
-        copilotActivate(props.config, false, dispatch)
-      }
-    }
-    const modalActivate: AppModal = {
-      id: 'loadcopilotActivate',
-      title: 'Download Solidity copilot',
-      modalType: ModalTypes.default,
-      okLabel: 'Hide',
-      cancelLabel: 'Cancel',
-      message,
-      okFn: async() => {
-        consentGivenForAI = CONSENT.GIVEN
-        startCopilot()
-      },
-      hideFn: async () => {
-        consentGivenForAI = CONSENT.NOT_GIVEN
-        props.plugin.off('copilot-suggestion', 'loading')
-        // if (await props.plugin.call('copilot-suggestion', 'status')) {
-        //   copilotActivate(props.config, true, dispatch)          
-        // } else {
-        //   props.plugin.call('copilot-suggestion', 'uninstall')
-        //   copilotActivate(props.config, false, dispatch)
-        // }
-      }
-    }
-    
-    if (consentGivenForAI === CONSENT.NOT_ASKED) {
-      console.log("CONSENT.NOT_ASKED modal")
-      props.plugin.call('notification', 'modal', modalActivate)
-    } else if (consentGivenForAI === CONSENT.GIVEN) {
-      startCopilot()
-    } else {
-      // NOT_GIVEN
-    }
-
-    if (props.plugin.call('copilot-suggestion', 'status')) {
-=======
       } 
     }
 
@@ -205,17 +163,16 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     })
 
     if (await props.plugin.call('copilot-suggestion', 'status')) {
->>>>>>> f63484701 (removed user consens)
       copilotActivate(props.config, true, dispatch)          
-    } else {
+    }else {
       startCopilot()
     }
   }
 
-  useEffect(() => {
-    if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
-    onchangeCopilotActivate()
-  }, [props.useCopilot])
+ useEffect(() => {
+  if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
+  onchangeCopilotActivate()
+}, [props.useCopilot])
 
 
   const onchangeCopilotMaxNewToken = (event) => {
@@ -489,8 +446,8 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
   let copilotTemperatureValue = (props.config.get('settings/copilot/suggest/temperature')) * 100
   if (!copilotTemperatureValue) {
-    props.config.set('settings/copilot/suggest/temperature', 0.5)
-    copilotTemperatureValue = 0.5
+    props.config.set('settings/copilot/suggest/temperature', 0.9)
+    copilotTemperatureValue = 0.9
   }
 
   //if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
