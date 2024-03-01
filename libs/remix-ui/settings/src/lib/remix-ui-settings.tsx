@@ -131,7 +131,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
   }
 
-  const onchangeCopilotActivate = async () => {
+  const onchangeCopilotActivate = () => {
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('copilot-suggestion', 'uninstall')
@@ -154,7 +154,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity Copilot activated` })
     })
 
-    if (await props.plugin.call('copilot-suggestion', 'status')) {
+    if (props.plugin.call('copilot-suggestion', 'status')) {
       copilotActivate(props.config, true, dispatch)          
     } else {
       startCopilot()
@@ -165,7 +165,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
     onchangeCopilotActivate()
   }, [props.useCopilot])
-
 
   const onchangeCopilotMaxNewToken = (event) => {
     copilotMaxNewToken(props.config, parseInt(event.target.value), dispatch)
