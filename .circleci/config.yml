@@ -296,6 +296,7 @@ jobs:
       # use USE_HARD_LINK=false https://github.com/electron-userland/electron-builder/issues/3179
       - run: 
           command: |
+            export DEBUG=electron-notarize*
             nvm use 20.0.0
             mkdir apps/remixdesktop/build
             cp -r dist/apps/remix-ide apps/remixdesktop/build
