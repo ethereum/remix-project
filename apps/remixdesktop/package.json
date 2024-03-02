@@ -83,7 +83,7 @@
       "category": "public.app-category.productivity",
       "target": [
         {
-          "target": "zip",
+          "target": "dmg",
           "arch": [
             "x64",
             "arm64"
