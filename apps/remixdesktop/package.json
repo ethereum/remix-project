@@ -64,7 +64,7 @@
   "build": {
     "productName": "Remix IDE 2",
     "appId": "org.ethereum.remix-ide",
-    "asar": true,
+    "asar": false,
     "generateUpdatesFilesForAllChannels": true,
     "icon": "assets",
     "files": [
