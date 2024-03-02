@@ -314,7 +314,7 @@ jobs:
                --team-id ${APPLE_TEAM_ID} \
                --password ${APPLE_ID_PASSWORD}
             # Assuming your app is packaged as a dmg or zip for notarization
-            xcrun notarytool submit 'release/Remix IDE-0.0.11-Alpha.dmg' \
+            xcrun notarytool submit 'release/Remix IDE-2-0.0.11-Alpha.dmg' \
               --keychain-profile "notarytool-password" \
               --wait
       - run:
@@ -322,21 +322,21 @@ jobs:
           command: |
             cd apps/remixdesktop
             # Assuming your app is packaged as a dmg or zip for notarization
-            xcrun notarytool submit 'release/Remix IDE-0.0.11-Alpha-Arm64.dmg' \
+            xcrun notarytool submit 'release/Remix IDE-2-0.0.11-Alpha-Arm64.dmg' \
               --keychain-profile "notarytool-password" \
               --wait
       - run:
           name: Staple the app
           command: |
             cd apps/remixdesktop
-            xcrun stapler staple 'release/Remix IDE-0.0.11-Alpha.dmg'
-            xcrun stapler staple 'release/Remix IDE-0.0.11-Alpha-Arm64.dmg' 
+            xcrun stapler staple 'release/Remix IDE-2-0.0.11-Alpha.dmg'
+            xcrun stapler staple 'release/Remix IDE-2-0.0.11-Alpha-Arm64.dmg' 
       - run:
           name: check the app
           command: |
             cd apps/remixdesktop
-            spctl -a -t open -vvv --context context:primary-signature 'release/Remix IDE-0.0.11-Alpha.dmg'
-            spctl -a -t open -vvv --context context:primary-signature 'release/Remix IDE-0.0.11-Alpha-Arm64.dmg' 
+            spctl -a -t open -vvv --context context:primary-signature 'release/Remix IDE-2-0.0.11-Alpha.dmg'
+            spctl -a -t open -vvv --context context:primary-signature 'release/Remix IDE-2-0.0.11-Alpha-Arm64.dmg' 
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-mac
