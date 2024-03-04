@@ -1,7 +1,7 @@
 const { spawn } = require('child_process');
 exports.default = async function afterbuild(context) {
   console.log('AFTER BUILD', context);
-  const child = spawn('ls', '-la', { shell: true });
+  const child = spawn('ls', ['-la'], { shell: true });
   
   child.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
