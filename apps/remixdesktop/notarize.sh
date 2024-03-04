@@ -3,7 +3,6 @@
 echo "Argument 1: $1"
 echo "Argument 2: $2"
 
-nvm use 20
 xcrun notarytool store-credentials "notarytool-password" \
 --apple-id ${APPLE_ID} \
 --team-id ${APPLE_TEAM_ID} \
