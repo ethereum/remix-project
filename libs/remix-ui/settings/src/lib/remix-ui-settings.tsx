@@ -205,7 +205,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
 
   const onchangeSaveEnvState= (event) => {
-    console.log('saveEnvState', event.target.checked)
     saveEnvState(props.config, event.target.checked, dispatch)
   }
 
@@ -226,7 +225,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const isAutoCompleteChecked = props.config.get('settings/auto-completion') || false
     const isShowGasInEditorChecked = props.config.get('settings/show-gas') || false
     const displayErrorsChecked = props.config.get('settings/display-errors') || false
-    const isSaveEnvStateChecked = props.config.get('settings/save-env-state') || false
+    const isSaveEvmStateChecked = props.config.get('settings/save-evm-state') || false
     return (
       <div className="$border-top">
         <div className="d-flex justify-content-end pr-4">
@@ -344,9 +343,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangeSaveEnvState} id="settingsEnableSaveEnvState" type="checkbox" className="custom-control-input" checked={isSaveEnvStateChecked} />
+            <input onChange={onchangeSaveEnvState} id="settingsEnableSaveEnvState" type="checkbox" className="custom-control-input" checked={isSaveEvmStateChecked} />
             <label
-              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/save-env-state')}`}
+              className={`form-check-label custom-control-label align-middle ${getTextClass('settings/save-evm-state')}`}
               data-id="settingsEnableSaveEnvStateLabel"
               htmlFor="settingsEnableSaveEnvState"
             >

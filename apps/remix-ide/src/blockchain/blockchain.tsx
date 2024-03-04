@@ -646,7 +646,7 @@ export class Blockchain extends Plugin {
   }
 
   async loadContext(context: string) {
-    const saveEvmState = this.config.get('settings/save-env-state')
+    const saveEvmState = this.config.get('settings/save-evm-state')
     
     if (saveEvmState) {
       const contextExists = await this.call('fileManager', 'exists', `.states/${context}/state.json`)
@@ -655,9 +655,9 @@ export class Blockchain extends Plugin {
         const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
   
         await this.getCurrentProvider().resetEnvironment(stateDb)
-      } else {
-        await this.getCurrentProvider().resetEnvironment()
       }
+    } else {
+      await this.getCurrentProvider().resetEnvironment()
     }
 
     // TODO: most params here can be refactored away in txRunner
@@ -904,7 +904,7 @@ export class Blockchain extends Plugin {
       let execResult
       let returnValue = null
       if (isVM) {
-        if (!tx.useCall) {
+        if (!tx.useCall && this.config.get('settings/save-evm-state')) {
           await this.executionContext.getStateDetails().then((state) => {
             this.call('fileManager', 'writeFile', `.states/${this.executionContext.getProvider()}/state.json`, state)
           })

@@ -58,7 +58,7 @@ export const initialState = {
       textClass: textSecondary
     },
     {
-      name: 'save-env-state',
+      name: 'save-evm-state',
       isChecked: false,
       textClass: textSecondary
     },
@@ -179,9 +179,9 @@ export const settingReducer = (state, action) => {
       ...state
     }
 
-  case 'save-env-state':
+  case 'save-evm-state':
     state.elementState.map(element => {
-      if (element.name === 'save-env-state') {
+      if (element.name === 'save-evm-state') {
         element.isChecked = action.payload.isChecked
         element.textClass = action.payload.textClass
       }
