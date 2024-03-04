@@ -22,7 +22,7 @@ while IFS= read -r DMG_PATH; do
 
     # Replace `your-app-specific-args` with the actual arguments for your app
     # Ensure your notarytool command and arguments are correct for your application
-    notarytool submit "$DMG_PATH_CLEANED" --keychain-profile "notarytool-password" --wait
+    xcrun notarytool submit "$DMG_PATH_CLEANED" --keychain-profile "notarytool-password" --wait
 
     # Check the command's success
     if [ $? -eq 0 ]; then
