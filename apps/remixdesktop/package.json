@@ -64,13 +64,13 @@
   "build": {
     "productName": "Remix IDE 2",
     "appId": "org.ethereum.remix-ide",
-    "asar": false,
+    "asar": true,
     "generateUpdatesFilesForAllChannels": true,
     "icon": "assets",
     "files": [
       "build/**/*"
     ],
-    "afterSign": "notarize.js",
+    "afterAllArtifactBuild": "afterbuild.js",
     "publish": [
       {
         "provider": "github",

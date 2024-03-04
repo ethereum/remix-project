@@ -1,6 +1,6 @@
 
 const { notarize } = require('@electron/notarize');
-
+const fs = require('fs');
 exports.default = async function notarizing(context) {
   const { electronPlatformName, appOutDir } = context; // Provided by electron-builder
 
@@ -12,7 +12,10 @@ exports.default = async function notarizing(context) {
 
   const appName = context.packager.appInfo.productFilename;
 
-  console.log(appName);
+  const files = fs.readdirSync(appOutDir, 'utf8')
+
+
+  console.log(files);
 
   console.log({
     appBundleId: 'org.ethereum.remix-ide', // Your app's bundle ID
