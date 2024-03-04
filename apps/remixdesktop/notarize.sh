@@ -8,17 +8,17 @@ xcrun notarytool store-credentials "notarytool-password" \
 --team-id ${APPLE_TEAM_ID} \
 --password ${APPLE_ID_PASSWORD}
 # Assuming your app is packaged as a dmg or zip for notarization
-xcrun notarytool submit 'release/Remix IDE 2-0.0.11-Alpha.dmg' \
+xcrun notarytool submit "$1" \
 --keychain-profile "notarytool-password" \
 --wait
 
 # Assuming your app is packaged as a dmg or zip for notarization
-xcrun notarytool submit 'release/Remix IDE 2-0.0.11-Alpha-Arm64.dmg' \
+xcrun notarytool submit "$2" \
 --keychain-profile "notarytool-password" \
 --wait
 
-xcrun stapler staple 'release/Remix IDE 2-0.0.11-Alpha.dmg'
-xcrun stapler staple 'release/Remix IDE 2-0.0.11-Alpha-Arm64.dmg'
+xcrun stapler staple "$1"
+xcrun stapler staple "$2"
 
-spctl -a -t open -vvv --context context:primary-signature 'release/Remix IDE 2-0.0.11-Alpha.dmg'
-spctl -a -t open -vvv --context context:primary-signature 'release/Remix IDE 2-0.0.11-Alpha-Arm64.dmg'
+spctl -a -t open -vvv --context context:primary-signature "$1"
+spctl -a -t open -vvv --context context:primary-signature "$2"
