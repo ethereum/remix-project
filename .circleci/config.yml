@@ -308,7 +308,7 @@ jobs:
       - run:
           name: Notarize the app
           command: |
-            sudo apt-get install jq
+            brew install jq
             cd apps/remixdesktop
             zsh notarizedmg.sh
       - store_artifacts:
