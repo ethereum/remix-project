@@ -1,6 +1,6 @@
 {
-  "name": "remixdesktop2",
-  "version": "0.0.11-Alpha",
+  "name": "remixdesktop",
+  "version": "0.0.12-Alpha",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
@@ -62,7 +62,7 @@
     "@remix-project/remix-ws-templates": "^1.0.27"
   },
   "build": {
-    "productName": "Remix IDE 2",
+    "productName": "Remix IDE",
     "appId": "org.ethereum.remix-ide",
     "asar": true,
     "generateUpdatesFilesForAllChannels": true,
