@@ -141,9 +141,9 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   }, [xtermState.showOutput])
 
   return (<>
-    { !xtermState.showOutput && <div style={{ flexGrow: 1 }} className='d-flex flex-row h-100'>
+    { <div style={{ flexGrow: 1 }} className={`flex-row ${xtermState.showOutput ? 'h-0 d-none' : 'h-100 d-flex'}`}>
       <>
-        { !xtermState.showOutput && <div className={`flex-row w-100 h-100 d-flex`}>
+        { <div className={`flex-row w-100 h-100 ${xtermState.showOutput ? 'h-0 d-none' : 'h-100 d-flex'}`}>
           {terminals.map((xtermState) => {
             return (
               <div className={`h-100 w-100 ${xtermState.hidden ? 'd-none' : 'd-block'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
