@@ -20,7 +20,7 @@ for DMG_PATH in $DMG_PATHS; do
 
     # Run your notarytool submit command here
     # Ensure you replace `your-app-specific-args` with actual arguments for your app
-    notarytool submit "$DMG_PATH_CLEANED" --keychain-profile "notarytool-password" --wait
+    xcrun notarytool submit "$DMG_PATH_CLEANED" --keychain-profile "notarytool-password" --wait
 
     # Check for success/failure if necessary
     if [ $? -eq 0 ]; then
