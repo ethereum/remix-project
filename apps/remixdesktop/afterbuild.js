@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+const fs = require('fs');
 exports.default = async function afterbuild(context) {
 
   // do not run when not on macOS
@@ -10,20 +10,8 @@ exports.default = async function afterbuild(context) {
 
   const artifactPaths = context.artifactPaths
   const dmgs = artifactPaths.filter((dmg) => dmg.endsWith('.dmg')).map((dmg) => `'${dmg}'`)
-  console.log(['notarize.sh', ...dmgs]);
+  fs.writeFileSync('dmgs.json', JSON.stringify({ dmgs }, null, 2))
+  
 
-  const child = spawn('zsh', ['notarize.sh', ...dmgs], { shell: true });
-
-  child.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
-  });
-
-  child.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  child.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-  });
 
 }
