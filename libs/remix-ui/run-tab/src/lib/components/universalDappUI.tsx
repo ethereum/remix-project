@@ -10,6 +10,7 @@ import {ContractGUI} from './contractGUI'
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view'
 import {BN} from 'bn.js'
 import {CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress} from '@remix-ui/helper'
+const _paq = (window._paq = window._paq || [])
 
 const txHelper = remixLib.execution.txHelper
 
@@ -122,12 +123,16 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const remove = async() => {
-    if (props.isSavedContract) await unsavePinnedContract()
+    if (props.isSavedContract) {
+      await unsavePinnedContract()
+      _paq.push(['trackEvent', 'udapp', 'pinContracts', 'unpinned'])
+    }
     props.removeInstance(props.index, props.isSavedContract, false)
   }
 
   const deletePinnedContract = async() => {
-    if (props.isSavedContract) await unsavePinnedContract()
+    await unsavePinnedContract()
+    _paq.push(['trackEvent', 'udapp', 'pinContracts', 'deletePinned'])
     props.removeInstance(props.index, props.isSavedContract, true)
   }
 
@@ -151,6 +156,7 @@ export function UniversalDappUI(props: UdappProps) {
     localStorage.setItem('savedContracts', JSON.stringify(objToSave))
     // Add contract to saved contracts list on UI
     await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.abi || props.instance.contractData.abi, props.instance.name, props.instance.savedOn, props.instance.filePath)
+    _paq.push(['trackEvent', 'udapp', 'pinContracts', 'pinned'])
     // Remove contract from deployed contracts list on UI
     props.removeInstance(props.index, false, false)
   }
