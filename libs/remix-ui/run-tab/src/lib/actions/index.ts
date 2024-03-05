@@ -48,7 +48,7 @@ export const setGasPriceStatus = (status: boolean) => updateGasPriceStatus(dispa
 export const setMaxFee = (fee: string) => updateMaxFee(dispatch, fee)
 export const setMaxPriorityFee = (fee: string) => updateMaxPriorityFee(dispatch, fee)
 export const removeInstances = () => clearInstances(dispatch)
-export const removeSingleInstance = (index: number, isSavedContract: boolean) => removeInstance(dispatch, index, isSavedContract)
+export const removeSingleInstance = (index: number, isSavedContract: boolean, shouldDelete: boolean) => removeInstance(dispatch, index, isSavedContract, shouldDelete)
 export const getExecutionContext = () => getContext(plugin)
 export const executeTransactions = (instanceIndex: number, isSavedContract: boolean, lookupOnly: boolean, funcABI: FuncABI, inputsValues: string, contractName: string, contractABI, contract, address, logMsg:string, mainnetPrompt: MainnetPrompt, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, funcIndex?: number) => runTransactions(plugin, dispatch, instanceIndex, isSavedContract, lookupOnly, funcABI, inputsValues, contractName, contractABI, contract, address, logMsg, mainnetPrompt, gasEstimationPrompt, passphrasePrompt, funcIndex)
 export const loadFromAddress = (contract: ContractData, address: string) => loadAddress(plugin, dispatch, contract, address)
