@@ -259,7 +259,7 @@ export function UniversalDappUI(props: UdappProps) {
           <div className="udapp_titleText input-group-prepend">
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.isSavedContract ? `Contract: ${props.instance.name},  Address: ${address}, Pin date:  ${new Date(props.instance.savedOn).toUTCString()}` : ''}>
               <span className="input-group-text udapp_spanTitleText">
-              {props.instance.name} at {shortenAddress(address)} {!props.isSavedContract ? `(${props.context})` : ''}
+                {props.instance.name} at {shortenAddress(address)} {!props.isSavedContract ? `(${props.context})` : ''}
               </span>
             </CustomTooltip>
           </div>
@@ -272,16 +272,16 @@ export function UniversalDappUI(props: UdappProps) {
             </CustomTooltip>
           </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
-            <i className="far fa-thumbtack p-2 text-success" aria-hidden="true" data-id="universalDappUiUdappSave" onClick={remove}></i>
-          </CustomTooltip> 
+              <i className="far fa-thumbtack p-2 text-success" aria-hidden="true" data-id="universalDappUiUdappSave" onClick={remove}></i>
+            </CustomTooltip> 
           </div> ) }
         </div>
         { !props.isSavedContract ? ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
           <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
         </CustomTooltip> ) :
-        ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
-          <i className="udapp_closeIcon m-1 far fa-trash align-self-center text-danger" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={remove}></i>
-        </CustomTooltip> )
+          ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
+            <i className="udapp_closeIcon m-1 far fa-trash align-self-center text-danger" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={remove}></i>
+          </CustomTooltip> )
         }
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
