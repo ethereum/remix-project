@@ -15,12 +15,12 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
       if (props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) enableSave.current = false
       else enableSave.current = true
       if (enableSave.current) {
+        const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
+        chainId.current = network.id
         const allSavedContracts = localStorage.getItem('savedContracts')
         if (allSavedContracts) {
           await props.plugin.call('udapp', 'clearAllSavedInstances')
           const savedContracts = JSON.parse(allSavedContracts)
-          const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-          chainId.current = network.id
           if (savedContracts && savedContracts[network.id]) {
             const instances = savedContracts[network.id]
             for (const inst of instances)
