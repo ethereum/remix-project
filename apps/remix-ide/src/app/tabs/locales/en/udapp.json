@@ -72,7 +72,7 @@
 
   "udapp.savedContracts": "Pinned Contracts",
   "udapp.tooltipTextPinnedContracts": "List of pinned contracts for selected network",
-  "udapp.NoSavedInstanceText": "No contracts pinned yet. Pinned contracts stays after reloading Remix IDE.",
+  "udapp.NoSavedInstanceText": "No contracts pinned yet. Pinned contracts stay after reloading Remix IDE.",
   "udapp.tooltipTextDelete": "Delete pinned contract",
   "udapp.tooltipTextUnpin": "Unpin contract",
   "udapp.savedOn": "Pinned On",
