@@ -292,10 +292,10 @@ export function UniversalDappUI(props: UdappProps) {
             <i className="far fa-trash p-2 text-danger" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={deletePinnedContract}></i>
           </CustomTooltip> 
         </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
-            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextRemove" />}>
-              <i className="fas fa-times p-2" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
-            </CustomTooltip> 
-          </div> )
+          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextRemove" />}>
+            <i className="fas fa-times p-2" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
+          </CustomTooltip> 
+        </div> )
         }
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
