@@ -75,8 +75,8 @@
   "udapp.NoSavedInstanceText": "No contracts pinned yet. Pinned contracts stay after reloading Remix IDE.",
   "udapp.tooltipTextDelete": "Delete pinned contract",
   "udapp.tooltipTextUnpin": "Unpin contract",
-  "udapp.savedOn": "Pinned On",
-  "udapp.filePath": "File Path",
+  "udapp.savedOn": "Pinned at",
+  "udapp.filePath": "File path",
 
   "udapp._comment_recorderCardUI.tsx": "libs/remix-ui/run-tab/src/lib/components/recorderCardUI.tsx",
   "udapp.transactionsRecorded": "Transactions recorded",
