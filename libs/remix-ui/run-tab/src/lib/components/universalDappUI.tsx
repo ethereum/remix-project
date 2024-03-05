@@ -111,17 +111,24 @@ export function UniversalDappUI(props: UdappProps) {
     setToggleExpander(!toggleExpander)
   }
 
+  const unsavePinnedContract = async () => {
+    const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
+    const savedContracts = localStorage.getItem('savedContracts')
+    const savedContractsJson = JSON.parse(savedContracts)
+    const instanceIndex = savedContractsJson[network.id].findIndex(instance => instance && instance.address === props.instance.address)
+    delete savedContractsJson[network.id][instanceIndex]
+    savedContractsJson[network.id] = savedContractsJson[network.id].filter(Boolean)
+    localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson))
+  }
+
   const remove = async() => {
-    if (props.isSavedContract) {
-      const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-      const savedContracts = localStorage.getItem('savedContracts')
-      const savedContractsJson = JSON.parse(savedContracts)
-      const instanceIndex = savedContractsJson[network.id].findIndex(instance => instance && instance.address === props.instance.address)
-      delete savedContractsJson[network.id][instanceIndex]
-      savedContractsJson[network.id] = savedContractsJson[network.id].filter(Boolean)
-      localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson))
-    }
-    props.removeInstance(props.index, props.isSavedContract)
+    if (props.isSavedContract) await unsavePinnedContract()
+    props.removeInstance(props.index, props.isSavedContract, false)
+  }
+
+  const deletePinnedContract = async() => {
+    if (props.isSavedContract) await unsavePinnedContract()
+    props.removeInstance(props.index, props.isSavedContract, true)
   }
 
   const pinContract = async() => {
@@ -145,7 +152,7 @@ export function UniversalDappUI(props: UdappProps) {
     // Add contract to saved contracts list on UI
     await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.abi || props.instance.contractData.abi, props.instance.name, props.instance.savedOn, props.instance.filePath)
     // Remove contract from deployed contracts list on UI
-    props.removeInstance(props.index, false)
+    props.removeInstance(props.index, false, false)
   }
 
   const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
@@ -280,7 +287,7 @@ export function UniversalDappUI(props: UdappProps) {
         </div>
         { props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
-              <i className="far fa-trash p-2 text-danger" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={remove}></i>
+              <i className="far fa-trash p-2 text-danger" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={deletePinnedContract}></i>
             </CustomTooltip> 
           </div> ) : ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextRemove" />}>
           <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
