@@ -537,12 +537,12 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
         }
       }
     } else return {
-        ...state,
-        instances: {
-          ...state.instances,
-          instanceList: state.instances.instanceList.filter((_, index) => index !== payload.index)
-        }
+      ...state,
+      instances: {
+        ...state.instances,
+        instanceList: state.instances.instanceList.filter((_, index) => index !== payload.index)
       }
+    }
   }
 
   case CLEAR_INSTANCES: {

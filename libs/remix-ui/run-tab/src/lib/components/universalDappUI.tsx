@@ -274,22 +274,22 @@ export function UniversalDappUI(props: UdappProps) {
             <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
           </div>
           { !(props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) ? 
-              props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
-                <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
-                  <i className="far fa-thumbtack p-2 text-success" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={remove}></i>
-                </CustomTooltip> 
-              </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
-                <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappPinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPin" />}>
-                  <i className="far fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappPin" onClick={pinContract}></i>
-                </CustomTooltip>
-              </div> )
-           : null}
+            props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
+                <i className="far fa-thumbtack p-2 text-success" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={remove}></i>
+              </CustomTooltip> 
+            </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappPinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPin" />}>
+                <i className="far fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappPin" onClick={pinContract}></i>
+              </CustomTooltip>
+            </div> )
+            : null}
         </div>
         { props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
-            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
-              <i className="far fa-trash p-2 text-danger" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={deletePinnedContract}></i>
-            </CustomTooltip> 
-          </div> ) : ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextRemove" />}>
+          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
+            <i className="far fa-trash p-2 text-danger" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={deletePinnedContract}></i>
+          </CustomTooltip> 
+        </div> ) : ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextRemove" />}>
           <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
         </CustomTooltip> )
         }
