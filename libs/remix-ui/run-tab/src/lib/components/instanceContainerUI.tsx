@@ -38,7 +38,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
     <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
       { enableSave.current ? (
         <div className="d-flex justify-content-between align-items-center pl-2">
-          <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
+          <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
             <label className="udapp_deployedContracts">
               <FormattedMessage id="udapp.savedContracts" />
             </label>
