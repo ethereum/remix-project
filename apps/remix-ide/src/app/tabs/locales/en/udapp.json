@@ -106,7 +106,7 @@
 
   "udapp._comment_universalDappUI.tsx": "libs/remix-ui/run-tab/src/lib/components/universalDappUI.tsx",
   "udapp.tooltipText7": "Remove from the list",
-  "udapp.tooltipText14": "Pin contract",
+  "udapp.tooltipTextPin": "Pin contract",
   "udapp.tooltipText8": "Click for docs about using 'receive'/'fallback'",
   "udapp.tooltipText9": "The Calldata to send to fallback function of the contract.",
   "udapp.tooltipText10": "Send data to contract.",
