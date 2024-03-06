@@ -1,8 +1,8 @@
 const fs = require('fs');
 exports.default = async function afterbuild(context) {
 
-  // do not run when not on macOS
-  if (process.platform !== 'darwin') {
+  // do not run when not on macOS or when not on CIRCLECI
+  if (process.platform !== 'darwin' || !process.env.CIRCLE_BRANCH) {
     return;
   }
 
