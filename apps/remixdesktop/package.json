@@ -71,6 +71,7 @@
     "files": [
       "build/**/*"
     ],
+    "afterSign": "notarize.js",
     "afterAllArtifactBuild": "afterbuild.js",
     "publish": [
       {
