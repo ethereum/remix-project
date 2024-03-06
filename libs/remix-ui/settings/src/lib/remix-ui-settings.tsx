@@ -161,7 +161,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     }
   }
 
-  useEffect(() => {
+  useEffect(()=>{
     if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
     onchangeCopilotActivate()
   }, [props.useCopilot])
