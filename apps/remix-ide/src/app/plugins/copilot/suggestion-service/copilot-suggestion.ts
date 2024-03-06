@@ -31,6 +31,7 @@ export class CopilotSuggestion extends Plugin {
     this.service.events.on('done', (data) => {
     })
     this.service.events.on('ready', (data) => {
+      this.emit('ready', data)
       this.ready = true
     })  
   }
