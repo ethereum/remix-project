@@ -655,6 +655,8 @@ export class Blockchain extends Plugin {
         const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
   
         await this.getCurrentProvider().resetEnvironment(stateDb)
+      } else {
+        await this.getCurrentProvider().resetEnvironment()
       }
     } else {
       await this.getCurrentProvider().resetEnvironment()
