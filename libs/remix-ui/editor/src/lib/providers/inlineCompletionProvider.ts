@@ -11,9 +11,11 @@ const result: string = ''
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
   props: EditorUIProps
   monaco: any
+  running:boolean
   constructor(props: any, monaco: any) {
     this.props = props
     this.monaco = monaco
+    this.running = false
   }
 
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
@@ -47,26 +49,24 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       const split = word.split('\n')
       if (split.length < 2) return
       const ask = split[split.length - 2].trimStart()
-      if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
+      if (split[split.length - 1].trim() === '' && ask.startsWith('///') && (!this.running)) {
         // use the code generation model, only take max 1000 word as context 
-        this.props.plugin.call('terminal', 'log', {type: 'typewriterwarning', value: 'Solcoder - generating code for following comment: ' + ask.replace('///', '')})
-
+        this.running = true
         const data = await this.props.plugin.call('solcoder', 'code_completion', word)
-        if ("error" in data) return
-
         console.log("solcoder completion data", data)
         const parsedData = data[0].trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: parsedData
         };
+        this.running =false
         return {
           items: [item],
           enableForwardStability: true
         }
       }
     } catch (e) {
-      return
-    }
+      console.error(e)
+    }   
 
     if (word.split('\n').at(-1).trimStart().startsWith('//') || 
         word.split('\n').at(-1).trimStart().startsWith('/*') ||
@@ -84,47 +84,38 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     let result
     try {
-      result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
-      const generatedText = (result as any).output[0].generated_text as string
-      let clean = generatedText
-      if (generatedText.indexOf('@custom:dev-run-script./') !== -1) {
-        clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
-      }
-      clean = clean.replace(word, '')
-      clean = this.process_completion(clean)
-
-      const item: monacoTypes.languages.InlineCompletion = {
-        insertText: clean
-      };
-      return {
-        items: [item],
-        enableForwardStability: true
+      if (!this.running){
+        result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
+        this.running = true
       }
     } catch (err) {
+      this.running=false
       return
     }
-  }
 
-  process_completion(data: any) {
-    const lines = data.split('\n') 
-    const result = []
-    let incode = 0
-    for (const line of lines){
-      if (line.includes('{')) incode += 1
-      if (line.includes('}')) incode -= 1
-
-      if (!line.includes('//') || !line.endsWith('}')) result.push(line)
-      if (incode === 0) {
-        return result.join('\n').trimStart()
-      }
-
-      if (incode <= 0 && line.includes('}')) {
-        return result.join('\n').trimStart()
-      }
+    const generatedText = (result as any).output[0].generated_text as string
+    let clean = generatedText
+    console.log('solcoder inline data:\n', clean)
+    if (generatedText.indexOf('@custom:dev-run-script./') !== -1) {
+      clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
     }
-    return result.join('\n').trimStart()
-  }
+    clean = clean.replace(word, '')
 
+    const item: monacoTypes.languages.InlineCompletion = {
+      insertText: clean
+    };
+    this.running=false
+
+    // abort if there is a signal
+    if (token.isCancellationRequested) {
+      return
+    }
+    return {
+      items: [item],
+      enableForwardStability: true
+    }
+
+  }
   handleItemDidShow?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, updatedInsertText: string): void {
 
   }
