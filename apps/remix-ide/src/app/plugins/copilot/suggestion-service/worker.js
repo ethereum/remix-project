@@ -22,7 +22,6 @@ class CodeCompletionPipeline {
 
 // Listen for messages from the main thread
 self.addEventListener('message', async (event) => {
-  console.log("worker message ", event.data)
   const {
     id, model, text, max_new_tokens, cmd,
 
