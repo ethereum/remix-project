@@ -61,8 +61,8 @@ module.exports = class SettingsTab extends ViewPlugin {
   }
 
   onActivation(): void {
-    this.on('copilot-suggestion', 'loading', (data) => {
-      this.call('terminal', 'log', {type: 'typewriterlog', value: `loading Solidity copilot: ${(data.loaded / data.total) * 100}%` })
+    this.once('copilot-suggestion', 'loading', (data) => {
+      this.call('terminal', 'log', {type: 'typewriterlog', value: `loading Solidity copilot ...` })
     })
   }
   render() {
