@@ -35,7 +35,7 @@ export class SolCoder extends Plugin {
           body: JSON.stringify({"data":[prompt, "code_generation", false,1000,0.2,0.8,50]}),
         })
       ).json()
-      return "error" in result? result.error : result.data[0]
+      return result.data[0]
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
@@ -91,7 +91,7 @@ export class SolCoder extends Plugin {
         })
       ).json()
       if (result) {
-        this.call('terminal', 'log', { type: 'typewriterwarning', value: "\n"+result.data[0]})
+        this.call('terminal', 'log', { type: 'typewriterwarning', value: result.data[0]})
       }
       return result.data[0]
     } catch (e) {
@@ -135,12 +135,6 @@ export class SolCoder extends Plugin {
         })
       ).json()
 
-      if ("error" in result){
-        console.log("error", result.error)
-        this.call('terminal', 'log', { type: 'typewriterwarning', value: result.error }) 
-        return result
-      } 
-      
       return result.data
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
