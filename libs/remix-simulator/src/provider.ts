@@ -31,12 +31,13 @@ export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePaylo
 export type State = Record<string, string>
 
 export type ProviderOptions = {
-  fork: string,
-  nodeUrl: string,
-  blockNumber: number | 'latest',
+  fork?: string,
+  nodeUrl?: string,
+  blockNumber?: number | 'latest',
   stateDb?: State,
   logDetails?: boolean
-  blocks?: string[]
+  blocks?: string[],
+  coinbase?: string
 }
 
 export class Provider {
