@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState, useRef} from 'react'
+import React, {useEffect, useState} from 'react'
 import {FormattedMessage, useIntl} from 'react-intl'
 import {UdappProps} from '../types'
 import {FuncABI} from '@remix-project/core-plugin'
@@ -23,7 +23,6 @@ export function UniversalDappUI(props: UdappProps) {
   const [calldataValue, setCalldataValue] = useState<string>('')
   const [evmBC, setEvmBC] = useState(null)
   const [instanceBalance, setInstanceBalance] = useState(0)
-  const env = useRef()
 
   const getVersion = () => window.location.href.split('=')[5].split('+')[0].split('-')[1]
 
@@ -57,13 +56,6 @@ export function UniversalDappUI(props: UdappProps) {
       setInstanceBalance(props.instance.balance)
     }
   }, [props.instance.balance])
-
-  useEffect(() => {
-    const getEnv = async () => {
-      env.current = await props.plugin.call('blockchain', 'getProvider')
-    }
-    getEnv()
-  }, [])
 
   const sendData = () => {
     setLlIError('')
@@ -272,7 +264,7 @@ export function UniversalDappUI(props: UdappProps) {
           <div className="btn" style={{padding: '0.15rem'}}>
             <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
           </div>
-          { !props.isSavedContract && env.current === 'injected' ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+          { props.isSavedContract || !(props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSaveTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText14" />}>
               <i className="far fa-save p-2" aria-hidden="true" data-id="universalDappUiUdappSave" onClick={saveContract}></i>
             </CustomTooltip>
@@ -292,7 +284,7 @@ export function UniversalDappUI(props: UdappProps) {
           { props.isSavedContract && props.instance.savedOn ? (
             <div className="d-flex" data-id="instanceContractSavedOn">
               <label>
-                <b><FormattedMessage id="udapp.savedOn" />:</b> {(new Date(props.instance.savedOn)).toUTCString()}
+                <b><FormattedMessage id="udapp.savedOn" />:</b> {(new Date(props.instance.savedOn)).toLocaleString()}
               </label>
             </div>
           ) : null }
