@@ -1,11 +1,13 @@
 import EventEmitter from 'events'
 
-export type SuggestOptions = { max_new_tokens: number, 
-                               temperature: number,
-                               do_sample:boolean
-                               top_k: number,
-                               top_p:number, 
-                               stream_result:boolean}
+export type SuggestOptions = {
+  max_new_tokens: number, 
+  temperature: number,
+  do_sample:boolean
+  top_k: number,
+  top_p:number, 
+  stream_result:boolean
+}
 
 export class SuggestionService {
   worker: Worker
@@ -17,12 +19,12 @@ export class SuggestionService {
     this.worker = new Worker(new URL('./worker.js', import.meta.url), {
       type: 'module'
     });
-    this.init()
     this.events = new EventEmitter()
     this.responses = {}
     this.current
   }
 
+  //todo ask Yann if we should keep the model
   terminate(): void {
     this.worker.terminate()
     this.worker = new Worker(new URL('./worker.js', import.meta.url), {

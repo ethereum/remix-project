@@ -1,4 +1,5 @@
 :root {
+  --ai: #da2de4;
   --blue: #007bff;
   --indigo: #6610f2;
   --purple: #6f42c1;
@@ -9366,7 +9367,9 @@ a.text-light:hover,
 a.text-light:focus {
   color: #d9d9d9 !important;
 }
-
+.text-ai {
+  color: #da2de4 !important;
+}
 .text-dark {
   color: #11556c !important;
 }
