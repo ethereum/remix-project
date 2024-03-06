@@ -10,6 +10,7 @@
 * Copyright 2011-2020 Twitter, Inc.
 * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
 */:root {
+    --ai: #da2de4;
     --blue:#033c73;
     --indigo:#6610f2;
     --purple:#6f42c1;
@@ -8372,6 +8373,9 @@ a.text-danger:focus,a.text-danger:hover {
 }
 a.text-light:focus,a.text-light:hover {
     color:#cbd3da!important
+}
+.text-ai {
+  color: #da2de4 !important;
 }
 .text-dark {
     color:#343a40!important

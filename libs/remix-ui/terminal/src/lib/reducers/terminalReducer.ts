@@ -159,7 +159,7 @@ export const registerScriptRunnerReducer = (state, action) => {
   case TYPEWRITERWARNING:
     return {
       ...state,
-      journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, typewriter: true, style: 'text-warning', provider: action.payload.provider })
+      journalBlocks: initialState.journalBlocks.push({ message: action.payload.message, typewriter: true, style: 'text-ai', provider: action.payload.provider })
     }
   case TYPEWRITERSUCCESS:
     return {

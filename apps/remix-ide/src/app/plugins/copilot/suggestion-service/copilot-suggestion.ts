@@ -20,8 +20,11 @@ export class CopilotSuggestion extends Plugin {
   ready: boolean
   constructor() {
     super(profile)
-    this.service = new SuggestionService()
     this.context = ''
+  }
+
+  onActivation(): void {
+    this.service = new SuggestionService()
     this.service.events.on('progress', (data) => {
       this.emit('loading', data)
     })
@@ -29,7 +32,7 @@ export class CopilotSuggestion extends Plugin {
     })
     this.service.events.on('ready', (data) => {
       this.ready = true
-    })
+    })  
   }
 
   useRemoteService(service: string) {

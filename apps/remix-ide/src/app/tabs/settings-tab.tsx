@@ -60,6 +60,12 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.renderComponent()
   }
 
+  onActivation(): void {
+    this.on('copilot-suggestion', 'loading', (data) => {
+      this.call('terminal', 'log', { type: 'typewritererror', value: `.` })
+      console.log("oninit")
+    })
+  }
   render() {
     return (
       <div id="settingsTab">
