@@ -49,6 +49,7 @@ export class AppUpdaterPlugin extends ElectronBasePlugin {
     autoUpdater.on('update-downloaded', (info) => {
       console.log('Update downloaded');
       this.sendToLog('Update downloaded')
+      this.sendToLog('processing download... please wait...')
       for(const client of this.clients) {
         client.downloadReady()
       }
@@ -93,7 +94,11 @@ class AppUpdaterPluginClient extends ElectronBasePluginClient {
   }
 
   async downloadReady(): Promise<void> {
-    this.emit('downloadReady')
+    // we do a wait here to make sure that the download is done, it's a bug in electron-updater
+    setTimeout(() => {
+      this.emit('downloadReady')
+    }
+    , 10000)
   }
 
   async download(): Promise<void> {
