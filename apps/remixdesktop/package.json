@@ -1,6 +1,6 @@
 {
   "name": "remixdesktop",
-  "version": "0.0.21-Alpha",
+  "version": "0.0.22-Alpha",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
@@ -86,13 +86,6 @@
       "target": [
         {
           "target": "dmg",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "zip",
           "arch": [
             "x64",
             "arm64"
