@@ -4,12 +4,6 @@ import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react
 import {AppModal, AlertModal, ModalTypes} from '@remix-ui/app'
 import {labels, textDark, textSecondary} from './constants'
 
-enum CONSENT {
-  GIVEN = 0,
-  NOT_GIVEN,
-  NOT_ASKED
-}
-let consentGivenForAI = CONSENT.NOT_ASKED
 
 import './remix-ui-settings.css'
 import {
@@ -138,8 +132,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
 
   const onchangeCopilotActivate = () => {
-    console.log("onchangeCopilotActivate ", props.useCopilot)
-  const onchangeCopilotActivate = async () => {
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('copilot-suggestion', 'uninstall')
@@ -162,18 +154,17 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity Copilot activated` })
     })
 
-    if (await props.plugin.call('copilot-suggestion', 'status')) {
+    if (props.plugin.call('copilot-suggestion', 'status')) {
       copilotActivate(props.config, true, dispatch)          
-    }else {
+    } else {
       startCopilot()
     }
   }
 
- useEffect(() => {
-  if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
-  onchangeCopilotActivate()
-}, [props.useCopilot])
-
+  useEffect(() => {
+    if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
+    onchangeCopilotActivate()
+  }, [props.useCopilot])
 
   const onchangeCopilotMaxNewToken = (event) => {
     copilotMaxNewToken(props.config, parseInt(event.target.value), dispatch)
