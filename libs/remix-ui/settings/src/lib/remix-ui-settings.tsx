@@ -211,6 +211,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     }
   }
 
+  useEffect(()=>{
+    if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
+    onchangeCopilotActivate()
+  }, [props.useCopilot])
+
   const onchangeCopilotMaxNewToken = (event) => {
     copilotMaxNewToken(props.config, parseInt(event.target.value), dispatch)
   }
