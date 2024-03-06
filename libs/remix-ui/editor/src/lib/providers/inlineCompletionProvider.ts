@@ -84,7 +84,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     let result
     try {
-      console.log('processing completion', word)
       result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
       const generatedText = (result as any).output[0].generated_text as string
       let clean = generatedText
@@ -93,9 +92,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
       }
       clean = clean.replace(word, '').trimStart()
-      console.log('completion', clean, clean.split('\n')[0])
       clean = clean.split('\n')[0].startsWith('\n') ? [clean.split('\n')[0], clean.split('\n')[1]].join('\n'): clean.split('\n')[0]
-      console.log('completion after ', clean)
 
       const item: monacoTypes.languages.InlineCompletion = {
         insertText: clean
