@@ -321,7 +321,7 @@ export function UniversalDappUI(props: UdappProps) {
           { props.isSavedContract && props.instance.filePath ? (
             <div className="d-flex" data-id="instanceContractFilePath">
               <label>
-                <b><FormattedMessage id="udapp.filePath" />:</b> {props.instance.filePath}
+                <span style={{float: 'left'}}><b><FormattedMessage id="udapp.filePath" />:</b></span> &nbsp;{props.instance.filePath}
               </label>
             </div>
           ) : null }
