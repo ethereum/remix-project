@@ -52,7 +52,8 @@ class Editor extends Plugin {
       cairo: 'cairo',
       ts: 'typescript',
       move: 'move',
-      circom: 'circom'
+      circom: 'circom',
+      nr: 'rust'
     }
 
     this.activated = false
@@ -360,7 +361,7 @@ class Editor extends Plugin {
 
   /**
    * Path of the currently editing file
-   * returns `undefined` if no session is being editer
+   * returns `undefined` if no session is being edited
    * @return {String} path of the current session
    */
   current () {
@@ -449,7 +450,7 @@ class Editor extends Plugin {
   }
 
   /**
-   * Clears all the decorations for the given @arg filePath and @arg plugin, if none is given, the current sesssion is used.
+   * Clears all the decorations for the given @arg filePath and @arg plugin, if none is given, the current session is used.
    * An annotation has the following shape:
       column: -1
       row: -1
@@ -502,7 +503,7 @@ class Editor extends Plugin {
   }
 
   /**
-   * Clears all the annotations for the given @arg filePath, the plugin name is retrieved from the context, if none is given, the current sesssion is used.
+   * Clears all the annotations for the given @arg filePath, the plugin name is retrieved from the context, if none is given, the current session is used.
    * An annotation has the following shape:
       column: -1
       row: -1

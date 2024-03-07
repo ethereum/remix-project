@@ -86,7 +86,7 @@
   "filePanel.copyFolderFailed": "Copia Cartella Non Riuscita",
   "filePanel.copyFolderFailedMsg": "Errore inatteso durante la copia della cartella: {src}",
   "filePanel.runScriptFailed": "Esecuzione dello script non riuscita",
-  "filePanel.createPublicGist": "Crea Gist Pubblico",
+  "filePanel.createPublicGist": "Pubblicare Gist Pubblico",
   "filePanel.createPublicGistMsg1": "Sei sicuro di voler inviare le modifiche al file gist remoto su github.com?",
   "filePanel.createPublicGistMsg2": "Sei sicuro di voler pubblicare in modo anonimo tutti i tuoi file nella cartella {path} come gist pubblico su github.com?",
   "filePanel.createPublicGistMsg3": "Sei sicuro di voler pubblicare in modo anonimo tutti i tuoi file nella cartella {path} come gist pubblico su github.com?",

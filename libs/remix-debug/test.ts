@@ -1,4 +1,4 @@
-// TODO: this file shoudl be removed at some point
+// TODO: this file should be removed at some point
 const CmdLine = require('./src/cmdline/index')
 // var compilation = require('./compilation.json')
 

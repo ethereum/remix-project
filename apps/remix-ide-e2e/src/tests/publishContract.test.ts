@@ -38,7 +38,7 @@ module.exports = {
       .openFile('ipfs/QmXYUS1ueS22EqNVRaKuZa31EgHLjKZ8uTM8vWhQLxa3pw')
   },
 
-  /* Disableing the test untill refactoring and the new swarm usage
+  /* Disabling the test until refactoring and the new swarm usage
   'Publish on Swarm': '' + function (browser: NightwatchBrowser) {
     browser
       .click('#publishOnSwarm')

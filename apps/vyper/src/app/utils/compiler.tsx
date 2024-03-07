@@ -31,9 +31,7 @@ export interface VyperCompilationError {
 export type VyperCompilationOutput = VyperCompilationResult | VyperCompilationError
 
 /** Check if the output is an error */
-export function isCompilationError(output: VyperCompilationOutput): output is VyperCompilationError {
-  return output.status === 'failed'
-}
+export const isCompilationError = (output: VyperCompilationOutput): output is VyperCompilationError => output.status === 'failed'
 
 export function normalizeContractPath(contractPath: string): string[] {
   const paths = contractPath.split('/')
@@ -52,20 +50,97 @@ function parseErrorString(errorString) {
   // Split the string into lines
   let lines = errorString.trim().split('\n')
   // Extract the line number and message
-  let message = lines[1].trim()
+  console.log(lines)
+  let message = errorString.trim()
   let targetLine = lines[2].split(',')
-  let lineColumn = targetLine[targetLine.length - 1].split(' ')[2].split(':')
+  let tline = lines[2].trim().split(' ')[1].split(':')
+
+  console.log('tline', tline)
   const errorObject = {
     status: 'failed',
     message: message,
-    column: parseInt(lineColumn[1]),
-    line: parseInt(lineColumn[0])
+    column: tline[1],
+    line: tline[0]
   }
   message = null
   targetLine = null
-  lineColumn = null
   lines = null
+  tline = null
   return errorObject
+}
+
+const buildError = (output) => {
+  if (isCompilationError(output)) {
+    const line = output.line
+    if (line) {
+      const lineColumnPos = {
+        start: {line: line - 1, column: 10},
+        end: {line: line - 1, column: 10}
+      }
+      // remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
+    } else {
+      const regex = output?.message?.match(/line ((\d+):(\d+))+/g)
+      const errors = output?.message?.split(/line ((\d+):(\d+))+/g) // extract error message
+      if (regex) {
+        let errorIndex = 0
+        regex.map((errorLocation) => {
+          const location = errorLocation?.replace('line ', '').split(':')
+          let message = errors[errorIndex]
+          errorIndex = errorIndex + 4
+          if (message && message?.split('\n\n').length > 0) {
+            try {
+              message = message?.split('\n\n')[message.split('\n\n').length - 1]
+            } catch (e) {}
+          }
+          if (location?.length > 0) {
+            const lineColumnPos = {
+              start: {line: parseInt(location[0]) - 1, column: 10},
+              end: {line: parseInt(location[0]) - 1, column: 10}
+            }
+            // remixClient.highlight(lineColumnPos as any, _contract.name, message)
+          }
+        })
+      }
+    }
+    throw new Error(output.message)
+  }
+}
+
+const compileReturnType = (output, contract) => {
+  const t: any = toStandardOutput(contract, output)
+  const temp = _.merge(t['contracts'][contract])
+  const normal = normalizeContractPath(contract)[2]
+  const abi = temp[normal]['abi']
+  const evm = _.merge(temp[normal]['evm'])
+  const dpb = evm.deployedBytecode
+  const runtimeBytecode = evm.bytecode
+  const methodIdentifiers = evm.methodIdentifiers
+  const version = output?.compilers[0]?.version ?? '0.3.10'
+  const optimized = output?.compilers[0]?.settings?.optimize ?? true
+  const evmVersion = ''
+
+  const result: {
+    contractName: any,
+    abi: any,
+    bytecode: any,
+    runtimeBytecode: any,
+    ir: '',
+    methodIdentifiers: any,
+    version?: '',
+    evmVersion?: ''
+    optimized?: boolean
+  } = {
+    contractName: normal,
+    abi,
+    bytecode: dpb,
+    runtimeBytecode,
+    ir: '',
+    methodIdentifiers,
+    version,
+    evmVersion,
+    optimized
+  }
+  return result
 }
 
 /**
@@ -117,6 +192,7 @@ export async function compile(url: string, contract: Contract): Promise<any> {
       method: 'Get'
     })).data
     result = parseErrorString(intermediate[0])
+    console.log('error payload', intermediate)
     return result
   }
   await new Promise((resolve) => setTimeout(() => resolve({}), 3000))
@@ -181,15 +257,11 @@ export async function compileContract(contract: string, compilerUrl: string, set
     try {
       _contract = await remixClient.getContract()
     } catch (e: any) {
-      // if (setOutput === null || setOutput === undefined) {
-      const compileResult = {
+      const errorGettingContract = {
         status: 'failed',
         message: e.message
       }
-      remixClient.eventEmitter.emit('setOutput', compileResult)
-      // } else {
-      //   setOutput('', {status: 'failed', message: e.message})
-      // }
+      remixClient.eventEmitter.emit('setOutput', errorGettingContract)
       return
     }
     remixClient.changeStatus({
@@ -198,76 +270,20 @@ export async function compileContract(contract: string, compilerUrl: string, set
       title: 'Compiling'
     })
     let output
-    try {
-      output = await compile(compilerUrl, _contract)
-      console.log('checking compile result', output)
-      remixClient.eventEmitter.emit('setOutput', output)
-    } catch (e: any) {
+    // try {
+    output = await compile(compilerUrl, _contract)
+    if (output.status === 'failed') {
+      console.log('possible error', output)
       remixClient.changeStatus({
         key: 'failed',
         type: 'error',
-        title: `${e.message} debugging`
+        title: 'Compilation failed...'
       })
-      // setOutput !== null || setOutput !== undefined && setOutput('', {status: 'failed', message: e.message})
-      remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: e.message})
+      remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: output.message, title: 'Error compiling...', line: output.line, column: output.column})
+      output = null
       return
     }
-    const compileReturnType = () => {
-      const t: any = toStandardOutput(contract, output)
-      const temp = _.merge(t['contracts'][contract])
-      const normal = normalizeContractPath(contract)[2]
-      const abi = temp[normal]['abi']
-      const evm = _.merge(temp[normal]['evm'])
-      const dpb = evm.deployedBytecode
-      const runtimeBytecode = evm.bytecode
-      const methodIdentifiers = evm.methodIdentifiers
 
-      const result = {
-        contractName: normal,
-        abi: abi,
-        bytecode: dpb,
-        runtimeBytecode: runtimeBytecode,
-        ir: '',
-        methodIdentifiers: methodIdentifiers
-      }
-      return result
-    }
-
-    // ERROR
-    if (isCompilationError(output)) {
-      const line = output.line
-      if (line) {
-        const lineColumnPos = {
-          start: {line: line - 1, column: 10},
-          end: {line: line - 1, column: 10}
-        }
-        // remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
-      } else {
-        const regex = output?.message?.match(/line ((\d+):(\d+))+/g)
-        const errors = output?.message?.split(/line ((\d+):(\d+))+/g) // extract error message
-        if (regex) {
-          let errorIndex = 0
-          regex.map((errorLocation) => {
-            const location = errorLocation?.replace('line ', '').split(':')
-            let message = errors[errorIndex]
-            errorIndex = errorIndex + 4
-            if (message && message?.split('\n\n').length > 0) {
-              try {
-                message = message?.split('\n\n')[message.split('\n\n').length - 1]
-              } catch (e) {}
-            }
-            if (location?.length > 0) {
-              const lineColumnPos = {
-                start: {line: parseInt(location[0]) - 1, column: 10},
-                end: {line: parseInt(location[0]) - 1, column: 10}
-              }
-              // remixClient.highlight(lineColumnPos as any, _contract.name, message)
-            }
-          })
-        }
-      }
-      throw new Error(output.message)
-    }
     // SUCCESS
     // remixClient.discardHighlight()
     remixClient.changeStatus({
@@ -278,12 +294,12 @@ export async function compileContract(contract: string, compilerUrl: string, set
 
     const data = toStandardOutput(_contract.name, output)
     remixClient.compilationFinish(_contract.name, _contract.content, data)
+    const contractName = _contract['name']
+    const compileResult = compileReturnType(output, contractName)
     if (setOutput === null || setOutput === undefined) {
-      const contractName = _contract['name']
-      const compileResult = compileReturnType()
       remixClient.eventEmitter.emit('setOutput', { contractName, compileResult })
     } else {
-      setOutput(_contract.name, compileReturnType())
+      remixClient.eventEmitter.emit('setOutput', { contractName, compileResult })
     }
   } catch (err: any) {
     remixClient.changeStatus({

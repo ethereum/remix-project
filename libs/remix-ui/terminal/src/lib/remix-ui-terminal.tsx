@@ -88,7 +88,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const messagesEndRef = useRef(null)
   const typeWriterIndexes = useRef([])
 
-  // terminal dragable
+  // terminal draggable
   const panelRef = useRef(null)
   const terminalMenu = useRef(null)
 
@@ -573,7 +573,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }, [])
 
   const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
-
 
   const replacer = (key, value) => {
     if (isBigInt(value)) value = value.toString()

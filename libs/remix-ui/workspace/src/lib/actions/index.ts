@@ -6,7 +6,7 @@ import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryR
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin, workspaceExists } from './workspace'
 import { QueryParams, Registry } from '@remix-project/remix-lib'
-import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
+import { fetchContractFromEtherscan, fetchContractFromBlockscout } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
 import { Actions, FileTree } from '../types'
 import IpfsHttpClient from 'ipfs-http-client'
@@ -26,6 +26,7 @@ export type UrlParametersType = {
   url: string,
   address: string
   opendir: string,
+  blockscout: string,
 }
 
 const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
@@ -90,6 +91,40 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           filePathToOpen = filePath
         }
       })
+    } else if (params.address && params.blockscout) {
+      if (params.address.startsWith('0x') && params.address.length === 42 && params.blockscout.length > 0) {
+        const contractAddress = params.address
+        const blockscoutUrl = params.blockscout
+        plugin.call('notification', 'toast', `Looking for contract(s) verified on ${blockscoutUrl} for contract address ${contractAddress} .....`)
+        let data
+        let count = 0
+        try {
+          const workspaceName = 'code-sample'
+          let filePath
+          const target = `/${blockscoutUrl}/${contractAddress}`
+
+          data = await fetchContractFromBlockscout(plugin, blockscoutUrl, contractAddress, target, false)
+          if (await workspaceExists(workspaceName)) workspaceProvider.setWorkspace(workspaceName)
+          else await createWorkspaceTemplate(workspaceName, 'code-template')
+          plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+          dispatch(setCurrentWorkspace({ name: workspaceName, isGitRepo: false }))
+          count = count + (Object.keys(data.compilationTargets)).length
+          for (filePath in data.compilationTargets)
+            await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+
+          plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
+            if (editorMounted){
+              setTimeout(async () => {
+                await plugin.fileManager.openFile(filePath)}, 1000)
+            }else{
+              filePathToOpen = filePath
+            }
+          })
+          plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '' : 's'} from ${blockscoutUrl} network for contract address ${contractAddress} !!`)
+        } catch (error) {
+          await basicWorkspaceInit(workspaces, workspaceProvider)
+        }
+      } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else if (params.address) {
       if (params.address.startsWith('0x') && params.address.length === 42) {
         const contractAddress = params.address
@@ -369,7 +404,7 @@ export const downloadPath = async (path: string) => {
   try {
     await fileManager.download(path)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while downloading.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while downloading.' + error))
   }
 }
 
@@ -379,7 +414,7 @@ export const copyFile = async (src: string, dest: string) => {
   try {
     await fileManager.copyFile(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyFile operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyFile operation.' + error))
   }
 }
 
@@ -406,7 +441,7 @@ export const copyShareURL = async (path: string) => {
     const shareUrl = `${window.location.origin}/#shareCode=${hash}`
     navigator.clipboard.writeText(shareUrl)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyShareURL operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyShareURL operation.' + error))
   }
 }
 
@@ -416,7 +451,7 @@ export const copyFolder = async (src: string, dest: string) => {
   try {
     await fileManager.copyDir(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyDir operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyDir operation.' + error))
   }
 }
 
@@ -508,7 +543,7 @@ const packageGistFiles = async (directory) => {
     if (isFile) {
       try {
         workspaceProvider.get(directory, (error, content) => {
-          if (error) throw new Error('An error ocurred while getting file content. ' + directory)
+          if (error) throw new Error('An error occurred while getting file content. ' + directory)
           if (/^\s+$/.test(content) || !content.length) {
             content = '// this line is added to create a gist. Empty file is not allowed.'
           }
@@ -596,7 +631,7 @@ export const moveFile = async (src: string, dest: string) => {
   try {
     await fileManager.moveFile(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing moveFile operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing moveFile operation.' + error))
   }
 }
 
@@ -606,7 +641,7 @@ export const moveFolder = async (src: string, dest: string) => {
   try {
     await fileManager.moveDir(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing moveDir operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing moveDir operation.' + error))
   }
 }
 

@@ -29,7 +29,7 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState}: 
         className="btn btn-primary w-100 d-block btn-block text-break remixui_disabled mb-1 mt-3"
       >
         <div className="d-flex align-items-center justify-content-center fa-1x">
-          <span className="fas fa-sync fa-pulse mr-1" />
+          {/* <span className="fas fa-sync fa-pulse mr-1" /> */}
           <div className="text-truncate overflow-hidden text-nowrap">
             <span>Compile</span>
             <span className="ml-1 text-nowrap">{contract}</span>

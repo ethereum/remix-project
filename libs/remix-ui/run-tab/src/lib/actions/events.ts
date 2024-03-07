@@ -1,8 +1,8 @@
 import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances, fillAccountsList } from "./account"
-import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
+import { addExternalProvider, addInstance, addSavedInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
+import { addDeployOption, clearAllInstances, clearAllSavedInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
 import { updateInstanceBalance } from './deploy'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
@@ -79,8 +79,16 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(clearAllInstances())
   })
 
+  plugin.on('udapp', 'clearAllSavedInstancesReducer', () => {
+    dispatch(clearAllSavedInstances())
+  })
+
   plugin.on('udapp', 'addInstanceReducer', (address, abi, name) => {
     addInstance(dispatch, { abi, address, name })
+  })
+
+  plugin.on('udapp', 'addSavedInstanceReducer', (address, abi, name, savedOn, filePath) => {
+    addSavedInstance(dispatch, { abi, address, name, savedOn, filePath})
   })
 
   plugin.on('filePanel', 'setWorkspace', () => {

@@ -49,7 +49,7 @@ export function ContractGUI(props: ContractGUIProps) {
       setTitle(props.funcABI.type === 'receive' ? '(receive)' : '(fallback)')
     }
     setBasicInput('')
-    // we have the reset the fields before reseting the previous references.
+    // we have the reset the fields before resetting the previous references.
     basicInputRef.current.value = ''
     multiFields.current.filter((el) => el !== null && el !== undefined).forEach((el) => (el.value = ''))
     multiFields.current = []

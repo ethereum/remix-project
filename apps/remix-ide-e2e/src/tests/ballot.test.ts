@@ -75,7 +75,7 @@ module.exports = {
         abortOnFailure: false,
         suppressNotFoundErrors: true,
       })
-      // we are not changing the visibility for not checksumed contracts
+      // we are not changing the visibility for not checksummed contracts
       // .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3B', true, false)
       .clickLaunchIcon('filePanel')
       .addAtAddressInstance('0x692a70D2e424a56D2C6C27aA97D1a86395877b3A', true, true)
