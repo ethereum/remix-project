@@ -238,15 +238,38 @@ jobs:
           command: |
             Get-ChildItem -Path 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit' -Filter signtool.exe -Recurse
       - run:
+          name: read env
+          shell: powershell.exe
+          command: |
+            # Specify the path to your package.json file
+            $packageJsonPath = "C:\Users\circleci\remix-project\apps\remixdesktop\package.json"
+
+            # Check if the file exists
+            if (Test-Path $packageJsonPath) {
+                # Read the content of the package.json file
+                $packageJsonContent = Get-Content $packageJsonPath -Raw | ConvertFrom-Json
+
+                # Check if the 'version' field exists in the package.json
+                if ($packageJsonContent.'version' -ne $null) {
+                    # Store the version value in an environment variable
+                    $env:PACKAGE_VERSION = 'C:\Users\circleci\remix-project\release\Remix-Desktop Setup '.$packageJsonContent.'.exe'
+                    Write-Host "Version $($env:PACKAGE_VERSION) stored in PACKAGE_VERSION environment variable."
+                } else {
+                    Write-Host "Error: 'version' field not found in package.json."
+                }
+            } else {
+                Write-Host "Error: package.json file not found at $packageJsonPath."
+            }
+      - run:
           name: "Signtool-Signing"
           shell: powershell.exe
           command: |
-            & $env:Signtool sign /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $env:RemixSetupExe
+            & $env:Signtool sign /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $env:PACKAGE_VERSION
       - run:
           name: "Signtool-Verification"
           shell: powershell.exe
           command: |
-            $verify_output = $(& $env:Signtool verify /v /pa $env:RemixSetupExe)
+            $verify_output = $(& $env:Signtool verify /v /pa $env:PACKAGE_VERSION)
             echo ${verify_output}
             if (!$verify_output.Contains("Number of files successfully Verified: 1")) {
               echo 'Verification failed'
@@ -269,7 +292,6 @@ jobs:
       SM_CLIENT_CERT_FILE: 'C:\Certificate_pkcs12.p12'
       Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
       SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
-      RemixSetupExe: 'C:\Users\circleci\remix-project\release\Remix-Desktop.exe'
         
   build-remixdesktop-mac:
     macos:
