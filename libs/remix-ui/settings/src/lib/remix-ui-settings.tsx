@@ -131,7 +131,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
 
   const onchangeCopilotActivate = () => {
-    console.log("onchangeCopilotActivate ", props.useCopilot)
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity copilot deactivated!` })
@@ -426,7 +425,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     copilotTemperatureValue = 0.9
   }
 
-  //if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
   const copilotSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
