@@ -134,28 +134,16 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     console.log("onchangeCopilotActivate ", props.useCopilot)
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
-      props.plugin.call('copilot-suggestion', 'uninstall')
-      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity copilot deactivated` })
+      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity copilot deactivated!` })
       return
     } 
 
-    props.plugin.on('copilot-suggestion', 'ready', (data) => {
-      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `loading Solidity copilot: 100% done.` })
-    })
-
     const startCopilot = async () => {
-      await props.plugin.call('copilot-suggestion', 'init')
-      if (await props.plugin.call('copilot-suggestion', 'status')) {
-        copilotActivate(props.config, true, dispatch)          
-      }
+      copilotActivate(props.config, true, dispatch)          
+      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity copilot activated!` })
     }
     
     startCopilot()
-    if (props.plugin.call('copilot-suggestion', 'status')) {
-      copilotActivate(props.config, true, dispatch)          
-    }else {
-      startCopilot()
-    }
   }
 
   useEffect(() => {
