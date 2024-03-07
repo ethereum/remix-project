@@ -556,11 +556,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }))
   }
 
-  const handleToggleTerminal = () => {
-    setIsOpen(!isOpen)
-    props.plugin.call('layout', 'minimize', props.plugin.profile.name, isOpen)
-  }
-
   useEffect(() => {
     ;(async () => {
       const storage = await props.plugin.call('storage', 'formatString', await props.plugin.call('storage', 'getStorage'))
@@ -579,9 +574,8 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
 
   return (
-    ( !props.visible? <></>: 
-      <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel" ref={panelRef}>
-
+    ( props.visible &&
+      <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel h-100" ref={panelRef}>
         <div tabIndex={-1} className="remix_ui_terminal_container d-flex h-100 m-0 flex-column" data-id="terminalContainer">
           {handleAutoComplete()}
           <div className="position-relative d-flex flex-column-reverse h-100">

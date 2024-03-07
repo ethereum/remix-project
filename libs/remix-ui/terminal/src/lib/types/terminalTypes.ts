@@ -31,7 +31,7 @@ export const SEARCH = 'search'
 export const SET_ISVM = 'setIsVM'
 
 export interface RemixUiTerminalProps {
-    plugin: any,
-    onReady: (api: any) => void,
-    visible: boolean,
+  plugin: any,
+  onReady: (api: any) => void,
+  visible: boolean,
 }
