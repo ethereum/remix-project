@@ -636,36 +636,36 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   return x.message
                     .filter((x) => includeSearch(x, terminalState.searchInput))
                     .map((trans) => {
-                    return (
-                      <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
-                        {trans.tx.isCall ? (
-                          <RenderCall
-                            tx={trans.tx}
-                            resolvedData={trans.resolvedData}
-                            logs={trans.logs}
-                            index={index}
-                            plugin={props.plugin}
-                            showTableHash={showTableHash}
-                            txDetails={txDetails}
-                            modal={modal}
-                          />
-                        ) : (
-                          <RenderKnownTransactions
-                            tx={trans.tx}
-                            receipt={trans.receipt}
-                            resolvedData={trans.resolvedData}
-                            logs={trans.logs}
-                            index={index}
-                            plugin={props.plugin}
-                            showTableHash={showTableHash}
-                            txDetails={txDetails}
-                            modal={modal}
-                            provider={x.provider}
-                          />
-                        )}
-                      </div>
-                    )
-                  })
+                      return (
+                        <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
+                          {trans.tx.isCall ? (
+                            <RenderCall
+                              tx={trans.tx}
+                              resolvedData={trans.resolvedData}
+                              logs={trans.logs}
+                              index={index}
+                              plugin={props.plugin}
+                              showTableHash={showTableHash}
+                              txDetails={txDetails}
+                              modal={modal}
+                            />
+                          ) : (
+                            <RenderKnownTransactions
+                              tx={trans.tx}
+                              receipt={trans.receipt}
+                              resolvedData={trans.resolvedData}
+                              logs={trans.logs}
+                              index={index}
+                              plugin={props.plugin}
+                              showTableHash={showTableHash}
+                              txDetails={txDetails}
+                              modal={modal}
+                              provider={x.provider}
+                            />
+                          )}
+                        </div>
+                      )
+                    })
                 } else if (Array.isArray(x.message)) {
                   if (terminalState.searchInput !== '') return []
                   return x.message.map((msg, i) => {
