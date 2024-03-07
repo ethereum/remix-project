@@ -64,7 +64,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
         className="remix_ui_terminal_filter border form-control"
         id="searchInput"
         placeholder={intl.formatMessage({ id: 'terminal.search' })}
-        data-id="terminalInputSearch"
+        data-id="terminalInputSearchTerminal"
       />
     </div>
     <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole}>

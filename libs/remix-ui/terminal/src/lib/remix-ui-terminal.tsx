@@ -10,6 +10,7 @@ import {
   listenOnNetworkAction,
   initListeningOnNetwork,
 } from './actions/terminalAction'
+import { isBigInt } from 'web3-validator'
 import { initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
 import { getKeyOf, getValueOf, Objectfilter, matched } from './utils/utils'
 import { allCommands, allPrograms } from './commands' // eslint-disable-line
@@ -573,6 +574,23 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
 
+
+  const replacer = (key, value) => {
+    if (isBigInt(value)) value = value.toString()
+    if (typeof value === 'function') value = value.toString()
+    return value
+  }
+
+  const includeSearch = (x, searchInput) => {
+    try {
+      const value = JSON.stringify(x, replacer)
+      return value.indexOf(searchInput) !== -1 || value.indexOf(searchInput.toLowerCase()) !== -1
+    } catch (e) {
+      console.error(e)
+      return true
+    }    
+  }
+
   return (
     ( props.visible &&
       <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel h-100" ref={panelRef}>
@@ -595,7 +613,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   )
                 } else if (x.name === UNKNOWN_TRANSACTION) {
                   return x.message
-                    .filter((x) => x.tx.hash.includes(terminalState.searchInput) || x.tx.from.includes(terminalState.searchInput) || (x.tx.to && x.tx.to.includes(terminalState.searchInput)))
+                    .filter((x) => includeSearch(x, terminalState.searchInput))
                     .map((trans) => {
                       return (
                         <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
@@ -616,7 +634,9 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                       )
                     })
                 } else if (x.name === KNOWN_TRANSACTION) {
-                  return x.message.map((trans) => {
+                  return x.message
+                    .filter((x) => includeSearch(x, terminalState.searchInput))
+                    .map((trans) => {
                     return (
                       <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
                         {trans.tx.isCall ? (
