@@ -7,7 +7,7 @@ exports.default = async function notarizing(context) {
 
   console.log('NOTARIZING');
 
-  if (electronPlatformName !== 'darwin') {
+  if (electronPlatformName !== 'darwin' || !process.env.CIRCLE_BRANCH) {
     return;
   }
 

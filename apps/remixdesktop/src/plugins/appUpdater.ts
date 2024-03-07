@@ -107,7 +107,6 @@ class AppUpdaterPluginClient extends ElectronBasePluginClient {
 
   async install(): Promise<void> {
     autoUpdater.quitAndInstall()
-    app.exit()
   }
 
   async checkForUpdates(): Promise<void> {
