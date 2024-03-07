@@ -68,7 +68,6 @@ const remixLib = require('@remix-project/remix-lib')
 import { QueryParams } from '@remix-project/remix-lib'
 import { SearchPlugin } from './app/tabs/search'
 import { ElectronProvider } from './app/files/electronProvider'
-import { CopilotSuggestion } from './app/plugins/copilot/suggestion-service/copilot-suggestion'
 
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
@@ -235,7 +234,6 @@ class AppComponent {
     // ----------------- AI --------------------------------------
     const openaigpt = new OpenAIGpt()
     const solcoder = new SolCoder()
-    const copilotSuggestion = new CopilotSuggestion()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -363,7 +361,6 @@ class AppComponent {
       templates,
       openaigpt,
       solcoder,
-      copilotSuggestion
     ])
 
     //---- fs plugin

@@ -1,5 +1,6 @@
 /* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
+
 import axios, {AxiosResponse} from 'axios'
 import { slice } from 'lodash';
 const _paq = (window._paq = window._paq || [])
@@ -28,16 +29,14 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: position.column,
     });
 
-    
     if (!word.endsWith(' ') &&
-      !word.endsWith(';') && 
       !word.endsWith('.') && 
       !word.endsWith('(')) {
       return;
     }
 
     try {
-      const isActivate = await this.props.plugin.call('copilot-suggestion', 'isActivate')
+      const isActivate = await  await this.props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
       if (!isActivate) return
     } catch (err) {
       return;
@@ -64,6 +63,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         }
       }
     } catch (e) {
+      console.error(e)
       return
     }   
 
@@ -84,15 +84,16 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     let result
     try {
-      result = await this.props.plugin.call('copilot-suggestion', 'suggest', word)
-      const generatedText = (result as any).output[0].generated_text as string
+      const output = await this.props.plugin.call('solcoder', 'code_completion', word)
+      const generatedText = output[0]
       let clean = generatedText
 
       if (generatedText.indexOf('@custom:dev-run-script./') !== -1) {
         clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
       }
       clean = clean.replace(word, '').trimStart()
-      clean = clean.split('\n')[0].startsWith('\n') ? [clean.split('\n')[0], clean.split('\n')[1]].join('\n'): clean.split('\n')[0]
+      console.log('clean', clean)
+      clean = this.process_completion(clean)
 
       const item: monacoTypes.languages.InlineCompletion = {
         insertText: clean
@@ -104,6 +105,16 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     } catch (err) {
       return
     }
+  }
+
+  process_completion(data: any) {
+    const clean = data.split('\n')[0].startsWith('\n') ? [data.split('\n')[0], data.split('\n')[1]].join('\n'): data.split('\n')[0]
+
+    // if clean starts with a comment, remove it
+    if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
+      return ""
+    }
+    return clean
   }
 
   handleItemDidShow?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, updatedInsertText: string): void {
