@@ -1,5 +1,6 @@
 /* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
+import { CompletionTimer } from './completionTimer';
 
 import axios, {AxiosResponse} from 'axios'
 import { slice } from 'lodash';
@@ -12,10 +13,13 @@ const result: string = ''
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
   props: EditorUIProps
   monaco: any
+  completionEnabled: boolean
   constructor(props: any, monaco: any) {
     this.props = props
     this.monaco = monaco
+    this.completionEnabled = true
   }
+
 
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
     if (context.selectedSuggestionInfo) {
@@ -82,6 +86,11 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return
     }
 
+    // abort if the completion is not enabled
+    if (!this.completionEnabled) {
+      return
+    }
+
     let result
     try {
       const output = await this.props.plugin.call('solcoder', 'code_completion', word)
@@ -92,12 +101,17 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
       }
       clean = clean.replace(word, '').trimStart()
-      console.log('clean', clean)
       clean = this.process_completion(clean)
 
       const item: monacoTypes.languages.InlineCompletion = {
         insertText: clean
       };
+
+      // handle the completion timer by locking suggestions request for 2 seconds
+      this.completionEnabled = false
+      const handleCompletionTimer = new CompletionTimer(2000, () => { this.completionEnabled = true });
+      handleCompletionTimer.start()
+
       return {
         items: [item],
         enableForwardStability: true
@@ -115,7 +129,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return ""
     }
     // remove comment inline 
-    clean = clean.split('//')[0]
+    clean = clean.split('//')[0].trimEnd()
     return clean
   }
 
