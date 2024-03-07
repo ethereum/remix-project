@@ -108,12 +108,14 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
   }
 
   process_completion(data: any) {
-    const clean = data.split('\n')[0].startsWith('\n') ? [data.split('\n')[0], data.split('\n')[1]].join('\n'): data.split('\n')[0]
+    let clean = data.split('\n')[0].startsWith('\n') ? [data.split('\n')[0], data.split('\n')[1]].join('\n'): data.split('\n')[0]
 
     // if clean starts with a comment, remove it
     if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
       return ""
     }
+    // remove comment inline 
+    clean = clean.split('//')[0]
     return clean
   }
 
