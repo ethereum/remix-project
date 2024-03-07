@@ -252,7 +252,8 @@ jobs:
                 # Check if the 'version' field exists in the package.json
                 if ($packageJsonContent.'version' -ne $null) {
                     # Store the version value in an environment variable
-                    $env:PACKAGE_VERSION = 'C:\Users\circleci\remix-project\release\Remix-Desktop Setup '.$packageJsonContent.'.exe'
+                    $version = $packageJsonContent.version
+                    $env:PACKAGE_VERSION = "C:\Users\circleci\remix-project\release\Remix-Desktop Setup $($version).exe" 
                     Write-Host "Version $($env:PACKAGE_VERSION) stored in PACKAGE_VERSION environment variable."
                 } else {
                     Write-Host "Error: 'version' field not found in package.json."
