@@ -595,7 +595,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   )
                 } else if (x.name === UNKNOWN_TRANSACTION) {
                   return x.message
-                    .filter((x) => x.tx.hash.includes(terminalState.searchInput) || x.tx.from.includes(terminalState.searchInput) || x.tx.to.includes(terminalState.searchInput))
+                    .filter((x) => x.tx.hash.includes(terminalState.searchInput) || x.tx.from.includes(terminalState.searchInput) || (x.tx.to && x.tx.to.includes(terminalState.searchInput)))
                     .map((trans) => {
                       return (
                         <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
@@ -648,6 +648,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                     )
                   })
                 } else if (Array.isArray(x.message)) {
+                  if (terminalState.searchInput !== '') return []
                   return x.message.map((msg, i) => {
                     // strictly check condition on 0, false, except undefined, NaN.
                     // if you type `undefined`, terminal automatically throws error, it's error message: "undefined" is not valid JSON
