@@ -111,8 +111,41 @@ export function UniversalDappUI(props: UdappProps) {
     setToggleExpander(!toggleExpander)
   }
 
-  const remove = () => {
-    props.removeInstance(props.index)
+  const remove = async() => {
+    if (props.isSavedContract) {
+      const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
+      const savedContracts = localStorage.getItem('savedContracts')
+      const savedContractsJson = JSON.parse(savedContracts)
+      const instanceIndex = savedContractsJson[network.id].findIndex(instance => instance && instance.address === props.instance.address)
+      delete savedContractsJson[network.id][instanceIndex]
+      savedContractsJson[network.id] = savedContractsJson[network.id].filter(Boolean)
+      localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson))
+    }
+    props.removeInstance(props.index, props.isSavedContract)
+  }
+
+  const saveContract = async() => {
+    const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
+    const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
+    const savedContracts = localStorage.getItem('savedContracts')
+    let objToSave
+    if (!savedContracts) {
+      objToSave = {}
+      objToSave[network.id] = []
+    } else {
+      objToSave = JSON.parse(savedContracts)
+      if (!objToSave[network.id]) {
+        objToSave[network.id] = []
+      }
+    }
+    props.instance.savedOn = Date.now()
+    props.instance.filePath = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
+    objToSave[network.id].push(props.instance)
+    localStorage.setItem('savedContracts', JSON.stringify(objToSave))
+    // Add contract to saved contracts list on UI
+    await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.abi || props.instance.contractData.abi, props.instance.name, props.instance.savedOn, props.instance.filePath)
+    // Remove contract from deployed contracts list on UI
+    props.removeInstance(props.index, false)
   }
 
   const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
@@ -121,6 +154,7 @@ export function UniversalDappUI(props: UdappProps) {
 
     props.runTransactions(
       props.index,
+      props.isSavedContract,
       lookupOnly,
       funcABI,
       inputsValues,
@@ -227,11 +261,16 @@ export function UniversalDappUI(props: UdappProps) {
               {props.instance.name} at {shortenAddress(address)} ({props.context})
             </span>
           </div>
-          <div className="btn">
+          <div className="btn" style={{padding: '0.15rem'}}>
             <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
           </div>
+          { props.isSavedContract || !(props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSaveTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText14" />}>
+              <i className="far fa-save p-2" aria-hidden="true" data-id="universalDappUiUdappSave" onClick={saveContract}></i>
+            </CustomTooltip>
+          </div> ) : null }
         </div>
-        <CustomTooltip placement="right" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText7" />}>
+        <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={ !props.isSavedContract ? (<FormattedMessage id="udapp.tooltipText7" />) : (<FormattedMessage id="udapp.tooltipTextUnsave" />)}>
           <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
         </CustomTooltip>
       </div>
@@ -239,9 +278,23 @@ export function UniversalDappUI(props: UdappProps) {
         <div className="udapp_contractActionsContainer">
           <div className="d-flex" data-id="instanceContractBal">
             <label>
-              <FormattedMessage id="udapp.balance" />: {instanceBalance} ETH
+              <b><FormattedMessage id="udapp.balance" />:</b> {instanceBalance} ETH
             </label>
           </div>
+          { props.isSavedContract && props.instance.savedOn ? (
+            <div className="d-flex" data-id="instanceContractSavedOn">
+              <label>
+                <b><FormattedMessage id="udapp.savedOn" />:</b> {(new Date(props.instance.savedOn)).toLocaleString()}
+              </label>
+            </div>
+          ) : null }
+          { props.isSavedContract && props.instance.filePath ? (
+            <div className="d-flex" data-id="instanceContractFilePath">
+              <label>
+                <b><FormattedMessage id="udapp.filePath" />:</b> {props.instance.filePath}
+              </label>
+            </div>
+          ) : null }
           {contractABI &&
             contractABI.map((funcABI, index) => {
               if (funcABI.type !== 'function') return null

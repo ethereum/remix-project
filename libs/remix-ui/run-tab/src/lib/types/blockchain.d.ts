@@ -43,7 +43,7 @@ export class Blockchain extends Plugin<any, any> {
   getProvider(): any;
   getInjectedWeb3Address(): any;
   /**
-     * return the fork name applied to the current envionment
+     * return the fork name applied to the current environment
      * @return {String} - fork name
      */
   getCurrentFork(): string;

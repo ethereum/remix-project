@@ -222,3 +222,43 @@ html, body, #root, main {
   margin: 15px;
   padding: 15px;
 }
+
+.cursor-status {
+
+}
+
+.cursor-status :hover {
+  cursor: pointer;
+}
+
+.accordion-background {
+  background-color: var(--body-bg);
+}
+
+.accordion-background:hover {
+  cursor: pointer;
+}
+
+.vyper-compile-warning,
+.vyper-compile-error {
+  white-space: pre-line;
+  word-wrap: break-word;
+  cursor: pointer;
+  position: relative;
+  margin: 0.5em 0 1em 0;
+  border-radius: 5px;
+  line-height: 20px;
+  padding: 8px 15px;
+}
+
+.vyper-compile-warning pre,
+.vyper-compile-error pre {
+  white-space: pre-line;
+  overflow-y: hidden;
+  background-color: transparent;
+  margin: 0;
+  font-size: 12px;
+  border: 0 none;
+  padding: 0;
+  border-radius: 0;
+}

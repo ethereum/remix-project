@@ -1,6 +1,6 @@
 import category from './categories'
 import {
-  isInteraction, isEffect, isLocalCallGraphRelevantNode, getFullQuallyfiedFuncDefinitionIdent,
+  isInteraction, isEffect, isLocalCallGraphRelevantNode, getFullQualifiedFuncDefinitionIdent,
   isWriteOnStateVariable, isStorageVariableDeclaration, getFullQualifiedFunctionCallIdent, getCompilerVersion
 } from './staticAnalysisCommon'
 import algorithm from './algorithmCategories'
@@ -36,7 +36,7 @@ export default class checksEffectsInteraction implements AnalyzerModule {
     contracts.forEach((contract) => {
       contract.functions.forEach((func) => {
         func['changesState'] = this.checkIfChangesState(
-          getFullQuallyfiedFuncDefinitionIdent(
+          getFullQualifiedFuncDefinitionIdent(
             contract.node,
             func.node,
             func.parameters
@@ -49,7 +49,7 @@ export default class checksEffectsInteraction implements AnalyzerModule {
       })
       contract.functions.forEach((func: FunctionHLAst) => {
         if (this.isPotentialVulnerableFunction(func, this.getContext(callGraph, contract, func))) {
-          const funcName: string = getFullQuallyfiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
+          const funcName: string = getFullQualifiedFuncDefinitionIdent(contract.node, func.node, func.parameters)
           let comments: string = (hasModifiers) ? 'Note: Modifiers are currently not considered by this static analysis.' : ''
           comments += (multipleContractsWithSameName) ? 'Note: Import aliases are currently not supported by this static analysis.' : ''
           warnings.push({

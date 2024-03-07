@@ -7,7 +7,7 @@ import { fileDecoration } from '@remix-ui/file-decorators'
 
 const profile = {
   name: 'fileDecorator',
-  desciption: 'Keeps decorators of the files',
+  description: 'Keeps decorators of the files',
   methods: ['setFileDecorators', 'clearFileDecorators', 'clearAllFileDecorators'],
   events: ['fileDecoratorsChanged'],
   version: '0.0.1'

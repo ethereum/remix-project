@@ -3,6 +3,7 @@ export const textDark = 'text-dark'
 
 export const gitAccessTokenLink = 'https://github.com/settings/tokens/new?scopes=gist,repo&description=Remix%20IDE%20Token'
 export const etherscanTokenLink = 'https://etherscan.io/myapikey'
+export const sindriAccessTokenLink = 'https://sindri.app'
 export const labels = {
   'gist': {
     'link': gitAccessTokenLink,
@@ -11,5 +12,9 @@ export const labels = {
   'etherscan': {
     'link': etherscanTokenLink,
     'key': 'etherscan-access-token'
+  },
+  'sindri': {
+    'link': sindriAccessTokenLink,
+    'key': 'sindri-access-token'
   }
 }

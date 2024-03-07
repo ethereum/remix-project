@@ -42,7 +42,7 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
-import { contractDeployerScripts, etherscanScripts } from '@remix-project/remix-ws-templates'
+import * as templates from '@remix-project/remix-ws-templates'
 
 declare global {
   interface Window {
@@ -298,7 +298,9 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
             }
             return Object.keys(standardInput.sources)[0]
           } else {
-            await workspaceProvider.set(path, JSON.stringify(content))
+            // preserve JSON whitepsace if this isn't a Solidity compiler JSON-input-output file
+            content = data.content
+            await workspaceProvider.set(path, content)
           }
         } catch (e) {
           console.log(e)
@@ -700,7 +702,7 @@ export const cloneRepository = async (url: string) => {
           plugin.call('notification', 'modal', cloneModal)
         })
     } catch (e) {
-      dispatch(displayPopUp('An error occured: ' + e))
+      dispatch(displayPopUp('An error occurred: ' + e))
     }
   }
 }
@@ -867,14 +869,10 @@ export const createSlitherGithubAction = async () => {
   plugin.call('fileManager', 'open', path)
 }
 
-const scriptsRef = {
-  deployer: contractDeployerScripts,
-  etherscan: etherscanScripts,
-}
 export const createHelperScripts = async (script: string) => {
-  if (!scriptsRef[script]) return
-  await scriptsRef[script](plugin)
-  plugin.call('notification', 'toast', 'scripts added in the "scripts" folder')
+  if (!templates[script]) return
+  await templates[script](plugin)
+  plugin.call('notification', 'toast', `'${script}' added to the workspace.`)
 }
 
 export const updateGitSubmodules = async () => {

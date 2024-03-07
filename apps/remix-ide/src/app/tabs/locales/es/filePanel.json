@@ -86,7 +86,7 @@
   "filePanel.copyFolderFailed": "Copia de Carpeta Fallida",
   "filePanel.copyFolderFailedMsg": "Error inesperado al copiar la carpeta: {src}",
   "filePanel.runScriptFailed": "Error al ejecutar el script",
-  "filePanel.createPublicGist": "Crear una lista pública",
+  "filePanel.createPublicGist": "Publicar una lista pública",
   "filePanel.createPublicGistMsg1": "¿Está seguro que desea empujar cambios al archivo gist remoto en github.com?",
   "filePanel.createPublicGistMsg2": "¿Estás seguro que quieres publicar todos tus archivos de forma anónima en la carpeta {path} como un gist público en github.com?",
   "filePanel.createPublicGistMsg3": "¿Estás seguro de que quieres publicar de forma anónima el archivo {path} como una gist público en github.com?",

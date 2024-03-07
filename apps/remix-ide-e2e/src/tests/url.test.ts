@@ -107,6 +107,46 @@ module.exports = {
       })
   },
 
+  'Should load Blockscout verified contracts from URL "address" and "blockscout" params (single source)': function (browser: NightwatchBrowser) {
+    browser
+      .url('http://127.0.0.1:8080/#address=0xdAC17F958D2ee523a2206206994597C13D831ec7&blockscout=eth.blockscout.com')
+      .refreshPage()
+      .pause(7000)
+      .currentWorkspaceIs('code-sample')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0xdAC17F958D2ee523a2206206994597C13D831ec7"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content && content.indexOf(
+          'contract TetherToken is Pausable, StandardToken, BlackList {') !== -1)
+
+      })
+  },
+
+  'Should load Blockscout verified contracts from URL "address" and "blockscout" params (multiple sources)': function (browser: NightwatchBrowser) {
+    browser
+      .url('http://127.0.0.1:8080/#address=0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9&blockscout=eth.blockscout.com')
+      .refreshPage()
+      .pause(7000)
+      .currentWorkspaceIs('code-sample')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/Address.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/BaseAdminUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/BaseUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/InitializableAdminUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/InitializableUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/Proxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/UpgradeabilityProxy.sol"]')
+      .openFile('eth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/InitializableAdminUpgradeabilityProxy.sol')
+      .getEditorValue((content) => {
+        browser.assert.ok(content && content.indexOf(
+          'contract InitializableAdminUpgradeabilityProxy is BaseAdminUpgradeabilityProxy, InitializableUpgradeabilityProxy {') !== -1)
+      })
+
+  },
+
   'Should load the code from URL & code params #group1': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=true&runs=300&url=https://github.com/ethereum/remix-project/blob/master/apps/remix-ide/contracts/app/solidity/mode.sol&code=cHJhZ21hIHNvbGlkaXR5ID49MC42LjAgPDAuNy4wOwoKaW1wb3J0ICJodHRwczovL2dpdGh1Yi5jb20vT3BlblplcHBlbGluL29wZW56ZXBwZWxpbi1jb250cmFjdHMvYmxvYi9tYXN0ZXIvY29udHJhY3RzL2FjY2Vzcy9Pd25hYmxlLnNvbCI7Cgpjb250cmFjdCBHZXRQYWlkIGlzIE93bmFibGUgewogIGZ1bmN0aW9uIHdpdGhkcmF3KCkgZXh0ZXJuYWwgb25seU93bmVyIHsKICB9Cn0')

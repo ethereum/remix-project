@@ -169,7 +169,7 @@ export const TabsUI = (props: TabsUIProps) => {
           <button
             data-id="play-editor"
             className="btn text-success py-0"
-            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol' || tabsState.currentExt === 'circom')}
+            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy')}
             onClick={async () => {
               const path = active().substr(active().indexOf('/') + 1, active().length)
               const content = await props.plugin.call('fileManager', 'readFile', path)
@@ -182,6 +182,9 @@ export const TabsUI = (props: TabsUIProps) => {
               } else if (tabsState.currentExt === 'circom') {
                 await props.plugin.call('circuit-compiler', 'compile', path)
                 _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+              } else if (tabsState.currentExt === 'vy') {
+                await props.plugin.call('vyper', 'vyperCompileCustomAction')
+                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
               }
             }}
           >
@@ -192,7 +195,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 <span>
                   {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
                     <FormattedMessage id="remixUiTabs.tooltipText1" />
-                  ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' ? (
+                  ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
                     <FormattedMessage id="remixUiTabs.tooltipText2" />
                   ) : (
                     <FormattedMessage id="remixUiTabs.tooltipText3" />

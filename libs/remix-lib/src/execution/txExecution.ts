@@ -80,7 +80,7 @@ export function checkError (execResult, compiledContracts) {
     return ret
   }
   const exceptionError = execResult.errorMessage || ''
-  const error = `Error occured: ${execResult.errorMessage}.\n`
+  const error = `Error occurred: ${execResult.errorMessage}.\n`
   let msg = ''
   if (exceptionError.includes(errorCode.INVALID_OPCODE)) {
     msg = '\t\n\tThe execution might have thrown OR the EVM version used by the selected environment is not compatible with the compiler EVM version.\n'
@@ -113,7 +113,7 @@ export function checkError (execResult, compiledContracts) {
                 const decodedCustomErrorInputs = fn.decodeFunctionData(functionDesc, returnData)
                 decodedCustomErrorInputsClean = {}
                 let devdoc = {}
-                // "contract" reprensents the compilation result containing the NATSPEC documentation
+                // "contract" represents the compilation result containing the NATSPEC documentation
                 if (contract && fn.functions && Object.keys(fn.functions).length) {
                   const functionSignature = Object.keys(fn.functions)[0]
                   // we check in the 'devdoc' if there's a developer documentation for this error
