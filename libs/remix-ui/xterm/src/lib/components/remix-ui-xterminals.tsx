@@ -141,27 +141,39 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   }, [xtermState.showOutput])
 
   return (<>
-    <div className='remix-ui-xterminals-container'>
+    { <div style={{ flexGrow: 1 }} className={`flex-row ${xtermState.showOutput ? 'h-0 d-none' : 'h-100 d-flex'}`}>
       <>
-
-        <div className={`remix-ui-xterminals-section ${xtermState.showOutput ? 'd-none' : 'd-flex'} `}>
+        { <div className={`flex-row w-100 h-100 ${xtermState.showOutput ? 'h-0 d-none' : 'h-100 d-flex'}`}>
           {terminals.map((xtermState) => {
             return (
-              <div className={`h-100 xterm-terminal ${xtermState.hidden ? 'hide-xterm' : 'show-xterm'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
-                <RemixUiXterm theme={theme} setTerminalRef={setTerminalRef} timeStamp={xtermState.timeStamp} send={send} resize={resize} pid={xtermState.pid} plugin={plugin}></RemixUiXterm>
+              <div className={`h-100 w-100 ${xtermState.hidden ? 'd-none' : 'd-block'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
+                <RemixUiXterm
+                  theme={theme}
+                  setTerminalRef={setTerminalRef}
+                  timeStamp={xtermState.timeStamp}
+                  send={send}
+                  resize={resize}
+                  pid={xtermState.pid}
+                  plugin={plugin}
+                ></RemixUiXterm>
               </div>
             )
           })}
-          <div className='remix-ui-xterminals-buttons border-left'>
+          <div className='d-flex flex-column border-left xterm-panel-left'>
             {terminals.map((xtermState, index) => {
-              return (<button key={index} onClick={async () => selectTerminal(xtermState)} className={`btn btn-sm mt-2 btn-secondary ${xtermState.hidden ? 'xterm-btn-none' : 'xterm-btn-active'}`}><span className="fa fa-terminal border-0 p-0 m-0"></span></button>)
+              return (<button
+                key={index}
+                onClick={async () => selectTerminal(xtermState)}
+                className={`btn btn-sm m-1 p-1 px-2 ${xtermState.hidden ? 'border border-secondary' : 'btn-secondary'}`}
+              >
+                <span className="fa fa-terminal border-0 p-0 m-0"></span>
+              </button>)
             })}
           </div>
         </div>
+        }
       </>
-    </div>
-
-
+    </div>}
   </>)
 }
 
