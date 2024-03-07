@@ -121,8 +121,7 @@
       "target": [
         "nsis"
       ],
-      "icon": "assets/icon.png",
-      "artifactName": "${productName}.${ext}"
+      "icon": "assets/icon.png"
     },
     "deb": {},
     "linux": {
