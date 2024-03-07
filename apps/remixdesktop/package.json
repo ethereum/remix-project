@@ -70,7 +70,7 @@
     "files": [
       "build/**/*"
     ],
-    "afterSign": "notarize.js",
+    "afterSign": "aftersign.js",
     "afterAllArtifactBuild": "afterbuild.js",
     "publish": [
       {
