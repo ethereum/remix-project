@@ -610,7 +610,7 @@ workflows:
           requires:
             - build-remixdesktop-mac
             - build-remixdesktop-linux
-            - build-remixdesktop-windows
+            - sign-remixdesktop-windows
       - build-plugin:
           matrix:
             parameters:
