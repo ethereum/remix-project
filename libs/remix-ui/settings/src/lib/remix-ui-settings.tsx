@@ -343,7 +343,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
-            <input onChange={onchangeSaveEnvState} id="settingsEnableSaveEnvState" type="checkbox" className="custom-control-input" checked={isSaveEvmStateChecked} />
+            <input onChange={onchangeSaveEnvState} id="settingsEnableSaveEnvState" data-id="settingsEnableSaveEnvState" type="checkbox" className="custom-control-input" checked={isSaveEvmStateChecked} />
             <label
               className={`form-check-label custom-control-label align-middle ${getTextClass('settings/save-evm-state')}`}
               data-id="settingsEnableSaveEnvStateLabel"
