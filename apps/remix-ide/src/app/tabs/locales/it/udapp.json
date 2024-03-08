@@ -88,7 +88,7 @@
   "udapp.tooltipText12": "Input richiesto",
   "udapp.tooltipText13": "Deploiato",
   "udapp._comment_universalDappUI.tsx": "libs/remix-ui/run-tab/src/lib/components/universalDappUI.tsx",
-  "udapp.tooltipText7": "Rimuovi dalla lista",
+  "udapp.tooltipTextRemove": "Rimuovi dalla lista",
   "udapp.tooltipText8": "Fare clic per i documenti sull'uso di 'receive'/'fallback'",
   "udapp.tooltipText9": "Il Calldata per inviare alla funzione di fallback del contratto.",
   "udapp.tooltipText10": "Invia dati al contratto.",

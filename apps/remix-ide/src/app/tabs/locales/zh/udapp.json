@@ -88,7 +88,7 @@
   "udapp.tooltipText12": "必填",
   "udapp.tooltipText13": "已部署 {date}",
   "udapp._comment_universalDappUI.tsx": "libs/remix-ui/run-tab/src/lib/components/universalDappUI.tsx",
-  "udapp.tooltipText7": "从列表中删除",
+  "udapp.tooltipTextRemove": "从列表中删除",
   "udapp.tooltipText8": "点击查看有关使用 'receive'/'fallback' 的文档",
   "udapp.tooltipText9": "发送到合约 fallback 函数的 Calldata。",
   "udapp.tooltipText10": "将数据发送到合约。",
