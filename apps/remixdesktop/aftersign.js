@@ -25,6 +25,7 @@ exports.default = async function notarizing(context) {
           reject(new Error(`Stderr: ${stderr}`));
           return;
         }
+        console.log(`stdout: ${stdout}`);
         resolve(stdout);
       });
     });
@@ -34,6 +35,7 @@ exports.default = async function notarizing(context) {
   // Async function to check the stapling status
   async function checkStapleStatus(appPath) {
     try {
+      console.log(`xcrun stapler validate "${appPath}"`)
       await execShellCommand(`xcrun stapler validate "${appPath}"`);
       console.log('App is already stapled. No action needed.');
       return true
@@ -68,7 +70,7 @@ exports.default = async function notarizing(context) {
       console.log(r)
 
       // Stapling the app
-      console.log('STAPLING')
+      console.log('STAPLING', `xcrun stapler staple "${appPath}"`)
 
       await execShellCommand(`xcrun stapler staple "${appPath}"`)
 
