@@ -253,8 +253,9 @@ jobs:
                 if ($packageJsonContent.'version' -ne $null) {
                     # Store the version value in an environment variable
                     $version = $packageJsonContent.version
-                    $env:PACKAGE_VERSION = "C:\Users\circleci\remix-project\release\Remix-Desktop Setup $($version).exe" 
-                    Write-Host "Version $($env:PACKAGE_VERSION) stored in PACKAGE_VERSION environment variable."
+                    $file = "C:\Users\circleci\remix-project\release\Remix-Desktop Setup $($version).exe" 
+                    Write-Host "Version $(file) stored in PACKAGE_VERSION environment variable."
+                    "Set-Variable -Name 'PACKAGE_VERSION' -Value '$file' -Scope Global" > SetEnvVars.ps1
                     dir Env:
                 } else {
                     Write-Host "Error: 'version' field not found in package.json."
@@ -266,13 +267,15 @@ jobs:
           name: "Signtool-Signing"
           shell: powershell.exe
           command: | 
+            . .\SetEnvVars.ps1
             dir Env:
-            & $env:Signtool sign /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $env:PACKAGE_VERSION
+            & $env:Signtool sign /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $PACKAGE_VERSION
       - run:
           name: "Signtool-Verification"
           shell: powershell.exe
           command: |
-            $verify_output = $(& $env:Signtool verify /v /pa $env:PACKAGE_VERSION)
+            . .\SetEnvVars.ps1
+            $verify_output = $(& $env:Signtool verify /v /pa $PACKAGE_VERSION)
             echo ${verify_output}
             if (!$verify_output.Contains("Number of files successfully Verified: 1")) {
               echo 'Verification failed'
