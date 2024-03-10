@@ -50,6 +50,7 @@ exports.default = async function notarizing(context) {
 
   async function runNotarize() {
 
+    console.log('NOTARIZING + ', `xcrun stapler staple "${appPath}"`)
     console.log({
       appBundleId: 'org.ethereum.remix-ide', // Your app's bundle ID
       appPath: `${appOutDir}/${appName}.app`, // Path to your .app
