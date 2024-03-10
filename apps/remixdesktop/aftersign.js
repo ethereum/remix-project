@@ -13,21 +13,34 @@ exports.default = async function notarizing(context) {
   const appName = context.packager.appInfo.productFilename
   const appPath = `${appOutDir}/${appName}.app`
 
+  // Function to promisify the exec command
+  function execShellCommand(cmd) {
+    return new Promise((resolve, reject) => {
+      exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error(`Error: ${error.message}`));
+          return;
+        }
+        if (stderr) {
+          reject(new Error(`Stderr: ${stderr}`));
+          return;
+        }
+        resolve(stdout);
+      });
+    });
+  }
+
   // Function to check if the app is stapled
-  function checkStapleStatus() {
-    exec(`xcrun stapler validate "${appPath}"`, async (error, stdout, stderr) => {
-      if (error) {
-        console.log(`App is not stapled: ${error.message}`)
-        await runNotarize()
-        return
-      }
-      if (stderr) {
-        console.log(`App is not stapled: ${stderr}`)
-        await runNotarize()
-        return
-      }
-      console.log('App is already stapled. No action needed.')
-    })
+  // Async function to check the stapling status
+  async function checkStapleStatus(appPath) {
+    try {
+      await execShellCommand(`xcrun stapler validate "${appPath}"`);
+      console.log('App is already stapled. No action needed.');
+      return true
+    } catch (error) {
+      console.log(`App is not stapled: ${error.message}`);
+      return false
+    }
   }
 
 
@@ -57,19 +70,18 @@ exports.default = async function notarizing(context) {
       // Stapling the app
       console.log('STAPLING')
 
-      exec(`xcrun stapler staple "${appPath}"`, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`)
-          return
-        }
-        console.log(`Stapling output: ${stdout}`)
-        console.error(`Stapling errors: ${stderr}`)
-      })
+      await execShellCommand(`xcrun stapler staple "${appPath}"`)
+
     } catch (error) {
       console.error('Error during notarization:', error)
     }
 
   }
 
-  checkStapleStatus()
+  if(!await checkStapleStatus()){
+    await runNotarize()
+    await checkStapleStatus()
+  }else{
+    return []
+  }
 }
