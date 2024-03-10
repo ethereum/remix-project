@@ -33,7 +33,7 @@ exports.default = async function notarizing(context) {
 
   // Function to check if the app is stapled
   // Async function to check the stapling status
-  async function checkStapleStatus(appPath) {
+  async function checkStapleStatus() {
     try {
       console.log(`xcrun stapler validate "${appPath}"`)
       await execShellCommand(`xcrun stapler validate "${appPath}"`);
