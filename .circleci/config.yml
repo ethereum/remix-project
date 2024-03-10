@@ -255,6 +255,7 @@ jobs:
                     $version = $packageJsonContent.version
                     $env:PACKAGE_VERSION = "C:\Users\circleci\remix-project\release\Remix-Desktop Setup $($version).exe" 
                     Write-Host "Version $($env:PACKAGE_VERSION) stored in PACKAGE_VERSION environment variable."
+                    dir Env:
                 } else {
                     Write-Host "Error: 'version' field not found in package.json."
                 }
@@ -264,7 +265,8 @@ jobs:
       - run:
           name: "Signtool-Signing"
           shell: powershell.exe
-          command: |
+          command: | 
+            dir Env:
             & $env:Signtool sign /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $env:PACKAGE_VERSION
       - run:
           name: "Signtool-Verification"
