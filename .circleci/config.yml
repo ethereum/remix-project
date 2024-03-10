@@ -348,10 +348,18 @@ jobs:
             cp -r dist/apps/remix-ide apps/remixdesktop/build
             cd apps/remixdesktop
             yarn
+      - run: 
+          command: |
+            nvm use 20
+            cd apps/remixdesktop
             yarn installRipGrepMacOXarm64
             PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false yarn dist --mac --arm64
+       - run: 
+          command: |
+            nvm use 20
+            cd apps/remixdesktop
             yarn installRipGrepMacOXx64
-            PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false yarn dist --mac --x64
+            PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false yarn dist --mac --x64       
       - run:
           name: Notarize the app
           command: |
