@@ -10,6 +10,7 @@ import {ContractGUI} from './contractGUI'
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view'
 import {BN} from 'bn.js'
 import {CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress} from '@remix-ui/helper'
+const _paq = (window._paq = window._paq || [])
 
 const txHelper = remixLib.execution.txHelper
 
@@ -111,20 +112,31 @@ export function UniversalDappUI(props: UdappProps) {
     setToggleExpander(!toggleExpander)
   }
 
-  const remove = async() => {
-    if (props.isSavedContract) {
-      const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-      const savedContracts = localStorage.getItem('savedContracts')
-      const savedContractsJson = JSON.parse(savedContracts)
-      const instanceIndex = savedContractsJson[network.id].findIndex(instance => instance && instance.address === props.instance.address)
-      delete savedContractsJson[network.id][instanceIndex]
-      savedContractsJson[network.id] = savedContractsJson[network.id].filter(Boolean)
-      localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson))
-    }
-    props.removeInstance(props.index, props.isSavedContract)
+  const unsavePinnedContract = async () => {
+    const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
+    const savedContracts = localStorage.getItem('savedContracts')
+    const savedContractsJson = JSON.parse(savedContracts)
+    const instanceIndex = savedContractsJson[network.id].findIndex(instance => instance && instance.address === props.instance.address)
+    delete savedContractsJson[network.id][instanceIndex]
+    savedContractsJson[network.id] = savedContractsJson[network.id].filter(Boolean)
+    localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson))
   }
 
-  const saveContract = async() => {
+  const remove = async() => {
+    if (props.isSavedContract) {
+      await unsavePinnedContract()
+      _paq.push(['trackEvent', 'udapp', 'pinContracts', 'unpinned'])
+    }
+    props.removeInstance(props.index, props.isSavedContract, false)
+  }
+
+  const deletePinnedContract = async() => {
+    await unsavePinnedContract()
+    _paq.push(['trackEvent', 'udapp', 'pinContracts', 'deletePinned'])
+    props.removeInstance(props.index, props.isSavedContract, true)
+  }
+
+  const pinContract = async() => {
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
     const savedContracts = localStorage.getItem('savedContracts')
@@ -144,8 +156,9 @@ export function UniversalDappUI(props: UdappProps) {
     localStorage.setItem('savedContracts', JSON.stringify(objToSave))
     // Add contract to saved contracts list on UI
     await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.abi || props.instance.contractData.abi, props.instance.name, props.instance.savedOn, props.instance.filePath)
+    _paq.push(['trackEvent', 'udapp', 'pinContracts', 'pinned'])
     // Remove contract from deployed contracts list on UI
-    props.removeInstance(props.index, false)
+    props.removeInstance(props.index, false, false)
   }
 
   const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
@@ -252,27 +265,44 @@ export function UniversalDappUI(props: UdappProps) {
       data-shared="universalDappUiInstance"
     >
       <div className="udapp_title pb-0 alert alert-secondary">
-        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass}>
+        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass} style={{padding: "0.45rem"}}>
           <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
         </span>
         <div className="input-group udapp_nameNbuts">
           <div className="udapp_titleText input-group-prepend">
-            <span className="input-group-text udapp_spanTitleText">
+            { props.isSavedContract ? ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.isSavedContract ? `Contract: ${props.instance.name},  Address: ${address}, Pinned at:  ${new Date(props.instance.savedOn).toLocaleString()}` : '' }>
+              <span className="input-group-text udapp_spanTitleText">
+                {props.instance.name} at {shortenAddress(address)}
+              </span>
+            </CustomTooltip>) : ( <span className="input-group-text udapp_spanTitleText">
               {props.instance.name} at {shortenAddress(address)} ({props.context})
-            </span>
+            </span>) }
           </div>
           <div className="btn" style={{padding: '0.15rem'}}>
             <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
           </div>
-          { props.isSavedContract || !(props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
-            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSaveTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText14" />}>
-              <i className="far fa-save p-2" aria-hidden="true" data-id="universalDappUiUdappSave" onClick={saveContract}></i>
-            </CustomTooltip>
-          </div> ) : null }
+          { !(props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) ? 
+            props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
+                <i className="fas fa-thumbtack p-2 text-success" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={remove}></i>
+              </CustomTooltip> 
+            </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappPinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPin" />}>
+                <i className="far fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappPin" onClick={pinContract}></i>
+              </CustomTooltip>
+            </div> )
+            : null}
         </div>
-        <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={ !props.isSavedContract ? (<FormattedMessage id="udapp.tooltipText7" />) : (<FormattedMessage id="udapp.tooltipTextUnsave" />)}>
-          <i className="udapp_closeIcon m-1 fas fa-times align-self-center" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
-        </CustomTooltip>
+        { props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
+            <i className="far fa-trash p-2" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={deletePinnedContract}></i>
+          </CustomTooltip> 
+        </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextRemove" />}>
+            <i className="fas fa-times p-2" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
+          </CustomTooltip> 
+        </div> )
+        }
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">

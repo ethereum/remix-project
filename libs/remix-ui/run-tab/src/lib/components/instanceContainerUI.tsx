@@ -8,17 +8,19 @@ import { UniversalDappUI } from './universalDappUI'
 export function InstanceContainerUI(props: InstanceContainerProps) {
   const { instanceList } = props.instances
   const enableSave = useRef(false)
+  const chainId = useRef()
 
   useEffect(() => {
     const fetchSavedContracts = async () => {
       if (props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) enableSave.current = false
       else enableSave.current = true
       if (enableSave.current) {
+        const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
+        chainId.current = network.id
         const allSavedContracts = localStorage.getItem('savedContracts')
         if (allSavedContracts) {
           await props.plugin.call('udapp', 'clearAllSavedInstances')
           const savedContracts = JSON.parse(allSavedContracts)
-          const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
           if (savedContracts && savedContracts[network.id]) {
             const instances = savedContracts[network.id]
             for (const inst of instances)
@@ -38,9 +40,10 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
     <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
       { enableSave.current ? (
         <div className="d-flex justify-content-between align-items-center pl-2">
-          <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
+          <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
             <label className="udapp_deployedContracts">
-              <FormattedMessage id="udapp.savedContracts" />
+              <FormattedMessage id="udapp.savedContracts" /> 
+              <span style={{fontSize: '0.75rem'}}> (chain id: {chainId.current})</span>
             </label>
           </CustomTooltip>
         </div>) : null }
