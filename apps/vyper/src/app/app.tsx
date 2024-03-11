@@ -134,21 +134,21 @@ const App = () => {
               <div className="pt-2">
                 <Form>
                   <div className="d-flex flex-row justify-content-around mb-1 mt-2">
-                    <div className={`custom-control custom-radio ${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`}>
-                      <input type="radio" id="remote-compiler" data-id="remote-compiler" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} className={`custom-control-input  ${state.environment === 'remote' ? 'd-flex mr-4' : 'd-flex mr-4 cursor-status'}`} />
+                    <div className={`custom-control custom-radio ${state.environment === 'remote' ? 'd-flex' : 'd-flex cursor-status'}`}>
+                      <input type="radio" id="remote-compiler" data-id="remote-compiler" name="remote" value={state.environment} checked={state.environment === 'remote'} onChange={() => setEnvironment('remote')} className={`custom-control-input  ${state.environment === 'remote' ? 'd-flex mr-1' : 'd-flex mr-1 cursor-status'}`} />
                       <label htmlFor="remote-compiler" className="form-check-label custom-control-label">Remote Compiler</label>
                     </div>
-                    <div className={`custom-control custom-radio ${state.environment === 'local' ? '' : `cursor-status`}`}>
+                    <div className={`custom-control custom-radio ${state.environment === 'local' ? 'mr-2' : `cursor-status`}`}>
                       <input id="local-compiler" data-id="local-compiler" checked={state.environment === 'local'} type="radio" name="local" value={state.environment} onChange={() => setEnvironment('local')} className={`custom-control-input  ${state.environment === 'local' ? '' : `cursor-status`}`} />
                       <label htmlFor="local-compiler" className="form-check-label custom-control-label">Local Compiler</label>
                     </div>
                   </div>
                 </Form>
+                <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
               </div>
             </Accordion.Collapse>
           </div>
         </Accordion>
-        <LocalUrlInput url={state.localUrl} setUrl={setLocalUrl} environment={state.environment} />
         <span className="px-3 mt-3 mb-3 small text-warning">
           Specify the{' '}
           <a className="text-warning" target="_blank" href="https://remix-ide.readthedocs.io/en/latest/vyper.html#specify-vyper-version">
