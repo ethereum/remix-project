@@ -134,7 +134,7 @@ export function UniversalDappUI(props: UdappProps) {
   const pinContract = async() => {
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-    let objToSave = {
+    const objToSave = {
       name: props.instance.name,
       address: props.instance.address,
       abi: props.instance.abi || props.instance.contractData.abi,
