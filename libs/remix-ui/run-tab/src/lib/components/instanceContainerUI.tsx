@@ -37,10 +37,11 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           }
           localStorage.removeItem('savedContracts')
         }
+        // Clear existing saved instance state
+        await props.plugin.call('udapp', 'clearAllSavedInstances')
         // Load contracts from FE
         const isPinnedAvailable = await props.plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${chainId.current}`)
         if (isPinnedAvailable) {
-          await props.plugin.call('udapp', 'clearAllSavedInstances')
           const list = await props.plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${chainId.current}`)
           const filePaths = Object.keys(list)
           for (const file of filePaths) {
