@@ -262,3 +262,7 @@ html, body, #root, main {
   padding: 0;
   border-radius: 0;
 }
+
+.vyper-panel-width {
+  width: 94%;
+}
