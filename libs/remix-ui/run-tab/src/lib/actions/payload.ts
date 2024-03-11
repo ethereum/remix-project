@@ -237,12 +237,13 @@ export const addNewSavedInstance = (instance: { contractData?: ContractData, add
   }
 }
 
-export const removeExistingInstance = (index: number, isSavedContract: boolean) => {
+export const removeExistingInstance = (index: number, isSavedContract: boolean, shouldDelete: boolean) => {
   return {
     type: REMOVE_INSTANCE,
     payload: { 
       index,
-      isSavedContract 
+      isSavedContract,
+      shouldDelete 
     }
   }
 }
