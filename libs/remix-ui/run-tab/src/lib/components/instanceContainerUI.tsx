@@ -17,14 +17,36 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
       if (enableSave.current) {
         const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
         chainId.current = network.id
+        // Move contract saved in localstorage to Remix FE
         const allSavedContracts = localStorage.getItem('savedContracts')
         if (allSavedContracts) {
-          await props.plugin.call('udapp', 'clearAllSavedInstances')
           const savedContracts = JSON.parse(allSavedContracts)
-          if (savedContracts && savedContracts[network.id]) {
-            const instances = savedContracts[network.id]
-            for (const inst of instances)
-              if (inst) await props.plugin.call('udapp', 'addSavedInstance', inst.address, inst.abi || inst.contractData.abi, inst.name, inst.savedOn, inst.filePath)
+          for (const networkId in savedContracts) {
+            if (savedContracts[networkId].length > 0) {
+              for (const contractDetails of savedContracts[networkId]) {
+                const objToSave = {
+                  name: contractDetails.name,
+                  address: contractDetails.address,
+                  abi: contractDetails.abi || contractDetails.contractData.abi,
+                  filePath: contractDetails.filePath,
+                  pinnedAt: contractDetails.savedOn
+                }
+                await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${networkId}/${contractDetails.address}.json`, JSON.stringify(objToSave, null, 2))
+              }
+            }
+          }
+          localStorage.removeItem('savedContracts')
+        }
+        // Load contracts from FE
+        const isPinnedAvailable = await props.plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${chainId.current}`)
+        if (isPinnedAvailable) {
+          await props.plugin.call('udapp', 'clearAllSavedInstances')
+          const list = await props.plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${chainId.current}`)
+          const filePaths = Object.keys(list)
+          for (const file of filePaths) {
+            const pinnedContract = await props.plugin.call('fileManager', 'readFile', file)
+            const pinnedContractObj = JSON.parse(pinnedContract)
+            if (pinnedContractObj) await props.plugin.call('udapp', 'addSavedInstance', pinnedContractObj.address, pinnedContractObj.abi, pinnedContractObj.name, pinnedContractObj.pinnedAt, pinnedContractObj.filePath)
           }
         }
       }
