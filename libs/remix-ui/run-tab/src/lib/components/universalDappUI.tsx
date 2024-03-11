@@ -139,9 +139,6 @@ export function UniversalDappUI(props: UdappProps) {
   const pinContract = async() => {
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-    // const hasPreviousPinned = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
-
-    // const savedContracts = localStorage.getItem('savedContracts')
     let objToSave = {
       name: props.instance.name,
       address: props.instance.address,
@@ -149,23 +146,7 @@ export function UniversalDappUI(props: UdappProps) {
       filePath: props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`,
       pinnedAt: Date.now()
     }
-    // if (!savedContracts) {
-    //   objToSave = {}
-    //   objToSave[network.id] = []
-    // } else {
-    //   objToSave = JSON.parse(savedContracts)
-    //   if (!objToSave[network.id]) {
-    //     objToSave[network.id] = []
-    //   }
-    // }
-    // const deployments = await this.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
-    // const hasPreviousDeploys = await this.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${networkName}/UUPS.json`)
     await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${network.id}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
-
-    // props.instance.savedOn = Date.now()
-    // props.instance.filePath = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
-    // objToSave[network.id].push(props.instance)
-    // localStorage.setItem('savedContracts', JSON.stringify(objToSave))
     // Add contract to saved contracts list on UI
     await props.plugin.call('udapp', 'addSavedInstance', objToSave.address, objToSave.abi, objToSave.name, objToSave.pinnedAt, objToSave.filePath)
     _paq.push(['trackEvent', 'udapp', 'pinContracts', 'pinned'])
