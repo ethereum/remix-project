@@ -11,6 +11,7 @@ import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
 import { VMContext } from './vm-context'
 import { Web3PluginBase } from 'web3'
+import { Block } from '@ethereumjs/block'
 
 export interface JSONRPCRequestPayload {
   params: any[];
@@ -27,8 +28,20 @@ export interface JSONRPCResponsePayload {
 
 export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePayload) =>  void
 
+export type State = Record<string, string>
+
+export type ProviderOptions = {
+  fork?: string,
+  nodeUrl?: string,
+  blockNumber?: number | 'latest',
+  stateDb?: State,
+  logDetails?: boolean
+  blocks?: string[],
+  coinbase?: string
+}
+
 export class Provider {
-  options: Record<string, string | number>
+  options: ProviderOptions
   vmContext
   Accounts
   Transactions
@@ -37,10 +50,10 @@ export class Provider {
   initialized: boolean
   pendingRequests: Array<any>
 
-  constructor (options: Record<string, string | number> = {}) {
+  constructor (options: ProviderOptions = {} as ProviderOptions) {
     this.options = options
     this.connected = true
-    this.vmContext = new VMContext(options['fork'] as string, options['nodeUrl'] as string, options['blockNumber'] as (number | 'latest'))
+    this.vmContext = new VMContext(options['fork'], options['nodeUrl'], options['blockNumber'], options['stateDb'], options['blocks'])
 
     this.Accounts = new Web3Accounts(this.vmContext)
     this.Transactions = new Transactions(this.vmContext)
@@ -60,7 +73,7 @@ export class Provider {
     this.pendingRequests = []
     await this.vmContext.init()
     await this.Accounts.resetAccounts()
-    this.Transactions.init(this.Accounts.accounts, this.vmContext.blockNumber)
+    this.Transactions.init(this.Accounts.accounts, this.vmContext.serializedBlocks)
     this.initialized = true
     if (this.pendingRequests.length > 0) {
       this.pendingRequests.map((req) => {
@@ -166,6 +179,20 @@ class Web3TestPlugin extends Web3PluginBase {
     return this.requestManager.send({
       method: 'eth_registerCallId',
       params: [id]
+    })
+  }
+
+  public getStateDb() {
+    return this.requestManager.send({
+      method: 'eth_getStateDb',
+      params: []
+    })
+  }
+
+  public getBlocksData() {
+    return this.requestManager.send({
+      method: 'eth_getBlocksData',
+      params: []
     })
   }
 }

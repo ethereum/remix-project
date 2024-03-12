@@ -24,24 +24,23 @@ export class TxRunnerVM {
   pendingTxs
   vmaccounts
   queusTxs
-  blocks
+  blocks: Buffer[]
   logsManager
   commonContext
   blockParentHash
   nextNonceForCall: number
   getVMObject: () => any
 
-  constructor (vmaccounts, api, getVMObject, blockNumber) {
+  constructor (vmaccounts, api, getVMObject, blocks: Buffer[] = []) {
     this.event = new EventManager()
     this.logsManager = new LogsManager()
     // has a default for now for backwards compatibility
     this.getVMObject = getVMObject
     this.commonContext = this.getVMObject().common
-    this.blockNumber = blockNumber || 0
+    this.blockNumber = Array.isArray(blocks) ? blocks.length : 0 // TODO: this should be set to the fetched block number count
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
     this.queusTxs = []
-    this.blocks = []
     /*
       txHash is generated using the nonce,
       in order to have unique transaction hash, we need to keep using different nonce (in case of a call)
@@ -51,7 +50,15 @@ export class TxRunnerVM {
     this.nextNonceForCall = 0
 
     const vm = this.getVMObject().vm
-    this.blockParentHash = vm.blockchain.genesisBlock.hash()
+    if (Array.isArray(blocks) && (blocks || []).length > 0) {
+      const lastBlock = Block.fromRLPSerializedBlock(blocks[blocks.length - 1], { common: this.commonContext })
+
+      this.blockParentHash = lastBlock.hash()
+      this.blocks = blocks
+    } else {
+      this.blockParentHash = vm.blockchain.genesisBlock.hash()
+      this.blocks = [vm.blockchain.genesisBlock.serialize()]
+    }
   }
 
   execute (args: InternalTransaction, confirmationCb, gasEstimationForceSend, promptCb, callback: VMExecutionCallBack) {
@@ -106,8 +113,7 @@ export class TxRunnerVM {
       const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']
       const difficulties = [69762765929000, 70762765929000, 71762765929000]
       const difficulty = this.commonContext.consensusType() === ConsensusType.ProofOfStake ? 0 : difficulties[this.blockNumber % difficulties.length]
-
-      const blocknumber = this.blockNumber + 1
+      const blocknumber = this.blocks.length
       const block = Block.fromBlockData({
         header: {
           timestamp: new Date().getTime() / 1000 | 0,
@@ -122,10 +128,13 @@ export class TxRunnerVM {
       }, { common: this.commonContext, hardforkByBlockNumber: false, hardforkByTTD: undefined })
 
       if (!useCall) {
-        this.blockNumber = this.blockNumber + 1
+        this.blockNumber = blocknumber
         this.blockParentHash = block.hash()
         this.runBlockInVm(tx, block, (err, result) => {
-          if (!err) this.getVMObject().vm.blockchain.putBlock(block)
+          if (!err) {
+            this.getVMObject().vm.blockchain.putBlock(block)
+            this.blocks.push(block.serialize())
+          }
           callback(err, result)
         })
       } else {
