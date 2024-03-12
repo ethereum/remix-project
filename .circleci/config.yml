@@ -253,7 +253,7 @@ jobs:
                 if ($packageJsonContent.'version' -ne $null) {
                     # Store the version value in an environment variable
                     $version = $packageJsonContent.version
-                    $file = "C:\Users\circleci\remix-project\release\Remix-Desktop Setup $($version).exe" 
+                    $file = "C:\Users\circleci\remix-project\release\Remix-Desktop-Setup-$($version).exe" 
                     Write-Host "Version $(file) stored in PACKAGE_VERSION environment variable."
                     "Set-Variable -Name 'PACKAGE_VERSION' -Value '$file' -Scope Global" > SetEnvVars.ps1
                     dir Env:
