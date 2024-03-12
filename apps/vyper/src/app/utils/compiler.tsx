@@ -50,12 +50,10 @@ function parseErrorString(errorString) {
   // Split the string into lines
   let lines = errorString.trim().split('\n')
   // Extract the line number and message
-  console.log(lines)
   let message = errorString.trim()
   let targetLine = lines[2].split(',')
   let tline = lines[2].trim().split(' ')[1].split(':')
 
-  console.log('tline', tline)
   const errorObject = {
     status: 'failed',
     message: message,
@@ -192,7 +190,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
       method: 'Get'
     })).data
     result = parseErrorString(intermediate[0])
-    console.log('error payload', intermediate)
     return result
   }
   await new Promise((resolve) => setTimeout(() => resolve({}), 3000))
@@ -273,7 +270,6 @@ export async function compileContract(contract: string, compilerUrl: string, set
     // try {
     output = await compile(compilerUrl, _contract)
     if (output.status === 'failed') {
-      console.log('possible error', output)
       remixClient.changeStatus({
         key: 'failed',
         type: 'error',
