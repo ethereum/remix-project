@@ -54,8 +54,6 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
     resize(event, pid)
   }
 
- 
-
   return (
     <Xterm
       addons={[fitAddon]}
