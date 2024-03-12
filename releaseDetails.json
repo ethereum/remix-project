@@ -1,10 +1,10 @@
 {
-    "version": "v0.44.0",
+    "version": "v0.45.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Integration of Sindri for ZKP generation",
-    "highlight2": "Save deployed contracts for Injected web3 environment",
-    "highlight3": "",
+    "highlight1": "Remix VM state can be saved now",
+    "highlight2": "Verified contracts can be fetched from Blockscout explorer",
+    "highlight3": "Saved contracts are pinned contracts now and stored in workspace",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-44-0-eede8a3b1402"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-45-0-dcb16ff6bf03"
   }
