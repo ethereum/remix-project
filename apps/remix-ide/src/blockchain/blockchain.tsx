@@ -135,7 +135,6 @@ export class Blockchain extends Plugin {
 
   setupEvents() {
     this.executionContext.event.register('contextChanged', async (context) => {
-      console.log('context changed', context)
       // reset environment to last known state of the context
       await this.loadContext(context)
       this._triggerEvent('contextChanged', [context])
