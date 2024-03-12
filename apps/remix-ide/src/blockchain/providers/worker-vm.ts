@@ -6,7 +6,7 @@ self.onmessage = (e: MessageEvent) => {
   switch (data.cmd) {
   case 'init': 
   {
-    provider = new Provider({ fork: data.fork, nodeUrl: data.nodeUrl, blockNumber: data.blockNumber })
+    provider = new Provider({ fork: data.fork, nodeUrl: data.nodeUrl, blockNumber: data.blockNumber, stateDb: data.stateDb, blocks: data.blocks})
     provider.init().then(() => {
       self.postMessage({
         cmd: 'initiateResult',
