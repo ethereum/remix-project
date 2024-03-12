@@ -1,6 +1,7 @@
 module.exports = {
     src_folders: ['build-e2e/remixdesktop/test/tests/app'],
     output_folder: './reports/tests',
+    custom_commands_path: ['build-e2e/remix-ide-e2e/src/commands'],
     custom_assertions_path: '',
     page_objects_path: '',
     globals_path: '',
