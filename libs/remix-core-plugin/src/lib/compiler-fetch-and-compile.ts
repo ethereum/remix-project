@@ -4,7 +4,7 @@ import { util } from '@remix-project/remix-lib'
 import { toChecksumAddress } from '@ethereumjs/util'
 import { fetchContractFromEtherscan } from './helpers/fetch-etherscan'
 import { fetchContractFromSourcify } from './helpers/fetch-sourcify'
-import { UUPSDeployedByteCode, UUPSCompilerVersion, UUPSOptimize, UUPSRuns, UUPSEvmVersion, UUPSLanguage, UUPSDeployedByteCodeV5, UUPSCompilerVersionV5 } from './constants/uups'
+import { UUPSDeployedByteCode, UUPSCompilerVersion, UUPSOptimize, UUPSRuns, UUPSEvmVersion, UUPSLanguage, UUPSDeployedByteCodeV5, UUPSCompilerVersionV5, UUPSEvmVersionv5, UUPSOptimizev5 } from './constants/uups'
 
 const profile = {
   name: 'fetchAndCompile',
@@ -30,12 +30,12 @@ export class FetchAndCompile extends Plugin {
   }
 
   /**
-   * Fetch compiliation metadata from source-Verify from a given @arg contractAddress - https://github.com/ethereum/source-verify
+   * Fetch compilation metadata from source-Verify from a given @arg contractAddress - https://github.com/ethereum/source-verify
    * Put the artifacts in the file explorer
    * Compile the code using Solidity compiler
    * Returns compilation data
    *
-   * @param {string} contractAddress - Address of the contrac to resolve
+   * @param {string} contractAddress - Address of the contract to resolve
    * @param {string} deployedBytecode - deployedBytecode of the contract
    * @param {string} targetPath - Folder where to save the compilation arfefacts
    * @return {CompilerAbstract} - compilation data targeting the given @arg contractAddress
@@ -72,7 +72,7 @@ export class FetchAndCompile extends Plugin {
         compilationTargets,
         settings,
         async (url, cb) => {
-          // we first try to resolve the content from the compilation target using a more appropiate path
+          // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
           if (compilationTargets[path] && compilationTargets[path].content) {
             return cb(null, compilationTargets[path].content)
@@ -88,8 +88,8 @@ export class FetchAndCompile extends Plugin {
       const settings = {
         version: UUPSCompilerVersionV5,
         language: UUPSLanguage,
-        evmVersion: UUPSEvmVersion,
-        optimize: UUPSOptimize,
+        evmVersion: UUPSEvmVersionv5,
+        optimize: UUPSOptimizev5,
         runs: UUPSRuns
       }
       const proxyUrl = 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v5.0.0/contracts/proxy/ERC1967/ERC1967Proxy.sol'
@@ -100,7 +100,7 @@ export class FetchAndCompile extends Plugin {
         compilationTargets,
         settings,
         async (url, cb) => {
-          // we first try to resolve the content from the compilation target using a more appropiate path
+          // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
           if (compilationTargets[path] && compilationTargets[path].content) {
             return cb(null, compilationTargets[path].content)
@@ -183,7 +183,7 @@ export class FetchAndCompile extends Plugin {
         compilationTargets,
         settings,
         async (url, cb) => {
-          // we first try to resolve the content from the compilation target using a more appropiate path
+          // we first try to resolve the content from the compilation target using a more appropriate path
           const path = `${targetPath}/${url}`
           if (compilationTargets[path] && compilationTargets[path].content) {
             return cb(null, compilationTargets[path].content)

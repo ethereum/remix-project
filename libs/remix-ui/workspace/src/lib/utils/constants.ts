@@ -1,3 +1,4 @@
+import { TemplateType } from '../types'
 export const ROOT_PATH = '/'
 export const solTestYml = `
 name: Running Solidity Unit Tests
@@ -86,16 +87,26 @@ export const TEMPLATE_NAMES = {
   'hashchecker': 'Hash Checker',
   'rln': 'Rate-Limiting Nullifier',
   'breakthroughLabsUniswapv4Hooks': 'Breakthrough-Labs Uniswapv4Hooks',
-  'uniswapV4Periphery': 'Uniswap v4 Periphery',
+  'uniswapV4Template': 'Uniswap v4 Template',
+  'uniswapV4HookBookMultiSigSwapHook': 'Uniswap V4 HookBook MultiSigSwapHook',
 }
 
-export const TEMPLATE_METADATA = {
+export const TEMPLATE_METADATA: Record<string, TemplateType> = {
   'breakthroughLabsUniswapv4Hooks': {
+    type: 'git',
     url: 'https://github.com/Breakthrough-Labs/Uniswapv4Hooks',
     branch: 'foundry_pure'
   },
-  'uniswapV4Periphery': {
-    url: 'https://github.com/Uniswap/v4-periphery',
+  'uniswapV4Template': {
+    type: 'git',
+    url: 'https://github.com/Breakthrough-Labs/v4-template',
     branch: 'main'
+  },
+  'uniswapV4HookBookMultiSigSwapHook': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openPattern',
+    params: ['Uniswap-V4-HookBook-MultiSigSwapHook', true]
   }
 }
+

@@ -61,7 +61,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     downloaded: [],
     compilerLicense: null,
     selectedVersion: null,
-    defaultVersion: 'soljson-v0.8.22+commit.4fc1097e.js', // this default version is defined: in makeMockCompiler (for browser test)
+    defaultVersion: 'soljson-v0.8.24+commit.e11b9ed9.js', // this default version is defined: in makeMockCompiler (for browser test)
     runs: '',
     compiledFileName: '',
     includeNightlies: false,
@@ -411,8 +411,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   const isSolFileSelected = (currentFile = '') => {
     if (!currentFile) currentFile = api.currentFile
     if (!currentFile) return false
-    const extention = currentFile.substr(currentFile.length - 3, currentFile.length)
-    return extention.toLowerCase() === 'sol' || extention.toLowerCase() === 'yul'
+    const extension = currentFile.substr(currentFile.length - 3, currentFile.length)
+    return extension.toLowerCase() === 'sol' || extension.toLowerCase() === 'yul'
   }
 
   const sessionSwitched = () => {

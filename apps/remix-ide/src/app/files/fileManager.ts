@@ -24,7 +24,7 @@ const profile = {
   methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'writeFileNoRewrite',
     'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
     'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
-    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule'
+    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson'
   ],
   kind: 'file-system'
 }
@@ -152,9 +152,9 @@ class FileManager extends Plugin {
   refresh() {
     const provider = this.fileProviderOf('/')
     // emit rootFolderChanged so that File Explorer reloads the file tree
-    if(Registry.getInstance().get('platform').api.isDesktop()){
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
       provider.event.emit('refresh')
-    }else{
+    } else {
       provider.event.emit('rootFolderChanged', provider.workspace || '/')
       this.emit('rootFolderChanged', provider.workspace || '/')
     }
@@ -192,8 +192,8 @@ class FileManager extends Plugin {
     path = this.normalize(path)
     path = this.limitPluginScope(path)
     path = this.getPathFromUrl(path).file
-    //await this._handleExists(path, `Cannot open file ${path}`)
-    //await this._handleIsFile(path, `Cannot open file ${path}`)
+    await this._handleExists(path, `Cannot open file ${path}`)
+    await this._handleIsFile(path, `Cannot open file ${path}`)
     await this.openFile(path)
   }
 
@@ -560,7 +560,6 @@ class FileManager extends Plugin {
         }
       }
     }
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRenamed', oldName, newName, isFolder)
   }
 
@@ -577,7 +576,6 @@ class FileManager extends Plugin {
   }
 
   async closeAllFiles() {
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('filesAllClosed')
     for (const file in this.openedFiles) {
       await this.closeFile(file)
@@ -588,10 +586,8 @@ class FileManager extends Plugin {
     delete this.openedFiles[name]
     if (!Object.keys(this.openedFiles).length) {
       this._deps.config.set('currentFile', '')
-      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('noFileSelected')
     }
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileClosed', name)
   }
 
@@ -614,7 +610,7 @@ class FileManager extends Plugin {
     return new Promise((resolve, reject) => {
       if (this.currentFile() === path) {
         const editorContent = this.editor.currentContent()
-        if(editorContent) resolve(editorContent)
+        if (editorContent) resolve(editorContent)
       }
       provider.get(path, (err, content) => {
         if (err) reject(err)
@@ -694,7 +690,6 @@ class FileManager extends Plugin {
     }
     this.editor.discard(path)
     delete this.openedFiles[path]
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('fileRemoved', path)
     if (path === this._deps.config.get('currentFile')) {
       this.openFile(this._deps.config.get('currentFile'))
@@ -704,7 +699,6 @@ class FileManager extends Plugin {
   async unselectCurrentFile() {
     await this.saveCurrentFile()
     this._deps.config.set('currentFile', '')
-    // TODO: Only keep `this.emit` (issue#2210)
     this.emit('noFileSelected')
   }
 
@@ -742,7 +736,6 @@ class FileManager extends Plugin {
       } else {
         await this.editor.open(file, content)
       }
-      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('currentFileChanged', file)
       return true
     }
@@ -783,7 +776,7 @@ class FileManager extends Plugin {
       return this._deps.filesProviders.localhost
     }
 
-    if(Registry.getInstance().get('platform').api.isDesktop()){
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
       return this._deps.filesProviders.electron
     }
     return this._deps.filesProviders.workspace
@@ -908,7 +901,7 @@ class FileManager extends Plugin {
   }
 
   currentWorkspace() {
-    if(Registry.getInstance().get('platform').api.isDesktop()){
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
       return ''
     }
 
@@ -988,7 +981,7 @@ class FileManager extends Plugin {
   /**
    * Moves a file to a new folder
    * @param {string} src path of the source file
-   * @param {string} dest path of the destrination file
+   * @param {string} dest path of the destination file
    * @returns {void}
    */
 
@@ -1047,6 +1040,14 @@ class FileManager extends Plugin {
     } catch (e) {
       throw new Error(e)
     }
+  }
+
+  async copyFolderToJson(folder: string) {
+    const provider = this.currentFileProvider()
+    if (provider && provider.copyFolderToJson) {
+      return await provider.copyFolderToJson(folder)
+    }
+    throw new Error('copyFolderToJson not available')    
   }
 }
 

@@ -215,7 +215,7 @@ export const moveTokenProvider = {
 
       // @ annotations.
       // As an example, we emit a debugging log message on these tokens.
-      // Note: message are supressed during the first load -- change some lines to see them.
+      // Note: message are suppressed during the first load -- change some lines to see them.
       [
         /@\s*[a-zA-Z_\$][\w\$]*/,
         { token: "annotation", log: "annotation token: $0" },

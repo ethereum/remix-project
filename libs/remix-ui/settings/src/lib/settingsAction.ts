@@ -90,3 +90,8 @@ export const saveIpfsSettingsToast = (config, dispatch, ipfsURL, ipfsProtocol, i
   config.set('settings/ipfs-project-secret', ipfsProjectSecret)
   dispatch({ type: 'save', payload: { message: 'IPFS settings have been saved' } })
 }
+
+export const saveEnvState = (config, checked, dispatch) => {
+  config.set('settings/save-evm-state', checked)
+  dispatch({ type: 'save-evm-state', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
+}

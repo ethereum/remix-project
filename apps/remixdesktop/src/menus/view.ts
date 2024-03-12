@@ -63,9 +63,12 @@ export default (
         click: function(item, focusedWindow) {
           if (focusedWindow){
             let factor = focusedWindow.webContents.getZoomFactor()
+            console.log(factor)
             if (factor > 1.25) {
-              factor = factor - 1.25
+              factor = factor - 0.25
               focusedWindow.webContents.setZoomFactor(factor)
+            }else{
+              focusedWindow.webContents.setZoomFactor(1)
             }
 
           }

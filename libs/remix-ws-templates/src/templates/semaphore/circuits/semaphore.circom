@@ -1,6 +1,6 @@
 pragma circom 2.0.0;
 
-include "circomlib/poseidon.circom";
+include "circomlib/circuits/poseidon.circom";
 include "./tree.circom";
 
 template CalculateSecret() {

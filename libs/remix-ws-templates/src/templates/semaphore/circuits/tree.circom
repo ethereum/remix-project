@@ -1,7 +1,7 @@
 pragma circom 2.0.0;
 
-include "circomlib/poseidon.circom";
-include "circomlib/mux1.circom";
+include "circomlib/circuits/poseidon.circom";
+include "circomlib/circuits/mux1.circom";
 
 template MerkleTreeInclusionProof(nLevels) {
     signal input leaf;

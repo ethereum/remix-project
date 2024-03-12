@@ -3815,7 +3815,7 @@ declare namespace monaco.editor {
      */
     mouseWheelScrollSensitivity?: number
     /**
-     * FastScrolling mulitplier speed when pressing `Alt`
+     * FastScrolling multiplier speed when pressing `Alt`
      * Defaults to 5.
      */
     fastScrollSensitivity?: number
@@ -8930,7 +8930,7 @@ declare namespace monaco.languages.css {
       readonly idSelector?: 'ignore' | 'warning' | 'error'
     }
     /**
-     * Configures the CSS data types known by the langauge service.
+     * Configures the CSS data types known by the language service.
      */
     readonly data?: CSSDataConfiguration
     /**
@@ -9124,7 +9124,7 @@ declare namespace monaco.languages.html {
      */
     readonly suggest?: CompletionConfiguration
     /**
-     * Configures the HTML data types known by the HTML langauge service.
+     * Configures the HTML data types known by the HTML language service.
      */
     readonly data?: HTMLDataConfiguration
   }
@@ -9828,7 +9828,7 @@ declare namespace monaco.languages.typescript {
      */
     getFormattingEditsAfterKeystroke(
       fileName: string,
-      postion: number,
+      position: number,
       ch: string,
       options: any
     ): Promise<any[]>
@@ -9838,7 +9838,7 @@ declare namespace monaco.languages.typescript {
      */
     findRenameLocations(
       fileName: string,
-      positon: number,
+      position: number,
       findInStrings: boolean,
       findInComments: boolean,
       providePrefixAndSuffixTextForRename: boolean
@@ -9848,7 +9848,7 @@ declare namespace monaco.languages.typescript {
      * @param options `typescript.RenameInfoOptions`
      * @returns `Promise<typescript.RenameInfo>`
      */
-    getRenameInfo(fileName: string, positon: number, options: any): Promise<any>
+    getRenameInfo(fileName: string, position: number, options: any): Promise<any>
     /**
      * Get transpiled output for the given file.
      * @returns `typescript.EmitOutput`

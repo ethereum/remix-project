@@ -17,6 +17,9 @@
   "settings.etherscanTokenTitle": "EtherScan Access Token",
   "settings.etherscanAccessTokenText": "Manage the api key used to interact with Etherscan.",
   "settings.etherscanAccessTokenText2": "Go to Etherscan api key page (link below) to create a new api key and save it in Remix.",
+  "settings.sindriAccessTokenTitle": "Sindri Credentials",
+  "settings.sindriAccessTokenText": "The access token is used to compile ZKP circuits and generate proofs with Sindri.",
+  "settings.sindriAccessTokenText2":"Go to the Sindri account creation page (link below) to create a new token and save it in Remix.",
   "settings.save": "Save",
   "settings.remove": "Remove",
   "settings.themes": "Themes",
@@ -40,5 +43,6 @@
   "settings.copilot": "Solidity copilot - Alpha",
   "settings.copilot.activate": "Load & Activate copilot",
   "settings.copilot.max_new_tokens": "Maximum number of words to generate",
-  "settings.copilot.temperature": "Temperature"
+  "settings.copilot.temperature": "Temperature",
+  "settings.enableSaveEnvState": "Save environment state"
 }

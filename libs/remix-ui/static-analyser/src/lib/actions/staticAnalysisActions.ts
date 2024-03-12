@@ -204,7 +204,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
             showWarnings(warningMessage, 'warningModuleName')
           }
         } catch(error) {
-          props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occured! See remixd console for details.' })
+          props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occurred! See remixd console for details.' })
           showWarnings(warningMessage, 'warningModuleName')
         }
       } else setStartAnalysis(false)

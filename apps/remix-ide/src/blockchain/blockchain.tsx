@@ -135,7 +135,8 @@ export class Blockchain extends Plugin {
 
   setupEvents() {
     this.executionContext.event.register('contextChanged', async (context) => {
-      await this.resetEnvironment()
+      // reset environment to last known state of the context
+      await this.loadContext(context)
       this._triggerEvent('contextChanged', [context])
       this.detectNetwork((error, network) => {
         this.networkStatus = {network, error}
@@ -526,7 +527,7 @@ export class Blockchain extends Plugin {
   }
 
   /**
-   * return the fork name applied to the current envionment
+   * return the fork name applied to the current environment
    * @return {String} - fork name
    */
   getCurrentFork() {
@@ -619,7 +620,7 @@ export class Blockchain extends Plugin {
     return this.executionContext.isVM() ? 'memory' : 'blockchain'
   }
 
-  // NOTE: the config is only needed because exectuionContext.init does
+  // NOTE: the config is only needed because executionContext.init does
   async resetAndInit(config: Config, transactionContextAPI: TransactionContextAPI) {
     this.transactionContextAPI = transactionContextAPI
     this.executionContext.init(config)
@@ -643,8 +644,23 @@ export class Blockchain extends Plugin {
     })
   }
 
-  async resetEnvironment() {
-    await this.getCurrentProvider().resetEnvironment()
+  async loadContext(context: string) {
+    const saveEvmState = this.config.get('settings/save-evm-state')
+    
+    if (saveEvmState) {
+      const contextExists = await this.call('fileManager', 'exists', `.states/${context}/state.json`)
+
+      if (contextExists) {
+        const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
+  
+        await this.getCurrentProvider().resetEnvironment(stateDb)
+      } else {
+        await this.getCurrentProvider().resetEnvironment()
+      }
+    } else {
+      await this.getCurrentProvider().resetEnvironment()
+    }
+
     // TODO: most params here can be refactored away in txRunner
     const web3Runner = new TxRunnerWeb3(
       {
@@ -677,7 +693,7 @@ export class Blockchain extends Plugin {
               view on etherscan
             </a>
           )
-        }
+        } 
       })
     })
     this.txRunner = new TxRunner(web3Runner, {})
@@ -889,8 +905,13 @@ export class Blockchain extends Plugin {
       let execResult
       let returnValue = null
       if (isVM) {
-        const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
+        if (!tx.useCall && this.config.get('settings/save-evm-state')) {
+          await this.executionContext.getStateDetails().then((state) => {
+            this.call('fileManager', 'writeFile', `.states/${this.executionContext.getProvider()}/state.json`, state)
+          })
+        }
 
+        const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
         if (hhlogs && hhlogs.length) {
           const finalLogs = (
             <div>

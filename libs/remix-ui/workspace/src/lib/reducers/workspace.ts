@@ -17,9 +17,10 @@ export interface BrowserState {
         name: string
       }[]
       currentBranch?: string
+      isGist: string
     }[]
     files: {[x: string]: Record<string, FileType>}
-    flatTree: {[x: string]: FileType}
+    flatTree: FileType[]
     expandPath: string[]
     isRequestingDirectory: boolean
     isSuccessfulDirectory: boolean
@@ -40,7 +41,7 @@ export interface BrowserState {
   localhost: {
     sharedFolder: string
     files: {[x: string]: Record<string, FileType>}
-    flatTree: {[x: string]: FileType}
+    flatTree: FileType[]
     expandPath: string[]
     isRequestingDirectory: boolean
     isSuccessfulDirectory: boolean
@@ -76,7 +77,7 @@ export const browserInitialState: BrowserState = {
     currentWorkspace: '',
     workspaces: [],
     files: {},
-    flatTree: {},
+    flatTree: [],
     expandPath: [],
     isRequestingDirectory: false,
     isSuccessfulDirectory: false,
@@ -97,7 +98,7 @@ export const browserInitialState: BrowserState = {
   localhost: {
     sharedFolder: '',
     files: {},
-    flatTree: {},
+    flatTree: [],
     expandPath: [],
     isRequestingDirectory: false,
     isSuccessfulDirectory: false,
@@ -150,7 +151,6 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 
   case 'SET_WORKSPACES': {
     const payload = action.payload
-
     return {
       ...state,
       browser: {
@@ -461,7 +461,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
               : state.localhost.files,
         flatTree: state.mode === 'localhost' ? flatTree : state.localhost.flatTree,
       },
-      focusEdit: payload.path + '/' + 'blank'
+      focusEdit: payload.path + '/' + '....blank'
     }
   }
 
@@ -891,21 +891,27 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
 }
 
 const flattenTree = (files, expandPath: string[]) =>{
-  const flatTree = {}
+  const flatTree = []
   const mapChild = (file: FileType) => {
 
-    if(!file || !file.path) return
+    if (!file || !file.path) return
 
-    flatTree[file.path] = file
-    expandPath && expandPath.find((path) => path.startsWith(file.path)) &&
-      file.child && Object.keys(file.child).map((key) => {
-      mapChild(file.child[key])
+    flatTree.push(file)
+    
+    if (file.isDirectory && file.child && expandPath && expandPath.find((path) => path === file.path || path.startsWith(file.path + '/')) ) {
+      const sorted = fileKeySort(file.child)
+      Object.keys(sorted).map((key) => {
+        mapChild(sorted[key])
+      })
+    }
+  }
+  if(files){
+    const sorted = fileKeySort(files[ROOT_PATH])
+    Object.keys(sorted).map((key) => {
+      mapChild(sorted[key])
     })
   }
-  files && files[ROOT_PATH] && Object.keys(files[ROOT_PATH]).map((key) => {
-
-    mapChild(files[ROOT_PATH][key])
-  })
+  
   return flatTree
 }
 
@@ -930,13 +936,12 @@ const fileAdded = (
     Object
   )
   const prevFiles = _.get(files, childPath)
-  const sortedFiles = fileKeySort(prevFiles)
   
   files = _.setWith(
     files,
     childPath,
     {
-      ...sortedFiles
+      ...prevFiles
     },
     Object
   )
@@ -964,7 +969,7 @@ const removeInputField = (
     state.mode === 'browser' ? state.browser.files : state.localhost.files
   const root = ROOT_PATH
   if (path === root) {
-    delete files[root][path + '/' + 'blank']
+    delete files[root][path + '/' + '....blank']
     return files
   }
   const _path = splitPath(state, path)
@@ -972,8 +977,8 @@ const removeInputField = (
 
   if (prevFiles) {
     prevFiles.child &&
-      prevFiles.child[path + '/' + 'blank'] &&
-      delete prevFiles.child[path + '/' + 'blank']
+      prevFiles.child[path + '/' + '....blank'] &&
+      delete prevFiles.child[path + '/' + '....blank']
     files = _.setWith(
       files,
       _path,
@@ -981,8 +986,7 @@ const removeInputField = (
         isDirectory: true,
         path,
         name: extractNameFromKey(path),
-        type:
-          extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder',
+        type: 'folder',
         child: prevFiles ? prevFiles.child : {}
       },
       Object
@@ -1002,7 +1006,6 @@ const fetchDirectoryContent = (
     return state.mode === 'browser'
       ? state.browser.files
       : state[state.mode].files
-  payload.fileTree = fileKeySort(payload.fileTree)
   if (state.mode === 'browser') {
     if (payload.path === ROOT_PATH) {
       let files = normalize(payload.fileTree, ROOT_PATH, payload.type)
@@ -1030,7 +1033,7 @@ const fetchDirectoryContent = (
           prevFiles.child
         )
         if (deletePath) {
-          if (deletePath.endsWith('/blank')) delete prevFiles.child[deletePath]
+          if (deletePath.endsWith('/....blank')) delete prevFiles.child[deletePath]
           else {
             deletePath = extractNameFromKey(deletePath)
             delete prevFiles.child[deletePath]
@@ -1065,7 +1068,7 @@ const fetchDirectoryContent = (
           prevFiles.child
         )
         if (deletePath) {
-          if (deletePath.endsWith('/blank')) delete prevFiles.child[deletePath]
+          if (deletePath.endsWith('/....blank')) delete prevFiles.child[deletePath]
           else {
             deletePath = extractNameFromKey(deletePath)
             delete prevFiles.child[deletePath]
@@ -1090,7 +1093,6 @@ const fetchWorkspaceDirectoryContent = (
   state: BrowserState,
   payload: {fileTree; path: string}
 ): {[x: string]: Record<string, FileType>} => {
-  payload.fileTree = fileKeySort(payload.fileTree)
   const files = normalize(payload.fileTree, ROOT_PATH)
 
   return {[ROOT_PATH]: files}
@@ -1114,8 +1116,7 @@ const normalize = (
         path,
         name: extractNameFromKey(path),
         isDirectory: filesList[key].isDirectory,
-        type:
-          extractNameFromKey(path).indexOf('gist-') === 0 ? 'gist' : 'folder'
+        type: 'folder'
       }
     } else {
       files[extractNameFromKey(key)] = {
@@ -1128,7 +1129,7 @@ const normalize = (
   })
 
   if (newInputType === 'folder') {
-    const path = directory + '/blank'
+    const path = directory + '/....blank'
 
     folders[path] = {
       path: path,
@@ -1137,7 +1138,7 @@ const normalize = (
       type: 'folder'
     }
   } else if (newInputType === 'file') {
-    const path = directory + '/blank'
+    const path = directory + '/....blank'
 
     files[path] = {
       path: path,

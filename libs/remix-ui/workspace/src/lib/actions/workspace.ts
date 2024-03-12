@@ -2,6 +2,8 @@ import React from 'react'
 import { bufferToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
+import { TemplateType } from '../types'
+import IpfsHttpClient from 'ipfs-http-client'
 import axios, { AxiosResponse } from 'axios'
 import {
   addInputFieldSuccess,
@@ -40,7 +42,7 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
-import { contractDeployerScripts, etherscanScripts } from '@remix-project/remix-ws-templates'
+import * as templates from '@remix-project/remix-ws-templates'
 
 declare global {
   interface Window {
@@ -139,7 +141,8 @@ export const createWorkspace = async (
     return
   }
   await plugin.fileManager.closeAllFiles()
-  const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName)
+  const metadata = TEMPLATE_METADATA[workspaceTemplateName]
+  const promise = createWorkspaceTemplate(workspaceName, workspaceTemplateName, metadata)
   dispatch(createWorkspaceRequest())
   promise.then(async () => {
     dispatch(createWorkspaceSuccess({ name: workspaceName, isGitRepo }))
@@ -184,7 +187,18 @@ export const createWorkspace = async (
         }
       }
     }
-    if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
+    if (metadata && metadata.type === 'plugin') {      
+      plugin.call('notification', 'toast', 'Please wait while the workspace is being populated with the template.')
+      dispatch(cloneRepositoryRequest())
+      setTimeout(() => {
+        plugin.call(metadata.name, metadata.endpoint, ...metadata.params).then(() => {
+          dispatch(cloneRepositorySuccess())
+        }).catch((e) => {
+          dispatch(cloneRepositorySuccess())
+          plugin.call('notification', 'toast', 'error adding template ' + e.message || e)
+        })  
+      }, 5000)      
+    } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
     cb && cb(null, workspaceName)
     if (isGitRepo) {
       await checkGit()
@@ -204,13 +218,14 @@ export const createWorkspace = async (
   return promise
 }
 
-export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault') => {
-  const metadata = TEMPLATE_METADATA[template]
+export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault', metadata?: TemplateType) => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
   if ((await workspaceExists(workspaceName)) && template === 'remixDefault') throw new Error('workspace already exists')
-  else if (metadata) {
+  else if (metadata && metadata.type === 'git') {
+    dispatch(cloneRepositoryRequest())
     await plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, workspaceName)
+    dispatch(cloneRepositorySuccess())
   } else {
     const workspaceProvider = plugin.fileProviders.workspace
     await workspaceProvider.createWorkspace(workspaceName)
@@ -220,6 +235,7 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: W
 export type UrlParametersType = {
   gist: string
   code: string
+  shareCode: string
   url: string
   language: string
 }
@@ -243,6 +259,30 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         content = atob(decodeURIComponent(params.code))
         await workspaceProvider.set(path, content)
       }
+      if (params.shareCode) {
+        const host = '127.0.0.1'
+        const port = 5001
+        const protocol = 'http'
+        // const projectId = ''
+        // const projectSecret = ''
+        // const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+
+        const ipfs = IpfsHttpClient({ port, host, protocol
+          , headers: {
+            // authorization: auth
+          } 
+        })
+        const hashed = bufferToHex(hash.keccakFromString(params.shareCode))
+
+        path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
+        const fileData = ipfs.get(params.shareCode)
+        for await (const file of fileData) {
+          const fileContent = []
+          for await (const chunk of file.content) fileContent.push(chunk)
+          content = Buffer.concat(fileContent).toString()
+        }
+        await workspaceProvider.set(path, content)
+      }
       if (params.url) {
         const data = await plugin.call('contentImport', 'resolve', params.url)
 
@@ -258,7 +298,9 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
             }
             return Object.keys(standardInput.sources)[0]
           } else {
-            await workspaceProvider.set(path, JSON.stringify(content))
+            // preserve JSON whitepsace if this isn't a Solidity compiler JSON-input-output file
+            content = data.content
+            await workspaceProvider.set(path, content)
           }
         } catch (e) {
           console.log(e)
@@ -294,11 +336,21 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       }
       const obj = {}
 
-      Object.keys(data.files).forEach((element) => {
+      for (const [element] of Object.entries(data.files)) {
         const path = element.replace(/\.\.\./g, '/')
+        let value
+        if (data.files[element].truncated) {
+          const response: AxiosResponse = await axios.get(data.files[element].raw_url)
+          value = { content: response.data }
+        } else {
+          value = { content: data.files[element].content }
+        }
 
-        obj['/' + 'gist-' + gistId + '/' + path] = data.files[element]
-      })
+        if (data.files[element].type === 'application/json') {
+          obj['/' + path] = { content: JSON.stringify(value.content, null, '\t') }
+        } else
+          obj['/' + path] = value
+      }
       plugin.fileManager.setBatchFiles(obj, 'workspace', true, (errorLoadingFile) => {
         if (errorLoadingFile) {
           dispatch(displayNotification('', errorLoadingFile.message || errorLoadingFile, 'OK', null, () => {}, null))
@@ -547,11 +599,9 @@ export const uploadFolder = async (target, targetFolder: string, cb?: (err: Erro
 }
 
 export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[]> | undefined => {
-  console.log('getWorkspaces')
   try {
     const workspaces: { name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
-      console.log('workspacesPath', workspacesPath)
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
         
         if (error) {
@@ -561,6 +611,7 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
           Object.keys(items)
             .filter((item) => items[item].isDirectory)
             .map(async (folder) => {
+              const name = folder.replace(workspacesPath + '/', '')
               const isGitRepo: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.git')
               const hasGitSubmodules: boolean = await plugin.fileProviders.browser.exists('/' + folder + '/.gitmodules')
               if (isGitRepo) {
@@ -570,24 +621,25 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
                 branches = await getGitRepoBranches(folder)
                 currentBranch = await getGitRepoCurrentBranch(folder)
                 return {
-                  name: folder.replace(workspacesPath + '/', ''),
+                  name,
                   isGitRepo,
                   branches,
                   currentBranch,
-                  hasGitSubmodules
+                  hasGitSubmodules,
+                  isGist: null
                 }
               } else {
                 return {
-                  name: folder.replace(workspacesPath + '/', ''),
+                  name,
                   isGitRepo,
-                  hasGitSubmodules
+                  hasGitSubmodules,
+                  isGist: plugin.isGist(name) // plugin is filePanel
                 }
               }
             })
         ).then((workspacesList) => resolve(workspacesList))
       })
     })
-    console.log('workspaces', workspaces)
     await plugin.setWorkspaces(workspaces)
     return workspaces
   } catch (e) {}
@@ -650,7 +702,7 @@ export const cloneRepository = async (url: string) => {
           plugin.call('notification', 'modal', cloneModal)
         })
     } catch (e) {
-      dispatch(displayPopUp('An error occured: ' + e))
+      dispatch(displayPopUp('An error occurred: ' + e))
     }
   }
 }
@@ -817,14 +869,10 @@ export const createSlitherGithubAction = async () => {
   plugin.call('fileManager', 'open', path)
 }
 
-const scriptsRef = {
-  deployer: contractDeployerScripts,
-  etherscan: etherscanScripts,
-}
 export const createHelperScripts = async (script: string) => {
-  if (!scriptsRef[script]) return
-  await scriptsRef[script](plugin)
-  plugin.call('notification', 'toast', 'scripts added in the "scripts" folder')
+  if (!templates[script]) return
+  await templates[script](plugin)
+  plugin.call('notification', 'toast', `'${script}' added to the workspace.`)
 }
 
 export const updateGitSubmodules = async () => {

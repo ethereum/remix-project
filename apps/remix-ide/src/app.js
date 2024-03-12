@@ -47,6 +47,7 @@ import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { CompilationDetailsPlugin } from './app/plugins/compile-details'
+import { VyperCompilationDetailsPlugin } from './app/plugins/vyper-compilation-details'
 import { ContractFlattener } from './app/plugins/contractFlattener'
 import { TemplatesPlugin } from './app/plugins/remix-templates'
 import { fsPlugin } from './app/plugins/electron/fsPlugin'
@@ -56,6 +57,7 @@ import { electronTemplates } from './app/plugins/electron/templatesPlugin'
 import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
+
 import {OpenAIGpt} from './app/plugins/openaigpt'
 
 const isElectron = require('is-electron')
@@ -163,11 +165,11 @@ class AppComponent {
       'remix.ethereum.org': 23,
       '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
     }
-    
+
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
     this.showMatamo = matomoDomains[window.location.hostname] && !this.matomoConfAlreadySet
-    
+
     this.walkthroughService = new WalkthroughService(appManager)
 
     this.platform = isElectron() ? 'desktop' : 'web'
@@ -225,7 +227,7 @@ class AppComponent {
 
     // ----------------- Compilation Details ----------------------------
     const compilationDetails = new CompilationDetailsPlugin(appManager)
-
+    const vyperCompilationDetails = new VyperCompilationDetailsPlugin(appManager)
     // ----------------- ContractFlattener ----------------------------
     const contractFlattener = new ContractFlattener()
 
@@ -353,6 +355,7 @@ class AppComponent {
       search,
       solidityumlgen,
       compilationDetails,
+      vyperCompilationDetails,
       contractFlattener,
       solidityScript,
       templates,
@@ -457,7 +460,7 @@ class AppComponent {
     } catch (e) {
       console.log("couldn't register iframe plugins", e.message)
     }
-    if(isElectron()){
+    if (isElectron()){
       await this.appManager.activatePlugin(['fs'])
     }
     await this.appManager.activatePlugin(['layout'])
@@ -496,7 +499,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
-    if(isElectron()){
+    if (isElectron()){
       await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep'])
     }
 

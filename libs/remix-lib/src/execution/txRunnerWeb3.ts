@@ -32,7 +32,7 @@ export class TxRunnerWeb3 {
         tx.type = '0x2'
       } else {
         tx.gasPrice = toHex(BigInt(this.getWeb3().utils.toWei(txFee.gasPrice, 'gwei')))
-        tx.type = '0x1'
+        // tx.type = '0x1'
       }
     }
 
@@ -181,7 +181,7 @@ async function tryTillReceiptAvailable (txhash: string, web3: Web3) {
     if (receipt) {
       if (!receipt.to && !receipt.contractAddress) {
         // this is a contract creation and the receipt doesn't contain a contract address. we have to keep polling...
-        console.log('this is a contract creation and the receipt does nott contain a contract address. we have to keep polling...')
+        console.log('this is a contract creation and the receipt does not contain a contract address. we have to keep polling...')
       } else
         return receipt
     }

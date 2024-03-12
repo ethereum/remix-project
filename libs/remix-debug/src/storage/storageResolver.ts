@@ -35,13 +35,13 @@ export class StorageResolver {
   }
 
   /**
-   * compute the mappgings type locations for the current address (cached for a debugging session)
+   * compute the mappings type locations for the current address (cached for a debugging session)
    * note: that only retrieve the first 100 items.
    *
    * @param {Object} tx
    * @param {Int} stepIndex
    * @param {Object} address  - storage
-   * @param {Array} corrections - used in case the calculated sha3 has been modifyed before SSTORE (notably used for struct in mapping).
+   * @param {Array} corrections - used in case the calculated sha3 has been modified before SSTORE (notably used for struct in mapping).
    * @return {Function} - callback
    */
   async initialPreimagesMappings (tx, stepIndex, address, corrections) {

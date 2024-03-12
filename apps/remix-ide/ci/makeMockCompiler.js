@@ -2,8 +2,8 @@
 
 var fs = require('fs')
 var compiler = require('solc')
-var compilerInput = require('@remix-project/remix-solidity').CompilerInput
-var defaultVersion = 'soljson-v0.8.22+commit.4fc1097e.js'
+var compilerInput = require('@remix-project/remix-solidity').compilerInputFactory
+var defaultVersion = 'soljson-v0.8.24+commit.e11b9ed9.js'
 const path = require('path')
 
 compiler.loadRemoteVersion(defaultVersion, (error, solcSnapshot) => {

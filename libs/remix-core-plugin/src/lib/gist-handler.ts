@@ -114,10 +114,23 @@ export class GistHandler extends Plugin {
         return
       }
 
+      const gistIdWorkspace = 'gist ' + gistId
+      const workspaces = await this.call('filePanel', 'getWorkspaces')
+      const found = workspaces.find((workspace) => workspace.name === gistIdWorkspace)
+      if (found) {        
+        await this.call('notification', 'alert', {
+          id: 'gistAlert',
+          message: `workspace "${gistIdWorkspace}" already exists`,
+        })
+        return
+      }
+      await this.call('filePanel', 'createWorkspace', 'gist ' + gistId, '', true)
+      await this.call('filePanel', 'switchToWorkspace', { name: 'gist ' + gistId, isLocalHost: false })
+
       const obj: StringByString = {}
       Object.keys(data.files).forEach((element) => {
         const path = element.replace(/\.\.\./g, '/')
-        obj['/gist-' + gistId + '/' + path] = data.files[element]
+        obj['/' + path] = data.files[element]
       })
       this.call('fileManager', 'setBatchFiles', obj, isElectron()? 'electron':'workspace', true, async (errorSavingFiles: any) => {
         if (errorSavingFiles) {

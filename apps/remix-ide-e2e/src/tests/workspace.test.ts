@@ -501,7 +501,7 @@ module.exports = {
       .pause(2000)
   },
 
-  'Should change the current workspace in localstorage to a non existant value, reload the page and see the workspace created #group2': function (browser: NightwatchBrowser) {
+  'Should change the current workspace in localstorage to a non existent value, reload the page and see the workspace created #group2': function (browser: NightwatchBrowser) {
     browser
       .execute(function () {
         localStorage.setItem('currentWorkspace', 'non_existing_workspace')
@@ -538,6 +538,29 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .currentWorkspaceIs('default_workspace')
 
+  },
+
+  'Should create a cookbook workspace #group3': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=uniswapV4HookBookMultiSigSwapHook]')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'multisig cookbook' })
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .waitForElementVisible('[data-id="PermissionHandler-modal-footer-ok-react"]', 300000)
+      .click('[data-id="PermissionHandler-modal-footer-ok-react"]')
+      // click on lib to close it
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemlib"]')
+      .click('*[data-id="treeViewLitreeViewItemlib"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc/MULTI_SIG"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc/MULTI_SIG/MultiSigSwapHook.sol"]')
   },
 
   tearDown: sauce

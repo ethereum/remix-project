@@ -5,8 +5,8 @@ import { sub } from '../solidity-decoder/types/util'
   * like { "<mapping_slot>" : { "<mapping-key1>": preimageOf1 }, { "<mapping-key2>": preimageOf2 }, ... }
   *
   * @param {Object} storage  - storage given by storage Viewer (basically a mapping hashedkey : {key, value})
-  * @param {Array} corrections - used in case the calculated sha3 has been modifyed before SSTORE (notably used for struct in mapping).
-  * @param {Function} callback  - calback
+  * @param {Array} corrections - used in case the calculated sha3 has been modified before SSTORE (notably used for struct in mapping).
+  * @param {Function} callback  - callback
   * @return {Map} - solidity mapping location (e.g { "<mapping_slot>" : { "<mapping-key1>": preimageOf1 }, { "<mapping-key2>": preimageOf2 }, ... })
   */
 export async function decodeMappingsKeys (web3, storage, corrections) {

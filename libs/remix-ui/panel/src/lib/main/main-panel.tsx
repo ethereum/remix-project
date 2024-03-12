@@ -6,9 +6,6 @@ import {PluginRecord} from '../types'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import './main-panel.css'
 
-
-
-
 export type RemixUIMainPanelProps = {
   layout: any
 }

@@ -39,7 +39,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       handleHide: null
     },
     solJsonBinData: null,
-    defaultVersion: 'soljson-v0.8.22+commit.4fc1097e.js', // this default version is defined: in makeMockCompiler (for browser test)
+    defaultVersion: 'soljson-v0.8.24+commit.e11b9ed9.js', // this default version is defined: in makeMockCompiler (for browser test)
   })
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)

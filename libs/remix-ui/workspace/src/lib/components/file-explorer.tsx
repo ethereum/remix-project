@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, SyntheticEvent, useTransition } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, SyntheticEvent } from 'react' // eslint-disable-line
 import { useIntl } from 'react-intl'
 import { TreeView } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
@@ -27,12 +27,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
     handleContextMenu,
     handleNewFileInput,
     handleNewFolderInput,
+    deletePath,
     uploadFile,
     uploadFolder,
     fileState
   } = props
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
-  const [isPending, startTransition] = useTransition();
+  // const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -130,6 +131,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   const renamePath = async (oldPath: string, newPath: string) => {
     try {
+      if (oldPath === newPath) return
       props.dispatchRenamePath(oldPath, newPath)
     } catch (error) {
       props.modal(
@@ -141,12 +143,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const publishToGist = (path?: string, type?: string) => {
+  const publishToGist = (path?: string) => {
     props.modal(
       intl.formatMessage({ id: 'filePanel.createPublicGist' }),
       intl.formatMessage({ id: 'filePanel.createPublicGistMsg4' }, { name }),
       intl.formatMessage({ id: 'filePanel.ok' }),
-      () => toGist(path, type),
+      () => toGist(path),
       intl.formatMessage({ id: 'filePanel.cancel' }),
       () => { }
     )
@@ -171,7 +173,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleClickFolder = async (path: string, type: 'folder' | 'file' | 'gist') => {
+  const handleClickFolder = async (path: string, type: 'folder' | 'file' ) => {
     if (state.ctrlKey) {
       if (props.focusElement.findIndex((item) => item.key === path) !== -1) {
         const focusElement = props.focusElement.filter((item) => item.key !== path)
@@ -247,8 +249,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
               () => { }
             )
           } else {
-            console.log('createNewFile', joinPath(parentFolder, content))
-            console.log('createNewFolder', state.focusEdit)
             state.focusEdit.type === 'file' ? createNewFile(joinPath(parentFolder, content)) : createNewFolder(joinPath(parentFolder, content))
             props.dispatchRemoveInputField(parentFolder)
           }
@@ -406,6 +406,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
           moveFile={handleFileMove}
           moveFolder={handleFolderMove}
           handleClickFolder={handleClickFolder}
+          createNewFile={props.createNewFile}
+          createNewFolder={props.createNewFolder}
+          deletePath={deletePath}
+          editPath={props.editModeOn}
         />
       </div>
     </div>

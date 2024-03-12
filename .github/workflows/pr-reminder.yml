@@ -2,7 +2,7 @@ name: PRs reviews reminder
 
 on:
   schedule:
-    - cron: "0 8-17/8 * * 1-5"
+    - cron: "0 8 * * 1-5"
   workflow_dispatch:
 
 jobs:
@@ -14,4 +14,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        freeze-date: '2024-01-08T12:00:00Z'
+        freeze-date: '2024-03-11T18:00:00Z'

@@ -9,7 +9,7 @@ declare global {
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done)
+    init(browser, done, 'http://localhost:8080')
   },
 
   'Should connect to vyper plugin #group1': function (browser: NightwatchBrowser) {
@@ -41,33 +41,80 @@ module.exports = {
       .openFile('examples/auctions/blind_auction.vy')
   },
 
-  'Compile blind_auction should success #group1': function (browser: NightwatchBrowser) {
-    browser.clickLaunchIcon('vyper')
+  'Context menu click to compile blind_auction should succeed #group1': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="treeViewLitreeViewItemexamples/auctions/blind_auction.vy"]')
+      .rightClick('*[data-id="treeViewLitreeViewItemexamples/auctions/blind_auction.vy"]')
+      .waitForElementPresent('[data-id="contextMenuItemvyper"]')
+      .click('[data-id="contextMenuItemvyper"]')
+      .clickLaunchIcon('vyper')
       // @ts-ignore
       .frame(0)
-      .click('[data-id="remote-compiler"]')
-      .click('[data-id="compile"]')
-      .isVisible({
-        selector: '[data-id="copy-abi"]',
-        timeout: 4000,
-        abortOnFailure: false,
-        suppressNotFoundErrors: true
-      }, (okVisible) => {
-        if (okVisible.value === null) {
-          console.log('retrying compilation...')
-          browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
-        } else{
-          browser.assert.ok(okVisible.value === true, 'ABI should be visible')
-        }
+      .waitForElementVisible({
+        selector:'[data-id="compilation-details"]',
+        timeout: 120000
       })
-      
+      .click('[data-id="compilation-details"]')
+      .frameParent()
+      .waitForElementVisible('[data-id="copy-abi"]')
+      .waitForElementVisible({
+        selector: "//*[@class='variable-value' and contains(.,'highestBidder')]",
+        locateStrategy: 'xpath',
+      })
+  },
 
+  'Compile blind_auction should success #group1': function (browser: NightwatchBrowser) {
+    browser
+      // @ts-ignore
+      .frame(0)
+      .click('[data-id="compile"]')
+      .waitForElementVisible({
+        selector:'[data-id="compilation-details"]',
+        timeout: 120000
+      })
+      .click('[data-id="compilation-details"]')
+      .frameParent()
+      .waitForElementVisible('[data-id="copy-abi"]')
+      .waitForElementVisible({
+        selector: "//*[@class='variable-value' and contains(.,'highestBidder')]",
+        locateStrategy: 'xpath',
+      })
+  },
+
+  'Should copy abi after blind_auction compile #group1': function (browser: NightwatchBrowser) {
+    if (browser.browserName.indexOf('chrome') > -1) {
+      const chromeBrowser = (browser as any).chrome
+      chromeBrowser.setPermission('clipboard-read', 'granted')
+      chromeBrowser.setPermission('clipboard-write', 'granted')
+      browser
+        .frame(0)
+        .click('[data-id="compile"]')
+        .waitForElementVisible({
+          selector:'[data-id="compilation-details"]',
+          timeout: 120000
+        })
+        .click('[data-id="compilation-details"]')
+        .frameParent()
+        .waitForElementVisible('[data-id="copy-abi"]')
+        .click('[data-id="copy-abi"]')
+        .executeAsyncScript(function (done) {
+          navigator.clipboard.readText()
+            .then(function (clippedText) {
+              done(clippedText)
+            }).catch(function (error) {
+              console.log('Failed to read clipboard contents: ', error)
+              done()
+            })
+        }, [], function (result) {
+          console.log('clipboard result: ' + result)
+          browser.assert.ok((result as any).value.length > 1, 'abi copied to clipboard')
+        })
+    }
   },
 
   'Compile test contract and deploy to remix VM #group1': function (browser: NightwatchBrowser) {
     let contractAddress
     browser
-      .frameParent()
       .clickLaunchIcon('filePanel')
       .switchWorkspace('default_workspace')
       .addFile('test.vy', { content: testContract })
@@ -75,20 +122,13 @@ module.exports = {
       // @ts-ignore
       .frame(0)
       .click('[data-id="compile"]')
-      .isVisible({
-        selector: '[data-id="copy-abi"]',
-        timeout: 4000,
-        abortOnFailure: false,
-        suppressNotFoundErrors: true
-      }, (okVisible) => {
-        if (okVisible.value === null) {
-          console.log('retrying compilation...')
-          browser.click('[data-id="compile"]').waitForElementVisible('[data-id="copy-abi"]')
-        } else{
-          browser.assert.ok(okVisible.value === true, 'ABI should be visible')
-        }
+      .waitForElementVisible({
+        selector:'[data-id="compilation-details"]',
+        timeout: 60000
       })
+      .click('[data-id="compilation-details"]')
       .frameParent()
+      .waitForElementVisible('[data-id="copy-abi"]')
       .clickLaunchIcon('udapp')
       .createContract('')
       .clickInstance(0)
@@ -105,7 +145,6 @@ module.exports = {
 }
 
 const testContract = `
-# @version >=0.2.4 <0.3.0
 
 DNA_DIGITS: constant(uint256) = 16
 DNA_MODULUS: constant(uint256) = 10 ** DNA_DIGITS
