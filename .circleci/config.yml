@@ -111,27 +111,27 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
-      - run: ldd --version
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: unzip ./persist/desktopbuild.zip
-      - run: 
-          command: |
-              node -v
-              mkdir apps/remixdesktop/build
-              cp -r dist/apps/remix-ide apps/remixdesktop/build
-              cd apps/remixdesktop/
-              yarn add node-pty
-              yarn --ignore-optional
-              yarn add @remix-project/remix-ws-templates
-              yarn dist
-              yarn run selenium-install
-       - run:
-          name: "Run selenium"
-          command: |
-            yarn run selenium
-          background: true
+        - run: ldd --version
+        - checkout
+        - attach_workspace:
+            at: .
+        - run: unzip ./persist/desktopbuild.zip
+        - run: 
+            command: |
+                node -v
+                mkdir apps/remixdesktop/build
+                cp -r dist/apps/remix-ide apps/remixdesktop/build
+                cd apps/remixdesktop/
+                yarn add node-pty
+                yarn --ignore-optional
+                yarn add @remix-project/remix-ws-templates
+                yarn dist
+                yarn run selenium-install
+        - run:
+            name: "Run selenium"
+            command: |
+              yarn run selenium
+            background: true
         - run:  
             name: "Run tests"
             command: |
