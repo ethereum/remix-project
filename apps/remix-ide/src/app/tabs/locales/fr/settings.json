@@ -37,5 +37,5 @@
   "settings.projectID": "ID du projet",
   "settings.projectSecret": "SECRET DU PROJET",
   "settings.analyticsInRemix": "Analytics dans l'IDE de Remix",
-  "settings.enableSaveEnvState": "Enregistrer l'état de l'environnement de déploiement"
+  "settings.enableSaveEnvState": "Save environment state"
 }

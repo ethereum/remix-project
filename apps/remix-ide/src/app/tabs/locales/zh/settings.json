@@ -37,5 +37,5 @@
   "settings.projectID": "项目 ID",
   "settings.projectSecret": "项目密钥",
   "settings.analyticsInRemix": "Remix IDE 中的分析功能",
-  "settings.enableSaveEnvState": "保存部署环境状态"
+  "settings.enableSaveEnvState": "Save environment state"
 }
