@@ -404,7 +404,6 @@ class FSPluginClient extends ElectronBasePluginClient {
     this.window.setTitle(getBaseName(this.workingDir))
     this.watch()
     this.emit('workingDirChanged', path)
-    await this.call('fileManager', 'closeAllFiles')
   }
 
   async revealInExplorer(action: customAction, isAbsolutePath: boolean = false): Promise<void> {
