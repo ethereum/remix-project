@@ -28,7 +28,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
   onContentChanged: () => void
   onFileClosed: (name: string) => void
   statusChanged: (data: { key: string, title?: string, type?: string }) => void
-  
+
   setSolJsonBinData: (urls: iSolJsonBinData) => void
 
   initCompilerApi () {
@@ -336,7 +336,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
             await this.call('editor', 'addAnnotation', pos, file)
           }
         }
-      }     
+      }
     }
     this.compiler.event.register('compilationFinished', this.data.eventHandlers.onCompilationFinished)
 
@@ -360,6 +360,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
           else this.compileTabLogic.runCompiler(undefined)
         } else if (this.currentFile && this.currentFile.endsWith('.circom')) {
           await this.call('circuit-compiler', 'compile', this.currentFile)
+        } else if (this.currentFile && this.currentFile.endsWith('.vy')) {
+          await this.call('vyper', 'vyperCompileCustomAction', this.currentFile)
         }
       }
     }
@@ -370,7 +372,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return new Promise((resolve) => {
       if (!data.contracts || (data.contracts && Object.keys(data.contracts).length === 0)) {
         return resolve({
-          contractMap: {}, 
+          contractMap: {},
           contractsDetails: {},
           target: source.target
         })
@@ -386,7 +388,7 @@ export const CompilerApiMixin = (Base) => class extends Base {
         )
       })
       return resolve({
-        contractMap, 
+        contractMap,
         contractsDetails,
         target: source.target
       })
