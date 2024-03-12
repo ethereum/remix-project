@@ -207,7 +207,6 @@ export class ExecutionContext {
   }
 
   async getStateDetails() {
-    // TODO: this won't save the state for transactions executed outside of the UI (for instance from a script execution).
     const db = await this.web3().remix.getStateDb()
     const blocksData = await this.web3().remix.getBlocksData()
     const state = {
