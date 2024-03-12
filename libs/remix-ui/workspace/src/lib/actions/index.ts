@@ -185,6 +185,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       if (params.opendir) {
         params.opendir = decodeURIComponent(params.opendir)
         plugin.call('notification', 'toast', `opening ${params.opendir}...`)
+        console.log('opening', params.opendir)
         await plugin.call('fs', 'setWorkingDir', params.opendir)
       }
       const currentPath = await plugin.call('fs', 'getWorkingDir')

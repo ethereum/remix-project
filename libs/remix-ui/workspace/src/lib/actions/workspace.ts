@@ -134,6 +134,7 @@ export const createWorkspace = async (
   isGitRepo: boolean = false,
   createCommit: boolean = true
 ) => {
+  console.log('createWorkspace', workspaceName, workspaceTemplateName, opts, isEmpty, isGitRepo, createCommit)
   if (plugin.registry.get('platform').api.isDesktop()) {
     if (workspaceTemplateName) {
       await plugin.call('remix-templates', 'loadTemplateInNewWindow', workspaceTemplateName, opts)
