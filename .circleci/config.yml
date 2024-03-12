@@ -130,6 +130,7 @@ jobs:
         - run:
             name: "Run selenium"
             command: |
+              cd apps/remixdesktop/
               yarn run selenium
             background: true
         - run:  
