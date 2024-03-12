@@ -114,12 +114,7 @@ export function UniversalDappUI(props: UdappProps) {
 
   const unsavePinnedContract = async () => {
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-    const savedContracts = localStorage.getItem('savedContracts')
-    const savedContractsJson = JSON.parse(savedContracts)
-    const instanceIndex = savedContractsJson[network.id].findIndex(instance => instance && instance.address === props.instance.address)
-    delete savedContractsJson[network.id][instanceIndex]
-    savedContractsJson[network.id] = savedContractsJson[network.id].filter(Boolean)
-    localStorage.setItem('savedContracts', JSON.stringify(savedContractsJson))
+    await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${network.id}/${props.instance.address}.json`)
   }
 
   const remove = async() => {
@@ -139,24 +134,17 @@ export function UniversalDappUI(props: UdappProps) {
   const pinContract = async() => {
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-    const savedContracts = localStorage.getItem('savedContracts')
-    let objToSave
-    if (!savedContracts) {
-      objToSave = {}
-      objToSave[network.id] = []
-    } else {
-      objToSave = JSON.parse(savedContracts)
-      if (!objToSave[network.id]) {
-        objToSave[network.id] = []
-      }
+    const objToSave = {
+      name: props.instance.name,
+      address: props.instance.address,
+      abi: props.instance.abi || props.instance.contractData.abi,
+      filePath: props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`,
+      pinnedAt: Date.now()
     }
-    props.instance.savedOn = Date.now()
-    props.instance.filePath = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
-    objToSave[network.id].push(props.instance)
-    localStorage.setItem('savedContracts', JSON.stringify(objToSave))
+    await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${network.id}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
     // Add contract to saved contracts list on UI
-    await props.plugin.call('udapp', 'addSavedInstance', props.instance.address, props.instance.abi || props.instance.contractData.abi, props.instance.name, props.instance.savedOn, props.instance.filePath)
-    _paq.push(['trackEvent', 'udapp', 'pinContracts', 'pinned'])
+    await props.plugin.call('udapp', 'addSavedInstance', objToSave.address, objToSave.abi, objToSave.name, objToSave.pinnedAt, objToSave.filePath)
+    _paq.push(['trackEvent', 'udapp', 'pinContracts', `pinned at ${network.id}`])
     // Remove contract from deployed contracts list on UI
     props.removeInstance(props.index, false, false)
   }

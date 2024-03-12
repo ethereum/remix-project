@@ -1,12 +1,12 @@
 /* global Node, requestAnimationFrame */   // eslint-disable-line
 import React from 'react' // eslint-disable-line
-import { RemixUiTerminal } from '@remix-ui/terminal' // eslint-disable-line
+import { RemixUiTerminal, RemixUITerminalWrapper } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import {Registry} from '@remix-project/remix-lib'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import vm from 'vm'
-const EventManager = require('../../lib/events')
+import EventManager from '../../lib/events'
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
 import { RemixUiXterminals } from '@remix-ui/xterm'
@@ -26,6 +26,34 @@ const profile = {
 }
 
 class Terminal extends Plugin {
+  fileImport: CompilerImports
+  event: any
+  globalRegistry: Registry
+  element: HTMLDivElement
+  eventsDecoder: any
+  txListener: any
+  _deps: { fileManager: any; editor: any; compilersArtefacts: any; offsetToLineColumnConverter: any }
+  commandHelp: { 'remix.loadgist(id)': string; 'remix.loadurl(url)': string; 'remix.execute(filepath)': string; 'remix.exeCurrent()': string; 'remix.help()': string }
+  blockchain: any
+  vm: typeof vm
+  _api: any
+  _opts: any
+  config: any
+  version: string
+  data: {
+    lineLength: any // ????
+    session: any[]; activeFilters: { commands: any; input: string }; filterFns: any
+  }
+  _view: { el: any; bar: any; input: any; term: any; journal: any; cli: any }
+  _components: any
+  _commands: any
+  commands: any
+  _JOURNAL: any[]
+  _jobs: any[]
+  _INDEX: any
+  _shell: any
+  dispatch: any
+  terminalApi: any
   constructor(opts, api) {
     super(profile)
     this.fileImport = new CompilerImports()
@@ -75,7 +103,7 @@ class Terminal extends Plugin {
     this._INDEX.commandsMain = {}
     if (opts.shell) this._shell = opts.shell // ???
     register(this)
-    this.event.register('debuggingRequested', async (hash) => {
+    this.event.register('debuggingRequested', async (hash: any) => {
       // TODO should probably be in the run module
       if (!await this._opts.appManager.isActive('debugger')) await this._opts.appManager.activatePlugin('debugger')
       this.call('menuicons', 'select', 'debugger')
@@ -114,13 +142,12 @@ class Terminal extends Plugin {
   }
 
   updateComponent(state) {
-    return (Registry.getInstance().get('platform').api.isDesktop()) ? <RemixUiXterminals onReady={state.onReady} plugin={state.plugin}>
-    </RemixUiXterminals>
-      : <RemixUiTerminal
+    return(
+      <RemixUITerminalWrapper
         plugin={state.plugin}
         onReady={state.onReady}
         visible={true}
-      />
+      />)
   }
 
   renderComponent() {

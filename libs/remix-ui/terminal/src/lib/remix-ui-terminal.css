@@ -19,7 +19,7 @@ element.style {
   min-height        : 3em;
 }
 .remix_ui_terminal_bar {
-  z-index           : 2;
+  z-index           : 20;
 }
 .remix_ui_terminal_menu {
   max-height           : 35px;
