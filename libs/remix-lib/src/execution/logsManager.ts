@@ -21,6 +21,7 @@ export class LogsManager {
     eachOf(block.transactions, (tx: any, i, next) => {
       const txHash = '0x' + tx.hash().toString('hex')
       web3.eth.getTransactionReceipt(txHash, (_error, receipt) => {
+        if (!receipt) return next()
         for (const log of receipt.logs) {
           this.oldLogs.push({ type: 'block', blockNumber, block, tx, log, txNumber: i, receipt })
           const subscriptions = this.getSubscriptionsFor({ type: 'block', blockNumber, block, tx, log, receipt})

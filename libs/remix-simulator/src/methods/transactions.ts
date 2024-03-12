@@ -4,7 +4,7 @@ import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
 import { ethers } from 'ethers'
 import { VMexecutionResult } from '@remix-project/remix-lib'
-import { RunTxResult } from '@ethereumjs/vm'
+import { VMContext } from '../vm-context'
 import { Log, EvmError } from '@ethereumjs/evm'
 const TxRunnerVM = execution.TxRunnerVM
 const TxRunner = execution.TxRunner
@@ -19,7 +19,7 @@ export type VMExecResult = {
 }
 
 export class Transactions {
-  vmContext
+  vmContext: VMContext
   accounts
   tags
   txRunnerVMInstance
@@ -32,7 +32,7 @@ export class Transactions {
     this.tags = {}
   }
 
-  init (accounts, blockNumber) {
+  init (accounts, blocksData: Buffer[]) {
     this.accounts = accounts
     const api = {
       logMessage: (msg) => {
@@ -55,11 +55,11 @@ export class Transactions {
       }
     }
 
-    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => this.vmContext.vmObject(), blockNumber)
+    this.txRunnerVMInstance = new TxRunnerVM(accounts, api, _ => this.vmContext.vmObject(), blocksData)
     this.txRunnerInstance = new TxRunner(this.txRunnerVMInstance, {})
     this.txRunnerInstance.vmaccounts = accounts
   }
-
+ 
   methods () {
     return {
       eth_sendTransaction: this.eth_sendTransaction.bind(this),
@@ -74,7 +74,9 @@ export class Transactions {
       eth_getExecutionResultFromSimulator: this.eth_getExecutionResultFromSimulator.bind(this),
       eth_getHHLogsForTx: this.eth_getHHLogsForTx.bind(this),
       eth_getHashFromTagBySimulator: this.eth_getHashFromTagBySimulator.bind(this),
-      eth_registerCallId: this.eth_registerCallId.bind(this)
+      eth_registerCallId: this.eth_registerCallId.bind(this),
+      eth_getStateDb: this.eth_getStateDb.bind(this),
+      eth_getBlocksData: this.eth_getBlocksData.bind(this)
     }
   }
 
@@ -196,6 +198,17 @@ export class Transactions {
   eth_registerCallId (payload, cb) {
     this.comingCallId = payload.params[0]
     cb()
+  }
+
+  eth_getStateDb (_, cb) {
+    cb(null, this.vmContext.currentVm.stateManager.getDb())
+  }
+
+  eth_getBlocksData (_, cb) {
+    cb(null, {
+      blocks: this.txRunnerVMInstance.blocks,
+      latestBlockNumber: this.txRunnerVMInstance.blockNumber
+    })
   }
 
   eth_call (payload, cb) {
