@@ -66,7 +66,6 @@ task('syncLibVersions', async function () {
         'remix-tests',
         'remix-url-resolver',
         'remix-ws-templates',
-        'remixd',
         'ghaction-helper'
     ]
 
@@ -76,6 +75,15 @@ task('syncLibVersions', async function () {
     })
     await Promise.resolve();
 });
+
+/**
+ * @dev Task to sync remixd version from 'dist' folder after publishing
+ */
+task('syncRemixdVersion', async function () {
+    const distPackageJSON = require(__dirname + '/dist/libs/remixd/package.json')
+    fs.writeFileSync(__dirname + '/libs/remixd/package.json', JSON.stringify(distPackageJSON, null, 2), 'utf8')
+    await Promise.resolve();
+})
 
 async function setBranchHead(branchName, head) {
     try {

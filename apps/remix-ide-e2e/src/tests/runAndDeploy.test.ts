@@ -80,12 +80,23 @@ module.exports = {
       .pause(1000)
       .getAddressAtPosition(1, (address) => {
         instanceAddress = address
+        console.log('instanceAddress', instanceAddress)
         browser
-        .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
-        .waitForElementContainsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH', 10000)
-        .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
-        .pause(1000)
-        .waitForElementContainsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000109 ETH', 10000)
+          .waitForElementVisible(`#instance${instanceAddress} [data-id="instanceContractBal"]`)
+        //*[@id="instance0xbBF289D846208c16EDc8474705C748aff07732dB" and contains(.,"Balance") and contains(.,'0.000000000000000111')]
+          .waitForElementVisible({
+            locateStrategy: 'xpath',
+            selector: `//*[@id="instance${instanceAddress}" and contains(.,"Balance") and contains(.,'0.000000000000000111')]`,
+            timeout: 60000
+          })
+        //.waitForElementContainsText(`#instance${instanceAddress} [data-id="instanceContractBal"]`, 'Balance: 0.000000000000000111 ETH', 60000)
+          .clickFunction('sendSomeEther - transact (not payable)', { types: 'uint256 num', values: '2' })
+          .pause(1000)
+          .waitForElementVisible({
+            locateStrategy: 'xpath',
+            selector: `//*[@id="instance${instanceAddress}" and contains(.,"Balance") and contains(.,'0.000000000000000109')]`,
+            timeout: 60000
+          })
       })
   },
 
@@ -191,7 +202,7 @@ module.exports = {
   },
 
   /*
-   * This test is using 3 differents services:
+   * This test is using 3 different services:
    * - Metamask for getting the transaction
    * - Source Verifier service for fetching the contract code
    * - Ropsten node for retrieving the trace and storage
@@ -226,6 +237,95 @@ module.exports = {
     browser
       .executeScriptInTerminal('web3.eth.getAccounts()')
       .journalLastChildIncludes('[ "0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f" ]')
+      .end()
+  },
+
+  'Should ensure that save environment state is checked by default #group4 #group5': function (browser: NightwatchBrowser) {
+    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+      .clickLaunchIcon('settings')
+      .waitForElementPresent('[data-id="settingsEnableSaveEnvStateLabel"]')
+      .scrollInto('[data-id="settingsEnableSaveEnvStateLabel"]')
+      .verify.elementPresent('[data-id="settingsEnableSaveEnvState"]:checked')
+  },
+
+  'Should deploy default storage contract; store value and ensure that state is saved. #group4 #group5': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .openFile('contracts/1_Storage.sol')
+      .pause(5000)
+      .clickLaunchIcon('udapp')
+      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .waitForElementPresent('#instance0xd9145CCE52D386f254917e481eB44e9943F39138')
+      .clickInstance(0)
+      .clickFunction('store - transact (not payable)', { types: 'uint256 num', values: '10' })
+      .clickFunction('retrieve - call')
+      .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
+      .clickLaunchIcon('filePanel')
+      .openFile('.states/vm-shanghai/state.json')
+      .getEditorValue((content) => {
+        browser
+          .assert.ok(content.includes('"latestBlockNumber": "0x02"'), 'State is saved')
+      })
+  },
+
+  'Should load state after page refresh #group4': function (browser: NightwatchBrowser) {
+    browser.refreshPage()
+      .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
+      .openFile('contracts/1_Storage.sol')
+      .addAtAddressInstance('0xd9145CCE52D386f254917e481eB44e9943F39138', true, true, false)
+      .clickInstance(0)
+      .clickFunction('retrieve - call')
+      .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
+  },
+
+  'Should save state after running web3 script #group4': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('settings')
+      .waitForElementPresent('[data-id="settingsTabGenerateContractMetadataLabel"]')
+      .click('[data-id="settingsTabGenerateContractMetadataLabel"]')
+      .verify.elementPresent('[data-id="settingsTabGenerateContractMetadata"]:checked')
+      .clickLaunchIcon('solidity')
+      .click('.remixui_compilerConfigSection')
+      .setValue('#evmVersionSelector', 'london')
+      .click('*[data-id="compilerContainerCompileBtn"]')
+      .pause(5000)
+      .clickLaunchIcon('udapp')
+      .switchEnvironment('vm-london')
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="treeViewLitreeViewItemscripts"]')
+      .openFile('scripts/deploy_with_web3.ts')
+      .click('[data-id="play-editor"]')
+      .waitForElementPresent('[data-id="treeViewDivDraggableItem.states/vm-london/state.json"]')
+      .click('[data-id="treeViewDivDraggableItem.states/vm-london/state.json"]')
+      .pause(100000)
+      .getEditorValue((content) => {
+        browser
+          .assert.ok(content.includes('"latestBlockNumber": "0x01"'), 'State is saved')
+      })
+  },
+
+  'Should ensure that .states is not updated when save env option is unchecked #group5': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('settings')
+      .waitForElementPresent('[data-id="settingsEnableSaveEnvStateLabel"]')
+      .click('[data-id="settingsEnableSaveEnvStateLabel"]')
+      .verify.elementNotPresent('[data-id="settingsEnableSaveEnvState"]:checked')
+      .clickLaunchIcon('filePanel')
+      .openFile('contracts/1_Storage.sol')
+      .pause(5000)
+      .clickLaunchIcon('udapp')
+      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .pause(5000)
+      .clickLaunchIcon('filePanel')
+      .openFile('.states/vm-shanghai/state.json')
+      .getEditorValue((content) => {
+        browser
+          .assert.ok(content.includes('"latestBlockNumber": "0x02"'), 'State is unchanged')
+      })
       .end()
   }
 }

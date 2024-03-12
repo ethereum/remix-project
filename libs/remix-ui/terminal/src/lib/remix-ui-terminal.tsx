@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent } from 'react' // eslint-disable-line
+import React, { useState, useEffect, useReducer, useRef, SyntheticEvent, MouseEvent, useContext } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   registerCommandAction,
@@ -10,6 +10,7 @@ import {
   listenOnNetworkAction,
   initListeningOnNetwork,
 } from './actions/terminalAction'
+import { isBigInt } from 'web3-validator'
 import { initialState, registerCommandReducer, addCommandHistoryReducer, registerScriptRunnerReducer } from './reducers/terminalReducer'
 import { getKeyOf, getValueOf, Objectfilter, matched } from './utils/utils'
 import { allCommands, allPrograms } from './commands' // eslint-disable-line
@@ -26,8 +27,9 @@ import RenderUnKnownTransactions from './components/RenderUnknownTransactions' /
 import RenderCall from './components/RenderCall' // eslint-disable-line
 import RenderKnownTransactions from './components/RenderKnownTransactions' // eslint-disable-line
 import parse from 'html-react-parser'
-import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, UNKNOWN_TRANSACTION } from './types/terminalTypes'
+import { EMPTY_BLOCK, KNOWN_TRANSACTION, RemixUiTerminalProps, SET_ISVM, UNKNOWN_TRANSACTION } from './types/terminalTypes'
 import { wrapScript } from './utils/wrapScript'
+import { TerminalContext } from './context'
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
@@ -40,7 +42,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const [_cmdIndex, setCmdIndex] = useState(-1)
   const [_cmdTemp, setCmdTemp] = useState('')
   const [isOpen, setIsOpen] = useState<boolean>(true)
-  const [newstate, dispatch] = useReducer(registerCommandReducer, initialState)
+  const { terminalState, dispatch } = useContext(TerminalContext)
   const [cmdHistory, cmdHistoryDispatch] = useReducer(addCommandHistoryReducer, initialState)
   const [, scriptRunnerDispatch] = useReducer(registerScriptRunnerReducer, initialState)
   const [toaster, setToaster] = useState(false)
@@ -58,7 +60,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     handleHide: () => {},
   })
 
-  const [clearConsole, setClearConsole] = useState(false)
+  const [isVM, setIsVM] = useState(false)
   const [paste, setPaste] = useState(false)
   const [storage, setStorage] = useState<any>(null)
   const [autoCompletState, setAutoCompleteState] = useState({
@@ -79,7 +81,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     commandHistoryIndex: 0,
   })
 
-  const [searchInput, setSearchInput] = useState('')
   const [showTableHash, setShowTableHash] = useState([])
 
   // terminal inputRef
@@ -87,7 +88,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const messagesEndRef = useRef(null)
   const typeWriterIndexes = useRef([])
 
-  // terminal dragable
+  // terminal draggable
   const panelRef = useRef(null)
   const terminalMenu = useRef(null)
 
@@ -98,6 +99,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
+    props.plugin.on('network', 'providerChanged', (provider) => {
+      dispatch({ type: SET_ISVM, payload: provider.startsWith('vm-') })
+    })
+
     props.onReady({
       logHtml: (html) => {
         scriptRunnerDispatch({
@@ -126,10 +131,10 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   // events
   useEffect(() => {
     initListeningOnNetwork(props.plugin, scriptRunnerDispatch)
-    registerLogScriptRunnerAction(on, 'log', newstate.commands, scriptRunnerDispatch)
-    registerInfoScriptRunnerAction(on, 'info', newstate.commands, scriptRunnerDispatch)
-    registerWarnScriptRunnerAction(on, 'warn', newstate.commands, scriptRunnerDispatch)
-    registerErrorScriptRunnerAction(on, 'error', newstate.commands, scriptRunnerDispatch)
+    registerLogScriptRunnerAction(on, 'log', terminalState.commands, scriptRunnerDispatch)
+    registerInfoScriptRunnerAction(on, 'info', terminalState.commands, scriptRunnerDispatch)
+    registerWarnScriptRunnerAction(on, 'warn', terminalState.commands, scriptRunnerDispatch)
+    registerErrorScriptRunnerAction(on, 'error', terminalState.commands, scriptRunnerDispatch)
     registerCommandAction('html', _blocksRenderer('html'), { activate: true }, dispatch)
     registerCommandAction('log', _blocksRenderer('log'), { activate: true }, dispatch)
     registerCommandAction('info', _blocksRenderer('info'), { activate: true }, dispatch)
@@ -152,7 +157,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   useEffect(() => {
     scrollToBottom()
-  }, [newstate.journalBlocks.length, toaster])
+  }, [terminalState.journalBlocks.length, toaster])
 
   function execute(file, cb) {
     function _execute(content, cb) {
@@ -161,7 +166,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         if (cb) cb()
         return
       }
-      newstate.commands.script(content)
+      terminalState.commands.script(content)
     }
 
     if (typeof file === 'undefined') {
@@ -297,7 +302,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         const script = autoCompletState.userInput.trim() // inputEl.current.innerText.trim()
         if (script.length) {
           cmdHistoryDispatch({ type: 'cmdHistory', payload: { script } })
-          newstate.commands.script(wrapScript(script))
+          terminalState.commands.script(wrapScript(script))
         }
         setAutoCompleteState((prevState) => ({ ...prevState, userInput: '' }))
         inputEl.current.innerText = ''
@@ -307,11 +312,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           showSuggestions: false,
         }))
       }
-    } else if (newstate._commandHistory.length && event.which === 38 && !autoCompletState.showSuggestions && autoCompletState.userInput === '') {
+    } else if (terminalState._commandHistory.length && event.which === 38 && !autoCompletState.showSuggestions && autoCompletState.userInput === '') {
       event.preventDefault()
       setAutoCompleteState((prevState) => ({
         ...prevState,
-        userInput: newstate._commandHistory[0],
+        userInput: terminalState._commandHistory[0],
       }))
     } else if (event.which === 38 && autoCompletState.showSuggestions) {
       event.preventDefault()
@@ -391,20 +396,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }
   }
 
+  useEffect(() => {
+    if(terminalState.clearConsole){
+      typeWriterIndexes.current = []
+      inputEl.current.focus()
+    }
+  },[terminalState.clearConsole])
+
   /* end of block content that gets rendered from script Runner */
 
-  const handleClearConsole = () => {
-    setClearConsole(true)
-    typeWriterIndexes.current = []
-    dispatch({ type: 'clearconsole', payload: [] })
-    inputEl.current.focus()
-  }
   /* start of autoComplete */
-
-  const listenOnNetwork = (e: any) => {
-    const isListening = e.target.checked
-    listenOnNetworkAction(props.plugin, isListening)
-  }
 
   const onChange = (event: any) => {
     event.preventDefault()
@@ -556,11 +557,6 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     }))
   }
 
-  const handleToggleTerminal = () => {
-    setIsOpen(!isOpen)
-    props.plugin.call('layout', 'minimize', props.plugin.profile.name, isOpen)
-  }
-
   useEffect(() => {
     ;(async () => {
       const storage = await props.plugin.call('storage', 'formatString', await props.plugin.call('storage', 'getStorage'))
@@ -578,66 +574,32 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   const classNameBlock = 'remix_ui_terminal_block px-4 py-1 text-break'
 
+  const replacer = (key, value) => {
+    if (isBigInt(value)) value = value.toString()
+    if (typeof value === 'function') value = value.toString()
+    return value
+  }
+
+  const includeSearch = (x, searchInput) => {
+    try {
+      const value = JSON.stringify(x, replacer)
+      return value.indexOf(searchInput) !== -1 || value.indexOf(searchInput.toLowerCase()) !== -1
+    } catch (e) {
+      console.error(e)
+      return true
+    }    
+  }
+
   return (
-    ( !props.visible? <></>: 
-      <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel" ref={panelRef}>
-        <div className="remix_ui_terminal_bar d-flex">
-          <div className="remix_ui_terminal_menu d-flex w-100 align-items-center position-relative border-top border-dark bg-light" ref={terminalMenu} data-id="terminalToggleMenu">
-            <CustomTooltip
-              placement="top"
-              tooltipId="terminalToggle"
-              tooltipClasses="text-nowrap"
-              tooltipText={isOpen ? <FormattedMessage id="terminal.hideTerminal" /> : <FormattedMessage id="terminal.showTerminal" />}
-            >
-              <i
-                className={`mx-2 remix_ui_terminal_toggleTerminal fas ${isOpen ? 'fa-angle-double-down' : 'fa-angle-double-up'}`}
-                data-id="terminalToggleIcon"
-                onClick={handleToggleTerminal}
-              ></i>
-            </CustomTooltip>
-            <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole}>
-              <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.clearConsole" />}>
-                <i className="fas fa-ban" aria-hidden="true"></i>
-              </CustomTooltip>
-            </div>
-            <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
-              <div className="mx-2">0</div>
-            </CustomTooltip>
-            <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
-              <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
-                <input className="custom-control-input" id="listenNetworkCheck" onChange={listenOnNetwork} type="checkbox" />
-              </CustomTooltip>
-              <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
-                <label
-                  className="form-check-label custom-control-label text-nowrap"
-                  style={{ paddingTop: '0.125rem' }}
-                  htmlFor="listenNetworkCheck"
-                  data-id="listenNetworkCheckInput"
-                >
-                  <FormattedMessage id="terminal.listen" />
-                </label>
-              </CustomTooltip>
-            </div>
-            <div className="remix_ui_terminal_search d-flex align-items-center h-100">
-              <i className="remix_ui_terminal_searchIcon d-flex align-items-center justify-content-center fas fa-search bg-light" aria-hidden="true"></i>
-              <input
-                onChange={(event) => setSearchInput(event.target.value.trim())}
-                type="text"
-                className="remix_ui_terminal_filter border form-control"
-                id="searchInput"
-                placeholder={intl.formatMessage({ id: 'terminal.search' })}
-                data-id="terminalInputSearch"
-              />
-            </div>
-          </div>
-        </div>
+    ( props.visible &&
+      <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel h-100" ref={panelRef}>
         <div tabIndex={-1} className="remix_ui_terminal_container d-flex h-100 m-0 flex-column" data-id="terminalContainer">
           {handleAutoComplete()}
           <div className="position-relative d-flex flex-column-reverse h-100">
             <div id="journal" className="remix_ui_terminal_journal d-flex flex-column pt-3 pb-4 px-2 mx-2 mr-0" data-id="terminalJournal">
-              {!clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version} />}
-              {newstate.journalBlocks &&
-              newstate.journalBlocks.map((x, index) => {
+              {!terminalState.clearConsole && <TerminalWelcomeMessage storage={storage} packageJson={version} />}
+              {terminalState.journalBlocks &&
+              terminalState.journalBlocks.map((x, index) => {
                 if (x.name === EMPTY_BLOCK) {
                   return (
                     <div className={classNameBlock} data-id="block" key={index}>
@@ -650,7 +612,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                   )
                 } else if (x.name === UNKNOWN_TRANSACTION) {
                   return x.message
-                    .filter((x) => x.tx.hash.includes(searchInput) || x.tx.from.includes(searchInput) || x.tx.to.includes(searchInput))
+                    .filter((x) => includeSearch(x, terminalState.searchInput))
                     .map((trans) => {
                       return (
                         <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
@@ -671,38 +633,41 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
                       )
                     })
                 } else if (x.name === KNOWN_TRANSACTION) {
-                  return x.message.map((trans) => {
-                    return (
-                      <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
-                        {trans.tx.isCall ? (
-                          <RenderCall
-                            tx={trans.tx}
-                            resolvedData={trans.resolvedData}
-                            logs={trans.logs}
-                            index={index}
-                            plugin={props.plugin}
-                            showTableHash={showTableHash}
-                            txDetails={txDetails}
-                            modal={modal}
-                          />
-                        ) : (
-                          <RenderKnownTransactions
-                            tx={trans.tx}
-                            receipt={trans.receipt}
-                            resolvedData={trans.resolvedData}
-                            logs={trans.logs}
-                            index={index}
-                            plugin={props.plugin}
-                            showTableHash={showTableHash}
-                            txDetails={txDetails}
-                            modal={modal}
-                            provider={x.provider}
-                          />
-                        )}
-                      </div>
-                    )
-                  })
+                  return x.message
+                    .filter((x) => includeSearch(x, terminalState.searchInput))
+                    .map((trans) => {
+                      return (
+                        <div className={classNameBlock} data-id={`block_tx${trans.tx.hash}`} key={index}>
+                          {trans.tx.isCall ? (
+                            <RenderCall
+                              tx={trans.tx}
+                              resolvedData={trans.resolvedData}
+                              logs={trans.logs}
+                              index={index}
+                              plugin={props.plugin}
+                              showTableHash={showTableHash}
+                              txDetails={txDetails}
+                              modal={modal}
+                            />
+                          ) : (
+                            <RenderKnownTransactions
+                              tx={trans.tx}
+                              receipt={trans.receipt}
+                              resolvedData={trans.resolvedData}
+                              logs={trans.logs}
+                              index={index}
+                              plugin={props.plugin}
+                              showTableHash={showTableHash}
+                              txDetails={txDetails}
+                              modal={modal}
+                              provider={x.provider}
+                            />
+                          )}
+                        </div>
+                      )
+                    })
                 } else if (Array.isArray(x.message)) {
+                  if (terminalState.searchInput !== '') return []
                   return x.message.map((msg, i) => {
                     // strictly check condition on 0, false, except undefined, NaN.
                     // if you type `undefined`, terminal automatically throws error, it's error message: "undefined" is not valid JSON

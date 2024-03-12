@@ -229,7 +229,7 @@ function getEnum (type, stateDefinitions, contractName) {
 }
 
 /**
-  * retrieve memebers declared in the given @arg tye
+  * retrieve members declared in the given @arg tye
   *
   * @param {String} typeName - name of the struct type (e.g struct <name>)
   * @param {Object} stateDefinitions  - all state definition given by the AST (including struct and enum type declaration) for all contracts
@@ -264,7 +264,7 @@ function getStructMembers (type, stateDefinitions, contractName, location) {
   * parse the full type
   *
   * @param {String} fullType - type given by the AST (ex: uint[2] storage ref[2])
-  * @return {String} returns the token type (used to instanciate the right decoder) (uint[2] storage ref[2] will return 'array', uint256 will return uintX)
+  * @return {String} returns the token type (used to instantiate the right decoder) (uint[2] storage ref[2] will return 'array', uint256 will return uintX)
   */
 function typeClass (fullType) {
   fullType = removeLocation(fullType)

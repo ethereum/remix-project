@@ -1,12 +1,23 @@
-import {HighlightPosition, CompilationResult, RemixApi} from '@remixproject/plugin-api'
+import {HighlightPosition, CompilationResult, RemixApi, customAction} from '@remixproject/plugin-api'
 import {Api, Status} from '@remixproject/plugin-utils'
 import {createClient} from '@remixproject/plugin-webview'
 import {PluginClient} from '@remixproject/plugin'
-import {Contract} from './compiler'
+import {Contract, compileContract} from './compiler'
 import {ExampleContract} from '../components/VyperResult'
+import EventEmitter from 'events'
 
+
+export type VyperComplierAddress = 'https://vyper2.remixproject.org/' | 'http://localhost:8000/'
 export class RemixClient extends PluginClient {
   private client = createClient<Api, Readonly<RemixApi>>(this)
+  compilerUrl: VyperComplierAddress = 'https://vyper2.remixproject.org/'
+  compilerOutput: any
+  eventEmitter = new EventEmitter()
+
+  constructor() {
+    super()
+    this.compilerOutput = {}
+  }
 
   loaded() {
     return this.client.onload()
@@ -26,6 +37,18 @@ export class RemixClient extends PluginClient {
     })
   }
 
+  resetCompilerState() {
+    this.compilerOutput = {}
+    this.eventEmitter.emit('resetCompilerState', {})
+  }
+
+  async vyperCompileCustomAction(action?: customAction) {
+    //read selected contract from file explorer and create contract type
+    const contract = await this.getContract()
+    //compile contract
+    await compileContract(contract.name, this.compilerUrl)
+  }
+
   /** Load Ballot contract example into the file manager */
   async loadContract({name, address}: ExampleContract) {
     try {
@@ -37,6 +60,23 @@ export class RemixClient extends PluginClient {
     }
   }
 
+  async askGpt(message: string) {
+    if (message.length === 0) {
+      this.client.call('terminal', 'log', { type: 'log', value: 'kindly send a proper message so I can respond please' })
+      return
+    }
+    try {
+      const formattedMessage = `
+        ${message}
+        can you explain why this error occurred and how to fix it?
+      `
+      await this.client.call('openaigpt' as any, 'message', formattedMessage)
+    } catch (err) {
+      console.error('unable to askGpt')
+      console.error(err)
+    }
+  }
+
   async cloneVyperRepo() {
     try {
       // @ts-ignore
@@ -45,7 +85,7 @@ export class RemixClient extends PluginClient {
       await this.call(
         'dGitProvider',
         'clone',
-        {url: 'https://github.com/vyperlang/vyper', token: null},
+        {url: 'https://github.com/vyperlang/vyper', token: null, branch: 'v0.3.10'},
         // @ts-ignore
         'vyper-lang'
       )
@@ -66,6 +106,13 @@ export class RemixClient extends PluginClient {
     this.client.emit('statusChanged', status)
   }
 
+  checkActiveTheme() {
+    const active = this.client.call('theme', 'currentTheme')
+    if (active === 'dark') {
+      return 'monokai' as any
+    }
+  }
+
   /** Highlight a part of the editor */
   async highlight(lineColumnPos: HighlightPosition, name: string, message: string) {
     await this.client.call('editor', 'highlight', lineColumnPos, name)
@@ -84,7 +131,7 @@ export class RemixClient extends PluginClient {
     await this.client.call('editor', 'addAnnotation', annotation, name)
   }
 
-  /** Remove current Hightlight */
+  /** Remove current Highlight */
   async discardHighlight() {
     await this.client.call('editor', 'discardHighlight')
     await this.client.call('editor', 'clearAnnotations')
@@ -114,4 +161,3 @@ export class RemixClient extends PluginClient {
 }
 
 export const remixClient = new RemixClient()
-// export const RemixClientContext = React.createContext(new RemixClient())

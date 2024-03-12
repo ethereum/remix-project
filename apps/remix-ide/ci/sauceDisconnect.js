@@ -18,7 +18,7 @@ function removeTunnel () {
         retrieveTunnel(data[k], function (error, result) {
           if (error) {
             console.log(error)
-          } else if (result.identtifier === tunnelName) {
+          } else if (result.identifier === tunnelName) {
             deleteTunnel(result.id, function () {
               console.log('tunnel deleted ' + data[k] + ' ' + tunnelName)
             })
@@ -35,7 +35,7 @@ function retrieveTunnel (tunnelid, callback) {
     if (error) {
       callback(error)
     } else {
-      callback(null, {'identtifier': JSON.parse(result).tunnel_identifier, 'id': tunnelid})
+      callback(null, {'identifier': JSON.parse(result).tunnel_identifier, 'id': tunnelid})
     }
   })
 }

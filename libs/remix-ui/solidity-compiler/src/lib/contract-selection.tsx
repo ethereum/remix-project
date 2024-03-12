@@ -176,7 +176,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       'compilerInput': 'Input to the Solidity compiler',
       'functionHashes': 'List of declared function and their corresponding hash',
       'gasEstimates': 'Gas estimation for each function call',
-      'metadata': 'Contains all informations related to the compilation',
+      'metadata': 'Contains all information related to the compilation',
       'metadataHash': 'Hash representing all metadata information',
       'abi': 'ABI: describing all the functions (input/output params, scope, ...)',
       'name': 'Name of the compiled contract',
@@ -310,6 +310,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 </span>
               </CustomTooltip>
             </button>
+
             <button
               data-id="compilation-details"
               className="btn btn-secondary btn-block"

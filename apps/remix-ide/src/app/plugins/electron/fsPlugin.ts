@@ -18,8 +18,6 @@ export class fsPlugin extends ElectronPlugin {
     })
     this.methods = ['readdir', 'readFile', 'writeFile', 'mkdir', 'rmdir', 'unlink', 'rename', 'stat', 'lstat', 'exists', 'setWorkingDir', 'getRecentFolders', 'openWindow']
 
-
-
     // List of commands all filesystems are expected to provide. `rm` is not
     // included since it may not exist and must be handled as a special case
     const commands = [
@@ -36,7 +34,6 @@ export class fsPlugin extends ElectronPlugin {
     ]
 
     this.fs = {
-
       exists: async (path: string) => {
         path = fixPath(path)
         const exists = await this.call('fs', 'exists', path)
@@ -109,29 +106,11 @@ export class fsPlugin extends ElectronPlugin {
         path = fixPath(path)
         return await this.call('fs', 'symlink', target, path)
       }
-
-
-
-
-
     }
-
-    
-
-
-
-
-
   }
 
-
-
-
   async onActivation() {
-
     (window as any).remixFileSystem = this.fs
-
-
     this.on('fs', 'workingDirChanged', async (path: string) => {
       workingDir = path
       await this.call('fileManager', 'refresh')
@@ -145,5 +124,4 @@ export class fsPlugin extends ElectronPlugin {
       }
     })
   }
-
 }

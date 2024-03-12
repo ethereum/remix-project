@@ -2,7 +2,7 @@
   "search.displayName": "Search in files",
   "search.replace": "Replace",
   "search.replaceAll": "Replace All",
-  "search.placeholder1": "Search ( Enter to search )",
+  "search.placeholder1": "Type to search",
   "search.placeholder2": "Include ie *.sol ( Enter to include )",
   "search.placeholder3": "Exclude ie .git/**/* ( Enter to exclude )",
   "search.matchCase": "Match Case",
@@ -20,5 +20,5 @@
   "search.no": "No",
   "search.loading": "Loading",
   "search.text1": "showing {count} results in {fileCount} files",
-  "search.text2": "Too many resuls to display...{br}Please narrow down your search."
+  "search.text2": "Too many results to display...{br}Please narrow down your search."
 }

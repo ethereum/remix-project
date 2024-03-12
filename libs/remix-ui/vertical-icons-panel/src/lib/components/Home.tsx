@@ -1,5 +1,6 @@
 import {CustomTooltip} from '@remix-ui/helper'
 import React from 'react'
+import { FormattedMessage } from 'react-intl'
 import BasicLogo from './BasicLogo'
 interface HomeProps {
   verticalIconPlugin: any
@@ -7,7 +8,7 @@ interface HomeProps {
 
 function Home({verticalIconPlugin}: HomeProps) {
   return (
-    <CustomTooltip placement="right" tooltipText={'Home'}>
+    <CustomTooltip placement="right" tooltipText={<FormattedMessage id='home.home' />}>
       <div
         className="mt-2 my-1 remixui_homeIcon"
         onClick={async () => await verticalIconPlugin.activateHome()}

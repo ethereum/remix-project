@@ -122,7 +122,7 @@ export class SolidityProxy {
   }
 
   /**
-   * get the filename refering to the index from the compilation result
+   * get the filename referring to the index from the compilation result
    *
    * @param {Int} index  - index of the filename
    * @param {Object} compilationResult  - current compilation result

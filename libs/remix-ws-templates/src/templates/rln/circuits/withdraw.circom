@@ -1,6 +1,6 @@
 pragma circom 2.1.0;
 
-include "circomlib/poseidon.circom";
+include "circomlib/circuits/poseidon.circom";
 
 template Withdraw() {
     signal input identitySecret;

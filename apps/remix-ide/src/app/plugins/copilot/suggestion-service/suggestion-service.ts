@@ -58,11 +58,11 @@ export class SuggestionService {
             this.responses[e.data.id](null, e.data)
           } else {
             this.responses[e.data.id]('aborted')
-          }          
+          }
           delete this.responses[e.data.id]
           this.current = null
         }
-          
+
         // Generation complete: re-enable the "Generate" button
         break;
       }
@@ -95,6 +95,6 @@ export class SuggestionService {
         if (error) return reject(error)
         resolve(result)
       }
-    })    
+    })
   }
 }

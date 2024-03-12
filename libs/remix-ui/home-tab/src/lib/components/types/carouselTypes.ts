@@ -30,8 +30,8 @@ export interface CarouselProps {
   customButtonGroup?: React.ReactElement<any> | null;
   infinite?: boolean;
   minimumTouchDrag?: number; // default 50px. The amount of distance to drag / swipe in order to move to the next slide.
-  afterChange?: (previousSlide: number, state: StateCallBack) => void; // Change callback after sliding everytime. `(previousSlide, currentState) => ...`
-  beforeChange?: (nextSlide: number, state: StateCallBack) => void; // Change callback before sliding everytime. `(previousSlide, currentState) => ...`
+  afterChange?: (previousSlide: number, state: StateCallBack) => void; // Change callback after sliding every time. `(previousSlide, currentState) => ...`
+  beforeChange?: (nextSlide: number, state: StateCallBack) => void; // Change callback before sliding every time. `(previousSlide, currentState) => ...`
   sliderClass?: string; // Use this to style your own track list.
   itemClass?: string; // Use this to style your own Carousel item. For example add padding-left and padding-right
   itemAriaLabel?: string; // Use this to add your own Carousel item aria-label.if it is not defined the child aria label will be applied if the child dont have one than a default empty string will be applied
@@ -56,7 +56,7 @@ export interface CarouselProps {
   // for example, customTransition="all .5"  then put transitionDuration as 500.
   // this is needed for the resizing to work.
   focusOnSelect?: boolean;
-  additionalTransfrom?: number; // this is only used if you want to add additional transfrom to the current transform
+  additionalTransfrom?: number; // this is only used if you want to add additional transform to the current transform
   pauseOnHover?: boolean;
   shouldResetAutoplay?: boolean;
   rewind?: boolean;

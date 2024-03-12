@@ -46,11 +46,6 @@ export class compilerLoaderPlugin extends Plugin {
 
     this.emit('jsonBinDataLoaded', response)
   }
-
-  async onActivation(): Promise<void> {
-
-  }
-
 }
 
 export class compilerLoaderPluginDesktop extends ElectronPlugin {

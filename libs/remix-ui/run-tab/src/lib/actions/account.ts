@@ -1,7 +1,8 @@
 import { shortenAddress } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
-import { displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setExternalEndpoint, setMatchPassphrase, setPassphrase } from "./payload"
+import { displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
+import { toChecksumAddress } from '@ethereumjs/util'
 
 export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
@@ -17,32 +18,26 @@ export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Disp
 export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   try {
     dispatch(fetchAccountsListRequest())
-    const promise = plugin.blockchain.getAccounts()
-
-    promise.then(async (accounts: string[]) => {
-      const loadedAccounts = {}
-
+    try {
+      let accounts = await plugin.blockchain.getAccounts()
       if (!accounts) accounts = []
-      // allSettled is undefined..
-      // so the current promise (all) will finish when:
-      // - all the promises resolve
-      // - at least one reject
-      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+
+      const loadedAccounts = {}
+      
       for (const account of accounts) {
         const balance = await plugin.blockchain.getBalanceInEther(account)
         loadedAccounts[account] =  shortenAddress(account, balance)
-      }     
+      }
       const provider = plugin.blockchain.getProvider()
 
       if (provider === 'injected') {
         const selectedAddress = plugin.blockchain.getInjectedWeb3Address()
-
-        if (!(Object.keys(loadedAccounts).includes(selectedAddress))) setAccount(dispatch, null)
+        if (!(Object.keys(loadedAccounts).includes(toChecksumAddress(selectedAddress)))) setAccount(dispatch, null)
       }
       dispatch(fetchAccountsListSuccess(loadedAccounts))
-    }).catch((e) => {
+    } catch (e) {
       dispatch(fetchAccountsListFailed(e.message))
-    })
+    }
   } catch (e) {
     dispatch(displayPopUp(`Cannot get account list: ${e}`))
   }
@@ -50,7 +45,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
 
 export const setFinalContext = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   dispatch(fetchAccountsListRequest())
-  // set the final context. Cause it is possible that this is not the one we've originaly selected
+  // set the final context. Cause it is possible that this is not the one we've originally selected
   const value = _getProviderDropdownValue(plugin)
 
   setExecEnv(dispatch, value)

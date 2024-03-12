@@ -1,5 +1,5 @@
 import { ContractData } from "@remix-project/core-plugin"
-import { addNewInstance, addProvider, clearAllInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
+import { addNewInstance, addNewSavedInstance, addProvider, clearAllInstances, clearAllSavedInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
 
 export const setAccount = (dispatch: React.Dispatch<any>, account: string) => {
   dispatch(setSelectedAccount(account))
@@ -70,12 +70,22 @@ export const addInstance = (dispatch: React.Dispatch<any>, instance: { contractD
   dispatch(addNewInstance(instance))
 }
 
-export const removeInstance = (dispatch: React.Dispatch<any>, index: number) => {
-  dispatch(removeExistingInstance(index))
+export const addSavedInstance = (dispatch: React.Dispatch<any>, instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any>, savedOn?: number, filePath?: string }) => {
+  instance.decodedResponse = {}
+  dispatch(addNewSavedInstance(instance))
+}
+
+export const removeInstance = (dispatch: React.Dispatch<any>, index: number, isSavedContract: boolean, shouldDelete: boolean) => {
+  dispatch(removeExistingInstance(index, isSavedContract, shouldDelete))
 }
 
 export const clearInstances = (dispatch: React.Dispatch<any>) => {
   dispatch(clearAllInstances())
+  dispatch(clearRecorderCount())
+}
+
+export const clearSavedInstances = (dispatch: React.Dispatch<any>) => {
+  dispatch(clearAllSavedInstances())
   dispatch(clearRecorderCount())
 }
 

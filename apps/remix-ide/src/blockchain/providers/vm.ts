@@ -2,6 +2,7 @@ import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
 import { fromWei, toBigInt } from 'web3-utils'
 import { privateToAddress, hashPersonalMessage, isHexString } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
+import {toBuffer} from '@ethereumjs/util'
 import { ExecutionContext } from '../execution-context'
 
 export class VMProvider {
@@ -12,9 +13,7 @@ export class VMProvider {
     sendAsync: (query: JSONRPCRequestPayload, callback: JSONRPCResponseCallback) => void
   }
   newAccountCallback: {[stamp: number]: (error: Error, address: string) => void}
-
   constructor (executionContext: ExecutionContext) {
-
     this.executionContext = executionContext
     this.worker = null
     this.provider = null
@@ -29,7 +28,7 @@ export class VMProvider {
       })
   }
 
-  async resetEnvironment () {
+  async resetEnvironment (stringifiedState?: string) {
     if (this.worker) this.worker.terminate()
     this.worker = new Worker(new URL('./worker-vm', import.meta.url))
     const provider = this.executionContext.getProviderObject()
@@ -76,9 +75,34 @@ export class VMProvider {
           }
         }
       })
-      this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), nodeUrl: provider?.options['nodeUrl'], blockNumber: provider?.options['blockNumber']})
+      if (stringifiedState) {
+        try {
+          const blockchainState = JSON.parse(stringifiedState)
+          const blockNumber = parseInt(blockchainState.latestBlockNumber, 16)
+          const stateDb = blockchainState.db
+
+          this.worker.postMessage({
+            cmd: 'init',
+            fork: this.executionContext.getCurrentFork(),
+            nodeUrl: provider?.options['nodeUrl'],
+            blockNumber,
+            stateDb,
+            blocks: blockchainState.blocks
+          })
+        } catch (e) {
+          console.error(e)
+        }
+      } else {
+        this.worker.postMessage({
+          cmd: 'init',
+          fork: this.executionContext.getCurrentFork(),
+          nodeUrl: provider?.options['nodeUrl'],
+          blockNumber: provider?.options['blockNumber']
+        })
+      }
     })
   }
+
 
   // TODO: is still here because of the plugin API
   // can be removed later when we update the API
@@ -97,7 +121,8 @@ export class VMProvider {
 
   async getBalanceInEther (address) {
     const balance = await this.web3.eth.getBalance(address, undefined, { number: FMT_NUMBER.HEX, bytes: FMT_BYTES.HEX })
-    return fromWei(toBigInt(balance).toString(10), 'ether')
+    const balInString = toBigInt(balance).toString(10)
+    return balInString === '0' ? balInString : fromWei(balInString, 'ether')
   }
 
   getGasPrice (cb) {

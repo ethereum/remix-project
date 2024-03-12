@@ -46,6 +46,7 @@ const profile = {
     'loadTemplate', 
     'clone',
     'isExpanded',
+    'isGist'
   ],
   events: ['setWorkspace', 'workspaceRenamed', 'workspaceDeleted', 'workspaceCreated'],
   icon: 'assets/img/fileManager.webp',
@@ -131,6 +132,20 @@ module.exports = class Filepanel extends ViewPlugin {
     })
   }
 
+  /**
+   * return the gist id if the current workspace is a gist workspace, otherwise returns null
+   * @argument {String} workspaceName - the name of the workspace to check against. default to the current workspace.
+   * @returns {string} gist id or null
+   */
+  isGist (workspaceName) {
+    workspaceName = workspaceName || this.currentWorkspaceMetadata && this.currentWorkspaceMetadata.name
+    const isGist = workspaceName.startsWith('gist')
+    if (isGist) {
+      return workspaceName.split(' ')[1]
+    }
+    return null
+  }
+
   getCurrentWorkspace() {
     return this.currentWorkspaceMetadata
   }
@@ -139,10 +154,10 @@ module.exports = class Filepanel extends ViewPlugin {
     return this.workspaces
   }
 
-  getAvailableWorkspaceName(name) {
+  getAvailableWorkspaceName(name) {    
     if (!this.workspaces) return name
     let index = 1
-    let workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)
+    let workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)    
     while (workspace) {
       index++
       workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)
@@ -200,6 +215,7 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   saveRecent(workspaceName) {
+    if (workspaceName === 'code-sample') return
     if (!localStorage.getItem('recentWorkspaces')) {
       localStorage.setItem('recentWorkspaces', JSON.stringify([ workspaceName ]))
     } else {
@@ -250,6 +266,8 @@ module.exports = class Filepanel extends ViewPlugin {
 
   isExpanded(path) {
     if(path === '/') return true
+    // remove leading slash
+    path = path.replace(/^\/+/, '')
     return this.expandPath.includes(path)
   }
 

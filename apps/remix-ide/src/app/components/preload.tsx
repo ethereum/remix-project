@@ -1,4 +1,5 @@
 import {RemixApp} from '@remix-ui/app'
+import axios from 'axios'
 import React, {useEffect, useRef, useState} from 'react'
 import { createRoot } from 'react-dom/client'
 import * as packageJson from '../../../../../package.json'
@@ -11,6 +12,7 @@ import isElectron from 'is-electron'
 const _paq = (window._paq = window._paq || [])
 
 export const Preload = (props: any) => {
+  const [tip, setTip] = useState<string>('')
   const [supported, setSupported] = useState<boolean>(true)
   const [error, setError] = useState<boolean>(false)
   const [showDownloader, setShowDownloader] = useState<boolean>(false)
@@ -80,7 +82,7 @@ export const Preload = (props: any) => {
     }
   }
 
-  useEffect(() => {
+  useEffect (() => {
     if(isElectron()){
       loadAppComponent()
       return
@@ -95,6 +97,24 @@ export const Preload = (props: any) => {
       !remixIndexedDB.current.loaded && (await setFileSystems())
     }
     loadStorage()
+
+    const abortController = new AbortController()
+    const signal = abortController.signal
+    async function showRemixTips() {
+      const response = await axios.get('https://raw.githubusercontent.com/remix-project-org/remix-dynamics/main/ide/tips.json', { signal })
+      if (signal.aborted) return
+      const tips = response.data
+      const index = Math.floor(Math.random() * (tips.length - 1))
+      setTip(tips[index])
+    }
+    try {
+      showRemixTips()
+    } catch (e) {
+      console.log(e)
+    }
+    return () => {
+      abortController.abort();
+    };
   }, [])
 
   return (
@@ -157,7 +177,13 @@ export const Preload = (props: any) => {
         ) : null}
         {supported && !error && !showDownloader ? (
           <div>
-            <i className="fas fa-spinner fa-spin fa-2x"></i>
+            <div className='text-center'>              
+              <i className="fas fa-spinner fa-spin fa-2x"></i>              
+            </div>
+            { tip && <div className='remix_tips text-center mt-3'>
+              <div><b>DID YOU KNOW</b></div>
+              <span>{tip}</span>
+            </div> }
           </div>
         ) : null}
       </div>

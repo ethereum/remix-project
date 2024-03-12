@@ -1,10 +1,10 @@
 {
-    "version": "v0.38.0",
+    "version": "v0.45.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Alpha release for Solidity co-pilot",
-    "highlight2": "Define Solidity remappings in remappings.txt file",
-    "highlight3": "Run free function for any selected environment",
-    "highlight4": "New Circom ZKP templates: Hash Checker & Rate Limiting Nullifier",
+    "highlight1": "Remix VM state can be saved now",
+    "highlight2": "Verified contracts can be fetched from Blockscout explorer",
+    "highlight3": "Saved contracts are pinned contracts now and stored in workspace",
+    "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-38-0-dccd551b6f1e"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-45-0-dcb16ff6bf03"
   }

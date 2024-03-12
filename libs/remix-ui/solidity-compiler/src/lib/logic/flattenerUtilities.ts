@@ -1,11 +1,14 @@
+import type {CompilationSource, AstNode} from '@remix-project/remix-solidity'
+
 const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm;
 const SPDX_SOLIDITY_REGEX = /^\s*\/\/ SPDX-License-Identifier:.*$/gm;
 
-export function getDependencyGraph(ast, target) {
+type Visited = { [key: string]: number }
+export function getDependencyGraph(ast: { [name: string]: CompilationSource }, target: string, remappings: string[]) {
   const graph = tsort();
   const visited = {};
   visited[target] = 1;
-  _traverse(graph, visited, ast, target);
+  _traverse(graph, visited, ast, target, remappings);
   return graph;
 }
 
@@ -21,32 +24,31 @@ export function concatSourceFiles(files: any[], sources: any) {
   return concat;
 }
 
-function _traverse(graph, visited, ast, name) {
+function _traverse(graph: Graph, visited: Visited, ast: { [name: string]: CompilationSource }, name: string, remappings: string[]) {
   let currentAst = null
   currentAst = ast[name].ast
   const dependencies = _getDependencies(currentAst);
   for (const dependency of dependencies) {
-    const path = resolve(name, dependency);
+    const path = resolve(name, dependency, remappings);
     if (path in visited) {
       // continue; // fixes wrong ordering of source in flattened file
     }
     visited[path] = 1;
     graph.add(name, path);
-    _traverse(graph, visited, ast, path);
+    _traverse(graph, visited, ast, path, remappings);
   }
 }
 
-function _getDependencies(ast) {
+function _getDependencies(ast: AstNode) {
   const dependencies = ast?.nodes
     .filter(node => node?.nodeType === 'ImportDirective')
     .map(node => node?.file);
   return dependencies;
 }
 
-
 // TSORT
 
-function tsort(initial?: any) {
+function tsort(initial?: any): Graph {
   const graph = new Graph();
 
   if (initial) {
@@ -58,78 +60,88 @@ function tsort(initial?: any) {
   return graph;
 }
 
+class Graph {
+  nodes: { [key: string]: any}
+  constructor() {
+    this.nodes = {}
+  }
 
-function Graph() {
-  this.nodes = {};
-}
-
-// Add sorted items to the graph
-Graph.prototype.add = function () {
-  const self = this;
-  // eslint-disable-next-line prefer-rest-params
-  let items = [].slice.call(arguments);
-
-  if (items.length === 1 && Array.isArray(items[0]))
-    items = items[0];
-
-  items.forEach(function (item) {
-    if (!self.nodes[item]) {
-      self.nodes[item] = [];
+  // Add sorted items to the graph
+  add (name, path) {
+    const self = this;
+    // eslint-disable-next-line prefer-rest-params
+    let items = [].slice.call(arguments);
+  
+    if (items.length === 1 && Array.isArray(items[0]))
+      items = items[0];
+  
+    items.forEach(function (item) {
+      if (!self.nodes[item]) {
+        self.nodes[item] = [];
+      }
+    });
+  
+    for (let i = 1; i < items.length; i++) {
+      const from = items[i];
+      const to = items[i - 1];
+  
+      self.nodes[from].push(to);
     }
-  });
-
-  for (let i = 1; i < items.length; i++) {
-    const from = items[i];
-    const to = items[i - 1];
-
-    self.nodes[from].push(to);
+  
+    return self;
   }
 
-  return self;
-};
-
-// Depth first search
-// As given in http://en.wikipedia.org/wiki/Topological_sorting
-Graph.prototype.sort = function () {
-  const self = this;
-  const nodes = Object.keys(this.nodes);
-
-  const sorted = [];
-  const marks = {};
-
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i];
-
-    if (!marks[node]) {
-      visit(node);
+  // Depth first search
+  // As given in http://en.wikipedia.org/wiki/Topological_sorting
+  sort () {
+    const self = this;
+    const nodes = Object.keys(this.nodes);
+  
+    const sorted = [];
+    const marks = {};
+  
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+  
+      if (!marks[node]) {
+        visit(node);
+      }
+    }
+  
+    return sorted;
+  
+    function visit(node) {
+      if (marks[node] === 'temp')
+        throw new Error("There is a cycle in the graph. It is not possible to derive a topological sort.");
+      else if (marks[node])
+        return;
+  
+      marks[node] = 'temp';
+      self.nodes[node].forEach(visit);
+      marks[node] = 'perm';
+  
+      sorted.push(node);
     }
   }
 
-  return sorted;
-
-  function visit(node) {
-    if (marks[node] === 'temp')
-      throw new Error("There is a cycle in the graph. It is not possible to derive a topological sort.");
-    else if (marks[node])
-      return;
-
-    marks[node] = 'temp';
-    self.nodes[node].forEach(visit);
-    marks[node] = 'perm';
-
-    sorted.push(node);
+  isEmpty () {
+    const nodes = Object.keys(this.nodes);
+    return nodes.length === 0;
   }
-};
-
-Graph.prototype.isEmpty = function () {
-  const nodes = Object.keys(this.nodes);
-  return nodes.length === 0;
 }
-
 
 // PATH
 
-function resolve(parentPath, childPath) {
+function resolve(parentPath, childPath, remappings: string[]) {
+  if (remappings && remappings.length) {
+    for (const mapping of remappings) {
+      if (mapping.indexOf('=') !== -1) {
+        const split = mapping.split('=')
+        childPath = childPath.replace(split[0].trim(), split[1].trim())
+      }
+    }
+  }
+
   if (_isAbsolute(childPath)) {
     return childPath;
   }

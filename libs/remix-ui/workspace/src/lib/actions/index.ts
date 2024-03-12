@@ -5,11 +5,11 @@ import { customAction } from '@remixproject/plugin-api'
 import { displayNotification, displayPopUp, fetchDirectoryError, fetchDirectoryRequest, fetchDirectorySuccess, focusElement, fsInitializationCompleted, hidePopUp, removeInputFieldSuccess, setCurrentLocalFilePath, setCurrentWorkspace, setExpandPath, setMode, setWorkspaces } from './payload'
 import { listenOnPluginEvents, listenOnProviderEvents } from './events'
 import { createWorkspaceTemplate, getWorkspaces, loadWorkspacePreset, setPlugin, workspaceExists } from './workspace'
-import { QueryParams } from '@remix-project/remix-lib'
-import { fetchContractFromEtherscan } from '@remix-project/core-plugin' // eslint-disable-line
+import { QueryParams, Registry } from '@remix-project/remix-lib'
+import { fetchContractFromEtherscan, fetchContractFromBlockscout } from '@remix-project/core-plugin' // eslint-disable-line
 import JSZip from 'jszip'
 import { Actions, FileTree } from '../types'
-import {Registry} from '@remix-project/remix-lib'
+import IpfsHttpClient from 'ipfs-http-client'
 
 export * from './events'
 export * from './workspace'
@@ -22,9 +22,11 @@ let plugin, dispatch: React.Dispatch<Actions>
 export type UrlParametersType = {
   gist: string,
   code: string,
+  shareCode: string,
   url: string,
   address: string
   opendir: string,
+  blockscout: string,
 }
 
 const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
@@ -54,22 +56,75 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     const localhostProvider = filePanelPlugin.fileProviders.localhost
     const electrOnProvider = filePanelPlugin.fileProviders.electron
     const params = queryParams.get() as UrlParametersType
+    let editorMounted = false
+    let filePathToOpen = null
     let workspaces = []
+    plugin.on('editor', 'editorMounted', async () => {
+      editorMounted = true
+      if(filePathToOpen){
+        setTimeout(async () => {
+          await plugin.fileManager.openFile(filePathToOpen)
+          filePathToOpen = null
+        }, 1000)
+      }
+    })
     if (!(Registry.getInstance().get('platform').api.isDesktop())) {
       workspaces = await getWorkspaces() || []
       dispatch(setWorkspaces(workspaces))
     }
     if (params.gist) {
-      await createWorkspaceTemplate('gist-sample', 'gist-template')
-      plugin.setWorkspace({ name: 'gist-sample', isLocalhost: false })
-      dispatch(setCurrentWorkspace({ name: 'gist-sample', isGitRepo: false }))
+      const name = 'gist ' + params.gist
+      await createWorkspaceTemplate(name, 'gist-template')
+      plugin.setWorkspace({ name, isLocalhost: false })
+      dispatch(setCurrentWorkspace({ name, isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
-    } else if (params.code || params.url) {
+    } else if (params.code || params.url || params.shareCode) {
       await createWorkspaceTemplate('code-sample', 'code-template')
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       const filePath = await loadWorkspacePreset('code-template')
-      plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+      plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {        
+        if (editorMounted){
+          setTimeout(async () => {
+            await plugin.fileManager.openFile(filePath)}, 1000)
+        }else{
+          filePathToOpen = filePath
+        }
+      })
+    } else if (params.address && params.blockscout) {
+      if (params.address.startsWith('0x') && params.address.length === 42 && params.blockscout.length > 0) {
+        const contractAddress = params.address
+        const blockscoutUrl = params.blockscout
+        plugin.call('notification', 'toast', `Looking for contract(s) verified on ${blockscoutUrl} for contract address ${contractAddress} .....`)
+        let data
+        let count = 0
+        try {
+          const workspaceName = 'code-sample'
+          let filePath
+          const target = `/${blockscoutUrl}/${contractAddress}`
+
+          data = await fetchContractFromBlockscout(plugin, blockscoutUrl, contractAddress, target, false)
+          if (await workspaceExists(workspaceName)) workspaceProvider.setWorkspace(workspaceName)
+          else await createWorkspaceTemplate(workspaceName, 'code-template')
+          plugin.setWorkspace({ name: workspaceName, isLocalhost: false })
+          dispatch(setCurrentWorkspace({ name: workspaceName, isGitRepo: false }))
+          count = count + (Object.keys(data.compilationTargets)).length
+          for (filePath in data.compilationTargets)
+            await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
+
+          plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
+            if (editorMounted){
+              setTimeout(async () => {
+                await plugin.fileManager.openFile(filePath)}, 1000)
+            }else{
+              filePathToOpen = filePath
+            }
+          })
+          plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '' : 's'} from ${blockscoutUrl} network for contract address ${contractAddress} !!`)
+        } catch (error) {
+          await basicWorkspaceInit(workspaces, workspaceProvider)
+        }
+      } else await basicWorkspaceInit(workspaces, workspaceProvider)
     } else if (params.address) {
       if (params.address.startsWith('0x') && params.address.length === 42) {
         const contractAddress = params.address
@@ -87,7 +142,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             { id: 5, name: 'goerli' }
           ]
           let found = false
-          const workspaceName = 'etherscan-code-sample'
+          const workspaceName = 'code-sample'
           let filePath
           const foundOnNetworks = []
           for (const network of networks) {
@@ -112,7 +167,15 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             for (filePath in data.compilationTargets)
               await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
           }
-          plugin.on('editor', 'editorMounted', async () => await plugin.fileManager.openFile(filePath))
+
+          plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {            
+            if (editorMounted){
+              setTimeout(async () => {
+                await plugin.fileManager.openFile(filePath)}, 1000)
+            }else{
+              filePathToOpen = filePath
+            }
+          })
           plugin.call('notification', 'toast', `Added ${count} verified contract${count === 1 ? '' : 's'} from ${foundOnNetworks.join(',')} network${foundOnNetworks.length === 1 ? '' : 's'} of Etherscan for contract address ${contractAddress} !!`)
         } catch (error) {
           await basicWorkspaceInit(workspaces, workspaceProvider)
@@ -197,11 +260,19 @@ export type SolidityConfiguration = {
   runs: string
 }
 
-export const publishToGist = async (path?: string, type?: string) => {
+export const publishToGist = async (path?: string) => {
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = path || '/'
-  const id = type === 'gist' ? extractNameFromKey(path).split('-')[1] : null
+  
   try {
+    let id
+    if (path) {
+      // check if the current folder is a gist folder
+      id = await plugin.call('filePanel', 'isGist', extractNameFromKey(path))
+    } else {
+      // check if the current workspace is a gist workspace
+      id = await plugin.call('filePanel', 'isGist')
+    }
     const packaged = await packageGistFiles(folder)
     // check for token
     const config = plugin.registry.get('config').api
@@ -276,14 +347,15 @@ export const createNewFile = async (path: string, rootDir: string) => {
   if (!createFile) {
     return dispatch(displayPopUp('Failed to create file ' + newName))
   } else {
-    const path = newName.indexOf(rootDir + '/') === 0 ? newName.replace(rootDir + '/', '') : newName
-
+    let path = newName.indexOf(rootDir + '/') === 0 ? newName.replace(rootDir + '/', '') : newName
+    // remove leading slash
+    path = path.indexOf('/') === 0 ? path.slice(1) : path
     await fileManager.open(path)
     setFocusElement([{ key: path, type: 'file' }])
   }
 }
 
-export const setFocusElement = async (elements: { key: string, type: 'file' | 'folder' | 'gist' }[]) => {
+export const setFocusElement = async (elements: { key: string, type: 'file' | 'folder' }[]) => {
   dispatch(focusElement(elements))
 }
 
@@ -297,6 +369,8 @@ export const createNewFolder = async (path: string, rootDir: string) => {
   }
   await fileManager.mkdir(dirName)
   path = path.indexOf(rootDir + '/') === 0 ? path.replace(rootDir + '/', '') : path
+  // remove leading slash
+  path = path.indexOf('/') === 0 ? path.slice(1) : path
   dispatch(focusElement([{ key: path, type: 'folder' }]))
 }
 
@@ -330,7 +404,7 @@ export const downloadPath = async (path: string) => {
   try {
     await fileManager.download(path)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while downloading.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while downloading.' + error))
   }
 }
 
@@ -340,7 +414,34 @@ export const copyFile = async (src: string, dest: string) => {
   try {
     await fileManager.copyFile(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyFile operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyFile operation.' + error))
+  }
+}
+
+export const copyShareURL = async (path: string) => {
+  const fileManager = plugin.fileManager
+
+  try {
+    const host = '127.0.0.1'
+    const port = 5001
+    const protocol = 'http'
+    // const projectId = ''
+    // const projectSecret = ''
+    // const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+
+    const ipfs = IpfsHttpClient({ port, host, protocol
+      , headers: {
+        // authorization: auth
+      } 
+    })
+
+    const fileContent = await fileManager.readFile(path)
+    const result = await ipfs.add(fileContent)
+    const hash = result.cid.string
+    const shareUrl = `${window.location.origin}/#shareCode=${hash}`
+    navigator.clipboard.writeText(shareUrl)
+  } catch (error) {
+    dispatch(displayPopUp('Oops! An error occurred while performing copyShareURL operation.' + error))
   }
 }
 
@@ -350,7 +451,7 @@ export const copyFolder = async (src: string, dest: string) => {
   try {
     await fileManager.copyDir(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing copyDir operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing copyDir operation.' + error))
   }
 }
 
@@ -369,10 +470,11 @@ export const emitContextMenuEvent = async (cmd: customAction) => {
   await plugin.call(cmd.id, cmd.name, cmd)
 }
 
-export const handleClickFile = async (path: string, type: 'file' | 'folder' | 'gist') => {
+export const handleClickFile = async (path: string, type: 'file' | 'folder' ) => {
   if (type === 'file' && path.endsWith('.md')) {
     // just opening the preview
     await plugin.call('doc-viewer' as any, 'viewDocs', [path])
+    plugin.call('tabs' as any, 'focus', 'doc-viewer')
   } else {
     await plugin.fileManager.open(path)
     dispatch(focusElement([{ key: path, type }]))
@@ -441,7 +543,7 @@ const packageGistFiles = async (directory) => {
     if (isFile) {
       try {
         workspaceProvider.get(directory, (error, content) => {
-          if (error) throw new Error('An error ocurred while getting file content. ' + directory)
+          if (error) throw new Error('An error occurred while getting file content. ' + directory)
           if (/^\s+$/.test(content) || !content.length) {
             content = '// this line is added to create a gist. Empty file is not allowed.'
           }
@@ -458,11 +560,6 @@ const packageGistFiles = async (directory) => {
           await workspaceProvider.copyFolderToJson(directory, ({ path, content }) => {
             if (/^\s+$/.test(content) || !content.length) {
               content = '// this line is added to create a gist. Empty file is not allowed.'
-            }
-            if (path.indexOf('gist-') === 0) {
-              path = path.split('/')
-              path.shift()
-              path = path.join('/')
             }
             path = path.replace(/\//g, '...')
             ret[path] = { content }
@@ -534,7 +631,7 @@ export const moveFile = async (src: string, dest: string) => {
   try {
     await fileManager.moveFile(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing moveFile operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing moveFile operation.' + error))
   }
 }
 
@@ -544,7 +641,7 @@ export const moveFolder = async (src: string, dest: string) => {
   try {
     await fileManager.moveDir(src, dest)
   } catch (error) {
-    dispatch(displayPopUp('Oops! An error ocurred while performing moveDir operation.' + error))
+    dispatch(displayPopUp('Oops! An error occurred while performing moveDir operation.' + error))
   }
 }
 

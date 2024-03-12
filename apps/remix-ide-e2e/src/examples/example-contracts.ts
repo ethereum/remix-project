@@ -4,7 +4,7 @@ const storage = `pragma solidity >=0.7.0 <0.9.0;
 
 /**
  * @title Storage
- * @dev Store & retreive value in a variable
+ * @dev Store & retrieve value in a variable
  */
 contract Storage {
 
@@ -22,7 +22,7 @@ contract Storage {
      * @dev Return value 
      * @return value of 'number'
      */
-    function retreive() public view returns (uint256){
+    function retrieve() public view returns (uint256){
         return number;
     }
 }`
@@ -301,7 +301,7 @@ contract BallotTest {
         Assert.equal(ballotToTest.winnerName(), bytes32("candidate1"), "candidate1 should be the winner name");
     }
     
-    function checkWinninProposalWithReturnValue () public view returns (bool) {
+    function checkWinningProposalWithReturnValue () public view returns (bool) {
         return ballotToTest.winningProposal() == 0;
     }
 }

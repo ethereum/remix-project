@@ -1,4 +1,4 @@
-import { PermissionHandler } from './app/ui/persmission-handler'
+import { PermissionHandler } from './app/ui/permission-handler'
 import { PluginManager } from '@remixproject/engine/lib/manager'
 import { EventEmitter } from 'events'
 import { Engine } from '@remixproject/engine/lib/engine'
@@ -50,9 +50,9 @@ export class PluginManagerSettings {
   currentSetting: any
   onValidation(): void
   /** Clear one permission from a plugin */
-  clearPersmission(from: string, to: string, method: string): void
-  /** Clear all persmissions from a plugin */
-  clearAllPersmission(to: string): void
+  clearPermission(from: string, to: string, method: string): void
+  /** Clear all permissions from a plugin */
+  clearAllPermission(to: string): void
   settings(): any
   render(): any
 }

@@ -21,5 +21,5 @@ try {
   console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: solc setting installation output: ${solcUseOP.toString()}`)
   console.log('\x1b[32m%s\x1b[0m', `[Slither Installation]: Slither is ready to use!`)
 } catch (err) {
-  console.log('\x1b[31m%s\x1b[0m', `[Slither Installation]: Error occured: ${err}`)
+  console.log('\x1b[31m%s\x1b[0m', `[Slither Installation]: Error occurred: ${err}`)
 }

@@ -91,33 +91,60 @@ module.exports = {
       })
   },
 
-  'Should load Etherscan verified contracts from URL "address" param)': !function (browser: NightwatchBrowser) {
+  'Should load Etherscan verified contracts from URL "address" param) #group1': function (browser: NightwatchBrowser) {
     browser
-
-      .url('http://127.0.0.1:8080/#address=0x56db08fb78bc6689a1ef66efd079083fed0e4915')
-      .refreshPage()
-
-      .currentWorkspaceIs('etherscan-code-sample')
-      .assert.elementPresent('*[data-id=treeViewLitreeViewItemropsten]')
-      .assert.elementPresent('*[data-id=treeViewLitreeViewItemrinkeby]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemrinkeby/0x56db08fb78bc6689a1ef66efd079083fed0e4915"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemrinkeby/0x56db08fb78bc6689a1ef66efd079083fed0e4915/Sample.sol"]')
-      .getEditorValue((content) => {
-        browser.assert.ok(content && content.indexOf(
-          'contract Sample {') !== -1)
-      })
       .url('http://127.0.0.1:8080/#address=0xdac17f958d2ee523a2206206994597c13d831ec7')
       .refreshPage()
       .pause(7000)
-      .currentWorkspaceIs('etherscan-code-sample')
-      .assert.elementPresent('*[data-id=treeViewLitreeViewItemmainnet]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
-      .assert.elementPresent('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7/TetherToken.sol"]')
+      .currentWorkspaceIs('code-sample')
+      .waitForElementVisible('*[data-id=treeViewLitreeViewItemmainnet]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemmainnet/0xdac17f958d2ee523a2206206994597c13d831ec7/TetherToken.sol"]')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'contract TetherToken is Pausable, StandardToken, BlackList {') !== -1)
 
       })
+  },
+
+  'Should load Blockscout verified contracts from URL "address" and "blockscout" params (single source)': function (browser: NightwatchBrowser) {
+    browser
+      .url('http://127.0.0.1:8080/#address=0xdAC17F958D2ee523a2206206994597C13D831ec7&blockscout=eth.blockscout.com')
+      .refreshPage()
+      .pause(7000)
+      .currentWorkspaceIs('code-sample')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0xdAC17F958D2ee523a2206206994597C13D831ec7"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content && content.indexOf(
+          'contract TetherToken is Pausable, StandardToken, BlackList {') !== -1)
+
+      })
+  },
+
+  'Should load Blockscout verified contracts from URL "address" and "blockscout" params (multiple sources)': function (browser: NightwatchBrowser) {
+    browser
+      .url('http://127.0.0.1:8080/#address=0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9&blockscout=eth.blockscout.com')
+      .refreshPage()
+      .pause(7000)
+      .currentWorkspaceIs('code-sample')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/Address.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/BaseAdminUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/BaseUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/InitializableAdminUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/InitializableUpgradeabilityProxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/Proxy.sol"]')
+      .assert.elementPresent('*[data-id="treeViewLitreeViewItemeth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/UpgradeabilityProxy.sol"]')
+      .openFile('eth.blockscout.com/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/contracts/open-zeppelin/InitializableAdminUpgradeabilityProxy.sol')
+      .getEditorValue((content) => {
+        browser.assert.ok(content && content.indexOf(
+          'contract InitializableAdminUpgradeabilityProxy is BaseAdminUpgradeabilityProxy, InitializableUpgradeabilityProxy {') !== -1)
+      })
+
   },
 
   'Should load the code from URL & code params #group1': function (browser: NightwatchBrowser) {
@@ -136,6 +163,13 @@ module.exports = {
         browser.assert.ok(content && content.indexOf(
           'proposals.length = _numProposals;') !== -1,
           'code has been loaded')
+      })
+      .url('http://127.0.0.1:8080') // refresh without loading the code sample
+      .currentWorkspaceIs('default_workspace')
+      .execute(() => {
+        return document.querySelector('[data-id="dropdown-item-code-sample"]') === null
+      }, [], (result) => {
+        browser.assert.ok((result as any).value, 'sample template has not be persisted.') // code-sample should not be kept.
       })
   },
 
@@ -276,12 +310,8 @@ module.exports = {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&url=https://raw.githubusercontent.com/EthVM/evm-source-verification/main/contracts/1/0x011e5846975c6463a8c6337eecf3cbf64e328884/input.json')
       .refreshPage()
-
-      .switchWorkspace('code-sample')
-      .openFile('@openzeppelin')
-      .openFile('@openzeppelin/contracts')
-      .openFile('@openzeppelin/contracts/access')
-      .openFile('@openzeppelin/contracts/access/AccessControl.sol')
+      .currentWorkspaceIs('code-sample')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItem@openzeppelin/contracts/access/AccessControl.sol"]')
       .openFile('contracts')
       .openFile('contracts/governance')
       .openFile('contracts/governance/UnionGovernor.sol')

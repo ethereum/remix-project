@@ -29,7 +29,8 @@ export class InjectedProvider {
 
   async getBalanceInEther (address) {
     const balance = await this.executionContext.web3().eth.getBalance(address)
-    return Web3.utils.fromWei(balance.toString(10), 'ether')
+    const balInString = balance.toString(10)
+    return balInString === '0' ? balInString : Web3.utils.fromWei(balInString, 'ether')
   }
 
   getGasPrice (cb) {

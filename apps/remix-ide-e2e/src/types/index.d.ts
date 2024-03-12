@@ -15,6 +15,7 @@ declare module 'nightwatch' {
     verifyContracts(compiledContractNames: string[], opts?: {wait: number; version?: string; runs?: string}): NightwatchBrowser
     selectAccount(account?: string): NightwatchBrowser
     clickFunction(fnFullName: string, expectedInput?: NightwatchClickFunctionExpectedInput): NightwatchBrowser
+    checkClipboard(): NightwatchBrowser
     testFunction(txHash: string, expectedInput: NightwatchTestFunctionExpectedInput): NightwatchBrowser
     goToVMTraceStep(step: number, incr?: number): NightwatchBrowser
     checkVariableDebug(id: string, debugValue: NightwatchCheckVariableDebugValue): NightwatchBrowser
@@ -53,14 +54,14 @@ declare module 'nightwatch' {
     notContainsText(cssSelector: string, text: string): NightwatchBrowser
     sendLowLevelTx(address: string, value: string, callData: string): NightwatchBrowser
     journalLastChild(val: string): NightwatchBrowser
-    checkTerminalFilter(filter: string, test: string): NightwatchBrowser
+    checkTerminalFilter(filter: string, test: string, notContain: boolean): NightwatchBrowser
     noWorkerErrorFor(version: string): NightwatchBrowser
     validateValueInput(selector: string, valueTosSet: string[], expectedValue: string): NightwatchBrowser
     checkAnnotations(type: string): NightwatchBrowser
     checkAnnotationsNotPresent(type: string): NightwatchBrowser
     getLastTransactionHash(callback: (hash: string) => void)
     currentWorkspaceIs(name: string): NightwatchBrowser
-    addLocalPlugin(this: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile): NightwatchBrowser
+    addLocalPlugin(this: NightwatchBrowser, profile: Profile & LocationProfile & ExternalProfile, focus: boolean): NightwatchBrowser
     acceptAndRemember(this: NightwatchBrowser, remember: boolean, accept: boolean): NightwatchBrowser
     clearConsole(this: NightwatchBrowser): NightwatchBrowser
     clearTransactions(this: NightwatchBrowser): NightwatchBrowser

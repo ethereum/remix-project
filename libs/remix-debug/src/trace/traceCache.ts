@@ -40,7 +40,7 @@ export class TraceCache {
     this.memoryChanges = []
     this.formattedMemory = {}
     this.storageChanges = []
-    this.sstore = {} // all sstore occurence in the trace
+    this.sstore = {} // all sstore occurrences in the trace
   }
 
   pushSteps (index, currentCallIndex) {

@@ -11,6 +11,7 @@ import vizRenderStringSync from '@aduh95/viz.js/sync'
 import {PluginViewWrapper} from '@remix-ui/helper'
 import {customAction} from '@remixproject/plugin-api'
 import {ClassOptions} from 'sol2uml/lib/converterClass2Dot'
+import type {CompilerInput} from '@remix-project/remix-solidity'
 const parser = (window as any).SolidityParser
 
 const _paq = (window._paq = window._paq || [])
@@ -74,7 +75,7 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
       try {
         if (data.sources && Object.keys(data.sources).length > 1) {
           // we should flatten first as there are multiple asts
-          result = await this.flattenContract(source, file, data)
+          result = await this.flattenContract(source, file, data, JSON.parse(input))
         }
         const ast = result.length > 1 ? parser.parse(result) : parser.parse(source.sources[file].content)
         this.umlClasses = convertAST2UmlClasses(ast, this.currentFile)
@@ -142,8 +143,8 @@ export class SolidityUmlGen extends ViewPlugin implements ISolidityUmlGen {
    * and assigns to a local property
    * @returns {Promise<string>}
    */
-  async flattenContract(source: any, filePath: string, data: any) {
-    const result = await this.call('contractflattener', 'flattenContract', source, filePath, data)
+  async flattenContract(source: any, filePath: string, data: any, input: CompilerInput) {
+    const result = await this.call('contractflattener', 'flattenContract', source, filePath, data, input)
     return result
   }
 

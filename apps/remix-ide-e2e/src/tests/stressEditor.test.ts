@@ -36,9 +36,9 @@ module.exports = {
         contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .waitForElementContainsText('*[data-id$="fileExplorerTreeItemInput"]', '', 60000)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', name)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
             .getText('.remix_ui_terminal_block', (result) => {
                 console.log(result)
             })
@@ -51,9 +51,9 @@ module.exports = {
         contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .waitForElementContainsText('*[data-id$="fileExplorerTreeItemInput"]', '', 60000)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', name)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
             .getText('.remix_ui_terminal_block', (result) => {
                 console.log(result)
             })
@@ -66,9 +66,9 @@ module.exports = {
         contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .waitForElementContainsText('*[data-id$="fileExplorerTreeItemInput"]', '', 60000)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', name)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
             .getText('.remix_ui_terminal_block', (result) => {
                 console.log(result)
             })
@@ -81,9 +81,9 @@ module.exports = {
         contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .waitForElementContainsText('*[data-id$="fileExplorerTreeItemInput"]', '', 60000)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', name)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
             .getText('.remix_ui_terminal_block', (result) => {
                 console.log(result)
             })
@@ -96,9 +96,9 @@ module.exports = {
         contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .waitForElementContainsText('*[data-id$="fileExplorerTreeItemInput"]', '', 60000)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', name)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
             .getText('.remix_ui_terminal_block', (result) => {
                 console.log(result)
             })
@@ -111,9 +111,9 @@ module.exports = {
         contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .waitForElementContainsText('*[data-id$="fileExplorerTreeItemInput"]', '', 60000)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', name)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
             .getText('.remix_ui_terminal_block', (result) => {
                 console.log(result)
             })
@@ -126,9 +126,9 @@ module.exports = {
         contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .waitForElementContainsText('*[data-id$="fileExplorerTreeItemInput"]', '', 60000)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', name)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
             .getText('.remix_ui_terminal_block', (result) => {
                 console.log(result)
             })
@@ -141,9 +141,9 @@ module.exports = {
         contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .waitForElementContainsText('*[data-id$="fileExplorerTreeItemInput"]', '', 60000)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', name)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
             .getText('.remix_ui_terminal_block', (result) => {
                 console.log(result)
             })
@@ -156,9 +156,9 @@ module.exports = {
         contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .waitForElementContainsText('*[data-id$="fileExplorerTreeItemInput"]', '', 60000)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', name)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
             .getText('.remix_ui_terminal_block', (result) => {
                 console.log(result)
             })
@@ -171,9 +171,9 @@ module.exports = {
         contents[i] = localContent
         const name = 'test_' + i + '.sol'
         browser.click('[data-id="fileExplorerNewFilecreateNewFile"]')
-            .waitForElementContainsText('*[data-id$="/blank"]', '', 60000)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', name)
-            .sendKeys('*[data-id$="/blank"] .remixui_items', browser.Keys.ENTER)
+            .waitForElementContainsText('*[data-id$="fileExplorerTreeItemInput"]', '', 60000)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', name)
+            .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
             .getText('.remix_ui_terminal_block', (result) => {
                 console.log(result)
             })

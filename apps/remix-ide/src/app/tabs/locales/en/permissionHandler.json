@@ -1,5 +1,5 @@
 {
-  "permissionHandler.allPermissionsReset": "All permisssions have been reset.",
+  "permissionHandler.allPermissionsReset": "All permissions have been reset.",
   "permissionHandler.rememberText": "has changed and",
   "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} would like to access to \"{method}\" of \"{to}\"`",
   "permissionHandler.description": "Description",
