@@ -200,6 +200,7 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async exists(path: string): Promise<boolean> {
+    if (this.workingDir === '') return false
     return fs
       .access(this.fixPath(path))
       .then(() => true)
@@ -398,13 +399,14 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async setWorkingDir(path: string): Promise<void> {
+    console.log('setWorkingDir', path)
     this.workingDir = path
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
     this.window.setTitle(getBaseName(this.workingDir))
     this.watch()
     this.emit('workingDirChanged', path)
-    await this.call('fileManager', 'closeAllFiles')
+    return
   }
 
   async revealInExplorer(action: customAction, isAbsolutePath: boolean = false): Promise<void> {
