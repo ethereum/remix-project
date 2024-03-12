@@ -132,11 +132,11 @@ jobs:
           command: |
             yarn run selenium
           background: true
-      - run:  
-          name: "Run tests"
-          command: |
-            cd apps/remixdesktop/
-            yarn run build:e2e && yarn run test:app:linuxlocal
+        - run:  
+            name: "Run tests"
+            command: |
+              cd apps/remixdesktop/
+              yarn run build:e2e && yarn run test:app:linuxlocal
 
   build-remixdesktop-linux:
       machine:
