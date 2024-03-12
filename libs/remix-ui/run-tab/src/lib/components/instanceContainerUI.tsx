@@ -42,12 +42,16 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         // Load contracts from FE
         const isPinnedAvailable = await props.plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${chainId.current}`)
         if (isPinnedAvailable) {
-          const list = await props.plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${chainId.current}`)
-          const filePaths = Object.keys(list)
-          for (const file of filePaths) {
-            const pinnedContract = await props.plugin.call('fileManager', 'readFile', file)
-            const pinnedContractObj = JSON.parse(pinnedContract)
-            if (pinnedContractObj) await props.plugin.call('udapp', 'addSavedInstance', pinnedContractObj.address, pinnedContractObj.abi, pinnedContractObj.name, pinnedContractObj.pinnedAt, pinnedContractObj.filePath)
+          try {
+            const list = await props.plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${chainId.current}`)
+            const filePaths = Object.keys(list)
+            for (const file of filePaths) {
+              const pinnedContract = await props.plugin.call('fileManager', 'readFile', file)
+              const pinnedContractObj = JSON.parse(pinnedContract)
+              if (pinnedContractObj) await props.plugin.call('udapp', 'addSavedInstance', pinnedContractObj.address, pinnedContractObj.abi, pinnedContractObj.name, pinnedContractObj.pinnedAt, pinnedContractObj.filePath)
+            }
+          } catch(err) {
+            console.log(err)
           }
         }
       }
