@@ -141,6 +141,22 @@ const compileReturnType = (output, contract) => {
   return result
 }
 
+const fixContractContent = (content: string) => {
+  if (content.length === 0) return
+  const pragmaFound = content.includes('#pragma version ^0.3.10')
+  const evmVerFound = content.includes('#pragma evm-version shanghai')
+  const pragma = '#pragma version ^0.3.10'
+  const evmVer = '#pragma evm-version shanghai'
+
+  if (!evmVerFound) {
+    content = `${evmVer}\n${content}`
+  }
+  if (!pragmaFound) {
+    content = `${pragma}\n${content}`
+  }
+  return content
+}
+
 /**
  * Compile the a contract
  * @param url The url of the compiler
@@ -155,11 +171,13 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     throw new Error('Use extension .vy for Vyper.')
   }
 
+
+
   let contractName = contract['name']
   const compilePackage = {
     manifest: 'ethpm/3',
     sources: {
-      [contractName] : {content : contract.content}
+      [contractName] : {content : fixContractContent(contract.content)}
     }
   }
   let response = await axios.post(`${url}compile`, compilePackage )
