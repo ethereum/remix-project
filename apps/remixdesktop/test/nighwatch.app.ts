@@ -21,17 +21,15 @@ module.exports = {
         },
   
       },
-      macos: {
+      maclocal: {
         desiredCapabilities: {
           browserName: 'chrome',
           javascriptEnabled: true,
           acceptSslCerts: true,
           'goog:chromeOptions': {
-            "binary": "electron .",
+            "binary": "release/mac/Remix IDE.app/Contents/MacOS/Remix IDE",
             "args": [
-              "--folder=test/contracts",
-              "--remix-ide-url=http://localhost:8080",
-              "--e2e"
+                "--e2e-local",
             ]
           }
         }
@@ -56,6 +54,19 @@ module.exports = {
           acceptSslCerts: true,
           'goog:chromeOptions': {
             "binary": "release/linux-unpacked/remixdesktop",
+            "args": [
+                "--e2e",
+            ]
+          }
+        }
+      },
+      mac: {
+        desiredCapabilities: {
+          browserName: 'chrome',
+          javascriptEnabled: true,
+          acceptSslCerts: true,
+          'goog:chromeOptions': {
+            "binary": "release/mac-arm64/Remix IDE.app/Contents/MacOS/Remix IDE",
             "args": [
                 "--e2e",
             ]

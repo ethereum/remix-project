@@ -17,7 +17,7 @@ module.exports = {
             .click('*[data-type="remixUIXT"]')
             .perform(function () {
                 const actions = this.actions({ async: true })
-                return actions.sendKeys('echo "Hello, World!" > example.txt').sendKeys(this.Keys.ENTER)
+                return actions.sendKeys('echo test > example.txt').sendKeys(this.Keys.ENTER)
             })
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemexample.txt"]', 10000)
     },
