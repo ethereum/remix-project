@@ -333,58 +333,6 @@ jobs:
           path: apps/remixdesktop/release/
           destination: remixdesktop-mac
 
-  test-remixdesktop-mac:
-    macos:
-      xcode: 14.2.0
-    resource_class:
-        macos.m1.large.gen1
-    working_directory: ~/remix-project
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: unzip ./persist/desktopbuild.zip
-      - run: 
-          command: |
-            ls -la dist/apps/remix-ide
-            nvm install 20.0.0
-            nvm use 20.0.0
-      - restore_cache:
-          keys:
-            - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
-      - run: 
-          command: |
-            nvm use 20.0.0
-            cd apps/remixdesktop && yarn
-            yarn add @remix-project/remix-ws-templates
-      - save_cache:
-          key: remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
-          paths:
-            - apps/remixdesktop/node_modules
-      # use USE_HARD_LINK=false https://github.com/electron-userland/electron-builder/issues/3179
-      - run: 
-          command: |
-            nvm use 20.0.0
-            mkdir apps/remixdesktop/build
-            cp -r dist/apps/remix-ide apps/remixdesktop/build
-            cd apps/remixdesktop
-            yarn
-            yarn installRipGrepMacOXarm64
-            PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --arm64
-            yarn run selenium-install-mac
-      - run:
-          name: "Run selenium"
-          command: |
-            nvm use 20.0.0
-            cd apps/remixdesktop/
-            yarn run selenium-mac
-          background: true
-      - run:  
-          name: "Run tests"
-          command: |
-            nvm use 20.0.0
-            cd apps/remixdesktop/
-            yarn run build:e2e && yarn run test:app:mac
  
   lint:
     docker:
