@@ -631,6 +631,9 @@ workflows:
       - test-remixdesktop-linux:
           requires:
             - build-desktop
+      - test-remixdesktop-mac:
+          requires:
+            - build-desktop
       - build-plugin:
           matrix:
             parameters:
