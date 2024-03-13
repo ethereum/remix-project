@@ -375,12 +375,14 @@ jobs:
       - run:
           name: "Run selenium"
           command: |
+            nvm use 20.0.0
             cd apps/remixdesktop/
             yarn run selenium-mac
           background: true
       - run:  
           name: "Run tests"
           command: |
+            nvm use 20.0.0
             cd apps/remixdesktop/
             yarn run build:e2e && yarn run test:app:mac
  
