@@ -1,9 +1,9 @@
 {
     "version": "v0.45.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Remix VM state can be saved now",
+    "highlight1": "Remix VM state can now be saved",
     "highlight2": "Verified contracts can be fetched from Blockscout explorer",
-    "highlight3": "Saved contracts are pinned contracts now and stored in workspace",
+    "highlight3": "Saved contracts are now stored in workspaces as 'Pinned Contracts'",
     "highlight4": "",
     "more": "Read More",
     "moreLink": "https://medium.com/remix-ide/remix-release-v0-45-0-dcb16ff6bf03"
