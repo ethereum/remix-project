@@ -100,6 +100,50 @@ module.exports = {
                 browser.assert.ok(!(result.value as string).includes('newExample.txt'))
             })
     },
+    'switch to a third terminal': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="createTerminalButton"]', 10000)
+            .click('*[data-id="createTerminalButton"]')
+            .waitForElementVisible({
+                selector: "//*[@data-type='remixUIXT' and @data-active='1']",
+                timeout: 10000,
+                locateStrategy: 'xpath'
+            }, 10000)
+            .click({
+                selector: "//*[@data-type='remixUIXT' and @data-active='1']",
+                timeout: 10000,
+                locateStrategy: 'xpath'
+            })
+            .elements('css selector', '[data-type="remixUIXTSideButton"]', function (result) {
+                browser.assert.ok((result.value as any).length === 3)
+            })
+            .perform(function () {
+                const actions = this.actions({ async: true })
+                return actions.sendKeys('echo thirdterminal').sendKeys(this.Keys.ENTER)
+            })
+    },
+    'switch back to the second terminal': function (browser: NightwatchBrowser) {
+        browser
+            .elements('css selector', '[data-type="remixUIXTSideButton"]', function (result) {
+                browser.elementIdClick(((Object.values((result.value as any)[1]))[0] as any))
+            })
+            .getText({
+                selector: "//*[@data-type='remixUIXT' and @data-active='1']",
+                timeout: 10000,
+                locateStrategy: 'xpath'
+            }, function (result) {
+                console.log('Text content of the element:', result.value);
+                browser.assert.ok(!(result.value as string).includes('newExample.txt'))
+            })
+    },
+    'close the second terminal': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="closeTerminalButton"]', 10000)
+            .click('*[data-id="closeTerminalButton"]')
+            .elements('css selector', '[data-type="remixUIXTSideButton"]', function (result) {
+                browser.assert.ok((result.value as any).length === 2)
+            })
+    },
     'switch back to the first terminal': function (browser: NightwatchBrowser) {
         browser
             .elements('css selector', '[data-type="remixUIXTSideButton"]', function (result) {
@@ -114,17 +158,38 @@ module.exports = {
                 browser.assert.ok((result.value as string).includes('newExample.txt'))
             })
     },
+    'switch to the output panel': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="tabOutput"]', 10000)
+            .click('*[data-id="tabOutput"]')
+            .waitForElementNotPresent('*[data-id="createTerminalButton"]', 10000)
+    },
+    'switch back to xterminal': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="tabXTerm"]', 10000)
+            .click('*[data-id="tabXTerm"]')
+            .waitForElementVisible('*[data-type="remixUIXT"]', 10000)
+            .click('*[data-type="remixUIXT"]')
+            .getText({
+                selector: "//*[@data-type='remixUIXT' and @data-active='1']",
+                timeout: 10000,
+                locateStrategy: 'xpath'
+            }, function (result) {
+                console.log('Text content of the element:', result.value);
+                browser.assert.ok((result.value as string).includes('newExample.txt'))
+            })
+    },
     'clear the terminal': function (browser: NightwatchBrowser) {
         browser
-        .waitForElementVisible('*[data-id="clearTerminalButton"]', 10000)
-        .click('*[data-id="clearTerminalButton"]')
-        .getText({
-            selector: "//*[@data-type='remixUIXT' and @data-active='1']",
-            timeout: 10000,
-            locateStrategy: 'xpath'
-        }, function (result) {
-            console.log('Text content of the element:', result.value);
-            browser.assert.ok(!(result.value as string).includes('newExample.txt'))
-        })
-    }  
+            .waitForElementVisible('*[data-id="clearTerminalButton"]', 10000)
+            .click('*[data-id="clearTerminalButton"]')
+            .getText({
+                selector: "//*[@data-type='remixUIXT' and @data-active='1']",
+                timeout: 10000,
+                locateStrategy: 'xpath'
+            }, function (result) {
+                console.log('Text content of the element:', result.value);
+                browser.assert.ok(!(result.value as string).includes('newExample.txt'))
+            })
+    }
 }
