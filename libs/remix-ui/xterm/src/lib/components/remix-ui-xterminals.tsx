@@ -146,7 +146,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         { <div className={`flex-row w-100 h-100 ${xtermState.showOutput ? 'h-0 d-none' : 'h-100 d-flex'}`}>
           {terminals.map((xtermState) => {
             return (
-              <div className={`h-100 w-100 ${xtermState.hidden ? 'd-none' : 'd-block'}`} key={xtermState.pid} data-id={`remixUIXT${xtermState.pid}`}>
+              <div className={`h-100 w-100 ${xtermState.hidden ? 'd-none' : 'd-block'}`} key={xtermState.pid} data-type="remixUIXT" data-id={`remixUIXT${xtermState.pid}`}>
                 <RemixUiXterm
                   theme={theme}
                   setTerminalRef={setTerminalRef}
