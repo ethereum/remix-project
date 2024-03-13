@@ -27,7 +27,7 @@ export const RemixUIXtermMenu = (props: RemixUiTerminalProps) => {
 
   return (<>
     <div className={`d-flex flex-row align-items-center ${xtermState.showOutput ? 'd-none' : ''}`}>
-      <div className="mx-2" onClick={async () => onCreateTerminal()}>
+      <div data-id="createTerminalButton" className="mx-2" onClick={async () => onCreateTerminal()}>
         <CustomTooltip tooltipText={<FormattedMessage id='xterm.new' defaultMessage='New terminal' />}>
           <i className="fas fa-plus border-0 p-0 m-0"></i>
         </CustomTooltip>
@@ -44,12 +44,12 @@ export const RemixUIXtermMenu = (props: RemixUiTerminalProps) => {
           </Dropdown>
         </CustomTooltip>
       </div>
-      <div className="mx-2" onClick={onCloseTerminal}>
+      <div data-id="closeTerminalButton" className="mx-2" onClick={onCloseTerminal}>
         <CustomTooltip tooltipText={<FormattedMessage id='xterm.close' defaultMessage='Close terminal' />}>
           <i className="far fa-trash border-0 ml-1"></i>
         </CustomTooltip>
       </div>
-      <div className="mx-2" onClick={async () => onClearTerminal()}>
+      <div data-id="clearTerminalButton" className="mx-2" onClick={async () => onClearTerminal()}>
         <CustomTooltip tooltipText={<FormattedMessage id='xterm.clear' defaultMessage='Clear Terminal' />}>
           <i className="fas fa-ban border-0 p-0 m-0"></i>
         </CustomTooltip>
