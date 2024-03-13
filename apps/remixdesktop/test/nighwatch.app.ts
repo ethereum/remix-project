@@ -49,6 +49,19 @@ module.exports = {
           }
         }
       },
+      linux: {
+        desiredCapabilities: {
+          browserName: 'chrome',
+          javascriptEnabled: true,
+          acceptSslCerts: true,
+          'goog:chromeOptions': {
+            "binary": "release/linux-unpacked/remixdesktop",
+            "args": [
+                "--e2e",
+            ]
+          }
+        }
+      },
       windows: {
         desiredCapabilities: {
           browserName: 'chrome',

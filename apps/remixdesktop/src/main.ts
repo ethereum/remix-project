@@ -7,6 +7,7 @@ export const version = app.getVersion();
 
 const args = process.argv.slice(1)
 export const isE2ELocal = args.find(arg => arg.startsWith('--e2e-local'))
+export const isE2E = args.find(arg => arg.startsWith('--e2e'))
 
 if (isE2ELocal) {
   console.log('e2e mode')

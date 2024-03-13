@@ -137,7 +137,7 @@ jobs:
             name: "Run tests"
             command: |
               cd apps/remixdesktop/
-              yarn run build:e2e && yarn run test:app:linuxlocal
+              yarn run build:e2e && yarn run test:app:linux
 
   build-remixdesktop-linux:
       machine:

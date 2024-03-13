@@ -3,7 +3,7 @@ import fs from 'fs/promises'
 import {Profile} from '@remixproject/plugin-utils'
 import chokidar from 'chokidar'
 import {dialog, shell} from 'electron'
-import {createWindow, isPackaged} from '../main'
+import {createWindow, isE2E, isPackaged} from '../main'
 import {writeConfig} from '../utils/config'
 import path from 'path'
 import {customAction} from '@remixproject/plugin-api'
@@ -32,7 +32,7 @@ const getBaseName = (pathName: string): string => {
 export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
   constructor() {
-    super(profile, clientProfile, FSPluginClientE2E)
+    super(profile, clientProfile, isE2E? FSPluginClientE2E: FSPluginClient)
     this.methods = [...super.methods, 'closeWatch', 'removeCloseListener']
   }
 
