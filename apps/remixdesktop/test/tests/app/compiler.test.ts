@@ -33,6 +33,5 @@ module.exports = {
                     "//a[@data-id='dropdown-item-soljson-v0.8.23+commit.f704f362.js']//*[contains(@class, 'fa-arrow-circle-down')]",
                 locateStrategy: 'xpath'
             })
-            .pause()
     }
 }
