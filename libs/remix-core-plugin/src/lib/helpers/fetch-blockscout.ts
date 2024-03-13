@@ -5,7 +5,6 @@ export const fetchContractFromBlockscout = async (plugin, endpoint, contractAddr
   try {
     data = await fetch('https://' + endpoint + '/api?module=contract&action=getsourcecode&address=' + contractAddress)
     data = await data.json()
-    console.log(data)
     // blockscout api doc https://blockscout.com/poa/core/api-docs
     if (data.message === 'OK' && data.status === "1") {
       if (data.result.length) {
