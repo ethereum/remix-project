@@ -20,7 +20,7 @@ module.exports = {
       // @ts-ignore
       .frame(0)
       .waitForElementVisible('input[name="apiKey"]')
-      .setValue('input[name="apiKey"]', 'GFPNQJ344H8A2F1U2YWJQ4YJFVNJK6H6KZ')
+      .setValue('input[name="apiKey"]', '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531')
       .click('[data-id="save-api-key"]')
   },
 
