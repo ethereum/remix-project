@@ -225,7 +225,7 @@ jobs:
             paths:
               - "release"
 
-  test-remixdesktop-win:
+  test-remixdesktop-windows:
     executor:
       name: win/default # executor type
       size: xlarge # can be medium, large, xlarge, 2xlarge
@@ -730,7 +730,7 @@ workflows:
       - test-remixdesktop-linux:
           requires:
             - build-desktop
-      - test-remixdesktop-win:
+      - test-remixdesktop-windows:
           requires:
            - build-desktop
       - uploadartifacts:
