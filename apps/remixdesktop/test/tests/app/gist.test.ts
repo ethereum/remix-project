@@ -1,6 +1,6 @@
 import { NightwatchBrowser } from 'nightwatch'
 
-const gist_id  = 'a4af87f9ae096a01c7819e75b32d1b72'
+const gist_id  = '02a847917a6a7ecaf4a7e0d4e68715bf'
 module.exports = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         done()
@@ -16,6 +16,12 @@ module.exports = {
         })
         .setValue('*[data-id="gisthandlerModalDialogModalBody-react"] input[data-id="modalDialogCustomPromp"]', gist_id)
         .modalFooterOKClick('gisthandler')
-        //.pause()
+        .pause(3000)
+        .windowHandles(function (result) {
+          console.log(result.value)
+          browser.switchWindow(result.value[1])
+          .waitForElementVisible('*[data-id="treeViewDivtreeViewItemREADME.txt"]')
+        })
+        .end()
     }
 }
