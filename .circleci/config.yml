@@ -224,6 +224,55 @@ jobs:
             root: apps/remixdesktop
             paths:
               - "release"
+
+  test-remixdesktop-windows:
+    executor:
+      name: win/default # executor type
+      size: xlarge # can be medium, large, xlarge, 2xlarge
+      shell: bash.exe
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: unzip ./persist/desktopbuild.zip
+      - restore_cache:
+          key: node-20-windows-v3
+      - run: 
+          command: |
+            nvm install 20.0.0
+            nvm use 20.0.0
+            node -v
+            npx -v
+            npm install --global yarn
+            yarn -v 
+      - save_cache:
+          key: node-20-windows-v3
+          paths:
+            - /ProgramData/nvm/v20.0.0
+      - restore_cache:
+          keys:
+            - remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+      - run: 
+          command: |
+              mkdir apps/remixdesktop/build
+              cp -r dist/apps/remix-ide apps/remixdesktop/build
+              cd apps/remixdesktop/
+              yarn
+              yarn dist
+              yarn run selenium-install-win
+      - run:
+          name: "Run selenium"
+          command: |
+            cd apps/remixdesktop/
+            yarn run selenium-win
+          background: true
+      - run:
+          name: "Run tests"
+          command: |
+           cd apps/remixdesktop/
+           yarn run test:app:win
+
   # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
   sign-remixdesktop-windows:
     executor: win/default # executor type
@@ -681,6 +730,9 @@ workflows:
       - test-remixdesktop-linux:
           requires:
             - build-desktop
+      - test-remixdesktop-win:
+          requires:
+           - build-desktop
       - uploadartifacts:
           requires:
             - build-remixdesktop-mac
