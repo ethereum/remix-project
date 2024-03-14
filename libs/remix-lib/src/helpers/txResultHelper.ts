@@ -32,12 +32,13 @@ export function resultToRemixTx (txResult, execResult?) {
     errorMessage = execResult.exceptionError
   }
 
+  console.log('resultToRemixTx', returnValue)
   return {
     transactionHash,
     status,
-    gasUsed: convertToPrefixedHex(gasUsed),
+    gasUsed: bytesToHex(gasUsed),
     error: errorMessage,
-    return: convertToPrefixedHex(returnValue),
-    createdAddress: convertToPrefixedHex(contractAddress)
+    return: returnValue ? bytesToHex(returnValue) : '0x0',
+    createdAddress: bytesToHex(contractAddress)
   }
 }
