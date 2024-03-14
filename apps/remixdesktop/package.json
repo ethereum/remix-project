@@ -1,6 +1,6 @@
 {
   "name": "remixdesktop",
-  "version": "0.0.11-Alpha",
+  "version": "0.0.26-Alpha",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
@@ -24,7 +24,7 @@
   "scripts": {
     "start:dev": "tsc && cp -R node_modules/yarn build/tools/ &&  cross-env NODE_ENV=development electron --inspect=5858 .",
     "start:production": "tsc &&  && cp -R node_modules/yarn build/tools/ && cross-env NODE_ENV=production electron .",
-    "dist": "tsc && cp -R node_modules/yarn build/tools/ && electron-builder",
+    "dist": "tsc && cp -R node_modules/yarn build/tools/ && electron-builder -p never",
     "installRipGrepMacOXx64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=x64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
     "installRipGrepMacOXarm64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=arm64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
     "postinstall": "electron-builder install-app-deps",
@@ -42,14 +42,14 @@
     "build:e2e": "tsc -p tsconfig.e2e.json"
   },
   "devDependencies": {
-    "@electron/rebuild": "^3.2.13",
+    "@electron/notarize": "^2.3.0",
     "@types/byline": "^4.2.35",
     "@types/express": "^4.17.21",
     "@types/nightwatch": "^2.3.23",
     "cross-env": "^7.0.3",
     "deep-equal": "^2.2.3",
-    "electron": "^25.0.1",
-    "electron-builder": "^23.6.0",
+    "electron": "^26.0.0",
+    "electron-builder": "^24.9.1",
     "electron-devtools-installer": "^3.2.0",
     "nightwatch": "2.3",
     "selenium-standalone": "^9.3.1",
@@ -58,16 +58,17 @@
   },
   "dependencies": {
     "@remix-project/remix-url-resolver": "^0.0.65",
-    "@remixproject/engine": "0.3.41",
-    "@remixproject/engine-electron": "0.3.41",
-    "@remixproject/plugin": "0.3.41",
-    "@remixproject/plugin-api": "^0.3.38",
-    "@remixproject/plugin-electron": "0.3.41",
+    "@remixproject/engine": "0.3.43",
+    "@remixproject/engine-electron": "0.3.43",
+    "@remixproject/plugin": "0.3.43",
+    "@remixproject/plugin-api": "^0.3.43",
+    "@remixproject/plugin-electron": "0.3.43",
     "@vscode/ripgrep": "^1.15.6",
     "add": "^2.0.6",
     "axios": "^1.6.1",
     "byline": "^5.0.0",
     "chokidar": "^3.5.3",
+    "electron-updater": "^6.1.8",
     "express": "^4.18.2",
     "isomorphic-git": "^1.24.2",
     "node-pty": "^0.10.1",
@@ -77,7 +78,7 @@
     "@remix-project/remix-ws-templates": "^1.0.27"
   },
   "build": {
-    "productName": "Remix IDE",
+    "productName": "Remix-Desktop",
     "appId": "org.ethereum.remix-ide",
     "asar": true,
     "generateUpdatesFilesForAllChannels": true,
@@ -85,6 +86,8 @@
     "files": [
       "build/**/*"
     ],
+    "afterSign": "aftersign.js",
+    "afterAllArtifactBuild": "afterbuild.js",
     "publish": [
       {
         "provider": "github",
@@ -96,38 +99,37 @@
     ],
     "mac": {
       "category": "public.app-category.productivity",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        }
-      ],
       "icon": "assets/icon.png",
-      "darkModeSupport": true
+      "darkModeSupport": true,
+      "hardenedRuntime" : true,
+      "gatekeeperAssess": false,
+      "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist"
     },
     "dmg": {
-      "writeUpdateInfo": false
+      "writeUpdateInfo": true,
+      "sign": true
     },
     "nsis": {
       "createDesktopShortcut": "always",
       "allowToChangeInstallationDirectory": true,
       "oneClick": false,
-      "shortcutName": "Remix IDE",
+      "shortcutName": "Remix Desktop",
       "differentialPackage": false
     },
     "win": {
       "target": [
         "nsis"
       ],
-      "icon": "assets/icon.png",
-      "artifactName": "${productName}.${ext}"
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "icon": "assets/icon.png"
     },
+    "deb": {},
     "linux": {
       "target": [
-        "deb"
+        "deb",
+        "snap",
+        "AppImage"
       ],
       "category": "WebBrowser",
       "icon": "assets"
