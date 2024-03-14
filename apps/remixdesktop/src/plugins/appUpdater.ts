@@ -2,6 +2,7 @@ import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plug
 import { Profile } from "@remixproject/plugin-utils"
 import { autoUpdater } from "electron-updater"
 import { app } from 'electron';
+import { isE2E } from "src/main";
 
 const profile = {
   displayName: 'appUpdater',
@@ -85,6 +86,7 @@ class AppUpdaterPluginClient extends ElectronBasePluginClient {
     this.onload(async () => {
       console.log('onload', 'appUpdaterPluginClient')
       this.emit('loaded')
+      if(isE2E) return
       await this.checkForUpdates()
     })
   }
