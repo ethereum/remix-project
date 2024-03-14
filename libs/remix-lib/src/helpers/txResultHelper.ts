@@ -5,10 +5,25 @@ import { isHexString } from 'ethjs-util'
 function convertToPrefixedHex (input) {
   if (input === undefined || input === null || isHexString(input)) {
     return input
-  } else if (Buffer.isBuffer(input)) {
-    return bytesToHex(input)
   }
-  return '0x' + input.toString(16)
+  if (typeof input === 'number') {
+    return '0x' + input.toString(16)
+  }
+  
+  try {
+    return bytesToHex(input)
+  } catch (e) {
+    console.log(e)
+  }
+
+  try {
+    // BigNumber
+    return '0x' + input.toString(16)
+  } catch (e) {
+    console.log(e)
+  } 
+
+  return input
 }
 
 /*
@@ -32,13 +47,13 @@ export function resultToRemixTx (txResult, execResult?) {
     errorMessage = execResult.exceptionError
   }
 
-  console.log('resultToRemixTx', returnValue)
+  console.log('resultToRemixTx', gasUsed, convertToPrefixedHex(gasUsed))
   return {
     transactionHash,
     status,
-    gasUsed: bytesToHex(gasUsed),
+    gasUsed: convertToPrefixedHex(gasUsed),
     error: errorMessage,
-    return: returnValue ? bytesToHex(returnValue) : '0x0',
-    createdAddress: bytesToHex(contractAddress)
+    return: returnValue ? convertToPrefixedHex(returnValue) : undefined,
+    createdAddress: convertToPrefixedHex(contractAddress)
   }
 }

@@ -132,8 +132,10 @@ export class TxRunnerVM {
         this.blockParentHash = block.hash()
         this.runBlockInVm(tx, block, async  (err, result) => {
           if (!err) {
-            this.getVMObject().vm.blockchain.putBlock(block)
-            this.blocks.push(block.serialize())
+            if (!useCall) {
+              this.getVMObject().vm.blockchain.putBlock(block)
+              this.blocks.push(block.serialize())
+            }
           }
           callback(err, result)
         })
