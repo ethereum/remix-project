@@ -27,7 +27,7 @@ module.exports = {
           javascriptEnabled: true,
           acceptSslCerts: true,
           'goog:chromeOptions': {
-            "binary": "release/mac/Remix IDE.app/Contents/MacOS/Remix IDE",
+            "binary": "release/mac/Remix-Desktop.app/Contents/MacOS/Remix-Desktop",
             "args": [
                 "--e2e-local",
             ]
@@ -66,7 +66,7 @@ module.exports = {
           javascriptEnabled: true,
           acceptSslCerts: true,
           'goog:chromeOptions': {
-            "binary": "release/mac-arm64/Remix IDE.app/Contents/MacOS/Remix IDE",
+            "binary": "release/mac-arm64/Remix-Desktop.app/Contents/MacOS/Remix-Desktop",
             "args": [
                 "--e2e",
             ]
