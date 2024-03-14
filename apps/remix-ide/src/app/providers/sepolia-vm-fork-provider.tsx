@@ -8,7 +8,7 @@ export class SepoliaForkVMProvider extends BasicVMProvider {
     super(
       {
         name: 'vm-sepolia-fork',
-        displayName: 'Sepolia fork - Remix VM (London)',
+        displayName: 'Sepolia fork - Remix VM (Cancun)',
         kind: 'provider',
         description: 'Remix VM (London)',
         methods: ['sendAsync', 'init'],
@@ -17,7 +17,7 @@ export class SepoliaForkVMProvider extends BasicVMProvider {
       blockchain
     )
     this.blockchain = blockchain
-    this.fork = 'shanghai'
+    this.fork = 'cancun'
     this.nodeUrl = 'https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9'
     this.blockNumber = 'latest'
   }
