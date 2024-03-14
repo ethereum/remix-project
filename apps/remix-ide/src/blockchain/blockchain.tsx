@@ -287,7 +287,7 @@ export class Blockchain extends Plugin {
       await this.saveDeployedContractStorageLayout(implementationContractObject, address, networkInfo)
       this.events.emit('newProxyDeployment', address, new Date().toISOString(), implementationContractObject.contractName)
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
-      this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name)
+      this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name, implementationContractObject)
     }
 
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
@@ -337,7 +337,7 @@ export class Blockchain extends Plugin {
       }
       await this.saveDeployedContractStorageLayout(newImplementationContractObject, proxyAddress, networkInfo)
       _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade Successful'])
-      this.call('udapp', 'addInstance', addressToString(proxyAddress), newImplementationContractObject.abi, newImplementationContractObject.name)
+      this.call('udapp', 'addInstance', addressToString(proxyAddress), newImplementationContractObject.abi, newImplementationContractObject.name, newImplementationContractObject)
     }
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
   }
