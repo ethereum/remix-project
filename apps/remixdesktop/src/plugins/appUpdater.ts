@@ -2,7 +2,7 @@ import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plug
 import { Profile } from "@remixproject/plugin-utils"
 import { autoUpdater } from "electron-updater"
 import { app } from 'electron';
-import { isE2E } from "src/main";
+import { isE2E } from "../main";
 
 const profile = {
   displayName: 'appUpdater',
