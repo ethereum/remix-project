@@ -6,6 +6,7 @@ export let isPackaged = false;
 export const version = app.getVersion();
 
 const args = process.argv.slice(1)
+console.log("args", args)
 export const isE2ELocal = args.find(arg => arg.startsWith('--e2e-local'))
 export const isE2E = args.find(arg => arg.startsWith('--e2e'))
 

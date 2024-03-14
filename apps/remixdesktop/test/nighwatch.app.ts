@@ -73,20 +73,31 @@ module.exports = {
           }
         }
       },
-      windows: {
+      winlocal: {
         desiredCapabilities: {
           browserName: 'chrome',
           javascriptEnabled: true,
           acceptSslCerts: true,
           'goog:chromeOptions': {
-            "binary": "./out/remixconnect-win32-x64/remixconnect.exe",
+            "binary": "./release/win-unpacked/Remix-Desktop.exe",
             "args": [
-              "--folder=test/contracts",
-              "--remix-ide-url=http://localhost:8080",
-              "--e2e"
+              "--e2e-local",
             ]
           }
         }
-      }
+      },
+      win: {
+        desiredCapabilities: {
+          browserName: 'chrome',
+          javascriptEnabled: true,
+          acceptSslCerts: true,
+          'goog:chromeOptions': {
+            "binary": "./release/win-unpacked/Remix-Desktop.exe",
+            "args": [
+              "--e2e",
+            ]
+          }
+        }
+      },
     }
   }
