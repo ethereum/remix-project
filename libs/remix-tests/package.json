@@ -77,6 +77,17 @@
     "ts-node": "^8.0.2",
     "typescript": "^3.3.1"
   },
+  "resolutions": {
+    "@ethereumjs/blockchain": "7.0.1",
+    "@ethereumjs/block": "5.0.1",
+    "@ethereumjs/common": "4.1.0",
+    "@ethereumjs/evm": "2.1.0",
+    "@ethereumjs/statemanager": "2.1.0",
+    "@ethereumjs/tx": "5.1.0",
+    "@ethereumjs/util": "9.0.1",
+    "@ethereumjs/vm": "7.1.0",
+    "@ethereumjs/trie": "6.0.1"
+  },
   "typings": "src/index.d.ts",
   "gitHead": "751c821c0264dec832ee8739800e32b79b09c00a"
 }
