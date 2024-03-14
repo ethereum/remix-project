@@ -42,10 +42,15 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt, "code_generation", false,1000,0.2,0.8,50]}),
+          body: JSON.stringify({"data":[prompt, "code_completion", "", false,1000,0.9,0.92,50]}),
         })
       ).json()
-      return "error" in result? result.error : result.data[0]
+      console.log(result)
+      if ("error" in result){
+        this.call('terminal', 'log', { type: 'typewriterwarning', value: result.error }) 
+        return result
+      }
+      return result.data
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
@@ -158,5 +163,6 @@ export class SolCoder extends Plugin {
       this.emit("aiInferingDone")
     }
   }
+
 
 }
