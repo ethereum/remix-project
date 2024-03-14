@@ -58,8 +58,17 @@ export class Web3ProviderModule extends Plugin {
                     const contractAddressStr = addressToString(receipt.contractAddress)
                     const contractData = await this.call('compilerArtefacts', 'getContractDataFromAddress', contractAddressStr)
                     if (contractData) {
-                      this.call('udapp', 'addInstance', contractAddressStr, contractData.contract.abi, contractData.name)
                       const data = await this.call('compilerArtefacts', 'getCompilerAbstract', contractData.file)
+                      const contractObject = {
+                        name: contractData.name,
+                        abi: contractData.contract.abi,
+                        compiler: data,
+                        contract: {
+                          file : contractData.file,
+                          object: contractData.contract
+                        }
+                      }
+                      this.call('udapp', 'addInstance', contractAddressStr, contractData.contract.abi, contractData.name, contractObject)
                       await this.call('compilerArtefacts', 'addResolvedContract', contractAddressStr, data)
                     }
                   }, 50)
