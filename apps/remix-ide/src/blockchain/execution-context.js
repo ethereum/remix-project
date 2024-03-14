@@ -174,7 +174,7 @@ export class ExecutionContext {
         try {
           this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
         } catch (e) {
-          this.currentFork = 'merge'
+          this.currentFork = 'cancun'
           console.log(`unable to detect fork, defaulting to ${this.currentFork}..`)
           console.error(e)
         }

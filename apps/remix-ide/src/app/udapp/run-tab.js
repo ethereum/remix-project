@@ -182,9 +182,9 @@ export class RunTab extends ViewPlugin {
     await addProvider('vm-paris', 'Remix VM (Paris)', false, true, 'paris', 'settingsVMParisMode', titleVM)
     await addProvider('vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
     await addProvider('vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
-    await addProvider('vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'merge', 'settingsVMMainnetMode', titleVM)
-    await addProvider('vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'merge', 'settingsVMSepoliaMode', titleVM)
-    await addProvider('vm-goerli-fork', 'Remix VM - Goerli fork', false, true, 'merge', 'settingsVMGoerliMode', titleVM)
+    await addProvider('vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'cancun', 'settingsVMMainnetMode', titleVM)
+    await addProvider('vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'cancun', 'settingsVMSepoliaMode', titleVM)
+    await addProvider('vm-goerli-fork', 'Remix VM - Goerli fork', false, true, 'paris', 'settingsVMGoerliMode', titleVM)
     await addProvider('vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
 
     // wallet connect
