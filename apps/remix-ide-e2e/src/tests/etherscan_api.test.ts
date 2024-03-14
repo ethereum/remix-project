@@ -33,7 +33,7 @@ module.exports = {
       .execute(() => {
         (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
       }, [], () => {})
-      .setValue('[data-id="modalDialogCustomPromp"]', 'https://remix-goerli.ethdevops.io')
+      .setValue('[data-id="modalDialogCustomPromp"]', 'https://rpc.ankr.com/eth_goerli')
       .modalFooterOKClick('basic-http-provider')
       .clickLaunchIcon('solidity') // compile
       .testContracts('Owner_1.sol', { content: verifiedContract }, ['Owner'])
