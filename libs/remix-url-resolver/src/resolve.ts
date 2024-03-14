@@ -108,8 +108,8 @@ export class RemixURLResolver {
    * @returns 
    */
   async handleSwarm(cleanUrl: string): Promise<HandlerResponse> {
-    // eslint-disable-next-line no-useless-catch
     const publicBeeNode = new Bee('https://api.gateway.ethswarm.org/')
+    // eslint-disable-next-line no-useless-catch
     try {
       const response = await (publicBeeNode.downloadFile(cleanUrl).catch(async () => {
         const data = await publicBeeNode.downloadData(cleanUrl)
