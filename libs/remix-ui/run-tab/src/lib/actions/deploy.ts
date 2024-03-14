@@ -250,7 +250,8 @@ export const loadAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, contr
         return dispatch(displayNotification('Alert', error, 'OK', null))
       }
       if (loadType === 'abi') {
-        return addInstance(dispatch, { abi, address, name: '<at address>' })
+        const contractData = { name: '<at address>', abi, contract: {file: plugin.REACT_API.contracts.currentFile}} as ContractData
+        return addInstance(dispatch, { contractData, address, name: '<at address>' })
       } else if (loadType === 'instance') {
         if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
         const currentFile = plugin.REACT_API.contracts.currentFile
