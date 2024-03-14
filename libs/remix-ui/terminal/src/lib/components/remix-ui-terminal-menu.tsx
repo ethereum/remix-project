@@ -54,7 +54,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
         </label>
       </div>
     </CustomTooltip>
-    <div className="remix_ui_terminal_search mr-1 d-flex align-items-center h-100">
+    <div className="remix_ui_terminal_search mx-1 d-flex align-items-center h-100">
       <i className="remix_ui_terminal_searchIcon d-flex align-items-center justify-content-center fas fa-search bg-light" aria-hidden="true"></i>
       <input
         onChange={(event) => setSearchInput(event.target.value.trim())}
