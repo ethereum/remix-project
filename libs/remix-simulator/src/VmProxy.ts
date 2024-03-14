@@ -118,13 +118,11 @@ export class VmProxy {
       resolve()
     })
     this.vm.events.on('afterTx', async (data: AfterTxEvent, resolve: (result?: any) => void) => {
-      console.log('afterTx')
       await this.txProcessed(data)
       this.txRunning = false
       resolve()
     })
     this.vm.events.on('beforeTx', async (data: TypedTransaction, resolve: (result?: any) => void) => {
-      console.log('beforeTx')
       this.txRunning = true
       await this.txWillProcess(data)      
       resolve()
