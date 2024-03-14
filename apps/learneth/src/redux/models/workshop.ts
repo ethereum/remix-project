@@ -56,7 +56,6 @@ const Model: ModelType = {
       const url = `${apiUrl}/clone/${encodeURIComponent(payload.name)}/${payload.branch}?${Math.random()}`
       console.log('loading ', url)
       const {data} = yield axios.get(url)
-      console.log(data)
       const repoId = `${payload.name}-${payload.branch}`
 
       for (let i = 0; i < data.ids.length; i++) {
