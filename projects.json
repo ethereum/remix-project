@@ -255,7 +255,7 @@
               "file": "libs/remix-url-resolver/package.json",
               "hash": "a1d94cf5872012dee16556723c58f1a50ceb9f4d",
               "deps": [
-                "npm:@erebos/bzz-node",
+                "npm:@ethersphere/bee-js",
                 "npm:axios",
                 "npm:url",
                 "npm:@types/chai",
@@ -286,7 +286,7 @@
               "deps": [
                 "npm:axios",
                 "npm:semver",
-                "npm:@erebos/bzz-node"
+                "npm:@ethersphere/bee-js"
               ]
             },
             {
@@ -3443,7 +3443,7 @@
               "file": "libs/remix-tests/package.json",
               "hash": "a9462d0075967537747e533bd48da292ebb6f048",
               "deps": [
-                "npm:@erebos/bzz-node",
+                "npm:@ethersphere/bee-js",
                 "npm:@ethereumjs/block",
                 "npm:@ethereumjs/common",
                 "npm:@ethereumjs/tx",

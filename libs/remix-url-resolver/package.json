@@ -23,7 +23,7 @@
   "author": "Remix Team",
   "license": "MIT",
   "dependencies": {
-    "@erebos/bzz-node": "^0.13.0",
+    "@ethersphere/bee-js": "^6.8.1",
     "axios": "1.6.0",
     "semver": "^7.5.4",
     "url": "^0.11.0",

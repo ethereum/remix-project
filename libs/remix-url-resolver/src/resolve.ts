@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
-import axios, { AxiosResponse } from 'axios'
-import semver from 'semver'
-import { BzzNode as Bzz } from '@erebos/bzz-node'
+import axios, { AxiosResponse } from 'axios';
+import semver from 'semver';
+import {Bee} from '@ethersphere/bee-js'
 
 export interface Imported {
   content: string;
@@ -101,12 +101,20 @@ export class RemixURLResolver {
     }
   }
 
-  async handleSwarm(url: string, cleanUrl: string): Promise<HandlerResponse> {
+  /**
+   * Handle an import statement based on Swarm.
+   * The resource may be either a file (/bzz) or a blob (/bytes).
+   * @param cleanUrl The url of the Swarm resource
+   * @returns 
+   */
+  async handleSwarm(cleanUrl: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
+    const publicBeeNode = new Bee('https://api.gateway.ethswarm.org/')
     try {
-      const bzz = new Bzz({ url: this.protocol + '//swarm-gateways.net' })
-      const url = bzz.getDownloadURL(cleanUrl, { mode: 'raw' })
-      const response: AxiosResponse = await axios.get(url, { transformResponse: [] })
+      const response = await (publicBeeNode.downloadFile(cleanUrl).catch(async () => {
+        const data = await publicBeeNode.downloadData(cleanUrl)
+        return { data }
+      }))
       return { content: response.data, cleanUrl }
     } catch (e) {
       throw e
@@ -222,8 +230,8 @@ export class RemixURLResolver {
       },
       {
         type: 'swarm',
-        match: (url) => { return /^(bzz-raw?:\/\/?(.*))$/.exec(url) },
-        handle: (match) => this.handleSwarm(match[1], match[2])
+        match: (url) => { return /^(bzz(-raw)?:\/\/?(.*))$/.exec(url) },
+        handle: (match) => this.handleSwarm(match[3])
       },
       {
         type: 'ipfs',

@@ -233,7 +233,7 @@ contract HelloWorld {
             </>
           )}
           <div className="d-flex flex-row">
-            {state.modalInfo.prefix && <span className="text-nowrap align-self-center mr-2">ipfs://</span>}
+            {state.modalInfo.prefix && <span className="text-nowrap align-self-center mr-2">{state.modalInfo.prefix}</span>}
             <input
               ref={inputValue}
               type='text'
@@ -349,6 +349,14 @@ contract HelloWorld {
           </button>
           <button className="btn p-2 border mr-2" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')}>
             IPFS
+          </button>
+          <button
+            className="btn p-2 border mr-2"
+            onClick={
+              () => showFullMessage('Swarm', 'swarm hash', ['bzz://39355825bfea2055ea7f6ddbed789517a61e554eb327562b89c5572ff44c1550'], 'bzz://')
+            }
+          >
+            Swarm
           </button>
           <button
             className="btn p-2 border"
