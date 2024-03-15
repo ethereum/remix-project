@@ -16,7 +16,7 @@ const versionData = {
 
 const loadLocalSolJson = async () => {
   //execute apps/remix-ide/ci/downloadsoljson.sh
-  const child = require('child_process').execSync('bash ' + __dirname + '/ci/downloadsoljson.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
+  const child = require('child_process').execSync('bash ' + __dirname + '/ci/downloadsoljson2.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
   // show output
   //console.log(child)
 }

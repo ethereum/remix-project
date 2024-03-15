@@ -11,6 +11,7 @@ import {getValidLanguage} from '@remix-project/remix-solidity'
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import {configFileContent} from './compilerConfiguration'
 import { appPlatformTypes, platformContext, onLineContext } from '@remix-ui/app'
+import * as packageJson from '../../../../../package.json'
 
 import './css/style.css'
 
@@ -18,6 +19,7 @@ import { CompilerDropdown } from './components/compiler-dropdown'
 
 
 const defaultPath = 'compiler_config.json'
+console.log('local version', packageJson.defaultVersion)
 
 declare global {
   interface Window {
@@ -61,7 +63,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     downloaded: [],
     compilerLicense: null,
     selectedVersion: null,
-    defaultVersion: 'soljson-v0.8.24+commit.e11b9ed9.js', // this default version is defined: in makeMockCompiler (for browser test)
+    defaultVersion: packageJson.defaultVersion, // this default version is defined: in makeMockCompiler (for browser test)
     runs: '',
     compiledFileName: '',
     includeNightlies: false,
