@@ -19,7 +19,6 @@ import { CompilerDropdown } from './components/compiler-dropdown'
 
 
 const defaultPath = 'compiler_config.json'
-console.log('local version', packageJson.defaultVersion)
 
 declare global {
   interface Window {
