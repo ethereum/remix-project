@@ -265,13 +265,15 @@ jobs:
           name: "Run selenium"
           command: |
             cd apps/remixdesktop/
+            ls -la
             yarn run selenium-win
           background: true
       - run:
           name: "Run tests"
           command: |
-           cd apps/remixdesktop/
-           yarn run test:app:win
+            cd apps/remixdesktop/
+            ls -la
+            yarn run test:app:win
 
   # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
   sign-remixdesktop-windows:
