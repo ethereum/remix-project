@@ -112,6 +112,7 @@ export class Compiler {
    */
 
   onCompilerLoaded(version: string, license: string): void {
+    console.log('compiler loaded:', version)
     this.state.currentVersion = version
     this.state.compilerLicense = license
     this.event.trigger('compilerLoaded', [version, license])

@@ -4,6 +4,7 @@
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "main": "index.js",
+  "defaultVersion": "soljson-v0.8.24+commit.e11b9ed9.js",
   "keywords": [
     "ethereum",
     "solidity",
