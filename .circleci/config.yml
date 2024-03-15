@@ -265,6 +265,8 @@ jobs:
           command: |
             cd apps/remixdesktop/
             ls -la
+            nvm use 20.0.0
+            node -v
             yarn run selenium-install-win
             yarn run selenium-win
           background: true
