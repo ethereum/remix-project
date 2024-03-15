@@ -11,7 +11,6 @@ import './css/style.css'
 import { iSolJsonBinData, iSolJsonBinDataBuild } from '@remix-project/remix-lib'
 
 const defaultPath = 'compiler_config.json'
-console.log('local version', packageJson.defaultVersion)
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const {
