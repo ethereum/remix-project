@@ -16,9 +16,10 @@ const versionData = {
 
 const loadLocalSolJson = async () => {
   //execute apps/remix-ide/ci/downloadsoljson.sh
+  console.log('loading local soljson')
   const child = require('child_process').execSync('bash ' + __dirname + '/ci/downloadsoljson2.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
   // show output
-  //console.log(child)
+  console.log(child)
 }
 
 fs.writeFileSync(__dirname + '/src/assets/version.json', JSON.stringify(versionData))
