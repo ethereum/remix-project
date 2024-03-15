@@ -258,16 +258,17 @@ jobs:
               mkdir apps/remixdesktop/build
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
+              nvm use 20.0.0
+              node -v
               yarn
               yarn dist
+              yarn run selenium-install-win
       - run:
           name: "Run selenium"
           command: |
             cd apps/remixdesktop/
-            ls -la
             nvm use 20.0.0
             node -v
-            yarn run selenium-install-win
             yarn run selenium-win
           background: true
       - run:
@@ -276,7 +277,6 @@ jobs:
             cd apps/remixdesktop/
             nvm use 20.0.0
             node -v
-            ls -la
             yarn run test:app:win
 
   # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
