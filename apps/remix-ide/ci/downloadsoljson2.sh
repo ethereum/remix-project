@@ -39,6 +39,7 @@ if [ ! -d "./apps/remix-ide/src/assets/js/soljson" ]; then
 fi
 
 # Download the file to ./apps/remix-ide/src/assets/js/soljson.js
+echo "Downloading soljson.js from "$fullPath" to ./apps/remix-ide/src/assets/js/soljson.js"
 curl -s "$fullPath" > ./apps/remix-ide/src/assets/js/soljson.js
 
 # Copy the downloaded soljson.js to the specific version directory
