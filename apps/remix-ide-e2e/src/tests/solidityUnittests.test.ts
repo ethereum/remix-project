@@ -341,6 +341,8 @@ module.exports = {
     browser
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('builtin')
+      .click('.remixui_compilerConfigSection')
+      .setValue('#evmVersionSelector', 'shanghai') // Temporary fix
       .clickLaunchIcon('filePanel')
       .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')
