@@ -500,8 +500,8 @@ jobs:
           command: |
             nvm use 20
             cd apps/remixdesktop
-            yarn installRipGrepMacOXarm64
-            PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false yarn dist --arm64
+            yarn installRipGrepMacOXx64
+            PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false yarn dist --x64  
       - run:
           name: "Run tests"
           command: |
