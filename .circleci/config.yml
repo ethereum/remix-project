@@ -265,11 +265,10 @@ jobs:
       - run:
           name: start selenium
           command: |
-            Set-Location -Path "apps/remixdesktop/"
+            cd "apps/remixdesktop/"
             yarn -v
             yarn run selenium-win
-          shell: powershell.exe -NoProfile -NoLogo -NonInteractive -Command "{0}"
-
+          shell: powershell.exe
   # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
   sign-remixdesktop-windows:
     executor: win/default # executor type
