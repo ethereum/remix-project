@@ -267,6 +267,7 @@ jobs:
               nvm use 20.0.0
               node -v
               yarn
+              yarn dist
               yarn run selenium-install-win
       - run:
           name: start selenium
@@ -275,6 +276,7 @@ jobs:
             yarn -v
             yarn run selenium-win
           shell: powershell.exe
+          background: true
       - run:
           name: start tests
           command: |
