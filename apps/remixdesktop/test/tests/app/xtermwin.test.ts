@@ -68,10 +68,15 @@ const tests = {
   },
   'list files': function (browser: NightwatchBrowser) {
     browser
+      .pause(3000)
+      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 10000)
+      .click("[data-active='1'][data-type='remixUIXT']")
+      .saveScreenshot('./reports/screenshots/list-files.png')
       .perform(function () {
         const actions = this.actions({async: true})
         return actions.sendKeys('ls').sendKeys(this.Keys.ENTER)
       })
+      .saveScreenshot('./reports/screenshots/list-files-after.png')
       .waitForElementVisible({
         selector: "//*[@data-type='remixUIXT' and @data-active='1']",
         timeout: 10000,
