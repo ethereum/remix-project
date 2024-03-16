@@ -266,11 +266,7 @@ jobs:
       - run:
           name: "Run selenium"
           command: |
-            cd apps/remixdesktop/
-            nvm use 20.0.0
-            node -v
-            npm install --global yarn
-            yarn run selenium-win
+            cd apps/remixdesktop/ && nvm use 20.0.0 && node -v && npm install --global yarn && yarn run selenium-win
           background: true
       - run:
           name: "Run tests"
