@@ -72,7 +72,7 @@ module.exports = {
           javascriptEnabled: true,
           acceptSslCerts: true,
           'goog:chromeOptions': {
-            "binary": "release/mac/Remix-Desktop.app/Contents/MacOS/Remix-Desktop",
+            "binary": "release/mac-arm64/Remix-Desktop.app/Contents/MacOS/Remix-Desktop",
             "args": [
                 "--e2e",
             ]

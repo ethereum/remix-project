@@ -132,8 +132,8 @@ const menu = [...(process.platform === 'darwin' ? [darwinMenu(commandKeys, execC
   WindowMenu(commandKeys, execCommand, []),
   HelpMenu(commandKeys, execCommand),
 ]
-
-Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
+if(!isE2E)
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 
 
 
