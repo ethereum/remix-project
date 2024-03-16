@@ -268,7 +268,7 @@ jobs:
             Set-Location -Path "apps/remixdesktop/"
             yarn -v
             yarn run selenium-win
-          shell: powershell.exe -NoProfile -NoLogo -NonInteractive -Command "{0}
+          shell: powershell.exe -NoProfile -NoLogo -NonInteractive -Command "{0}"
 
   # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
   sign-remixdesktop-windows:
