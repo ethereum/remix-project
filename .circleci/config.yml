@@ -246,6 +246,12 @@ jobs:
             npx -v
             npm install --global yarn
             yarn -v 
+      - run:
+          name: start selenium
+          command: |
+            cd "apps/remixdesktop/"
+            yarn -v
+          shell: powershell.exe      
       - save_cache:
           key: node-20-windows-v3
           paths:
