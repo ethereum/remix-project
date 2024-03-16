@@ -67,3 +67,4 @@ apps/remix-ide/src/assets/list.json
 apps/remix-ide/src/assets/esbuild.wasm
 apps/remixdesktop/build*
 apps/remixdesktop/reports
+apps/remixdesktop/logs/
