@@ -274,7 +274,7 @@ jobs:
           command: |
             cd "apps/remixdesktop/"
             yarn -v
-            yarn run selenium-win
+            yarn run selenium-standalone start
           shell: powershell.exe
           background: true
       - run:
