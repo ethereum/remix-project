@@ -152,7 +152,7 @@ module.exports = {
       .scrollAndClick('*[data-id="settingsTabLocaleLabelen"]')
       .pause(2000)
       .assert.containsText('*[data-id="sidePanelSwapitTitle"]', 'SETTINGS')
-      .assert.containsText('*[data-id="listenNetworkCheckInput"]', 'listen on all transactions')
+      .assert.containsText('*[data-id="listenNetworkCheckInput"]', 'Listen on all transactions')
       .assert.containsText('*[data-id="settingsTabGenerateContractMetadataLabel"]', 'Generate contract metadata')
       .assert.containsText('*[data-id="settingsAutoCompleteLabel"]', 'Enable code completion in editor')
       .assert.containsText('*[data-id="settingsShowGasLabel"]', 'Display gas estimates in editor')

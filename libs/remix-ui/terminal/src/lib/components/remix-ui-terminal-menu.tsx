@@ -27,25 +27,23 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
   }
 
   return (<div className='d-flex flex-row align-items-center'>
-    <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
+    <CustomTooltip placement="top" tooltipId="terminalpendingTransactions" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.pendingTransactions" />}>
       <div className="mx-2">0</div>
     </CustomTooltip>
     <CustomTooltip
       placement="top"
-      tooltipId="terminalClear"
+      tooltipId="terminalListenOnN"
       tooltipClasses="text-nowrap"
-      tooltipText={intl.formatMessage({ id: terminalState.isVM ? 'terminal.listenVM' : 'terminal.listenTitle' })}
+      tooltipText={terminalState.isVM ? intl.formatMessage({ id: 'terminal.listenVM' }) : intl.formatMessage({ id: 'terminal.listenTitle' })}
     >
       <div className="h-80 mx-3 align-items-center remix_ui_terminal_listenOnNetwork custom-control custom-checkbox">
-        <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={intl.formatMessage({ id: 'terminal.listenTitle' })}>
-          <input
-            className="custom-control-input"
-            id="listenNetworkCheck"
-            onChange={listenOnNetwork}
-            type="checkbox"
-            disabled={terminalState.isVM}
-          />
-        </CustomTooltip>
+        <input
+          className="custom-control-input"
+          id="listenNetworkCheck"
+          onChange={listenOnNetwork}
+          type="checkbox"
+          disabled={terminalState.isVM}
+        />
         <label
           className="form-check-label custom-control-label text-nowrap"
           style={{ paddingTop: '0.125rem' }}
@@ -56,7 +54,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
         </label>
       </div>
     </CustomTooltip>
-    <div className="remix_ui_terminal_search d-flex align-items-center h-100">
+    <div className="remix_ui_terminal_search mx-1 d-flex align-items-center h-100">
       <i className="remix_ui_terminal_searchIcon d-flex align-items-center justify-content-center fas fa-search bg-light" aria-hidden="true"></i>
       <input
         onChange={(event) => setSearchInput(event.target.value.trim())}
@@ -68,7 +66,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
       />
     </div>
     <div className="mx-2 remix_ui_terminal_console" id="clearConsole" data-id="terminalClearConsole" onClick={handleClearConsole}>
-      <CustomTooltip placement="top" tooltipId="terminalClear" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.clearConsole" />}>
+      <CustomTooltip placement="top" tooltipId="terminalClearTerminal" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="terminal.clearConsole" />}>
         <i className="fas fa-ban" aria-hidden="true"></i>
       </CustomTooltip>
     </div>
