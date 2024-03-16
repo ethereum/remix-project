@@ -72,13 +72,9 @@ module.exports = {
           javascriptEnabled: true,
           acceptSslCerts: true,
           'goog:chromeOptions': {
-            "binary": "release/mac-arm64/Remix-Desktop.app/Contents/MacOS/Remix-Desktop",
+            "binary": "release/mac/Remix-Desktop.app/Contents/MacOS/Remix-Desktop",
             "args": [
                 "--e2e",
-                '--no-sandbox',
-                '--headless',
-                '--verbose',
-                '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
             ]
           }
         }
