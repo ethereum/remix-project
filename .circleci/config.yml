@@ -265,7 +265,7 @@ jobs:
       - run:
           name: start selenium
           command: |
-            cd apps/remixdesktop/
+            Set-Location -Path "apps/remixdesktop/"
             yarn -v
             yarn run selenium-win
           shell: powershell.exe -NoProfile -NoLogo -NonInteractive -Command "{0}
