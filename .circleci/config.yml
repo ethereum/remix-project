@@ -126,13 +126,6 @@ jobs:
                 yarn --ignore-optional
                 yarn add @remix-project/remix-ws-templates
                 yarn dist
-                yarn run selenium-install-linux
-        - run:
-            name: "Run selenium"
-            command: |
-              cd apps/remixdesktop/
-              yarn run selenium-linux
-            background: true
         - run:  
             name: "Run tests"
             command: |
@@ -268,13 +261,11 @@ jobs:
               node -v
               yarn
               yarn dist
-              yarn run selenium-install-win
       - run:
           name: start tests
           command: |
             cd "apps/remixdesktop/"
             yarn -v
-            Start-Job -ScriptBlock { yarn run selenium-win }
             sleep 15
             yarn run test:app:win
           shell: powershell.exe

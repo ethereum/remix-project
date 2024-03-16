@@ -18,7 +18,14 @@ module.exports = {
           path: './reports/screenshots',
           on_failure: true,
           on_error: true
-        }
+        },
+        webdriver: {
+          start_process: true,
+          timeout_options: {
+            timeout: 60000, // 15 seconds
+            retry_attempts: 3
+          }
+        },
       },
       maclocal: {
         desiredCapabilities: {
