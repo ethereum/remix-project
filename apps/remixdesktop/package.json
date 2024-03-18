@@ -1,13 +1,13 @@
 {
   "name": "remixdesktop",
-  "version": "0.0.26-Alpha",
+  "version": "2.0.0-Alpha",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
   "description": "Remix IDE Desktop",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bunsenstraat/remix-desktop.git"
+    "url": "git+https://github.com/ethereum/remix-desktop.git"
   },
   "author": {
     "name": "Remix Team",
@@ -93,7 +93,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "bunsenstraat",
+        "owner": "ethereum",
         "repo": "remix-desktop",
         "releaseType": "draft",
         "publishAutoUpdate": true
