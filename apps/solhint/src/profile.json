@@ -13,7 +13,7 @@
   "icon": "https://raw.githubusercontent.com/protofire/solhint/master/solhint-icon.png",  
   "location": "hiddenPanel",
   "url": "",
-  "documentation": "https://remix-plugins.readthedocs.io/en/latest/",
+  "documentation": "https://remix-ide.readthedocs.io/en/latest/static_analysis.html",
   "repo": "https://github.com/ethereum/remix-project",
   "maintainedBy": "Remix",
   "authorContact": "remix@ethereum.org"
