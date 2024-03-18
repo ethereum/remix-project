@@ -14,7 +14,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
 
   const currentProvider = props.providers.providerList.find((exEnv) => exEnv.value === props.selectedEnv)
   const bridges = {
-    'injected-optimism-provider': 'https://www.optimism.io/apps/bridges',
+    'injected-optimism-provider': 'https://app.optimism.io/bridge/deposit',
     'injected-arbitrum-one-provider': 'https://bridge.arbitrum.io/'
   }
 
