@@ -6,7 +6,7 @@ export const compileCircuit = async (plugin: CircomPluginClient, appState: AppSt
     if (appState.status !== "compiling") {
       await plugin.compile(appState.filePath, { version: appState.version, prime: appState.primeValue })
     } else {
-      console.log('Exisiting circuit compilation in progress')
+      console.log('Existing circuit compilation in progress')
     }
   } catch (e) {
     plugin.internalEvents.emit('circuit_compiling_errored', e)
@@ -19,7 +19,7 @@ export const generateR1cs = async (plugin: CircomPluginClient, appState: AppStat
     if (appState.status !== "generating") {
       await plugin.generateR1cs(appState.filePath, { version: appState.version, prime: appState.primeValue })
     } else {
-      console.log('Exisiting r1cs generation in progress')
+      console.log('Existing r1cs generation in progress')
     }
   } catch (e) {
     plugin.internalEvents.emit('circuit_generating_r1cs_errored', e)
@@ -34,7 +34,7 @@ export const computeWitness = async (plugin: CircomPluginClient, status: string,
 
       await plugin.computeWitness(input)
     } else {
-      console.log('Exisiting witness computation in progress')
+      console.log('Existing witness computation in progress')
     }
   } catch (e) {
     plugin.internalEvents.emit('circuit_computing_witness_errored', e)
