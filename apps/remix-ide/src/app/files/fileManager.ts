@@ -70,7 +70,7 @@ class FileManager extends Plugin {
   }
 
   limitPluginScope(path) {
-    return path.replace(/^\/browser\//, '').replace(/^browser\//, '') // forbids plugin to access the root filesystem
+    return path.replace(/^\/browser\//, '') // forbids plugin to access the root filesystem
   }
 
   normalize(path) {
