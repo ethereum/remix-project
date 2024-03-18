@@ -129,7 +129,7 @@ module.exports = {
         })
       })
   },
-  'Use special functions receive/fallback - only fallback is diclared and is payable, sending data and wei #group3': function (browser: NightwatchBrowser) {
+  'Use special functions receive/fallback - only fallback is declared and is payable, sending data and wei #group3': function (browser: NightwatchBrowser) {
     // don't need to redeploy it, same contract
     browser.perform((done) => {
       browser.getAddressAtPosition(0, (address) => {
