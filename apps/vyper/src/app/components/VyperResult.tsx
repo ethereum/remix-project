@@ -58,9 +58,8 @@ function VyperResult({ output, plugin }: VyperResultProps) {
 
   return (
     <>
-      <div className="border border-top"></div>
-      <div className="d-flex justify-content-center px-2 w-100 flex-column">
-        <button data-id="compilation-details" className="btn btn-secondary w-100" onClick={async () => {
+      <div className="d-flex justify-content-center mx-3 mb-3 mt-1 vyper-panel-width flex-column">
+        <button data-id="compilation-details" className="btn btn-secondary d-block btn-block" onClick={async () => {
           await plugin?.call('vyperCompilationDetails', 'showDetails', output)
         }}>
           <span>Compilation Details</span>
@@ -68,17 +67,17 @@ function VyperResult({ output, plugin }: VyperResultProps) {
         <div className="mt-1">
           <div className="input-group input-group mt-3 d-flex flex-row-reverse">
             <div className="btn-group align-self-start" role="group" aria-label="Copy to Clipboard">
-              <CopyToClipboard tip={'Copy ABI to clipboard'} getContent={() => (Object.values(output)[0] as OutputType).abi} direction="bottom" icon="far fa-copy">
-                <button className="btn remixui_copyButton">
+              <CopyToClipboard tip={'Copy ABI to clipboard'} getContent={() => (Object.values(output)[1] as OutputType)?.abi} direction="bottom" icon="far fa-copy">
+                <span className="btn remixui_copyButton">
                   <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                   <span>ABI</span>
-                </button>
+                </span>
               </CopyToClipboard>
-              <CopyToClipboard tip={'Copy Bytecode to clipboard'} getContent={() => (Object.values(output)[0] as OutputType).bytecode.object} direction="bottom" icon="far fa-copy">
-                <button className="btn remixui_copyButton">
+              <CopyToClipboard tip={'Copy Bytecode to clipboard'} getContent={() => (Object.values(output)[1] as OutputType)?.bytecode.object} direction="bottom" icon="far fa-copy">
+                <span className="btn remixui_copyButton">
                   <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                   <span>Bytecode</span>
-                </button>
+                </span>
               </CopyToClipboard>
             </div>
           </div>

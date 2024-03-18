@@ -50,12 +50,10 @@ function parseErrorString(errorString) {
   // Split the string into lines
   let lines = errorString.trim().split('\n')
   // Extract the line number and message
-  console.log(lines)
   let message = errorString.trim()
   let targetLine = lines[2].split(',')
   let tline = lines[2].trim().split(' ')[1].split(':')
 
-  console.log('tline', tline)
   const errorObject = {
     status: 'failed',
     message: message,
@@ -143,6 +141,22 @@ const compileReturnType = (output, contract) => {
   return result
 }
 
+const fixContractContent = (content: string) => {
+  if (content.length === 0) return
+  const pragmaFound = content.includes('#pragma version ^0.3.10')
+  const evmVerFound = content.includes('#pragma evm-version shanghai')
+  const pragma = '#pragma version ^0.3.10'
+  const evmVer = '#pragma evm-version shanghai'
+
+  if (!evmVerFound) {
+    content = `${evmVer}\n${content}`
+  }
+  if (!pragmaFound) {
+    content = `${pragma}\n${content}`
+  }
+  return content
+}
+
 /**
  * Compile the a contract
  * @param url The url of the compiler
@@ -157,11 +171,13 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     throw new Error('Use extension .vy for Vyper.')
   }
 
+
+
   let contractName = contract['name']
   const compilePackage = {
     manifest: 'ethpm/3',
     sources: {
-      [contractName] : {content : contract.content}
+      [contractName] : {content : fixContractContent(contract.content)}
     }
   }
   let response = await axios.post(`${url}compile`, compilePackage )
@@ -192,7 +208,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
       method: 'Get'
     })).data
     result = parseErrorString(intermediate[0])
-    console.log('error payload', intermediate)
     return result
   }
   await new Promise((resolve) => setTimeout(() => resolve({}), 3000))
@@ -273,7 +288,6 @@ export async function compileContract(contract: string, compilerUrl: string, set
     // try {
     output = await compile(compilerUrl, _contract)
     if (output.status === 'failed') {
-      console.log('possible error', output)
       remixClient.changeStatus({
         key: 'failed',
         type: 'error',

@@ -224,8 +224,22 @@ export class TabProxy extends Plugin {
     this.removeTab(oldName)
   }
 
+  /**
+   *
+   * @param {string} name
+   * @param {string} title
+   * @param {Function} switchTo
+   * @param {Function} close
+   * @param {string} icon
+   * @param {string} description
+   * @returns
+   */
   addTab (name, title, switchTo, close, icon, description = '') {
     if (this._handlers[name]) return this.renderComponent()
+
+    if ((name.endsWith('.vy') && icon === undefined) || title.includes('Vyper')) {
+      icon = 'assets/img/vyperLogo2.webp'
+    }
 
     var slash = name.split('/')
     const tabPath = slash.reverse()
@@ -292,7 +306,7 @@ export class TabProxy extends Plugin {
       if (!previous && tab.name === name) {
         if(index - 1  >= 0 && this.loadedTabs[index - 1])
           previous = this.loadedTabs[index - 1]
-        else if (index + 1 && this.loadedTabs[index + 1]) 
+        else if (index + 1 && this.loadedTabs[index + 1])
           previous = this.loadedTabs[index + 1]
       }
       return tab.name !== name
