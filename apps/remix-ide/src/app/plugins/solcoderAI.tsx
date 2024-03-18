@@ -32,7 +32,7 @@ export class SolCoder extends Plugin {
   async code_generation(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Waiting for Solcoder answer...'})
+    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Code Generation: Waiting for Solcoder answer...'})
     let result
     try {
       result = await(
@@ -56,6 +56,7 @@ export class SolCoder extends Plugin {
       return
     }finally {
       this.emit("aiInferingDone")
+      this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Code Generation: Done'})
     }
   }
 
@@ -80,6 +81,7 @@ export class SolCoder extends Plugin {
       return
     }finally {
       this.emit("aiInferingDone")
+      this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Solcoder: Done'})
     }
     if (result) {
       this.call('terminal', 'log', { type: 'typewriterwarning', value: result.data[0]})
@@ -92,7 +94,7 @@ export class SolCoder extends Plugin {
   async code_explaining(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Waiting for Solcoder answer...'})
+    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Explain Code: Waiting for Solcoder answer...'})
     let result
     try {
       result = await(
@@ -114,6 +116,7 @@ export class SolCoder extends Plugin {
       return
     }finally {
       this.emit("aiInferingDone")
+      this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Explaining: Done'})
     }
   }
 
