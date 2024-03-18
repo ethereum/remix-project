@@ -263,7 +263,7 @@ export function toStandardOutput(fileName: string, compilationResult: any): any 
 }
 
 
-export async function compileContract(contract: string, compilerUrl: string, setOutput?: any) {
+export async function compileContract(contract: string, compilerUrl: string, setOutput?: any, setLoadingSpinnerState?: React.Dispatch<React.SetStateAction<boolean>>) {
   remixClient.eventEmitter.emit('resetCompilerState', {})
 
   try {
@@ -293,6 +293,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
         type: 'error',
         title: 'Compilation failed...'
       })
+      setLoadingSpinnerState(false)
       remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: output.message, title: 'Error compiling...', line: output.line, column: output.column})
       output = null
       return
@@ -305,7 +306,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
       type: 'success',
       title: 'success'
     })
-
+    setLoadingSpinnerState(false)
     const data = toStandardOutput(_contract.name, output)
     remixClient.compilationFinish(_contract.name, _contract.content, data)
     const contractName = _contract['name']
@@ -321,6 +322,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
       type: 'error',
       title: err.message
     })
+    setLoadingSpinnerState(false)
     remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: err.message})
   }
 }
