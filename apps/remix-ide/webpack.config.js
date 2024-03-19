@@ -7,6 +7,7 @@ const fs = require('fs')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const rustbnWasm = require('rustbn-wasm')
+const path = require('path')
 
 const versionData = {
   version: version,
@@ -68,15 +69,13 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     readline: false,
     child_process: false,
     buffer: require.resolve('buffer/'),
-    vm: require.resolve('vm-browserify'),
-    'rustbn-wasm': require.resolve('rustbn-wasm')
+    vm: require.resolve('vm-browserify')
   }
 
   // add externals
   config.externals = {
     ...config.externals,
     solc: 'solc',
-    'rustbn-wasm': rustbnWasm
   }
 
   // uncomment this to enable react profiling
@@ -86,6 +85,17 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     'react-dom$': 'react-dom/profiling',
   }
   */
+
+  // use the web build instead of the node.js build
+  // we do like that because using "config.resolve.alias" doesn't work
+  let  pkgVerkle = fs.readFileSync(path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/package.json'), 'utf8')
+  pkgVerkle = pkgVerkle.replace('"main": "./nodejs/rust_verkle_wasm.js",', '"main": "./web/rust_verkle_wasm.js",')
+  fs.writeFileSync(path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/package.json'), pkgVerkle)
+
+  config.resolve.alias = {
+    ...config.resolve.alias,
+    // 'rust-verkle-wasm$': path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/web/run_verkle_wasm.js')
+  }
 
 
   // add public path
