@@ -130,7 +130,7 @@ jobs:
             name: "Run tests"
             command: |
               cd apps/remixdesktop/
-              yarn run build:e2e && yarn run test
+              yarn run build:e2e && yarn run test && yarn run test:isogit
 
   build-remixdesktop-linux:
       machine:
@@ -268,6 +268,7 @@ jobs:
             yarn -v
             sleep 15
             yarn run test
+            yarn run test:isogit
           shell: powershell.exe
   # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
   sign-remixdesktop-windows:
@@ -507,7 +508,7 @@ jobs:
           command: |
             nvm use 20
             cd apps/remixdesktop
-            yarn run test     
+            yarn run test && yarn run test:isogit   
   
   uploadartifacts:
     docker:
