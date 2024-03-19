@@ -35,7 +35,6 @@
   },
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-tests#readme",
   "dependencies": {
-    "@erebos/bzz-node": "^0.13.0",
     "@ethereumjs/block": "^4.2.0",
     "@ethereumjs/common": "^3.1.1",
     "@ethereumjs/tx": "^4.1.1",
