@@ -3,6 +3,7 @@ const os = require('os');
 const http = require('http');
 
 const useIsoGit = process.argv.includes('--useIsoGit');
+const useOffline = process.argv.includes('--useOffline');
 
 // Function to check if localhost:8080 is active
 function checkLocalhost8080Active(callback) {
@@ -84,6 +85,7 @@ module.exports = {
             let args = process.env.CIRCLECI ? ["--e2e"] : ["--e2e-local"];
             
             if(useIsoGit) args = [...args, '--useIsoGit'];
+            if(useOffline) args = [...args, '--useOffline'];
 
             if(!process.env.CIRCLECI){
               checkLocalhost8080Active((isActive)=>{

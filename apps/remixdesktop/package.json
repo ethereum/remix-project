@@ -30,6 +30,7 @@
     "postinstall": "electron-builder install-app-deps",
     "test": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js",
     "test:isogit": "yarn run test --useIsoGit --test build-e2e/remixdesktop/test/tests/app/git.test.js",
+    "test:offline": "yarn run test --useOffline --test build-e2e/remixdesktop/test/tests/app/offline.test.js",
     "build:e2e": "tsc -p tsconfig.e2e.json"
   },
   "devDependencies": {
