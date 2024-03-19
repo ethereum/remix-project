@@ -1,5 +1,48 @@
 const os = require('os');
 
+const http = require('http');
+
+// Function to check if localhost:8080 is active
+function checkLocalhost8080Active(callback) {
+  const options = {
+    hostname: 'localhost',
+    port: 8080,
+    path: '/',
+    method: 'GET',
+  };
+
+  const req = http.request(options, (res) => {
+    console.log(`Status Code: ${res.statusCode}`);
+    if (res.statusCode === 200) {
+      callback(true); // Server is active
+    } else {
+      callback(false); // Server is running but returned a non-success status code
+    }
+  });
+
+  req.on('error', (error) => {
+    //console.error(error);
+    callback(false); // Server is not active
+  });
+
+  req.end();
+}
+
+// Determine if running on CircleCI or locally with --e2e-local
+const isLocalE2E = process.argv.includes('--e2e-local') && !process.env.CIRCLECI;
+
+if (isLocalE2E) {
+  checkLocalhost8080Active((isActive) => {
+    if (!isActive) {
+      console.error('localhost:8080 is not active. Please start the server before running tests.');
+      process.exit(1); // Exit if localhost:8080 is not active
+    } else {
+      console.log('localhost:8080 is active. Proceeding with tests.');
+      // The script can continue to the Nightwatch configuration below if needed
+    }
+  });
+}
+
 module.exports = {
     src_folders: ['build-e2e/remixdesktop/test/tests/app'],
     output_folder: './reports/tests',
@@ -38,6 +81,18 @@ module.exports = {
             // Check if running on CircleCI or locally
             let args = process.env.CIRCLECI ? ["--e2e"] : ["--e2e-local"];
             
+            if(!process.env.CIRCLECI){
+              checkLocalhost8080Active((isActive)=>{
+                if(!isActive){
+                  console.error('localhost:8080 is not active. Please start the server before running tests.');
+                  process.exit(1); // Exit if localhost:8080 is not active
+                } else {
+                  console.log('localhost:8080 is active. Proceeding with tests.');
+                  // The script can continue to the Nightwatch configuration below if needed
+                }
+              });
+            }
+
             switch (type) {
               case 'Windows_NT':
                 binaryPath = "./release/win-unpacked/Remix-Desktop.exe";
