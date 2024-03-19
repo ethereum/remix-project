@@ -1,8 +1,9 @@
+const os = require('os');
+
 module.exports = {
     src_folders: ['build-e2e/remixdesktop/test/tests/app'],
     output_folder: './reports/tests',
     custom_commands_path: ['build-e2e/remix-ide-e2e/src/commands'],
-    custom_assertions_path: '',
     page_objects_path: '',
     globals_path: '',
     test_settings: {
@@ -22,101 +23,41 @@ module.exports = {
         webdriver: {
           start_process: true,
           timeout_options: {
-            timeout: 60000, // 15 seconds
+            timeout: 60000,
             retry_attempts: 3
           }
         },
-      },
-      maclocal: {
         desiredCapabilities: {
           browserName: 'chrome',
           javascriptEnabled: true,
           acceptSslCerts: true,
-          'goog:chromeOptions': {
-            "binary": "release/mac/Remix-Desktop.app/Contents/MacOS/Remix-Desktop",
-            "args": [
-                "--e2e-local",
-            ]
-          }
+          'goog:chromeOptions': (() => {
+            const type = os.type();
+            const arch = os.arch();
+            let binaryPath = "";
+            // Check if running on CircleCI or locally
+            let args = process.env.CIRCLECI ? ["--e2e"] : ["--e2e-local"];
+            
+            switch (type) {
+              case 'Windows_NT':
+                binaryPath = "./release/win-unpacked/Remix-Desktop.exe";
+                break;
+              case 'Darwin':
+                binaryPath = arch === 'x64' ? 
+                  "release/mac/Remix-Desktop.app/Contents/MacOS/Remix-Desktop" :
+                  "release/mac-arm64/Remix-Desktop.app/Contents/MacOS/Remix-Desktop";
+                break;
+              case 'Linux':
+                binaryPath = "release/linux-unpacked/remixdesktop";
+                break;
+            }
+            
+            return {
+              binary: binaryPath,
+              args: args
+            };
+          })()
         }
-      },
-      maclocalarm64: {
-        desiredCapabilities: {
-          browserName: 'chrome',
-          javascriptEnabled: true,
-          acceptSslCerts: true,
-          'goog:chromeOptions': {
-            "binary": "release/mac-arm64/Remix-Desktop.app/Contents/MacOS/Remix-Desktop",
-            "args": [
-                "--e2e-local",
-            ]
-          }
-        }
-      },
-      linuxlocal: {
-        desiredCapabilities: {
-          browserName: 'chrome',
-          javascriptEnabled: true,
-          acceptSslCerts: true,
-          'goog:chromeOptions': {
-            "binary": "release/linux-unpacked/remixdesktop",
-            "args": [
-                "--e2e-local",
-            ]
-          }
-        }
-      },
-      linux: {
-        desiredCapabilities: {
-          browserName: 'chrome',
-          javascriptEnabled: true,
-          acceptSslCerts: true,
-          'goog:chromeOptions': {
-            "binary": "release/linux-unpacked/remixdesktop",
-            "args": [
-                "--e2e",
-            ]
-          }
-        }
-      },
-      mac: {
-        desiredCapabilities: {
-          browserName: 'chrome',
-          javascriptEnabled: true,
-          acceptSslCerts: true,
-          'goog:chromeOptions': {
-            "binary": "release/mac-arm64/Remix-Desktop.app/Contents/MacOS/Remix-Desktop",
-            "args": [
-                "--e2e",
-            ]
-          }
-        }
-      },
-      winlocal: {
-        desiredCapabilities: {
-          browserName: 'chrome',
-          javascriptEnabled: true,
-          acceptSslCerts: true,
-          'goog:chromeOptions': {
-            "binary": "./release/win-unpacked/Remix-Desktop.exe",
-            "args": [
-              "--e2e-local",
-            ]
-          }
-        }
-      },
-      win: {
-        desiredCapabilities: {
-          browserName: 'chrome',
-          javascriptEnabled: true,
-          acceptSslCerts: true,
-          'goog:chromeOptions': {
-            "binary": "./release/win-unpacked/Remix-Desktop.exe",
-            "args": [
-              "--e2e",
-            ]
-          }
-        }
-      },
+      }
     }
-  }
+};
