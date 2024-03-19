@@ -130,7 +130,7 @@ jobs:
             name: "Run tests"
             command: |
               cd apps/remixdesktop/
-              yarn run build:e2e && yarn run test && yarn run test:isogit
+              yarn run build:e2e && yarn run test:offline && yarn run test && yarn run test:isogit
 
   build-remixdesktop-linux:
       machine:
@@ -267,6 +267,7 @@ jobs:
             cd "apps/remixdesktop/"
             yarn -v
             sleep 15
+            yarn run test:offline
             yarn run test
             yarn run test:isogit
           shell: powershell.exe
@@ -508,7 +509,7 @@ jobs:
           command: |
             nvm use 20
             cd apps/remixdesktop
-            yarn run test && yarn run test:isogit   
+            yarn run test:offline && yarn run test && yarn run test:isogit   
   
   uploadartifacts:
     docker:
