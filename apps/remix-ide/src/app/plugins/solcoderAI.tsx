@@ -1,5 +1,13 @@
 import { Plugin } from '@remixproject/engine'
-import {SuggestOptions} from './copilot/suggestion-service/suggestion-service'
+
+export type SuggestOptions = {
+  max_new_tokens: number, 
+  temperature: number,
+  do_sample:boolean
+  top_k: number,
+  top_p:number, 
+  stream_result:boolean
+}
 
 const _paq = (window._paq = window._paq || [])
 
@@ -14,15 +22,17 @@ const profile = {
 
 export class SolCoder extends Plugin {
   api_url: string
+  completion_url: string
   constructor() {
     super(profile)
     this.api_url = "https://solcoder.remixproject.org"
+    this.completion_url = "https://completion.remixproject.org"
   }
 
   async code_generation(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Waiting for Solcoder answer...'})
+    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Code Generation: Waiting for Solcoder answer...'})
     let result
     try {
       result = await(
@@ -32,15 +42,21 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt, "code_generation", false,1000,0.2,0.8,50]}),
+          body: JSON.stringify({"data":[prompt, "code_completion", "", false,1000,0.9,0.92,50]}),
         })
       ).json()
-      return "error" in result? result.error : result.data[0]
+      console.log(result)
+      if ("error" in result){
+        this.call('terminal', 'log', { type: 'typewriterwarning', value: result.error }) 
+        return result
+      }
+      return result.data
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
     }finally {
       this.emit("aiInferingDone")
+      this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Code Generation: Done'})
     }
   }
 
@@ -65,6 +81,7 @@ export class SolCoder extends Plugin {
       return
     }finally {
       this.emit("aiInferingDone")
+      this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Solcoder: Done'})
     }
     if (result) {
       this.call('terminal', 'log', { type: 'typewriterwarning', value: result.data[0]})
@@ -77,7 +94,7 @@ export class SolCoder extends Plugin {
   async code_explaining(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Waiting for Solcoder answer...'})
+    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Explain Code: Waiting for Solcoder answer...'})
     let result
     try {
       result = await(
@@ -99,6 +116,7 @@ export class SolCoder extends Plugin {
       return
     }finally {
       this.emit("aiInferingDone")
+      this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Explaining: Done'})
     }
   }
 
@@ -107,7 +125,7 @@ export class SolCoder extends Plugin {
     let result
     try {
       result = await(
-        await fetch(this.api_url, {
+        await fetch(this.completion_url, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -118,7 +136,7 @@ export class SolCoder extends Plugin {
             "code_completion",
             "", // string  in 'comment' Textbox component		
             false, // boolean  in 'stream_result' Checkbox component		
-            200, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component		
+            30, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component		
             0.9, // number (numeric value between 0.01 and 1) in 'temperature' Slider component		
             0.90, // number (numeric value between 0 and 1) in 'top_p' Slider component		
             50, // number (numeric value between 1 and 200) in 'top_k' Slider component
@@ -139,13 +157,15 @@ export class SolCoder extends Plugin {
         this.call('terminal', 'log', { type: 'typewriterwarning', value: result.error }) 
         return result
       }
+      return result.data
 
     } catch (e) {
-      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
+      this.call('terminal', 'log', { type: 'typewriterwarning', value: `Unable to get a response ${e.message}` })
       return
     } finally {
       this.emit("aiInferingDone")
     }
   }
+
 
 }

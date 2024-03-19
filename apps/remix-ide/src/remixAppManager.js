@@ -81,7 +81,6 @@ let requiredModules = [ // services + layout views + system views
   'home',
   'doc-viewer',
   'doc-gen',
-  'copilot-suggestion',
   'remix-templates'
 ]
 
