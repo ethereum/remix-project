@@ -28,13 +28,7 @@
     "installRipGrepMacOXx64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=x64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
     "installRipGrepMacOXarm64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=arm64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
     "postinstall": "electron-builder install-app-deps",
-    "test:app:linuxlocal": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js --env=linuxlocal",
-    "test:app:maclocal": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js --env=maclocal",
-    "test:app:maclocalarm64": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js --env=maclocalarm64",
-    "test:app:winlocal": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js --env=winlocal",
-    "test:app:linux": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js --env=linux",
-    "test:app:mac": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js --env=mac",
-    "test:app:win": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js --env=win",
+    "test": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js",
     "build:e2e": "tsc -p tsconfig.e2e.json"
   },
   "devDependencies": {
