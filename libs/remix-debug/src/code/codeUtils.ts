@@ -2,7 +2,7 @@
 import { bytesToHex } from '@ethereumjs/util'
 import { Common } from '@ethereumjs/common'
 // TODO fix the import when getOpcodesForHF is exported
-import { getOpcodesForHF } from '../../../../node_modules/@ethereumjs/evm/dist/esm/opcodes/codes'
+import { getOpcodesForHF } from '@ethereumjs/evm'
 import getOpcodes from './opcodes'
 
 export function nameOpCodes (raw, hardfork) {
