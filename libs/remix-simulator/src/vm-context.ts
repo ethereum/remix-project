@@ -356,8 +356,8 @@ export class VMContext {
     }, { common })
 
     const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
-    const evm = new EVM({ common, allowUnlimitedContractSize: true, stateManager, blockchain })
-    
+    const evm = await EVM.create({ common, allowUnlimitedContractSize: true, stateManager, blockchain })
+     
     const vm = await VM.create({
       common,
       activatePrecompiles: true,
