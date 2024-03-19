@@ -12,7 +12,8 @@ const profile: Profile = {
   displayName: 'isogit',
   description: 'isogit plugin',
 }
-
+// used in e2e tests
+const useIsoGit = process.argv.includes('--useIsoGit');
 export class IsoGitPlugin extends ElectronBasePlugin {
   clients: IsoGitPluginClient[] = []
   constructor() {
@@ -60,7 +61,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
         this.gitIsInstalled = await gitProxy.version() ? true : false
       })
       this.workingDir = await this.call('fs' as any, 'getWorkingDir')
-      this.gitIsInstalled = await gitProxy.version() ? true : false
+      this.gitIsInstalled = await gitProxy.version() && !useIsoGit ? true : false
     })
   }
 
@@ -335,6 +336,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       }
     } else {
       try {
+        this.call('terminal' as any, 'log', 'Cloning using builtin git... please wait.')
         const clone = await git.clone({
           ...await this.getGitConfig(),
           ...cmd,
