@@ -230,7 +230,7 @@
     "remark-gfm": "^3.0.1",
     "rlp": "^3.0.0",
     "rss-parser": "^3.12.0",
-    "rustbn-wasm": "^0.2.0",
+    "rustbn-wasm": "^0.4.0",
     "signale": "^1.4.0",
     "snarkjs": "^0.7.0",
     "sol2uml": "^2.4.3",
