@@ -40,6 +40,19 @@ module.exports = {
           }
         }
       },
+      maclocalarm64: {
+        desiredCapabilities: {
+          browserName: 'chrome',
+          javascriptEnabled: true,
+          acceptSslCerts: true,
+          'goog:chromeOptions': {
+            "binary": "release/mac-arm64/Remix-Desktop.app/Contents/MacOS/Remix-Desktop",
+            "args": [
+                "--e2e-local",
+            ]
+          }
+        }
+      },
       linuxlocal: {
         desiredCapabilities: {
           browserName: 'chrome',
