@@ -7,14 +7,10 @@ import { UniversalDappUI } from './universalDappUI'
 
 export function InstanceContainerUI(props: InstanceContainerProps) {
   const { instanceList } = props.instances
-  const enableSave = useRef(false)
   const chainId = useRef()
 
   useEffect(() => {
     const fetchSavedContracts = async () => {
-      if (props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) enableSave.current = false
-      else enableSave.current = true
-      if (enableSave.current) {
         const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
         chainId.current = network.id
         // Move contract saved in localstorage to Remix FE
@@ -54,7 +50,6 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             console.log(err)
           }
         }
-      }
     }
     fetchSavedContracts()
   }, [props.plugin.REACT_API.selectExEnv, props.plugin.REACT_API.networkName])
@@ -65,7 +60,6 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
 
   return (
     <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
-      { enableSave.current ? (
         <div className="d-flex justify-content-between align-items-center pl-2">
           <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
             <label className="udapp_deployedContracts">
@@ -73,9 +67,9 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
               <span style={{fontSize: '0.75rem'}}> (chain id: {chainId.current})</span>
             </label>
           </CustomTooltip>
-        </div>) : null }
-      { enableSave.current ? (
-        props.savedInstances.instanceList.length > 0 ? (
+        </div>
+
+        {props.savedInstances.instanceList.length > 0 ? (
           <div>
             {' '}
             {props.savedInstances.instanceList.map((instance, index) => {
@@ -104,8 +98,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           <span className="mx-2 mt-2 text-dark" data-id="NoSavedInstanceText">
             <FormattedMessage id="udapp.NoSavedInstanceText" />
           </span>
-        )
-      ) :  null }
+        )}
 
       <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
