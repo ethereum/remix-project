@@ -743,7 +743,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
     let solgptExplainFunctionAction
     const executeSolgptExplainFunctionAction = {
-      id: 'explainFunction',
+      id: 'solExplainFunction',
       label: intl.formatMessage({id: 'editor.explainFunctionSol'}),
       contextMenuOrder: 1, // choose the order
       contextMenuGroupId: 'sol-gtp', // create a new grouping
@@ -836,6 +836,8 @@ export const EditorUI = (props: EditorUIProps) => {
         gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
         executegptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunction'}, {name: functionImpl.name})
         gptExplainFunctionAction = editor.addAction(executegptExplainFunctionAction)
+        executeSolgptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunctionSol'})
+        solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
       }else{
         executeSolgptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunctionSol'})
         solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
