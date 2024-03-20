@@ -1,12 +1,17 @@
 'use strict'
 import { bytesToHex } from '@ethereumjs/util'
 import { isHexString } from 'ethjs-util'
+import { BN } from 'bn.js'
+import { isBigInt } from 'web3-validator'
 
 function convertToPrefixedHex (input) {
   if (input === undefined || input === null || isHexString(input)) {
     return input
   }
   if (typeof input === 'number') {
+    return '0x' + input.toString(16)
+  }
+  if ((input.constructor && input.constructor.name === 'BigNumber') || BN.isBN(input) || isBigInt(input)) {
     return '0x' + input.toString(16)
   }
   
@@ -47,10 +52,9 @@ export function resultToRemixTx (txResult, execResult?) {
     errorMessage = execResult.exceptionError
   }
 
-  console.log('resultToRemixTx', gasUsed, convertToPrefixedHex(gasUsed))
   return {
     transactionHash,
-    status,
+    status: convertToPrefixedHex(status),
     gasUsed: convertToPrefixedHex(gasUsed),
     error: errorMessage,
     return: returnValue ? convertToPrefixedHex(returnValue) : undefined,
