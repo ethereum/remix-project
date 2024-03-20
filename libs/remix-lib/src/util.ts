@@ -2,6 +2,8 @@
 import { hash } from '@remix-project/remix-lib'
 import { bytesToHex, setLengthLeft, toBytes, addHexPrefix } from '@ethereumjs/util'
 import stringSimilarity from 'string-similarity'
+import { BN } from 'bn.js'
+import { isBigInt } from 'web3-validator'
 
 /*
  contains misc util: @TODO should be split
@@ -152,6 +154,12 @@ export function buildCallPath (index, rootCall) {
   */
 // eslint-disable-next-line camelcase
 export function sha3_256 (value) {
+  if ((value.constructor && value.constructor.name === 'BigNumber') || BN.isBN(value) || isBigInt(value)) {
+    value = value.toString(16)
+  }
+  if (typeof value === 'number') {
+    value = value.toString(16)
+  }
   value = toBytes(addHexPrefix(value))
   const retInBuffer: Uint8Array = hash.keccak(Buffer.from(setLengthLeft(value, 32)))
   return bytesToHex(retInBuffer)
