@@ -52,7 +52,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       const ask = split[split.length - 2].trimStart()
       if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
         // use the code generation model, only take max 1000 word as context 
-        this.props.plugin.call('terminal', 'log', {type: 'typewriterwarning', value: 'Solcoder - generating code for following comment: ' + ask.replace('///', '')})
+        this.props.plugin.call('terminal', 'log', {type: 'aitypewriterwarning', value: 'Solcoder - generating code for following comment: ' + ask.replace('///', '')})
 
         const data = await this.props.plugin.call('solcoder', 'code_generation', word)
 
