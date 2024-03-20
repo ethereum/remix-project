@@ -33,7 +33,7 @@ module.exports = {
       .execute(() => {
         (document.querySelector('*[data-id="basic-http-providerModalDialogContainer-react"] input[data-id="modalDialogCustomPromp"]') as any).focus()
       }, [], () => {})
-      .setValue('[data-id="modalDialogCustomPromp"]', 'https://rpc.ankr.com/eth_goerli')
+      .setValue('[data-id="modalDialogCustomPromp"]', 'https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9') // sepolia
       .modalFooterOKClick('basic-http-provider')
       .clickLaunchIcon('solidity') // compile
       .testContracts('Owner_1.sol', { content: verifiedContract }, ['Owner'])
@@ -42,7 +42,7 @@ module.exports = {
       .frame(0)
       .click('[data-id="home"]')
       .setValue('select[name="contractName"]', 'Owner')
-      .setValue('*[name="contractAddress"]', ['0x9981c9d00103da481c3c65b22a79582a3e3ff50b', browser.Keys.TAB])
+      .setValue('*[name="contractAddress"]', ['0xfF6A41815582cFD18855c5B90efD1d45784fd4f5', browser.Keys.TAB])
       .click('[data-id="verify-contract"]')
       .waitForElementVisible('[data-id="verify-result"]')
       .waitForElementContainsText('[data-id="verify-result"]', 'Contract source code already verified', 15000)
