@@ -56,7 +56,6 @@ export class SolCoder extends Plugin {
       return
     }finally {
       this.emit("aiInferingDone")
-      this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Code Generation: Done'})
     }
   }
 
@@ -81,7 +80,6 @@ export class SolCoder extends Plugin {
       return
     }finally {
       this.emit("aiInferingDone")
-      this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Solcoder: Done'})
     }
     if (result) {
       this.call('terminal', 'log', { type: 'typewriterwarning', value: result.data[0]})
@@ -116,7 +114,6 @@ export class SolCoder extends Plugin {
       return
     }finally {
       this.emit("aiInferingDone")
-      this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Explaining: Done'})
     }
   }
 
