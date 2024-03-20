@@ -65,14 +65,20 @@ const tests = {
   },
   'list files': function (browser: NightwatchBrowser) {
     browser
-      .perform(function () {
-        const actions = this.actions({async: true})
-        return actions.sendKeys('ls').sendKeys(this.Keys.ENTER)
-      })
+      .pause(2000)
       .waitForElementVisible({
         selector: "//*[@data-type='remixUIXT' and @data-active='1']",
         timeout: 10000,
         locateStrategy: 'xpath',
+      })
+      .click({
+        selector: "//*[@data-type='remixUIXT' and @data-active='1']",
+        timeout: 10000,
+        locateStrategy: 'xpath',
+      })
+      .perform(function () {
+        const actions = this.actions({async: true})
+        return actions.sendKeys('ls').sendKeys(this.Keys.ENTER)
       })
       .getText(
         {
