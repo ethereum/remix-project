@@ -186,9 +186,9 @@ async function main() {
       }
       console.log(combined)
       const newYml = YAML.stringify(combined)
-      //fs.writeFileSync(path.join(__dirname, '../../../release', 'latest-mac.yml'), newYml)
+      fs.writeFileSync(path.join(__dirname, '../../../release', 'latest-mac.yml'), newYml)
       // remove the arm64 file
-      // fs.unlinkSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml'))
+      fs.unlinkSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml'))
     }
   } catch (e) {
     console.log(e)
