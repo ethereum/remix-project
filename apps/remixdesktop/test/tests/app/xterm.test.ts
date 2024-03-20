@@ -79,7 +79,7 @@ const tests = {
       .perform(function () {
         const actions = this.actions({async: true})
         return actions.sendKeys('ls').sendKeys(this.Keys.ENTER)
-      })
+      }).pause(3000)
       .getText(
         {
           selector: "//*[@data-type='remixUIXT' and @data-active='1']",
@@ -201,6 +201,7 @@ const tests = {
   },
   'clear the terminal': function (browser: NightwatchBrowser) {
     browser
+      .pause(1000)
       .waitForElementVisible('*[data-id="clearTerminalButton"]', 10000)
       .click('*[data-id="clearTerminalButton"]')
       .getText(
