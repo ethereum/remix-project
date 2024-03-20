@@ -41,6 +41,5 @@
   "settings.copilot.activate": "Load & Activate copilot",
   "settings.copilot.max_new_tokens": "Maximum number of words to generate",
   "settings.copilot.temperature": "Temperature",
-  "settings.copilot.top_k": "top_k",
-  "settings.copilot.top_p": "top_p"
+  "settings.enableSaveEnvState": "Save environment state"
 }
