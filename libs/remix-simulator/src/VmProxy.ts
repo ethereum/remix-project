@@ -46,7 +46,6 @@ export class VmProxy {
   stateCopy: EVMStateManagerInterface
   flagrecordVMSteps: boolean
   lastMemoryUpdate: Array<string>
-  randomCallHash: bigint
   callIncrement: bigint
   txRunning: boolean
 
@@ -93,7 +92,6 @@ export class VmProxy {
     this.blocks = {}
     this.lastMemoryUpdate = []
     this.flagrecordVMSteps = true
-    this.randomCallHash = BigInt('0x34c5f87d9ac75c4b2a3ba8fba43c30456a346c6a9e250bf48f29167fc6798826')
     this.callIncrement = BigInt(1)
     this.txRunning = false
   }
@@ -101,18 +99,6 @@ export class VmProxy {
   setVM (vm) {
     if (this.vm === vm) return
     this.vm = vm
-    /*this.vm.evm.events.on('beforeMessage', async (data: Message, resolve: (result?: any) => void) => {
-      if (!this.txRunning) {
-        await this.messageWillProcess(data)
-      }      
-      resolve()
-    })
-    this.vm.evm.events.on('afterMessage', async (data: EVMResult, resolve: (result?: any) => void) => {
-      if (!this.txRunning) {
-        await this.messageProcessed(data)
-      }      
-      resolve()
-    })*/
     this.vm.evm.events.on('step', async (data: InterpreterStep, resolve: (result?: any) => void) => {      
       await this.pushTrace(data)
       resolve()
