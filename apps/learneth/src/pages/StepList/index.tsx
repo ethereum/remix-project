@@ -1,16 +1,17 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import {Link, useLocation} from 'react-router-dom'
 import Markdown from 'react-markdown'
 import BackButton from '../../components/BackButton'
 import SlideIn from '../../components/SlideIn'
-import {useAppSelector} from '../../redux/hooks'
+import {AppContext} from '../../contexts'
 import './index.scss'
 
 function StepListPage(): JSX.Element {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
   const id = queryParams.get('id') as string
-  const {detail, selectedId} = useAppSelector((state) => state.workshop)
+  const {appState} = useContext(AppContext)
+  const {detail, selectedId} = appState.workshop
   const entity = detail[selectedId].entities[id]
 
   return (

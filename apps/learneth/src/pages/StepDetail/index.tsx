@@ -1,34 +1,32 @@
-import React, {useEffect} from 'react'
+import React, {useContext, useEffect} from 'react'
 import {useLocation, useNavigate} from 'react-router-dom'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import BackButton from '../../components/BackButton'
-import {useAppSelector, useAppDispatch} from '../../redux/hooks'
+import {AppContext} from '../../contexts'
+import {displayFile, showAnswer, testStep} from '../../actions'
 import './index.scss'
 
 function StepDetailPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const dispatch = useAppDispatch()
+  const {dispatch, appState} = useContext(AppContext)
   const queryParams = new URLSearchParams(location.search)
   const id = queryParams.get('id') as string
   const stepId = Number(queryParams.get('stepId'))
   const {
     workshop: {detail, selectedId},
     remixide: {errorLoadingFile, errors, success},
-  } = useAppSelector((state: any) => state)
+  } = appState
   const entity = detail[selectedId].entities[id]
   const steps = entity.steps
   const step = steps[stepId]
   console.log(step)
 
   useEffect(() => {
+    displayFile(step)
     dispatch({
-      type: 'remixide/displayFile',
-      payload: step,
-    })
-    dispatch({
-      type: 'remixide/save',
+      type: 'SET_REMIXIDE',
       payload: {errors: [], success: false},
     })
     window.scrollTo(0, 0)
@@ -55,10 +53,7 @@ function StepDetailPage() {
           <button
             className="w-100nav-item rounded-0 nav-link btn btn-success test"
             onClick={() => {
-              dispatch({
-                type: 'remixide/displayFile',
-                payload: step,
-              })
+              displayFile(step)
             }}
           >
             Load the file
@@ -81,10 +76,7 @@ function StepDetailPage() {
               <button
                 className="nav-item rounded-0 nav-link btn btn-warning test"
                 onClick={() => {
-                  dispatch({
-                    type: 'remixide/displayFile',
-                    payload: step,
-                  })
+                  displayFile(step)
                 }}
               >
                 Load the file
@@ -96,10 +88,7 @@ function StepDetailPage() {
                     <button
                       className="nav-item rounded-0 nav-link btn btn-info test"
                       onClick={() => {
-                        dispatch({
-                          type: 'remixide/testStep',
-                          payload: step,
-                        })
+                        testStep(step)
                       }}
                     >
                       Check Answer
@@ -108,10 +97,7 @@ function StepDetailPage() {
                       <button
                         className="nav-item rounded-0 nav-link btn btn-warning test"
                         onClick={() => {
-                          dispatch({
-                            type: 'remixide/showAnswer',
-                            payload: step,
-                          })
+                          showAnswer(step)
                         }}
                       >
                         Show answer
@@ -134,10 +120,7 @@ function StepDetailPage() {
                           <button
                             className="nav-item rounded-0 nav-link btn btn-warning test"
                             onClick={() => {
-                              dispatch({
-                                type: 'remixide/showAnswer',
-                                payload: step,
-                              })
+                              showAnswer(step)
                             }}
                           >
                             Show answer
@@ -189,10 +172,7 @@ function StepDetailPage() {
               <button
                 className="nav-item rounded-0 nav-link btn btn-warning test"
                 onClick={() => {
-                  dispatch({
-                    type: 'remixide/showAnswer',
-                    payload: step,
-                  })
+                  showAnswer(step)
                 }}
               >
                 Show answer
