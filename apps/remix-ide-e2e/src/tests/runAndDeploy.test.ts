@@ -263,7 +263,7 @@ module.exports = {
       .clickFunction('retrieve - call')
       .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
       .clickLaunchIcon('filePanel')
-      .openFile('.states/vm-shanghai/state.json')
+      .openFile('.states/vm-cancun/state.json')
       .getEditorValue((content) => {
         browser
           .assert.ok(content.includes('"latestBlockNumber": "0x2"'), 'State is saved')
@@ -321,7 +321,7 @@ module.exports = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
       .clickLaunchIcon('filePanel')
-      .openFile('.states/vm-shanghai/state.json')
+      .openFile('.states/vm-cancun/state.json')
       .getEditorValue((content) => {
         browser
           .assert.ok(content.includes('"latestBlockNumber": "0x2"'), 'State is unchanged')
