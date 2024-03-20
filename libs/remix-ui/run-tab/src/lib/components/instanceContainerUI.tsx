@@ -7,27 +7,57 @@ import { UniversalDappUI } from './universalDappUI'
 
 export function InstanceContainerUI(props: InstanceContainerProps) {
   const { instanceList } = props.instances
-  const env = useRef()
+  const enableSave = useRef(false)
+  const chainId = useRef()
 
   useEffect(() => {
     const fetchSavedContracts = async () => {
-      env.current = await props.plugin.call('blockchain', 'getProvider')
-      if(env.current && env.current === 'injected') {
+      if (props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) enableSave.current = false
+      else enableSave.current = true
+      if (enableSave.current) {
+        const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
+        chainId.current = network.id
+        // Move contract saved in localstorage to Remix FE
         const allSavedContracts = localStorage.getItem('savedContracts')
         if (allSavedContracts) {
-          await props.plugin.call('udapp', 'clearAllSavedInstances')
           const savedContracts = JSON.parse(allSavedContracts)
-          const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-          if (savedContracts && savedContracts[network.id]) {
-            const instances = savedContracts[network.id]
-            for (const inst of instances)
-              if (inst) await props.plugin.call('udapp', 'addSavedInstance', inst.address, inst.abi || inst.contractData.abi, inst.name, inst.savedOn, inst.filePath)
+          for (const networkId in savedContracts) {
+            if (savedContracts[networkId].length > 0) {
+              for (const contractDetails of savedContracts[networkId]) {
+                const objToSave = {
+                  name: contractDetails.name,
+                  address: contractDetails.address,
+                  abi: contractDetails.abi || contractDetails.contractData.abi,
+                  filePath: contractDetails.filePath,
+                  pinnedAt: contractDetails.savedOn
+                }
+                await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${networkId}/${contractDetails.address}.json`, JSON.stringify(objToSave, null, 2))
+              }
+            }
+          }
+          localStorage.removeItem('savedContracts')
+        }
+        // Clear existing saved instance state
+        await props.plugin.call('udapp', 'clearAllSavedInstances')
+        // Load contracts from FE
+        const isPinnedAvailable = await props.plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${chainId.current}`)
+        if (isPinnedAvailable) {
+          try {
+            const list = await props.plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${chainId.current}`)
+            const filePaths = Object.keys(list)
+            for (const file of filePaths) {
+              const pinnedContract = await props.plugin.call('fileManager', 'readFile', file)
+              const pinnedContractObj = JSON.parse(pinnedContract)
+              if (pinnedContractObj) await props.plugin.call('udapp', 'addSavedInstance', pinnedContractObj.address, pinnedContractObj.abi, pinnedContractObj.name, pinnedContractObj.pinnedAt, pinnedContractObj.filePath)
+            }
+          } catch(err) {
+            console.log(err)
           }
         }
       }
     }
     fetchSavedContracts()
-  }, [props.plugin.REACT_API.networkName])
+  }, [props.plugin.REACT_API.selectExEnv, props.plugin.REACT_API.networkName])
 
   const clearInstance = () => {
     props.clearInstances()
@@ -35,15 +65,16 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
 
   return (
     <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
-      { env.current && env.current === 'injected' ? (
-        <div className="d-flex justify-content-between align-items-center pl-2 mb-2">
-          <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
+      { enableSave.current ? (
+        <div className="d-flex justify-content-between align-items-center pl-2">
+          <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
             <label className="udapp_deployedContracts">
-              <FormattedMessage id="udapp.savedContracts" />
+              <FormattedMessage id="udapp.savedContracts" /> 
+              <span style={{fontSize: '0.75rem'}}> (chain id: {chainId.current})</span>
             </label>
           </CustomTooltip>
         </div>) : null }
-      { env.current && env.current === 'injected' ? (
+      { enableSave.current ? (
         props.savedInstances.instanceList.length > 0 ? (
           <div>
             {' '}
@@ -68,13 +99,13 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             })}
           </div>
         ) : (
-          <span className="mx-2 mt-3 alert alert-warning" data-id="NoSavedInstanceText" role="alert">
+          <span className="mx-2 mt-2 text-dark" data-id="NoSavedInstanceText">
             <FormattedMessage id="udapp.NoSavedInstanceText" />
           </span>
         )
       ) :  null }
 
-      <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-3">
+      <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
           <label className="udapp_deployedContracts">
             <FormattedMessage id="udapp.deployedContracts" />

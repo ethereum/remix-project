@@ -1,0 +1,9 @@
+{
+  "$schema": "https://sindri.app/api/v1/sindri-manifest-schema.json",
+  "name": "circuit_name",
+  "circuitPath": "./circuits/circuit.circom",
+  "circuitType": "circom",
+  "curve": "bn254",
+  "provingScheme": "groth16",
+  "witnessCompiler": "wasm"
+}

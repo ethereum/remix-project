@@ -321,7 +321,7 @@ export interface InstanceContainerProps {
     error: string
   },
   clearInstances: () => void,
-  removeInstance: (index: number, isSavedContract:boolean) => void,
+  removeInstance: (index: number, isSavedContract:boolean, shouldDelete: boolean) => void,
   getContext: () => 'memory' | 'blockchain',
   runTransactions: (
     instanceIndex: number,
@@ -428,7 +428,7 @@ export interface UdappProps {
   },
   context: 'memory' | 'blockchain',
   isSavedContract?: boolean
-  removeInstance: (index: number, isSavedContract: boolean) => void,
+  removeInstance: (index: number, isSavedContract: boolean, shouldDelete: boolean) => void,
   index: number,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (message: string) => JSX.Element,

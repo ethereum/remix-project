@@ -60,6 +60,23 @@ export class RemixClient extends PluginClient {
     }
   }
 
+  async askGpt(message: string) {
+    if (message.length === 0) {
+      this.client.call('terminal', 'log', { type: 'log', value: 'kindly send a proper message so I can respond please' })
+      return
+    }
+    try {
+      const formattedMessage = `
+        ${message}
+        can you explain why this error occurred and how to fix it?
+      `
+      await this.client.call('openaigpt' as any, 'message', formattedMessage)
+    } catch (err) {
+      console.error('unable to askGpt')
+      console.error(err)
+    }
+  }
+
   async cloneVyperRepo() {
     try {
       // @ts-ignore
@@ -144,4 +161,3 @@ export class RemixClient extends PluginClient {
 }
 
 export const remixClient = new RemixClient()
-// export const RemixClientContext = React.createContext(new RemixClient())
