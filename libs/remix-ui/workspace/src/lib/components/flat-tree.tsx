@@ -86,7 +86,7 @@ export const FlatTree = (props: FlatTreeProps) => {
     path = path.replace(/^\//g, '')
     const pathArray = path.split('/')
     const level = pathArray.length - 1
-    const indent = level * 4
+    const indent = level * 12
     return (<div style={{ paddingLeft: `${indent}px` }}></div>)
   }
 

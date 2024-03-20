@@ -886,6 +886,9 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-move' })
     monacoRef.current.languages.register({ id: 'remix-circom' })
 
+    // Allow JSON schema requests
+    monacoRef.current.languages.json.jsonDefaults.setDiagnosticsOptions({enableSchemaRequest: true})
+
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-solidity', solidityLanguageConfig as any)

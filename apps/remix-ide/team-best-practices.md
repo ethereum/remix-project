@@ -168,7 +168,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
 ### 3) Documentation:
 
 - The documentation is done / updated just after the feature / release in a team effort.
-- Documentation work is filable as a github issue.
+- Documentation work is fileable as a github issue.
 - It is encouraged to find and link associated doc produced by the community (blog posts, videos, tutorials, ...)
 
 ---

@@ -83,8 +83,8 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(clearAllSavedInstances())
   })
 
-  plugin.on('udapp', 'addInstanceReducer', (address, abi, name) => {
-    addInstance(dispatch, { abi, address, name })
+  plugin.on('udapp', 'addInstanceReducer', (address, abi, name, contractData?) => {
+    addInstance(dispatch, { contractData, abi, address, name })
   })
 
   plugin.on('udapp', 'addSavedInstanceReducer', (address, abi, name, savedOn, filePath) => {

@@ -1,2 +1,5 @@
 export * from './lib/components/remix-ui-xterm'
 export * from './lib/components/remix-ui-xterminals'
+export * from './lib/reducer'
+export * from './lib/types'
+export * from './lib/actions'
