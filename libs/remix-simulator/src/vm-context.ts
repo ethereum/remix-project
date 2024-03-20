@@ -371,10 +371,10 @@ export class VMContext {
     web3vm.setVM(vm)
     this.addBlock(genesisBlock, true)
     if (blocks.length > 0) blocks.splice(0, 1)
-    blocks.forEach(block => {
-      blockchain.putBlock(block)
+    for (const block of blocks) {
+      await blockchain.putBlock(block)
       this.addBlock(block, false, false, web3vm)
-    })
+    }
     return { vm, web3vm, stateManager, common, blocks }
   }
 
