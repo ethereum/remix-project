@@ -26,16 +26,20 @@ async function getAllReleases() {
 async function uploadReleaseAsset(release, name, file) {
   const upload_url = release.upload_url
   console.log(`Uploading ${name} to ${upload_url}`)
-  octokit.request({
-    method: "POST",
-    url: upload_url,
-    headers: {
-      "content-type": "text/plain",
-    },
-    data: fs.readFileSync(file),
-    name,
-    label: name
-  });
+  if (fs.existsSync(file)) {
+    octokit.request({
+      method: "POST",
+      url: upload_url,
+      headers: {
+        "content-type": "text/plain",
+      },
+      data: fs.readFileSync(file),
+      name,
+      label: name
+    });
+  }else{
+    console.log(`File ${file} does not exist. Skipping...`)
+  }
 }
 
 async function getVersionFromPackageJson() {
