@@ -1,10 +1,11 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import BounceLoader from 'react-spinners/BounceLoader'
+import {AppContext} from '../../contexts'
 import './index.css'
-import {useAppSelector} from '../../redux/hooks'
 
 const LoadingScreen: React.FC = () => {
-  const loading = useAppSelector((state) => state.loading.screen)
+  const {appState} = useContext(AppContext)
+  const loading = appState.loading.screen
 
   return loading ? (
     <div className="spinnersOverlay">

@@ -1,11 +1,12 @@
-import React, {useEffect} from 'react'
+import React, {useContext, useEffect} from 'react'
 import {Link} from 'react-router-dom'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
-import {useAppDispatch, useAppSelector} from '../../redux/hooks'
+import {AppContext} from '../../contexts'
 import RepoImporter from '../../components/RepoImporter'
 import './index.css'
+import {initWorkshop} from '../../actions'
 
 function HomePage(): JSX.Element {
   const [openKeys, setOpenKeys] = React.useState<string[]>([])
@@ -15,8 +16,8 @@ function HomePage(): JSX.Element {
     setOpenKeys(isOpen(key) ? openKeys.filter((item) => item !== key) : [...openKeys, key])
   }
 
-  const dispatch = useAppDispatch()
-  const {list, detail, selectedId} = useAppSelector((state) => state.workshop)
+  const {appState} = useContext(AppContext)
+  const {list, detail, selectedId} = appState.workshop
 
   const selectedRepo = detail[selectedId]
 
@@ -27,9 +28,7 @@ function HomePage(): JSX.Element {
   }
 
   useEffect(() => {
-    dispatch({
-      type: 'workshop/init',
-    })
+    initWorkshop()
   }, [])
 
   return (

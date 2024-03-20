@@ -1,13 +1,6 @@
-import React, {useEffect} from 'react'
-import {useAppDispatch} from '../../redux/hooks'
+import React from 'react'
 
 const LogoPage: React.FC = () => {
-  const dispatch = useAppDispatch()
-
-  useEffect(() => {
-    dispatch({type: 'remixide/connect'})
-  }, [])
-
   return (
     <div>
       <div>

@@ -1,13 +1,12 @@
 import React, {useState, useEffect} from 'react'
 import {Button, Dropdown, Form, Tooltip, OverlayTrigger} from 'react-bootstrap'
-import {useAppDispatch} from '../../redux/hooks'
+import {loadRepo, resetAllWorkshop} from '../../actions'
 import './index.css'
 
 function RepoImporter({list, selectedRepo}: any): JSX.Element {
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [branch, setBranch] = useState('')
-  const dispatch = useAppDispatch()
 
   useEffect(() => {
     setName(selectedRepo.name)
@@ -19,16 +18,16 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
   }
 
   const selectRepo = (repo: {name: string; branch: string}) => {
-    dispatch({type: 'workshop/loadRepo', payload: repo})
+    loadRepo(repo)
   }
 
   const importRepo = (event: {preventDefault: () => void}) => {
     event.preventDefault()
-    dispatch({type: 'workshop/loadRepo', payload: {name, branch}})
+    loadRepo({name, branch})
   }
 
   const resetAll = () => {
-    dispatch({type: 'workshop/resetAll'})
+    resetAllWorkshop()
     setName('')
     setBranch('')
   }
