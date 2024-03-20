@@ -438,6 +438,7 @@ jobs:
             yarn installRipGrepMacOXarm64
             PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false yarn dist --arm64
             cat release/latest-mac.yml
+            cp release/latest-mac-arm64.yml
       - run: 
           command: |
             nvm use 20
