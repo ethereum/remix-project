@@ -114,7 +114,7 @@ export class ExecutionContext {
 
   removeProvider (name) {
     if (name && this.customNetWorks[name]) {
-      if (this.executionContext === name) this.setContext('vm-shanghai', null, null, null)
+      if (this.executionContext === name) this.setContext('vm-paris', null, null, null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
