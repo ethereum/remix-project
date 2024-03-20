@@ -1,4 +1,4 @@
-import {Octokit} from 'octokit'
+import { Octokit } from 'octokit'
 import * as fs from 'fs'
 import * as path from 'path'
 import YAML from 'yaml'
@@ -126,12 +126,12 @@ async function main() {
   for (const file of ymlFiles) {
     const content = fs.readFileSync(path.join(__dirname, '../../../release', file), 'utf8')
     const parsed = YAML.parse(content)
-    const hashes:{
+    const hashes: {
       url: string,
       sha512: string,
       size: number
     }[] = []
-    if(parsed.files) {
+    if (parsed.files) {
       console.log(`Found`, parsed.files)
       for (const f of parsed.files) {
         const executable = f.url
@@ -139,10 +139,10 @@ async function main() {
         if (!exists) {
           console.log(`File ${executable} does not exist on local fs. Skipping...`)
           continue
-        }else{
+        } else {
           console.log(`File ${executable} exists on local fs. Recalculating hash...`)
           // calculate sha512 hash of executable
-          const hash:string = await hashFile(path.join(__dirname, '../../../release', executable))
+          const hash: string = await hashFile(path.join(__dirname, '../../../release', executable))
           console.log(hash)
           // calculate file size of executable
           const stats = fs.statSync(path.join(__dirname, '../../../release', executable))
@@ -153,7 +153,7 @@ async function main() {
             sha512: hash,
             size: fileSizeInBytes
           })
-          if(parsed.path === executable) {
+          if (parsed.path === executable) {
             parsed.sha512 = hash
             parsed.size = fileSizeInBytes
           }
@@ -167,6 +167,30 @@ async function main() {
   }
 
   let files = await readReleaseFilesFromLocalDirectory()
+
+  try {
+    if (fs.existsSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml')) && fs.existsSync(path.join(__dirname, '../../../release', 'latest-mac.yml'))) {
+      // combine the two files
+      const macArm64 = fs.readFileSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml'), 'utf8')
+      const mac = fs.readFileSync(path.join(__dirname, '../../../release', 'latest-mac.yml'), 'utf8')
+      const parsedMacArm64 = YAML.parse(macArm64)
+      const parsedMac = YAML.parse(mac)
+      const combined = {
+        ...parsedMac,
+        files: {
+          ...parsedMac.files,
+          ...parsedMacArm64.files
+        }
+      }
+      console.log(combined)
+      const newYml = YAML.stringify(combined)
+      fs.writeFileSync(path.join(__dirname, '../../../release', 'latest-mac.yml'), newYml)
+      // remove the arm64 file
+      fs.unlinkSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml'))
+    }
+  } catch (e) {
+    console.log(e)
+  }
 
   files = files.filter((file) => file.endsWith('.zip') || file.endsWith('.dmg') || file.endsWith('.exe') || file.endsWith('.AppImage') || file.endsWith('.snap') || file.endsWith('.deb') || file.startsWith('latest'))
   console.log(`Found ${files.length} files to upload`)
