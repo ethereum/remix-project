@@ -179,10 +179,10 @@ async function main() {
       console.log(parsedMac)
       const combined = {
         ...parsedMac,
-        files: {
+        files: [
           ...parsedMac.files,
           ...parsedMacArm64.files
-        }
+        ]
       }
       console.log(combined)
       const newYml = YAML.stringify(combined)
