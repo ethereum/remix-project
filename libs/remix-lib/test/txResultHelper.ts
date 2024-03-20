@@ -2,16 +2,16 @@
 
 import tape from 'tape'
 import { BN } from 'bn.js'
-import { toBuffer } from '@ethereumjs/util'
+import { toBytes } from '@ethereumjs/util'
 import { resultToRemixTx } from '../src/helpers/txResultHelper'
 
 const TRANSACTION_HASH = '0x538ad944d09c2df403f064c1e4556fae877fe3f1b600c567622e330c2bdbbe2e'
 const CONTRACT_ADDRESS_HEX = '0x692a70d2e424a56d2c6c27aa97d1a86395877b3a'
-const CONTRACT_ADDRESS_BUFFER = toBuffer(
+const CONTRACT_ADDRESS_BUFFER = toBytes(
   [105, 42, 112, 210, 228, 36, 165, 109, 44, 108, 39, 170, 151, 209, 168,
     99, 149, 135, 123, 58])
 const RETURN_VALUE_HEX = '0x0000000000000000000000000000000000000000000000000000000000000001'
-const RETURN_VALUE_BUFFER = toBuffer(
+const RETURN_VALUE_BUFFER = toBytes(
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 1])
 const STATUS_OK = '0x1'

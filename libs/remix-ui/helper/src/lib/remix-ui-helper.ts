@@ -1,4 +1,4 @@
-import * as ethJSUtil from '@ethereumjs/util'
+import { bytesToHex, toChecksumAddress } from '@ethereumjs/util'
 
 export const extractNameFromKey = (key: string): string => {
   if (!key) return
@@ -97,12 +97,12 @@ export const shortenAddress = (address, etherBalance?) => {
 export const addressToString = (address) => {
   if (!address) return null
   if (typeof address !== 'string') {
-    address = address.toString('hex')
+    address = bytesToHex(address)
   }
   if (address.indexOf('0x') === -1) {
     address = '0x' + address
   }
-  return ethJSUtil.toChecksumAddress(address)
+  return toChecksumAddress(address)
 }
 
 export const is0XPrefixed = (value) => {

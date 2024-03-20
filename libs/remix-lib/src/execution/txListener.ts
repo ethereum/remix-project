@@ -1,6 +1,6 @@
 'use strict'
 import { ethers } from 'ethers'
-import { toBuffer, addHexPrefix } from '@ethereumjs/util'
+import { toBytes, addHexPrefix } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { compareByteCode, getinputParameters } from '../util'
 import { decodeResponse } from './txFormat'
@@ -64,9 +64,9 @@ export class TxListener {
       let execResult
       if (this.executionContext.isVM()) {
         execResult = await this.executionContext.web3().remix.getExecutionResultFromSimulator(txResult.transactionHash)
-        returnValue = toBuffer(execResult.returnValue)
+        returnValue = toBytes(execResult.returnValue)
       } else {
-        returnValue = toBuffer(addHexPrefix(txResult.result))
+        returnValue = toBytes(addHexPrefix(txResult.result))
       }
       const call = {
         from: from,
@@ -374,7 +374,7 @@ export class TxListener {
   }
 
   _decodeInputParams (data, abi) {
-    data = toBuffer(addHexPrefix(data))
+    data = toBytes(addHexPrefix(data))
     if (!data.length) data = new Uint8Array(32 * abi.inputs.length) // ensuring the data is at least filled by 0 cause `AbiCoder` throws if there's not enough data
 
     const inputTypes = []
