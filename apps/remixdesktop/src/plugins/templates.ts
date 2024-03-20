@@ -54,7 +54,7 @@ class TemplatesPluginClient extends ElectronBasePluginClient {
 
         await fs.mkdir(path.dirname(folder + file), { recursive: true })
         if (typeof files[file] !== 'string' && files[file].content) {
-          await fs.writeFile(folder + files[file].filename, files[file].content, {
+          await fs.writeFile(folder + file, files[file].content, {
             encoding: 'utf8',
           })
         } else {

@@ -22,6 +22,8 @@ module.exports = {
           browser.switchWindow(result.value[1])
           .waitForElementVisible('*[data-id="treeViewDivtreeViewItemREADME.txt"]')
         })
+        .click('[data-id="treeViewLitreeViewItemcontracts"]')
+        .openFile('contracts/3_Ballot.sol')
         .end()
     }
 }
