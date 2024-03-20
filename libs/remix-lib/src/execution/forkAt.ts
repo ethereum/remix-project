@@ -62,6 +62,14 @@ const forks = {
     {
       number: 15537394,
       name: 'paris'
+    },
+    {
+      number: 17034870,
+      name: 'shanghai'
+    },
+    {
+      number: 19426587,
+      name: 'cancun'
     }
   ],
   3: [

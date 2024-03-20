@@ -8,10 +8,10 @@ function convertToPrefixedHex (input) {
   if (input === undefined || input === null || isHexString(input)) {
     return input
   }
-  if (typeof input === 'number') {
-    return '0x' + input.toString(16)
-  }
-  if ((input.constructor && input.constructor.name === 'BigNumber') || BN.isBN(input) || isBigInt(input)) {
+  if ((input.constructor && input.constructor.name === 'BigNumber') 
+      || BN.isBN(input) 
+      || isBigInt(input)
+      || typeof input === 'number') {
     return '0x' + input.toString(16)
   }
   

@@ -123,8 +123,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
-      process: 'process/browser',
-      'rustbn-wasm': 'rustbn-wasm'
+      process: 'process/browser'
     })
   )
 
