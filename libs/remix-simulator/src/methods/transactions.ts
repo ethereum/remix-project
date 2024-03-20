@@ -148,7 +148,6 @@ export class Transactions {
   }
 
   eth_estimateGas (payload, cb) {
-    // return cb(null, 3000000)
     // from might be lowercased address (web3)
     if (payload.params && payload.params.length > 0 && payload.params[0].from) {
       payload.params[0].from = toChecksumAddress(payload.params[0].from)

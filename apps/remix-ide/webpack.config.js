@@ -6,7 +6,6 @@ const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-const rustbnWasm = require('rustbn-wasm')
 const path = require('path')
 
 const versionData = {

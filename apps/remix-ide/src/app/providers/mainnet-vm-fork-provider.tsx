@@ -8,7 +8,7 @@ export class MainnetForkVMProvider extends BasicVMProvider {
     super(
       {
         name: 'vm-mainnet-fork',
-        displayName: 'Mainet fork - Remix VM (Cancun)',
+        displayName: 'Mainnet fork - Remix VM (Cancun)',
         kind: 'provider',
         description: 'Remix VM (London)',
         methods: ['sendAsync', 'init'],
