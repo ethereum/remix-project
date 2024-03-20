@@ -3,7 +3,7 @@
 import Web3 from 'web3'
 import { execution } from '@remix-project/remix-lib'
 import EventManager from '../lib/events'
-import {bufferToHex} from '@ethereumjs/util'
+import { bytesToHex } from '@ethereumjs/util'
 const _paq = window._paq = window._paq || []
 
 let web3
@@ -114,7 +114,7 @@ export class ExecutionContext {
 
   removeProvider (name) {
     if (name && this.customNetWorks[name]) {
-      if (this.executionContext === name) this.setContext('vm-merge', null, null, null)
+      if (this.executionContext === name) this.setContext('vm-paris', null, null, null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
@@ -174,7 +174,7 @@ export class ExecutionContext {
         try {
           this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
         } catch (e) {
-          this.currentFork = 'merge'
+          this.currentFork = 'cancun'
           console.log(`unable to detect fork, defaulting to ${this.currentFork}..`)
           console.error(e)
         }
@@ -207,10 +207,10 @@ export class ExecutionContext {
   }
 
   async getStateDetails() {
-    const db = await this.web3().remix.getStateDb()
+    const stateDb = await this.web3().remix.getStateDb()
     const blocksData = await this.web3().remix.getBlocksData()
     const state = {
-      db: Object.fromEntries(db._database),
+      db: Object.fromEntries(stateDb.db._database),
       blocks: blocksData.blocks,
       latestBlockNumber: blocksData.latestBlockNumber
     }
@@ -218,11 +218,17 @@ export class ExecutionContext {
       if (key === 'db') {
         return value
       } else if (key === 'blocks') {
-        return value.map(block => bufferToHex(block))
-      }else if (key === '') {
-        return value           
+        return value.map(block => bytesToHex(block))
+      } else if (key === '') {
+        return value       
       }
-      return bufferToHex(value)
+      if (typeof value === 'string') {
+        return value.startsWith('0x') ? value : '0x' + value
+      } else if (typeof value === 'number') {
+        return '0x' + value.toString(16)
+      } else {
+        return bytesToHex(value)
+      }      
     }, '\t')
 
     return stringifyed

@@ -20,7 +20,7 @@ module.exports = {
   'Should show deploy proxy option for UUPS upgradeable contract #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
-      .switchEnvironment('vm-merge') // this runtime doesn't have the PUSH0 opcode.
+      .switchEnvironment('vm-paris') // this runtime doesn't have the PUSH0 opcode.
       .clickLaunchIcon('solidity')
       .click('.remixui_compilerConfigSection')
       .setValue('#evmVersionSelector', 'paris') // set an evm version which doesn't have PUSH0 opcode.

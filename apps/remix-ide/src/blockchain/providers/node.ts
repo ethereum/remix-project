@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import { hashPersonalMessage, isHexString } from '@ethereumjs/util'
+import { hashPersonalMessage, isHexString, bytesToHex } from '@ethereumjs/util'
 import { Personal } from 'web3-eth-personal'
 import { ExecutionContext } from '../execution-context'
 import Config from '../../config'
@@ -49,8 +49,8 @@ export class NodeProvider {
       const personal = new Personal(this.executionContext.web3().currentProvider)
       message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
       personal.sign(message, account, passphrase)
-        .then(signedData => cb(undefined, '0x' + messageHash.toString('hex'), signedData))
-        .catch(error => cb(error, '0x' + messageHash.toString('hex'), undefined))
+        .then(signedData => cb(undefined, bytesToHex(messageHash), signedData))
+        .catch(error => cb(error, bytesToHex(messageHash), undefined))
     } catch (e) {
       cb(e.message)
     }

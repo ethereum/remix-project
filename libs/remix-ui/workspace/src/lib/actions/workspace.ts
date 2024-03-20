@@ -1,5 +1,5 @@
 import React from 'react'
-import { bufferToHex } from '@ethereumjs/util'
+import { bytesToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
 import { TemplateType } from '../types'
@@ -253,7 +253,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       let content
 
       if (params.code) {
-        const hashed = bufferToHex(hash.keccakFromString(params.code))
+        const hashed = bytesToHex(hash.keccakFromString(params.code))
 
         path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
         content = atob(decodeURIComponent(params.code))
@@ -272,7 +272,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
             // authorization: auth
           } 
         })
-        const hashed = bufferToHex(hash.keccakFromString(params.shareCode))
+        const hashed = bytesToHex(hash.keccakFromString(params.shareCode))
 
         path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
         const fileData = ipfs.get(params.shareCode)
