@@ -32,7 +32,7 @@ export class SolCoder extends Plugin {
   async code_generation(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Code Generation: Waiting for Solcoder answer...'})
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'Code Generation: Waiting for Solcoder answer...'})
     let result
     try {
       result = await(
@@ -47,7 +47,7 @@ export class SolCoder extends Plugin {
       ).json()
       console.log(result)
       if ("error" in result){
-        this.call('terminal', 'log', { type: 'typewriterwarning', value: result.error }) 
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.error }) 
         return result
       }
       return result.data
@@ -62,7 +62,7 @@ export class SolCoder extends Plugin {
   async solidity_answer(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Waiting for Solcoder answer...'})
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'Waiting for Solcoder answer...'})
     let result
     try {
       result = await(
@@ -82,9 +82,9 @@ export class SolCoder extends Plugin {
       this.emit("aiInferingDone")
     }
     if (result) {
-      this.call('terminal', 'log', { type: 'typewriterwarning', value: result.data[0]})
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0]})
     } else if  (result.error) {
-      this.call('terminal', 'log', { type: 'typewriterwarning', value: "Error on request" })
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "Error on request" })
     }
 
   }
@@ -92,7 +92,7 @@ export class SolCoder extends Plugin {
   async code_explaining(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'typewriterwarning', value: 'Explain Code: Waiting for Solcoder answer...'})
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'Explain Code: Waiting for Solcoder answer...'})
     let result
     try {
       result = await(
@@ -106,7 +106,7 @@ export class SolCoder extends Plugin {
         })
       ).json()
       if (result) {
-        this.call('terminal', 'log', { type: 'typewriterwarning', value: result.data[0]})
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0]})
       }
       return result.data[0]
     } catch (e) {
@@ -151,13 +151,13 @@ export class SolCoder extends Plugin {
       ).json()
 
       if ("error" in result){
-        this.call('terminal', 'log', { type: 'typewriterwarning', value: result.error }) 
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.error }) 
         return result
       }
       return result.data
 
     } catch (e) {
-      this.call('terminal', 'log', { type: 'typewriterwarning', value: `Unable to get a response ${e.message}` })
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `Unable to get a response ${e.message}` })
       return
     } finally {
       this.emit("aiInferingDone")
