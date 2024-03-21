@@ -10,8 +10,6 @@ import * as packageJson from '../../../../../package.json'
 import './css/style.css'
 import { iSolJsonBinData, iSolJsonBinDataBuild } from '@remix-project/remix-lib'
 
-const defaultPath = 'compiler_config.json'
-
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const {
     api,
