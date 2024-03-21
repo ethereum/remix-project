@@ -2,7 +2,7 @@
 
 import { parseCode } from './codeUtils'
 import { util } from '@remix-project/remix-lib'
-import { bufferToHex } from '@ethereumjs/util'
+import { bytesToHex } from '@ethereumjs/util'
 
 function createExpressions (instructions) {
   const expressions = []
@@ -37,7 +37,7 @@ function createExpressions (instructions) {
 
 function toString (expr) {
   if (expr.name.slice(0, 4) === 'PUSH') {
-    return bufferToHex(expr.pushData)
+    return bytesToHex(expr.pushData)
   } else if (expr.name === 'JUMPDEST') {
     return expr.label + ':'
   } else if (expr.args) {
