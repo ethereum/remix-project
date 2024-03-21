@@ -21,15 +21,6 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState, o
     return <Button disabled className="w-100">Not a vyper contract</Button>
   }
 
-  // useEffect(() => {
-  //   const checkCompileOutput = () => {
-  //     if (output && Object.keys(output).length > 0) {
-  //       setLoadingSpinnerState(false)
-  //     }
-  //   }
-  //   checkCompileOutput()
-  // }, [])
-
   /** Compile a Contract */
 
   return (
