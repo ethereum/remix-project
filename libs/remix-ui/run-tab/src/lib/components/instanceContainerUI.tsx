@@ -36,10 +36,15 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         // Clear existing saved instance state
         await props.plugin.call('udapp', 'clearAllSavedInstances')
         // Load contracts from FE
-        const isPinnedAvailable = await props.plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${chainId.current}`)
+        const dirName = props.plugin.REACT_API.networkName === 'VM' ? props.plugin.REACT_API.selectExEnv : chainId.current
+        console.log('dirPath=====>', `.deploys/pinned-contracts/${dirName}`)
+        const currentWorkspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
+        console.log('currentWorkspace=====>', currentWorkspace)
+        const isPinnedAvailable = await props.plugin.call('fileManager', 'exists', `.workspaces/${currentWorkspace}/.deploys/pinned-contracts/${dirName}`)
+        console.log('isPinnedAvailable=====>', isPinnedAvailable)
         if (isPinnedAvailable) {
           try {
-            const list = await props.plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${chainId.current}`)
+            const list = await props.plugin.call('fileManager', 'readdir', `.workspaces/${currentWorkspace}/.deploys/pinned-contracts/${dirName}`)
             const filePaths = Object.keys(list)
             for (const file of filePaths) {
               const pinnedContract = await props.plugin.call('fileManager', 'readFile', file)
