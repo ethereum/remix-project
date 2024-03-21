@@ -23,11 +23,11 @@ web3.eth.setConfig(config)
 export class ExecutionContext {
   constructor () {
     this.event = new EventManager()
-    this.executionContext = 'vm-shanghai'
+    this.executionContext = 'vm-cancun'
     this.lastBlock = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = 'shanghai'
+    this.currentFork = 'cancun'
     this.mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
     this.customNetWorks = {}
     this.blocks = {}
@@ -37,7 +37,7 @@ export class ExecutionContext {
   }
 
   init (config) {
-    this.executionContext = 'vm-shanghai'
+    this.executionContext = 'vm-cancun'
     this.event.trigger('contextChanged', [this.executionContext])
   }
 
@@ -114,7 +114,7 @@ export class ExecutionContext {
 
   removeProvider (name) {
     if (name && this.customNetWorks[name]) {
-      if (this.executionContext === name) this.setContext('vm-paris', null, null, null)
+      if (this.executionContext === name) this.setContext('vm-cancun', null, null, null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
