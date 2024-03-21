@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import {Link, useLocation, useNavigate} from 'react-router-dom'
 import {Button, Modal, Tooltip, OverlayTrigger} from 'react-bootstrap'
-import './index.scss'
 
 function BackButton({entity}: any) {
   const navigate = useNavigate()

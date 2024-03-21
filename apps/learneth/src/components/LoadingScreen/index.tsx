@@ -8,8 +8,8 @@ const LoadingScreen: React.FC = () => {
   const loading = appState.loading.screen
 
   return loading ? (
-    <div className="spinnersOverlay">
-      <BounceLoader color="#a7b0ae" size={100} className="spinnersLoading" />
+    <div className="spinnersOverlay opacity-100">
+      <BounceLoader color="#a7b0ae" size={100} className="spinnersLoading m-0" />
     </div>
   ) : null
 }

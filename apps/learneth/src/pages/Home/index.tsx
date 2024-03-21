@@ -5,8 +5,8 @@ import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 import {AppContext} from '../../contexts'
 import RepoImporter from '../../components/RepoImporter'
-import './index.css'
 import {initWorkshop} from '../../actions'
+import './index.css'
 
 function HomePage(): JSX.Element {
   const [openKeys, setOpenKeys] = React.useState<string[]>([])
@@ -43,7 +43,7 @@ function HomePage(): JSX.Element {
                 <div key={item.id}>
                   <div>
                     <span
-                      className="arrow-icon"
+                      className="arrow-icon d-inline-block"
                       onClick={() => {
                         handleClick(item.id)
                       }}
@@ -62,11 +62,11 @@ function HomePage(): JSX.Element {
                       <i className="fas fa-play-circle fa-lg" />
                     </Link>
                   </div>
-                  <div className={`container-fluid bg-light pt-3 mt-2 ${isOpen(item.id) ? '' : 'description-collapsed'}`}>
-                    {levelMap[level] && <p className="tag pt-2 pr-1 font-weight-bold small text-uppercase">{levelMap[level]}</p>}
+                  <div className={`container-fluid bg-light ${isOpen(item.id) ? 'pt-3 mt-2' : 'description-collapsed overflow-hidden text-break p-0 m-0'}`}>
+                    {levelMap[level] && <p className="d-inline pt-2 pr-1 font-weight-bold small text-uppercase">{levelMap[level]}</p>}
 
                     {selectedRepo.entities[item.id].metadata.data.tags?.map((tag: string) => (
-                      <p key={tag} className="tag pr-1 font-weight-bold small text-uppercase">
+                      <p key={tag} className="d-inline pr-1 font-weight-bold small text-uppercase">
                         {tag}
                       </p>
                     ))}

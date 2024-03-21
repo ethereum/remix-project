@@ -5,7 +5,6 @@ import rehypeRaw from 'rehype-raw'
 import BackButton from '../../components/BackButton'
 import {AppContext} from '../../contexts'
 import {displayFile, showAnswer, testStep} from '../../actions'
-import './index.scss'
 
 function StepDetailPage() {
   const navigate = useNavigate()
@@ -48,8 +47,8 @@ function StepDetailPage() {
       <div id="top"></div>
       {errorLoadingFile ? (
         <>
-          <div className="errorloadingspacer"></div>
-          <h1 className="pl-3 pr-3 pt-3 pb-1">{step.name}</h1>
+          <div className="pt-5"></div>
+          <h1 className="pl-3 pr-3 pt-3 pb-1 text-break text-start">{step.name}</h1>
           <button
             className="w-100nav-item rounded-0 nav-link btn btn-success test"
             onClick={() => {
@@ -62,8 +61,8 @@ function StepDetailPage() {
         </>
       ) : (
         <>
-          <div className="menuspacer"></div>
-          <h1 className="pr-3 pl-3 pt-3 pb-1">{step.name}</h1>
+          <div className="pt-5"></div>
+          <h1 className="pr-3 pl-3 pt-3 pb-1 text-break text-start">{step.name}</h1>
         </>
       )}
       <div className="container-fluid">

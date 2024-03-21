@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {Button, Dropdown, Form, Tooltip, OverlayTrigger} from 'react-bootstrap'
 import {loadRepo, resetAllWorkshop} from '../../actions'
-import './index.css'
 
 function RepoImporter({list, selectedRepo}: any): JSX.Element {
   const [open, setOpen] = useState(false)
@@ -44,7 +43,7 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
 
       <div onClick={panelChange} style={{cursor: 'pointer'}} className="container-fluid d-flex mb-3 small">
         <div className="d-flex pr-2 pl-2">
-          <i className={`arrow-icon pt-1 fas fa-xs ${open ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
+          <i style={{width: 3}} className={`d-inline-block pt-1 fas fa-xs ${open ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
         </div>
         <div className="d-flex">Import another tutorial repo</div>
       </div>
