@@ -322,7 +322,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
       type: 'error',
       title: err.message
     })
-    setLoadingSpinnerState(false)
+    // setLoadingSpinnerState(false)
     remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: err.message})
   }
 }
