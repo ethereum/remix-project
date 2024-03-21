@@ -177,13 +177,14 @@ export class RunTab extends ViewPlugin {
 
     // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
+    await addProvider('vm-cancun', 'Remix VM (Cancun)', false, true, 'cancun', 'settingsVMCancunMode', titleVM)
     await addProvider('vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
-    await addProvider('vm-merge', 'Remix VM (Merge)', false, true, 'merge', 'settingsVMMergeMode', titleVM)
+    await addProvider('vm-paris', 'Remix VM (Paris)', false, true, 'paris', 'settingsVMParisMode', titleVM)
     await addProvider('vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
     await addProvider('vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
-    await addProvider('vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'merge', 'settingsVMMainnetMode', titleVM)
-    await addProvider('vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'merge', 'settingsVMSepoliaMode', titleVM)
-    await addProvider('vm-goerli-fork', 'Remix VM - Goerli fork', false, true, 'merge', 'settingsVMGoerliMode', titleVM)
+    await addProvider('vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'cancun', 'settingsVMMainnetMode', titleVM)
+    await addProvider('vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'cancun', 'settingsVMSepoliaMode', titleVM)
+    await addProvider('vm-goerli-fork', 'Remix VM - Goerli fork', false, true, 'paris', 'settingsVMGoerliMode', titleVM)
     await addProvider('vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
 
     // wallet connect

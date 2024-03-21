@@ -17,7 +17,7 @@
     "test": "./../../node_modules/.bin/ts-node --require tsconfig-paths/register ./../../node_modules/.bin/tape ./test/tests.ts"
   },
   "dependencies": {
-    "@ethereumjs/util": "^8.0.5",
+    "@ethereumjs/util": "9.0.3",
     "async": "^2.1.2",
     "create-hash": "^1.2.0",
     "ethers": "^5.7.2",
