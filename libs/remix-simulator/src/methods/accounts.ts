@@ -1,4 +1,4 @@
-import { privateToAddress, toChecksumAddress, isValidPrivate, Address } from '@ethereumjs/util'
+import { privateToAddress, toChecksumAddress, isValidPrivate, Address, toBytes, bytesToHex, Account } from '@ethereumjs/util'
 import { privateKeyToAccount } from 'web3-eth-accounts'
 import { toBigInt } from 'web3-utils'
 import * as crypto from 'crypto'
@@ -36,26 +36,27 @@ export class Web3Accounts {
     await this._addAccount('71975fbf7fe448e004ac7ae54cad0a383c3906055a65468714156a07385e96ce', '0x56BC75E2D63100000')
   }
 
-  _addAccount (privateKey, balance) {
-    return new Promise((resolve, reject) => {
-      privateKey = Buffer.from(privateKey, 'hex')
-      const address: Buffer = privateToAddress(privateKey)
-      const addressStr = toChecksumAddress('0x' + address.toString('hex'))
+  async _addAccount (privateKey, balance) {
+    try {
+      privateKey = toBytes('0x' + privateKey)
+      const address: Uint8Array = privateToAddress(privateKey)
+      const addressStr = toChecksumAddress(bytesToHex(address))
       this.accounts[addressStr] = { privateKey, nonce: 0 }
-      this.accountsKeys[addressStr] = '0x' + privateKey.toString('hex')
+      this.accountsKeys[addressStr] = bytesToHex(privateKey)
 
       const stateManager = this.vmContext.vm().stateManager
-      stateManager.getAccount(Address.fromString(addressStr)).then((account) => {
+      const account = await stateManager.getAccount(Address.fromString(addressStr))
+      if (!account) {
+        const account = new Account(BigInt(0), toBigInt(balance || '0xf00000000000000001'))
+        await stateManager.putAccount(Address.fromString(addressStr), account)
+      } else {
         account.balance = toBigInt(balance || '0xf00000000000000001')
-        stateManager.putAccount(Address.fromString(addressStr), account).catch((error) => {
-          reject(error)
-        }).then(() => {
-          resolve({})
-        })
-      }).catch((error) => {
-        reject(error)
-      })
-    })
+        await stateManager.putAccount(Address.fromString(addressStr), account)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    
   }
 
   newAccount (cb) {
@@ -64,7 +65,7 @@ export class Web3Accounts {
       privateKey = crypto.randomBytes(32)
     } while (!isValidPrivate(privateKey))
     this._addAccount(privateKey, '0x56BC75E2D63100000')
-    return cb(null, '0x' + privateToAddress(privateKey).toString('hex'))
+    return cb(null, bytesToHex(privateToAddress(privateKey)))
   }
 
   methods (): Record<string, unknown> {
@@ -82,7 +83,6 @@ export class Web3Accounts {
 
   eth_getBalance (payload, cb) {
     const address = payload.params[0]
-
     this.vmContext.vm().stateManager.getAccount(Address.fromString(address)).then((account) => {
       cb(null, toBigInt(account.balance).toString(10))
     }).catch((error) => {

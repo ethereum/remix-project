@@ -1,6 +1,6 @@
 'use strict'
 import { BN } from 'bn.js'
-import { bufferToHex } from '@ethereumjs/util'
+import { bytesToHex } from '@ethereumjs/util'
 import { isBigInt } from 'web3-validator'
 
 export function toInt (h) {
@@ -27,7 +27,7 @@ function convertToString (v) {
     } else if (v._isBigNumber) {
       return toInt(v._hex)
     } else if (v._isBuffer) {
-      return bufferToHex(v)
+      return bytesToHex(v)
     } else if (typeof v === 'object') {
       const retObject = {}
       for (const i in v) {

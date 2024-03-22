@@ -26,11 +26,12 @@ describe('testRunner: remix-tests CLI', function(){
     it('remix-tests version', () => {
       const res = spawnSync(executablePath, ['-V'])
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      expect(res.stdout.toString().trim()).to.equal(require('../package.json').version)
+      expect(res.stdout.toString().trim()).to.equal(require('../package.json').version, `actual value: ${res.stdout.toString()}`)
     })
 
     it('remix-tests help', () => {
       const res = spawnSync(executablePath, ['-h'])
+      console.log(res.stdout.toString())
       const expectedHelp = `Usage: remix-tests [options] [command] <file_path>
 
 Arguments:
@@ -62,6 +63,7 @@ Commands:
       const res = spawnSync(executablePath, [resolve(__dirname + '/examples_0/assert_ok_test.sol')])
       //console.log(res.stdout.toString())
       // match initial lines
+      console.log(res.stdout.toString())
       expect(res.stdout.toString().trim()).to.match(/:: Running tests using remix-tests ::/)
       expect(res.stdout.toString().trim()).to.match(/creation of library remix_tests.sol:Assert pending.../)
       // match test result
