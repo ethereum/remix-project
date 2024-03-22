@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {Button, Dropdown, Form, Tooltip, OverlayTrigger} from 'react-bootstrap'
+import {FormattedMessage} from 'react-intl'
 import {loadRepo, resetAllWorkshop} from '../../actions'
 
 function RepoImporter({list, selectedRepo}: any): JSX.Element {
@@ -35,9 +36,10 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
     <>
       {selectedRepo.name && (
         <div className="container-fluid mb-3 small mt-3">
-          Tutorials from:
-          <h4 className="mb-1">{selectedRepo.name}</h4>
-          <span className="">Date modified: {new Date(selectedRepo.datemodified).toLocaleString()}</span>
+          <FormattedMessage id="learneth.tutorialsFrom" />: <h4 className="mb-1">{selectedRepo.name}</h4>
+          <span className="">
+            <FormattedMessage id="learneth.dateModified" />: {new Date(selectedRepo.datemodified).toLocaleString()}
+          </span>
         </div>
       )}
 
@@ -45,14 +47,16 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
         <div className="d-flex pr-2 pl-2">
           <i style={{width: 3}} className={`d-inline-block pt-1 fas fa-xs ${open ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
         </div>
-        <div className="d-flex">Import another tutorial repo</div>
+        <div className="d-flex">
+          <FormattedMessage id="learneth.importAnotherRepo" />
+        </div>
       </div>
 
       {open && (
         <div className="container-fluid">
           <Dropdown className="w-100">
             <Dropdown.Toggle className="btn btn-secondary w-100" id="dropdownBasic1">
-              Select a repo
+              <FormattedMessage id="learneth.selectARepo" />
             </Dropdown.Toggle>
             <Dropdown.Menu className="w-100">
               {list.map((item: any) => (
@@ -68,7 +72,7 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
             </Dropdown.Menu>
           </Dropdown>
           <div onClick={resetAll} className="small mb-3" style={{cursor: 'pointer'}}>
-            reset list
+            <FormattedMessage id="learneth.resetList" />
           </div>
         </div>
       )}
@@ -78,9 +82,16 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
           <Form onSubmit={importRepo}>
             <Form.Group className="form-group">
               <Form.Label className="mr-2" htmlFor="name">
-                REPO
+                <FormattedMessage id="learneth.repo" />
               </Form.Label>
-              <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">ie username/repository</Tooltip>}>
+              <OverlayTrigger
+                placement="right"
+                overlay={
+                  <Tooltip id="tooltip-right">
+                    <FormattedMessage id="learneth.userAndRepo" />
+                  </Tooltip>
+                }
+              >
                 <i className="fas fa-question-circle" />
               </OverlayTrigger>
               <Form.Control
@@ -91,7 +102,9 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
                 }}
                 value={name}
               />
-              <Form.Label htmlFor="branch">BRANCH</Form.Label>
+              <Form.Label htmlFor="branch">
+                <FormattedMessage id="learneth.branch" />
+              </Form.Label>
               <Form.Control
                 id="branch"
                 required
@@ -102,10 +115,10 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
               />
             </Form.Group>
             <Button className="btn btn-success start w-100" type="submit" disabled={!name || !branch}>
-              Import {name}
+              <FormattedMessage id="learneth.import" /> {name}
             </Button>
             <a href="https://github.com/bunsenstraat/remix-learneth-plugin/blob/master/README.md" className="d-none" target="_blank" rel="noreferrer">
-              <i className="fas fa-info-circle" /> how to setup your repo
+              <i className="fas fa-info-circle" /> <FormattedMessage id="learneth.howToSetupRepo" />
             </a>
           </Form>
         )}
