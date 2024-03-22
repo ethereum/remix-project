@@ -102,6 +102,9 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
           if (pathWithoutWorkingDir.startsWith('/')) {
             pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
           }
+          if (pathWithoutWorkingDir.startsWith('./')) {
+            pathWithoutWorkingDir = pathWithoutWorkingDir.slice(2)
+          }
           if (pathWithoutWorkingDir.startsWith('\\')) {
             pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
           }

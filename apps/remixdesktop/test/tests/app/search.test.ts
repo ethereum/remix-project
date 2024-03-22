@@ -57,7 +57,6 @@ module.exports = {
                 Array.isArray(res.value) && browser.assert.equal(res.value.length, 62)
             })
             .setValue('*[id="search_exclude"]', ',contracts/**').sendKeys('*[id="search_exclude"]', browser.Keys.ENTER).pause(4000)
-            .pause()
             .elements('css selector', '.search_plugin_search_line', (res) => {
                 Array.isArray(res.value) && browser.assert.equal(res.value.length, 56)
             })
@@ -171,18 +170,95 @@ module.exports = {
                 browser.assert.ok(content.includes("123test' contract"), 'should replace text ok')
             })
             .waitForElementVisible('*[data-id="undo-replace-README.txt"]')
-            .click('div[data-path="default_workspace/contracts/1_Storage.sol"]').pause(2000)
+            .click('div[data-path="/contracts/1_Storage.sol"]').pause(2000)
             .waitForElementVisible('*[data-id="undo-replace-contracts/1_Storage.sol"]')
             .click('*[data-id="undo-replace-contracts/1_Storage.sol"]').pause(2000)
             .getEditorValue((content) => {
                 browser.assert.ok(content.includes('contract Storage'), 'should undo text ok')
                 browser.assert.ok(content.includes('title Storage'), 'should undo text ok')
             })
-            .click('div[data-path="default_workspace/README.txt"]').pause(2000)
+            .click('div[data-path="/README.txt"]').pause(2000)
             .waitForElementVisible('*[data-id="undo-replace-README.txt"]')
             .click('*[data-id="undo-replace-README.txt"]').pause(2000)
             .getEditorValue((content) => {
                 browser.assert.ok(content.includes("Storage' contract"), 'should replace text ok')
             })
+    },
+    'Should hide button when edited content is the same #group2': function (browser: NightwatchBrowser) {
+        browser.refresh()
+            .waitForElementVisible('*[data-id="remixIdeSidePanel"]')
+            .addFile('test.sol', { content: '123' })
+            .pause(4000)
+            .click('*[plugin="search"]')
+            .waitForElementVisible('*[id="search_input"]')
+            .waitForElementVisible('*[data-id="toggle_replace"]')
+            .click('*[data-id="toggle_replace"]')
+            .clearValue('*[id="search_input"]')
+            .setValue('*[id="search_input"]', '123')
+            .sendKeys('*[id="search_input"]', browser.Keys.ENTER)
+            .waitForElementVisible('*[id="search_replace"]')
+            .clearValue('*[id="search_replace"]')
+            .setValue('*[id="search_replace"]', '456').pause(1000)
+            .click('*[data-id="confirm_replace_label"]').pause(500)
+            .waitForElementVisible('*[data-id="replace-all-test.sol"]')
+            .click('*[data-id="replace-all-test.sol"]').pause(2000)
+            .getEditorValue((content) => {
+                browser.assert.ok(content.includes('456'), 'should replace text ok')
+            }
+            )
+            .setEditorValue('123')
+            .getEditorValue((content) => {
+                browser.assert.ok(content.includes('123'), 'should have text ok')
+            }
+            ).pause(5000)
+            .waitForElementNotPresent('*[data-id="undo-replace-test.sol"]')
+    },
+    'Should disable/enable button when edited content changed #group2': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[id="search_input"]')
+            .clearValue('*[id="search_input"]')
+            .clearValue('*[id="search_input"]')
+            .setValue('*[id="search_input"]', '123').sendKeys('*[id="search_input"]', browser.Keys.ENTER)
+            .clearValue('*[id="search_replace"]')
+            .setValue('*[id="search_replace"]', 'replaced').pause(1000)
+            .waitForElementVisible('*[data-id="replace-all-test.sol"]')
+            .click('*[data-id="replace-all-test.sol"]').pause(2000)
+            .getEditorValue((content) => {
+                browser.assert.ok(content.includes('replaced'), 'should replace text ok')
+            }
+            )
+            .setEditorValue('changed')
+            .getEditorValue((content) => {
+                browser.assert.ok(content.includes('changed'), 'should have text ok')
+            }
+            ).pause(5000)
+            .waitForElementVisible('*[data-id="undo-replace-test.sol"]')
+            .getAttribute('[data-id="undo-replace-test.sol"]', 'disabled', (result) => {
+                browser.assert.equal(result.value, 'true', 'should be disabled')
+            })
+            .setEditorValue('replaced')
+            .getEditorValue((content) => {
+                browser.assert.ok(content.includes('replaced'), 'should have text ok')
+            }
+            ).pause(1000)
+            .waitForElementVisible('*[data-id="undo-replace-test.sol"]')
+            .getAttribute('[data-id="undo-replace-test.sol"]', 'disabled', (result) => {
+                browser.assert.equal(result.value, null, 'should not be disabled')
+            })
+            .click('*[data-id="undo-replace-test.sol"]').pause(2000)
+            .getEditorValue((content) => {
+                browser.assert.ok(content.includes('123'), 'should have text ok')
+            })
+            .waitForElementNotPresent('*[data-id="undo-replace-test.sol"]')
+    },
+
+    'should clear search #group2': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[id="search_input"]')
+            .setValue('*[id="search_input"]', 'nodata').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(1000)
+            .elements('css selector', '.search_plugin_search_line', (res) => {
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 0)
+            })
     }
+
 }
