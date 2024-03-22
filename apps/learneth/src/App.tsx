@@ -8,7 +8,7 @@ import HomePage from './pages/Home'
 import StepListPage from './pages/StepList'
 import StepDetailPage from './pages/StepDetail'
 import {appInitialState, appReducer} from './reducers/state'
-import {updateState, initDispatch, connectRemix} from './actions'
+import {updateState, initDispatch, connectRemix, repoMap, loadRepo} from './actions'
 import {AppContext} from './contexts'
 import remixClient from './remix-client'
 import 'react-toastify/dist/ReactToastify.css'
@@ -53,6 +53,7 @@ function App(): JSX.Element {
       // @ts-ignore
       remixClient.on('locale', 'localeChanged', (locale: any) => {
         setLocale(locale)
+        loadRepo(repoMap[locale.code] || repoMap.en)
       })
     })
   }, [])
@@ -61,6 +62,7 @@ function App(): JSX.Element {
       value={{
         dispatch,
         appState,
+        localeCode: locale.code,
       }}
     >
       <IntlProvider locale={locale.code} messages={locale.messages}>
