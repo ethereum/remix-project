@@ -319,7 +319,7 @@ module.exports = {
       .execute(() => {
         (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkEvmType"]') as any).focus()
       }, [], () => { })
-      .click('*[data-id="CustomForkEvmType"] [value="merge"]')
+      .click('*[data-id="CustomForkEvmType"] [value="cancun"]')
       .pause(5000)
       .modalFooterOKClick('vm-custom-fork')
       .waitForElementPresent({

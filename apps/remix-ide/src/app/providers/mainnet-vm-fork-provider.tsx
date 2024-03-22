@@ -8,16 +8,16 @@ export class MainnetForkVMProvider extends BasicVMProvider {
     super(
       {
         name: 'vm-mainnet-fork',
-        displayName: 'Mainet fork -Remix VM (London)',
+        displayName: 'Mainnet fork - Remix VM (Cancun)',
         kind: 'provider',
-        description: 'Remix VM (London)',
+        description: 'Remix VM (Cancun)',
         methods: ['sendAsync', 'init'],
         version: packageJson.version
       },
       blockchain
     )
     this.blockchain = blockchain
-    this.fork = 'shanghai'
+    this.fork = 'cancun'
     this.nodeUrl = 'https://go.getblock.io/56f8bc5187aa4ac696348f67545acf38'
     this.blockNumber = 'latest'
   }
