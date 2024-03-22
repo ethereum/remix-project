@@ -62,7 +62,7 @@ let requiredModules = [ // services + layout views + system views
   'vm-goerli-fork',
   'vm-mainnet-fork',
   'vm-sepolia-fork',
-  'vm-merge',
+  'vm-paris',
   'vm-london',
   'vm-berlin',
   'vm-shanghai',

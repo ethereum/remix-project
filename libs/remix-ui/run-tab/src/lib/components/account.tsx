@@ -34,7 +34,7 @@ export function AccountUI(props: AccountProps) {
       })
       break
 
-    case 'vm-merge':
+    case 'vm-paris':
       setPlusOpt({
         classList: '',
         title: intl.formatMessage({id: 'udapp.createNewAccount'})
