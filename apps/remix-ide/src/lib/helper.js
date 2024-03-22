@@ -1,5 +1,5 @@
 var async = require('async')
-import { toChecksumAddress } from '@ethereumjs/util'
+import { toChecksumAddress, bytesToHex } from '@ethereumjs/util'
 
 export default  {
   shortenAddress: function (address, etherBalance) {
@@ -9,7 +9,7 @@ export default  {
   addressToString: function (address) {
     if (!address) return null
     if (typeof address !== 'string') {
-      address = address.toString('hex')
+      address = bytesToHex(address)
     }
     if (address.indexOf('0x') === -1) {
       address = '0x' + address

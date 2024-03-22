@@ -1,27 +1,26 @@
 import { keccak224, keccak384, keccak256 as k256, keccak512 } from 'ethereum-cryptography/keccak'
 const createHash = require('create-hash')
 import { encode, Input } from 'rlp'
-import { toBuffer, setLengthLeft, isHexString } from '@ethereumjs/util'
+import { toBytes, setLengthLeft, isHexString } from '@ethereumjs/util'
 
 /**
- * Creates Keccak hash of a Buffer input
- * @param a The input data (Buffer)
+ * Creates Keccak hash of a Uint8Array input
+ * @param a The input data (Uint8Array)
  * @param bits (number = 256) The Keccak width
  */
-export const keccak = function(a: Buffer, bits: number = 256): Buffer {
-  assertIsBuffer(a)
+export const keccak = function(a: Uint8Array, bits: number = 256): Uint8Array {
   switch (bits) {
   case 224: {
-    return toBuffer(keccak224(a))
+    return toBytes(keccak224(Buffer.from(a)))
   }
   case 256: {
-    return toBuffer(k256(a))
+    return toBytes(k256(Buffer.from(a)))
   }
   case 384: {
-    return toBuffer(keccak384(a))
+    return toBytes(keccak384(Buffer.from(a)))
   }
   case 512: {
-    return toBuffer(keccak512(a))
+    return toBytes(keccak512(Buffer.from(a)))
   }
   default: {
     throw new Error(`Invalid algorithm: keccak${bits}`)
@@ -33,7 +32,7 @@ export const keccak = function(a: Buffer, bits: number = 256): Buffer {
  * Creates Keccak-256 hash of the input, alias for keccak(a, 256).
  * @param a The input data (Buffer)
  */
-export const keccak256 = function(a: Buffer): Buffer {
+export const keccak256 = function(a: Buffer): Uint8Array {
   return keccak(a)
 }
 
@@ -55,7 +54,7 @@ export const keccakFromString = function(a: string, bits: number = 256) {
  */
 export const keccakFromHexString = function(a: string, bits: number = 256) {
   assertIsHexString(a)
-  return keccak(toBuffer(a), bits)
+  return keccak(Buffer.from(toBytes(a)), bits)
 }
 
 /**
@@ -65,7 +64,7 @@ export const keccakFromHexString = function(a: string, bits: number = 256) {
  */
 export const keccakFromArray = function(a: number[], bits: number = 256) {
   assertIsArray(a)
-  return keccak(toBuffer(a), bits)
+  return keccak(Buffer.from(toBytes(a)), bits)
 }
 
 /**
@@ -73,7 +72,7 @@ export const keccakFromArray = function(a: number[], bits: number = 256) {
  * @param  a The input data (Buffer|Array|String)
  */
 const _sha256 = function(a: any): Buffer {
-  a = toBuffer(a)
+  a = toBytes(a)
   return createHash('sha256')
     .update(a)
     .digest()
@@ -112,12 +111,12 @@ export const sha256FromArray = function(a: number[]): Buffer {
  * @param padded Whether it should be padded to 256 bits or not
  */
 const _ripemd160 = function(a: any, padded: boolean): Buffer {
-  a = toBuffer(a)
+  a = toBytes(a)
   const hash = createHash('rmd160')
     .update(a)
     .digest()
   if (padded === true) {
-    return setLengthLeft(hash, 32)
+    return Buffer.from(setLengthLeft(hash, 32))
   } else {
     return hash
   }
@@ -158,7 +157,7 @@ export const ripemd160FromArray = function(a: number[], padded: boolean): Buffer
  * @param a The input data
  */
 export const rlphash = function(a: Input): Buffer {
-  return keccak(Buffer.from(encode(a)))
+  return Buffer.from(keccak(Buffer.from(encode(a))))
 }
 
 /**

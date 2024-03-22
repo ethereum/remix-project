@@ -1,7 +1,9 @@
 'use strict'
 import { hash } from '@remix-project/remix-lib'
-import { bufferToHex, setLengthLeft, toBuffer, addHexPrefix } from '@ethereumjs/util'
+import { bytesToHex, setLengthLeft, toBytes, addHexPrefix } from '@ethereumjs/util'
 import stringSimilarity from 'string-similarity'
+import { BN } from 'bn.js'
+import { isBigInt } from 'web3-validator'
 
 /*
  contains misc util: @TODO should be split
@@ -58,7 +60,7 @@ export function toHexPaddedString(v: bigint | string): string {
   ints: ints: IntArray
 */
 export function formatMemory (mem) {
-  const hexMem = bufferToHex(mem).substr(2)
+  const hexMem = bytesToHex(mem).substr(2)
   const ret = []
   for (let k = 0; k < hexMem.length; k += 32) {
     const row = hexMem.substr(k, 32)
@@ -152,9 +154,15 @@ export function buildCallPath (index, rootCall) {
   */
 // eslint-disable-next-line camelcase
 export function sha3_256 (value) {
-  value = toBuffer(addHexPrefix(value))
-  const retInBuffer: Buffer = hash.keccak(setLengthLeft(value, 32))
-  return bufferToHex(retInBuffer)
+  if ((value.constructor && value.constructor.name === 'BigNumber') || BN.isBN(value) || isBigInt(value)) {
+    value = value.toString(16)
+  }
+  if (typeof value === 'number') {
+    value = value.toString(16)
+  }
+  value = toBytes(addHexPrefix(value))
+  const retInBuffer: Uint8Array = hash.keccak(Buffer.from(setLengthLeft(value, 32)))
+  return bytesToHex(retInBuffer)
 }
 
 /**

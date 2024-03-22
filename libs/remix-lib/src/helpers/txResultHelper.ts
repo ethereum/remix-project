@@ -1,14 +1,34 @@
 'use strict'
-import { bufferToHex } from '@ethereumjs/util'
+import { bytesToHex } from '@ethereumjs/util'
 import { isHexString } from 'ethjs-util'
+import { BN } from 'bn.js'
+import { isBigInt } from 'web3-validator'
 
 function convertToPrefixedHex (input) {
   if (input === undefined || input === null || isHexString(input)) {
     return input
-  } else if (Buffer.isBuffer(input)) {
-    return bufferToHex(input)
   }
-  return '0x' + input.toString(16)
+  if ((input.constructor && input.constructor.name === 'BigNumber') 
+      || BN.isBN(input) 
+      || isBigInt(input)
+      || typeof input === 'number') {
+    return '0x' + input.toString(16)
+  }
+  
+  try {
+    return bytesToHex(input)
+  } catch (e) {
+    console.log(e)
+  }
+
+  try {
+    // BigNumber
+    return '0x' + input.toString(16)
+  } catch (e) {
+    console.log(e)
+  } 
+
+  return input
 }
 
 /*
@@ -34,10 +54,10 @@ export function resultToRemixTx (txResult, execResult?) {
 
   return {
     transactionHash,
-    status,
+    status: convertToPrefixedHex(status),
     gasUsed: convertToPrefixedHex(gasUsed),
     error: errorMessage,
-    return: convertToPrefixedHex(returnValue),
+    return: returnValue ? convertToPrefixedHex(returnValue) : undefined,
     createdAddress: convertToPrefixedHex(contractAddress)
   }
 }
