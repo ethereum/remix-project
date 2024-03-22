@@ -2,6 +2,7 @@ import React, {useContext, useEffect} from 'react'
 import {useLocation, useNavigate} from 'react-router-dom'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
+import {FormattedMessage} from 'react-intl'
 import BackButton from '../../components/BackButton'
 import {AppContext} from '../../contexts'
 import {displayFile, showAnswer, testStep} from '../../actions'
@@ -55,7 +56,7 @@ function StepDetailPage() {
               displayFile(step)
             }}
           >
-            Load the file
+            <FormattedMessage id="learneth.loadFile" />
           </button>
           <div className="mb-4"></div>
         </>
@@ -78,7 +79,7 @@ function StepDetailPage() {
                   displayFile(step)
                 }}
               >
-                Load the file
+                <FormattedMessage id="learneth.loadFile" />
               </button>
             ) : (
               <>
@@ -90,7 +91,7 @@ function StepDetailPage() {
                         testStep(step)
                       }}
                     >
-                      Check Answer
+                      <FormattedMessage id="learneth.checkAnswer" />
                     </button>
                     {step.answer?.content && (
                       <button
@@ -99,7 +100,7 @@ function StepDetailPage() {
                           showAnswer(step)
                         }}
                       >
-                        Show answer
+                        <FormattedMessage id="learneth.showAnswer" />
                       </button>
                     )}
                   </>
@@ -113,7 +114,7 @@ function StepDetailPage() {
                             navigate(stepId === steps.length - 1 ? `/list?id=${id}` : `/detail?id=${id}&stepId=${stepId + 1}`)
                           }}
                         >
-                          Next
+                          <FormattedMessage id="learneth.next" />
                         </button>
                         {step.answer?.content && (
                           <button
@@ -122,7 +123,7 @@ function StepDetailPage() {
                               showAnswer(step)
                             }}
                           >
-                            Show answer
+                            <FormattedMessage id="learneth.showAnswer" />
                           </button>
                         )}
                       </>
@@ -139,20 +140,20 @@ function StepDetailPage() {
                 navigate(stepId === steps.length - 1 ? `/list?id=${id}` : `/detail?id=${id}&stepId=${stepId + 1}`)
               }}
             >
-              Next
+              <FormattedMessage id="learneth.next" />
             </button>
           )}
           <div id="errors">
             {success && (
               <div className="alert rounded-0 alert-success mb-0 mt-0" role="alert">
-                Well done! No errors.
+                <FormattedMessage id="learneth.wellDone" />
               </div>
             )}
             {errors.length > 0 && (
               <>
                 {!success && (
                   <div className="alert rounded-0 alert-danger mb-0 mt-0" role="alert">
-                    Errors
+                    <FormattedMessage id="learneth.errors" />
                   </div>
                 )}
                 {errors.map((error: string, index: number) => (
@@ -174,7 +175,7 @@ function StepDetailPage() {
                   showAnswer(step)
                 }}
               >
-                Show answer
+                <FormattedMessage id="learneth.showAnswer" />
               </button>
             )}
           </nav>
@@ -185,7 +186,7 @@ function StepDetailPage() {
                 navigate(`/detail?id=${id}&stepId=${stepId + 1}`)
               }}
             >
-              Next
+              <FormattedMessage id="learneth.next" />
             </button>
           )}
           {stepId === steps.length - 1 && (
@@ -195,7 +196,7 @@ function StepDetailPage() {
                 navigate(`/list?id=${id}`)
               }}
             >
-              Finish tutorial
+              <FormattedMessage id="learneth.finishTutorial" />
             </button>
           )}
         </>

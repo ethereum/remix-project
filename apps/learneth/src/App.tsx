@@ -1,6 +1,7 @@
-import React, {useEffect, useReducer} from 'react'
+import React, {useEffect, useReducer, useState} from 'react'
 import {createHashRouter, RouterProvider} from 'react-router-dom'
 import {ToastContainer} from 'react-toastify'
+import {IntlProvider} from 'react-intl'
 import LoadingScreen from './components/LoadingScreen'
 import LogoPage from './pages/Logo'
 import HomePage from './pages/Home'
@@ -9,6 +10,7 @@ import StepDetailPage from './pages/StepDetail'
 import {appInitialState, appReducer} from './reducers/state'
 import {updateState, initDispatch, connectRemix} from './actions'
 import {AppContext} from './contexts'
+import remixClient from './remix-client'
 import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
 
@@ -32,6 +34,10 @@ export const router = createHashRouter([
 ])
 
 function App(): JSX.Element {
+  const [locale, setLocale] = useState<{code: string; messages: any}>({
+    code: 'en',
+    messages: null,
+  })
   const [appState, dispatch] = useReducer(appReducer, appInitialState)
   useEffect(() => {
     updateState(appState)
@@ -39,7 +45,16 @@ function App(): JSX.Element {
   useEffect(() => {
     initDispatch(dispatch)
     updateState(appState)
-    connectRemix()
+    connectRemix().then(() => {
+      // @ts-ignore
+      remixClient.call('locale', 'currentLocale').then((locale: any) => {
+        setLocale(locale)
+      })
+      // @ts-ignore
+      remixClient.on('locale', 'localeChanged', (locale: any) => {
+        setLocale(locale)
+      })
+    })
   }, [])
   return (
     <AppContext.Provider
@@ -48,9 +63,11 @@ function App(): JSX.Element {
         appState,
       }}
     >
-      <RouterProvider router={router} />
-      <LoadingScreen />
-      <ToastContainer position="bottom-right" newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover autoClose={false} theme="colored" />
+      <IntlProvider locale={locale.code} messages={locale.messages}>
+        <RouterProvider router={router} />
+        <LoadingScreen />
+        <ToastContainer position="bottom-right" newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover autoClose={false} theme="colored" />
+      </IntlProvider>
     </AppContext.Provider>
   )
 }
