@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import {isVyper, compile, toStandardOutput, isCompilationError, remixClient, normalizeContractPath, compileContract} from '../utils'
+import {isVyper, compile, toStandardOutput, isCompilationError, remixClient, normalizeContractPath, compileContract, RemixClient} from '../utils'
 import Button from 'react-bootstrap/Button'
 
 interface Props {
@@ -8,9 +8,10 @@ interface Props {
   output?: any
   setOutput: (name: string, output: any) => void
   resetCompilerState: () => void
+  remixClient: RemixClient
 }
 
-function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState, output}: Props) {
+function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState, output, remixClient}: Props) {
   const [loadingSpinner, setLoadingSpinnerState] = useState(false)
 
   if (!contract || !contract) {
