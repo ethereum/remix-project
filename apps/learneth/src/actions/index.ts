@@ -10,6 +10,17 @@ let dispatch, state
 // const apiUrl = 'http://localhost:3001';
 const apiUrl = 'https://static.220.14.12.49.clients.your-server.de:3000'
 
+export const repoMap = {
+  en: {
+    name: 'ethereum/remix-workshops',
+    branch: 'master',
+  },
+  zh: {
+    name: 'PlanckerLabs/remix-workshops',
+    branch: 'zh',
+  },
+}
+
 export const initDispatch = (_dispatch) => {
   dispatch = _dispatch
 }
@@ -18,7 +29,7 @@ export const updateState = (_state) => {
   state = _state
 }
 
-export const initWorkshop = async () => {
+export const initWorkshop = async (code) => {
   const cache = localStorage.getItem('workshop.state')
 
   if (cache) {
@@ -28,10 +39,7 @@ export const initWorkshop = async () => {
       payload: workshopState,
     })
   } else {
-    await loadRepo({
-      name: 'ethereum/remix-workshops',
-      branch: 'master',
-    })
+    await loadRepo(repoMap[code])
   }
 }
 
@@ -136,7 +144,7 @@ export const loadRepo = async (payload) => {
   }
 }
 
-export const resetAllWorkshop = async () => {
+export const resetAllWorkshop = async (code) => {
   await dispatch({
     type: 'SET_WORKSHOP',
     payload: {
@@ -148,7 +156,7 @@ export const resetAllWorkshop = async () => {
 
   localStorage.removeItem('workshop.state')
 
-  await initWorkshop()
+  await initWorkshop(code)
 }
 
 export const connectRemix = async () => {

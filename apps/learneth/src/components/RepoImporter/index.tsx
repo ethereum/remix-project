@@ -1,12 +1,14 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import {Button, Dropdown, Form, Tooltip, OverlayTrigger} from 'react-bootstrap'
 import {FormattedMessage} from 'react-intl'
 import {loadRepo, resetAllWorkshop} from '../../actions'
+import {AppContext} from '../../contexts'
 
 function RepoImporter({list, selectedRepo}: any): JSX.Element {
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [branch, setBranch] = useState('')
+  const {localeCode} = useContext(AppContext)
 
   useEffect(() => {
     setName(selectedRepo.name)
@@ -27,7 +29,7 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
   }
 
   const resetAll = () => {
-    resetAllWorkshop()
+    resetAllWorkshop(localeCode)
     setName('')
     setBranch('')
   }

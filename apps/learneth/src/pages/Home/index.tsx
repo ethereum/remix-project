@@ -16,7 +16,7 @@ function HomePage(): JSX.Element {
     setOpenKeys(isOpen(key) ? openKeys.filter((item) => item !== key) : [...openKeys, key])
   }
 
-  const {appState} = useContext(AppContext)
+  const {appState, localeCode} = useContext(AppContext)
   const {list, detail, selectedId} = appState.workshop
 
   const selectedRepo = detail[selectedId]
@@ -28,7 +28,7 @@ function HomePage(): JSX.Element {
   }
 
   useEffect(() => {
-    initWorkshop()
+    initWorkshop(localeCode)
   }, [])
 
   return (
