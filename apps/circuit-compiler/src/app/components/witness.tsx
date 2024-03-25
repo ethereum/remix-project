@@ -12,10 +12,20 @@ export function WitnessSection ({ plugin, signalInputs, status }: {plugin: Circo
   const handleSignalInput = (e: any) => {
     let value = e.target.value
 
-    try {
-      value = remixLib.execution.txFormat.parseFunctionParams(value)
-    } catch (e) {
+    if (value.startsWith('[') && value.endsWith(']')) {
+      try {
+        value = remixLib.execution.txFormat.parseFunctionParams(value)
+      } catch (e) {
       // do nothing
+      }
+    } else if (value.startsWith('[') && !value.endsWith(']')) {
+      // do nothing
+    } else {
+      try {
+        value = remixLib.execution.txFormat.parseFunctionParams(value)
+      } catch (e) {
+      // do nothing
+      }
     }
     setWitnessValues({
       ...witnessValues,
