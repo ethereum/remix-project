@@ -94,8 +94,9 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
 
         const stream = byline(rg.stdout.setEncoding('utf8'))
         stream.on('data', (rgresult: string) => {
-          console.log('rgresult', rgresult)
-          let pathWithoutWorkingDir = rgresult.replace(convertPathToPosix(this.workingDir), '')
+          console.log('rgresult', rgresult, convertPathToPosix(this.workingDir), convertPathToPosix(rgresult))
+          let pathWithoutWorkingDir = convertPathToPosix(rgresult).replace(convertPathToPosix(this.workingDir), '')
+          console.log(pathWithoutWorkingDir)
           if (pathWithoutWorkingDir.endsWith('/')) {
             pathWithoutWorkingDir = pathWithoutWorkingDir.slice(0, -1)
           }
@@ -109,11 +110,11 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
             pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
           }
           resultrg.push({
-            path: convertPathToPosix(pathWithoutWorkingDir),
+            path: pathWithoutWorkingDir,
             isDirectory: false,
           })
         })
-        stream.on('end', () => {
+        stream.on('end', () => { 
           c(resultrg)
         })
       })
