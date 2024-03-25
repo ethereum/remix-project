@@ -54,6 +54,7 @@ module.exports = {
     globals_path: '',
     test_settings: {
       default: {
+        enable_fail_fast: true,
         selenium_port: 4444,
         selenium_host: 'localhost',
         globals: {
