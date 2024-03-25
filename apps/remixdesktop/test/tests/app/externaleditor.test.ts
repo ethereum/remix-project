@@ -40,6 +40,7 @@ const testsBash = {
         const actions = this.actions({async: true})
         return actions.sendKeys('cat example.txt').sendKeys(this.Keys.ENTER)
       })
+      .pause(1000)
       .getText(
         {
           selector: "//*[@data-type='remixUIXT' and @data-active='1']",
