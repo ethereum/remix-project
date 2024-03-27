@@ -92,7 +92,7 @@ addRepository(repoName, branch)
 startTutorial(repoName,branch,id)
 ```
 
-You don't need to add a seperate addRepository before calling startTutorial, this call will also add the repo.
+You don't need to add a separate addRepository before calling startTutorial, this call will also add the repo.
 
 _Parameters_
 
@@ -117,7 +117,7 @@ tags:
 ```
 (function ()  {
 try {
-    // You don't need to add a seperate addRepository before calling startTutorial, this is just an example
+    // You don't need to add a separate addRepository before calling startTutorial, this is just an example
     remix.call('LearnEth', 'addRepository', "ethereum/remix-workshops", "master")
     remix.call('LearnEth', 'startTutorial', "ethereum/remix-workshops", "master", "basics")
     remix.call('LearnEth', 'startTutorial', "ethereum/remix-workshops", "master", 2)

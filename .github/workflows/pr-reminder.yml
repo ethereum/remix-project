@@ -14,4 +14,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        freeze-date: '2024-03-25T18:00:00Z'
+        freeze-date: '2024-04-08T18:00:00Z'
