@@ -766,7 +766,8 @@ workflows:
           requires:
             - build-desktop
           matrix:
-            parameters: ["arm64", "x64"]
+            parameters: 
+              arch: ["arm64", "x64"]
       - build-remixdesktop-windows:
           requires:
             - build-desktop
