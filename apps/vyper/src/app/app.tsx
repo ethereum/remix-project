@@ -47,6 +47,7 @@ const App = () => {
       try {
         await remixClient.loaded()
         remixClient.onFileChange((name) => {
+          !name.endsWith('.vy') && remixClient.changeStatus({ key: 'none' })
           setOutput({})
           setContract(name)
         })
@@ -161,7 +162,7 @@ const App = () => {
           in the .vy file.
         </span>
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
-          <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} resetCompilerState={resetCompilerResultState} />
+          <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} resetCompilerState={resetCompilerResultState} output={output} remixClient={remixClient}/>
         </div>
 
         <article id="result" className="p-2 mx-3 border-top mt-2">
