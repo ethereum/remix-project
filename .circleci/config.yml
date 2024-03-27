@@ -441,7 +441,7 @@ jobs:
             yarn installRipGrepMacOX<< parameters.arch >>
             PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false yarn dist --<< parameters.arch >>
             cat release/latest-mac.yml
-            cp release/latest-mac.yml release/latest-mac-<< parameters.arch >>.yml 
+            mv release/latest-mac.yml release/latest-mac-<< parameters.arch >>.yml 
       - run:
           name: Notarize the app
           command: |
