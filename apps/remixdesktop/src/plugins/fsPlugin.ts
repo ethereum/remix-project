@@ -258,7 +258,7 @@ class FSPluginClient extends ElectronBasePluginClient {
         depth: 0,
       })
       .on('all', async (eventName, path, stats) => {
-        this.watcherExec(eventName, path)
+        this.watcherExec(eventName, convertPathToPosix(path))
       })
       .on('error', (error) => {
         watcher.close()
@@ -295,7 +295,6 @@ class FSPluginClient extends ElectronBasePluginClient {
     } else {
       try {
         const dirname = path.dirname(pathWithoutPrefix)
-        //console.log('check emitting', eventName, pathWithoutPrefix, this.expandedPaths, dirname)
         if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
           //console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
           //this.emit('change', eventName, pathWithoutPrefix)
@@ -390,7 +389,7 @@ class FSPluginClient extends ElectronBasePluginClient {
     }
     path = dirs && dirs.length && dirs[0] ? dirs[0] : path
     if (!path) return
-    this.workingDir = path
+    this.workingDir = convertPathToPosix(path)
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
     this.window.setTitle(this.workingDir)
@@ -400,7 +399,7 @@ class FSPluginClient extends ElectronBasePluginClient {
 
   async setWorkingDir(path: string): Promise<void> {
     console.log('setWorkingDir', path)
-    this.workingDir = path
+    this.workingDir = convertPathToPosix(path)
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
     this.window.setTitle(getBaseName(this.workingDir))
@@ -466,7 +465,7 @@ export class FSPluginClientE2E extends FSPluginClient {
   async openFolderInSameWindow(dir?: string): Promise<void> {
     dir = await this.selectFolder(dir)
     if (!dir) return
-    this.workingDir = dir
+    this.workingDir = convertPathToPosix(dir)
     await this.updateRecentFolders(dir)
     await this.updateOpenedFolders(dir)
     this.window.setTitle(this.workingDir)
