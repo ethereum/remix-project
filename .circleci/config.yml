@@ -762,12 +762,12 @@ workflows:
       - build-remixdesktop-mac:
           requires:
             - build-desktop
-      - test-remixdesktop-mac:
-          requires:
-            - build-desktop
           matrix:
             parameters: 
               arch: ["arm64", "x64"]
+      - test-remixdesktop-mac:
+          requires:
+            - build-desktop
       - build-remixdesktop-windows:
           requires:
             - build-desktop
