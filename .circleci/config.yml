@@ -388,6 +388,9 @@ jobs:
     resource_class:
         macos.m1.large.gen1
     working_directory: ~/remix-project
+        parameters:
+      arch:
+        type: string
     steps:
       - checkout
       - attach_workspace:
@@ -435,17 +438,10 @@ jobs:
           command: |
             nvm use 20
             cd apps/remixdesktop
-            yarn installRipGrepMacOXarm64
-            PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false yarn dist --arm64
+            yarn installRipGrepMacOX<< parameters.arch >>
+            PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false yarn dist --<< parameters.arch >>
             cat release/latest-mac.yml
-            cp release/latest-mac.yml release/latest-mac-arm64.yml
-      - run:  
-          command: |
-            nvm use 20
-            cd apps/remixdesktop
-            yarn installRipGrepMacOXx64
-            PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false yarn dist --x64    
-            cat release/latest-mac.yml   
+            cp release/latest-mac.yml release/latest-mac-<< parameters.arch >>.yml 
       - run:
           name: Notarize the app
           command: |
@@ -769,6 +765,8 @@ workflows:
       - test-remixdesktop-mac:
           requires:
             - build-desktop
+          matrix:
+            paramaters: ["arm64", "x64"]
       - build-remixdesktop-windows:
           requires:
             - build-desktop
