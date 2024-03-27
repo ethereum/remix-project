@@ -76,31 +76,33 @@ const testsWindows = {
       .pause(1000)
       .perform(function () {
         const actions = this.actions({async: true})
-        return actions.sendKeys('New-Item -ItemType Directory -Name "dir" && Set-Location -Path "./dir" && "test" | Out-File -FilePath example.txt').sendKeys(this.Keys.ENTER)
+        return actions.sendKeys('New-Item -ItemType Directory -Name "dir" ; Set-Location -Path "./dir" ; Add-Content -Path "example.txt" -Value "test" -Encoding UTF8').sendKeys(this.Keys.ENTER)
       })
+      .pause(1000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemdir"]', 10000)
       .openFile('dir')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemdir/example.txt"]', 10000)
-      .openFile('dir/example.txt')
+      .openFile('dir/example.txt').pause(1000)
       .getEditorValue((result) => {
-        browser.assert.equal(result, 'test\n')
+        browser.assert.equal(result, 'test\r\n')
       })
-      .waitForElementVisible('*[data-type="remixUIXT"]', 10000)
-      .click('*[data-type="remixUIXT"]')
+      .pause(1000)
+      .waitForElementVisible("[data-active='1'][data-type='remixUIXT']", 10000)
+      .click("[data-active='1'][data-type='remixUIXT']")
       .perform(function () {
         const actions = this.actions({async: true})
-        return actions.sendKeys('"123" | Out-File -FilePath "example.txt" -Append').sendKeys(this.Keys.ENTER)
+        return actions.sendKeys('Add-Content -Path "example.txt" -Value "123" -Encoding UTF8').sendKeys(this.Keys.ENTER)
       })
       .pause(1000)
       .getEditorValue((result) => {
-        browser.assert.equal(result, 'test\n123\n')
+        browser.assert.equal(result, 'test\r\n123\r\n')
       })
       .setEditorValue('somethinginthere')
       .pause(1000)
       .perform(function () {
         const actions = this.actions({async: true})
         return actions.sendKeys('Get-Content example.txt').sendKeys(this.Keys.ENTER)
-      })
+      }).pause(1000)
       .getText(
         {
           selector: "//*[@data-type='remixUIXT' and @data-active='1']",
