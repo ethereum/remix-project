@@ -173,10 +173,10 @@ async function main() {
   let files = await readReleaseFilesFromLocalDirectory()
 
   try {
-    if (fs.existsSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml')) && fs.existsSync(path.join(__dirname, '../../../release', 'latest-mac.yml'))) {
+    if (fs.existsSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml')) && fs.existsSync(path.join(__dirname, '../../../release', 'latest-mac-x64.yml'))) {
       // combine the two files
       const macArm64 = fs.readFileSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml'), 'utf8')
-      const mac = fs.readFileSync(path.join(__dirname, '../../../release', 'latest-mac.yml'), 'utf8')
+      const mac = fs.readFileSync(path.join(__dirname, '../../../release', 'latest-mac-x64.yml'), 'utf8')
       const parsedMacArm64 = YAML.parse(macArm64)
       const parsedMac = YAML.parse(mac)
       console.log(parsedMacArm64)
@@ -193,6 +193,7 @@ async function main() {
       fs.writeFileSync(path.join(__dirname, '../../../release', 'latest-mac.yml'), newYml)
       // remove the arm64 file
       fs.unlinkSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml'))
+      fs.unlinkSync(path.join(__dirname, '../../../release', 'latest-mac-x64.yml'))
     }
   } catch (e) {
     console.log(e)
