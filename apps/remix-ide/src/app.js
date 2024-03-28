@@ -37,15 +37,6 @@ import {HardhatProvider} from './app/providers/hardhat-provider'
 import {GanacheProvider} from './app/providers/ganache-provider'
 import {FoundryProvider} from './app/providers/foundry-provider'
 import {ExternalHttpProvider} from './app/providers/external-http-provider'
-
-/*
-import {InjectedProviderTrustWallet} from './app/providers/injected-provider-trustwallet'
-import {Injected0ptimismProvider} from './app/providers/injected-optimism-provider'
-import {InjectedArbitrumOneProvider} from './app/providers/injected-arbitrum-one-provider'
-import {InjectedEphemeryTestnetProvider} from './app/providers/injected-ephemery-testnet-provider'
-import {InjectedSKALEChaosTestnetProvider} from './app/providers/injected-skale-chaos-testnet-provider'
-*/
-
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
@@ -271,7 +262,7 @@ class AppComponent {
     const ganacheProvider = new GanacheProvider(blockchain)
     const foundryProvider = new FoundryProvider(blockchain)
     const externalHttpProvider = new ExternalHttpProvider(blockchain)
-   // ----------------- convert offset to line/column service -----------
+    // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
       api: offsetToLineColumnConverter,
