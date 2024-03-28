@@ -1,10 +1,9 @@
-import {PluginClient} from '@remixproject/plugin'
-import {Profile} from '@remixproject/plugin-utils'
-import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
+import { Profile } from '@remixproject/plugin-utils'
+import { ElectronBasePlugin, ElectronBasePluginClient } from '@remixproject/plugin-electron'
 import path from 'path'
-import {rgPath} from '@vscode/ripgrep'
+import { rgPath } from '@vscode/ripgrep'
 import byline from 'byline'
-import {spawn} from 'child_process'
+import { spawn } from 'child_process'
 import { SearchInWorkspaceOptions } from '../lib'
 
 const profile: Profile = {
@@ -69,14 +68,14 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
       if (opts && opts.include) {
         for (const include of opts.include) {
           if (include !== '') {
-            globs.push('--glob=' + include)
+            globs.push('--glob=' + include + '')
           }
         }
       }
       if (opts && opts.exclude) {
         for (const exclude of opts.exclude) {
           if (exclude !== '') {
-            globs.push('--glob=!=' + exclude)
+            globs.push('--glob=!' + exclude + '')
           }
         }
       }
@@ -85,29 +84,37 @@ export class RipgrepPluginClient extends ElectronBasePluginClient {
         // replace packed app path with unpacked app path for release on windows
 
         const customRgPath = rgPath.includes('app.asar.unpacked') ? rgPath : rgPath.replace('app.asar', 'app.asar.unpacked')
+        console.log('customRgPath', [...globs, ...args, opts.pattern, '.'], path)
+        const rg = spawn(customRgPath, [...globs, ...args, opts.pattern, '.'], {
+          cwd: path
+        });
 
-        const rg = spawn(customRgPath, [...globs, ...args,  opts.pattern, path])
 
         const resultrg: any[] = []
 
         const stream = byline(rg.stdout.setEncoding('utf8'))
         stream.on('data', (rgresult: string) => {
-          let pathWithoutWorkingDir = rgresult.replace(convertPathToPosix(this.workingDir), '')
+          console.log('rgresult', rgresult, convertPathToPosix(this.workingDir), convertPathToPosix(rgresult))
+          let pathWithoutWorkingDir = convertPathToPosix(rgresult).replace(convertPathToPosix(this.workingDir), '')
+          console.log(pathWithoutWorkingDir)
           if (pathWithoutWorkingDir.endsWith('/')) {
             pathWithoutWorkingDir = pathWithoutWorkingDir.slice(0, -1)
           }
           if (pathWithoutWorkingDir.startsWith('/')) {
             pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
           }
+          if (pathWithoutWorkingDir.startsWith('./')) {
+            pathWithoutWorkingDir = pathWithoutWorkingDir.slice(2)
+          }
           if (pathWithoutWorkingDir.startsWith('\\')) {
             pathWithoutWorkingDir = pathWithoutWorkingDir.slice(1)
           }
           resultrg.push({
-            path: convertPathToPosix(pathWithoutWorkingDir),
+            path: pathWithoutWorkingDir,
             isDirectory: false,
           })
         })
-        stream.on('end', () => {
+        stream.on('end', () => { 
           c(resultrg)
         })
       })

@@ -9,6 +9,7 @@ import { ConfigPlugin } from './plugins/configPlugin';
 import { TemplatesPlugin } from './plugins/templates';
 import { RipgrepPlugin } from './plugins/ripgrepPlugin';
 import { CompilerLoaderPlugin } from './plugins/compilerLoader';
+import { AppUpdaterPlugin } from './plugins/appUpdater';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -19,6 +20,7 @@ const configPlugin = new ConfigPlugin()
 const templatesPlugin = new TemplatesPlugin()
 const ripgrepPlugin = new RipgrepPlugin()
 const compilerLoaderPlugin = new CompilerLoaderPlugin()
+const appUpdaterPlugin = new AppUpdaterPlugin()
 
 engine.register(appManager)
 engine.register(fsPlugin)
@@ -28,6 +30,7 @@ engine.register(configPlugin)
 engine.register(templatesPlugin)
 engine.register(ripgrepPlugin)
 engine.register(compilerLoaderPlugin)
+engine.register(appUpdaterPlugin)
 
 appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')

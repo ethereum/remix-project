@@ -4,7 +4,7 @@ import path from 'path'
 
 export const cacheDir = path.join(os.homedir(), '.cache_remix_ide')
 
-console.log('cacheDir', cacheDir)
+console.log('cache dir is:', cacheDir)
 
 export const createDefaultConfigLocations = async() => {
   try {

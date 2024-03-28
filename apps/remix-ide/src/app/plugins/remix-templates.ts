@@ -5,7 +5,7 @@ const profile = {
   name: 'remix-templates',
   displayName: 'remix-templates',
   description: 'Remix Templates plugin',
-  methods: ['getTemplate', 'loadTemplateInNewWindow'],
+  methods: ['getTemplate', 'loadTemplateInNewWindow', 'loadFilesInNewWindow'],
 }
 
 export class TemplatesPlugin extends Plugin {
@@ -24,6 +24,10 @@ export class TemplatesPlugin extends Plugin {
   // electron only method
   async loadTemplateInNewWindow (template: string, opts?: any) {
     const files = await this.getTemplate(template, opts)
+    this.call('electronTemplates', 'loadTemplateInNewWindow', files)
+  }
+
+  async loadFilesInNewWindow (files: any) {
     this.call('electronTemplates', 'loadTemplateInNewWindow', files)
   }
 }

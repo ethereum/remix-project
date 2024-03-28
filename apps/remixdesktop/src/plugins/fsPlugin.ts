@@ -3,7 +3,7 @@ import fs from 'fs/promises'
 import {Profile} from '@remixproject/plugin-utils'
 import chokidar from 'chokidar'
 import {dialog, shell} from 'electron'
-import {createWindow, isPackaged} from '../main'
+import {createWindow, isE2E, isPackaged} from '../main'
 import {writeConfig} from '../utils/config'
 import path from 'path'
 import {customAction} from '@remixproject/plugin-api'
@@ -32,7 +32,7 @@ const getBaseName = (pathName: string): string => {
 export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
   constructor() {
-    super(profile, clientProfile, FSPluginClient)
+    super(profile, clientProfile, isE2E? FSPluginClientE2E: FSPluginClient)
     this.methods = [...super.methods, 'closeWatch', 'removeCloseListener']
   }
 
@@ -200,6 +200,7 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async exists(path: string): Promise<boolean> {
+    if (this.workingDir === '') return false
     return fs
       .access(this.fixPath(path))
       .then(() => true)
@@ -257,7 +258,7 @@ class FSPluginClient extends ElectronBasePluginClient {
         depth: 0,
       })
       .on('all', async (eventName, path, stats) => {
-        this.watcherExec(eventName, path)
+        this.watcherExec(eventName, convertPathToPosix(path))
       })
       .on('error', (error) => {
         watcher.close()
@@ -294,7 +295,6 @@ class FSPluginClient extends ElectronBasePluginClient {
     } else {
       try {
         const dirname = path.dirname(pathWithoutPrefix)
-        //console.log('check emitting', eventName, pathWithoutPrefix, this.expandedPaths, dirname)
         if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
           //console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
           //this.emit('change', eventName, pathWithoutPrefix)
@@ -389,7 +389,7 @@ class FSPluginClient extends ElectronBasePluginClient {
     }
     path = dirs && dirs.length && dirs[0] ? dirs[0] : path
     if (!path) return
-    this.workingDir = path
+    this.workingDir = convertPathToPosix(path)
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
     this.window.setTitle(this.workingDir)
@@ -398,13 +398,14 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async setWorkingDir(path: string): Promise<void> {
-    this.workingDir = path
+    console.log('setWorkingDir', path)
+    this.workingDir = convertPathToPosix(path)
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
     this.window.setTitle(getBaseName(this.workingDir))
     this.watch()
     this.emit('workingDirChanged', path)
-    await this.call('fileManager', 'closeAllFiles')
+    return
   }
 
   async revealInExplorer(action: customAction, isAbsolutePath: boolean = false): Promise<void> {
@@ -432,4 +433,44 @@ class FSPluginClient extends ElectronBasePluginClient {
   openWindow(path: string): void {
     createWindow(path)
   }
+}
+
+import os from 'os'
+export class FSPluginClientE2E extends FSPluginClient {
+  constructor(webContentsId: number, profile: Profile) {
+    super(webContentsId, profile)
+  }
+
+  async selectFolder(dir?: string, title?: string, button?: string): Promise<string> {
+    if (!dir) {
+      // create random directory on os homedir
+      const randomdir = path.join(os.homedir(), 'remix-tests' + Date.now().toString())
+      await fs.mkdir(randomdir)
+      return randomdir
+    }
+    if (!dir) return ''
+    return dir
+  }
+
+  async openFolder(dir?: string): Promise<void> {
+    dir = await this.selectFolder(dir)
+
+    await this.updateRecentFolders(dir)
+    await this.updateOpenedFolders(dir)
+    if (!dir) return
+    
+    this.openWindow(dir)
+  }
+
+  async openFolderInSameWindow(dir?: string): Promise<void> {
+    dir = await this.selectFolder(dir)
+    if (!dir) return
+    this.workingDir = convertPathToPosix(dir)
+    await this.updateRecentFolders(dir)
+    await this.updateOpenedFolders(dir)
+    this.window.setTitle(this.workingDir)
+    this.watch()
+    this.emit('workingDirChanged', dir)
+  }
+
 }
