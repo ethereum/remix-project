@@ -1,0 +1,23 @@
+{
+  "learneth.tutorialsFrom": "Tutorials from",
+  "learneth.dateModified": "Date modified",
+  "learneth.importAnotherRepo": "Import another tutorial repo",
+  "learneth.selectARepo": "Select a repo",
+  "learneth.resetList": "reset list",
+  "learneth.repo": "REPO",
+  "learneth.userAndRepo": "ie username/repository",
+  "learneth.branch": "BRANCH",
+  "learneth.import": "Import",
+  "learneth.howToSetupRepo": "how to setup your repo",
+  "learneth.leaveTutorial": "Leave tutorial",
+  "learneth.leaveTutorialConfirmText": "Are you sure you want to leave the tutorial?",
+  "learneth.no": "No",
+  "learneth.yes": "Yes",
+  "learneth.loadFile": "Load the file",
+  "learneth.checkAnswer": "Check Answer",
+  "learneth.showAnswer": "Show Answer",
+  "learneth.next": "Next",
+  "learneth.wellDone": "Well done! No errors.",
+  "learneth.errors": "Errors",
+  "learneth.finishTutorial": "Finish tutorial"
+}
