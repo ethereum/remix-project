@@ -38,6 +38,7 @@ export interface RemixUiSettingsProps {
   editor: any
   _deps: any
   useMatomoAnalytics: boolean
+  useCopilot: boolean
   themeModule: ThemeModule
   localeModule: LocaleModule
 }
@@ -76,7 +77,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
-
+  
   useEffect(() => {
     const token = props.config.get('settings/' + labels['gist'].key)
     if (token) {
@@ -124,7 +125,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   useEffect(() => {
     if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
-  }, [props.useMatomoAnalytics])
+  }, [props.useMatomoAnalytics])  
 
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
@@ -134,48 +135,25 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     textWrapEventAction(props.config, props.editor, event.target.checked, dispatch)
   }
 
-  const onchangeCopilotActivate = async (event) => {
-    if (!event.target.checked) {
-      copilotActivate(props.config, event.target.checked, dispatch)
-      props.plugin.call('copilot-suggestion', 'uninstall')
+  const onchangeCopilotActivate = () => {
+    if (!props.useCopilot) {
+      copilotActivate(props.config, props.useCopilot, dispatch)
+      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity copilot deactivated!` })
       return
-    }   
-    const message = <div>Please wait while the copilot is downloaded. <span ref={copilotDownload}>0</span>/100 .</div>
-    props.plugin.on('copilot-suggestion', 'loading', (data) => {
-      if (!copilotDownload.current) return
-      const loaded = ((data.loaded / data.total) * 100).toString()
-      const dot = loaded.match(/(.*)\./g)
-      copilotDownload.current.innerText = dot ? dot[0].replace('.', '') : loaded
-    })
-    const modalActivate: AppModal = {
-      id: 'loadcopilotActivate',
-      title: 'Download Solidity copilot',
-      modalType: ModalTypes.default,
-      okLabel: 'Close',
-      message,
-      okFn: async() => {
-        props.plugin.off('copilot-suggestion', 'loading')
-        if (await props.plugin.call('copilot-suggestion', 'status')) {
-          copilotActivate(props.config, true, dispatch)          
-        } else {
-          props.plugin.call('copilot-suggestion', 'uninstall')
-          copilotActivate(props.config, false, dispatch)
-        }
-      },
-      hideFn: async () => {
-        props.plugin.off('copilot-suggestion', 'loading')
-        if (await props.plugin.call('copilot-suggestion', 'status')) {
-          copilotActivate(props.config, true, dispatch)          
-        } else {
-          props.plugin.call('copilot-suggestion', 'uninstall')
-          copilotActivate(props.config, false, dispatch)
-        }
-      }
+    } 
+
+    const startCopilot = async () => {
+      copilotActivate(props.config, true, dispatch)          
+      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity copilot activated!` })
     }
-    props.plugin.call('copilot-suggestion', 'init')
-    props.plugin.call('notification', 'modal', modalActivate)
     
+    startCopilot()
   }
+
+  useEffect(() => {
+    if (props.useCopilot !== null) copilotActivate(props.config, props.useCopilot, dispatch)
+    onchangeCopilotActivate()
+  }, [props.useCopilot])
 
   const onchangeCopilotMaxNewToken = (event) => {
     copilotMaxNewToken(props.config, parseInt(event.target.value), dispatch)
@@ -460,35 +438,21 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const isCopilotActivated = props.config.get('settings/copilot/suggest/activate') || false
   let copilotMaxnewToken = props.config.get('settings/copilot/suggest/max_new_tokens')
   if (!copilotMaxnewToken) {
-    props.config.set('settings/copilot/suggest/max_new_tokens', 5)
-    copilotMaxnewToken = 5
+    props.config.set('settings/copilot/suggest/max_new_tokens', 10)
+    copilotMaxnewToken = 10
   }
   let copilotTemperatureValue = (props.config.get('settings/copilot/suggest/temperature')) * 100
   if (!copilotTemperatureValue) {
-    props.config.set('settings/copilot/suggest/temperature', 0.5)
-    copilotTemperatureValue = 0.5
+    props.config.set('settings/copilot/suggest/temperature', 0.9)
+    copilotTemperatureValue = 0.9
   }
 
-  if (isCopilotActivated) props.plugin.call('copilot-suggestion', 'init')
   const copilotSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
         <h6 className="card-title">
           <FormattedMessage id="settings.copilot" />
         </h6>
-
-        <div className="pt-2 mb-0">
-          <div className="text-secondary mb-0 h6">
-            <div>
-              <div className="custom-control custom-checkbox mb-1">
-                <input onChange={onchangeCopilotActivate} id="copilot-activate" type="checkbox" className="custom-control-input" checked={isCopilotActivated} />
-                <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/copilot/suggest/activate')}`} htmlFor="copilot-activate">
-                  <FormattedMessage id="settings.copilot.activate" />
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <div className="pt-2 mb-0">
           <div className="text-secondary mb-0 h6">

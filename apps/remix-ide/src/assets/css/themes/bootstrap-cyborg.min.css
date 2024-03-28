@@ -11,6 +11,7 @@
 * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
 */@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap);
 :root {
+    --ai: #2de7f3;
     --blue:#2a9fd6;
     --indigo:#6610f2;
     --purple:#6f42c1;
@@ -8374,6 +8375,9 @@ a.text-danger:focus,a.text-danger:hover {
 }
 a.text-light:focus,a.text-light:hover {
     color:#000!important
+}
+.text-dark {
+  color: #babbcc !important;
 }
 .text-dark {
     color:#adafae!important

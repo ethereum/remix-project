@@ -1,5 +1,5 @@
 export const wrapScript = (script) => {
-  const isKnownScript = ['remix.', 'console.', 'git', 'gpt'].some(prefix => script.trim().startsWith(prefix))
+  const isKnownScript = ['remix.', 'console.', 'git', 'gpt', 'sol-gpt'].some(prefix => script.trim().startsWith(prefix))
   if (isKnownScript) return script
   return `
         try {

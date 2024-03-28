@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito+Sans:400,600&display=swap');
 :root {
+  --ai: #2de7f3;
   --blue: #90c3f6;
   --indigo: #6610f2;
   --purple: #9e77f6;
@@ -8589,6 +8590,9 @@ a.text-light:hover {
 }
 .text-dark {
   color: #babbcc !important;
+}
+.text-ai {
+  color: #2de7f3 !important;
 }
 a.text-dark:focus,
 a.text-dark:hover {
