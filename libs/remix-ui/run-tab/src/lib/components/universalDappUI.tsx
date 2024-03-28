@@ -294,10 +294,11 @@ export function UniversalDappUI(props: UdappProps) {
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
-          <div className="d-flex" data-id="instanceContractBal">
+          <div className="d-flex justify-content-between" data-id="instanceContractBal">
             <label>
               <b><FormattedMessage id="udapp.balance" />:</b> {instanceBalance} ETH
             </label>
+            {props.exEnvironment === 'injected' && <i className="fas fa-edit btn btn-sm p-0" onClick={() => {props.editInstance(props.instance)}}></i>}
           </div>
           { props.isSavedContract && props.instance.savedOn ? (
             <div className="d-flex" data-id="instanceContractSavedOn">
