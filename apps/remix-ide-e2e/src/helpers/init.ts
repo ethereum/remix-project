@@ -10,6 +10,7 @@ type LoadPlugin = {
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin, hideToolTips: boolean = true): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
+    .switchBrowserTab(0)
     .perform((done) => {
       if (!loadPlugin) return done()
       browser
@@ -22,7 +23,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         .perform(done())
     })
     .verifyLoad()
-    .enableClipBoard()
+    // .enableClipBoard()
     .perform((done) => {
         browser.execute(function () { // hide tooltips
           function addStyle(styleString) {
