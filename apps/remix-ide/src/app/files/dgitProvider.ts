@@ -74,14 +74,19 @@ class DGitProvider extends Plugin {
   }
 
   async parseInput(input) {
+    const corsproxy = await this.call('config', 'getAppParameter', 'settings/corsproxy-url')
+    const gitlabToken = await this.call('config', 'getAppParameter', 'settings/gitlab-token')
     return {
-      corsProxy: 'https://corsproxy.remixproject.org/',
+      corsProxy: corsproxy || 'https://corsproxy.remixproject.org/',
       http,
       onAuth: url => {
         url
-        const auth = {
+        const auth = url.startsWith('https://github.com') ? {
           username: input.token,
           password: ''
+        } : {
+          username: 'oauth2',
+          password: gitlabToken
         }
         return auth
       }

@@ -647,7 +647,7 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
 
 export const cloneRepository = async (url: string) => {
   const config = plugin.registry.get('config').api
-  const token = config.get('settings/gist-access-token')
+  const token = config.get(`settings/${url.startsWith('https://github.com')? 'gist-access-token' : 'gitlab-token'}`) 
   const repoConfig = { url, token }
 
   if (plugin.registry.get('platform').api.isDesktop()) {
