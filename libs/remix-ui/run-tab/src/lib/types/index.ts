@@ -96,6 +96,18 @@ export interface RunTabState {
     }[],
     error: string
   },
+  savedInstances: {
+    instanceList: {
+      contractData?: ContractData,
+      address: string,
+      balance?: number,
+      name: string,
+      decodedResponse?: Record<number, any>,
+      abi?: any,
+      savedOn?: number
+    }[],
+    error: string
+  },
   recorder: {
     pathToScenario: string,
     transactionCount: number
@@ -295,11 +307,25 @@ export interface InstanceContainerProps {
     }[],
     error: string
   },
+  savedInstances: {
+    instanceList: {
+      contractData?: ContractData,
+      address: string,
+      balance?: number,
+      name: string,
+      decodedResponse?: Record<number, any>,
+      abi?: any,
+      savedOn?: number,
+      filePath?: string
+    }[],
+    error: string
+  },
   clearInstances: () => void,
-  removeInstance: (index: number) => void,
+  removeInstance: (index: number, isSavedContract:boolean, shouldDelete: boolean) => void,
   getContext: () => 'memory' | 'blockchain',
   runTransactions: (
     instanceIndex: number,
+    isSavedContract: boolean,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
@@ -316,6 +342,9 @@ export interface InstanceContainerProps {
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   sendValue: string,
   getFuncABIInputs: (funcABI: FuncABI) => string
+  exEnvironment: string
+  editInstance: (instance) => void
+  plugin: RunTab
 }
 
 export interface Modal {
@@ -395,16 +424,20 @@ export interface UdappProps {
     balance?: number,
     name: string,
     decodedResponse?: Record<number, any>,
-    abi?: any
+    abi?: any,
+    savedOn?: number,
+    filePath?: string
   },
   context: 'memory' | 'blockchain',
-  removeInstance: (index: number) => void,
+  isSavedContract?: boolean
+  removeInstance: (index: number, isSavedContract: boolean, shouldDelete: boolean) => void,
   index: number,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (message: string) => JSX.Element,
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   runTransactions: (
     instanceIndex: number,
+    isSavedContract: boolean,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
@@ -418,6 +451,9 @@ export interface UdappProps {
     funcIndex?: number) => void,
   sendValue: string,
   getFuncABIInputs: (funcABI: FuncABI) => string
+  exEnvironment: string
+  editInstance: (instance) => void
+  plugin: RunTab
 }
 
 export interface DeployButtonProps {

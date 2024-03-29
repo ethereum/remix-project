@@ -86,7 +86,7 @@
   "filePanel.copyFolderFailed": "Échec de la copie du dossier",
   "filePanel.copyFolderFailedMsg": "Erreur inattendue lors de la copie du fichier : {src}",
   "filePanel.runScriptFailed": "Échec de l'exécution du script",
-  "filePanel.createPublicGist": "Créer un gist public",
+  "filePanel.createPublicGist": "Publier un gist public",
   "filePanel.createPublicGistMsg1": "Êtes-vous sûr de vouloir envoyer les changements dans le fichier gist distant sur github.com?",
   "filePanel.createPublicGistMsg2": "Êtes-vous sûr de vouloir publier anonymement tous vos fichiers dans le dossier {path} en tant que gist public sur github.com?",
   "filePanel.createPublicGistMsg3": "Êtes-vous sûr de vouloir publier anonymement tous vos fichiers dans le dossier {path} en tant que gist public sur github.com?",

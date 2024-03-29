@@ -312,7 +312,9 @@ export function RunTabUI(props: RunTabProps) {
             currentFile={currentfile}
           />
           <InstanceContainerUI
+            plugin={plugin}
             instances={runTab.instances}
+            savedInstances={runTab.savedInstances}
             clearInstances={removeInstances}
             removeInstance={removeSingleInstance}
             getContext={getExecutionContext}
@@ -322,6 +324,10 @@ export function RunTabUI(props: RunTabProps) {
             runTransactions={executeTransactions}
             sendValue={runTab.sendValue}
             getFuncABIInputs={getFuncABIValues}
+            exEnvironment={runTab.selectExEnv}
+            editInstance={(instance) => {
+              plugin.call('dapp-draft', 'edit', {address: instance.address, abi: instance.contractData.abi, name: instance.name, network: runTab.networkName})
+            }}
           />
         </div>
       </div>

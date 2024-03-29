@@ -6,7 +6,7 @@ const version = require('../../package.json').version
 const fs = require('fs')
 const TerserPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-const axios = require('axios')
+const path = require('path')
 
 const versionData = {
   version: version,
@@ -16,9 +16,10 @@ const versionData = {
 
 const loadLocalSolJson = async () => {
   //execute apps/remix-ide/ci/downloadsoljson.sh
+  console.log('loading local soljson')
   const child = require('child_process').execSync('bash ' + __dirname + '/ci/downloadsoljson.sh', { encoding: 'utf8', cwd: process.cwd(), shell: true })
   // show output
-  //console.log(child)
+  console.log(child)
 }
 
 fs.writeFileSync(__dirname + '/src/assets/version.json', JSON.stringify(versionData))
@@ -74,7 +75,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
   // add externals
   config.externals = {
     ...config.externals,
-    solc: 'solc'
+    solc: 'solc',
   }
 
   // uncomment this to enable react profiling
@@ -84,6 +85,17 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     'react-dom$': 'react-dom/profiling',
   }
   */
+
+  // use the web build instead of the node.js build
+  // we do like that because using "config.resolve.alias" doesn't work
+  let  pkgVerkle = fs.readFileSync(path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/package.json'), 'utf8')
+  pkgVerkle = pkgVerkle.replace('"main": "./nodejs/rust_verkle_wasm.js",', '"main": "./web/rust_verkle_wasm.js",')
+  fs.writeFileSync(path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/package.json'), pkgVerkle)
+
+  config.resolve.alias = {
+    ...config.resolve.alias,
+    // 'rust-verkle-wasm$': path.resolve(__dirname, '../../node_modules/rust-verkle-wasm/web/run_verkle_wasm.js')
+  }
 
 
   // add public path
@@ -112,7 +124,7 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       url: ['url', 'URL'],
-      process: 'process/browser',
+      process: 'process/browser'
     })
   )
 

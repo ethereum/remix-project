@@ -38,7 +38,7 @@ module.exports = {
       .executeScriptInTerminal(`remix.loadgist('${gistid}')`)
       // .perform((done) => { if (runtimeBrowser === 'chrome') { browser.openFile('gists') } done() })
       .waitForElementVisible(`[data-id="treeViewLitreeViewItemREADME.txt"]`)
-      
+
       .openFile(`README.txt`)
       // Remix publish to gist
       /* .click('*[data-id="fileExplorerNewFilepublishToGist"]')
@@ -111,7 +111,7 @@ module.exports = {
       .click('[data-id="settingsTabRemoveGistToken"]')
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
-      .click('*[data-id="workspacepublishToGist"]')      
+      .click('*[data-id="workspacepublishToGist"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(10000)
@@ -145,24 +145,24 @@ module.exports = {
       .openFile(`README.txt`)
       .waitForElementVisible(`div[data-path='gist ${testData.validGistId}/README.txt']`)
       .assert.containsText(`div[data-path='gist ${testData.validGistId}/README.txt'] > span`, 'README.txt')
-    },
+  },
 
-    'Load Gist from URL and verify truncated files are loaded #group3': function (browser: NightwatchBrowser) {
-      const gistId = '1b179bf1b92c8b0664b4cbe61774e15d'
-      browser
-        .url('http://127.0.0.1:8080/#gist=' + gistId) // loading the gist
-        .refreshPage()
-        .currentWorkspaceIs('gist ' + gistId)
-        .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
-        .waitForElementVisible(`#fileExplorerView li[data-path='contracts']`, 30000)
-        .openFile(`contracts/2_Owner.sol`)
-        .getEditorValue((content) => {
-          browser.assert.ok(content.indexOf('contract Owner {') !== -1)
-        })
-        .click('*[data-id="workspacesMenuDropdown"]')
-        .click('*[data-id="workspacepublishToGist"]')      
-        .modalFooterOKClick('fileSystem')
-        .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
-        .assert.containsText('*[data-shared="tooltipPopup"]', 'Saving gist (' + gistId + ') ...')        
-      }
+  'Load Gist from URL and verify truncated files are loaded #group3': function (browser: NightwatchBrowser) {
+    const gistId = '1b179bf1b92c8b0664b4cbe61774e15d'
+    browser
+      .url('http://127.0.0.1:8080/#gist=' + gistId) // loading the gist
+      .refreshPage()
+      .currentWorkspaceIs('gist ' + gistId)
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 15000)
+      .waitForElementVisible(`#fileExplorerView li[data-path='contracts']`, 30000)
+      .openFile(`contracts/2_Owner.sol`)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf('contract Owner {') !== -1)
+      })
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacepublishToGist"]')
+      .modalFooterOKClick('fileSystem')
+      .waitForElementVisible('*[data-shared="tooltipPopup"]', 5000)
+      .assert.containsText('*[data-shared="tooltipPopup"]', 'Saving gist (' + gistId + ') ...')
+  }
 }

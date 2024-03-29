@@ -1,7 +1,7 @@
 import React from 'react' // eslint-disable-line
 import {fromWei, toBigInt, toWei} from 'web3-utils'
 import {Plugin} from '@remixproject/engine'
-import {toBuffer, addHexPrefix} from '@ethereumjs/util'
+import {toBytes, addHexPrefix} from '@ethereumjs/util'
 import {EventEmitter} from 'events'
 import {format} from 'util'
 import {ExecutionContext} from './execution-context'
@@ -135,7 +135,8 @@ export class Blockchain extends Plugin {
 
   setupEvents() {
     this.executionContext.event.register('contextChanged', async (context) => {
-      await this.resetEnvironment()
+      // reset environment to last known state of the context
+      await this.loadContext(context)
       this._triggerEvent('contextChanged', [context])
       this.detectNetwork((error, network) => {
         this.networkStatus = {network, error}
@@ -286,7 +287,7 @@ export class Blockchain extends Plugin {
       await this.saveDeployedContractStorageLayout(implementationContractObject, address, networkInfo)
       this.events.emit('newProxyDeployment', address, new Date().toISOString(), implementationContractObject.contractName)
       _paq.push(['trackEvent', 'blockchain', 'Deploy With Proxy', 'Proxy deployment successful'])
-      this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name)
+      this.call('udapp', 'addInstance', addressToString(address), implementationContractObject.abi, implementationContractObject.name, implementationContractObject)
     }
 
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
@@ -336,7 +337,7 @@ export class Blockchain extends Plugin {
       }
       await this.saveDeployedContractStorageLayout(newImplementationContractObject, proxyAddress, networkInfo)
       _paq.push(['trackEvent', 'blockchain', 'Upgrade With Proxy', 'Upgrade Successful'])
-      this.call('udapp', 'addInstance', addressToString(proxyAddress), newImplementationContractObject.abi, newImplementationContractObject.name)
+      this.call('udapp', 'addInstance', addressToString(proxyAddress), newImplementationContractObject.abi, newImplementationContractObject.name, newImplementationContractObject)
     }
     this.runTx(args, confirmationCb, continueCb, promptCb, finalCb)
   }
@@ -643,8 +644,23 @@ export class Blockchain extends Plugin {
     })
   }
 
-  async resetEnvironment() {
-    await this.getCurrentProvider().resetEnvironment()
+  async loadContext(context: string) {
+    const saveEvmState = this.config.get('settings/save-evm-state')
+    
+    if (saveEvmState) {
+      const contextExists = await this.call('fileManager', 'exists', `.states/${context}/state.json`)
+
+      if (contextExists) {
+        const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
+  
+        await this.getCurrentProvider().resetEnvironment(stateDb)
+      } else {
+        await this.getCurrentProvider().resetEnvironment()
+      }
+    } else {
+      await this.getCurrentProvider().resetEnvironment()
+    }
+
     // TODO: most params here can be refactored away in txRunner
     const web3Runner = new TxRunnerWeb3(
       {
@@ -677,7 +693,7 @@ export class Blockchain extends Plugin {
               view on etherscan
             </a>
           )
-        }
+        } 
       })
     })
     this.txRunner = new TxRunner(web3Runner, {})
@@ -889,8 +905,16 @@ export class Blockchain extends Plugin {
       let execResult
       let returnValue = null
       if (isVM) {
-        const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
+        if (!tx.useCall && this.config.get('settings/save-evm-state')) {
+          try {
+            const state = await this.executionContext.getStateDetails()
+            this.call('fileManager', 'writeFile', `.states/${this.executionContext.getProvider()}/state.json`, state)
+          } catch (e) {
+            console.error(e)
+          }          
+        }
 
+        const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
         if (hhlogs && hhlogs.length) {
           const finalLogs = (
             <div>
@@ -920,8 +944,8 @@ export class Blockchain extends Plugin {
         if (execResult) {
           // if it's not the VM, we don't have return value. We only have the transaction, and it does not contain the return value.
           returnValue = execResult
-            ? toBuffer(execResult.returnValue)
-            : toBuffer(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
+            ? toBytes(execResult.returnValue)
+            : toBytes(addHexPrefix(txResult.result) || '0x0000000000000000000000000000000000000000000000000000000000000000')
           const compiledContracts = await this.call('compilerArtefacts', 'getAllContractDatas')
           const vmError = txExecution.checkError({ errorMessage: execResult.exceptionError ? execResult.exceptionError.error : '', errorData: execResult.returnValue }, compiledContracts)
           if (vmError.error) {
@@ -930,7 +954,7 @@ export class Blockchain extends Plugin {
         }
       }
       if (!isVM && tx && tx.useCall) {
-        returnValue = toBuffer(addHexPrefix(txResult.result))
+        returnValue = toBytes(addHexPrefix(txResult.result))
       }
 
       let address = null

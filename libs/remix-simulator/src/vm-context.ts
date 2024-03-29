@@ -1,27 +1,25 @@
 /* global ethereum */
 'use strict'
-import { Cache } from '@ethereumjs/statemanager/dist/cache'
 import { hash } from '@remix-project/remix-lib'
-import { bufferToHex, Account, toBuffer, bufferToBigInt} from '@ethereumjs/util'
+import { bytesToHex, Account, bigIntToHex, MapDB, toBytes, bytesToBigInt } from '@ethereumjs/util'
 import { keccak256 } from 'ethereum-cryptography/keccak'
-import type { Address } from '@ethereumjs/util'
+import { Address } from '@ethereumjs/util'
 import { decode } from 'rlp'
 import { ethers } from 'ethers'
 import { execution } from '@remix-project/remix-lib'
 const { LogsManager } = execution
 import { VmProxy } from './VmProxy'
 import { VM } from '@ethereumjs/vm'
-import type { BigIntLike } from '@ethereumjs/util'
 import { Common, ConsensusType } from '@ethereumjs/common'
 import { Trie } from '@ethereumjs/trie'
-import { DefaultStateManager, StateManager, EthersStateManager, EthersStateManagerOpts } from '@ethereumjs/statemanager'
-import { StorageDump } from '@ethereumjs/statemanager/dist/interface'
+import { DefaultStateManager } from '@ethereumjs/statemanager'
+import { EVMStateManagerInterface, StorageDump } from '@ethereumjs/common'
 import { EVM } from '@ethereumjs/evm'
-import { EEI } from '@ethereumjs/vm'
 import { Blockchain } from '@ethereumjs/blockchain'
 import { Block } from '@ethereumjs/block'
-import { Transaction } from '@ethereumjs/tx'
-import { bigIntToHex } from '@ethereumjs/util'
+import { TypedTransaction } from '@ethereumjs/tx'
+import { State } from './provider'
+import { hexToBytes } from 'web3-utils'
 
 /**
  * Options for constructing a {@link StateManager}.
@@ -50,40 +48,52 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
     this.keyHashes = {}
   }
 
+  getDb () {
+    // @ts-ignore
+    return this._trie.database().db
+  }
+
   putContractStorage (address, key, value) {
-    this.keyHashes[hash.keccak(key).toString('hex')] = bufferToHex(key)
+    this.keyHashes[bytesToHex(hash.keccak(key))] = bytesToHex(key)
     return super.putContractStorage(address, key, value)
   }
 
-  copy(): StateManagerCommonStorageDump {
+  shallowCopy(): StateManagerCommonStorageDump {
     const copyState =  new StateManagerCommonStorageDump({
-      trie: this._trie.copy(false),
+      trie: this._trie.shallowCopy(false),
     })
     copyState.keyHashes = this.keyHashes
     return copyState
   }
 
   async dumpStorage (address): Promise<StorageDump> {
+    await this.flush()
+    const account = await this.getAccount(address)
+    if (!account) {
+      throw new Error(`dumpStorage f() can only be called for an existing account`)
+    }
     return new Promise((resolve, reject) => {
-      this._getStorageTrie(address)
-        .then((trie) => {
-          const storage = {}
-          const stream = trie.createReadStream()
+      try {
+        const trie = this._getStorageTrie(address, account)
+        const storage = {}
+        const stream = trie.createReadStream()
 
-          stream.on('data', (val) => {
-            const value: any = decode(val.value)
-            storage['0x' + val.key.toString('hex')] = {
-              key: this.keyHashes[val.key.toString('hex')],
-              value: '0x' + value.toString('hex')
-            }
-          })
-          stream.on('end', () => {
-            resolve(storage)
-          })
+        stream.on('data', (val) => {
+          const value: any = decode(val.value)
+          storage[bytesToHex(val.key)] = {
+            key: this.keyHashes[bytesToHex(val.key)],
+            value: bytesToHex(value)
+          }
         })
-        .catch((e) => {
+        stream.on('end', () => {
+          resolve(storage)
+        })
+        stream.on('error', (e) => {
           reject(e)
         })
+      } catch (e) {
+        reject(e)
+      }      
     })
   }
 }
@@ -100,7 +110,7 @@ export interface CustomEthersStateManagerOpts {
 class CustomEthersStateManager extends StateManagerCommonStorageDump {
   private provider: ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
   private blockTag: string
-
+  
   constructor(opts: CustomEthersStateManagerOpts) {
     super(opts)
     if (typeof opts.provider === 'string') {
@@ -112,32 +122,6 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
     }
 
     this.blockTag = opts.blockTag
-
-    /*
-     * For a custom StateManager implementation adopt these
-     * callbacks passed to the `Cache` instantiated to perform
-     * the `get`, `put` and `delete` operations with the
-     * desired backend.
-     */
-    const getCb = async (address) => {
-      const rlp = await this._trie.get(address.buf)
-      if (rlp) {
-        const ac = Account.fromRlpSerializedAccount(rlp)
-        return ac
-      } else {
-        const ac =  await this.getAccountFromProvider(address)
-        return ac
-      }
-    }
-    const putCb = async (keyBuf, accountRlp) => {
-      const trie = this._trie
-      await trie.put(keyBuf, accountRlp)
-    }
-    const deleteCb = async (keyBuf: Buffer) => {
-      const trie = this._trie
-      await trie.del(keyBuf)
-    }
-    this._cache = new Cache({ getCb, putCb, deleteCb })
   }
 
   /**
@@ -149,11 +133,11 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
     this.blockTag = blockTag === 'earliest' ? blockTag : bigIntToHex(blockTag)
   }
 
-  copy(): CustomEthersStateManager {
+  shallowCopy(): CustomEthersStateManager {
     const newState = new CustomEthersStateManager({
       provider: this.provider,
       blockTag: this.blockTag,
-      trie: this._trie.copy(false),
+      trie: this._trie.shallowCopy(false),
     })
     return newState
   }
@@ -164,11 +148,11 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
    * @returns {Promise<Buffer>} - Resolves with the code corresponding to the provided address.
    * Returns an empty `Buffer` if the account has no associated code.
    */
-  async getContractCode(address: Address): Promise<Buffer> {
+  async getContractCode(address: Address): Promise<Uint8Array> {
     const code = await super.getContractCode(address)
     if (code && code.length > 0) return code
     else {
-      const code = toBuffer(await this.provider.getCode(address.toString(), this.blockTag))
+      const code = toBytes(await this.provider.getCode(address.toString(), this.blockTag))
       await super.putContractCode(address, code)
       return code
     }
@@ -183,13 +167,13 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
    * corresponding to the provided address at the provided key.
    * If this does not exist an empty `Buffer` is returned.
    */
-  async getContractStorage(address: Address, key: Buffer): Promise<Buffer> {
+  async getContractStorage(address: Address, key: Buffer): Promise<Uint8Array> {
     let storage = await super.getContractStorage(address, key)
     if (storage && storage.length > 0) return storage
     else {
-      storage = toBuffer(await this.provider.getStorageAt(
+      storage = toBytes(await this.provider.getStorageAt(
         address.toString(),
-        bufferToBigInt(key),
+        bytesToBigInt(key),
         this.blockTag)
       )
       await super.putContractStorage(address, key, storage)
@@ -202,19 +186,30 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
    * @param address - Address of the `account` to check
    */
   async accountExists(address: Address): Promise<boolean> {
-    const localAccount = this._cache.get(address)
-    if (!localAccount.isEmpty()) return true
+    const account = await super.getAccount(address)
+    if (!account.isEmpty()) return true
+    
     // Get merkle proof for `address` from provider
     const proof = await this.provider.send('eth_getProof', [address.toString(), [], this.blockTag])
 
-    const proofBuf = proof.accountProof.map((proofNode: string) => toBuffer(proofNode))
+    const proofBuf = proof.accountProof.map((proofNode: string) => toBytes(proofNode))
 
     const trie = new Trie({ useKeyHashing: true })
     const verified = await trie.verifyProof(
       Buffer.from(keccak256(proofBuf[0])),
-      address.buf,
+      address.bytes,
       proofBuf
     )
+    if (verified) {
+      const codeHash = proof.codeHash === '0x0000000000000000000000000000000000000000000000000000000000000000' ? '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' : proof.codeHash
+      const account = Account.fromAccountData({
+        balance: BigInt(proof.balance),
+        nonce: BigInt(proof.nonce),
+        codeHash: hexToBytes(codeHash)
+        // storageRoot: toBuffer([]), // we have to remove this in order to force the creation of the Trie in the local state.
+      })
+      super.putAccount(address, account)
+    }
     // if not verified (i.e. verifyProof returns null), account does not exist
     return verified === null ? false : true
   }
@@ -240,14 +235,14 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
       account = Account.fromAccountData({
         balance: BigInt(0),
         nonce: BigInt(0),
-        codeHash: toBuffer('0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470')
+        codeHash: hexToBytes('0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470')
       })
     } else {
       const codeHash = accountData.codeHash === '0x0000000000000000000000000000000000000000000000000000000000000000' ? '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' : accountData.codeHash
       account = Account.fromAccountData({
         balance: BigInt(accountData.balance),
         nonce: BigInt(accountData.nonce),
-        codeHash: toBuffer(codeHash)
+        codeHash: hexToBytes(codeHash)
         // storageRoot: toBuffer([]), // we have to remove this in order to force the creation of the Trie in the local state.
       })
     }    
@@ -255,29 +250,21 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
   }
 }
 
+
 export type CurrentVm = {
   vm: VM,
   web3vm: VmProxy,
-  stateManager: StateManager,
+  stateManager: EVMStateManagerInterface,
   common: Common
 }
 
 export class VMCommon extends Common {
 
   /**
-   * Override "setHardforkByBlockNumber" to disable updating the original fork state
-   * 
-   * @param blockNumber
-   * @param td
-   * @param timestamp
-   * @returns The name of the HF set
-   */
-  setHardforkByBlockNumber(
-    blockNumber: BigIntLike,
-    td?: BigIntLike,
-    timestamp?: BigIntLike
-  ): string {
-    return this.hardfork()
+    * Always return the fork set at initialization
+    */
+  setHardforkBy() {    
+    return this._hardfork;
   }
 }
 
@@ -291,19 +278,23 @@ export class VMContext {
   blocks: Record<string, Block>
   latestBlockNumber: string
   blockByTxHash: Record<string, Block>
-  txByHash: Record<string, Transaction>
+  txByHash: Record<string, TypedTransaction>
   currentVm: CurrentVm
   web3vm: VmProxy
   logsManager: any // LogsManager 
-  exeResults: Record<string, Transaction>
+  exeResults: Record<string, TypedTransaction>
   nodeUrl: string
   blockNumber: number | 'latest'
+  stateDb: State
+  rawBlocks: string[]
+  serializedBlocks: Uint8Array[]
 
-  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest') {
+  constructor (fork?: string, nodeUrl?: string, blockNumber?: number | 'latest', stateDb?: State, blocksData?: string[]) {
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = fork || 'merge'
+    this.currentFork = fork || 'cancun'
     this.nodeUrl = nodeUrl
+    this.stateDb = stateDb
     this.blockNumber = blockNumber
     this.blocks = {}
     this.latestBlockNumber = "0x0"
@@ -311,6 +302,8 @@ export class VMContext {
     this.txByHash = {}
     this.exeResults = {}
     this.logsManager = new LogsManager()
+    this.rawBlocks = blocksData
+    this.serializedBlocks = []
   }
 
   async init () {
@@ -318,7 +311,7 @@ export class VMContext {
   }
 
   async createVm (hardfork) {
-    let stateManager: StateManager
+    let stateManager: EVMStateManagerInterface
     if (this.nodeUrl) {
       let block = this.blockNumber
       if (this.blockNumber === 'latest') {
@@ -332,18 +325,27 @@ export class VMContext {
       } else {
         stateManager = new CustomEthersStateManager({
           provider: this.nodeUrl,
-          blockTag: '0x' + this.blockNumber.toString(16)
+          blockTag: '0x' + block.toString(16)
         })
       }
+    } else {
+      const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
+      const mapDb = new MapDB(db)
+      const trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
       
-    } else
-      stateManager = new StateManagerCommonStorageDump()
+      stateManager = new StateManagerCommonStorageDump({ trie })
+    }
 
     const consensusType = hardfork === 'berlin' || hardfork === 'london' ? ConsensusType.ProofOfWork : ConsensusType.ProofOfStake
     const difficulty = consensusType === ConsensusType.ProofOfStake ? 0 : 69762765929000
 
     const common = new VMCommon({ chain: 'mainnet', hardfork })
-    const genesisBlock: Block = Block.fromBlockData({
+    const blocks = (this.rawBlocks || []).map(block => {
+      const serializedBlock = hexToBytes(block)
+      this.serializedBlocks.push(serializedBlock)
+      return Block.fromRLPSerializedBlock(serializedBlock, { common })
+    })
+    const genesisBlock: Block = blocks.length > 0 && (blocks[0] || {}).isGenesis ? blocks[0] : Block.fromBlockData({
       header: {
         timestamp: (new Date().getTime() / 1000 | 0),
         number: 0,
@@ -351,27 +353,29 @@ export class VMContext {
         difficulty,
         gasLimit: 8000000
       }
-    }, { common, hardforkByBlockNumber: false, hardforkByTTD: undefined })
+    }, { common })
 
     const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
-    const eei = new EEI(stateManager, common, blockchain)
-    const evm = new EVM({ common, eei, allowUnlimitedContractSize: true })
-    
+    const evm = await EVM.create({ common, allowUnlimitedContractSize: true, stateManager, blockchain })
+     
     const vm = await VM.create({
       common,
       activatePrecompiles: true,
-      hardforkByBlockNumber: false,
       stateManager,
       blockchain,
       evm
     })
-
     // VmProxy and VMContext are very intricated.
     // VmProxy is used to track the EVM execution (to listen on opcode execution, in order for instance to generate the VM trace)
     const web3vm = new VmProxy(this)
     web3vm.setVM(vm)
     this.addBlock(genesisBlock, true)
-    return { vm, web3vm, stateManager, common }
+    if (blocks.length > 0) blocks.splice(0, 1)
+    for (const block of blocks) {
+      await blockchain.putBlock(block)
+      this.addBlock(block, false, false, web3vm)
+    }
+    return { vm, web3vm, stateManager, common, blocks }
   }
 
   getCurrentFork () {
@@ -390,17 +394,18 @@ export class VMContext {
     return this.currentVm
   }
 
-  addBlock (block: Block, genesis?: boolean, isCall?: boolean) {
+  addBlock (block: Block, genesis?: boolean, isCall?: boolean, web3vm?: VmProxy) {
     let blockNumber = bigIntToHex(block.header.number)
     if (blockNumber === '0x') {
       blockNumber = '0x0'
     }
 
-    this.blocks['0x' + block.hash().toString('hex')] = block
+    this.blocks[bytesToHex(block.hash())] = block
     this.blocks[blockNumber] = block
     this.latestBlockNumber = blockNumber
 
-    if (!isCall && !genesis) this.logsManager.checkBlock(blockNumber, block, this.web3())
+    if (!isCall && !genesis && web3vm) this.logsManager.checkBlock(blockNumber, block, web3vm)
+    if (!isCall && !genesis && !web3vm) this.logsManager.checkBlock(blockNumber, block, this.web3())
   }
 
   trackTx (txHash, block, tx) {

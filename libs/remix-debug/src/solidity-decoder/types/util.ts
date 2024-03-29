@@ -1,5 +1,5 @@
 'use strict'
-import { bufferToHex, unpadHexString } from '@ethereumjs/util'
+import { unpadHex } from '@ethereumjs/util'
 import BN from 'bn.js'
 
 export function decodeIntFromHex (value, byteLength, signed) {
@@ -11,7 +11,7 @@ export function decodeIntFromHex (value, byteLength, signed) {
 }
 
 export function readFromStorage (slot, storageResolver): Promise<string> {
-  const hexSlot = '0x' + normalizeHex(bufferToHex(slot))
+  const hexSlot = '0x' + normalizeHex(slot.toString(16))
   return new Promise((resolve, reject) => {
     storageResolver.storageSlot(hexSlot, (error, slot) => {
       if (error) {
@@ -58,7 +58,7 @@ export function toBN (value) {
   if (value instanceof BN) {
     return value
   } else if (value.match && value.match(/^(0x)?([a-f0-9]*)$/)) {
-    value = unpadHexString(value)
+    value = unpadHex(value)
     value = value.replace('0x', '')
     value = new BN(value === '' ? '0' : value, 16)
   } else if (!isNaN(value)) {

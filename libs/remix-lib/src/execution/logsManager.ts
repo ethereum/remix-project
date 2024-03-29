@@ -1,6 +1,6 @@
 import { eachOf } from 'async'
 import { randomBytes } from 'crypto'
-import { toChecksumAddress } from '@ethereumjs/util'
+import { toChecksumAddress, bytesToHex } from '@ethereumjs/util'
 
 export class LogsManager {
   notificationCallbacks
@@ -19,8 +19,9 @@ export class LogsManager {
 
   checkBlock (blockNumber, block, web3) {
     eachOf(block.transactions, (tx: any, i, next) => {
-      const txHash = '0x' + tx.hash().toString('hex')
+      const txHash = bytesToHex(tx.hash())
       web3.eth.getTransactionReceipt(txHash, (_error, receipt) => {
+        if (!receipt) return next()
         for (const log of receipt.logs) {
           this.oldLogs.push({ type: 'block', blockNumber, block, tx, log, txNumber: i, receipt })
           const subscriptions = this.getSubscriptionsFor({ type: 'block', blockNumber, block, tx, log, receipt})
@@ -28,8 +29,8 @@ export class LogsManager {
             const result = {
               logIndex: '0x1', // 1
               blockNumber: blockNumber,
-              blockHash: ('0x' + block.hash().toString('hex')),
-              transactionHash: ('0x' + tx.hash().toString('hex')),
+              blockHash: bytesToHex(block.hash()),
+              transactionHash: bytesToHex(tx.hash()),
               transactionIndex: '0x' + i.toString(16),
               // TODO: if it's a contract deploy, it should be that address instead
               address: log.address,
@@ -139,7 +140,7 @@ export class LogsManager {
     if (filterType === 'block') {
       const blocks = this.oldLogs.filter(x => x.type === 'block').filter(x => tracking.block === undefined || x.blockNumber >= tracking.block)
       tracking.block = blocks[blocks.length - 1]
-      return blocks.map(block => ('0x' + block.hash().toString('hex')))
+      return blocks.map(block => bytesToHex(block.hash()))
     }
     if (filterType === 'pendingTransactions') {
       return []
@@ -147,13 +148,13 @@ export class LogsManager {
   }
 
   getLogsByTxHash (hash) {
-    return this.oldLogs.filter((log) => '0x' + log.tx.hash().toString('hex') === hash)
+    return this.oldLogs.filter((log) => bytesToHex(log.tx.hash()) === hash)
       .map((log) => {
         return {
           logIndex: '0x1', // 1
           blockNumber: log.blockNumber,
-          blockHash: ('0x' + log.block.hash().toString('hex')),
-          transactionHash: ('0x' + log.tx.hash().toString('hex')),
+          blockHash: bytesToHex(log.block.hash()),
+          transactionHash: bytesToHex(log.tx.hash()),
           transactionIndex: '0x' + log.txNumber.toString(16),
           // TODO: if it's a contract deploy, it should be that address instead
           address: log.log.address,
@@ -170,8 +171,8 @@ export class LogsManager {
         results.push({
           logIndex: '0x1', // 1
           blockNumber: log.blockNumber,
-          blockHash: ('0x' + log.block.hash().toString('hex')),
-          transactionHash: ('0x' + log.tx.hash().toString('hex')),
+          blockHash: bytesToHex(log.block.hash()),
+          transactionHash: bytesToHex(log.tx.hash()),
           transactionIndex: '0x' + log.txNumber.toString(16),
           // TODO: if it's a contract deploy, it should be that address instead
           address: log.log.address,

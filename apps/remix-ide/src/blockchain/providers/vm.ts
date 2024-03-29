@@ -1,6 +1,6 @@
 import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
 import { fromWei, toBigInt } from 'web3-utils'
-import { privateToAddress, hashPersonalMessage, isHexString } from '@ethereumjs/util'
+import { privateToAddress, hashPersonalMessage, isHexString, bytesToHex } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
 import { ExecutionContext } from '../execution-context'
 
@@ -12,9 +12,7 @@ export class VMProvider {
     sendAsync: (query: JSONRPCRequestPayload, callback: JSONRPCResponseCallback) => void
   }
   newAccountCallback: {[stamp: number]: (error: Error, address: string) => void}
-
   constructor (executionContext: ExecutionContext) {
-
     this.executionContext = executionContext
     this.worker = null
     this.provider = null
@@ -29,7 +27,7 @@ export class VMProvider {
       })
   }
 
-  async resetEnvironment () {
+  async resetEnvironment (stringifiedState?: string) {
     if (this.worker) this.worker.terminate()
     this.worker = new Worker(new URL('./worker-vm', import.meta.url))
     const provider = this.executionContext.getProviderObject()
@@ -76,9 +74,34 @@ export class VMProvider {
           }
         }
       })
-      this.worker.postMessage({ cmd: 'init', fork: this.executionContext.getCurrentFork(), nodeUrl: provider?.options['nodeUrl'], blockNumber: provider?.options['blockNumber']})
+      if (stringifiedState) {
+        try {
+          const blockchainState = JSON.parse(stringifiedState)
+          const blockNumber = parseInt(blockchainState.latestBlockNumber, 16)
+          const stateDb = blockchainState.db
+
+          this.worker.postMessage({
+            cmd: 'init',
+            fork: this.executionContext.getCurrentFork(),
+            nodeUrl: provider?.options['nodeUrl'],
+            blockNumber,
+            stateDb,
+            blocks: blockchainState.blocks
+          })
+        } catch (e) {
+          console.error(e)
+        }
+      } else {
+        this.worker.postMessage({
+          cmd: 'init',
+          fork: this.executionContext.getCurrentFork(),
+          nodeUrl: provider?.options['nodeUrl'],
+          blockNumber: provider?.options['blockNumber']
+        })
+      }
     })
   }
+
 
   // TODO: is still here because of the plugin API
   // can be removed later when we update the API
@@ -86,7 +109,7 @@ export class VMProvider {
     const { privateKey, balance } = newAccount
     this.worker.postMessage({ cmd: 'addAccount', privateKey: privateKey, balance })
     const privKey = Buffer.from(privateKey, 'hex')
-    return '0x' + privateToAddress(privKey).toString('hex')
+    return bytesToHex(privateToAddress(privKey))
   }
 
   newAccount (_passwordPromptCb, cb) {
@@ -109,7 +132,7 @@ export class VMProvider {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
     this.web3.eth.sign(message, account)
-      .then(signedData => cb(null, '0x' + messageHash.toString('hex'), signedData))
+      .then(signedData => cb(null, bytesToHex(messageHash), signedData))
       .catch(error => cb(error))
   }
 

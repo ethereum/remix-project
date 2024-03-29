@@ -339,8 +339,12 @@ module.exports = {
 
   'Basic Solidity Unit tests with local compiler #group6': function (browser: NightwatchBrowser) {
     browser
+      .clickLaunchIcon('udapp')
+      .switchEnvironment('vm-cancun')
       .clickLaunchIcon('solidity')
       .setSolidityCompilerVersion('builtin')
+      .click('.remixui_compilerConfigSection')
+      .setValue('#evmVersionSelector', 'cancun') // Temporary fix
       .clickLaunchIcon('filePanel')
       .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .openFile('contracts/3_Ballot.sol')

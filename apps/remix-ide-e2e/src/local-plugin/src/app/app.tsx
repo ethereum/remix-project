@@ -46,7 +46,6 @@ function App() {
       const customProfiles = ['menuicons', 'tabs', 'solidityUnitTesting', 'hardhat-provider', 'notification']
 
       client.testCommand = async (data: any) => {
-        console.log(data)
         methodLog(data)
       }
 

@@ -1,10 +1,10 @@
 {
-    "version": "v0.43.0",
+    "version": "v0.46.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "File Explorer and Vyper compiler comes with a better user interface",
-    "highlight2": "Update Wallet Connect to the latest version",
+    "highlight1": "Remix VM (Cancun) added with the functionalities of cancun fork",
+    "highlight2": "Latest Solidity compiler version set to 0.8.25 with cancun as default EVM version",
     "highlight3": "",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-43-0-1150e59a81df?source=friends_link&sk=4965f88ef43b297c4350f3a749083cfb"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-46-0-f90a4948fff0"
   }

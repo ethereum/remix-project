@@ -6,7 +6,7 @@ import { Toaster } from '@remix-ui/toaster' // eslint-disable-line
 import { ModalDialog } from '@remix-ui/modal-dialog' // eslint-disable-line
 import { Renderer } from '@remix-ui/renderer' // eslint-disable-line
 import { baseURLBin, baseURLWasm, pathToURL } from '@remix-project/remix-solidity'
-
+import * as packageJson from '../../../../../package.json'
 import './css/style.css'
 import { iSolJsonBinData, iSolJsonBinDataBuild } from '@remix-project/remix-lib'
 
@@ -39,8 +39,9 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       handleHide: null
     },
     solJsonBinData: null,
-    defaultVersion: 'soljson-v0.8.24+commit.e11b9ed9.js', // this default version is defined: in makeMockCompiler (for browser test)
+    defaultVersion: packageJson.defaultVersion, // this default version is defined: in makeMockCompiler (for browser test)
   })
+
   const [currentVersion, setCurrentVersion] = useState('')
   const [hideWarnings, setHideWarnings] = useState<boolean>(false)
   const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({ [currentFile]: api.compileErrors })

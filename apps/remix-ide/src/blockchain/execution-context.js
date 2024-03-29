@@ -3,6 +3,7 @@
 import Web3 from 'web3'
 import { execution } from '@remix-project/remix-lib'
 import EventManager from '../lib/events'
+import { bytesToHex } from '@ethereumjs/util'
 const _paq = window._paq = window._paq || []
 
 let web3
@@ -22,11 +23,11 @@ web3.eth.setConfig(config)
 export class ExecutionContext {
   constructor () {
     this.event = new EventManager()
-    this.executionContext = 'vm-shanghai'
+    this.executionContext = 'vm-cancun'
     this.lastBlock = null
     this.blockGasLimitDefault = 4300000
     this.blockGasLimit = this.blockGasLimitDefault
-    this.currentFork = 'shanghai'
+    this.currentFork = 'cancun'
     this.mainNetGenesisHash = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3'
     this.customNetWorks = {}
     this.blocks = {}
@@ -36,7 +37,7 @@ export class ExecutionContext {
   }
 
   init (config) {
-    this.executionContext = 'vm-shanghai'
+    this.executionContext = 'vm-cancun'
     this.event.trigger('contextChanged', [this.executionContext])
   }
 
@@ -71,40 +72,49 @@ export class ExecutionContext {
   }
 
   detectNetwork (callback) {
-    if (this.isVM()) {
-      callback(null, { id: '-', name: 'VM' })
-    } else {
-      if (!web3.currentProvider) {
-        return callback('No provider set')
-      }
-      const cb = (err, id) => {
-        let name = null
-        if (err) name = 'Unknown'
-        // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
-        else if (id === 1) name = 'Main'
-        else if (id === 3) name = 'Ropsten'
-        else if (id === 4) name = 'Rinkeby'
-        else if (id === 5) name = 'Goerli'
-        else if (id === 42) name = 'Kovan'
-        else if (id === 11155111) name = 'Sepolia'
-        else name = 'Custom'
-
-        if (id === 1) {
-          web3.eth.getBlock(0).then((block) => {
-            if (block && block.hash !== this.mainNetGenesisHash) name = 'Custom'
-            callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
-          }).catch((error) => callback(error))
-        } else {
-          callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
+    return new Promise((resolve, reject) => {
+      if (this.isVM()) {
+        callback && callback(null, { id: '-', name: 'VM' })
+        return resolve({ id: '-', name: 'VM' })
+      } else {
+        if (!web3.currentProvider) {
+          callback && callback('No provider set')
+          return reject('No provider set')
         }
+        const cb = (err, id) => {
+          let name = null
+          if (err) name = 'Unknown'
+          // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
+          else if (id === 1) name = 'Main'
+          else if (id === 3) name = 'Ropsten'
+          else if (id === 4) name = 'Rinkeby'
+          else if (id === 5) name = 'Goerli'
+          else if (id === 42) name = 'Kovan'
+          else if (id === 11155111) name = 'Sepolia'
+          else name = 'Custom'
+  
+          if (id === 1) {
+            web3.eth.getBlock(0).then((block) => {
+              if (block && block.hash !== this.mainNetGenesisHash) name = 'Custom'
+              callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
+              return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
+            }).catch((error) => {
+              callback && callback(error)
+              return reject(error)
+            })
+          } else {
+            callback && callback(err, { id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
+            return resolve({ id, name, lastBlock: this.lastBlock, currentFork: this.currentFork })
+          }
+        }
+        web3.eth.net.getId().then(id=>cb(null,parseInt(id))).catch(err=>cb(err))
       }
-      web3.eth.net.getId().then(id=>cb(null,parseInt(id))).catch(err=>cb(err))
-    }
+    })
   }
 
   removeProvider (name) {
     if (name && this.customNetWorks[name]) {
-      if (this.executionContext === name) this.setContext('vm-merge', null, null, null)
+      if (this.executionContext === name) this.setContext('vm-cancun', null, null, null)
       delete this.customNetWorks[name]
       this.event.trigger('removeProvider', [name])
     }
@@ -164,7 +174,7 @@ export class ExecutionContext {
         try {
           this.currentFork = execution.forkAt(await web3.eth.net.getId(), block.number)
         } catch (e) {
-          this.currentFork = 'merge'
+          this.currentFork = 'cancun'
           console.log(`unable to detect fork, defaulting to ${this.currentFork}..`)
           console.error(e)
         }
@@ -194,5 +204,33 @@ export class ExecutionContext {
     if (transactionDetailsLinks[network]) {
       return transactionDetailsLinks[network] + hash
     }
+  }
+
+  async getStateDetails() {
+    const stateDb = await this.web3().remix.getStateDb()
+    const blocksData = await this.web3().remix.getBlocksData()
+    const state = {
+      db: Object.fromEntries(stateDb.db._database),
+      blocks: blocksData.blocks,
+      latestBlockNumber: blocksData.latestBlockNumber
+    }
+    const stringifyed = JSON.stringify(state, (key, value) => {
+      if (key === 'db') {
+        return value
+      } else if (key === 'blocks') {
+        return value.map(block => bytesToHex(block))
+      } else if (key === '') {
+        return value       
+      }
+      if (typeof value === 'string') {
+        return value.startsWith('0x') ? value : '0x' + value
+      } else if (typeof value === 'number') {
+        return '0x' + value.toString(16)
+      } else {
+        return bytesToHex(value)
+      }      
+    }, '\t')
+
+    return stringifyed
   }
 }

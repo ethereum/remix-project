@@ -1,5 +1,5 @@
 import React from 'react'
-import { bufferToHex } from '@ethereumjs/util'
+import { bytesToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
 import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
 import { TemplateType } from '../types'
@@ -42,8 +42,8 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
-import { contractDeployerScripts, etherscanScripts } from '@remix-project/remix-ws-templates'
 import { branch } from '@remix-ui/git'
+import * as templates from '@remix-project/remix-ws-templates'
 
 declare global {
   interface Window {
@@ -254,7 +254,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       let content
 
       if (params.code) {
-        const hashed = bufferToHex(hash.keccakFromString(params.code))
+        const hashed = bytesToHex(hash.keccakFromString(params.code))
 
         path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
         content = atob(decodeURIComponent(params.code))
@@ -273,7 +273,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
             // authorization: auth
           } 
         })
-        const hashed = bufferToHex(hash.keccakFromString(params.shareCode))
+        const hashed = bytesToHex(hash.keccakFromString(params.shareCode))
 
         path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
         const fileData = ipfs.get(params.shareCode)
@@ -870,14 +870,10 @@ export const createSlitherGithubAction = async () => {
   plugin.call('fileManager', 'open', path)
 }
 
-const scriptsRef = {
-  deployer: contractDeployerScripts,
-  etherscan: etherscanScripts,
-}
 export const createHelperScripts = async (script: string) => {
-  if (!scriptsRef[script]) return
-  await scriptsRef[script](plugin)
-  plugin.call('notification', 'toast', 'scripts added in the "scripts" folder')
+  if (!templates[script]) return
+  await templates[script](plugin)
+  plugin.call('notification', 'toast', `'${script}' added to the workspace.`)
 }
 
 export const updateGitSubmodules = async () => {

@@ -119,7 +119,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
       }
       this.call('notification', 'alert', modalContent)
     }
-    await this.call('udapp', 'setEnvironmentMode', {context: 'vm-merge'})
+    await this.call('udapp', 'setEnvironmentMode', {context: 'vm-paris'})
     return
   }
 
