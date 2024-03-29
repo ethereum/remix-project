@@ -111,7 +111,7 @@ module.exports = {
       .waitForElementPresent('[data-id="circuit_feedback"]')
       .waitForElementVisible('[data-id="circuit_feedback"]')
       .assert.hasClass('[data-id="circuit_feedback"]', 'alert-warning')
-      .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/simple.circom does not include pragma version. Assuming pragma version (2, 1, 8)')
+      .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/simple.circom does not include pragma version. Assuming pragma version (2, 1, 6)')
   },
   'Should hide/show warnings for compiled circuit #group4': function (browser: NightwatchBrowser) {
     browser
@@ -119,7 +119,7 @@ module.exports = {
       .waitForElementNotPresent('[data-id="circuit_feedback"]')
       .click('[data-id="hide_circuit_warnings_checkbox_input"]')
       .waitForElementVisible('[data-id="circuit_feedback"]')
-      .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/simple.circom does not include pragma version. Assuming pragma version (2, 1, 8)')
+      .waitForElementContainsText('[data-id="circuit_feedback"]', 'File circuits/simple.circom does not include pragma version. Assuming pragma version (2, 1, 6)')
   },
   'Should display error for invalid circuit #group4': function (browser: NightwatchBrowser) {
     browser
