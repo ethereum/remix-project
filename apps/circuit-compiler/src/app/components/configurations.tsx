@@ -42,6 +42,27 @@ export function Configurations ({primeValue, setPrimeValue, versionValue}: Confi
                     <option value="vesta">vesta</option>
                   </>
                 </RenderIf>
+                <RenderIf condition={versionValue === '2.1.7'}>
+                  <>
+                    <option value="bn128">bn128</option>
+                    <option value="bls12381">bls12381</option>
+                    <option value="goldilocks">goldilocks</option>
+                    <option value="grumpkin">grumpkin</option>
+                    <option value="pallas">pallas</option>
+                    <option value="vesta">vesta</option>
+                  </>
+                </RenderIf>
+                <RenderIf condition={versionValue === '2.1.8'}>
+                  <>
+                    <option value="bn128">bn128</option>
+                    <option value="bls12381">bls12381</option>
+                    <option value="goldilocks">goldilocks</option>
+                    <option value="grumpkin">grumpkin</option>
+                    <option value="pallas">pallas</option>
+                    <option value="vesta">vesta</option>
+                    <option value="secq256r1">secq256r1</option>
+                  </>
+                </RenderIf>
               </select>
             </div>
           </CustomTooltip>
