@@ -241,7 +241,7 @@ export class CircomPluginClient extends PluginClient {
     // @ts-ignore
     const buffer: any = await this.call('fileManager', 'readFile', wasmPath, { encoding: null })
     const dataRead = new Uint8Array(buffer)
-    const witness = this.compiler ? await this.compiler.generate_witness(dataRead, input) : generate_witness(dataRead, input)
+    const witness = this.compiler ? await this.compiler.generate_witness(dataRead, input) : await generate_witness(dataRead, input)
     // @ts-ignore
     await this.call('fileManager', 'writeFile', wasmPath.replace('.wasm', '.wtn'), witness, true)
     this.internalEvents.emit('circuit_computing_witness_done')
