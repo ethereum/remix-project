@@ -19,7 +19,7 @@ export class CircomPluginClient extends PluginClient {
   private lastCompiledCircuitPath: string = ''
   private lastParsedFiles: Record<string, string> = {}
   private lastCompiledFile: string = ''
-  private compiler: typeof compilerV215 | typeof compilerV216 = compilerV216
+  private compiler: typeof compilerV215 & typeof compilerV216 & typeof compilerV217 & typeof compilerV218
 
   constructor() {
     super()
