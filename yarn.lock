@@ -11793,10 +11793,9 @@ circom_runtime@0.1.22:
   dependencies:
     ffjavascript "0.2.57"
 
-circom_wasm@^0.2.1:
+"circom_wasm@https://github.com/remix-project-org/circom_wasm.git":
   version "0.2.1"
-  resolved "https://registry.yarnpkg.com/circom_wasm/-/circom_wasm-0.2.1.tgz#11eeceb497c03461676b3bc21d7d71ac3310dd58"
-  integrity sha512-57Xhg3nUcQX+aMr+sH8XyxklpPgAWohjGkaEbiJDv3UiUveFAB2pOFOOE4whoMm7mjxKbO4n4mVs1oC031ApQQ==
+  resolved "https://github.com/remix-project-org/circom_wasm.git#f96a79cc231dfb5ae506a7f71bb628159c0b27c0"
 
 circular-json@^0.3.0:
   version "0.3.3"
