@@ -113,8 +113,13 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const unsavePinnedContract = async () => {
-    const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-    await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${network.id}/${props.instance.address}.json`)
+    let dirName
+    if (props.plugin.REACT_API.networkName === 'VM') dirName = props.plugin.REACT_API.selectExEnv
+    else {
+      const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
+      dirName = network.id
+    }
+    await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${dirName}/${props.instance.address}.json`)
   }
 
   const remove = async() => {
