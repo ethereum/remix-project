@@ -834,7 +834,7 @@ export const EditorUI = (props: EditorUIProps) => {
         currentFunction.current = functionImpl.name
         executeGptGenerateDocumentationAction.label = intl.formatMessage({id: 'editor.generateDocumentation2'}, {name: functionImpl.name})
         gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
-        executegptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunction'}, {name: functionImpl.name})
+        executegptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunction2'}, {name: functionImpl.name})
         gptExplainFunctionAction = editor.addAction(executegptExplainFunctionAction)
         executeSolgptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunctionSol'})
         solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
