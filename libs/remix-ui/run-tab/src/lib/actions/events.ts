@@ -87,13 +87,30 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     addInstance(dispatch, { contractData, abi, address, name })
   })
 
-  plugin.on('udapp', 'addSavedInstanceReducer', (address, abi, name, savedOn, filePath) => {
-    addSavedInstance(dispatch, { abi, address, name, savedOn, filePath})
+  plugin.on('udapp', 'addSavedInstanceReducer', (address, abi, name, pinnedAt, filePath) => {
+    addSavedInstance(dispatch, { abi, address, name, pinnedAt, filePath})
   })
 
-  plugin.on('filePanel', 'setWorkspace', () => {
+  plugin.on('filePanel', 'setWorkspace', async () => {
     dispatch(resetUdapp())
     resetAndInit(plugin)
+    const { network } = await plugin.call('blockchain', 'getCurrentNetworkStatus')
+    const dirName = plugin.REACT_API.networkName === 'VM' ? plugin.REACT_API.selectExEnv : network.id
+    const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
+    console.log('isPinnedAvailable==in events===>', isPinnedAvailable)
+    if (isPinnedAvailable) {
+      try {
+        const list = await plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${dirName}`)
+        const filePaths = Object.keys(list)
+        for (const file of filePaths) {
+          const pinnedContract = await plugin.call('fileManager', 'readFile', file)
+          const pinnedContractObj = JSON.parse(pinnedContract)
+          if (pinnedContractObj) addSavedInstance(dispatch, pinnedContractObj)
+        }
+      } catch(err) {
+        console.log(err)
+      }
+    }
     plugin.call('manager', 'isActive', 'remixd').then((activated) => {
       dispatch(setRemixDActivated(activated))
     })

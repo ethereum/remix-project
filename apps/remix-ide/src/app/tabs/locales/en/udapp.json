@@ -75,7 +75,7 @@
   "udapp.NoSavedInstanceText": "No pinned contracts found for selected workspace & network",
   "udapp.tooltipTextDelete": "Delete pinned contract",
   "udapp.tooltipTextUnpin": "Unpin contract",
-  "udapp.savedOn": "Pinned at",
+  "udapp.pinnedAt": "Pinned at",
   "udapp.filePath": "File path",
 
   "udapp._comment_recorderCardUI.tsx": "libs/remix-ui/run-tab/src/lib/components/recorderCardUI.tsx",
