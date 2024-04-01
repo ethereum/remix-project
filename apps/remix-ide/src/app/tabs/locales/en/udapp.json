@@ -72,8 +72,8 @@
 
   "udapp.savedContracts": "Pinned Contracts",
   "udapp.tooltipTextPinnedContracts": "List of pinned contracts for selected workspace & network",
-  "udapp.NoSavedInstanceText": "No pinned contracts found for selected workspace & network",
-  "udapp.tooltipTextDelete": "Delete pinned contract",
+  "udapp.NoPinnedInstanceText": "No pinned contracts found for selected workspace & network",
+  "udapp.tooltipTextDelete": "Delete immediately",
   "udapp.tooltipTextUnpin": "Unpin contract",
   "udapp.pinnedAt": "Pinned at",
   "udapp.filePath": "File path",

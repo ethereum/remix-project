@@ -96,7 +96,7 @@ export interface RunTabState {
     }[],
     error: string
   },
-  savedInstances: {
+  pinnedInstances: {
     instanceList: {
       contractData?: ContractData,
       address: string,
@@ -307,7 +307,7 @@ export interface InstanceContainerProps {
     }[],
     error: string
   },
-  savedInstances: {
+  pinnedInstances: {
     instanceList: {
       contractData?: ContractData,
       address: string,
@@ -321,11 +321,11 @@ export interface InstanceContainerProps {
     error: string
   },
   clearInstances: () => void,
-  removeInstance: (index: number, isSavedContract:boolean, shouldDelete: boolean) => void,
+  removeInstance: (index: number, isPinnedContract:boolean, shouldDelete: boolean) => void,
   getContext: () => 'memory' | 'blockchain',
   runTransactions: (
     instanceIndex: number,
-    isSavedContract: boolean,
+    isPinnedContract: boolean,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
@@ -429,15 +429,15 @@ export interface UdappProps {
     filePath?: string
   },
   context: 'memory' | 'blockchain',
-  isSavedContract?: boolean
-  removeInstance: (index: number, isSavedContract: boolean, shouldDelete: boolean) => void,
+  isPinnedContract?: boolean
+  removeInstance: (index: number, isPinnedContract: boolean, shouldDelete: boolean) => void,
   index: number,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (message: string) => JSX.Element,
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   runTransactions: (
     instanceIndex: number,
-    isSavedContract: boolean,
+    isPinnedContract: boolean,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,

@@ -34,7 +34,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         localStorage.removeItem('savedContracts')
       }
       // Clear existing saved instance state
-      await props.plugin.call('udapp', 'clearAllSavedInstances')
+      await props.plugin.call('udapp', 'clearAllPinnedInstances')
       // Load contracts from FE
       const dirName = props.plugin.REACT_API.networkName === 'VM' ? props.plugin.REACT_API.selectExEnv : chainId.current
       const isPinnedAvailable = await props.plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
@@ -45,7 +45,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           for (const file of filePaths) {
             const pinnedContract = await props.plugin.call('fileManager', 'readFile', file)
             const pinnedContractObj = JSON.parse(pinnedContract)
-            if (pinnedContractObj) await props.plugin.call('udapp', 'addSavedInstance', pinnedContractObj.address, pinnedContractObj.abi, pinnedContractObj.name, pinnedContractObj.pinnedAt, pinnedContractObj.filePath)
+            if (pinnedContractObj) await props.plugin.call('udapp', 'addPinnedInstance', pinnedContractObj.address, pinnedContractObj.abi, pinnedContractObj.name, pinnedContractObj.pinnedAt, pinnedContractObj.filePath)
           }
         } catch(err) {
           console.log(err)
@@ -70,15 +70,15 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         </CustomTooltip>
       </div>
 
-      {props.savedInstances.instanceList.length > 0 ? (
+      {props.pinnedInstances.instanceList.length > 0 ? (
         <div>
           {' '}
-          {props.savedInstances.instanceList.map((instance, index) => {
+          {props.pinnedInstances.instanceList.map((instance, index) => {
             return (
               <UniversalDappUI
                 key={index}
                 instance={instance}
-                isSavedContract={true}
+                isPinnedContract={true}
                 context={props.getContext()}
                 removeInstance={props.removeInstance}
                 index={index}
@@ -96,8 +96,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           })}
         </div>
       ) : (
-        <span className="mx-2 mt-2 text-dark" data-id="NoSavedInstanceText">
-          <FormattedMessage id="udapp.NoSavedInstanceText" />
+        <span className="mx-2 mt-2 text-dark" data-id="NoPinnedInstanceText">
+          <FormattedMessage id="udapp.NoPinnedInstanceText" />
         </span>
       )}
 
@@ -126,7 +126,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
               <UniversalDappUI
                 key={index}
                 instance={instance}
-                isSavedContract={false}
+                isPinnedContract={false}
                 context={props.getContext()}
                 removeInstance={props.removeInstance}
                 index={index}
