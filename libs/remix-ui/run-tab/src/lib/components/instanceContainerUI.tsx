@@ -65,7 +65,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
             <label className="udapp_deployedContracts">
               <FormattedMessage id="udapp.savedContracts" /> 
-              <span style={{fontSize: '0.75rem'}}> (chain id: {chainId.current})</span>
+              <span style={{fontSize: '0.75rem'}}> { props.plugin.REACT_API.networkName === 'VM' ? `(VM: ${props.plugin.REACT_API.selectExEnv})` : `(chain id: ${chainId.current})` }</span>
             </label>
           </CustomTooltip>
         </div>
