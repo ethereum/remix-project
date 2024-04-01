@@ -104,7 +104,7 @@ export interface RunTabState {
       name: string,
       decodedResponse?: Record<number, any>,
       abi?: any,
-      savedOn?: number
+      pinnedAt?: number
     }[],
     error: string
   },
@@ -315,7 +315,7 @@ export interface InstanceContainerProps {
       name: string,
       decodedResponse?: Record<number, any>,
       abi?: any,
-      savedOn?: number,
+      pinnedAt?: number,
       filePath?: string
     }[],
     error: string
@@ -425,7 +425,7 @@ export interface UdappProps {
     name: string,
     decodedResponse?: Record<number, any>,
     abi?: any,
-    savedOn?: number,
+    pinnedAt?: number,
     filePath?: string
   },
   context: 'memory' | 'blockchain',
