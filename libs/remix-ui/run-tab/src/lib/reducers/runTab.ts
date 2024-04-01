@@ -492,7 +492,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case ADD_SAVED_INSTANCE: {
-    const payload: { contractData: ContractData, address: string, name: string, abi?: any, savedOn: number, decodedResponse?: Record<number, any> } = action.payload
+    const payload: { contractData: ContractData, address: string, name: string, abi?: any, pinnedAt: number, decodedResponse?: Record<number, any> } = action.payload
     return {
       ...state,
       savedInstances: {

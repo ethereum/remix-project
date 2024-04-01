@@ -70,7 +70,7 @@ export const addInstance = (dispatch: React.Dispatch<any>, instance: { contractD
   dispatch(addNewInstance(instance))
 }
 
-export const addSavedInstance = (dispatch: React.Dispatch<any>, instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any>, savedOn?: number, filePath?: string }) => {
+export const addSavedInstance = (dispatch: React.Dispatch<any>, instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any>, pinnedAt?: number, filePath?: string }) => {
   instance.decodedResponse = {}
   dispatch(addNewSavedInstance(instance))
 }

@@ -263,7 +263,7 @@ export function UniversalDappUI(props: UdappProps) {
         </span>
         <div className="input-group udapp_nameNbuts">
           <div className="udapp_titleText input-group-prepend">
-            { props.isSavedContract ? ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.isSavedContract ? `Contract: ${props.instance.name},  Address: ${address}, Pinned at:  ${new Date(props.instance.savedOn).toLocaleString()}` : '' }>
+            { props.isSavedContract ? ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.isSavedContract ? `Contract: ${props.instance.name},  Address: ${address}, Pinned at:  ${new Date(props.instance.pinnedAt).toLocaleString()}` : '' }>
               <span className="input-group-text udapp_spanTitleText">
                 {props.instance.name} at {shortenAddress(address)}
               </span>
@@ -304,10 +304,10 @@ export function UniversalDappUI(props: UdappProps) {
             </label>
             {props.exEnvironment === 'injected' && <i className="fas fa-edit btn btn-sm p-0" onClick={() => {props.editInstance(props.instance)}}></i>}
           </div>
-          { props.isSavedContract && props.instance.savedOn ? (
+          { props.isSavedContract && props.instance.pinnedAt ? (
             <div className="d-flex" data-id="instanceContractSavedOn">
               <label>
-                <b><FormattedMessage id="udapp.savedOn" />:</b> {(new Date(props.instance.savedOn)).toLocaleString()}
+                <b><FormattedMessage id="udapp.pinnedAt" />:</b> {(new Date(props.instance.pinnedAt)).toLocaleString()}
               </label>
             </div>
           ) : null }
