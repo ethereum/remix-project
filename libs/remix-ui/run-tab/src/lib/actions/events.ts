@@ -1,8 +1,8 @@
 import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances, fillAccountsList } from "./account"
-import { addExternalProvider, addInstance, addSavedInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { addDeployOption, clearAllInstances, clearAllSavedInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
+import { addExternalProvider, addInstance, addPinnedInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
+import { addDeployOption, clearAllInstances, clearAllPinnedInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
 import { updateInstanceBalance } from './deploy'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
@@ -79,16 +79,16 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(clearAllInstances())
   })
 
-  plugin.on('udapp', 'clearAllSavedInstancesReducer', () => {
-    dispatch(clearAllSavedInstances())
+  plugin.on('udapp', 'clearAllPinnedInstancesReducer', () => {
+    dispatch(clearAllPinnedInstances())
   })
 
   plugin.on('udapp', 'addInstanceReducer', (address, abi, name, contractData?) => {
     addInstance(dispatch, { contractData, abi, address, name })
   })
 
-  plugin.on('udapp', 'addSavedInstanceReducer', (address, abi, name, pinnedAt, filePath) => {
-    addSavedInstance(dispatch, { abi, address, name, pinnedAt, filePath})
+  plugin.on('udapp', 'addPinnedInstanceReducer', (address, abi, name, pinnedAt, filePath) => {
+    addPinnedInstance(dispatch, { abi, address, name, pinnedAt, filePath})
   })
 
   plugin.on('filePanel', 'setWorkspace', async () => {
@@ -104,7 +104,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
         for (const file of filePaths) {
           const pinnedContract = await plugin.call('fileManager', 'readFile', file)
           const pinnedContractObj = JSON.parse(pinnedContract)
-          if (pinnedContractObj) addSavedInstance(dispatch, pinnedContractObj)
+          if (pinnedContractObj) addPinnedInstance(dispatch, pinnedContractObj)
         }
       } catch(err) {
         console.log(err)

@@ -28,9 +28,9 @@ const profile = {
     'getSettings',
     'setEnvironmentMode',
     'clearAllInstances',
-    'clearAllSavedInstances',
+    'clearAllPinnedInstances',
     'addInstance',
-    'addSavedInstance',
+    'addPinnedInstance',
     'resolveContractAndAddInstance'
   ]
 }
@@ -81,16 +81,16 @@ export class RunTab extends ViewPlugin {
     this.emit('clearAllInstancesReducer')
   }
 
-  clearAllSavedInstances() {
-    this.emit('clearAllSavedInstancesReducer')
+  clearAllPinnedInstances() {
+    this.emit('clearAllPinnedInstancesReducer')
   }
 
   addInstance(address, abi, name, contractData) {
     this.emit('addInstanceReducer', address, abi, name, contractData)
   }
 
-  addSavedInstance(address, abi, name, pinnedAt, filePath) {
-    this.emit('addSavedInstanceReducer', address, abi, name, pinnedAt, filePath)
+  addPinnedInstance(address, abi, name, pinnedAt, filePath) {
+    this.emit('addPinnedInstanceReducer', address, abi, name, pinnedAt, filePath)
   }
 
   createVMAccount(newAccount) {
