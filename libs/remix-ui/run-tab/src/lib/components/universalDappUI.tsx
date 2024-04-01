@@ -123,17 +123,17 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const remove = async() => {
-    if (props.isSavedContract) {
+    if (props.isPinnedContract) {
       await unsavePinnedContract()
       _paq.push(['trackEvent', 'udapp', 'pinContracts', 'unpinned'])
     }
-    props.removeInstance(props.index, props.isSavedContract, false)
+    props.removeInstance(props.index, props.isPinnedContract, false)
   }
 
   const deletePinnedContract = async() => {
     await unsavePinnedContract()
     _paq.push(['trackEvent', 'udapp', 'pinContracts', 'deletePinned'])
-    props.removeInstance(props.index, props.isSavedContract, true)
+    props.removeInstance(props.index, props.isPinnedContract, true)
   }
 
   const pinContract = async() => {
@@ -153,7 +153,7 @@ export function UniversalDappUI(props: UdappProps) {
     }
     await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${dirName}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
     // Add contract to saved contracts list on UI
-    await props.plugin.call('udapp', 'addSavedInstance', objToSave.address, objToSave.abi, objToSave.name, objToSave.pinnedAt, objToSave.filePath)
+    await props.plugin.call('udapp', 'addPinnedInstance', objToSave.address, objToSave.abi, objToSave.name, objToSave.pinnedAt, objToSave.filePath)
     _paq.push(['trackEvent', 'udapp', 'pinContracts', `pinned at ${dirName}`])
     // Remove contract from deployed contracts list on UI
     props.removeInstance(props.index, false, false)
@@ -165,7 +165,7 @@ export function UniversalDappUI(props: UdappProps) {
 
     props.runTransactions(
       props.index,
-      props.isSavedContract,
+      props.isPinnedContract,
       lookupOnly,
       funcABI,
       inputsValues,
@@ -268,7 +268,7 @@ export function UniversalDappUI(props: UdappProps) {
         </span>
         <div className="input-group udapp_nameNbuts">
           <div className="udapp_titleText input-group-prepend">
-            { props.isSavedContract ? ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.isSavedContract ? `Contract: ${props.instance.name},  Address: ${address}, Pinned at:  ${new Date(props.instance.pinnedAt).toLocaleString()}` : '' }>
+            { props.isPinnedContract ? ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.isPinnedContract ? `Contract: ${props.instance.name},  Address: ${address}, Pinned at:  ${new Date(props.instance.pinnedAt).toLocaleString()}` : '' }>
               <span className="input-group-text udapp_spanTitleText">
                 {props.instance.name} at {shortenAddress(address)}
               </span>
@@ -279,7 +279,7 @@ export function UniversalDappUI(props: UdappProps) {
           <div className="btn" style={{padding: '0.15rem'}}>
             <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
           </div>
-          { props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+          { props.isPinnedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
               <i className="fas fa-thumbtack p-2 text-success" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={remove}></i>
             </CustomTooltip> 
@@ -290,7 +290,7 @@ export function UniversalDappUI(props: UdappProps) {
           </div> )
           }
         </div>
-        { props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+        { props.isPinnedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
           <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
             <i className="far fa-trash p-2" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={deletePinnedContract}></i>
           </CustomTooltip> 
@@ -309,14 +309,14 @@ export function UniversalDappUI(props: UdappProps) {
             </label>
             {props.exEnvironment === 'injected' && <i className="fas fa-edit btn btn-sm p-0" onClick={() => {props.editInstance(props.instance)}}></i>}
           </div>
-          { props.isSavedContract && props.instance.pinnedAt ? (
+          { props.isPinnedContract && props.instance.pinnedAt ? (
             <div className="d-flex" data-id="instanceContractSavedOn">
               <label>
                 <b><FormattedMessage id="udapp.pinnedAt" />:</b> {(new Date(props.instance.pinnedAt)).toLocaleString()}
               </label>
             </div>
           ) : null }
-          { props.isSavedContract && props.instance.filePath ? (
+          { props.isPinnedContract && props.instance.filePath ? (
             <div className="d-flex" data-id="instanceContractFilePath">
               <label>
                 <b><FormattedMessage id="udapp.filePath" />:</b> {props.instance.filePath}

@@ -1,5 +1,5 @@
 import { ContractData } from "@remix-project/core-plugin"
-import { addNewInstance, addNewSavedInstance, addProvider, clearAllInstances, clearAllSavedInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
+import { addNewInstance, addNewPinnedInstance, addProvider, clearAllInstances, clearAllPinnedInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
 
 export const setAccount = (dispatch: React.Dispatch<any>, account: string) => {
   dispatch(setSelectedAccount(account))
@@ -70,13 +70,13 @@ export const addInstance = (dispatch: React.Dispatch<any>, instance: { contractD
   dispatch(addNewInstance(instance))
 }
 
-export const addSavedInstance = (dispatch: React.Dispatch<any>, instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any>, pinnedAt?: number, filePath?: string }) => {
+export const addPinnedInstance = (dispatch: React.Dispatch<any>, instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any>, pinnedAt?: number, filePath?: string }) => {
   instance.decodedResponse = {}
-  dispatch(addNewSavedInstance(instance))
+  dispatch(addNewPinnedInstance(instance))
 }
 
-export const removeInstance = (dispatch: React.Dispatch<any>, index: number, isSavedContract: boolean, shouldDelete: boolean) => {
-  dispatch(removeExistingInstance(index, isSavedContract, shouldDelete))
+export const removeInstance = (dispatch: React.Dispatch<any>, index: number, isPinnedContract: boolean, shouldDelete: boolean) => {
+  dispatch(removeExistingInstance(index, isPinnedContract, shouldDelete))
 }
 
 export const clearInstances = (dispatch: React.Dispatch<any>) => {
@@ -84,8 +84,8 @@ export const clearInstances = (dispatch: React.Dispatch<any>) => {
   dispatch(clearRecorderCount())
 }
 
-export const clearSavedInstances = (dispatch: React.Dispatch<any>) => {
-  dispatch(clearAllSavedInstances())
+export const clearPinnedInstances = (dispatch: React.Dispatch<any>) => {
+  dispatch(clearAllPinnedInstances())
   dispatch(clearRecorderCount())
 }
 
