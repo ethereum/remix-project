@@ -97,7 +97,6 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     const { network } = await plugin.call('blockchain', 'getCurrentNetworkStatus')
     const dirName = plugin.REACT_API.networkName === 'VM' ? plugin.REACT_API.selectExEnv : network.id
     const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
-    console.log('isPinnedAvailable==in events===>', isPinnedAvailable)
     if (isPinnedAvailable) {
       try {
         const list = await plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${dirName}`)
