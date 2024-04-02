@@ -282,6 +282,24 @@ export const TabsUI = (props: TabsUIProps) => {
               </span>
             </button>
           </CustomTooltip>
+          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-aiDocumentation" tooltipText={<FormattedMessage id="remixUiTabs.tooltipText8" />}>
+            <span 
+              data-id="remix_ai_docs"
+              id="remix_ai_docs"
+              className="btn ai-docs"
+              role='link'
+              onClick={()=>{window.open("https://remix-ide.readthedocs.io/en/latest/security.html")}}
+            >
+              <i className="fa-solid fa-book text-ai"></i>
+              <span
+                className="position-relative text-ai text-sm pl-1"
+                style={{fontSize: "x-small", alignSelf: "end"}}
+              >
+                AI
+              </span>
+            </span>
+          </CustomTooltip>
+          
           <script>
             const button = document.querySelector('#button');
           </script>
