@@ -17,14 +17,17 @@ module.exports = {
     browser
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .click('*[data-id="treeViewLitreeViewItemcontracts]')
+      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
       .click('*[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
       .clickLaunchIcon('udapp')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .waitForElementPresent('*[data-shared="universalDappUiInstance"]')
+      .assert.elementPresent('*[data-id="unpinnedInstance0xd9145CCE52D386f254917e481eB44e9943F39138"]')
+      .assert.not.hasClass('*[data-id="universalDappUiUdappPin"]', 'text-success')
       .click('*[data-id="universalDappUiUdappPin"]')
       .assert.elementPresent('*[data-id="deployAndRunNoInstanceText"]')
       .assert.textContains('*[data-id="deployAndRunNoInstanceText"]', 'Currently you have no unpinned contracts to interact with.')
-      .assert.elementNotPresent('*[data-id="NoPinnedInstanceText"]')
-  },
+      .assert.not.elementPresent('*[data-id="NoPinnedInstanceText"]')
+      .assert.elementPresent('*[data-id="pinnedInstance0xd9145CCE52D386f254917e481eB44e9943F39138"]')
+      .assert.hasClass('*[data-id="universalDappUiUdappUnpin"]', 'text-success')
+    },
 }
