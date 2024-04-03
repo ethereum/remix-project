@@ -105,7 +105,6 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
               className="position-relative text-ai text-sm pl-0 pr-2"
               style={{fontSize: "x-small", alignSelf: "end"}}
             >
-              AI
             </span>
             <span
               className="button border text-ai btn-sm"

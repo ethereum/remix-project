@@ -304,9 +304,6 @@ export const TabsUI = (props: TabsUIProps) => {
             </span>
           </CustomTooltip>
           
-          <script>
-            const button = document.querySelector('#button');
-          </script>
           <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
             <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" onClick={() => props.onZoomOut()}></span>
           </CustomTooltip>
