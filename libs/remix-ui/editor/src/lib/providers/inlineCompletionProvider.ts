@@ -55,6 +55,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         this.props.plugin.call('terminal', 'log', {type: 'aitypewriterwarning', value: 'Solcoder - generating code for following comment: ' + ask.replace('///', '')})
 
         const data = await this.props.plugin.call('solcoder', 'code_generation', word)
+        _paq.push(['trackEvent', 'ai', 'solcoder', 'code_generation'])
 
         const parsedData = data[0].trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
@@ -93,6 +94,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     let result
     try {
       const output = await this.props.plugin.call('solcoder', 'code_completion', word)
+      _paq.push(['trackEvent', 'ai', 'solcoder', 'code_completion'])
       const generatedText = output[0]
       let clean = generatedText
 
