@@ -17,7 +17,11 @@ class MetaMask extends EventEmitter {
 function setupMetaMask (browser: NightwatchBrowser, passphrase: string, password: string, done: VoidFunction) {
   const words = passphrase.split(' ')
   browser
-    .switchBrowserTab(1)
+    .perform((done) => {
+      browser.switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+        browser.perform(() => done())
+      })
+    })    
     .waitForElementVisible('input[data-testid="onboarding-terms-checkbox"]')
     .click('input[data-testid="onboarding-terms-checkbox"]')
     .click('button[data-testid="onboarding-import-wallet"]')    
