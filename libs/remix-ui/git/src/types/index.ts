@@ -25,7 +25,7 @@ export type gitState = {
     repositories: repository[]
     remoteBranches: remoteBranch[]
     commitChanges: commitChange[]
-    branchCommits:  Record<string, ReadCommitResult[]>
+    branchCommits:  Record<string, pagedCommits[]>
     syncStatus: syncStatus,
     localCommitCount: number
     remoteCommitCount: number
@@ -33,6 +33,14 @@ export type gitState = {
     gitHubUser: GitHubUser
     rateLimit: RateLimit
     gitHubAccessToken: string
+}
+
+export type pagedCommits = {
+    page: number,
+    perPage: number,
+    total: number,
+    hasNextPage: boolean,
+    commits: ReadCommitResult[]
 }
 
 export type loaderState = {
@@ -210,7 +218,7 @@ export interface setBranchCommitsAction {
     type: string,
     payload: {
         branch: branch,
-        commits: ReadCommitResult[]
+        commits: pagedCommits[]
     }
 }
 
