@@ -199,6 +199,7 @@ async function main() {
     console.log(e)
   }
 
+  files = await readReleaseFilesFromLocalDirectory()
   files = files.filter((file) => file.endsWith('.zip') || file.endsWith('.dmg') || file.endsWith('.exe') || file.endsWith('.AppImage') || file.endsWith('.snap') || file.endsWith('.deb') || file.startsWith('latest'))
   console.log(`Found ${files.length} files to upload`)
   console.log(files)
