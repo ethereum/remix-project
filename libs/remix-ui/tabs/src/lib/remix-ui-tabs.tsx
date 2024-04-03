@@ -288,7 +288,10 @@ export const TabsUI = (props: TabsUIProps) => {
               id="remix_ai_docs"
               className="btn ai-docs"
               role='link'
-              onClick={()=>{window.open("https://remix-ide.readthedocs.io/en/latest/security.html")}}
+              onClick={()=>{
+                window.open("https://remix-ide.readthedocs.io/en/latest/security.html")
+                _paq.push(['trackEvent', 'ai', 'solcoder', 'documentation'])
+              }}
             >
               <i className="fa-solid fa-book text-ai"></i>
               <span
