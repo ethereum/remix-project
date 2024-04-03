@@ -2,8 +2,8 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
-const passphrase = process.env.account_passphrase
-const password = process.env.account_password
+const passphrase = 'explain uniform adapt basic blue onion rebel pull rice erase volcano couple'
+const password = 'remix_is_cool'
 
 module.exports = {
   '@disabled': true,
@@ -22,16 +22,18 @@ module.exports = {
       .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
-      .pause(5000)
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')
-      .click('*[data-id="settingsSelectEnvOptions"] option[id="injected-mode"]')
+      .switchEnvironment('MetaMask')
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
-      .switchBrowserTab(1) // switch to metamask
-      .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
-      .click('.page-container__footer-button:nth-of-type(2)')
-      .switchBrowserTab(0)
+      .pause(5000)
+      .switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+        browser
+          .click('*[data-testid="page-container-footer-next"]') // this connects the metamask account to remix
+          .click('*[data-testid="page-container-footer-next"]')
+          .click('*[data-testid="popover-close"]')
+      })
+      .switchBrowserTab(0) // back to remix
   },
 
   'Should add a contract file #group1': function (browser: NightwatchBrowser) {
@@ -42,53 +44,56 @@ module.exports = {
       .waitForElementVisible('*[data-id="Deploy - transact (not payable)"]', 45000) // wait for the contract to compile
   },
 
-  'Should deploy contract on Goerli Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+  'Should deploy contract on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
-      .switchBrowserTab(2)
-      .waitForElementPresent('.transaction-status--unapproved')
-      .click('.transaction-status--unapproved')
-      .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
-      .click('.page-container__footer-button:nth-of-type(2)')
-      .waitForElementPresent('.transaction-status--submitted')
-      .pause(25000)
-      .switchBrowserTab(0)
+      .pause(5000)
+      .perform((done) => {
+        browser.switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+          browser
+            .waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .click('[data-testid="page-container-footer-next"]') // approve the tx
+            .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .perform(() => done())
+        })
+      })      
   },
 
-  'Should run low level interaction (fallback function) on Goerli Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .waitForElementPresent('*[data-id="universalDappUiTitleExpander"]')
-      .click('*[data-id="universalDappUiTitleExpander"]')
+  'Should run low level interaction (fallback function) on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+    browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+      .clickInstance(0)
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
-      .switchBrowserTab(2)
-      .waitForElementPresent('.transaction-status--unapproved')
-      .click('.transaction-status--unapproved')
-      .waitForElementPresent('.page-container__footer-button:nth-of-type(2)')
-      .click('.page-container__footer-button:nth-of-type(2)')
-      .waitForElementPresent('.transaction-status--submitted')
-      .pause(25000)
-      .switchBrowserTab(0)
+      .perform((done) => {
+        browser.switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+          browser
+            .waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .click('[data-testid="page-container-footer-next"]') // approve the tx
+            .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .perform(() => done())
+        })      
+      })      
   },
 
   'Should connect to Ethereum Main Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .switchBrowserTab(2)
-      .waitForElementPresent('.network-indicator__down-arrow')
-      .click('.network-indicator__down-arrow')
-      .useXpath().click("//span[text()='Main Ethereum Network']")
+      .switchBrowserTab(1)
+      .click('[data-testid="network-display"]')
+      .click('div[data-testid="Ethereum Mainnet"]') // switch to mainnet
       .useCss().switchBrowserTab(0)
       .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
-      .pause(5000)
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')
-      .click('*[data-id="settingsSelectEnvOptions"] option[id="injected-mode"]')
+      .switchEnvironment('MetaMask')
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
   },
@@ -101,41 +106,35 @@ module.exports = {
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .waitForElementPresent('*[data-id="modalDialogContainer"]', 15000)
+      .modalFooterOKClick('udappNotify')
       .pause(10000)
-      .assert.containsText('*[data-id="modalDialogModalBody"]', 'You are creating a transaction on the main network. Click confirm if you are sure to continue.')
-      .modalFooterCancelClick()
+      .assert.containsText('*[data-id="modalDialogModalBody"]', 'You are about to create a transaction on Main Network. Confirm the details to send the info to your provider.')
+      .modalFooterCancelClick('udappNotify')
   },
 
   /*
    * This test is using 3 different services:
    * - Metamask for getting the transaction
    * - Source Verifier service for fetching the contract code
-   * - Ropsten node for retrieving the trace and storage
+   * - Sepolia node for retrieving the trace and storage
    *
    */
-  'Should debug Ropsten transaction with source highlighting using the source verifier service and MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should debug Sepolia transaction with source highlighting using the source verifier service and MetaMask #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .switchBrowserTab(2)
-      .waitForElementPresent('.network-indicator__down-arrow')
-      .click('.network-indicator__down-arrow')
-      .useXpath().click("//span[text()='Ropsten Test Network']") // switch to Ropsten
-      .useCss().switchBrowserTab(0)
-      .refreshPage()
       .clickLaunchIcon('pluginManager') // load debugger and source verification
     // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
     // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
       .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-id="settingsSelectEnvOptions"]')
-      .click('*[data-id="settingsSelectEnvOptions"] option[id="injected-mode"]') // switch to Ropsten in udapp
+      .switchEnvironment('MetaMask')
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
-      .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Ropsten (3) network')
+      .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
       .clickLaunchIcon('debugger')
-      .setValue('*[data-id="debuggerTransactionInput"]', '0x959371506b8f6223d71c709ac2eb2d0158104dca2d76ca949f1662712cf0e6db') // debug tx
+      .setValue('*[data-id="debuggerTransactionInput"]', '0xe92c2482686566a0f02f78fc4b7b154fa54734a2de7fff17b38a42a0cb64e210') // debug tx
       .click('*[data-id="debuggerTransactionStartButton"]')
       .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
-      .assert.containsText('*[data-id="stepdetail"]', 'loaded address:\n0x3c943Fb816694d7D1f4C738e3e7823818a88DD6C')
-      .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x6C3CCC7FBA111707D5A1AAF2758E9D4F4AC5E7B1')
+      .assert.containsText('*[data-id="stepdetail"]', 'loaded address:\n0xbdf0D592CB3DB429DE1c03e52ea35d92eba31BD8')
+      .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x78CddD795A3ed0EFF3eFFfFc2651A0B22c1B877e')
   },
 
   'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group1': function (browser: NightwatchBrowser) {
