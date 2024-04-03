@@ -10,6 +10,8 @@ module.exports = {
   'Should show text in pinned contracts section #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('udapp')
+      .assert.elementPresent('*[data-id="pinnedContracts"]')
+      .assert.textContains('*[data-id="pinnedContractsSublabel"]', '(VM: vm-cancun)')
       .assert.elementPresent('*[data-id="NoPinnedInstanceText"]')
       .assert.textContains('*[data-id="NoPinnedInstanceText"]', 'No pinned contracts found for selected workspace & network')
   },

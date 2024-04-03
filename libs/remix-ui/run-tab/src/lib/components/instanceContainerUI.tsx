@@ -63,9 +63,9 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
     <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
       <div className="d-flex justify-content-between align-items-center pl-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
-          <label className="udapp_deployedContracts">
-            <FormattedMessage id="udapp.savedContracts" /> 
-            <span style={{fontSize: '0.75rem'}}> { props.plugin.REACT_API.networkName === 'VM' ? `(VM: ${props.plugin.REACT_API.selectExEnv})` : `(chain id: ${chainId.current})` }</span>
+          <label className="udapp_deployedContracts" data-id="pinnedContracts">
+            <FormattedMessage id="udapp.pinnedContracts" /> 
+            <span style={{fontSize: '0.75rem'}} data-id="pinnedContractsSublabel"> { props.plugin.REACT_API.networkName === 'VM' ? `(VM: ${props.plugin.REACT_API.selectExEnv})` : `(chain id: ${chainId.current})` }</span>
           </label>
         </CustomTooltip>
       </div>
@@ -103,7 +103,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
 
       <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
-          <label className="udapp_deployedContracts">
+          <label className="udapp_deployedContracts" data-id="unpinnedContracts">
             <FormattedMessage id="udapp.deployedContracts" />
           </label>
         </CustomTooltip>
