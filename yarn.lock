@@ -8460,15 +8460,6 @@ axios@^0.26.0:
   dependencies:
     follow-redirects "^1.14.8"
 
-axios@^1.6.2:
-  version "1.6.8"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.6.8.tgz#66d294951f5d988a00e87a0ffb955316a619ea66"
-  integrity sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==
-  dependencies:
-    follow-redirects "^1.15.6"
-    form-data "^4.0.0"
-    proxy-from-env "^1.1.0"
-
 axobject-query@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/axobject-query/-/axobject-query-2.2.0.tgz#943d47e10c0b704aa42275e20edf3722648989be"
@@ -14697,11 +14688,6 @@ follow-redirects@^1.0.0, follow-redirects@^1.12.1, follow-redirects@^1.14.0, fol
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
-
-follow-redirects@^1.15.6:
-  version "1.15.6"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.6.tgz#7f815c0cda4249c74ff09e95ef97c23b5fd0399b"
-  integrity sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==
 
 font-family-papandreou@^0.2.0-patch1:
   version "0.2.0-patch2"
@@ -26033,12 +26019,11 @@ select-hose@^2.0.0:
   resolved "https://registry.yarnpkg.com/select-hose/-/select-hose-2.0.0.tgz#625d8658f865af43ec962bfc376a37359a4994ca"
   integrity sha1-Yl2GWPhlr0Psliv8N2o3NZpJlMo=
 
-selenium-standalone@^9.4.0:
-  version "9.4.0"
-  resolved "https://registry.yarnpkg.com/selenium-standalone/-/selenium-standalone-9.4.0.tgz#be6a7aa6c1c1e8414d1405934bde809427c8411a"
-  integrity sha512-GzHVN1h3yoo7ZiP5NaJ63rxLIo4glIW7smQyQFTXqaYy9nbem4lK/diL6PorChuNbKPPiHDDbMlvkEP0Oi0Oug==
+selenium-standalone@^9.5.0:
+  version "9.5.0"
+  resolved "https://registry.yarnpkg.com/selenium-standalone/-/selenium-standalone-9.5.0.tgz#6755a8a8d14dd8b9356825b6c82a4a02fa185342"
+  integrity sha512-VbFzL0baRaDwg9OJ50fzRnn7WnFViueULRTHvhPAjFLovuMt6ynsW2Jh4d9xn0l0oezt2TbOcXNCp3AFikKWGw==
   dependencies:
-    axios "^1.6.2"
     commander "^8.3.0"
     cross-spawn "^7.0.3"
     debug "^4.3.1"
