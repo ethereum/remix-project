@@ -140,9 +140,9 @@ export class TxRunnerVM {
           callback(err, result)
         })
       } else {
-        await this.getVMObject().vm.evm.journal.checkpoint()
-        this.runTxInVm(tx, block, async (err, result) => {
-          await this.getVMObject().vm.evm.journal.revert()
+        const root = await this.getVMObject().stateManager.getStateRoot()
+        this.runBlockInVm(tx, block, async (err, result) => {
+          await this.getVMObject().stateManager.setStateRoot(root)
           callback(err, result)
         })
       }
