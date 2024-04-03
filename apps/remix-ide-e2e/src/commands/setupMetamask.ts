@@ -43,9 +43,13 @@ function setupMetaMask (browser: NightwatchBrowser, passphrase: string, password
     .click('button[data-testid="pin-extension-next"]')
     .click('button[data-testid="pin-extension-done"]')
     .click('button[data-testid="popover-close"]')
+    .pause(1000)
     .click('[data-testid="network-display"]')
     .click('.mm-modal-content label.toggle-button--off') // show test networks
     .click('div[data-testid="Sepolia"]') // switch to sepolia
+    .perform(() => {
+      done()
+    })
 }
 
 module.exports = MetaMask
