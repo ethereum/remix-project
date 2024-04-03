@@ -269,6 +269,7 @@ export const TabsUI = (props: TabsUIProps) => {
               onClick={async () => {
                 await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
                 setAI_switch(!ai_switch)
+                ai_switch ? _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_disabled'])
               }}
             >
               <i
