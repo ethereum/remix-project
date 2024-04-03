@@ -85,4 +85,12 @@ module.exports = {
         'decoded output': { "0": "uint256: 55" }
       })
     },
+  'Re-pin & delete immediately #group1': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-id="universalDappUiUdappPin"]')
+      .assert.elementPresent('*[data-id="deployAndRunNoInstanceText"]')
+      .click('*[data-id="universalDappUiUdappDelete"]')
+      .assert.textContains('*[data-id="NoPinnedInstanceText"]', 'No pinned contracts found for selected workspace & network')
+      .assert.textContains('*[data-id="deployAndRunNoInstanceText"]', 'Currently you have no unpinned contracts to interact with.')
+    },
 }
