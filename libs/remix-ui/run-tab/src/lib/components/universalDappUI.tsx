@@ -311,7 +311,7 @@ export function UniversalDappUI(props: UdappProps) {
             {props.exEnvironment === 'injected' && <i className="fas fa-edit btn btn-sm p-0" onClick={() => {props.editInstance(props.instance)}}></i>}
           </div>
           { props.isPinnedContract && props.instance.pinnedAt ? (
-            <div className="d-flex" data-id="instanceContractSavedOn">
+            <div className="d-flex" data-id="instanceContractPinnedAt">
               <label>
                 <b><FormattedMessage id="udapp.pinnedAt" />:</b> {(new Date(props.instance.pinnedAt)).toLocaleString()}
               </label>
