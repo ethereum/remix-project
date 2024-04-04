@@ -94,6 +94,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                   sendValue={props.sendValue}
                   getFuncABIInputs={props.getFuncABIInputs}
                   plugin={props.plugin}
+                  exEnvironment={props.exEnvironment}
+                  editInstance={props.editInstance}
                 />
               )
             })}
@@ -141,6 +143,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 sendValue={props.sendValue}
                 getFuncABIInputs={props.getFuncABIInputs}
                 plugin={props.plugin}
+                exEnvironment={props.exEnvironment}
+                editInstance={props.editInstance}
               />
             )
           })}

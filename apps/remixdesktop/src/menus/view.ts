@@ -79,9 +79,9 @@ export default (
         accelerator: 'CmdOrCtrl+0',
         click: function(item, focusedWindow) {
           if (focusedWindow)
-            {
-              focusedWindow.webContents.setZoomFactor(1)
-            }
+          {
+            focusedWindow.webContents.setZoomFactor(1)
+          }
         }
       },
 
