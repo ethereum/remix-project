@@ -23,7 +23,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
         .perform(done())
     })
     .verifyLoad()
-    // .enableClipBoard()
+    .enableClipBoard()
     .perform((done) => {
         browser.execute(function () { // hide tooltips
           function addStyle(styleString) {
