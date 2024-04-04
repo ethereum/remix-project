@@ -160,6 +160,7 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
+    if (props.isPinnedContract) _paq.push(['trackEvent', 'udapp', 'pinContracts', 'interactWithPinned'])
     const functionName = funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
     const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${props.instance.name}.${functionName}`
 
