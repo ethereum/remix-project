@@ -60,6 +60,7 @@ import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins
 import { appUpdaterPlugin } from './app/plugins/electron/appUpdaterPlugin'
  
 import {OpenAIGpt} from './app/plugins/openaigpt'
+import {SolCoder} from './app/plugins/solcoderAI'
 
 const isElectron = require('is-electron')
 
@@ -68,7 +69,6 @@ const remixLib = require('@remix-project/remix-lib')
 import { QueryParams } from '@remix-project/remix-lib'
 import { SearchPlugin } from './app/tabs/search'
 import { ElectronProvider } from './app/files/electronProvider'
-import { CopilotSuggestion } from './app/plugins/copilot/suggestion-service/copilot-suggestion'
 
 const Storage = remixLib.Storage
 const RemixDProvider = require('./app/files/remixDProvider')
@@ -234,7 +234,7 @@ class AppComponent {
 
     // ----------------- AI --------------------------------------
     const openaigpt = new OpenAIGpt()
-    const copilotSuggestion = new CopilotSuggestion()
+    const solcoder = new SolCoder()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -363,7 +363,7 @@ class AppComponent {
       solidityScript,
       templates,
       openaigpt,
-      copilotSuggestion
+      solcoder,
     ])
 
     //---- fs plugin
@@ -520,7 +520,9 @@ class AppComponent {
       }
     )
     await this.appManager.activatePlugin(['solidity-script', 'openaigpt'])
+    await this.appManager.activatePlugin(['solcoder'])
 
+    
 
     await this.appManager.activatePlugin(['filePanel'])
     // Set workspace after initial activation
