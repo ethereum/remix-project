@@ -96,7 +96,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           })}
         </div>
       ) : (
-        <span className="mx-2 mt-2 text-dark" data-id="NoPinnedInstanceText">
+        <span className="mx-2 mt-3 alert alert-secondary" data-id="NoPinnedInstanceText">
           <FormattedMessage id="udapp.NoPinnedInstanceText" />
         </span>
       )}
@@ -114,7 +114,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             tooltipId="deployAndRunClearInstancesTooltip"
             tooltipText={<FormattedMessage id="udapp.deployAndRunClearInstances" />}
           >
-            <i className="mr-1 udapp_icon far fa-trash-alt" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
+            <i className="mr-1 p-2 udapp_icon far fa-trash-alt" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
           </CustomTooltip>
         ) : null}
       </div>
@@ -144,7 +144,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
           })}
         </div>
       ) : (
-        <span className="mx-2 mt-3 alert alert-warning" data-id="deployAndRunNoInstanceText" role="alert">
+        <span className="mx-2 mt-3 alert alert-secondary" data-id="deployAndRunNoInstanceText" role="alert">
           <FormattedMessage id="udapp.deployAndRunNoInstanceText" />
         </span>
       )}
