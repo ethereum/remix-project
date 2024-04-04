@@ -318,7 +318,7 @@ export function UniversalDappUI(props: UdappProps) {
             </div>
           ) : null }
           { props.isPinnedContract && props.instance.filePath ? (
-            <div className="d-flex" data-id="instanceContractFilePath">
+            <div className="d-flex" data-id="instanceContractFilePath" style={{textAlign: "start", lineBreak: "anywhere"}}>
               <label>
                 <b><FormattedMessage id="udapp.filePath" />:</b> {props.instance.filePath}
               </label>
