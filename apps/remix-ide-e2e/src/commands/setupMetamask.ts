@@ -17,15 +17,14 @@ class MetaMask extends EventEmitter {
 function setupMetaMask (browser: NightwatchBrowser, passphrase: string, password: string, done: VoidFunction) {
   const words = passphrase.split(' ')
   browser
-    .perform((done) => {
-      browser.switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
-        browser.perform(() => done())
-      })
-    })    
+    .switchBrowserTab(1) 
     .waitForElementVisible('input[data-testid="onboarding-terms-checkbox"]')
     .click('input[data-testid="onboarding-terms-checkbox"]')
-    .click('button[data-testid="onboarding-import-wallet"]')    
+    .waitForElementVisible('button[data-testid="onboarding-import-wallet"]')
+    .click('button[data-testid="onboarding-import-wallet"]')
+    .waitForElementVisible('button[data-testid="metametrics-i-agree"]')
     .click('button[data-testid="metametrics-i-agree"]')
+    .waitForElementVisible('input[data-testid="import-srp__srp-word-0"]')
     .setValue('input[data-testid="import-srp__srp-word-0"]', words[0]) // import account
     .setValue('input[data-testid="import-srp__srp-word-1"]', words[1]) // import account
     .setValue('input[data-testid="import-srp__srp-word-2"]', words[2]) // import account
@@ -39,13 +38,18 @@ function setupMetaMask (browser: NightwatchBrowser, passphrase: string, password
     .setValue('input[data-testid="import-srp__srp-word-10"]', words[10]) // import account
     .setValue('input[data-testid="import-srp__srp-word-11"]', words[11]) // import account
     .click('button[data-testid="import-srp-confirm"]')
+    .waitForElementVisible('input[data-testid="create-password-new"]')
     .setValue('input[data-testid="create-password-new"]', password)
     .setValue('input[data-testid="create-password-confirm"]', password)
     .click('input[data-testid="create-password-terms"]')
     .click('button[data-testid="create-password-import"]')
+    .waitForElementVisible('button[data-testid="onboarding-complete-done"]')
     .click('button[data-testid="onboarding-complete-done"]')
+    .waitForElementVisible('button[data-testid="pin-extension-next"]')
     .click('button[data-testid="pin-extension-next"]')
+    .waitForElementVisible('button[data-testid="pin-extension-done"]')
     .click('button[data-testid="pin-extension-done"]')
+    .waitForElementVisible('button[data-testid="popover-close"]')
     .click('button[data-testid="popover-close"]')
     .pause(1000)
     .click('[data-testid="network-display"]')
