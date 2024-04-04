@@ -16,17 +16,19 @@ const logger = {
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer);
     // @ts-ignore
+    await remix.call('circuit-compiler', 'compile', 'circuits/calculate_hash.circom');
+    // @ts-ignore
     const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/calculate_hash.wasm', true);
     // @ts-ignore
     const wasm = new Uint8Array(wasmBuffer);   
      
     const zkey_final = {
       type: "mem",
-      data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/build/zk_setup.txt')))
+      data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/zkey_final.txt')))
     }
     const wtns = { type: "mem" };   
 
-    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/build/verification_key.json'))
+    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/verification_key.json'))
   
     const value1 = '1234'
     const value2 = '2'
@@ -56,7 +58,12 @@ const logger = {
     const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof, logger);
     console.log('zk proof validity', verified);
     
+    const templates = {
+      groth16: await remix.call('fileManager', 'readFile', 'templates/groth16_verifier.sol.ejs')
+    }
+    const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
     
+    await remix.call('fileManager', 'writeFile', './zk/build/groth16/zk_verifier.sol', solidityContract)
   } catch (e) {
     console.error(e.message)
   }

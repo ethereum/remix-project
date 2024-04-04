@@ -39,17 +39,10 @@ const logger = {
 
     console.log('exportVerificationKey')
     const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final)
-    await remix.call('fileManager', 'writeFile', './zk/build/verification_key.json', JSON.stringify(vKey))
+    await remix.call('fileManager', 'writeFile', './zk/keys/groth16/verification_key.json', JSON.stringify(vKey, null, 2))
     
-    const templates = {
-      groth16: await remix.call('fileManager', 'readFile', 'templates/groth16_verifier.sol.ejs')
-    }
-    const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
-    
-    await remix.call('fileManager', 'writeFile', './zk/build/zk_verifier.sol', solidityContract)
-    
-    console.log('buffer', (zkey_final as any).data.length)
-    await remix.call('fileManager', 'writeFile', './zk/build/zk_setup.txt', JSON.stringify(Array.from(((zkey_final as any).data))))
+    console.log('save zkey_final')
+    await remix.call('fileManager', 'writeFile', './zk/keys/groth16/zkey_final.txt', JSON.stringify(Array.from(((zkey_final as any).data))))
     
     console.log('setup done.')
     
