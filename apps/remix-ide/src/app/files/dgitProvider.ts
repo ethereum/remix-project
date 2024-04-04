@@ -3,7 +3,7 @@
 import {
   Plugin
 } from '@remixproject/engine'
-import git from 'isomorphic-git'
+import git, { ReadCommitResult } from 'isomorphic-git'
 import IpfsHttpClient from 'ipfs-http-client'
 import {
   saveAs
@@ -19,7 +19,7 @@ import { Octokit, App } from "octokit"
 import { OctokitResponse } from '@octokit/types'
 import { Endpoints } from "@octokit/types"
 import { IndexedDBStorage } from './filesystems/indexedDB'
-import { GitHubUser, RateLimit, branch, commitChange, remote } from '@remix-ui/git'
+import { GitHubUser, RateLimit, branch, commitChange, remote, pagedCommits } from '@remix-ui/git'
 import { LibraryProfile, StatusEvents } from '@remixproject/plugin-utils'
 import { ITerminal } from '@remixproject/plugin-api/src/lib/terminal'
 
@@ -999,7 +999,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async remotecommits(input: { owner: string, repo: string, token: string, branch: string, length: number }): Promise<Endpoints["GET /repos/{owner}/{repo}/commits"]["response"]["data"]> {
+  async remotecommits(input: { owner: string, repo: string, token: string, branch: string, length: number }): Promise<pagedCommits[]> {
     const octokit = new Octokit({
       auth: input.token
     })
@@ -1010,7 +1010,8 @@ class DGitProvider extends Plugin {
       sha: input.branch,
       per_page: 10
     })
-    const readCommitResults = []
+    const pages: pagedCommits[] = []
+    const readCommitResults: ReadCommitResult[] = []
     for (const githubApiCommit of response.data) {
       const readCommitResult = {
         oid: githubApiCommit.sha,
@@ -1048,8 +1049,14 @@ class DGitProvider extends Plugin {
     }
 
     console.log("Has next page:", hasNextPage);
-
-    return readCommitResults
+    pages.push({
+      page: 1,
+      perPage: 10,
+      total: response.data.length,
+      hasNextPage: hasNextPage,
+      commits: readCommitResults
+    })
+    return pages
   }
 
   async repositories(input: { token: string }) {
