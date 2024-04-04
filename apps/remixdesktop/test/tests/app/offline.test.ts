@@ -36,6 +36,10 @@ module.exports = {
             .waitForElementVisible('*[data-id="compilerContainerCompileBtn"]')
             .click('[data-id="compilerContainerCompileBtn"]')
             .clickLaunchIcon('filePanel')
-            .verifyContracts(['Storage'])
+            .clickLaunchIcon('solidity')
+            .pause(5000)
+            .waitForElementPresent('*[data-id="compiledContracts"] option', 60000)
+            .click('*[data-id="compilation-details"]')
+            .waitForElementVisible('*[data-id="remixui_treeviewitem_metadata"]')
     }
 }
