@@ -143,6 +143,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@gradio/client": "^0.10.1",
     "@isomorphic-git/lightning-fs": "^4.4.1",
     "@microlink/react-json-view": "^1.23.0",
     "@openzeppelin/contracts": "^5.0.0",

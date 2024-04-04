@@ -60,8 +60,10 @@ const tabsReducer = (state: ITabsState, action: ITabsAction) => {
 export const TabsUI = (props: TabsUIProps) => {
   const [tabsState, dispatch] = useReducer(tabsReducer, initialTabsState)
   const currentIndexRef = useRef(-1)
+  const [explaining, setExplaining] = useState<boolean>(false)
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
+  const [ai_switch, setAI_switch] = useState<boolean>(false)
 
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
@@ -166,46 +168,142 @@ export const TabsUI = (props: TabsUIProps) => {
     <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
       <div className="d-flex flex-row" style={{maxWidth: 'fit-content', width: '99%'}}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
-          <button
-            data-id="play-editor"
-            className="btn text-success py-0"
-            disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy')}
-            onClick={async () => {
-              const path = active().substr(active().indexOf('/') + 1, active().length)
-              const content = await props.plugin.call('fileManager', 'readFile', path)
-              if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
-                await props.plugin.call('scriptRunner', 'execute', content, path)
-                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
-                await props.plugin.call('solidity', 'compile', path)
-                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              } else if (tabsState.currentExt === 'circom') {
-                await props.plugin.call('circuit-compiler', 'compile', path)
-                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              } else if (tabsState.currentExt === 'vy') {
-                await props.plugin.call('vyper', 'vyperCompileCustomAction')
-                _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
-              }
-            }}
+          <CustomTooltip
+            placement="bottom"
+            tooltipId="overlay-tooltip-run-script"
+            tooltipText={
+              <span>
+                {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
+                  <FormattedMessage id="remixUiTabs.tooltipText1" />
+                ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom'  || tabsState.currentExt === 'vy' ? (
+                  <FormattedMessage id="remixUiTabs.tooltipText2" />
+                ) : (
+                  <FormattedMessage id="remixUiTabs.tooltipText3" />
+                )}
+              </span>
+            }
           >
-            <CustomTooltip
-              placement="bottom"
-              tooltipId="overlay-tooltip-run-script"
-              tooltipText={
-                <span>
-                  {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
-                    <FormattedMessage id="remixUiTabs.tooltipText1" />
-                  ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
-                    <FormattedMessage id="remixUiTabs.tooltipText2" />
-                  ) : (
-                    <FormattedMessage id="remixUiTabs.tooltipText3" />
-                  )}
-                </span>
-              }
+            <button
+              data-id="play-editor"
+              className="btn text-success py-0"
+              disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy')}
+              onClick={async () => {
+                const path = active().substr(active().indexOf('/') + 1, active().length)
+                const content = await props.plugin.call('fileManager', 'readFile', path)
+                if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
+                  await props.plugin.call('scriptRunner', 'execute', content, path)
+                  _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+                } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
+                  await props.plugin.call('solidity', 'compile', path)
+                  _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+                } else if (tabsState.currentExt === 'circom') {
+                  await props.plugin.call('circuit-compiler', 'compile', path)
+                  _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+                } else if (tabsState.currentExt === 'vy') {
+                  await props.plugin.call('vyper', 'vyperCompileCustomAction')
+                  _paq.push(['trackEvent', 'editor', 'clickRunFromEditor', tabsState.currentExt])
+                }
+              }}
             >
               <i className="fad fa-play"></i>
-            </CustomTooltip>
-          </button>
+            </button>
+          </CustomTooltip>
+          <CustomTooltip
+            placement="bottom"
+            tooltipId="overlay-tooltip-explaination"
+            tooltipText={
+              <span>
+                {tabsState.currentExt === 'sol'? (
+                  <FormattedMessage id="remixUiTabs.tooltipText5" />
+                ) : (
+                  <FormattedMessage id="remixUiTabs.tooltipText4" />
+                )}
+              </span>
+            }
+          >
+            <button
+              data-id="explain-editor"
+              id='explain_btn'
+              className='btn py-0 text-ai px-0 d-flex'
+              disabled={!(tabsState.currentExt === 'sol') || explaining}
+              onClick={async () => {
+                const path = active().substr(active().indexOf('/') + 1, active().length)
+                const content = await props.plugin.call('fileManager', 'readFile', path)
+                if (tabsState.currentExt === 'sol') {
+                  setExplaining(true)
+                  await props.plugin.call('solcoder', 'code_explaining', content)
+                  setExplaining(false)
+                  _paq.push(['trackEvent', 'ai', 'solcoder', 'explain_file'])
+                }
+              }}
+            >
+              <i className={`fa-solid fa-user-robot ${explaining ? 'loadingExplanation' : ''}`}></i>
+              <span
+                className="position-relative text-ai text-sm pl-1"
+                style={{fontSize: "x-small", alignSelf: "end"}}
+              >
+                AI
+              </span>
+            </button>
+          </CustomTooltip>
+          <CustomTooltip
+            placement="bottom"
+            tooltipId="overlay-tooltip-copilot"
+            tooltipText={
+              <span>
+                { tabsState.currentExt === 'sol'? (
+                  !ai_switch ? (
+                    <FormattedMessage id="remixUiTabs.tooltipText6" />
+                  ) : (<FormattedMessage id="remixUiTabs.tooltipText7" />)
+                ) : (
+                  <FormattedMessage id="remixUiTabs.tooltipText4" />
+                )}
+              </span>
+            }
+          >
+            <button
+              data-id="remix_ai_switch"
+              id='remix_ai_switch'
+              className="btn ai-switch text-ai pl-2 pr-0 py-0 d-flex"
+              disabled={!(tabsState.currentExt === 'sol' )}
+              onClick={async () => {
+                await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
+                setAI_switch(!ai_switch)
+                ai_switch ? _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_disabled'])
+              }}
+            >
+              <i
+                className={ai_switch ? "fa-solid fa-toggle-on" : "fa-solid fa-toggle-off"}
+              ></i>
+              <span
+                className="position-relative text-ai text-sm pl-1"
+                style={{fontSize: "x-small", alignSelf: "end"}}
+              >
+                AI
+              </span>
+            </button>
+          </CustomTooltip>
+          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-aiDocumentation" tooltipText={<FormattedMessage id="remixUiTabs.tooltipText8" />}>
+            <span 
+              data-id="remix_ai_docs"
+              id="remix_ai_docs"
+              className="btn ai-docs"
+              role='link'
+              onClick={()=>{
+                window.open("https://remix-ide.readthedocs.io/en/latest/security.html")
+                _paq.push(['trackEvent', 'ai', 'solcoder', 'documentation'])
+              }}
+            >
+              <i className="fa-solid fa-book text-ai"></i>
+              <span
+                className="position-relative text-ai text-sm pl-1"
+                style={{fontSize: "x-small", alignSelf: "end"}}
+              >
+                AI
+              </span>
+            </span>
+          </CustomTooltip>
+          
           <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
             <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" onClick={() => props.onZoomOut()}></span>
           </CustomTooltip>
