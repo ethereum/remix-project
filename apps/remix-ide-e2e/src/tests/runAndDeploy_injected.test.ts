@@ -126,42 +126,100 @@ module.exports = {
       .modalFooterCancelClick('udappNotify')
   },
 
-  /*
-   * This test is using 3 different services:
-   * - Metamask for getting the transaction
-   * - Source Verifier service for fetching the contract code
-   * - Sepolia node for retrieving the trace and storage
-   *
-   */
-  'Should debug Sepolia transaction with source highlighting using the source verifier service and MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should deploy Ballot to Sepolia using metamask': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
       .click('[data-testid="network-display"]')
       .click('div[data-testid="Sepolia"]') // switch to sepolia
       .useCss().switchBrowserTab(0)
-      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .openFile('contracts')
+      .openFile('contracts/3_Ballot.sol')
+      .clickLaunchIcon('udapp')
+      .clearConsole()
+      .clearTransactions()
+      .clickLaunchIcon('udapp')
+      .waitForElementVisible('input[placeholder="bytes32[] proposalNames"]')
+      .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
+      .click('*[data-id="Deploy - transact (not payable)"]') // deploy ballot
+      .perform((done) => {
+        browser.switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+          browser
+            .waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .click('[data-testid="page-container-footer-next"]') // approve the tx
+            .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .perform(() => done())
+        })
+      })    
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+      .clearConsole()
+      .clickInstance(0)
+      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
+      .perform((done) => { // call delegate
+        browser.switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+          browser
+            .waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .click('[data-testid="page-container-footer-next"]') // approve the tx
+            .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .perform(() => done())
+        })
+      })
+      .testFunction('last',
+        {
+          status: '0x1 Transaction mined and execution succeed',
+          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+        })
+  },
+
+  /*
+   * This test is using 2 different services:
+   * - Metamask for getting the transaction
+   * - Sepolia node for retrieving the trace and storage
+   */
+  'Should debug Sepolia transaction with source highlighting MetaMask #group1': function (browser: NightwatchBrowser) {
+    if (!checkBrowserIsChrome(browser)) return
+    let txhash   
+      browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('pluginManager') // load debugger and source verification
     // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
     // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
       .clickLaunchIcon('udapp')
-      .switchEnvironment('MetaMask')
-      .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
-      .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
-      .clickLaunchIcon('debugger')
-      .setValue('*[data-id="debuggerTransactionInput"]', '0xe92c2482686566a0f02f78fc4b7b154fa54734a2de7fff17b38a42a0cb64e210') // debug tx
-      .click('*[data-id="debuggerTransactionStartButton"]')
-      .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
-      .assert.containsText('*[data-id="stepdetail"]', 'loaded address:\n0xbdf0D592CB3DB429DE1c03e52ea35d92eba31BD8')
-      .assert.containsText('*[data-id="solidityLocals"]', 'to: 0x78CddD795A3ed0EFF3eFFfFc2651A0B22c1B877e')
+      .perform((done) => {
+        browser.getLastTransactionHash((hash) => {
+          txhash = hash
+          done()
+        })
+      })
+      .perform((done) => {
+        browser
+        .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+        .clickLaunchIcon('debugger')
+        .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
+        .click('*[data-id="debuggerTransactionStartButton"]')
+        .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
+        .checkVariableDebug('soliditylocals', localsCheck)
+        .perform(() => done())
+      })
+      
   },
 
   'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser
       .executeScriptInTerminal('web3.eth.getAccounts()')
-      .journalLastChildIncludes('[ "0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f" ]')
+      .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
   }  
+}
+
+const localsCheck = {
+  to: {
+    value: '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB',
+    type: 'address'
+  }
 }
 
 const sources = [
