@@ -290,7 +290,7 @@ export const TabsUI = (props: TabsUIProps) => {
               className="btn pl-2 pr-0 py-0 d-flex ai-docs"
               role='link'
               onClick={()=>{
-                window.open("https://remix-ide.readthedocs.io/en/latest/security.html")
+                window.open("https://remix-ide.readthedocs.io/en/latest/ai.html")
                 _paq.push(['trackEvent', 'ai', 'solcoder', 'documentation'])
               }}
             >
