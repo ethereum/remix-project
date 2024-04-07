@@ -2,6 +2,11 @@
   "remixUiTabs.tooltipText1": "执行脚本 (CTRL + SHIFT + S)",
   "remixUiTabs.tooltipText2": "编译 CTRL + S",
   "remixUiTabs.tooltipText3": "选择 .sol 或 .yul 文件进行编译，或选择 .ts 或 .js 文件并运行它",
+  "remixUiTabs.tooltipText4": "选择 .sol 文件以使用AI工具 [BETA]",
+  "remixUiTabs.tooltipText5": "解释当前文件中的合同 [BETA]",
+  "remixUiTabs.tooltipText6": "启用人工智能副驾驶 [BETA]",
+  "remixUiTabs.tooltipText7": "禁用 AI 副驾驶 [BETA]",
+  "remixUiTabs.tooltipText8": "人工智能文档 [BETA]",
   "remixUiTabs.zoomOut": "缩小",
   "remixUiTabs.zoomIn": "放大"
 }

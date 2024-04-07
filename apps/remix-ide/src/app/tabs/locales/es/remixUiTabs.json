@@ -2,6 +2,11 @@
   "remixUiTabs.tooltipText1": "Ejecutar script (CTRL + SHIFT + S)",
   "remixUiTabs.tooltipText2": "Compilar CTRL + S",
   "remixUiTabs.tooltipText3": "Seleccione el archivo .sol o .yul para compilar o un archivo .ts o .js y ejecútelo",
+  "remixUiTabs.tooltipText4": "Seleccione el archivo .sol para usar herramientas de IA [BETA]",
+  "remixUiTabs.tooltipText5": "Explique los contratos en el archivo actual [BETA]",
+  "remixUiTabs.tooltipText6": "Habilitar el copiloto AI [BETA]",
+  "remixUiTabs.tooltipText7": "Desactivar el copiloto AI [BETA]",
+  "remixUiTabs.tooltipText8": "Documentación de IA [BETA]",
   "remixUiTabs.zoomOut": "Alejar",
   "remixUiTabs.zoomIn": "Acercar"
 }
