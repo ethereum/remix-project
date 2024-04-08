@@ -79,7 +79,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     ){
       return; // do not do completion on single and multiline comment
     }
-
     
     // abort if there is a signal
     if (token.isCancellationRequested) {
