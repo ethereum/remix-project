@@ -67,7 +67,7 @@ export class StorageViewer {
   /**
     * return all the possible mappings locations for the current context (cached) do not return state changes during the current transaction
     *
-    * @param {Array} corrections - used in case the calculated sha3 has been modifyed before SSTORE (notably used for struct in mapping).
+    * @param {Array} corrections - used in case the calculated sha3 has been modified before SSTORE (notably used for struct in mapping).
     */
   async initialMappingsLocation (corrections) {
     if (!this.initialMappingsLocationPromise) {
@@ -79,7 +79,7 @@ export class StorageViewer {
   /**
     * return all the possible mappings locations for the current context (cached) and current mapping slot. returns state changes during the current transaction
     *
-    * @param {Array} corrections - used in case the calculated sha3 has been modifyed before SSTORE (notably used for struct in mapping).
+    * @param {Array} corrections - used in case the calculated sha3 has been modified before SSTORE (notably used for struct in mapping).
     */
   async mappingsLocation (corrections) {
     if (!this.currentMappingsLocationPromise) {
@@ -94,7 +94,7 @@ export class StorageViewer {
   /**
     * retrieve mapping location changes from the storage changes.
     * @param {Map} storageChanges
-    * @param {Array} corrections - used in case the calculated sha3 has been modifyed before SSTORE (notably used for struct in mapping).
+    * @param {Array} corrections - used in case the calculated sha3 has been modified before SSTORE (notably used for struct in mapping).
     */
   extractMappingsLocationChanges (storageChanges, corrections) {
     if (this.mappingsLocationChanges) {
