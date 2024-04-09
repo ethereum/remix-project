@@ -137,8 +137,14 @@ export class TxRunnerWeb3 {
       this.getWeb3().eth.estimateGas(txCopy)
         .then(gasEstimation => {
           gasEstimationForceSend(null, () => {
-            // callback is called whenever no error
-            tx['gas'] = !gasEstimation ? gasLimit : gasEstimation
+            /*
+            * gasLimit is a value that can be set in the UI to hardcap value that can be put in a tx.
+            * e.g if the gasestimate 
+            */
+            if (gasEstimation > gasLimit) {
+              return callback(`estimated gas for this transaction (${gasEstimation}) is higher than gasLimit set in the configuration  (${gasLimit}). Please raise the gas limit.`)
+            }
+            tx['gas'] = gasLimit
 
             if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
               return this._executeTx(tx, network, null, this._api, promptCb, callback)
