@@ -78,7 +78,7 @@ jobs:
           paths:
             - "persist"
 
-  build-endpoints:
+  test-endpoints:
     machine:
         image: ubuntu-2004:current
     resource_class:
@@ -553,7 +553,7 @@ workflows:
           filters:
             branches:
               only: ['master', /.*desktop.*/]
-      - build-endpoints
+      - test-endpoints
       - build-remixdesktop-mac:
           requires:
             - build-desktop
