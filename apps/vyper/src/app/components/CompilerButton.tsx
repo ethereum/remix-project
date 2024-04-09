@@ -31,7 +31,6 @@ function CompilerButton({contract, setOutput, compilerUrl, resetCompilerState, o
           setLoadingSpinnerState(true)
           await compileContract(contract, compilerUrl, setOutput, setLoadingSpinnerState)
         }}
-        title={contract}
         className="btn btn-primary w-100 d-block btn-block text-break remixui_disabled mb-1 mt-3"
       >
         <div className="d-flex align-items-center justify-content-center fa-1x">
