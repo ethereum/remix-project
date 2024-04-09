@@ -551,8 +551,11 @@ module.exports = {
       .click('select[id="wstemplate"] option[value=uniswapV4HookBookMultiSigSwapHook]')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'multisig cookbook' })
+      .saveScreenshot('./reports/screenshot/cookbook1.png')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .saveScreenshot('./reports/screenshot/cookbook2.png')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .saveScreenshot('./reports/screenshot/cookbook3.png')
       .waitForElementVisible('[data-id="PermissionHandler-modal-footer-ok-react"]', 300000)
       .click('[data-id="PermissionHandler-modal-footer-ok-react"]')
       // click on lib to close it
