@@ -56,7 +56,7 @@ import { StatusPlugin } from './hosts/status'
     
     // Start the server
    
-    app.listen(port, () => {
+    app.listen(port, process.env.NODE_ENV === 'test'? 'localhost': '', () => {
         logger.info('Express server started on port: ' + port);
     });
 
@@ -68,7 +68,7 @@ import { StatusPlugin } from './hosts/status'
                 cert: fs.readFileSync(process.env.SSL_CERT),
             }, app);
 
-            httpsServer.listen(443, () => {
+            httpsServer.listen(443, process.env.NODE_ENV === 'test'? 'localhost': '', () => {
                 logger.info('HTTPS Server running on port 443');
             });
         } catch (e) {
