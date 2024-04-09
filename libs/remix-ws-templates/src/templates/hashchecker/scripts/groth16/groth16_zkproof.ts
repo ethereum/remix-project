@@ -12,23 +12,23 @@ const logger = {
 (async () => {
   try {
     // @ts-ignore
-    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/calculate_hash.r1cs', true);
+    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/calculate_hash.r1cs', { encoding: null });
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer);
     // @ts-ignore
     await remix.call('circuit-compiler', 'compile', 'circuits/calculate_hash.circom');
     // @ts-ignore
-    const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/calculate_hash.wasm', true);
+    const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/calculate_hash.wasm', { encoding: null });
     // @ts-ignore
     const wasm = new Uint8Array(wasmBuffer);   
      
     const zkey_final = {
       type: "mem",
-      data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/zkey_final.txt')))
+      data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/groth16/zkey_final.txt')))
     }
     const wtns = { type: "mem" };   
 
-    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/verification_key.json'))
+    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/groth16/verification_key.json'))
   
     const value1 = '1234'
     const value2 = '2'

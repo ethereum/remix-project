@@ -64,21 +64,23 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
 (async () => {
   try {
     // @ts-ignore
-    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.r1cs', true);
+    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.r1cs', { encoding: null });
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer);
     // @ts-ignore
-    const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.wasm', true);
+    await remix.call('circuit-compiler', 'compile', 'circuits/rln.circom');
+    // @ts-ignore
+    const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.wasm', { encoding: null });
     // @ts-ignore
     const wasm = new Uint8Array(wasmBuffer);   
      
     const zkey_final = {
       type: "mem",
-      data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/build/zk_setup.txt')))
+      data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/groth16/zkey_final.txt')))
     }
     const wtns = { type: "mem" };   
 
-    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/build/verification_key.json'))
+    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/groth16/verification_key.json'))
   
     // build list of identity commitments
     const secrets = []
@@ -119,7 +121,7 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
       externalNullifier: 0xa // hash(epoch, appId)
     }
     const proof1 = await prove(signals1, wasm, wtns, r1cs, zkey_final, vKey)
-
+    
     const signals2 = {
       identitySecret: secrets[0],
       userMessageLimit,
@@ -135,6 +137,13 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
 
     console.log(secret.toString(10))
     console.log(Fq.normalize(secrets[0]))
+    
+    const templates = {
+      groth16: await remix.call('fileManager', 'readFile', 'templates/groth16_verifier.sol.ejs')
+    }
+    const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
+    
+    await remix.call('fileManager', 'writeFile', './zk/build/groth16/zk_verifier.sol', solidityContract)
   } catch (e) {
     console.error(e.message)
   }
