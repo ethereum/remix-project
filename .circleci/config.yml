@@ -78,6 +78,28 @@ jobs:
           paths:
             - "persist"
 
+  build-endpoints:
+    machine:
+        image: ubuntu-2004:current
+    resource_class:
+        xlarge
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - save_cache:
+          key: v1-deps-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - run:
+          name: Build
+          command: |
+             cd apps/remix-endpoints 
+             yarn && yarn build && yarn test
+
   build-plugin:
       docker:
       - image: cimg/node:20.0.0-browsers
@@ -529,6 +551,7 @@ workflows:
           filters:
             branches:
               only: ['master', /.*desktop.*/]
+      - build-endpoints
       - build-remixdesktop-mac:
           requires:
             - build-desktop
