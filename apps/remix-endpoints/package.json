@@ -4,7 +4,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.prod.json",
     "start": "yarn build && node ./dist/src",
-    "start:test": "sudo yarn start --env test",
+    "start:test": "yarn start --env test",
     "update": "git fetch origin master && git checkout origin/master",
     "test": "mocha"
   },

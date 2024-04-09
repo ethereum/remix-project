@@ -1,10 +1,9 @@
 import chai from 'chai';
 import axios from 'axios';
-import { describe, it } from 'mocha'; // Import 'it' for defining test cases
+import { describe, it } from 'mocha';
 import https from 'https';
 
-// Tell chai to use the chai-http plugin is missing in the provided code
-// If you're using chai-http for other purposes, remember to import it and use chai.use(chaiHttp)
+
 
 describe('IPFS', () => {
   it('should retrieve data from IPFS and check content', async () => { // Define a test case with 'it'
@@ -15,7 +14,7 @@ describe('IPFS', () => {
     });
 
     try {
-      const res = await axiosInstance.get('https://jqgt.remixproject.org/ipfs/QmcuCKyokk9Z6f65ADAADNiS2R2xCjfRkv7mYBSWDwtA7M');
+      const res = await axiosInstance.get('/jqgt/ipfs/QmcuCKyokk9Z6f65ADAADNiS2R2xCjfRkv7mYBSWDwtA7M');
       console.log(res.data);
       chai.expect(res.data).to.contains('greeting'); // Ensure this matches the actual expected content
       chai.expect(res.status).to.equal(200);
@@ -31,7 +30,7 @@ describe('OpenAI GPT Remix Project API Test', function() {
 
   it('should return a successful response from the API', async function() {
     // Perform the Axios request
-    const response = await axios.post('https://openai-gpt.remixproject.org/', {
+    const response = await axios.post('/openai-gpt/', {
       prompt: 'Hello, my name is John and I am a'
     }, {
       headers: {
@@ -40,7 +39,6 @@ describe('OpenAI GPT Remix Project API Test', function() {
       timeout: 5000,
     });
 
-    console.log(response.data);
     chai.expect(response.data.choices[0].message.role).to.equal('assistant'); // Ensure this matches
     chai.expect(response.status).to.equal(200);
 
