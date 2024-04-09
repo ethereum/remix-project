@@ -42,7 +42,7 @@ Root directories are individual workshops, the name used will be the name of the
 
 ### README.md
 
-The readme in each directry contains an explanation of what the workshop is about. If an additional summary property is provided in the config.yml that will be used in the overview section of the plugin.
+The readme in each directory contains an explanation of what the workshop is about. If an additional summary property is provided in the config.yml that will be used in the overview section of the plugin.
 
 ### config.yml
 
