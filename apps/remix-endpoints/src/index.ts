@@ -32,7 +32,7 @@ import { StatusPlugin } from './hosts/status'
     if(process.env.NODE_ENV === 'test') {
         port = Number(1024);
         ssl_port = Number(1025);
-        console.log('Starting dev server...', process.env)
+        console.log('Starting dev server...')
         app.use('/jqgt', ipfsGatewayPlugin());
         app.use('/openai-gpt', openaigpt());
         app.use('/solcoder', solcoder());

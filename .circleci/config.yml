@@ -97,7 +97,7 @@ jobs:
              cd apps/remix-endpoints 
              (yarn start:test &> background.log &) && sleep 5 && yarn test
       - run:
-          name: read log
+          name: server log
           command: |
              cd apps/remix-endpoints 
              cat background.log
