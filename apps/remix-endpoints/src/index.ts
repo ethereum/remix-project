@@ -28,8 +28,10 @@ import { StatusPlugin } from './hosts/status'
 
     
     let port: number
+    let ssl_port: number
     if(process.env.NODE_ENV === 'test') {
         port = Number(1024);
+        ssl_port = Number(1025);
         console.log('Starting dev server...', process.env)
         app.use('/jqgt', ipfsGatewayPlugin());
         app.use('/openai-gpt', openaigpt());
@@ -38,6 +40,7 @@ import { StatusPlugin } from './hosts/status'
         app.use('/gpt-chat', gptchat());
     }else{
         port = Number(80);
+        ssl_port = Number(443);
         app.use(vhost('jqgt.remixproject.org', ipfsGatewayPlugin()))
         app.use(vhost('openai-gpt.remixproject.org', openaigpt()))
         app.use(vhost('solcoder.remixproject.org', solcoder()))
@@ -56,7 +59,7 @@ import { StatusPlugin } from './hosts/status'
     
     // Start the server
    
-    app.listen(port, process.env.NODE_ENV === 'test'? 'localhost': '', () => {
+    app.listen(port,  'localhost', () => {
         logger.info('Express server started on port: ' + port);
     });
 
@@ -68,8 +71,8 @@ import { StatusPlugin } from './hosts/status'
                 cert: fs.readFileSync(process.env.SSL_CERT),
             }, app);
 
-            httpsServer.listen(443, process.env.NODE_ENV === 'test'? 'localhost': '', () => {
-                logger.info('HTTPS Server running on port 443');
+            httpsServer.listen(ssl_port, 'localhost', () => {
+                logger.info(`HTTPS Server running on port ${ssl_port} `);
             });
         } catch (e) {
             console.warn(e)
