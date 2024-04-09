@@ -14,7 +14,7 @@ export const SolidityLocals = ({data, message, registerEvent, triggerEvent, clas
     let color = 'var(--primary)'
     if (data.isArray || data.isStruct || data.isMapping) {
       color = 'var(--info)'
-    } else if (data.type.indexOf('uint') === 0 || data.type.indexOf('int') === 0 || data.type.indexOf('bool') === 0 || data.type.indexOf('enum') === 0) {
+    } else if (data.type && data.type.indexOf && (data.type.indexOf('uint') === 0 || data.type.indexOf('int') === 0 || data.type.indexOf('bool') === 0 || data.type.indexOf('enum') === 0)) {
       color = 'var(--green)'
     } else if (data.type === 'string') {
       color = 'var(--teal)'
