@@ -91,16 +91,11 @@ jobs:
           command: |
              cd apps/remix-endpoints 
              yarn && yarn build
-      - run: 
-          name: run endpoints
-          command: cd apps/remix-endpoints && yarn start:test &
-          background: true
       - run:
           name: run tests
           command: |
-             sleep 10
              cd apps/remix-endpoints 
-             yarn test
+             (yarn start:test &) && sleep 5 && yarn test
 
   build-plugin:
       docker:
