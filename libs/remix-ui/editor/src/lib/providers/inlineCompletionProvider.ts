@@ -25,12 +25,24 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     if (context.selectedSuggestionInfo) {
       return;
     }
+    const getTextAtLine = (lineNumber) => {
+      const lineRange = model.getFullModelRange().setStartPosition(lineNumber, 1).setEndPosition(lineNumber + 1, 1);
+      return model.getValueInRange(lineRange);
+    } 
     // get text before the position of the completion
     const word = model.getValueInRange({
       startLineNumber: 1,
       startColumn: 1,
       endLineNumber: position.lineNumber,
       endColumn: position.column,
+    });
+
+    // get text after the position of the completion
+    const word_after = model.getValueInRange({
+      startLineNumber: position.lineNumber,
+      startColumn: position.column,
+      endLineNumber: model.getLineCount(),
+      endColumn: getTextAtLine(model.getLineCount()).length + 1,
     });
 
     if (!word.endsWith(' ') &&
@@ -90,8 +102,34 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return
     }
 
+    if (word.replace(/ +$/, '').endsWith('\n')){
+      // Code insertion
+      try{
+        const output = await this.props.plugin.call('solcoder', 'code_insertion', word, word_after)
+        _paq.push(['trackEvent', 'ai', 'solcoder', 'code_insertion'])
+        const generatedText = output[0] // no need to clean it. should already be 
+
+        const item: monacoTypes.languages.InlineCompletion = {
+          insertText: generatedText
+        };
+
+        this.completionEnabled = false
+        const handleCompletionTimer = new CompletionTimer(5000, () => { this.completionEnabled = true });
+        handleCompletionTimer.start()
+
+        return {
+          items: [item],
+          enableForwardStability: true
+        }
+      }
+      catch (err){
+        return
+      }
+    }
+
     let result
     try {
+      // Code completion
       const output = await this.props.plugin.call('solcoder', 'code_completion', word)
       _paq.push(['trackEvent', 'ai', 'solcoder', 'code_completion'])
       const generatedText = output[0]
