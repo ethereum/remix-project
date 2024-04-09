@@ -98,7 +98,12 @@ jobs:
           name: Build
           command: |
              cd apps/remix-endpoints 
-             yarn && yarn build && yarn test
+             yarn && yarn build
+      - run:
+          name: run tests on live endpoints
+          command: |
+             cd apps/remix-endpoints 
+             yarn test
 
   build-plugin:
       docker:
