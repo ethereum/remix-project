@@ -27,8 +27,9 @@ import { StatusPlugin } from './hosts/status'
     app.use(morgan('dev'));
 
     
-
+    let port: number
     if(process.env.NODE_ENV === 'test') {
+        port = Number(1024);
         console.log('Starting dev server...', process.env)
         app.use('/jqgt', ipfsGatewayPlugin());
         app.use('/openai-gpt', openaigpt());
@@ -36,6 +37,7 @@ import { StatusPlugin } from './hosts/status'
         app.use('/completion', solcompletion());
         app.use('/gpt-chat', gptchat());
     }else{
+        port = Number(80);
         app.use(vhost('jqgt.remixproject.org', ipfsGatewayPlugin()))
         app.use(vhost('openai-gpt.remixproject.org', openaigpt()))
         app.use(vhost('solcoder.remixproject.org', solcoder()))
@@ -53,7 +55,7 @@ import { StatusPlugin } from './hosts/status'
     app.use(vhost('status.remixproject.org', StatusPlugin()))
     
     // Start the server
-    const port = Number(80);
+   
     app.listen(port, () => {
         logger.info('Express server started on port: ' + port);
     });
