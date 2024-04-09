@@ -101,7 +101,7 @@ jobs:
              yarn && yarn build
       - run: 
           name: run endpoints
-          command: cd apps/remix-endpoints && sudo yarn start:test &
+          command: cd apps/remix-endpoints && yarn start:test &
           background: true
       - run:
           name: run tests
