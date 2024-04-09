@@ -95,7 +95,12 @@ jobs:
           name: run tests
           command: |
              cd apps/remix-endpoints 
-             (yarn start:test &) && sleep 5 && yarn test
+             (yarn start:test &> background.log &) && sleep 5 && yarn test
+      - run:
+          name: read log
+          command: |
+             cd apps/remix-endpoints 
+             cat background.log
 
   build-plugin:
       docker:
