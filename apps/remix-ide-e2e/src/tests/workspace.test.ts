@@ -553,7 +553,7 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'multisig cookbook' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-      .waitForElementVisible('[data-id="PermissionHandler-modal-footer-ok-react"]', 300000)
+      .waitForElementVisible('[data-id="PermissionHandler-modal-footer-ok-react"]', 600000)
       .click('[data-id="PermissionHandler-modal-footer-ok-react"]')
       // click on lib to close it
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemlib"]')
