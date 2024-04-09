@@ -1,10 +1,10 @@
 {
-    "version": "v0.46.0",
+    "version": "v0.47.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Remix VM (Cancun) added with the functionalities of cancun fork",
-    "highlight2": "Latest Solidity compiler version set to 0.8.25 with cancun as default EVM version",
-    "highlight3": "",
+    "highlight1": "Contract pinning enabled for Remix VMs too",
+    "highlight2": "Dapp draft plugin added to edit & deploy a DApp",
+    "highlight3": "AI tools integrated using Solcoder",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-46-0-f90a4948fff0"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-47-0-d52f3dc21886"
   }
