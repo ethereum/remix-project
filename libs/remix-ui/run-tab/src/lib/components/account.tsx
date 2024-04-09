@@ -33,7 +33,14 @@ export function AccountUI(props: AccountProps) {
         title: intl.formatMessage({id: 'udapp.injectedTitle'})
       })
       break
-
+        
+    case 'vm-cancun':
+      setPlusOpt({
+        classList: '',
+        title: intl.formatMessage({id: 'udapp.createNewAccount'})
+      })
+      break
+        
     case 'vm-paris':
       setPlusOpt({
         classList: '',
