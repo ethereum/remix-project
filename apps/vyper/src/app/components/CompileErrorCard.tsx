@@ -7,7 +7,6 @@ export function CompileErrorCard(props: { output: any, plugin: RemixClient }) {
     <div
       id="vyperErrorResult"
       className=" d-flex flex-column p-2 alert alert-danger error vyper-compile-error vyper-panel-width"
-      title={props.output?.title}
     >
       <span
         data-id="error-message"
