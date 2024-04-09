@@ -540,7 +540,7 @@ module.exports = {
 
   },
 
-  'Should create a cookbook workspace #group3': function (browser: NightwatchBrowser) {
+  'Should create a cookbook workspace #group3 #flaky': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
