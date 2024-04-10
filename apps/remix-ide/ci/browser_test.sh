@@ -2,6 +2,16 @@
 
 set -e
 
+OPENAITEST=$( curl --connect-timeout 1 -m 5 -H 'Content-Type: application/json' \
+      -d '{"prompt":"Hello, my name is John and I am a"}' \
+      -X POST \
+      https://openai-gpt.remixproject.org/)
+
+if [[ $OPENAITEST == *"assistant"* ]]; then
+    echo "up"
+else
+    echo "down"
+fi
 
 
 BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
