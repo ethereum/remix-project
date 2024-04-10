@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-unused-vars
-import axios, { AxiosResponse } from 'axios'
+import axios, { AxiosInstance, AxiosResponse } from 'axios'
 import semver from 'semver'
 import { BzzNode as Bzz } from '@erebos/bzz-node'
-
+import https from 'https';
 export interface Imported {
   content: string;
   cleanUrl: string;
@@ -123,9 +123,14 @@ export class RemixURLResolver {
     // eslint-disable-next-line no-useless-catch
     try {
       const req = process && process.env && process.env['NX_API_URL'] ? `${process.env['NX_API_URL']}${url}` : `https://jqgt.remixproject.org/${url}`
-      // If you don't find greeter.sol on ipfs gateway use local
-      // const req = 'http://localhost:8080/' + url
-      const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
+
+      let axiosInstance: AxiosInstance = axios.create({
+          httpsAgent: new https.Agent({
+            rejectUnauthorized: process && process.env && process.env['NX_API_URL']? false : true // This will ignore SSL certificate errors in CIRCLECI
+          })
+      }); 
+    
+      const response: AxiosResponse = await axiosInstance.get(req, { transformResponse: [] })
       return { content: response.data, cleanUrl: url.replace('ipfs/', '') }
     } catch (e) {
       throw e
