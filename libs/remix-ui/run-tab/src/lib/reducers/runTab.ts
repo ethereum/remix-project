@@ -18,7 +18,7 @@ export const runTabInitialState: RunTabState = {
   },
   sendValue: '0',
   sendUnit: 'wei',
-  gasLimit: 200000,
+  gasLimit: 500000,
   selectExEnv: 'vm-paris',
   personalMode: false,
   networkName: 'VM',
