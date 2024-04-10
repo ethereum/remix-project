@@ -141,10 +141,15 @@ export class TxRunnerWeb3 {
             * gasLimit is a value that can be set in the UI to hardcap value that can be put in a tx.
             * e.g if the gasestimate 
             */
-            if (gasEstimation > gasLimit) {
+            if (gasLimit !== '0x0' && gasEstimation > gasLimit) {
               return callback(`estimated gas for this transaction (${gasEstimation}) is higher than gasLimit set in the configuration  (${gasLimit}). Please raise the gas limit.`)
-            }
-            tx['gas'] = gasLimit
+            } 
+            
+            if (gasLimit === '0x0') {
+              tx['gas'] = gasEstimation
+            } else {
+              tx['gas'] = gasLimit
+            }           
 
             if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
               return this._executeTx(tx, network, null, this._api, promptCb, callback)

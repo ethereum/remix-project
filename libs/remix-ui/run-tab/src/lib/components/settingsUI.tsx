@@ -4,7 +4,7 @@ import {SettingsProps} from '../types'
 import {EnvironmentUI} from './environment'
 import {NetworkUI} from './network'
 import {AccountUI} from './account'
-import {GasPriceUI} from './gasPrice'
+import {GasLimitUI} from './gasLimit'
 import {ValueUI} from './value'
 
 export function SettingsUI(props: SettingsProps) {
@@ -27,7 +27,7 @@ export function SettingsUI(props: SettingsProps) {
         signMessageWithAddress={props.signMessageWithAddress}
         passphrase={props.passphrase}
       />
-      <GasPriceUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} />
+      <GasLimitUI gasLimit={props.gasLimit} setGasFee={props.setGasFee} />
       <ValueUI setUnit={props.setUnit} sendValue={props.sendValue} sendUnit={props.sendUnit} setSendValue={props.setSendValue} />
     </div>
   )
