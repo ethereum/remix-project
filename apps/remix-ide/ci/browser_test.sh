@@ -2,7 +2,7 @@
 
 set -e
 
-OPENAITEST=$( curl --connect-timeout 1 -m 5 -H 'Content-Type: application/json' \
+OPENAITEST=$( curl --connect-timeout 1 -k -m 5 -H 'Content-Type: application/json' \
       -d '{"prompt":"Hello, my name is John and I am a"}' \
       -X POST \
      https://localhost:1025/openai-gpt/)
