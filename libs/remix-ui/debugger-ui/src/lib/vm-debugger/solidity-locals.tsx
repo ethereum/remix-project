@@ -41,7 +41,9 @@ export const SolidityLocals = ({data, message, registerEvent, triggerEvent, clas
       </label>
     )
   }
-
+  if (calldata && Object.keys(calldata).length) {
+    message = ''
+  }
   return (
     <div className={className} id="soliditylocals" data-id="solidityLocals">
       <DropdownPanel
