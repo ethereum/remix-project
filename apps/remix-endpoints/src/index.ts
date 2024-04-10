@@ -17,6 +17,7 @@ import { gptchat } from './hosts/gpt-chat'
 import { RSS } from './hosts/rss';
 import morgan from 'morgan';
 import { StatusPlugin } from './hosts/status'
+import { mockChat } from './hosts/mock-ai-gpt'
 
 (async () => {
 
@@ -38,6 +39,7 @@ import { StatusPlugin } from './hosts/status'
         app.use('/solcoder', solcoder());
         app.use('/completion', solcompletion());
         app.use('/gpt-chat', gptchat());
+        app.use('/chat/completions', mockChat());
     }else{
         port = Number(80);
         ssl_port = Number(443);

@@ -10,8 +10,8 @@ module.exports = {
   'Should ask a simple chat gpt question #group1 #flaky': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
-      .executeScriptInTerminal('gpt Hello, my name is John and I am a')
+      .executeScriptInTerminal('gpt 123')
       .pause(2000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'assistent', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Mockapi', 60000)
   },
 }

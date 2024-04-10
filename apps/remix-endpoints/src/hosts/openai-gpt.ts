@@ -6,6 +6,7 @@ export const openaigpt = () => {
   const apiToken = process.env['OPENAIGPT_API_TOKEN']
   const configuration = new Configuration({
     apiKey: apiToken,
+    basePath: process.env.NODE_ENV === 'test' ? 'http://localhost:1024' : '',
   });
   const openai = new OpenAIApi(configuration)
   const app = express()
@@ -13,7 +14,7 @@ export const openaigpt = () => {
   app.use(cors())
   app.post('/', async (req: Request, res: any, next: any) => {
     //console.log('req', req)
-    if(!req.ip) return res.status(400).json({error: 'No IP'})
+    if (!req.ip) return res.status(400).json({ error: 'No IP' })
     if (ips.get(req.ip) && (Date.now() - (ips.get(req.ip) as number)) < 20000) { // 1 call every 20 seconds
       res.setHeader('Content-Type', 'application/json');
       const remainer = 20000 - (Date.now() - (ips.get(req.ip) as number))
@@ -24,23 +25,32 @@ export const openaigpt = () => {
     console.log('ip', req.ip)
     ips.set(req.ip, Date.now())
     const prompt = req.body.prompt
-    const result = await openai.createChatCompletion(
-      {
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }]
-      },
-      {
-        timeout: 60000,
-        headers: {
-          "Authorization": `Bearer ${apiToken}`,
+    try {
+      const result = await openai.createChatCompletion(
+        {
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }]
         },
-      }
-    )
-    const response: CreateChatCompletionResponse = result.data
+        {
+          timeout: 60000,
+          headers: {
+            "Authorization": `Bearer ${apiToken}`,
+          },
+        }
+      )
+      const response: CreateChatCompletionResponse = result.data
 
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(response));
-    next()
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(response));
+      next()
+    } catch (e) {
+      console.log(e)
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: e }));
+      next()
+      return
+    }
+
   })
   return app
 }
