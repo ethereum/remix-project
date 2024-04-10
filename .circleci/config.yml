@@ -409,6 +409,10 @@ jobs:
       - attach_workspace:
           at: .
       - run: cd apps/remix-endpoints && yarn && yarn build
+      - run: 
+          name: run endpoints
+          command: cd apps/remix-endpoints && yarn start:test
+          background: true
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
