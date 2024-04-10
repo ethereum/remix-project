@@ -8,6 +8,7 @@ TEST_EXITCODE=0
 
 npx http-server -p 9999 ./dist/apps/$1 &
 npx ganache &
+node apps/remix-endpoints/dist/src --env test &
 npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
 
