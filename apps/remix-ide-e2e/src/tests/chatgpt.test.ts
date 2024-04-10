@@ -5,7 +5,7 @@ import init from '../helpers/init'
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
-    init(browser, done, 'http://127.0.0.1:8080?plugins=solidity,udapp', false)
+    init(browser, done)
   },
   'Should ask a simple chat gpt question #group1 #flaky': function (browser: NightwatchBrowser) {
     browser

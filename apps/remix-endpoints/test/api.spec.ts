@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   })
 });
 
-const API_URL = 'https://localhost:1025';
+const API_URL = 'https://127.0.0.1:1025';
 
 describe('IPFS', () => {
   it('should retrieve data from IPFS and check content', async () => { // Define a test case with 'it'

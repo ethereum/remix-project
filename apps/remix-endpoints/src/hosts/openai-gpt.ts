@@ -13,7 +13,6 @@ export const openaigpt = () => {
   const ips = new Map<string, number>()
   app.use(cors())
   app.post('/', async (req: Request, res: any, next: any) => {
-    //console.log('req', req)
     if (!req.ip) return res.status(400).json({ error: 'No IP' })
     if (ips.get(req.ip) && (Date.now() - (ips.get(req.ip) as number)) < 20000) { // 1 call every 20 seconds
       res.setHeader('Content-Type', 'application/json');
