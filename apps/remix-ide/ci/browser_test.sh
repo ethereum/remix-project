@@ -8,6 +8,7 @@ BUILD_ID=${CIRCLE_BUILD_NUM:-${TRAVIS_JOB_NUMBER}}
 echo "$BUILD_ID"
 TEST_EXITCODE=0
 npx ganache &
+node apps/remix-endpoints/dist/src --env test &
 npx http-server -p 9090 --cors='*' ./node_modules &
 yarn run serve:production &
 sleep 5
