@@ -7,7 +7,7 @@ OPENAITEST=$( curl --connect-timeout 1 -k -m 5 -H 'Content-Type: application/jso
       -X POST \
      https://localhost:1025/openai-gpt/)
 
-if [[ $OPENAITEST == *"assistant"* ]]; then
+if [[ $OPENAITEST == *"Mockapi"* ]]; then
     echo "up"
 else
     echo "down"
