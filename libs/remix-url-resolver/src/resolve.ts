@@ -124,7 +124,7 @@ export class RemixURLResolver {
     try {
       const req = process && process.env && process.env['NX_API_URL'] ? `${process.env['NX_API_URL']}${url}` : `https://jqgt.remixproject.org/${url}`
 
-      let axiosInstance: AxiosInstance = axios.create({
+      const axiosInstance: AxiosInstance = axios.create({
           httpsAgent: new https.Agent({
             rejectUnauthorized: process && process.env && process.env['NX_API_URL']? false : true // This will ignore SSL certificate errors in CIRCLECI
           })
