@@ -335,14 +335,6 @@ class AppComponent {
       ganacheProvider,
       foundryProvider,
       externalHttpProvider,      
-      /*
-      defaultInjectedProvider,
-      trustWalletInjectedProvider,
-      injected0ptimismProvider,
-      injectedArbitrumOneProvider,
-      injectedEphemeryTestnetProvider,
-      injectedSKALEChaosTestnetProvider,
-      */
       this.walkthroughService,
       search,
       solidityumlgen,
