@@ -3,11 +3,10 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
-  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
-  'Should ask a simple chat gpt question #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should ask a simple chat gpt question #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
       .executeScriptInTerminal('gpt 123')

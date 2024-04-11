@@ -40,8 +40,7 @@ describe('OpenAI GPT Remix Project API Test', function() {
       },
       timeout: 5000,
     });
-
-    chai.expect(response.data.choices[0].message.role).to.equal('assistant'); // Ensure this matches
+    chai.expect(response.data.choices[0].message.content).to.equal('Mockapi'); // Ensure this matches
     chai.expect(response.status).to.equal(200);
 
   });
