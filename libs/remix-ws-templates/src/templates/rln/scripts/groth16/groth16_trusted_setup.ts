@@ -42,7 +42,7 @@ const logger = {
     await remix.call('fileManager', 'writeFile', './zk/keys/groth16/verification_key.json', JSON.stringify(vKey, null, 2))
     
     console.log('save zkey_final')
-    await remix.call('fileManager', 'writeFile', './zk/keys/groth16/zkey_final.txt', JSON.stringify(Array.from(((zkey_final as any).data))))
+    await remix.call('fileManager', 'writeFile', './zk/keys/groth16/zkey_final.txt', (zkey_final as any).data, { encoding: null })
     
     console.log('setup done.')
     
