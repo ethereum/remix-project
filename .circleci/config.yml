@@ -394,8 +394,8 @@ jobs:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
           steps:
-            - run: mkdir -p node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
-            - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
+            - run: mkdir -p node_modules/selenium-standalone/.selenium/chromedriver/latest-linux/
+            - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-linux/chromedriver
             - run: 
                 name: run selenium
                 command: yarn selenium-standalone start --singleDriverStart=chrome
@@ -451,8 +451,8 @@ jobs:
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: npm list selenium-standalone
       - run: yarn run selenium-install --singleDriverInstall=firefox
-      - run: mkdir -p node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
-      - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
+      - run: mkdir -p node_modules/selenium-standalone/.selenium/chromedriver/latest-linux/
+      - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-linux/chromedriver
       - run:
           name: Start Selenium
           command: yarn run selenium --singleDriverStart=chrome
