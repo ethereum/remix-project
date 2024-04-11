@@ -2,8 +2,8 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
-const passphrase = 'explain uniform adapt basic blue onion rebel pull rice erase volcano couple'
-const password = 'remix_is_cool'
+const passphrase = process.env.account_passphrase
+const password = process.env.account_password
 
 const checkBrowserIsChrome = function (browser: NightwatchBrowser) {
   return browser.browserName.indexOf('chrome') > -1
