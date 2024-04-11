@@ -20,7 +20,8 @@ const snarkjs = require('snarkjs');
     const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final)
 
     console.log('save zkey_final')
-    await remix.call('fileManager', 'writeFile', './zk/keys/plonk/zkey_final.txt', JSON.stringify(Array.from(((zkey_final as any).data))))
+    // @ts-ignore
+    await remix.call('fileManager', 'writeFile', './zk/keys/plonk/zkey_final.txt', (zkey_final as any).data, { encoding: null })
 
     console.log('save verification key')
     await remix.call('fileManager', 'writeFile', './zk/keys/plonk/verification_key.json', JSON.stringify(vKey, null, 2))
