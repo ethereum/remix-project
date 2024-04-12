@@ -94,22 +94,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   plugin.on('filePanel', 'setWorkspace', async () => {
     dispatch(resetUdapp())
     resetAndInit(plugin)
-    const { network } = await plugin.call('blockchain', 'getCurrentNetworkStatus')
-    const dirName = plugin.REACT_API.networkName === 'VM' ? plugin.REACT_API.selectExEnv : network.id
-    const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
-    if (isPinnedAvailable) {
-      try {
-        const list = await plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${dirName}`)
-        const filePaths = Object.keys(list)
-        for (const file of filePaths) {
-          const pinnedContract = await plugin.call('fileManager', 'readFile', file)
-          const pinnedContractObj = JSON.parse(pinnedContract)
-          if (pinnedContractObj) addPinnedInstance(dispatch, pinnedContractObj)
-        }
-      } catch(err) {
-        console.log(err)
-      }
-    }
+    await loadPinnedContracts(plugin, dispatch)
     plugin.call('manager', 'isActive', 'remixd').then((activated) => {
       dispatch(setRemixDActivated(activated))
     })
@@ -177,6 +162,25 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     fillAccountsList(plugin, dispatch)
     updateInstanceBalance(plugin, dispatch)
   }, 30000)  
+}
+
+const loadPinnedContracts = async (plugin, dispatch) => {
+  const { network } = await plugin.call('blockchain', 'getCurrentNetworkStatus')
+    const dirName = plugin.REACT_API.networkName === 'VM' ? plugin.REACT_API.selectExEnv : network.id
+    const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
+    if (isPinnedAvailable) {
+      try {
+        const list = await plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${dirName}`)
+        const filePaths = Object.keys(list)
+        for (const file of filePaths) {
+          const pinnedContract = await plugin.call('fileManager', 'readFile', file)
+          const pinnedContractObj = JSON.parse(pinnedContract)
+          if (pinnedContractObj) addPinnedInstance(dispatch, pinnedContractObj)
+        }
+      } catch(err) {
+        console.log(err)
+      }
+    }
 }
 
 const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {
