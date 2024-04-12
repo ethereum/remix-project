@@ -95,6 +95,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(resetUdapp())
     resetAndInit(plugin)
     await loadPinnedContracts(plugin, dispatch)
+    await migrateSavedContracts(plugin)
     plugin.call('manager', 'isActive', 'remixd').then((activated) => {
       dispatch(setRemixDActivated(activated))
     })
@@ -181,6 +182,29 @@ const loadPinnedContracts = async (plugin, dispatch) => {
         console.log(err)
       }
     }
+}
+
+const migrateSavedContracts = async (plugin) => {
+      // Move contract saved in localstorage to Remix FE
+      const allSavedContracts = localStorage.getItem('savedContracts')
+      if (allSavedContracts) {
+        const savedContracts = JSON.parse(allSavedContracts)
+        for (const networkId in savedContracts) {
+          if (savedContracts[networkId].length > 0) {
+            for (const contractDetails of savedContracts[networkId]) {
+              const objToSave = {
+                name: contractDetails.name,
+                address: contractDetails.address,
+                abi: contractDetails.abi || contractDetails.contractData.abi,
+                filePath: contractDetails.filePath,
+                pinnedAt: contractDetails.savedOn
+              }
+              await plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${networkId}/${contractDetails.address}.json`, JSON.stringify(objToSave, null, 2))
+            }
+          }
+        }
+        localStorage.removeItem('savedContracts')
+      }
 }
 
 const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {

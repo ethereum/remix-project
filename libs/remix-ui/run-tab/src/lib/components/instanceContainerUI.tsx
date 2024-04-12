@@ -13,26 +13,6 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
     const fetchSavedContracts = async () => {
       const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
       chainId.current = network.id
-      // Move contract saved in localstorage to Remix FE
-      const allSavedContracts = localStorage.getItem('savedContracts')
-      if (allSavedContracts) {
-        const savedContracts = JSON.parse(allSavedContracts)
-        for (const networkId in savedContracts) {
-          if (savedContracts[networkId].length > 0) {
-            for (const contractDetails of savedContracts[networkId]) {
-              const objToSave = {
-                name: contractDetails.name,
-                address: contractDetails.address,
-                abi: contractDetails.abi || contractDetails.contractData.abi,
-                filePath: contractDetails.filePath,
-                pinnedAt: contractDetails.savedOn
-              }
-              await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${networkId}/${contractDetails.address}.json`, JSON.stringify(objToSave, null, 2))
-            }
-          }
-        }
-        localStorage.removeItem('savedContracts')
-      }
       // Clear existing saved instance state
       await props.plugin.call('udapp', 'clearAllPinnedInstances')
       // Load contracts from FE
