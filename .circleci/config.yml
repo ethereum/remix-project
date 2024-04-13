@@ -357,6 +357,9 @@ jobs:
         type: string
     parallelism: 10
     steps:
+      - checkout
+      - attach_workspace:
+          at: .
       - when:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
@@ -378,9 +381,8 @@ jobs:
                 install-geckodriver: true
                 install-chromedriver: false
             - run: firefox --version
-      - checkout
-      - attach_workspace:
-          at: .
+
+
       - run: unzip ./persist/dist.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
