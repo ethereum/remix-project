@@ -9,7 +9,6 @@ module.exports = {
   webdriver: {
     start_process: true,
     port: 4444,
-    server_path: './node_modules/geckodriver/bin/geckodriver.js',
     cli_args: [
       // very verbose geckodriver logs
       // '-vv'
@@ -88,6 +87,9 @@ module.exports = {
     },
 
     'firefox': {
+      web_driver: {
+        server_path: './node_modules/geckodriver/bin/geckodriver.js'
+      },
       desiredCapabilities: {
         'browserName': 'firefox',
         'javascriptEnabled': true,
