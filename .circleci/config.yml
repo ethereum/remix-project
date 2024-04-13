@@ -360,6 +360,10 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run: unzip ./persist/dist.zip
+      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
+      - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
+      - run: ls -la ./dist/apps/remix-ide/assets/js
       - when:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
@@ -382,12 +386,6 @@ jobs:
                 install-chromedriver: false
             - run: sh ./chrome.sh    
             - run: firefox --version
-
-
-      - run: unzip ./persist/dist.zip
-      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-      - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
-      - run: ls -la ./dist/apps/remix-ide/assets/js
       - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
           path: ./reports/tests
