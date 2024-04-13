@@ -246,12 +246,6 @@ This script will give you an options menu, just select the test you want
 ```
 yarn run select_test
 ```
-#### method 2
-
-```
-yarn run group_test --test=debugger --group=10 --env=chromeDesktop
-```
-- specify chromeDesktop to see the browser action, use 'chrome' to run it headless
 
 ### Run the same (flaky) test across all instances in CircleCI
 
