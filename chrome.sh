@@ -3,3 +3,4 @@
         echo "CHROME DRIVER INSTALL $VERSION"
         yarn add -D chromedriver@$VERSION
         rm version.txt
+        yarn add -D geckodriver

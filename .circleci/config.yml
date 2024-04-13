@@ -378,8 +378,9 @@ jobs:
             - browser-tools/install-browser-tools:
                 install-firefox: true
                 install-chrome: false
-                install-geckodriver: true
+                install-geckodriver: false
                 install-chromedriver: false
+            - run: sh ./chrome.sh    
             - run: firefox --version
 
 
