@@ -125,9 +125,9 @@ export class RemixURLResolver {
       const req = process && process.env && process.env['NX_API_URL'] ? `${process.env['NX_API_URL']}${url}` : `https://jqgt.remixproject.org/${url}`
 
       const axiosInstance: AxiosInstance = axios.create({
-          httpsAgent: new https.Agent({
-            rejectUnauthorized: process && process.env && process.env['NX_API_URL']? false : true // This will ignore SSL certificate errors in CIRCLECI
-          })
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: process && process.env && process.env['NX_API_URL']? false : true // This will ignore SSL certificate errors in CIRCLECI
+        })
       }); 
     
       const response: AxiosResponse = await axiosInstance.get(req, { transformResponse: [] })
