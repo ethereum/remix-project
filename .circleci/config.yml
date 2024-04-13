@@ -366,10 +366,8 @@ jobs:
                 install-chrome: true
                 install-chromedriver: false
                 install-geckodriver: false
-            - install-chromedriver-custom-linux
+            - run: sh ./chrome.sh
             - run: google-chrome --version
-            - run: chromedriver --version
-            - run: rm LICENSE.chromedriver 2> /dev/null || true
       - when:
           condition:
               equal: [ "firefox", << parameters.browser >> ]
@@ -380,7 +378,6 @@ jobs:
                 install-geckodriver: true
                 install-chromedriver: false
             - run: firefox --version
-            - run: geckodriver --version
       - checkout
       - attach_workspace:
           at: .
@@ -388,25 +385,6 @@ jobs:
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
       - run: ls -la ./dist/apps/remix-ide/assets/js
-      - run: yarn run selenium-install --singleDriverInstall=firefox
-      - when:
-          condition:
-              equal: [ "chrome", << parameters.browser >> ]
-          steps:
-            - run: mkdir -p node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
-            - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
-            - run: 
-                name: run selenium
-                command: yarn selenium-standalone start --singleDriverStart=chrome
-                background: true
-      - when:
-          condition:
-              equal: [ "firefox", << parameters.browser >> ]
-          steps:
-            - run: 
-                name: run selenium
-                command: yarn selenium-standalone start --singleDriverStart=firefox
-                background: true
       - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
           path: ./reports/tests

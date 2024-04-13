@@ -6,10 +6,20 @@ module.exports = {
   page_objects_path: '',
   globals_path: '',
 
+  webdriver: {
+    start_process: true,
+    port: 4444,
+    server_path: './node_modules/geckodriver/bin/geckodriver.js',
+    cli_args: [
+      // very verbose geckodriver logs
+      // '-vv'
+    ]
+  },
+
   test_settings: {
+    selenium_port: 4444,
+    selenium_host: 'localhost',
     'default': {
-      selenium_port: 4444,
-      selenium_host: 'localhost',
       globals: {
         waitForConditionTimeout: 10000,
         asyncHookTimeout: 100000
@@ -19,6 +29,9 @@ module.exports = {
         path: './reports/screenshots',
         on_failure: true,
         on_error: true
+      },
+      web_driver: {
+        start_process: true
       },
       exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.test.js', 'dist/apps/remix-ide-e2e/src/tests/pluginManager.test.ts']
     },
