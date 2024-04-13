@@ -11,28 +11,28 @@ module.exports = {
 
   'Should add error marker': function (browser: NightwatchBrowser) {
     browser
-    .openFile('contracts')
-    .openFile('contracts/1_Storage.sol')
-    .addFile('scripts/adderror.ts', {content: addErrorMarker})
-    .pause(4000)
-    .executeScriptInTerminal('remix.exeCurrent()')
-    .pause(4000)
-    .openFile('contracts/1_Storage.sol')
-    .useXpath()
-    .waitForElementVisible("//*[@class='cdr squiggly-error']")
-    .waitForElementVisible("//*[@class='cdr squiggly-warning']")
+      .openFile('contracts')
+      .openFile('contracts/1_Storage.sol')
+      .addFile('scripts/adderror.ts', {content: addErrorMarker})
+      .pause(4000)
+      .executeScriptInTerminal('remix.exeCurrent()')
+      .pause(4000)
+      .openFile('contracts/1_Storage.sol')
+      .useXpath()
+      .waitForElementVisible("//*[@class='cdr squiggly-error']")
+      .waitForElementVisible("//*[@class='cdr squiggly-warning']")
   },
   'Should clear error marker': function (browser: NightwatchBrowser) {
-    browser 
-    .useCss()
-    .addFile('scripts/clear.ts', {content: clearMarkers})
-    .pause(4000)
-    .executeScriptInTerminal('remix.exeCurrent()')
-    .pause(4000)
-    .openFile('contracts/1_Storage.sol')
-    .useXpath()
-    .waitForElementNotPresent("//*[@class='cdr squiggly-error']")
-    .waitForElementNotPresent("//*[@class='cdr squiggly-warning']")
+    browser
+      .useCss()
+      .addFile('scripts/clear.ts', {content: clearMarkers})
+      .pause(4000)
+      .executeScriptInTerminal('remix.exeCurrent()')
+      .pause(4000)
+      .openFile('contracts/1_Storage.sol')
+      .useXpath()
+      .waitForElementNotPresent("//*[@class='cdr squiggly-error']")
+      .waitForElementNotPresent("//*[@class='cdr squiggly-warning']")
   }
 }
 
@@ -44,7 +44,7 @@ const clearMarkers =`
 const addErrorMarker = `
 (async () => {
 
- 
+
     let errors = [
         {
             position: {
@@ -81,5 +81,5 @@ const addErrorMarker = `
 
     await remix.call('editor', 'addErrorMarker' as any, errors)
 
-    
+
 })()`

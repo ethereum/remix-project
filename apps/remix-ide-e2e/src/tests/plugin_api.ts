@@ -85,18 +85,18 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
               browser.frame(0, () => { resolve(true) })
             } else {
               browser
-              .useXpath()
-              .isVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okVisible: any) => {
-                if (okVisible.value) {
-                  browser.click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
+                .useXpath()
+                .isVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', (okVisible: any) => {
+                  if (okVisible.value) {
+                    browser.click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
                     // @ts-ignore
-                    browser.frame(0, () => { resolve(true) })
-                  })
-                } else {
+                      browser.frame(0, () => { resolve(true) })
+                    })
+                  } else {
                   // @ts-ignore
-                  browser.frame(0, () => { resolve(true) })
-                }
-              })
+                    browser.frame(0, () => { resolve(true) })
+                  }
+                })
             }
           })
 
@@ -104,12 +104,12 @@ const checkForAcceptAndRemember = async function (browser: NightwatchBrowser) {
 
         } else {
           browser.waitForElementVisible('//*[@data-id="permissionHandlerRememberUnchecked"]')
-          .click('//*[@data-id="permissionHandlerRememberUnchecked"]')
-          .waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]')
-          .click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
+            .click('//*[@data-id="permissionHandlerRememberUnchecked"]')
+            .waitForElementVisible('//*[@data-id="PermissionHandler-modal-footer-ok-react"]')
+            .click('//*[@data-id="PermissionHandler-modal-footer-ok-react"]', () => {
             // @ts-ignore
-            browser.frame(0, () => { resolve(true) })
-          })
+              browser.frame(0, () => { resolve(true) })
+            })
         }
       })
     })

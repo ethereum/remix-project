@@ -49,7 +49,7 @@ export function Workspace() {
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
 
   const [canPaste, setCanPaste] = useState(false)
-
+  const [selectedItems, setSelectedItems] = useState<any>([])
   const [state, setState] = useState<WorkSpaceState>({
     ctrlKey: false,
     newFileName: '',
@@ -104,6 +104,26 @@ export function Workspace() {
       ])
     }
   }, [canPaste])
+
+  const handleFinishMultiSelect = async () => {
+    (window as any).focusElements = global.fs.focusElement
+    const selectedItems = await global.plugin.call('fileManager', 'getCurrentlySelectedItems', (window as any).focusElements, {})
+    const getFromWindowObj = await global.plugin.call('fileManager', 'getFocusElements')
+    console.log('selectedItems in workspace component', selectedItems)
+    console.log('handleFinishMultiSelect', (window as any).focusElements)
+    console.log('getFromWindowObj', getFromWindowObj)
+  }
+
+  useEffect(() => {
+    let items = []
+    if (global.fs.focusElement.length > 1) {
+      setTimeout(() => {
+        handleFinishMultiSelect()
+      }, 5000)
+    }
+    (async () => items = await global.plugin.call('fileManager', 'getFocusElements'))()
+    console.log('items in useEffect', items)
+  }, [global.fs.focusElement.length])
 
   useEffect(() => {
     let workspaceName = localStorage.getItem('currentWorkspace')

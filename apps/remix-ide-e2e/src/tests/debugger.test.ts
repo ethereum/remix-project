@@ -102,7 +102,7 @@ module.exports = {
         _name = name_;
         _symbol = symbol_;
     }`) !== -1,
-          'current displayed content is not from the ERC20 source code')
+        'current displayed content is not from the ERC20 source code')
       })
       .goToVMTraceStep(10)
       .waitForElementVisible({
@@ -239,7 +239,7 @@ module.exports = {
         browser.addFile('test_jsDebug.js', { content: jsDebug.replace('<txhash>', txhash) }).perform(() => {
           done()
         })
-      })      
+      })
       .executeScriptInTerminal('remix.exeCurrent()')
       .pause(3000)
       .clickLaunchIcon('debugger')

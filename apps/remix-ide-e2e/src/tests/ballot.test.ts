@@ -169,7 +169,7 @@ module.exports = {
         suppressNotFoundErrors: true,
         timeout: 1000
       })
-      
+
       .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
       .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
       .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
@@ -185,25 +185,25 @@ module.exports = {
             selector: '*[data-id="scConfigChangeFilePath"]',
             abortOnFailure: false
           }, 10000)
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          
-          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
-          .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
-          .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+            .click({
+              selector: '*[data-id="scConfigChangeFilePath"]',
+              suppressNotFoundErrors: true,
+              timeout: 1000
+            })
+            .click({
+              selector: '*[data-id="scConfigChangeFilePath"]',
+              suppressNotFoundErrors: true,
+              timeout: 1000
+            })
+            .click({
+              selector: '*[data-id="scConfigChangeFilePath"]',
+              suppressNotFoundErrors: true,
+              timeout: 1000
+            })
+
+            .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+            .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
+            .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
         }
       })
 
@@ -218,25 +218,25 @@ module.exports = {
             selector: '*[data-id="scConfigChangeFilePath"]',
             abortOnFailure: false
           }, 10000)
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          .click({
-            selector: '*[data-id="scConfigChangeFilePath"]',
-            suppressNotFoundErrors: true,
-            timeout: 1000
-          })
-          
-          .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
-          .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
-          .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
+            .click({
+              selector: '*[data-id="scConfigChangeFilePath"]',
+              suppressNotFoundErrors: true,
+              timeout: 1000
+            })
+            .click({
+              selector: '*[data-id="scConfigChangeFilePath"]',
+              suppressNotFoundErrors: true,
+              timeout: 1000
+            })
+            .click({
+              selector: '*[data-id="scConfigChangeFilePath"]',
+              suppressNotFoundErrors: true,
+              timeout: 1000
+            })
+
+            .waitForElementVisible('*[data-id="scConfigFilePathInput"]', 10000)
+            .sendKeys('*[data-id="scConfigFilePathInput"]', 'cf.json')
+            .sendKeys('*[data-id="scConfigFilePathInput"]', browser.Keys.ENTER)
         }
       })
 

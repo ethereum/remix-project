@@ -168,7 +168,7 @@ module.exports = {
 
   'Should upgrade contract by selecting a previously deployed proxy address from dropdown (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="terminalClearConsole"]') 
+      .click('*[data-id="terminalClearConsole"]')
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
       .openFile('myTokenV2.sol')
@@ -214,7 +214,7 @@ module.exports = {
 
   'Should upgrade contract by providing proxy address in input field (MyTokenV1 to MyTokenV2) #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="terminalClearConsole"]') 
+      .click('*[data-id="terminalClearConsole"]')
       .waitForElementPresent('[data-id="deployAndRunClearInstances"]')
       .click('[data-id="deployAndRunClearInstances"]')
       .openFile('myTokenV2.sol')
@@ -253,15 +253,15 @@ module.exports = {
   },
   'Should debug the call': function(browser: NightwatchBrowser) {
     browser
-    .debugTransaction(0)
-    .waitForElementVisible({
-      locateStrategy: 'xpath',
-      selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"11")]',
-      timeout: 60000
-    })
-    .goToVMTraceStep(146)
-    .waitForElementContainsText('*[data-id="functionPanel"]', 'version()', 60000) 
-    .end()
+      .debugTransaction(0)
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: '//*[@data-id="treeViewLivm trace step" and contains(.,"11")]',
+        timeout: 60000
+      })
+      .goToVMTraceStep(146)
+      .waitForElementContainsText('*[data-id="functionPanel"]', 'version()', 60000)
+      .end()
   }
 }
 
@@ -272,24 +272,24 @@ const sources = [
       content: `
       // SPDX-License-Identifier: MIT
       pragma solidity ^0.8.4;
-      
+
       import "@openzeppelin/contracts-upgradeable@4.8.3/token/ERC721/ERC721Upgradeable.sol";
       import "@openzeppelin/contracts-upgradeable@4.8.3/access/OwnableUpgradeable.sol";
       import "@openzeppelin/contracts-upgradeable@4.8.3/proxy/utils/Initializable.sol";
       import "@openzeppelin/contracts-upgradeable@4.8.3/proxy/utils/UUPSUpgradeable.sol";
-      
+
       contract MyToken is Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
           /// @custom:oz-upgrades-unsafe-allow constructor
           constructor() {
               _disableInitializers();
           }
-      
+
           function initialize() initializer public {
               __ERC721_init("MyToken", "MTK");
               __Ownable_init();
               __UUPSUpgradeable_init();
           }
-      
+
           function _authorizeUpgrade(address newImplementation)
               internal
               onlyOwner
@@ -315,24 +315,24 @@ const sources = [
       content: `
       // SPDX-License-Identifier: MIT
       pragma solidity ^0.8.4;
-      
+
       import "@openzeppelin/contracts-upgradeable@4.8.3/token/ERC721/ERC721Upgradeable.sol";
       import "@openzeppelin/contracts-upgradeable@4.8.3/access/OwnableUpgradeable.sol";
       import "@openzeppelin/contracts-upgradeable@4.8.3/proxy/utils/Initializable.sol";
       import "@openzeppelin/contracts-upgradeable@4.8.3/proxy/utils/UUPSUpgradeable.sol";
-      
+
       contract MyInitializedToken is Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
           /// @custom:oz-upgrades-unsafe-allow constructor
           constructor() {
               _disableInitializers();
           }
-      
+
           function initialize(string memory tokenName, string memory tokenSymbol) initializer public {
               __ERC721_init(tokenName, tokenSymbol);
               __Ownable_init();
               __UUPSUpgradeable_init();
           }
-      
+
           function _authorizeUpgrade(address newImplementation)
               internal
               onlyOwner

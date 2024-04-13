@@ -8,6 +8,7 @@ import {Registry} from '@remix-project/remix-lib'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
+import { FileType } from '@remix-ui/workspace'
 
 /*
   attach to files event (removed renamed)
@@ -24,7 +25,7 @@ const profile = {
   methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'writeFileNoRewrite',
     'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
     'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
-    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson'
+    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson', 'getCurrentlySelectedItems', 'getFocusElements'
   ],
   kind: 'file-system'
 }
@@ -45,6 +46,7 @@ class FileManager extends Plugin {
   _components: any
   appManager: RemixAppManager
   _deps: any
+  focusElements: any[]
   getCurrentFile: () => any
   getFile: (path: any) => Promise<unknown>
   getFolder: (path: any) => Promise<unknown>
@@ -59,6 +61,30 @@ class FileManager extends Plugin {
     this._components.registry = Registry.getInstance()
     this.appManager = appManager
     this.init()
+    this.focusElements = []
+  }
+
+  /**
+   * Get the list of selected items
+   * @param selected array of selected items
+   * @returns {Promise<FileType[]>} list of selected items converted to file type
+   */
+  async getCurrentlySelectedItems (selected: any[]) {
+    console.log('selected', selected)
+    const result = []
+    for (const item of selected) {
+
+      const temp: any = item.type === 'file' ? { path: item.key, type: item.type, isDirectory: false } : await this.readdir(item.key)
+      result.push(temp)
+      this.focusElements.push(temp)
+    }
+    console.log('result', result)
+    return result
+  }
+
+  getFocusElements() {
+    const result = (window as any).focusElements
+    return result
   }
 
   getOpenedFiles() {
@@ -251,7 +277,7 @@ class FileManager extends Plugin {
       throw new Error(e)
     }
   }
-  
+
   /**
    * Set the content of a specific file, does nnot rewrite file if it exists but creates a new unique name
    * @param {string} path path of the file
@@ -523,7 +549,7 @@ class FileManager extends Plugin {
     this._deps.electronExplorer.event.on('fileRenamed', (oldName, newName, isFolder) => { this.fileRenamedEvent(oldName, newName, isFolder) })
     this._deps.electronExplorer.event.on('fileRemoved', (path) => { this.fileRemovedEvent(path) })
     this._deps.electronExplorer.event.on('fileAdded', (path) => { this.fileAddedEvent(path) })
-    
+
     this.getCurrentFile = this.file
     this.getFile = this.readFile
     this.getFolder = this.readdir
@@ -726,7 +752,7 @@ class FileManager extends Plugin {
       }
       try {
         // This make sure dependencies are loaded in the editor context.
-        // This ensure monaco is aware of deps artifacts, so it can provide basic features like "go to" symbols.   
+        // This ensure monaco is aware of deps artifacts, so it can provide basic features like "go to" symbols.
         await this.editor.handleTypeScriptDependenciesOf(file, content, path => this.readFile(path), path => this.exists(path))
       } catch (e) {
         console.log('unable to handle TypeScript dependencies of', file)
@@ -970,7 +996,7 @@ class FileManager extends Plugin {
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
         return false
-      } 
+      }
       return true
     } catch (e) {
       console.log(e)
@@ -1033,7 +1059,7 @@ class FileManager extends Plugin {
       if (provider.isSubDirectory(src, dest)) {
         this.call('notification', 'toast', recursivePasteToastMsg())
         return false
-      } 
+      }
       await this.inDepthCopy(src, dest, dirName)
       await this.remove(src)
 
@@ -1047,7 +1073,7 @@ class FileManager extends Plugin {
     if (provider && provider.copyFolderToJson) {
       return await provider.copyFolderToJson(folder)
     }
-    throw new Error('copyFolderToJson not available')    
+    throw new Error('copyFolderToJson not available')
   }
 }
 

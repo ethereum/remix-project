@@ -311,10 +311,10 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
       if(
-        data.toString().includes('is listening') 
+        data.toString().includes('is listening')
         || data.toString().includes('There is already a client running')
-        ) {
-        
+      ) {
+
         resolve(remixd)
       }
     })

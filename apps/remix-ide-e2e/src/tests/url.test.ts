@@ -11,31 +11,31 @@ const sources = [
       content: `
       // SPDX-License-Identifier: MIT
       pragma solidity ^0.8.20;
-      
+
       import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
       import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
       import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
       import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-      
+
       contract MyToken is Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
           /// @custom:oz-upgrades-unsafe-allow constructor
           constructor() {
               _disableInitializers();
           }
-      
+
           function initialize(address initialOwner) initializer public {
               __ERC721_init("MyToken", "MTK");
               __Ownable_init(initialOwner);
               __UUPSUpgradeable_init();
           }
-      
+
           function _authorizeUpgrade(address newImplementation)
               internal
               onlyOwner
               override
           {}
       }
-          
+
         `
     }
   }
@@ -70,7 +70,7 @@ module.exports = {
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol') !== -1,
-          'code has not been loaded')
+        'code has not been loaded')
       })
   },
 
@@ -87,7 +87,7 @@ module.exports = {
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'proposals.length = _numProposals;') !== -1,
-          'url has not been loaded')
+        'url has not been loaded')
       })
   },
 
@@ -162,7 +162,7 @@ module.exports = {
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'proposals.length = _numProposals;') !== -1,
-          'code has been loaded')
+        'code has been loaded')
       })
       .url('http://127.0.0.1:8080') // refresh without loading the code sample
       .currentWorkspaceIs('default_workspace')

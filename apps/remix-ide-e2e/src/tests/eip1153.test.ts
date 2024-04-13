@@ -31,7 +31,7 @@ module.exports = {
             1: 'uint256: out2 15'
           }
         })
-     .end()
+      .end()
   }
 }
 
@@ -47,5 +47,5 @@ contract TestTransientStorage {
            out1 := tload(0)
            out2 := tload(1)
         }
-    }    
+    }
 }`

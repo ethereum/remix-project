@@ -7,7 +7,7 @@ module.exports = {
     init(browser, done)
   },
   '@sources': () => sources,
-  'Should flatten contract after creation': function (browser: NightwatchBrowser) { 
+  'Should flatten contract after creation': function (browser: NightwatchBrowser) {
     browser.addFile('TestContract.sol', sources[0]['TestContract.sol'])
       .pause(10000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemTestContract.sol"]')
@@ -43,34 +43,34 @@ const sources = [
       content: `
       // SPDX-License-Identifier: MIT
       pragma solidity ^0.8.20;
-      
+
       import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
       import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
       import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
       import "@openzeppelin/contracts/access/Ownable.sol";
       import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-      
+
       contract MyToken is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit {
           constructor(address initialOwner)
               ERC20("MyToken", "MTK")
               Ownable(initialOwner)
               ERC20Permit("MyToken")
           {}
-      
+
           function pause() public onlyOwner {
               _pause();
           }
-      
+
           function unpause() public onlyOwner {
               _unpause();
           }
-      
+
           function mint(address to, uint256 amount) public onlyOwner {
               _mint(to, amount);
           }
-      
+
           // The following functions are overrides required by Solidity.
-      
+
           function _update(address from, address to, uint256 value)
               internal
               override(ERC20, ERC20Pausable)
@@ -78,10 +78,10 @@ const sources = [
               super._update(from, to, value);
           }
       }
-      
+
       `
     },
-}
+  }
 ]
 
 const content = `
@@ -89,7 +89,7 @@ const content = `
 
         pragma solidity >=0.7.0 <0.9.0;
 
-        /** 
+        /**
          * @title Ballot
          * @dev Implements voting process along with vote delegation
          */
@@ -103,7 +103,7 @@ const content = `
             }
 
             struct Proposal {
-                // If you can limit the length to a certain number of bytes, 
+                // If you can limit the length to a certain number of bytes,
                 // always use one of bytes1 to bytes32 because they are much cheaper
                 bytes32 name;   // short name (up to 32 bytes)
                 uint voteCount; // number of accumulated votes
@@ -115,7 +115,7 @@ const content = `
 
             Proposal[] public proposals;
 
-            /** 
+            /**
              * @dev Create a new ballot to choose one of 'proposalNames'.
              * @param proposalNames names of proposals
              */
@@ -134,7 +134,7 @@ const content = `
                 }
             }
 
-            /** 
+            /**
              * @dev Give 'voter' the right to vote on this ballot. May only be called by 'chairperson'.
              * @param voter address of voter
              */
@@ -197,7 +197,7 @@ const content = `
                 proposals[proposal].voteCount += sender.weight;
             }
 
-            /** 
+            /**
              * @dev Computes the winning proposal taking all previous votes into account.
              * @return winningProposal_ index of winning proposal in the proposals array
              */
@@ -213,7 +213,7 @@ const content = `
                 }
             }
 
-            /** 
+            /**
              * @dev Calls winningProposal() function to get the index of the winner contained in the proposals array and then
              * @return winnerName_ the name of the winner
              */
