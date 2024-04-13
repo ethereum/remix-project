@@ -8,11 +8,7 @@ module.exports = {
 
   webdriver: {
     start_process: true,
-    port: 4444,
-    cli_args: [
-      // very verbose geckodriver logs
-      // '-vv'
-    ]
+    port: 4444
   },
 
   test_settings: {
@@ -28,9 +24,6 @@ module.exports = {
         path: './reports/screenshots',
         on_failure: true,
         on_error: true
-      },
-      web_driver: {
-        start_process: true
       },
       exclude: ['dist/apps/remix-ide-e2e/src/tests/runAndDeploy.test.js', 'dist/apps/remix-ide-e2e/src/tests/pluginManager.test.ts']
     },
@@ -71,31 +64,6 @@ module.exports = {
         'acceptSslCerts': true,
         'goog:chromeOptions': {
           args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose']
-        }
-      }
-    },
-
-    'firefoxDesktop': {
-      desiredCapabilities: {
-        'browserName': 'firefox',
-        'javascriptEnabled': true,
-        'acceptSslCerts': true,
-        'moz:firefoxOptions': {
-          args: ['-width=2560', '-height=1440']
-        }
-      }
-    },
-
-    'firefox': {
-      web_driver: {
-        server_path: './node_modules/geckodriver/bin/geckodriver.js'
-      },
-      desiredCapabilities: {
-        'browserName': 'firefox',
-        'javascriptEnabled': true,
-        'acceptSslCerts': true,
-        'moz:firefoxOptions': {
-          args: ['-headless', '-width=2560', '-height=1440']
         }
       }
     }
