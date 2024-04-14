@@ -23,9 +23,15 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/semaphore.circom"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/run_setup.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/groth16_trusted_setup.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/groth16_zkproof.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/plonk_trusted_setup.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/plonk_zkproof.ts"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/plonk_verifier.sol.ejs"]')
   },
   'Should compile a simple circuit using editor play button #group1': function (browser: NightwatchBrowser) {
     browser
