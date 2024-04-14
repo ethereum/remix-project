@@ -56,7 +56,6 @@ const logger = {
     
     await remix.call('fileManager', 'writeFile', 'zk/build/plonk/zk_verifier.sol', solidityContract)
     await remix.call('fileManager', 'writeFile', 'zk/build/plonk/input.json', JSON.stringify({
-      _pubSignals: publicSignals,
       _proof: [
         ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[0]).toHexString(), 32),
         ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[1]).toHexString(), 32),
@@ -82,7 +81,8 @@ const logger = {
         ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_s1).toHexString(), 32),
         ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_s2).toHexString(), 32),
         ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_zw).toHexString(), 32),
-      ]
+      ],
+      _pubSignals: publicSignals
     }, null, 2))
     
     console.log('proof done.')
