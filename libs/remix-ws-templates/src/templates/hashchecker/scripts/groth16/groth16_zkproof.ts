@@ -64,6 +64,12 @@ const logger = {
     const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
     
     await remix.call('fileManager', 'writeFile', './zk/build/groth16/zk_verifier.sol', solidityContract)
+    await remix.call('fileManager', 'writeFile', 'zk/build/groth16/input.json', JSON.stringify({
+      _pA: [proof.pi_a[0], proof.pi_a[1]],
+      _pB: [[proof.pi_b[0][1], proof.pi_b[0][0]], [proof.pi_b[1][1], proof.pi_b[1][0]]],
+      _pC: [proof.pi_c[0], proof.pi_c[1]],
+      _pubSignals: publicSignals,
+    }, null, 2))
   } catch (e) {
     console.error(e.message)
   }

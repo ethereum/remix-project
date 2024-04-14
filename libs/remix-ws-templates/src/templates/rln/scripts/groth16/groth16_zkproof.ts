@@ -54,6 +54,15 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
   
   const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof, logger);
   console.log('zk proof validity', verified);
+
+  await remix.call('fileManager', 'writeFile', `zk/build/groth16/input-${Date.now()}.json`, JSON.stringify({
+    _pA: [proof.pi_a[0], proof.pi_a[1]],
+    _pB: [[proof.pi_b[0][1], proof.pi_b[0][0]], [proof.pi_b[1][1], proof.pi_b[1][0]]],
+    _pC: [proof.pi_c[0], proof.pi_c[1]],
+    _pubSignals: publicSignals,
+  }, null, 2))
+
+  console.log('proof done.')
   return {
     proof,
     x: publicSignals[3],

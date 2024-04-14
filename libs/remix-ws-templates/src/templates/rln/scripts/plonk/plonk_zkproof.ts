@@ -108,9 +108,10 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
      
     const zkey_final = {
       type: "mem",
+      // @ts-ignore
       data: new Uint8Array(await remix.call('fileManager', 'readFile', './zk/keys/plonk/zkey_final.txt', { encoding: null }))
     }
-    const wtns = { type: "mem" };   
+    const wtns = { type: "mem" };
 
     const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/plonk/verification_key.json'))
   
