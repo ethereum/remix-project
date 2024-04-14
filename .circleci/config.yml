@@ -418,9 +418,6 @@ jobs:
       - run: unzip ./persist/dist.zip
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-      - run: yarn run selenium-install --singleDriverInstall=firefox
-      - run: mkdir -p node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
-      - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
       - browser-tools/install-browser-tools:
           install-firefox: false
           install-chrome: true
