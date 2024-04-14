@@ -5,6 +5,8 @@ export default async () => {
     // @ts-ignore
     'circuits/tree.circom': (await import('!!raw-loader!./circuits/tree.circom')).default,
     // @ts-ignore
+    'circuits/simple.circom': (await import('!!raw-loader!./circuits/simple.circom')).default,
+    // @ts-ignore
     'scripts/groth16/groth16_trusted_setup.ts': (await import('!!raw-loader!./scripts/groth16/groth16_trusted_setup.ts')).default,
     // @ts-ignore
     'scripts/groth16/groth16_zkproof.ts': (await import('!!raw-loader!./scripts/groth16/groth16_zkproof.ts')).default,
