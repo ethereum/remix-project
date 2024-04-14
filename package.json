@@ -285,7 +285,7 @@
     "buffer": "^6.0.3",
     "chai": "^4.3.7",
     "child_process": "^1.0.2",
-    "chromedriver": "122",
+    "chromedriver": "123",
     "colors": "^1.4.0",
     "colors-browserify": "^0.1.1",
     "component-type": "^1.2.1",
