@@ -46,7 +46,7 @@ module.exports = {
       .waitForElementPresent('//*[@id="staticanalysisresult"]', 5000)
       .useCss()
       // Check warning count
-      .pause()
+      //.pause()
       .waitForElementVisible('span#ssaRemixtab')
       .click('span#ssaRemixtab')
       .assert.containsText('span#ssaRemixtab > *[data-id="RemixStaticAnalysisErrorCount"]', '1')
