@@ -6,10 +6,16 @@ module.exports = {
   page_objects_path: '',
   globals_path: '',
 
+  webdriver: {
+    start_process: true,
+    port: 4444,
+    server_path: './tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
+  },
+
   test_settings: {
+    selenium_port: 4444,
+    selenium_host: 'localhost',
     'default': {
-      selenium_port: 4444,
-      selenium_host: 'localhost',
       globals: {
         waitForConditionTimeout: 10000,
         asyncHookTimeout: 100000
@@ -59,28 +65,6 @@ module.exports = {
         'acceptSslCerts': true,
         'goog:chromeOptions': {
           args: ['window-size=2560,1440', 'start-fullscreen', '--no-sandbox', '--headless', '--verbose']
-        }
-      }
-    },
-
-    'firefoxDesktop': {
-      desiredCapabilities: {
-        'browserName': 'firefox',
-        'javascriptEnabled': true,
-        'acceptSslCerts': true,
-        'moz:firefoxOptions': {
-          args: ['-width=2560', '-height=1440']
-        }
-      }
-    },
-
-    'firefox': {
-      desiredCapabilities: {
-        'browserName': 'firefox',
-        'javascriptEnabled': true,
-        'acceptSslCerts': true,
-        'moz:firefoxOptions': {
-          args: ['-headless', '-width=2560', '-height=1440']
         }
       }
     }
