@@ -19,7 +19,7 @@ export const scanAPIurls = {
   8453: 'https://api.basescan.org/api',
 
   // all testnet
-  5: 'https://api-goerli.etherscan.io/api',
+  17000: 'https://api-holesky.etherscan.io/api',
   11155111: 'https://api-sepolia.etherscan.io/api',
   97: 'https://api-testnet.bscscan.com/api',
   80001: 'https://api-testnet.polygonscan.com/api',
