@@ -56,8 +56,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', '--no-sandbox', '--verbose'],
-          extensions: [metamaskExtension]
+          args: ['window-size=2560,1440', '--no-sandbox', '--verbose']
         }
       }
     },
