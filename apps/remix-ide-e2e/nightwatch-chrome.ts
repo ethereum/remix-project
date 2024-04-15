@@ -8,7 +8,8 @@ module.exports = {
 
   webdriver: {
     start_process: true,
-    port: 4444
+    port: 4444,
+    server_path: './tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
   },
 
   test_settings: {
