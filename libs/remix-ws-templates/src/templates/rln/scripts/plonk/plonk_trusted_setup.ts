@@ -6,7 +6,7 @@ const snarkjs = require('snarkjs');
     // @ts-ignore
     await remix.call('circuit-compiler', 'generateR1cs', 'circuits/rln.circom');
 
-    const ptau_final = "https://ipfs-cluster.ethdevops.io/ipfs/QmTiT4eiYz5KF7gQrDsgfCSTRv3wBPYJ4bRN1MmTRshpnW";
+    const ptau_final = "https://ipfs-cluster.ethdevops.io/ipfs/QmciCq5JcZQyTLvC9GRanrLBi82ZmSriq1Fr5zANkGHebf";
     // @ts-ignore
     const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.r1cs', { encoding: null });
     // @ts-ignore
