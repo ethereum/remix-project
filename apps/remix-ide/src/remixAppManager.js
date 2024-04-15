@@ -127,7 +127,8 @@ export function isNative(name) {
     'doc-viewer',
     'circuit-compiler',
     'compilationDetails',
-    'vyperCompilationDetails'
+    'vyperCompilationDetails',
+    'remixGuide',
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name)
 }
