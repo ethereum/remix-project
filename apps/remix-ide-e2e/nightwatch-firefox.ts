@@ -9,7 +9,7 @@ module.exports = {
   webdriver: {
     start_process: true,
     port: 4444,
-    server_path: './node_modules/geckodriver/bin/geckodriver.js',
+    server_path: './tmp/webdrivers/node_modules/geckodriver/bin/geckodriver.js',
   },
 
   test_settings: {

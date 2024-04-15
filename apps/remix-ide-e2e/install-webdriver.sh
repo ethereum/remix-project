@@ -25,4 +25,18 @@ fi
 
 MAJORVERSION=$(echo "$version" | grep -Eo '[0-9]+\.' | head -1 | cut -d'.' -f1)
 echo "CHROME DRIVER INSTALL $MAJORVERSION"
-yarn add -D chromedriver@$MAJORVERSION geckodriver
+
+# Specify the directory to check
+directory="./tmp/webdrivers"
+
+# Check if the directory exists
+if [ -d "$directory" ]; then
+    echo "Directory exists: $directory"
+else
+    echo "Directory does not exist. Creating directory: $directory"
+    mkdir -p "$directory"
+fi
+
+
+yarn init -y --cwd "$directory" || exit 1
+yarn add -D chromedriver@$MAJORVERSION geckodriver --cwd  "$directory" || exit 1
