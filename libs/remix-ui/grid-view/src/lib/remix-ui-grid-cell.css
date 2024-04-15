@@ -1,0 +1,21 @@
+.remixui_grid_cell {
+  font-weight: normal;
+}
+
+.remixui_grid_cell_container {
+  width: fit-content;
+}
+
+.remixui_grid_cell_title{
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.remixui_grid_cell_btn {
+  width: 32px;
+}
+
+.remixui_grid_cell_logo {
+  width: 3rem;
+  height: 3rem;
+}
