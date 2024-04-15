@@ -47,6 +47,13 @@ do
         done
     else
         # run the selected test
-        yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $opt --env=$BROWSER
+        if [ "$BROWSER" = "firefoxDesktop" ]; then
+            yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch-firefox.js $opt --env=$BROWSER
+        elif [ "$BROWSER" = "chrome" ]; then
+            yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch-chrome.js $opt --env=$BROWSER
+        elif [ "$BROWSER" = "chromeDesktop" ]; then
+            yarn run build:e2e && nightwatch --config dist/apps/remix-ide-e2e/nightwatch-chrome.js $opt --env=$BROWSER
+        fi
+
     fi
 done

@@ -46,7 +46,7 @@ The readme in each directory contains an explanation of what the workshop is abo
 
 ### config.yml
 
-This config file contains meta data describing some properties of your workshop, for example
+This config file contains metadata describing some properties of your workshop, for example
 
 ```
 ---
