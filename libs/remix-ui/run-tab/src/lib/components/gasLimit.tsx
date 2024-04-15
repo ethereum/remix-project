@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import {FormattedMessage} from 'react-intl'
 import {GasPriceProps} from '../types'
 
-const defaultGasLimit = 500000
+const defaultGasLimit = 3000000
 export function GasLimitUI(props: GasPriceProps) {
   const auto = useRef(true)
   const inputComponent = useRef<HTMLInputElement>(null)
