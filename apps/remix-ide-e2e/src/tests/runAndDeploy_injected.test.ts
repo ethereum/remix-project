@@ -32,7 +32,7 @@ module.exports = {
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
       .pause(5000)
-      .switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+      .switchBrowserWindow('chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html', 'MetaMask', (browser) => {
         browser
           .waitForElementVisible('*[data-testid="page-container-footer-next"]')
           .click('*[data-testid="page-container-footer-next"]') // this connects the metamask account to remix
@@ -64,7 +64,7 @@ module.exports = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
       .perform((done) => {
-        browser.switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+        browser.switchBrowserWindow('chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html', 'MetaMask', (browser) => {
           browser
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
@@ -83,7 +83,7 @@ module.exports = {
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .perform((done) => {
-        browser.switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+        browser.switchBrowserWindow('chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html', 'MetaMask', (browser) => {
           browser
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
@@ -143,7 +143,7 @@ module.exports = {
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
       .click('*[data-id="Deploy - transact (not payable)"]') // deploy ballot
       .perform((done) => {
-        browser.switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+        browser.switchBrowserWindow('chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html', 'MetaMask', (browser) => {
           browser
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
@@ -158,7 +158,7 @@ module.exports = {
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .perform((done) => { // call delegate
-        browser.switchBrowserWindow('chrome-extension://mmejnnbljapjihcidiglpfkpnojpiamk/home.html', 'MetaMask', (browser) => {
+        browser.switchBrowserWindow('chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html', 'MetaMask', (browser) => {
           browser
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
