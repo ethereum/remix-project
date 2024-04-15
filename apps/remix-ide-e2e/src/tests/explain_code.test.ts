@@ -23,6 +23,18 @@ module.exports = {
                 locateStrategy: 'xpath',
                 selector: path
             })
+            .execute(function() {
+                return document.documentElement.innerHTML;  // Get the entire DOM as a string
+              }, [], function(result) {
+                const fs = require('fs');  // Require the File System module
+                fs.writeFile('output.html', result.value, function(err) {  // Write the DOM to a file
+                  if (err) {
+                    console.log('Error writing file:', err);
+                  } else {
+                    console.log('DOM saved to output.html');
+                  }
+                });
+              })
             // do things to click on the menu & check the results
     },
 }
