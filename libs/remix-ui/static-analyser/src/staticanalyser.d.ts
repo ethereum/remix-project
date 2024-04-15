@@ -2,7 +2,7 @@ import { CompilationResult, SourceWithTarget } from '@remixproject/plugin-api'
 
 import { ViewPlugin } from '@remixproject/engine-web';
 import { EventEmitter } from 'events';
-import {Registry} from '@remix-project/remix-lib';
+import { Registry } from '@remix-project/remix-lib';
 export declare class AnalysisTab extends ViewPlugin {
   event: EventManager;
   events: EventEmitter;

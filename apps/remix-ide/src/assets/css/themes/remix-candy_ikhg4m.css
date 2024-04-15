@@ -14,7 +14,7 @@
   --gray: #6c757d;
   --gray-dark: #343a40;
   --primary: #fc58a3;
-  --secondary: #e2f5f2;
+  --secondary: #c7e3de;
   --success: #24b882;
   --info: #00bbff;
   --warning: #fabe33;
@@ -74,6 +74,18 @@ body {
   color: #0f7292;
   text-align: left;
   background-color: var(--body-bg);
+}
+
+*::-webkit-scrollbar {
+  width:  8px;
+  height: 6px;
+  background-color: var(--body-bg);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--secondary);
+  opacity: 0.3;
+  border-radius: 30px;
 }
 
 [tabindex="-1"]:focus {
