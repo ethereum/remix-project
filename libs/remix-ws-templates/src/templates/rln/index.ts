@@ -17,7 +17,7 @@ export default async () => {
     // @ts-ignore
     'templates/groth16_verifier.sol.ejs': (await import('!!raw-loader!./templates/groth16_verifier.sol.ejs')).default,
     // @ts-ignore
-    'templates/plonk_verifier.sol.ejs': (await import('!!raw-loader!./templates/groth16_verifier.sol.ejs')).default,
+    'templates/plonk_verifier.sol.ejs': (await import('!!raw-loader!./templates/plonk_verifier.sol.ejs')).default,
     // @ts-ignore
     'LICENSE-APACHE': (await import('!!raw-loader!./LICENSE-APACHE')).default,
     // @ts-ignore
