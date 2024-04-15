@@ -52,6 +52,9 @@ function setupMetaMask (browser: NightwatchBrowser, passphrase: string, password
     .waitForElementVisible('button[data-testid="popover-close"]')
     .click('button[data-testid="popover-close"]')
     .pause(1000)
+    .isPresent('button[data-testid="popover-close"]', () => {
+      browser.click('button[data-testid="popover-close"]')
+    })
     .click('[data-testid="network-display"]')
     .click('.mm-modal-content label.toggle-button--off') // show test networks
     .click('div[data-testid="Sepolia"]') // switch to sepolia
