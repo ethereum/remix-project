@@ -146,21 +146,11 @@ For example, to run unit tests of `remix-analyzer`, use `nx test remix-analyzer`
 
 ## Browser Testing
 
-To run the Selenium tests via Nightwatch:
+To run the tests via Nightwatch:
 
- - Install Selenium for the first time: `yarn run selenium-install`
- - Run a selenium server: `yarn run selenium`
+ - Install webdrivers for the first time: `yarn install_webdriver`
  - Build & Serve Remix: `yarn serve`
- - Run all the end-to-end tests:
 
-    for Firefox: `yarn run nightwatch_local_firefox`, or 
-
-    for Google Chrome: `yarn run nightwatch_local_chrome`
- - Run a specific test case instead, use a command like this: 
- 
-		- yarn run nightwatch_local_ballot
-		
-	The package.json file contains a list of all the tests you can run.
         
 **NOTE:**
 
@@ -172,8 +162,6 @@ To run the Selenium tests via Nightwatch:
 ```
     gist_token = <token> // token should have permission to create a gist
 ```
-
-### Using 'select_test' for locally running specific tests
 
 There is a script to allow selecting the browser and a specific test to run:
 
