@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 
-const crxFile = fs.readFileSync('apps/remix-ide-e2e/src/extensions/chrome/metamask.crx')
-const metamaskExtension = Buffer.from(crxFile).toString('base64')
+const crxFile = fs.readFileSync('apps/remix-ide-e2e/src/extensions/chrome/11.13.1_0.crx')
+const metamaskExtension = crxFile.toString('base64')
 
 module.exports = {
   src_folders: ['dist/apps/remix-ide-e2e/src/tests'],
@@ -13,13 +13,11 @@ module.exports = {
 
   webdriver: {
     start_process: true,
-    port: 4444,
+    port: 9515,
     server_path: './tmp/webdrivers/node_modules/chromedriver/bin/chromedriver',
   },
 
   test_settings: {
-    selenium_port: 4444,
-    selenium_host: 'localhost',
     'default': {
       globals: {
         waitForConditionTimeout: 10000,
@@ -58,7 +56,7 @@ module.exports = {
         'javascriptEnabled': true,
         'acceptSslCerts': true,
         'goog:chromeOptions': {
-          args: ['window-size=2560,1440', '--no-sandbox'],
+          args: ['window-size=2560,1440', '--no-sandbox', '--verbose'],
           extensions: [metamaskExtension]
         }
       }

@@ -10,6 +10,7 @@ type LoadPlugin = {
 export default function (browser: NightwatchBrowser, callback: VoidFunction, url?: string, preloadPlugins = true, loadPlugin?: LoadPlugin, hideToolTips: boolean = true): void {
   browser
     .url(url || 'http://127.0.0.1:8080')
+    .pause(5000)
     .switchBrowserTab(0)
     .perform((done) => {
       if (!loadPlugin) return done()
