@@ -11,7 +11,7 @@ module.exports = {
     browser
       .clickLaunchIcon('udapp')
       .assert.elementPresent('*[data-id="pinnedContracts"]')
-      .assert.textContains('*[data-id="pinnedContractsSublabel"]', '(VM: vm-cancun)')
+      .assert.textContains('*[data-id="pinnedContractsSublabel"]', '(network: vm-cancun)')
       .assert.elementPresent('*[data-id="NoPinnedInstanceText"]')
       .assert.textContains('*[data-id="NoPinnedInstanceText"]', 'No pinned contracts found for selected workspace & network')
   },
