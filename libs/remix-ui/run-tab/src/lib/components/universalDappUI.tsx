@@ -113,13 +113,7 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const unsavePinnedContract = async () => {
-    let dirName
-    if (props.plugin.REACT_API.networkName === 'VM') dirName = props.plugin.REACT_API.selectExEnv
-    else {
-      const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-      dirName = network.id
-    }
-    await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${dirName}/${props.instance.address}.json`)
+    await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}/${props.instance.address}.json`)
   }
 
   const remove = async() => {
@@ -145,16 +139,10 @@ export function UniversalDappUI(props: UdappProps) {
       filePath: props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`,
       pinnedAt: Date.now()
     }
-    let dirName
-    if (props.plugin.REACT_API.networkName === 'VM') dirName = props.plugin.REACT_API.selectExEnv
-    else {
-      const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-      dirName = network.id
-    }
-    await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${dirName}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
+    await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
     // Add contract to saved contracts list on UI
     await props.plugin.call('udapp', 'addPinnedInstance', objToSave.address, objToSave.abi, objToSave.name, objToSave.pinnedAt, objToSave.filePath)
-    _paq.push(['trackEvent', 'udapp', 'pinContracts', `pinned at ${dirName}`])
+    _paq.push(['trackEvent', 'udapp', 'pinContracts', `pinned at ${props.plugin.REACT_API.chainId}`])
     // Remove contract from deployed contracts list on UI
     props.removeInstance(props.index, false, false)
   }
