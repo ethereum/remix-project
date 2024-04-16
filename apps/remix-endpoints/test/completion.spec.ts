@@ -35,7 +35,7 @@ describe('completion', () => {
 
         const response = await axiosInstance.post(`${API_URL}/completion/`, postData, config)
         console.log(response.data);
-        chai.expect(response.data.data[0]).to.contains('function add');
+        chai.expect(response.data.data[0]).to.contains('uint256');
         chai.expect(response.data.is_generating).to.equal(false);
     });
 })
