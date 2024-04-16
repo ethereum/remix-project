@@ -2,6 +2,8 @@ import React from 'react' // eslint-disable-line
 import {RunTabUI} from '@remix-ui/run-tab'
 import {ViewPlugin} from '@remixproject/engine-web'
 import {addressToString} from '@remix-ui/helper'
+import {InjectedProviderDefault} from '../providers/injected-provider-default'
+import {InjectedCustomProvider} from '../providers/injected-custom-provider'
 import * as packageJson from '../../../../../package.json'
 
 const EventManager = require('../../lib/events')
@@ -36,9 +38,10 @@ const profile = {
 }
 
 export class RunTab extends ViewPlugin {
-  constructor(blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, fileProvider) {
+  constructor(blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, fileProvider, engine) {
     super(profile)
     this.event = new EventManager()
+    this.engine = engine
     this.config = config
     this.blockchain = blockchain
     this.fileManager = fileManager
@@ -150,29 +153,24 @@ export class RunTab extends ViewPlugin {
       })
     }
 
-    // basic injected
-    // if it's the trust wallet provider, we have a specific provider for that, see below
-    if (window && window.ethereum && !(window.ethereum.isTrustWallet || window.ethereum.selectedProvider?.isTrustWallet)) {
-      const displayNameInjected = `Injected Provider${
-        window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)
-          ? window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet
-            ? ' - Coinbase'
-            : window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet
-              ? ' - Brave'
-              : window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask
-                ? ' - MetaMask'
-                : ''
-          : ''
-      }`
-      await addProvider('injected', displayNameInjected, true, false)
-    } else if (window && !window.ethereum) {
-      // we still add "injected" if there's no provider (just so it's visible to the user).
-      await addProvider('injected', 'Injected Provider', true, false)
+    const addCustomInjectedProvider = async (event, name, networkId, urls, nativeCurrency) => {
+      name = `${name} through ${event.detail.info.name}`
+      await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, networkId, urls, nativeCurrency)])
+      await addProvider(name, name, true, false, false)
     }
+    const registerInjectedProvider = async (event) => {
+      console.log('registerInjectedProvider', event)
+      await this.engine.register([new InjectedProviderDefault(event.detail.provider, event.detail.info.name)])
+      await addProvider(event.detail.info.name, event.detail.info.name, true, false, false)
 
-    if (window && window.trustwallet) {
-      const displayNameInjected = `Injected Provider - TrustWallet`
-      await addProvider('injected-trustwallet', displayNameInjected, true, false)
+      await addCustomInjectedProvider(event, 'Optimism', '0xa', ['https://mainnet.optimism.io'])
+      await addCustomInjectedProvider(event, 'Arbitrum One', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])
+      await addCustomInjectedProvider(event, 'SKALE Chaos Testnet', '0x50877ed6', ['https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix'], {
+        "name": "sFUEL",
+        "symbol": "sFUEL",
+        "decimals": 18
+      })
+      await addCustomInjectedProvider(event, 'Ephemery Testnet', '', ['https://arb1.arbitrum.io/rpc'])
     }
 
     // VM
@@ -191,8 +189,10 @@ export class RunTab extends ViewPlugin {
     await addProvider('walletconnect', 'WalletConnect', false, false)
 
     // testnet
+    /*
     await addProvider('injected-ephemery-testnet-provider', 'Ephemery Testnet', true, false)
     await addProvider('injected-skale-chaos-testnet-provider', 'SKALE Chaos Testnet', true, false)
+    */
 
     // external provider
     await addProvider('basic-http-provider', 'Custom - External Http Provider', false, false)
@@ -200,9 +200,16 @@ export class RunTab extends ViewPlugin {
     await addProvider('ganache-provider', 'Dev - Ganache Provider', false, false)
     await addProvider('foundry-provider', 'Dev - Foundry Provider', false, false)
 
-    // injected provider
-    await addProvider('injected-optimism-provider', 'L2 - Optimism Provider', true, false)
-    await addProvider('injected-arbitrum-one-provider', 'L2 - Arbitrum One Provider', true, false)
+    // register injected providers
+    
+    window.addEventListener(
+      "eip6963:announceProvider",
+      (event) => {
+        registerInjectedProvider(event)
+      }
+    )
+    
+    window.dispatchEvent(new Event("eip6963:requestProvider"))
   }
 
   writeFile(fileName, content) {
