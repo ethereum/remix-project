@@ -11,6 +11,20 @@ const checkBrowserIsChrome = function (browser: NightwatchBrowser) {
   return browser.browserName.indexOf('chrome') > -1
 }
 
+const checkAlerts = function (browser: NightwatchBrowser){
+  browser.isVisible({
+    selector: '//*[contains(.,"not have enough")]',
+    locateStrategy: 'xpath',
+    suppressNotFoundErrors: true,
+    timeout: 3000
+  }, (okVisible) => {
+    if (okVisible.value) {
+      browser.assert.fail('Not enough ETH in test account!!')
+      browser.end()
+    }
+  })
+}
+
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -67,6 +81,7 @@ module.exports = {
       .pause(5000)
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
+          checkAlerts(browser)
           browser
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx

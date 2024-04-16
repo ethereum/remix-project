@@ -3,7 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 const EventEmitter = require('events')
 
 class MetaMask extends EventEmitter {
-  command (this: NightwatchBrowser, passphrase: string, password: string): NightwatchBrowser {
+  command(this: NightwatchBrowser, passphrase: string, password: string): NightwatchBrowser {
     this.api.perform((done) => {
       setupMetaMask(this.api, passphrase, password, () => {
         done()
@@ -14,10 +14,10 @@ class MetaMask extends EventEmitter {
   }
 }
 
-function setupMetaMask (browser: NightwatchBrowser, passphrase: string, password: string, done: VoidFunction) {
+function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password: string, done: VoidFunction) {
   const words = passphrase.split(' ')
   browser
-    .switchBrowserTab(1) 
+    .switchBrowserTab(1)
     .waitForElementVisible('input[data-testid="onboarding-terms-checkbox"]')
     .click('input[data-testid="onboarding-terms-checkbox"]')
     .waitForElementVisible('button[data-testid="onboarding-import-wallet"]')
@@ -49,11 +49,18 @@ function setupMetaMask (browser: NightwatchBrowser, passphrase: string, password
     .click('button[data-testid="pin-extension-next"]')
     .waitForElementVisible('button[data-testid="pin-extension-done"]')
     .click('button[data-testid="pin-extension-done"]')
-    .waitForElementVisible('button[data-testid="popover-close"]')
-    .click('button[data-testid="popover-close"]')
-    .pause(1000)
-    .isPresent('button[data-testid="popover-close"]', () => {
-      browser.click('button[data-testid="popover-close"]')
+    .isVisible({
+      selector: 'button[data-testid="popover-close"]',
+      locateStrategy: 'css selector',
+      suppressNotFoundErrors: true,
+      timeout: 3000
+    }, (okVisible) => {
+      console.log('okVisible', okVisible)
+      if (!okVisible.value) {
+        console.log('popover not found')
+      }else{
+        browser.click('button[data-testid="popover-close"]')
+      }
     })
     .click('[data-testid="network-display"]')
     .click('.mm-modal-content label.toggle-button--off') // show test networks
