@@ -753,7 +753,7 @@ export const EditorUI = (props: EditorUIProps) => {
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const selectedCode = editor.getModel().getValueInRange(editor.getSelection())
 
-        await props.plugin.call('solcoder', 'code_explaining', selectedCode)
+        await props.plugin.call('solcoder', 'code_explaining', selectedCode, content)
         _paq.push(['trackEvent', 'ai', 'solcoder', 'explainFunction'])
       },
     }
@@ -823,12 +823,15 @@ export const EditorUI = (props: EditorUIProps) => {
         freeFunctionCondition.set(false)
         return
       }
+
+      
       const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
       const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
       if (freeFunctionNode) {
         executeFreeFunctionAction.label = intl.formatMessage({id: 'editor.executeFreeFunction2'}, {name: freeFunctionNode.name})
         freeFunctionAction = editor.addAction(executeFreeFunctionAction)
       }
+
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
         currentFunction.current = functionImpl.name
@@ -839,6 +842,8 @@ export const EditorUI = (props: EditorUIProps) => {
         executeSolgptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunctionSol'})
         solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
       }else{
+        // do not allow single character explaining
+        if (editor.getModel().getValueInRange(editor.getSelection()).length <=1){ return}
         executeSolgptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunctionSol'})
         solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
       }
