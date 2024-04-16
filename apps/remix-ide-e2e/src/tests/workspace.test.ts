@@ -402,9 +402,15 @@ module.exports = {
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/run_setup.ts"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/run_verification.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/groth16_trusted_setup.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/groth16_zkproof.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/plonk_trusted_setup.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/plonk_zkproof.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/plonk_verifier.sol.ejs"]')
       .click('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Groth16Verifier {`) !== -1,
