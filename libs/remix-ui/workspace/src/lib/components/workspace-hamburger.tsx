@@ -194,6 +194,16 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
         }}
         platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
       ></HamburgerMenuItem>
+      <HamburgerMenuItem
+        kind="addcreate2solidityfactory"
+        fa="fa-kit fa-ts-logo"
+        hideOption={hideWorkspaceOptions || hideFileOperations}
+        actionOnClick={() => {
+          props.addHelperScripts('contractCreate2Factory')
+          props.hideIconsMenu(!showIconsMenu)
+        }}
+        platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
+      ></HamburgerMenuItem>
     </>
   )
 }
