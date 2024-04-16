@@ -229,7 +229,7 @@ function getEnum (type, stateDefinitions, contractName) {
 }
 
 /**
-  * retrieve members declared in the given @arg tye
+  * retrieve members declared in the given @arg type
   *
   * @param {String} typeName - name of the struct type (e.g struct <name>)
   * @param {Object} stateDefinitions  - all state definition given by the AST (including struct and enum type declaration) for all contracts

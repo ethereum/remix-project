@@ -324,7 +324,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
     remixClient.changeStatus({
       key: 'failed',
       type: 'error',
-      title: `1 error occured ${err.message}`
+      title: `1 error occurred ${err.message}`
     })
 
     setLoadingSpinnerState && setLoadingSpinnerState(false)
