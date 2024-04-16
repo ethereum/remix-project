@@ -50,10 +50,42 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
   await snarkjs.wtns.check(r1cs, wtns, logger);  
 
   console.log('prove')
-  const { proof, publicSignals } = await snarkjs.groth16.prove(zkey_final, wtns);
+  const { proof, publicSignals } = await snarkjs.plonk.prove(zkey_final, wtns);
   
-  const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof, logger);
+  const verified = await snarkjs.plonk.verify(vKey, publicSignals, proof, logger);
   console.log('zk proof validity', verified);
+
+  await remix.call('fileManager', 'writeFile', `zk/build/plonk/input-${Date.now()}.json`, JSON.stringify({
+    _pubSignals: publicSignals,
+    _proof: [
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[0]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[1]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.B[0]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.B[1]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.C[0]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.C[1]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Z[0]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Z[1]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T1[0]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T1[1]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T2[0]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T2[1]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T3[0]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T3[1]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxi[0]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxi[1]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxiw[0]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxiw[1]).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_a).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_b).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_c).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_s1).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_s2).toHexString(), 32),
+      ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_zw).toHexString(), 32),
+    ]
+  }, null, 2))
+  
+  console.log('proof done.')
   return {
     proof,
     x: publicSignals[3],
@@ -64,21 +96,24 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
 (async () => {
   try {
     // @ts-ignore
-    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.r1cs', true);
+    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.r1cs', { encoding: null });
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer);
     // @ts-ignore
-    const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.wasm', true);
+    await remix.call('circuit-compiler', 'compile', 'circuits/rln.circom');
+    // @ts-ignore
+    const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.wasm', { encoding: null });
     // @ts-ignore
     const wasm = new Uint8Array(wasmBuffer);   
      
     const zkey_final = {
       type: "mem",
-      data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/build/zk_setup.txt')))
+      // @ts-ignore
+      data: new Uint8Array(await remix.call('fileManager', 'readFile', './zk/keys/plonk/zkey_final.txt', { encoding: null }))
     }
-    const wtns = { type: "mem" };   
+    const wtns = { type: "mem" };
 
-    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/build/verification_key.json'))
+    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/plonk/verification_key.json'))
   
     // build list of identity commitments
     const secrets = []
@@ -119,7 +154,7 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
       externalNullifier: 0xa // hash(epoch, appId)
     }
     const proof1 = await prove(signals1, wasm, wtns, r1cs, zkey_final, vKey)
-
+    
     const signals2 = {
       identitySecret: secrets[0],
       userMessageLimit,
@@ -135,6 +170,13 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
 
     console.log(secret.toString(10))
     console.log(Fq.normalize(secrets[0]))
+    
+    const templates = {
+      plonk: await remix.call('fileManager', 'readFile', 'templates/plonk_verifier.sol.ejs')
+    }
+    const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
+    
+    await remix.call('fileManager', 'writeFile', './zk/build/plonk/zk_verifier.sol', solidityContract)
   } catch (e) {
     console.error(e.message)
   }

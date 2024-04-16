@@ -9,11 +9,11 @@ const logger = {
 (async () => {
   try {
     // @ts-ignore
-    await remix.call('circuit-compiler', 'generateR1cs', 'circuits/rln.circom');
+    await remix.call('circuit-compiler', 'generateR1cs', 'circuits/calculate_hash.circom');
 
     const ptau_final = "https://ipfs-cluster.ethdevops.io/ipfs/QmTiT4eiYz5KF7gQrDsgfCSTRv3wBPYJ4bRN1MmTRshpnW";
     // @ts-ignore
-    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.r1cs', true);
+    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/calculate_hash.r1cs', { encoding: null });
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer);
     const zkey_0 = { type: "mem" };
@@ -39,17 +39,10 @@ const logger = {
 
     console.log('exportVerificationKey')
     const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final)
-    await remix.call('fileManager', 'writeFile', './zk/build/verification_key.json', JSON.stringify(vKey))
+    await remix.call('fileManager', 'writeFile', './zk/keys/groth16/verification_key.json', JSON.stringify(vKey, null, 2))
     
-    const templates = {
-      groth16: await remix.call('fileManager', 'readFile', 'templates/groth16_verifier.sol.ejs')
-    }
-    const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
-    
-    await remix.call('fileManager', 'writeFile', './zk/build/zk_verifier.sol', solidityContract)
-    
-    console.log('buffer', (zkey_final as any).data.length)
-    await remix.call('fileManager', 'writeFile', './zk/build/zk_setup.txt', JSON.stringify(Array.from(((zkey_final as any).data))))
+    console.log('save zkey_final')
+    await remix.call('fileManager', 'writeFile', './zk/keys/groth16/zkey_final.txt', JSON.stringify(Array.from(((zkey_final as any).data))))
     
     console.log('setup done.')
     
