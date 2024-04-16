@@ -8,7 +8,6 @@ export type SuggestOptions = {
   top_p:number, 
   stream_result:boolean
 }
-
 const _paq = (window._paq = window._paq || [])
 
 const profile = {
@@ -20,13 +19,18 @@ const profile = {
   maintainedBy: 'Remix',
 }
 
+type ChatEntry = [string, string];
+
 export class SolCoder extends Plugin {
   api_url: string
   completion_url: string
+  solgpt_chat_history:ChatEntry[]
+  max_history = 5
   constructor() {
     super(profile)
     this.api_url = "https://solcoder.remixproject.org"
     this.completion_url = "https://completion.remixproject.org"
+    this.solgpt_chat_history = []
   }
 
   async code_generation(prompt): Promise<any> {
@@ -62,6 +66,8 @@ export class SolCoder extends Plugin {
     this.call('layout', 'maximizeTerminal')
     let result
     try {
+      const main_prompt = this._build_solgpt_promt(prompt)
+      console.log('Main prompt', main_prompt)
       result = await(
         await fetch(this.api_url, {
           method: 'POST',
@@ -69,7 +75,7 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt, "solidity_answer", false,1000,0.9,0.8,50]}),
+          body: JSON.stringify({"data":[main_prompt, "solidity_answer", false,1000,0.9,0.8,50]}),
         })
       ).json()
     } catch (e) {
@@ -80,6 +86,11 @@ export class SolCoder extends Plugin {
     }
     if (result) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0]})
+      const chat:ChatEntry = [prompt, result.data[0]]
+      this.solgpt_chat_history.push(chat)
+      console.log("chathuistory", this.solgpt_chat_history)
+
+      if (this.solgpt_chat_history.length >5){this.solgpt_chat_history.shift()}
     } else if  (result.error) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "Error on request" })
     }
@@ -193,6 +204,23 @@ export class SolCoder extends Plugin {
     } finally {
       this.emit("aiInferingDone")
     }
+  }
+
+  _build_solgpt_promt(user_promt:string){
+    if (this.solgpt_chat_history.length === 0){
+      return user_promt
+    }else{
+      let new_promt = ""
+      for (const [question, answer] of this.solgpt_chat_history) {
+        console.log(question, answer.length)
+        new_promt += "### INSTRUCTION:\n" + question.split('sol-gpt')[1] + "\n### RESPONSE:\n" + answer
+      }
+      // finaly 
+      new_promt = "sol-gpt " + new_promt + "### INSTRUCTION:\n" + user_promt.split('sol-gpt')[1] +  "\n### RESPONSE:\n"
+      return new_promt
+    }
+
+    
   }
 
 
