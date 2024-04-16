@@ -15,7 +15,7 @@ sleep 5
 
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep $1 | sort | circleci tests split )
 for TESTFILE in $TESTFILES; do
-    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $TESTFILE --env=chrome  || TEST_EXITCODE=1
+    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-chrome.js $TESTFILE --env=chrome  || TEST_EXITCODE=1
 done
 
 echo "$TEST_EXITCODE"

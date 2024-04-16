@@ -34,7 +34,7 @@ yarn run serve:production &
 sleep 5
 
 for TESTFILE in $TESTFILES; do
-    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch.js $TESTFILE --env=$1  || TEST_EXITCODE=1
+    npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-${1}.js $TESTFILE --env=$1  || TEST_EXITCODE=1
 done
 
 echo "$TEST_EXITCODE"

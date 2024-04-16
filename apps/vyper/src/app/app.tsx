@@ -156,7 +156,7 @@ const App = () => {
             compiler version
           </a>{' '}
           &{' '}
-          <a className="text-warning" href="http://docs.vyperlang.org/en/stable/compiling-a-contract.html#setting-the-target-evm-version" target="_blank" rel="noopener noreferrer">
+          <a className="text-warning" href="https://remix-ide.readthedocs.io/en/latest/vyper.html#evm-version" target="_blank" rel="noopener noreferrer">
             EVM version
           </a>{' '}
           in the .vy file.
