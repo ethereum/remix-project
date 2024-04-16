@@ -30,6 +30,18 @@ module.exports = {
       .assert.not.elementPresent('*[data-id="NoPinnedInstanceText"]')
       .assert.elementPresent('*[data-id="pinnedInstance0xd9145CCE52D386f254917e481eB44e9943F39138"]')
     },
+  'Test pinned contract loading on environment change #group1': function (browser: NightwatchBrowser) {
+    browser
+      .switchEnvironment('vm-shanghai')
+      .assert.elementPresent('*[data-id="pinnedContracts"]')
+      .assert.textContains('*[data-id="pinnedContractsSublabel"]', '(network: vm-shanghai)')
+      .assert.elementPresent('*[data-id="NoPinnedInstanceText"]')
+      .assert.textContains('*[data-id="NoPinnedInstanceText"]', 'No pinned contracts found for selected workspace & network')
+      .switchEnvironment('vm-cancun')
+      .assert.textContains('*[data-id="pinnedContractsSublabel"]', '(network: vm-cancun)')
+      .assert.not.elementPresent('*[data-id="NoPinnedInstanceText"]')
+      .assert.elementPresent('*[data-id="pinnedInstance0xd9145CCE52D386f254917e481eB44e9943F39138"]')
+    },
   'Interact with pinned contract #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="universalDappUiTitleExpander0"]')
