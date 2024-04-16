@@ -17,6 +17,7 @@ export const scanAPIurls = {
   1101: 'https://api-zkevm.polygonscan.com/api',
   59144: 'https://api.lineascan.build/api',
   8453: 'https://api.basescan.org/api',
+  534352: 'https://api.scrollscan.com/api',
 
   // all testnet
   17000: 'https://api-holesky.etherscan.io/api',
@@ -37,4 +38,5 @@ export const scanAPIurls = {
   84532: "https://api-sepolia.basescan.org/api",
   1442: 'https://api-testnet-zkevm.polygonscan.com/api',
   59140: 'https://api-testnet.lineascan.build/api',
+  534351: 'https://api-sepolia.scrollscan.com/api',
 }
