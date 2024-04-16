@@ -22,8 +22,8 @@ export class CompilerAbstract {
     return helper.getContract(name, this.data.contracts)
   }
 
-  visitContracts (calllback) {
-    return helper.visitContracts(this.data.contracts, calllback)
+  visitContracts (callback) {
+    return helper.visitContracts(this.data.contracts, callback)
   }
 
   getData () {
