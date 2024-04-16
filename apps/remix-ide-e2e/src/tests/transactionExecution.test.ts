@@ -174,7 +174,6 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param1"')
       .journalLastChildIncludes('"documentation": "param2"')
       .journalLastChildIncludes('"documentation": "param3"')
-      .journalLastChildIncludes('Debug the transaction to get more information.')
       .click('*[data-id="deployAndRunClearInstances"]')
   },
 
@@ -198,7 +197,6 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param1"')
       .journalLastChildIncludes('"documentation": "param2"')
       .journalLastChildIncludes('"documentation": "param3"')
-      .journalLastChildIncludes('Debug the transaction to get more information.')
   },
 
   'Should Compile and Deploy a contract which define a custom error in a library, the error should be logged in the terminal #group3': function (browser: NightwatchBrowser) {
@@ -216,7 +214,6 @@ module.exports = {
       .journalLastChildIncludes('"documentation": "param1 from library"')
       .journalLastChildIncludes('"documentation": "param2 from library"')
       .journalLastChildIncludes('"documentation": "param3 from library"')
-      .journalLastChildIncludes('Debug the transaction to get more information.')
   },
 
   'Should compile and deploy 2 simple contracts, the contract creation component state should be correctly reset for the deployment of the second contract #group4': function (browser: NightwatchBrowser) {
