@@ -167,10 +167,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
 }
 
 const loadPinnedContracts = async (plugin, dispatch, dirName) => {
-  console.log('loadPinnedContracts---->')
   await plugin.call('udapp', 'clearAllPinnedInstances')
-  // const { network } = await plugin.call('blockchain', 'getCurrentNetworkStatus')
-  // const dirName = plugin.REACT_API.networkName === 'VM' ? plugin.REACT_API.selectExEnv : network.id
   const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
   if (isPinnedAvailable) {
     try {
