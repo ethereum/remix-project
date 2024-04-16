@@ -7,33 +7,6 @@ import { UniversalDappUI } from './universalDappUI'
 
 export function InstanceContainerUI(props: InstanceContainerProps) {
   const { instanceList } = props.instances
-  const chainId = useRef()
-
-  useEffect(() => {
-    const fetchSavedContracts = async () => {
-      const { network } = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-      chainId.current = network.id
-      // Clear existing saved instance state
-      await props.plugin.call('udapp', 'clearAllPinnedInstances')
-      // Load contracts from FE
-      const dirName = props.plugin.REACT_API.networkName === 'VM' ? props.plugin.REACT_API.selectExEnv : chainId.current
-      const isPinnedAvailable = await props.plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
-      if (isPinnedAvailable) {
-        try {
-          const list = await props.plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${dirName}`)
-          const filePaths = Object.keys(list)
-          for (const file of filePaths) {
-            const pinnedContract = await props.plugin.call('fileManager', 'readFile', file)
-            const pinnedContractObj = JSON.parse(pinnedContract)
-            if (pinnedContractObj) await props.plugin.call('udapp', 'addPinnedInstance', pinnedContractObj.address, pinnedContractObj.abi, pinnedContractObj.name, pinnedContractObj.pinnedAt, pinnedContractObj.filePath)
-          }
-        } catch(err) {
-          console.log(err)
-        }
-      }
-    }
-    fetchSavedContracts()
-  }, [props.plugin.REACT_API.selectExEnv, props.plugin.REACT_API.networkName])
 
   const clearInstance = () => {
     props.clearInstances()
@@ -45,7 +18,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
           <label className="udapp_deployedContracts" data-id="pinnedContracts">
             <FormattedMessage id="udapp.pinnedContracts" /> 
-            <span style={{fontSize: '0.75rem'}} data-id="pinnedContractsSublabel"> { props.plugin.REACT_API.networkName === 'VM' ? `(VM: ${props.plugin.REACT_API.selectExEnv})` : `(chain id: ${chainId.current})` }</span>
+            <span style={{fontSize: '0.75rem'}} data-id="pinnedContractsSublabel"> (network: {props.plugin.REACT_API.chainId}) </span>
           </label>
         </CustomTooltip>
       </div>

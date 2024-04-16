@@ -1,5 +1,5 @@
 import { ContractData } from "@remix-project/core-plugin"
-import { addNewInstance, addNewPinnedInstance, addProvider, clearAllInstances, clearAllPinnedInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
+import { addNewInstance, addNewPinnedInstance, addProvider, clearAllInstances, clearAllPinnedInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setChainId, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
 
 export const setAccount = (dispatch: React.Dispatch<any>, account: string) => {
   dispatch(setSelectedAccount(account))
@@ -19,6 +19,10 @@ export const setExecEnv = (dispatch: React.Dispatch<any>, env: string) => {
 
 export const setNetworkNameFromProvider = (dispatch: React.Dispatch<any>, networkName: string) => {
   dispatch(setNetworkName(networkName))
+}
+
+export const setPinnedChainId = (dispatch: React.Dispatch<any>, chainId: string) => {
+  dispatch(setChainId(chainId))
 }
 
 export const addExternalProvider = (dispatch: React.Dispatch<any>, network) => {
