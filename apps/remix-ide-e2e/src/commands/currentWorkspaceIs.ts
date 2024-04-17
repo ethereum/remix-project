@@ -8,10 +8,10 @@ class CurrentWorkspaceIs extends EventEmitter {
     browser.getText('[data-id="workspacesSelect"]', function (result) {
       browser.assert.equal(result.value, name)
     })
-    .perform((done) => {
-      done()
-      this.emit('complete')
-    })
+      .perform((done) => {
+        done()
+        this.emit('complete')
+      })
     return this
   }
 }

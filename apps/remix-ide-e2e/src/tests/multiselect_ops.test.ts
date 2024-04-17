@@ -7,27 +7,21 @@ module.exports = {
   },
 
   'Should select multiple items in the file explorer': function (browser: NightwatchBrowser) {
+    const selectedElements = []
     browser
-      .addFile('runTest.js', { content: testMultiselect })
-      .keys(browser.Keys.SHIFT)
-      .click('*[data-id="treeViewLitreeViewItemcontracts"]')
-      .click('*[data-id=treeViewLitreeViewItemscripts')
-      .click('*[data-id="treeViewLitreeViewItemtests"]')
-      .executeScriptInTerminal('remix.exeCurrent()')
-      .pause(2000)
-      .execute(() => {
-        browser.assert.ok((window as any).focusElements.length > 1, 'test passed')
+      .openFile('contracts')
+    browser
+      .click({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })// the first element is the storage
+    browser
+      .findElement({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]', locateStrategy: 'xpath' }, (el) => {
+        selectedElements.push(el)
       })
-      .end()
+    browser
+      .findElement({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' }, (el) => {
+        selectedElements.push(el)
+      })
+    browser.selectFiles(selectedElements)
+    browser.waitForElementVisible('*[data-id="contextMenuItemdeleteAll"]').end()
   }
 }
 
-const testMultiselect = `
-  const runThis = async () => {
-    const result = await remix.call('fileManager', 'getFocusElements')
-
-    console.log(result)
-  }
-
-  runThis()
-`
