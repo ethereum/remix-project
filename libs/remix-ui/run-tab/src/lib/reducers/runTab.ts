@@ -193,11 +193,11 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case SET_NETWORK_NAME: {
-    const payload = action.payload
+    const payload: string = action.payload
 
     return {
       ...state,
-      networkName: payload.networkName,
+      networkName: payload,
     }
   }
 
