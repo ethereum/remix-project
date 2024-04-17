@@ -307,6 +307,9 @@ export function UniversalDappUI(props: UdappProps) {
                 ></i>
               </CustomTooltip>
             )}
+            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextSolScan" />}>
+              <i className="fas fa-qrcode btn btn-sm p-0"></i>
+            </CustomTooltip> 
           </div>
           { props.isPinnedContract && props.instance.pinnedAt ? (
             <div className="d-flex" data-id="instanceContractPinnedAt">
