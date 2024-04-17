@@ -98,7 +98,7 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt, "code_explaining", context, false,2000,0.9,0.8,50]}),
+          body: JSON.stringify({"data":[prompt, "code_explaining", false,2000,0.9,0.8,50, context]}),
         })
       ).json()
       if (result) {
