@@ -16,7 +16,7 @@ module.exports = {
   'Should ask a simple solidity chat gpt question #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
-      .executeScriptInTerminal('gpt What are function modifiers')
+      .executeScriptInTerminal('sol-gpt What are function modifiers')
       .pause(2000)
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'In Solidity', 60000)
   },
