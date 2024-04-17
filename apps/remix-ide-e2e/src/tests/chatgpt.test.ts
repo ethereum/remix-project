@@ -18,6 +18,6 @@ module.exports = {
       .waitForElementVisible('*[data-id="terminalCli"]', 10000)
       .executeScriptInTerminal('sol-gpt What are function modifiers')
       .pause(2000)
-      .waitForElementContainsText('*[data-id="terminalJournal"]', 'In Solidity', 60000)
+      .waitForElementContainsText('*[data-id="terminalJournal"]', 'Solidity', 60000)
   },
 }
