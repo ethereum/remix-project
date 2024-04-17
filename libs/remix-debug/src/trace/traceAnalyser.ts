@@ -1,5 +1,6 @@
 'use strict'
 import {  util } from '@remix-project/remix-lib'
+import { bytesToHex } from '@ethereumjs/util'
 const { toHexPaddedString } = util
 import * as traceHelper from './traceHelper'
 
@@ -85,7 +86,7 @@ export class TraceAnalyser {
         offset = 2 * parseInt(toHexPaddedString(stack[stack.length - 4]), 16)
         size = 2 * parseInt(toHexPaddedString(stack[stack.length - 5]), 16)
       }
-      calldata = '0x' + memory.join('').substr(offset, size)
+      calldata = bytesToHex(memory).replace('0x', '').substring(offset, offset + size)
       this.traceCache.pushCallDataChanges(index + 1, calldata)
     }
   }
