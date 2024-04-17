@@ -443,19 +443,19 @@ class Editor extends Plugin {
     this.emit('revealRange', startLineNumber, startColumn, endLineNumber, endColumn)
   }
 
-    /**
+  /**
    * Selects the range in the editor.
    * @param {number} startLineNumber
    * @param {number} startColumn
    * @param {number} endLineNumber
    * @param {number} endColumn
    */
-    setSelection (startLineNumber, startColumn, endLineNumber, endColumn) {
-      if (!this.activated) return
-      this.emit('focus')
-      console.log(startLineNumber, startColumn, endLineNumber, endColumn)
-      this.emit('setSelection', startLineNumber, startColumn, endLineNumber, endColumn)
-    }
+  setSelection (startLineNumber, startColumn, endLineNumber, endColumn) {
+    if (!this.activated) return
+    this.emit('focus')
+    console.log(startLineNumber, startColumn, endLineNumber, endColumn)
+    this.emit('setSelection', startLineNumber, startColumn, endLineNumber, endColumn)
+  }
 
   /**
    * Scrolls to a line. If center is true, it puts the line in middle of screen (or attempts to).

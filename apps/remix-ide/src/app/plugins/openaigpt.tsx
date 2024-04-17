@@ -29,7 +29,7 @@ export class OpenAIGpt extends Plugin {
         httpsAgent: new https.Agent({
           rejectUnauthorized: process && process.env && process.env['NX_API_URL']? false : true // This will ignore SSL certificate errors in CIRCLECI
         })
-    }); 
+      }); 
 
       const response = await axiosInstance.post( process && process.env && process.env['NX_API_URL']? `${process.env['NX_API_URL']}openai-gpt/` : `https://openai-gpt.remixproject.org`,
         { prompt }, 
