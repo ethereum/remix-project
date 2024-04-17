@@ -111,6 +111,7 @@
   "udapp.tooltipTextRemove": "Remove from the list",
   "udapp.tooltipTextEdit": "Create a DApp using this contract in the main panel",
   "udapp.tooltipTextPin": "Pin contract",
+  "udapp.tooltipTextSolScan": "Run Solidity scan for contract",
   "udapp.tooltipText8": "Click for docs about using 'receive'/'fallback'",
   "udapp.tooltipText9": "The Calldata to send to fallback function of the contract.",
   "udapp.tooltipText10": "Send data to contract.",
