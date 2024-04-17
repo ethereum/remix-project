@@ -11,10 +11,12 @@ export const openaigpt = () => {
   const openai = new OpenAIApi(configuration)
   const app = express()
   const ips = new Map<string, number>()
+  const ipWhitelist = ['127.0.0.1']
   app.use(cors())
   app.post('/', async (req: Request, res: any, next: any) => {
+    console.log(req.ip)
     if (!req.ip) return res.status(400).json({ error: 'No IP' })
-    if (ips.get(req.ip) && (Date.now() - (ips.get(req.ip) as number)) < 20000) { // 1 call every 20 seconds
+    if (ipWhitelist.indexOf(req.ip)==-1 && ips.get(req.ip) && (Date.now() - (ips.get(req.ip) as number)) < 20000) { // 1 call every 20 seconds
       res.setHeader('Content-Type', 'application/json');
       const remainer = 20000 - (Date.now() - (ips.get(req.ip) as number))
       res.end(JSON.stringify({ error: `rate limit exceeded, please wait ${remainer} ms` }));
