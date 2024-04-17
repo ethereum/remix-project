@@ -33,6 +33,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
+    await loadPinnedContracts(plugin, dispatch)
   })
 
   plugin.blockchain.event.register('networkStatus', async ({ error, network }) => {
@@ -47,7 +48,6 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     const pinnedChainId = !networkProvider().startsWith('vm') ? network.id : networkProvider()
     setNetworkNameFromProvider(dispatch, netUI)
     setPinnedChainId(dispatch, pinnedChainId)
-    await loadPinnedContracts(plugin, dispatch, pinnedChainId)
   })
 
   plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
@@ -166,8 +166,10 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   }, 30000)  
 }
 
-const loadPinnedContracts = async (plugin, dispatch, dirName) => {
+const loadPinnedContracts = async (plugin, dispatch) => {
   await plugin.call('udapp', 'clearAllPinnedInstances')
+  const { network } = await plugin.call('blockchain', 'getCurrentNetworkStatus')
+  const dirName = plugin.REACT_API.networkName === 'VM' ? plugin.REACT_API.selectExEnv : network.id
   const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
   if (isPinnedAvailable) {
     try {
