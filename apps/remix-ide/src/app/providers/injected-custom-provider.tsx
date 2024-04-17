@@ -1,14 +1,15 @@
-import {InjectedProviderDefaultBase} from './injected-provider-default'
+import Web3 from 'web3'
+import {InjectedProviderDefault} from './injected-provider-default'
 
-export class InjectedCustomProvider extends InjectedProviderDefaultBase {
+export class InjectedCustomProvider extends InjectedProviderDefault {
   chainName: string
   chainId: string
   rpcUrls: Array<string>
   nativeCurrency: Record<string, any>
   blockExplorerUrls: Array<string>
 
-  constructor(profile: any, chainName: string, chainId: string, rpcUrls: Array<string>, nativeCurrency?: Record<string, any>, blockExplorerUrls?: Array<string>) {
-    super(profile)
+  constructor(provider: any, chainName: string, chainId: string, rpcUrls: Array<string>, nativeCurrency?: Record<string, any>, blockExplorerUrls?: Array<string>) {
+    super(provider, chainName)
     this.chainName = chainName
     this.chainId = chainId
     this.rpcUrls = rpcUrls
@@ -17,6 +18,10 @@ export class InjectedCustomProvider extends InjectedProviderDefaultBase {
   }
 
   async init() {
+    if (!this.chainId) {
+      const chainId = await new Web3(this.rpcUrls[0]).eth.getChainId()
+      this.chainId = `0x${chainId.toString(16)}`
+    }
     await super.init()
     if (this.chainName && this.rpcUrls && this.rpcUrls.length > 0) await addCustomNetwork(this.chainName, this.chainId, this.rpcUrls, this.nativeCurrency, this.blockExplorerUrls)
     else throw new Error('Cannot add the custom network to main injected provider')
