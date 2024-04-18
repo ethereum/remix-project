@@ -238,6 +238,7 @@ export type UrlParametersType = {
   shareCode: string
   url: string
   language: string
+  ghfolder: string
 }
 
 export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault', opts?) => {
@@ -284,28 +285,34 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         await workspaceProvider.set(path, content)
       }
       if (params.url) {
-        const data = await plugin.call('contentImport', 'resolve', params.url)
-
-        path = data.cleanUrl
-        content = data.content
-
-        try {
-          content = JSON.parse(content) as any
-          if (content.language && content.language === 'Solidity' && content.sources) {
-            const standardInput: JSONStandardInput = content as JSONStandardInput
-            for (const [fname, source] of Object.entries(standardInput.sources)) {
-              await workspaceProvider.set(fname, source.content)
-            }
-            return Object.keys(standardInput.sources)[0]
-          } else {
-            // preserve JSON whitespace if this isn't a Solidity compiler JSON-input-output file
-            content = data.content
+        if (params.ghfolder === 'true') {
+          const files = await plugin.call('contentImport', 'resolveGithubFolder', params.url)
+          console.log(files)
+          for (const [path, content] of  Object.entries(files)) {
             await workspaceProvider.set(path, content)
           }
-        } catch (e) {
-          console.log(e)
-          await workspaceProvider.set(path, content)
-        }
+        } else {
+          const data = await plugin.call('contentImport', 'resolve', params.url)
+          path = data.cleanUrl
+          content = data.content
+          try {
+            content = JSON.parse(content) as any
+            if (content.language && content.language === 'Solidity' && content.sources) {
+              const standardInput: JSONStandardInput = content as JSONStandardInput
+              for (const [fname, source] of Object.entries(standardInput.sources)) {
+                await workspaceProvider.set(fname, source.content)
+              }
+              return Object.keys(standardInput.sources)[0]
+            } else {
+              // preserve JSON whitespace if this isn't a Solidity compiler JSON-input-output file
+              content = data.content
+              await workspaceProvider.set(path, content)
+            }
+          } catch (e) {
+            console.log(e)
+            await workspaceProvider.set(path, content)
+          }
+        }        
       }
       return path
     } catch (e) {
