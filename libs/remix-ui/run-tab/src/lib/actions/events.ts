@@ -14,7 +14,7 @@ import { shortenAddress } from "@remix-ui/helper"
 const _paq = window._paq = window._paq || []
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  let currentNetwork = {
+  const currentNetwork = {
     provider: null,
     chainId: null
   }
