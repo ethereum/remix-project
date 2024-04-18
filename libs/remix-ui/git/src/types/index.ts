@@ -25,7 +25,8 @@ export type gitState = {
     repositories: repository[]
     remoteBranches: remoteBranch[]
     commitChanges: commitChange[]
-    branchCommits:  Record<string, pagedCommits[]>
+    remoteBranchCommits:  Record<string, pagedCommits[]>
+    localBranchCommits:  Record<string, pagedCommits[]>
     syncStatus: syncStatus,
     localCommitCount: number
     remoteCommitCount: number
@@ -121,7 +122,8 @@ export const defaultGitState: gitState = {
     repositories: [],
     remoteBranches: [],
     commitChanges: [],
-    branchCommits: {},
+    remoteBranchCommits: {},
+    localBranchCommits: {},
     syncStatus: syncStatus.none,
     localCommitCount: 0,
     remoteCommitCount: 0,
@@ -214,7 +216,15 @@ export interface setUpstreamAction {
     payload: string
 }
 
-export interface setBranchCommitsAction {
+export interface setRemoteBranchCommitsAction {
+    type: string,
+    payload: {
+        branch: branch,
+        commits: pagedCommits[]
+    }
+}
+
+export interface setLocalBranchCommitsAction {
     type: string,
     payload: {
         branch: branch,
@@ -227,4 +237,4 @@ export interface setTokenAction {
     payload: string
 }
 
-export type gitActionDispatch = setTokenAction | setUpstreamAction | setBranchCommitsAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export type gitActionDispatch = setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

@@ -122,9 +122,16 @@ export const setCommitChanges = (commitChanges: commitChange[]) => {
     }
 }
 
-export const setBranchCommits =({branch, commits}) => {
+export const setRemoteBranchCommits =({branch, commits}) => {
     return {
-        type: 'SET_BRANCH_COMMITS',
+        type: 'SET_REMOTE_BRANCH_COMMITS',
+        payload: { branch, commits }
+    }
+}
+
+export const setLocalBranchCommits = ({branch, commits}) => {
+    return {
+        type: 'SET_LOCAL_BRANCH_COMMITS',
         payload: { branch, commits }
     }
 }

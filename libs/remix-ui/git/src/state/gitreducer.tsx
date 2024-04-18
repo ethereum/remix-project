@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
 import { allChangedButNotStagedFiles, getFilesByStatus, getFilesWithNotModifiedStatus } from "../lib/fileHelpers"
-import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setBranchCommitsAction } from "../types"
+import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setRemoteBranchCommitsAction, setLocalBranchCommitsAction } from "../types"
 
 interface Action {
     type: string
@@ -118,12 +118,29 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
                 commitChanges: [...state.commitChanges]
             }
 
-        case 'SET_BRANCH_COMMITS':
-            state.branchCommits[(action as setBranchCommitsAction).payload.branch.name] = (action  as setBranchCommitsAction).payload.commits
+        case 'SET_REMOTE_BRANCH_COMMITS':
+            if(state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name]){
+                state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name].push(...(action  as setRemoteBranchCommitsAction).payload.commits)
+            }else{
+                state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name] =  (action  as setRemoteBranchCommitsAction).payload.commits
+            }
             return {
                 ...state,
-                branchCommits: {...state.branchCommits}
+                remoteBranchCommits: {...state.remoteBranchCommits}
             }
+
+        case 'SET_LOCAL_BRANCH_COMMITS':
+            if(state.localBranchCommits[(action as setLocalBranchCommitsAction).payload.branch.name]){
+                state.localBranchCommits[(action as setLocalBranchCommitsAction).payload.branch.name].push(...(action  as setLocalBranchCommitsAction).payload.commits)
+            }else{
+                state.localBranchCommits[(action as setLocalBranchCommitsAction).payload.branch.name] =  (action  as setLocalBranchCommitsAction).payload.commits
+            }
+            return {
+                ...state,
+                localBranchCommits: {...state.localBranchCommits}
+            }
+
+        case 'SET_GITHUB_ACCESS_TOKEN':
 
         case 'SET_GITHUB_USER':
             return {

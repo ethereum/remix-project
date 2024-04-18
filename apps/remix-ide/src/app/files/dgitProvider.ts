@@ -269,7 +269,6 @@ class DGitProvider extends Plugin {
     const status = await git.log({
       ...await this.addIsomorphicGitConfigFS(),
       ...cmd,
-      depth: 10
     })
     return status
   }
@@ -999,16 +998,18 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async remotecommits(input: { owner: string, repo: string, token: string, branch: string, length: number }): Promise<pagedCommits[]> {
+  async remotecommits(input: { owner: string, repo: string, token: string, branch: string, length: number,page: number }): Promise<pagedCommits[]> {
     const octokit = new Octokit({
       auth: input.token
     })
-
+    input.length = input.length || 5
+    input.page = input.page || 1
     const response = await octokit.request('GET /repos/{owner}/{repo}/commits', {
       owner: input.owner,
       repo: input.repo,
       sha: input.branch,
-      per_page: 10
+      per_page: input.length,
+      page: input.page
     })
     const pages: pagedCommits[] = []
     const readCommitResults: ReadCommitResult[] = []
@@ -1050,8 +1051,8 @@ class DGitProvider extends Plugin {
 
     console.log("Has next page:", hasNextPage);
     pages.push({
-      page: 1,
-      perPage: 10,
+      page: input.page,
+      perPage: input.length,
       total: response.data.length,
       hasNextPage: hasNextPage,
       commits: readCommitResults

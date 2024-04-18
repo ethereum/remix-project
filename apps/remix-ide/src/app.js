@@ -348,9 +348,7 @@ class AppComponent {
       solidityScript,
       templates,
       openaigpt,
-      copilotSuggestion,
-      git,
-      solcoder
+      git
     ])
 
     //---- fs plugin

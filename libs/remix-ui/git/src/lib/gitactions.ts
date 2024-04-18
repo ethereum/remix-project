@@ -1,7 +1,7 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, fileStatusMerge, setBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream } from "../state/gitpayload";
+import { fileStatus, fileStatusMerge, setRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream } from "../state/gitpayload";
 import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
@@ -696,11 +696,25 @@ export const getCommitChanges = async (oid1: string, oid2: string) => {
   return result
 }
 
-export const fetchBranch = async (branch: branch) => {
+async function getRepoDetails(url: string) {
+  // Extract the owner and repo name from the URL
+  const pathParts = new URL(url).pathname.split('/').filter(part => part);
+  if (pathParts.length < 2) {
+    throw new Error("URL must be in the format 'https://github.com/[owner]/[repository]'");
+  }
+  const owner = pathParts[0];
+  const repo = pathParts[1];
+  return { owner, repo };
+}
+
+
+export const fetchBranch = async (branch: branch, page: number) => {
   const token = await tokenWarning();
-  const rc = await plugin.call('dGitProvider' as any, 'remotecommits', { token, owner:'bunsenstraat', repo:'empty', branch:'main', length });
+  console.log('fetch', branch)
+  const { owner, repo } = await getRepoDetails(branch.remote.url);
+  const rc = await plugin.call('dGitProvider' as any, 'remotecommits', { token, owner: owner, repo: repo, branch: branch.name, length, page });
   console.log(rc, 'remote commits from octokit')
-  dispatch(setBranchCommits({ branch, commits: rc }))
+  dispatch(setRemoteBranchCommits({ branch, commits: rc }))
   return
   const r = await plugin.call('dGitProvider', 'fetch', {
     ref: branch.name,
@@ -748,10 +762,10 @@ export const fetchBranch = async (branch: branch) => {
 
   console.log(mergeCommits)
   //console.log(r, commits)
-  dispatch(setBranchCommits({ branch, commits: mergeCommits }))
+  dispatch(setRemoteBranchCommits({ branch, commits: mergeCommits }))
 }
 
-export const getBranchCommits = async (branch: branch) => {
+export const getBranchCommits = async (branch: branch, page: number) => {
   try {
     console.log(branch)
     if (!branch.remote) {
@@ -759,12 +773,12 @@ export const getBranchCommits = async (branch: branch) => {
         ref: branch.name,
       })
       console.log(commits)
-      dispatch(setBranchCommits({ branch, commits }))
+      //dispatch(setRemoteBranchCommits({ branch, commits }))
     } else {
-      await fetchBranch(branch)
+      await fetchBranch(branch, page)
     }
   } catch (e) {
     console.log(e)
-    await fetchBranch(branch)
+    await fetchBranch(branch, page)
   }
 }

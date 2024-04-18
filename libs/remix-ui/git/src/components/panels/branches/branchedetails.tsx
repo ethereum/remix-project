@@ -19,19 +19,43 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
   const actions = React.useContext(gitActionsContext)
   const context = React.useContext(gitPluginContext)
   const [activePanel, setActivePanel] = useState<string>("");
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false)
+  const [lastPageNumber, setLastPageNumber] = useState<number>(0)
 
   useEffect(() => {
     if (activePanel === "0") {
       console.log('GET BRANCH COMMITS', branch)
-      actions.getBranchCommits(branch)
+      if(lastPageNumber === 0)
+        actions.getBranchCommits(branch, 1)
     }
   }, [activePanel])
+
+  useEffect(() => {
+    let hasNextPage = false
+    let lastPageNumber = 0
+    console.log('BRANCH COMMITS', context.remoteBranchCommits)
+    context.remoteBranchCommits && Object.entries(context.remoteBranchCommits).map(([key, value]) => {
+      if(key == branch.name){
+        value.map((page, index) => {
+          hasNextPage = page.hasNextPage
+          lastPageNumber = page.page
+        })
+      }
+    })
+    setHasNextPage(hasNextPage)
+    setLastPageNumber(lastPageNumber)
+  }, [context.remoteBranchCommits])
 
   const checkout = (branch: branch) => {
     actions.checkout({
       ref: branch.name,
       remote: branch.remote && branch.remote.remote || null
     });
+  }
+
+  const loadNextPage = () => {
+    console.log('LOAD NEXT PAGE', lastPageNumber+1)
+    actions.getBranchCommits(branch, lastPageNumber+1)
   }
 
   const checkoutCommit = async (oid: string) => {
@@ -49,7 +73,7 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
     <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
       <>
       <div className="ml-1">
-        {context.branchCommits && Object.entries(context.branchCommits).map(([key, value]) => {
+        {context.remoteBranchCommits && Object.entries(context.remoteBranchCommits).map(([key, value]) => {
           if(key == branch.name){
             return value.map((page, index) => {
               return page.commits.map((commit, index) => {
@@ -61,7 +85,7 @@ export const BranchDetails = (props: BrancheDetailsProps) => {
         
 
       </div>
-      <div>Load more</div>
+      {hasNextPage && <a href="#" className="cursor-pointer mb-1 ml-2" onClick={loadNextPage}>Load more</a>}
       </>
     </Accordion.Collapse>
   </Accordion>)
