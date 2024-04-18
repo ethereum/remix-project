@@ -14,6 +14,10 @@ import { shortenAddress } from "@remix-ui/helper"
 const _paq = window._paq = window._paq || []
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  let currentNetwork = {
+    provider: null,
+    chainId: null
+  }
   plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
     plugin.emit('newTransaction', tx, receipt)
   })
@@ -33,7 +37,6 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
-    await loadPinnedContracts(plugin, dispatch)
   })
 
   plugin.blockchain.event.register('networkStatus', async ({ error, network }) => {
@@ -44,10 +47,16 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
       return
     }
     const networkProvider = plugin.networkModule.getNetworkProvider.bind(plugin.networkModule)
-    const netUI = !networkProvider().startsWith('vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
-    const pinnedChainId = !networkProvider().startsWith('vm') ? network.id : networkProvider()
+    const isVM = networkProvider().startsWith('vm') ?  true : false
+    const netUI = !isVM ? `${network.name} (${network.id || '-'}) network` : 'VM'
+    const pinnedChainId = !isVM ? network.id : networkProvider()
     setNetworkNameFromProvider(dispatch, netUI)
     setPinnedChainId(dispatch, pinnedChainId)
+    if (currentNetwork.provider !== networkProvider() || (!isVM && currentNetwork.chainId !== network.id)) {
+      currentNetwork.provider = networkProvider()
+      if (!isVM) currentNetwork.chainId = network.id
+      await loadPinnedContracts(plugin, dispatch, pinnedChainId)
+    }
   })
 
   plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
@@ -166,10 +175,8 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   }, 30000)  
 }
 
-const loadPinnedContracts = async (plugin, dispatch) => {
+const loadPinnedContracts = async (plugin, dispatch, dirName) => {
   await plugin.call('udapp', 'clearAllPinnedInstances')
-  const { network } = await plugin.call('blockchain', 'getCurrentNetworkStatus')
-  const dirName = plugin.REACT_API.networkName === 'VM' ? plugin.REACT_API.selectExEnv : network.id
   const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
   if (isPinnedAvailable) {
     try {
