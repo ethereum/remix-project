@@ -251,7 +251,7 @@ export function RunTabUI(props: RunTabProps) {
   return (
     <Fragment>
       <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
-        <div className="list-group list-group-flush">
+        <div className="list-group pb-4 list-group-flush">
           <SettingsUI
             networkName={runTab.networkName}
             personalMode={runTab.personalMode}
@@ -314,7 +314,7 @@ export function RunTabUI(props: RunTabProps) {
           <InstanceContainerUI
             plugin={plugin}
             instances={runTab.instances}
-            savedInstances={runTab.savedInstances}
+            pinnedInstances={runTab.pinnedInstances}
             clearInstances={removeInstances}
             removeInstance={removeSingleInstance}
             getContext={getExecutionContext}

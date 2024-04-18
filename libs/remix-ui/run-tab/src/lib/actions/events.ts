@@ -1,8 +1,8 @@
 import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances, fillAccountsList } from "./account"
-import { addExternalProvider, addInstance, addSavedInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider } from "./actions"
-import { addDeployOption, clearAllInstances, clearAllSavedInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
+import { addExternalProvider, addInstance, addPinnedInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider, setPinnedChainId } from "./actions"
+import { addDeployOption, clearAllInstances, clearAllPinnedInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
 import { updateInstanceBalance } from './deploy'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
@@ -33,9 +33,10 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
+    await loadPinnedContracts(plugin, dispatch)
   })
 
-  plugin.blockchain.event.register('networkStatus', ({ error, network }) => {
+  plugin.blockchain.event.register('networkStatus', async ({ error, network }) => {
     if (error) {
       const netUI = 'can\'t detect network'
       setNetworkNameFromProvider(dispatch, netUI)
@@ -44,8 +45,9 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     }
     const networkProvider = plugin.networkModule.getNetworkProvider.bind(plugin.networkModule)
     const netUI = !networkProvider().startsWith('vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
-
+    const pinnedChainId = !networkProvider().startsWith('vm') ? network.id : networkProvider()
     setNetworkNameFromProvider(dispatch, netUI)
+    setPinnedChainId(dispatch, pinnedChainId)
   })
 
   plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
@@ -79,21 +81,22 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(clearAllInstances())
   })
 
-  plugin.on('udapp', 'clearAllSavedInstancesReducer', () => {
-    dispatch(clearAllSavedInstances())
+  plugin.on('udapp', 'clearAllPinnedInstancesReducer', () => {
+    dispatch(clearAllPinnedInstances())
   })
 
   plugin.on('udapp', 'addInstanceReducer', (address, abi, name, contractData?) => {
     addInstance(dispatch, { contractData, abi, address, name })
   })
 
-  plugin.on('udapp', 'addSavedInstanceReducer', (address, abi, name, savedOn, filePath) => {
-    addSavedInstance(dispatch, { abi, address, name, savedOn, filePath})
+  plugin.on('udapp', 'addPinnedInstanceReducer', (address, abi, name, pinnedAt, filePath) => {
+    addPinnedInstance(dispatch, { abi, address, name, pinnedAt, filePath})
   })
 
-  plugin.on('filePanel', 'setWorkspace', () => {
+  plugin.on('filePanel', 'setWorkspace', async () => {
     dispatch(resetUdapp())
     resetAndInit(plugin)
+    await migrateSavedContracts(plugin)
     plugin.call('manager', 'isActive', 'remixd').then((activated) => {
       dispatch(setRemixDActivated(activated))
     })
@@ -161,6 +164,49 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     fillAccountsList(plugin, dispatch)
     updateInstanceBalance(plugin, dispatch)
   }, 30000)  
+}
+
+const loadPinnedContracts = async (plugin, dispatch) => {
+  await plugin.call('udapp', 'clearAllPinnedInstances')
+  const { network } = await plugin.call('blockchain', 'getCurrentNetworkStatus')
+  const dirName = plugin.REACT_API.networkName === 'VM' ? plugin.REACT_API.selectExEnv : network.id
+  const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
+  if (isPinnedAvailable) {
+    try {
+      const list = await plugin.call('fileManager', 'readdir', `.deploys/pinned-contracts/${dirName}`)
+      const filePaths = Object.keys(list)
+      for (const file of filePaths) {
+        const pinnedContract = await plugin.call('fileManager', 'readFile', file)
+        const pinnedContractObj = JSON.parse(pinnedContract)
+        if (pinnedContractObj) addPinnedInstance(dispatch, pinnedContractObj)
+      }
+    } catch(err) {
+      console.log(err)
+    }
+  }
+}
+
+const migrateSavedContracts = async (plugin) => {
+  // Move contract saved in localstorage to Remix FE
+  const allSavedContracts = localStorage.getItem('savedContracts')
+  if (allSavedContracts) {
+    const savedContracts = JSON.parse(allSavedContracts)
+    for (const networkId in savedContracts) {
+      if (savedContracts[networkId].length > 0) {
+        for (const contractDetails of savedContracts[networkId]) {
+          const objToSave = {
+            name: contractDetails.name,
+            address: contractDetails.address,
+            abi: contractDetails.abi || contractDetails.contractData.abi,
+            filePath: contractDetails.filePath,
+            pinnedAt: contractDetails.savedOn
+          }
+          await plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${networkId}/${contractDetails.address}.json`, JSON.stringify(objToSave, null, 2))
+        }
+      }
+    }
+    localStorage.removeItem('savedContracts')
+  }
 }
 
 const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, dispatch: React.Dispatch<any>, file, source, languageVersion, data, input?) => {

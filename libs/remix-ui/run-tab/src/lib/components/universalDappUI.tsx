@@ -113,27 +113,25 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const unsavePinnedContract = async () => {
-    const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
-    await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${network.id}/${props.instance.address}.json`)
+    await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}/${props.instance.address}.json`)
   }
 
   const remove = async() => {
-    if (props.isSavedContract) {
+    if (props.isPinnedContract) {
       await unsavePinnedContract()
       _paq.push(['trackEvent', 'udapp', 'pinContracts', 'unpinned'])
     }
-    props.removeInstance(props.index, props.isSavedContract, false)
+    props.removeInstance(props.index, props.isPinnedContract, false)
   }
 
   const deletePinnedContract = async() => {
     await unsavePinnedContract()
     _paq.push(['trackEvent', 'udapp', 'pinContracts', 'deletePinned'])
-    props.removeInstance(props.index, props.isSavedContract, true)
+    props.removeInstance(props.index, props.isPinnedContract, true)
   }
 
   const pinContract = async() => {
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
-    const {network} = await props.plugin.call('blockchain', 'getCurrentNetworkStatus')
     const objToSave = {
       name: props.instance.name,
       address: props.instance.address,
@@ -141,21 +139,22 @@ export function UniversalDappUI(props: UdappProps) {
       filePath: props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`,
       pinnedAt: Date.now()
     }
-    await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${network.id}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
+    await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
     // Add contract to saved contracts list on UI
-    await props.plugin.call('udapp', 'addSavedInstance', objToSave.address, objToSave.abi, objToSave.name, objToSave.pinnedAt, objToSave.filePath)
-    _paq.push(['trackEvent', 'udapp', 'pinContracts', `pinned at ${network.id}`])
+    await props.plugin.call('udapp', 'addPinnedInstance', objToSave.address, objToSave.abi, objToSave.name, objToSave.pinnedAt, objToSave.filePath)
+    _paq.push(['trackEvent', 'udapp', 'pinContracts', `pinned at ${props.plugin.REACT_API.chainId}`])
     // Remove contract from deployed contracts list on UI
     props.removeInstance(props.index, false, false)
   }
 
   const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
+    if (props.isPinnedContract) _paq.push(['trackEvent', 'udapp', 'pinContracts', 'interactWithPinned'])
     const functionName = funcABI.type === 'function' ? funcABI.name : `(${funcABI.type})`
     const logMsg = `${lookupOnly ? 'call' : 'transact'} to ${props.instance.name}.${functionName}`
 
     props.runTransactions(
       props.index,
-      props.isSavedContract,
+      props.isPinnedContract,
       lookupOnly,
       funcABI,
       inputsValues,
@@ -251,6 +250,7 @@ export function UniversalDappUI(props: UdappProps) {
       className={`instance udapp_instance udapp_run-instance border-dark ${toggleExpander ? 'udapp_hidesub' : 'bg-light'}`}
       id={`instance${address}`}
       data-shared="universalDappUiInstance"
+      data-id={props.isPinnedContract ? `pinnedInstance${address}` : `unpinnedInstance${address}`}
     >
       <div className="udapp_title pb-0 alert alert-secondary">
         <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass} style={{padding: "0.45rem"}}>
@@ -258,7 +258,7 @@ export function UniversalDappUI(props: UdappProps) {
         </span>
         <div className="input-group udapp_nameNbuts">
           <div className="udapp_titleText input-group-prepend">
-            { props.isSavedContract ? ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.isSavedContract ? `Contract: ${props.instance.name},  Address: ${address}, Pinned at:  ${new Date(props.instance.savedOn).toLocaleString()}` : '' }>
+            { props.isPinnedContract ? ( <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={props.isPinnedContract ? `Contract: ${props.instance.name},  Address: ${address}, Pinned at:  ${new Date(props.instance.pinnedAt).toLocaleString()}` : '' }>
               <span className="input-group-text udapp_spanTitleText">
                 {props.instance.name} at {shortenAddress(address)}
               </span>
@@ -269,19 +269,18 @@ export function UniversalDappUI(props: UdappProps) {
           <div className="btn" style={{padding: '0.15rem'}}>
             <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
           </div>
-          { !(props.plugin.REACT_API.selectExEnv && props.plugin.REACT_API.selectExEnv.startsWith('vm-')) ? 
-            props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
-              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
-                <i className="fas fa-thumbtack p-2 text-success" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={remove}></i>
-              </CustomTooltip> 
-            </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
-              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappPinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPin" />}>
-                <i className="far fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappPin" onClick={pinContract}></i>
-              </CustomTooltip>
-            </div> )
-            : null}
+          { props.isPinnedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
+              <i className="fas fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={remove}></i>
+            </CustomTooltip> 
+          </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappPinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPin" />}>
+              <i className="far fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappPin" onClick={pinContract}></i>
+            </CustomTooltip>
+          </div> )
+          }
         </div>
-        { props.isSavedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+        { props.isPinnedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
           <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
             <i className="far fa-trash p-2" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={deletePinnedContract}></i>
           </CustomTooltip> 
@@ -300,15 +299,15 @@ export function UniversalDappUI(props: UdappProps) {
             </label>
             {props.exEnvironment === 'injected' && <i className="fas fa-edit btn btn-sm p-0" onClick={() => {props.editInstance(props.instance)}}></i>}
           </div>
-          { props.isSavedContract && props.instance.savedOn ? (
-            <div className="d-flex" data-id="instanceContractSavedOn">
+          { props.isPinnedContract && props.instance.pinnedAt ? (
+            <div className="d-flex" data-id="instanceContractPinnedAt">
               <label>
-                <b><FormattedMessage id="udapp.savedOn" />:</b> {(new Date(props.instance.savedOn)).toLocaleString()}
+                <b><FormattedMessage id="udapp.pinnedAt" />:</b> {(new Date(props.instance.pinnedAt)).toLocaleString()}
               </label>
             </div>
           ) : null }
-          { props.isSavedContract && props.instance.filePath ? (
-            <div className="d-flex" data-id="instanceContractFilePath">
+          { props.isPinnedContract && props.instance.filePath ? (
+            <div className="d-flex" data-id="instanceContractFilePath" style={{textAlign: "start", lineBreak: "anywhere"}}>
               <label>
                 <b><FormattedMessage id="udapp.filePath" />:</b> {props.instance.filePath}
               </label>
