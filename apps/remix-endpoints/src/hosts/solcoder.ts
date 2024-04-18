@@ -7,7 +7,7 @@ export const solcoder = () => {
   const ips = new Map<string, number>()
   app.use(cors())
   app.post('/', async (req: any, res: any, next: any) => {
-    if (ips.get(req.ip) && (Date.now() - (ips.get(req.ip) as number)) < 10000) { // 1 call every 10 seconds
+    if (ips.get(req.ip) && (Date.now() - (ips.get(req.ip) as number)) < 100) { // 1 call every 10 seconds
       res.setHeader('Content-Type', 'application/json');
       const remainer = 10000 - (Date.now() - (ips.get(req.ip) as number))
       res.end(JSON.stringify({ error: `rate limit exceeded, please wait ${remainer} ms` }));
@@ -22,6 +22,7 @@ export const solcoder = () => {
     const result = await axio.post( "https://7dixmojk6ir0ot-7861.proxy.runpod.net/ai/api/".concat(task),
       {"data":[prompt, ...params]}
     )
+
 
     const response = result.data
     res.setHeader('Content-Type', 'application/json');
