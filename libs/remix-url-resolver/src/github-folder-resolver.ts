@@ -17,20 +17,20 @@ export const githubFolderResolver = async (url, obj = {}, token) => {
 }
 
 const pullFolder = async (url, token) => {
-    url = new URL(url);
-    const pathname = url.pathname;
-    const pathParts = pathname.split('/');
-    const username = pathParts[1];
-    const repo = pathParts[2];
-    const folderPath = pathParts.slice(5).join('/');
-    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${folderPath}`;
-    const response = await axios.get(apiUrl,
-      { 
-        headers: {
-          Authorization: `Bearer ${token}`
-        } 
-      });
-    const data = await response.data;
-    return data 
+  url = new URL(url);
+  const pathname = url.pathname;
+  const pathParts = pathname.split('/');
+  const username = pathParts[1];
+  const repo = pathParts[2];
+  const folderPath = pathParts.slice(5).join('/');
+  const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${folderPath}`;
+  const response = await axios.get(apiUrl,
+    { 
+      headers: {
+        Authorization: `Bearer ${token}`
+      } 
+    });
+  const data = await response.data;
+  return data
 }
 
