@@ -25,8 +25,8 @@ export class SolCoder extends Plugin {
   completion_url: string
   constructor() {
     super(profile)
-    this.api_url = "https://solcoder.remixproject.org"
-    this.completion_url = "https://completion.remixproject.org"
+    this.api_url =  process && process.env && process.env['NX_API_URL']? `${process.env['NX_API_URL']}solcoder/`: "https://solcoder.remixproject.org"
+    this.completion_url = process && process.env && process.env['NX_API_URL']? `${process.env['NX_API_URL']}completion/`: "https://completion.remixproject.org"
   }
 
   async code_generation(prompt): Promise<any> {
