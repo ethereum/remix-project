@@ -144,6 +144,7 @@ const compileReturnType = (output, contract) => {
 const fixContractContent = (content: string) => {
   if (content.length === 0) return
   const pragmaFound = content.includes('#pragma version ^0.3.10')
+  const wrongpragmaFound = content.includes('# pragma version ^0.3.10')
   const evmVerFound = content.includes('#pragma evm-version shanghai')
   const pragma = '#pragma version ^0.3.10'
   const evmVer = '#pragma evm-version shanghai'
@@ -151,7 +152,10 @@ const fixContractContent = (content: string) => {
   if (evmVerFound === false) {
     content = `${evmVer}\n${content}`
   }
-  if (pragmaFound === false) {
+  if (wrongpragmaFound === true) {
+    content = content.replace('# pragma version ^0.3.10', '')
+  }
+  if (pragmaFound === false ) {
     content = `${pragma}\n${content}`
   }
   return content
