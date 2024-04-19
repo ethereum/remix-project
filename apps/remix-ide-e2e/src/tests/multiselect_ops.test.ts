@@ -6,7 +6,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Should select multiple items in file explorer #group1': function (browser: NightwatchBrowser) {
+  'Should select multiple items in file explorer': function (browser: NightwatchBrowser) {
     const selectedElements = []
     browser
       .openFile('contracts')
@@ -21,7 +21,9 @@ module.exports = {
         selectedElements.push(el)
       })
     browser.selectFiles(selectedElements)
-    browser.waitForElementPresent('*[data-id="contextMenuItemdeleteAll"]').end()
+    browser
+      .rightClick('*[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
+      .waitForElementPresent('*[data-id="contextMenuItemdeleteAll"]').end()
   }
 }
 
