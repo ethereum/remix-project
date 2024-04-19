@@ -11,7 +11,7 @@ module.exports = {
     browser
       .openFile('contracts')
     browser
-      .click({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })// the first element is the storage
+      .click({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
     browser
       .findElement({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]', locateStrategy: 'xpath' }, (el) => {
         selectedElements.push(el)
@@ -21,9 +21,6 @@ module.exports = {
         selectedElements.push(el)
       })
     browser.selectFiles(selectedElements)
-    browser
-      .rightClick('*[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
-      .waitForElementPresent('*[data-id="contextMenuItemdeleteAll"]').end()
   }
 }
 
