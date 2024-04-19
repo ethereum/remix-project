@@ -3,6 +3,7 @@ import React from "react"
 import { branch, commitChange, remote } from "../types"
 
 export interface gitActions  {
+    removeRemote(remote: remote): void
     clone(url: string, path: string, depth: number, singleBranch: boolean): Promise<void>
     add(path: string): Promise<void>
     rm(path: string): Promise<void>
@@ -25,6 +26,7 @@ export interface gitActions  {
     getBranches: () => Promise<void>
     getRemotes: () => Promise<void>
     setDefaultRemote: (remote: remote) => Promise<void>
+    addRemote: (remote: remote) => Promise<void>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)

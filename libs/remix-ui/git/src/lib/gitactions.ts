@@ -88,7 +88,7 @@ export const getBranches = async () => {
 }
 export const getRemotes = async () => {
   console.log('getRemotes')
-  const remotes = await plugin.call("dGitProvider", "remotes" as any);
+  const remotes: remote[] = await plugin.call("dGitProvider", "remotes" as any);
   console.log('remotes :>>', remotes)
   dispatch(setRemotes(remotes));
 }
@@ -800,4 +800,22 @@ export const getBranchCommits = async (branch: branch, page: number) => {
 
 export const setDefaultRemote = async (remote: remote) => {
   dispatch(setRemoteAsDefault(remote))
+}
+
+export const addRemote = async (remote: remote) => {
+  try {
+    await plugin.call('dGitProvider', 'addremote', remote)
+    await getRemotes()
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const removeRemote = async (remote: remote) => {
+  try {
+    await plugin.call('dGitProvider', 'delremote', remote)
+    await getRemotes()
+  } catch (e) {
+    console.log(e)
+  }
 }

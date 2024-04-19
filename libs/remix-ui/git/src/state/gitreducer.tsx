@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
 import { allChangedButNotStagedFiles, getFilesByStatus, getFilesWithNotModifiedStatus } from "../lib/fileHelpers"
-import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setRemoteBranchCommitsAction, setLocalBranchCommitsAction, setBranchDifferencesAction, setDefaultRemoteAction } from "../types"
+import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setRemoteBranchCommitsAction, setLocalBranchCommitsAction, setBranchDifferencesAction, setDefaultRemoteAction, setRemotesAction } from "../types"
 
 interface Action {
     type: string

@@ -2,13 +2,16 @@ import { branch, remote } from "../../../types";
 import React, { useEffect, useState } from "react";
 import { gitPluginContext } from "../../gitui";
 import { CommitDetails } from "../commits/commitdetails";
+import { BranchDifferenceDetails } from "./branchdifferencedetails";
 
 export interface BrancheDetailsProps {
   branch: branch;
+  showSummary?: boolean;
+  remote?: remote;
 }
 
 export const BranchDifferences = (props: BrancheDetailsProps) => {
-  const { branch } = props;
+  const { branch, showSummary, remote } = props;
   const context = React.useContext(gitPluginContext)
 
   useEffect(() => {
@@ -28,20 +31,18 @@ export const BranchDifferences = (props: BrancheDetailsProps) => {
   }
 
   return (
-    <div>
-      <div>
-        {context.remotes.map((remote, index) => {
+    <>
+        {!showSummary && context.remotes.map((remote, index) => {
           return (
             <div key={index}>
-              <h5>{remote.remote}</h5>
-              <ul>
-                <li>ahead by {commitsAhead(remote).length} commit(s)</li>
-                <li>behind by {commitsBehind(remote).length} commits(s)</li>
-              </ul>
+                <BranchDifferenceDetails title={`ahead of ${remote.remote} by ${commitsAhead(remote).length} commit(s)`} commits={commitsAhead(remote)}></BranchDifferenceDetails>
+                <BranchDifferenceDetails title={`behind ${remote.remote} by ${commitsBehind(remote).length} commit(s)`} commits={commitsBehind(remote)}></BranchDifferenceDetails>
+                {commitsAhead(remote).length === 0 && commitsBehind(remote).length === 0? null: <hr></hr>}
             </div>
           );
         })}
-      </div>
-    </div>
+        {showSummary && <div>summary</div>}
+
+    </>
   );
 }

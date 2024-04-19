@@ -59,7 +59,10 @@ export const RemotesImport = () => {
 
   const addRemote = async () => {
     try {
-
+      actions.addRemote({
+        remote: remoteName,
+        url: repo.html_url
+      })
     } catch (e) {
       // do nothing
     }

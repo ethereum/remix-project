@@ -18,9 +18,10 @@ export const Remotes = () => {
   }
 
   const addRemote = async () => {
-    //await gitservice.addRemote(remoteName, url)
-    //setCurrentRemote(remoteName)
-    //await gitservice.getRemotes()
+    actions.addRemote({
+      remote: remoteName,
+      url: url
+    })
   }
 
 

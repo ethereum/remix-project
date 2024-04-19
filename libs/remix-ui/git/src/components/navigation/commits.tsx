@@ -4,6 +4,7 @@ import { CustomTooltip } from "@remix-ui/helper";
 import React, { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { pluginActionsContext } from "../../state/context";
+import { branch } from "../../types";
 import { gitPluginContext } from "../gitui";
 
 export interface CommitsNavigationProps {
@@ -11,6 +12,7 @@ export interface CommitsNavigationProps {
     eventKey: string,
     activePanel: string,
     callback: (eventKey: string) => void
+    branch?: branch,
 }
 
 export const CommitsNavigation = ({ eventKey, activePanel, callback, title }: CommitsNavigationProps) => {
@@ -41,6 +43,7 @@ export const CommitsNavigation = ({ eventKey, activePanel, callback, title }: Co
 
 
                 </span>
+                
                 {
                     activePanel === eventKey ?
                         <span className='d-flex justify-content-end align-items-center w-25'>

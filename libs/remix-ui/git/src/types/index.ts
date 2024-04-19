@@ -95,6 +95,7 @@ export type repository = {
     full_name: string
     default_branch: string
     id: number
+    url: string
 }
 
 export type branch = {
