@@ -6,7 +6,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Should select multiple items in the file explorer': function (browser: NightwatchBrowser) {
+  'Should select multiple items in file explorer #group1': function (browser: NightwatchBrowser) {
     const selectedElements = []
     browser
       .openFile('contracts')
