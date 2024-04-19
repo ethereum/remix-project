@@ -33,13 +33,14 @@ module.exports = {
       })
       .currentWorkspaceIs('snekmate')
       .waitForElementVisible({
-        selector: "//*[@data-id='treeViewLitreeViewItemexamples' and contains(.,'examples')]",
+        selector: "//*[@data-id='treeViewLitreeViewItemsrc' and contains(.,'src')]",
         locateStrategy: 'xpath',
         timeout: 60000
       })
       .openFile('src')
-      .openFile('src/tokens')
-      .openFile('src/tokens/ERC721.vy')
+      .openFile('src/snekmate')
+      .openFile('src/snekmate/tokens')
+      .openFile('src/snekmate/tokens/ERC721.vy')
   },
   // 'Add vyper file to run tests #group1': function (browser: NightwatchBrowser) {
   //   browser.addFile('TestBallot.sol', sources[0]['TestBallot.sol'])
@@ -47,7 +48,7 @@ module.exports = {
   '@sources': () => sources,
   'Context menu click to compile blind_auction should succeed #group1': function (browser: NightwatchBrowser) {
     browser
-      .addFile('blind_auction.vy', sources[0]['blindAuction'])
+      .addFileSnekmate('blind_auction.vy', sources[0]['blindAuction'])
       .click('*[data-id="treeViewLitreeViewItemblind_auction.vy"]')
       .rightClick('*[data-id="treeViewLitreeViewItemblind_auction.vy"]')
       .waitForElementPresent('[data-id="contextMenuItemvyper"]')
