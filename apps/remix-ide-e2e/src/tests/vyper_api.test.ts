@@ -27,28 +27,29 @@ module.exports = {
       .frameParent()
       .clickLaunchIcon('filePanel')
       .waitForElementVisible({
-        selector: "//*[@data-id='workspacesSelect' and contains(.,'vyper-lang')]",
+        selector: "//*[@data-id='workspacesSelect' and contains(.,'snekmate')]",
         locateStrategy: 'xpath',
         timeout: 60000
       })
-      .currentWorkspaceIs('vyper-lang')
+      .currentWorkspaceIs('snekmate')
       .waitForElementVisible({
         selector: "//*[@data-id='treeViewLitreeViewItemexamples' and contains(.,'examples')]",
         locateStrategy: 'xpath',
         timeout: 60000
       })
-      .openFile('examples')
-      .openFile('examples/auctions')
-      .openFile('examples/auctions/blind_auction.vy')
+      .openFile('src')
+      .openFile('src/tokens')
+      .openFile('src/tokens/ERC721.vy')
   },
   // 'Add vyper file to run tests #group1': function (browser: NightwatchBrowser) {
   //   browser.addFile('TestBallot.sol', sources[0]['TestBallot.sol'])
   // },
-
+  '@sources': () => sources,
   'Context menu click to compile blind_auction should succeed #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="treeViewLitreeViewItemexamples/auctions/blind_auction.vy"]')
-      .rightClick('*[data-id="treeViewLitreeViewItemexamples/auctions/blind_auction.vy"]')
+      .addFile('blind_auction.vy', sources[0]['blindAuction'])
+      .click('*[data-id="treeViewLitreeViewItemblind_auction.vy"]')
+      .rightClick('*[data-id="treeViewLitreeViewItemblind_auction.vy"]')
       .waitForElementPresent('[data-id="contextMenuItemvyper"]')
       .click('[data-id="contextMenuItemvyper"]')
       .clickLaunchIcon('vyper')
@@ -180,8 +181,9 @@ def _createPokemon(_name: String[32], _dna: uint256, _HP: uint256):
         wins: 0
     })
     self.totalPokemonCount += 1`
+const sources = [{
 
-const blindAuction = `
+  'blindAuction' : { content: `
 # Blind Auction. Adapted to Vyper from [Solidity by Example](https://github.com/ethereum/solidity/blob/develop/docs/solidity-by-example.rst#blind-auction-1)
 #pragma version ^0.3.10
 
@@ -358,4 +360,6 @@ def auctionEnd():
 
     # Transfer funds to beneficiary
     send(self.beneficiary, self.highestBid)
-`
+`}
+}
+]
