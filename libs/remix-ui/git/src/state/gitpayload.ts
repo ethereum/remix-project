@@ -172,3 +172,10 @@ export const setGItHubToken = (token: string) => {
         payload: token
     }
 }
+
+export const setRemoteAsDefault = (remote: remote) => {
+    return {
+        type: 'SET_DEFAULT_REMOTE',
+        payload: remote
+    }
+}

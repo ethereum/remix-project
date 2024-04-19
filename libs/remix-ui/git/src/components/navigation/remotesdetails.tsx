@@ -1,6 +1,7 @@
-import { faCaretDown, faCaretRight, faArrowRightArrowLeft, faGlobe } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown, faCaretRight, faArrowRightArrowLeft, faGlobe, faToggleOff, faToggleOn } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
+import { gitActionsContext } from "../../state/context";
 import { branch, remote } from "../../types";
 import { gitPluginContext } from "../gitui";
 
@@ -14,6 +15,8 @@ interface RemotesDetailsNavigationProps {
 export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) => {
   const { eventKey, activePanel, callback, remote } = props;
   const context = React.useContext(gitPluginContext)
+  const actions = React.useContext(gitActionsContext)
+  
   const handleClick = () => {
     if (!callback) return
     if (activePanel === eventKey) {
@@ -25,6 +28,10 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
 
   const openRemote = () => {
     window.open(`${remote.url}`, '_blank');
+  }
+
+  const setAsDefault = () => {
+    actions.setDefaultRemote(remote)
   }
 
   return (
@@ -39,6 +46,11 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
           </div>
 
         </div>
+        {context.defaultRemote && context.defaultRemote?.url === remote.url ?
+          <FontAwesomeIcon className='ml-auto mr-1 pointer text-success' icon={faToggleOff} ></FontAwesomeIcon>
+          :
+          <FontAwesomeIcon className='ml-auto mr-1 pointer' icon={faToggleOn} onClick={setAsDefault} ></FontAwesomeIcon>
+        }
         {remote?.url && <FontAwesomeIcon className='ml-2 pointer' icon={faGlobe} onClick={() => openRemote()}></FontAwesomeIcon>}
       </div>
     </>

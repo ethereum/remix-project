@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
 import React from "react"
-import { branch, commitChange } from "../types"
+import { branch, commitChange, remote } from "../types"
 
 export interface gitActions  {
     clone(url: string, path: string, depth: number, singleBranch: boolean): Promise<void>
@@ -24,6 +24,7 @@ export interface gitActions  {
     setUpstreamRemote(upstream: string): Promise<void>
     getBranches: () => Promise<void>
     getRemotes: () => Promise<void>
+    setDefaultRemote: (remote: remote) => Promise<void>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)

@@ -12,6 +12,7 @@ export type gitState = {
     canCommit: boolean
     branches: branch[]
     remotes: remote[]
+    defaultRemote: remote
     fileStatusResult: fileStatusResult[]
     canUseApp: boolean
     loading: boolean
@@ -117,6 +118,7 @@ export const defaultGitState: gitState = {
     canCommit: true,
     branches: [],
     remotes: [],
+    defaultRemote: null,
     fileStatusResult: [],
     staged: [],
     untracked: [],
@@ -255,4 +257,9 @@ export interface setTokenAction {
     payload: string
 }
 
-export type gitActionDispatch = setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export interface setDefaultRemoteAction {
+    type: string,
+    payload: remote
+}
+
+export type gitActionDispatch =  setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

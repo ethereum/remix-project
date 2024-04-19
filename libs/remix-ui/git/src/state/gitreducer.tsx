@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
 import { allChangedButNotStagedFiles, getFilesByStatus, getFilesWithNotModifiedStatus } from "../lib/fileHelpers"
-import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setRemoteBranchCommitsAction, setLocalBranchCommitsAction, setBranchDifferencesAction } from "../types"
+import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setRemoteBranchCommitsAction, setLocalBranchCommitsAction, setBranchDifferencesAction, setDefaultRemoteAction } from "../types"
 
 interface Action {
     type: string
@@ -139,7 +139,7 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
             }
 
         case 'SET_BRANCH_DIFFERENCES':
-          
+
 
             state.branchDifferences[`${(action as setBranchDifferencesAction).payload.remote.remote}/${(action as setBranchDifferencesAction).payload.branch.name}`] = (action as setBranchDifferencesAction).payload.branchDifference
 
@@ -167,6 +167,12 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
             return {
                 ...state,
                 gitHubAccessToken: action.payload
+            }
+
+        case 'SET_DEFAULT_REMOTE':
+            return {
+                ...state,
+                defaultRemote: (action as setDefaultRemoteAction).payload
             }
     }
 }
