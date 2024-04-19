@@ -148,10 +148,10 @@ const fixContractContent = (content: string) => {
   const pragma = '#pragma version ^0.3.10'
   const evmVer = '#pragma evm-version shanghai'
 
-  if (!evmVerFound) {
+  if (evmVerFound === false) {
     content = `${evmVer}\n${content}`
   }
-  if (!pragmaFound) {
+  if (pragmaFound === false) {
     content = `${pragma}\n${content}`
   }
   return content
