@@ -147,6 +147,34 @@ module.exports = {
         browser.verifyCallReturnValue(contractAddress, ['0:uint256: 0'])
           .perform(() => done())
       })
+  },
+
+  'Compile Ownable contract from snekmate #group1': function (browser: NightwatchBrowser) {
+    let contractAddress
+    browser
+      .frameParent()
+      .clickLaunchIcon('filePanel')
+      .switchWorkspace('snekmate')
+      .openFile('src')
+      .openFile('src/snekmate')
+      .openFile('src/snekmate/auth')
+      .openFile('src/snekmate/auth/Ownable.vy')
+      // .click('*[data-id="treeViewLitreeViewItemsrc/snekmate/auth/Ownable.vy"]') 
+      .rightClick('*[data-id="treeViewLitreeViewItemsrc/snekmate/auth/Ownable.vy"]')
+      .waitForElementVisible('*[data-id="contextMenuItemvyper"]')
+      .click('*[data-id="contextMenuItemvyper"]')
+      .clickLaunchIcon('vyper')
+      // @ts-ignore
+      .frame(0)
+      .click('[data-id="compile"]')
+      .waitForElementVisible({
+        selector:'[data-id="compilation-details"]',
+        timeout: 60000
+      })
+      .click('[data-id="compilation-details"]')
+      .frameParent()
+      .waitForElementVisible('[data-id="copy-abi"]')
+      .end()
   }
 }
 
