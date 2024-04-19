@@ -21,7 +21,7 @@ module.exports = {
         selectedElements.push(el)
       })
     browser.selectFiles(selectedElements)
-    browser.waitForElementVisible('*[data-id="contextMenuItemdeleteAll"]').end()
+    browser.waitForElementPresent('*[data-id="contextMenuItemdeleteAll"]').end()
   }
 }
 
