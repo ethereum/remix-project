@@ -35,7 +35,7 @@ const profile: LibraryProfile = {
   icon: 'assets/img/fileManager.webp',
   version: '0.0.1',
   methods: ['init', 'localStorageUsed', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pull', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'version', 'updateSubmodules'
-    , 'getGitHubUser', 'remotebranches', 'remotecommits', 'repositories', 'getCommitChanges'],
+    , 'getGitHubUser', 'remotebranches', 'remotecommits', 'repositories', 'getCommitChanges', 'compareBranches'],
   kind: 'file-system'
 }
 class DGitProvider extends Plugin {
@@ -271,6 +271,35 @@ class DGitProvider extends Plugin {
       ...cmd,
     })
     return status
+  }
+
+  async compareBranches({branch, remote}:{branch: branch, remote: remote}) {
+    // Get current branch commits
+    const headCommits = await git.log({
+      ...await this.addIsomorphicGitConfigFS(),
+      ref: branch.name,
+    });
+  
+    // Get remote branch commits
+    const remoteCommits = await git.log({
+      ...await this.addIsomorphicGitConfigFS(),
+      ref: `${remote.remote}/${branch.name}`,
+    });
+  
+    // Convert arrays of commit objects to sets of commit SHAs
+    const headCommitSHAs = new Set(headCommits.map(commit => commit.oid));
+    const remoteCommitSHAs = new Set(remoteCommits.map(commit => commit.oid));
+  
+    // Filter out commits that are only in the remote branch
+    const uniqueRemoteCommits = remoteCommits.filter(commit => !headCommitSHAs.has(commit.oid));
+
+    // filter out commits that are only in the local branch
+    const uniqueHeadCommits = headCommits.filter(commit => !remoteCommitSHAs.has(commit.oid));
+  
+    return {
+      uniqueHeadCommits,
+      uniqueRemoteCommits,
+    };
   }
 
   async getCommitChanges(commitHash1, commitHash2): Promise<commitChange[]> {

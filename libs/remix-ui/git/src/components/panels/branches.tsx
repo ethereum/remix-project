@@ -3,7 +3,8 @@ import { Alert } from "react-bootstrap";
 import { gitActionsContext } from "../../state/context";
 import { remote } from "../../types";
 import { gitPluginContext } from "../gitui";
-import { BranchDetails } from "./branches/branchedetails";
+import { LocalBranchDetails } from "./branches/localbranchdetails";
+import { RemoteBranchDetails } from "./branches/remotebranchedetails";
 
 export const Branches = () => {
     const context = React.useContext(gitPluginContext)
@@ -26,9 +27,9 @@ export const Branches = () => {
             <div className="pt-1">
                 {context.branches && context.branches.length ?
                     <div>
-                        {context.branches && context.branches.map((branch, index) => {
+                        {context.branches && context.branches.filter((branch, index) => !branch.remote).map((branch, index) => {
                             return (
-                               <BranchDetails key={index} branch={branch}></BranchDetails>
+                                <LocalBranchDetails key={index} branch={branch}></LocalBranchDetails>
                             );
                         })}
                         <hr />

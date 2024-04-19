@@ -12,7 +12,7 @@ import { Commits } from './panels/commits'
 import { Branches } from './panels/branches'
 import { SourceControlNavigation } from './navigation/sourcecontrol'
 import { BranchesNavigation } from './navigation/branches'
-import { CommitslNavigation } from './navigation/commits'
+import { CommitsNavigation } from './navigation/commits'
 import '../style/index.css'
 import { CloneNavigation } from './navigation/clone'
 import { Clone } from './panels/clone'
@@ -149,7 +149,7 @@ export const GitUI = (props: IGitUi) => {
                       </>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <CommitslNavigation eventKey="3" activePanel={activePanel} callback={setActivePanel} />
+                    <CommitsNavigation title={`COMMITS`} eventKey="3" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="3">
                       <>
                         <Commits />
@@ -162,17 +162,17 @@ export const GitUI = (props: IGitUi) => {
                         <Branches /></>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="4">
-                      <>
-                        <Clone /></>
-                    </Accordion.Collapse>
-                    <hr></hr>
                     <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="5">
                       <>
                         <Remotes></Remotes>
                       </>
+                    </Accordion.Collapse>
+                    <hr></hr>
+                    <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey="4">
+                      <>
+                        <Clone /></>
                     </Accordion.Collapse>
                     <hr></hr>
                     <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />

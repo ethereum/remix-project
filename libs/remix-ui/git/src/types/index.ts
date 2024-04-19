@@ -25,8 +25,9 @@ export type gitState = {
     repositories: repository[]
     remoteBranches: remoteBranch[]
     commitChanges: commitChange[]
-    remoteBranchCommits:  Record<string, pagedCommits[]>
-    localBranchCommits:  Record<string, pagedCommits[]>
+    remoteBranchCommits: Record<string, pagedCommits[]>
+    localBranchCommits: Record<string, ReadCommitResult[]>
+    branchDifferences: Record<remoteBranchIdentifier, branchDifference>
     syncStatus: syncStatus,
     localCommitCount: number
     remoteCommitCount: number
@@ -34,6 +35,13 @@ export type gitState = {
     gitHubUser: GitHubUser
     rateLimit: RateLimit
     gitHubAccessToken: string
+}
+
+export type remoteBranchIdentifier = `${string}/${string}`
+
+export type branchDifference = {
+    uniqueHeadCommits: ReadCommitResult[],
+    uniqueRemoteCommits: ReadCommitResult[],
 }
 
 export type pagedCommits = {
@@ -52,7 +60,7 @@ export type loaderState = {
     plugin: boolean
 }
 
-export type commitChangeTypes = {  
+export type commitChangeTypes = {
     "deleted": "D"
     "modified": "M"
     "added": "A",
@@ -70,8 +78,8 @@ export type commitChangeType = keyof commitChangeTypes
 export type commitChange = {
     type: commitChangeType
     path: string,
-    hashModified : string,
-    hashOriginal : string,
+    hashModified: string,
+    hashOriginal: string,
     original?: string,
     modified?: string,
     readonly?: boolean
@@ -124,6 +132,7 @@ export const defaultGitState: gitState = {
     commitChanges: [],
     remoteBranchCommits: {},
     localBranchCommits: {},
+    branchDifferences: {},
     syncStatus: syncStatus.none,
     localCommitCount: 0,
     remoteCommitCount: 0,
@@ -142,12 +151,12 @@ export const defaultLoaderState: loaderState = {
 }
 
 export type fileStatusResult = {
-    filename:string,
+    filename: string,
     status?: fileStatus
-    statusNames?:string[]
+    statusNames?: string[]
 }
 
-export type fileStatus =[string, 0 | 1, 0 | 1 | 2, 0 | 1 | 2 | 3]
+export type fileStatus = [string, 0 | 1, 0 | 1 | 2, 0 | 1 | 2 | 3]
 
 export type statusMatrixType = { matrix: string[] | undefined; status: string[] }
 
@@ -156,7 +165,7 @@ export type sourceControlGroup = {
     name: string
 }
 
-export interface fileStatusAction  {
+export interface fileStatusAction {
     type: string,
     payload: fileStatusResult[]
 }
@@ -228,7 +237,16 @@ export interface setLocalBranchCommitsAction {
     type: string,
     payload: {
         branch: branch,
-        commits: pagedCommits[]
+        commits: ReadCommitResult[]
+    }
+}
+
+export interface setBranchDifferencesAction {
+    type: string,
+    payload: {
+        branch: branch,
+        remote: remote,
+        branchDifference: branchDifference
     }
 }
 
@@ -237,4 +255,4 @@ export interface setTokenAction {
     payload: string
 }
 
-export type gitActionDispatch = setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export type gitActionDispatch = setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

@@ -1,8 +1,8 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, fileStatusMerge, setRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream } from "../state/gitpayload";
-import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState } from '../types';
+import { fileStatus, fileStatusMerge, setRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences } from "../state/gitpayload";
+import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
@@ -762,7 +762,7 @@ export const fetchBranch = async (branch: branch, page: number) => {
 
   console.log(mergeCommits)
   //console.log(r, commits)
-  dispatch(setRemoteBranchCommits({ branch, commits: mergeCommits }))
+  //dispatch(setRemoteBranchCommits({ branch, commits: mergeCommits }))
 }
 
 export const getBranchCommits = async (branch: branch, page: number) => {
@@ -772,8 +772,23 @@ export const getBranchCommits = async (branch: branch, page: number) => {
       const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
         ref: branch.name,
       })
-      console.log(commits)
-      //dispatch(setRemoteBranchCommits({ branch, commits }))
+
+      const branchDifference: branchDifference = await plugin.call('dGitProvider', 'compareBranches', {
+        branch,
+        remote: {
+          remote: 'origin',
+          url: ''
+        }
+      })
+      console.log(commits, branchDifference)
+      dispatch(setBranchDifferences(
+        {
+          branch,
+          remote:
+            { remote: 'origin', url: '' },
+            branchDifference: branchDifference
+        }))
+      dispatch(setLocalBranchCommits({ branch, commits }))
     } else {
       await fetchBranch(branch, page)
     }

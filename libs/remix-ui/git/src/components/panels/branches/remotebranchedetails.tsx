@@ -8,13 +8,12 @@ import { branch } from "../../../types";
 import { BrancheDetailsNavigation } from "../../navigation/branchedetails";
 import { CommitDetailsItems } from "../commits/commitdetailsitem";
 import { CommitDetails } from "../commits/commitdetails";
-import { BranchCommits } from "./branchCommits";
 
 export interface BrancheDetailsProps {
   branch: branch;
 }
 
-export const BranchDetails = (props: BrancheDetailsProps) => {
+export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
   const { branch } = props;
   const actions = React.useContext(gitActionsContext)
   const context = React.useContext(gitPluginContext)

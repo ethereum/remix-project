@@ -34,7 +34,7 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <div className="long-and-truncated">
+          <div className="long-and-truncated pl-1">
           {remote.remote}  <FontAwesomeIcon className='' icon={faArrowRightArrowLeft}></FontAwesomeIcon> {remote.url}
           </div>
 

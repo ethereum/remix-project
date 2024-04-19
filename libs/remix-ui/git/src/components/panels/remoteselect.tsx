@@ -6,7 +6,7 @@ import { default as dateFormat } from "dateformat";
 import { RemotesDetailsNavigation } from "../navigation/remotesdetails";
 import { Accordion } from "react-bootstrap";
 import { remote } from "../../types";
-import { BranchDetails } from "./branches/branchedetails";
+import { RemoteBranchDetails } from "./branches/remotebranchedetails";
 
 export interface RemoteSelectProps {
   remote: remote
@@ -36,7 +36,7 @@ export const Remoteselect = (props: RemoteSelectProps) => {
           <>
             {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.remote === remote.remote ).map((branch, index) => {
               return (
-                <BranchDetails key={index} branch={branch}></BranchDetails>
+                <RemoteBranchDetails key={index} branch={branch}></RemoteBranchDetails>
               );
             })}</>
 

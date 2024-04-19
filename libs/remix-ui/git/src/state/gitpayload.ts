@@ -1,5 +1,5 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { GitHubUser, branch, commitChange, fileStatusResult, remote } from "../types"
+import { GitHubUser, branch, commitChange, fileStatusResult, remote, pagedCommits, branchDifference } from "../types"
 import { Endpoints } from "@octokit/types"
 
 export const fileStatus = (files: fileStatusResult[]) => {
@@ -122,17 +122,47 @@ export const setCommitChanges = (commitChanges: commitChange[]) => {
     }
 }
 
-export const setRemoteBranchCommits =({branch, commits}) => {
+export const setRemoteBranchCommits = ({ branch, commits }:{
+    branch: branch,
+    commits: pagedCommits[]
+}):{
+    type: string;
+    payload: { branch: branch; commits: pagedCommits[] };
+} => {
     return {
         type: 'SET_REMOTE_BRANCH_COMMITS',
         payload: { branch, commits }
     }
 }
 
-export const setLocalBranchCommits = ({branch, commits}) => {
+export const setLocalBranchCommits = ({
+    branch,
+    commits
+}: {
+    branch: branch;
+    commits: ReadCommitResult[];
+}): {
+    type: string;
+    payload: { branch: branch; commits: ReadCommitResult[] };
+} => {
     return {
         type: 'SET_LOCAL_BRANCH_COMMITS',
         payload: { branch, commits }
+    };
+};
+
+export const setBranchDifferences = ({
+    branch,
+    remote,
+    branchDifference
+}:{
+    branch: branch;
+    remote: remote;
+    branchDifference: branchDifference;
+}) => {
+    return {
+        type: 'SET_BRANCH_DIFFERENCES',
+        payload: { branch, remote, branchDifference }
     }
 }
 
