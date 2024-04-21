@@ -34,7 +34,13 @@ const profile = {
 }
 
 export class InjectedProviderDefault extends InjectedProviderDefaultBase {
-  constructor() {
-    super(profile)
+  provider: any 
+  constructor(provider: any, name: string) {
+    super({ ...profile, ...{ name, displayName: name } })
+    this.provider = provider
+  }
+
+  getInjectedProvider() {
+    return this.provider
   }
 }

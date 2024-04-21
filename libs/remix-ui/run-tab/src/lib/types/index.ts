@@ -33,6 +33,7 @@ export interface RunTabState {
   selectExEnv: string,
   personalMode: boolean,
   networkName: string,
+  chainId: string
   providers: {
     providerList: {
       id?: string,

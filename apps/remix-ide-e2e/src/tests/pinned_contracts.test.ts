@@ -11,7 +11,7 @@ module.exports = {
     browser
       .clickLaunchIcon('udapp')
       .assert.elementPresent('*[data-id="pinnedContracts"]')
-      .assert.textContains('*[data-id="pinnedContractsSublabel"]', '(VM: vm-cancun)')
+      .assert.textContains('*[data-id="pinnedContractsSublabel"]', '(network: vm-cancun)')
       .assert.elementPresent('*[data-id="NoPinnedInstanceText"]')
       .assert.textContains('*[data-id="NoPinnedInstanceText"]', 'No pinned contracts found for selected workspace & network')
   },
@@ -27,6 +27,18 @@ module.exports = {
       .click('*[data-id="universalDappUiUdappPin"]')
       .assert.elementPresent('*[data-id="deployAndRunNoInstanceText"]')
       .assert.textContains('*[data-id="deployAndRunNoInstanceText"]', 'Currently you have no unpinned contracts to interact with.')
+      .assert.not.elementPresent('*[data-id="NoPinnedInstanceText"]')
+      .assert.elementPresent('*[data-id="pinnedInstance0xd9145CCE52D386f254917e481eB44e9943F39138"]')
+    },
+  'Test pinned contract loading on environment change #group1': function (browser: NightwatchBrowser) {
+    browser
+      .switchEnvironment('vm-shanghai')
+      .assert.elementPresent('*[data-id="pinnedContracts"]')
+      .assert.textContains('*[data-id="pinnedContractsSublabel"]', '(network: vm-shanghai)')
+      .assert.elementPresent('*[data-id="NoPinnedInstanceText"]')
+      .assert.textContains('*[data-id="NoPinnedInstanceText"]', 'No pinned contracts found for selected workspace & network')
+      .switchEnvironment('vm-cancun')
+      .assert.textContains('*[data-id="pinnedContractsSublabel"]', '(network: vm-cancun)')
       .assert.not.elementPresent('*[data-id="NoPinnedInstanceText"]')
       .assert.elementPresent('*[data-id="pinnedInstance0xd9145CCE52D386f254917e481eB44e9943F39138"]')
     },

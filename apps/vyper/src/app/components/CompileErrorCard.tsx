@@ -7,7 +7,6 @@ export function CompileErrorCard(props: { output: any, plugin: RemixClient }) {
     <div
       id="vyperErrorResult"
       className=" d-flex flex-column p-2 alert alert-danger error vyper-compile-error vyper-panel-width"
-      title={props.output?.title}
     >
       <span
         data-id="error-message"
@@ -21,7 +20,7 @@ export function CompileErrorCard(props: { output: any, plugin: RemixClient }) {
       </span>
       <div className="d-flex flex-column pt-3 align-items-end mb-2">
         <div>
-          <span className="border border-success text-success btn-sm" onClick={async () => await props.plugin.askGpt(props.output.message)}>
+          <span className="border border-ai text-ai btn-sm" onClick={async () => await props.plugin.askGpt(props.output.message)}>
             Ask GPT
           </span>
           <span className="ml-3 pt-1 py-1">
