@@ -68,6 +68,17 @@ export function EnvironmentUI(props: EnvironmentProps) {
                 </span>
               </Dropdown.Item>
             ))}
+            <Dropdown.Item
+              key={10000}
+              onClick={() => {
+                props.setExecutionContext({ context: 'item-another-chain' })
+              }}
+              data-id={`dropdown-item-another-chain`}
+            >
+              <span className="">
+                Pin another chain...
+              </span>
+            </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>
