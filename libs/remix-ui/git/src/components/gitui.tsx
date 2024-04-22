@@ -29,6 +29,7 @@ import { GitHubCredentials } from './panels/githubcredentials'
 import { loaderReducer } from '../state/loaderReducer'
 import { ApolloClient, ApolloProvider, NormalizedCacheObject } from '@apollo/client'
 import { client, getApolloLink } from '../state/apolloClient'
+import GetDeviceCode from './github/devicecode'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
@@ -181,6 +182,7 @@ export const GitUI = (props: IGitUi) => {
                       <>
                         <GitHubAuth></GitHubAuth>
                         <GitHubCredentials></GitHubCredentials>
+                        <GetDeviceCode></GetDeviceCode>
                       </>
                     </Accordion.Collapse>
 

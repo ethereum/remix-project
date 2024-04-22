@@ -186,15 +186,11 @@ export const currentBranch = async () => {
 
 export const createBranch = async (name: string = "") => {
   dispatch(setLoading(true))
-  await disableCallBacks()
-  
   if (name) {
     await plugin.call("dGitProvider", "branch", { ref: name });
     await plugin.call("dGitProvider", "checkout", { ref: name });
   }
-
   dispatch(setLoading(false))
-  await enableCallBacks()
 }
 
 export const getCommitFromRef = async (ref: string) => {
