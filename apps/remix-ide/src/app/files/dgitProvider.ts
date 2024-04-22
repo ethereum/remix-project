@@ -273,29 +273,29 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async compareBranches({branch, remote}:{branch: branch, remote: remote}) {
+  async compareBranches({ branch, remote }: { branch: branch, remote: remote }) {
     // Get current branch commits
     const headCommits = await git.log({
       ...await this.addIsomorphicGitConfigFS(),
       ref: branch.name,
     });
-  
+
     // Get remote branch commits
     const remoteCommits = await git.log({
       ...await this.addIsomorphicGitConfigFS(),
       ref: `${remote.remote}/${branch.name}`,
     });
-  
+
     // Convert arrays of commit objects to sets of commit SHAs
     const headCommitSHAs = new Set(headCommits.map(commit => commit.oid));
     const remoteCommitSHAs = new Set(remoteCommits.map(commit => commit.oid));
-  
+
     // Filter out commits that are only in the remote branch
     const uniqueRemoteCommits = remoteCommits.filter(commit => !headCommitSHAs.has(commit.oid));
 
     // filter out commits that are only in the local branch
     const uniqueHeadCommits = headCommits.filter(commit => !remoteCommitSHAs.has(commit.oid));
-  
+
     return {
       uniqueHeadCommits,
       uniqueRemoteCommits,
@@ -1028,7 +1028,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async remotecommits(input: { owner: string, repo: string, token: string, branch: string, length: number,page: number }): Promise<pagedCommits[]> {
+  async remotecommits(input: { owner: string, repo: string, token: string, branch: string, length: number, page: number }): Promise<pagedCommits[]> {
     const octokit = new Octokit({
       auth: input.token
     })
@@ -1091,20 +1091,19 @@ class DGitProvider extends Plugin {
   }
 
   async repositories(input: { token: string }) {
-    console.log(input)
-    const octokit = new Octokit({
-      auth: input.token
-    })
+    // Set your access token
+    const accessToken = input.token;
 
-    console.log('octokit', input.token)
+    // Set headers for the request
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`, // Include your GitHub access token
+      'Accept': 'application/vnd.github.v3+json', // GitHub API v3 media type
+    };
 
-    const data = await octokit.request('GET /user/repos', {
-      per_page: 200,
-      page: 2
-    })
-
-    console.log(data.data)
-    return data.data
+    // Make the GET request with Axios
+    const response = await axios.get('https://api.github.com/user/repos?visibility=private,public', { headers })
+      
+    return response.data
   }
 
 }

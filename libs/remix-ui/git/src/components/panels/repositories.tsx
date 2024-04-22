@@ -3,9 +3,10 @@ import { Alert, Button } from "react-bootstrap";
 import { gitActionsContext } from "../../state/context";
 import { repository } from "../../types";
 import { gitPluginContext } from "../gitui";
-import Select from 'react-select'
+import AsyncSelect from 'react-select'
 import { selectStyles, selectTheme } from "../../types/styles";
 import { TokenWarning } from "./tokenWarning";
+import RepositorySelect from "../github/repositoryselect";
 
 interface RepositoriesProps {
   cloneDepth?: number
@@ -99,24 +100,10 @@ export const Repositories = (props: RepositoriesProps) => {
   
   return (
     <>
-      <TokenWarning/>
-      <Button onClick={fetchRepositories} className="w-100 mt-1">
-        <i className="fab fa-github mr-1"></i>Fetch Repositories from GitHub
-      </Button>
-      {show?
-      <Select
-        options={repoOtions}
-        className="mt-1"
-        onChange={(e: any) => e && selectRepo(e.value)}
-        theme={selectTheme}
-        styles={selectStyles}
-        isClearable={true}
-        placeholder="Type to search for a repository..."
-        isLoading={loading}
-      />:null}
+      <RepositorySelect />
 
       {branchOptions && branchOptions.length ?
-        <Select
+        <AsyncSelect
           options={branchOptions}
           className="mt-1"
           onChange={(e: any) => e && selectRemoteBranch(e.value)}
