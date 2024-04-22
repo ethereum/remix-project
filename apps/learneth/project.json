@@ -9,6 +9,7 @@
       "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "development",
+      "dependsOn": ["install"],
       "options": {
         "compiler": "babel",
         "outputPath": "dist/apps/learneth",
@@ -33,6 +34,15 @@
             }
           ]
         }
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd apps/learneth && yarn"
+        ],
+        "parallel": false
       }
     },
     "serve": {
