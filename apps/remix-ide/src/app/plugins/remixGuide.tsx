@@ -1,3 +1,4 @@
+
 import React from 'react'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
@@ -88,6 +89,7 @@ export class RemixGuidePlugin extends ViewPlugin {
         logo='/assets/img/YouTubeLogo.webp'
         enableFilter={true}
         showUntagged={true}
+        showPin={true}
         tagList={[
           ['beginner', 'danger'],
           ['advanced', 'warning'],
@@ -117,12 +119,14 @@ export class RemixGuidePlugin extends ViewPlugin {
           <RemixUIGridCell
             plugin={this}
             title="next"
+            pinned={true}
             tagList={['L2', 'plugins']}
           >
             <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
           </RemixUIGridCell> <RemixUIGridCell
             plugin={this}
             title="something"
+            pinned={false}
             tagList={['solidity', 'plugins']}
           >
             <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
