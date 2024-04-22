@@ -8,6 +8,7 @@ import { CommitSummary } from "./commits/commitsummary";
 
 
 export const Commits = () => {
+    const [hasNextPage, setHasNextPage] = React.useState(true)
     const context = React.useContext(gitPluginContext)
     const actions = React.useContext(gitActionsContext)
 
@@ -21,6 +22,16 @@ export const Commits = () => {
         }
     };
 
+    const loadNextPage = () => {
+        console.log('LOAD NEXT PAGE', context.commits.length)
+        actions.fetch(null, context.currentBranch.name, null, 5, true, true)
+        //actions.getBranchCommits(branch, lastPageNumber+1)
+    }
+
+    const getCommitChanges = async (commit: ReadCommitResult) => {
+        await actions.getCommitChanges(commit.oid, commit.commit.parent[0])
+    }
+
 
     return (
         <>
@@ -29,11 +40,13 @@ export const Commits = () => {
                     <div className="pt-1">
                         {context.commits && context.commits.map((commit, index) => {
                             return (
-                                <CommitDetails key={index} checkout={checkout} commit={commit}></CommitDetails>
+                                <CommitDetails getCommitChanges={getCommitChanges} key={index} checkout={checkout} commit={commit}></CommitDetails>
                             );
                         })}
                     </div>
-                </div></>
+                </div>
+                    {hasNextPage && <a href="#" className="cursor-pointer mb-1 ml-2" onClick={loadNextPage}>Load more</a>}
+                </>
                 : <div className="text-muted">No commits</div>}
         </>
     )

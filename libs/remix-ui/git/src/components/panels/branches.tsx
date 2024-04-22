@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Alert } from "react-bootstrap";
 import { gitActionsContext } from "../../state/context";
 import { remote } from "../../types";
+import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
 import { LocalBranchDetails } from "./branches/localbranchdetails";
 import { RemoteBranchDetails } from "./branches/remotebranchedetails";
@@ -44,13 +45,13 @@ export const Branches = () => {
                                 id="newbranchname"
                             />
                         </div>
-                        <button
+                        <GitUIButton
                             onClick={async () => actions.createBranch(newBranch.value)}
                             className="btn w-md-25 w-100 btn-primary"
                             id="createbranch-btn"
                         >
                             create new branch
-                        </button>
+                        </GitUIButton>
                     </div> : <div className="text-muted">No branches</div>}
             </div>
         </>

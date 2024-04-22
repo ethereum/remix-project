@@ -9,19 +9,19 @@ import { CommitDetailsItems } from "./commitdetailsitem";
 export interface CommitDetailsProps {
   commit: ReadCommitResult;
   checkout: (oid: string) => void;
+  getCommitChanges: (commit: ReadCommitResult) => void;
 }
 
 export const CommitDetails = (props: CommitDetailsProps) => {
-  const { commit, checkout } = props;
+  const { commit, checkout, getCommitChanges } = props;
   const actions = React.useContext(gitActionsContext)
   const context = React.useContext(gitPluginContext)
   const [activePanel, setActivePanel] = useState<string>("");
 
   useEffect(() => {
-    console.log(commit)
     if (activePanel === "0") {
-      console.log(commit.oid, commit.commit.parent)
-      actions.getCommitChanges(commit.oid, commit.commit.parent[0])
+      console.log(context)
+      getCommitChanges(commit)
     }
   }, [activePanel])
 

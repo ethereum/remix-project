@@ -35,8 +35,8 @@ export const BranchDifferences = (props: BrancheDetailsProps) => {
         {!showSummary && context.remotes.map((remote, index) => {
           return (
             <div key={index}>
-                <BranchDifferenceDetails title={`ahead of ${remote.remote} by ${commitsAhead(remote).length} commit(s)`} commits={commitsAhead(remote)}></BranchDifferenceDetails>
-                <BranchDifferenceDetails title={`behind ${remote.remote} by ${commitsBehind(remote).length} commit(s)`} commits={commitsBehind(remote)}></BranchDifferenceDetails>
+                <BranchDifferenceDetails branch={branch} remote={remote} title={`ahead of ${remote.remote} by ${commitsAhead(remote).length} commit(s)`} commits={commitsAhead(remote)}></BranchDifferenceDetails>
+                <BranchDifferenceDetails branch={branch} remote={remote} title={`behind ${remote.remote} by ${commitsBehind(remote).length} commit(s)`} commits={commitsBehind(remote)}></BranchDifferenceDetails>
                 {commitsAhead(remote).length === 0 && commitsBehind(remote).length === 0? null: <hr></hr>}
             </div>
           );

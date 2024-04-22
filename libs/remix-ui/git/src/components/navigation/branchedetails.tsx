@@ -46,7 +46,6 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
         }
 
         {branch.remote?.url && <>
-          <FontAwesomeIcon className='ml-auto pointer' icon={faSync} onClick={() => checkout(branch)}></FontAwesomeIcon>
           <FontAwesomeIcon className='ml-2 pointer' icon={faGlobe} onClick={() => openRemote()}></FontAwesomeIcon></>}
       </div>
     </>

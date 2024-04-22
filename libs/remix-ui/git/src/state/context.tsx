@@ -11,13 +11,13 @@ export interface gitActions  {
     addall(): Promise<void>
     push(remote?: string, ref?: string, remoteRef?: string, force?: boolean): Promise<void>
     pull(remote?: string, ref?: string, remoteRef?: string): Promise<void>
-    fetch(remote?: string, ref?: string, remoteRef?: string): Promise<void>
+    fetch(remote?: string, ref?: string, remoteRef?: string, depth?: number, singleBranch?: boolean, relative?: boolean, quiet?: boolean): Promise<void>
     repositories(): Promise<any>
     checkoutfile(file: string): Promise<void>
     checkout(cmd: any): Promise<void>
     createBranch(branch: string): Promise<void>
     remoteBranches(owner: string, repo: string): Promise<any>
-    getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
+    getCommitChanges(oid1: string, oid2: string, branch?: branch, remote?: remote): Promise<commitChange[] | boolean>
     getBranchCommits(branch: branch, page: number): Promise<void>
     getGitHubUser(): Promise<any>
     diff(commitChange: commitChange): Promise<void>

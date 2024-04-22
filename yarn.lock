@@ -19155,10 +19155,10 @@ isobject@^3.0.0, isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
-isomorphic-git@^1.25.0:
-  version "1.25.0"
-  resolved "https://registry.yarnpkg.com/isomorphic-git/-/isomorphic-git-1.25.0.tgz#3a04d7e70f75ebdbb991f9fa87cfec90e3742c9f"
-  integrity sha512-F8X7z74gL+jN4bd6qB6a3Z0QQzonWPkiQ3nK/oFWlrc2pIwVM9Uksl3YMFh99ltswsqoCoOthgasybX08/fiGg==
+isomorphic-git@^1.25.7:
+  version "1.25.7"
+  resolved "https://registry.yarnpkg.com/isomorphic-git/-/isomorphic-git-1.25.7.tgz#f6f6fae81ee67d3982edad8c90ca0f096e39267c"
+  integrity sha512-KE10ejaIsEpQ+I/apS33qqTjyzCXgOniEaL32DwNbXtboKG8H3cu+RiBcdp3G9w4MpOOTQfGPsWp4i8UxRfDLg==
   dependencies:
     async-lock "^1.1.0"
     clean-git-ref "^2.0.1"

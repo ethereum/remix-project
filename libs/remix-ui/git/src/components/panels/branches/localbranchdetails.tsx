@@ -25,7 +25,7 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
   useEffect(() => {
     if (activePanel === "0") {
       console.log('GET BRANCH COMMITS', branch)
-      if(lastPageNumber === 0)
+      if (lastPageNumber === 0)
         actions.getBranchCommits(branch, 1)
     }
   }, [activePanel])
@@ -40,37 +40,41 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
   }
 
   const loadNextPage = () => {
-    console.log('LOAD NEXT PAGE', lastPageNumber+1)
-    actions.getBranchCommits(branch, lastPageNumber+1)
+    console.log('LOAD NEXT PAGE', lastPageNumber + 1)
+    actions.getBranchCommits(branch, lastPageNumber + 1)
   }
 
   const checkoutCommit = async (oid: string) => {
     try {
-        //await ModalRef.current?.show();
-        actions.checkout({ ref: oid })
-        //Utils.log("yes");
+      //await ModalRef.current?.show();
+      actions.checkout({ ref: oid })
+      //Utils.log("yes");
     } catch (e) {
-        //Utils.log("no");
+      //Utils.log("no");
     }
-};
+  };
+
+  const getCommitChanges = async (commit: ReadCommitResult) => {
+    await actions.getCommitChanges(commit.oid, commit.commit.parent[0])
+  }
 
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
     <BrancheDetailsNavigation checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
     <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
       <>
-      <div className="ml-1">
-        <BranchDifferences branch={branch}></BranchDifferences>
-        {context.localBranchCommits && Object.entries(context.localBranchCommits).map(([key, value]) => {
-          if(key == branch.name){
+        <div className="ml-1">
+          <BranchDifferences branch={branch}></BranchDifferences>
+          {context.localBranchCommits && Object.entries(context.localBranchCommits).map(([key, value]) => {
+            if (key == branch.name) {
               return value.map((commit, index) => {
-                return(<CommitDetails key={index} checkout={checkoutCommit} commit={commit}></CommitDetails>)
+                return (<CommitDetails key={index} getCommitChanges={getCommitChanges} checkout={checkoutCommit} commit={commit}></CommitDetails>)
               })
-          }
-        })}
-        
+            }
+          })}
 
-      </div>
-      {hasNextPage && <a href="#" className="cursor-pointer mb-1 ml-2" onClick={loadNextPage}>Load more</a>}
+
+        </div>
+        {hasNextPage && <a href="#" className="cursor-pointer mb-1 ml-2" onClick={loadNextPage}>Load more</a>}
       </>
     </Accordion.Collapse>
   </Accordion>)

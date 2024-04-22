@@ -736,6 +736,7 @@ class DGitProvider extends Plugin {
   }
 
   async push(input) {
+    console.log('push input', input)
     const cmd = {
       force: input.force,
       ref: input.ref,
@@ -752,11 +753,12 @@ class DGitProvider extends Plugin {
         ...cmd,
         ...await this.addIsomorphicGitConfig(input),
       }
+      console.log('push cmd', cmd2)
       const result = await git.push({
         ...await this.addIsomorphicGitConfigFS(),
         ...cmd2
       })
-      console.log('push result', result)
+      console.log('push result', cmd2, result)
       return result
 
     }
@@ -797,6 +799,9 @@ class DGitProvider extends Plugin {
       remoteRef: input.remoteRef,
       author: await this.getCommandUser(input),
       remote: input.remote,
+      depth: input.depth || 5,
+      singleBranch: input.singleBranch,
+      relative: input.relative,
       input
     }
     let result
@@ -811,11 +816,7 @@ class DGitProvider extends Plugin {
         ...await this.addIsomorphicGitConfigFS(),
         ...cmd2
       })
-      console.log('fetch result', result)
-      console.log({
-        ...await this.addIsomorphicGitConfigFS(),
-        ...cmd2
-      })
+      console.log('fetch result', cmd2, result)
     }
 
     setTimeout(async () => {

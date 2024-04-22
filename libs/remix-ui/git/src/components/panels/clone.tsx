@@ -6,6 +6,7 @@ import { gitActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
 import { Repositories } from "./repositories";
 import { RemixUiCheckbox } from "@remix-ui/checkbox";
+import GitUIButton from "../buttons/gituibutton";
 
 export const Clone = () => {
     const context = React.useContext(gitPluginContext)
@@ -68,9 +69,9 @@ export const Clone = () => {
 
 
             <input name='clonebranch' onChange={e => onCloneBranchChange(e.target.value)} value={cloneBranch} className="form-control mb-1 mt-2" placeholder="branch" type="text" id="clonebranch" />
-            <button disabled={!cloneUrl || !cloneBranch} data-id='clonebtn' className='btn btn-primary mt-1 w-100' onClick={async () => {
+            <GitUIButton disabledCondition={!cloneUrl || !cloneBranch} data-id='clonebtn' className='btn btn-primary mt-1 w-100' onClick={async () => {
                 clone()
-            }}>clone</button>
+            }}>clone</GitUIButton>
             <hr />
             <Repositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} />
             <hr />

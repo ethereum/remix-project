@@ -3,6 +3,7 @@ import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
 import { selectStyles, selectTheme } from "../../../types/styles";
 import Select from 'react-select'
+import GitUIButton from "../../buttons/gituibutton";
 
 export const Merge = () => {
   const context = React.useContext(gitPluginContext)
@@ -46,8 +47,7 @@ export const Merge = () => {
 
 
       <div className="btn-group w-100" role="group" aria-label="Basic example">
-        <button type="button" onClick={async () => merge()} className="btn btn-primary mr-1">Merge</button>
-
+        <GitUIButton type="button" onClick={async () => merge()} className="btn btn-primary mr-1">Merge</GitUIButton>
       </div>
 
 

@@ -373,31 +373,46 @@ export const clone = async (url: string, branch: string, depth: number, singleBr
   dispatch(setLoading(false))
 }
 
-export const fetch = async (remote?: string, ref?: string, remoteRef?: string) => {
+export const fetch = async (remote?: string, ref?: string, remoteRef?: string, depth?: number, singleBranch?: boolean, relative?: boolean, quiet?: boolean) => {
+  dispatch(setLoading(true))
+  await disableCallBacks()
+  await plugin.call('notification', 'toast', `Fetching ${remote || ''} ${ref || ''} ${remoteRef || ''}`)
   try {
-    await plugin.call('dGitProvider' as any, 'fetch', { remote, ref, remoteRef })
-    await gitlog()
-    await getBranches()
+    await plugin.call('dGitProvider' as any, 'fetch', { remote, ref, remoteRef, depth, singleBranch, relative });
+    if(!quiet){
+      await gitlog()
+      await getBranches()
+    }
   } catch (e: any) {
     await parseError(e)
   }
+  dispatch(setLoading(false))
+  await enableCallBacks()
 }
 
 export const pull = async (remote?: string, ref?: string, remoteRef?: string) => {
+  dispatch(setLoading(true))
+  await disableCallBacks()
   try {
     await plugin.call('dGitProvider' as any, 'pull', { remote, ref, remoteRef })
     await gitlog()
   } catch (e: any) {
     await parseError(e)
   }
+  dispatch(setLoading(false))
+  await enableCallBacks()
 }
 
 export const push = async (remote?: string, ref?: string, remoteRef?: string, force?: boolean) => {
+  dispatch(setLoading(true))
+  await disableCallBacks()
   try {
     await plugin.call('dGitProvider' as any, 'push', { remote, ref, remoteRef, force })
   } catch (e: any) {
     await parseError(e)
   }
+  dispatch(setLoading(false))
+  await enableCallBacks()
 }
 
 const tokenWarning = async () => {
@@ -690,10 +705,16 @@ export const diff = async (commitChange: commitChange) => {
   */
 }
 
-export const getCommitChanges = async (oid1: string, oid2: string) => {
-  const result: commitChange[] = await plugin.call('dGitProvider', 'getCommitChanges', oid1, oid2)
-  dispatch(setCommitChanges(result))
-  return result
+export const getCommitChanges = async (oid1: string, oid2: string, branch?: branch, remote?: remote) => {
+  console.log(oid1, oid2, branch, remote)
+  try{
+    const result: commitChange[] = await plugin.call('dGitProvider', 'getCommitChanges', oid1, oid2)
+    dispatch(setCommitChanges(result))
+    return result
+  }catch(e){
+    console.log(e)
+    return false
+  }
 }
 
 async function getRepoDetails(url: string) {
@@ -709,6 +730,7 @@ async function getRepoDetails(url: string) {
 
 
 export const fetchBranch = async (branch: branch, page: number) => {
+  if(!branch.remote || !branch.remote.url) return
   const token = await tokenWarning();
   console.log('fetch', branch)
   const { owner, repo } = await getRepoDetails(branch.remote.url);
@@ -772,7 +794,7 @@ export const getBranchCommits = async (branch: branch, page: number) => {
       const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
         ref: branch.name,
       })
-
+      
       const branchDifference: branchDifference = await plugin.call('dGitProvider', 'compareBranches', {
         branch,
         remote: {
@@ -787,7 +809,7 @@ export const getBranchCommits = async (branch: branch, page: number) => {
           remote:
             { remote: 'origin', url: '' },
             branchDifference: branchDifference
-        }))
+        }))     
       dispatch(setLocalBranchCommits({ branch, commits }))
     } else {
       await fetchBranch(branch, page)

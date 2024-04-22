@@ -4,6 +4,7 @@ import { gitPluginContext } from "../../gitui";
 import { selectStyles, selectTheme } from "../../../types/styles";
 import Select, { Options, OptionsOrGroups } from 'react-select'
 import { setUpstream } from "../../../state/gitpayload";
+import GitUIButton from "../../buttons/gituibutton";
 
 export const PushPull = () => {
   const context = React.useContext(gitPluginContext)
@@ -50,11 +51,12 @@ export const PushPull = () => {
   }
 
   const push = async () => {
-    actions.push()
+    console.log('PUSH', context.upstream, localBranch, remoteBranch, force)
+    actions.push(context.upstream, localBranch, remoteBranch, force)
   }
 
   const pull = async () => {
-    actions.pull()
+    actions.pull(context.upstream, localBranch, remoteBranch)
   }
 
 
@@ -96,10 +98,10 @@ export const PushPull = () => {
 
 
 
-      <div className="btn-group w-100" role="group" aria-label="Basic example">
+      <div className="btn-group w-100" role="group">
    
-        <button type="button" onClick={async () => pull()} className="btn btn-primary mr-1">Pull</button>
-        <button type="button" onClick={async () => push()} className="btn btn-primary">Push</button>
+        <GitUIButton type="button" onClick={async () => pull()} className="btn btn-primary mr-1">Pull</GitUIButton>
+        <GitUIButton type="button" onClick={async () => push()} className="btn btn-primary">Push</GitUIButton>
       </div>
 
 

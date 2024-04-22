@@ -30,10 +30,9 @@ export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => 
 
 
                 </span>
-                {
-                    activePanel === eventKey ?
-                        <SourceControlButtons/> : null
-                }
+
+                <SourceControlButtons />
+
 
             </div>
         </>

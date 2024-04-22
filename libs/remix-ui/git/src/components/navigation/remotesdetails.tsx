@@ -1,4 +1,4 @@
-import { faCaretDown, faCaretRight, faArrowRightArrowLeft, faGlobe, faToggleOff, faToggleOn, faTrash, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown, faCaretRight, faArrowRightArrowLeft, faGlobe, faToggleOff, faToggleOn, faTrash, faCheck, faSync } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
 import { gitActionsContext } from "../../state/context";
@@ -51,7 +51,10 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
           :
           <FontAwesomeIcon className='ml-auto mr-1 pointer' icon={faToggleOn} onClick={setAsDefault} ></FontAwesomeIcon>
         }
-        <FontAwesomeIcon className='ml-auto mr-1 pointer' icon={faTrash} onClick={() => actions.removeRemote(remote)}></FontAwesomeIcon>
+        <FontAwesomeIcon className='ml-auto pointer mr-1' icon={faSync} onClick={async () => {
+          await actions.fetch(remote.remote)
+        }}></FontAwesomeIcon>
+        <FontAwesomeIcon className='ml-auto mr-1 pointer text-danger' icon={faTrash} onClick={() => actions.removeRemote(remote)}></FontAwesomeIcon>
         {remote?.url && <FontAwesomeIcon className='ml-2 pointer' icon={faGlobe} onClick={() => openRemote()}></FontAwesomeIcon>}
       </div>
     </>

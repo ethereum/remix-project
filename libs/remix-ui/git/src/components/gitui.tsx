@@ -133,8 +133,6 @@ export const GitUI = (props: IGitUi) => {
           <loaderContext.Provider value={loaderState}>
             <gitActionsContext.Provider value={gitActionsProviderValue}>
               <pluginActionsContext.Provider value={pluginActionsProviderValue}>
-                {gitState.loading && <div className="text-center py-5"><i className="fas fa-spinner fa-pulse fa-2x"></i></div>}
-                {!gitState.loading &&
                   <Accordion activeKey={activePanel} defaultActiveKey="0">
                     <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
 
@@ -188,7 +186,7 @@ export const GitUI = (props: IGitUi) => {
 
 
 
-                  </Accordion>}
+                  </Accordion>
               </pluginActionsContext.Provider>
             </gitActionsContext.Provider>
           </loaderContext.Provider>

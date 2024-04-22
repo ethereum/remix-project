@@ -184,6 +184,7 @@ export const enableCallBacks = async () => {
 }
 
 const synTimerStart = async () => {
+    console.trace('synTimerStart')
     if (!callBackEnabled) return
     clearTimeout(syncTimer)
     syncTimer = setTimeout(async () => {
