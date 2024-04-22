@@ -73,6 +73,7 @@ declare module 'nightwatch' {
     waitForElementNotContainsText: (id: string, value: string, timeout: number = 10000) => NightwatchBrowser
     hideToolTips: (this: NightwatchBrowser) => NightwatchBrowser
     enableClipBoard: () => NightwatchBrowser
+    addFileSnekmate: (name: string, content: NightwatchContractContent) => NightwatchBrowser
   }
 
   export interface NightwatchBrowser {
