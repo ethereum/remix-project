@@ -19,6 +19,7 @@ interface RemixUIGridViewProps {
   enableFilter?: boolean
   tagList?: [string, string][] // max 8, others will be ignored
   showUntagged?: boolean
+  showPin?: boolean
   classList?: string
   styleList?: any
   description?: string
@@ -29,6 +30,7 @@ export const RemixUIGridView = (props: RemixUIGridViewProps) => {
   const [keyValueMap, setKeyValueMap] = useState<Record<string, { enabled: boolean; color: string; }>>({});
 
   const showUntagged = props.showUntagged || false
+  const showPin = props.showPin || false
   const updateValue = (key: string, enabled: boolean, color?: string) => {
     if (!color || color === '') color = setKeyValueMap[key].color
     setKeyValueMap((prevMap) => ({
@@ -96,7 +98,7 @@ export const RemixUIGridView = (props: RemixUIGridViewProps) => {
   }, [plugin])
 
   return (
-    <FiltersContext.Provider value={{ showUntagged, keyValueMap, updateValue, addValue }}>
+    <FiltersContext.Provider value={{ showUntagged, showPin, keyValueMap, updateValue, addValue }}>
       <div className={"d-flex flex-column bg-dark w-100 h-100 remixui_grid_view_container " + props.classList || ''} data-id="remixUIGV">
         <ThemeContext.Provider value={state.themeQuality}>
           <div className="d-flex flex-column w-100 remixui_grid_view">

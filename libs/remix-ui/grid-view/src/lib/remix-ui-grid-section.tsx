@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useContext, useRef, ReactNode} from 'react' // eslint-disable-line
 
 import './remix-ui-grid-section.css'
-import {ThemeContext, themes} from './themeContext'
 
 declare global {
   interface Window {
@@ -20,37 +19,6 @@ interface RemixUIGridSectionProps {
 }
 
 export const RemixUIGridSection = (props: RemixUIGridSectionProps) => {
-  const {plugin} = props.plugin
-  const searchInputRef = useRef(null)
-
-  console.log('props.hScrollable ', props.hScrollable)
-  const [state, setState] = useState<{
-    themeQuality: {filter: string; name: string}
-  }>({
-    themeQuality: themes.light
-  })
-
-  useEffect(() => {
-    plugin?.call('theme', 'currentTheme').then((theme) => {
-      // update theme quality. To be used for for images
-      setState((prevState) => {
-        return {
-          ...prevState,
-          themeQuality: theme.quality === 'dark' ? themes.dark : themes.light
-        }
-      })
-    })
-    plugin?.on('theme', 'themeChanged', (theme) => {
-      // update theme quality. To be used for for images
-      setState((prevState) => {
-        return {
-          ...prevState,
-          themeQuality: theme.quality === 'dark' ? themes.dark : themes.light
-        }
-      })
-    })
-  }, [plugin])
-
   return (
     <div
       className={`d-flex px-4 py-2 flex-column w-100 remixui_grid_section_container ${props.classList}`}

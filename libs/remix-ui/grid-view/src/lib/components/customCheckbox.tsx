@@ -16,7 +16,7 @@ export const CustomCheckbox = (props: CustomCheckboxProps) => {
   if (!textColor || textColor == '') textColor = filterCon.keyValueMap[props.label].color
 
   return (
-    <div className="h-80 mx-1 align-items-center custom-control custom-checkbox" style={{minWidth: '4rem'}}>
+    <div id={textColor + props.label} className="h-80 mx-1 align-items-center custom-control custom-checkbox" style={{minWidth: '4rem'}}>
       <input
         className="custom-control-input"
         id={"GVCheckbox" + props.label}
