@@ -1,7 +1,9 @@
 import { checkout, ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { gitActionsContext } from "../../state/context";
+import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
+import LoaderIndicator from "../navigation/loaderindicator";
 import { BranchDifferences } from "./branches/branchdifferences";
 import { CommitDetails } from "./commits/commitdetails";
 import { CommitSummary } from "./commits/commitsummary";
@@ -45,7 +47,7 @@ export const Commits = () => {
                         })}
                     </div>
                 </div>
-                    {hasNextPage && <a href="#" className="cursor-pointer mb-1 ml-2" onClick={loadNextPage}>Load more</a>}
+                    {hasNextPage && <GitUIButton className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
                 </>
                 : <div className="text-muted">No commits</div>}
         </>

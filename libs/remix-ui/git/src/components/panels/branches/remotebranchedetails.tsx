@@ -8,6 +8,7 @@ import { branch } from "../../../types";
 import { BrancheDetailsNavigation } from "../../navigation/branchedetails";
 import { CommitDetailsItems } from "../commits/commitdetailsitem";
 import { CommitDetails } from "../commits/commitdetails";
+import GitUIButton from "../../buttons/gituibutton";
 
 export interface BrancheDetailsProps {
   branch: branch;
@@ -93,7 +94,7 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
 
 
         </div>
-        {hasNextPage && <a href="#" className="cursor-pointer mb-1 ml-2" onClick={loadNextPage}>Load more</a>}
+        {hasNextPage && <GitUIButton className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
       </>
     </Accordion.Collapse>
   </Accordion>)

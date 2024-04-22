@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
 import { gitActionsContext } from "../../state/context";
 import { branch, remote } from "../../types";
+import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
 
 interface RemotesDetailsNavigationProps {
@@ -47,15 +48,15 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
 
         </div>
         {context.defaultRemote && context.defaultRemote?.url === remote.url ?
-          <FontAwesomeIcon className='ml-auto mr-1 pointer text-success' icon={faCheck} ></FontAwesomeIcon>
+          <GitUIButton className="btn btn-sm" onClick={()=>{}} disabledCondition={true}><FontAwesomeIcon className='text-success' icon={faCheck} ></FontAwesomeIcon></GitUIButton>
           :
-          <FontAwesomeIcon className='ml-auto mr-1 pointer' icon={faToggleOn} onClick={setAsDefault} ></FontAwesomeIcon>
+          <GitUIButton className="btn btn-sm" onClick={setAsDefault}><FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon></GitUIButton>
         }
-        <FontAwesomeIcon className='ml-auto pointer mr-1' icon={faSync} onClick={async () => {
+        <GitUIButton className="btn btn-sm" onClick={async () => {
           await actions.fetch(remote.remote)
-        }}></FontAwesomeIcon>
-        <FontAwesomeIcon className='ml-auto mr-1 pointer text-danger' icon={faTrash} onClick={() => actions.removeRemote(remote)}></FontAwesomeIcon>
-        {remote?.url && <FontAwesomeIcon className='ml-2 pointer' icon={faGlobe} onClick={() => openRemote()}></FontAwesomeIcon>}
+        }}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon></GitUIButton>
+        <GitUIButton className="btn btn-sm" onClick={() => actions.removeRemote(remote)}><FontAwesomeIcon className='text-danger' icon={faTrash} ></FontAwesomeIcon></GitUIButton>
+        {remote?.url && <GitUIButton className="btn btn-sm pr-0" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}
       </div>
     </>
   );

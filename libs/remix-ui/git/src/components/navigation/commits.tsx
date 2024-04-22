@@ -7,6 +7,7 @@ import { pluginActionsContext } from "../../state/context";
 import { branch, remote } from "../../types";
 import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
 import { gitPluginContext } from "../gitui";
+import LoaderIndicator from "./loaderindicator";
 
 export interface CommitsNavigationProps {
     title: string,
@@ -42,7 +43,7 @@ export const CommitsNavigation = ({ eventKey, activePanel, callback, title, bran
                         activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
                     }
                     <label className="pl-1 nav form-check-label">{title}</label>
-
+                    <LoaderIndicator></LoaderIndicator>
 
                 </span>
 

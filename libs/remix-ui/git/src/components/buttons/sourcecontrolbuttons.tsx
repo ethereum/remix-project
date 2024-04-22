@@ -6,6 +6,7 @@ import { FormattedMessage } from "react-intl"
 import { gitActionsContext } from "../../state/context"
 import { branch, remote } from "../../types"
 import { gitPluginContext } from "../gitui"
+import GitUIButton from "./gituibutton"
 
 interface SourceControlButtonsProps {
   remote?: remote,
@@ -88,16 +89,16 @@ export const SourceControlButtons = (props: SourceControlButtonsProps) => {
 
   return (<span className='d-flex justify-content-end align-items-center'>
     <CustomTooltip tooltipText={<FormattedMessage id="git.pull" />}>
-      <>{commitsBehind.length}<button onClick={pull} className='btn btn-sm'><FontAwesomeIcon icon={faArrowDown} className="" /></button></>
+      <>{commitsBehind.length}<GitUIButton onClick={pull} className='btn btn-sm'><FontAwesomeIcon icon={faArrowDown} className="" /></GitUIButton></>
     </CustomTooltip>
     <CustomTooltip tooltipText={<FormattedMessage id="git.push" />}>
-      <>{commitsAhead.length}<button onClick={push} className='btn btn-sm'><FontAwesomeIcon icon={faArrowUp} className="" /></button></>
+      <>{commitsAhead.length}<GitUIButton onClick={push} className='btn btn-sm'><FontAwesomeIcon icon={faArrowUp} className="" /></GitUIButton></>
     </CustomTooltip>
     <CustomTooltip tooltipText={<FormattedMessage id="git.sync" />}>
-      <button onClick={sync} className='btn btn-sm'><FontAwesomeIcon icon={faArrowsUpDown} className="" /></button>
+      <GitUIButton onClick={sync} className='btn btn-sm'><FontAwesomeIcon icon={faArrowsUpDown} className="" /></GitUIButton>
     </CustomTooltip>
     <CustomTooltip tooltipText={<FormattedMessage id="git.refresh" />}>
-      <button onClick={async () => { }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowRotateRight} className="" /></button>
+      <GitUIButton onClick={async () => { }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowRotateRight} className="" /></GitUIButton>
     </CustomTooltip>
   </span>)
 }

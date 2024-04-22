@@ -1,6 +1,7 @@
 import { faCaretUp, faCaretDown, faArrowUp, faArrowDown, faArrowRotateRight, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
+import LoaderIndicator from "./loaderindicator";
 
 export const CloneNavigation = ({ eventKey, activePanel, callback  }) => {
 
@@ -20,6 +21,7 @@ export const CloneNavigation = ({ eventKey, activePanel, callback  }) => {
                         activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
                     }
                     <label className="pl-1 nav form-check-label">CLONE</label>
+                    <LoaderIndicator></LoaderIndicator>
                 </span>
             </div>
         </>

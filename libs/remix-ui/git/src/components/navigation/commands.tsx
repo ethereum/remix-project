@@ -1,8 +1,10 @@
-import { faCaretUp, faCaretDown, faArrowUp, faArrowDown, faArrowRotateRight, faCaretRight, faCircleCheck, faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
+import { faCaretUp, faCaretDown, faArrowUp, faArrowDown, faArrowRotateRight, faCaretRight, faCircleCheck, faArrowsUpDown, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
 import { pluginActionsContext } from "../../state/context";
+import GitUIButton from "../buttons/gituibutton";
 import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
+import LoaderIndicator from "./loaderindicator";
 
 export const CommandsNavigation = ({ eventKey, activePanel, callback }) => {
     const pluginactions = React.useContext(pluginActionsContext)
@@ -24,6 +26,8 @@ export const CommandsNavigation = ({ eventKey, activePanel, callback }) => {
                         activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
                     }
                     <label className="pl-1 nav form-check-label">COMMANDS</label>
+                    <LoaderIndicator></LoaderIndicator>
+
                 </span>
             </div>
         </>

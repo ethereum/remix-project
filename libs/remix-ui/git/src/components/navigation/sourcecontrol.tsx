@@ -5,6 +5,7 @@ import React, { useContext, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { pluginActionsContext } from "../../state/context";
 import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
+import LoaderIndicator from "./loaderindicator";
 import { SourceControlMenu } from "./menu/sourcecontrolmenu";
 
 export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => {
@@ -27,7 +28,7 @@ export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => 
                         activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
                     }
                     <label className="nav pl-1 form-check-label">SOURCE CONTROL</label>
-
+                    <LoaderIndicator></LoaderIndicator>
 
                 </span>
 

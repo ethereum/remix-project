@@ -185,10 +185,16 @@ export const currentBranch = async () => {
 }
 
 export const createBranch = async (name: string = "") => {
+  dispatch(setLoading(true))
+  await disableCallBacks()
+  
   if (name) {
     await plugin.call("dGitProvider", "branch", { ref: name });
     await plugin.call("dGitProvider", "checkout", { ref: name });
   }
+
+  dispatch(setLoading(false))
+  await enableCallBacks()
 }
 
 export const getCommitFromRef = async (ref: string) => {
@@ -788,6 +794,8 @@ export const fetchBranch = async (branch: branch, page: number) => {
 }
 
 export const getBranchCommits = async (branch: branch, page: number) => {
+  dispatch(setLoading(true))
+  await disableCallBacks()
   try {
     console.log(branch)
     if (!branch.remote) {
@@ -818,6 +826,8 @@ export const getBranchCommits = async (branch: branch, page: number) => {
     console.log(e)
     await fetchBranch(branch, page)
   }
+  dispatch(setLoading(false))
+  await enableCallBacks()
 }
 
 export const setDefaultRemote = async (remote: remote) => {

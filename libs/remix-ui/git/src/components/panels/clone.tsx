@@ -33,11 +33,7 @@ export const Clone = () => {
 
 
     const clone = async () => {
-        try {
-            setTimeout(() => actions.clone(cloneUrl, cloneBranch, cloneDepth, !cloneAllBranches), 1500)
-        } catch (e) {
-
-        }
+        await actions.clone(cloneUrl, cloneBranch, cloneDepth, !cloneAllBranches)
     }
 
     const onCloneBranchChange = (value: string) => {
