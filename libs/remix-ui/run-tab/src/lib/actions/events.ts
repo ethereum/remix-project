@@ -55,6 +55,8 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     const pinnedChainId = !isVM ? network.id : networkProvider()
     setNetworkNameFromProvider(dispatch, netUI)
     setPinnedChainId(dispatch, pinnedChainId)
+    
+    // Check if provider is changed or network is changed for same provider e.g; Metamask
     if (currentNetwork.provider !== networkProvider() || (!isVM && currentNetwork.chainId !== network.id)) {
       currentNetwork.provider = networkProvider()
       if (!isVM) currentNetwork.chainId = network.id
