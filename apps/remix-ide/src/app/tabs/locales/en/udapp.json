@@ -3,6 +3,8 @@
 
   "udapp._comment_gasPrice.tsx": "libs/remix-ui/run-tab/src/lib/components/gasPrice.tsx",
   "udapp.gasLimit": "Gas limit",
+  "udapp.gasLimitAuto": "Estimated Gas",
+  "udapp.gasLimitManual": "Custom",
   "udapp.tooltipText4": "The default gas limit is 3M. Adjust as needed.",
 
   "udapp._comment_value.tsx": "libs/remix-ui/run-tab/src/lib/components/value.tsx",

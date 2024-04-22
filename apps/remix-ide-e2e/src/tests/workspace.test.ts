@@ -569,6 +569,17 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc/MULTI_SIG/MultiSigSwapHook.sol"]')
   },
 
+  'Should add Create2 solidity factory #group4': !function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspaceaddcreate2solidityfactory"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`contract Create2FactoryAssembly {`) !== -1,
+          'current displayed content is not Create2FactoryAssembly')
+      })      
+  },
+
   tearDown: sauce
 }
 

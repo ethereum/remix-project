@@ -73,7 +73,8 @@ body {
   background-color: var(--body-bg);
 }
 *::-webkit-scrollbar {
-  width: 8px;
+  width:  8px;
+  height: 6px;
 }
 *::-webkit-scrollbar-thumb {
   background-color: #37373b;

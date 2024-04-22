@@ -76,6 +76,18 @@ body {
   background-color: var(--body-bg);
 }
 
+*::-webkit-scrollbar {
+  width:  8px;
+  height: 6px;
+  background-color: var(--body-bg);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--secondary);
+  opacity: 0.3;
+  border-radius: 30px;
+}
+
 [tabindex="-1"]:focus {
   outline: 0 !important;
 }
