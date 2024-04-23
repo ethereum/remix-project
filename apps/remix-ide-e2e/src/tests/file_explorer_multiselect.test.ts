@@ -10,14 +10,12 @@ module.exports = {
     const selectedElements = []
     browser
       .openFile('contracts')
-    browser
       .click({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
-    browser
       .findElement({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]', locateStrategy: 'xpath' }, (el) => {
         selectedElements.push(el)
       })
-    browser
-      .findElement({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' }, (el) => {
+    browser.findElement({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' },
+      (el: any) => {
         selectedElements.push(el)
       })
     browser.selectFiles(selectedElements)
