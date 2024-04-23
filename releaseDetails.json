@@ -3,8 +3,8 @@
     "title": "RELEASE HIGHLIGHTS",
     "highlight1": "EIP6963 supported",
     "highlight2": "PLONK scripts of ZKP templates",
-    "highlight3": "Translation added for Russian language",
-    "highlight4": "Scripts added to use CREATE2 for contract deployment",
+    "highlight3": "Scripts added to use CREATE2 for contract deployment",
+    "highlight4": "",
     "more": "Read More",
     "moreLink": "https://medium.com/remix-ide/remix-release-v0-48-0-0f256b049ff6"
   }
