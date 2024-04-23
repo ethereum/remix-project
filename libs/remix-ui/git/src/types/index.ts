@@ -1,5 +1,3 @@
-export * from "./fragment-masking";
-export * from "./gql";
 import { Endpoints } from "@octokit/types"
 import { CommitObject, ReadCommitResult } from "isomorphic-git"
 export type GitHubUser = Endpoints["GET /user"]["response"]['data']

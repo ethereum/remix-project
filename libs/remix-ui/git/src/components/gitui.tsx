@@ -28,7 +28,7 @@ import { GitHubAuth } from './panels/github'
 import { GitHubCredentials } from './panels/githubcredentials'
 import { loaderReducer } from '../state/loaderReducer'
 import { ApolloClient, ApolloProvider, NormalizedCacheObject } from '@apollo/client'
-import { client, getApolloLink } from '../state/apolloClient'
+
 import { GetDeviceCode } from './github/devicecode'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
@@ -41,7 +41,6 @@ interface IGitUi {
 export const GitUI = (props: IGitUi) => {
   const plugin = props.plugin
   const [gitState, gitDispatch] = useReducer(gitReducer, defaultGitState)
-  const [apolloClient, setApolloClient] = useState<ApolloClient<NormalizedCacheObject>>(client)
   const [loaderState, loaderDispatch] = useReducer(loaderReducer, defaultLoaderState)
   const [activePanel, setActivePanel] = useState<string>("0");
   const [timeOut, setTimeOut] = useState<number>(null)
@@ -78,9 +77,6 @@ export const GitUI = (props: IGitUi) => {
       console.log('updatestate', gitState)
       if (gitState.currentBranch && gitState.currentBranch.remote && gitState.currentBranch.remote.url) {
         remoteCommits(gitState.currentBranch.remote.url, gitState.currentBranch.name, 1)
-      }
-      if(gitState.gitHubAccessToken) {
-        client.setLink(getApolloLink(gitState.gitHubAccessToken))
       }
     }
     setTimeout(() => {
@@ -129,7 +125,6 @@ export const GitUI = (props: IGitUi) => {
 
   return (
     <div className="m-1">
-      <ApolloProvider client={apolloClient}>
         <gitPluginContext.Provider value={gitState}>
           <loaderContext.Provider value={loaderState}>
             <gitActionsContext.Provider value={gitActionsProviderValue}>
@@ -191,7 +186,6 @@ export const GitUI = (props: IGitUi) => {
             </gitActionsContext.Provider>
           </loaderContext.Provider>
         </gitPluginContext.Provider>
-      </ApolloProvider>
     </div>
   )
 }
