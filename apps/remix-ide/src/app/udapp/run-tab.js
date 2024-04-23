@@ -172,7 +172,12 @@ export class RunTab extends ViewPlugin {
           "symbol": "sFUEL",
           "decimals": 18
         })
-        await addCustomInjectedProvider(33, event, 'Ephemery Testnet', '', ['https://arb1.arbitrum.io/rpc'])
+        await addCustomInjectedProvider(33, event, 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
+        {
+          "name": "Ephemery ETH",
+          "symbol": "ETH",
+          "decimals": 18
+        })
       }      
     }
 
