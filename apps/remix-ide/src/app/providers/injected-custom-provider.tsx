@@ -24,7 +24,9 @@ export class InjectedCustomProvider extends InjectedProviderDefault {
     }
     await super.init()
     if (this.chainName && this.rpcUrls && this.rpcUrls.length > 0) await addCustomNetwork(this.chainName, this.chainId, this.rpcUrls, this.nativeCurrency, this.blockExplorerUrls)
-    else throw new Error('Cannot add the custom network to main injected provider')
+    else {
+      console.log('The custom network is added without rpcUrls, the network need to be already installed in the injected provider.')
+    }
     return {}
   }
 }
