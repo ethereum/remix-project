@@ -1,6 +1,7 @@
 import React from 'react' // eslint-disable-line
 import {RunTabUI} from '@remix-ui/run-tab'
 import {ViewPlugin} from '@remixproject/engine-web'
+import isElectron from 'is-electron'
 import {addressToString} from '@remix-ui/helper'
 import {InjectedProviderDefault} from '../providers/injected-provider-default'
 import {InjectedCustomProvider} from '../providers/injected-custom-provider'
@@ -215,8 +216,7 @@ export class RunTab extends ViewPlugin {
         registerInjectedProvider(event)
       }
     )
-    
-    window.dispatchEvent(new Event("eip6963:requestProvider"))
+    if (!isElectron()) window.dispatchEvent(new Event("eip6963:requestProvider"))
   }
 
   writeFile(fileName, content) {
