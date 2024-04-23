@@ -85,7 +85,7 @@ describe('solcoder', () => {
         `function store(uint256 num) public {
           number = num;
         }`,
-        "code_generation",
+        "code_explaining",
         false,
         20,
         0.9,
@@ -151,7 +151,7 @@ describe('solcoder', () => {
           0.9,
           0.92,
           50,
-      ""
+          "",
         ]
       };
 
