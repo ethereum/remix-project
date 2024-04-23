@@ -1,10 +1,10 @@
 {
-    "version": "v0.47.0",
+    "version": "v0.48.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Contract pinning enabled for Remix VMs too",
-    "highlight2": "Dapp draft plugin added to edit & deploy a DApp",
-    "highlight3": "AI tools integrated using Solcoder",
-    "highlight4": "",
+    "highlight1": "EIP6963 supported",
+    "highlight2": "PLONK scripts of ZKP templates",
+    "highlight3": "Translation added for Russian language",
+    "highlight4": "Scripts added to use CREATE2 for contract deployment",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-47-0-d52f3dc21886"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-48-0-0f256b049ff6"
   }
