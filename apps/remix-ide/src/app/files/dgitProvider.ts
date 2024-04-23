@@ -984,7 +984,7 @@ class DGitProvider extends Plugin {
 
   // OCTOKIT FEATURES
 
-  async remotebranches(input: { owner: string, repo: string, token: string }) {
+  async remotebranches(input: { owner: string, repo: string, token: string, page: number, per_page:  number }) {
     console.log(input)
 
     const octokit = new Octokit({
@@ -994,9 +994,10 @@ class DGitProvider extends Plugin {
     const data = await octokit.request('GET /repos/{owner}/{repo}/branches{?protected,per_page,page}', {
       owner: input.owner,
       repo: input.repo,
-      per_page: 100
+      per_page: input.per_page || 100,
+      page: input.page || 1
     })
-    console.log(data)
+
     return data.data
   }
 
@@ -1090,20 +1091,31 @@ class DGitProvider extends Plugin {
     return pages
   }
 
-  async repositories(input: { token: string }) {
-    // Set your access token
+  async repositories(input: { token: string, page?: number, per_page?: number }) {
+
     const accessToken = input.token;
 
-    // Set headers for the request
+    let page = input.page || 1
+    const perPage = input.per_page || 10
+
+    const baseURL = 'https://api.github.com/user/repos'
+    const repositories = []
+    const sort = 'updated'
+    const direction = 'desc'
+
     const headers = {
       'Authorization': `Bearer ${accessToken}`, // Include your GitHub access token
       'Accept': 'application/vnd.github.v3+json', // GitHub API v3 media type
     };
 
-    // Make the GET request with Axios
-    const response = await axios.get('https://api.github.com/user/repos?visibility=private,public', { headers })
-      
-    return response.data
+
+    const url = `${baseURL}?visibility=private,public&page=${page}&per_page=${perPage}&sort=${sort}&direction=${direction}`;
+    const response = await axios.get(url, { headers });
+
+    repositories.push(...response.data);
+
+
+    return repositories
   }
 
 }

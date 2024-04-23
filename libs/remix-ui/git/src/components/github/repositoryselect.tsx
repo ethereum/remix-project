@@ -1,15 +1,17 @@
-import { clearInstances } from 'libs/remix-ui/run-tab/src/lib/actions/actions';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { OptionsOrGroups, GroupBase } from 'react-select';
-import Select from 'react-select/async';
+import Select from 'react-select';
 import { gitActionsContext } from '../../state/context';
+import { repository } from '../../types';
 import { selectStyles, selectTheme } from '../../types/styles';
 import { gitPluginContext } from '../gitui';
 import { TokenWarning } from '../panels/tokenWarning';
 
-const RepositorySelect = () => {
-  const [page, setPage] = useState(1);
+interface RepositorySelectProps {
+  select: (repo: repository) => void;
+}
+
+const RepositorySelect = (props: RepositorySelectProps) => {
   const [repoOtions, setRepoOptions] = useState<any>([]);
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
@@ -17,14 +19,14 @@ const RepositorySelect = () => {
   const [show, setShow] = useState(false)
 
   useEffect(() => {
-    console.log('context', context.repositories)
     if (context.repositories && context.repositories.length > 0) {
       // map context.repositories to options
       const options = context.repositories && context.repositories.length > 0 && context.repositories.map(repo => {
         return { value: repo.id, label: repo.full_name }
       })
-      console.log('options', options)
+
       setRepoOptions(options)
+      setShow(options.length > 0)
     } else {
       setRepoOptions(null)
       setShow(false)
@@ -33,22 +35,19 @@ const RepositorySelect = () => {
 
   }, [context.repositories])
 
-  useEffect(() => {
-    console.log('OTIONS', repoOtions)
-  },[repoOtions])
-
-  const selectRepo = async (value: number | string) => {
-    // find repo
-    console.log('setRepo', value, context.repositories)
-
+  const selectRepo = async (e: any) => {
+    if(!e || !e.value) {
+      props.select(null) 
+      return
+    }
+    const value = e && e.value
+  
     const repo = context.repositories.find(repo => {
       return repo.id.toString() === value.toString()
     })
-    console.log('repo', repo)
+    
     if (repo) {
-      //setBranchOptions([])
-      //setBranch({ name: "" })
-      //setRepo(repo)
+      props.select(repo)
       await actions.remoteBranches(repo.owner.login, repo.name)
     }
   }
@@ -57,8 +56,7 @@ const RepositorySelect = () => {
     try {
       setShow(true)
       setLoading(true)
-      //setRepoOptions([])
-      //setBranchOptions([])
+      setRepoOptions([])
       console.log(await actions.repositories())
     } catch (e) {
       // do nothing
@@ -74,7 +72,7 @@ const RepositorySelect = () => {
           <Select
             options={repoOtions}
             className="mt-1"
-            onChange={(e: any) => e && selectRepo(e.value)}
+            onChange={(e: any) => selectRepo(e)}
             theme={selectTheme}
             styles={selectStyles}
             isClearable={true}

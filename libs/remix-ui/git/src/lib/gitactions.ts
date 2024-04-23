@@ -470,8 +470,21 @@ export const repositories = async () => {
   try {
     const token = await tokenWarning();
     if (token) {
-      const repos = await plugin.call('dGitProvider' as any, 'repositories', { token });
+      let repos = await plugin.call('dGitProvider' as any, 'repositories', { token, per_page: 100 })
       dispatch(setRepos(repos))
+      let page = 2
+      let hasMoreData = true
+      const per_page = 100
+      while(hasMoreData){
+        let pagedResponse = await plugin.call('dGitProvider' as any, 'repositories', { token, page:page, per_page: per_page })
+        if(pagedResponse.length < per_page){
+          hasMoreData = false
+        }
+        repos = [...repos,...pagedResponse]
+        dispatch(setRepos(repos))
+        page++
+      }
+
     } else {
       plugin.call('notification', 'alert', {
         title: 'Error getting repositories',
@@ -493,8 +506,20 @@ export const remoteBranches = async (owner: string, repo: string) => {
   try {
     const token = await tokenWarning();
     if (token) {
-      const branches = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo });
+      let branches = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo, per_page: 100 });
       dispatch(setRemoteBranches(branches))
+      let page = 2
+      let hasMoreData = true
+      const per_page = 100
+      while(hasMoreData){
+        let pagedResponse = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo, page:page, per_page: per_page })
+        if(pagedResponse.length < per_page){
+          hasMoreData = false
+        }
+        branches = [...branches,...pagedResponse]
+        dispatch(setRemoteBranches(branches))
+        page++
+      }
     } else {
       plugin.call('notification', 'alert', {
         title: 'Error getting branches',

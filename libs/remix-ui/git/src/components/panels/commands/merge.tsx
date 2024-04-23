@@ -27,7 +27,6 @@ export const Merge = () => {
   }
 
   useEffect(() => {
-    console.log('context', context.repositories)
     // map context.repositories to options
     const localBranches = context.branches && context.branches.length > 0 && context.branches
       .filter(branch => !branch.remote)

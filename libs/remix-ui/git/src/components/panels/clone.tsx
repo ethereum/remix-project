@@ -4,7 +4,7 @@ import { Alert, Form, FormControl, InputGroup } from "react-bootstrap";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { gitActionsContext } from "../../state/context";
 import { gitPluginContext } from "../gitui";
-import { Repositories } from "./repositories";
+import { SelectAndCloneRepositories } from "../github/selectandclonerepositories";
 import { RemixUiCheckbox } from "@remix-ui/checkbox";
 import GitUIButton from "../buttons/gituibutton";
 
@@ -69,7 +69,7 @@ export const Clone = () => {
                 clone()
             }}>clone</GitUIButton>
             <hr />
-            <Repositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} />
+            <SelectAndCloneRepositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} />
             <hr />
             <label>options</label>
             <InputGroup className="mt-1 mb-1">
