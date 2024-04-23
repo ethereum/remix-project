@@ -1,8 +1,8 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, fileStatusMerge, setRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault } from "../state/gitpayload";
-import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote } from '../types';
+import { fileStatus, fileStatusMerge, setRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog } from "../state/gitpayload";
+import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
@@ -556,10 +556,14 @@ export const remoteCommits = async (url: string, branch: string, length: number)
       const commits = await plugin.call('dGitProvider' as any, 'remotecommits', { token, owner, repo, branch, length });
       console.log(commits, 'remote commits')
     } else {
-      plugin.call('notification', 'alert', {
-        title: 'Error getting commits',
+      sendToGitLog({
+        type: 'error',
         message: `Please check your GitHub token in the GitHub settings. It needs to have access to the commits.`
       })
+      //plugin.call('notification', 'alert', {
+      //  title: 'Error getting commits',
+      //  message: `Please check your GitHub token in the GitHub settings. It needs to have access to the commits.`
+      //})
     }
   } catch (e) {
     console.log(e)
@@ -604,12 +608,14 @@ export const getGitHubUser = async () => {
       const data: {
         user: GitHubUser,
         ratelimit: RateLimit
+        scopes: string[]
       } = await plugin.call('dGitProvider' as any, 'getGitHubUser', { token });
 
       console.log('GET USER"', data)
 
       dispatch(setGitHubUser(data.user))
       dispatch(setRateLimit(data.ratelimit))
+      dispatch(setScopes(data.scopes))
     } else {
       dispatch(setGitHubUser(null))
     }
@@ -871,4 +877,12 @@ export const removeRemote = async (remote: remote) => {
   } catch (e) {
     console.log(e)
   }
+}
+
+export const sendToGitLog = async (message: gitLog) => {
+  dispatch(setLog(message))
+}
+
+export const clearGitLog = async () => {
+  dispatch(clearLog())
 }

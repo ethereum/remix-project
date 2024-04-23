@@ -168,11 +168,31 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
                 ...state,
                 gitHubAccessToken: action.payload
             }
+        
+        case 'SET_SCOPES':
+            return {
+               ...state,
+                gitHubScopes: action.payload
+            }
 
         case 'SET_DEFAULT_REMOTE':
             return {
                 ...state,
                 defaultRemote: (action as setDefaultRemoteAction).payload
             }
+
+        case 'SET_LOG':
+            return {
+               ...state,
+                log: [...state.log, action.payload]
+            }
+
+        case 'CLEAR_LOG':
+            return {
+               ...state,
+                log: []
+            }
+
+
     }
 }

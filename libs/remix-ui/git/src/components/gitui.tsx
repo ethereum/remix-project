@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, getGitHubUser, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentials, fetch, pull, push, setDefaultRemote, addRemote, removeRemote } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, getGitHubUser, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentials, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
@@ -30,6 +30,8 @@ import { loaderReducer } from '../state/loaderReducer'
 import { ApolloClient, ApolloProvider, NormalizedCacheObject } from '@apollo/client'
 
 import { GetDeviceCode } from './github/devicecode'
+import { LogNavigation } from './navigation/log'
+import LogViewer from './panels/log'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
@@ -110,7 +112,9 @@ export const GitUI = (props: IGitUi) => {
     push,
     setDefaultRemote,
     addRemote,
-    removeRemote
+    removeRemote,
+    sendToGitLog,
+    clearGitLog
   }
 
   const pluginActionsProviderValue = {
@@ -178,7 +182,13 @@ export const GitUI = (props: IGitUi) => {
                         <GetDeviceCode></GetDeviceCode>
                       </>
                     </Accordion.Collapse>
-
+                    <hr></hr>
+                    <LogNavigation eventKey="6" activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey="6">
+                      <>
+                        <LogViewer/>
+                      </>
+                    </Accordion.Collapse>
 
 
                   </Accordion>

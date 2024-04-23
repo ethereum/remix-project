@@ -13,8 +13,8 @@ export const GetDeviceCode = () => {
   const [gitHubResponse, setGitHubResponse] = React.useState<any>(null)
   const [authorized, setAuthorized] = React.useState<boolean>(false)
 
-  
-  
+
+
   const getDeviceCodeFromGitHub = async () => {
 
     setAuthorized(false)
@@ -24,7 +24,7 @@ export const GetDeviceCode = () => {
       url: 'http://0.0.0.0:3000/github.com/login/device/code',
       data: {
         client_id: 'dccbc48453f7afa34fad',
-        scope: 'repo'
+        scope: 'repo gist'
       },
       headers: {
         'Content-Type': 'application/json',
@@ -74,6 +74,8 @@ export const GetDeviceCode = () => {
   const disconnect = async () => {
     setAuthorized(false)
     setGitHubResponse(null)
+    await pluginActions.saveToken(null)
+    await actions.getGitHubUser()
   }
 
   const checkConnection = async () => {
@@ -82,7 +84,7 @@ export const GetDeviceCode = () => {
 
   useEffect(() => {
 
-  },[])
+  }, [])
 
   useEffect(() => {
     console.log('context.rateLimit', context.rateLimit)
@@ -94,7 +96,7 @@ export const GetDeviceCode = () => {
       {(context.gitHubUser && context.gitHubUser.login) ? null :
         <button className='btn btn-primary mt-1 w-100' onClick={async () => {
           getDeviceCodeFromGitHub();
-        }}>Login in with github</button>
+        }}><i className="fab fa-github mr-1"></i>Login in with github</button>
       }
       {gitHubResponse && !authorized &&
         <div className="pt-2">
@@ -118,25 +120,26 @@ export const GetDeviceCode = () => {
       }
       {
         (context.gitHubUser && context.gitHubUser.login) ?
-        <div className="pt-2">
-          <button className='btn btn-primary mt-1 w-100' onClick={async () => {
-            disconnect()
-          }}>Disconnect</button>
-        </div>: null
+          <div className="pt-2">
+            <button className='btn btn-primary mt-1 w-100' onClick={async () => {
+              disconnect()
+            }}>Disconnect</button>
+          </div> : null
       }
       {
         (context.gitHubUser && context.gitHubUser.login) ?
-        <div className="pt-2">
-          <Card>
-            <Card.Body>
-              <Card.Title>Connected as {context.gitHubUser.login}</Card.Title>
-              <Card.Text>
-                <img src={context.gitHubUser.avatar_url} className="w-100" />
-                <a target="_blank" href={context.gitHubUser.html_url}>{context.gitHubUser.html_url}</a>
-              </Card.Text>
-            </Card.Body>
-          </Card>
-        </div>: null
+          <div className="pt-2">
+            <Card>
+              <Card.Body>
+                <Card.Title>Connected as {context.gitHubUser.login}</Card.Title>
+                <Card.Text>
+                  <img src={context.gitHubUser.avatar_url} className="w-100" />
+                  <a target="_blank" href={context.gitHubUser.html_url}>{context.gitHubUser.html_url}</a>
+                </Card.Text>
+              </Card.Body>
+            </Card>
+
+          </div> : null
       }
 
 

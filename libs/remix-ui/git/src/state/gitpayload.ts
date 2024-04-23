@@ -1,5 +1,5 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { GitHubUser, branch, commitChange, fileStatusResult, remote, pagedCommits, branchDifference } from "../types"
+import { GitHubUser, branch, commitChange, fileStatusResult, remote, pagedCommits, branchDifference, gitLog } from "../types"
 import { Endpoints } from "@octokit/types"
 
 export const fileStatus = (files: fileStatusResult[]) => {
@@ -55,6 +55,13 @@ export const setRateLimit = (rateLimit: any) => {
     return {
         type: 'SET_RATE_LIMIT',
         payload: rateLimit
+    }
+}
+
+export const setScopes = (scopes: string[]) => {
+    return {
+        type: 'SET_SCOPES',
+        payload: scopes
     }
 }
 
@@ -177,5 +184,18 @@ export const setRemoteAsDefault = (remote: remote) => {
     return {
         type: 'SET_DEFAULT_REMOTE',
         payload: remote
+    }
+}
+
+export const setLog = (message: gitLog) => {
+    return {
+        type: 'SET_LOG',
+        payload: message
+    }
+}
+
+export const clearLog = () => {
+    return {
+        type: 'CLEAR_LOG'
     }
 }

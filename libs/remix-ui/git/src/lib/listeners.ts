@@ -1,7 +1,7 @@
 
 import { ViewPlugin } from "@remixproject/engine-web";
 import React from "react";
-import { setCanUseApp, setLoading, setRepoName, setGItHubToken } from "../state/gitpayload";
+import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog } from "../state/gitpayload";
 import { gitActionDispatch } from "../types";
 import { diffFiles, getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
 
@@ -71,12 +71,24 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
         await loadFiles();
     })
     plugin.on('dGitProvider', 'commit', async () => {
+        gitDispatch(setLog({
+            message: 'Committed changes...',
+            type: 'success'
+        }))
         await loadFiles();
     })
     plugin.on('dGitProvider', 'branch', async () => {
+        gitDispatch(setLog({
+            message: "Created Branch",
+            type: "success"
+        }))
         await loadFiles();
     })
     plugin.on('dGitProvider', 'clone', async () => {
+        gitDispatch(setLog({
+            message: "Cloned Repository",
+            type: "success"
+        }))
         await loadFiles();
     })
     plugin.on('manager', 'pluginActivated', async (p: Plugin) => {

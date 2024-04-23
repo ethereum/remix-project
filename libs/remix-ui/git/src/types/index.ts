@@ -33,7 +33,13 @@ export type gitState = {
     upstream: string
     gitHubUser: GitHubUser
     rateLimit: RateLimit
+    gitHubScopes: string[]
     gitHubAccessToken: string
+    log: gitLog[]
+}
+export type gitLog = {
+    type: 'error' | 'warning' | 'info' |'success',
+    message: string
 }
 
 export type remoteBranchIdentifier = `${string}/${string}`
@@ -140,7 +146,9 @@ export const defaultGitState: gitState = {
     upstream: "",
     gitHubUser: {} as GitHubUser,
     rateLimit: {} as RateLimit,
-    gitHubAccessToken: ""
+    gitHubScopes: [],
+    gitHubAccessToken: "",
+    log: []
 }
 
 export const defaultLoaderState: loaderState = {
@@ -261,4 +269,13 @@ export interface setDefaultRemoteAction {
     payload: remote
 }
 
-export type gitActionDispatch =  setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export interface setLogAction {
+    type: string,
+    payload: gitLog
+}
+
+export interface clearLogAction {
+    type: string
+}
+
+export type gitActionDispatch =  clearLogAction | setLogAction | setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

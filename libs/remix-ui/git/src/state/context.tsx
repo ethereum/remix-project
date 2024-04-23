@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
 import React from "react"
-import { branch, commitChange, remote } from "../types"
+import { branch, commitChange, gitLog, remote } from "../types"
 
 export interface gitActions  {
     removeRemote(remote: remote): void
@@ -27,6 +27,8 @@ export interface gitActions  {
     getRemotes: () => Promise<void>
     setDefaultRemote: (remote: remote) => Promise<void>
     addRemote: (remote: remote) => Promise<void>
+    sendToGitLog: (message: gitLog) => Promise<void>
+    clearGitLog: () => Promise<void>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)

@@ -1001,9 +1001,12 @@ class DGitProvider extends Plugin {
     return data.data
   }
 
+  
+
   async getGitHubUser(input: { token: string }): Promise<{
     user: GitHubUser,
     ratelimit: RateLimit
+    scopes: string[]
   }> {
     const octokit = new Octokit({
       auth: input.token
@@ -1023,9 +1026,14 @@ class DGitProvider extends Plugin {
 
     const user = await octokit.request('GET /user')
 
+    const scopes = user.headers['x-oauth-scopes'];
+
+    console.log('scopes', scopes)
+
     return {
       user: user.data,
-      ratelimit: ratelimit.data
+      ratelimit: ratelimit.data,
+      scopes: scopes.split(',')
     }
   }
 
