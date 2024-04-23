@@ -19,6 +19,23 @@ export interface Contract {
 export interface ContractList {
   [file: string]: Contract[]
 }
+
+export type Provider = {
+  name: string
+  displayName: string
+  provider: {
+    sendAsync: () => void
+  },
+  init: () => void
+  title: string
+  dataId: string
+  options: { [key: string]: string}
+  fork: boolean
+  isVM: boolean
+  isInjected: boolean
+  position: number
+}
+
 export interface RunTabState {
   accounts: {
     loadedAccounts: Record<string, string>,
@@ -35,14 +52,7 @@ export interface RunTabState {
   networkName: string,
   chainId: string
   providers: {
-    providerList: {
-      id?: string,
-      dataId?: string,
-      title?: string,
-      value: string,
-      fork?: string
-      content: string
-    }[],
+    providerList: Provider[],
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
@@ -138,14 +148,7 @@ export interface SettingsProps {
   personalMode: boolean,
   networkName: string,
   providers: {
-    providerList: {
-      id?: string,
-      dataId?: string,
-      title?: string,
-      value: string,
-      fork?: string
-      content: string
-    }[],
+    providerList: Provider[],
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
@@ -164,14 +167,7 @@ export interface SettingsProps {
 export interface EnvironmentProps {
   selectedEnv: string,
   providers: {
-    providerList: {
-      id?: string,
-      dataId?: string,
-      title?: string,
-      value: string,
-      fork?: string
-      content: string
-    }[],
+    providerList: Provider[],
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string

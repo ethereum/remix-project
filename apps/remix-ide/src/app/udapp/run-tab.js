@@ -128,8 +128,9 @@ export class RunTab extends ViewPlugin {
   async onInitDone() {
     const udapp = this // eslint-disable-line
 
-    const addProvider = async (name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
+    const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
       await this.call('blockchain', 'addProvider', {
+        position,
         options: {},
         dataId,
         name,
@@ -153,52 +154,47 @@ export class RunTab extends ViewPlugin {
       })
     }
 
-    const addCustomInjectedProvider = async (event, name, networkId, urls, nativeCurrency) => {
-      name = `${name} through ${event.detail.info.name}`
+    const addCustomInjectedProvider = async (position, event, name, networkId, urls, nativeCurrency) => {
+      // name = `${name} through ${event.detail.info.name}`
       await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, networkId, urls, nativeCurrency)])
-      await addProvider(name, name, true, false, false)
+      await addProvider(position, name, name, true, false, false)
     }
     const registerInjectedProvider = async (event) => {
       console.log('registerInjectedProvider', event)
       await this.engine.register([new InjectedProviderDefault(event.detail.provider, event.detail.info.name)])
-      await addProvider(event.detail.info.name, event.detail.info.name, true, false, false)
+      await addProvider(0, event.detail.info.name, 'Injected Provider - ' + event.detail.info.name, true, false, false)
 
-      await addCustomInjectedProvider(event, 'Optimism', '0xa', ['https://mainnet.optimism.io'])
-      await addCustomInjectedProvider(event, 'Arbitrum One', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])
-      await addCustomInjectedProvider(event, 'SKALE Chaos Testnet', '0x50877ed6', ['https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix'], {
-        "name": "sFUEL",
-        "symbol": "sFUEL",
-        "decimals": 18
-      })
-      await addCustomInjectedProvider(event, 'Ephemery Testnet', '', ['https://arb1.arbitrum.io/rpc'])
+      if (event.detail.info.name === 'MetaMask') {
+        await addCustomInjectedProvider(5, event, 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
+        await addCustomInjectedProvider(6, event, 'L2 - Arbitrum One', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])
+        await addCustomInjectedProvider(32, event, 'SKALE Chaos Testnet', '0x50877ed6', ['https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix'], {
+          "name": "sFUEL",
+          "symbol": "sFUEL",
+          "decimals": 18
+        })
+        await addCustomInjectedProvider(33, event, 'Ephemery Testnet', '', ['https://arb1.arbitrum.io/rpc'])
+      }      
     }
 
     // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
-    await addProvider('vm-cancun', 'Remix VM (Cancun)', false, true, 'cancun', 'settingsVMCancunMode', titleVM)
-    await addProvider('vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
-    await addProvider('vm-paris', 'Remix VM (Paris)', false, true, 'paris', 'settingsVMParisMode', titleVM)
-    await addProvider('vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
-    await addProvider('vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
-    await addProvider('vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'cancun', 'settingsVMMainnetMode', titleVM)
-    await addProvider('vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'cancun', 'settingsVMSepoliaMode', titleVM)
-    await addProvider('vm-goerli-fork', 'Remix VM - Goerli fork', false, true, 'paris', 'settingsVMGoerliMode', titleVM)
-    await addProvider('vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
+    await addProvider(1, 'vm-cancun', 'Remix VM (Cancun)', false, true, 'cancun', 'settingsVMCancunMode', titleVM)
+    await addProvider(50, 'vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
+    await addProvider(51, 'vm-paris', 'Remix VM (Paris)', false, true, 'paris', 'settingsVMParisMode', titleVM)
+    await addProvider(52, 'vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
+    await addProvider(53, 'vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
+    await addProvider(2, 'vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'cancun', 'settingsVMMainnetMode', titleVM)
+    await addProvider(3, 'vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'cancun', 'settingsVMSepoliaMode', titleVM)
+    await addProvider(4, 'vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
 
     // wallet connect
-    await addProvider('walletconnect', 'WalletConnect', false, false)
-
-    // testnet
-    /*
-    await addProvider('injected-ephemery-testnet-provider', 'Ephemery Testnet', true, false)
-    await addProvider('injected-skale-chaos-testnet-provider', 'SKALE Chaos Testnet', true, false)
-    */
+    await addProvider(0, 'walletconnect', 'WalletConnect', false, false)
 
     // external provider
-    await addProvider('basic-http-provider', 'Custom - External Http Provider', false, false)
-    await addProvider('hardhat-provider', 'Dev - Hardhat Provider', false, false)
-    await addProvider('ganache-provider', 'Dev - Ganache Provider', false, false)
-    await addProvider('foundry-provider', 'Dev - Foundry Provider', false, false)
+    await addProvider(7, 'basic-http-provider', 'Custom - External Http Provider', false, false)
+    await addProvider(20, 'hardhat-provider', 'Dev - Hardhat Provider', false, false)
+    await addProvider(21, 'ganache-provider', 'Dev - Ganache Provider', false, false)
+    await addProvider(22, 'foundry-provider', 'Dev - Foundry Provider', false, false)
 
     // register injected providers
     
