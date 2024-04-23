@@ -166,16 +166,22 @@ export class RunTab extends ViewPlugin {
 
       if (event.detail.info.name === 'MetaMask') {
         await addCustomInjectedProvider(5, event, 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
-        await addCustomInjectedProvider(6, event, 'L2 - Arbitrum One', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])
-        await addCustomInjectedProvider(32, event, 'SKALE Chaos Testnet', '0x50877ed6', ['https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix'], {
-          "name": "sFUEL",
-          "symbol": "sFUEL",
+        await addCustomInjectedProvider(6, event, 'L2 - Arbitrum One', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
+        await addCustomInjectedProvider(7, event, 'Sepolia Testnet', '0xaa36a7', [],
+        {
+          "name": "Sepolia ETH",
+          "symbol": "ETH",
           "decimals": 18
-        })
-        await addCustomInjectedProvider(33, event, 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
+        })    
+        await addCustomInjectedProvider(8, event, 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
         {
           "name": "Ephemery ETH",
           "symbol": "ETH",
+          "decimals": 18
+        })
+        await addCustomInjectedProvider(9, event, 'SKALE Chaos Testnet', '0x50877ed6', ['https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix'], {
+          "name": "sFUEL",
+          "symbol": "sFUEL",
           "decimals": 18
         })
       }      
