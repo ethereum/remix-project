@@ -19,7 +19,7 @@ export const runTabInitialState: RunTabState = {
   sendValue: '0',
   sendUnit: 'wei',
   gasLimit: 0,
-  selectExEnv: 'vm-paris',
+  selectExEnv: 'vm-cancun',
   personalMode: false,
   networkName: 'VM',
   chainId:'-',
@@ -166,7 +166,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     return {
       ...state,
       selectExEnv: payload,
-      networkName: state.selectExEnv === 'vm-paris' ? 'VM' : state.networkName,
+      networkName: state.selectExEnv === 'vm-cancun' ? 'VM' : state.networkName,
       accounts: {
         ...state.accounts,
         selectedAccount: '',
