@@ -19,7 +19,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
   }
 
   const isL2 = (providerDisplayName: string) => providerDisplayName === 'Optimism Provider' || providerDisplayName === 'Arbitrum One Provider'
-  console.log('current PROVIDER', currentProvider, props.selectedEnv)
   return (
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel">
