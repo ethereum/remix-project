@@ -1,5 +1,5 @@
-import {PluginClient} from '@remixproject/plugin'
-import {Profile} from '@remixproject/plugin-utils'
+import { PluginClient } from '@remixproject/plugin'
+import { Profile } from '@remixproject/plugin-utils'
 import {
   ElectronBasePlugin,
   ElectronBasePluginClient,
@@ -8,25 +8,25 @@ import {
 import os from 'os'
 import * as pty from 'node-pty'
 import process from 'node:process'
-import {userInfo} from 'node:os'
-import {findExecutable} from '../utils/findExecutable'
-import {spawnSync} from 'child_process'
+import { userInfo } from 'node:os'
+import { findExecutable } from '../utils/findExecutable'
+import { spawnSync } from 'child_process'
 import { stripAnsi } from '../lib'
 import { DataBatcher } from '../lib/databatcher'
 
 export const detectDefaultShell = () => {
-  const {env} = process
+  const { env } = process
 
   if (process.platform === 'win32') {
     return env.SHELL || 'powershell.exe'
   }
 
   try {
-    const {shell} = userInfo()
+    const { shell } = userInfo()
     if (shell) {
       return shell
     }
-  } catch {}
+  } catch { }
 
   if (process.platform === 'darwin') {
     return env.SHELL || '/bin/zsh'
@@ -123,7 +123,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
   async getShells(): Promise<string[]> {
     if (os.platform() === 'win32') {
       let bash = await findExecutable('bash.exe')
-      if(bash.length === 0) {
+      if (bash.length === 0) {
         bash = await findExecutable('bash.exe', undefined, [process.env['ProgramFiles'] + '\\Git\\bin'])
       }
       if (bash) {
@@ -139,7 +139,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
   async createTerminal(path?: string, shell?: string): Promise<number> {
     let parsedEnv: any = null
     if (!(process.platform === 'win32')) {
-      const {stdout} = spawnSync(defaultShell, getShellEnvArgs, {
+      const { stdout } = spawnSync(defaultShell, getShellEnvArgs, {
         encoding: 'utf8',
       })
       parsedEnv = parseEnv(stdout)
@@ -155,9 +155,17 @@ class XtermPluginClient extends ElectronBasePluginClient {
       env: env,
     })
     const dataBatcher = new DataBatcher(ptyProcess.pid)
+    this.dataBatchers[ptyProcess.pid] = dataBatcher
     ptyProcess.onData((data: string) => {
       dataBatcher.write(Buffer.from(data))
       //this.sendData(data, ptyProcess.pid)
+    })
+    ptyProcess.onExit(() => {
+      const pid = ptyProcess.pid
+      this.terminals[pid].kill()
+      delete this.terminals[pid]
+      delete this.dataBatchers[pid]
+      this.emit('close', pid)
     })
     dataBatcher.on('flush', (data: string, uid: number) => {
       this.sendData(data, uid)
@@ -170,15 +178,16 @@ class XtermPluginClient extends ElectronBasePluginClient {
   async closeTerminal(pid: number): Promise<void> {
     this.terminals[pid].kill()
     delete this.terminals[pid]
+    delete this.dataBatchers[pid]
     this.emit('close', pid)
   }
 
-  async resize({cols, rows}: {cols: number; rows: number}, pid: number) {
+  async resize({ cols, rows }: { cols: number; rows: number }, pid: number) {
     if (this.terminals[pid]) {
       try {
         this.terminals[pid].resize(cols, rows)
       } catch (_err) {
-        const err = _err as {stack: any}
+        const err = _err as { stack: any }
         console.error(err.stack)
       }
     } else {
