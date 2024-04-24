@@ -268,14 +268,14 @@ jobs:
             yarn -v
             sleep 15
             yarn run test:offline
-       - run:
+      - run:
           name: start tests
           command: |
             cd "apps/remixdesktop/"
             yarn -v
             sleep 15
             yarn run test
-       - run:
+     - run:
           name: start tests git
           command: |
             cd "apps/remixdesktop/"
