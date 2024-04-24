@@ -275,7 +275,7 @@ jobs:
             yarn -v
             sleep 15
             yarn run test
-     - run:
+      - run:
           name: start tests git
           command: |
             cd "apps/remixdesktop/"
