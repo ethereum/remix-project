@@ -199,7 +199,7 @@ const tests = {
         }
       )
   },
-  'clear the terminal': function (browser: NightwatchBrowser) {
+  'clear the terminal and type exit': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
       .waitForElementVisible('*[data-id="clearTerminalButton"]', 10000)
@@ -212,7 +212,29 @@ const tests = {
         },
         function (result) {
           console.log('Text content of the element:', result.value)
-          browser.assert.ok(!(result.value as string).includes('newExample.txt')).end()
+          browser.assert.ok(!(result.value as string).includes('newExample.txt'))
+          .waitForElementVisible(
+            {
+              selector: "//*[@data-type='remixUIXT' and @data-active='1']",
+              timeout: 10000,
+              locateStrategy: 'xpath',
+            },
+            10000
+          )
+          .click({
+            selector: "//*[@data-type='remixUIXT' and @data-active='1']",
+            timeout: 10000,
+            locateStrategy: 'xpath',
+          })
+          .pause(1000)
+          .perform(function () {
+            const actions = this.actions({async: true})
+            return actions.sendKeys('exit').sendKeys(this.Keys.ENTER)
+          })
+          .pause(1000)
+          .elements('css selector', '[data-type="remixUIXTSideButton"]', function (result) {
+            browser.assert.ok((result.value as any).length === 1)
+          }).end()
         }
       ).pause(3000)
   },
