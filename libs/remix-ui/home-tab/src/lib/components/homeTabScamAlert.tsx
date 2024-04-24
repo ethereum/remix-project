@@ -18,9 +18,9 @@ function HomeTabScamAlert() {
         </span>
         <div className="d-flex flex-column">
           {platform === appPlatformTypes.web && (
-          <span className="pl-4 mt-1">
-            <FormattedMessage id="home.scamAlertText" />
-          </span>)}
+            <span className="pl-4 mt-1">
+              <FormattedMessage id="home.scamAlertText" />
+            </span>)}
           <span className="pl-4 mt-1">
             <FormattedMessage id="home.scamAlertText2" />:
             <a
