@@ -158,7 +158,6 @@ class XtermPluginClient extends ElectronBasePluginClient {
     this.dataBatchers[ptyProcess.pid] = dataBatcher
     ptyProcess.onData((data: string) => {
       dataBatcher.write(Buffer.from(data))
-      //this.sendData(data, ptyProcess.pid)
     })
     ptyProcess.onExit(() => {
       const pid = ptyProcess.pid
