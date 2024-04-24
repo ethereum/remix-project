@@ -297,7 +297,7 @@ export function UniversalDappUI(props: UdappProps) {
             <label>
               <b><FormattedMessage id="udapp.balance" />:</b> {instanceBalance} ETH
             </label>
-            {props.exEnvironment.indexOf('Injected Provider') > -1 && <i className="fas fa-edit btn btn-sm p-0" onClick={() => {props.editInstance(props.instance)}}></i>}
+            {props.exEnvironment && props.exEnvironment.startsWith('injected') > -1 && <i className="fas fa-edit btn btn-sm p-0" onClick={() => {props.editInstance(props.instance)}}></i>}
           </div>
           { props.isPinnedContract && props.instance.pinnedAt ? (
             <div className="d-flex" data-id="instanceContractPinnedAt">
