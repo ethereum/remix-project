@@ -33,10 +33,11 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         dispatchXterm({ type: 'REMOVE_TERMINAL', payload: pid })
       })
 
-      plugin.on('xterm', 'new', async (pid: number) => {
-        dispatchXterm({ type: 'ADD_TERMINAL', payload: { pid, queue: '', timeStamp: Date.now(), ref: null, hidden: false } })
-        dispatchXterm({ type: 'SHOW_OUTPUT', payload: false })
-        dispatchXterm({ type: 'HIDE_ALL_TERMINALS', payload: null })
+      plugin.on('xterm', 'new', async () => {
+          const pid = await plugin.call('xterm', 'createTerminal', workingDir, null)
+          dispatchXterm({ type: 'HIDE_ALL_TERMINALS', payload: null })
+          dispatchXterm({ type: 'SHOW_OUTPUT', payload: false })
+          dispatchXterm({ type: 'ADD_TERMINAL', payload: { pid, queue: '', timeStamp: Date.now(), ref: null, hidden: false } })
       })
 
 
@@ -134,13 +135,6 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
       return [...prevState]
     })
   }
-
-  useEffect(() => {
-    if (!xtermState.showOutput) {
-      console.log('create terminal because of showOutput')
-      //if (terminals.length === 0) createTerminal('', plugin, xtermState.workingDir, dispatchXterm)
-    }
-  }, [xtermState.showOutput])
 
   return (<>
     { <div style={{ flexGrow: 1 }} className={`flex-row ${xtermState.showOutput ? 'h-0 d-none' : 'h-100 d-flex'}`}>
