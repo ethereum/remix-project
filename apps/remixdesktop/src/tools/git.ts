@@ -40,7 +40,7 @@ export const gitProxy = {
 
 
     clone: async (url: string, path: string) => {
-        const { stdout, stderr } = await execAsync(`git clone ${url} ${path}`);
+        const { stdout, stderr } = await execAsync(`git clone ${url} '${path}'`);
     },
 
     async push(path: string, remote: string, src: string, branch: string, force: boolean = false) {
