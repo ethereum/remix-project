@@ -161,10 +161,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
     })
     ptyProcess.onExit(() => {
       const pid = ptyProcess.pid
-      this.terminals[pid].kill()
-      delete this.terminals[pid]
-      delete this.dataBatchers[pid]
-      this.emit('close', pid)
+      this.closeTerminal(pid)
     })
     dataBatcher.on('flush', (data: string, uid: number) => {
       this.sendData(data, uid)
@@ -175,9 +172,18 @@ class XtermPluginClient extends ElectronBasePluginClient {
   }
 
   async closeTerminal(pid: number): Promise<void> {
-    this.terminals[pid].kill()
-    delete this.terminals[pid]
-    delete this.dataBatchers[pid]
+    if (this.terminals) {
+      if (this.terminals[pid]) {
+        try {
+          this.terminals[pid].kill()
+        } catch (err) {
+          // ignore
+        }
+        delete this.terminals[pid]
+      }
+      if (this.dataBatchers[pid])
+        delete this.dataBatchers[pid]
+    }
     this.emit('close', pid)
   }
 
