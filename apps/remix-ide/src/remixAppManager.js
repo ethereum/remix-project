@@ -96,6 +96,10 @@ const isInjectedProvider = (name) => {
   return name.startsWith('injected')
 }
 
+const isVM = (name) => {
+  return name.startsWith('vm')
+}
+
 export function isNative(name) {
   
   // nativePlugin allows to bypass the permission request
@@ -125,7 +129,7 @@ export function isNative(name) {
     'remixGuide',
     'walletconnect'
   ]
-  return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name)
+  return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
 }
 
 /**
@@ -232,7 +236,7 @@ export class RemixAppManager extends PluginManager {
 
   isRequired(name) {
     // excluding internal use plugins
-    return requiredModules.includes(name) || isInjectedProvider(name)
+    return requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
   }
 
   async registeredPlugins() {
