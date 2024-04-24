@@ -4,7 +4,7 @@ import * as path from 'path'
 import YAML from 'yaml'
 import crypto from 'crypto'
 
-const owner = 'bunsenstraat'
+const owner = 'ethereum'
 const repo = 'remix-desktop'
 const headers = {
   'X-GitHub-Api-Version': '2022-11-28',
