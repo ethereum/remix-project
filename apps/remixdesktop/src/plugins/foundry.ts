@@ -1,12 +1,30 @@
-import * as WS from 'ws' // eslint-disable-line
-import { PluginClient } from '@remixproject/plugin'
 import * as chokidar from 'chokidar'
-import * as utils from '../utils'
-import * as fs from 'fs-extra'
-import { basename, join } from 'path'
+import { Profile } from "@remixproject/plugin-utils";
+import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
+import fs from 'fs/promises'
 const { spawn } = require('child_process') // eslint-disable-line
 
-export class FoundryClient extends PluginClient {
+const profile: Profile = {
+  name: 'electronFoundry',
+  displayName: 'electronFoundry',
+  description: 'Foundry plugin',
+}
+
+export class FoundryPlugin extends ElectronBasePlugin {
+  clients: FoundryPluginClient[] = []
+  constructor() {
+    super(profile, clientProfile, FoundryPluginClient)
+  }
+}
+
+const clientProfile: Profile = {
+  name: 'electronFoundry',
+  displayName: 'electronFoundry',
+  description: 'Foundry plugin',
+  methods: ['compile', 'sync'],
+}
+
+class FoundryPluginClient extends ElectronBasePluginClient {
   methods: Array<string>
   currentSharedFolder: string
   watcher: chokidar.FSWatcher
@@ -16,9 +34,8 @@ export class FoundryClient extends PluginClient {
   logTimeout: NodeJS.Timeout
   processingTimeout: NodeJS.Timeout
 
-  constructor(private readOnly = false) {
-    super()
-    this.methods = ['compile', 'sync']
+  constructor(webContentsId: number, profile: Profile) {
+    super(webContentsId, profile)
     this.onActivation = () => {
       console.log('Foundry plugin activated')
       this.call('terminal', 'log', { type: 'log', value: 'Foundry plugin activated' })
@@ -26,14 +43,11 @@ export class FoundryClient extends PluginClient {
     }
   }
 
-  sharedFolder(currentSharedFolder: string): void {
-    this.currentSharedFolder = currentSharedFolder
-    this.buildPath = utils.absolutePath('out', this.currentSharedFolder)
-    this.cachePath = utils.absolutePath('cache', this.currentSharedFolder)
-  }
-
-  startListening() {
-    if (fs.existsSync(this.buildPath) && fs.existsSync(this.cachePath)) {
+  async startListening() {
+    const statsBuild = await fs.lstat(this.buildPath)
+    const statsCache = await fs.lstat(this.cachePath)
+    
+    if (statsBuild.isDirectory() && statsCache.isDirectory()) {
       this.listenOnFoundryCompilation()
     } else {
       this.listenOnFoundryFolder()
@@ -46,8 +60,10 @@ export class FoundryClient extends PluginClient {
       if(this.watcher) this.watcher.close()
       this.watcher = chokidar.watch(this.currentSharedFolder, { depth: 1, ignorePermissionErrors: true, ignoreInitial: true })
       // watch for new folders
-      this.watcher.on('addDir', () => {
-        if (fs.existsSync(this.buildPath) && fs.existsSync(this.cachePath)) {
+      this.watcher.on('addDir', async () => {
+        const statsBuild = await fs.lstat(this.buildPath)
+        const statsCache = await fs.lstat(this.cachePath)
+        if (statsBuild.isDirectory() && statsCache.isDirectory()) {
           this.listenOnFoundryCompilation()
         }
       })
@@ -58,21 +74,17 @@ export class FoundryClient extends PluginClient {
 
   compile() {
     return new Promise((resolve, reject) => {
-      if (this.readOnly) {
-        const errMsg = '[Foundry Compilation]: Cannot compile in read-only mode'
-        return reject(new Error(errMsg))
-      }
       const cmd = `forge build`
       const options = { cwd: this.currentSharedFolder, shell: true }
       const child = spawn(cmd, options)
       let result = ''
       let error = ''
-      child.stdout.on('data', (data) => {
+      child.stdout.on('data', (data: any) => {
         const msg = `[Foundry Compilation]: ${data.toString()}`
         console.log('\x1b[32m%s\x1b[0m', msg)
         result += msg + '\n'
       })
-      child.stderr.on('data', (err) => {
+      child.stderr.on('data', (err: any) => {
         error += `[Foundry Compilation]: ${err.toString()} \n`
       })
       child.on('close', () => {
@@ -210,4 +222,7 @@ export class FoundryClient extends PluginClient {
     console.log('syncing Foundry with Remix...')
     this.processArtifact()
   }
+
 }
+
+
