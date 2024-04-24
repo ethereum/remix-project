@@ -107,6 +107,7 @@ export class Blockchain extends Plugin {
     this.active = true
     this.on('manager', 'pluginActivated', (plugin) => {
       if (plugin && plugin.name && (plugin.name.startsWith('injected') || plugin.name === 'walletconnect')) {
+        this.registeredPluginEvents.push(plugin.name)
         this.on(plugin.name, 'chainChanged', () => {
           this.detectNetwork((error, network) => {
             this.networkStatus = {network, error}
