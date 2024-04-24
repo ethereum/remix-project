@@ -139,6 +139,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
   }
 
   async createTerminal(path?: string, shell?: string): Promise<number> {
+    const start_time = Date.now()
     console.log('createTerminal', path, shell || defaultShell)
     let parsedEnv: any = null
     if (!(process.platform === 'win32')) {
@@ -172,7 +173,8 @@ class XtermPluginClient extends ElectronBasePluginClient {
       this.sendData(data, uid)
     })
     this.terminals[ptyProcess.pid] = ptyProcess
-
+    const end_time = Date.now()
+    console.log('createTerminal', end_time - start_time)
     return ptyProcess.pid
   }
 
@@ -218,9 +220,6 @@ class XtermPluginClient extends ElectronBasePluginClient {
   }
 
   async new(): Promise<void> {
-    console.log('new terminal in client')
-    const pid = await this.createTerminal(this.workingDir)
-    console.log('new terminal in client', pid)
-    this.emit('new', pid)
+    this.emit('new')
   }
 }
