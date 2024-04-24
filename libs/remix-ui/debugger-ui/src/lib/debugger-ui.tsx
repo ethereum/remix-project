@@ -106,7 +106,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
     const providerChanged = () => {
       debuggerModule.onEnvChanged((provider) => {
         setState((prevState) => {
-          const isLocalNodeUsed = !provider.startsWith('vm') && provider !== 'injected'
+          const isLocalNodeUsed = !provider.startsWith('vm') && !provider.startsWith('injected')
           return {...prevState, isLocalNodeUsed: isLocalNodeUsed}
         })
       })

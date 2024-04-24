@@ -116,9 +116,29 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     })
   })
 
-  plugin.on('manager', 'pluginActivated', (plugin: Plugin) => {
-    if (plugin.name === 'remixd') {
+  plugin.on('manager', 'pluginActivated', (activatedPlugin: Plugin) => {
+    if (activatedPlugin.name === 'remixd') {
       dispatch(setRemixDActivated(true))
+    } else {
+      if (activatedPlugin && activatedPlugin.name.startsWith('injected')) {
+        plugin.on(activatedPlugin.name, 'accountsChanged', (accounts: Array<string>) => {
+          const accountsMap = {}
+          accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
+          dispatch(fetchAccountsListSuccess(accountsMap))
+        })
+      } else if (activatedPlugin && activatedPlugin.name === 'walletconnect') {
+        plugin.on('walletconnect', 'accountsChanged', async (accounts: Array<string>) => {
+          const accountsMap = {}
+      
+          await Promise.all(accounts.map(async (account) => {
+            const balance = await plugin.blockchain.getBalanceInEther(account)
+            const updated = shortenAddress(account, balance)
+      
+            accountsMap[account] = updated
+          }))
+          dispatch(fetchAccountsListSuccess(accountsMap))
+        })
+      }
     }
   })
 
@@ -150,29 +170,6 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(clearRecorderCount())
   })
 
-  plugin.on('injected', 'accountsChanged', (accounts: Array<string>) => {
-    const accountsMap = {}
-    accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
-    dispatch(fetchAccountsListSuccess(accountsMap))
-  })
-
-  plugin.on('injected-trustwallet', 'accountsChanged', (accounts: Array<string>) => {
-    const accountsMap = {}
-    accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
-    dispatch(fetchAccountsListSuccess(accountsMap))
-  })
-
-  plugin.on('walletconnect', 'accountsChanged', async (accounts: Array<string>) => {
-    const accountsMap = {}
-
-    await Promise.all(accounts.map(async (account) => {
-      const balance = await plugin.blockchain.getBalanceInEther(account)
-      const updated = shortenAddress(account, balance)
-
-      accountsMap[account] = updated
-    }))
-    dispatch(fetchAccountsListSuccess(accountsMap))
-  })
 
   setInterval(() => {
     fillAccountsList(plugin, dispatch)

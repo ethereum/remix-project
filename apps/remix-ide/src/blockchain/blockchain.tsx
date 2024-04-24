@@ -61,6 +61,7 @@ export class Blockchain extends Plugin {
   }
   providers: {[key: string]: VMProvider | InjectedProvider | NodeProvider}
   transactionContextAPI: TransactionContextAPI
+  registeredPluginEvents: string[]
 
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor(config: Config) {
@@ -91,6 +92,7 @@ export class Blockchain extends Plugin {
 
     this.networkcallid = 0
     this.networkStatus = {network: {name: ' - ', id: ' - '}}
+    this.registeredPluginEvents = []
     this.setupEvents()
     this.setupProviders()
   }
@@ -103,34 +105,23 @@ export class Blockchain extends Plugin {
 
   onActivation() {
     this.active = true
-    this.on('injected', 'chainChanged', () => {
-      this.detectNetwork((error, network) => {
-        this.networkStatus = {network, error}
-        this._triggerEvent('networkStatus', [this.networkStatus])
-      })
-    })
-
-    this.on('injected-trustwallet', 'chainChanged', () => {
-      this.detectNetwork((error, network) => {
-        this.networkStatus = {network, error}
-        this._triggerEvent('networkStatus', [this.networkStatus])
-      })
-    })
-
-    this.on('walletconnect', 'chainChanged', () => {
-      this.detectNetwork((error, network) => {
-        this.networkStatus = {network, error}
-        this._triggerEvent('networkStatus', [this.networkStatus])
-      })
+    this.on('manager', 'pluginActivated', (plugin) => {
+      if (plugin && plugin.name && (plugin.name.startsWith('injected') || plugin.name === 'walletconnect')) {
+        this.on(plugin.name, 'chainChanged', () => {
+          this.detectNetwork((error, network) => {
+            this.networkStatus = {network, error}
+            this._triggerEvent('networkStatus', [this.networkStatus])
+          })
+        })
+      }
     })
   }
 
   onDeactivation() {
     this.active = false
-    this.off('injected', 'chainChanged')
-    this.off('injected-trustwallet', 'chainChanged')
-    this.off('walletconnect', 'chainChanged')
-    this.off('walletconnect', 'accountsChanged')
+    for (const plugin of this.registeredPluginEvents) {
+      this.off(plugin, 'chainChanged')
+    }
   }
 
   setupEvents() {
@@ -175,6 +166,7 @@ export class Blockchain extends Plugin {
   getCurrentProvider() {
     const provider = this.getProvider()
     if (provider && provider.startsWith('vm')) return this.providers['vm']
+    if (provider && provider.startsWith('injected')) return this.providers['injected']
     if (this.providers[provider]) return this.providers[provider]
     return this.providers.web3 // default to the common type of provider
   }
@@ -532,16 +524,6 @@ export class Blockchain extends Plugin {
    */
   getCurrentFork() {
     return this.executionContext.getCurrentFork()
-  }
-
-  isWeb3Provider() {
-    const isVM = this.executionContext.isVM()
-    const isInjected = this.getProvider() === 'injected'
-    return !isVM && !isInjected
-  }
-
-  isInjectedWeb3() {
-    return this.getProvider() === 'injected'
   }
 
   signMessage(message, account, passphrase, cb) {
