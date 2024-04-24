@@ -5,7 +5,7 @@
   "udapp.gasLimit": "Gas limit",
   "udapp.gasLimitAuto": "Estimated Gas",
   "udapp.gasLimitManual": "Custom",
-  "udapp.tooltipText4": "The default gas limit is 3M. Adjust as needed.",
+  "udapp.tooltipText4": "Enter custom Gas Limit.",
 
   "udapp._comment_value.tsx": "libs/remix-ui/run-tab/src/lib/components/value.tsx",
   "udapp.value": "Value",
