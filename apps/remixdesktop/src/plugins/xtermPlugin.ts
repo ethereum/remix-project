@@ -81,7 +81,9 @@ export class XtermPlugin extends ElectronBasePlugin {
 
   new(webContentsId: any): void {
     const client = this.clients.find((c) => c.webContentsId === webContentsId)
+    console.log('new terminal', webContentsId)
     if (client) {
+      console.log('client exists')
       client.new()
     }
   }
@@ -137,6 +139,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
   }
 
   async createTerminal(path?: string, shell?: string): Promise<number> {
+    console.log('createTerminal', path, shell || defaultShell)
     let parsedEnv: any = null
     if (!(process.platform === 'win32')) {
       const { stdout } = spawnSync(defaultShell, getShellEnvArgs, {
@@ -153,10 +156,12 @@ class XtermPluginClient extends ElectronBasePluginClient {
       rows: 20,
       cwd: path || process.cwd(),
       env: env,
-    })
+      encoding: 'utf8',
+    });
     const dataBatcher = new DataBatcher(ptyProcess.pid)
     this.dataBatchers[ptyProcess.pid] = dataBatcher
     ptyProcess.onData((data: string) => {
+      //console.log('data', data)
       dataBatcher.write(Buffer.from(data))
     })
     ptyProcess.onExit(() => {
@@ -213,8 +218,9 @@ class XtermPluginClient extends ElectronBasePluginClient {
   }
 
   async new(): Promise<void> {
-    console.log('new terminal')
+    console.log('new terminal in client')
     const pid = await this.createTerminal(this.workingDir)
+    console.log('new terminal in client', pid)
     this.emit('new', pid)
   }
 }
