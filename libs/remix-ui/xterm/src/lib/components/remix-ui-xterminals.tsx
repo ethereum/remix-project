@@ -25,6 +25,10 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   useEffect(() => {
     setTimeout(async () => {
 
+      plugin.call('xterm', 'getShells').then((shells) => {
+        dispatchXterm({ type: 'ADD_SHELLS', payload: shells })
+      })
+
       plugin.on('xterm', 'data', async (data: string, pid: number) => {
         writeToTerminal(data, pid)
       })
@@ -34,10 +38,10 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
       })
 
       plugin.on('xterm', 'new', async () => {
-          const pid = await plugin.call('xterm', 'createTerminal', workingDir, null)
-          dispatchXterm({ type: 'HIDE_ALL_TERMINALS', payload: null })
-          dispatchXterm({ type: 'SHOW_OUTPUT', payload: false })
-          dispatchXterm({ type: 'ADD_TERMINAL', payload: { pid, queue: '', timeStamp: Date.now(), ref: null, hidden: false } })
+        const pid = await plugin.call('xterm', 'createTerminal', workingDir, null)
+        dispatchXterm({ type: 'HIDE_ALL_TERMINALS', payload: null })
+        dispatchXterm({ type: 'SHOW_OUTPUT', payload: false })
+        dispatchXterm({ type: 'ADD_TERMINAL', payload: { pid, queue: '', timeStamp: Date.now(), ref: null, hidden: false } })
       })
 
 
@@ -47,7 +51,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
       })
 
       const workingDir = await plugin.call('fs', 'getWorkingDir')
-      if(workingDir && workingDir !== '') {
+      if (workingDir && workingDir !== '') {
         dispatchXterm({ type: 'ENABLE_TERMINALS', payload: null })
         dispatchXterm({ type: 'SET_WORKING_DIR', payload: workingDir })
       }
@@ -76,7 +80,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 
   useEffect(() => {
     setTerminals(xtermState.terminals)
-    if(xtermState.terminals.length === 0) {
+    if (xtermState.terminals.length === 0) {
       dispatchXterm({ type: 'SHOW_OUTPUT', payload: true })
     }
   }, [xtermState.terminals])
@@ -137,9 +141,9 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
   }
 
   return (<>
-    { <div style={{ flexGrow: 1 }} className={`flex-row ${xtermState.showOutput ? 'h-0 d-none' : 'h-100 d-flex'}`}>
+    {<div style={{ flexGrow: 1 }} className={`flex-row ${xtermState.showOutput ? 'h-0 d-none' : 'h-100 d-flex'}`}>
       <>
-        { <div className={`flex-row w-100 h-100 ${xtermState.showOutput ? 'h-0 d-none' : 'h-100 d-flex'}`}>
+        {<div className={`flex-row w-100 h-100 ${xtermState.showOutput ? 'h-0 d-none' : 'h-100 d-flex'}`}>
           {terminals.map((xtermState) => {
             return (
               <div className={`h-100 w-100 ${xtermState.hidden ? 'd-none' : 'd-block'}`} data-active={`${xtermState.hidden ? '0' : '1'}`} key={xtermState.pid} data-type="remixUIXT" data-id={`remixUIXT${xtermState.pid}`}>
