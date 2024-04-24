@@ -8,5 +8,4 @@ declare class InjectedProvider {
   getBalanceInEther(address: any): Promise<string>;
   getGasPrice(cb: any): void;
   signMessage(message: any, account: any, _passphrase: any, cb: any): void;
-  getProvider(): string;
 }

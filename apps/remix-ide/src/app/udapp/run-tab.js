@@ -155,26 +155,28 @@ export class RunTab extends ViewPlugin {
       })
     }
 
-    const addCustomInjectedProvider = async (position, event, name, networkId, urls, nativeCurrency) => {
+    const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency) => {
       // name = `${name} through ${event.detail.info.name}`
       await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, networkId, urls, nativeCurrency)])
-      await addProvider(position, name, name, true, false, false)
+      await addProvider(position, name, displayName, true, false, false)
     }
     const registerInjectedProvider = async (event) => {
       console.log('registerInjectedProvider', event)
-      await this.engine.register([new InjectedProviderDefault(event.detail.provider, event.detail.info.name)])
-      await addProvider(0, event.detail.info.name, 'Injected Provider - ' + event.detail.info.name, true, false, false)
+      const name = 'injected-' + event.detail.info.name
+      const displayName = 'Injected Provider - ' + event.detail.info.name
+      await this.engine.register([new InjectedProviderDefault(event.detail.provider, name)])
+      await addProvider(0, name, displayName, true, false, false)
 
       if (event.detail.info.name === 'MetaMask') {
-        await addCustomInjectedProvider(5, event, 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
-        await addCustomInjectedProvider(6, event, 'L2 - Arbitrum One', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
-        await addCustomInjectedProvider(7, event, 'Sepolia Testnet', '0xaa36a7', [],
+        await addCustomInjectedProvider(5, event, 'injected-metamask-optimism', 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
+        await addCustomInjectedProvider(6, event, 'injected-metamask-arbitrum', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
+        await addCustomInjectedProvider(7, event, 'injected-metamask-sepolia', '0xaa36a7', [],
           {
             "name": "Sepolia ETH",
             "symbol": "ETH",
             "decimals": 18
           })    
-        await addCustomInjectedProvider(8, event, 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
+        await addCustomInjectedProvider(8, event, 'injected-metamask-ephemery', 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
           {
             "name": "Ephemery ETH",
             "symbol": "ETH",
