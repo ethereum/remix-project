@@ -169,8 +169,8 @@ export class RunTab extends ViewPlugin {
 
       if (event.detail.info.name === 'MetaMask') {
         await addCustomInjectedProvider(5, event, 'injected-metamask-optimism', 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
-        await addCustomInjectedProvider(6, event, 'injected-metamask-arbitrum', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
-        await addCustomInjectedProvider(7, event, 'injected-metamask-sepolia', '0xaa36a7', [],
+        await addCustomInjectedProvider(6, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
+        await addCustomInjectedProvider(7, event, 'injected-metamask-sepolia', 'Testnet - Sepolia', '0xaa36a7', [],
           {
             "name": "Sepolia ETH",
             "symbol": "ETH",
