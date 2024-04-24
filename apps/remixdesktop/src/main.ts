@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess } from 'electron';
+import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess, screen } from 'electron';
 import path from 'path';
 
 
@@ -35,8 +35,9 @@ const windowSet = new Set<BrowserWindow>([]);
 export const createWindow = async (dir?: string): Promise<void> => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 800,
-    width: 1024,
+    height: screen.getPrimaryDisplay().size.height * 0.8,
+    width: screen.getPrimaryDisplay().size.width * 0.8,
+    frame: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     },
@@ -52,7 +53,6 @@ export const createWindow = async (dir?: string): Promise<void> => {
     (process.env.NODE_ENV === 'production' || isPackaged) && !isE2ELocal ? `file://${__dirname}/remix-ide/index.html` + params :
       'http://localhost:8080' + params)
 
-  mainWindow.maximize();
 
   if (dir) {
     mainWindow.setTitle(dir)
