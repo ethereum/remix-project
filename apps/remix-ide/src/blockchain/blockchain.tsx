@@ -120,8 +120,8 @@ export class Blockchain extends Plugin {
 
   onDeactivation() {
     this.active = false
-    for (const plugin of this.registeredPluginEvents) {
-      this.off(plugin, 'chainChanged')
+    for (const pluginName of this.registeredPluginEvents) {
+      this.off(pluginName, 'chainChanged')
     }
   }
 
