@@ -56,12 +56,6 @@ ipcMain.on('git:startclone', async (event) => {
   isoGitPlugin.startClone(event)
 })
 
-ipcMain.on('terminal:new', async (event) => {
-  console.log('new terminal')
-  xtermPlugin.new(event)
-})
-
-
 ipcMain.handle('getWebContentsID', (event, message) => {
   return event.sender.id
 })

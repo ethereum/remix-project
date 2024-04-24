@@ -34,8 +34,9 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
       })
 
       plugin.on('xterm', 'new', async (pid: number) => {
-        dispatchXterm({ type: 'SHOW_OUTPUT', payload: false })
         dispatchXterm({ type: 'ADD_TERMINAL', payload: { pid, queue: '', timeStamp: Date.now(), ref: null, hidden: false } })
+        dispatchXterm({ type: 'SHOW_OUTPUT', payload: false })
+        dispatchXterm({ type: 'HIDE_ALL_TERMINALS', payload: null })
       })
 
 
@@ -136,7 +137,8 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 
   useEffect(() => {
     if (!xtermState.showOutput) {
-      if (terminals.length === 0) createTerminal('', plugin, xtermState.workingDir, dispatchXterm)
+      console.log('create terminal because of showOutput')
+      //if (terminals.length === 0) createTerminal('', plugin, xtermState.workingDir, dispatchXterm)
     }
   }, [xtermState.showOutput])
 
