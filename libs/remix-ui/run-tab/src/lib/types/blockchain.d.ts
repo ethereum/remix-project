@@ -47,8 +47,6 @@ export class Blockchain extends Plugin<any, any> {
      * @return {String} - fork name
      */
   getCurrentFork(): string;
-  isWeb3Provider(): boolean;
-  isInjectedWeb3(): boolean;
   signMessage(message: any, account: any, passphrase: any, cb: any): void;
   web3(): any;
   getTxListener(opts: any): any;
