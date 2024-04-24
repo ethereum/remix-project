@@ -45,7 +45,7 @@ const RepositorySelect = (props: RepositorySelectProps) => {
     const repo = context.repositories.find(repo => {
       return repo.id.toString() === value.toString()
     })
-    
+
     if (repo) {
       props.select(repo)
       await actions.remoteBranches(repo.owner.login, repo.name)
@@ -64,7 +64,7 @@ const RepositorySelect = (props: RepositorySelectProps) => {
   };
 
   return (
-    <><TokenWarning /><Button onClick={fetchRepositories} className="w-100 mt-1">
+    <><Button onClick={fetchRepositories} className="w-100 mt-1">
       <i className="fab fa-github mr-1"></i>Fetch Repositories from GitHub
     </Button>
       {

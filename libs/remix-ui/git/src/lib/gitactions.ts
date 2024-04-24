@@ -488,7 +488,7 @@ export const repositories = async () => {
     } else {
       plugin.call('notification', 'alert', {
         title: 'Error getting repositories',
-        message: `Please check your GitHub token in the GitHub settings. It needs to have access to the repositories.`
+        message: `Please check your GitHub token in the GitHub settings... cannot connect to GitHub`
       })
       dispatch(setRepos([]))
     }
@@ -558,12 +558,8 @@ export const remoteCommits = async (url: string, branch: string, length: number)
     } else {
       sendToGitLog({
         type: 'error',
-        message: `Please check your GitHub token in the GitHub settings. It needs to have access to the commits.`
+        message: `Please check your GitHub token in the GitHub settings.`
       })
-      //plugin.call('notification', 'alert', {
-      //  title: 'Error getting commits',
-      //  message: `Please check your GitHub token in the GitHub settings. It needs to have access to the commits.`
-      //})
     }
   } catch (e) {
     console.log(e)

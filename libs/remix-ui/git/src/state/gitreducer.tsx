@@ -182,10 +182,19 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
             }
 
         case 'SET_LOG':
+            const previousLog = [...state.log]
+            // check if the new message is the same as the last
+            if (previousLog.length > 0 && previousLog[previousLog.length - 1].message === action.payload.message) {
+                return {
+                   ...state,
+                    log: previousLog
+                }
+            }
             return {
                ...state,
-                log: [...state.log, action.payload]
+                log: [...previousLog, action.payload]
             }
+ 
 
         case 'CLEAR_LOG':
             return {
