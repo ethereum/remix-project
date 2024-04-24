@@ -4,14 +4,14 @@ import * as path from 'path'
 import YAML from 'yaml'
 import crypto from 'crypto'
 
-const owner = 'ethereum'
+const owner = 'remix-project-org'
 const repo = 'remix-desktop'
 const headers = {
   'X-GitHub-Api-Version': '2022-11-28',
 }
 
 const octokit = new Octokit({
-  auth: process.env.GH_TOKEN,
+  auth: process.env.GH_TOKEN_DESKTOP_PUBLISH,
 })
 
 async function getAllReleases() {
