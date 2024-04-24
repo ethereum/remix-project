@@ -92,7 +92,7 @@ const sensitiveCalls = {
   web3Provider: ['sendAsync']
 }
 
-const isInjectedProvicer = (name) => {
+const isInjectedProvider = (name) => {
   return name.startsWith('injected')
 }
 
@@ -125,7 +125,7 @@ export function isNative(name) {
     'remixGuide',
     'walletconnect'
   ]
-  return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvicer(name)
+  return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name)
 }
 
 /**
@@ -232,7 +232,7 @@ export class RemixAppManager extends PluginManager {
 
   isRequired(name) {
     // excluding internal use plugins
-    return requiredModules.includes(name) || isInjectedProvicer(name)
+    return requiredModules.includes(name) || isInjectedProvider(name)
   }
 
   async registeredPlugins() {
