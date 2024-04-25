@@ -480,6 +480,7 @@ jobs:
     resource_class:
         macos.m1.large.gen1
     working_directory: ~/remix-project
+    parallelism: 10
     steps:
       - checkout
       - attach_workspace:
@@ -520,7 +521,7 @@ jobs:
           command: |
             nvm use 20
             cd apps/remixdesktop
-            yarn run test:offline && yarn run test && yarn run test:isogit   
+            ./run_ci_test.sh  
   
   uploadartifacts:
     docker:
