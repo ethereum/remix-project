@@ -9,6 +9,7 @@ interface IRemixDragBarUi {
   minWidth: number
   maximiseTrigger: number
   resetTrigger: number
+  layoutPosition: 'left' | 'right'
 }
 
 const DragBar = (props: IRemixDragBarUi) => {
@@ -19,7 +20,13 @@ const DragBar = (props: IRemixDragBarUi) => {
   const nodeRef = React.useRef(null) // fix for strictmode
 
   useEffect(() => {
-    setDragBarPosX(offset + (props.hidden ? 0 : props.refObject.current.offsetWidth))
+    if (props.hidden) {
+      setDragBarPosX(offset)
+    } else if (props.layoutPosition === 'left') {
+      setDragBarPosX(offset + props.refObject.current.offsetWidth)
+    } else if (props.layoutPosition === 'right') {
+      setDragBarPosX(offset)
+    }
   }, [props.hidden, offset])
 
   useEffect(() => {

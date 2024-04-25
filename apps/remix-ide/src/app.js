@@ -9,6 +9,7 @@ import {Web3ProviderModule} from './app/tabs/web3-provider'
 import {CompileAndRun} from './app/tabs/compile-and-run'
 import {SidePanel} from './app/components/side-panel'
 import {HiddenPanel} from './app/components/hidden-panel'
+import {PinnedPanel} from './app/components/pinned-panel'
 import {VerticalIcons} from './app/components/vertical-icons'
 import {LandingPage} from './app/ui/landing-page/landing-page'
 import {MainPanel} from './app/components/main-panel'
@@ -389,7 +390,7 @@ class AppComponent {
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor, appManager)
 
-    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, filePanel, pluginManagerComponent, this.settings])
+    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, filePanel, pluginManagerComponent, this.settings, this.pinnedPanel])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
     const openZeppelinProxy = new OpenZeppelinProxy(blockchain)

@@ -27,15 +27,18 @@ const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
   const [showEnterDialog, setShowEnterDialog] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
-  const [maximiseTrigger, setMaximiseTrigger] = useState<number>(0)
-  const [resetTrigger, setResetTrigger] = useState<number>(0)
+  const [hidePinnedPanel, setHidePinnedPanel] = useState<boolean>(false)
+  const [maximiseLeftTrigger, setMaximiseLeftTrigger] = useState<number>(0)
+  const [resetLeftTrigger, setResetLeftTrigger] = useState<number>(0)
+  const [maximiseRightTrigger, setMaximiseRightTrigger] = useState<number>(0)
+  const [resetRightTrigger, setResetRightTrigger] = useState<number>(0)
   const [online, setOnline] = useState<boolean>(true)
   const [locale, setLocale] = useState<{ code: string; messages: any }>({
     code: 'en',
     messages: {}
   })
   const sidePanelRef = useRef(null)
-  const pinnedPanelRef: React.MutableRefObject<JSX.Element> = useRef(null)
+  const pinnedPanelRef = useRef(null)
 
   useEffect(() => {
     async function activateApp() {
@@ -82,16 +85,35 @@ const RemixApp = (props: IRemixAppUi) => {
     })
 
     props.app.layout.event.on('maximisesidepanel', () => {
-      setMaximiseTrigger((prev) => {
+      setMaximiseLeftTrigger((prev) => {
         return prev + 1
       })
     })
 
     props.app.layout.event.on('resetsidepanel', () => {
-      setResetTrigger((prev) => {
+      setResetLeftTrigger((prev) => {
         return prev + 1
       })
     })
+
+    props.app.layout.event.on('minimizepinnedpanel', () => {
+      setTimeout(() => {
+        setHideSidePanel(true)
+      }, 1000)
+    })
+
+    props.app.layout.event.on('maximisepinnedpanel', () => {
+      setMaximiseRightTrigger((prev) => {
+        return prev + 1
+      })
+    })
+
+    props.app.layout.event.on('resetpinnedpanel', () => {
+      setResetRightTrigger((prev) => {
+        return prev + 1
+      })
+    })
+
     props.app.localeModule.events.on('localeChanged', (nextLocale) => {
       setLocale(nextLocale)
     })
@@ -167,18 +189,31 @@ const RemixApp = (props: IRemixAppUi) => {
                 {props.app.sidePanel.render()}
               </div>
               <DragBar
-                resetTrigger={resetTrigger}
-                maximiseTrigger={maximiseTrigger}
+                resetTrigger={resetLeftTrigger}
+                maximiseTrigger={maximiseLeftTrigger}
                 minWidth={285}
                 refObject={sidePanelRef}
                 hidden={hideSidePanel}
                 setHideStatus={setHideSidePanel}
+                layoutPosition='left'
               ></DragBar>
               <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
                 <RemixUIMainPanel layout={props.app.layout}></RemixUIMainPanel>
                 <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-all-tabs" tooltipText={<FormattedMessage id="remixApp.scrollToSeeAllTabs" />}>
                   <div className="remix-ui-tabs_end remix-bg-opacity position-absolute position-fixed"></div>
                 </CustomTooltip>
+              </div>
+              <DragBar
+                resetTrigger={resetRightTrigger}
+                maximiseTrigger={maximiseRightTrigger}
+                minWidth={285}
+                refObject={pinnedPanelRef}
+                hidden={hidePinnedPanel}
+                setHideStatus={setHideSidePanel}
+                layoutPosition='right'
+              ></DragBar>
+              <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className='pinnedpanel d-flex border-right border-left'>
+                {props.app.pinnedPanel.render()}
               </div>
             </div>
             <div>{props.app.hiddenPanel.render()}</div>

@@ -4,6 +4,8 @@
   "panel.documentation": "Documentation",
   "panel.description": "Description",
   "panel.maintainedByRemix": "Maintained by Remix",
+  "panel.pinnedMsg": "Click to dock plugin to the right",
+  "panel.unPinnedMsg": "Click to return plugin to the side panel",
   "panel.maintainedExternally": "Not maintained by Remix",
   "panel.pluginInfo": "Plugin info",
   "panel.linkToDoc": "Link to documentation",

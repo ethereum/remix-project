@@ -1,11 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react' // eslint-disable-line
-import { FormattedMessage } from 'react-intl'
-import { PluginRecord } from '../types'
+import React, {useEffect, useState} from 'react' // eslint-disable-line
+import {FormattedMessage} from 'react-intl'
+import {PluginRecord} from '../types'
 import './panel.css'
 import { CustomTooltip } from '@remix-ui/helper'
 
 export interface RemixPanelProps {
-  plugins: Record<string, PluginRecord>
+  plugins: Record<string, PluginRecord>,
+  pinView?: (profile: PluginRecord['profile'], view: PluginRecord['view']) => void,
+  unPinView?: (profile: PluginRecord['profile']) => void
 }
 const RemixUIPanelHeader = (props: RemixPanelProps) => {
   const [plugin, setPlugin] = useState<PluginRecord>()
@@ -23,6 +25,15 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
 
   const toggleClass = () => {
     setToggleExpander(!toggleExpander)
+  }
+
+  const pinPlugin = () => {
+    console.log('called pinPlugin')
+    props.pinView && props.pinView(plugin.profile, plugin.view)
+  }
+
+  const unPinPlugin = () => {
+    props.unPinView && props.unPinView(plugin.profile)
   }
 
   const tooltipChild = <i className={`px-1 ml-2 pt-1 pb-2 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
@@ -49,6 +60,21 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
               {tooltipChild}
             </CustomTooltip>
           </div>
+          {
+            !plugin?.pinned ? (
+              <div className='d-flex' onClick={pinPlugin}>
+                <CustomTooltip placement="right-end" tooltipId="pinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.pinnedMsg" />}>
+                  <i aria-hidden="true" className="mt-1 px-1 pl-2 fas fa-thumbtack"></i>
+                </CustomTooltip>
+              </div>
+            ) : (
+              <div className='d-flex' onClick={unPinPlugin}>
+                <CustomTooltip placement="right-end" tooltipId="unPinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.unPinnedMsg" />}>
+                  <i aria-hidden="true" className="text-success mt-1 px-1 pl-2 fas fa-thumbtack"></i>
+                </CustomTooltip>
+              </div>
+            )
+          }
         </div>
       </div>
       <div className={`bg-light mx-3 mb-2 p-3 pt-1 border-bottom flex-column ${toggleExpander ? 'd-flex' : 'd-none'}`}>

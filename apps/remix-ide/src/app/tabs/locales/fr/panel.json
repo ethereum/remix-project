@@ -6,5 +6,7 @@
   "panel.maintainedByRemix": "Maintenu par Remix",
   "panel.pluginInfo": "Informations sur l'extension",
   "panel.linkToDoc": "Lien vers la documentation",
-  "panel.makeAnissue": "Faire un ticket"
+  "panel.makeAnissue": "Faire un ticket",
+  "panel.pinnedMsg": "Click to dock plugin to the right",
+  "panel.unPinnedMsg": "Click to return plugin to the side panel"
 }
