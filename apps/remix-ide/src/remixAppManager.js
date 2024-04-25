@@ -281,11 +281,8 @@ export class RemixAppManager extends PluginManager {
       }
     }
 
-    plugins = plugins.filter((plugin) => {
-      return plugin.name !== 'dgit'
-    })
-
     return plugins.map(plugin => {
+      if (plugin.name === 'dgit' && Registry.getInstance().get('platform').api.isDesktop()) { plugin.url = 'https://dgit4-76cc9.web.app/' }
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
     })
