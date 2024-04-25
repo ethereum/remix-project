@@ -656,3 +656,21 @@ export const moveFolderIsAllowed = async (src: string, dest: string) => {
   return isAllowed
 }
 
+export const moveFilesIsAllowed = async (src: string[], dest: string) => {
+  const fileManager = plugin.fileManager
+  const boolArray: boolean[] = []
+  for (const srcFile of src) {
+    boolArray.push(await fileManager.moveFileIsAllowed(srcFile, dest))
+  }
+  return boolArray.every(p => p === true) || false
+}
+
+export const moveFoldersIsAllowed = async (src: string[], dest: string) => {
+  const fileManager = plugin.fileManager
+  const boolArray: boolean[] = []
+  for (const srcFile of src) {
+    boolArray.push(await fileManager.moveDirIsAllowed(srcFile, dest))
+  }
+  return boolArray.every(p => p === true) || false
+}
+
