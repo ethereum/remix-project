@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useRef, useState, RefObject, useMemo } from 'react'
+import React, { SyntheticEvent, useEffect, useRef, useState, RefObject, useMemo, useContext } from 'react'
 import { Popover } from 'react-bootstrap'
 import { FileType, WorkspaceElement } from '../types'
 import { getPathIcon } from '@remix-ui/helper';
@@ -9,6 +9,7 @@ import { getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators';
 import { FileHoverIcons } from './file-explorer-hovericons';
 import { deletePath } from '../actions';
+import { FileSystemContext } from '../contexts';
 
 export default function useOnScreen(ref: RefObject<HTMLElement>) {
 
@@ -37,6 +38,8 @@ interface FlatTreeProps {
   handleClickFolder: (path: string, type: string) => void
   moveFile: (dest: string, src: string) => void
   moveFolder: (dest: string, src: string) => void
+  moveFolderSilently: (dest: string, src: string) => Promise<void>
+  moveFileSilently: (dest: string, src: string) => Promise<void>
   fileState: fileDecoration[]
   createNewFile?: any
   createNewFolder?: any
@@ -50,7 +53,7 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder, deletePath, editPath } = props
+  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder, deletePath, moveFileSilently, moveFolderSilently } = props
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
     path: string,
@@ -249,6 +252,8 @@ export const FlatTree = (props: FlatTreeProps) => {
         getFlatTreeItem={getFlatTreeItem}
         moveFile={moveFile}
         moveFolder={moveFolder}
+        moveFolderSilently={moveFolderSilently}
+        moveFileSilently={moveFileSilently}
         handleClickFolder={handleClickFolder}
         expandPath={expandPath}
       >
@@ -257,7 +262,8 @@ export const FlatTree = (props: FlatTreeProps) => {
           onClick={handleTreeClick}
           onMouseLeave={onMouseLeave}
           onMouseMove={onMouseMove}
-          onContextMenu={handleContextMenu}>
+          onContextMenu={handleContextMenu}
+        >
           { showMouseOverTarget && mouseOverTarget && !isDragging &&
             <Popover id='popover-basic'
               placement='top'
