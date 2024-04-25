@@ -131,7 +131,7 @@ jobs:
             name: "Run tests"
             command: |
               cd apps/remixdesktop/
-              ./run_test.sh
+              ./run_ci_test.sh
 
   build-remixdesktop-linux:
       machine:
