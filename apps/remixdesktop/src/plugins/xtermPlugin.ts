@@ -157,7 +157,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
       name: 'xterm-color',
       cols: 80,
       rows: 20,
-      cwd: path || process.cwd(),
+      cwd: path || this.workingDir || process.cwd(),
       env: env,
       encoding: 'utf8',
     });

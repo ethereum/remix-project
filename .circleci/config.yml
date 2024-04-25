@@ -110,6 +110,7 @@ jobs:
     resource_class:
       xlarge
     working_directory: ~/remix-project
+    parallelism: 10
     steps:
         - run: ldd --version
         - checkout
@@ -130,7 +131,7 @@ jobs:
             name: "Run tests"
             command: |
               cd apps/remixdesktop/
-              yarn run build:e2e && yarn run test:offline && yarn run test && yarn run test:isogit
+              ./run_test.sh
 
   build-remixdesktop-linux:
       machine:
