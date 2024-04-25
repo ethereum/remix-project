@@ -74,6 +74,7 @@ export class SidePanel extends AbstractPanel {
     if (this.plugins[profile.name].pinned) return
     this.plugins[profile.name].pinned = true
     this.call('pinnedPanel', 'addView', profile, view)
+    // this.removeView(profile)
   }
 
   unPinView (profile) {
@@ -106,7 +107,7 @@ export class SidePanel extends AbstractPanel {
   }
 
   updateComponent(state: any) {
-    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins}></RemixUIPanelHeader>} plugins={state.plugins} />
+    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins} pinView={this.pinView.bind(this)} unPinView={this.unPinView.bind(this)}></RemixUIPanelHeader>} plugins={state.plugins} />
   }
 
   renderComponent() {

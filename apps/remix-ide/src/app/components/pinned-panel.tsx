@@ -26,29 +26,23 @@ export class PinnedPanel extends AbstractPanel {
     this.renderComponent()
   }
 
-  focus(name) {
-    this.emit('focusChanged', name)
-    super.focus(name)
+  currentFocus (): string {
+    return Object.values(this.plugins).find(plugin => {
+      return plugin.pinned
+    }).profile.name
   }
 
   removeView(profile) {
-    super.removeView(profile)
+    this.remove(profile.name)
     this.emit('unpinnedPlugin', profile.name)
     this.renderComponent()
   }
 
   addView(profile, view) {
     super.addView(profile, view)
-    this.renderComponent()
-  }
-
-  /**
-   * Display content and update the header
-   * @param {String} name The name of the plugin to display
-   */
-  async showContent(name) {
-    super.showContent(name)
-    this.emit('focusChanged', name)
+    this.plugins[profile.name].pinned = true
+    super.showContent(profile.name)
+    this.emit('pinnedPlugin', profile.name)
     this.renderComponent()
   }
 
