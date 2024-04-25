@@ -281,8 +281,11 @@ export class RemixAppManager extends PluginManager {
       }
     }
 
+    plugins = plugins.filter((plugin) => {
+      return plugin.name !== 'dgit'
+    })
+
     return plugins.map(plugin => {
-      if (plugin.name === 'dgit') return null
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
     })
