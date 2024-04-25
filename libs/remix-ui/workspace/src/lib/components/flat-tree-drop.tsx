@@ -116,7 +116,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
       }
       selectItems.push(dragTarget)
     })
-    // console.log('selectItem', { selectItems, target })
     return selectItems
   }
 
