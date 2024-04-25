@@ -1,0 +1,13 @@
+{
+  "permissionHandler.allPermissionsReset": "Все разрешения были сброшены.",
+  "permissionHandler.rememberText": "изменено и",
+  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} хочет получить доступ к \"{method}\" из \"{to}\"`",
+  "permissionHandler.description": "Описание",
+  "permissionHandler.noDescriptionProvided": "Описание отсутствует",
+  "permissionHandler.makeSureYouTrustThisPlugin": "Убедитесь, что Вы доверяете этому плагину перед обработкой этого вызова. Если Вы запомните выбор для этого вызова, то значение будет сохранено только для текущей сессии.",
+  "permissionHandler.rememberThisChoice": "Запомнить этот выбор",
+  "permissionHandler.resetAllPermissions": "Сбросить все разрешения",
+  "permissionHandler.permissionNeededFor": "Для {to} необходимо разрешение",
+  "permissionHandler.accept": "Принять",
+  "permissionHandler.decline": "Отклонить"
+}

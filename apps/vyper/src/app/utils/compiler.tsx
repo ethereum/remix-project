@@ -144,14 +144,18 @@ const compileReturnType = (output, contract) => {
 const fixContractContent = (content: string) => {
   if (content.length === 0) return
   const pragmaFound = content.includes('#pragma version ^0.3.10')
+  const wrongpragmaFound = content.includes('# pragma version ^0.3.10')
   const evmVerFound = content.includes('#pragma evm-version shanghai')
   const pragma = '#pragma version ^0.3.10'
   const evmVer = '#pragma evm-version shanghai'
 
-  if (!evmVerFound) {
+  if (evmVerFound === false) {
     content = `${evmVer}\n${content}`
   }
-  if (!pragmaFound) {
+  if (wrongpragmaFound === true) {
+    content = content.replace('# pragma version ^0.3.10', '')
+  }
+  if (pragmaFound === false ) {
     content = `${pragma}\n${content}`
   }
   return content
@@ -263,8 +267,9 @@ export function toStandardOutput(fileName: string, compilationResult: any): any 
 }
 
 
-export async function compileContract(contract: string, compilerUrl: string, setOutput?: any) {
+export async function compileContract(contract: string, compilerUrl: string, setOutput?: any, setLoadingSpinnerState?: React.Dispatch<React.SetStateAction<boolean>>, spinner?: boolean) {
   remixClient.eventEmitter.emit('resetCompilerState', {})
+  spinner && spinner === true ? setLoadingSpinnerState && setLoadingSpinnerState(true) : null
 
   try {
     // await remixClient.discardHighlight()
@@ -276,6 +281,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
         status: 'failed',
         message: e.message
       }
+
       remixClient.eventEmitter.emit('setOutput', errorGettingContract)
       return
     }
@@ -293,7 +299,9 @@ export async function compileContract(contract: string, compilerUrl: string, set
         type: 'error',
         title: 'Compilation failed...'
       })
-      remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: output.message, title: 'Error compiling...', line: output.line, column: output.column})
+
+      setLoadingSpinnerState && setLoadingSpinnerState(false)
+      remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: output.message, title: 'Error compiling...', line: output.line, column: output.column, key: 1 })
       output = null
       return
     }
@@ -306,6 +314,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
       title: 'success'
     })
 
+    setLoadingSpinnerState && setLoadingSpinnerState(false)
     const data = toStandardOutput(_contract.name, output)
     remixClient.compilationFinish(_contract.name, _contract.content, data)
     const contractName = _contract['name']
@@ -319,8 +328,10 @@ export async function compileContract(contract: string, compilerUrl: string, set
     remixClient.changeStatus({
       key: 'failed',
       type: 'error',
-      title: err.message
+      title: `1 error occurred ${err.message}`
     })
+
+    setLoadingSpinnerState && setLoadingSpinnerState(false)
     remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: err.message})
   }
 }

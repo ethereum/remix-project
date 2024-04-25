@@ -30,7 +30,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
       }
       const provider = plugin.blockchain.getProvider()
 
-      if (provider === 'injected') {
+      if (provider && provider.startsWith('injected')) {
         const selectedAddress = plugin.blockchain.getInjectedWeb3Address()
         if (!(Object.keys(loadedAccounts).includes(toChecksumAddress(selectedAddress)))) setAccount(dispatch, null)
       }

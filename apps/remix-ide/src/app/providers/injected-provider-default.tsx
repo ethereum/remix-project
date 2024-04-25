@@ -25,7 +25,7 @@ export class InjectedProviderDefaultBase extends InjectedProvider {
 }
 
 const profile = {
-  name: 'injected',
+  name: 'injected', // the name will be overwritten in the constructor.
   displayName: 'Injected Provider',
   kind: 'provider',
   description: 'injected Provider',
@@ -34,7 +34,13 @@ const profile = {
 }
 
 export class InjectedProviderDefault extends InjectedProviderDefaultBase {
-  constructor() {
-    super(profile)
+  provider: any 
+  constructor(provider: any, name: string) {
+    super({ ...profile, ...{ name, displayName: name } })
+    this.provider = provider
+  }
+
+  getInjectedProvider() {
+    return this.provider
   }
 }

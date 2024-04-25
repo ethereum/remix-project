@@ -1,7 +1,10 @@
 import React from 'react' // eslint-disable-line
 import {RunTabUI} from '@remix-ui/run-tab'
 import {ViewPlugin} from '@remixproject/engine-web'
+import isElectron from 'is-electron'
 import {addressToString} from '@remix-ui/helper'
+import {InjectedProviderDefault} from '../providers/injected-provider-default'
+import {InjectedCustomProvider} from '../providers/injected-custom-provider'
 import * as packageJson from '../../../../../package.json'
 
 const EventManager = require('../../lib/events')
@@ -28,17 +31,18 @@ const profile = {
     'getSettings',
     'setEnvironmentMode',
     'clearAllInstances',
-    'clearAllSavedInstances',
+    'clearAllPinnedInstances',
     'addInstance',
-    'addSavedInstance',
+    'addPinnedInstance',
     'resolveContractAndAddInstance'
   ]
 }
 
 export class RunTab extends ViewPlugin {
-  constructor(blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, fileProvider) {
+  constructor(blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, fileProvider, engine) {
     super(profile)
     this.event = new EventManager()
+    this.engine = engine
     this.config = config
     this.blockchain = blockchain
     this.fileManager = fileManager
@@ -81,16 +85,16 @@ export class RunTab extends ViewPlugin {
     this.emit('clearAllInstancesReducer')
   }
 
-  clearAllSavedInstances() {
-    this.emit('clearAllSavedInstancesReducer')
+  clearAllPinnedInstances() {
+    this.emit('clearAllPinnedInstancesReducer')
   }
 
   addInstance(address, abi, name, contractData) {
     this.emit('addInstanceReducer', address, abi, name, contractData)
   }
 
-  addSavedInstance(address, abi, name, savedOn, filePath) {
-    this.emit('addSavedInstanceReducer', address, abi, name, savedOn, filePath)
+  addPinnedInstance(address, abi, name, pinnedAt, filePath) {
+    this.emit('addPinnedInstanceReducer', address, abi, name, pinnedAt, filePath)
   }
 
   createVMAccount(newAccount) {
@@ -125,8 +129,9 @@ export class RunTab extends ViewPlugin {
   async onInitDone() {
     const udapp = this // eslint-disable-line
 
-    const addProvider = async (name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
+    const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
       await this.call('blockchain', 'addProvider', {
+        position,
         options: {},
         dataId,
         name,
@@ -150,59 +155,73 @@ export class RunTab extends ViewPlugin {
       })
     }
 
-    // basic injected
-    // if it's the trust wallet provider, we have a specific provider for that, see below
-    if (window && window.ethereum && !(window.ethereum.isTrustWallet || window.ethereum.selectedProvider?.isTrustWallet)) {
-      const displayNameInjected = `Injected Provider${
-        window && window.ethereum && !(window.ethereum.providers && !window.ethereum.selectedProvider)
-          ? window.ethereum.isCoinbaseWallet || window.ethereum.selectedProvider?.isCoinbaseWallet
-            ? ' - Coinbase'
-            : window.ethereum.isBraveWallet || window.ethereum.selectedProvider?.isBraveWallet
-              ? ' - Brave'
-              : window.ethereum.isMetaMask || window.ethereum.selectedProvider?.isMetaMask
-                ? ' - MetaMask'
-                : ''
-          : ''
-      }`
-      await addProvider('injected', displayNameInjected, true, false)
-    } else if (window && !window.ethereum) {
-      // we still add "injected" if there's no provider (just so it's visible to the user).
-      await addProvider('injected', 'Injected Provider', true, false)
+    const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency) => {
+      // name = `${name} through ${event.detail.info.name}`
+      await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, networkId, urls, nativeCurrency)])
+      await addProvider(position, name, displayName, true, false, false)
     }
+    const registerInjectedProvider = async (event) => {
+      console.log('registerInjectedProvider', event)
+      const name = 'injected-' + event.detail.info.name
+      const displayName = 'Injected Provider - ' + event.detail.info.name
+      await this.engine.register([new InjectedProviderDefault(event.detail.provider, name)])
+      await addProvider(0, name, displayName, true, false, false)
 
-    if (window && window.trustwallet) {
-      const displayNameInjected = `Injected Provider - TrustWallet`
-      await addProvider('injected-trustwallet', displayNameInjected, true, false)
+      if (event.detail.info.name === 'MetaMask') {
+        await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
+        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
+        await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Testnet - Sepolia', '0xaa36a7', [],
+          {
+            "name": "Sepolia ETH",
+            "symbol": "ETH",
+            "decimals": 18
+          })    
+        await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
+          {
+            "name": "Ephemery ETH",
+            "symbol": "ETH",
+            "decimals": 18
+          })
+        /*
+        await addCustomInjectedProvider(9, event, 'SKALE Chaos Testnet', '0x50877ed6', ['https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix'],
+          {
+            "name": "sFUEL",
+            "symbol": "sFUEL",
+            "decimals": 18
+          })
+        */
+      }      
     }
 
     // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
-    await addProvider('vm-cancun', 'Remix VM (Cancun)', false, true, 'cancun', 'settingsVMCancunMode', titleVM)
-    await addProvider('vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
-    await addProvider('vm-paris', 'Remix VM (Paris)', false, true, 'paris', 'settingsVMParisMode', titleVM)
-    await addProvider('vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
-    await addProvider('vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
-    await addProvider('vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'cancun', 'settingsVMMainnetMode', titleVM)
-    await addProvider('vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'cancun', 'settingsVMSepoliaMode', titleVM)
-    await addProvider('vm-goerli-fork', 'Remix VM - Goerli fork', false, true, 'paris', 'settingsVMGoerliMode', titleVM)
-    await addProvider('vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
+    await addProvider(1, 'vm-cancun', 'Remix VM (Cancun)', false, true, 'cancun', 'settingsVMCancunMode', titleVM)
+    await addProvider(50, 'vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
+    await addProvider(51, 'vm-paris', 'Remix VM (Paris)', false, true, 'paris', 'settingsVMParisMode', titleVM)
+    await addProvider(52, 'vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
+    await addProvider(53, 'vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
+    await addProvider(2, 'vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'cancun', 'settingsVMMainnetMode', titleVM)
+    await addProvider(3, 'vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'cancun', 'settingsVMSepoliaMode', titleVM)
+    await addProvider(4, 'vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
 
     // wallet connect
-    await addProvider('walletconnect', 'WalletConnect', false, false)
-
-    // testnet
-    await addProvider('injected-ephemery-testnet-provider', 'Ephemery Testnet', true, false)
-    await addProvider('injected-skale-chaos-testnet-provider', 'SKALE Chaos Testnet', true, false)
+    await addProvider(6, 'walletconnect', 'WalletConnect', false, false)
 
     // external provider
-    await addProvider('basic-http-provider', 'Custom - External Http Provider', false, false)
-    await addProvider('hardhat-provider', 'Dev - Hardhat Provider', false, false)
-    await addProvider('ganache-provider', 'Dev - Ganache Provider', false, false)
-    await addProvider('foundry-provider', 'Dev - Foundry Provider', false, false)
+    await addProvider(10, 'basic-http-provider', 'Custom - External Http Provider', false, false)
+    await addProvider(20, 'hardhat-provider', 'Dev - Hardhat Provider', false, false)
+    await addProvider(21, 'ganache-provider', 'Dev - Ganache Provider', false, false)
+    await addProvider(22, 'foundry-provider', 'Dev - Foundry Provider', false, false)
 
-    // injected provider
-    await addProvider('injected-optimism-provider', 'L2 - Optimism Provider', true, false)
-    await addProvider('injected-arbitrum-one-provider', 'L2 - Arbitrum One Provider', true, false)
+    // register injected providers
+    
+    window.addEventListener(
+      "eip6963:announceProvider",
+      (event) => {
+        registerInjectedProvider(event)
+      }
+    )
+    if (!isElectron()) window.dispatchEvent(new Event("eip6963:requestProvider"))
   }
 
   writeFile(fileName, content) {

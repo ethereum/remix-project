@@ -1,24 +1,24 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import {FormattedMessage} from 'react-intl'
-import {EnvironmentProps} from '../types'
+import {EnvironmentProps, Provider} from '../types'
 import {Dropdown} from 'react-bootstrap'
 import {CustomMenu, CustomToggle, CustomTooltip} from '@remix-ui/helper'
 
 export function EnvironmentUI(props: EnvironmentProps) {
   const handleChangeExEnv = (env: string) => {
-    const provider = props.providers.providerList.find((exEnv) => exEnv.value === env)
-    const context = provider.value
+    const provider = props.providers.providerList.find((exEnv) => exEnv.name === env)
+    const context = provider.name
     props.setExecutionContext({context})
   }
 
-  const currentProvider = props.providers.providerList.find((exEnv) => exEnv.value === props.selectedEnv)
+  const currentProvider = props.providers.providerList.find((exEnv) => exEnv.name === props.selectedEnv)
   const bridges = {
-    'injected-optimism-provider': 'https://app.optimism.io/bridge/deposit',
-    'injected-arbitrum-one-provider': 'https://bridge.arbitrum.io/'
+    'L2 - Optimism': 'https://app.optimism.io/bridge/deposit',
+    'L2 - Arbitrum One': 'https://bridge.arbitrum.io/'
   }
 
-  const isL2 = (provider) => provider && (provider.value === 'Optimism Provider' || provider.value === 'Arbitrum One Provider')
+  const isL2 = (providerDisplayName: string) => providerDisplayName === 'Optimism Provider' || providerDisplayName === 'Arbitrum One Provider'
   return (
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel">
@@ -33,33 +33,33 @@ export function EnvironmentUI(props: EnvironmentProps) {
       <div className="udapp_environment">
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
-            {isL2(currentProvider) && 'L2 - '}
-            {currentProvider && currentProvider.content}
-            {currentProvider && bridges[currentProvider.value] && (
+            {isL2(currentProvider && currentProvider.displayName) && 'L2 - '}
+            {currentProvider && currentProvider.displayName}
+            {currentProvider && bridges[currentProvider.name] && (
               <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
                 <i
                   style={{fontSize: 'medium'}}
                   className={'ml-2 fa fa-rocket-launch'}
                   aria-hidden="true"
                   onClick={() => {
-                    window.open(bridges[currentProvider.value], '_blank')
+                    window.open(bridges[currentProvider.name], '_blank')
                   }}
                 ></i>
               </CustomTooltip>
             )}
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
-            {props.providers.providerList.map(({content, value}, index) => (
+            {props.providers.providerList.map(({displayName, name}, index) => (
               <Dropdown.Item
                 key={index}
                 onClick={() => {
-                  handleChangeExEnv(value)
+                  handleChangeExEnv(name)
                 }}
-                data-id={`dropdown-item-${value}`}
+                data-id={`dropdown-item-${name}`}
               >
                 <span className="">
-                  {isL2({value}) && 'L2 - '}
-                  {content}
+                  {isL2(displayName) && 'L2 - '}
+                  {displayName}
                 </span>
               </Dropdown.Item>
             ))}

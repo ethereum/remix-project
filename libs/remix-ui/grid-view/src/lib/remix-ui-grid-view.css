@@ -1,0 +1,25 @@
+.remixui_grid_view {
+  font-weight: normal;
+}
+
+.remixui_grid_view_container {
+  overflow: auto;
+}
+
+.remixui_grid_view_title{
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.remixui_grid_view_btn {
+  width: 32px;
+}
+
+.remixui_grid_view_logo {
+  width: 3rem;
+  height: 3rem;
+}
+
+.remixui_grid_view_titlebar {
+  min-width: max-content;
+}

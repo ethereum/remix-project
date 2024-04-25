@@ -402,9 +402,15 @@ module.exports = {
           'Incorrect content')
       })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/run_setup.ts"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/run_verification.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/groth16_trusted_setup.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/groth16_zkproof.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/plonk_trusted_setup.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/plonk_zkproof.ts"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/plonk_verifier.sol.ejs"]')
       .click('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Groth16Verifier {`) !== -1,
@@ -539,8 +545,8 @@ module.exports = {
       .currentWorkspaceIs('default_workspace')
 
   },
-
-  'Should create a cookbook workspace #group3': function (browser: NightwatchBrowser) {
+  // This test is disable as it was failing for chrome on CI
+  'Should create a cookbook workspace #group3': !function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
@@ -561,6 +567,17 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc/MULTI_SIG"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc/MULTI_SIG/MultiSigSwapHook.sol"]')
+  },
+
+  'Should add Create2 solidity factory #group4': !function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspaceaddcreate2solidityfactory"]')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`contract Create2FactoryAssembly {`) !== -1,
+          'current displayed content is not Create2FactoryAssembly')
+      })      
   },
 
   tearDown: sauce

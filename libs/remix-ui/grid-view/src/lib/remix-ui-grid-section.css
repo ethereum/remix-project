@@ -1,0 +1,26 @@
+.remixui_grid_section {
+  font-weight: normal;
+}
+
+.remixui_grid_section_container {
+  width: fit-content;
+}
+
+.remixui_grid_section_title{
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.remixui_grid_section_btn {
+  width: 32px;
+}
+
+.remixui_grid_section_logo {
+  width: 3rem;
+  height: 3rem;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-dark) var(--bg-light);
+}

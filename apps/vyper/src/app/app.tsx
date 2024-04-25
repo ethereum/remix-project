@@ -47,6 +47,7 @@ const App = () => {
       try {
         await remixClient.loaded()
         remixClient.onFileChange((name) => {
+          !name.endsWith('.vy') && remixClient.changeStatus({ key: 'none' })
           setOutput({})
           setContract(name)
         })
@@ -116,9 +117,9 @@ const App = () => {
     <main id="vyper-plugin">
       <section>
         <div className="px-3 pt-3 mb-3 w-100">
-          <CustomTooltip placement="bottom" tooltipText="Clone Vyper examples. Switch to the File Explorer to see the examples.">
+          <CustomTooltip placement="bottom" tooltipText="Clone a repo of Vyper examples. Switch to the File Explorer to see the examples.">
             <Button data-id="add-repository" className="w-100 btn btn-secondary" onClick={() => remixClient.cloneVyperRepo()}>
-              Clone Vyper examples repository
+              Clone a repo of Vyper examples
             </Button>
           </CustomTooltip>
         </div>
@@ -155,13 +156,13 @@ const App = () => {
             compiler version
           </a>{' '}
           &{' '}
-          <a className="text-warning" href="http://docs.vyperlang.org/en/stable/compiling-a-contract.html#setting-the-target-evm-version" target="_blank" rel="noopener noreferrer">
+          <a className="text-warning" href="https://remix-ide.readthedocs.io/en/latest/vyper.html#evm-version" target="_blank" rel="noopener noreferrer">
             EVM version
           </a>{' '}
           in the .vy file.
         </span>
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
-          <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} resetCompilerState={resetCompilerResultState} />
+          <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} resetCompilerState={resetCompilerResultState} output={output} remixClient={remixClient}/>
         </div>
 
         <article id="result" className="p-2 mx-3 border-top mt-2">

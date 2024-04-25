@@ -106,7 +106,6 @@ export class TxRunnerWeb3 {
     const tx = { from: from, to: to, data: data, value: value }
     if (!from) return callback('the value of "from" is not defined. Please make sure an account is selected.')
     if (useCall) {
-      tx['gas'] = gasLimit
       if (this._api && this._api.isVM()) {
         (this.getWeb3() as any).remix.registerCallId(timestamp)
       }
@@ -137,8 +136,19 @@ export class TxRunnerWeb3 {
       this.getWeb3().eth.estimateGas(txCopy)
         .then(gasEstimation => {
           gasEstimationForceSend(null, () => {
-            // callback is called whenever no error
-            tx['gas'] = !gasEstimation ? gasLimit : gasEstimation
+            /*
+            * gasLimit is a value that can be set in the UI to hardcap value that can be put in a tx.
+            * e.g if the gasestimate 
+            */
+            if (gasLimit !== '0x0' && gasEstimation > gasLimit) {
+              return callback(`estimated gas for this transaction (${gasEstimation}) is higher than gasLimit set in the configuration  (${gasLimit}). Please raise the gas limit.`)
+            } 
+            
+            if (gasLimit === '0x0') {
+              tx['gas'] = gasEstimation
+            } else {
+              tx['gas'] = gasLimit
+            }           
 
             if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
               return this._executeTx(tx, network, null, this._api, promptCb, callback)
@@ -158,7 +168,8 @@ export class TxRunnerWeb3 {
           }
           err = network.name === 'VM' ? null : err // just send the tx if "VM"
           gasEstimationForceSend(err, () => {
-            tx['gas'] = gasLimit
+            const defaultGasLimit = 3000000
+            tx['gas'] = gasLimit === '0x0' ? '0x' + defaultGasLimit.toString(16) : gasLimit
 
             if (this._api.config.getUnpersistedProperty('doNotShowTransactionConfirmationAgain')) {
               return this._executeTx(tx, network, null, this._api, promptCb, callback)
