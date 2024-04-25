@@ -82,6 +82,7 @@ const tests = {
         timeout: 10000,
         locateStrategy: 'xpath',
       })
+      .pause(2000)
       .getText(
         {
           selector: "//*[@data-type='remixUIXT' and @data-active='1']",
