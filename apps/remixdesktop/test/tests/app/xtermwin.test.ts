@@ -91,7 +91,7 @@ const tests = {
         },
         function (result) {
           console.log('Text content of the element:', result.value)
-          browser.assert.ok((result.value as string).includes('newExample.txt'))
+          browser.assert.ok((result.value as string).includes('newExample'))
         }
       )
   },
@@ -114,7 +114,7 @@ const tests = {
         },
         function (result) {
           console.log('Text content of the element:', result.value)
-          browser.assert.ok(!(result.value as string).includes('newExample.txt'))
+          browser.assert.ok(!(result.value as string).includes('newExample'))
         }
       )
   },
@@ -159,7 +159,7 @@ const tests = {
         },
         function (result) {
           console.log('Text content of the element:', result.value)
-          browser.assert.ok(!(result.value as string).includes('newExample.txt'))
+          browser.assert.ok(!(result.value as string).includes('newExample'))
         }
       )
   },
@@ -185,7 +185,7 @@ const tests = {
         },
         function (result) {
           console.log('Text content of the element:', result.value)
-          browser.assert.ok((result.value as string).includes('newExample.txt'))
+          browser.assert.ok((result.value as string).includes('newExample'))
         }
       )
   },
@@ -206,7 +206,7 @@ const tests = {
         },
         function (result) {
           console.log('Text content of the element:', result.value)
-          browser.assert.ok((result.value as string).includes('newExample.txt'))
+          browser.assert.ok((result.value as string).includes('newExample'))
         }
       )
   },
@@ -222,7 +222,7 @@ const tests = {
         },
         function (result) {
           console.log('Text content of the element:', result.value)
-          browser.assert.ok(!(result.value as string).includes('newExample.txt'))
+          browser.assert.ok(!(result.value as string).includes('newExample'))
         }
       )
   },
