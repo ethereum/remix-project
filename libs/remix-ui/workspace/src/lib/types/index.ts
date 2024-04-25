@@ -135,6 +135,8 @@ export interface FileExplorerProps {
     dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
     dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
+    dispatchMoveFiles: (src: string[], dest: string) => Promise<void>,
+    dispatchMoveFolders: (src: string[], dest: string) => Promise<void>,
     dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
     handlePasteClick: (dest: string, destType: string) => void
     handleCopyClick: (path: string, type: WorkspaceElement) => void
@@ -344,10 +346,10 @@ export type Actions = {[A in keyof ActionPayloadTypes]: Action<A>}[keyof ActionP
 export type WorkspaceElement = 'folder' | 'file' | 'workspace'
 
 export interface FlatTreeDropProps {
-  moveFile: (dest: string, src: string) => void
-  moveFolder: (dest: string, src: string) => void
-  moveFolderSilently: (dest: string, src: string) => Promise<void>
-  moveFileSilently: (dest: string, src: string) => Promise<void>
+  moveFile: (dest: string, src: string[]) => void
+  moveFolder: (dest: string, src: string[]) => void
+  moveFolderSilently: (dest: string, src: string[]) => Promise<void>
+  moveFileSilently: (dest: string, src: string[]) => Promise<void>
   getFlatTreeItem: (path: string) => FileType
   handleClickFolder: (path: string, type: string) => void
   dragSource: FileType

@@ -69,20 +69,20 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     }
     if (dragDestination.isDirectory) {
       if (dragSource.isDirectory) {
-        moveFolder(dragDestination.path, dragSource.path)
+        moveFolder(dragDestination.path, [dragSource.path])
         await moveFoldersSilently(items, dragDestination.path)
       } else {
-        moveFile(dragDestination.path, dragSource.path)
+        moveFile(dragDestination.path, [dragSource.path])
         await moveFilesSilently(items, dragDestination.path)
       }
     } else {
       const path = extractParentFromKey(dragDestination.path) || '/'
 
       if (dragSource.isDirectory) {
-        moveFolder(path, dragSource.path)
+        moveFolder(path, [dragSource.path])
         await moveFoldersSilently(items, dragDestination.path)
       } else {
-        moveFile(path, dragSource.path)
+        moveFile(path, [dragSource.path])
         await moveFilesSilently(items, dragDestination.path)
       }
     }
@@ -130,7 +130,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     const promises = items.filter(item => item.path !== targetPath)
       .map(async (item) => {
         if (item.type === 'file') {
-          await props.moveFileSilently(targetPath, item.path)
+          await props.moveFileSilently(targetPath, [item.path])
         }
       })
     await Promise.all(promises)
@@ -147,7 +147,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     const promises = items.filter(item => item.path !== targetPath)
       .map(async (item) => {
         if (item.type === 'folder') {
-          await props.moveFolderSilently(targetPath, item.path)
+          await props.moveFolderSilently(targetPath, [item.path])
         }
       })
     await Promise.all(promises)
