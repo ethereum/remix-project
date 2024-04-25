@@ -107,7 +107,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
   }) => {
     const selectItems = []
     document.querySelectorAll('li.bg-secondary.li_tv').forEach(item => {
-
+      item.classList.add('dragging')
       const dragTarget = {
         position: { top: target?.position.top || 0, left: target?.position.left || 0 },
         path: item.getAttribute('data-path') || item.getAttribute('data-label-path') || '',
@@ -130,7 +130,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     const promises = items.filter(item => item.path !== targetPath)
       .map(async (item) => {
         if (item.type === 'file') {
-          await props.moveFileSilently(item.path, targetPath)
+          await props.moveFileSilently(targetPath, item.path)
         }
       })
     await Promise.all(promises)
@@ -147,7 +147,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     const promises = items.filter(item => item.path !== targetPath)
       .map(async (item) => {
         if (item.type === 'folder') {
-          await props.moveFolderSilently(item.path, targetPath)
+          await props.moveFolderSilently(targetPath, item.path)
         }
       })
     await Promise.all(promises)
