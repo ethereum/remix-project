@@ -1,5 +1,5 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import React from 'react'
+import React, { Dispatch } from 'react'
 import { customAction } from '@remixproject/plugin-api'
 import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
@@ -350,6 +350,7 @@ export interface FlatTreeDropProps {
   moveFolder: (dest: string, src: string[]) => void
   moveFolderSilently: (dest: string, src: string[]) => Promise<void>
   moveFileSilently: (dest: string, src: string[]) => Promise<void>
+  setFilesSelected: Dispatch<React.SetStateAction<string[]>>
   getFlatTreeItem: (path: string) => FileType
   handleClickFolder: (path: string, type: string) => void
   dragSource: FileType

@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useRef, useState, RefObject, useMemo, useContext } from 'react'
+import React, { SyntheticEvent, useEffect, useRef, useState, RefObject, useMemo, useContext, Dispatch } from 'react'
 import { Popover } from 'react-bootstrap'
 import { FileType, WorkspaceElement } from '../types'
 import { getPathIcon } from '@remix-ui/helper';
@@ -40,6 +40,7 @@ interface FlatTreeProps {
   moveFolder: (dest: string, src: string[]) => void
   moveFolderSilently: (dest: string, src: string[]) => Promise<void>
   moveFileSilently: (dest: string, src: string[]) => Promise<void>
+  setFilesSelected: Dispatch<React.SetStateAction<string[]>>
   fileState: fileDecoration[]
   createNewFile?: any
   createNewFolder?: any
@@ -53,7 +54,7 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder, deletePath, moveFileSilently, moveFolderSilently } = props
+  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder, deletePath, moveFileSilently, moveFolderSilently, setFilesSelected } = props
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
     path: string,
@@ -254,6 +255,7 @@ export const FlatTree = (props: FlatTreeProps) => {
         moveFolder={moveFolder}
         moveFolderSilently={moveFolderSilently}
         moveFileSilently={moveFileSilently}
+        setFilesSelected={setFilesSelected}
         handleClickFolder={handleClickFolder}
         expandPath={expandPath}
       >
