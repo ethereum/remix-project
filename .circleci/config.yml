@@ -224,6 +224,7 @@ jobs:
       name: win/default # executor type
       size: xlarge # can be medium, large, xlarge, 2xlarge
       shell: bash.exe
+    parallelism: 10
     working_directory: ~/remix-project
     steps:
       - checkout
@@ -268,21 +269,7 @@ jobs:
             cd "apps/remixdesktop/"
             yarn -v
             sleep 15
-            yarn run test:offline
-      - run:
-          name: start tests
-          command: |
-            cd "apps/remixdesktop/"
-            yarn -v
-            sleep 15
-            yarn run test
-      - run:
-          name: start tests git
-          command: |
-            cd "apps/remixdesktop/"
-            yarn -v
-            sleep 15
-            yarn run test:isogit
+            ./run_ci_test.sh  
   # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
   sign-remixdesktop-windows:
     executor: win/default # executor type
