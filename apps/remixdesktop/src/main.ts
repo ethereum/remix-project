@@ -63,6 +63,9 @@ export const createWindow = async (dir?: string): Promise<void> => {
     windowSet.delete(mainWindow)
   })
 
+  if(isE2E)
+    mainWindow.maximize()
+
   windowSet.add(mainWindow)
   //mainWindow.webContents.openDevTools();
 };
@@ -116,6 +119,7 @@ import ViewMenu from './menus/view';
 import TerminalMenu from './menus/terminal';
 import HelpMenu from './menus/help';
 import { execCommand } from './menus/commands';
+import main from './menus/main';
 
 
 const commandKeys: Record<string, string> = {
