@@ -2,6 +2,7 @@ import { NightwatchBrowser } from 'nightwatch'
 
 
 module.exports = {
+    '@offline': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         done()
     },
