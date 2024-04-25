@@ -9,7 +9,7 @@ import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, getPathIcon, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ROOT_PATH } from '../utils/constants'
-import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
+import { moveFileIsAllowed, moveFilesIsAllowed, moveFolderIsAllowed, moveFoldersIsAllowed } from '../actions'
 import { FlatTree } from './flat-tree'
 
 export const FileExplorer = (props: FileExplorerProps) => {
@@ -299,11 +299,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
    * @param src path of the source
    * @returns {void}
    */
-  const moveFileSilently = async (dest: string, src: string) => {
-    if (dest.length === 0 || src.length === 0) return
-    if (await moveFileIsAllowed(src, dest) === false) return
+  const moveFileSilently = async (dest: string, sourcesrc: string[]) => {
+    if (dest.length === 0 || sourcesrc.length === 0) return
+    if (await moveFilesIsAllowed(sourcesrc, dest) === false) return
+
+    const src = sourcesrc.length === 1 ? sourcesrc[0] : sourcesrc.join('\n')
     try {
-      props.dispatchMoveFile(src, dest)
+      props.dispatchMoveFiles(sourcesrc, dest)
     } catch (error) {
       props.modal(
         intl.formatMessage({ id: 'filePanel.movingFileFailed' }),
@@ -321,11 +323,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
    * @param src path of the source
    * @returns {void}
    */
-  const moveFolderSilently = async (dest: string, src: string) => {
-    if (dest.length === 0 || src.length === 0) return
-    if (await moveFolderIsAllowed(src, dest) === false) return
+  const moveFolderSilently = async (dest: string, sourcesrc: string[]) => {
+    if (dest.length === 0 || sourcesrc.length === 0) return
+    if (await moveFoldersIsAllowed(sourcesrc, dest) === false) return
+
+    const src = sourcesrc.length === 1 ? sourcesrc[0] : sourcesrc.join('\n')
     try {
-      props.dispatchMoveFolder(src, dest)
+      props.dispatchMoveFolders(sourcesrc, dest)
     } catch (error) {
       props.modal(
         intl.formatMessage({ id: 'filePanel.movingFolderFailed' }),
@@ -336,14 +340,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleFileMove = async (dest: string, src: string) => {
-    if (await moveFileIsAllowed(src, dest) === false) return
+  const handleFileMove = async (dest: string, sourcesrc: string[]) => {
+    if (await moveFilesIsAllowed(sourcesrc, dest) === false) return
+    const src = sourcesrc.length === 1 ? sourcesrc[0] : sourcesrc.join('\n')
     try {
       props.modal(
         intl.formatMessage({ id: 'filePanel.moveFile' }),
         intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
         intl.formatMessage({ id: 'filePanel.yes' }),
-        () => props.dispatchMoveFile(src, dest),
+        () => props.dispatchMoveFiles(sourcesrc, dest),
         intl.formatMessage({ id: 'filePanel.cancel' }),
         () => { }
       )
@@ -357,14 +362,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleFolderMove = async (dest: string, src: string) => {
-    if (await moveFolderIsAllowed(src, dest) === false) return
+  const handleFolderMove = async (dest: string, sourcesrc: string[]) => {
+    if (await moveFoldersIsAllowed(sourcesrc, dest) === false) return
+    const src = sourcesrc.length === 1 ? sourcesrc[0] : sourcesrc.join('\n')
     try {
       props.modal(
         intl.formatMessage({ id: 'filePanel.moveFile' }),
         intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
         intl.formatMessage({ id: 'filePanel.yes' }),
-        () => props.dispatchMoveFolder(src, dest),
+        () => props.dispatchMoveFolders(sourcesrc, dest),
         intl.formatMessage({ id: 'filePanel.cancel' }),
         () => { }
       )

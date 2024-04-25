@@ -36,10 +36,10 @@ interface FlatTreeProps {
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
   handleTreeClick: (e: SyntheticEvent) => void
   handleClickFolder: (path: string, type: string) => void
-  moveFile: (dest: string, src: string) => void
-  moveFolder: (dest: string, src: string) => void
-  moveFolderSilently: (dest: string, src: string) => Promise<void>
-  moveFileSilently: (dest: string, src: string) => Promise<void>
+  moveFile: (dest: string, src: string[]) => void
+  moveFolder: (dest: string, src: string[]) => void
+  moveFolderSilently: (dest: string, src: string[]) => Promise<void>
+  moveFileSilently: (dest: string, src: string[]) => Promise<void>
   fileState: fileDecoration[]
   createNewFile?: any
   createNewFolder?: any
