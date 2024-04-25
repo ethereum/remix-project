@@ -292,6 +292,50 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchHandleExpandPath(expandPath)
   }
 
+  /**
+   * This offers the ability to move a file to a new location
+   * without showing a modal dialong to the user.
+   * @param dest path of the destination
+   * @param src path of the source
+   * @returns {void}
+   */
+  const moveFileSilently = async (dest: string, src: string) => {
+    if (dest.length === 0 || src.length === 0) return
+    if (await moveFileIsAllowed(src, dest) === false) return
+    try {
+      props.dispatchMoveFile(src, dest)
+    } catch (error) {
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.movingFileFailed' }),
+        intl.formatMessage({ id: 'filePanel.movingFileFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
+        async () => { }
+      )
+    }
+  }
+
+  /**
+   * This offers the ability to move a folder to a new location
+   * without showing a modal dialong to the user.
+   * @param dest path of the destination
+   * @param src path of the source
+   * @returns {void}
+   */
+  const moveFolderSilently = async (dest: string, src: string) => {
+    if (dest.length === 0 || src.length === 0) return
+    if (await moveFolderIsAllowed(src, dest) === false) return
+    try {
+      props.dispatchMoveFolder(src, dest)
+    } catch (error) {
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.movingFolderFailed' }),
+        intl.formatMessage({ id: 'filePanel.movingFolderFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
+        async () => { }
+      )
+    }
+  }
+
   const handleFileMove = async (dest: string, src: string) => {
     if (await moveFileIsAllowed(src, dest) === false) return
     try {
@@ -403,6 +447,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           handleContextMenu={handleContextMenu}
           moveFile={handleFileMove}
           moveFolder={handleFolderMove}
+          moveFolderSilently={moveFolderSilently}
+          moveFileSilently={moveFileSilently}
           handleClickFolder={handleClickFolder}
           createNewFile={props.createNewFile}
           createNewFolder={props.createNewFolder}
