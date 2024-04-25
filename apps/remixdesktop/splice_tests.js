@@ -31,5 +31,5 @@ const filteredFiles = filterFilesByWord(testFiles, '');
 // Output the list of filtered files
 //console.log('Files without "@offline":', filteredFiles);
 for (let i = 0; i < filteredFiles.length; i++) {
-  console.log(filteredFiles[i]);
+  console.log(path.basename(filteredFiles[i]));
 }
