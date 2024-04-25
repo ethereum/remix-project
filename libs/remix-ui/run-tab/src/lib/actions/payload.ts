@@ -1,5 +1,5 @@
 import { ContractData } from '@remix-project/core-plugin'
-import { ADD_DEPLOY_OPTION, ADD_INSTANCE, ADD_SAVED_INSTANCE, UPDATE_INSTANCES_BALANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_SAVED_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_DEPLOY_OPTION, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, SET_REMIXD_ACTIVATED, FETCH_PROXY_DEPLOYMENTS, NEW_PROXY_DEPLOYMENT, RESET_PROXY_DEPLOYMENTS, EXTRACT_COMPILER_VERSION } from '../constants'
+import { ADD_DEPLOY_OPTION, ADD_INSTANCE, ADD_PINNED_INSTANCE, UPDATE_INSTANCES_BALANCE, ADD_PROVIDER, CLEAR_INSTANCES, CLEAR_PINNED_INSTANCES, CLEAR_RECORDER_COUNT, DISPLAY_NOTIFICATION, DISPLAY_POPUP_MESSAGE, FETCH_ACCOUNTS_LIST_FAILED, FETCH_ACCOUNTS_LIST_REQUEST, FETCH_ACCOUNTS_LIST_SUCCESS, FETCH_CONTRACT_LIST_FAILED, FETCH_CONTRACT_LIST_REQUEST, FETCH_CONTRACT_LIST_SUCCESS, HIDE_NOTIFICATION, HIDE_POPUP_MESSAGE, REMOVE_DEPLOY_OPTION, REMOVE_INSTANCE, REMOVE_PROVIDER, RESET_STATE, SET_BASE_FEE_PER_GAS, SET_CONFIRM_SETTINGS, SET_CURRENT_CONTRACT, SET_CURRENT_FILE, SET_DECODED_RESPONSE, SET_DEPLOY_OPTIONS, SET_EXECUTION_ENVIRONMENT, SET_CHAIN_ID, SET_EXTERNAL_WEB3_ENDPOINT, SET_GAS_LIMIT, SET_GAS_PRICE, SET_GAS_PRICE_STATUS, SET_IPFS_CHECKED_STATE, SET_LOAD_TYPE, SET_MATCH_PASSPHRASE, SET_MAX_FEE, SET_MAX_PRIORITY_FEE, SET_NETWORK_NAME, SET_PASSPHRASE, SET_PATH_TO_SCENARIO, SET_PERSONAL_MODE, SET_RECORDER_COUNT, SET_SELECTED_ACCOUNT, SET_SEND_UNIT, SET_SEND_VALUE, SET_REMIXD_ACTIVATED, FETCH_PROXY_DEPLOYMENTS, NEW_PROXY_DEPLOYMENT, RESET_PROXY_DEPLOYMENTS, EXTRACT_COMPILER_VERSION } from '../constants'
 import { ContractList, DeployOptions } from '../types'
 
 export const fetchAccountsListRequest = () => {
@@ -69,6 +69,13 @@ export const setNetworkName = (networkName: string) => {
   return {
     type: SET_NETWORK_NAME,
     payload: networkName
+  }
+}
+
+export const setChainId = (chainId: string) => {
+  return {
+    type: SET_CHAIN_ID,
+    payload: chainId
   }
 }
 
@@ -230,19 +237,19 @@ export const addNewInstance = (instance: { contractData?: ContractData, address:
   }
 }
 
-export const addNewSavedInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any, savedOn?: number }) => {
+export const addNewPinnedInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any, pinnedAt?: number }) => {
   return {
-    type: ADD_SAVED_INSTANCE,
+    type: ADD_PINNED_INSTANCE,
     payload: instance
   }
 }
 
-export const removeExistingInstance = (index: number, isSavedContract: boolean, shouldDelete: boolean) => {
+export const removeExistingInstance = (index: number, isPinnedContract: boolean, shouldDelete: boolean) => {
   return {
     type: REMOVE_INSTANCE,
     payload: { 
       index,
-      isSavedContract,
+      isPinnedContract,
       shouldDelete 
     }
   }
@@ -254,20 +261,20 @@ export const clearAllInstances = () => {
   }
 }
 
-export const clearAllSavedInstances = () => {
+export const clearAllPinnedInstances = () => {
   return {
-    type: CLEAR_SAVED_INSTANCES
+    type: CLEAR_PINNED_INSTANCES
   }
 }
 
-export const setDecodedResponse = (instanceIndex: number, response, funcIndex?: number, isSavedContract?: boolean) => {
+export const setDecodedResponse = (instanceIndex: number, response, funcIndex?: number, isPinnedContract?: boolean) => {
   return {
     type: SET_DECODED_RESPONSE,
     payload: {
       instanceIndex,
       funcIndex,
       response,
-      isSavedContract
+      isPinnedContract
     }
   }
 }

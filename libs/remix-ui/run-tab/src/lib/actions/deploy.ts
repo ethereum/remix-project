@@ -120,8 +120,11 @@ const getConfirmationCb = (plugin: RunTab, dispatch: React.Dispatch<any>, confir
 export const continueHandler = (dispatch: React.Dispatch<any>, gasEstimationPrompt: (msg: string) => JSX.Element, error, continueTxExecution, cancelCb) => {
   if (error) {
     let msg = typeof error !== 'string' ? error.message : error
+    if (error && error.innerError) {
+      msg += '\n' + error.innerError 
+    }
     
-    if (msg.includes('invalid opcode')) msg += '\n OR the EVM version used by the selected environment is not compatible with the compiler EVM version.'
+    if (msg.includes('invalid opcode')) msg += '\nThe EVM version used by the selected environment is not compatible with the compiler EVM version.'
     
     dispatch(displayNotification('Gas estimation failed', gasEstimationPrompt(msg), 'Send Transaction', 'Cancel Transaction', () => {
       continueTxExecution()
@@ -283,7 +286,7 @@ export const runTransactions = (
   plugin: RunTab,
   dispatch: React.Dispatch<any>,
   instanceIndex: number,
-  isSavedContract: boolean,
+  isPinnedContract: boolean,
   lookupOnly: boolean,
   funcABI: FuncABI,
   inputsValues: string,
@@ -320,7 +323,7 @@ export const runTransactions = (
     (returnValue) => {
       const response = txFormat.decodeResponse(returnValue, funcABI)
 
-      dispatch(setDecodedResponse(instanceIndex, response, funcIndex, isSavedContract))
+      dispatch(setDecodedResponse(instanceIndex, response, funcIndex, isPinnedContract))
     },
     (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       confirmationHandler(plugin, dispatch, mainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb)
@@ -339,8 +342,9 @@ export const getFuncABIInputs = (plugin: RunTab, funcABI: FuncABI) => {
 }
 
 export const updateInstanceBalance = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  if (plugin.REACT_API?.instances?.instanceList?.length) {
-    const instances = plugin.REACT_API?.instances?.instanceList
+  if (plugin.REACT_API?.instances?.instanceList?.length || plugin.REACT_API?.pinnedInstances?.instanceList?.length) {
+    let instances = plugin.REACT_API?.instances?.instanceList?.length ? plugin.REACT_API?.instances?.instanceList : []
+    instances = plugin.REACT_API?.pinnedInstances?.instanceList.length ? instances.concat(plugin.REACT_API.pinnedInstances.instanceList) : instances
     for (const instance of instances) {
       const balInEth = await plugin.blockchain.getBalanceInEther(instance.address)
       instance.balance = balInEth

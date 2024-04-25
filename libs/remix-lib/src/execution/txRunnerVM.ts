@@ -128,7 +128,14 @@ export class TxRunnerVM {
         transactions: [tx]
       }, { common: this.commonContext })
 
-      if (!this.standaloneTx) {
+      // standaloneTx represents a gas estimation call
+      if (this.standaloneTx || useCall) {
+        const root = await this.getVMObject().stateManager.getStateRoot()
+        this.runBlockInVm(tx, block, async (err, result) => {
+          await this.getVMObject().stateManager.setStateRoot(root)
+          callback(err, result)
+        })
+      } else {
         this.blockParentHash = block.hash()
         this.runBlockInVm(tx, block, async  (err, result) => {
           if (!err) {
@@ -137,12 +144,6 @@ export class TxRunnerVM {
               this.blocks.push(block.serialize())
             }
           }
-          callback(err, result)
-        })
-      } else {
-        const root = await this.getVMObject().stateManager.getStateRoot()
-        this.runBlockInVm(tx, block, async (err, result) => {
-          await this.getVMObject().stateManager.setStateRoot(root)
           callback(err, result)
         })
       }

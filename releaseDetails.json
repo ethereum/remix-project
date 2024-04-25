@@ -1,10 +1,10 @@
 {
-    "version": "v0.46.0",
+    "version": "v0.48.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Remix VM (Cancun) added with the functionalities of cancun fork",
-    "highlight2": "Latest Solidity compiler version set to 0.8.25 with cancun as default EVM version",
-    "highlight3": "",
+    "highlight1": "EIP6963 supported",
+    "highlight2": "PLONK scripts added for ZKP templates",
+    "highlight3": "Solidity scripts added to use CREATE2 for contract deployment",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-46-0-f90a4948fff0"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-48-0-0f256b049ff6?source=friends_link&sk=31785d048aa0293ea7e952004ff7e3e4"
   }

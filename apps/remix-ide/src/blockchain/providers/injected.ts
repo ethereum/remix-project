@@ -48,8 +48,4 @@ export class InjectedProvider {
       cb(e.message)
     }
   }
-
-  getProvider () {
-    return 'injected'
-  }
 }

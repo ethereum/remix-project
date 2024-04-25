@@ -598,6 +598,13 @@ jobs:
         type: string
     parallelism: 10
     steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: unzip ./persist/dist.zip
+      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules || yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
+      - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
+      - run: ls -la ./dist/apps/remix-ide/assets/js
       - when:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
@@ -607,10 +614,8 @@ jobs:
                 install-chrome: true
                 install-chromedriver: false
                 install-geckodriver: false
-            - install-chromedriver-custom-linux
+            - run: yarn install_webdriver
             - run: google-chrome --version
-            - run: chromedriver --version
-            - run: rm LICENSE.chromedriver 2> /dev/null || true
       - when:
           condition:
               equal: [ "firefox", << parameters.browser >> ]
@@ -618,36 +623,10 @@ jobs:
             - browser-tools/install-browser-tools:
                 install-firefox: true
                 install-chrome: false
-                install-geckodriver: true
+                install-geckodriver: false
                 install-chromedriver: false
+            - run: yarn install_webdriver
             - run: firefox --version
-            - run: geckodriver --version
-      - checkout
-      - attach_workspace:
-          at: .
-      - run: unzip ./persist/dist.zip
-      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-      - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
-      - run: ls -la ./dist/apps/remix-ide/assets/js
-      - run: yarn run selenium-install --singleDriverInstall=firefox
-      - when:
-          condition:
-              equal: [ "chrome", << parameters.browser >> ]
-          steps:
-            - run: mkdir -p node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
-            - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
-            - run: 
-                name: run selenium
-                command: yarn selenium-standalone start --singleDriverStart=chrome
-                background: true
-      - when:
-          condition:
-              equal: [ "firefox", << parameters.browser >> ]
-          steps:
-            - run: 
-                name: run selenium
-                command: yarn selenium-standalone start --singleDriverStart=firefox
-                background: true
       - run: ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >>
       - store_test_results:
           path: ./reports/tests
@@ -674,28 +653,19 @@ jobs:
         default: 1
     parallelism: << parameters.parallelism >>
     steps:
-      - browser-tools/install-browser-tools:
-          install-firefox: false
-          install-chrome: true
-          install-geckodriver: false
-          install-chromedriver: false
-      - install-chromedriver-custom-linux
-      - run: google-chrome --version
-      - run: chromedriver --version
-      - run: rm LICENSE.chromedriver 2> /dev/null || true
       - checkout
       - attach_workspace:
           at: .
       - run: unzip ./persist/dist.zip
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
-      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
-      - run: yarn run selenium-install --singleDriverInstall=firefox
-      - run: mkdir -p node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
-      - run: cp ~/bin/chromedriver /home/circleci/remix-project/node_modules/selenium-standalone/.selenium/chromedriver/latest-x64/
-      - run:
-          name: Start Selenium
-          command: yarn run selenium --singleDriverStart=chrome
-          background: true
+      - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules || yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
+      - browser-tools/install-browser-tools:
+          install-firefox: false
+          install-chrome: true
+          install-geckodriver: false
+          install-chromedriver: false
+      - run: yarn install_webdriver
+      - run: google-chrome --version
       - run: ./apps/remix-ide/ci/browser_test_plugin.sh << parameters.plugin >>
       - store_test_results:
           path: ./reports/tests
@@ -882,35 +852,3 @@ workflows:
               only: remix_beta
 
 # VS Code Extension Version: 1.5.1
-commands:
-  install-chromedriver-custom-linux:
-    description: Custom script to install chromedriver with better version support for linux
-    steps:
-      - run:
-          name: install-chromedriver-custom-linux
-          command: |
-            google-chrome --version > version.txt
-            VERSION=$(grep -Eo '[0-9]+\.' < version.txt | head -1)
-            # CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json' | jq '.channels.Stable.downloads.chromedriver[] | select(.platform == "linux64") | .url' | tr -d '"')
-            CHROMEDRIVER_URL=$(curl -s 'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json' | jq --arg v "$VERSION" '.versions[] | select(.version | startswith($v)) | .downloads.chromedriver[] | select(.platform == "linux64") | .url' | tail -n1 | tr -d '"')
-            echo $CHROMEDRIVER_URL
-            ZIPFILEPATH="/tmp/chromedriver.zip"
-            echo "Downloading from $CHROMEDRIVER_URL"
-            curl -f --silent $CHROMEDRIVER_URL > "$ZIPFILEPATH"
-
-            BINFILEPATH="$HOME/bin/chromedriver-linux"
-            echo "Extracting to $BINFILEPATH"
-            unzip -p "$ZIPFILEPATH" chromedriver-linux64/chromedriver > "$BINFILEPATH"
-
-            echo Setting execute flag
-            chmod +x "$BINFILEPATH"
-
-            echo Updating symlink
-            ln -nfs "$BINFILEPATH" ~/bin/chromedriver
-
-            echo Removing ZIP file
-            rm "$ZIPFILEPATH"
-            rm version.txt
-
-            echo Done
-            chromedriver -v

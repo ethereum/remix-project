@@ -13,4 +13,5 @@ export { default as rln } from './templates/rln'
 export { contractDeployerScripts } from './script-templates/contract-deployer'
 export { etherscanScripts } from './script-templates/etherscan'
 export { sindriScripts } from './script-templates/sindri'
+export { contractCreate2Factory } from './script-templates/create2-solidity-factory'
 
