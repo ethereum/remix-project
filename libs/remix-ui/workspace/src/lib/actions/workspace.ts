@@ -202,8 +202,10 @@ export const createWorkspace = async (
     cb && cb(null, workspaceName)
     if (isGitRepo) {
       await checkGit()
-      const isActive = await plugin.call('manager', 'isActive', 'dgit')
-      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      if (!plugin.registry.get('platform').api.isDesktop()) {
+        const isActive = await plugin.call('manager', 'isActive', 'dgit')
+        if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      }
     }
     if (workspaceTemplateName === 'semaphore' || workspaceTemplateName === 'hashchecker' || workspaceTemplateName === 'rln') {
       const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
@@ -510,8 +512,10 @@ export const switchToWorkspace = async (name: string) => {
     await plugin.setWorkspace({ name, isLocalhost: false })
     const isGitRepo = await plugin.fileManager.isGitRepo()
     if (isGitRepo) {
-      const isActive = await plugin.call('manager', 'isActive', 'dgit')
-      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      if (!plugin.registry.get('platform').api.isDesktop()) {
+        const isActive = await plugin.call('manager', 'isActive', 'dgit')
+        if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      }
     }
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace({ name, isGitRepo }))
@@ -670,9 +674,10 @@ export const cloneRepository = async (url: string) => {
       dispatch(cloneRepositoryRequest())
       promise
         .then(async () => {
-          const isActive = await plugin.call('manager', 'isActive', 'dgit')
-
-          if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+          if (!plugin.registry.get('platform').api.isDesktop()) {
+            const isActive = await plugin.call('manager', 'isActive', 'dgit')
+            if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+          }
           await fetchWorkspaceDirectory(ROOT_PATH)
           const workspacesPath = plugin.fileProviders.workspace.workspacesPath
           const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
@@ -757,8 +762,8 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
 }
 
 export const showAllBranches = async () => {
-
-  const isActive = await plugin.call('manager', 'isActive', 'dgit')
+  if (plugin.registry.get('platform').api.isDesktop()) return
+  const isActive = await plugin.call('manager', 'isActive', 'dgit') 
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
   plugin.call('dgit', 'open', 'branches')
