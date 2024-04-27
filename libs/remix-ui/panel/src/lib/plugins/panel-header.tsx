@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react' // eslint-disable-line
 import {FormattedMessage} from 'react-intl'
 import {PluginRecord} from '../types'
 import './panel.css'
-import { CustomTooltip } from '@remix-ui/helper'
+import {CustomTooltip, RenderIf, RenderIfNot} from '@remix-ui/helper'
 
 export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>,
@@ -47,32 +47,39 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         <div className="d-flex flex-row">
           <div className="d-flex flex-row">
             {plugin?.profile?.maintainedBy?.toLowerCase() === 'remix' ? (
-              <CustomTooltip placement="right-end" tooltipId="maintainedByTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.maintainedByRemix" />}>
+              <CustomTooltip placement="auto-end" tooltipId="maintainedByTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.maintainedByRemix" />}>
                 <i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check"></i>
               </CustomTooltip>)
-              : (<CustomTooltip placement="right-end" tooltipId="maintainedExternally" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
+              : (<CustomTooltip placement="auto-end" tooltipId="maintainedExternally" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
                 <i aria-hidden="true" className="mt-1 px-1 text-warning far fa-exclamation-circle"></i>
               </CustomTooltip>)
             }
           </div>
           <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id="swapitHeaderInfoSectionId" onClick={toggleClass}>
-            <CustomTooltip placement="right-end" tooltipText={<FormattedMessage id="panel.pluginInfo" />} tooltipId="pluginInfoTooltip" tooltipClasses="text-nowrap">
+            <CustomTooltip placement="auto-end" tooltipText={<FormattedMessage id="panel.pluginInfo" />} tooltipId="pluginInfoTooltip" tooltipClasses="text-nowrap">
               {tooltipChild}
             </CustomTooltip>
           </div>
           {
-            !plugin?.pinned ? (
-              <div className='d-flex' onClick={pinPlugin}>
-                <CustomTooltip placement="right-end" tooltipId="pinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.pinnedMsg" />}>
-                  <i aria-hidden="true" className="mt-1 px-1 pl-2 fas fa-thumbtack"></i>
-                </CustomTooltip>
-              </div>
-            ) : (
-              <div className='d-flex' onClick={unPinPlugin}>
-                <CustomTooltip placement="right-end" tooltipId="unPinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.unPinnedMsg" />}>
-                  <i aria-hidden="true" className="text-success mt-1 px-1 pl-2 fas fa-thumbtack"></i>
-                </CustomTooltip>
-              </div>
+            plugin && plugin.profile.name !== 'filePanel' && (
+              <RenderIfNot condition={plugin.profile.name === 'filePanel'}>
+                <>
+                  <RenderIf condition={plugin.pinned}>
+                    <div className='d-flex' onClick={unPinPlugin}>
+                      <CustomTooltip placement="auto-end" tooltipId="unPinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.unPinnedMsg" />}>
+                        <i aria-hidden="true" className="text-success mt-1 px-1 pl-2 fas fa-thumbtack"></i>
+                      </CustomTooltip>
+                    </div>
+                  </RenderIf>
+                  <RenderIfNot condition={plugin.pinned}>
+                    <div className='d-flex' onClick={pinPlugin}>
+                      <CustomTooltip placement="auto-end" tooltipId="pinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.pinnedMsg" />}>
+                        <i aria-hidden="true" className="mt-1 px-1 pl-2 fas fa-thumbtack"></i>
+                      </CustomTooltip>
+                    </div>
+                  </RenderIfNot>
+                </>
+              </RenderIfNot>
             )
           }
         </div>

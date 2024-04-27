@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import { AbstractPanel } from './panel'
-import { RemixPluginPanel } from '@remix-ui/panel'
+import { PluginRecord, RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
 import { RemixUIPanelHeader } from '@remix-ui/panel'
 import { PluginViewWrapper } from '@remix-ui/helper'
@@ -11,7 +11,7 @@ const pinnedPanel = {
   displayName: 'Pinned Panel',
   description: 'Remix IDE pinned panel',
   version: packageJson.version,
-  methods: ['addView', 'removeView', 'currentFocus']
+  methods: ['addView', 'removeView', 'currentFocus', 'pinView', 'unPinView']
 }
 
 export class PinnedPanel extends AbstractPanel {
@@ -26,24 +26,26 @@ export class PinnedPanel extends AbstractPanel {
     this.renderComponent()
   }
 
-  currentFocus (): string {
-    return Object.values(this.plugins).find(plugin => {
-      return plugin.pinned
-    }).profile.name
-  }
+  pinView (profile, view) {
+    const activePlugin = this.currentFocus()
 
-  removeView(profile) {
-    this.remove(profile.name)
-    this.emit('unpinnedPlugin', profile.name)
-    this.renderComponent()
-  }
-
-  addView(profile, view) {
-    super.addView(profile, view)
+    if (activePlugin === profile.name) throw new Error(`Plugin ${profile.name} already pinned`) 
+    if (activePlugin) this.remove(activePlugin)
+    this.addView(profile, view)
     this.plugins[profile.name].pinned = true
-    super.showContent(profile.name)
-    this.emit('pinnedPlugin', profile.name)
+    this.plugins[profile.name].active = true
     this.renderComponent()
+    this.events.emit('pinnedPlugin', profile.name)
+  }
+
+  unPinView (profile) {
+    const activePlugin = this.currentFocus()
+
+    if (activePlugin !== profile.name) throw new Error(`Plugin ${profile.name} already pinned`)
+    super.remove(profile.name)
+    this.call('sidePanel', 'unPinView', profile)
+    this.renderComponent()
+    this.events.emit('unPinnedPlugin', profile.name)
   }
 
   setDispatch (dispatch: React.Dispatch<any>) {
@@ -57,7 +59,7 @@ export class PinnedPanel extends AbstractPanel {
   }
 
   updateComponent(state: any) {
-    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins}></RemixUIPanelHeader>} plugins={state.plugins} />
+    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins} pinView={this.pinView.bind(this)} unPinView={this.unPinView.bind(this)}></RemixUIPanelHeader>} plugins={state.plugins} />
   }
 
   renderComponent() {

@@ -27,7 +27,7 @@ const RemixApp = (props: IRemixAppUi) => {
   const [appReady, setAppReady] = useState<boolean>(false)
   const [showEnterDialog, setShowEnterDialog] = useState<boolean>(false)
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
-  const [hidePinnedPanel, setHidePinnedPanel] = useState<boolean>(false)
+  const [hidePinnedPanel, setHidePinnedPanel] = useState<boolean>(true)
   const [maximiseLeftTrigger, setMaximiseLeftTrigger] = useState<number>(0)
   const [resetLeftTrigger, setResetLeftTrigger] = useState<number>(0)
   const [maximiseRightTrigger, setMaximiseRightTrigger] = useState<number>(0)
@@ -118,6 +118,14 @@ const RemixApp = (props: IRemixAppUi) => {
       setLocale(nextLocale)
     })
 
+    props.app.pinnedPanel.events.on('pinnedPlugin', () => {
+      setHidePinnedPanel(false)
+    })
+
+    props.app.pinnedPanel.events.on('unPinnedPlugin', () => {
+      setHidePinnedPanel(true)
+    })
+
     setInterval(() => {
       setOnline(window.navigator.onLine)
     }, 1000)
@@ -199,9 +207,9 @@ const RemixApp = (props: IRemixAppUi) => {
               ></DragBar>
               <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
                 <RemixUIMainPanel layout={props.app.layout}></RemixUIMainPanel>
-                <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-all-tabs" tooltipText={<FormattedMessage id="remixApp.scrollToSeeAllTabs" />}>
-                  <div className="remix-ui-tabs_end remix-bg-opacity position-absolute position-fixed"></div>
-                </CustomTooltip>
+                {/* <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-all-tabs" tooltipText={<FormattedMessage id="remixApp.scrollToSeeAllTabs" />}>
+                  <div className="remix-ui-tabs_end remix-bg-opacity position-absolute"></div>
+                </CustomTooltip> */}
               </div>
               <DragBar
                 resetTrigger={resetRightTrigger}
@@ -212,7 +220,7 @@ const RemixApp = (props: IRemixAppUi) => {
                 setHideStatus={setHideSidePanel}
                 layoutPosition='right'
               ></DragBar>
-              <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className='pinnedpanel d-flex border-right border-left'>
+              <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
                 {props.app.pinnedPanel.render()}
               </div>
             </div>

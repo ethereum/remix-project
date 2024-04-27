@@ -12,7 +12,7 @@ const sidePanel = {
   displayName: 'Side Panel',
   description: 'Remix IDE side panel',
   version: packageJson.version,
-  methods: ['addView', 'removeView', 'currentFocus']
+  methods: ['addView', 'removeView', 'currentFocus', 'pinView', 'unPinView']
 }
 
 export class SidePanel extends AbstractPanel {
@@ -65,7 +65,20 @@ export class SidePanel extends AbstractPanel {
   }
 
   addView(profile, view) {
+    console.log(profile.name)
     super.addView(profile, view)
+    this.call('menuicons', 'linkContent', profile)
+    this.renderComponent()
+  }
+
+  hideView(profile) {
+    this.plugins[profile.name].active = false
+    this.plugins['filePanel'].active = true
+    this.call('menuicons', 'unlinkContent', profile)
+    this.renderComponent()
+  }
+
+  showView(profile) {
     this.call('menuicons', 'linkContent', profile)
     this.renderComponent()
   }
@@ -73,14 +86,14 @@ export class SidePanel extends AbstractPanel {
   pinView (profile, view) {
     if (this.plugins[profile.name].pinned) return
     this.plugins[profile.name].pinned = true
-    this.call('pinnedPanel', 'addView', profile, view)
-    // this.removeView(profile)
+    this.call('pinnedPanel', 'pinView', profile, view)
+    this.hideView(profile)
   }
 
   unPinView (profile) {
     if (!this.plugins[profile.name].pinned) return
     this.plugins[profile.name].pinned = false
-    this.call('pinnedPanel', 'removeView', profile)
+    this.showView(profile)
   }
 
   /**
