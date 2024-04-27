@@ -34,6 +34,9 @@ export const Commits = () => {
         await actions.getCommitChanges(commit.oid, commit.commit.parent[0])
     }
 
+    const fetchIsDisabled = () => {
+        return context.upstream === '' || context.remotes.length === 0
+    }
 
     return (
         <>
@@ -47,7 +50,7 @@ export const Commits = () => {
                         })}
                     </div>
                 </div>
-                    {hasNextPage && <GitUIButton className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
+                    {hasNextPage && <GitUIButton disabledCondition={fetchIsDisabled()} className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
                 </>
                 : <div className="text-muted">No commits</div>}
         </>

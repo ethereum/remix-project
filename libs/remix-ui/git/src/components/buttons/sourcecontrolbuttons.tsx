@@ -50,7 +50,7 @@ export const SourceControlButtons = (props: SourceControlButtonsProps) => {
     }
     if (!props.remote) {
       setRemote(context.defaultRemote)
-    }else{
+    } else {
       setDefaultRemote()
     }
   }, [])
@@ -62,7 +62,7 @@ export const SourceControlButtons = (props: SourceControlButtonsProps) => {
     }
     if (!props.remote) {
       setRemote(context.defaultRemote)
-    }else{
+    } else {
       setDefaultRemote()
     }
   }, [context.defaultRemote, context.currentBranch])
@@ -86,19 +86,26 @@ export const SourceControlButtons = (props: SourceControlButtonsProps) => {
     await actions.push(remote.remote, branch.name)
   }
 
+  const buttonsDisabled = () => {
+    return context.upstream === '' || context.remotes.length === 0
+  }
 
-  return (<span className='d-flex justify-content-end align-items-center'>
-    <CustomTooltip tooltipText={<FormattedMessage id="git.pull" />}>
-      <>{commitsBehind.length}<GitUIButton onClick={pull} className='btn btn-sm'><FontAwesomeIcon icon={faArrowDown} className="" /></GitUIButton></>
-    </CustomTooltip>
-    <CustomTooltip tooltipText={<FormattedMessage id="git.push" />}>
-      <>{commitsAhead.length}<GitUIButton onClick={push} className='btn btn-sm'><FontAwesomeIcon icon={faArrowUp} className="" /></GitUIButton></>
-    </CustomTooltip>
-    <CustomTooltip tooltipText={<FormattedMessage id="git.sync" />}>
-      <GitUIButton onClick={sync} className='btn btn-sm'><FontAwesomeIcon icon={faArrowsUpDown} className="" /></GitUIButton>
-    </CustomTooltip>
-    <CustomTooltip tooltipText={<FormattedMessage id="git.refresh" />}>
-      <GitUIButton onClick={async () => { }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowRotateRight} className="" /></GitUIButton>
-    </CustomTooltip>
-  </span>)
+
+  return (
+    <span className='d-flex justify-content-end align-items-center'>
+      <CustomTooltip tooltipText={<FormattedMessage id="git.pull" />}>
+        <>{commitsBehind.length}<GitUIButton disabledCondition={buttonsDisabled()} onClick={pull} className='btn btn-sm'><FontAwesomeIcon icon={faArrowDown} className="" /></GitUIButton></>
+      </CustomTooltip>
+      <CustomTooltip tooltipText={<FormattedMessage id="git.push" />}>
+        <>{commitsAhead.length}<GitUIButton disabledCondition={buttonsDisabled()} onClick={push} className='btn btn-sm'><FontAwesomeIcon icon={faArrowUp} className="" /></GitUIButton></>
+      </CustomTooltip>
+      <CustomTooltip tooltipText={<FormattedMessage id="git.sync" />}>
+        <GitUIButton disabledCondition={buttonsDisabled()} onClick={sync} className='btn btn-sm'><FontAwesomeIcon icon={faArrowsUpDown} className="" /></GitUIButton>
+      </CustomTooltip>
+      <CustomTooltip tooltipText={<FormattedMessage id="git.refresh" />}>
+        <GitUIButton disabledCondition={buttonsDisabled()} onClick={async () => { }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowRotateRight} className="" /></GitUIButton>
+      </CustomTooltip>
+    </span>
+
+  )
 }

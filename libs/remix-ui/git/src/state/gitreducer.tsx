@@ -119,6 +119,15 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
                 commitChanges: [...state.commitChanges]
             }
 
+        case 'RESET_REMOTE_BRANCH_COMMITS':
+            if (state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name]) {
+                delete state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name]
+            }
+            return {
+               ...state,
+               remoteBranchCommits: { ...state.remoteBranchCommits }
+            }
+
         case 'SET_REMOTE_BRANCH_COMMITS':
             if (state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name]) {
                 state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name].push(...(action as setRemoteBranchCommitsAction).payload.commits)

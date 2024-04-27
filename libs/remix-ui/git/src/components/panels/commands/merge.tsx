@@ -53,6 +53,7 @@ export const Merge = () => {
       <label>Merge from Branch</label>
       <Select
         options={localBranchOptions}
+        isDisabled={context.branches.length === 0}
         onChange={(e: any) => e && onLocalBranchChange(e.value)}
         theme={selectTheme}
         styles={selectStyles}

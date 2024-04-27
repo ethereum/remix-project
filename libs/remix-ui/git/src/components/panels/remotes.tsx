@@ -48,7 +48,7 @@ export const Remotes = () => {
       <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
       <input placeholder="remote url" name='remoteurl' onChange={e => onUrlChange(e.target.value)} value={url} className="form-control" type="text" id="remoteurl" />
 
-      <button className='btn btn-primary mt-1 w-100' onClick={async () => {
+      <button disabled={(remoteName && url)?false:true} className='btn btn-primary mt-1 w-100' onClick={async () => {
         addRemote();
       }}>add remote</button>
       <hr />

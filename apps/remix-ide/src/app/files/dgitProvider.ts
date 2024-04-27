@@ -303,14 +303,14 @@ class DGitProvider extends Plugin {
   }
 
   async getCommitChanges(commitHash1, commitHash2): Promise<commitChange[]> {
-    //console.log([git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
+    console.log(commitHash1, commitHash2, [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
     const result: commitChange[] = await git.walk({
       ...await this.addIsomorphicGitConfigFS(),
       trees: [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })],
       map: async function (filepath, [A, B]) {
         // ignore directories
 
-        //console.log(filepath, A, B)
+        console.log(filepath, A, B)
 
         if (filepath === '.') {
           return
@@ -333,6 +333,8 @@ class DGitProvider extends Plugin {
           path: filepath,
         }
 
+        console.log('Aoid', Aoid, 'Boid', Boid, commitChange)
+
         // determine modification type
         if (Aoid !== Boid) {
           commitChange.type = "modified"
@@ -340,7 +342,7 @@ class DGitProvider extends Plugin {
         if (Aoid === undefined) {
           commitChange.type = "deleted"
         }
-        if (Boid === undefined) {
+        if (Boid === undefined || !commitHash2) {
           commitChange.type = "added"
         }
         if (Aoid === undefined && Boid === undefined) {

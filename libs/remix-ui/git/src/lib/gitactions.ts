@@ -1,7 +1,7 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, fileStatusMerge, setRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog } from "../state/gitpayload";
+import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog } from "../state/gitpayload";
 import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
@@ -381,7 +381,7 @@ export const fetch = async (remote?: string, ref?: string, remoteRef?: string, d
   await plugin.call('notification', 'toast', `Fetching ${remote || ''} ${ref || ''} ${remoteRef || ''}`)
   try {
     await plugin.call('dGitProvider' as any, 'fetch', { remote, ref, remoteRef, depth, singleBranch, relative });
-    if(!quiet){
+    if (!quiet) {
       await gitlog()
       await getBranches()
     }
@@ -428,6 +428,7 @@ const tokenWarning = async () => {
 
 
 const parseError = async (e: any) => {
+  console.log(e)
   // if message conttains 401 Unauthorized, show token warning
   if (e.message.includes('401')) {
     const result = await plugin.call('notification', 'modal', {
@@ -458,6 +459,13 @@ const parseError = async (e: any) => {
       cancelLabel: 'Close',
       type: ModalTypes.confirm
     })
+  } else if (e.toString().includes('NotFoundError') && !e.toString().includes('fetch')) {
+    await plugin.call('notification', 'modal', {
+      title: 'Remote branch not found',
+      message: 'The branch you are trying to fetch does not exist on the remote.\ If you have forked this branch from another branch, you may need to fetch the original branch first or publish this branch on the remote.',
+      okLabel: 'OK',
+      type: ModalTypes.alert
+    })
   } else {
     await plugin.call('notification', 'alert', {
       title: 'Error',
@@ -475,12 +483,12 @@ export const repositories = async () => {
       let page = 2
       let hasMoreData = true
       const per_page = 100
-      while(hasMoreData){
-        let pagedResponse = await plugin.call('dGitProvider' as any, 'repositories', { token, page:page, per_page: per_page })
-        if(pagedResponse.length < per_page){
+      while (hasMoreData) {
+        let pagedResponse = await plugin.call('dGitProvider' as any, 'repositories', { token, page: page, per_page: per_page })
+        if (pagedResponse.length < per_page) {
           hasMoreData = false
         }
-        repos = [...repos,...pagedResponse]
+        repos = [...repos, ...pagedResponse]
         dispatch(setRepos(repos))
         page++
       }
@@ -511,12 +519,12 @@ export const remoteBranches = async (owner: string, repo: string) => {
       let page = 2
       let hasMoreData = true
       const per_page = 100
-      while(hasMoreData){
-        let pagedResponse = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo, page:page, per_page: per_page })
-        if(pagedResponse.length < per_page){
+      while (hasMoreData) {
+        let pagedResponse = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo, page: page, per_page: per_page })
+        if (pagedResponse.length < per_page) {
           hasMoreData = false
         }
-        branches = [...branches,...pagedResponse]
+        branches = [...branches, ...pagedResponse]
         dispatch(setRemoteBranches(branches))
         page++
       }
@@ -736,11 +744,22 @@ export const diff = async (commitChange: commitChange) => {
 
 export const getCommitChanges = async (oid1: string, oid2: string, branch?: branch, remote?: remote) => {
   console.log(oid1, oid2, branch, remote)
-  try{
+
+  try {
+    // check if oid2 exists
+    const log =  await plugin.call('dGitProvider', 'log', {
+      ref: branch? branch.name : 'HEAD',
+    })
+    if(log) {
+      const foundCommit = log.find((commit: ReadCommitResult) => commit.oid === oid2)
+      if(!foundCommit) {
+        await fetch(remote? remote.remote: null, branch? branch.name: null,null, 5, true, true)
+      }
+    }
     const result: commitChange[] = await plugin.call('dGitProvider', 'getCommitChanges', oid1, oid2)
     dispatch(setCommitChanges(result))
     return result
-  }catch(e){
+  } catch (e) {
     console.log(e)
     return false
   }
@@ -759,9 +778,12 @@ async function getRepoDetails(url: string) {
 
 
 export const fetchBranch = async (branch: branch, page: number) => {
-  if(!branch.remote || !branch.remote.url) return
+  if (!branch.remote || !branch.remote.url) return
   const token = await tokenWarning();
   console.log('fetch', branch)
+  if (page == 1) {
+    dispatch(resetRemoteBranchCommits({ branch }))
+  }
   const { owner, repo } = await getRepoDetails(branch.remote.url);
   const rc = await plugin.call('dGitProvider' as any, 'remotecommits', { token, owner: owner, repo: repo, branch: branch.name, length, page });
   console.log(rc, 'remote commits from octokit')
@@ -825,28 +847,31 @@ export const getBranchCommits = async (branch: branch, page: number) => {
       const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
         ref: branch.name,
       })
-      
-      const branchDifference: branchDifference = await plugin.call('dGitProvider', 'compareBranches', {
-        branch,
-        remote: {
-          remote: 'origin',
-          url: ''
-        }
-      })
-      console.log(commits, branchDifference)
-      dispatch(setBranchDifferences(
-        {
+      try {
+        const branchDifference: branchDifference = await plugin.call('dGitProvider', 'compareBranches', {
           branch,
-          remote:
-            { remote: 'origin', url: '' },
+          remote: {
+            remote: 'origin',
+            url: ''
+          }
+        })
+        console.log(commits, branchDifference)
+        dispatch(setBranchDifferences(
+          {
+            branch,
+            remote:
+              { remote: 'origin', url: '' },
             branchDifference: branchDifference
-        }))     
+          }))
+      } catch (e) {
+
+      }
       dispatch(setLocalBranchCommits({ branch, commits }))
     } else {
       await fetchBranch(branch, page)
     }
   } catch (e) {
-    console.log(e)
+    console.trace(e)
     await fetchBranch(branch, page)
   }
   dispatch(setLoading(false))

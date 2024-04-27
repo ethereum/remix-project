@@ -36,12 +36,12 @@ export const PushPull = () => {
   }
 
   const onRemoteChange = (value: any) => {
-    console.log('onRemoteChange', value)
+    console.log('onRemoteChange', value, context)
     actions.setUpstreamRemote(value)
   }
 
   useEffect(() => {
-    console.log('UPSTREAM', context.upstream)
+    console.log('UPSTREAM', context.upstream, context)
   }, [context.upstream])
 
   const onForceChange = (event: any) => {
@@ -61,7 +61,7 @@ export const PushPull = () => {
 
 
   useEffect(() => {
-    console.log('context repositories', context.repositories)
+    console.log('context branches', context.branches)
     // map context.repositories to options
     const localBranches = context.branches && context.branches.length > 0 && context.branches
       .filter(branch => !branch.remote)
@@ -93,6 +93,11 @@ export const PushPull = () => {
   }, [context.remotes])
 
 
+  const pushPullIsDisabled = () => {
+    return localBranch === '' || remoteBranch === '' || context.upstream === '' || context.remotes.length === 0
+  }
+
+
   return (
     <>
 
@@ -100,14 +105,15 @@ export const PushPull = () => {
 
       <div className="btn-group w-100" role="group">
    
-        <GitUIButton type="button" onClick={async () => pull()} className="btn btn-primary mr-1">Pull</GitUIButton>
-        <GitUIButton type="button" onClick={async () => push()} className="btn btn-primary">Push</GitUIButton>
+        <GitUIButton disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => pull()} className="btn btn-primary mr-1">Pull</GitUIButton>
+        <GitUIButton disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => push()} className="btn btn-primary">Push</GitUIButton>
       </div>
 
 
       <label>Local Branch</label>
       <Select
         options={localBranchOptions}
+        isDisabled={context.branches.length === 0}
         onChange={(e: any) => e && onLocalBranchChange(e.value)}
         theme={selectTheme}
         styles={selectStyles}
@@ -119,6 +125,7 @@ export const PushPull = () => {
       <label>Remote Branch</label>
       <Select
         options={remoteBranchOptions}
+        isDisabled={context.branches.length === 0}
         onChange={(e: any) => e && onRemoteBranchChange(e.value)}
         theme={selectTheme}
         styles={selectStyles}
@@ -127,9 +134,10 @@ export const PushPull = () => {
         placeholder="Type to search for a branch..."
       />
 
-      <label>Upstream</label>
+      <label>Remote</label>
       <Select
         options={localRemotesOptions}
+        isDisabled={context.remotes.length === 0}
         onChange={(e: any) => e && onRemoteChange(e.value)}
         theme={selectTheme}
         styles={selectStyles}

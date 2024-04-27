@@ -1,6 +1,7 @@
 import { faCaretUp, faCaretDown, faCaretRight, faArrowUp, faArrowDown, faArrowRotateRight, faArrowsUpDown, faGlobe, faCheckCircle, faToggleOff, faToggleOn, faSync } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
+import { gitActionsContext } from "../../state/context";
 import { branch } from "../../types";
 import { gitPluginContext } from "../gitui";
 
@@ -15,6 +16,7 @@ interface BrancheDetailsNavigationProps {
 export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) => {
   const { eventKey, activePanel, callback, branch, checkout } = props;
   const context = React.useContext(gitPluginContext)
+  const actions = React.useContext(gitActionsContext)
   const handleClick = () => {
     if (!callback) return
     if (activePanel === eventKey) {
@@ -26,6 +28,10 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
 
   const openRemote = () => {
     window.open(`${branch.remote.url}/tree/${branch.name}`, '_blank');
+  }
+
+  const reloadBranch = () => {
+    actions.getBranchCommits(branch, 1)
   }
 
   return (
@@ -44,6 +50,9 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
           :
           <FontAwesomeIcon className='ml-auto mr-1 pointer' icon={faToggleOn} onClick={() => checkout(branch)}></FontAwesomeIcon>
         }
+
+        {branch.remote?.url && <>
+          <FontAwesomeIcon className='ml-2 pointer' icon={faSync} onClick={() => reloadBranch()}></FontAwesomeIcon></>}
 
         {branch.remote?.url && <>
           <FontAwesomeIcon className='ml-2 pointer' icon={faGlobe} onClick={() => openRemote()}></FontAwesomeIcon></>}

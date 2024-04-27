@@ -15,7 +15,7 @@ const GitUIButton = ({children, disabledCondition = false, ...rest }:ButtonWithC
 
   const isDisabled = loading || disabledCondition
   return (
-    <button disabled={loading} {...rest}>
+    <button disabled={isDisabled} {...rest}>
       {children}
     </button>
   );

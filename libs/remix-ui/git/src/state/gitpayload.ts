@@ -142,6 +142,18 @@ export const setRemoteBranchCommits = ({ branch, commits }:{
     }
 }
 
+export const resetRemoteBranchCommits = ({ branch }:{
+    branch: branch,
+}):{
+    type: string;
+    payload: { branch: branch };
+} => {
+    return {
+        type: 'RESET_REMOTE_BRANCH_COMMITS',
+        payload: { branch }
+    }
+}
+
 export const setLocalBranchCommits = ({
     branch,
     commits
