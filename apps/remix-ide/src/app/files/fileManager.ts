@@ -8,6 +8,9 @@ import {Registry} from '@remix-project/remix-lib'
 import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from '@remix-ui/helper'
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
+import { commitChange } from '@remix-ui/git'
+import { Editor } from '../editor/editor'
+import { IEditorFile } from '@remix-ui/editor'
 
 /*
   attach to files event (removed renamed)
@@ -702,24 +705,63 @@ class FileManager extends Plugin {
     this.emit('noFileSelected')
   }
 
+  async diff(change: commitChange) {
+    await this.saveCurrentFile()
+    this._deps.config.set('currentFile', '')
+    // TODO: Only keep `this.emit` (issue#2210)
+    this.emit('noFileSelected')
+    this.events.emit('noFileSelected')
+
+    if(!change.readonly){
+      let file = this.normalize(change.path)
+      const resolved = this.getPathFromUrl(file)
+      file = resolved.file
+      this._deps.config.set('currentFile', file)
+      this.openedFiles[file] = file
+    }
+
+    await this.editor.openDiff(change)
+    this.emit('openDiff', change)
+    this.events.emit('openDiff', change)
+  }
+
+  async closeDiff(change: commitChange) {
+    if(!change.readonly){
+      let file = this.normalize(change.path)
+      delete this.openedFiles[file]
+      if (!Object.keys(this.openedFiles).length) {
+        this._deps.config.set('currentFile', '')
+        // TODO: Only keep `this.emit` (issue#2210)
+        this.emit('noFileSelected')
+        this.events.emit('noFileSelected')
+      }
+    }
+    this.emit('closeDiff', change)
+    this.events.emit('closeDiff', change)
+  }
+
+
   async openFile(file?: string) {
     if (!file) {
       this.emit('noFileSelected')
+      this.events.emit('noFileSelected')
     } else {
       file = this.normalize(file)
       const resolved = this.getPathFromUrl(file)
       file = resolved.file
       await this.saveCurrentFile()
-      if (this.currentFile() === file) return
-
+      // we always open the file in the editor, even if it's the same as the current one if the editor is in diff mode
+      if (this.currentFile() === file && !this.editor.isDiff) return
+      
       const provider = resolved.provider
       this._deps.config.set('currentFile', file)
+
       this.openedFiles[file] = file
+
 
       let content = ''
       try {
         content = await provider.get(file)
-
       } catch (error) {
         console.log(error)
         throw error
@@ -736,7 +778,9 @@ class FileManager extends Plugin {
       } else {
         await this.editor.open(file, content)
       }
+      // TODO: Only keep `this.emit` (issue#2210)
       this.emit('currentFileChanged', file)
+      this.events.emit('currentFileChanged', file)
       return true
     }
   }
