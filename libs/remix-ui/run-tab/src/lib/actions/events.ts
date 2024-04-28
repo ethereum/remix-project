@@ -14,6 +14,13 @@ import { shortenAddress } from "@remix-ui/helper"
 const _paq = window._paq = window._paq || []
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
+  // This maintains current network state and update the pinned contracts list,
+  // only when there is a change in provider or in chain id for same provider
+  // as 'networkStatus' is triggered in each 10 seconds
+  const currentNetwork = {
+    provider: null,
+    chainId: null
+  }
   plugin.blockchain.events.on('newTransaction', (tx, receipt) => {
     plugin.emit('newTransaction', tx, receipt)
   })
@@ -33,7 +40,6 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
-    await loadPinnedContracts(plugin, dispatch)
   })
 
   plugin.blockchain.event.register('networkStatus', async ({ error, network }) => {
@@ -44,10 +50,18 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
       return
     }
     const networkProvider = plugin.networkModule.getNetworkProvider.bind(plugin.networkModule)
-    const netUI = !networkProvider().startsWith('vm') ? `${network.name} (${network.id || '-'}) network` : 'VM'
-    const pinnedChainId = !networkProvider().startsWith('vm') ? network.id : networkProvider()
+    const isVM = networkProvider().startsWith('vm') ?  true : false
+    const netUI = !isVM ? `${network.name} (${network.id || '-'}) network` : 'VM'
+    const pinnedChainId = !isVM ? network.id : networkProvider()
     setNetworkNameFromProvider(dispatch, netUI)
     setPinnedChainId(dispatch, pinnedChainId)
+    
+    // Check if provider is changed or network is changed for same provider e.g; Metamask
+    if (currentNetwork.provider !== networkProvider() || (!isVM && currentNetwork.chainId !== network.id)) {
+      currentNetwork.provider = networkProvider()
+      if (!isVM) currentNetwork.chainId = network.id
+      await loadPinnedContracts(plugin, dispatch, pinnedChainId)
+    }
   })
 
   plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
@@ -102,9 +116,29 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     })
   })
 
-  plugin.on('manager', 'pluginActivated', (plugin: Plugin) => {
-    if (plugin.name === 'remixd') {
+  plugin.on('manager', 'pluginActivated', (activatedPlugin: Plugin) => {
+    if (activatedPlugin.name === 'remixd') {
       dispatch(setRemixDActivated(true))
+    } else {
+      if (activatedPlugin && activatedPlugin.name.startsWith('injected')) {
+        plugin.on(activatedPlugin.name, 'accountsChanged', (accounts: Array<string>) => {
+          const accountsMap = {}
+          accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
+          dispatch(fetchAccountsListSuccess(accountsMap))
+        })
+      } else if (activatedPlugin && activatedPlugin.name === 'walletconnect') {
+        plugin.on('walletconnect', 'accountsChanged', async (accounts: Array<string>) => {
+          const accountsMap = {}
+      
+          await Promise.all(accounts.map(async (account) => {
+            const balance = await plugin.blockchain.getBalanceInEther(account)
+            const updated = shortenAddress(account, balance)
+      
+            accountsMap[account] = updated
+          }))
+          dispatch(fetchAccountsListSuccess(accountsMap))
+        })
+      }
     }
   })
 
@@ -136,29 +170,6 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(clearRecorderCount())
   })
 
-  plugin.on('injected', 'accountsChanged', (accounts: Array<string>) => {
-    const accountsMap = {}
-    accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
-    dispatch(fetchAccountsListSuccess(accountsMap))
-  })
-
-  plugin.on('injected-trustwallet', 'accountsChanged', (accounts: Array<string>) => {
-    const accountsMap = {}
-    accounts.map(account => { accountsMap[account] = shortenAddress(account, '0')})
-    dispatch(fetchAccountsListSuccess(accountsMap))
-  })
-
-  plugin.on('walletconnect', 'accountsChanged', async (accounts: Array<string>) => {
-    const accountsMap = {}
-
-    await Promise.all(accounts.map(async (account) => {
-      const balance = await plugin.blockchain.getBalanceInEther(account)
-      const updated = shortenAddress(account, balance)
-
-      accountsMap[account] = updated
-    }))
-    dispatch(fetchAccountsListSuccess(accountsMap))
-  })
 
   setInterval(() => {
     fillAccountsList(plugin, dispatch)
@@ -166,10 +177,8 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   }, 30000)  
 }
 
-const loadPinnedContracts = async (plugin, dispatch) => {
+const loadPinnedContracts = async (plugin, dispatch, dirName) => {
   await plugin.call('udapp', 'clearAllPinnedInstances')
-  const { network } = await plugin.call('blockchain', 'getCurrentNetworkStatus')
-  const dirName = plugin.REACT_API.networkName === 'VM' ? plugin.REACT_API.selectExEnv : network.id
   const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
   if (isPinnedAvailable) {
     try {

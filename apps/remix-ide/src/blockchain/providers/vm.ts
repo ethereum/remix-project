@@ -134,9 +134,5 @@ export class VMProvider {
     this.web3.eth.sign(message, account)
       .then(signedData => cb(null, bytesToHex(messageHash), signedData))
       .catch(error => cb(error))
-  }
-
-  getProvider () {
-    return this.executionContext.getProvider()
-  }
+  }  
 }

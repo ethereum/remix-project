@@ -26,69 +26,69 @@ export function AccountUI(props: AccountProps) {
 
   useEffect(() => {
     props.setAccount('')
-    switch (selectExEnv) {
-    case 'injected':
+    if (selectExEnv && selectExEnv.startsWith('injected')) {
       setPlusOpt({
         classList: 'udapp_disableMouseEvents',
         title: intl.formatMessage({id: 'udapp.injectedTitle'})
       })
-      break
-        
-    case 'vm-cancun':
-      setPlusOpt({
-        classList: '',
-        title: intl.formatMessage({id: 'udapp.createNewAccount'})
-      })
-      break
-        
-    case 'vm-paris':
-      setPlusOpt({
-        classList: '',
-        title: intl.formatMessage({id: 'udapp.createNewAccount'})
-      })
-      break
-
-    case 'vm-london':
-      setPlusOpt({
-        classList: '',
-        title: intl.formatMessage({id: 'udapp.createNewAccount'})
-      })
-      break
-
-    case 'vm-berlin':
-      setPlusOpt({
-        classList: '',
-        title: intl.formatMessage({id: 'udapp.createNewAccount'})
-      })
-      break
-
-    case 'vm-shanghai':
-      setPlusOpt({
-        classList: '',
-        title: intl.formatMessage({id: 'udapp.createNewAccount'})
-      })
-      break
-
-    case 'web3':
-      if (!personalMode) {
-        setPlusOpt({
-          classList: 'disableMouseEvents',
-          title: intl.formatMessage({id: 'udapp.web3Title'})
-        })
-      } else {
+    } else {
+      switch (selectExEnv) {           
+      case 'vm-cancun':
         setPlusOpt({
           classList: '',
           title: intl.formatMessage({id: 'udapp.createNewAccount'})
         })
+        break
+            
+      case 'vm-paris':
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({id: 'udapp.createNewAccount'})
+        })
+        break
+    
+      case 'vm-london':
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({id: 'udapp.createNewAccount'})
+        })
+        break
+    
+      case 'vm-berlin':
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({id: 'udapp.createNewAccount'})
+        })
+        break
+    
+      case 'vm-shanghai':
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({id: 'udapp.createNewAccount'})
+        })
+        break
+    
+      case 'web3':
+        if (!personalMode) {
+          setPlusOpt({
+            classList: 'disableMouseEvents',
+            title: intl.formatMessage({id: 'udapp.web3Title'})
+          })
+        } else {
+          setPlusOpt({
+            classList: '',
+            title: intl.formatMessage({id: 'udapp.createNewAccount'})
+          })
+        }
+        break
+    
+      default:
+        setPlusOpt({
+          classList: 'disableMouseEvents',
+          title: intl.formatMessage({id: 'udapp.defaultTitle'}, {selectExEnv})
+        })
       }
-      break
-
-    default:
-      setPlusOpt({
-        classList: 'disableMouseEvents',
-        title: intl.formatMessage({id: 'udapp.defaultTitle'}, {selectExEnv})
-      })
-    }
+    }    
   }, [selectExEnv, personalMode])
 
   const newAccount = () => {

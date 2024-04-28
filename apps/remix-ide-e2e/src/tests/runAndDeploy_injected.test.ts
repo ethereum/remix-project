@@ -44,7 +44,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
       .clickLaunchIcon('udapp')
-      .switchEnvironment('MetaMask')
+      .switchEnvironment('injected-MetaMask')
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Sepolia (11155111) network')
       .pause(5000)
@@ -123,7 +123,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .click('*[data-id="landingPageStartSolidity"]')
       .clickLaunchIcon('udapp')
-      .switchEnvironment('MetaMask')
+      .switchEnvironment('injected-MetaMask')
       .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
   },
