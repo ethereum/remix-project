@@ -346,16 +346,18 @@ export type Actions = {[A in keyof ActionPayloadTypes]: Action<A>}[keyof ActionP
 export type WorkspaceElement = 'folder' | 'file' | 'workspace'
 
 export interface FlatTreeDropProps {
-  moveFile: (dest: string, src: string[]) => void
-  moveFolder: (dest: string, src: string[]) => void
-  moveFolderSilently: (dest: string, src: string[]) => Promise<void>
-  moveFileSilently: (dest: string, src: string[]) => Promise<void>
+  moveFile: (dest: string, src: string) => void
+  moveFolder: (dest: string, src: string) => void
+  moveFolderSilently: (dest: string, src: string) => Promise<void>
+  moveFileSilently: (dest: string, src: string) => Promise<void>
   setFilesSelected: Dispatch<React.SetStateAction<string[]>>
   getFlatTreeItem: (path: string) => FileType
   handleClickFolder: (path: string, type: string) => void
   dragSource: FileType
   children: React.ReactNode
   expandPath: string[]
+  selectedItems: DragStructure[]
+  setSelectedItems: Dispatch<React.SetStateAction<DragStructure[]>>
 }
 
 export type DragStructure = {
