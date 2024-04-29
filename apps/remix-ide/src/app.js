@@ -61,6 +61,8 @@ import { Matomo } from './app/plugins/matomo'
 
 import {SolCoder} from './app/plugins/solcoderAI'
 
+import {TemplatesSelection} from './app/plugins/templates-selection'
+
 const isElectron = require('is-electron')
 
 const remixLib = require('@remix-project/remix-lib')
@@ -315,6 +317,8 @@ class AppComponent {
     // ----------------- run script after each compilation results -----------
     const pluginStateLogger = new PluginStateLogger()
 
+    const templateSelection = new TemplatesSelection()
+
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -366,7 +370,8 @@ class AppComponent {
       solcoder,
       git,
       pluginStateLogger,
-      matomo
+      matomo,
+      templateSelection
     ])
 
     //---- fs plugin

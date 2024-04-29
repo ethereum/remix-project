@@ -163,47 +163,6 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
         }}
         platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
       ></HamburgerMenuItem>
-      <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
-      <HamburgerMenuItem
-        kind="addscriptetherscan"
-        fa="fa-kit fa-ts-logo"
-        hideOption={hideWorkspaceOptions || hideFileOperations}
-        actionOnClick={() => {
-          props.addHelperScripts('etherscanScripts')
-          props.hideIconsMenu(!showIconsMenu)
-        }}
-        platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
-      ></HamburgerMenuItem>
-      <HamburgerMenuItem
-        kind="addscriptdeployer"
-        fa="fa-kit fa-ts-logo"
-        hideOption={hideWorkspaceOptions || hideFileOperations}
-        actionOnClick={() => {
-          props.addHelperScripts('contractDeployerScripts')
-          props.hideIconsMenu(!showIconsMenu)
-        }}
-        platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
-      ></HamburgerMenuItem>
-      <HamburgerMenuItem
-        kind="addscriptsindri"
-        fa="fa-kit fa-ts-logo"
-        hideOption={hideWorkspaceOptions || hideFileOperations}
-        actionOnClick={() => {
-          props.addHelperScripts('sindriScripts')
-          props.hideIconsMenu(!showIconsMenu)
-        }}
-        platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
-      ></HamburgerMenuItem>
-      <HamburgerMenuItem
-        kind="addcreate2solidityfactory"
-        fa="fa-kit fa-ts-logo"
-        hideOption={hideWorkspaceOptions || hideFileOperations}
-        actionOnClick={() => {
-          props.addHelperScripts('contractCreate2Factory')
-          props.hideIconsMenu(!showIconsMenu)
-        }}
-        platforms={[appPlatformTypes.web, appPlatformTypes.desktop]}
-      ></HamburgerMenuItem>
     </>
   )
 }

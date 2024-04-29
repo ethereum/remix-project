@@ -110,3 +110,21 @@ export const TEMPLATE_METADATA: Record<string, TemplateType> = {
   }
 }
 
+export type TemplateOption = {
+  mintable?: boolean
+  burnable?: boolean
+  pausable?: boolean
+  upgradeable?: 'uups' | 'transparent'
+}
+
+export type Template = {
+  value: string
+  displayName: string
+  opts?: TemplateOption
+}
+
+export type TemplateGroup = {
+  name: string
+  items: Array<Template>
+}
+
