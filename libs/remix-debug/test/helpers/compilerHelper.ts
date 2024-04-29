@@ -13,8 +13,8 @@ export function compilerInput (contracts) {
       },
       outputSelection: {
         '*': {
-          '': [ 'ast' ],
-          '*': [ 'abi', 'metadata', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates' ]
+          '': ['ast'],
+          '*': ['abi', 'metadata', 'evm.legacyAssembly', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates']
         }
       }
     }

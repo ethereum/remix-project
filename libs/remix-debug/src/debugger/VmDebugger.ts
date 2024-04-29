@@ -110,7 +110,7 @@ export class VmDebuggerLogic {
           } catch (e) {
             console.log(e)
           }
-          
+
           try {
             const memory = this._traceManager.getMemoryAt(index)
             if (this.stepManager.currentStepIndex === index) {
@@ -122,9 +122,9 @@ export class VmDebuggerLogic {
           try {
             const address = this._traceManager.getCurrentCalledAddressAt(index)
             if (!this.storageResolver) return
-    
+
             const storageViewer = new StorageViewer({ stepIndex: this.stepManager.currentStepIndex, tx: this.tx, address: address }, this.storageResolver, this._traceManager)
-    
+
             storageViewer.storageRange().then((storage) => {
               if (this.stepManager.currentStepIndex === index) {
                 const header = storageViewer.isComplete(address) ? '[Completely Loaded]' : '[Partially Loaded]'
@@ -145,8 +145,8 @@ export class VmDebuggerLogic {
           } catch (error) {
             this.event.trigger('traceReturnValueUpdate', [[error]])
           }
-        })()        
-      }, 1000)      
+        })()
+      }, 1000)
 
       try {
         const step = this._traceManager.getCurrentStep(index)
