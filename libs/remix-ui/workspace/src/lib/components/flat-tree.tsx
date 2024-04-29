@@ -46,6 +46,7 @@ interface FlatTreeProps {
   createNewFolder?: any
   deletePath?: (path: string | string[]) => void | Promise<void>
   editPath?: (path: string, type: string, isNew?: boolean) => void
+  warnMovingItems: (srcs: string[], dests: string) => Promise<void>
 }
 
 let mouseTimer: any = {
@@ -54,7 +55,7 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, fileState, focusElement, handleClickFolder, deletePath, moveFileSilently, moveFolderSilently, setFilesSelected } = props
+  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, warnMovingItems, fileState, focusElement, handleClickFolder, deletePath, moveFileSilently, moveFolderSilently, setFilesSelected } = props
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
     path: string,
@@ -264,6 +265,7 @@ export const FlatTree = (props: FlatTreeProps) => {
         getFlatTreeItem={getFlatTreeItem}
         moveFile={moveFile}
         moveFolder={moveFolder}
+        warnMovingItems={warnMovingItems}
         moveFolderSilently={moveFolderSilently}
         moveFileSilently={moveFileSilently}
         setFilesSelected={setFilesSelected}

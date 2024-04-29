@@ -339,12 +339,23 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleFileMove = async (dest: string, copySrc: string) => {
-    if (await moveFileIsAllowed(copySrc, dest) === false) return
+  const warnMovingItems = async (src: string[], dest: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.moveFile' }),
+        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src: src.join(', '), dest }),
+        intl.formatMessage({ id: 'filePanel.yes' }),
+        () => resolve(null),
+        intl.formatMessage({ id: 'filePanel.cancel' }),
+        () => reject()
+      )
+    })    
+  }
 
-    const src = filesSelected && filesSelected.length > 0 ? filesSelected.join(' ') : ''
-
-    console.log('handleFileMove sourcesrc', {src, copySrc, dest })
+  const handleFileMove = async (dest: string, sourcesrc: string[]) => {
+    if (await moveFilesIsAllowed(sourcesrc, dest) === false) return
+    const files = filesSelected && filesSelected.length > 0 && filesSelected.join(' ')
+    const src = files.length > 0 ? files : sourcesrc.length === 1 ? sourcesrc[0] : sourcesrc.join(' ')
     try {
       props.modal(
         intl.formatMessage({ id: 'filePanel.moveFile' }),
@@ -454,6 +465,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           fileState={fileState}
           expandPath={props.expandPath}
           handleContextMenu={handleContextMenu}
+          warnMovingItems={warnMovingItems}
           moveFile={handleFileMove}
           moveFolder={handleFolderMove}
           moveFolderSilently={moveFolderSilently}
