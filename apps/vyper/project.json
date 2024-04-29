@@ -38,6 +38,14 @@
         }
       }
     },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/vyper/**/*.ts"],
+        "eslintConfig": "libs/vyper/.eslintrc"
+      }
+    },
     "serve": {
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
