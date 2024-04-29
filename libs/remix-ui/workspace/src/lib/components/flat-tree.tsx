@@ -125,6 +125,12 @@ export const FlatTree = (props: FlatTreeProps) => {
 
   const onDragEnd = (event: SyntheticEvent) => {
     setIsDragging(false)
+    document.querySelectorAll('li.remixui_selected').forEach(item => {
+      item.classList.remove('remixui_selected')
+      item.classList.remove('bg-secondary')
+    })
+    props.setFilesSelected([])
+    setSelectedItems([])
   }
 
   const getFlatTreeItem = (path: string) => {
