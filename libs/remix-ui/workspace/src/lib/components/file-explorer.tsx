@@ -364,17 +364,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleFolderMove = async (dest: string, src: string) => {
-    if (await moveFolderIsAllowed(src, dest) === false) return
-    const folders = filesSelected && filesSelected.length > 0 && filesSelected.join(' ')
-    console.log(folders)
+  const handleFolderMove = async (dest: string, copySrc: string) => {
+    if (await moveFolderIsAllowed(copySrc, dest) === false) return
+    const src = filesSelected && filesSelected.length > 0 ? filesSelected.join(' ') : ''
 
     try {
       props.modal(
         intl.formatMessage({ id: 'filePanel.moveFile' }),
         intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
         intl.formatMessage({ id: 'filePanel.yes' }),
-        () => props.dispatchMoveFolder(src, dest),
+        () => props.dispatchMoveFolder(copySrc, dest),
         intl.formatMessage({ id: 'filePanel.cancel' }),
         () => { }
       )
