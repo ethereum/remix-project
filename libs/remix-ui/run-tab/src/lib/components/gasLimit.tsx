@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-use-before-define
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 import React, { useEffect, useRef, useState } from 'react'
-import {FormattedMessage} from 'react-intl'
-import {GasPriceProps} from '../types'
+import { FormattedMessage } from 'react-intl'
+import { GasPriceProps } from '../types'
 
 const defaultGasLimit = 3000000
 export function GasLimitUI(props: GasPriceProps) {
@@ -28,7 +28,7 @@ export function GasLimitUI(props: GasPriceProps) {
       props.setGasFee(0)
     } else {
       props.setGasFee(currentGasLimit.current)
-    }    
+    }
   }
 
   return (
@@ -72,11 +72,11 @@ export function GasLimitUI(props: GasPriceProps) {
                 id="gasLimit"
                 value={props.gasLimit === 0 ? currentGasLimit.current : props.gasLimit}
                 onChange={handleGasLimit}
-              />        
+              />
             </CustomTooltip>
           </label>
         </div>
       </div>
-    </div>      
+    </div>
   )
 }

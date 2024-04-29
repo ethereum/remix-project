@@ -20,7 +20,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
             <>
               <CustomTooltip
                 placement="bottom"
-                delay={{show: 1000, hide: 0}}
+                delay={{ show: 1000, hide: 0 }}
                 tooltipText={<FormattedMessage id="filePanel.createNewFolder" />}
                 tooltipId={`filePanel.createNewFolder.${props.file.path}`}
                 tooltipClasses="text-nowrap"
@@ -38,7 +38,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
               </CustomTooltip>
               <CustomTooltip
                 placement="bottom"
-                delay={{show: 1000, hide: 0}}
+                delay={{ show: 1000, hide: 0 }}
                 tooltipText={<FormattedMessage id="filePanel.createNewFile" />}
                 tooltipId={`fileExplorer.createNewFile.${props.file.path}`}
                 tooltipClasses="text-nowrap"
@@ -59,7 +59,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
         }
         <CustomTooltip
           placement="bottom"
-          delay={{show: 1000, hide: 0}}
+          delay={{ show: 1000, hide: 0 }}
           tooltipText={<FormattedMessage id="filePanel.rename" />}
           tooltipId={`filePanel.rename.${props.file.path}`}
           tooltipClasses="text-nowrap"
@@ -77,7 +77,7 @@ export function FileHoverIcons(props: FileHoverIconsProps) {
         </CustomTooltip>
         <CustomTooltip
           placement="bottom"
-          delay={{show: 1000, hide: 0}}
+          delay={{ show: 1000, hide: 0 }}
           tooltipText={<FormattedMessage id="filePanel.deleteItem" />}
           tooltipId={`filePanel.deleteItem.${props.file.path}`}
           tooltipClasses="text-nowrap"

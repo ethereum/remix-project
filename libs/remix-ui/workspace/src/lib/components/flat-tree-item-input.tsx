@@ -48,18 +48,18 @@ export const FlatTreeItemInput = (props: FlatTreeItemInputProps) => {
     ref.current.focus()
   },[])
 
-  return(<input 
+  return (<input
     onBlur={handleEditBlur}
-    data-id='fileExplorerTreeItemInput' 
+    data-id='fileExplorerTreeItemInput'
     data-input-path = {file.path}
-    onKeyDown={handleKeyDown} 
-    ref={ref} 
+    onKeyDown={handleKeyDown}
+    ref={ref}
     style={{
       height: '1.5em',
     }}
-    className='form-control p-0 ml-2 remixui_items' 
-    onFocus={handleFocus} 
-    onChange={changeValue} 
+    className='form-control p-0 ml-2 remixui_items'
+    onFocus={handleFocus}
+    onChange={changeValue}
     defaultValue={file.name}>
   </input>)
 }

@@ -162,9 +162,9 @@ contract HelloWorld {
     } else {
       await plugin.call('fileManager', 'open', '/contracts/HelloWorld.sol')
     }
-    
+
   }
-  
+
   const uploadFile = async (target) => {
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'uploadFile'])
     await plugin.call('filePanel', 'uploadFile', target)
@@ -300,7 +300,7 @@ contract HelloWorld {
               tooltipText={<FormattedMessage id="home.connectToLocalhost" />}
               tooltipTextClasses="border bg-light text-dark p-1 pr-3"
             >
-              <button className="btn text-nowrap p-2 border my-1" style={{width: 'fit-content'}} onClick={() => connectToLocalhost()}>
+              <button className="btn text-nowrap p-2 border my-1" style={{ width: 'fit-content' }} onClick={() => connectToLocalhost()}>
                 <FormattedMessage id="home.accessFileSystem" />
               </button>
             </CustomTooltip>

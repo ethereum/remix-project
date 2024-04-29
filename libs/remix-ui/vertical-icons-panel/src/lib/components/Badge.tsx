@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, {useEffect} from 'react'
-import {BadgeStatus} from './Icon'
-import {CustomTooltip} from '@remix-ui/helper'
-import {FormattedMessage} from 'react-intl'
+import React, { useEffect } from 'react'
+import { BadgeStatus } from './Icon'
+import { CustomTooltip } from '@remix-ui/helper'
+import { FormattedMessage } from 'react-intl'
 interface BadgeProps {
   badgeStatus?: BadgeStatus
 }
 
 // eslint-disable-next-line no-undef
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Badge({badgeStatus}: BadgeProps) {
+function Badge({ badgeStatus }: BadgeProps) {
   /**
    * resolve a classes list for @arg key
    * @param {Object} key

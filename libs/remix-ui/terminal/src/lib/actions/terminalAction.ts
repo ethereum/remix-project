@@ -131,7 +131,7 @@ export const initListeningOnNetwork = (plugins, dispatch: React.Dispatch<any>) =
   const log = async (plugins, tx, receipt, dispatch: React.Dispatch<any>) => {
     const resolvedTransaction = await plugins.txListener.resolvedTransaction(tx.hash)
     const provider = plugins.blockchain.getProvider()
-  
+
     if (resolvedTransaction) {
       let compiledContracts = null
       try {

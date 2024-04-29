@@ -61,7 +61,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     let workspaces = []
     plugin.on('editor', 'editorMounted', async () => {
       editorMounted = true
-      if(filePathToOpen){
+      if (filePathToOpen){
         setTimeout(async () => {
           await plugin.fileManager.openFile(filePathToOpen)
           filePathToOpen = null
@@ -83,11 +83,11 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
       const filePath = await loadWorkspacePreset('code-template')
-      plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {        
+      plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
         if (editorMounted){
           setTimeout(async () => {
             await plugin.fileManager.openFile(filePath)}, 1000)
-        }else{
+        } else {
           filePathToOpen = filePath
         }
       })
@@ -116,7 +116,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
             if (editorMounted){
               setTimeout(async () => {
                 await plugin.fileManager.openFile(filePath)}, 1000)
-            }else{
+            } else {
               filePathToOpen = filePath
             }
           })
@@ -168,11 +168,11 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
               await workspaceProvider.set(filePath, data.compilationTargets[filePath]['content'])
           }
 
-          plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {            
+          plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
             if (editorMounted){
               setTimeout(async () => {
                 await plugin.fileManager.openFile(filePath)}, 1000)
-            }else{
+            } else {
               filePathToOpen = filePath
             }
           })
@@ -190,7 +190,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       const currentPath = await plugin.call('fs', 'getWorkingDir')
       dispatch(setCurrentLocalFilePath(currentPath))
       plugin.setWorkspace({ name: 'electron', isLocalhost: false })
-      
+
       dispatch(setCurrentWorkspace({ name: 'electron', isGitRepo: false }))
       electrOnProvider.init()
       listenOnProviderEvents(electrOnProvider)(dispatch)
@@ -263,7 +263,7 @@ export type SolidityConfiguration = {
 export const publishToGist = async (path?: string) => {
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = path || '/'
-  
+
   try {
     let id
     if (path) {
@@ -432,7 +432,7 @@ export const copyShareURL = async (path: string) => {
     const ipfs = IpfsHttpClient({ port, host, protocol
       , headers: {
         // authorization: auth
-      } 
+      }
     })
 
     const fileContent = await fileManager.readFile(path)

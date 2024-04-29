@@ -1,9 +1,9 @@
-import {fileDecoration, FileDecorationIcons} from '@remix-ui/file-decorators'
-import {CustomTooltip} from '@remix-ui/helper'
-import {Plugin} from '@remixproject/engine'
+import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
+import { CustomTooltip } from '@remix-ui/helper'
+import { Plugin } from '@remixproject/engine'
 import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs'
+import { FormattedMessage } from 'react-intl'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
 const _paq = (window._paq = window._paq || [])
 
@@ -85,7 +85,7 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const getFileDecorationIcons = (tab: any) => {
-    return <FileDecorationIcons file={{path: tab.name}} fileDecorations={tabsState.fileDecorations} />
+    return <FileDecorationIcons file={{ path: tab.name }} fileDecorations={tabsState.fileDecorations} />
   }
 
   const renderTab = (tab, index) => {
@@ -103,7 +103,7 @@ export const TabsUI = (props: TabsUIProps) => {
           data-id={index === currentIndexRef.current ? 'tab-active' : ''}
           data-path={tab.name}
         >
-          {tab.icon ? <img className="my-1 mr-1 iconImage" style={{filter: invert}} src={tab.icon} /> : <i className={classNameImg}></i>}
+          {tab.icon ? <img className="my-1 mr-1 iconImage" style={{ filter: invert }} src={tab.icon} /> : <i className={classNameImg}></i>}
           <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
           {getFileDecorationIcons(tab)}
           <span
@@ -129,11 +129,11 @@ export const TabsUI = (props: TabsUIProps) => {
   const activateTab = (name: string) => {
     const index = tabs.current.findIndex((tab) => tab.name === name)
     currentIndexRef.current = index
-    dispatch({type: 'SELECT_INDEX', payload: index, ext: getExt(name)})
+    dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(name) })
   }
 
   const setFileDecorations = (fileStates: fileDecoration[]) => {
-    dispatch({type: 'SET_FILE_DECORATIONS', payload: fileStates})
+    dispatch({ type: 'SET_FILE_DECORATIONS', payload: fileStates })
   }
 
   const transformScroll = (event) => {
@@ -166,7 +166,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   return (
     <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
-      <div className="d-flex flex-row" style={{maxWidth: 'fit-content', width: '99%'}}>
+      <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '99%' }}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
           <CustomTooltip
             placement="bottom"
@@ -175,7 +175,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <span>
                 {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
                   <FormattedMessage id="remixUiTabs.tooltipText1" />
-                ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom'  || tabsState.currentExt === 'vy' ? (
+                ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
                   <FormattedMessage id="remixUiTabs.tooltipText2" />
                 ) : (
                   <FormattedMessage id="remixUiTabs.tooltipText3" />
@@ -240,7 +240,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className={`fa-solid fa-user-robot ${explaining ? 'loadingExplanation' : ''}`}></i>
               <span
                 className="position-relative text-ai text-sm pl-1"
-                style={{fontSize: "x-small", alignSelf: "end"}}
+                style={{ fontSize: "x-small", alignSelf: "end" }}
               >
                 AI
               </span>
@@ -277,14 +277,14 @@ export const TabsUI = (props: TabsUIProps) => {
               ></i>
               <span
                 className="position-relative text-ai text-sm pl-1"
-                style={{fontSize: "x-small", alignSelf: "end"}}
+                style={{ fontSize: "x-small", alignSelf: "end" }}
               >
                 AI
               </span>
             </button>
           </CustomTooltip>
           <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-aiDocumentation" tooltipText={<FormattedMessage id="remixUiTabs.tooltipText8" />}>
-            <span 
+            <span
               data-id="remix_ai_docs"
               id="remix_ai_docs"
               className="btn pl-2 pr-0 py-0 d-flex ai-docs"
@@ -297,13 +297,13 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className="fa-solid fa-book text-ai"></i>
               <span
                 className="position-relative text-ai text-sm pl-1"
-                style={{fontSize: "x-small", alignSelf: "end"}}
+                style={{ fontSize: "x-small", alignSelf: "end" }}
               >
                 AI
               </span>
             </span>
           </CustomTooltip>
-          
+
           <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
             <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" onClick={() => props.onZoomOut()}></span>
           </CustomTooltip>
@@ -335,7 +335,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 {renderTab(tab, i)}
               </Tab>
             ))}
-            <div style={{minWidth: '4rem', height: '1rem'}} id="dummyElForLastXVisibility"></div>
+            <div style={{ minWidth: '4rem', height: '1rem' }} id="dummyElForLastXVisibility"></div>
           </TabList>
           {props.tabs.map((tab) => (
             <TabPanel key={tab.name}></TabPanel>

@@ -46,7 +46,6 @@ export class RemixHoverProvider implements monacoTypes.languages.HoverProvider {
       return await this.props.plugin.call('codeParser', 'getVariableDeclaration', node)
     }
 
-
     const getParamaters = async (node: any) => {
       return await this.props.plugin.call('codeParser', 'getFunctionParamaters', node)
     }
@@ -54,7 +53,6 @@ export class RemixHoverProvider implements monacoTypes.languages.HoverProvider {
     const getReturnParameters = async (node: any) => {
       return await this.props.plugin.call('codeParser', 'getFunctionReturnParameters', node)
     }
-
 
     const getOverrides = async (node: any) => {
       if (node.overrides) {
@@ -179,7 +177,7 @@ export class RemixHoverProvider implements monacoTypes.languages.HoverProvider {
 
       try {
         const decodedVar = await this.props.plugin.call('debugger', 'decodeStateVariable', nodeAtPosition.id)
-        if (decodedVar !== null  && decodedVar.type) {
+        if (decodedVar !== null && decodedVar.type) {
           contents.push({
             value: `STATE VARIABLE ${nodeAtPosition.name}:  ${typeof(decodedVar.value) === 'string' ? decodedVar.value : JSON.stringify(decodedVar.value, null, '\t')}`
           })
