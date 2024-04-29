@@ -50,7 +50,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     event.preventDefault()
 
     const target = await getEventTarget(event)
-    // const items = buildMultiSelectedItemProfiles(target)
     const filePaths = []
 
     let dragDestination: any
