@@ -35,7 +35,7 @@ export const Commits = () => {
     }
 
     const fetchIsDisabled = () => {
-        return context.upstream === '' || context.remotes.length === 0
+        return (!context.upstream)|| context.remotes.length === 0
     }
 
     return (

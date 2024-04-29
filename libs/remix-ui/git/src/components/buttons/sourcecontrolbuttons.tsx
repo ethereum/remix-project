@@ -87,7 +87,7 @@ export const SourceControlButtons = (props: SourceControlButtonsProps) => {
   }
 
   const buttonsDisabled = () => {
-    return context.upstream === '' || context.remotes.length === 0
+    return (!context.upstream) || context.remotes.length === 0
   }
 
 

@@ -93,7 +93,7 @@ export const getRemotes = async () => {
   dispatch(setRemotes(remotes));
 }
 
-export const setUpstreamRemote = async (remote: string) => {
+export const setUpstreamRemote = async (remote: remote) => {
   dispatch(setUpstream(remote));
 }
 
@@ -842,6 +842,24 @@ export const fetchBranch = async (branch: branch, page: number) => {
   //dispatch(setRemoteBranchCommits({ branch, commits: mergeCommits }))
 }
 
+export const getBranchDifferences = async (branch: branch, remote: remote) => {
+  try {
+    const branchDifference: branchDifference = await plugin.call('dGitProvider', 'compareBranches', {
+      branch,
+      remote
+    })
+
+    dispatch(setBranchDifferences(
+      {
+        branch,
+        remote,
+        branchDifference: branchDifference
+      }))
+  } catch (e) {
+
+  }
+}
+
 export const getBranchCommits = async (branch: branch, page: number) => {
   dispatch(setLoading(true))
   await disableCallBacks()
@@ -851,25 +869,7 @@ export const getBranchCommits = async (branch: branch, page: number) => {
       const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
         ref: branch.name,
       })
-      try {
-        const branchDifference: branchDifference = await plugin.call('dGitProvider', 'compareBranches', {
-          branch,
-          remote: {
-            remote: 'origin',
-            url: ''
-          }
-        })
-        console.log(commits, branchDifference)
-        dispatch(setBranchDifferences(
-          {
-            branch,
-            remote:
-              { remote: 'origin', url: '' },
-            branchDifference: branchDifference
-          }))
-      } catch (e) {
-
-      }
+      console.log(commits)
       dispatch(setLocalBranchCommits({ branch, commits }))
     } else {
       await fetchBranch(branch, page)

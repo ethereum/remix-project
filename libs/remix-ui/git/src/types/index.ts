@@ -30,7 +30,7 @@ export type gitState = {
     syncStatus: syncStatus,
     localCommitCount: number
     remoteCommitCount: number
-    upstream: string
+    upstream: remote
     gitHubUser: GitHubUser
     rateLimit: RateLimit
     gitHubScopes: string[]
@@ -143,7 +143,7 @@ export const defaultGitState: gitState = {
     syncStatus: syncStatus.none,
     localCommitCount: 0,
     remoteCommitCount: 0,
-    upstream: "",
+    upstream: null,
     gitHubUser: {} as GitHubUser,
     rateLimit: {} as RateLimit,
     gitHubScopes: [],
@@ -231,7 +231,7 @@ export interface setRemotesAction {
 
 export interface setUpstreamAction {
     type: string,
-    payload: string
+    payload: remote
 }
 
 export interface setRemoteBranchCommitsAction {

@@ -1105,7 +1105,7 @@ class DGitProvider extends Plugin {
 
     const accessToken = input.token;
 
-    let page = input.page || 1
+    const page = input.page || 1
     const perPage = input.per_page || 10
 
     const baseURL = 'https://api.github.com/user/repos'

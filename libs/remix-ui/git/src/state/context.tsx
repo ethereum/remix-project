@@ -22,7 +22,7 @@ export interface gitActions  {
     getGitHubUser(): Promise<any>
     diff(commitChange: commitChange): Promise<void>
     resolveRef(ref: string): Promise<string>
-    setUpstreamRemote(upstream: string): Promise<void>
+    setUpstreamRemote(upstream: remote): Promise<void>
     getBranches: () => Promise<void>
     getRemotes: () => Promise<void>
     setDefaultRemote: (remote: remote) => Promise<void>

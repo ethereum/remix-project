@@ -115,7 +115,7 @@ export const setRemotes = (remotes: remote[]) => {
     }
 }
 
-export const setUpstream = (upstream: string) => {
+export const setUpstream = (upstream: remote) => {
     return {
         type: 'SET_UPSTREAM',
         payload: upstream

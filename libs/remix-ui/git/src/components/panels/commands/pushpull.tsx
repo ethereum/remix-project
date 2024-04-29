@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
 import { selectStyles, selectTheme } from "../../../types/styles";
-import Select, { Options, OptionsOrGroups } from 'react-select'
-import { setUpstream } from "../../../state/gitpayload";
+import Select from 'react-select'
 import GitUIButton from "../../buttons/gituibutton";
+import { remote } from "../../../types";
 
 export const PushPull = () => {
   const context = React.useContext(gitPluginContext)
@@ -19,8 +19,8 @@ export const PushPull = () => {
   useEffect(() => {
     setRemoteBranch(context.currentBranch.name)
     setLocalBranch(context.currentBranch.name)
-    if ((!context.upstream || context.upstream === '') && context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.remote) {
-      actions.setUpstreamRemote(context.currentBranch.remote.remote)
+    if ((!context.upstream) && context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.remote) {
+      actions.setUpstreamRemote(context.currentBranch.remote)
     }
   }, [context.currentBranch])
 
@@ -35,9 +35,12 @@ export const PushPull = () => {
     setLocalBranch(value)
   }
 
-  const onRemoteChange = (value: any) => {
+  const onRemoteChange = (value: string) => {
     console.log('onRemoteChange', value, context)
-    actions.setUpstreamRemote(value)
+    const remote: remote = context.remotes.find(r => r.remote === value)
+    if(remote) {
+      actions.setUpstreamRemote(remote)
+    }
   }
 
   useEffect(() => {
@@ -52,11 +55,11 @@ export const PushPull = () => {
 
   const push = async () => {
     console.log('PUSH', context.upstream, localBranch, remoteBranch, force)
-    actions.push(context.upstream, localBranch, remoteBranch, force)
+    actions.push(context.upstream.remote, localBranch, remoteBranch, force)
   }
 
   const pull = async () => {
-    actions.pull(context.upstream, localBranch, remoteBranch)
+    actions.pull(context.upstream.remote, localBranch, remoteBranch)
   }
 
 
@@ -94,7 +97,7 @@ export const PushPull = () => {
 
 
   const pushPullIsDisabled = () => {
-    return localBranch === '' || remoteBranch === '' || context.upstream === '' || context.remotes.length === 0
+    return localBranch === '' || remoteBranch === '' || !context.upstream || context.remotes.length === 0
   }
 
 

@@ -723,7 +723,7 @@ class FileManager extends Plugin {
 
   async closeDiff(change: commitChange) {
     if(!change.readonly){
-      let file = this.normalize(change.path)
+      const file = this.normalize(change.path)
       delete this.openedFiles[file]
       if (!Object.keys(this.openedFiles).length) {
         this._deps.config.set('currentFile', '')

@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
 import { allChangedButNotStagedFiles, getFilesByStatus, getFilesWithNotModifiedStatus } from "../lib/fileHelpers"
-import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setRemoteBranchCommitsAction, setLocalBranchCommitsAction, setBranchDifferencesAction, setDefaultRemoteAction, setRemotesAction } from "../types"
+import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setRemoteBranchCommitsAction, setLocalBranchCommitsAction, setBranchDifferencesAction, setDefaultRemoteAction, setRemotesAction, setUpstreamAction } from "../types"
 
 interface Action {
     type: string
@@ -105,7 +105,7 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
         case 'SET_UPSTREAM':
             return {
                 ...state,
-                upstream: action.payload
+                upstream: (action as setUpstreamAction).payload
             }
 
         case 'SET_COMMIT_CHANGES':
