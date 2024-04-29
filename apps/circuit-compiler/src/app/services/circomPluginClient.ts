@@ -163,7 +163,7 @@ export class CircomPluginClient extends PluginClient {
     } else {
       this.lastCompiledFile = path
       const fileName = extractNameFromKey(path)
-      
+
       this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'wasm')
       // @ts-ignore
       await this.call('fileManager', 'writeFile', this.lastCompiledCircuitPath, circuitProgram, { encoding: null })
@@ -179,7 +179,7 @@ export class CircomPluginClient extends PluginClient {
         this.internalEvents.emit('circuit_compiling_done', [])
       }
       circuitApi.log().map(log => {
-        log && this.call('terminal', 'log', { type: 'log', value: log })  
+        log && this.call('terminal', 'log', { type: 'log', value: log })
       })
       // @ts-ignore
       this.call('terminal', 'log', { type: 'typewritersuccess', value: 'Everything went okay' })
@@ -222,11 +222,11 @@ export class CircomPluginClient extends PluginClient {
       this.internalEvents.emit('circuit_generating_r1cs_done')
       const fileName = extractNameFromKey(path)
       const writePath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'r1cs')
-  
+
       // @ts-ignore
       await this.call('fileManager', 'writeFile', writePath, r1csProgram, true)
       r1csApi.log().map(log => {
-        log && this.call('terminal', 'log', { type: 'log', value: log })  
+        log && this.call('terminal', 'log', { type: 'log', value: log })
       })
       // @ts-ignore
       this.call('terminal', 'log', { type: 'typewritersuccess', value: 'Everything went okay' })
@@ -339,7 +339,7 @@ export class CircomPluginClient extends PluginClient {
 
           absFilePath = include.startsWith('circomlib') ? absFilePath.substring(1) : absFilePath
           if (!blackPath.includes(absFilePath)) {
-            if(!includeName.startsWith('circomlib')) {
+            if (!includeName.startsWith('circomlib')) {
               dependencyContent = dependencyContent.replace(`${includeName}`, `${absFilePath}`)
               return absFilePath
             }
