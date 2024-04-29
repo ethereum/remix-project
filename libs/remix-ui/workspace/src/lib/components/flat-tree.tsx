@@ -1,11 +1,11 @@
 import React, { SyntheticEvent, useEffect, useRef, useState, RefObject, useMemo, useContext, Dispatch } from 'react'
 import { Popover } from 'react-bootstrap'
-import { FileType, WorkspaceElement } from '../types'
+import { DragStructure, FileType, WorkspaceElement } from '../types'
 import { getPathIcon } from '@remix-ui/helper';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 import { FlatTreeItemInput } from './flat-tree-item-input';
 import { FlatTreeDrop } from './flat-tree-drop';
-import { getEventTarget } from '../utils/getEventTarget';
+import { buildMultiSelectedItemProfiles, getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators';
 import { FileHoverIcons } from './file-explorer-hovericons';
 import { deletePath } from '../actions';
@@ -36,10 +36,10 @@ interface FlatTreeProps {
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
   handleTreeClick: (e: SyntheticEvent) => void
   handleClickFolder: (path: string, type: string) => void
-  moveFile: (dest: string, src: string[]) => void
-  moveFolder: (dest: string, src: string[]) => void
-  moveFolderSilently: (dest: string, src: string[]) => Promise<void>
-  moveFileSilently: (dest: string, src: string[]) => Promise<void>
+  moveFile: (dest: string, src: string) => void
+  moveFolder: (dest: string, src: string) => void
+  moveFolderSilently: (dest: string, src: string) => Promise<void>
+  moveFileSilently: (dest: string, src: string) => Promise<void>
   setFilesSelected: Dispatch<React.SetStateAction<string[]>>
   fileState: fileDecoration[]
   createNewFile?: any
@@ -71,12 +71,14 @@ export const FlatTree = (props: FlatTreeProps) => {
   const ref = useRef(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const virtuoso = useRef<VirtuosoHandle>(null)
+  const [selectedItems, setSelectedItems] = useState<DragStructure[]>([])
+
 
   const labelClass = (file: FileType) =>
     props.focusEdit.element === file.path
       ? 'bg-light'
       : props.focusElement.findIndex((item) => item.key === file.path) !== -1
-        ? 'bg-secondary remix_selected'
+        ? 'bg-secondary remixui_selected'
         : hover == file.path
           ? 'bg-light border-no-shift'
           : props.focusContext.element === file.path && props.focusEdit.element !== file.path
@@ -107,6 +109,9 @@ export const FlatTree = (props: FlatTreeProps) => {
     const target = await getEventTarget(event)
     setDragSource(flatTree.find((item) => item.path === target.path))
     setIsDragging(true)
+    const items = buildMultiSelectedItemProfiles(target)
+    setSelectedItems(items)
+    setFilesSelected(items.map((item) => item.path))
   }
 
   useEffect(() => {
@@ -258,6 +263,8 @@ export const FlatTree = (props: FlatTreeProps) => {
         setFilesSelected={setFilesSelected}
         handleClickFolder={handleClickFolder}
         expandPath={expandPath}
+        selectedItems={selectedItems}
+        setSelectedItems={setSelectedItems}
       >
         <div data-id="treeViewUltreeViewMenu"
           className='d-flex h-100 w-100 pb-2'

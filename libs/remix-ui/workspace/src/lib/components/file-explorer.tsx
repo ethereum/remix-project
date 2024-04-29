@@ -300,16 +300,16 @@ export const FileExplorer = (props: FileExplorerProps) => {
    * @param src path of the source
    * @returns {void}
    */
-  const moveFileSilently = async (dest: string, sourcesrc: string[]) => {
-    if (dest.length === 0 || sourcesrc.length === 0) return
-    if (await moveFilesIsAllowed(sourcesrc, dest) === false) return
+  const moveFileSilently = async (dest: string, src: string) => {
+    if (dest.length === 0 || src.length === 0) return
+    if (await moveFileIsAllowed(src, dest) === false) return
 
     try {
-      props.dispatchMoveFiles(sourcesrc, dest)
+      props.dispatchMoveFile(src, dest)
     } catch (error) {
       props.modal(
         intl.formatMessage({ id: 'filePanel.movingFileFailed' }),
-        intl.formatMessage({ id: 'filePanel.movingFileFailedMsg' }, { src: sourcesrc.join(' ') }),
+        intl.formatMessage({ id: 'filePanel.movingFileFailedMsg' }, { src }),
         intl.formatMessage({ id: 'filePanel.close' }),
         async () => { }
       )
@@ -323,35 +323,34 @@ export const FileExplorer = (props: FileExplorerProps) => {
    * @param src path of the source
    * @returns {void}
    */
-  const moveFolderSilently = async (dest: string, sourcesrc: string[]) => {
-    if (dest.length === 0 || sourcesrc.length === 0) return
-    if (await moveFoldersIsAllowed(sourcesrc, dest) === false) return
+  const moveFolderSilently = async (dest: string, src: string) => {
+    if (dest.length === 0 || src.length === 0) return
+    if (await moveFolderIsAllowed(src, dest) === false) return
 
-    // console.log('moveFolderSilently', { src, dest, sourcesrc })
     try {
-      props.dispatchMoveFolders(sourcesrc, dest)
+      props.dispatchMoveFolder(src, dest)
     } catch (error) {
       props.modal(
         intl.formatMessage({ id: 'filePanel.movingFolderFailed' }),
-        intl.formatMessage({ id: 'filePanel.movingFolderFailedMsg' }, { src: sourcesrc.join(' ') }),
+        intl.formatMessage({ id: 'filePanel.movingFolderFailedMsg' }, { src }),
         intl.formatMessage({ id: 'filePanel.close' }),
         async () => { }
       )
     }
   }
 
-  const handleFileMove = async (dest: string, sourcesrc: string[]) => {
-    if (await moveFilesIsAllowed(sourcesrc, dest) === false) return
-    console.log('What files have been selected?', filesSelected)
-    const files = filesSelected && filesSelected.length > 0 && filesSelected.join(' ')
-    const src = files.length > 0 ? files : sourcesrc.length === 1 ? sourcesrc[0] : sourcesrc.join(' ')
-    console.log('handleFileMove sourcesrc', {files, sourcesrc, dest, src })
+  const handleFileMove = async (dest: string, copySrc: string) => {
+    if (await moveFileIsAllowed(copySrc, dest) === false) return
+
+    const src = filesSelected && filesSelected.length > 0 ? filesSelected.join(' ') : ''
+
+    console.log('handleFileMove sourcesrc', {src, copySrc, dest })
     try {
       props.modal(
         intl.formatMessage({ id: 'filePanel.moveFile' }),
         intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
         intl.formatMessage({ id: 'filePanel.yes' }),
-        () => props.dispatchMoveFiles(sourcesrc, dest),
+        () => props.dispatchMoveFile(copySrc, dest),
         intl.formatMessage({ id: 'filePanel.cancel' }),
         () => { }
       )
@@ -365,17 +364,17 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleFolderMove = async (dest: string, sourcesrc: string[]) => {
-    if (await moveFoldersIsAllowed(sourcesrc, dest) === false) return
+  const handleFolderMove = async (dest: string, src: string) => {
+    if (await moveFolderIsAllowed(src, dest) === false) return
     const folders = filesSelected && filesSelected.length > 0 && filesSelected.join(' ')
     console.log(folders)
-    const src = folders.length > 0 ? folders : sourcesrc.length === 1 ? sourcesrc[0] : sourcesrc.join(' ')
+
     try {
       props.modal(
         intl.formatMessage({ id: 'filePanel.moveFile' }),
         intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
         intl.formatMessage({ id: 'filePanel.yes' }),
-        () => props.dispatchMoveFolders(sourcesrc, dest),
+        () => props.dispatchMoveFolder(src, dest),
         intl.formatMessage({ id: 'filePanel.cancel' }),
         () => { }
       )
