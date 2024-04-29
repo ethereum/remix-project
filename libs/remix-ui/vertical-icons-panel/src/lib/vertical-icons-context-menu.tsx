@@ -1,6 +1,6 @@
-import {Plugin} from '@remixproject/engine'
-import React, {Fragment, useEffect, useRef} from 'react'
-import {FormattedMessage} from 'react-intl'
+import { Plugin } from '@remixproject/engine'
+import React, { Fragment, useEffect, useRef } from 'react'
+import { FormattedMessage } from 'react-intl'
 
 export interface VerticalIconsContextMenuProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pageX: number
@@ -66,7 +66,7 @@ const VerticalIconsContextMenu = (props: VerticalIconsContextMenuProps) => {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const MenuForLinks = ({listItems, hide, profileName, contextMenuAction}: MenuLinksProps) => {
+const MenuForLinks = ({ listItems, hide, profileName, contextMenuAction }: MenuLinksProps) => {
   return (
     <Fragment>
       {listItems.CanDeactivate ? (

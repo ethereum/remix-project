@@ -1,9 +1,9 @@
-import React, {useContext, useEffect, useRef, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {SearchContext} from '../context/context'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { SearchContext } from '../context/context'
 
 export const Include = (props) => {
-  const {setInclude, cancelSearch, startSearch} = useContext(SearchContext)
+  const { setInclude, cancelSearch, startSearch } = useContext(SearchContext)
   const [includeInput, setIncludeInput] = useState<string>('*.sol, *.js')
 
   const intl = useIntl()
@@ -31,7 +31,7 @@ export const Include = (props) => {
         </label>
         <input
           id="search_include"
-          placeholder={intl.formatMessage({id: 'search.placeholder2'})}
+          placeholder={intl.formatMessage({ id: 'search.placeholder2' })}
           className="form-control"
           onChange={async (e) => change(e)}
           onKeyUp={handleKeypress}

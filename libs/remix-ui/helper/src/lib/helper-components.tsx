@@ -1,4 +1,4 @@
-import {LayoutCompatibilityReport} from '@openzeppelin/upgrades-core/dist/storage/report'
+import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
 import React from 'react'
 
 export const fileChangedToastMsg = (from: string, path: string) => (
@@ -123,7 +123,7 @@ export const upgradeReportMsg = (report: LayoutCompatibilityReport) => (
   <div>
     <div className="py-2 ml-2 mb-1 align-self-end mb-2 d-flex">
       <span className="align-self-center pl-4 mt-1">
-        <i className="pr-2 text-warning far fa-exclamation-triangle" aria-hidden="true" style={{fontSize: 'xxx-large', fontWeight: 'lighter'}}></i>
+        <i className="pr-2 text-warning far fa-exclamation-triangle" aria-hidden="true" style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }}></i>
       </span>
       <div className="d-flex flex-column">
         <span className="pl-4 mt-1">The storage layout of new implementation is NOT</span>

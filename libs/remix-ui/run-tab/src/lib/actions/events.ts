@@ -50,12 +50,12 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
       return
     }
     const networkProvider = plugin.networkModule.getNetworkProvider.bind(plugin.networkModule)
-    const isVM = networkProvider().startsWith('vm') ?  true : false
+    const isVM = networkProvider().startsWith('vm') ? true : false
     const netUI = !isVM ? `${network.name} (${network.id || '-'}) network` : 'VM'
     const pinnedChainId = !isVM ? network.id : networkProvider()
     setNetworkNameFromProvider(dispatch, netUI)
     setPinnedChainId(dispatch, pinnedChainId)
-    
+
     // Check if provider is changed or network is changed for same provider e.g; Metamask
     if (currentNetwork.provider !== networkProvider() || (!isVM && currentNetwork.chainId !== network.id)) {
       currentNetwork.provider = networkProvider()
@@ -104,7 +104,7 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   })
 
   plugin.on('udapp', 'addPinnedInstanceReducer', (address, abi, name, pinnedAt, filePath) => {
-    addPinnedInstance(dispatch, { abi, address, name, pinnedAt, filePath})
+    addPinnedInstance(dispatch, { abi, address, name, pinnedAt, filePath })
   })
 
   plugin.on('filePanel', 'setWorkspace', async () => {
@@ -129,11 +129,11 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
       } else if (activatedPlugin && activatedPlugin.name === 'walletconnect') {
         plugin.on('walletconnect', 'accountsChanged', async (accounts: Array<string>) => {
           const accountsMap = {}
-      
+
           await Promise.all(accounts.map(async (account) => {
             const balance = await plugin.blockchain.getBalanceInEther(account)
             const updated = shortenAddress(account, balance)
-      
+
             accountsMap[account] = updated
           }))
           dispatch(fetchAccountsListSuccess(accountsMap))
@@ -170,11 +170,10 @@ export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
     dispatch(clearRecorderCount())
   })
 
-
   setInterval(() => {
     fillAccountsList(plugin, dispatch)
     updateInstanceBalance(plugin, dispatch)
-  }, 30000)  
+  }, 30000)
 }
 
 const loadPinnedContracts = async (plugin, dispatch, dirName) => {
@@ -189,7 +188,7 @@ const loadPinnedContracts = async (plugin, dispatch, dirName) => {
         const pinnedContractObj = JSON.parse(pinnedContract)
         if (pinnedContractObj) addPinnedInstance(dispatch, pinnedContractObj)
       }
-    } catch(err) {
+    } catch (err) {
       console.log(err)
     }
   }
@@ -239,7 +238,7 @@ const broadcastCompilationResult = async (compilerName: string, plugin: RunTab, 
 
   if (isUpgradeable) {
     const options = await plugin.call('openzeppelin-proxy', 'getProxyOptions', data, file)
-  
+
     dispatch(addDeployOption({ [file]: options }))
   } else {
     dispatch(addDeployOption({ [file]: {} }))
@@ -254,7 +253,7 @@ const getCompiledContracts = (compiler) => {
 
   compiler.visitContracts((contract) => {
     contracts.push(contract)
-  }) 
+  })
   return contracts
 }
 

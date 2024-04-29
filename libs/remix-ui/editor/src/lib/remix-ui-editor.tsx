@@ -152,16 +152,16 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t| |_) | |  _|   | |\\/| |  | |   \\  /    | |  | | | | |  _|  
   \t\t\t\t\t\t\t|  _ <  | |___  | |  | |  | |   /  \\    | |  | |_| | | |___ 
   \t\t\t\t\t\t\t|_| \\_\\ |_____| |_|  |_| |___| /_/\\_\\  |___| |____/  |_____|\n\n
-  \t\t\t\t\t\t\t${intl.formatMessage({id: 'editor.keyboardShortcuts'})}:\n
-  \t\t\t\t\t\t\t\tCTRL + S: ${intl.formatMessage({id: 'editor.keyboardShortcuts.text1'})}\n
-  \t\t\t\t\t\t\t\tCTRL + Shift + F : ${intl.formatMessage({id: 'editor.keyboardShortcuts.text2'})}\n
-  \t\t\t\t\t\t\t\tCTRL + Shift + A : ${intl.formatMessage({id: 'editor.keyboardShortcuts.text3'})}\n
-  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: ${intl.formatMessage({id: 'editor.keyboardShortcuts.text4'})}\n
-  \t\t\t\t\t\t\t${intl.formatMessage({id: 'editor.editorKeyboardShortcuts'})}:\n
-  \t\t\t\t\t\t\t\tCTRL + Alt + F : ${intl.formatMessage({id: 'editor.editorKeyboardShortcuts.text1'})}\n
-  \t\t\t\t\t\t\t${intl.formatMessage({id: 'editor.importantLinks'})}:\n
-  \t\t\t\t\t\t\t\t${intl.formatMessage({id: 'editor.importantLinks.text1'})}: https://remix-project.org/\n
-  \t\t\t\t\t\t\t\t${intl.formatMessage({id: 'editor.importantLinks.text2'})}: https://remix-ide.readthedocs.io/en/latest/\n
+  \t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.keyboardShortcuts' })}:\n
+  \t\t\t\t\t\t\t\tCTRL + S: ${intl.formatMessage({ id: 'editor.keyboardShortcuts.text1' })}\n
+  \t\t\t\t\t\t\t\tCTRL + Shift + F : ${intl.formatMessage({ id: 'editor.keyboardShortcuts.text2' })}\n
+  \t\t\t\t\t\t\t\tCTRL + Shift + A : ${intl.formatMessage({ id: 'editor.keyboardShortcuts.text3' })}\n
+  \t\t\t\t\t\t\t\tCTRL + SHIFT + S: ${intl.formatMessage({ id: 'editor.keyboardShortcuts.text4' })}\n
+  \t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.editorKeyboardShortcuts' })}:\n
+  \t\t\t\t\t\t\t\tCTRL + Alt + F : ${intl.formatMessage({ id: 'editor.editorKeyboardShortcuts.text1' })}\n
+  \t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks' })}:\n
+  \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text1' })}: https://remix-project.org/\n
+  \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text2' })}: https://remix-ide.readthedocs.io/en/latest/\n
   \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
   \t\t\t\t\t\t\t\tGitter: https://gitter.im/ethereum/remix\n
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
@@ -472,7 +472,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   const addDecoration = (decoration: sourceAnnotation | sourceMarker, filePath: string, typeOfDecoration: string) => {
     const model = editorModelsState[filePath]?.model
-    if (!model) return { currentDecorations: [] }
+    if (!model) return { currentDecorations: []}
     const monacoDecoration = convertToMonacoDecoration(decoration, typeOfDecoration)
     return {
       currentDecorations: model.deltaDecorations([], [monacoDecoration]),
@@ -629,7 +629,7 @@ export const EditorUI = (props: EditorUIProps) => {
       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         const modalContent: AlertModal = {
           id: 'newCodePasted',
-          title: intl.formatMessage({id: 'editor.title1'}),
+          title: intl.formatMessage({ id: 'editor.title1' }),
           message: (
             <div>
               {' '}
@@ -638,7 +638,7 @@ export const EditorUI = (props: EditorUIProps) => {
               <div>
                 <FormattedMessage id="editor.title1.message2" />
                 <div className="mt-2">
-                  <FormattedMessage id="editor.title1.message3" values={{span: (chunks) => <span className="text-warning">{chunks}</span>}} />
+                  <FormattedMessage id="editor.title1.message3" values={{ span: (chunks) => <span className="text-warning">{chunks}</span> }} />
                 </div>
                 <div className="text-warning  mt-2">
                   <FormattedMessage id="editor.title1.message4" />
@@ -670,7 +670,7 @@ export const EditorUI = (props: EditorUIProps) => {
     // add context menu items
     const zoominAction = {
       id: 'zoomIn',
-      label: intl.formatMessage({id: 'editor.zoomIn'}),
+      label: intl.formatMessage({ id: 'editor.zoomIn' }),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'zooming', // create a new grouping
       keybindings: [
@@ -683,7 +683,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
     const zoomOutAction = {
       id: 'zoomOut',
-      label: intl.formatMessage({id: 'editor.zoomOut'}),
+      label: intl.formatMessage({ id: 'editor.zoomOut' }),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'zooming', // create a new grouping
       keybindings: [
@@ -696,7 +696,7 @@ export const EditorUI = (props: EditorUIProps) => {
     }
     const formatAction = {
       id: 'autoFormat',
-      label: intl.formatMessage({id: 'editor.formatCode'}),
+      label: intl.formatMessage({ id: 'editor.formatCode' }),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'formatting', // create a new grouping
       keybindings: [
@@ -712,14 +712,14 @@ export const EditorUI = (props: EditorUIProps) => {
     let gptGenerateDocumentationAction
     const executeGptGenerateDocumentationAction = {
       id: 'generateDocumentation',
-      label: intl.formatMessage({id: 'editor.generateDocumentation'}),
+      label: intl.formatMessage({ id: 'editor.generateDocumentation' }),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'gtp', // create a new grouping
       keybindings: [],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
-        const message = intl.formatMessage({id: 'editor.generateDocumentationByAI'}, {content, currentFunction: currentFunction.current})
+        const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
         await props.plugin.call('openaigpt', 'message', message)
         _paq.push(['trackEvent', 'ai', 'openai', 'generateDocumentation'])
       },
@@ -728,14 +728,14 @@ export const EditorUI = (props: EditorUIProps) => {
     let gptExplainFunctionAction
     const executegptExplainFunctionAction = {
       id: 'explainFunction',
-      label: intl.formatMessage({id: 'editor.explainFunction'}),
+      label: intl.formatMessage({ id: 'editor.explainFunction' }),
       contextMenuOrder: 1, // choose the order
       contextMenuGroupId: 'gtp', // create a new grouping
       keybindings: [],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
-        const message = intl.formatMessage({id: 'editor.explainFunctionByAI'}, {content, currentFunction: currentFunction.current})
+        const message = intl.formatMessage({ id: 'editor.explainFunctionByAI' }, { content, currentFunction: currentFunction.current })
         await props.plugin.call('openaigpt', 'message', message)
         _paq.push(['trackEvent', 'ai', 'openai', 'explainFunction'])
       },
@@ -744,7 +744,7 @@ export const EditorUI = (props: EditorUIProps) => {
     let solgptExplainFunctionAction
     const executeSolgptExplainFunctionAction = {
       id: 'solExplainFunction',
-      label: intl.formatMessage({id: 'editor.explainFunctionSol'}),
+      label: intl.formatMessage({ id: 'editor.explainFunctionSol' }),
       contextMenuOrder: 1, // choose the order
       contextMenuGroupId: 'sol-gtp', // create a new grouping
       keybindings: [],
@@ -758,12 +758,11 @@ export const EditorUI = (props: EditorUIProps) => {
       },
     }
 
-
     const freeFunctionCondition = editor.createContextKey('freeFunctionCondition', false)
     let freeFunctionAction
     const executeFreeFunctionAction = {
       id: 'executeFreeFunction',
-      label: intl.formatMessage({id: 'editor.executeFreeFunction'}),
+      label: intl.formatMessage({ id: 'editor.executeFreeFunction' }),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'execute', // create a new grouping
       precondition: 'freeFunctionCondition',
@@ -780,10 +779,10 @@ export const EditorUI = (props: EditorUIProps) => {
             const file = await props.plugin.call('fileManager', 'getCurrentFile')
             props.plugin.call('solidity-script', 'execute', file, freeFunctionNode.name)
           } else {
-            props.plugin.call('notification', 'toast', intl.formatMessage({id: 'editor.toastText1'}))
+            props.plugin.call('notification', 'toast', intl.formatMessage({ id: 'editor.toastText1' }))
           }
         } else {
-          props.plugin.call('notification', 'toast', intl.formatMessage({id: 'editor.toastText2'}))
+          props.plugin.call('notification', 'toast', intl.formatMessage({ id: 'editor.toastText2' }))
         }
       },
     }
@@ -824,27 +823,26 @@ export const EditorUI = (props: EditorUIProps) => {
         return
       }
 
-      
       const { nodesAtPosition } = await retrieveNodesAtPosition(props.editorAPI, props.plugin)
       const freeFunctionNode = nodesAtPosition.find((node) => node.kind === 'freeFunction')
       if (freeFunctionNode) {
-        executeFreeFunctionAction.label = intl.formatMessage({id: 'editor.executeFreeFunction2'}, {name: freeFunctionNode.name})
+        executeFreeFunctionAction.label = intl.formatMessage({ id: 'editor.executeFreeFunction2' }, { name: freeFunctionNode.name })
         freeFunctionAction = editor.addAction(executeFreeFunctionAction)
       }
 
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
         currentFunction.current = functionImpl.name
-        executeGptGenerateDocumentationAction.label = intl.formatMessage({id: 'editor.generateDocumentation2'}, {name: functionImpl.name})
+        executeGptGenerateDocumentationAction.label = intl.formatMessage({ id: 'editor.generateDocumentation2' }, { name: functionImpl.name })
         gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
-        executegptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunction2'}, {name: functionImpl.name})
+        executegptExplainFunctionAction.label = intl.formatMessage({ id: 'editor.explainFunction2' }, { name: functionImpl.name })
         gptExplainFunctionAction = editor.addAction(executegptExplainFunctionAction)
-        executeSolgptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunctionSol'})
+        executeSolgptExplainFunctionAction.label = intl.formatMessage({ id: 'editor.explainFunctionSol' })
         solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
-      }else{
+      } else {
         // do not allow single character explaining
         if (editor.getModel().getValueInRange(editor.getSelection()).length <=1){ return}
-        executeSolgptExplainFunctionAction.label = intl.formatMessage({id: 'editor.explainFunctionSol'})
+        executeSolgptExplainFunctionAction.label = intl.formatMessage({ id: 'editor.explainFunctionSol' })
         solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
       }
       freeFunctionCondition.set(!!freeFunctionNode)
@@ -892,7 +890,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-circom' })
 
     // Allow JSON schema requests
-    monacoRef.current.languages.json.jsonDefaults.setDiagnosticsOptions({enableSchemaRequest: true})
+    monacoRef.current.languages.json.jsonDefaults.setDiagnosticsOptions({ enableSchemaRequest: true })
 
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)

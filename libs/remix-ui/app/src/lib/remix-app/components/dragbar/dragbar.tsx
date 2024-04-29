@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Draggable from 'react-draggable'
 import './dragbar.css'
 
@@ -77,7 +77,7 @@ const DragBar = (props: IRemixDragBarUi) => {
   return (
     <>
       <div className={`overlay ${dragState ? '' : 'd-none'}`}></div>
-      <Draggable nodeRef={nodeRef} position={{x: dragBarPosX, y: 0}} onStart={startDrag} onStop={stopDrag} axis="x">
+      <Draggable nodeRef={nodeRef} position={{ x: dragBarPosX, y: 0 }} onStart={startDrag} onStop={stopDrag} axis="x">
         <div ref={nodeRef} className={`dragbar ${dragState ? 'ondrag' : ''}`}></div>
       </Draggable>
     </>

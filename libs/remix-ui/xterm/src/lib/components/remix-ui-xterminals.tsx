@@ -38,14 +38,13 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
         dispatchXterm({ type: 'ADD_TERMINAL', payload: { pid, queue: '', timeStamp: Date.now(), ref: null, hidden: false } })
       })
 
-
       plugin.on('fs', 'workingDirChanged', (path: string) => {
         dispatchXterm({ type: 'SET_WORKING_DIR', payload: path })
         dispatchXterm({ type: 'ENABLE_TERMINALS', payload: null })
       })
 
       const workingDir = await plugin.call('fs', 'getWorkingDir')
-      if(workingDir && workingDir !== '') {
+      if (workingDir && workingDir !== '') {
         dispatchXterm({ type: 'ENABLE_TERMINALS', payload: null })
         dispatchXterm({ type: 'SET_WORKING_DIR', payload: workingDir })
       }
@@ -74,7 +73,7 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
 
   useEffect(() => {
     setTerminals(xtermState.terminals)
-    if(xtermState.terminals.length === 0) {
+    if (xtermState.terminals.length === 0) {
       dispatchXterm({ type: 'SHOW_OUTPUT', payload: true })
     }
   }, [xtermState.terminals])
@@ -86,7 +85,6 @@ export const RemixUiXterminals = (props: RemixUiXterminalsProps) => {
       }
     })
   }
-
 
   const writeToTerminal = (data: string, pid: number) => {
     setTerminals(prevState => {

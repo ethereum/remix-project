@@ -282,14 +282,13 @@ export const CompilerApiMixin = (Base) => class extends Base {
     this.on('fileManager', 'fileClosed', this.data.eventHandlers.onFileClosed)
 
     this.on('compilerloader', 'jsonBinDataLoaded', (urls: iSolJsonBinData) => {
-      try{
+      try {
         this.setSolJsonBinData(urls)
-      }catch(e){
+      } catch (e){
       }
       this.solJsonBinData = urls
     })
     this.call('compilerloader', 'getJsonBinData')
-
 
     this.data.eventHandlers.onCompilationFinished = async (success, data, source, input, version) => {
       this.compileErrors = data
@@ -355,8 +354,8 @@ export const CompilerApiMixin = (Base) => class extends Base {
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.keyCode === 83 && this.currentFile !== '') {
         e.preventDefault()
         if (this.currentFile && (this.currentFile.endsWith('.sol') || this.currentFile.endsWith('.yul'))) {
-          if(await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
-          else if(await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
+          if (await this.getAppParameter('hardhat-compilation')) this.compileTabLogic.runCompiler('hardhat')
+          else if (await this.getAppParameter('truffle-compilation')) this.compileTabLogic.runCompiler('truffle')
           else this.compileTabLogic.runCompiler(undefined)
         } else if (this.currentFile && this.currentFile.endsWith('.circom')) {
           await this.call('circuit-compiler', 'compile', this.currentFile)

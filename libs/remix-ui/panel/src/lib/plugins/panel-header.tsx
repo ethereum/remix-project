@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {PluginRecord} from '../types'
+import { FormattedMessage } from 'react-intl'
+import { PluginRecord } from '../types'
 import './panel.css'
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>

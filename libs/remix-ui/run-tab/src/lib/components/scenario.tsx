@@ -22,7 +22,7 @@ export function ScenarioPrompt(props: ScenarioProps) {
           type="text"
           name="prompt_text"
           className="form-control"
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
           onInput={handleScenarioPath}
           data-id="modalDialogCustomPromptText"
           defaultValue={props.defaultValue}

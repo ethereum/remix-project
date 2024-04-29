@@ -314,9 +314,9 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
         console.log(e)
       }
     }
-    
+
     fetchWorkspace()
-    
+
     return () => {
       plugin.off('fileManager', 'fileChanged')
       plugin.off('filePanel', 'setWorkspace')
@@ -416,7 +416,7 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
             value.setSearchResults(filteredFiles)
           } else {
             let filesToSearch = files?.files
-            if(!files || files.timeStamp != directoryUpdateCacheTimeStamp.current) {
+            if (!files || files.timeStamp != directoryUpdateCacheTimeStamp.current) {
               const newFiles = await getDirectory('/', plugin)
               setFiles({
                 files: newFiles,
@@ -437,7 +437,7 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
             })
             value.setSearchResults(filteredFiles)
           }
-          
+
         } catch (e) {
           console.log(e)
         }

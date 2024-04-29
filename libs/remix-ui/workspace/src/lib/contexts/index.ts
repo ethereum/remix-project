@@ -52,5 +52,4 @@ export const FileSystemContext = createContext<{
   dispatchRemoveRecentFolder: (path: string) => Promise<void>
   dispatchUpdateGitSubmodules: () => Promise<void>
     }>(null)
-  
-    
+
