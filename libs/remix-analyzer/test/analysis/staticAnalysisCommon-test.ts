@@ -1,11 +1,10 @@
-import { default as test} from "tape"
+import { default as test } from "tape"
 import * as common from '../../src/solidity-analyzer/modules/staticAnalysisCommon'
 const { localCall, thisLocalCall, libCall, externalDirect, superLocal, assignment, abiNamespaceCallNodes,
   inlineAssembly, unaryOperation, nowAst, blockTimestamp, stateVariableContractNode,
   functionDefinition, requireCall, selfdestruct, storageVariableNodes, dynamicDeleteUnaryOp,
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   lowlevelCall, parameterFunction, parameterFunctionCall, inheritance, blockHashAccess, contractDefinition, funcDefForComplexParams } = require('./astBlocks')
-
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const compiledContractObj = require('./compilationDetails/CompiledContractObj.json')
@@ -89,7 +88,7 @@ test('staticAnalysisCommon.helpers.operator', function (t) {
 
 test('staticAnalysisCommon.helpers.nodeType', function (t) {
   t.plan(3)
-  const node = { nodeType: 'Identifier', name: 'now'}
+  const node = { nodeType: 'Identifier', name: 'now' }
   const node2 = { nodeType: 'FunctionCall', memberName: 'call' }
 
   t.ok(common.helpers.nodeType(node, common.nodeTypes.IDENTIFIER), 'should work for identifier')
@@ -140,7 +139,7 @@ test('staticAnalysisCommon.helpers.expressionTypeDescription', function (t) {
 
 test('staticAnalysisCommon.getType', function (t) {
   t.plan(3)
-  const node =  { "argumentTypes": null,
+  const node = { "argumentTypes": null,
     "id": 3,
     "name": "a",
     "nodeType": "Identifier",
@@ -357,9 +356,9 @@ test('staticAnalysisCommon.isStateVariable', function (t) {
 test('staticAnalysisCommon.isConstantFunction', function (t) {
   t.plan(3)
   t.ok(common.isConstantFunction(functionDefinition), 'should be const func definition')
-  functionDefinition.stateMutability =  'view'
+  functionDefinition.stateMutability = 'view'
   t.ok(common.isConstantFunction(functionDefinition), 'should be const func definition')
-  functionDefinition.stateMutability =  'nonpayable'
+  functionDefinition.stateMutability = 'nonpayable'
   t.notOk(common.isConstantFunction(functionDefinition), 'should not be const func definition')
 })
 
