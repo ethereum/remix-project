@@ -303,7 +303,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const moveFileSilently = async (dest: string, src: string) => {
     if (dest.length === 0 || src.length === 0) return
     if (await moveFileIsAllowed(src, dest) === false) return
-    console.log({ src, dest })
     try {
       props.dispatchMoveFile(src, dest)
     } catch (error) {
@@ -326,7 +325,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const moveFolderSilently = async (dest: string, src: string) => {
     if (dest.length === 0 || src.length === 0) return
     if (await moveFolderIsAllowed(src, dest) === false) return
-    console.log({ src, dest })
     try {
       props.dispatchMoveFolder(src, dest)
     } catch (error) {
@@ -350,52 +348,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
         () => reject()
       )
     })    
-  }
-
-  const handleFileMove = async (dest: string, sourcesrc: string[]) => {
-    if (await moveFilesIsAllowed(sourcesrc, dest) === false) return
-    const files = filesSelected && filesSelected.length > 0 && filesSelected.join(' ')
-    const src = files.length > 0 ? files : sourcesrc.length === 1 ? sourcesrc[0] : sourcesrc.join(' ')
-    try {
-      props.modal(
-        intl.formatMessage({ id: 'filePanel.moveFile' }),
-        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
-        intl.formatMessage({ id: 'filePanel.yes' }),
-        () => props.dispatchMoveFile(copySrc, dest),
-        intl.formatMessage({ id: 'filePanel.cancel' }),
-        () => { }
-      )
-    } catch (error) {
-      props.modal(
-        intl.formatMessage({ id: 'filePanel.movingFileFailed' }),
-        intl.formatMessage({ id: 'filePanel.movingFileFailedMsg' }, { src }),
-        intl.formatMessage({ id: 'filePanel.close' }),
-        async () => { }
-      )
-    }
-  }
-
-  const handleFolderMove = async (dest: string, copySrc: string) => {
-    if (await moveFolderIsAllowed(copySrc, dest) === false) return
-    const src = filesSelected && filesSelected.length > 0 ? filesSelected.join(' ') : ''
-
-    try {
-      props.modal(
-        intl.formatMessage({ id: 'filePanel.moveFile' }),
-        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
-        intl.formatMessage({ id: 'filePanel.yes' }),
-        () => props.dispatchMoveFolder(copySrc, dest),
-        intl.formatMessage({ id: 'filePanel.cancel' }),
-        () => { }
-      )
-    } catch (error) {
-      props.modal(
-        intl.formatMessage({ id: 'filePanel.movingFolderFailed' }),
-        intl.formatMessage({ id: 'filePanel.movingFolderFailedMsg' }, { src }),
-        intl.formatMessage({ id: 'filePanel.close' }),
-        async () => { }
-      )
-    }
   }
 
   const handleTreeClick = (event: SyntheticEvent) => {
@@ -466,8 +418,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
           expandPath={props.expandPath}
           handleContextMenu={handleContextMenu}
           warnMovingItems={warnMovingItems}
-          moveFile={handleFileMove}
-          moveFolder={handleFolderMove}
           moveFolderSilently={moveFolderSilently}
           moveFileSilently={moveFileSilently}
           setFilesSelected={setFilesSelected}

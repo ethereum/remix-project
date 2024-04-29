@@ -83,7 +83,6 @@ class FileManager extends Plugin {
    * @param {string} message message to display if path doesn't exist.
    */
   async _handleExists(path: string, message?: string) {
-    console.log('_handleExists is called ', { path, message })
     const exists = await this.exists(path)
 
     if (!exists) {
