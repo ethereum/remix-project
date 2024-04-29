@@ -34,10 +34,10 @@ export function parseNatspec(item: DocItemWithContext): NatSpec {
   const docString = docSource !== undefined
     ? cleanUpDocstringFromSource(docSource)
     : 'documentation' in item && item.documentation
-    ? typeof item.documentation === 'string'
-    ? item.documentation
-    : cleanUpDocstringFromSolc(item.documentation.text)
-    : '';
+      ? typeof item.documentation === 'string'
+        ? item.documentation
+        : cleanUpDocstringFromSolc(item.documentation.text)
+      : '';
 
   const tagMatches = execAll(
     /^(?:@(\w+|custom:[a-z][a-z-]*) )?((?:(?!^@(?:\w+|custom:[a-z][a-z-]*) )[^])*)/m,
