@@ -298,7 +298,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
    * without showing a modal dialong to the user.
    * @param dest path of the destination
    * @param src path of the source
-   * @returns {void}
+   * @returns {Promise<void>}
    */
   const moveFileSilently = async (dest: string, src: string) => {
     if (dest.length === 0 || src.length === 0) return
@@ -321,7 +321,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
    * without showing a modal dialong to the user.
    * @param dest path of the destination
    * @param src path of the source
-   * @returns {void}
+   * @returns {Promise<void>}
    */
   const moveFolderSilently = async (dest: string, src: string) => {
     if (dest.length === 0 || src.length === 0) return
