@@ -84,10 +84,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
         await moveFilesSilently(props.selectedItems, dragDestination.path)
       }
     }
-    document.querySelectorAll('li.remixui_selected').forEach(item => {
-      item.classList.remove('remixui_selected')
-      item.classList.remove('bg-secondary')
-    })
   }
 
   /**
