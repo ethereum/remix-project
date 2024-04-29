@@ -36,8 +36,6 @@ interface FlatTreeProps {
   handleContextMenu: (pageX: number, pageY: number, path: string, content: string, type: string) => void
   handleTreeClick: (e: SyntheticEvent) => void
   handleClickFolder: (path: string, type: string) => void
-  moveFile: (dest: string, src: string) => void
-  moveFolder: (dest: string, src: string) => void
   moveFolderSilently: (dest: string, src: string) => Promise<void>
   moveFileSilently: (dest: string, src: string) => Promise<void>
   setFilesSelected: Dispatch<React.SetStateAction<string[]>>
@@ -55,7 +53,7 @@ let mouseTimer: any = {
 }
 
 export const FlatTree = (props: FlatTreeProps) => {
-  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, moveFile, moveFolder, warnMovingItems, fileState, focusElement, handleClickFolder, deletePath, moveFileSilently, moveFolderSilently, setFilesSelected } = props
+  const { files, flatTree, expandPath, focusEdit, editModeOff, handleTreeClick, warnMovingItems, fileState, focusElement, handleClickFolder, deletePath, moveFileSilently, moveFolderSilently, setFilesSelected } = props
   const [hover, setHover] = useState<string>('')
   const [mouseOverTarget, setMouseOverTarget] = useState<{
     path: string,
@@ -263,8 +261,6 @@ export const FlatTree = (props: FlatTreeProps) => {
       <FlatTreeDrop
         dragSource={dragSource}
         getFlatTreeItem={getFlatTreeItem}
-        moveFile={moveFile}
-        moveFolder={moveFolder}
         warnMovingItems={warnMovingItems}
         moveFolderSilently={moveFolderSilently}
         moveFileSilently={moveFileSilently}
