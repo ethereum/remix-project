@@ -9,8 +9,6 @@ import { fileChangedToastMsg, recursivePasteToastMsg, storageFullMessage } from 
 import helper from '../../lib/helper.js'
 import { RemixAppManager } from '../../remixAppManager'
 import { commitChange } from '@remix-ui/git'
-import { Editor } from '../editor/editor'
-import { IEditorFile } from '@remix-ui/editor'
 
 /*
   attach to files event (removed renamed)
@@ -27,7 +25,7 @@ const profile = {
   methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'writeFileNoRewrite',
     'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
     'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
-    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson'
+    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson', 'diff'
   ],
   kind: 'file-system'
 }
@@ -710,7 +708,6 @@ class FileManager extends Plugin {
     this._deps.config.set('currentFile', '')
     // TODO: Only keep `this.emit` (issue#2210)
     this.emit('noFileSelected')
-    this.events.emit('noFileSelected')
 
     if(!change.readonly){
       let file = this.normalize(change.path)
@@ -722,7 +719,6 @@ class FileManager extends Plugin {
 
     await this.editor.openDiff(change)
     this.emit('openDiff', change)
-    this.events.emit('openDiff', change)
   }
 
   async closeDiff(change: commitChange) {
@@ -733,18 +729,15 @@ class FileManager extends Plugin {
         this._deps.config.set('currentFile', '')
         // TODO: Only keep `this.emit` (issue#2210)
         this.emit('noFileSelected')
-        this.events.emit('noFileSelected')
       }
     }
     this.emit('closeDiff', change)
-    this.events.emit('closeDiff', change)
   }
 
 
   async openFile(file?: string) {
     if (!file) {
       this.emit('noFileSelected')
-      this.events.emit('noFileSelected')
     } else {
       file = this.normalize(file)
       const resolved = this.getPathFromUrl(file)
@@ -780,7 +773,6 @@ class FileManager extends Plugin {
       }
       // TODO: Only keep `this.emit` (issue#2210)
       this.emit('currentFileChanged', file)
-      this.events.emit('currentFileChanged', file)
       return true
     }
   }

@@ -5,6 +5,7 @@ import { EditorUI } from '@remix-ui/editor' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
+import { commitChange } from '@remix-ui/git'
 
 const EventManager = require('../../lib/events')
 
@@ -13,7 +14,7 @@ const profile = {
   name: 'editor',
   description: 'service - editor',
   version: packageJson.version,
-  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText', 'getPositionAt'],
+  methods: ['highlight', 'discardHighlight', 'clearAnnotations', 'addLineText', 'discardLineTexts', 'addAnnotation', 'gotoLine', 'revealRange', 'getCursorPosition', 'open', 'addModel','addErrorMarker', 'clearErrorMarkers', 'getText', 'getPositionAt', 'openReadOnly'],
 }
 
 class Editor extends Plugin {
@@ -62,7 +63,8 @@ class Editor extends Plugin {
       onBreakPointAdded: (file, line) => this.triggerEvent('breakpointAdded', [file, line]),
       onBreakPointCleared: (file, line) => this.triggerEvent('breakpointCleared', [file, line]),
       onDidChangeContent: (file) => this._onChange(file),
-      onEditorMounted: () => this.triggerEvent('editorMounted', [])
+      onEditorMounted: () => this.triggerEvent('editorMounted', []),
+      onDiffEditorMounted: () => this.triggerEvent('diffEditorMounted', [])
     }
 
     // to be implemented by the react component
@@ -80,8 +82,10 @@ class Editor extends Plugin {
       editorAPI={state.api}
       themeType={state.currentThemeType}
       currentFile={state.currentFile}
+      currentDiffFile={state.currentDiffFile}
       events={state.events}
       plugin={state.plugin}
+      isDiff={state.isDiff}
     />
   }
 
@@ -110,6 +114,8 @@ class Editor extends Plugin {
       api: this.api,
       currentThemeType: this.currentThemeType,
       currentFile: this.currentFile,
+      currentDiffFile: this.currentDiffFile,
+      isDiff: this.isDiff,
       events: this.events,
       plugin: this
     })
@@ -182,9 +188,10 @@ class Editor extends Plugin {
   }
 
   _switchSession (path) {
-    if (path === this.currentFile) return
-    this.triggerEvent('sessionSwitched', [])
-    this.currentFile = path
+    if (path !== this.currentFile) {
+      this.triggerEvent('sessionSwitched', [])
+      this.currentFile = path
+    }
     this.renderComponent()
   }
 
@@ -240,10 +247,10 @@ class Editor extends Plugin {
    * @param {string} content Content of the file to open
    * @param {string} mode Mode for this file [Default is `text`]
    */
-  async _createSession (path, content, mode) {
+  async _createSession (path, content, mode, readOnly) {
     if (!this.activated) return
     
-    this.emit('addModel', content, mode, path, this.readOnlySessions[path])
+    this.emit('addModel', content, mode, path, readOnly || this.readOnlySessions[path])
     return {
       path,
       language: mode,
@@ -313,6 +320,7 @@ class Editor extends Plugin {
        - URL prepended with "browser"
        - URL not prepended with the file explorer. We assume (as it is in the whole app, that this is a "browser" URL
     */
+    this.isDiff = false
     if (!this.sessions[path]) {
       this.readOnlySessions[path] = false
       const session = await this._createSession(path, content, this._getMode(path))
@@ -334,7 +342,20 @@ class Editor extends Plugin {
       const session = await this._createSession(path, content, this._getMode(path))
       this.sessions[path] = session
     }
+    this.isDiff = false
     this._switchSession(path)
+  }
+
+  async openDiff(change) {
+    console.log('openDiff', change)
+    const hashedPathModified = change.readonly ? change.path + change.hashModified : change.path
+    const hashedPathOriginal = change.path + change.hashOriginal
+    const session = await this._createSession(hashedPathModified, change.modified, this._getMode(change.path), change.readonly)
+    await this._createSession(hashedPathOriginal, change.original, this._getMode(change.path), change.readonly)
+    this.sessions[hashedPathModified] = session
+    this.currentDiffFile = hashedPathOriginal
+    this.isDiff = true
+    this._switchSession(hashedPathModified)
   }
 
   /**

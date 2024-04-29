@@ -746,14 +746,18 @@ export const getCommitChanges = async (oid1: string, oid2: string, branch?: bran
   console.log(oid1, oid2, branch, remote)
 
   try {
-    // check if oid2 exists
-    const log =  await plugin.call('dGitProvider', 'log', {
-      ref: branch? branch.name : 'HEAD',
-    })
-    if(log) {
+    let log
+    try {
+      // check if oid2 exists
+      log = await plugin.call('dGitProvider', 'log', {
+        ref: branch ? branch.name : 'HEAD',
+      })
+    } catch (e) {
+    }
+    if (log) {
       const foundCommit = log.find((commit: ReadCommitResult) => commit.oid === oid2)
-      if(!foundCommit) {
-        await fetch(remote? remote.remote: null, branch? branch.name: null,null, 5, true, true)
+      if (!foundCommit) {
+        await fetch(remote ? remote.remote : null, branch ? branch.name : null, null, 5, true, true)
       }
     }
     const result: commitChange[] = await plugin.call('dGitProvider', 'getCommitChanges', oid1, oid2)

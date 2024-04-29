@@ -1,5 +1,6 @@
 
 import { monacoTypes } from '@remix-ui/editor';
+import { commitChange } from '@remix-ui/git';
 export interface Action {
   type: string;
   payload: Record<string, any>
@@ -36,6 +37,10 @@ export const reducerActions = (models = initialState, action: Action) => {
     const model = models[uri]?.model
     if (model) model.dispose()
     delete models[uri]
+    return models
+  }
+  case 'ADD_DIFF': {
+    if (!editor) return models
     return models
   }
   case 'SET_VALUE': {
@@ -106,6 +111,15 @@ export const reducerListener = (plugin, dispatch, monaco, editor, events) => {
     dispatch({
       type: 'ADD_MODEL',
       payload: { uri, value, language, readOnly, events },
+      monaco,
+      editor
+    })
+  })
+
+  plugin.on('editor', 'addDiff', (value: commitChange) => {
+    dispatch({
+      type: 'ADD_DIFF',
+      payload: { value },
       monaco,
       editor
     })
