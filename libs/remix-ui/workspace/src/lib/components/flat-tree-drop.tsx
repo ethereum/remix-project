@@ -8,7 +8,7 @@ import { FileSystemContext } from '../contexts'
 
 export const FlatTreeDrop = (props: FlatTreeDropProps) => {
 
-  const { getFlatTreeItem, dragSource, moveFile, moveFolder, handleClickFolder, expandPath } = props
+  const { getFlatTreeItem, dragSource, handleClickFolder, expandPath } = props
   // delay timer
   const [timer, setTimer] = useState<NodeJS.Timeout>()
   // folder to open
@@ -67,21 +67,21 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
 
     if (dragDestination.isDirectory) {
       if (dragSource.isDirectory) {
-        moveFolder(dragDestination.path, dragSource.path)
-        await moveFoldersSilently(props.selectedItems, dragDestination.path)
+        await props.warnMovingItems(filePaths, dragDestination.path)
+        await moveFoldersSilently(filePaths, dragDestination.path)
       } else {
-        moveFile(dragDestination.path, dragSource.path)
-        await moveFilesSilently(props.selectedItems, dragDestination.path)
+        await props.warnMovingItems(filePaths, dragDestination.path)
+        await moveFilesSilently(filePaths, dragDestination.path)
       }
     } else {
       const path = extractParentFromKey(dragDestination.path) || '/'
 
       if (dragSource.isDirectory) {
-        moveFolder(path, dragSource.path)
-        await moveFoldersSilently(props.selectedItems, path)
+        await props.warnMovingItems(filePaths, path)
+        await moveFoldersSilently(filePaths, path)
       } else {
-        moveFile(path, dragSource.path)
-        await moveFilesSilently(props.selectedItems, path)
+        await props.warnMovingItems(filePaths, path)
+        await moveFilesSilently(filePaths, path)
       }
     }
   }
@@ -93,7 +93,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
    * @returns Promise<void>
    */
   const moveFilesSilently = async (items: DragStructure[], targetPath: string) => {
-    console.log('moveItemsSilently', { items, targetPath })
     const promises = items.filter(item => item.path !== targetPath)
       .map(async (item) => {
         if (item.type === 'file') {
@@ -110,7 +109,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
    * @returns Promise<void>
    */
   const moveFoldersSilently = async (items: DragStructure[], targetPath: string) => {
-    console.log('moveItemsSilently', { items, targetPath })
     const promises = items.filter(item => item.path !== targetPath)
       .map(async (item) => {
         if (item.type === 'folder') {
