@@ -23,3 +23,34 @@ export const getEventTarget = async (e: any, useLabel: boolean = false) => {
     }
   }
 }
+
+/**
+   *  When multiple files are selected in FileExplorer,
+   *  and these files are dragged to a target folder,
+   *  this function will build the profile of each selected item
+   *  in FileExplorer so they can be moved when dropped
+   * @param target - Initial target item in FileExplorer
+   * @returns - {DragStructure} Array of selected items
+   */
+export const buildMultiSelectedItemProfiles = (target: {
+  path: string
+  type: string
+  content: string
+  position: {
+      top: number
+      left: number
+  }
+  }) => {
+  const selectItems = []
+  document.querySelectorAll('li.remixui_selected').forEach(item => {
+
+    const dragTarget = {
+      position: { top: target?.position.top || 0, left: target?.position.left || 0 },
+      path: item.getAttribute('data-path') || item.getAttribute('data-label-path') || '',
+      type: item.getAttribute('data-type') || item.getAttribute('data-label-type') || '',
+      content: item.textContent || ''
+    }
+    selectItems.push(dragTarget)
+  })
+  return selectItems
+}
