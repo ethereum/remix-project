@@ -1,6 +1,7 @@
 import React from 'react'
 import { bytesToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
+import { createNonClashingNameAsync } from '@remix-ui/helper'
 import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
 import { TemplateType } from '../types'
 import IpfsHttpClient from 'ipfs-http-client'
@@ -154,6 +155,7 @@ export const createWorkspace = async (
     await plugin.workspaceCreated(workspaceName)
 
     if (isGitRepo && createCommit) {
+      console.log('CREATE COMMIT')
       const name = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
       const currentBranch: branch = await dgitPlugin.call('dgitApi', 'currentbranch')
@@ -191,24 +193,7 @@ export const createWorkspace = async (
         }
       }
     }
-    if (metadata && metadata.type === 'plugin') {
-      plugin.call('notification', 'toast', 'Please wait while the workspace is being populated with the template.')
-      dispatch(cloneRepositoryRequest())
-      setTimeout(() => {
-        plugin.call(metadata.name, metadata.endpoint, ...metadata.params).then(() => {
-          dispatch(cloneRepositorySuccess())
-        }).catch((e) => {
-          dispatch(cloneRepositorySuccess())
-          plugin.call('notification', 'toast', 'error adding template ' + e.message || e)
-        })
-      }, 5000)
-    } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
-    cb && cb(null, workspaceName)
-
-    if (workspaceTemplateName === 'semaphore' || workspaceTemplateName === 'hashchecker' || workspaceTemplateName === 'rln') {
-      const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
-      if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
-    }
+    await populateWorkspace(workspaceTemplateName, opts, isEmpty, (err: Error) => { cb && cb(err, workspaceName) }, isGitRepo, createCommit)
     // this call needs to be here after the callback because it calls dGitProvider which also calls this function and that would cause an infinite loop
     await plugin.setWorkspaces(await getWorkspaces())
   }).catch((error) => {
@@ -216,6 +201,39 @@ export const createWorkspace = async (
     cb && cb(error)
   })
   return promise
+}
+
+export const populateWorkspace = async (
+  workspaceTemplateName: WorkspaceTemplate,
+  opts = null,
+  isEmpty = false,
+  cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void,
+  isGitRepo: boolean = false,
+  createCommit: boolean = false
+) => {
+  const metadata = TEMPLATE_METADATA[workspaceTemplateName]
+  if (metadata && metadata.type === 'plugin') {      
+    plugin.call('notification', 'toast', 'Please wait while the workspace is being populated with the template.')
+    dispatch(cloneRepositoryRequest())
+    setTimeout(() => {
+      plugin.call(metadata.name, metadata.endpoint, ...metadata.params).then(() => {
+        dispatch(cloneRepositorySuccess())
+      }).catch((e) => {
+        dispatch(cloneRepositorySuccess())
+        plugin.call('notification', 'toast', 'error adding template ' + e.message || e)
+      })  
+    }, 5000)      
+  } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
+  cb && cb(null)
+  if (isGitRepo) {
+    await checkGit()
+    const isActive = await plugin.call('manager', 'isActive', 'dgit')
+    if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+  }
+  if (workspaceTemplateName === 'semaphore' || workspaceTemplateName === 'hashchecker' || workspaceTemplateName === 'rln') {
+    const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
+    if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
+  }
 }
 
 export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault', metadata?: TemplateType) => {
@@ -387,12 +405,14 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
     try {
       const templateList = Object.keys(templateWithContent)
       if (!templateList.includes(template)) break
+
       _paq.push(['trackEvent', 'workspace', 'template', template])
       // @ts-ignore
-      const files = await templateWithContent[template](opts)
+      const files = await templateWithContent[template](opts, plugin)
       for (const file in files) {
         try {
-          await workspaceProvider.set(file, files[file])
+          const uniqueFileName = await createNonClashingNameAsync(file, plugin.fileManager)
+          await workspaceProvider.set(uniqueFileName, files[file])
         } catch (error) {
           console.error(error)
         }

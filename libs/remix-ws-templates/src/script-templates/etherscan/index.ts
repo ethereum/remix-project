@@ -1,5 +1,5 @@
-export const etherscanScripts = async (plugin) => {
-  await plugin.call('fileManager', 'writeFile',
+export const etherscanScripts = async (opts, plugin) => {
+  await plugin.call('fileManager', 'writeFile', 
     'scripts/etherscan/verifyScript.ts' ,
     // @ts-ignore
     (await import('!!raw-loader!./verifyScript.ts')).default)

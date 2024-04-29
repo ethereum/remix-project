@@ -18,7 +18,7 @@ const getWorkspaceFilesByPath = async (plugin: any, pathRegex: RegExp | null = n
   return filesByPath
 }
 
-export const sindriScripts = async (plugin: any) => {
+export const sindriScripts = async (opts, plugin: any) => {
   // Load in all of the Sindri or circuit-related files in the workspace.
   const existingFilesByPath = await getWorkspaceFilesByPath(plugin, /sindri|\.circom$/i)
   const writeIfNotExists = async (path: string, content: string) => {
