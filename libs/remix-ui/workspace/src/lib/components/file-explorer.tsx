@@ -310,7 +310,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       props.modal(
         intl.formatMessage({ id: 'filePanel.movingFileFailed' }),
         intl.formatMessage({ id: 'filePanel.movingFileFailedMsg' }, { src: sourcesrc.join(' ') }),
-
         intl.formatMessage({ id: 'filePanel.close' }),
         async () => { }
       )

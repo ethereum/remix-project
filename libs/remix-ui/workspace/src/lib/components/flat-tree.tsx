@@ -76,7 +76,7 @@ export const FlatTree = (props: FlatTreeProps) => {
     props.focusEdit.element === file.path
       ? 'bg-light'
       : props.focusElement.findIndex((item) => item.key === file.path) !== -1
-        ? 'bg-secondary'
+        ? 'bg-secondary remix_selected'
         : hover == file.path
           ? 'bg-light border-no-shift'
           : props.focusContext.element === file.path && props.focusEdit.element !== file.path

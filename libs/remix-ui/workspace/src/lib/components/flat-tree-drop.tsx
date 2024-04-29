@@ -53,7 +53,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
   }
 
   const onDrop = async (event: SyntheticEvent) => {
-    event.stopPropagation()
     event.preventDefault()
 
     const target = await getEventTarget(event)
@@ -92,6 +91,9 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
         await moveFilesSilently(items, dragDestination.path)
       }
     }
+    document.querySelectorAll('li.remix_selected').forEach(item => {
+      item.classList.remove('remix_selected')
+    })
   }
 
   /**
@@ -112,8 +114,8 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
   }
   }) => {
     const selectItems = []
-    document.querySelectorAll('li.bg-secondary.li_tv').forEach(item => {
-      item.classList.add('dragging')
+    document.querySelectorAll('li.remix_selected').forEach(item => {
+
       const dragTarget = {
         position: { top: target?.position.top || 0, left: target?.position.left || 0 },
         path: item.getAttribute('data-path') || item.getAttribute('data-label-path') || '',
