@@ -78,10 +78,10 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
 
       if (dragSource.isDirectory) {
         moveFolder(path, dragSource.path)
-        await moveFoldersSilently(props.selectedItems, dragDestination.path)
+        await moveFoldersSilently(props.selectedItems, path)
       } else {
         moveFile(path, dragSource.path)
-        await moveFilesSilently(props.selectedItems, dragDestination.path)
+        await moveFilesSilently(props.selectedItems, path)
       }
     }
   }
