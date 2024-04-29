@@ -1,8 +1,10 @@
 {
-  "name": "vyper",
+  "name": "provider-explorer",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/vyper/src",
+  "sourceRoot": "apps/provider-explorer/src",
   "projectType": "application",
+  "implicitDependencies": [
+  ],
   "targets": {
     "build": {
       "executor": "@nrwl/webpack:webpack",
@@ -10,20 +12,18 @@
       "defaultConfiguration": "development",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/vyper",
-        "index": "apps/vyper/src/index.html",
+        "outputPath": "dist/apps/provider-explorer",
+        "index": "apps/provider-explorer/src/index.html",
         "baseHref": "./",
-        "main": "apps/vyper/src/main.tsx",
-        "polyfills": "apps/vyper/src/polyfills.ts",
-        "tsConfig": "apps/vyper/tsconfig.app.json",
+        "main": "apps/provider-explorer/src/main.tsx",
+        "tsConfig": "apps/provider-explorer/tsconfig.app.json",
         "assets": [
-          "apps/vyper/src/favicon.ico",
-          "apps/vyper/src/assets",
-          "apps/vyper/src/profile.json"
+          "apps/provider-explorer/src/favicon.ico",
+          "apps/provider-explorer/src/profile.json"
         ],
-        "styles": ["apps/vyper/src/styles.css"],
+        "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/vyper/webpack.config.js"
+        "webpackConfig": "apps/provider-explorer/webpack.config.js"
       },
       "configurations": {
         "development": {
@@ -31,8 +31,8 @@
         "production": {
           "fileReplacements": [
             {
-              "replace": "apps/vyper/src/environments/environment.ts",
-              "with": "apps/vyper/src/environments/environment.prod.ts"
+              "replace": "apps/provider-explorer/src/environments/environment.ts",
+              "with": "apps/provider-explorer/src/environments/environment.prod.ts"
             }
           ]
         }
@@ -42,25 +42,25 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/vyper/**/*.ts"],
-        "eslintConfig": "libs/vyper/.eslintrc"
+        "lintFilePatterns": ["apps/learneth/**/*.ts"],
+        "eslintConfig": "apps/learneth/.eslintrc"
       }
     },
     "serve": {
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "vyper:build",
+        "buildTarget": "provider-explorer:build",
         "hmr": true,
         "baseHref": "/"
       },
       "configurations": {
         "development": {
-          "buildTarget": "vyper:build:development",
-          "port": 5002
+          "buildTarget": "provider-explorer:build:development",
+          "port": 7003
         },
         "production": {
-          "buildTarget": "vyper:build:production"
+          "buildTarget": "provider-explorer:build:production"
         }
       }
     }
