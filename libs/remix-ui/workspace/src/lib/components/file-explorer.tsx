@@ -303,7 +303,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const moveFileSilently = async (dest: string, src: string) => {
     if (dest.length === 0 || src.length === 0) return
     if (await moveFileIsAllowed(src, dest) === false) return
-
+    console.log({ src, dest })
     try {
       props.dispatchMoveFile(src, dest)
     } catch (error) {
@@ -326,7 +326,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const moveFolderSilently = async (dest: string, src: string) => {
     if (dest.length === 0 || src.length === 0) return
     if (await moveFolderIsAllowed(src, dest) === false) return
-
+    console.log({ src, dest })
     try {
       props.dispatchMoveFolder(src, dest)
     } catch (error) {
