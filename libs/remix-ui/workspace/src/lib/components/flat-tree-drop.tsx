@@ -53,12 +53,13 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
   }
 
   const onDrop = async (event: SyntheticEvent) => {
+    event.stopPropagation()
     event.preventDefault()
 
     const target = await getEventTarget(event)
     const items = buildMultiSelectedItemProfiles(target)
     const filePaths = []
-    // console.log('onDrop', { items, target, filePaths })
+
     let dragDestination: any
     if (!target || !target.path) {
       dragDestination = {
@@ -68,8 +69,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     } else {
       dragDestination = getFlatTreeItem(target.path)
     }
-    
-    filePaths.push(dragDestination.path)
+
     items.forEach((item) => filePaths.push(item.path))
     props.setFilesSelected(filePaths)
 
