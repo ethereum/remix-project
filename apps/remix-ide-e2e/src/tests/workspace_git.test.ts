@@ -13,6 +13,8 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-remixDefault"]')
+      .scrollAndClick('*[data-id="create-remixDefault"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .waitForElementVisible({
@@ -47,6 +49,8 @@ module.exports = {
       .waitForElementNotVisible('[data-id="workspaceGitPanel"]')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-blank"]')
+      .scrollAndClick('*[data-id="create-blank"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
@@ -391,10 +395,10 @@ module.exports = {
     browser
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-uniswapV4Template"]')
+      .scrollAndClick('*[data-id="create-uniswapV4Template"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=uniswapV4Template]')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
