@@ -45,8 +45,8 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/solidity-compiler/**/*.ts"],
-        "eslintConfig": "libs/solidity-compiler/.eslintrc"
+        "lintFilePatterns": ["apps/solidity-compiler/**/*.ts"],
+        "eslintConfig": "apps/solidity-compiler/.eslintrc"
       }
     },
     "serve": {
