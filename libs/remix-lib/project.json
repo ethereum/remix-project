@@ -22,7 +22,7 @@
         "outputs": ["{options.outputFile}"],
         "options": {
           "lintFilePatterns": ["libs/remix-lib/**/*.ts"],
-          "eslintConfig": "libs/remix-lib/.eslinrc"
+          "eslintConfig": "libs/remix-lib/.eslintrc"
         }
       }
     },
