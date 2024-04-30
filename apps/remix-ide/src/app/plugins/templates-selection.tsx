@@ -341,7 +341,7 @@ export class TemplatesSelection extends ViewPlugin {
       const email = await this.call('settings', 'get', 'settings/github-email')
       const gitNotSet = !username || !email
       let workspaceName = defaultName
-      let initGit = true
+      let initGit = false
       const modal: AppModal = {
         id: 'TemplatesSelection',
         title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
