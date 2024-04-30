@@ -4,8 +4,6 @@ import { buildMultiSelectedItemProfiles, getEventTarget } from '../utils/getEven
 import { extractParentFromKey } from '@remix-ui/helper'
 import { FileSystemContext } from '../contexts'
 
-
-
 export const FlatTreeDrop = (props: FlatTreeDropProps) => {
 
   const { getFlatTreeItem, dragSource, handleClickFolder, expandPath } = props
@@ -13,9 +11,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
   const [timer, setTimer] = useState<NodeJS.Timeout>()
   // folder to open
   const [folderToOpen, setFolderToOpen] = useState<string>()
-  const globalFEContext = useContext(FileSystemContext)
-
-  const [selectedItems, setSelectedItems] = useState<DragStructure[]>([])
 
   const onDragOver = async (e: SyntheticEvent) => {
     e.preventDefault()
@@ -66,23 +61,12 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
     props.setFilesSelected(filePaths)
 
     if (dragDestination.isDirectory) {
-      if (dragSource.isDirectory) {
-        await props.warnMovingItems(filePaths, dragDestination.path)
-        await moveFoldersSilently(props.selectedItems, dragDestination.path)
-      } else {
-        await props.warnMovingItems(filePaths, dragDestination.path)
-        await moveFilesSilently(props.selectedItems, dragDestination.path)
-      }
+      await props.warnMovingItems(filePaths, dragDestination.path)
+      await moveItemsSilently(props.selectedItems, dragDestination.path)
     } else {
       const path = extractParentFromKey(dragDestination.path) || '/'
-
-      if (dragSource.isDirectory) {
-        await props.warnMovingItems(filePaths, path)
-        await moveFoldersSilently(props.selectedItems, path)
-      } else {
-        await props.warnMovingItems(filePaths, path)
-        await moveFilesSilently(props.selectedItems, path)
-      }
+      await props.warnMovingItems(filePaths, path)
+      await moveItemsSilently(props.selectedItems, path)
     }
   }
 
@@ -92,32 +76,17 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
    * @param dragSource source FileExplorer item being dragged.
    * @returns Promise<void>
    */
-  const moveFilesSilently = async (items: DragStructure[], targetPath: string) => {
+  const moveItemsSilently = async (items: DragStructure[], targetPath: string) => {
     const promises = items.filter(item => item.path !== targetPath)
       .map(async (item) => {
         if (item.type === 'file') {
           await props.moveFileSilently(targetPath, item.path)
-        }
-      })
-    await Promise.all(promises)
-  }
-
-  /**
-   * Moves items silently without showing a confirmation dialog.
-   * @param items MultiSelected items built into a DragStructure profile
-   * @param dragSource source FileExplorer item being dragged.
-   * @returns Promise<void>
-   */
-  const moveFoldersSilently = async (items: DragStructure[], targetPath: string) => {
-    const promises = items.filter(item => item.path !== targetPath)
-      .map(async (item) => {
-        if (item.type === 'folder') {
+        } else if (item.type === 'folder') {
           await props.moveFolderSilently(targetPath, item.path)
         }
       })
     await Promise.all(promises)
   }
-
 
   return (<div
     onDrop={onDrop} onDragOver={onDragOver}
