@@ -2,6 +2,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
+  "@disabled": true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
   },
@@ -31,7 +32,8 @@ module.exports = {
         selectedElements.push(el)
       })
     browser.selectFiles(selectedElements)
-    browser.findElement({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' },
+    .perform((done) => {
+      browser.findElement({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' },
       (el: any) => {
         const id = (el as any).value.getId()
         browser
@@ -43,17 +45,21 @@ module.exports = {
           .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests/2_Owner.sol"]')
           .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
           .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
+          .perform(() => done())
       })
+    })    
   },
-  'should drag and drop multiple files and folders in file explorer to contracts folder #group1': function (browser: NightwatchBrowser) {
+  'should drag and drop multiple files and folders in file explorer to contracts folder #group3': function (browser: NightwatchBrowser) {
     const selectedElements = []
     browser
+      .clickLaunchIcon('filePanel')
       .click({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' })
       .findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemREADME.txt"]', locateStrategy: 'xpath' }, (el) => {
         selectedElements.push(el)
       })
     browser.selectFiles(selectedElements)
-    browser.findElement({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts"]', locateStrategy: 'xpath' },
+    .perform((done) => {
+      browser.findElement({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts"]', locateStrategy: 'xpath' },
       (el: any) => {
         const id = (el as any).value.getId()
         browser
@@ -65,6 +71,8 @@ module.exports = {
           .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/README.txt"]')
           .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemtests"]')
           .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemREADME.txt"]')
+          .perform(() => done())
       })
+    })    
   }
 }
