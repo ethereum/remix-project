@@ -1,7 +1,7 @@
-import {toast} from 'react-toastify'
-import {type ModelType} from '../store'
+import { toast } from 'react-toastify'
+import { type ModelType } from '../store'
 import remixClient from '../../remix-client'
-import {router} from '../../App'
+import { router } from '../../App'
 
 function getFilePath(file: string): string {
   const name = file.split('/')
@@ -17,12 +17,12 @@ const Model: ModelType = {
     // theme: '',
   },
   reducers: {
-    save(state, {payload}) {
-      return {...state, ...payload}
+    save(state, { payload }) {
+      return { ...state, ...payload }
     },
   },
   effects: {
-    *connect(_, {put}) {
+    *connect(_, { put }) {
       toast.info('connecting to the REMIX IDE')
 
       yield put({
@@ -45,7 +45,7 @@ const Model: ModelType = {
 
       yield router.navigate('/home')
     },
-    *displayFile({payload: step}, {select, put}) {
+    *displayFile({ payload: step }, { select, put }) {
       let content = ''
       let path = ''
       if (step.solidity?.file) {
@@ -73,7 +73,7 @@ const Model: ModelType = {
         },
       })
 
-      const {detail, selectedId} = yield select((state) => state.workshop)
+      const { detail, selectedId } = yield select((state) => state.workshop)
 
       const workshop = detail[selectedId]
       console.log('loading ', step, workshop)
@@ -87,7 +87,7 @@ const Model: ModelType = {
         yield remixClient.call('fileManager', 'switchFile', `${path}`)
         yield put({
           type: 'remixide/save',
-          payload: {errorLoadingFile: false},
+          payload: { errorLoadingFile: false },
         })
         toast.dismiss()
       } catch (error) {
@@ -95,7 +95,7 @@ const Model: ModelType = {
         toast.error('File could not be loaded. Please try again.')
         yield put({
           type: 'remixide/save',
-          payload: {errorLoadingFile: true},
+          payload: { errorLoadingFile: true },
         })
       }
       yield put({
@@ -105,7 +105,7 @@ const Model: ModelType = {
         },
       })
     },
-    *testStep({payload: step}, {select, put}) {
+    *testStep({ payload: step }, { select, put }) {
       yield put({
         type: 'loading/save',
         payload: {
@@ -116,9 +116,9 @@ const Model: ModelType = {
       try {
         yield put({
           type: 'remixide/save',
-          payload: {success: false},
+          payload: { success: false },
         })
-        const {detail, selectedId} = yield select((state) => state.workshop)
+        const { detail, selectedId } = yield select((state) => state.workshop)
 
         const workshop = detail[selectedId]
 
@@ -141,7 +141,7 @@ const Model: ModelType = {
         if (!result) {
           yield put({
             type: 'remixide/save',
-            payload: {errors: ['Compiler failed to test this file']},
+            payload: { errors: ['Compiler failed to test this file']},
           })
         } else {
           const success = result.totalFailing === 0
@@ -149,7 +149,7 @@ const Model: ModelType = {
           if (success) {
             yield put({
               type: 'remixide/save',
-              payload: {errors: [], success: true},
+              payload: { errors: [], success: true },
             })
           } else {
             yield put({
@@ -164,7 +164,7 @@ const Model: ModelType = {
         console.log('TESTING ERROR', err)
         yield put({
           type: 'remixide/save',
-          payload: {errors: [String(err)]},
+          payload: { errors: [String(err)]},
         })
       }
       yield put({
@@ -174,7 +174,7 @@ const Model: ModelType = {
         },
       })
     },
-    *showAnswer({payload: step}, {select, put}) {
+    *showAnswer({ payload: step }, { select, put }) {
       yield put({
         type: 'loading/save',
         payload: {
@@ -189,7 +189,7 @@ const Model: ModelType = {
         const content = step.answer.content
         let path = getFilePath(step.answer.file)
 
-        const {detail, selectedId} = yield select((state) => state.workshop)
+        const { detail, selectedId } = yield select((state) => state.workshop)
 
         const workshop = detail[selectedId]
         path = `.learneth/${workshop.name}/${step.name}/${path}`
@@ -198,7 +198,7 @@ const Model: ModelType = {
       } catch (err) {
         yield put({
           type: 'remixide/save',
-          payload: {errors: [String(err)]},
+          payload: { errors: [String(err)]},
         })
       }
 
@@ -210,7 +210,7 @@ const Model: ModelType = {
         },
       })
     },
-    *testSolidityCompiler(_, {put, select}) {
+    *testSolidityCompiler(_, { put, select }) {
       try {
         yield remixClient.call('solidity', 'getCompilationResult')
       } catch (err) {
