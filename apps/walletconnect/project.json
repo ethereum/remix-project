@@ -39,8 +39,8 @@
         "executor": "@nrwl/linter:eslint",
         "outputs": ["{options.outputFile}"],
         "options": {
-          "lintFilePatterns": ["libs/walletconnect/**/*.ts"],
-          "eslintConfig": "libs/walletconnect/.eslintrc"
+          "lintFilePatterns": ["apps/walletconnect/**/*.ts"],
+          "eslintConfig": "apps/walletconnect/.eslintrc"
         }
       },
       "serve": {
