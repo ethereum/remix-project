@@ -51,8 +51,8 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/solhint/**/*.ts"],
-        "eslintConfig": "libs/solhint/.eslintrc"
+        "lintFilePatterns": ["apps/solhint/**/*.ts"],
+        "eslintConfig": "apps/solhint/.eslintrc"
       }
     },
     "serve": {
