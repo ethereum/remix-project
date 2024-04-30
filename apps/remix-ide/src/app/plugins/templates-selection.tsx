@@ -7,9 +7,8 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 import { RemixUIGridView } from '@remix-ui/remix-ui-grid-view'
 import { RemixUIGridSection } from '@remix-ui/remix-ui-grid-section'
 import { RemixUIGridCell } from '@remix-ui/remix-ui-grid-cell'
+import isElectron from 'is-electron'
 import type { TemplateGroup } from '@remix-ui/workspace'
-
-const isElectron = require('is-electron')
 
 //@ts-ignore
 const _paq = (window._paq = window._paq || [])
@@ -342,7 +341,7 @@ export class TemplatesSelection extends ViewPlugin {
       const email = await this.call('settings', 'get', 'settings/github-email')
       const gitNotSet = !username || !email
       let workspaceName = defaultName
-      let initGit = true
+      let initGit = false
       const modal: AppModal = {
         id: 'TemplatesSelection',
         title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
