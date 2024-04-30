@@ -42,15 +42,15 @@ export const buildMultiSelectedItemProfiles = (target: {
   }
   }) => {
   const selectItems = []
+  selectItems.push(target)
   document.querySelectorAll('li.remixui_selected').forEach(item => {
-
     const dragTarget = {
       position: { top: target?.position.top || 0, left: target?.position.left || 0 },
       path: item.getAttribute('data-path') || item.getAttribute('data-label-path') || '',
       type: item.getAttribute('data-type') || item.getAttribute('data-label-type') || '',
       content: item.textContent || ''
     }
-    selectItems.push(dragTarget)
+    if (dragTarget.path !== target.path) selectItems.push(dragTarget)
   })
   return selectItems
 }
