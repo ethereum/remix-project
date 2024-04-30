@@ -23,7 +23,7 @@ module.exports = {
       .assert.visible('.bg-secondary[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
       .assert.visible('.bg-secondary[data-id="treeViewLitreeViewItemtests"]')
   },
-  'Should select multiple items in file explorer to tests folder #group1': function (browser: NightwatchBrowser) {
+  'Should drag and drop multiple files in file explorer to tests folder #group1': function (browser: NightwatchBrowser) {
     const selectedElements = []
     browser
       .click({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
@@ -45,7 +45,7 @@ module.exports = {
           .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
       })
   },
-  'should select multiple files and folders in file explorer to contracts folder #group1': function (browser: NightwatchBrowser) {
+  'should drag and drop multiple files and folders in file explorer to contracts folder #group1': function (browser: NightwatchBrowser) {
     const selectedElements = []
     browser
       .click({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' })

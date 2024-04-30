@@ -347,7 +347,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         intl.formatMessage({ id: 'filePanel.cancel' }),
         () => reject()
       )
-    })    
+    })
   }
 
   const handleTreeClick = (event: SyntheticEvent) => {

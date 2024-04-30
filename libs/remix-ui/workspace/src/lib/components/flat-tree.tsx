@@ -72,7 +72,6 @@ export const FlatTree = (props: FlatTreeProps) => {
   const virtuoso = useRef<VirtuosoHandle>(null)
   const [selectedItems, setSelectedItems] = useState<DragStructure[]>([])
 
-
   const labelClass = (file: FileType) =>
     props.focusEdit.element === file.path
       ? 'bg-light'
