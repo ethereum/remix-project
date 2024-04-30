@@ -212,7 +212,7 @@ export const populateWorkspace = async (
   createCommit: boolean = false
 ) => {
   const metadata = TEMPLATE_METADATA[workspaceTemplateName]
-  if (metadata && metadata.type === 'plugin') {      
+  if (metadata && metadata.type === 'plugin') {
     plugin.call('notification', 'toast', 'Please wait while the workspace is being populated with the template.')
     dispatch(cloneRepositoryRequest())
     setTimeout(() => {
@@ -221,8 +221,8 @@ export const populateWorkspace = async (
       }).catch((e) => {
         dispatch(cloneRepositorySuccess())
         plugin.call('notification', 'toast', 'error adding template ' + e.message || e)
-      })  
-    }, 5000)      
+      })
+    }, 5000)
   } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
   cb && cb(null)
   if (isGitRepo) {

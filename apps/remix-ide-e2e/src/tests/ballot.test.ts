@@ -100,7 +100,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_remix_default' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')

@@ -319,8 +319,8 @@ export function Workspace() {
     )
   }
   const createWorkspace = async () => {
-    await global.plugin.call('manager', 'activatePlugin', 'templateSelection')   
-    await global.plugin.call('tabs', 'focus', 'templateSelection') 
+    await global.plugin.call('manager', 'activatePlugin', 'templateSelection')
+    await global.plugin.call('tabs', 'focus', 'templateSelection')
   }
 
   const deleteCurrentWorkspace = () => {

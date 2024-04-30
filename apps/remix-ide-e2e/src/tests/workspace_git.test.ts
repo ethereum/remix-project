@@ -16,7 +16,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .waitForElementVisible({
         selector: "//*[@class='text-warning' and contains(.,'add username and email')]",
         locateStrategy: 'xpath'
@@ -52,7 +51,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-blank"]')
       .scrollAndClick('*[data-id="create-blank"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
       .click('select[id="wstemplate"]')
