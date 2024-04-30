@@ -183,3 +183,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
 }
 
 export default HomeTabGetStarted
+
+// (descriptor: MessageDescriptor, values?: Record<string, PrimitiveType | FormatXMLElementFn<string, string>>, opts?: Options) => string
+
+// (descriptor: any, values?: any, opts?: any) => string
