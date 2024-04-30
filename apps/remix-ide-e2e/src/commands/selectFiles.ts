@@ -11,7 +11,7 @@ class SelectFiles extends EventEmitter {
       for(let i = 0; i < selectedElements.length; i++) {
         actions.click(selectedElements[i].value)
       }
-      return actions.contextClick(selectedElements[0].value)
+      // return actions.contextClick(selectedElements[0].value)
     })
     this.emit('complete')
     return this
