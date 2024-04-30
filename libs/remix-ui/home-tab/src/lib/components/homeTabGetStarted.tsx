@@ -8,6 +8,7 @@ import WorkspaceTemplate from './workspaceTemplate'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
+import { CustomTooltip } from '@remix-ui/helper'
 
 declare global {
   interface Window {
@@ -19,12 +20,65 @@ interface HomeTabGetStartedProps {
   plugin: any
 }
 
-function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
+type WorkspaceTemplate = {
+  gsID: string
+  workspaceTitle: string
+  description: string
+  projectLogo: string
+  templateName: string
+}
+
+const workspaceTemplates: WorkspaceTemplate[] = [
+  {
+    gsID: 'sUTLogo',
+    workspaceTitle: 'Playground',
+    description: 'Create a new project using this template.',
+    projectLogo: 'assets/img/remixverticaltextLogo.png',
+    templateName: 'remixDefault'
+  },
+  {
+    gsID: 'sUTLogo',
+    workspaceTitle: 'Circom',
+    description: 'Create a new ZK Project with Circom using this template.',
+    projectLogo: 'assets/img/circom.webp',
+    templateName: ''
+  },
+  {
+    gsID: 'sUTLogo',
+    workspaceTitle: 'Uniswap',
+    description: 'Create a new MultiSig wallet using this template.',
+    projectLogo: 'assets/img/gnosissafeLogo.png',
+    templateName: ''
+  },
+  {
+    gsID: 'sUTLogo',
+    workspaceTitle: 'ERC20',
+    description: 'Create a new ERC20 token using this template.',
+    projectLogo: 'assets/img/oxprojectLogo.png',
+    templateName: ''
+  },
+  {
+    gsID: 'sUTLogo',
+    workspaceTitle: 'NFT / ERC721',
+    description: 'Create a new ERC721 token using this template.',
+    projectLogo: 'assets/img/openzeppelinLogo.png',
+    templateName: ''
+  },
+  {
+    gsID: 'sUTLogo',
+    workspaceTitle: 'MultiSig',
+    description: 'Create a new MultiSig wallet using this template.',
+    projectLogo: 'assets/img/gnosissafeLogo.png',
+    templateName: ''
+  },
+]
+
+function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
   const platform = useContext(platformContext)
   const themeFilter = useContext(ThemeContext)
+  const intl = useIntl()
   const carouselRef = useRef<any>({})
   const carouselRefDiv = useRef(null)
-  const intl = useIntl()
 
   useEffect(() => {
     document.addEventListener('wheel', handleScroll)
@@ -92,12 +146,12 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
 
   return (
     <div className="pl-2" id="hTGetStartedSection">
-      <label style={{ fontSize: '1.2rem' }}>
+      <label className="pt-3" style={{fontSize: '1.2rem'}}>
         <FormattedMessage id="home.projectTemplates" />
       </label>
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
         <ThemeContext.Provider value={themeFilter}>
-          <Carousel
+          {/* <Carousel
             ref={carouselRef}
             focusOnSelect={true}
             customButtonGroup={<CustomNavButtons next={undefined} previous={undefined} goToSlide={undefined} parent={carouselRef} />}
@@ -175,7 +229,31 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
               projectLogo="assets/img/remixverticaltextLogo.png"
               callback={() => createWorkspace("remixDefault")}
             />
-          </Carousel>
+          </Carousel> */}
+          <div className="pt-2">
+            <div className="d-flex flex-row align-items-center mb-3 flex-nowrap">
+              {workspaceTemplates.slice(0, 3).map((template, index) => (
+                <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="top-start">
+                  <button key={index} className={index === 0 ? "btn btn-primary border p-2 text-nowrap mr-3" : index === workspaceTemplates.length - 1 ? "btn border p-2 text-nowrap mr-2" : "btn border p-2 text-nowrap mr-3"}>{template.workspaceTitle}</button>
+                </CustomTooltip>
+              ))}
+            </div>
+            <div className="d-flex flex-row align-items-center mb-3 flex-nowrap">
+              {workspaceTemplates.slice(3, workspaceTemplates.length).map((template, index) => (
+                <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="bottom-start">
+                  <button
+                    key={index}
+                    className={"btn border p-2 text-nowrap mr-3"}
+                    onClick={() => {
+                      createWorkspace(template.templateName)
+                    }}
+                  >
+                    {template.workspaceTitle}
+                  </button>
+                </CustomTooltip>
+              ))}
+            </div>
+          </div>
         </ThemeContext.Provider>
       </div>
     </div>
