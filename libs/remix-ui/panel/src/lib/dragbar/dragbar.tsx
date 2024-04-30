@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
 import './dragbar.css'
 
@@ -46,7 +46,7 @@ const DragBar = (props: IRemixDragBarUi) => {
   return (
     <>
       <div className={`overlay ${dragState ? '' : 'd-none'}`}></div>
-      <Draggable nodeRef={nodeRef} position={{x: 0, y: dragBarPosY}} onStart={startDrag} onStop={stopDrag} axis="y">
+      <Draggable nodeRef={nodeRef} position={{ x: 0, y: dragBarPosY }} onStart={startDrag} onStop={stopDrag} axis="y">
         <div ref={nodeRef} className={`dragbar_terminal ${dragState ? 'ondrag' : ''}`}></div>
       </Draggable>
     </>

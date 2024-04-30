@@ -1,7 +1,7 @@
-import {Monaco} from '@monaco-editor/react'
+import { Monaco } from '@monaco-editor/react'
 import monaco from '../../types/monaco'
-import {EditorUIProps} from '../remix-ui-editor'
-import {default as fixesList} from './quickfixes'
+import { EditorUIProps } from '../remix-ui-editor'
+import { default as fixesList } from './quickfixes'
 
 export class RemixCodeActionProvider implements monaco.languages.CodeActionProvider {
   props: EditorUIProps
@@ -75,7 +75,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
             case 9.1:
             case 9.2:
             case 10.1:
-            case 10.2: 
+            case 10.2:
             case 10.3:
             case 11.1:
             case 11.2: {
@@ -115,7 +115,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
    * @param fix details of quick fix to apply
    */
   addQuickFix(actions: monaco.languages.CodeAction[], error: monaco.editor.IMarkerData, uri: monaco.Uri, fix: Record<string, any>) {
-    const {id, title, range, text} = fix
+    const { id, title, range, text } = fix
     actions.push({
       title,
       diagnostics: [error],
@@ -124,7 +124,7 @@ export class RemixCodeActionProvider implements monaco.languages.CodeActionProvi
         edits: [
           {
             resource: uri,
-            textEdit: {range, text},
+            textEdit: { range, text },
             versionId: undefined
           }
         ]

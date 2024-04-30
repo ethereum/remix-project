@@ -2,7 +2,7 @@
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
 import { CompletionTimer } from './completionTimer';
 
-import axios, {AxiosResponse} from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { slice } from 'lodash';
 const _paq = (window._paq = window._paq || [])
 
@@ -20,7 +20,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     this.completionEnabled = true
   }
 
-
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
     if (context.selectedSuggestionInfo) {
       return;
@@ -28,7 +27,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     const getTextAtLine = (lineNumber) => {
       const lineRange = model.getFullModelRange().setStartPosition(lineNumber, 1).setEndPosition(lineNumber + 1, 1);
       return model.getValueInRange(lineRange);
-    } 
+    }
     // get text before the position of the completion
     const word = model.getValueInRange({
       startLineNumber: 1,
@@ -46,13 +45,13 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     });
 
     if (!word.endsWith(' ') &&
-      !word.endsWith('.') && 
+      !word.endsWith('.') &&
       !word.endsWith('(')) {
       return;
     }
 
     try {
-      const isActivate = await  await this.props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
+      const isActivate = await await this.props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
       if (!isActivate) return
     } catch (err) {
       return;
@@ -63,8 +62,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       if (split.length < 2) return
       const ask = split[split.length - 2].trimStart()
       if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
-        // use the code generation model, only take max 1000 word as context 
-        this.props.plugin.call('terminal', 'log', {type: 'aitypewriterwarning', value: 'Solcoder - generating code for following comment: ' + ask.replace('///', '')})
+        // use the code generation model, only take max 1000 word as context
+        this.props.plugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'Solcoder - generating code for following comment: ' + ask.replace('///', '') })
 
         const data = await this.props.plugin.call('solcoder', 'code_generation', word)
         _paq.push(['trackEvent', 'ai', 'solcoder', 'code_generation'])
@@ -81,17 +80,17 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     } catch (e) {
       console.error(e)
       return
-    }   
+    }
 
-    if (word.split('\n').at(-1).trimStart().startsWith('//') || 
+    if (word.split('\n').at(-1).trimStart().startsWith('//') ||
         word.split('\n').at(-1).trimStart().startsWith('/*') ||
         word.split('\n').at(-1).trimStart().startsWith('*') ||
         word.split('\n').at(-1).trimStart().startsWith('*/') ||
-        word.split('\n').at(-1).endsWith(';') 
+        word.split('\n').at(-1).endsWith(';')
     ){
       return; // do not do completion on single and multiline comment
     }
-    
+
     // abort if there is a signal
     if (token.isCancellationRequested) {
       return
@@ -104,10 +103,10 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     if (word.replace(/ +$/, '').endsWith('\n')){
       // Code insertion
-      try{
+      try {
         const output = await this.props.plugin.call('solcoder', 'code_insertion', word, word_after)
         _paq.push(['trackEvent', 'ai', 'solcoder', 'code_insertion'])
-        const generatedText = output[0] // no need to clean it. should already be 
+        const generatedText = output[0] // no need to clean it. should already be
 
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: generatedText
@@ -166,7 +165,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
       return ""
     }
-    // remove comment inline 
+    // remove comment inline
     clean = clean.split('//')[0].trimEnd()
     return clean
   }

@@ -76,7 +76,8 @@ let requiredModules = [ // services + layout views + system views
   'home',
   'doc-viewer',
   'doc-gen',
-  'remix-templates'
+  'remix-templates',
+  'solhint'
 ]
 
 

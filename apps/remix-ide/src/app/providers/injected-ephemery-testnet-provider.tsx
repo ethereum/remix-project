@@ -1,5 +1,5 @@
 import * as packageJson from '../../../../../package.json'
-import {InjectedCustomProvider} from './injected-custom-provider'
+import { InjectedCustomProvider } from './injected-custom-provider'
 import Web3 from 'web3'
 
 const profile = {
@@ -13,7 +13,7 @@ const profile = {
 
 export class InjectedEphemeryTestnetProvider extends InjectedCustomProvider {
   constructor() {
-    super(profile, 
+    super(profile,
       'Ephemery Testnet',
       '',
       ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
@@ -25,7 +25,7 @@ export class InjectedEphemeryTestnetProvider extends InjectedCustomProvider {
       [
         'https://otter.bordel.wtf/',
         'https://explorer.ephemery.dev/'
-      ] 
+      ]
     )
   }
 

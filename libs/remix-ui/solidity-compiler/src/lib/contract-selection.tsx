@@ -1,17 +1,17 @@
 import React, {useState, useEffect} from 'react' // eslint-disable-line
-import {FormattedMessage, useIntl} from 'react-intl'
-import {ContractPropertyName, ContractSelectionProps} from './types'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { ContractPropertyName, ContractSelectionProps } from './types'
 import {PublishToStorage} from '@remix-ui/publish-to-storage' // eslint-disable-line
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
 import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
-import {saveAs} from 'file-saver'
+import { saveAs } from 'file-saver'
 
 import './css/style.css'
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || [])
 
 export const ContractSelection = (props: ContractSelectionProps) => {
-  const {api, compiledFileName, contractsDetails, contractList, compilerInput, modal} = props
+  const { api, compiledFileName, contractsDetails, contractList, compilerInput, modal } = props
   const [selectedContract, setSelectedContract] = useState('')
   const [storage, setStorage] = useState(null)
 
@@ -104,10 +104,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const extractData = (item) => {
-    const ret = {children: null, self: null}
+    const ret = { children: null, self: null }
 
     if (item instanceof Array) {
-      ret.children = item.map((item, index) => ({key: index, value: item}))
+      ret.children = item.map((item, index) => ({ key: index, value: item }))
       ret.self = ''
     } else if (item instanceof Object) {
       ret.children = Object.keys(item).map((key) => ({
@@ -200,7 +200,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           {Object.keys(contractProperties).map((propertyName: ContractPropertyName, index) => {
             const copyDetails = (
               <span className="remixui_copyDetails">
-                <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copy'})} content={contractProperties[propertyName]} direction="top" />
+                <CopyToClipboard tip={intl.formatMessage({ id: 'solidity.copy' })} content={contractProperties[propertyName]} direction="top" />
               </span>
             )
             const questionMark = (
@@ -256,7 +256,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               <FormattedMessage id="solidity.contract" />
             </label>
             <select onChange={(e) => handleContractChange(e.target.value)} value={selectedContract} data-id="compiledContracts" id="compiledContracts" className="custom-select">
-              {contractList.map(({name, file}, index) => (
+              {contractList.map(({ name, file }, index) => (
                 <option value={name} key={index}>
                   {name} ({file})
                 </option>
@@ -334,13 +334,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             <div className="remixui_contractHelperButtons">
               <div className="input-group">
                 <div className="btn-group" role="group" aria-label="Copy to Clipboard">
-                  <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copyABI'})} getContent={copyABI} direction="top">
+                  <CopyToClipboard tip={intl.formatMessage({ id: 'solidity.copyABI' })} getContent={copyABI} direction="top">
                     <button className="btn remixui_copyButton">
                       <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                       <span>ABI</span>
                     </button>
                   </CopyToClipboard>
-                  <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copyBytecode'})} getContent={copyBytecode} direction="top">
+                  <CopyToClipboard tip={intl.formatMessage({ id: 'solidity.copyBytecode' })} getContent={copyBytecode} direction="top">
                     <button className="btn remixui_copyButton">
                       <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
                       <span>Bytecode</span>

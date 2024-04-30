@@ -1,11 +1,11 @@
-import React, {useContext} from 'react'
-import {SearchProvider} from '../context/context'
-import {Results} from './results/Results'
+import React, { useContext } from 'react'
+import { SearchProvider } from '../context/context'
+import { Results } from './results/Results'
 import '../search.css'
-import {Include} from './Include'
-import {Exclude} from './Exclude'
-import {FindContainer} from './FindContainer'
-import {Undo} from './Undo'
+import { Include } from './Include'
+import { Exclude } from './Exclude'
+import { FindContainer } from './FindContainer'
+import { Undo } from './Undo'
 import { platformContext } from '@remix-ui/app'
 
 export const SearchTab = (props) => {

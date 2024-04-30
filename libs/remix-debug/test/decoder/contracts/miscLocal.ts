@@ -36,4 +36,4 @@ contract miscLocal {
            string memory smallstring = "test_test_test";
         }
   }
-`}
+` }

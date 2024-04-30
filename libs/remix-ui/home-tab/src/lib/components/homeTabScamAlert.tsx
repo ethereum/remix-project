@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
-import {FormattedMessage} from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 function HomeTabScamAlert() {
   return (
     <div className="" id="hTScamAlertSection">
-      <label className="pl-2 text-danger" style={{fontSize: '1.2rem'}}>
+      <label className="pl-2 text-danger" style={{ fontSize: '1.2rem' }}>
         <FormattedMessage id="home.scamAlert" />
       </label>
       <div className="py-2 ml-2 mb-1 align-self-end mb-2 d-flex  border border-danger">
         <span className="align-self-center pl-4 mt-1">
-          <i style={{fontSize: 'xxx-large', fontWeight: 'lighter'}} className="pr-2 text-danger far fa-exclamation-triangle"></i>
+          <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }} className="pr-2 text-danger far fa-exclamation-triangle"></i>
         </span>
         <div className="d-flex flex-column">
           <span className="pl-4 mt-1">

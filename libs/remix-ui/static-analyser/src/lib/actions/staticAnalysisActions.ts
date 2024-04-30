@@ -176,8 +176,8 @@ export async function run (lastCompilationResult, lastCompilationSource, current
                   fileName = Object.keys(lastCompilationResult.sources)[fileIndex]
                 }
               }
-              if(fileName !== currentFile) {
-                const {file, provider} = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
+              if (fileName !== currentFile) {
+                const { file, provider } = await props.analysisModule.call('fileManager', 'getPathFromUrl', fileName)
                 if (file.startsWith('.deps') || (file.includes('.deps')) || (provider.type === 'localhost' && file.startsWith('localhost/node_modules'))) isLibrary = true
               }
               const msg = message(item.title, item.description, item.more ?? '', fileName, locationString)
@@ -203,7 +203,7 @@ export async function run (lastCompilationResult, lastCompilationSource, current
             }
             showWarnings(warningMessage, 'warningModuleName')
           }
-        } catch(error) {
+        } catch (error) {
           props.analysisModule.call('terminal', 'log', { type: 'error', value: '[Slither Analysis]: Error occurred! See remixd console for details.' })
           showWarnings(warningMessage, 'warningModuleName')
         }

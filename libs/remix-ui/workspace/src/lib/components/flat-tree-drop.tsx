@@ -19,7 +19,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
   // folder to open
   const [folderToOpen, setFolderToOpen] = useState<string>()
 
-
   const onDragOver = async (e: SyntheticEvent) => {
     e.preventDefault()
     const target = await getEventTarget(e)
@@ -76,7 +75,6 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
       }
     }
   }
-
 
   return (<div
     onDrop={onDrop} onDragOver={onDragOver}

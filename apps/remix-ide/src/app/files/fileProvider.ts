@@ -5,7 +5,6 @@ import EventManager from 'events'
 import { Storage } from '@remix-project/remix-lib'
 import pathModule from 'path'
 
-
 export default class FileProvider {
   event: any
   type: any
@@ -189,7 +188,7 @@ export default class FileProvider {
           return await this.removeFile(path)
         } else {
           await window.remixFileSystem.unlink(path)
-          this.event.emit('fileRemoved', this._normalizePath(path))        
+          this.event.emit('fileRemoved', this._normalizePath(path))
         }
       } catch (e) {
         console.log(e)

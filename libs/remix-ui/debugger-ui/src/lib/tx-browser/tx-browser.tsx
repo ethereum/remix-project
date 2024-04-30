@@ -1,9 +1,9 @@
-import {CustomTooltip, isValidHash} from '@remix-ui/helper'
+import { CustomTooltip, isValidHash } from '@remix-ui/helper'
 import React, {useState, useEffect, useRef} from 'react' //eslint-disable-line
-import {useIntl, FormattedMessage} from 'react-intl'
+import { useIntl, FormattedMessage } from 'react-intl'
 import './tx-browser.css'
 
-export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging}) => {
+export const TxBrowser = ({ requestDebug, updateTxNumberFlag, unloadRequested, transactionNumber, debugging }) => {
   const [state, setState] = useState({
     txNumber: '',
     isTxNumberValid: false
@@ -63,7 +63,7 @@ export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, tr
         onClick={handleSubmit}
         data-id="debuggerTransactionStartButton"
         disabled={!state.txNumber || !state.isTxNumberValid}
-        style={{pointerEvents: 'none', color: 'white'}}
+        style={{ pointerEvents: 'none', color: 'white' }}
       >
         <span>
           <FormattedMessage id={`debugger.${debugging ? 'stopDebugging' : 'startDebugging'}`} />
@@ -81,9 +81,9 @@ export const TxBrowser = ({requestDebug, updateTxNumberFlag, unloadRequested, tr
             className="form-control m-0 txinput"
             id="txinput"
             type="text"
-            onChange={({target: {value}}) => txInputChanged(value)}
+            onChange={({ target: { value } }) => txInputChanged(value)}
             onInput={txInputOnInput}
-            placeholder={intl.formatMessage({id: 'debugger.placeholder'})}
+            placeholder={intl.formatMessage({ id: 'debugger.placeholder' })}
             data-id="debuggerTransactionInput"
             disabled={debugging}
           />

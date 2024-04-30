@@ -19,7 +19,7 @@ export class OpenAIGpt extends Plugin {
 
   async message(prompt): Promise<CreateChatCompletionResponse> {
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'Waiting for GPT answer...'})
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'Waiting for GPT answer...' })
     let result
     try {
       result = await (
@@ -36,10 +36,10 @@ export class OpenAIGpt extends Plugin {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
     }
-    
+
     if (result && result.choices && result.choices.length) {
-      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.choices[0].message.content })    
-    } else if  (result.error) {
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.choices[0].message.content })
+    } else if (result.error) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.error })
     } else {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'No response...' })

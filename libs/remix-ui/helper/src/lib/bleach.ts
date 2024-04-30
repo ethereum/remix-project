@@ -57,9 +57,9 @@ export const bleach = {
     return matches
   },
 
-  sanitize: function (html, options = { mode: 'white', list: bleach.whitelist, encode_entities: false}) {
+  sanitize: function (html, options = { mode: 'white', list: bleach.whitelist, encode_entities: false }) {
     html = String(html) || ''
-    
+
     const mode = options.mode || 'white'
     const list = options.list || bleach.whitelist
 

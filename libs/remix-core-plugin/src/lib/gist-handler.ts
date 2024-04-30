@@ -117,7 +117,7 @@ export class GistHandler extends Plugin {
       const gistIdWorkspace = 'gist ' + gistId
       const workspaces = await this.call('filePanel', 'getWorkspaces')
       const found = workspaces.find((workspace) => workspace.name === gistIdWorkspace)
-      if (found) {        
+      if (found) {
         await this.call('notification', 'alert', {
           id: 'gistAlert',
           message: `workspace "${gistIdWorkspace}" already exists`,

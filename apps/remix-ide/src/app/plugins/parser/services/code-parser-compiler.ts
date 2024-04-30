@@ -75,7 +75,6 @@ export default class CodeParserCompiler {
                 length: error.sourceLocation.end - error.sourceLocation.start
               }, lineBreaks)
 
-
               const filePath = error.sourceLocation.file
               const fileTarget = await this.plugin.call('fileManager', 'getUrlFromPath', filePath)
 
@@ -103,24 +102,23 @@ export default class CodeParserCompiler {
       if (data.sources && Object.keys(data.sources).length === 0) return
       this.plugin.compilerAbstract = new CompilerAbstract('soljson', data, source, input)
       this.errorState = false
-      
+
       this.plugin.nodeIndex = {
         declarations: {},
         flatReferences: {},
         nodesPerFile: {},
       }
-      
 
       this.plugin._buildIndex(data, source)
       // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository
       const extractedFiledNodes = this.plugin._extractFileNodes(this.plugin.currentFile, this.plugin.compilerAbstract as unknown as lastCompilationResult)
-      if(extractedFiledNodes) {
+      if (extractedFiledNodes) {
         this.plugin.nodeIndex.nodesPerFile[this.plugin.currentFile] = extractedFiledNodes
       }
       await this.plugin.gasService.showGasEstimates()
       this.plugin.emit('astFinished')
     }
-        
+
     this.compiler = new Compiler((url, cb) => this.plugin.call('contentImport', 'resolveAndSave', url, undefined).then((result) => cb(null, result)).catch((error) => cb(error.message)))
     this.compiler.event.register('compilationFinished', this.onAstFinished)
   }
@@ -128,8 +126,8 @@ export default class CodeParserCompiler {
   // COMPILER
 
   /**
-     * 
-     * @returns 
+     *
+     * @returns
      */
   async compile() {
     try {
@@ -149,7 +147,7 @@ export default class CodeParserCompiler {
         } else {
           this.compiler.set('remappings', [])
         }
-        
+
         const configFileContent = {
           "language": "Solidity",
           "settings": {
@@ -227,7 +225,7 @@ export default class CodeParserCompiler {
       const fileTarget = await this.plugin.call('fileManager', 'getPathFromUrl', fileName)
       await this.plugin.call('fileDecorator', 'clearFileDecorators', fileTarget.file)
     }
-    if(decorators.length > 0)
+    if (decorators.length > 0)
       await this.plugin.call('fileDecorator', 'setFileDecorators', decorators)
     await this.plugin.call('editor', 'clearErrorMarkers', filesWithOutErrors)
 
