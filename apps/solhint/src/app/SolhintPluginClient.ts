@@ -45,7 +45,7 @@ export class SolHint extends PluginClient {
   }
 
   async lintOnCompilation() {
-    if(!this.triggerLinter) return
+    if (!this.triggerLinter) return
     this.on('solidity', 'compilationFinished', async (fileName, source, languageVersion, data) => {
       const hints = await this.lint(fileName)
       console.log('after compile', { hints })

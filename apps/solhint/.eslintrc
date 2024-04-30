@@ -10,7 +10,7 @@
       ],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [
-          "warn"
+          "off"
         ]
       }
     }
