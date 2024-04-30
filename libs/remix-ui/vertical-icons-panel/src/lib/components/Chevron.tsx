@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import React, {MutableRefObject} from 'react'
+import React, { MutableRefObject } from 'react'
 
 export interface ChevronProps {
   divElementRef: MutableRefObject<any>
@@ -10,9 +10,9 @@ export interface ChevronProps {
 function Chevron(props: ChevronProps) {
   const click = () => {
     if (props.direction === 'down') {
-      props.divElementRef.current.scrollBy({top: 40, behavior: 'smooth'})
+      props.divElementRef.current.scrollBy({ top: 40, behavior: 'smooth' })
     } else {
-      props.divElementRef.current.scrollBy({top: -40, behavior: 'smooth'})
+      props.divElementRef.current.scrollBy({ top: -40, behavior: 'smooth' })
     }
   }
 
@@ -25,4 +25,4 @@ function Chevron(props: ChevronProps) {
   )
 }
 
-export {Chevron}
+export { Chevron }

@@ -6,17 +6,17 @@ export function defineGetterMemoized<K extends keyof any, T, O extends { [k in K
     enumerable: true,
     get() {
       switch (state) {
-        case 'done': 
-          return value;
+      case 'done':
+        return value;
 
-        case 'doing':
-          throw new Error("Detected recursion");
+      case 'doing':
+        throw new Error("Detected recursion");
 
-        case 'todo':
-          state = 'doing';
-          value = getter();
-          state = 'done';
-          return value;
+      case 'todo':
+        state = 'doing';
+        value = getter();
+        state = 'done';
+        return value;
       }
     }
   });

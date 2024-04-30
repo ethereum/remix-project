@@ -20,6 +20,6 @@ describe('compiler-input', () => {
     expect(getValidLanguage(undefined)).toBe(null)
     expect(getValidLanguage('')).toBe(null)
     expect(getValidLanguage('A')).toBe(null)
-    expect(getValidLanguage('Something')).toBe(null)    
+    expect(getValidLanguage('Something')).toBe(null)
   })
 })

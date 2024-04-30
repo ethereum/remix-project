@@ -6,7 +6,6 @@ import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { useIntl } from 'react-intl'
 const _paq = (window._paq = window._paq || [])
 
-
 export default function SolidityCompile({ contractProperties, selectedContract, help, insertValue, saveAs, plugin }: any) {
   const intl = useIntl()
   const downloadFn = () => {
@@ -17,7 +16,7 @@ export default function SolidityCompile({ contractProperties, selectedContract, 
     <>
       <div className="d-flex justify-content-between align-items-center mr-1">
         <span className="lead">{selectedContract}</span>
-        <CustomTooltip tooltipText={intl.formatMessage({id: 'solidity.compileDetails'})}>
+        <CustomTooltip tooltipText={intl.formatMessage({ id: 'solidity.compileDetails' })}>
           <span className="btn btn-outline-success border-success mr-1" onClick={downloadFn}>Download</span>
         </CustomTooltip>
       </div>
@@ -26,7 +25,7 @@ export default function SolidityCompile({ contractProperties, selectedContract, 
           {Object.keys(contractProperties).map((propertyName: ContractPropertyName, index) => {
             const copyDetails = (
               <span className="remixui_copyDetails">
-                <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copy'})} content={contractProperties[propertyName]} direction="top" />
+                <CopyToClipboard tip={intl.formatMessage({ id: 'solidity.copy' })} content={contractProperties[propertyName]} direction="top" />
               </span>
             )
             const questionMark = (

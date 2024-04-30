@@ -20,7 +20,7 @@ export default (sources: Source, opts: CompilerInputOptions): string => {
       },
       remappings: opts.remappings || []
     }
-  }  
+  }
   if (opts.evmVersion) {
     if (opts.evmVersion.toLowerCase() == 'default') {
       opts.evmVersion = null

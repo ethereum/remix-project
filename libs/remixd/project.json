@@ -24,7 +24,8 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/remixd/**/*.ts"]
+        "lintFilePatterns": ["libs/remixd/**/*.ts"],
+        "eslintConfig": "libs/remixd/.eslintrc"
       }
     }
   },

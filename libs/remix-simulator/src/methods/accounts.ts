@@ -56,7 +56,7 @@ export class Web3Accounts {
     } catch (e) {
       console.error(e)
     }
-    
+
   }
 
   newAccount (cb) {

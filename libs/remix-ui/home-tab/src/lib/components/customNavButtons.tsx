@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 
-const CustomNavButtons = ({parent, next, previous, goToSlide, ...rest}) => {
+const CustomNavButtons = ({ parent, next, previous, goToSlide, ...rest }) => {
   const {
-    carouselState: {currentSlide, totalItems, containerWidth, transform}
+    carouselState: { currentSlide, totalItems, containerWidth, transform }
   } = rest
   return (
     <div className="mt-1 d-flex justify-content-end carousel-button-group">

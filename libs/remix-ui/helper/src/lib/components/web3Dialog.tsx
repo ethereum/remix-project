@@ -47,7 +47,7 @@ export function Web3ProviderDialog(props: web3ProviderDialogProps) {
         type="text"
         name="prompt_text"
         id="prompt_text"
-        style={{width: '100%'}}
+        style={{ width: '100%' }}
         className="form-control"
         defaultValue={props.externalEndpoint}
         data-id="modalDialogCustomPromptText"

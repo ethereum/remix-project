@@ -1,6 +1,6 @@
 import React from 'react'
 import { ViewPlugin } from '@remixproject/engine-web'
-import {PluginViewWrapper} from '@remix-ui/helper'
+import { PluginViewWrapper } from '@remix-ui/helper'
 import { RemixAppManager } from '../../remixAppManager'
 import { RemixUiVyperCompileDetails } from '@remix-ui/vyper-compile-details'
 import { ThemeKeys, ThemeObject } from '@microlink/react-json-view'
@@ -49,13 +49,13 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
   }
 
   async showDetails(sentPayload: any) {
-    const contractName = Object.entries(sentPayload).find(([key, value]) =>  key )
+    const contractName = Object.entries(sentPayload).find(([key, value]) => key )
     await this.call('tabs', 'focus', 'vyperCompilationDetails')
     this.profile.displayName = `${contractName[0]}`
     this.payload = sentPayload
     const active = await this.call('theme', 'currentTheme')
     if (active.quality === 'dark') {
-      switch(active.name) {
+      switch (active.name) {
       case 'HackerOwl':
         this.theme = 'harmonic'
         this.themeStyle = { backgroundColor: active.backgroundColor }
@@ -78,7 +78,7 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
         break
       }
     } else {
-      switch(active.name) {
+      switch (active.name) {
       case 'Candy':
         this.theme = 'apathy:inverted'
         this.themeStyle = { backgroundColor: active.backgroundColor }
@@ -106,7 +106,7 @@ export class VyperCompilationDetailsPlugin extends ViewPlugin {
   private handleThemeChange() {
     this.on('theme', 'themeChanged', (theme: any) => {
       if (theme.quality === 'dark') {
-        switch(theme.name) {
+        switch (theme.name) {
         case 'HackerOwl':
           this.theme = 'solarized'
           this.themeStyle = { backgroundColor: theme.backgroundColor }

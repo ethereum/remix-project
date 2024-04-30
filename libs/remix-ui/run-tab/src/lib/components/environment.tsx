@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import {FormattedMessage} from 'react-intl'
-import {EnvironmentProps, Provider} from '../types'
-import {Dropdown} from 'react-bootstrap'
-import {CustomMenu, CustomToggle, CustomTooltip} from '@remix-ui/helper'
+import { FormattedMessage } from 'react-intl'
+import { EnvironmentProps, Provider } from '../types'
+import { Dropdown } from 'react-bootstrap'
+import { CustomMenu, CustomToggle, CustomTooltip } from '@remix-ui/helper'
 
 export function EnvironmentUI(props: EnvironmentProps) {
   const handleChangeExEnv = (env: string) => {
     const provider = props.providers.providerList.find((exEnv) => exEnv.name === env)
     const context = provider.name
-    props.setExecutionContext({context})
+    props.setExecutionContext({ context })
   }
 
   const currentProvider = props.providers.providerList.find((exEnv) => exEnv.name === props.selectedEnv)
@@ -26,7 +26,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
 
         <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText2" />}>
           <a href="https://chainlist.org/" target="_blank">
-            <i style={{fontSize: 'medium'}} className={'ml-2 fad fa-plug'} aria-hidden="true"></i>
+            <i style={{ fontSize: 'medium' }} className={'ml-2 fad fa-plug'} aria-hidden="true"></i>
           </a>
         </CustomTooltip>
       </label>
@@ -38,7 +38,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
             {currentProvider && bridges[currentProvider.name] && (
               <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
                 <i
-                  style={{fontSize: 'medium'}}
+                  style={{ fontSize: 'medium' }}
                   className={'ml-2 fa fa-rocket-launch'}
                   aria-hidden="true"
                   onClick={() => {
@@ -49,7 +49,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
             )}
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
-            {props.providers.providerList.map(({displayName, name}, index) => (
+            {props.providers.providerList.map(({ displayName, name }, index) => (
               <Dropdown.Item
                 key={index}
                 onClick={() => {

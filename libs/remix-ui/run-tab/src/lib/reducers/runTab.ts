@@ -248,7 +248,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       state.providers.providerList.push(payload)
     } else {
       let index = 0
-      for (const provider of state.providers.providerList) { 
+      for (const provider of state.providers.providerList) {
         if (provider.position >= payload.position) {
           state.providers.providerList.splice(index, 0, payload)
           break;
@@ -647,7 +647,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       contracts: {
         ...state.contracts,
-        deployOptions: {...state.contracts.deployOptions, ...payload }
+        deployOptions: { ...state.contracts.deployOptions, ...payload }
       }
     }
   }

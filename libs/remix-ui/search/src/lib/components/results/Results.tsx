@@ -1,11 +1,11 @@
-import React, {useContext, useEffect} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {SearchContext} from '../../context/context'
-import {StopSearch} from '../StopSearch'
-import {ResultItem} from './ResultItem'
+import React, { useContext, useEffect } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { SearchContext } from '../../context/context'
+import { StopSearch } from '../StopSearch'
+import { ResultItem } from './ResultItem'
 
 export const Results = () => {
-  const {state} = useContext(SearchContext)
+  const { state } = useContext(SearchContext)
   return (
     <div data-id="search_results" className="mt-2">
       <div className="search_plugin_search_indicator py-1">
@@ -15,12 +15,12 @@ export const Results = () => {
 
       {state.find && !state.clipped ? (
         <div className="search_plugin_result_count_number badge badge-pill badge-secondary">
-          <FormattedMessage id="search.text1" values={{count: state.count, fileCount: state.fileCount}} />
+          <FormattedMessage id="search.text1" values={{ count: state.count, fileCount: state.fileCount }} />
         </div>
       ) : null}
       {state.find && state.clipped ? (
         <div className="alert alert-warning mt-1">
-          <FormattedMessage id="search.text2" values={{br: <br />}} />
+          <FormattedMessage id="search.text2" values={{ br: <br /> }} />
         </div>
       ) : null}
       {state.searchResults &&

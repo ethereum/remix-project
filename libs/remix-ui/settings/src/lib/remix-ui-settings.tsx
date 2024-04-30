@@ -1,8 +1,8 @@
-import {ViewPlugin} from '@remixproject/engine-web'
+import { ViewPlugin } from '@remixproject/engine-web'
 import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react' // eslint-disable-line
 
-import {AppModal, AlertModal, ModalTypes} from '@remix-ui/app'
-import {labels, textDark, textSecondary} from './constants'
+import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
+import { labels, textDark, textSecondary } from './constants'
 
 import './remix-ui-settings.css'
 import {
@@ -22,14 +22,14 @@ import {
   useDisplayErrors,
   saveEnvState
 } from './settingsAction'
-import {initialState, toastInitialState, toastReducer, settingReducer} from './settingsReducer'
+import { initialState, toastInitialState, toastReducer, settingReducer } from './settingsReducer'
 import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
-import {RemixUiThemeModule, ThemeModule} from '@remix-ui/theme-module'
-import {RemixUiLocaleModule, LocaleModule} from '@remix-ui/locale-module'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {GithubSettings} from './github-settings'
-import {EtherscanSettings} from './etherscan-settings'
-import {SindriSettings} from './sindri-settings'
+import { RemixUiThemeModule, ThemeModule } from '@remix-ui/theme-module'
+import { RemixUiLocaleModule, LocaleModule } from '@remix-ui/locale-module'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { GithubSettings } from './github-settings'
+import { EtherscanSettings } from './etherscan-settings'
+import { SindriSettings } from './sindri-settings'
 
 /* eslint-disable-next-line */
 export interface RemixUiSettingsProps {
@@ -77,19 +77,19 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   }
   useEffect(() => initValue(), [resetState, props.config])
   useEffect(() => initValue(), [])
-  
+
   useEffect(() => {
     const token = props.config.get('settings/' + labels['gist'].key)
     if (token) {
       setTokenValue((prevState) => {
-        return {...prevState, gist: token}
+        return { ...prevState, gist: token }
       })
     }
 
     const etherscantoken = props.config.get('settings/' + labels['etherscan'].key)
     if (etherscantoken) {
       setTokenValue((prevState) => {
-        return {...prevState, etherscan: etherscantoken}
+        return { ...prevState, etherscan: etherscantoken }
       })
     }
     const configPrivateBeeAddress = props.config.get('settings/swarm-private-bee-address')
@@ -125,7 +125,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
 
   useEffect(() => {
     if (props.useMatomoAnalytics !== null) useMatomoAnalytics(props.config, props.useMatomoAnalytics, dispatch)
-  }, [props.useMatomoAnalytics])  
+  }, [props.useMatomoAnalytics])
 
   const onchangeGenerateContractMetadata = (event) => {
     generateContractMetadat(props.config, event.target.checked, dispatch)
@@ -138,15 +138,15 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const onchangeCopilotActivate = () => {
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
-      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity copilot not activated!` })
+      props.plugin.call('terminal', 'log', { type: 'typewriterlog', value: `Solidity copilot not activated!` })
       return
-    } 
+    }
 
     const startCopilot = async () => {
-      copilotActivate(props.config, true, dispatch)          
-      props.plugin.call('terminal', 'log', {type: 'typewriterlog', value: `Solidity copilot activated!` })
+      copilotActivate(props.config, true, dispatch)
+      props.plugin.call('terminal', 'log', { type: 'typewriterlog', value: `Solidity copilot activated!` })
     }
-    
+
     startCopilot()
   }
 
@@ -385,7 +385,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             id="saveswarmsettings"
             data-id="settingsTabSaveSwarmSettings"
             onClick={() => saveSwarmSettings()}
-            value={intl.formatMessage({id: 'settings.save'})}
+            value={intl.formatMessage({ id: 'settings.save' })}
             type="button"
             disabled={privateBeeAddress === ''}
           ></input>
@@ -461,7 +461,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                 <label className={`form-check-label align-middle ${getTextClass('settings/copilot/suggest/max_new_tokens')}`} htmlFor="copilot-activate">
                   <FormattedMessage id="settings.copilot.max_new_tokens" /> - <span>{copilotMaxnewToken}</span>
                 </label>
-                <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="custom-range" />                
+                <input onChange={onchangeCopilotMaxNewToken} id="copilot-max-new-token" value={copilotMaxnewToken} min='1' max='150' type="range" className="custom-range" />
               </div>
             </div>
           </div>
@@ -474,7 +474,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                 <label className={`form-check-label align-middle ${getTextClass('settings/copilot/suggest/temperature')}`} htmlFor="copilot-activate">
                   <FormattedMessage id="settings.copilot.temperature" /> - <span>{copilotTemperatureValue / 100}</span>
                 </label>
-                <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='100' type="range" className="custom-range" />                
+                <input onChange={onchangeCopilotTemperature} id="copilot-temperature" value={copilotTemperatureValue} min='0' max='100' type="range" className="custom-range" />
               </div>
             </div>
           </div>
@@ -550,7 +550,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             id="saveIpfssettings"
             data-id="settingsTabSaveIpfsSettings"
             onClick={() => saveIpfsSettings()}
-            value={intl.formatMessage({id: 'settings.save'})}
+            value={intl.formatMessage({ id: 'settings.save' })}
             type="button"
           ></input>
         </div>
@@ -597,7 +597,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
       {swarmSettings()}
       {ipfsSettings()}
       <RemixUiThemeModule themeModule={props._deps.themeModule} />
-      <RemixUiLocaleModule localeModule={props._deps.localeModule} />      
+      <RemixUiLocaleModule localeModule={props._deps.localeModule} />
     </div>
   )
 }

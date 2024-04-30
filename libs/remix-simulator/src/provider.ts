@@ -26,7 +26,7 @@ export interface JSONRPCResponsePayload {
   jsonrpc: string;
 }
 
-export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePayload) =>  void
+export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePayload) => void
 
 export type State = Record<string, string>
 
@@ -83,7 +83,7 @@ export class Provider {
     }
   }
 
-  _send(payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
+  _send(payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) => void) {
     // log.info('payload method is ', payload.method) // commented because, this floods the IDE console
     if (!this.initialized) {
       this.pendingRequests.push({ payload, callback })
@@ -109,13 +109,13 @@ export class Provider {
     callback(new Error('unknown method ' + payload.method))
   }
 
-  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
+  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) => void) {
     return new Promise((resolve,reject)=>{
       const cb = (err, result) => {
-        if(typeof callback==='function'){
+        if (typeof callback==='function'){
           callback(err,result)
         }
-        if(err){
+        if (err){
           return reject(err)
         }
         return resolve(result)
@@ -146,7 +146,7 @@ export class Provider {
 }
 
 export function extend (web3) {
-  if(!web3.remix){
+  if (!web3.remix){
     web3.registerPlugin(new Web3TestPlugin())
   }
 }

@@ -1,12 +1,12 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useRef, useState} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {BN} from 'bn.js'
-import {CustomTooltip, isNumeric} from '@remix-ui/helper'
-import {ValueProps} from '../types'
+import React, { useEffect, useRef, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { BN } from 'bn.js'
+import { CustomTooltip, isNumeric } from '@remix-ui/helper'
+import { ValueProps } from '../types'
 
 export function ValueUI(props: ValueProps) {
-  const inputValue = useRef<HTMLInputElement>({} as HTMLInputElement)  
+  const inputValue = useRef<HTMLInputElement>({} as HTMLInputElement)
 
   useEffect(() => {
     if (props.sendValue !== inputValue.current.value) {

@@ -156,7 +156,7 @@ contract Ballot {
   output = JSON.parse(output)
   const param = '0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000148656c6c6f20576f726c64210000000000000000000000000000000000000000'
   const web3 = await vmCall.getWeb3()
-  vmCall.sendTx(web3, {nonce: 0, privateKey: privateKey}, undefined, 0, output.contracts['test.sol']['Ballot'].evm.bytecode.object + param, (error, hash) => {
+  vmCall.sendTx(web3, { nonce: 0, privateKey: privateKey }, undefined, 0, output.contracts['test.sol']['Ballot'].evm.bytecode.object + param, (error, hash) => {
     console.log(error, hash)
     if (error) {
       throw error
@@ -177,7 +177,7 @@ contract Ballot {
               }
             }
           })
-  
+
           debugManager.callTree.event.register('callTreeReady', () => {
             testDebugging(debugManager)
           })
@@ -189,7 +189,7 @@ contract Ballot {
             console.error(error)
             throw error
           })
-  
+
           debugManager.debug(tx)
         })
         .catch(error => { throw error })
@@ -279,10 +279,10 @@ function testDebugging (debugManager) {
 
   tape('breakPointManager', (t) => {
     t.plan(2)
-    const {traceManager, callTree, solidityProxy} = debugManager
-    const breakPointManager = new BreakpointManager({traceManager, callTree, solidityProxy})
+    const { traceManager, callTree, solidityProxy } = debugManager
+    const breakPointManager = new BreakpointManager({ traceManager, callTree, solidityProxy })
 
-    breakPointManager.add({fileName: 'test.sol', row: 39})
+    breakPointManager.add({ fileName: 'test.sol', row: 39 })
 
     breakPointManager.event.register('breakpointHit', function (sourceLocation, step) {
       t.equal(JSON.stringify(sourceLocation), JSON.stringify({ start: 1146, length: 6, file: 0, jump: '-' }))

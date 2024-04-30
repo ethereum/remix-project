@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {UdappProps} from '../types'
-import {FuncABI} from '@remix-project/core-plugin'
-import {CopyToClipboard} from '@remix-ui/clipboard'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { UdappProps } from '../types'
+import { FuncABI } from '@remix-project/core-plugin'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from '@ethereumjs/util'
-import {ContractGUI} from './contractGUI'
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view'
-import {BN} from 'bn.js'
-import {CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress} from '@remix-ui/helper'
+import { ContractGUI } from './contractGUI'
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
+import { BN } from 'bn.js'
+import { CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || [])
 
 const txHelper = remixLib.execution.txHelper
@@ -73,30 +73,30 @@ export function UniversalDappUI(props: UdappProps) {
     if (amount !== '0') {
       // check for numeric and receive/fallback
       if (!isNumeric(amount)) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError1'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError1' }))
       } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError2'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError2' }))
       }
     }
     let calldata = calldataValue
 
     if (calldata) {
       if (calldata.length < 4 && is0XPrefixed(calldata)) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError3'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError3' }))
       } else {
         if (is0XPrefixed(calldata)) {
           calldata = calldata.substr(2, calldata.length)
         }
         if (!isHexadecimal(calldata)) {
-          return setLlIError(intl.formatMessage({id: 'udapp.llIError4'}))
+          return setLlIError(intl.formatMessage({ id: 'udapp.llIError4' }))
         }
       }
       if (!fallback) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError5'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError5' }))
       }
     }
 
-    if (!receive && !fallback) return setLlIError(intl.formatMessage({id: 'udapp.llIError6'}))
+    if (!receive && !fallback) return setLlIError(intl.formatMessage({ id: 'udapp.llIError6' }))
 
     // we have to put the right function ABI:
     // if receive is defined and that there is no calldata => receive function is called
@@ -104,7 +104,7 @@ export function UniversalDappUI(props: UdappProps) {
     if (receive && !calldata) args.funcABI = receive
     else if (fallback) args.funcABI = fallback
 
-    if (!args.funcABI) return setLlIError(intl.formatMessage({id: 'udapp.llIError7'}))
+    if (!args.funcABI) return setLlIError(intl.formatMessage({ id: 'udapp.llIError7' }))
     runTransaction(false, args.funcABI, null, calldataValue)
   }
 
@@ -179,14 +179,14 @@ export function UniversalDappUI(props: UdappProps) {
     } else {
       if (item instanceof Array) {
         ret.children = item.map((item, index) => {
-          return {key: index, value: item}
+          return { key: index, value: item }
         })
         ret.self = 'Array'
         ret.isNode = true
         ret.isLeaf = false
       } else if (item instanceof Object) {
         ret.children = Object.keys(item).map((key) => {
-          return {key: key, value: item[key]}
+          return { key: key, value: item[key] }
         })
         ret.self = 'Object'
         ret.isNode = true
@@ -253,7 +253,7 @@ export function UniversalDappUI(props: UdappProps) {
       data-id={props.isPinnedContract ? `pinnedInstance${address}` : `unpinnedInstance${address}`}
     >
       <div className="udapp_title pb-0 alert alert-secondary">
-        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass} style={{padding: "0.45rem"}}>
+        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass} style={{ padding: "0.45rem" }}>
           <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
         </span>
         <div className="input-group udapp_nameNbuts">
@@ -266,28 +266,28 @@ export function UniversalDappUI(props: UdappProps) {
               {props.instance.name} at {shortenAddress(address)} ({props.context})
             </span>) }
           </div>
-          <div className="btn" style={{padding: '0.15rem'}}>
-            <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
+          <div className="btn" style={{ padding: '0.15rem' }}>
+            <CopyToClipboard tip={intl.formatMessage({ id: 'udapp.copy' })} content={address} direction={'top'} />
           </div>
-          { props.isPinnedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+          { props.isPinnedContract ? ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
               <i className="fas fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={remove}></i>
-            </CustomTooltip> 
-          </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+            </CustomTooltip>
+          </div> ) : ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappPinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPin" />}>
               <i className="far fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappPin" onClick={pinContract}></i>
             </CustomTooltip>
           </div> )
           }
         </div>
-        { props.isPinnedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+        { props.isPinnedContract ? ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
           <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
             <i className="far fa-trash p-2" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={deletePinnedContract}></i>
-          </CustomTooltip> 
-        </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+          </CustomTooltip>
+        </div> ) : ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
           <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextRemove" />}>
             <i className="fas fa-times p-2" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
-          </CustomTooltip> 
+          </CustomTooltip>
         </div> )
         }
       </div>
@@ -307,7 +307,7 @@ export function UniversalDappUI(props: UdappProps) {
             </div>
           ) : null }
           { props.isPinnedContract && props.instance.filePath ? (
-            <div className="d-flex" data-id="instanceContractFilePath" style={{textAlign: "start", lineBreak: "anywhere"}}>
+            <div className="d-flex" data-id="instanceContractFilePath" style={{ textAlign: "start", lineBreak: "anywhere" }}>
               <label>
                 <b><FormattedMessage id="udapp.filePath" />:</b> {props.instance.filePath}
               </label>

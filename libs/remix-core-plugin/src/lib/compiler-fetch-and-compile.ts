@@ -155,7 +155,7 @@ export class FetchAndCompile extends Plugin {
         this.call('notification', 'toast', e.message)
         setTimeout(_ => this.emit('notFound', contractAddress), 0) // plugin framework returns a time out error although it actually didn't find the source...
         this.unresolvedAddresses.push(contractAddress)
-        return localCompilation()    
+        return localCompilation()
       }
     }
 
@@ -176,7 +176,7 @@ export class FetchAndCompile extends Plugin {
       }
     }
     const { settings, compilationTargets } = data
-   
+
     try {
       setTimeout(_ => this.emit('compiling', settings), 0)
       const compData = await compile(

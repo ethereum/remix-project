@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import React, {useEffect, useState, useRef, useContext} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {CustomTooltip} from '@remix-ui/helper'
+import React, { useEffect, useState, useRef, useContext } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { CustomTooltip } from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 function HomeTabTitle() {
@@ -53,12 +53,12 @@ function HomeTabTitle() {
     <div className="px-2 pb-2 pt-2 d-flex flex-column border-bottom" id="hTTitleSection">
       <div className="d-flex py-2 justify-content-between">
         <div className="d-flex justify-content-start">
-          <span className="h-80 text-uppercase" style={{fontSize: 'xx-large', fontFamily: 'Noah, sans-serif'}}>
+          <span className="h-80 text-uppercase" style={{ fontSize: 'xx-large', fontFamily: 'Noah, sans-serif' }}>
             Remix
           </span>
           <div className="ml-2 d-flex">
             <div onClick={() => playRemi()}>
-              <img className="" src="assets/img/guitarRemiCroped.webp" style={{height: '3rem'}} alt=""></img>
+              <img className="" src="assets/img/guitarRemiCroped.webp" style={{ height: '3rem' }} alt=""></img>
             </div>
             <audio id="remiAudio" muted={false} src="assets/audio/remiGuitar-single-power-chord-A-minor.mp3" ref={remiAudioEl}></audio>
           </div>
@@ -142,7 +142,7 @@ function HomeTabTitle() {
           </CustomTooltip>
         </span>
       </div>
-      <b className="py-1 text-dark" style={{fontStyle: 'italic'}}>
+      <b className="py-1 text-dark" style={{ fontStyle: 'italic' }}>
         <FormattedMessage id="home.nativeIDE" />
       </b>
       <div className="pb-1" id="hTGeneralLinks">
@@ -180,7 +180,7 @@ function HomeTabTitle() {
           type="text"
           className="border form-control border-right-0"
           id="homeTabSearchInput"
-          placeholder={intl.formatMessage({id: 'home.searchDocumentation'})}
+          placeholder={intl.formatMessage({ id: 'home.searchDocumentation' })}
           data-id="terminalInputSearchHome"
         />
         <button
@@ -190,7 +190,7 @@ function HomeTabTitle() {
             openLink()
           }}
           disabled={state.searchDisable}
-          style={{width: '3rem'}}
+          style={{ width: '3rem' }}
         ></button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react' // eslint-disable-line
 
-export const Slider = ({jumpTo, sliderValue, traceLength}) => {
+export const Slider = ({ jumpTo, sliderValue, traceLength }) => {
   const onChangeId = useRef(null)
   const slider = useRef(null)
 
