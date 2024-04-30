@@ -5,12 +5,13 @@ import React, { useContext, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { pluginActionsContext } from "../../state/context";
 import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
+import { gitPluginContext } from "../gitui";
 import LoaderIndicator from "./loaderindicator";
 import { SourceControlMenu } from "./menu/sourcecontrolmenu";
 
 export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => {
     const pluginactions = React.useContext(pluginActionsContext)
-
+    const context = React.useContext(gitPluginContext)
     const handleClick = () => {
         if (!callback) return
         if (activePanel === eventKey) {
@@ -32,7 +33,7 @@ export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => 
 
                 </span>
 
-                <SourceControlButtons />
+                <SourceControlButtons/>
 
 
             </div>

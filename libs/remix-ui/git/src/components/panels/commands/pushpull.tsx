@@ -20,7 +20,6 @@ export const PushPull = () => {
     setRemoteBranch(context.currentBranch.name)
     setLocalBranch(context.currentBranch.name)
     if ((!context.upstream) && context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.remote) {
-      console.log('SET UPSTREAM', context.currentBranch.remote)
       actions.setUpstreamRemote(context.currentBranch.remote)
     }
   }, [context.currentBranch])
@@ -32,21 +31,15 @@ export const PushPull = () => {
   }
 
   const onLocalBranchChange = (value: any) => {
-    console.log('onLocalBranchChange', value)
     setLocalBranch(value)
   }
 
   const onRemoteChange = (value: string) => {
-    console.log('onRemoteChange', value, context)
     const remote: remote = context.remotes.find(r => r.remote === value)
     if(remote) {
       actions.setUpstreamRemote(remote)
     }
   }
-
-  useEffect(() => {
-    console.log('UPSTREAM', context.upstream, context)
-  }, [context.upstream])
 
   const onForceChange = (event: any) => {
     const target = event.target;

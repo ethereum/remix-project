@@ -23,25 +23,33 @@ export const SourceControlButtons = (props: SourceControlButtonsProps) => {
 
 
   useEffect(() => {
-    console.log('BRANCH DIFF SourceControlButtons', context.branchDifferences, remote, branch)
+    console.log('BRANCH DIFF SourceControlButtons',branch, remote, context.branchDifferences, context.currentBranch)
     setDefaultRemote()
     if (remote && branch && context.branchDifferences && context.branchDifferences[`${remote.remote}/${branch.name}`]) {
+      console.log('BRANCH DIFF found SourceControlButtons', context.branchDifferences[`${remote.remote}/${branch.name}`])
       setCommitsAhead(context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueHeadCommits)
       setCommitsBehind(context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueRemoteCommits)
+    }else{
+      setCommitsAhead([])
+      setCommitsBehind([])
     }
-  }, [context.branchDifferences, branch, remote])
+  }, [context.branchDifferences, context.currentBranch, branch, remote])
 
 
   const setDefaultRemote = () => {
+  
     if (context.remotes.length > 0) {
       // find remote called origin
       const origin = context.remotes.find(remote => remote.remote === 'origin')
+      console.log('DEFAULT REMOTE', origin)
       if (origin) {
         setRemote(origin)
       } else {
         setRemote(context.remotes[0])
       }
+      return origin
     }
+    return null
   }
 
   useEffect(() => {
