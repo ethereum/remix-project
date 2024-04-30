@@ -21,7 +21,7 @@ export class EventsDecoder {
   * @param {Function} cb - callback
   */
   parseLogs (tx, contractName, compiledContracts, cb) {
-    if (tx.isCall) return cb(null, { decoded: [], raw: [] })
+    if (tx.isCall) return cb(null, { decoded: [], raw: []})
     this.resolveReceipt(tx, (error, receipt) => {
       if (error) return cb(error)
       this._decodeLogs(tx, receipt, contractName, compiledContracts, cb)
@@ -33,7 +33,7 @@ export class EventsDecoder {
       return cb('cannot decode logs - contract or receipt not resolved ')
     }
     if (!receipt.logs) {
-      return cb(null, { decoded: [], raw: [] })
+      return cb(null, { decoded: [], raw: []})
     }
     this._decodeEvents(tx, receipt.logs, contract, contracts, cb)
   }
