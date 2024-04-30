@@ -1,7 +1,6 @@
 
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-const isElectron = require('is-electron')
 import { AppModal } from '@remix-ui/app'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
@@ -9,6 +8,8 @@ import { RemixUIGridView } from '@remix-ui/remix-ui-grid-view'
 import { RemixUIGridSection } from '@remix-ui/remix-ui-grid-section'
 import { RemixUIGridCell } from '@remix-ui/remix-ui-grid-cell'
 import type { TemplateGroup } from '@remix-ui/workspace'
+
+const isElectron = require('is-electron')
 
 //@ts-ignore
 const _paq = (window._paq = window._paq || [])
@@ -26,7 +27,7 @@ export class TemplatesSelection extends ViewPlugin {
   templates: Array<TemplateGroup>
   dispatch: React.Dispatch<any> = () => { }
   constructor() {
-    super(profile)   
+    super(profile)
   }
 
   async onActivation() {
@@ -40,7 +41,7 @@ export class TemplatesSelection extends ViewPlugin {
   }
 
   private handleThemeChange() {
-    this.on('theme', 'themeChanged', (theme: any) => {    
+    this.on('theme', 'themeChanged', (theme: any) => {
       this.renderComponent()
     })
   }
@@ -81,121 +82,121 @@ export class TemplatesSelection extends ViewPlugin {
       {
         name: "Generic",
         items: [
-          { value: "remixDefault", displayName: window._intl.formatMessage({id: 'filePanel.basic'}) },
-          { value: "blank", displayName: window._intl.formatMessage({id: 'filePanel.blank'}) }
+          { value: "remixDefault", displayName: window._intl.formatMessage({ id: 'filePanel.basic' }) },
+          { value: "blank", displayName: window._intl.formatMessage({ id: 'filePanel.blank' }) }
         ]
       },
       {
         name: "OpenZeppelin",
         items: [
-          { 
+          {
             value: "ozerc20",
-            displayName: "ERC20" 
+            displayName: "ERC20"
           },
-          { 
-            value: "ozerc721", 
-            displayName: "ERC721 (NFT)" 
+          {
+            value: "ozerc721",
+            displayName: "ERC721 (NFT)"
           },
-          { 
-            value: "ozerc1155", 
-            displayName: "ERC1155" 
+          {
+            value: "ozerc1155",
+            displayName: "ERC1155"
           },
-          { 
+          {
             value: "ozerc20",
             displayName: "ERC20",
             opts: {
               mintable: true
-            }            
+            }
           },
-          { 
-            value: "ozerc721", 
+          {
+            value: "ozerc721",
             displayName: "ERC721 (NFT)",
             opts: {
               mintable: true
-            } 
+            }
           },
-          { 
-            value: "ozerc1155", 
+          {
+            value: "ozerc1155",
             displayName: "ERC1155",
             opts: {
               mintable: true
-            } 
+            }
           },
-          { 
+          {
             value: "ozerc20",
             displayName: "ERC20",
             opts: {
               mintable: true,
               burnable: true
-            }            
+            }
           },
-          { 
-            value: "ozerc721", 
+          {
+            value: "ozerc721",
             displayName: "ERC721 (NFT)",
             opts: {
               mintable: true,
               burnable: true
-            } 
+            }
           },
-          { 
-            value: "ozerc1155", 
+          {
+            value: "ozerc1155",
             displayName: "ERC1155",
             opts: {
               mintable: true,
               burnable: true
-            } 
+            }
           },
-          { 
+          {
             value: "ozerc20",
             displayName: "ERC20",
             opts: {
               mintable: true,
               pausable: true
-            }            
+            }
           },
-          { 
-            value: "ozerc721", 
+          {
+            value: "ozerc721",
             displayName: "ERC721 (NFT)",
             opts: {
               mintable: true,
               pausable: true
-            } 
+            }
           },
-          { 
-            value: "ozerc1155", 
+          {
+            value: "ozerc1155",
             displayName: "ERC1155",
             opts: {
               mintable: true,
               pausable: true
-            } 
+            }
           }
         ]
       },
       {
         name: "OpenZeppelin Proxy",
         items: [
-          { 
+          {
             value: "ozerc20",
             displayName: "ERC20",
             opts: {
               upgradeable: 'uups'
             }
           },
-          { 
-            value: "ozerc721", 
+          {
+            value: "ozerc721",
             displayName: "ERC721 (NFT)",
             opts: {
               upgradeable: 'uups'
             }
           },
-          { 
+          {
             value: "ozerc1155",
             displayName: "ERC1155",
             opts: {
               upgradeable: 'uups'
             }
           },
-          { 
+          {
             value: "ozerc20",
             displayName: "ERC20",
             opts: {
@@ -203,15 +204,15 @@ export class TemplatesSelection extends ViewPlugin {
               mintable: true
             }
           },
-          { 
-            value: "ozerc721", 
+          {
+            value: "ozerc721",
             displayName: "ERC721 (NFT)",
             opts: {
               upgradeable: 'uups',
               mintable: true
             }
           },
-          { 
+          {
             value: "ozerc1155",
             displayName: "ERC1155",
             opts: {
@@ -219,7 +220,7 @@ export class TemplatesSelection extends ViewPlugin {
               mintable: true
             }
           },
-          { 
+          {
             value: "ozerc20",
             displayName: "ERC20",
             opts: {
@@ -228,8 +229,8 @@ export class TemplatesSelection extends ViewPlugin {
               burnable: true
             }
           },
-          { 
-            value: "ozerc721", 
+          {
+            value: "ozerc721",
             displayName: "ERC721 (NFT)",
             opts: {
               upgradeable: 'uups',
@@ -237,7 +238,7 @@ export class TemplatesSelection extends ViewPlugin {
               burnable: true
             }
           },
-          { 
+          {
             value: "ozerc1155",
             displayName: "ERC1155",
             opts: {
@@ -246,7 +247,7 @@ export class TemplatesSelection extends ViewPlugin {
               burnable: true
             }
           },
-          { 
+          {
             value: "ozerc20",
             displayName: "ERC20",
             opts: {
@@ -255,8 +256,8 @@ export class TemplatesSelection extends ViewPlugin {
               pausable: true
             }
           },
-          { 
-            value: "ozerc721", 
+          {
+            value: "ozerc721",
             displayName: "ERC721 (NFT)",
             opts: {
               upgradeable: 'uups',
@@ -264,12 +265,22 @@ export class TemplatesSelection extends ViewPlugin {
               pausable: true
             }
           },
-          { 
+          {
             value: "ozerc1155",
             displayName: "ERC1155",
             opts: {
               upgradeable: 'uups',
               mintable: true,
+              pausable: true
+            }
+          },
+          {
+            value: "ozerc1155",
+            displayName: "ERC1155",
+            opts: {
+              upgradeable: 'uups',
+              mintable: true,
+              burnable: true,
               pausable: true
             }
           }
@@ -284,42 +295,42 @@ export class TemplatesSelection extends ViewPlugin {
       {
         name: "Gnosis Safe",
         items: [
-          { value: "gnosisSafeMultisig", displayName: window._intl.formatMessage({id: 'filePanel.multiSigWallet'}) }
+          { value: "gnosisSafeMultisig", displayName: window._intl.formatMessage({ id: 'filePanel.multiSigWallet' }) }
         ]
       },
       {
         name: "Circom ZKP",
         items: [
-          { value: "semaphore", displayName: window._intl.formatMessage({id: 'filePanel.semaphore'}) },
-          { value: "hashchecker", displayName: window._intl.formatMessage({id: 'filePanel.hashchecker'}) },
-          { value: "rln", displayName: window._intl.formatMessage({id: 'filePanel.rln'}) }
+          { value: "semaphore", displayName: window._intl.formatMessage({ id: 'filePanel.semaphore' }) },
+          { value: "hashchecker", displayName: window._intl.formatMessage({ id: 'filePanel.hashchecker' }) },
+          { value: "rln", displayName: window._intl.formatMessage({ id: 'filePanel.rln' }) }
         ]
       },
       {
         name: "Generic ZKP",
         items: [
-          { value: "sindriScripts", displayName: window._intl.formatMessage({id: 'filePanel.addscriptsindri'}) },
+          { value: "sindriScripts", displayName: window._intl.formatMessage({ id: 'filePanel.addscriptsindri' }) },
         ]
       },
       {
         name: "Uniswap V4",
         items: [
-          { value: "uniswapV4Template", displayName: window._intl.formatMessage({id: 'filePanel.uniswapV4Template'}) },
-          { value: "breakthroughLabsUniswapv4Hooks", displayName: window._intl.formatMessage({id: 'filePanel.breakthroughLabsUniswapv4Hooks'}) },
-          { value: "uniswapV4HookBookMultiSigSwapHook", displayName: window._intl.formatMessage({id: 'filePanel.uniswapV4HookBookMultiSigSwapHook'}) }
+          { value: "uniswapV4Template", displayName: window._intl.formatMessage({ id: 'filePanel.uniswapV4Template' }) },
+          { value: "breakthroughLabsUniswapv4Hooks", displayName: window._intl.formatMessage({ id: 'filePanel.breakthroughLabsUniswapv4Hooks' }) },
+          { value: "uniswapV4HookBookMultiSigSwapHook", displayName: window._intl.formatMessage({ id: 'filePanel.uniswapV4HookBookMultiSigSwapHook' }) }
         ]
       },
       {
         name: "Solidity CREATE2",
         items: [
-          { value: "contractCreate2Factory", displayName: window._intl.formatMessage({id: 'filePanel.addcreate2solidityfactory'}) },
-          { value: "contractDeployerScripts", displayName: window._intl.formatMessage({id: 'filePanel.addscriptdeployer'}) }
+          { value: "contractCreate2Factory", displayName: window._intl.formatMessage({ id: 'filePanel.addcreate2solidityfactory' }) },
+          { value: "contractDeployerScripts", displayName: window._intl.formatMessage({ id: 'filePanel.addscriptdeployer' }) }
         ]
       },
       {
         name: "Contract Verification",
         items: [
-          { value: "etherscanScripts", displayName: window._intl.formatMessage({id: 'filePanel.addscriptetherscan'}) },
+          { value: "etherscanScripts", displayName: window._intl.formatMessage({ id: 'filePanel.addscriptetherscan' }) },
         ]
       }
     ]
@@ -334,9 +345,9 @@ export class TemplatesSelection extends ViewPlugin {
       let initGit = true
       const modal: AppModal = {
         id: 'TemplatesSelection',
-        title:  window._intl.formatMessage({id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop'}),
+        title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
         message: await createModalMessage(defaultName, gitNotSet, (value) => workspaceName = value, (value) => initGit = !!value),
-        okLabel: window._intl.formatMessage({id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder'}),
+        okLabel: window._intl.formatMessage({ id: !isElectron() ? 'filePanel.ok':'filePanel.selectFolder' }),
       }
       const modalResult = await this.call('notification', 'modal', modal)
       if (!modalResult) return
@@ -344,15 +355,15 @@ export class TemplatesSelection extends ViewPlugin {
         if (e) {
           const modal: AppModal = {
             id: 'TemplatesSelection',
-            title:  window._intl.formatMessage({id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop'}),
+            title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
             message: e.message,
-            okLabel: window._intl.formatMessage({id: 'filePanel.ok'}),
-            cancelLabel: window._intl.formatMessage({id: 'filePanel.cancel'})
+            okLabel: window._intl.formatMessage({ id: 'filePanel.ok' }),
+            cancelLabel: window._intl.formatMessage({ id: 'filePanel.cancel' })
           }
           this.call('notification', 'modal', modal)
           console.error(e)
         }
-        
+
       }, initGit)
     }
 
@@ -361,15 +372,15 @@ export class TemplatesSelection extends ViewPlugin {
         if (e) {
           const modal: AppModal = {
             id: 'TemplatesSelection',
-            title:  window._intl.formatMessage({id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop'}),
+            title:  window._intl.formatMessage({ id: !isElectron() ? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
             message: e.message,
-            okLabel: window._intl.formatMessage({id: 'filePanel.ok'}),
-            cancelLabel: window._intl.formatMessage({id: 'filePanel.cancel'})
+            okLabel: window._intl.formatMessage({ id: 'filePanel.ok' }),
+            cancelLabel: window._intl.formatMessage({ id: 'filePanel.cancel' })
           }
           this.call('notification', 'modal', modal)
           console.error(e)
         }
-        
+
       })
     }
 
@@ -386,27 +397,27 @@ export class TemplatesSelection extends ViewPlugin {
         description="Template Selection"
       >
         {
-        
-        this.templates.map(template => {
-          return <RemixUIGridSection
-          plugin={this}
-          title={template.name}
-          hScrollable= {true}
-        >
-          {template.items.map(item => {
-            return <RemixUIGridCell
-            plugin={this}
-            title={item.displayName}
-          >
-            <div>
-              {item.displayName}
-              {JSON.stringify(item.opts)}
-              <div><button onClick={async () => createWorkspace(item)} className="btn btn-secondary" >Create a new workspace</button><button onClick={async () => addToExistingWorkspace(item)}  className="btn btn-primary" >Add to existing workspace</button></div>
-            </div>
-          </RemixUIGridCell>
+
+          this.templates.map(template => {
+            return <RemixUIGridSection
+              plugin={this}
+              title={template.name}
+              hScrollable= {true}
+            >
+              {template.items.map(item => {
+                return <RemixUIGridCell
+                  plugin={this}
+                  title={item.displayName}
+                >
+                  <div>
+                    {item.displayName}
+                    {JSON.stringify(item.opts)}
+                    <div><button data-id={`create-${item.value}${item.opts ? JSON.stringify(item.opts) : ''}`} onClick={async () => createWorkspace(item)} className="btn btn-secondary" >Create a new workspace</button><button data-id={`add-${item.value}`} onClick={async () => addToExistingWorkspace(item)} className="btn btn-primary" >Add to existing workspace</button></div>
+                  </div>
+                </RemixUIGridCell>
+              })}
+            </RemixUIGridSection>
           })}
-        </RemixUIGridSection>
-        })}
       </RemixUIGridView>
     )
   }
@@ -414,14 +425,14 @@ export class TemplatesSelection extends ViewPlugin {
 }
 
 const createModalMessage = async (
-    defaultName: string,
-    gitConfigNotSet: boolean,
-    onChangeTemplateName: (name: string) => void, 
-    onChangeInitGit: (name: string) => void) => {
-  
+  defaultName: string,
+  gitConfigNotSet: boolean,
+  onChangeTemplateName: (name: string) => void,
+  onChangeInitGit: (name: string) => void) => {
+
   return (
     <>
-      <label id="wsName" className="form-check-label" style={{fontWeight: 'bolder'}}>
+      <label id="wsName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
         <FormattedMessage id="filePanel.workspaceName" />
       </label>
       <input
@@ -444,7 +455,7 @@ const createModalMessage = async (
           htmlFor="initGitRepository"
           data-id="initGitRepositoryLabel"
           className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-          title={window._intl.formatMessage({id: 'filePanel.initGitRepoTitle'})}
+          title={window._intl.formatMessage({ id: 'filePanel.initGitRepoTitle' })}
         >
           <FormattedMessage id="filePanel.initGitRepositoryLabel" />
         </label>
