@@ -42,8 +42,8 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/vyper/**/*.ts"],
-        "eslintConfig": "libs/vyper/.eslintrc"
+        "lintFilePatterns": ["apps/vyper/**/*.ts"],
+        "eslintConfig": "apps/vyper/.eslintrc"
       }
     },
     "serve": {
