@@ -12,6 +12,7 @@ import HomeTabFeaturedPlugins from './components/homeTabFeaturedPlugins'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { HomeTabFileElectron } from './components/homeTabFileElectron'
 import { LanguageOptions } from './components/homeTablangOptions'
+import GettingStarted from './components/homeTabGettingStarted'
 
 declare global {
   interface Window {
@@ -60,15 +61,16 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
         <div className="d-flex flex-row w-100 custom_home_bg">
           <div className="px-2 pl-3 justify-content-start d-flex border-right flex-column" id="remixUIHTLeft" style={{ width: 'inherit' }}>
             <HomeTabTitle />
+            <GettingStarted />
             {!(platform === appPlatformTypes.desktop) ?
               <HomeTabFile plugin={plugin} />:
               <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>}
-            <HomeTabLearn plugin={plugin} />
+            {/* <HomeTabLearn plugin={plugin} /> */}
           </div>
           <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{ width: '65%' }} id="remixUIHTRight">
             <LanguageOptions plugin={plugin}/>
             <HomeTabFeatured></HomeTabFeatured>
-            <HomeTabGetStarted plugin={plugin}></HomeTabGetStarted>
+            {/* <HomeTabGetStarted plugin={plugin}></HomeTabGetStarted> */}
             <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>
             <HomeTabScamAlert></HomeTabScamAlert>
           </div>
