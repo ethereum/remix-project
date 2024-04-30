@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
 import { selectStyles, selectTheme } from "../../../types/styles";
-import Select from 'react-select'
+import Select, { Options, OptionsOrGroups } from 'react-select'
 import GitUIButton from "../../buttons/gituibutton";
 import { remote } from "../../../types";
 
@@ -20,6 +20,7 @@ export const PushPull = () => {
     setRemoteBranch(context.currentBranch.name)
     setLocalBranch(context.currentBranch.name)
     if ((!context.upstream) && context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.remote) {
+      console.log('SET UPSTREAM', context.currentBranch.remote)
       actions.setUpstreamRemote(context.currentBranch.remote)
     }
   }, [context.currentBranch])
@@ -145,7 +146,7 @@ export const PushPull = () => {
         theme={selectTheme}
         styles={selectStyles}
         isClearable={true}
-        value={{ value: context.upstream, label: context.upstream }}
+        value={{ value: context.upstream && context.upstream.remote, label: context.upstream && context.upstream.remote }}
         placeholder="Type to search for a branch..."
       />
 

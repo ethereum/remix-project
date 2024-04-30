@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
 import React from "react"
-import { branch, commitChange, gitLog, remote } from "../types"
+import { branch, commitChange, gitLog, gitState, remote } from "../types"
 
 export interface gitActions  {
     removeRemote(remote: remote): void
@@ -19,6 +19,7 @@ export interface gitActions  {
     remoteBranches(owner: string, repo: string): Promise<any>
     getCommitChanges(oid1: string, oid2: string, branch?: branch, remote?: remote): Promise<commitChange[] | boolean>
     getBranchCommits(branch: branch, page: number): Promise<void>
+    getBranchDifferences(branch: branch, remote?: remote, state?: gitState): Promise<void>
     getGitHubUser(): Promise<any>
     diff(commitChange: commitChange): Promise<void>
     resolveRef(ref: string): Promise<string>

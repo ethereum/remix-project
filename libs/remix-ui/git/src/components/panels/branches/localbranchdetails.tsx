@@ -28,6 +28,7 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
       console.log('GET BRANCH COMMITS', branch)
       if (lastPageNumber === 0)
         actions.getBranchCommits(branch, 1)
+        actions.getBranchDifferences(branch, null, context)
     }
   }, [activePanel])
 

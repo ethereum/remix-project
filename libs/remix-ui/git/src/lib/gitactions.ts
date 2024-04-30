@@ -6,7 +6,7 @@ import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusM
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
-import { gitActionsContext } from "../state/context";
+import { gitActions, gitActionsContext } from "../state/context";
 import { gitPluginContext } from "../components/gitui";
 import { setFileDecorators } from "./pluginActions";
 import { IDgitSystem, IRemixApi, RemixApi } from "@remixproject/plugin-api";
@@ -694,52 +694,6 @@ export const diff = async (commitChange: commitChange) => {
     commitChange.original = "";
   }
 
-
-  /*
-  const fullfilename = args; // $(args[0].currentTarget).data('file')
-  try {
-    const commitOid = await client.call(
-      "dGitProvider",
-      "resolveref",
-      { ref: "HEAD" }
-    );
-    
-    const { blob } = await client.call("dGitProvider", "readblob", {
-      oid: commitOid,
-      filepath: removeSlash(fullfilename),
-    });
-
-    const newcontent = await client.call(
-      "fileManager",
-      "readFile",//
-      removeSlash(fullfilename)
-    );
-    
-
-    // Utils.log(original);
-    //Utils.log(newcontent);
-    //const filediff = createPatch(filename, original, newcontent); // diffLines(original,newcontent)
-    ////Utils.log(filediff)
-    const filediff: diffObject = {
-      originalFileName: fullfilename,
-      updatedFileName: fullfilename,
-      current: newcontent,
-      past: original,
-    };
-
-    return filediff;
-  } catch (e) {
-    
-
-    const filediff: diffObject = {
-      originalFileName: "",
-      updatedFileName: "",
-      current: "",
-      past: "",
-    };
-    return filediff;
-  }
-  */
 }
 
 export const getCommitChanges = async (oid1: string, oid2: string, branch?: branch, remote?: remote) => {
@@ -793,57 +747,22 @@ export const fetchBranch = async (branch: branch, page: number) => {
   console.log(rc, 'remote commits from octokit')
   dispatch(setRemoteBranchCommits({ branch, commits: rc }))
   return
-  const r = await plugin.call('dGitProvider', 'fetch', {
-    ref: branch.name,
-    remoteRef: branch.name,
-    singleBranch: true,
-    remote: branch.remote.remote,
-    depth: 10
-  })
-  console.log(branch)
-
-  const remoteCommits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
-    ref: r.fetchHead
-  })
-  console.log(r, remoteCommits)
-  let localCommits: ReadCommitResult[] = []
-  try {
-
-    localCommits = await plugin.call('dGitProvider', 'log', {
-      ref: branch.name,
-    })
-    console.log(r, localCommits)
-  } catch (e) { }
-
-  const remoteCommitsThatAreNotLocal: ReadCommitResult[] = remoteCommits.filter((commit) => {
-    return !localCommits.find((localCommit) => localCommit.oid === commit.oid)
-  }
-  )
-  console.log(remoteCommitsThatAreNotLocal)
-  const mergeCommits = remoteCommitsThatAreNotLocal.map((commit) => {
-    return {
-      ...commit,
-      remote: true
-    }
-  }).concat(localCommits.map((commit) => {
-    return {
-      ...commit,
-      remote: false
-    }
-  }
-  ))
-  // sort by date
-  mergeCommits.sort((a, b) => {
-    return new Date(b.commit.committer.timestamp).getTime() - new Date(a.commit.committer.timestamp).getTime()
-  })
-
-  console.log(mergeCommits)
-  //console.log(r, commits)
-  //dispatch(setRemoteBranchCommits({ branch, commits: mergeCommits }))
 }
 
-export const getBranchDifferences = async (branch: branch, remote: remote) => {
+export const getBranchDifferences = async (branch: branch, remote: remote, state: gitState) => {
+  if(!remote && state){
+    if(state.defaultRemote){
+      remote = state.defaultRemote
+    }else{
+      remote = state.remotes.find((remote: remote) => remote.remote === 'origin')
+    }
+    if(!remote && state.remotes[0]){
+      remote = state.remotes[0]
+    }
+  }
+  if(!remote) return
   try {
+    console.log('compare', branch, remote)
     const branchDifference: branchDifference = await plugin.call('dGitProvider', 'compareBranches', {
       branch,
       remote
