@@ -97,6 +97,8 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-remixDefault"]')
+      .scrollAndClick('*[data-id="create-remixDefault"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
