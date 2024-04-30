@@ -6,7 +6,7 @@ const transactionDetailsLinks = {
   Goerli: 'https://goerli.etherscan.io/tx/',
   Sepolia: 'https://sepolia.etherscan.io/tx/'
 }
-  
+
 export function etherScanLink (network: string, hash: string): string {
   if (transactionDetailsLinks[network]) {
     return transactionDetailsLinks[network] + hash

@@ -1,17 +1,17 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import {ViewPlugin} from '@remixproject/engine-web'
+import { ViewPlugin } from '@remixproject/engine-web'
 import React from 'react'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import {RemixUiSolidityUmlGen} from '@remix-ui/solidity-uml-gen'
-import {ISolidityUmlGen, ThemeQualityType, ThemeSummary} from 'libs/remix-ui/solidity-uml-gen/src/types'
-import {RemixAppManager} from 'libs/remix-ui/plugin-manager/src/types'
-import {normalizeContractPath} from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
-import {convertAST2UmlClasses} from 'sol2uml/lib/converterAST2Classes'
+import { RemixUiSolidityUmlGen } from '@remix-ui/solidity-uml-gen'
+import { ISolidityUmlGen, ThemeQualityType, ThemeSummary } from 'libs/remix-ui/solidity-uml-gen/src/types'
+import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
+import { normalizeContractPath } from 'libs/remix-ui/solidity-compiler/src/lib/logic/flattenerUtilities'
+import { convertAST2UmlClasses } from 'sol2uml/lib/converterAST2Classes'
 import vizRenderStringSync from '@aduh95/viz.js/sync'
-import {PluginViewWrapper} from '@remix-ui/helper'
-import {customAction} from '@remixproject/plugin-api'
-import {ClassOptions} from 'sol2uml/lib/converterClass2Dot'
-import type {CompilerInput} from '@remix-project/remix-solidity'
+import { PluginViewWrapper } from '@remix-ui/helper'
+import { customAction } from '@remixproject/plugin-api'
+import { ClassOptions } from 'sol2uml/lib/converterClass2Dot'
+import type { CompilerInput } from '@remix-project/remix-solidity'
 const parser = (window as any).SolidityParser
 
 const _paq = (window._paq = window._paq || [])
@@ -207,10 +207,10 @@ interface Sol2umlClassOptions extends ClassOptions {
   textColor?: string
 }
 
-import {dirname} from 'path'
-import {convertClass2Dot} from 'sol2uml/lib/converterClass2Dot'
-import {Association, ClassStereotype, ReferenceType, UmlClass} from 'sol2uml/lib/umlClass'
-import {findAssociatedClass} from 'sol2uml/lib/associations'
+import { dirname } from 'path'
+import { convertClass2Dot } from 'sol2uml/lib/converterClass2Dot'
+import { Association, ClassStereotype, ReferenceType, UmlClass } from 'sol2uml/lib/umlClass'
+import { findAssociatedClass } from 'sol2uml/lib/associations'
 
 // const debug = require('debug')('sol2uml')
 
