@@ -30,7 +30,7 @@ export class RemixGuidePlugin extends ViewPlugin {
     super(profile)
     this.appManager = appManager
     this.element = document.createElement('div')
-    this.element.setAttribute('id', 'remixGuideEl')    
+    this.element.setAttribute('id', 'remixGuideEl')
   }
 
   async onActivation() {
@@ -49,13 +49,13 @@ export class RemixGuidePlugin extends ViewPlugin {
     this.profile.displayName = `${contractName[0]}`
     this.payload = sentPayload
     const active = await this.call('theme', 'currentTheme')
-    
+
     this.renderComponent()
   }
 
   private handleThemeChange() {
     this.on('theme', 'themeChanged', (theme: any) => {
-    
+
       this.renderComponent()
     })
   }
@@ -114,7 +114,7 @@ export class RemixGuidePlugin extends ViewPlugin {
             tagList={['L2', 'AI']}
             logo='/assets/img/soliditySurvey2023.webp'
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
@@ -122,55 +122,55 @@ export class RemixGuidePlugin extends ViewPlugin {
             pinned={true}
             tagList={['L2', 'plugins']}
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell> <RemixUIGridCell
             plugin={this}
             title="something"
             pinned={false}
             tagList={['solidity', 'plugins']}
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="1"
             tagList={['solidity']}
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell> <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="Something very very long"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell> <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
         </RemixUIGridSection>
         <RemixUIGridSection
@@ -183,58 +183,58 @@ export class RemixGuidePlugin extends ViewPlugin {
             title="first item"
             logo='/assets/img/soliditySurvey2023.webp'
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="next"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell> <RemixUIGridCell
             plugin={this}
             title="something"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell> <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell> <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
           <RemixUIGridCell
             plugin={this}
             title="1"
           >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{height: '70px', width: '70px'}} alt=""></img>
+            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
           </RemixUIGridCell>
         </RemixUIGridSection>
       </RemixUIGridView>

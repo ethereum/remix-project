@@ -46,7 +46,7 @@ export class VMProvider {
             stamps[msg.data.stamp].reject(msg.data.error)
           } else {
             stamps[msg.data.stamp].resolve(msg.data.result)
-          }          
+          }
         } else if (msg.data.cmd === 'initiateResult') {
           if (!msg.data.error) {
             this.provider = {
@@ -55,7 +55,7 @@ export class VMProvider {
                   const stamp = Date.now() + incr
                   incr++
                   stamps[stamp] = { callback, resolve, reject }
-                  this.worker.postMessage({ cmd: 'sendAsync', query, stamp })              
+                  this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
                 })
               }
             }
@@ -102,7 +102,6 @@ export class VMProvider {
     })
   }
 
-
   // TODO: is still here because of the plugin API
   // can be removed later when we update the API
   createVMAccount (newAccount) {
@@ -134,5 +133,5 @@ export class VMProvider {
     this.web3.eth.sign(message, account)
       .then(signedData => cb(null, bytesToHex(messageHash), signedData))
       .catch(error => cb(error))
-  }  
+  }
 }

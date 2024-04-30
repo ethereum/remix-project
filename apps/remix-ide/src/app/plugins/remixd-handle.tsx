@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {WebsocketPlugin} from '@remixproject/engine-web'
+import { FormattedMessage } from 'react-intl'
+import { WebsocketPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import {version as remixdVersion} from '../../../../../libs/remixd/package.json'
-import {PluginManager} from '@remixproject/engine'
-import {AppModal, AlertModal, appPlatformTypes} from '@remix-ui/app'
-import {Registry} from '@remix-project/remix-lib'
+import { version as remixdVersion } from '../../../../../libs/remixd/package.json'
+import { PluginManager } from '@remixproject/engine'
+import { AppModal, AlertModal, appPlatformTypes } from '@remix-ui/app'
+import { Registry } from '@remix-project/remix-lib'
 
 const LOCALHOST = ' - connect to localhost - '
 
@@ -85,7 +85,7 @@ export class RemixdHandle extends WebsocketPlugin {
         console.log(error)
         const alert: AlertModal = {
           id: 'connectionAlert',
-          message: window._intl.formatMessage({id: 'remixd.connectionAlert1'}),
+          message: window._intl.formatMessage({ id: 'remixd.connectionAlert1' }),
         }
         this.call('notification', 'alert', alert)
         this.canceled()
@@ -96,14 +96,14 @@ export class RemixdHandle extends WebsocketPlugin {
             clearInterval(intervalId)
             const alert: AlertModal = {
               id: 'connectionAlert',
-              message: window._intl.formatMessage({id: 'remixd.connectionAlert2'}),
+              message: window._intl.formatMessage({ id: 'remixd.connectionAlert2' }),
             }
             this.call('notification', 'alert', alert)
             this.canceled()
           }
         }, 3000)
         this.localhostProvider.init(() => {
-          this.call('filePanel', 'setWorkspace', {name: LOCALHOST, isLocalhost: true}, true)
+          this.call('filePanel', 'setWorkspace', { name: LOCALHOST, isLocalhost: true }, true)
         })
         for (const plugin of this.dependentPlugins) {
           await this.appManager.activatePlugin(plugin)
@@ -116,10 +116,10 @@ export class RemixdHandle extends WebsocketPlugin {
       // warn the user only if he/she is in the browser context
       const mod: AppModal = {
         id: 'remixdConnect',
-        title: window._intl.formatMessage({id: 'remixd.remixdConnect'}),
+        title: window._intl.formatMessage({ id: 'remixd.remixdConnect' }),
         message: remixdDialog(),
-        okLabel: window._intl.formatMessage({id: 'remixd.connect'}),
-        cancelLabel: window._intl.formatMessage({id: 'remixd.cancel'}),
+        okLabel: window._intl.formatMessage({ id: 'remixd.connect' }),
+        cancelLabel: window._intl.formatMessage({ id: 'remixd.cancel' }),
       }
       const result = await this.call('notification', 'modal', mod)
       if (result) {

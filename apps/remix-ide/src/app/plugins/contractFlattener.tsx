@@ -1,8 +1,8 @@
 import React from 'react'
-import {Plugin} from '@remixproject/engine'
-import {customAction} from '@remixproject/plugin-api'
-import {concatSourceFiles, getDependencyGraph, normalizeContractPath} from '@remix-ui/solidity-compiler'
-import type {CompilerInput, CompilationSource } from '@remix-project/remix-solidity'
+import { Plugin } from '@remixproject/engine'
+import { customAction } from '@remixproject/plugin-api'
+import { concatSourceFiles, getDependencyGraph, normalizeContractPath } from '@remix-ui/solidity-compiler'
+import type { CompilerInput, CompilationSource } from '@remix-project/remix-solidity'
 
 const _paq = (window._paq = window._paq || [])
 
