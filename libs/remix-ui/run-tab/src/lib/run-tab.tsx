@@ -326,7 +326,14 @@ export function RunTabUI(props: RunTabProps) {
             getFuncABIInputs={getFuncABIValues}
             exEnvironment={runTab.selectExEnv}
             editInstance={(instance) => {
-              plugin.call('dapp-draft', 'edit', { address: instance.address, abi: instance.contractData.abi, name: instance.name, network: runTab.networkName })
+              plugin.call('dapp-draft', 'edit', {
+                address: instance.address,
+                abi: instance.contractData.abi,
+                name: instance.name,
+                network: runTab.networkName,
+                devdoc: instance.contractData.object.devdoc,
+                methodIdentifiers: instance.contractData.object.evm.methodIdentifiers,
+              })
             }}
           />
         </div>
