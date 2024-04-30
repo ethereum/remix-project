@@ -41,7 +41,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-remixDefault"]')
       .scrollAndClick('*[data-id="create-remixDefault"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_remix_default' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
@@ -115,7 +114,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-blank"]')
       .scrollAndClick('*[data-id="create-blank"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
@@ -138,7 +136,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-ozerc20"]')
       .scrollAndClick('*[data-id="create-ozerc20"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_erc20' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
@@ -199,7 +196,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-ozerc721"]')
       .scrollAndClick('*[data-id="create-ozerc721"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_erc721' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
@@ -260,7 +256,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-ozerc1155"]')
       .scrollAndClick('*[data-id="create-ozerc1155"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_erc1155' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
@@ -321,7 +316,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-ozerc1155-{&quot;upgradeable&quot;:&quot;uups&quot;,&quot;mintable&quot;:true,&quot;burnable&quot;:true,&quot;pausable&quot;:true}"]')
       .scrollAndClick('*[data-id="create-ozerc1155-{&quot;upgradeable&quot;:&quot;uups&quot;,&quot;mintable&quot;:true,&quot;burnable&quot;:true,&quot;pausable&quot;:true}')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
@@ -386,7 +380,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-hashchecker"]')
       .scrollAndClick('*[data-id="create-hashchecker"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
       .pause(100)
@@ -498,7 +491,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-ozerc1155"]')
       .scrollAndClick('*[data-id="create-ozerc1155"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'sometestworkspace' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
       .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
@@ -525,7 +517,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-ozerc1155"]')
       .scrollAndClick('*[data-id="create-ozerc1155"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_db_test' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
@@ -555,7 +546,6 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-uniswapV4HookBookMultiSigSwapHook"]')
       .scrollAndClick('*[data-id="create-uniswapV4HookBookMultiSigSwapHook"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       // eslint-disable-next-line dot-notation
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'multisig cookbook' })
       .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
