@@ -7,9 +7,8 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 import { RemixUIGridView } from '@remix-ui/remix-ui-grid-view'
 import { RemixUIGridSection } from '@remix-ui/remix-ui-grid-section'
 import { RemixUIGridCell } from '@remix-ui/remix-ui-grid-cell'
+import isElectron from 'is-electron'
 import type { TemplateGroup } from '@remix-ui/workspace'
-
-const isElectron = require('is-electron')
 
 //@ts-ignore
 const _paq = (window._paq = window._paq || [])
