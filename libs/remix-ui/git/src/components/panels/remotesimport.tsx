@@ -8,7 +8,6 @@ import { selectStyles, selectTheme } from "../../types/styles";
 import { TokenWarning } from "./tokenWarning";
 import RepositorySelect from "../github/repositoryselect";
 
-
 export const RemotesImport = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
@@ -48,7 +47,6 @@ export const RemotesImport = () => {
     setRepo(repo)
   }
 
-
   useEffect(() => {
     console.log('OTIONS', repoOtions)
   },[repoOtions])
@@ -77,8 +75,6 @@ export const RemotesImport = () => {
         <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
         : null}
 
-
-
       {repo && remoteName ?
         <button data-id='clonebtn' className='btn btn-primary mt-1 w-100' onClick={async () => {
           await addRemote()
@@ -87,5 +83,4 @@ export const RemotesImport = () => {
     </>
   )
 }
-
 

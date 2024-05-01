@@ -33,7 +33,6 @@ export function getBytesCompletionItems(range: monacoTypes.IRange, monaco): mona
   ]
 }
 
-
 export function getBlockCompletionItems(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
   return [
     {
@@ -442,7 +441,6 @@ export function getAbiCompletionItems(range: monacoTypes.IRange, monaco): monaco
   ];
 }
 
-
 export function GetCompletionTypes(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
   const completionItems = [];
   const types = ['address', 'string', 'bytes', 'byte', 'int', 'uint', 'bool', 'hash'];
@@ -510,7 +508,6 @@ export function GetCompletionKeywords(range: monacoTypes.IRange, monaco): monaco
   return completionItems;
 }
 
-
 export function GeCompletionUnits(range: monacoTypes.IRange, monaco): monacoTypes.languages.CompletionItem[] {
   const completionItems = [];
   const etherUnits = ['wei', 'gwei', 'finney', 'szabo', 'ether'];
@@ -556,7 +553,6 @@ export function GetImports(range: monacoTypes.IRange
           insertText: `${item}`,
         }
       })]
-
 
     list = [...list,
       ...data.files

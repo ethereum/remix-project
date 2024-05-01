@@ -71,7 +71,7 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
   const getCommitChanges = async (commit: ReadCommitResult) => {
     const changes = await actions.getCommitChanges(commit.oid, commit.commit.parent[0], branch, branch.remote)
     console.log('CHANGES', changes)
-    if(!changes) {
+    if (!changes) {
       // try to fetch the data
       await actions.fetch(branch.remote.remote, branch.name,null,20, true, false, true)
     }
@@ -91,7 +91,6 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
               })
             }
           })}
-
 
         </div>
         {hasNextPage && <GitUIButton className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}

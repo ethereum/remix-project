@@ -28,11 +28,9 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
       console.log('GET BRANCH COMMITS', branch)
       if (lastPageNumber === 0)
         actions.getBranchCommits(branch, 1)
-        actions.getBranchDifferences(branch, null, context)
+      actions.getBranchDifferences(branch, null, context)
     }
   }, [activePanel])
-
-
 
   const checkout = (branch: branch) => {
     actions.checkout({
@@ -73,7 +71,6 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
               })
             }
           })}
-
 
         </div>
         {hasNextPage && <GitUIButton className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}

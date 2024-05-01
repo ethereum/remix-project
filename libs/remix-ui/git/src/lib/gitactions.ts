@@ -147,7 +147,6 @@ export const showCurrentBranch = async () => {
     const branch = await currentBranch();
     const currentcommitoid = await getCommitFromRef("HEAD");
 
-
     if (typeof branch === "undefined" || branch.name === "") {
       //toast.warn(`You are in a detached state`);
       plugin.call('notification', 'alert', {
@@ -288,7 +287,6 @@ export const add = async (args: string | undefined) => {
   }
 }
 
-
 const getLastCommmit = async () => {
   try {
     let currentcommitoid = "";
@@ -299,7 +297,6 @@ const getLastCommmit = async () => {
   }
 }
 
-
 export const rm = async (args: any) => {
   const filename = args;
   await plugin.call("dGitProvider", "rm", {
@@ -307,7 +304,6 @@ export const rm = async (args: any) => {
   });
   plugin.call('notification', 'toast', `Removed ${filename} from git`)
 }
-
 
 export const checkoutfile = async (filename: string) => {
   const oid = await getLastCommmit();
@@ -426,7 +422,6 @@ const tokenWarning = async () => {
   }
 }
 
-
 const parseError = async (e: any) => {
   console.log(e)
   // if message conttains 401 Unauthorized, show token warning
@@ -462,7 +457,7 @@ const parseError = async (e: any) => {
   } else if (e.toString().includes('NotFoundError') && !e.toString().includes('fetch')) {
     await plugin.call('notification', 'modal', {
       title: 'Remote branch not found',
-      message: 'The branch you are trying to fetch does not exist on the remote.\ If you have forked this branch from another branch, you may need to fetch the original branch first or publish this branch on the remote.',
+      message: 'The branch you are trying to fetch does not exist on the remote. If you have forked this branch from another branch, you may need to fetch the original branch first or publish this branch on the remote.',
       okLabel: 'OK',
       type: ModalTypes.alert
     })
@@ -484,7 +479,7 @@ export const repositories = async () => {
       let hasMoreData = true
       const per_page = 100
       while (hasMoreData) {
-        let pagedResponse = await plugin.call('dGitProvider' as any, 'repositories', { token, page: page, per_page: per_page })
+        const pagedResponse = await plugin.call('dGitProvider' as any, 'repositories', { token, page: page, per_page: per_page })
         if (pagedResponse.length < per_page) {
           hasMoreData = false
         }
@@ -520,7 +515,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
       let hasMoreData = true
       const per_page = 100
       while (hasMoreData) {
-        let pagedResponse = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo, page: page, per_page: per_page })
+        const pagedResponse = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo, page: page, per_page: per_page })
         if (pagedResponse.length < per_page) {
           hasMoreData = false
         }
@@ -628,10 +623,8 @@ export const getGitHubUser = async () => {
   }
 }
 
-
-
 export const statusMatrix = async (filepaths: string[]) => {
-  const matrix = await plugin.call("dGitProvider", "status", { ref: "HEAD", filepaths: filepaths || ['.'] });
+  const matrix = await plugin.call("dGitProvider", "status", { ref: "HEAD", filepaths: filepaths || ['.']});
   const result = (matrix || []).map((x) => {
     return {
       filename: `/${x.shift()}`,
@@ -734,7 +727,6 @@ async function getRepoDetails(url: string) {
   return { owner, repo };
 }
 
-
 export const fetchBranch = async (branch: branch, page: number) => {
   if (!branch.remote || !branch.remote.url) return
   const token = await tokenWarning();
@@ -750,17 +742,17 @@ export const fetchBranch = async (branch: branch, page: number) => {
 }
 
 export const getBranchDifferences = async (branch: branch, remote: remote, state: gitState) => {
-  if(!remote && state){
-    if(state.defaultRemote){
+  if (!remote && state){
+    if (state.defaultRemote){
       remote = state.defaultRemote
-    }else{
+    } else {
       remote = state.remotes.find((remote: remote) => remote.remote === 'origin')
     }
-    if(!remote && state.remotes[0]){
+    if (!remote && state.remotes[0]){
       remote = state.remotes[0]
     }
   }
-  if(!remote) return
+  if (!remote) return
   try {
     console.log('compare', branch, remote)
     const branchDifference: branchDifference = await plugin.call('dGitProvider', 'compareBranches', {

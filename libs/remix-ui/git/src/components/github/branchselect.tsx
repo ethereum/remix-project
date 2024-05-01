@@ -26,8 +26,8 @@ export const BranchSelect = (props: BranchySelectProps) => {
   }, [context.remoteBranches])
 
   const selectRemoteBranch = async (e: any) => {
-    if(!e || !e.value) {
-      props.select(null) 
+    if (!e || !e.value) {
+      props.select(null)
       return
     }
     const value = e && e.value

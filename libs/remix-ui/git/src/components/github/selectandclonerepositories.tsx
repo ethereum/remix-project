@@ -35,7 +35,6 @@ export const SelectAndCloneRepositories = (props: RepositoriesProps) => {
     }
   };
 
-  
   return (
     <>
       <TokenWarning />
@@ -51,5 +50,4 @@ export const SelectAndCloneRepositories = (props: RepositoriesProps) => {
     </>
   )
 }
-
 

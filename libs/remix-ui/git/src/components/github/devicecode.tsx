@@ -5,15 +5,12 @@ import axios from "axios";
 import { CopyToClipboard } from "@remix-ui/clipboard";
 import { Card } from "react-bootstrap";
 
-
 export const GetDeviceCode = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const pluginActions = React.useContext(pluginActionsContext)
   const [gitHubResponse, setGitHubResponse] = React.useState<any>(null)
   const [authorized, setAuthorized] = React.useState<boolean>(false)
-
-
 
   const getDeviceCodeFromGitHub = async () => {
 
@@ -90,7 +87,6 @@ export const GetDeviceCode = () => {
     console.log('context.rateLimit', context.rateLimit)
   }, [context.rateLimit])
 
-
   return (
     <>
       {(context.gitHubUser && context.gitHubUser.login) ? null :
@@ -141,7 +137,6 @@ export const GetDeviceCode = () => {
 
           </div> : null
       }
-
 
     </>)
 }

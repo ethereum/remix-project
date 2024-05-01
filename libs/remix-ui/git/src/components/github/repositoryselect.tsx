@@ -36,12 +36,12 @@ const RepositorySelect = (props: RepositorySelectProps) => {
   }, [context.repositories])
 
   const selectRepo = async (e: any) => {
-    if(!e || !e.value) {
-      props.select(null) 
+    if (!e || !e.value) {
+      props.select(null)
       return
     }
     const value = e && e.value
-  
+
     const repo = context.repositories.find(repo => {
       return repo.id.toString() === value.toString()
     })
@@ -67,19 +67,19 @@ const RepositorySelect = (props: RepositorySelectProps) => {
     <><Button onClick={fetchRepositories} className="w-100 mt-1">
       <i className="fab fa-github mr-1"></i>Fetch Repositories from GitHub
     </Button>
-      {
-        show ?
-          <Select
-            options={repoOtions}
-            className="mt-1"
-            onChange={(e: any) => selectRepo(e)}
-            theme={selectTheme}
-            styles={selectStyles}
-            isClearable={true}
-            placeholder="Type to search for a repository..."
-            isLoading={loading}
-          /> : null
-      }</>
+    {
+      show ?
+        <Select
+          options={repoOtions}
+          className="mt-1"
+          onChange={(e: any) => selectRepo(e)}
+          theme={selectTheme}
+          styles={selectStyles}
+          isClearable={true}
+          placeholder="Type to search for a repository..."
+          isLoading={loading}
+        /> : null
+    }</>
   );
 };
 

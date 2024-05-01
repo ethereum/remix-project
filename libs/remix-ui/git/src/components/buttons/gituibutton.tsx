@@ -10,7 +10,7 @@ interface ButtonWithContextProps {
 }
 
 // This component extends a button, disabling it when loading is true
-const GitUIButton = ({children, disabledCondition = false, ...rest }:ButtonWithContextProps) => {
+const GitUIButton = ({ children, disabledCondition = false, ...rest }:ButtonWithContextProps) => {
   const { loading } = React.useContext(gitPluginContext)
 
   const isDisabled = loading || disabledCondition

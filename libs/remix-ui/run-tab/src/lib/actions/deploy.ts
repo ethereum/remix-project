@@ -121,11 +121,11 @@ export const continueHandler = (dispatch: React.Dispatch<any>, gasEstimationProm
   if (error) {
     let msg = typeof error !== 'string' ? error.message : error
     if (error && error.innerError) {
-      msg += '\n' + error.innerError 
+      msg += '\n' + error.innerError
     }
-    
+
     if (msg.includes('invalid opcode')) msg += '\nThe EVM version used by the selected environment is not compatible with the compiler EVM version.'
-    
+
     dispatch(displayNotification('Gas estimation failed', gasEstimationPrompt(msg), 'Send Transaction', 'Cancel Transaction', () => {
       continueTxExecution()
     }, () => {
@@ -253,7 +253,7 @@ export const loadAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, contr
         return dispatch(displayNotification('Alert', error, 'OK', null))
       }
       if (loadType === 'abi') {
-        const contractData = { name: '<at address>', abi, contract: {file: plugin.REACT_API.contracts.currentFile}} as ContractData
+        const contractData = { name: '<at address>', abi, contract: { file: plugin.REACT_API.contracts.currentFile } } as ContractData
         return addInstance(dispatch, { contractData, address, name: '<at address>' })
       } else if (loadType === 'instance') {
         if (!contract) return dispatch(displayPopUp('No compiled contracts found.'))
@@ -276,7 +276,7 @@ export const syncContractsInternal = async (plugin: RunTab) => {
   }
   if (await plugin.call('manager', 'isActive', 'hardhat')) {
     plugin.call('hardhat', 'sync')
-  } 
+  }
   if (await plugin.call('manager', 'isActive', 'foundry')) {
     plugin.call('foundry', 'sync')
   }
@@ -350,7 +350,7 @@ export const updateInstanceBalance = async (plugin: RunTab, dispatch: React.Disp
       instance.balance = balInEth
     }
     dispatch(updateInstanceBalance(instances, dispatch))
-  } 
+  }
 }
 
 export const isValidContractAddress = async (plugin: RunTab, address: string) => {
@@ -400,7 +400,7 @@ export const isValidContractUpgrade = async (plugin: RunTab, proxyAddress: strin
 
     if (parsedNetworkFile.deployments[proxyAddress] && parsedNetworkFile.deployments[proxyAddress].implementationAddress) {
       const solcBuildExists = await plugin.call('fileManager', 'exists', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
-        
+
       if (solcBuildExists) {
         const solcFile: string = await plugin.call('fileManager', 'readFile', `.deploys/upgradeable-contracts/${identifier}/solc-${parsedNetworkFile.deployments[proxyAddress].implementationAddress}.json`)
         const parsedSolcFile: SolcBuildFile = JSON.parse(solcFile)

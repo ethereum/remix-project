@@ -24,7 +24,6 @@ export interface CompilerContainerProps {
   solJsonBinData: iSolJsonBinData
 }
 
-
 export interface ContractSelectionProps {
   api: ICompilerApi,
   compiledFileName: string,

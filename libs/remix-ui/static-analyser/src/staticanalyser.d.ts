@@ -94,7 +94,6 @@ type ErrorRendererOptions = {
   }
 }
 
-
 type SlitherAnalysisResultType = {
 description: string,
   title: string,

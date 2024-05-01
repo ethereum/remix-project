@@ -7,16 +7,16 @@ const LogViewer = () => {
 
   const typeToCssClass = (type: string) => {
     switch (type) {
-      case 'error':
-        return 'text-danger';
-      case 'warning':
-        return 'text-warning';
-      case 'info':
-        return 'text-info';
-      case 'debug':
-        return 'text-secondary';
-      default:
-        return 'text-success';
+    case 'error':
+      return 'text-danger';
+    case 'warning':
+      return 'text-warning';
+    case 'info':
+      return 'text-info';
+    case 'debug':
+      return 'text-secondary';
+    default:
+      return 'text-success';
     }
   };
 

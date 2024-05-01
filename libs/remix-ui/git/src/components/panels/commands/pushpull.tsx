@@ -24,8 +24,6 @@ export const PushPull = () => {
     }
   }, [context.currentBranch])
 
-
-
   const onRemoteBranchChange = (value: string) => {
     setRemoteBranch(value)
   }
@@ -36,7 +34,7 @@ export const PushPull = () => {
 
   const onRemoteChange = (value: string) => {
     const remote: remote = context.remotes.find(r => r.remote === value)
-    if(remote) {
+    if (remote) {
       actions.setUpstreamRemote(remote)
     }
   }
@@ -55,7 +53,6 @@ export const PushPull = () => {
   const pull = async () => {
     actions.pull(context.upstream.remote, localBranch, remoteBranch)
   }
-
 
   useEffect(() => {
     console.log('context branches', context.branches)
@@ -89,23 +86,18 @@ export const PushPull = () => {
 
   }, [context.remotes])
 
-
   const pushPullIsDisabled = () => {
     return localBranch === '' || remoteBranch === '' || !context.upstream || context.remotes.length === 0
   }
 
-
   return (
     <>
 
-
-
       <div className="btn-group w-100" role="group">
-   
+
         <GitUIButton disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => pull()} className="btn btn-primary mr-1">Pull</GitUIButton>
         <GitUIButton disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => push()} className="btn btn-primary">Push</GitUIButton>
       </div>
-
 
       <label>Local Branch</label>
       <Select
@@ -142,7 +134,6 @@ export const PushPull = () => {
         value={{ value: context.upstream && context.upstream.remote, label: context.upstream && context.upstream.remote }}
         placeholder="Type to search for a branch..."
       />
-
 
       <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
         <input checked={force} onChange={e => onForceChange(e)} className="remixui_autocompile custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />

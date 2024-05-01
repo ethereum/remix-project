@@ -15,7 +15,7 @@ interface SourceControlButtonsProps {
   children: React.ReactNode
 }
 
-export const syncStateContext = createContext<{commitsAhead: ReadCommitResult[], commitsBehind: ReadCommitResult[]}>({commitsAhead: [], commitsBehind: []})
+export const syncStateContext = createContext<{commitsAhead: ReadCommitResult[], commitsBehind: ReadCommitResult[]}>({ commitsAhead: [], commitsBehind: []})
 
 export const SourceControlBase = (props: SourceControlButtonsProps) => {
   const [branch, setBranch] = useState(props.branch)
@@ -32,15 +32,14 @@ export const SourceControlBase = (props: SourceControlButtonsProps) => {
       console.log('BRANCH DIFF found SourceControlButtons', context.branchDifferences[`${remote.remote}/${branch.name}`])
       setCommitsAhead(context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueHeadCommits)
       setCommitsBehind(context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueRemoteCommits)
-    }else{
+    } else {
       setCommitsAhead([])
       setCommitsBehind([])
     }
   }, [context.branchDifferences, context.currentBranch, branch, remote])
 
-
   const setDefaultRemote = () => {
-  
+
     if (context.remotes.length > 0) {
       // find remote called origin
       const origin = context.remotes.find(remote => remote.remote === 'origin')
@@ -79,9 +78,9 @@ export const SourceControlBase = (props: SourceControlButtonsProps) => {
   }, [context.defaultRemote, context.currentBranch])
 
   return (<>
-    <syncStateContext.Provider value={{commitsAhead, commitsBehind}}>
+    <syncStateContext.Provider value={{ commitsAhead, commitsBehind }}>
       {props.children}
     </syncStateContext.Provider>
   </>)
-  
+
 }

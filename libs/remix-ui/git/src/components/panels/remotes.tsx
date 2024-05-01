@@ -24,14 +24,12 @@ export const Remotes = () => {
     })
   }
 
-
   useEffect(() => {
     console.log('SHOW REMOTES', context.remotes)
   }, [context.remotes])
 
   return (
     <>
-
 
       {context.remotes && context.remotes.length ?
         <>

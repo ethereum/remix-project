@@ -3,7 +3,6 @@ import { gitActionsContext } from "../../../state/context";
 import GitUIButton from "../../buttons/gituibutton";
 import { gitPluginContext } from "../../gitui";
 
-
 export const Fetch = () => {
   const actions = React.useContext(gitActionsContext)
   const context = React.useContext(gitPluginContext)

@@ -26,7 +26,6 @@ export const SettingsNavigation = ({ eventKey, activePanel, callback }) => {
           }
           <label className="nav pl-1 form-check-label">SETTINGS</label>
 
-
         </span>
 
         <span className='d-flex justify-content-end align-items-center w-25'>
@@ -34,8 +33,7 @@ export const SettingsNavigation = ({ eventKey, activePanel, callback }) => {
             <button onClick={async () => { await pluginactions.loadFiles() }} className='btn btn-sm text-warning'><FontAwesomeIcon icon={faTriangleExclamation} className="" /></button>
           </CustomTooltip>
 
-        </span> 
-
+        </span>
 
       </div>
     </>

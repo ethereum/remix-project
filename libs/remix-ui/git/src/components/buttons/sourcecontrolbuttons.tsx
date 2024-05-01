@@ -28,15 +28,14 @@ export const SourceControlButtons = (props: SourceControlButtonsProps) => {
       console.log('BRANCH DIFF found SourceControlButtons', context.branchDifferences[`${remote.remote}/${branch.name}`])
       setCommitsAhead(context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueHeadCommits)
       setCommitsBehind(context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueRemoteCommits)
-    }else{
+    } else {
       setCommitsAhead([])
       setCommitsBehind([])
     }
   }, [context.branchDifferences, context.currentBranch, branch, remote])
 
-
   const setDefaultRemote = () => {
-  
+
     if (context.remotes.length > 0) {
       // find remote called origin
       const origin = context.remotes.find(remote => remote.remote === 'origin')
@@ -78,8 +77,6 @@ export const SourceControlButtons = (props: SourceControlButtonsProps) => {
     console.log('SC BUTTONS', branch, remote)
   }, [])
 
-
-
   const pull = async () => {
     await actions.pull(remote.remote, branch.name)
   }
@@ -96,7 +93,6 @@ export const SourceControlButtons = (props: SourceControlButtonsProps) => {
   const buttonsDisabled = () => {
     return (!context.upstream) || context.remotes.length === 0
   }
-
 
   return (
     <span className='d-flex justify-content-end align-items-center'>

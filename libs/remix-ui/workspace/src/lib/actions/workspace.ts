@@ -86,7 +86,7 @@ export const setPlugin = (filePanelPlugin, reducerDispatch) => {
     await getGitConfig()
   })
   plugin.on('fileManager', 'fileAdded', async (filePath: string) => {
-    if(filePath.includes('.gitmodules')) {
+    if (filePath.includes('.gitmodules')) {
       await checkGit()
     }
   })
@@ -188,7 +188,7 @@ export const createWorkspace = async (
         }
       }
     }
-    if (metadata && metadata.type === 'plugin') {      
+    if (metadata && metadata.type === 'plugin') {
       plugin.call('notification', 'toast', 'Please wait while the workspace is being populated with the template.')
       dispatch(cloneRepositoryRequest())
       setTimeout(() => {
@@ -197,8 +197,8 @@ export const createWorkspace = async (
         }).catch((e) => {
           dispatch(cloneRepositorySuccess())
           plugin.call('notification', 'toast', 'error adding template ' + e.message || e)
-        })  
-      }, 5000)      
+        })
+      }, 5000)
     } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
     cb && cb(null, workspaceName)
     if (isGitRepo) {
@@ -225,7 +225,7 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: W
   if ((await workspaceExists(workspaceName)) && template === 'remixDefault') throw new Error('workspace already exists')
   else if (metadata && metadata.type === 'git') {
     dispatch(cloneRepositoryRequest())
-    await plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, workspaceName)
+    await plugin.call('dGitProvider', 'clone', { url: metadata.url, branch: metadata.branch }, workspaceName)
     dispatch(cloneRepositorySuccess())
   } else {
     const workspaceProvider = plugin.fileProviders.workspace
@@ -271,7 +271,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         const ipfs = IpfsHttpClient({ port, host, protocol
           , headers: {
             // authorization: auth
-          } 
+          }
         })
         const hashed = bytesToHex(hash.keccakFromString(params.shareCode))
 
@@ -604,7 +604,7 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
     const workspaces: { name: string; isGitRepo: boolean; hasGitSubmodules: boolean; branches?: { remote: any; name: string }[]; currentBranch?: string }[] = await new Promise((resolve, reject) => {
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
       plugin.fileProviders.browser.resolveDirectory('/' + workspacesPath, (error, items) => {
-        
+
         if (error) {
           return reject(error)
         }
@@ -687,7 +687,7 @@ export const cloneRepository = async (url: string) => {
           const cloneModal = {
             id: 'cloneGitRepository',
             title: 'Clone Git Repository',
-            message: 
+            message:
             'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin',
             modalType: 'modal',
             okLabel: plugin.registry.get('platform').api.isDesktop() ? 'Select or create folder':'OK',

@@ -25,10 +25,9 @@ export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
     const status = commitChange.type
     return (<>
 
-        {status && status.indexOf("modified") === -1 ? <></> : <span>M</span>}
-        {status && status.indexOf("deleted") === -1 ? <></> : <span>D</span>}
-        {status && status.indexOf("added") === -1 ? <></> : <span>A</span>}
-
+      {status && status.indexOf("modified") === -1 ? <></> : <span>M</span>}
+      {status && status.indexOf("deleted") === -1 ? <></> : <span>D</span>}
+      {status && status.indexOf("added") === -1 ? <></> : <span>A</span>}
 
     </>)
   }

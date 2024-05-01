@@ -13,43 +13,42 @@ interface SourceControlGroupNavigationProps {
     group: sourceControlGroup
 }
 
-
 export const SourceControlGroupNavigation = (props: SourceControlGroupNavigationProps) => {
-    const { eventKey, activePanel, callback, group } = props;
-    const actions = React.useContext(gitActionsContext)
-    const pluginActions = React.useContext(pluginActionsContext)
-    const handleClick = () => {
-        if (!callback) return
-        if (activePanel === eventKey) {
-            callback('')
-        } else {
-            callback(eventKey)
-        }
+  const { eventKey, activePanel, callback, group } = props;
+  const actions = React.useContext(gitActionsContext)
+  const pluginActions = React.useContext(pluginActionsContext)
+  const handleClick = () => {
+    if (!callback) return
+    if (activePanel === eventKey) {
+      callback('')
+    } else {
+      callback(eventKey)
     }
-    return (
-        <>
-            <div className={'d-flex justify-content-between  pt-1 ' + (activePanel === eventKey? 'bg-light': '')}>
-                <span onClick={()=>handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'>
-                    {
-                        activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
-                    }
-                    <label className="pl-1 nav form-check-label">{group.name}</label>
-                </span>
-                {
-                    activePanel === eventKey ?
-                        <span className='d-flex justify-content-end align-items-center w-25'>
-                          {group.name === 'Changes' ?
-                            <CustomTooltip tooltipText={<FormattedMessage id="Stage All Changes" />}>
-                                <button onClick={async () => { await actions.addall() }} className='btn btn-sm'><FontAwesomeIcon icon={faPlus} className="" /></button>
-                            </CustomTooltip>: null}
-                            {group.name === 'Staged' ?
-                            <CustomTooltip tooltipText={<FormattedMessage id="Unstage All Changes" />}>
-                                <button onClick={async () => { await pluginActions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faMinus} className="" /></button>
-                            </CustomTooltip>: null}
+  }
+  return (
+    <>
+      <div className={'d-flex justify-content-between  pt-1 ' + (activePanel === eventKey? 'bg-light': '')}>
+        <span onClick={()=>handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'>
+          {
+            activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
+          }
+          <label className="pl-1 nav form-check-label">{group.name}</label>
+        </span>
+        {
+          activePanel === eventKey ?
+            <span className='d-flex justify-content-end align-items-center w-25'>
+              {group.name === 'Changes' ?
+                <CustomTooltip tooltipText={<FormattedMessage id="Stage All Changes" />}>
+                  <button onClick={async () => { await actions.addall() }} className='btn btn-sm'><FontAwesomeIcon icon={faPlus} className="" /></button>
+                </CustomTooltip>: null}
+              {group.name === 'Staged' ?
+                <CustomTooltip tooltipText={<FormattedMessage id="Unstage All Changes" />}>
+                  <button onClick={async () => { await pluginActions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faMinus} className="" /></button>
+                </CustomTooltip>: null}
 
-                        </span> : null
-                }
-            </div>
-        </>
-    );
+            </span> : null
+        }
+      </div>
+    </>
+  );
 }

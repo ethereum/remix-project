@@ -57,7 +57,6 @@ export const GitUI = (props: IGitUi) => {
 
   useEffect(() => {
 
-
     async function setDecorators(gitState: gitState) {
       await plugin.call('fileDecorator', 'clearFileDecorators')
       await setModifiedDecorator(gitState.modified)
@@ -70,11 +69,9 @@ export const GitUI = (props: IGitUi) => {
       setDecorators(gitState)
     })
 
-
   }, [gitState.fileStatusResult])
 
   useEffect(() => {
-
 
     async function updatestate() {
       console.log('updatestate', gitState)
@@ -87,7 +84,6 @@ export const GitUI = (props: IGitUi) => {
     })
 
   }, [gitState.gitHubUser, gitState.currentBranch, gitState.remotes, gitState.gitHubAccessToken])
-
 
   const gitActionsProviderValue = {
     commit,
@@ -131,73 +127,72 @@ export const GitUI = (props: IGitUi) => {
 
   return (
     <div className="m-1">
-        <gitPluginContext.Provider value={gitState}>
-          <loaderContext.Provider value={loaderState}>
-            <gitActionsContext.Provider value={gitActionsProviderValue}>
-              <pluginActionsContext.Provider value={pluginActionsProviderValue}>
-                  <Accordion activeKey={activePanel} defaultActiveKey="0">
-                    <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+      <gitPluginContext.Provider value={gitState}>
+        <loaderContext.Provider value={loaderState}>
+          <gitActionsContext.Provider value={gitActionsProviderValue}>
+            <pluginActionsContext.Provider value={pluginActionsProviderValue}>
+              <Accordion activeKey={activePanel} defaultActiveKey="0">
+                <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
 
-                    <Accordion.Collapse className='bg-light' eventKey="0">
-                      <>
-                        <SourceControlBase children={<CommitMessage/>} />
-                        <SourceControl />
-                      </>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="1">
-                      <>
-                        <Commands></Commands>
-                      </>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <CommitsNavigation title={`COMMITS`} eventKey="3" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="3">
-                      <>
-                        <Commits />
-                      </>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="2">
-                      <>
-                        <Branches /></>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="5">
-                      <>
-                        <Remotes></Remotes>
-                      </>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="4">
-                      <>
-                        <Clone /></>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="7">
-                      <>
-                        <GetDeviceCode></GetDeviceCode>
-                      </>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <LogNavigation eventKey="6" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="6">
-                      <>
-                        <LogViewer/>
-                      </>
-                    </Accordion.Collapse>
+                <Accordion.Collapse className='bg-light' eventKey="0">
+                  <>
+                    <SourceControlBase children={<CommitMessage/>} />
+                    <SourceControl />
+                  </>
+                </Accordion.Collapse>
+                <hr></hr>
+                <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
+                <Accordion.Collapse className='bg-light' eventKey="1">
+                  <>
+                    <Commands></Commands>
+                  </>
+                </Accordion.Collapse>
+                <hr></hr>
+                <CommitsNavigation title={`COMMITS`} eventKey="3" activePanel={activePanel} callback={setActivePanel} />
+                <Accordion.Collapse className='bg-light' eventKey="3">
+                  <>
+                    <Commits />
+                  </>
+                </Accordion.Collapse>
+                <hr></hr>
+                <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
+                <Accordion.Collapse className='bg-light' eventKey="2">
+                  <>
+                    <Branches /></>
+                </Accordion.Collapse>
+                <hr></hr>
+                <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
+                <Accordion.Collapse className='bg-light' eventKey="5">
+                  <>
+                    <Remotes></Remotes>
+                  </>
+                </Accordion.Collapse>
+                <hr></hr>
+                <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
+                <Accordion.Collapse className='bg-light' eventKey="4">
+                  <>
+                    <Clone /></>
+                </Accordion.Collapse>
+                <hr></hr>
+                <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />
+                <Accordion.Collapse className='bg-light' eventKey="7">
+                  <>
+                    <GetDeviceCode></GetDeviceCode>
+                  </>
+                </Accordion.Collapse>
+                <hr></hr>
+                <LogNavigation eventKey="6" activePanel={activePanel} callback={setActivePanel} />
+                <Accordion.Collapse className='bg-light' eventKey="6">
+                  <>
+                    <LogViewer/>
+                  </>
+                </Accordion.Collapse>
 
-
-                  </Accordion>
-              </pluginActionsContext.Provider>
-            </gitActionsContext.Provider>
-          </loaderContext.Provider>
-        </gitPluginContext.Provider>
+              </Accordion>
+            </pluginActionsContext.Provider>
+          </gitActionsContext.Provider>
+        </loaderContext.Provider>
+      </gitPluginContext.Provider>
     </div>
   )
 }

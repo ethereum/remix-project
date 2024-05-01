@@ -1,22 +1,21 @@
 import React, {useState, useEffect, useRef, useContext, ChangeEvent} from 'react' // eslint-disable-line
-import {FormattedMessage, useIntl} from 'react-intl'
-import {Dropdown} from 'react-bootstrap'
-import {CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
-import {CopyToClipboard} from '@remix-ui/clipboard'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Dropdown } from 'react-bootstrap'
+import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 import {FileExplorer} from './components/file-explorer' // eslint-disable-line
-import {FileSystemContext} from './contexts'
+import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
-import {ROOT_PATH, TEMPLATE_NAMES} from './utils/constants'
-import {HamburgerMenu} from './components/workspace-hamburger'
+import { ROOT_PATH, TEMPLATE_NAMES } from './utils/constants'
+import { HamburgerMenu } from './components/workspace-hamburger'
 
-import {MenuItems, WorkSpaceState, WorkspaceMetadata} from './types'
-import {contextMenuActions} from './utils'
+import { MenuItems, WorkSpaceState, WorkspaceMetadata } from './types'
+import { contextMenuActions } from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
-
 
 const _paq = (window._paq = window._paq || [])
 
@@ -141,7 +140,7 @@ export function Workspace() {
   }, [global.fs.browser.currentWorkspace, global.fs.localhost.sharedFolder, global.fs.mode])
 
   useEffect(() => {
-    if (global.fs.browser.currentWorkspace && !global.fs.browser.workspaces.find(({name}) => name === global.fs.browser.currentWorkspace)) {
+    if (global.fs.browser.currentWorkspace && !global.fs.browser.workspaces.find(({ name }) => name === global.fs.browser.currentWorkspace)) {
       if (global.fs.browser.workspaces.length > 0) {
         switchWorkspace(global.fs.browser.workspaces[global.fs.browser.workspaces.length - 1].name)
       } else {
@@ -157,92 +156,92 @@ export function Workspace() {
 
   const renameCurrentWorkspace = () => {
     global.modal(
-      intl.formatMessage({id: 'filePanel.workspace.rename'}),
+      intl.formatMessage({ id: 'filePanel.workspace.rename' }),
       renameModalMessage(),
-      intl.formatMessage({id: 'filePanel.save'}),
+      intl.formatMessage({ id: 'filePanel.save' }),
       onFinishRenameWorkspace,
-      intl.formatMessage({id: 'filePanel.cancel'})
+      intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
 
   const saveSampleCodeWorkspace = () => {
     const workspaceName = global.plugin.getAvailableWorkspaceName('code-sample')
     global.modal(
-      intl.formatMessage({id: 'filePanel.workspace.save_workspace'}),
+      intl.formatMessage({ id: 'filePanel.workspace.save_workspace' }),
       renameModalMessage(workspaceName),
-      intl.formatMessage({id: 'filePanel.save'}),
+      intl.formatMessage({ id: 'filePanel.save' }),
       onFinishRenameWorkspace,
-      intl.formatMessage({id: 'filePanel.cancel'})
+      intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
 
   const downloadCurrentWorkspace = () => {
     global.modal(
-      intl.formatMessage({id: 'filePanel.workspace.download'}),
-      intl.formatMessage({id: 'filePanel.workspace.downloadConfirm'}),
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({ id: 'filePanel.workspace.download' }),
+      intl.formatMessage({ id: 'filePanel.workspace.downloadConfirm' }),
+      intl.formatMessage({ id: 'filePanel.ok' }),
       onFinishDownloadWorkspace,
-      intl.formatMessage({id: 'filePanel.cancel'})
+      intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
   const createWorkspace = () => {
     global.modal(
-      intl.formatMessage({id: (platform !== appPlatformTypes.desktop)? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop'}),
+      intl.formatMessage({ id: (platform !== appPlatformTypes.desktop)? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
       createModalMessage(),
-      intl.formatMessage({id: (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder'}),
+      intl.formatMessage({ id: (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder' }),
       onFinishCreateWorkspace,
-      intl.formatMessage({id: 'filePanel.cancel'})
+      intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
 
   const deleteCurrentWorkspace = () => {
     global.modal(
-      intl.formatMessage({id: 'filePanel.workspace.delete'}),
-      intl.formatMessage({id: 'filePanel.workspace.deleteConfirm'}),
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({ id: 'filePanel.workspace.delete' }),
+      intl.formatMessage({ id: 'filePanel.workspace.deleteConfirm' }),
+      intl.formatMessage({ id: 'filePanel.ok' }),
       onFinishDeleteWorkspace,
-      intl.formatMessage({id: 'filePanel.cancel'})
+      intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
 
   const deleteAllWorkspaces = () => {
     global.modal(
-      intl.formatMessage({id: 'filePanel.workspace.deleteAll'}),
+      intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }),
       <>
         <div className="d-flex flex-column">
-          <span className="pb-1">{intl.formatMessage({id: 'filePanel.workspace.deleteAllConfirm1'})}</span>
-          <span>{intl.formatMessage({id: 'filePanel.workspace.deleteAllConfirm2'})}</span>
+          <span className="pb-1">{intl.formatMessage({ id: 'filePanel.workspace.deleteAllConfirm1' })}</span>
+          <span>{intl.formatMessage({ id: 'filePanel.workspace.deleteAllConfirm2' })}</span>
         </div>
       </>,
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({ id: 'filePanel.ok' }),
       onFinishDeleteAllWorkspaces,
-      intl.formatMessage({id: 'filePanel.cancel'})
+      intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
 
   const addMenuItems = (items: MenuItems) => {
     setState((prevState) => {
       // filter duplicate items
-      const actions = items.filter(({name}) => prevState.actions.findIndex((action) => action.name === name) === -1)
+      const actions = items.filter(({ name }) => prevState.actions.findIndex((action) => action.name === name) === -1)
 
-      return {...prevState, actions: [...prevState.actions, ...actions]}
+      return { ...prevState, actions: [...prevState.actions, ...actions]}
     })
   }
 
   const removeMenuItems = (items: MenuItems) => {
     setState((prevState) => {
-      const actions = prevState.actions.filter(({id, name}) => items.findIndex((item) => id === item.id && name === item.name) === -1)
-      return {...prevState, actions}
+      const actions = prevState.actions.filter(({ id, name }) => items.findIndex((item) => id === item.id && name === item.name) === -1)
+      return { ...prevState, actions }
     })
   }
 
   const cloneGitRepository = () => {
     global.modal(
-      intl.formatMessage({id: 'filePanel.workspace.clone'}),
+      intl.formatMessage({ id: 'filePanel.workspace.clone' }),
       cloneModalMessage(),
-      intl.formatMessage({id:  (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder'}),
+      intl.formatMessage({ id:  (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder' }),
       handleTypingUrl,
-      intl.formatMessage({id: 'filePanel.cancel'})
+      intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
 
@@ -287,11 +286,11 @@ export function Workspace() {
       await global.dispatchRenameWorkspace(currentWorkspace, workspaceName)
     } catch (e) {
       global.modal(
-        intl.formatMessage({id: 'filePanel.workspace.rename'}),
+        intl.formatMessage({ id: 'filePanel.workspace.rename' }),
         e.message,
-        intl.formatMessage({id: 'filePanel.ok'}),
+        intl.formatMessage({ id: 'filePanel.ok' }),
         () => {},
-        intl.formatMessage({id: 'filePanel.cancel'})
+        intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
     }
@@ -302,11 +301,11 @@ export function Workspace() {
       await global.dispatchHandleDownloadWorkspace()
     } catch (e) {
       global.modal(
-        intl.formatMessage({id: 'filePanel.workspace.download'}),
+        intl.formatMessage({ id: 'filePanel.workspace.download' }),
         e.message,
-        intl.formatMessage({id: 'filePanel.ok'}),
+        intl.formatMessage({ id: 'filePanel.ok' }),
         () => {},
-        intl.formatMessage({id: 'filePanel.cancel'})
+        intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
     }
@@ -334,11 +333,11 @@ export function Workspace() {
       await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName, opts, initGitRepo)
     } catch (e) {
       global.modal(
-        intl.formatMessage({id:  (platform !== appPlatformTypes.desktop)? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop'}),
+        intl.formatMessage({ id:  (platform !== appPlatformTypes.desktop)? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
         e.message,
-        intl.formatMessage({id: 'filePanel.ok'}),
+        intl.formatMessage({ id: 'filePanel.ok' }),
         () => {},
-        intl.formatMessage({id: 'filePanel.cancel'})
+        intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
     }
@@ -349,11 +348,11 @@ export function Workspace() {
       await global.dispatchDeleteWorkspace(global.fs.browser.currentWorkspace)
     } catch (e) {
       global.modal(
-        intl.formatMessage({id: 'filePanel.workspace.delete'}),
+        intl.formatMessage({ id: 'filePanel.workspace.delete' }),
         e.message,
-        intl.formatMessage({id: 'filePanel.ok'}),
+        intl.formatMessage({ id: 'filePanel.ok' }),
         () => {},
-        intl.formatMessage({id: 'filePanel.cancel'})
+        intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
     }
@@ -364,18 +363,18 @@ export function Workspace() {
       await global.dispatchDeleteAllWorkspaces()
     } catch (e) {
       global.modal(
-        intl.formatMessage({id: 'filePanel.workspace.deleteAll'}),
+        intl.formatMessage({ id: 'filePanel.workspace.deleteAll' }),
         e.message,
-        intl.formatMessage({id: 'filePanel.ok'}),
+        intl.formatMessage({ id: 'filePanel.ok' }),
         () => {},
-        intl.formatMessage({id: 'filePanel.cancel'})
+        intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
     }
   }
 
   const resetFocus = () => {
-    global.dispatchSetFocusElement([{key: '', type: 'folder'}])
+    global.dispatchSetFocusElement([{ key: '', type: 'folder' }])
   }
 
   const switchWorkspace = async (name: string) => {
@@ -384,11 +383,11 @@ export function Workspace() {
       global.dispatchHandleExpandPath([])
     } catch (e) {
       global.modal(
-        intl.formatMessage({id: 'filePanel.workspace.switch'}),
+        intl.formatMessage({ id: 'filePanel.workspace.switch' }),
         e.message,
-        intl.formatMessage({id: 'filePanel.ok'}),
+        intl.formatMessage({ id: 'filePanel.ok' }),
         () => {},
-        intl.formatMessage({id: 'filePanel.cancel'})
+        intl.formatMessage({ id: 'filePanel.cancel' })
       )
       console.error(e)
     }
@@ -423,26 +422,26 @@ export function Workspace() {
       global.dispatchCloneRepository(url)
     } else {
       global.modal(
-        intl.formatMessage({id: 'filePanel.workspace.clone'}),
-        intl.formatMessage({id: 'filePanel.workspace.cloneMessage'}),
-        intl.formatMessage({id: (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder'}),
+        intl.formatMessage({ id: 'filePanel.workspace.clone' }),
+        intl.formatMessage({ id: 'filePanel.workspace.cloneMessage' }),
+        intl.formatMessage({ id: (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder' }),
         () => {},
-        intl.formatMessage({id: 'filePanel.cancel'})
+        intl.formatMessage({ id: 'filePanel.cancel' })
       )
     }
   }
 
   const handleCopyClick = (path: string, type: 'folder' | 'file' | 'workspace') => {
     setState((prevState) => {
-      return {...prevState, copyElement: [{key: path, type}]}
+      return { ...prevState, copyElement: [{ key: path, type }]}
     })
     setCanPaste(true)
-    global.toast(intl.formatMessage({id: 'filePanel.copiedToClipboard'}, {path}))
+    global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { path }))
   }
 
   const handlePasteClick = (dest: string, destType: string) => {
     dest = destType === 'file' ? extractParentFromKey(dest) || ROOT_PATH : dest
-    state.copyElement.map(({key, type}) => {
+    state.copyElement.map(({ key, type }) => {
       type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
     })
   }
@@ -452,9 +451,9 @@ export function Workspace() {
       global.dispatchDownloadPath(path)
     } catch (error) {
       global.modal(
-        intl.formatMessage({id: 'filePanel.downloadFailed'}),
-        intl.formatMessage({id: 'filePanel.copiedToClipboard'}, {error: typeof error === 'string' ? error : error.message}),
-        intl.formatMessage({id: 'filePanel.close'}),
+        intl.formatMessage({ id: 'filePanel.downloadFailed' }),
+        intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { error: typeof error === 'string' ? error : error.message }),
+        intl.formatMessage({ id: 'filePanel.close' }),
         async () => {}
       )
     }
@@ -465,9 +464,9 @@ export function Workspace() {
       global.dispatchCopyFile(src, dest)
     } catch (error) {
       global.modal(
-        intl.formatMessage({id: 'filePanel.copyFileFailed'}),
-        intl.formatMessage({id: 'filePanel.copyFileFailedMsg'}, {src}),
-        intl.formatMessage({id: 'filePanel.close'}),
+        intl.formatMessage({ id: 'filePanel.copyFileFailed' }),
+        intl.formatMessage({ id: 'filePanel.copyFileFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
         async () => {}
       )
     }
@@ -478,9 +477,9 @@ export function Workspace() {
       global.dispatchCopyFolder(src, dest)
     } catch (error) {
       global.modal(
-        intl.formatMessage({id: 'filePanel.copyFolderFailed'}),
-        intl.formatMessage({id: 'filePanel.copyFolderFailedMsg'}, {src}),
-        intl.formatMessage({id: 'filePanel.close'}),
+        intl.formatMessage({ id: 'filePanel.copyFolderFailed' }),
+        intl.formatMessage({ id: 'filePanel.copyFolderFailedMsg' }, { src }),
+        intl.formatMessage({ id: 'filePanel.close' }),
         async () => {}
       )
     }
@@ -491,8 +490,8 @@ export function Workspace() {
     setState((prevState) => {
       return {
         ...prevState,
-        focusContext: {element: path, x: pageX, y: pageY, type},
-        focusEdit: {...prevState.focusEdit, element: null, lastEdit: content},
+        focusContext: { element: path, x: pageX, y: pageY, type },
+        focusEdit: { ...prevState.focusEdit, element: null, lastEdit: content },
         showContextMenu: prevState.focusEdit.element !== path
       }
     })
@@ -542,7 +541,7 @@ export function Workspace() {
     setState((prevState) => {
       return {
         ...prevState,
-        focusContext: {element: null, x: 0, y: 0, type: ''},
+        focusContext: { element: null, x: 0, y: 0, type: '' },
         showContextMenu: false
       }
     })
@@ -552,7 +551,7 @@ export function Workspace() {
     try {
       global.dispatchRunScript(path)
     } catch (error) {
-      global.toast(intl.formatMessage({id: 'filePanel.runScriptFailed'}))
+      global.toast(intl.formatMessage({ id: 'filePanel.runScriptFailed' }))
     }
   }
 
@@ -566,33 +565,33 @@ export function Workspace() {
 
   const pushChangesToGist = (path?: string) => {
     global.modal(
-      intl.formatMessage({id: 'filePanel.createPublicGist'}),
-      intl.formatMessage({id: 'filePanel.createPublicGistMsg1'}),
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({ id: 'filePanel.createPublicGist' }),
+      intl.formatMessage({ id: 'filePanel.createPublicGistMsg1' }),
+      intl.formatMessage({ id: 'filePanel.ok' }),
       () => toGist(path),
-      intl.formatMessage({id: 'filePanel.cancel'}),
+      intl.formatMessage({ id: 'filePanel.cancel' }),
       () => {}
     )
   }
 
   const publishFolderToGist = (path?: string) => {
     global.modal(
-      intl.formatMessage({id: 'filePanel.createPublicGist'}),
-      intl.formatMessage({id: 'filePanel.createPublicGistMsg2'}, {path}),
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({ id: 'filePanel.createPublicGist' }),
+      intl.formatMessage({ id: 'filePanel.createPublicGistMsg2' }, { path }),
+      intl.formatMessage({ id: 'filePanel.ok' }),
       () => toGist(path),
-      intl.formatMessage({id: 'filePanel.cancel'}),
+      intl.formatMessage({ id: 'filePanel.cancel' }),
       () => {}
     )
   }
 
   const publishFileToGist = (path?: string) => {
     global.modal(
-      intl.formatMessage({id: 'filePanel.createPublicGist'}),
-      intl.formatMessage({id: 'filePanel.createPublicGistMsg3'}, {path}),
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({ id: 'filePanel.createPublicGist' }),
+      intl.formatMessage({ id: 'filePanel.createPublicGistMsg3' }, { path }),
+      intl.formatMessage({ id: 'filePanel.ok' }),
       () => toGist(path),
-      intl.formatMessage({id: 'filePanel.cancel'}),
+      intl.formatMessage({ id: 'filePanel.cancel' }),
       () => {}
     )
   }
@@ -615,13 +614,13 @@ export function Workspace() {
     if (!Array.isArray(path)) path = [path]
 
     global.modal(
-      path.length > 1 ? intl.formatMessage({id: 'filePanel.deleteItems'}) : intl.formatMessage({id: 'filePanel.deleteItem'}),
+      path.length > 1 ? intl.formatMessage({ id: 'filePanel.deleteItems' }) : intl.formatMessage({ id: 'filePanel.deleteItem' }),
       deleteMessage(path),
-      intl.formatMessage({id: 'filePanel.ok'}),
+      intl.formatMessage({ id: 'filePanel.ok' }),
       () => {
         global.dispatchDeletePath(path)
       },
-      intl.formatMessage({id: 'filePanel.cancel'}),
+      intl.formatMessage({ id: 'filePanel.cancel' }),
       () => {}
     )
   }
@@ -631,11 +630,11 @@ export function Workspace() {
   }
 
   const editModeOn = (path: string, type: string, isNew = false) => {
-    if (global.fs.readonly) return global.toast(intl.formatMessage({id: 'filePanel.globalToast'}))
+    if (global.fs.readonly) return global.toast(intl.formatMessage({ id: 'filePanel.globalToast' }))
     setState((prevState) => {
       return {
         ...prevState,
-        focusEdit: {...prevState.focusEdit, element: path, isNew, type}
+        focusEdit: { ...prevState.focusEdit, element: path, isNew, type }
       }
     })
   }
@@ -706,11 +705,11 @@ export function Workspace() {
     } catch (e) {
       console.error(e)
       global.modal(
-        intl.formatMessage({id: 'filePanel.checkoutGitBranch'}),
+        intl.formatMessage({ id: 'filePanel.checkoutGitBranch' }),
         e.message,
-        intl.formatMessage({id: 'filePanel.ok'}),
+        intl.formatMessage({ id: 'filePanel.ok' }),
         () => {},
-        intl.formatMessage({id: 'filePanel.cancel'})
+        intl.formatMessage({ id: 'filePanel.cancel' })
       )
     }
   }
@@ -721,11 +720,11 @@ export function Workspace() {
       _paq.push(['trackEvent', 'Workspace', 'GIT', 'switch_to_new_branch'])
     } catch (e) {
       global.modal(
-        intl.formatMessage({id: 'filePanel.checkoutGitBranch'}),
+        intl.formatMessage({ id: 'filePanel.checkoutGitBranch' }),
         e.message,
-        intl.formatMessage({id: 'filePanel.ok'}),
+        intl.formatMessage({ id: 'filePanel.ok' }),
         () => {},
-        intl.formatMessage({id: 'filePanel.cancel'})
+        intl.formatMessage({ id: 'filePanel.cancel' })
       )
     }
   }
@@ -733,7 +732,7 @@ export function Workspace() {
   const createModalMessage = () => {
     return (
       <>
-        <label id="selectWsTemplate" className="form-check-label" style={{fontWeight: 'bolder'}}>
+        <label id="selectWsTemplate" className="form-check-label" style={{ fontWeight: 'bolder' }}>
           <FormattedMessage id="filePanel.workspace.chooseTemplate" />
         </label>
         <select
@@ -744,63 +743,62 @@ export function Workspace() {
           ref={workspaceCreateTemplateInput}
           onChange={updateWsName}
         >
-          <optgroup style={{fontSize: 'medium'}} label="General">
-            <option style={{fontSize: 'small'}} value="remixDefault">
-              {intl.formatMessage({id: 'filePanel.basic'})}
+          <optgroup style={{ fontSize: 'medium' }} label="General">
+            <option style={{ fontSize: 'small' }} value="remixDefault">
+              {intl.formatMessage({ id: 'filePanel.basic' })}
             </option>
-            <option style={{fontSize: 'small'}} value="blank">
-              {intl.formatMessage({id: 'filePanel.blank'})}
+            <option style={{ fontSize: 'small' }} value="blank">
+              {intl.formatMessage({ id: 'filePanel.blank' })}
             </option>
           </optgroup>
-          <optgroup style={{fontSize: 'medium'}} label="OpenZeppelin">
-            <option style={{fontSize: 'small'}} value="ozerc20">
+          <optgroup style={{ fontSize: 'medium' }} label="OpenZeppelin">
+            <option style={{ fontSize: 'small' }} value="ozerc20">
               ERC20
             </option>
-            <option style={{fontSize: 'small'}} value="ozerc721">
+            <option style={{ fontSize: 'small' }} value="ozerc721">
               ERC721
             </option>
-            <option style={{fontSize: 'small'}} value="ozerc1155">
+            <option style={{ fontSize: 'small' }} value="ozerc1155">
               ERC1155
             </option>
           </optgroup>
-          <optgroup style={{fontSize: 'medium'}} label="0xProject">
-            <option style={{fontSize: 'small'}} value="zeroxErc20">
+          <optgroup style={{ fontSize: 'medium' }} label="0xProject">
+            <option style={{ fontSize: 'small' }} value="zeroxErc20">
               ERC20
             </option>
           </optgroup>
-          <optgroup style={{fontSize: 'medium'}} label="GnosisSafe">
-            <option style={{fontSize: 'small'}} value="gnosisSafeMultisig">
-              {intl.formatMessage({id: 'filePanel.multiSigWallet'})}
+          <optgroup style={{ fontSize: 'medium' }} label="GnosisSafe">
+            <option style={{ fontSize: 'small' }} value="gnosisSafeMultisig">
+              {intl.formatMessage({ id: 'filePanel.multiSigWallet' })}
             </option>
           </optgroup>
-          <optgroup style={{fontSize: 'medium'}} label="Circom ZKP">
-            <option style={{fontSize: 'small'}} value="semaphore">
-              {intl.formatMessage({id: 'filePanel.semaphore'})}
+          <optgroup style={{ fontSize: 'medium' }} label="Circom ZKP">
+            <option style={{ fontSize: 'small' }} value="semaphore">
+              {intl.formatMessage({ id: 'filePanel.semaphore' })}
             </option>
-            <option style={{fontSize: 'small'}} value="hashchecker">
-              {intl.formatMessage({id: 'filePanel.hashchecker'})}
+            <option style={{ fontSize: 'small' }} value="hashchecker">
+              {intl.formatMessage({ id: 'filePanel.hashchecker' })}
             </option>
-            <option style={{fontSize: 'small'}} value="rln">
-              {intl.formatMessage({id: 'filePanel.rln'})}
+            <option style={{ fontSize: 'small' }} value="rln">
+              {intl.formatMessage({ id: 'filePanel.rln' })}
             </option>
           </optgroup>
-          <optgroup style={{fontSize: 'medium'}} label="Uniswap V4">
-            <option style={{fontSize: 'small'}} value="uniswapV4Template">
-              {intl.formatMessage({id: 'filePanel.uniswapV4Template'})}
+          <optgroup style={{ fontSize: 'medium' }} label="Uniswap V4">
+            <option style={{ fontSize: 'small' }} value="uniswapV4Template">
+              {intl.formatMessage({ id: 'filePanel.uniswapV4Template' })}
             </option>
-            <option style={{fontSize: 'small'}} value="breakthroughLabsUniswapv4Hooks">
-              {intl.formatMessage({id: 'filePanel.breakthroughLabsUniswapv4Hooks'})}
-            </option>
-
-            <option style={{fontSize: 'small'}} value="uniswapV4HookBookMultiSigSwapHook">
-              {intl.formatMessage({id: 'filePanel.uniswapV4HookBookMultiSigSwapHook'})}
+            <option style={{ fontSize: 'small' }} value="breakthroughLabsUniswapv4Hooks">
+              {intl.formatMessage({ id: 'filePanel.breakthroughLabsUniswapv4Hooks' })}
             </option>
 
+            <option style={{ fontSize: 'small' }} value="uniswapV4HookBookMultiSigSwapHook">
+              {intl.formatMessage({ id: 'filePanel.uniswapV4HookBookMultiSigSwapHook' })}
+            </option>
 
           </optgroup>
         </select>
-        <div id="ozcustomization" data-id="ozCustomization" ref={displayOzCustomRef} style={{display: 'none'}} className="mb-2">
-          <label className="form-check-label d-block mb-2" style={{fontWeight: 'bolder'}}>
+        <div id="ozcustomization" data-id="ozCustomization" ref={displayOzCustomRef} style={{ display: 'none' }} className="mb-2">
+          <label className="form-check-label d-block mb-2" style={{ fontWeight: 'bolder' }}>
             <FormattedMessage id="filePanel.customizeTemplate" />
           </label>
 
@@ -847,7 +845,7 @@ export function Workspace() {
           </div>
         </div>
 
-        <label id="wsName" className="form-check-label" style={{fontWeight: 'bolder'}}>
+        <label id="wsName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
           <FormattedMessage id="filePanel.workspaceName" />
         </label>
         <input
@@ -872,7 +870,7 @@ export function Workspace() {
             htmlFor="initGitRepository"
             data-id="initGitRepositoryLabel"
             className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-            title={intl.formatMessage({id: 'filePanel.initGitRepoTitle'})}
+            title={intl.formatMessage({ id: 'filePanel.initGitRepoTitle' })}
           >
             <FormattedMessage id="filePanel.initGitRepositoryLabel" />
           </label>
@@ -898,7 +896,7 @@ export function Workspace() {
   }
 
   const formatNameForReadonly = (name: string) => {
-    return global.fs.readonly ? name + ` (${intl.formatMessage({id: 'filePanel.readOnly'})})` : name
+    return global.fs.readonly ? name + ` (${intl.formatMessage({ id: 'filePanel.readOnly' })})` : name
   }
 
   const cloneModalMessage = () => {
@@ -985,7 +983,7 @@ export function Workspace() {
                     </CustomTooltip>}
 
                     {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
-                      <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{fontSize: '1.1rem', cursor: 'pointer'}} ></i>
+                      <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{ fontSize: '1.1rem', cursor: 'pointer' }} ></i>
                     </CopyToClipboard>
                     }
 
@@ -1030,7 +1028,7 @@ export function Workspace() {
                             </span>
                           )}
                         </Dropdown.Item>
-                        {global.fs.browser.workspaces.map(({name, isGitRepo}, index) => (
+                        {global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
                           <Dropdown.Item
                             key={index}
                             onClick={() => {
@@ -1209,12 +1207,12 @@ export function Workspace() {
             <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
             {selectedWorkspace.hasGitSubmodules?
               <div className="pt-1 mr-1">
-                {global.fs.browser.isRequestingCloning ? <div style={{ height: 30 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div>  :
+                {global.fs.browser.isRequestingCloning ? <div style={{ height: 30 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div> :
                   <div style={{ height: 30 }} onClick={updateSubModules} data-id='updatesubmodules' className='btn btn-sm border text-muted small'>update submodules</div>}
               </div>
               : null}
             <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
-              <Dropdown style={{height: 30, minWidth: 80}} onToggle={toggleBranches} show={showBranches} drop={'up'}>
+              <Dropdown style={{ height: 30, minWidth: 80 }} onToggle={toggleBranches} show={showBranches} drop={'up'}>
                 <Dropdown.Toggle
                   as={CustomToggle}
                   id="dropdown-custom-components"
@@ -1226,7 +1224,7 @@ export function Workspace() {
 
                 <Dropdown.Menu as={CustomMenu} className="custom-dropdown-items branches-dropdown">
                   <div data-id="custom-dropdown-menu">
-                    <div className="d-flex text-dark" style={{fontSize: 14, fontWeight: 'bold'}}>
+                    <div className="d-flex text-dark" style={{ fontSize: 14, fontWeight: 'bold' }}>
                       <span className="mt-2 ml-2 mr-auto">
                         <FormattedMessage id="filePanel.switchBranches" />
                       </span>
@@ -1245,12 +1243,12 @@ export function Workspace() {
                         placeholder={intl.formatMessage({
                           id: 'filePanel.findOrCreateABranch'
                         })}
-                        style={{minWidth: 225}}
+                        style={{ minWidth: 225 }}
                         onChange={handleBranchFilterChange}
                         data-id="workspaceGitInput"
                       />
                     </div>
-                    <div className="border-top" style={{maxHeight: 120, overflowY: 'scroll'}} data-id="custom-dropdown-items">
+                    <div className="border-top" style={{ maxHeight: 120, overflowY: 'scroll' }} data-id="custom-dropdown-items">
                       {filteredBranches.length > 0 ? (
                         filteredBranches.map((branch, index) => {
                           return (
@@ -1259,7 +1257,7 @@ export function Workspace() {
                               onClick={() => {
                                 switchToBranch(branch)
                               }}
-                              title={intl.formatMessage({id: `filePanel.switchToBranch${branch.remote ? 'Title1' : 'Title2'}`})}
+                              title={intl.formatMessage({ id: `filePanel.switchToBranch${branch.remote ? 'Title1' : 'Title2'}` })}
                             >
                               <div data-id={`workspaceGit-${branch.remote ? `${branch.remote}/${branch.name}` : branch.name}`}>
                                 {currentBranch === branch.name && !branch.remote ? (
@@ -1290,7 +1288,7 @@ export function Workspace() {
                     </div>
                     {(selectedWorkspace.branches || []).length > 4 && (
                       <div className="text-center border-top pt-2">
-                        <label style={{fontSize: 12, cursor: 'pointer'}} onClick={showAllBranches}>
+                        <label style={{ fontSize: 12, cursor: 'pointer' }} onClick={showAllBranches}>
                           <FormattedMessage id="filePanel.viewAllBranches" />
                         </label>
                       </div>

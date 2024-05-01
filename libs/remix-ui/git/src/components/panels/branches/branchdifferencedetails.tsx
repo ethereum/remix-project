@@ -25,16 +25,16 @@ export const BranchDifferenceDetails = (props: BrancheDifferenceProps) => {
   }
 
   return (
-  <Accordion activeKey={activePanel} defaultActiveKey="">
-    <CommitsNavigation branch={branch} remote={remote} title={title} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
-    <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
-    <div className="ml-1">
-      {commits && commits.map((commit, index) => {
-        return (
-          <CommitDetails getCommitChanges={getCommitChanges} key={index} checkout={()=>{}} commit={commit}></CommitDetails>
-        );
-      })}
-    </div>
-    </Accordion.Collapse>
-  </Accordion>)
+    <Accordion activeKey={activePanel} defaultActiveKey="">
+      <CommitsNavigation branch={branch} remote={remote} title={title} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+      <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
+        <div className="ml-1">
+          {commits && commits.map((commit, index) => {
+            return (
+              <CommitDetails getCommitChanges={getCommitChanges} key={index} checkout={()=>{}} commit={commit}></CommitDetails>
+            );
+          })}
+        </div>
+      </Accordion.Collapse>
+    </Accordion>)
 }

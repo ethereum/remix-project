@@ -4,7 +4,6 @@ import './remix-ui-grid-cell.css'
 import FiltersContext from "./filtersContext"
 import { CustomTooltip } from '@remix-ui/helper'
 
-
 declare global {
   interface Window {
     _paq: any
@@ -17,7 +16,7 @@ interface RemixUIGridCellProps {
   pinned?: boolean
   pinStateCallback?: any
   logo?: string
-  title?: string       
+  title?: string
   tagList?: string[] // max 8, others will be ignored
   classList?: string
   styleList?: any
@@ -31,7 +30,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
 
   useEffect(() => {
     if (props.tagList) setAnyEnabled(props.tagList.some((key) => filterCon.keyValueMap[key]?.enabled))
-    else setAnyEnabled(filterCon.showUntagged) 
+    else setAnyEnabled(filterCon.showUntagged)
   }, [filterCon, props.tagList])
 
   return (
@@ -39,11 +38,11 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
       { anyEnabled && <div className='d-flex flex-grid'>
         <div className={"d-flex mx-0 p-2 bg-light border border-secondary remixui_grid_cell_container " + props.classList || ''} data-id={"remixUIGS" + props.title}>
           <div className="d-flex remixui_grid_cell flex-column">
-            <div className='d-flex flex-row pb-1 align-items-end' style={{width: '8rem', height: '1rem'}}>
-              { props.logo && <img className='remixui_grid_view_logo mr-1' src={props.logo}  style={{width: '1rem', height: '1rem'}}/> }
+            <div className='d-flex flex-row pb-1 align-items-end' style={{ width: '8rem', height: '1rem' }}>
+              { props.logo && <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> }
               { props.title && <label
                 className='m-0 p-0 align-items-left'
-                style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 'xx-small'}}
+                style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 'xx-small' }}
               >
                 { props.title }
               </label> }
@@ -75,7 +74,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
             )
           )) }
         </div> }
-        { !props.tagList &&  <span
+        { !props.tagList && <span
           className={'remixui_grid_cell_tags'}>
         </span> }
       </div> }

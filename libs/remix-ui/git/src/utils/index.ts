@@ -1,3 +1,3 @@
 export const removeSlash = (s: string) => {
-    return s.replace(/^\/+/, "");
-  };
+  return s.replace(/^\/+/, "");
+};

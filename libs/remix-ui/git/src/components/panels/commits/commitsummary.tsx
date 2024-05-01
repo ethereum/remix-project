@@ -21,10 +21,10 @@ export const CommitSummary = (props: CommitSummaryProps) => {
         return "today at " + dateFormat(timestamp * 1000, "HH:MM");
       } else
 
-        if (diff < 1) {
-          // return how many hours ago
-          return `${Math.floor(diff * 24)} hour(s) ago`;
-        }
+      if (diff < 1) {
+        // return how many hours ago
+        return `${Math.floor(diff * 24)} hour(s) ago`;
+      }
 
       if (diff < 7) {
         // return how many days ago
@@ -45,8 +45,6 @@ export const CommitSummary = (props: CommitSummaryProps) => {
       </div>
       {commit.commit.author.name || ""}
       <span className="ml-1">{getDate(commit)}</span>
-
-
 
     </>
   )

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext, useRef, ReactNode} from 'react' // eslint-disable-line
 
 import './remix-ui-grid-view.css'
-import {ThemeContext, themes} from './themeContext'
+import { ThemeContext, themes } from './themeContext'
 import CustomCheckbox from './components/customCheckbox'
 import FiltersContext from "./filtersContext"
 
@@ -35,7 +35,7 @@ export const RemixUIGridView = (props: RemixUIGridViewProps) => {
     if (!color || color === '') color = setKeyValueMap[key].color
     setKeyValueMap((prevMap) => ({
       ...prevMap,
-      [key]: {color, enabled},
+      [key]: { color, enabled },
     }))
   }
 
@@ -52,7 +52,7 @@ export const RemixUIGridView = (props: RemixUIGridViewProps) => {
     }))
   }
 
-  const {plugin} = props.plugin
+  const { plugin } = props.plugin
   const searchInputRef = useRef(null)
 
   const [state, setState] = useState<{
@@ -65,13 +65,13 @@ export const RemixUIGridView = (props: RemixUIGridViewProps) => {
   useEffect(() => {
     if (props.tagList && Array.isArray(props.tagList)) {
       const initialKeyValueMap: Record<string, { enabled: boolean; color: string; }> = {};
-    
+
       // Limit to first 8 elements, ignoring the rest
       for (let i = 0; i < props.tagList.length; i++) {
         const [key, color] = props.tagList[i]
-        initialKeyValueMap[key] = { enabled: true, color } 
+        initialKeyValueMap[key] = { enabled: true, color }
       }
-      if (showUntagged) initialKeyValueMap['no tag'] = { enabled: true, color: 'primary' } 
+      if (showUntagged) initialKeyValueMap['no tag'] = { enabled: true, color: 'primary' }
       setKeyValueMap(initialKeyValueMap)
     }
   }, [])
@@ -121,7 +121,7 @@ export const RemixUIGridView = (props: RemixUIGridViewProps) => {
                     <input
                       ref={searchInputRef}
                       type="text"
-                      style={{minWidth: '100px'}}
+                      style={{ minWidth: '100px' }}
                       className="border form-control border-right-0 mr-4"
                       id="GVFilterInput"
                       placeholder={"Filter the list"}

@@ -15,8 +15,6 @@ export const Merge = () => {
     setLocalBranch(context.currentBranch.name)
   }, [context.currentBranch])
 
-
-
   const onLocalBranchChange = (value: any) => {
     console.log('onLocalBranchChange', value)
     setLocalBranch(value)
@@ -35,20 +33,14 @@ export const Merge = () => {
       })
     setLocalBranchOptions(localBranches)
 
-
   }, [context.branches])
-
-
 
   return (
     <>
 
-
-
       <div className="btn-group w-100" role="group" aria-label="Basic example">
         <GitUIButton type="button" onClick={async () => merge()} className="btn btn-primary mr-1">Merge</GitUIButton>
       </div>
-
 
       <label>Merge from Branch</label>
       <Select
@@ -61,7 +53,6 @@ export const Merge = () => {
         value={{ value: localBranch, label: localBranch }}
         placeholder="Type to search for a branch..."
       />
-
 
     </>)
 }

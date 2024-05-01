@@ -40,17 +40,17 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
   }
 
   function FunctionStatusIcons() {
-    
+
     const status = file.statusNames
 
     return (<>
 
-        {status && status.indexOf("modified") === -1 ? <></> : <div>M</div>}
-        {status && status.indexOf("deleted") === -1 ? <></> : <span>D</span>}
-        {status && status.indexOf("added") === -1 ? <></> : <span>A</span>}
-        {status && status.indexOf("untracked") === -1 ? <></> : <span>U</span>}
+      {status && status.indexOf("modified") === -1 ? <></> : <div>M</div>}
+      {status && status.indexOf("deleted") === -1 ? <></> : <span>D</span>}
+      {status && status.indexOf("added") === -1 ? <></> : <span>A</span>}
+      {status && status.indexOf("untracked") === -1 ? <></> : <span>U</span>}
     </>)
-    
+
   }
   return (<>
     <div className="d-flex w-100 d-flex flex-row align-items-center">

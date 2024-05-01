@@ -8,7 +8,6 @@ import { useIntl, FormattedMessage } from "react-intl";
 import { CopyToClipboard } from "@remix-ui/clipboard";
 import { FormControl, InputGroup } from "react-bootstrap";
 
-
 export const GitHubCredentials = () => {
   const context = React.useContext(gitPluginContext)
   const pluginactions = React.useContext(pluginActionsContext)
@@ -44,7 +43,7 @@ export const GitHubCredentials = () => {
 
   async function refresh() {
     const credentials = await pluginactions.getGitHubCredentials()
-    if(!credentials) return
+    if (!credentials) return
     console.log('credentials', credentials)
     setGithubToken(credentials.token || '')
     setGithubUsername(credentials.username || '')
@@ -61,7 +60,6 @@ export const GitHubCredentials = () => {
       token: ''
     })
   }
-
 
   return (
     <>

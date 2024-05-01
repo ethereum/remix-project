@@ -2,7 +2,7 @@ import { ReadCommitResult } from "isomorphic-git"
 import React from "react"
 import { branch, commitChange, gitLog, gitState, remote } from "../types"
 
-export interface gitActions  {
+export interface gitActions {
     removeRemote(remote: remote): void
     clone(url: string, path: string, depth: number, singleBranch: boolean): Promise<void>
     add(path: string): Promise<void>
@@ -41,9 +41,9 @@ export interface pluginActions {
     openDiff(change: commitChange): Promise<void>
     saveToken(token: string): Promise<void>
     saveGitHubCredentials({
-        username,
-        email,
-        token
+      username,
+      email,
+      token
     }): Promise<void>
     getGitHubCredentials(): Promise<{
         username: string

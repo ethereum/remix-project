@@ -1,21 +1,21 @@
 import React, {useState} from 'react' // eslint-disable-line
-import {FormattedMessage, useIntl} from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import CheckTxStatus from './ChechTxStatus' // eslint-disable-line
 import Context from './Context' // eslint-disable-line
 import showTable from './Table'
 
-const RenderUnKnownTransactions = ({tx, receipt, index, plugin, showTableHash, txDetails, modal, provider}) => {
+const RenderUnKnownTransactions = ({ tx, receipt, index, plugin, showTableHash, txDetails, modal, provider }) => {
   const intl = useIntl()
   const debug = (event, tx) => {
     event.stopPropagation()
     if (tx.isCall && !tx.envMode.startsWith('vm')) {
       modal(
-        intl.formatMessage({id: 'terminal.vmMode'}),
-        intl.formatMessage({id: 'terminal.vmModeMsg'}),
-        intl.formatMessage({id: 'terminal.ok'}),
+        intl.formatMessage({ id: 'terminal.vmMode' }),
+        intl.formatMessage({ id: 'terminal.vmModeMsg' }),
+        intl.formatMessage({ id: 'terminal.ok' }),
         false,
         () => {},
-        intl.formatMessage({id: 'terminal.cancel'}),
+        intl.formatMessage({ id: 'terminal.cancel' }),
         () => {}
       )
     } else {
@@ -26,7 +26,7 @@ const RenderUnKnownTransactions = ({tx, receipt, index, plugin, showTableHash, t
   const from = tx.from
   const to = tx.to
   const txType = 'unknown' + (tx.isCall ? 'Call' : 'Tx')
-  const options = {from, to, tx}
+  const options = { from, to, tx }
   return (
     <span id={`tx${tx.hash}`} key={index}>
       <div className="remix_ui_terminal_log" onClick={(event) => txDetails(event, tx)}>

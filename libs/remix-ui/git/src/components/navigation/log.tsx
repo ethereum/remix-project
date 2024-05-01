@@ -24,7 +24,7 @@ export const LogNavigation = ({ eventKey, activePanel, callback }) => {
   }
 
   useEffect(() => {
-    if(!context.log) return
+    if (!context.log) return
     // count different types of logs
     const errorCount = context.log.filter(log => log.type === 'error').length
     const warningCount = context.log.filter(log => log.type === 'warning').length
@@ -80,7 +80,7 @@ export const LogNavigation = ({ eventKey, activePanel, callback }) => {
           )}
         </span>
         {context.log && context.log.length > 0 && (
-        <FontAwesomeIcon onClick={clearLogs} className='btn btn-sm' icon={faBan}></FontAwesomeIcon>)}
+          <FontAwesomeIcon onClick={clearLogs} className='btn btn-sm' icon={faBan}></FontAwesomeIcon>)}
       </div>
     </>
   );
