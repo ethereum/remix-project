@@ -420,7 +420,6 @@ export class TemplatesSelection extends ViewPlugin {
       </RemixUIGridView>
     )
   }
-
 }
 
 const createModalMessage = async (
@@ -440,6 +439,7 @@ const createModalMessage = async (
         defaultValue={defaultName}
         className="form-control"
         onChange={(e) => onChangeTemplateName(e.target.value)}
+        onInput={(e) => onChangeTemplateName((e.target as any).value)}
       />
       <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
         <input
@@ -449,6 +449,7 @@ const createModalMessage = async (
           type="checkbox"
           disabled={gitConfigNotSet}
           onChange={(e) => onChangeInitGit(e.target.value)}
+          onInput={(e) => onChangeInitGit((e.target as any).value)}
         />
         <label
           htmlFor="initGitRepository"
