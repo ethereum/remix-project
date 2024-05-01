@@ -61,7 +61,7 @@
   "home.startCodingPlayground": "Open a playground for prototyping and simple learning",
   "home.openFile": "Open File",
   "home.openFileTooltip": "Open a File from your File System",
-  "home.accessFileSystem": "Access File System",
+  "home.accessFileSystem": "Connect to local filesystem",
   "home.loadFrom": "Load from",
   "home.resources": "Resources",
   "home.connectToLocalhost": "Connect to Localhost",

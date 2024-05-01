@@ -253,6 +253,28 @@ contract HelloWorld {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
+        {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
+          <div className="d-flex flex-column mb-3">
+            <label style={{ fontSize: '0.8rem' }} className="mt-3">
+                Recent workspaces
+            </label>
+            {state.recentWorkspaces[0] && state.recentWorkspaces[0] !== '' && (
+              <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[0])}>
+                {state.recentWorkspaces[0]}
+              </a>
+            )}
+            {state.recentWorkspaces[1] && state.recentWorkspaces[1] !== '' && (
+              <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[1])}>
+                {state.recentWorkspaces[1]}
+              </a>
+            )}
+            {state.recentWorkspaces[2] && state.recentWorkspaces[2] !== '' && (
+              <a className="cursor-pointer ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[2])}>
+                {state.recentWorkspaces[2]}
+              </a>
+            )}
+          </div>
+        )}
         <label style={{ fontSize: '1.2rem' }}>
           <FormattedMessage id="home.files" />
         </label>
@@ -293,63 +315,32 @@ contract HelloWorld {
                 />
               </span>
             </CustomTooltip>
-            <CustomTooltip
-              placement={'top'}
-              tooltipId="overlay-tooltip"
-              tooltipClasses="text-nowrap"
-              tooltipText={<FormattedMessage id="home.connectToLocalhost" />}
-              tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+            <button
+              className="btn text-nowrap p-2 mr-2 border my-1"
+              data-id="landingPageImportFromGitHubButton"
+              onClick={() =>
+                showFullMessage('GitHub', 'github URL', [
+                  'https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol',
+                  'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol',
+                ])
+              }
             >
-              <button className="btn text-nowrap p-2 border my-1" style={{ width: 'fit-content' }} onClick={() => connectToLocalhost()}>
-                <FormattedMessage id="home.accessFileSystem" />
-              </button>
-            </CustomTooltip>
-          </div>
-          {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
-            <div className="d-flex flex-column">
-              <label style={{ fontSize: '0.8rem' }} className="mt-3">
-                Recent workspaces
-              </label>
-              {state.recentWorkspaces[0] && state.recentWorkspaces[0] !== '' && (
-                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[0])}>
-                  {state.recentWorkspaces[0]}
-                </a>
-              )}
-              {state.recentWorkspaces[1] && state.recentWorkspaces[1] !== '' && (
-                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[1])}>
-                  {state.recentWorkspaces[1]}
-                </a>
-              )}
-              {state.recentWorkspaces[2] && state.recentWorkspaces[2] !== '' && (
-                <a className="cursor-pointer ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[2])}>
-                  {state.recentWorkspaces[2]}
-                </a>
-              )}
-            </div>
-          )}
-        </div>
-        <label style={{ fontSize: '0.8rem' }} className="pt-3">
-          <FormattedMessage id="home.loadFrom" />
-        </label>
-        <div className="d-flex">
-          <button
-            className="btn p-2 border mr-2"
-            data-id="landingPageImportFromGitHubButton"
-            onClick={() =>
-              showFullMessage('GitHub', 'github URL', [
-                'https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol',
-                'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol',
-              ])
-            }
-          >
             GitHub
-          </button>
-          <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
+            </button>
+            <button className="btn text-nowrap p-2 mr-2 border my-1" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')}>
+            IPFS
+            </button>
+          </div>
+
+        </div>
+        {/* <label style={{ fontSize: '0.8rem' }} className="pt-3">
+          <FormattedMessage id="home.loadFrom" />
+        </label> */}
+        <div className="d-flex mt-2">
+          {/* <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
             Gist
           </button>
-          <button className="btn p-2 border mr-2" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')}>
-            IPFS
-          </button>
+
           <button
             className="btn p-2 border"
             onClick={() =>
@@ -357,7 +348,18 @@ contract HelloWorld {
             }
           >
             HTTPS
-          </button>
+          </button> */}
+          <CustomTooltip
+            placement={'top'}
+            tooltipId="overlay-tooltip"
+            tooltipClasses="text-nowrap"
+            tooltipText={<FormattedMessage id="home.connectToLocalhost" />}
+            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+          >
+            <button className="btn btn-block w-100 text-nowrap p-2 border my-1" style={{ width: 'fit-content' }} onClick={() => connectToLocalhost()}>
+              <FormattedMessage id="home.accessFileSystem" />
+            </button>
+          </CustomTooltip>
         </div>
       </div>
     </>

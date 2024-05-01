@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useRef, useContext } from 'react'
+import React, { useEffect, useRef, useContext, SyntheticEvent, useState } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { TEMPLATE_NAMES,TEMPLATE_METADATA } from '@remix-ui/workspace'
 import { ThemeContext } from '../themeContext'
@@ -144,6 +144,33 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
     _paq.push(['trackEvent', 'hometab', 'homeGetStarted', templateName])
   }
 
+  const [activeButtonClass, setActiveButtonClass] = useState('')
+  const [activeButton, setActiveButton] = useState('homeTabGetStartedPlayground')
+
+  useEffect(() => {
+    const checkWorkspaceName = async () => {
+      const currentWorkspace = await plugin.call('filePanel', 'getCurrentWorkspace')
+      const getWorkspaces = await plugin.call('filePanel', 'getWorkspaces')
+      // setActiveButton(currentWorkspace.name)
+      console.log('activeButton', { activeButton, currentWorkspace, getWorkspaces })
+    }
+    checkWorkspaceName()
+  }, [])
+  const manipulateClasses = async (e: SyntheticEvent) => {
+    const target = e.target as HTMLButtonElement
+    // if btn-primary is active, remove it based on the following conditions:
+    // 1. Most importantly, if the  activeButton is the same as the data-id of any of the buttons
+    // then that button should be active
+    // 2. If the activeButton is not the same as the data-id of any of the buttons
+    // then the first button should be active
+    const currentWorkspace = await plugin.call('filePanel', 'getCurrentWorkspace')
+    const allworkspaces = await plugin.call('filePanel', 'getWorkspaces')
+    console.log('currentWorkspace', { currentWorkspace, allworkspaces })
+    if (target.classList.contains('btn-primary') && target.dataset.id === activeButton) {
+
+    }
+  }
+
   return (
     <div className="pl-2" id="hTGetStartedSection">
       <label className="pt-3" style={{ fontSize: '1.2rem' }}>
@@ -154,11 +181,13 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
           <div className="pt-2">
             <div className="d-flex flex-row align-items-center mb-3 flex-nowrap">
               {workspaceTemplates.slice(0, 3).map((template, index) => (
-                <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="top-start">
+                <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="top-start" key={`${template.gsID}-${template.workspaceTitle}-${index}`}>
                   <button key={index} className={index === 0 ? "btn btn-primary border p-2 text-nowrap mr-3" : index === workspaceTemplates.length - 1 ? "btn border p-2 text-nowrap mr-2" : "btn border p-2 text-nowrap mr-3"}
-                    onClick={() => {
-                      createWorkspace(template.templateName)
+                    onClick={(e) => {
+                      manipulateClasses(e)
+                      // createWorkspace(template.templateName)
                     }}
+                    data-id={`homeTabGetStarted${template.workspaceTitle}`}
                   >
                     {template.workspaceTitle}
                   </button>
@@ -167,13 +196,14 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
             </div>
             <div className="d-flex flex-row align-items-center mb-3 flex-nowrap">
               {workspaceTemplates.slice(3, workspaceTemplates.length).map((template, index) => (
-                <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="bottom-start">
+                <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="bottom-start" key={`${template.gsID}-${template.workspaceTitle}-${index}`}>
                   <button
                     key={index}
                     className={"btn border p-2 text-nowrap mr-3"}
                     onClick={() => {
                       createWorkspace(template.templateName)
                     }}
+                    data-id={`homeTabGetStarted${template.workspaceTitle}`}
                   >
                     {template.workspaceTitle}
                   </button>
