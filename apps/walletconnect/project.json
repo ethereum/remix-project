@@ -35,6 +35,14 @@
           }
         }
       },
+      "lint": {
+        "executor": "@nrwl/linter:eslint",
+        "outputs": ["{options.outputFile}"],
+        "options": {
+          "lintFilePatterns": ["apps/walletconnect/**/*.ts"],
+          "eslintConfig": "apps/walletconnect/.eslintrc"
+        }
+      },
       "serve": {
         "executor": "@nrwl/webpack:dev-server",
         "defaultConfiguration": "development",

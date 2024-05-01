@@ -41,7 +41,8 @@
       "options": {
         "lintFilePatterns": [
           "libs/remix-tests/**/*.ts"
-        ]
+        ],
+        "eslintConfig": "libs/remix-tests/.eslintrc"
       }
     }
   },
