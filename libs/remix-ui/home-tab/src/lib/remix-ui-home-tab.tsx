@@ -12,7 +12,7 @@ import HomeTabFeaturedPlugins from './components/homeTabFeaturedPlugins'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { HomeTabFileElectron } from './components/homeTabFileElectron'
 import { LanguageOptions } from './components/homeTablangOptions'
-import GettingStarted from './components/homeTabGettingStarted'
+
 
 declare global {
   interface Window {
