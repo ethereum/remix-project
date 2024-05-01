@@ -4,10 +4,12 @@ import { gitActionsContext } from "../../state/context"
 import { gitPluginContext } from "../gitui"
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { syncStateContext } from "./sourceControlBase";
 
 export const CommitMessage = () => {
     const context = React.useContext(gitPluginContext)
     const actions = React.useContext(gitActionsContext)
+    const syncState = React.useContext(syncStateContext)
 
     const [message, setMessage] = useState({ value: '' })
 
@@ -46,7 +48,7 @@ export const CommitMessage = () => {
             {context.canCommit ? <></> : <div className='alert alert-warning'>Cannot commit in detached state! Create a new branch and check it out first or checkout main.<br></br></div>}
             <button data-id='commitButton' className="btn btn-primary w-100" disabled={commitAllowed()} onClick={async () => await commit()} >
                 <FontAwesomeIcon icon={faCheck} className="mr-1" />
-                Commit
+                Commit {syncState.commitsAhead? `+${syncState.commitsAhead.length}` : ''} {syncState.commitsBehind? `-${syncState.commitsBehind.length}` : ''}
             </button>
             <hr></hr>
         </>

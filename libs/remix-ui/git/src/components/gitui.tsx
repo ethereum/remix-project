@@ -7,7 +7,7 @@ import { gitReducer } from '../state/gitreducer'
 import { defaultGitState, defaultLoaderState, gitState, loaderState } from '../types'
 import { SourceControl } from './panels/sourcontrol'
 import { Accordion } from "react-bootstrap";
-import { CommitMessage } from './panels/commitmessage'
+import { CommitMessage } from './buttons/commitmessage'
 import { Commits } from './panels/commits'
 import { Branches } from './panels/branches'
 import { SourceControlNavigation } from './navigation/sourcecontrol'
@@ -32,6 +32,7 @@ import { ApolloClient, ApolloProvider, NormalizedCacheObject } from '@apollo/cli
 import { GetDeviceCode } from './github/devicecode'
 import { LogNavigation } from './navigation/log'
 import LogViewer from './panels/log'
+import { SourceControlBase } from './buttons/sourceControlBase'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
@@ -139,7 +140,7 @@ export const GitUI = (props: IGitUi) => {
 
                     <Accordion.Collapse className='bg-light' eventKey="0">
                       <>
-                        <CommitMessage />
+                        <SourceControlBase children={<CommitMessage/>} />
                         <SourceControl />
                       </>
                     </Accordion.Collapse>
