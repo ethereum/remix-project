@@ -24,7 +24,8 @@ module.exports = {
         selector: '//*[@data-id="initGitRepository"][@disabled]',
         locateStrategy: 'xpath'
       })
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
+      .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_blank')
       .click('[data-id="initGitRepositoryLabel"]')
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
@@ -50,8 +51,8 @@ module.exports = {
       .waitForElementPresent('*[data-id="create-blank"]')
       .scrollAndClick('*[data-id="create-blank"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
+      .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_blank')
       .click('[data-id="initGitRepositoryLabel"]')
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
