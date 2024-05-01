@@ -84,10 +84,10 @@ export class Debugger {
           const generatedSources = this.debugger.callTree.sourceLocationTracker.getGeneratedSourcesFromAddress(address)
 
           const lineColumnPos = rawLocationAndOpcode.lineColumnPos
-          
+
           let lineGasCostObj = null
           try {
-            lineGasCostObj = await this.debugger.callTree.getGasCostPerLine(rawLocation.file, lineColumnPos.start.line)  
+            lineGasCostObj = await this.debugger.callTree.getGasCostPerLine(rawLocation.file, lineColumnPos.start.line)
           } catch (e) {
             console.log(e)
           }
@@ -97,9 +97,9 @@ export class Debugger {
             const instructionIndexes = lineGasCostObj.indexes.map((index) => { // translate from vmtrace index to instruction index
               return this.debugger.codeManager.getInstructionIndex(address, index)
             })
-            this.vmDebuggerLogic.event.trigger('lineGasCostChanged', [instructionIndexes, lineColumnPos.start.line ])
+            this.vmDebuggerLogic.event.trigger('lineGasCostChanged', [instructionIndexes, lineColumnPos.start.line])
             this.currentFile = rawLocation.file
-            this.currentLine = lineColumnPos.start.line       
+            this.currentLine = lineColumnPos.start.line
           }
         } else {
           this.event.trigger('newSourceLocation', [null])

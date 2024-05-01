@@ -1,6 +1,7 @@
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
 import EventEmitter from 'events'
+// eslint-disable @nrwl/nx/enforce-module-boundaries
 import { processStr } from 'solhint'
 import { applyExtends } from 'solhint/lib/config/config-file'
 import bestPractises from 'solhint/lib/rules/best-practises'
@@ -44,7 +45,7 @@ export class SolHint extends PluginClient {
   }
 
   async lintOnCompilation() {
-    if(!this.triggerLinter) return
+    if (!this.triggerLinter) return
     this.on('solidity', 'compilationFinished', async (fileName, source, languageVersion, data) => {
       const hints = await this.lint(fileName)
       console.log('after compile', { hints })

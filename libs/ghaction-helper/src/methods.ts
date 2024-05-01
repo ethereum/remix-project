@@ -11,7 +11,7 @@ const providerConfig = {
   blockNumber: global.blockNumber || null
 }
 
-const config  = { defaultTransactionType: '0x0' }
+const config = { defaultTransactionType: '0x0' }
 global.remixProvider = new Provider(providerConfig)
 global.remixProvider.init()
 global.web3Provider = new ethers.providers.Web3Provider(global.remixProvider)
@@ -194,9 +194,9 @@ const getContractAt = async (contractNameOrABI: ethers.ContractInterface, addres
   //@ts-ignore
   const provider = web3Provider
 
-  if(typeof contractNameOrABI === 'string') {
+  if (typeof contractNameOrABI === 'string') {
     const result = await getArtifactsByContractName(contractNameOrABI)
-    
+
     if (result) {
       return new ethers.Contract(address, result.abi, signer || provider.getSigner())
     } else {

@@ -291,7 +291,6 @@ const node: Node = {
   }
 }
 
-
 node.source = `contract test {
     int x;
 

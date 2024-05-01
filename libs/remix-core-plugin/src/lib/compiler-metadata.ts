@@ -78,19 +78,19 @@ export class CompilerMetadata extends Plugin {
       solcLongVersion,
       input
     })
-    const id =  createHash('md5').update(Buffer.from(json)).digest().toString('hex')
-    const buildFilename = this.joinPath(path, this.innerPath, 'build-info/' +  id + '.json')
+    const id = createHash('md5').update(Buffer.from(json)).digest().toString('hex')
+    const buildFilename = this.joinPath(path, this.innerPath, 'build-info/' + id + '.json')
     // If there are no file in buildInfoNames,it means compilation is running first time after loading Remix
     if (!this.buildInfoNames[filePath]) {
       // Check the existing build-info and delete all the previous build files for compiled file
       await this.removeStoredBuildInfo(input, path, filePath)
       this.buildInfoNames[filePath] = buildFilename
-      const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+      const buildData = { id, _format: format, solcVersion, solcLongVersion, input, output }
       await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
     } else if (this.buildInfoNames[filePath] && this.buildInfoNames[filePath] !== buildFilename) {
       await this.call('fileManager', 'remove', this.buildInfoNames[filePath])
       this.buildInfoNames[filePath] = buildFilename
-      const buildData = {id, _format: format, solcVersion, solcLongVersion, input, output}
+      const buildData = { id, _format: format, solcVersion, solcLongVersion, input, output }
       await this.call('fileManager', 'writeFile', buildFilename, JSON.stringify(buildData, null, '\t'))
     }
   }
@@ -136,7 +136,7 @@ export class CompilerMetadata extends Plugin {
       },
       abi: contract.object.abi
     }
-    await this.call('fileManager', 'writeFile', fileName, JSON.stringify(data, null, '\t'))    
+    await this.call('fileManager', 'writeFile', fileName, JSON.stringify(data, null, '\t'))
     this.emit('artefactsUpdated', fileName, contract)
   }
 

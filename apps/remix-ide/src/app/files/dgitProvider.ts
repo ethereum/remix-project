@@ -571,7 +571,7 @@ class DGitProvider extends Plugin {
         const result = await this.call('isogit', 'clone', cmd)
         this.call('fs', 'openWindow', folder)
         return result
-      } catch (e) {
+      } catch (e){
         this.call('notification', 'alert', {
           id: 'dgitAlert',
           message: 'Unexpected error while cloning the repository: \n' + e.toString(),
@@ -708,9 +708,8 @@ class DGitProvider extends Plugin {
                 this.call('terminal', 'log', {
                   type: 'error',
                   value: `Could not checkout submodule to ${result[0]}`
-                })
-              } else {
-                this.call('terminal', 'logHtml', `Checked out submodule ${dir} to ${result[0]}`)
+                })} else {
+                this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
               }
             }
 

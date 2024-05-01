@@ -23,10 +23,10 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
           const traceManager = new TraceManager({ web3 })
           const codeManager = new CodeManager(traceManager)
           codeManager.clear()
-          const solidityProxy = new SolidityProxy({ 
-            getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager), 
+          const solidityProxy = new SolidityProxy({
+            getCurrentCalledAddressAt: traceManager.getCurrentCalledAddressAt.bind(traceManager),
             getCode: codeManager.getCode.bind(codeManager),
-            compilationResult: () => compilationResult 
+            compilationResult: () => compilationResult
           })
           const debuggerEvent = new EventManager()
           const offsetToLineColumnConverter = {
@@ -51,7 +51,7 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
                 st.fail(e.message)
               }
             })
-    
+
             helper.decodeLocals(st, 7, traceManager, callTree, function (locals) {
               try {
                 // st.equals(Object.keys(locals).length, 0)
@@ -70,5 +70,5 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
         })
         .catch(error => st.fail(error))
     })
-  })  
+  })
 }

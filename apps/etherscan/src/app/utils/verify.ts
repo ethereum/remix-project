@@ -23,7 +23,7 @@ export const verify = async (
   compilationResultParam: CompilerAbstract,
   chainRef: number | string,
   isProxyContract: boolean,
-  expectedImplAddress: string, 
+  expectedImplAddress: string,
   client: PluginClient,
   onVerifiedContract: (value: EtherScanReturn) => void,
   setResults: (value: string) => void
@@ -47,7 +47,7 @@ export const verify = async (
       etherscanApi = getEtherScanApi(networkChainId)
     }
   }
-  
+
   try {
     const contractMetadata = getContractMetadata(
       // cast from the remix-plugin interface to the solidity one. Should be fixed when remix-plugin move to the remix-project repository
@@ -61,7 +61,7 @@ export const verify = async (
         message: "Please recompile contract"
       }
     }
-    
+
     const contractMetadataParsed = JSON.parse(contractMetadata)
 
     const fileName = getContractFileName(
@@ -146,9 +146,9 @@ export const verify = async (
         title: result,
       })
       const returnValue = {
-          message: result,
-          succeed: false,
-          isProxyContract
+        message: result,
+        succeed: false,
+        isProxyContract
       }
       resetAfter10Seconds(client, setResults)
       return returnValue
@@ -184,7 +184,7 @@ export const getContractFileName = (
   }
   return fileName
 }
-  
+
 export const getContractMetadata = (
   compilationResult: CompilationResult,
   contractName: string

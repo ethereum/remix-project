@@ -1,6 +1,6 @@
-import {configureStore, createSlice, type PayloadAction, type Reducer} from '@reduxjs/toolkit'
+import { configureStore, createSlice, type PayloadAction, type Reducer } from '@reduxjs/toolkit'
 import createSagaMiddleware from 'redux-saga'
-import {call, put, takeEvery, delay, select, all, fork, type ForkEffect} from 'redux-saga/effects'
+import { call, put, takeEvery, delay, select, all, fork, type ForkEffect } from 'redux-saga/effects'
 
 // @ts-expect-error
 const context = require.context('./models', false, /\.ts$/)
@@ -39,7 +39,7 @@ function createReducer(model: ModelType): Reducer {
 }
 
 const rootReducer = models.reduce((prev: any, model: ModelType) => {
-  return {...prev, [model.namespace]: createReducer(model)}
+  return { ...prev, [model.namespace]: createReducer(model) }
 }, {})
 
 function watchEffects(model: ModelType): ForkEffect {
