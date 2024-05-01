@@ -1,8 +1,8 @@
 import React from 'react' // eslint-disable-line
-import {format} from 'util'
-import {Plugin} from '@remixproject/engine'
-import {compile} from '@remix-project/remix-solidity'
-import {Transaction} from 'web3-types'
+import { format } from 'util'
+import { Plugin } from '@remixproject/engine'
+import { compile } from '@remix-project/remix-solidity'
+import { Transaction } from 'web3-types'
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
 
 const profile = {
@@ -37,7 +37,7 @@ export class SolidityScript extends Plugin {
               ${functionName}();
           }
       }`
-    const targets = {'script.sol': {content}}
+    const targets = { 'script.sol': { content } }
 
     // compile
     const compilation = await compile(targets, params, async (url, cb) => {
@@ -81,20 +81,20 @@ export class SolidityScript extends Plugin {
       this.call('terminal', 'logHtml', e.message)
       return
     }
-    
+
     tx = {
       from: accounts[0],
       to: receipt.contractAddress,
       data: '0x69d4394b' // function remixRun() public
     }
-    let receiptCall 
-    
+    let receiptCall
+
     try {
       receiptCall = await web3.eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
     } catch (e) {
       this.call('terminal', 'logHtml', e.message)
       return
-    }   
+    }
 
     const hhlogs = await web3.remix.getHHLogsForTx(receiptCall.transactionHash)
 

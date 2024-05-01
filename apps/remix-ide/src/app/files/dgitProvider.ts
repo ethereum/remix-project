@@ -27,7 +27,6 @@ declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; remixFileSystem: any; }
 }
 
-
 const profile: LibraryProfile = {
   name: 'dGitProvider',
   displayName: 'Decentralized git',
@@ -162,7 +161,6 @@ class DGitProvider extends Plugin {
       return status
     }
 
-
     const status = await git.statusMatrix({
       ...await this.addIsomorphicGitConfigFS(),
       ...cmd
@@ -264,7 +262,6 @@ class DGitProvider extends Plugin {
 
       return status
     }
-
 
     const status = await git.log({
       ...await this.addIsomorphicGitConfigFS(),
@@ -986,7 +983,7 @@ class DGitProvider extends Plugin {
 
   // OCTOKIT FEATURES
 
-  async remotebranches(input: { owner: string, repo: string, token: string, page: number, per_page:  number }) {
+  async remotebranches(input: { owner: string, repo: string, token: string, page: number, per_page: number }) {
     console.log(input)
 
     const octokit = new Octokit({
@@ -1002,8 +999,6 @@ class DGitProvider extends Plugin {
 
     return data.data
   }
-
-  
 
   async getGitHubUser(input: { token: string }): Promise<{
     user: GitHubUser,
@@ -1022,7 +1017,6 @@ class DGitProvider extends Plugin {
     // epoch timestamp to local date time
     const localResetTime = ratelimit.data.rate.reset * 1000
     const localResetTimeString = new Date(localResetTime).toLocaleString()
-
 
     console.log('rate limit', localResetTimeString)
 
@@ -1118,12 +1112,10 @@ class DGitProvider extends Plugin {
       'Accept': 'application/vnd.github.v3+json', // GitHub API v3 media type
     };
 
-
     const url = `${baseURL}?visibility=private,public&page=${page}&per_page=${perPage}&sort=${sort}&direction=${direction}`;
     const response = await axios.get(url, { headers });
 
     repositories.push(...response.data);
-
 
     return repositories
   }
