@@ -7,42 +7,41 @@ import { BranchDifferenceDetails } from "./branchdifferencedetails";
 export interface BrancheDetailsProps {
   branch: branch;
   showSummary?: boolean;
-  remote?: remote;
 }
 
 export const BranchDifferences = (props: BrancheDetailsProps) => {
-  const { branch, showSummary, remote } = props;
+  const { branch, showSummary } = props;
   const context = React.useContext(gitPluginContext)
 
   useEffect(() => {
     console.log('GET BRANCH DIFF', branch)
   }, [])
 
+  const getRemote = (): remote | null => {
+    return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
+  }
+
   useEffect(() => {
     console.log('BRANCH DIFF', context.branchDifferences)
   }, [context.branchDifferences])
 
   const commitsAhead = (remote: remote) => {
+    if(!remote) return [];
     return context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueHeadCommits || [];
   }
 
   const commitsBehind = (remote: remote) => {
+    if(!remote) return [];
     return context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueRemoteCommits || [];
   }
 
-  return (
-    <>
-      {!showSummary && context.remotes.map((remote, index) => {
-        return (
-          <div key={index}>
-            <BranchDifferenceDetails branch={branch} remote={remote} title={`ahead of ${remote.remote} by ${commitsAhead(remote).length} commit(s)`} commits={commitsAhead(remote)}></BranchDifferenceDetails>
-            <BranchDifferenceDetails branch={branch} remote={remote} title={`behind ${remote.remote} by ${commitsBehind(remote).length} commit(s)`} commits={commitsBehind(remote)}></BranchDifferenceDetails>
-            {commitsAhead(remote).length === 0 && commitsBehind(remote).length === 0? null: <hr></hr>}
-          </div>
-        );
-      })}
-      {showSummary && <div>summary</div>}
+  if(!getRemote()) return null;
 
-    </>
-  );
+  return (
+
+    <div>
+      <BranchDifferenceDetails ahead={true} branch={branch} remote={getRemote()} title={`ahead of ${getRemote().remote} by ${commitsAhead(getRemote()).length} commit(s)`} commits={commitsAhead(getRemote())}></BranchDifferenceDetails>
+      <BranchDifferenceDetails behind={true} branch={branch} remote={getRemote()} title={`behind ${getRemote().remote} by ${commitsBehind(getRemote()).length} commit(s)`} commits={commitsBehind(getRemote())}></BranchDifferenceDetails>
+      {commitsAhead(getRemote()).length === 0 && commitsBehind(getRemote()).length === 0 ? null : <hr></hr>}
+    </div>)
 }

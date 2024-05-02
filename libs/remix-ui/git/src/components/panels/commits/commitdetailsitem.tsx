@@ -7,10 +7,11 @@ import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 
 export interface CCommitDetailsItemsProps {
   commitChange: commitChange;
+  isAheadOfRepo: boolean;
 }
 
 export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
-  const { commitChange } = props;
+  const { commitChange, isAheadOfRepo } = props;
   const actions = React.useContext(gitActionsContext)
   const pluginActions = React.useContext(pluginActionsContext)
 
@@ -32,7 +33,7 @@ export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
     </>)
   }
   return (<>
-    <div className="d-flex w-100 d-flex flex-row commitdetailsitem">
+    <div className={`d-flex w-100 d-flex flex-row commitdetailsitem ${isAheadOfRepo? 'text-success':''}`}>
       <div className='pointer gitfile long-and-truncated' onClick={async () => await openChanges(commitChange)}>
         <span className='font-weight-bold long-and-truncated'>{path.basename(commitChange.path)}</span>
         <div className='text-secondary long-and-truncated'> {commitChange.path}</div>

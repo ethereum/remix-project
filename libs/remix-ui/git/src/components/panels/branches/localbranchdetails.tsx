@@ -67,7 +67,7 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
           {context.localBranchCommits && Object.entries(context.localBranchCommits).map(([key, value]) => {
             if (key == branch.name) {
               return value.map((commit, index) => {
-                return (<CommitDetails key={index} getCommitChanges={getCommitChanges} checkout={checkoutCommit} commit={commit}></CommitDetails>)
+                return (<CommitDetails branch={branch} key={index} getCommitChanges={getCommitChanges} checkout={checkoutCommit} commit={commit}></CommitDetails>)
               })
             }
           })}

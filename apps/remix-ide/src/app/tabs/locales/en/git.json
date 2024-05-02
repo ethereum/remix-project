@@ -3,6 +3,7 @@
   "git.pull": "pull",
   "git.commit": "commit",
   "git.sync": "sync",
+  "git.syncchanges": "sync changes",
   "git.publish": "publish",
   "git.ignore": "ignore",
   "git.createBranch": "create branch",

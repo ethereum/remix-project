@@ -112,7 +112,7 @@ export const CommitMessage = () => {
       </button>
       <button data-id='syncButton' className={`btn btn-primary w-100 ${buttonState === buttonStateValues.Sync ?'':'d-none'}`} disabled={!syncEnabled()} onClick={async () => await commit()} >
         <FontAwesomeIcon icon={faSync} className="mr-1" aria-hidden="true" />
-                Sync {upDownArrows()}
+                Sync Changes {upDownArrows()}
       </button>
       <button data-id='publishBranchButton' className={`btn btn-primary w-100 ${buttonState === buttonStateValues.PublishBranch ?'':'d-none'}`} onClick={async () => await publishBranch()} >
         <FontAwesomeIcon icon={faCloudArrowUp} className="mr-1" aria-hidden="true" />

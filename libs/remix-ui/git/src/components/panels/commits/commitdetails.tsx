@@ -5,15 +5,17 @@ import { CommitDetailsNavigation } from "../../navigation/commitdetails";
 import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
 import { CommitDetailsItems } from "./commitdetailsitem";
+import { branch, remote } from "@remix-ui/git";
 
 export interface CommitDetailsProps {
   commit: ReadCommitResult;
   checkout: (oid: string) => void;
   getCommitChanges: (commit: ReadCommitResult) => void;
+  branch: branch
 }
 
 export const CommitDetails = (props: CommitDetailsProps) => {
-  const { commit, checkout, getCommitChanges } = props;
+  const { commit, checkout, getCommitChanges, branch } = props;
   const actions = React.useContext(gitActionsContext)
   const context = React.useContext(gitPluginContext)
   const [activePanel, setActivePanel] = useState<string>("");
@@ -25,14 +27,27 @@ export const CommitDetails = (props: CommitDetailsProps) => {
     }
   }, [activePanel])
 
+  const getRemote = (): remote | null => {
+    return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
+  }
+
+  const commitsAhead = (remote: remote) => {
+    if(!remote) return [];
+    return context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueHeadCommits || [];
+  }
+
+  const isAheadOfRepo = () => {
+    return commitsAhead(getRemote()).findIndex((c) => c.oid === commit.oid) > -1
+  }
+
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
-    <CommitDetailsNavigation commit={commit} checkout={checkout} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+    <CommitDetailsNavigation isAheadOfRepo={isAheadOfRepo()} commit={commit} checkout={checkout} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
     <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
       <>
         {context.commitChanges && context.commitChanges.filter(
           (change) => change.hashModified === commit.oid && change.hashOriginal === commit.commit.parent[0]
         ).map((change, index) => {
-          return (<CommitDetailsItems key={index} commitChange={change}></CommitDetailsItems>)
+          return (<CommitDetailsItems isAheadOfRepo={isAheadOfRepo()} key={index} commitChange={change}></CommitDetailsItems>)
         })}
 
       </>

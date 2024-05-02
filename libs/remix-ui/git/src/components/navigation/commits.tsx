@@ -1,4 +1,4 @@
-import { faCaretDown, faArrowUp, faArrowDown, faArrowRotateRight, faCaretRight, faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown, faArrowUp, faArrowDown, faArrowRotateRight, faCaretRight, faArrowsUpDown, faCloudArrowUp, faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CustomTooltip } from "@remix-ui/helper";
 import React, { useEffect } from "react";
@@ -11,15 +11,18 @@ import { gitPluginContext } from "../gitui";
 import LoaderIndicator from "./loaderindicator";
 
 export interface CommitsNavigationProps {
-    title: string,
-    eventKey: string,
-    activePanel: string,
-    callback: (eventKey: string) => void
-    branch?: branch,
-    remote?: remote
+  title: string,
+  eventKey: string,
+  activePanel: string,
+  callback: (eventKey: string) => void
+  branch?: branch,
+  remote?: remote
+  showButtons?: boolean
+  ahead?: boolean,
+  behind?: boolean,
 }
 
-export const CommitsNavigation = ({ eventKey, activePanel, callback, title, branch, remote }: CommitsNavigationProps) => {
+export const CommitsNavigation = ({ eventKey, activePanel, callback, title, branch, remote, showButtons, ahead, behind }: CommitsNavigationProps) => {
   const pluginactions = React.useContext(pluginActionsContext)
   const [pullEnabled, setPullEnabled] = React.useState(true)
   const [pushEnabled, setPushEnabled] = React.useState(true)
@@ -38,19 +41,21 @@ export const CommitsNavigation = ({ eventKey, activePanel, callback, title, bran
 
   return (
     <>
-      <div className={'d-flex justify-content-between ' + (activePanel === eventKey ? 'bg-light' : '')}>
-        <span onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'>
+      <div className={`d-flex justify-content-between ${activePanel === eventKey ? 'bg-light' : ''} ${ahead || behind? 'text-success':''}`}>
+        <span onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-100'>
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-1 nav form-check-label">{title}</label>
+          {ahead? <FontAwesomeIcon className='ml-1' icon={faCloudArrowUp}></FontAwesomeIcon> : null}
+          {behind? <FontAwesomeIcon className='ml-1' icon={faCloudArrowDown}></FontAwesomeIcon> : null}
+          <label className={`pl-1 nav form-check-label ${ahead || behind? 'text-success':''}`}>{title}</label>
           <LoaderIndicator></LoaderIndicator>
 
         </span>
-
-        <SourceControlBase branch={branch} remote={remote}>
-          <SourceControlButtons/>
-        </SourceControlBase>
+        {showButtons ?
+          <SourceControlBase branch={branch} remote={remote}>
+            <SourceControlButtons />
+          </SourceControlBase> : null}
 
       </div>
     </>

@@ -44,7 +44,7 @@ export const Commits = () => {
           <div className="pt-1">
             {context.commits && context.commits.map((commit, index) => {
               return (
-                <CommitDetails getCommitChanges={getCommitChanges} key={index} checkout={checkout} commit={commit}></CommitDetails>
+                <CommitDetails branch={context.currentBranch} getCommitChanges={getCommitChanges} key={index} checkout={checkout} commit={commit}></CommitDetails>
               );
             })}
           </div>

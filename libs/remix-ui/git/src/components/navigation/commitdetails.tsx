@@ -10,10 +10,11 @@ interface CommitDetailsNavigationProps {
     eventKey: string
     activePanel: string
     callback: (eventKey: string) => void
+    isAheadOfRepo: boolean
 }
 
 export const CommitDetailsNavigation = (props: CommitDetailsNavigationProps) => {
-  const { commit, checkout, eventKey, activePanel, callback } = props;
+  const { commit, checkout, eventKey, activePanel, callback, isAheadOfRepo } = props;
   const handleClick = () => {
     if (!callback) return
     if (activePanel === eventKey) {
@@ -24,7 +25,7 @@ export const CommitDetailsNavigation = (props: CommitDetailsNavigationProps) => 
   }
   return (
     <>
-      <div onClick={() => handleClick()} role={'button'} className='pointer mb-2 mt-2 w-100 d-flex flex-row commit-navigation'>
+      <div onClick={() => handleClick()} role={'button'} className={`pointer mb-2 mt-2 w-100 d-flex flex-row commit-navigation ${isAheadOfRepo? 'text-success':''}`}>
         {
           activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
         }

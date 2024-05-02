@@ -87,7 +87,7 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
             if (key == branch.name) {
               return value.map((page, index) => {
                 return page.commits.map((commit, index) => {
-                  return (<CommitDetails getCommitChanges={getCommitChanges} key={index} checkout={checkoutCommit} commit={commit}></CommitDetails>)
+                  return (<CommitDetails branch={branch} getCommitChanges={getCommitChanges} key={index} checkout={checkoutCommit} commit={commit}></CommitDetails>)
                 })
               })
             }

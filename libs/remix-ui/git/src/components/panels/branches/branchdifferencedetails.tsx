@@ -11,10 +11,12 @@ export interface BrancheDifferenceProps {
   title: string,
   remote?: remote,
   branch?: branch
+  ahead?: boolean,
+  behind?: boolean
 }
 
 export const BranchDifferenceDetails = (props: BrancheDifferenceProps) => {
-  const { commits, title, branch, remote } = props;
+  const { commits, title, branch, remote, ahead, behind } = props;
   const [activePanel, setActivePanel] = useState<string>("");
   const actions = React.useContext(gitActionsContext)
 
@@ -26,12 +28,12 @@ export const BranchDifferenceDetails = (props: BrancheDifferenceProps) => {
 
   return (
     <Accordion activeKey={activePanel} defaultActiveKey="">
-      <CommitsNavigation branch={branch} remote={remote} title={title} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+      <CommitsNavigation ahead={ahead} behind={behind} branch={branch} remote={remote} title={title} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
       <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
         <div className="ml-1">
           {commits && commits.map((commit, index) => {
             return (
-              <CommitDetails getCommitChanges={getCommitChanges} key={index} checkout={()=>{}} commit={commit}></CommitDetails>
+              <CommitDetails branch={branch} getCommitChanges={getCommitChanges} key={index} checkout={()=>{}} commit={commit}></CommitDetails>
             );
           })}
         </div>
