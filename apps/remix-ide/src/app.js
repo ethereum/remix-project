@@ -61,7 +61,7 @@ import { Matomo } from './app/plugins/matomo'
 
 import {SolCoder} from './app/plugins/solcoderAI'
 
-import {TemplatesSelection} from './app/plugins/templates-selection'
+import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
 const isElectron = require('is-electron')
 
@@ -317,7 +317,7 @@ class AppComponent {
     // ----------------- run script after each compilation results -----------
     const pluginStateLogger = new PluginStateLogger()
 
-    const templateSelection = new TemplatesSelection()
+    const templateSelection = new TemplatesSelectionPlugin()
 
     this.engine.register([
       permissionHandler,
