@@ -32,12 +32,18 @@ export const CommitDetails = (props: CommitDetailsProps) => {
   }
 
   const commitsAhead = (remote: remote) => {
-    if(!remote) return [];
+    if (!remote) return [];
     return context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueHeadCommits || [];
   }
 
   const isAheadOfRepo = () => {
     return commitsAhead(getRemote()).findIndex((c) => c.oid === commit.oid) > -1
+  }
+
+  const openFileOnRemote = (file: string, hash: string) => {
+    console.log("open file on remote", file, hash, getRemote() ? `${getRemote().remote}/${branch.name}/commit/${hash}/${file}` : "")
+    if (!getRemote()) return
+    window.open(`${getRemote() ? `${getRemote().url}/blob/${hash}/${file}` : ""}`, "_blank")
   }
 
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
@@ -47,7 +53,7 @@ export const CommitDetails = (props: CommitDetailsProps) => {
         {context.commitChanges && context.commitChanges.filter(
           (change) => change.hashModified === commit.oid && change.hashOriginal === commit.commit.parent[0]
         ).map((change, index) => {
-          return (<CommitDetailsItems isAheadOfRepo={isAheadOfRepo()} key={index} commitChange={change}></CommitDetailsItems>)
+          return (<CommitDetailsItems openFileOnRemote={openFileOnRemote} isAheadOfRepo={isAheadOfRepo()} key={index} commitChange={change}></CommitDetailsItems>)
         })}
 
       </>

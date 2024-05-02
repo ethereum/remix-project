@@ -36,6 +36,19 @@ export const CommitMessage = () => {
       await actions.addall()
     await actions.commit(message.value)
   }
+
+  const getRemote = () => {
+    return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
+  }
+
+  const getRemoteName = () => {
+    return getRemote() ? getRemote().remote : ''
+  }
+
+  const sync = async() => {
+    await actions.pull(getRemoteName(), context.currentBranch.name)
+    await actions.push(getRemoteName(), context.currentBranch.name)
+  }
   
   const commitNotAllowed = () => {
     return context.canCommit === false || message.value === "" || ( context.staged.length === 0 && context.allchangesnotstaged.length == 0 )
@@ -110,7 +123,7 @@ export const CommitMessage = () => {
         <FontAwesomeIcon icon={faCheck} className="mr-1" />
                 Commit
       </button>
-      <button data-id='syncButton' className={`btn btn-primary w-100 ${buttonState === buttonStateValues.Sync ?'':'d-none'}`} disabled={!syncEnabled()} onClick={async () => await commit()} >
+      <button data-id='syncButton' className={`btn btn-primary w-100 ${buttonState === buttonStateValues.Sync ?'':'d-none'}`} disabled={!syncEnabled()} onClick={async () => await sync()} >
         <FontAwesomeIcon icon={faSync} className="mr-1" aria-hidden="true" />
                 Sync Changes {upDownArrows()}
       </button>
