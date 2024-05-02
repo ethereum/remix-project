@@ -38,11 +38,11 @@ export const SourceControlGroupNavigation = (props: SourceControlGroupNavigation
           activePanel === eventKey ?
             <span className='d-flex justify-content-end align-items-center w-25'>
               {group.name === 'Changes' ?
-                <CustomTooltip tooltipText={<FormattedMessage id="Stage All Changes" />}>
+                <CustomTooltip tooltipText={<FormattedMessage id="git.stageall" />}>
                   <button onClick={async () => { await actions.addall() }} className='btn btn-sm'><FontAwesomeIcon icon={faPlus} className="" /></button>
                 </CustomTooltip>: null}
               {group.name === 'Staged' ?
-                <CustomTooltip tooltipText={<FormattedMessage id="Unstage All Changes" />}>
+                <CustomTooltip tooltipText={<FormattedMessage id="git.unstageall" />}>
                   <button onClick={async () => { await pluginActions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faMinus} className="" /></button>
                 </CustomTooltip>: null}
 

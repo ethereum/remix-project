@@ -46,11 +46,12 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
     setLastPageNumber(lastPageNumber)
   }, [context.remoteBranchCommits])
 
-  const checkout = (branch: branch) => {
-    actions.checkout({
+  const checkout = async (branch: branch) => {
+    await actions.checkout({
       ref: branch.name,
       remote: branch.remote && branch.remote.remote || null
     });
+    await actions.getBranches()
   }
 
   const loadNextPage = () => {

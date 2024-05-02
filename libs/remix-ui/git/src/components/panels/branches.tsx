@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import { gitActionsContext } from "../../state/context";
 import { remote } from "../../types";
@@ -23,6 +23,12 @@ export const Branches = () => {
       // do nothing
     }
   };
+
+  useEffect(() => {
+    console.log("branches", context.branches)
+  },[context.branches])
+
+  
   return (
     <>
       <div className="pt-1">

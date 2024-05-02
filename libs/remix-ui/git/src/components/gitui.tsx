@@ -5,7 +5,7 @@ import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntr
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
 import { defaultGitState, defaultLoaderState, gitState, loaderState } from '../types'
-import { SourceControl } from './panels/sourcontrol'
+
 import { Accordion } from "react-bootstrap";
 import { CommitMessage } from './buttons/commitmessage'
 import { Commits } from './panels/commits'
@@ -21,18 +21,14 @@ import { CommandsNavigation } from './navigation/commands'
 import { RemotesNavigation } from './navigation/remotes'
 import { Remotes } from './panels/remotes'
 import { ViewPlugin } from '@remixproject/engine-web'
-import { SettingsNavigation } from './navigation/settings'
-import { Settings } from './panels/settings'
 import { GitHubNavigation } from './navigation/github'
-import { GitHubAuth } from './panels/github'
-import { GitHubCredentials } from './panels/githubcredentials'
 import { loaderReducer } from '../state/loaderReducer'
-import { ApolloClient, ApolloProvider, NormalizedCacheObject } from '@apollo/client'
-
 import { GetDeviceCode } from './github/devicecode'
 import { LogNavigation } from './navigation/log'
 import LogViewer from './panels/log'
 import { SourceControlBase } from './buttons/sourceControlBase'
+import { BranchHeader } from './branchHeader'
+import { SourceControl } from './panels/sourcontrol'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
@@ -84,6 +80,7 @@ export const GitUI = (props: IGitUi) => {
     })
 
   }, [gitState.gitHubUser, gitState.currentBranch, gitState.remotes, gitState.gitHubAccessToken])
+  
 
   const gitActionsProviderValue = {
     commit,
@@ -130,14 +127,16 @@ export const GitUI = (props: IGitUi) => {
       <gitPluginContext.Provider value={gitState}>
         <loaderContext.Provider value={loaderState}>
           <gitActionsContext.Provider value={gitActionsProviderValue}>
+            <BranchHeader/>
             <pluginActionsContext.Provider value={pluginActionsProviderValue}>
+              
               <Accordion activeKey={activePanel} defaultActiveKey="0">
                 <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
-
+                
                 <Accordion.Collapse className='bg-light' eventKey="0">
                   <>
-                    <SourceControlBase children={<CommitMessage/>} />
-                    <SourceControl />
+                    <SourceControlBase><CommitMessage/></SourceControlBase>
+                    <SourceControl/>
                   </>
                 </Accordion.Collapse>
                 <hr></hr>
@@ -189,6 +188,7 @@ export const GitUI = (props: IGitUi) => {
                 </Accordion.Collapse>
 
               </Accordion>
+   
             </pluginActionsContext.Provider>
           </gitActionsContext.Provider>
         </loaderContext.Provider>

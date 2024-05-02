@@ -332,6 +332,7 @@ export const checkoutfile = async (filename: string) => {
 }
 
 export const checkout = async (cmd: any) => {
+  console.log(cmd)
   await disableCallBacks();
   await plugin.call('fileManager', 'closeAllFiles')
   try {
@@ -382,6 +383,7 @@ export const fetch = async (remote?: string, ref?: string, remoteRef?: string, d
       await getBranches()
     }
   } catch (e: any) {
+    console.log(e)
     await parseError(e)
   }
   dispatch(setLoading(false))
@@ -423,7 +425,7 @@ const tokenWarning = async () => {
 }
 
 const parseError = async (e: any) => {
-  console.log(e)
+  console.trace(e)
   // if message conttains 401 Unauthorized, show token warning
   if (e.message.includes('401')) {
     const result = await plugin.call('notification', 'modal', {
@@ -767,7 +769,7 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
         branchDifference: branchDifference
       }))
   } catch (e) {
-
+      console.log(e)
   }
 }
 

@@ -4,6 +4,7 @@ import { CustomTooltip } from "@remix-ui/helper";
 import React, { useContext, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { pluginActionsContext } from "../../state/context";
+import { SourceControlBase } from "../buttons/sourceControlBase";
 import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
 import { gitPluginContext } from "../gitui";
 import LoaderIndicator from "./loaderindicator";
@@ -33,7 +34,7 @@ export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => 
 
         </span>
 
-        <SourceControlButtons/>
+        <SourceControlBase><SourceControlButtons/></SourceControlBase>
 
       </div>
     </>

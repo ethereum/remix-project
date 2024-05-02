@@ -20,7 +20,7 @@ export const GetDeviceCode = () => {
       method: 'post',
       url: 'http://0.0.0.0:3000/github.com/login/device/code',
       data: {
-        client_id: 'dccbc48453f7afa34fad',
+        client_id: '2795b4e41e7197d6ea11',
         scope: 'repo gist'
       },
       headers: {
@@ -42,7 +42,7 @@ export const GetDeviceCode = () => {
       method: 'post',
       url: 'http://0.0.0.0:3000/github.com/login/oauth/access_token',
       data: {
-        client_id: 'dccbc48453f7afa34fad',
+        client_id: '2795b4e41e7197d6ea11',
         device_code: gitHubResponse.device_code,
         grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
       },

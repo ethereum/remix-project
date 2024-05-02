@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { pluginActionsContext } from "../../state/context";
 import { branch, remote } from "../../types";
+import { SourceControlBase } from "../buttons/sourceControlBase";
 import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
 import { gitPluginContext } from "../gitui";
 import LoaderIndicator from "./loaderindicator";
@@ -47,7 +48,9 @@ export const CommitsNavigation = ({ eventKey, activePanel, callback, title, bran
 
         </span>
 
-        <SourceControlButtons branch={branch} remote={remote}></SourceControlButtons>
+        <SourceControlBase branch={branch} remote={remote}>
+          <SourceControlButtons/>
+        </SourceControlBase>
 
       </div>
     </>

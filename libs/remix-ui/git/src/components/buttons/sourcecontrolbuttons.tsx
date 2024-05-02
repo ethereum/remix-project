@@ -7,103 +7,73 @@ import { gitActionsContext } from "../../state/context"
 import { branch, remote } from "../../types"
 import { gitPluginContext } from "../gitui"
 import GitUIButton from "./gituibutton"
+import { syncStateContext } from "./sourceControlBase"
 
-interface SourceControlButtonsProps {
-  remote?: remote,
-  branch?: branch
-}
-
-export const SourceControlButtons = (props: SourceControlButtonsProps) => {
-  const [branch, setBranch] = useState(props.branch)
-  const [remote, setRemote] = useState(props.remote)
+export const SourceControlButtons = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
-  const [commitsAhead, setCommitsAhead] = useState([])
-  const [commitsBehind, setCommitsBehind] = useState([])
-
-  useEffect(() => {
-    console.log('BRANCH DIFF SourceControlButtons',branch, remote, context.branchDifferences, context.currentBranch)
-    setDefaultRemote()
-    if (remote && branch && context.branchDifferences && context.branchDifferences[`${remote.remote}/${branch.name}`]) {
-      console.log('BRANCH DIFF found SourceControlButtons', context.branchDifferences[`${remote.remote}/${branch.name}`])
-      setCommitsAhead(context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueHeadCommits)
-      setCommitsBehind(context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueRemoteCommits)
-    } else {
-      setCommitsAhead([])
-      setCommitsBehind([])
-    }
-  }, [context.branchDifferences, context.currentBranch, branch, remote])
-
-  const setDefaultRemote = () => {
-
-    if (context.remotes.length > 0) {
-      // find remote called origin
-      const origin = context.remotes.find(remote => remote.remote === 'origin')
-      console.log('DEFAULT REMOTE', origin)
-      if (origin) {
-        setRemote(origin)
-      } else {
-        setRemote(context.remotes[0])
-      }
-      return origin
-    }
-    return null
-  }
-
-  useEffect(() => {
-    if (!props.branch) {
-      setBranch(context.currentBranch)
-    }
-    if (!props.remote) {
-      setRemote(context.defaultRemote)
-    } else {
-      setDefaultRemote()
-    }
-  }, [])
-
-  useEffect(() => {
-    console.log('context', context.defaultRemote, context.currentBranch)
-    if (!props.branch) {
-      setBranch(context.currentBranch)
-    }
-    if (!props.remote) {
-      setRemote(context.defaultRemote)
-    } else {
-      setDefaultRemote()
-    }
-  }, [context.defaultRemote, context.currentBranch])
+  const syncState = React.useContext(syncStateContext)
+  const [branch, setBranch] = useState<branch>(syncState.branch)
+  const [remote, setRemote] = useState<remote>(syncState.remote)
 
   useEffect(() => {
     console.log('SC BUTTONS', branch, remote)
   }, [])
 
+  const getRemote = () => {
+    return remote ? remote : context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
+  }
+
+  const getRemoteName = () => {
+    return getRemote() ? getRemote().remote : ''
+  }
+
   const pull = async () => {
-    await actions.pull(remote.remote, branch.name)
+    await actions.pull(getRemoteName(), branch ? branch.name : context.currentBranch.name)
   }
 
   const push = async () => {
-    await actions.pull(remote.remote, branch.name)
+    await actions.pull(getRemoteName(), branch ? branch.name : context.currentBranch.name)
   }
 
   const sync = async () => {
-    await actions.pull(remote.remote, branch.name)
-    await actions.push(remote.remote, branch.name)
+    await actions.pull(getRemoteName(), branch ? branch.name : context.currentBranch.name)
+    await actions.push(getRemoteName(), branch ? branch.name : context.currentBranch.name)
   }
 
   const buttonsDisabled = () => {
     return (!context.upstream) || context.remotes.length === 0
   }
 
+  const getTooltipText = (id: string) => {
+    if (buttonsDisabled()) return <FormattedMessage id="git.noremote" />
+    return <><FormattedMessage id={id} /> {getRemoteName()}</>
+  }
+
   return (
     <span className='d-flex justify-content-end align-items-center'>
-      <CustomTooltip tooltipText={<FormattedMessage id="git.pull" />}>
-        <>{commitsBehind.length}<GitUIButton disabledCondition={buttonsDisabled()} onClick={pull} className='btn btn-sm'><FontAwesomeIcon icon={faArrowDown} className="" /></GitUIButton></>
+      <CustomTooltip tooltipText={getTooltipText('git.pull')}>
+        <GitUIButton disabledCondition={buttonsDisabled()} onClick={pull} className='btn btn-sm pl-0 pr-2'>
+        <div className="d-flex align-items-baseline">
+            {syncState.commitsBehind.length ? <div className="badge badge-pill pl-0">
+              {syncState.commitsBehind.length}
+            </div> : null}
+            <FontAwesomeIcon icon={faArrowDown} className="" />
+          </div>
+        </GitUIButton>
       </CustomTooltip>
-      <CustomTooltip tooltipText={<FormattedMessage id="git.push" />}>
-        <>{commitsAhead.length}<GitUIButton disabledCondition={buttonsDisabled()} onClick={push} className='btn btn-sm'><FontAwesomeIcon icon={faArrowUp} className="" /></GitUIButton></>
+      <CustomTooltip tooltipText={getTooltipText('git.push')}>
+        <GitUIButton disabledCondition={buttonsDisabled()} onClick={push} className='btn btn-sm pl-0 pr-2'>
+          <div className="d-flex align-items-baseline">
+            {syncState.commitsAhead.length ? <div className="badge badge-pill pl-0">
+              {syncState.commitsAhead.length}
+            </div> : null}
+            <FontAwesomeIcon icon={faArrowUp} className="" />
+          </div>
+        </GitUIButton>
       </CustomTooltip>
-      <CustomTooltip tooltipText={<FormattedMessage id="git.sync" />}>
-        <GitUIButton disabledCondition={buttonsDisabled()} onClick={sync} className='btn btn-sm'><FontAwesomeIcon icon={faArrowsUpDown} className="" /></GitUIButton>
+      <CustomTooltip tooltipText={getTooltipText('git.sync')}>
+        <GitUIButton disabledCondition={buttonsDisabled()} onClick={sync} className='btn btn-sm  pl-0 pr-2'><FontAwesomeIcon icon={faArrowsUpDown} className="" /></GitUIButton>
       </CustomTooltip>
       <CustomTooltip tooltipText={<FormattedMessage id="git.refresh" />}>
         <GitUIButton disabledCondition={buttonsDisabled()} onClick={async () => { }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowRotateRight} className="" /></GitUIButton>
