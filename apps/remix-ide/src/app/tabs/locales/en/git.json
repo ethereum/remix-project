@@ -11,5 +11,8 @@
   "git.rebaseBranch": "rebase branch",
   "git.checkout": "checkout",
   "git.fetch": "fetch",
-  "git.refresh": "refresh"
+  "git.refresh": "refresh",
+  "git.unstageall": "unstage all",
+  "git.stageall": "stage all",
+  "git.noremote": "this repo has no remotes"
 }
