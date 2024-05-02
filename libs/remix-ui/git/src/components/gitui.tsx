@@ -29,6 +29,8 @@ import LogViewer from './panels/log'
 import { SourceControlBase } from './buttons/sourceControlBase'
 import { BranchHeader } from './branchHeader'
 import { SourceControl } from './panels/sourcontrol'
+import { Settings } from './panels/settings'
+import { GitHubCredentials } from './panels/githubcredentials'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
@@ -157,7 +159,7 @@ export const GitUI = (props: IGitUi) => {
                 <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
                 <Accordion.Collapse className='bg-light' eventKey="2">
                   <>
-                    <Branches /></>
+                    <Branches isOpen={activePanel === '2'} /></>
                 </Accordion.Collapse>
                 <hr></hr>
                 <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
@@ -177,6 +179,8 @@ export const GitUI = (props: IGitUi) => {
                 <Accordion.Collapse className='bg-light' eventKey="7">
                   <>
                     <GetDeviceCode></GetDeviceCode>
+                    <hr></hr>
+                    <GitHubCredentials></GitHubCredentials>
                   </>
                 </Accordion.Collapse>
                 <hr></hr>

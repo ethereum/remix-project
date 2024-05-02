@@ -5,36 +5,65 @@ import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog } from ".
 import { gitActionDispatch } from "../types";
 import { diffFiles, getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
 
-let plugin: ViewPlugin, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>
+let plugin: ViewPlugin, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
 let callBackEnabled: boolean = false
 let syncTimer: NodeJS.Timer = null
+
+type AsyncCallback = () => Promise<void>;
+
+class AsyncDebouncedQueue {
+    private queues: Map<AsyncCallback, { timer: any, lastCall: number }>;
+
+    constructor(private delay: number = 300) {
+        this.queues = new Map();
+    }
+
+    enqueue(callback: AsyncCallback, customDelay?:number): void {
+        if (this.queues.has(callback)) {
+            clearTimeout(this.queues.get(callback)!.timer);
+        }
+
+        let timer = setTimeout(async () => {
+            await callback();  // Await the asynchronous operation
+            this.queues.delete(callback);
+        }, customDelay || this.delay);
+
+        this.queues.set(callback, { timer, lastCall: Date.now() });
+    }
+}
+
+
 
 export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispatch<gitActionDispatch>, loaderDispatcher: React.Dispatch<any>) => {
   plugin = viewPlugin
   gitDispatch = gitDispatcher
   loaderDispatch = loaderDispatcher
+  loadFileQueue = new AsyncDebouncedQueue()
 
   setPlugin(viewPlugin, gitDispatcher)
 
   plugin.on("fileManager", "fileSaved", async (file: string) => {
     console.log(file)
-    loadFiles([file])
-    //await synTimerStart();
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    })
   });
 
   plugin.on('dGitProvider', 'checkout' as any, async () => {
-    await synTimerStart();
+    //await synTimerStart();
   })
   plugin.on('dGitProvider', 'branch' as any, async () => {
-    await synTimerStart();
+    //await synTimerStart();
   })
 
   plugin.on("fileManager", "fileAdded", async (e) => {
-    await synTimerStart();
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    })
   });
 
   plugin.on("fileManager", "fileRemoved", async (e) => {
-    await synTimerStart();
+    //await synTimerStart();
   });
 
   plugin.on("fileManager", "currentFileChanged", async (e) => {
@@ -43,53 +72,71 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
   });
 
   plugin.on("fileManager", "fileRenamed", async (oldfile, newfile) => {
-    await synTimerStart();
+    //await synTimerStart();
   });
 
   plugin.on("filePanel", "setWorkspace", async (x: any) => {
-    await synTimerStart();
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    })
+    loadFileQueue.enqueue(async () => {
+      gitlog()
+    })
+    loadFileQueue.enqueue(async () => {
+      getBranches()
+    })
+    loadFileQueue.enqueue(async () => {
+      getRemotes()
+    })
   });
 
   plugin.on("filePanel", "deleteWorkspace" as any, async (x: any) => {
-    await synTimerStart();
+    //await synTimerStart();
   });
 
   plugin.on("filePanel", "renameWorkspace" as any, async (x: any) => {
-    await synTimerStart();
+    //await synTimerStart();
   });
 
   plugin.on('dGitProvider', 'checkout', async () => {
-    await loadFiles();
+   
   })
   plugin.on('dGitProvider', 'init', async () => {
-    await loadFiles();
+    
   })
   plugin.on('dGitProvider', 'add', async () => {
-    await loadFiles();
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    }, 10)
   })
   plugin.on('dGitProvider', 'rm', async () => {
-    await loadFiles();
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    }, 10)
   })
   plugin.on('dGitProvider', 'commit', async () => {
+    loadFileQueue.enqueue(async () => {
+      gitlog()
+    }, 10)
     gitDispatch(setLog({
       message: 'Committed changes...',
       type: 'success'
     }))
-    await loadFiles();
   })
   plugin.on('dGitProvider', 'branch', async () => {
     gitDispatch(setLog({
       message: "Created Branch",
       type: "success"
     }))
-    await loadFiles();
   })
   plugin.on('dGitProvider', 'clone', async () => {
     gitDispatch(setLog({
       message: "Cloned Repository",
       type: "success"
     }))
-    await loadFiles();
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    })
   })
   plugin.on('manager', 'pluginActivated', async (p: Plugin) => {
     if (p.name === 'dGitProvider') {
@@ -117,7 +164,7 @@ export const getGitConfig = async () => {
   return config
 }
 
-const syncFromWorkspace = async (isLocalhost = false) => {
+const syncFromWorkspace = async (callback: Function, isLocalhost = false) => {
   //gitDispatch(setLoading(true));
   await disableCallBacks();
   if (isLocalhost) {
@@ -142,35 +189,17 @@ const syncFromWorkspace = async (isLocalhost = false) => {
   } catch (e) {
     gitDispatch(setCanUseApp(false));
   }
-  await loadFiles();
+  await callback();
   await enableCallBacks();
 }
 
 export const loadFiles = async (filepaths: string[] = null) => {
-  //gitDispatch(setLoading(true));
-
   try {
     await getFileStatusMatrix(filepaths);
   } catch (e) {
     // TODO: handle error
     console.error(e);
   }
-  try {
-    await gitlog();
-  } catch (e) { }
-  try {
-    await getBranches();
-  } catch (e) { }
-  try {
-    await getRemotes();
-  } catch (e) { }
-  try {
-    //await getStorageUsed();
-  } catch (e) { }
-  try {
-    //await diffFiles('');
-  } catch (e) { }
-  //gitDispatch(setLoading(false));
 }
 
 const getStorageUsed = async () => {
@@ -192,11 +221,3 @@ export const enableCallBacks = async () => {
   callBackEnabled = true;
 }
 
-const synTimerStart = async () => {
-  //console.trace('synTimerStart')
-  if (!callBackEnabled) return
-  clearTimeout(syncTimer)
-  syncTimer = setTimeout(async () => {
-    await syncFromWorkspace();
-  }, 1000)
-}

@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
 import React from "react"
-import { branch, commitChange, gitLog, gitState, remote } from "../types"
+import { branch, commitChange, fileStatusResult, gitLog, gitState, remote } from "../types"
 
 export interface gitActions {
     removeRemote(remote: remote): void
@@ -8,7 +8,7 @@ export interface gitActions {
     add(path: string): Promise<void>
     rm(path: string): Promise<void>
     commit(message: string): Promise<any>
-    addall(): Promise<void>
+    addall(files: fileStatusResult[]): Promise<void>
     push(remote?: string, ref?: string, remoteRef?: string, force?: boolean): Promise<void>
     pull(remote?: string, ref?: string, remoteRef?: string): Promise<void>
     fetch(remote?: string, ref?: string, remoteRef?: string, depth?: number, singleBranch?: boolean, relative?: boolean, quiet?: boolean): Promise<void>

@@ -33,8 +33,9 @@ export const CommitMessage = () => {
   const commit = async() => {
     if (context.staged.length === 0 && context.allchangesnotstaged.length == 0) return
     if (context.staged.length === 0)
-      await actions.addall()
+      await actions.addall(context.allchangesnotstaged)
     await actions.commit(message.value)
+    setMessage({ value: '' })
   }
 
   const getRemote = () => {

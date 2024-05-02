@@ -2,7 +2,7 @@ import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog } from "../state/gitpayload";
-import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog } from '../types';
+import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
@@ -229,7 +229,11 @@ export const commit = async (message: string = "") => {
       },
       message: message,
     });
-    plugin.call('notification', 'toast', `Commited: ${sha}`)
+    
+    sendToGitLog({
+      type:'success',
+      message: `Commited: ${sha}`
+    })
 
   } catch (err) {
     plugin.call('notification', 'toast', `${err}`)
@@ -237,24 +241,19 @@ export const commit = async (message: string = "") => {
 
 }
 
-export const addall = async () => {
+export const addall = async (files: fileStatusResult[]) => {
   try {
-    await plugin
-      .call("dGitProvider", "status", { ref: "HEAD" })
-      .then((status) =>
-        Promise.all(
-          status.map(([filepath, , worktreeStatus]) =>
-            worktreeStatus
-              ? plugin.call("dGitProvider", "add", {
-                filepath: removeSlash(filepath),
-              })
-              : plugin.call("dGitProvider", "rm", {
-                filepath: removeSlash(filepath),
-              })
-          )
-        )
-      );
-    plugin.call('notification', 'toast', `Added all files to git`)
+    console.log('addall', files.map(f => removeSlash(f.filename)))
+    const filesToAdd = files.map(f => removeSlash(f.filename))
+    try {
+      await plugin.call("dGitProvider", "add", {
+        filepath: filesToAdd,
+      });
+    } catch (e) { }
+    sendToGitLog({
+      type:'success',
+      message: `Added all files to git`
+    })
 
   } catch (e) {
     plugin.call('notification', 'toast', `${e}`)
@@ -269,7 +268,7 @@ export const add = async (args: string | undefined) => {
       filename = removeSlash(filename);
       stagingfiles = [filename];
     } else {
-      await addall();
+      //await addall();
       return;
     }
     try {
@@ -280,7 +279,10 @@ export const add = async (args: string | undefined) => {
           });
         } catch (e) { }
       }
-      plugin.call('notification', 'toast', `Added ${filename} to git`);
+      sendToGitLog({
+        type:'success',
+        message: `Added ${filename} to git`
+      })
     } catch (e) {
       plugin.call('notification', 'toast', `${e}`)
     }
@@ -302,7 +304,10 @@ export const rm = async (args: any) => {
   await plugin.call("dGitProvider", "rm", {
     filepath: removeSlash(filename),
   });
-  plugin.call('notification', 'toast', `Removed ${filename} from git`)
+  sendToGitLog({
+    type:'success',
+    message: `Removed ${filename} from git`
+  })
 }
 
 export const checkoutfile = async (filename: string) => {
@@ -364,7 +369,11 @@ export const clone = async (url: string, branch: string, depth: number, singleBr
     //} else {
     await plugin.call('dGitProvider' as any, 'clone', { url, branch, token, depth, singleBranch }, repoNameWithTimestamp);
     await enableCallBacks()
-    plugin.call('notification', 'toast', `Cloned ${url} to ${repoNameWithTimestamp}`)
+    
+    sendToGitLog({
+      type:'success',
+      message: `Cloned ${url} to ${repoNameWithTimestamp}`
+    })
     //}
   } catch (e: any) {
     await parseError(e)

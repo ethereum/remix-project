@@ -5,6 +5,7 @@ import React, { useContext, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { gitActionsContext, pluginActionsContext } from "../../state/context";
 import { sourceControlGroup } from "../../types";
+import { gitPluginContext } from "../gitui";
 
 interface SourceControlGroupNavigationProps {
     eventKey: string;
@@ -17,6 +18,7 @@ export const SourceControlGroupNavigation = (props: SourceControlGroupNavigation
   const { eventKey, activePanel, callback, group } = props;
   const actions = React.useContext(gitActionsContext)
   const pluginActions = React.useContext(pluginActionsContext)
+  const context = React.useContext(gitPluginContext)
   const handleClick = () => {
     if (!callback) return
     if (activePanel === eventKey) {
@@ -39,11 +41,7 @@ export const SourceControlGroupNavigation = (props: SourceControlGroupNavigation
             <span className='d-flex justify-content-end align-items-center w-25'>
               {group.name === 'Changes' ?
                 <CustomTooltip tooltipText={<FormattedMessage id="git.stageall" />}>
-                  <button onClick={async () => { await actions.addall() }} className='btn btn-sm'><FontAwesomeIcon icon={faPlus} className="" /></button>
-                </CustomTooltip>: null}
-              {group.name === 'Staged' ?
-                <CustomTooltip tooltipText={<FormattedMessage id="git.unstageall" />}>
-                  <button onClick={async () => { await pluginActions.loadFiles() }} className='btn btn-sm'><FontAwesomeIcon icon={faMinus} className="" /></button>
+                  <button onClick={async () => { await actions.addall(context.allchangesnotstaged) }} className='btn btn-sm'><FontAwesomeIcon icon={faPlus} className="" /></button>
                 </CustomTooltip>: null}
 
             </span> : null
