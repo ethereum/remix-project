@@ -30,6 +30,7 @@ export interface gitActions {
     addRemote: (remote: remote) => Promise<void>
     sendToGitLog: (message: gitLog) => Promise<void>
     clearGitLog: () => Promise<void>
+    getFileStatusMatrix(filespaths:[]): Promise<void>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)

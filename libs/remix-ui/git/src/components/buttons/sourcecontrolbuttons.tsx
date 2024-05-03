@@ -41,6 +41,10 @@ export const SourceControlButtons = () => {
     await actions.push(getRemoteName(), branch ? branch.name : context.currentBranch.name)
   }
 
+  const refresh = async() => {
+    actions.getFileStatusMatrix(null)
+  }
+
   const buttonsDisabled = () => {
     return (!context.upstream) || context.remotes.length === 0
   }
@@ -76,7 +80,7 @@ export const SourceControlButtons = () => {
         <GitUIButton disabledCondition={buttonsDisabled()} onClick={sync} className='btn btn-sm  pl-0 pr-2'><FontAwesomeIcon icon={faArrowsUpDown} className="" /></GitUIButton>
       </CustomTooltip>
       <CustomTooltip tooltipText={<FormattedMessage id="git.refresh" />}>
-        <GitUIButton disabledCondition={buttonsDisabled()} onClick={async () => { }} className='btn btn-sm'><FontAwesomeIcon icon={faArrowRotateRight} className="" /></GitUIButton>
+        <GitUIButton onClick={refresh} className='btn btn-sm'><FontAwesomeIcon icon={faArrowRotateRight} className="" /></GitUIButton>
       </CustomTooltip>
     </span>
 
