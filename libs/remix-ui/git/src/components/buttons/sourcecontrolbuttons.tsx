@@ -33,7 +33,8 @@ export const SourceControlButtons = () => {
   }
 
   const push = async () => {
-    await actions.pull(getRemoteName(), branch ? branch.name : context.currentBranch.name)
+    await actions.push(getRemoteName(), branch ? branch.name : context.currentBranch.name)
+    await actions.fetch(getRemoteName(), branch ? branch.name : context.currentBranch.name, null, null, true)
   }
 
   const sync = async () => {

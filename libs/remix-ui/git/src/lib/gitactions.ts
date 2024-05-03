@@ -384,7 +384,6 @@ export const clone = async (url: string, branch: string, depth: number, singleBr
 export const fetch = async (remote?: string, ref?: string, remoteRef?: string, depth?: number, singleBranch?: boolean, relative?: boolean, quiet?: boolean) => {
   dispatch(setLoading(true))
   await disableCallBacks()
-  await plugin.call('notification', 'toast', `Fetching ${remote || ''} ${ref || ''} ${remoteRef || ''}`)
   try {
     await plugin.call('dGitProvider' as any, 'fetch', { remote, ref, remoteRef, depth, singleBranch, relative });
     if (!quiet) {

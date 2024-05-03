@@ -47,7 +47,8 @@ export const PushPull = () => {
 
   const push = async () => {
     console.log('PUSH', context.upstream, localBranch, remoteBranch, force)
-    actions.push(context.upstream.remote, localBranch, remoteBranch, force)
+    await actions.push(context.upstream.remote, localBranch, remoteBranch, force)
+    await actions.fetch(context.upstream.remote, localBranch, remoteBranch, 1, true)
   }
 
   const pull = async () => {

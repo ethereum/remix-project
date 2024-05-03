@@ -1,6 +1,11 @@
 import { ReadCommitResult } from "isomorphic-git"
 import { default as dateFormat } from "dateformat";
 import React from "react";
+import { faGlobe } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { remote } from "@remix-ui/git";
+import GitUIButton from "../../buttons/gituibutton";
+import { gitPluginContext } from "../../gitui";
 
 export interface CommitSummaryProps {
   commit: ReadCommitResult;
@@ -9,6 +14,7 @@ export interface CommitSummaryProps {
 
 export const CommitSummary = (props: CommitSummaryProps) => {
   const { commit, checkout } = props;
+  const context = React.useContext(gitPluginContext)
 
   const getDate = (commit: ReadCommitResult) => {
     const timestamp = commit.commit.author.timestamp;
@@ -38,6 +44,15 @@ export const CommitSummary = (props: CommitSummaryProps) => {
     return "";
   };
 
+  const getRemote = (): remote | null => {
+    return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
+  }
+
+  const openRemote = () => {
+    if(getRemote())
+    window.open(`${getRemote().url}/commit/${commit.oid}`, '_blank');
+  }
+
   return (
     <>
       <div className="long-and-truncated ml-2">
@@ -45,7 +60,7 @@ export const CommitSummary = (props: CommitSummaryProps) => {
       </div>
       {commit.commit.author.name || ""}
       <span className="ml-1">{getDate(commit)}</span>
-
+      {getRemote() && getRemote()?.url && <GitUIButton className="btn btn-sm p-0 mx-1 text-muted" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}
     </>
   )
 }
