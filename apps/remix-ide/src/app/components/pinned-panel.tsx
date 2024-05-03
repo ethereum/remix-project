@@ -17,6 +17,7 @@ const pinnedPanel = {
 export class PinnedPanel extends AbstractPanel {
   sideelement: any
   dispatch: React.Dispatch<any> = () => {}
+  loggedState: any
 
   constructor() {
     super(pinnedPanel)
@@ -26,11 +27,12 @@ export class PinnedPanel extends AbstractPanel {
     this.renderComponent()
   }
 
-  pinView (profile, view) {
+  async pinView (profile, view) {
     const activePlugin = this.currentFocus()
 
     if (activePlugin === profile.name) throw new Error(`Plugin ${profile.name} already pinned`) 
     if (activePlugin) this.remove(activePlugin)
+    this.loggedState = await this.call('pluginStateLogger', 'getPluginState', profile.name)
     this.addView(profile, view)
     this.plugins[profile.name].pinned = true
     this.plugins[profile.name].active = true
@@ -59,12 +61,13 @@ export class PinnedPanel extends AbstractPanel {
   }
 
   updateComponent(state: any) {
-    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins} pinView={this.pinView.bind(this)} unPinView={this.unPinView.bind(this)}></RemixUIPanelHeader>} plugins={state.plugins} />
+    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins} pinView={this.pinView.bind(this)} unPinView={this.unPinView.bind(this)}></RemixUIPanelHeader>} plugins={state.plugins} pluginState={state.pluginState} />
   }
 
   renderComponent() {
     this.dispatch({
-      plugins: this.plugins
+      plugins: this.plugins,
+      pluginState: this.loggedState
     })
   }
 }
