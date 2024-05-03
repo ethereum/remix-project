@@ -3,7 +3,9 @@ import React, {forwardRef, useEffect, useRef, useState} from 'react' // eslint-d
 import { PluginRecord } from '../types'
 import './panel.css'
 interface panelPLuginProps {
-  pluginRecord: PluginRecord
+  pluginRecord: PluginRecord,
+  initialState?: any,
+  children?: any
 }
 
 const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
@@ -14,7 +16,19 @@ const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
     if (ref.current) {
       if (props.pluginRecord.view) {
         if (React.isValidElement(props.pluginRecord.view)) {
-          setView(props.pluginRecord.view)
+          let view = props.pluginRecord.view
+
+          if (props.initialState) {
+            view = React.Children.map((props.pluginRecord.view.props as any).children, child => {
+              if (React.isValidElement(child) && typeof child.type === 'function') {
+              // Safe to clone and pass `initialState`
+                return React.cloneElement(child, { ...props, initialState: props.initialState } as any)
+              }
+              return child
+            })
+          }
+
+          setView(view)
         } else {
           ref.current.appendChild(props.pluginRecord.view)
         }

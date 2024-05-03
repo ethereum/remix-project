@@ -7,6 +7,7 @@ import {LocaleModule} from './app/tabs/locale-module'
 import {NetworkModule} from './app/tabs/network-module'
 import {Web3ProviderModule} from './app/tabs/web3-provider'
 import {CompileAndRun} from './app/tabs/compile-and-run'
+import {PluginStateLogger} from './app/tabs/state-logger'
 import {SidePanel} from './app/components/side-panel'
 import {HiddenPanel} from './app/components/hidden-panel'
 import {PinnedPanel} from './app/components/pinned-panel'
@@ -301,7 +302,8 @@ class AppComponent {
     this.layout = new Layout()
 
     const permissionHandler = new PermissionHandlerPlugin()
-
+    // ----------------- run script after each compilation results -----------
+    const pluginStateLogger = new PluginStateLogger()
     
     this.engine.register([
       permissionHandler,
@@ -352,6 +354,7 @@ class AppComponent {
       templates,
       openaigpt,
       solcoder,
+      pluginStateLogger
     ])
 
     //---- fs plugin
@@ -468,7 +471,8 @@ class AppComponent {
       'compilerArtefacts',
       'network',
       'web3Provider',
-      'offsetToLineColumnConverter'
+      'offsetToLineColumnConverter',
+      'pluginStateLogger'
     ])
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately

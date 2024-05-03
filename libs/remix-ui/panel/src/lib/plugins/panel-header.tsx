@@ -28,7 +28,6 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
   }
 
   const pinPlugin = () => {
-    console.log('called pinPlugin')
     props.pinView && props.pinView(plugin.profile, plugin.view)
   }
 
