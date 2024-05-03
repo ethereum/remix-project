@@ -5,6 +5,7 @@ import { CommitDetails } from "../commits/commitdetails";
 import { CommitsNavigation } from "../../navigation/commits";
 import { branch, remote } from "../../../types";
 import { gitActionsContext } from "../../../state/context";
+import { gitPluginContext } from "../../gitui";
 
 export interface BrancheDifferenceProps {
   commits: ReadCommitResult[];
@@ -18,12 +19,17 @@ export interface BrancheDifferenceProps {
 export const BranchDifferenceDetails = (props: BrancheDifferenceProps) => {
   const { commits, title, branch, remote, ahead, behind } = props;
   const [activePanel, setActivePanel] = useState<string>("");
+  const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
 
   if (commits.length === 0) return null
 
+  const getRemote = () => {
+    return remote ? remote : context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
+  }
+
   const getCommitChanges = async (commit: ReadCommitResult) => {
-    await actions.getCommitChanges(commit.oid, commit.commit.parent[0])
+    await actions.getCommitChanges(commit.oid, commit.commit.parent[0], null, getRemote())
   }
 
   return (

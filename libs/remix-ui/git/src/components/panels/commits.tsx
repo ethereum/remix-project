@@ -29,8 +29,13 @@ export const Commits = () => {
     //actions.getBranchCommits(branch, lastPageNumber+1)
   }
 
+  const getRemote = () => {
+    return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
+  }
+
+
   const getCommitChanges = async (commit: ReadCommitResult) => {
-    await actions.getCommitChanges(commit.oid, commit.commit.parent[0])
+    await actions.getCommitChanges(commit.oid, commit.commit.parent[0],null, getRemote())
   }
 
   const fetchIsDisabled = () => {

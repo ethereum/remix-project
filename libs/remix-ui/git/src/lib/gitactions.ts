@@ -710,11 +710,14 @@ export const getCommitChanges = async (oid1: string, oid2: string, branch?: bran
       log = await plugin.call('dGitProvider', 'log', {
         ref: branch ? branch.name : 'HEAD',
       })
+      console.log(log, 'log')
     } catch (e) {
+      console.log(e, 'log error')
     }
     if (log) {
       const foundCommit = log.find((commit: ReadCommitResult) => commit.oid === oid2)
-      if (!foundCommit) {
+      if (!foundCommit && remote) {
+        console.log('getCommitChanges fetching remote')
         await fetch(remote ? remote.remote : null, branch ? branch.name : null, null, 5, true, true)
       }
     }

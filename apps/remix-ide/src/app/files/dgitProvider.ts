@@ -300,14 +300,14 @@ class DGitProvider extends Plugin {
   }
 
   async getCommitChanges(commitHash1, commitHash2): Promise<commitChange[]> {
-    console.log(commitHash1, commitHash2, [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
+    //console.log(commitHash1, commitHash2, [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
     const result: commitChange[] = await git.walk({
       ...await this.addIsomorphicGitConfigFS(),
       trees: [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })],
       map: async function (filepath, [A, B]) {
         // ignore directories
 
-        console.log(filepath, A, B)
+        //console.log(filepath, A, B)
 
         if (filepath === '.') {
           return
@@ -330,7 +330,7 @@ class DGitProvider extends Plugin {
           path: filepath,
         }
 
-        console.log('Aoid', Aoid, 'Boid', Boid, commitChange)
+        //console.log('Aoid', Aoid, 'Boid', Boid, commitChange)
 
         // determine modification type
         if (Aoid !== Boid) {
@@ -802,6 +802,7 @@ class DGitProvider extends Plugin {
       relative: input.relative,
       input
     }
+    console.log('fetch input', cmd)
     let result
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       result = await this.call('isogit', 'fetch', cmd)

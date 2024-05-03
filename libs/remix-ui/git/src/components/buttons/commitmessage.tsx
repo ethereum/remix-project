@@ -76,7 +76,7 @@ export const CommitMessage = () => {
 
   const publishEnabled = () => {
     const remoteEquivalentBranch = context.branches.find((b) => b.name === context.currentBranch.name && b.remote)
-    return remoteEquivalentBranch === undefined
+    return remoteEquivalentBranch === undefined && getRemote()!== null
   }
 
   const publishBranch = async () => {

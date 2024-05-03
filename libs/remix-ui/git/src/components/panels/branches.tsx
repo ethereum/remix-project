@@ -7,11 +7,7 @@ import { gitPluginContext } from "../gitui";
 import { LocalBranchDetails } from "./branches/localbranchdetails";
 import { RemoteBranchDetails } from "./branches/remotebranchedetails";
 
-interface BranchesProps {
-  isOpen: boolean;
-}
-
-export const Branches = ({isOpen}: BranchesProps) => {
+export const Branches = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const [newBranch, setNewBranch] = useState({ value: "" });
@@ -28,17 +24,12 @@ export const Branches = ({isOpen}: BranchesProps) => {
     }
   };
 
-  useEffect(() => {
-    console.log("open branches", context.branches)
-    //if(context.branches && context.branches.length) return
-    //actions.getBranches()
-  },[isOpen])
 
   useEffect(() => {
     console.log("branches", context.branches)
-  },[context.branches])
+  }, [context.branches])
 
-  
+
   return (
     <>
       <div className="pt-1">
@@ -66,7 +57,7 @@ export const Branches = ({isOpen}: BranchesProps) => {
               className="btn w-md-25 w-100 btn-primary"
               id="createbranch-btn"
             >
-                            create new branch
+              create new branch
             </GitUIButton>
           </div> : <div className="text-muted">No branches</div>}
       </div>
