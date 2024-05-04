@@ -72,34 +72,19 @@ export class SidePanel extends AbstractPanel {
     this.renderComponent()
   }
 
-  hideView(profile) {
-    this.plugins[profile.name].active = false
-    this.plugins['filePanel'].active = true
-    this.call('menuicons', 'unlinkContent', profile)
-    this.renderComponent()
+  pinView (profile) {
+    this.call('pinnedPanel', 'pinView', profile, this.plugins[profile.name].view)
+    this.removeView(profile)
   }
 
-  showView(profile) {
+  async unPinView (profile, view) {
+    this.addView(profile, view)
     const activePlugin = this.currentFocus()
 
     this.plugins[activePlugin].active = false
     this.plugins[profile.name].active = true
-    this.call('menuicons', 'linkContent', profile)
-    this.renderComponent()
-  }
-
-  pinView (profile) {
-    if (this.plugins[profile.name].pinned) return
-    this.plugins[profile.name].pinned = true
-    this.call('pinnedPanel', 'pinView', profile, this.plugins[profile.name].view)
-    this.removeView(profile)
-    // this.hideView(profile)
-  }
-
-  unPinView (profile) {
-    if (!this.plugins[profile.name].pinned) return
-    this.plugins[profile.name].pinned = false
-    this.showView(profile)
+    await this.call('menuicons', 'linkContent', profile)
+    this.showContent(profile.name)
   }
 
   /**
