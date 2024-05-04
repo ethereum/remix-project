@@ -3,7 +3,7 @@ import { ViewPlugin } from "@remixproject/engine-web";
 import React from "react";
 import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog } from "../state/gitpayload";
 import { gitActionDispatch } from "../types";
-import { diffFiles, getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
+import { currentBranch, diffFiles, getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin, showCurrentBranch } from "./gitactions";
 
 let plugin: ViewPlugin, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
 let callBackEnabled: boolean = false
@@ -12,24 +12,24 @@ let syncTimer: NodeJS.Timer = null
 type AsyncCallback = () => Promise<void>;
 
 class AsyncDebouncedQueue {
-    private queues: Map<AsyncCallback, { timer: any, lastCall: number }>;
+  private queues: Map<AsyncCallback, { timer: any, lastCall: number }>;
 
-    constructor(private delay: number = 300) {
-        this.queues = new Map();
+  constructor(private delay: number = 300) {
+    this.queues = new Map();
+  }
+
+  enqueue(callback: AsyncCallback, customDelay?: number): void {
+    if (this.queues.has(callback)) {
+      clearTimeout(this.queues.get(callback)!.timer);
     }
 
-    enqueue(callback: AsyncCallback, customDelay?:number): void {
-        if (this.queues.has(callback)) {
-            clearTimeout(this.queues.get(callback)!.timer);
-        }
+    let timer = setTimeout(async () => {
+      await callback();  // Await the asynchronous operation
+      this.queues.delete(callback);
+    }, customDelay || this.delay);
 
-        let timer = setTimeout(async () => {
-            await callback();  // Await the asynchronous operation
-            this.queues.delete(callback);
-        }, customDelay || this.delay);
-
-        this.queues.set(callback, { timer, lastCall: Date.now() });
-    }
+    this.queues.set(callback, { timer, lastCall: Date.now() });
+  }
 }
 
 
@@ -45,21 +45,18 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
   plugin.on("fileManager", "fileSaved", async (file: string) => {
     console.log(file)
     loadFileQueue.enqueue(async () => {
-      loadFiles()
-    })
+      await loadFiles()
+    }, 10)
   });
 
-  plugin.on('dGitProvider', 'checkout' as any, async () => {
-    //await synTimerStart();
-  })
   plugin.on('dGitProvider', 'branch' as any, async () => {
     //await synTimerStart();
   })
 
   plugin.on("fileManager", "fileAdded", async (e) => {
     loadFileQueue.enqueue(async () => {
-      loadFiles()
-    })
+      await loadFiles()
+    }, 10)
   });
 
   plugin.on("fileManager", "fileRemoved", async (e) => {
@@ -77,16 +74,16 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
 
   plugin.on("filePanel", "setWorkspace", async (x: any) => {
     loadFileQueue.enqueue(async () => {
-      loadFiles()
+      await loadFiles()
+    }, 10)
+    loadFileQueue.enqueue(async () => {
+      await gitlog()
     })
     loadFileQueue.enqueue(async () => {
-      gitlog()
+      await getBranches()
     })
     loadFileQueue.enqueue(async () => {
-      getBranches()
-    })
-    loadFileQueue.enqueue(async () => {
-      getRemotes()
+      await getRemotes()
     })
   });
 
@@ -99,19 +96,30 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
   });
 
   plugin.on('dGitProvider', 'checkout', async () => {
-   
+    loadFileQueue.enqueue(async () => {
+      await loadFiles()
+    }, 10)
+    loadFileQueue.enqueue(async () => {
+      await getBranches()
+    }, 10)
+    loadFileQueue.enqueue(async () => {
+      await showCurrentBranch()
+    }, 10)
+    loadFileQueue.enqueue(async () => {
+      await gitlog()
+    })
   })
   plugin.on('dGitProvider', 'init', async () => {
-    
+
   })
   plugin.on('dGitProvider', 'add', async () => {
     loadFileQueue.enqueue(async () => {
-      loadFiles()
+      await loadFiles()
     }, 10)
   })
   plugin.on('dGitProvider', 'rm', async () => {
     loadFileQueue.enqueue(async () => {
-      loadFiles()
+      await loadFiles()
     }, 10)
   })
   plugin.on('dGitProvider', 'commit', async () => {
@@ -135,8 +143,8 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
       type: "success"
     }))
     loadFileQueue.enqueue(async () => {
-      loadFiles()
-    })
+      await loadFiles()
+    }, 10)
   })
   plugin.on('manager', 'pluginActivated', async (p: Plugin) => {
     if (p.name === 'dGitProvider') {

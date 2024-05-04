@@ -25,6 +25,7 @@ export interface gitActions {
     resolveRef(ref: string): Promise<string>
     setUpstreamRemote(upstream: remote): Promise<void>
     getBranches: () => Promise<void>
+    gitlog:() => Promise<void>
     getRemotes: () => Promise<void>
     setDefaultRemote: (remote: remote) => Promise<void>
     addRemote: (remote: remote) => Promise<void>
