@@ -5,12 +5,12 @@ import { CommitSummary } from "../panels/commits/commitsummary";
 import { ReadCommitResult } from "isomorphic-git"
 
 interface CommitDetailsNavigationProps {
-    commit: ReadCommitResult,
-    checkout: (oid: string) => void
-    eventKey: string
-    activePanel: string
-    callback: (eventKey: string) => void
-    isAheadOfRepo: boolean
+  commit: ReadCommitResult,
+  checkout: (oid: string) => void
+  eventKey: string
+  activePanel: string
+  callback: (eventKey: string) => void
+  isAheadOfRepo: boolean
 }
 
 export const CommitDetailsNavigation = (props: CommitDetailsNavigationProps) => {
@@ -25,12 +25,12 @@ export const CommitDetailsNavigation = (props: CommitDetailsNavigationProps) => 
   }
   return (
     <>
-      <div onClick={() => handleClick()} role={'button'} className={`pointer mb-2 mt-2 w-100 d-flex flex-row commit-navigation ${isAheadOfRepo? 'text-success':''}`}>
+      <div onClick={() => handleClick()} role={'button'} className={`pointer mb-2 mt-2 w-100 d-flex flex-row commit-navigation ${isAheadOfRepo ? 'text-success' : ''}`}>
         {
           activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
         }
 
-        <CommitSummary commit={commit} checkout={checkout}></CommitSummary>
+        <CommitSummary isAheadOfRepo={isAheadOfRepo} commit={commit} checkout={checkout}></CommitSummary>
       </div>
     </>
   );

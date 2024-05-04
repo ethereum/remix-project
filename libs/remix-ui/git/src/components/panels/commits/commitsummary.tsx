@@ -10,10 +10,11 @@ import { gitPluginContext } from "../../gitui";
 export interface CommitSummaryProps {
   commit: ReadCommitResult;
   checkout: (oid: string) => void;
+  isAheadOfRepo: boolean
 }
 
 export const CommitSummary = (props: CommitSummaryProps) => {
-  const { commit, checkout } = props;
+  const { commit, checkout, isAheadOfRepo } = props;
   const context = React.useContext(gitPluginContext)
 
   const getDate = (commit: ReadCommitResult) => {
@@ -60,7 +61,7 @@ export const CommitSummary = (props: CommitSummaryProps) => {
       </div>
       {commit.commit.author.name || ""}
       <span className="ml-1">{getDate(commit)}</span>
-      {getRemote() && getRemote()?.url && <GitUIButton className="btn btn-sm p-0 mx-1 text-muted" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}
+      {getRemote() && getRemote()?.url && !isAheadOfRepo && <GitUIButton className="btn btn-sm p-0 text-muted ml-1" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}
     </>
   )
 }
