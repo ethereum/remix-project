@@ -83,8 +83,10 @@ export function RunTabUI(props: RunTabProps) {
 
   useEffect(() => {
     if (!props.initialState) {
-      initRunTab(plugin)(dispatch)
+      initRunTab(plugin, true)(dispatch)
       plugin.onInitDone()
+    } else {
+      initRunTab(plugin, false)(dispatch)
     }
   }, [plugin])
 
