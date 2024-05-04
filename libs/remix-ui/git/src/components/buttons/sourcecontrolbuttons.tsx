@@ -25,7 +25,7 @@ export const SourceControlButtons = () => {
   }
 
   const getRemoteName = () => {
-    return getRemote() ? getRemote().remote : ''
+    return getRemote() ? getRemote().name : ''
   }
 
   const pull = async () => {

@@ -49,7 +49,7 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
   const checkout = async (branch: branch) => {
     await actions.checkout({
       ref: branch.name,
-      remote: branch.remote && branch.remote.remote || null
+      remote: branch.remote && branch.remote.name || null
     });
     await actions.getBranches()
   }
@@ -74,7 +74,7 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
     console.log('CHANGES', changes)
     if (!changes) {
       // try to fetch the data
-      await actions.fetch(branch.remote.remote, branch.name,null,20, true, false, true)
+      await actions.fetch(branch.remote.name, branch.name,null,20, true, false, true)
     }
   }
 

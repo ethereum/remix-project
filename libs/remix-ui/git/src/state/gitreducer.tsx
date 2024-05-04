@@ -148,7 +148,7 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
 
   case 'SET_BRANCH_DIFFERENCES':
 
-    state.branchDifferences[`${(action as setBranchDifferencesAction).payload.remote.remote}/${(action as setBranchDifferencesAction).payload.branch.name}`] = (action as setBranchDifferencesAction).payload.branchDifference
+    state.branchDifferences[`${(action as setBranchDifferencesAction).payload.remote.name}/${(action as setBranchDifferencesAction).payload.branch.name}`] = (action as setBranchDifferencesAction).payload.branchDifference
 
     return {
       ...state,

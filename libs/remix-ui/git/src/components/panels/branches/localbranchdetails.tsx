@@ -35,7 +35,7 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
   const checkout = (branch: branch) => {
     actions.checkout({
       ref: branch.name,
-      remote: branch.remote && branch.remote.remote || null
+      remote: branch.remote && branch.remote.name || null
     });
   }
 

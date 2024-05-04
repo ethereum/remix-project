@@ -45,7 +45,7 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
           }
           <CustomTooltip tooltipText={remote.url} placement="top">
             <div className={`long-and-truncated ml-1 ${context.defaultRemote && context.defaultRemote?.url === remote.url ? 'text-success' : ''}`}>
-              {remote.remote}  <FontAwesomeIcon className='' icon={faArrowRightArrowLeft}></FontAwesomeIcon> {remote.url}
+              {remote.name}  <FontAwesomeIcon className='' icon={faArrowRightArrowLeft}></FontAwesomeIcon> {remote.url}
             </div>
           </CustomTooltip>
 
@@ -56,7 +56,7 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
           <GitUIButton className="btn btn-sm" onClick={setAsDefault}><FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon></GitUIButton>
         }
         <GitUIButton className="btn btn-sm" onClick={async () => {
-          await actions.fetch(remote.remote)
+          await actions.fetch(remote.name)
         }}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon></GitUIButton>
         <GitUIButton className="btn btn-sm" onClick={() => actions.removeRemote(remote)}><FontAwesomeIcon className='text-danger' icon={faTrash} ></FontAwesomeIcon></GitUIButton>
         {remote?.url && <GitUIButton className="btn btn-sm pr-0" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}

@@ -36,41 +36,7 @@ const statusmatrix: statusMatrixType[] = fileStatuses.map((x: any) => {
     status: x,
   };
 });
-/*
-interface customDGitSystem extends IDgitSystem{
-  events: StatusEvents,
-  methods: {
-    getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
-    getBranchCommits(branch: branch): Promise<ReadCommitResult[]>
-    fetchBranch(branch: branch): Promise<any>
-    remotebranches(owner: string, repo: string): Promise<branch[]>
-    remoteCommits(url: string, branch: string, length: number): Promise<ReadCommitResult[]>
-    repositories(token: string): Promise<any>
-    clone(url: string, branch: string, depth: number, singleBranch: boolean): Promise<any>
-    getGitHubUser(token: string): Promise<{ user: GitHubUser, ratelimit: RateLimit }>
-    saveGitHubCredentials(credentials: { username: string, email: string, token: string }): Promise<any>
-    getGitHubCredentials(): Promise<{ username: string, email: string, token: string }>
-    currentbranch(): Promise<branch>
-  }
-}
 
-interface notificationSystem {
-  methods: {
-    toast(message: string): void
-    alert(message: {
-      title: string,
-      type: string
-    }): void
-    modal(modal: AlertModal): void
-  },
-  events: StatusEvents
-}
-
-interface customApi extends IRemixApi {
-  dGitProvider: customDGitSystem
-  notification: notificationSystem
-}
-*/
 
 let plugin: Plugin, dispatch: React.Dispatch<gitActionDispatch>
 
@@ -173,7 +139,7 @@ export const currentBranch = async () => {
       (await plugin.call("dGitProvider", "currentbranch")) || {
         name: "",
         remote: {
-          remote: "",
+          name: "",
           url: "",
         },
       };
@@ -717,7 +683,7 @@ export const getCommitChanges = async (oid1: string, oid2: string, branch?: bran
       const foundCommit = log.find((commit: ReadCommitResult) => commit.oid === oid2)
       if (!foundCommit && remote) {
         console.log('getCommitChanges fetching remote')
-        await fetch(remote ? remote.remote : null, branch ? branch.name : null, null, 5, true, true)
+        await fetch(remote ? remote.name : null, branch ? branch.name : null, null, 5, true, true)
       }
     }
     const result: commitChange[] = await plugin.call('dGitProvider', 'getCommitChanges', oid1, oid2)
@@ -759,7 +725,7 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
     if (state.defaultRemote){
       remote = state.defaultRemote
     } else {
-      remote = state.remotes.find((remote: remote) => remote.remote === 'origin')
+      remote = state.remotes.find((remote: remote) => remote.name === 'origin')
     }
     if (!remote && state.remotes[0]){
       remote = state.remotes[0]

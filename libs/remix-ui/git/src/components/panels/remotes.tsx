@@ -19,7 +19,7 @@ export const Remotes = () => {
 
   const addRemote = async () => {
     actions.addRemote({
-      remote: remoteName,
+      name: remoteName,
       url: url
     })
   }

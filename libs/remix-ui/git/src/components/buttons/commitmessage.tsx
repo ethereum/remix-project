@@ -43,7 +43,7 @@ export const CommitMessage = () => {
   }
 
   const getRemoteName = () => {
-    return getRemote() ? getRemote().remote : ''
+    return getRemote() ? getRemote().name : ''
   }
 
   const sync = async() => {

@@ -33,7 +33,7 @@ export const CommitDetails = (props: CommitDetailsProps) => {
 
   const commitsAhead = (remote: remote) => {
     if (!remote) return [];
-    return context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueHeadCommits || [];
+    return context.branchDifferences[`${remote.name}/${branch.name}`]?.uniqueHeadCommits || [];
   }
 
   const isAheadOfRepo = () => {
@@ -41,7 +41,7 @@ export const CommitDetails = (props: CommitDetailsProps) => {
   }
 
   const openFileOnRemote = (file: string, hash: string) => {
-    console.log("open file on remote", file, hash, getRemote() ? `${getRemote().remote}/${branch.name}/commit/${hash}/${file}` : "")
+    console.log("open file on remote", file, hash, getRemote() ? `${getRemote().name}/${branch.name}/commit/${hash}/${file}` : "")
     if (!getRemote()) return
     window.open(`${getRemote() ? `${getRemote().url}/blob/${hash}/${file}` : ""}`, "_blank")
   }

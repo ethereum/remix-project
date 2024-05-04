@@ -27,12 +27,12 @@ export const BranchDifferences = (props: BrancheDetailsProps) => {
 
   const commitsAhead = (remote: remote) => {
     if(!remote) return [];
-    return context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueHeadCommits || [];
+    return context.branchDifferences[`${remote.name}/${branch.name}`]?.uniqueHeadCommits || [];
   }
 
   const commitsBehind = (remote: remote) => {
     if(!remote) return [];
-    return context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueRemoteCommits || [];
+    return context.branchDifferences[`${remote.name}/${branch.name}`]?.uniqueRemoteCommits || [];
   }
 
   if(!getRemote()) return null;
@@ -40,8 +40,8 @@ export const BranchDifferences = (props: BrancheDetailsProps) => {
   return (
 
     <div>
-      <BranchDifferenceDetails ahead={true} branch={branch} remote={getRemote()} title={`ahead of ${getRemote().remote} by ${commitsAhead(getRemote()).length} commit(s)`} commits={commitsAhead(getRemote())}></BranchDifferenceDetails>
-      <BranchDifferenceDetails behind={true} branch={branch} remote={getRemote()} title={`behind ${getRemote().remote} by ${commitsBehind(getRemote()).length} commit(s)`} commits={commitsBehind(getRemote())}></BranchDifferenceDetails>
+      <BranchDifferenceDetails ahead={true} branch={branch} remote={getRemote()} title={`ahead of ${getRemote().name} by ${commitsAhead(getRemote()).length} commit(s)`} commits={commitsAhead(getRemote())}></BranchDifferenceDetails>
+      <BranchDifferenceDetails behind={true} branch={branch} remote={getRemote()} title={`behind ${getRemote().name} by ${commitsBehind(getRemote()).length} commit(s)`} commits={commitsBehind(getRemote())}></BranchDifferenceDetails>
       {commitsAhead(getRemote()).length === 0 && commitsBehind(getRemote()).length === 0 ? null : <hr></hr>}
     </div>)
 }

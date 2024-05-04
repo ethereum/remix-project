@@ -34,7 +34,7 @@ export const Remoteselect = (props: RemoteSelectProps) => {
         <RemotesDetailsNavigation callback={setActivePanel} eventKey="0" activePanel={activePanel} remote={remote} />
         <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
           <>
-            {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.remote === remote.remote ).map((branch, index) => {
+            {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.name === remote.name ).map((branch, index) => {
               return (
                 <RemoteBranchDetails key={index} branch={branch}></RemoteBranchDetails>
               );

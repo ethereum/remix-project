@@ -108,7 +108,7 @@ export type branch = {
 }
 
 export type remote = {
-    remote: string
+    name: string
     url: string
 }
 
@@ -117,7 +117,7 @@ export type remoteBranch = {
 }
 
 export const defaultGitState: gitState = {
-  currentBranch: { name: "", remote: { remote: "", url: "" } },
+  currentBranch: { name: "", remote: { name: "", url: "" } },
   commits: [],
   branch: "",
   canCommit: true,

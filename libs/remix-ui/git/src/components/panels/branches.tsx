@@ -18,7 +18,7 @@ export const Branches = () => {
 
   const checkout = async (oid: string, remote: remote) => {
     try {
-      actions.checkout({ ref: oid, remote: remote.remote });
+      actions.checkout({ ref: oid, remote: remote.name });
     } catch (e) {
       // do nothing
     }

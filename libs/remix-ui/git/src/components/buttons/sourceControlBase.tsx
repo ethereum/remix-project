@@ -34,10 +34,9 @@ export const SourceControlBase = (props: SourceControlButtonsProps) => {
   useEffect(() => {
     //console.log('BRANCH DIFF SourceControlButtons',branch, remote, context.branchDifferences, context.currentBranch)
     setDefaultRemote()
-    if (remote && branch && context.branchDifferences && context.branchDifferences[`${remote.remote}/${branch.name}`]) {
-      //console.log('BRANCH DIFF found SourceControlButtons', context.branchDifferences[`${remote.remote}/${branch.name}`])
-      setCommitsAhead(context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueHeadCommits)
-      setCommitsBehind(context.branchDifferences[`${remote.remote}/${branch.name}`]?.uniqueRemoteCommits)
+    if (remote && branch && context.branchDifferences && context.branchDifferences[`${remote.name}/${branch.name}`]) {
+      setCommitsAhead(context.branchDifferences[`${remote.name}/${branch.name}`]?.uniqueHeadCommits)
+      setCommitsBehind(context.branchDifferences[`${remote.name}/${branch.name}`]?.uniqueRemoteCommits)
     } else {
       setCommitsAhead([])
       setCommitsBehind([])
@@ -48,7 +47,7 @@ export const SourceControlBase = (props: SourceControlButtonsProps) => {
 
     if (context.remotes.length > 0) {
       // find remote called origin
-      const origin = context.remotes.find(remote => remote.remote === 'origin')
+      const origin = context.remotes.find(remote => remote.name === 'origin')
       if (origin) {
         setRemote(origin)
       } else {

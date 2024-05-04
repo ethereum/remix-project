@@ -19,7 +19,7 @@ export const PushPull = () => {
   useEffect(() => {
     setRemoteBranch(context.currentBranch.name)
     setLocalBranch(context.currentBranch.name)
-    if ((!context.upstream) && context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.remote) {
+    if ((!context.upstream) && context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.name) {
       actions.setUpstreamRemote(context.currentBranch.remote)
     }
   }, [context.currentBranch])
@@ -33,7 +33,7 @@ export const PushPull = () => {
   }
 
   const onRemoteChange = (value: string) => {
-    const remote: remote = context.remotes.find(r => r.remote === value)
+    const remote: remote = context.remotes.find(r => r.name === value)
     if (remote) {
       actions.setUpstreamRemote(remote)
     }
@@ -47,12 +47,12 @@ export const PushPull = () => {
 
   const push = async () => {
     console.log('PUSH', context.upstream, localBranch, remoteBranch, force)
-    await actions.push(context.upstream.remote, localBranch, remoteBranch, force)
-    await actions.fetch(context.upstream.remote, localBranch, remoteBranch, 1, true)
+    await actions.push(context.upstream.name, localBranch, remoteBranch, force)
+    await actions.fetch(context.upstream.name, localBranch, remoteBranch, 1, true)
   }
 
   const pull = async () => {
-    actions.pull(context.upstream.remote, localBranch, remoteBranch)
+    actions.pull(context.upstream.name, localBranch, remoteBranch)
   }
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export const PushPull = () => {
     // map context.repositories to options
     const options = context.remotes && context.remotes.length > 0 && context.remotes
       .map(repo => {
-        return { value: repo.remote, label: repo.remote }
+        return { value: repo.name, label: repo.name }
       })
 
     setLocalRemotesOptions(options)
@@ -132,7 +132,7 @@ export const PushPull = () => {
         theme={selectTheme}
         styles={selectStyles}
         isClearable={true}
-        value={{ value: context.upstream && context.upstream.remote, label: context.upstream && context.upstream.remote }}
+        value={{ value: context.upstream && context.upstream.name, label: context.upstream && context.upstream.name }}
         placeholder="Type to search for a branch..."
       />
 
