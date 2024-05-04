@@ -22,7 +22,7 @@ export class GitPlugin extends ViewPlugin {
 
   onDeactivation(): void {
     this.call('fileDecorator', 'clearFileDecorators')
-    this.call('manager', 'activatePlugin', 'dGitProvider')
+    this.call('manager', 'activatePlugin', 'dgitApi')
   }
 
   render() {

@@ -19,7 +19,7 @@ import { Octokit, App } from "octokit"
 import { OctokitResponse } from '@octokit/types'
 import { Endpoints } from "@octokit/types"
 import { IndexedDBStorage } from './filesystems/indexedDB'
-import { GitHubUser, RateLimit, branch, commitChange, remote, pagedCommits } from '@remix-ui/git'
+import { GitHubUser, RateLimit, branch, commitChange, remote, pagedCommits, remoteCommitsInputType, cloneInputType, fetchInputType, pullInputType, pushInputType } from '@remix-ui/git'
 import { LibraryProfile, StatusEvents } from '@remixproject/plugin-utils'
 import { ITerminal } from '@remixproject/plugin-api/src/lib/terminal'
 
@@ -28,7 +28,7 @@ declare global {
 }
 
 const profile: LibraryProfile = {
-  name: 'dGitProvider',
+  name: 'dgitApi',
   displayName: 'Decentralized git',
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
@@ -252,7 +252,7 @@ class DGitProvider extends Plugin {
     this.emit('checkout')
   }
 
-  async log(cmd) {
+  async log(cmd:{ref:string}):Promise<ReadCommitResult[]> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'log', {
@@ -280,7 +280,7 @@ class DGitProvider extends Plugin {
     // Get remote branch commits
     const remoteCommits = await git.log({
       ...await this.addIsomorphicGitConfigFS(),
-      ref: `${remote.remote}/${branch.name}`,
+      ref: `${remote.name}/${branch.name}`,
     });
 
     // Convert arrays of commit objects to sets of commit SHAs
@@ -299,7 +299,7 @@ class DGitProvider extends Plugin {
     };
   }
 
-  async getCommitChanges(commitHash1, commitHash2): Promise<commitChange[]> {
+  async getCommitChanges(commitHash1: string, commitHash2: string): Promise<commitChange[]> {
     //console.log(commitHash1, commitHash2, [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
     const result: commitChange[] = await git.walk({
       ...await this.addIsomorphicGitConfigFS(),
@@ -355,14 +355,16 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  async remotes(config) {
+  async remotes(config): Promise<remote[]> {
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'remotes', config)
     }
 
     let remotes: remote[] = []
     try {
-      remotes = await git.listRemotes({ ...config ? config : await this.addIsomorphicGitConfigFS() })
+      remotes = (await git.listRemotes({ ...config ? config : await this.addIsomorphicGitConfigFS() })).map((remote) => 
+        { return { name: remote.remote, url: remote.url } }
+      )
     } catch (e) {
       // do nothing
     }
@@ -389,7 +391,7 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async currentbranch(config) {
+  async currentbranch(config): Promise<branch> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'currentbranch')
@@ -411,7 +413,7 @@ class DGitProvider extends Plugin {
             ...defaultConfig,
             path: `remote.${remoteName}.url`
           })
-          remote = { remote: remoteName, url: remoteUrl }
+          remote = { name: remoteName, url: remoteUrl }
         }
 
       } catch (e) {
@@ -440,7 +442,7 @@ class DGitProvider extends Plugin {
       let branches: branch[] = []
       branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
       for (const remote of remotes) {
-        cmd.remote = remote.remote
+        cmd.remote = remote.name
         const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote, name: branch } })
         branches = [...branches, ...remotebranches]
       }
@@ -553,7 +555,7 @@ class DGitProvider extends Plugin {
     return this.calculateLocalStorage()
   }
 
-  async clone(input, workspaceName, workspaceExists = false) {
+  async clone(input: cloneInputType) {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const folder = await this.call('fs', 'selectFolder', null, 'Select or create a folder to clone the repository in', 'Select as Repository Destination')
@@ -581,7 +583,7 @@ class DGitProvider extends Plugin {
       const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
       if (!permission) return false
       if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
-      if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
+      if (!input.workspaceExists) await this.call('filePanel', 'createWorkspace', input.workspaceName || `workspace_${Date.now()}`, true)
       const cmd = {
         url: input.url,
         singleBranch: input.singleBranch,
@@ -733,13 +735,13 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async push(input) {
+  async push(input: pushInputType) {
     console.log('push input', input)
     const cmd = {
       force: input.force,
-      ref: input.ref,
-      remoteRef: input.remoteRef,
-      remote: input.remote,
+      ref: input.ref.name,
+      remoteRef: input.remoteRef.name,
+      remote: input.remote.name,
       author: await this.getCommandUser(input),
       input,
     }
@@ -762,12 +764,12 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async pull(input) {
+  async pull(input: pullInputType) {
     const cmd = {
-      ref: input.ref,
-      remoteRef: input.remoteRef,
+      ref: input.ref.name,
+      remoteRef: input.remoteRef.name,
       author: await this.getCommandUser(input),
-      remote: input.remote,
+      remote: input.remote.name,
       input,
     }
     let result
@@ -791,12 +793,12 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  async fetch(input) {
+  async fetch(input: fetchInputType) {
     const cmd = {
-      ref: input.ref,
-      remoteRef: input.remoteRef,
+      ref: input.ref.name,
+      remoteRef: input.remoteRef.name,
       author: await this.getCommandUser(input),
-      remote: input.remote,
+      remote: input.remote.name,
       depth: input.depth || 5,
       singleBranch: input.singleBranch,
       relative: input.relative,
@@ -1033,7 +1035,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async remotecommits(input: { owner: string, repo: string, token: string, branch: string, length: number, page: number }): Promise<pagedCommits[]> {
+  async remotecommits(input: remoteCommitsInputType): Promise<pagedCommits[]> {
     const octokit = new Octokit({
       auth: input.token
     })

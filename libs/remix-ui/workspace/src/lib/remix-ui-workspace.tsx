@@ -16,6 +16,7 @@ import { customAction } from '@remixproject/plugin-api'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
+import { branch } from '@remix-ui/git'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -693,13 +694,14 @@ export function Workspace() {
     global.dispatchShowAllBranches()
   }
 
-  const switchToBranch = async (branch: {remote: string; name: string}) => {
+  const switchToBranch = async (branch: branch) => {
+    console.log('switchToBranch', branch)
     try {
       if (branch.remote) {
-        await global.dispatchCheckoutRemoteBranch(branch.name, branch.remote)
+        await global.dispatchCheckoutRemoteBranch(branch)
         _paq.push(['trackEvent', 'Workspace', 'GIT', 'checkout_remote_branch'])
       } else {
-        await global.dispatchSwitchToBranch(branch.name)
+        await global.dispatchSwitchToBranch(branch)
         _paq.push(['trackEvent', 'Workspace', 'GIT', 'switch_to_exisiting_branch'])
       }
     } catch (e) {
@@ -1259,7 +1261,7 @@ export function Workspace() {
                               }}
                               title={intl.formatMessage({ id: `filePanel.switchToBranch${branch.remote ? 'Title1' : 'Title2'}` })}
                             >
-                              <div data-id={`workspaceGit-${branch.remote ? `${branch.remote}/${branch.name}` : branch.name}`}>
+                              <div data-id={`workspaceGit-${branch.remote ? `${branch.remote.name}/${branch.name}` : branch.name}`}>
                                 {currentBranch === branch.name && !branch.remote ? (
                                   <span>
                                     &#10003; <i className="far fa-code-branch"></i>
@@ -1268,7 +1270,7 @@ export function Workspace() {
                                 ) : (
                                   <span className="pl-3">
                                     <i className={`far ${branch.remote ? 'fa-cloud' : 'fa-code-branch'}`}></i>
-                                    <span className="pl-1">{branch.remote ? `${branch.remote}/${branch.name}` : branch.name}</span>
+                                    <span className="pl-1">{branch.remote ? `${branch.remote.name}/${branch.name}` : branch.name}</span>
                                   </span>
                                 )}
                               </div>

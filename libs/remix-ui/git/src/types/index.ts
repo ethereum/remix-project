@@ -1,7 +1,70 @@
 import { Endpoints } from "@octokit/types"
+import { IRemixApi } from "@remixproject/plugin-api"
+import { LibraryProfile, StatusEvents } from "@remixproject/plugin-utils"
 import { CommitObject, ReadCommitResult } from "isomorphic-git"
 export type GitHubUser = Endpoints["GET /user"]["response"]['data']
 export type RateLimit = Endpoints["GET /rate_limit"]["response"]["data"]
+
+
+  
+  export interface customDGitSystem {
+    events: StatusEvents,
+    methods: {
+      getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
+      //getBranchCommits(branch: branch): Promise<ReadCommitResult[]>
+      //fetchBranch(branch: branch): Promise<any>
+      //remotebranches(owner: string, repo: string): Promise<branch[]>
+      //remoteCommits(url: string, branch: string, length: number): Promise<ReadCommitResult[]>
+      //repositories(token: string): Promise<any>
+      clone(input: cloneInputType): Promise<any>
+      branches(): Promise<branch[]>,
+      remotes(): Promise<remote[]>,
+      log(cmd:{ref:string}): Promise<ReadCommitResult[]>,
+      remotecommits(input: remoteCommitsInputType): Promise<pagedCommits[]>
+      fetch(input: fetchInputType): Promise<any>
+      pull(input: pullInputType): Promise<any>
+      push(input: pushInputType): Promise<any>
+      //getGitHubUser(token: string): Promise<{ user: GitHubUser, ratelimit: RateLimit }>
+      //saveGitHubCredentials(credentials: { username: string, email: string, token: string }): Promise<any>
+      //getGitHubCredentials(): Promise<{ username: string, email: string, token: string }>
+      //currentbranch(): Promise<branch>
+    }
+  }
+
+  export type remoteCommitsInputType = {
+    owner: string, repo: string, token: string, branch: string, length: number, page: number
+  }
+
+  export type fetchInputType = {
+    remote: remote, ref: branch, remoteRef: branch, depth: number, singleBranch: boolean, relative: boolean, quiet: boolean
+  }
+
+  export type pullInputType = {
+    remote: remote, ref: branch, remoteRef: branch
+  }
+
+  export type pushInputType = {
+    remote: remote, ref: branch, remoteRef: branch, force: boolean
+  }
+
+  export interface cloneInputType {
+    url: string,
+    branch: string,
+    depth: number,
+    singleBranch: boolean
+    workspaceName?: string
+    workspaceExists?: boolean
+  }
+
+  export const dGitProfile: LibraryProfile<customDGitSystem> = {
+    name: 'dgitApi',
+    methods: ['clone', 'branches', 'remotes','getCommitChanges', 'log', 'remotecommits'],
+  }
+  
+  
+  export interface customGitApi extends IRemixApi {
+    dgit: customDGitSystem
+  }
 
 export type gitState = {
     currentBranch: branch

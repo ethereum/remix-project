@@ -35,7 +35,7 @@ let requiredModules = [ // services + layout views + system views
   'pluginManager',
   'tabs',
   'udapp',
-  'dGitProvider',
+  'dgitApi',
   'solidity',
   'solidity-logic',
   'gistHandler',

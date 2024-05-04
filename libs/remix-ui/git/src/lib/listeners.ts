@@ -49,10 +49,10 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
     })
   });
 
-  plugin.on('dGitProvider', 'checkout' as any, async () => {
+  plugin.on('dgitApi', 'checkout' as any, async () => {
     //await synTimerStart();
   })
-  plugin.on('dGitProvider', 'branch' as any, async () => {
+  plugin.on('dgitApi', 'branch' as any, async () => {
     //await synTimerStart();
   })
 
@@ -98,23 +98,23 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
     //await synTimerStart();
   });
 
-  plugin.on('dGitProvider', 'checkout', async () => {
+  plugin.on('dgitApi', 'checkout', async () => {
    
   })
-  plugin.on('dGitProvider', 'init', async () => {
+  plugin.on('dgitApi', 'init', async () => {
     
   })
-  plugin.on('dGitProvider', 'add', async () => {
+  plugin.on('dgitApi', 'add', async () => {
     loadFileQueue.enqueue(async () => {
       loadFiles()
     }, 10)
   })
-  plugin.on('dGitProvider', 'rm', async () => {
+  plugin.on('dgitApi', 'rm', async () => {
     loadFileQueue.enqueue(async () => {
       loadFiles()
     }, 10)
   })
-  plugin.on('dGitProvider', 'commit', async () => {
+  plugin.on('dgitApi', 'commit', async () => {
     loadFileQueue.enqueue(async () => {
       gitlog()
     }, 10)
@@ -123,13 +123,13 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
       type: 'success'
     }))
   })
-  plugin.on('dGitProvider', 'branch', async () => {
+  plugin.on('dgitApi', 'branch', async () => {
     gitDispatch(setLog({
       message: "Created Branch",
       type: "success"
     }))
   })
-  plugin.on('dGitProvider', 'clone', async () => {
+  plugin.on('dgitApi', 'clone', async () => {
     gitDispatch(setLog({
       message: "Cloned Repository",
       type: "success"
@@ -139,7 +139,7 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
     })
   })
   plugin.on('manager', 'pluginActivated', async (p: Plugin) => {
-    if (p.name === 'dGitProvider') {
+    if (p.name === 'dgitApi') {
       getGitHubUser();
       plugin.off('manager', 'pluginActivated');
     }
@@ -206,7 +206,7 @@ const getStorageUsed = async () => {
   try {
     const storageUsed = await plugin.call("storage" as any, "getStorage" as any);
   } catch (e) {
-    const storage: string = await plugin.call("dGitProvider", "localStorageUsed" as any);
+    const storage: string = await plugin.call('dgitApi', "localStorageUsed" as any);
     const storageUsed = {
       usage: parseFloat(storage) * 1000,
       quota: 10000000,
