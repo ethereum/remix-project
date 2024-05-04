@@ -22,11 +22,13 @@ declare global {
 const _paq = window._paq = window._paq || []  //eslint-disable-line
 let plugin: RunTab, dispatch: React.Dispatch<any> = () => {}
 
-export const initRunTab = (udapp: RunTab) => async (reducerDispatch: React.Dispatch<any>) => {
+export const initRunTab = (udapp: RunTab, resetEventsAndAccounts: boolean) => async (reducerDispatch: React.Dispatch<any>) => {
   plugin = udapp
   dispatch = reducerDispatch
-  setupEvents(plugin, dispatch)
-  resetAndInit(plugin)
+  if (resetEventsAndAccounts) {
+    setupEvents(plugin, dispatch)  
+    resetAndInit(plugin)
+  }
 }
 
 export const setAccountAddress = (account: string) => setAccount(dispatch, account)
