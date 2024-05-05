@@ -18,7 +18,7 @@ export const Clone = () => {
 
   const [cloneDepth, setCloneDepth] = useLocalStorage(
     "CLONE_DEPTH",
-    1
+    10
   );
 
   const [cloneBranch, setCloneBranch] = useLocalStorage(
@@ -73,7 +73,7 @@ export const Clone = () => {
       <InputGroup className="mt-1 mb-1">
         <InputGroup.Prepend>
           <InputGroup.Text id="clonedepthprepend">
-                        --depth
+                        depth
           </InputGroup.Text>
         </InputGroup.Prepend>
         <FormControl id="clonedepth" type="number" value={cloneDepth} onChange={e => onDepthChange(parseInt(e.target.value))} aria-describedby="clonedepthprepend" />

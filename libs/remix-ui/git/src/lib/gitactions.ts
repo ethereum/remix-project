@@ -835,3 +835,13 @@ export const sendToGitLog = async (message: gitLog) => {
 export const clearGitLog = async () => {
   dispatch(clearLog())
 }
+
+export const refresh = async() =>{
+  dispatch(setLoading(true))
+  await disableCallBacks()
+  await getFileStatusMatrix(null)
+  await getBranches()
+  await gitlog()
+  dispatch(setLoading(false))
+  await enableCallBacks()
+}

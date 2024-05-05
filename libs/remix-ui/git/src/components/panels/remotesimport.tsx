@@ -69,10 +69,10 @@ export const RemotesImport = () => {
   return (
     <>
       <TokenWarning />
-      <RepositorySelect select={selectRepo} />
+      <RepositorySelect title={`Select repository from GitHub`} select={selectRepo} />
 
       {repo ?
-        <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
+        <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2 mt-1" type="text" id="remotename" />
         : null}
 
       {repo && remoteName ?

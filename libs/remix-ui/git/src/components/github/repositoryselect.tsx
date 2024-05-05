@@ -4,11 +4,13 @@ import Select from 'react-select';
 import { gitActionsContext } from '../../state/context';
 import { repository } from '../../types';
 import { selectStyles, selectTheme } from '../../types/styles';
+import GitUIButton from '../buttons/gituibutton';
 import { gitPluginContext } from '../gitui';
 import { TokenWarning } from '../panels/tokenWarning';
 
 interface RepositorySelectProps {
   select: (repo: repository) => void;
+  title: string;
 }
 
 const RepositorySelect = (props: RepositorySelectProps) => {
@@ -64,9 +66,9 @@ const RepositorySelect = (props: RepositorySelectProps) => {
   };
 
   return (
-    <><Button onClick={fetchRepositories} className="w-100 mt-1">
-      <i className="fab fa-github mr-1"></i>Fetch Repositories from GitHub
-    </Button>
+    <><GitUIButton onClick={fetchRepositories} className="btn btn-primary w-100 mt-1">
+      <i className="fab fa-github mr-1"></i>{props.title}
+    </GitUIButton>
     {
       show ?
         <Select
