@@ -31,7 +31,10 @@ export class PinnedPanel extends AbstractPanel {
     const activePlugin = this.currentFocus()
 
     if (activePlugin === profile.name) throw new Error(`Plugin ${profile.name} already pinned`) 
-    if (activePlugin) this.remove(activePlugin)
+    if (activePlugin) {
+      await this.call('sidePanel', 'unPinView', this.plugins[activePlugin].profile, this.plugins[activePlugin].view)
+      this.remove(activePlugin)
+    }
     this.loggedState = await this.call('pluginStateLogger', 'getPluginState', profile.name)
     this.addView(profile, view)
     this.plugins[profile.name].pinned = true
@@ -40,11 +43,11 @@ export class PinnedPanel extends AbstractPanel {
     this.events.emit('pinnedPlugin', profile.name)
   }
 
-  unPinView (profile) {
+  async unPinView (profile) {
     const activePlugin = this.currentFocus()
 
     if (activePlugin !== profile.name) throw new Error(`Plugin ${profile.name} already pinned`)
-    this.call('sidePanel', 'unPinView', profile, this.plugins[profile.name].view)
+    await this.call('sidePanel', 'unPinView', profile, this.plugins[profile.name].view)
     super.remove(profile.name)
     this.renderComponent()
     this.events.emit('unPinnedPlugin', profile.name)
