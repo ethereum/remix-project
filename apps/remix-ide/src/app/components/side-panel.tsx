@@ -72,15 +72,17 @@ export class SidePanel extends AbstractPanel {
     this.renderComponent()
   }
 
-  pinView (profile) {
-    this.call('pinnedPanel', 'pinView', profile, this.plugins[profile.name].view)
+  async pinView (profile, view) {
+    await this.call('pinnedPanel', 'pinView', profile, view)
     this.removeView(profile)
   }
 
   async unPinView (profile, view) {
-    this.addView(profile, view)
     const activePlugin = this.currentFocus()
 
+    if (activePlugin === profile.name) throw new Error(`Plugin ${profile.name} already unpinned`)
+    this.loggedState = await this.call('pluginStateLogger', 'getPluginState', profile.name)
+    super.addView(profile, view)
     this.plugins[activePlugin].active = false
     this.plugins[profile.name].active = true
     await this.call('menuicons', 'linkContent', profile)
@@ -111,7 +113,7 @@ export class SidePanel extends AbstractPanel {
   }
 
   updateComponent(state: any) {
-    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins} pinView={this.pinView.bind(this)} unPinView={this.unPinView.bind(this)}></RemixUIPanelHeader>} plugins={state.plugins} pluginState={state.loggedState} />
+    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins} pinView={this.pinView.bind(this)} unPinView={this.unPinView.bind(this)}></RemixUIPanelHeader>} plugins={state.plugins} pluginState={state.pluginState} />
   }
 
   renderComponent() {
