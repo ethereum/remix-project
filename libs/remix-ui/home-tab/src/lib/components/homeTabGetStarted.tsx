@@ -71,7 +71,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
     const metadata = TEMPLATE_METADATA[templateName]
     if (metadata) {
       if (metadata.type === 'git') {
-        await plugin.call('dGitProvider', 'clone', { url: metadata.url, branch: metadata.branch }, templateDisplayName)
+        await plugin.call('dgitApi', 'clone', { url: metadata.url, branch: metadata.branch }, templateDisplayName)
       } else if (metadata && metadata.type === 'plugin') {
         await plugin.appManager.activatePlugin('filePanel')
         templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)

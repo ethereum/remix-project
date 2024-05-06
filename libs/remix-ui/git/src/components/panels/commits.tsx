@@ -25,7 +25,14 @@ export const Commits = () => {
 
   const loadNextPage = () => {
     console.log('LOAD NEXT PAGE', context.commits.length)
-    actions.fetch(null, context.currentBranch.name, null, 5, true, true)
+    //actions.fetch(null, context.currentBranch.name, null, 5, true, true)
+    actions.fetch({
+      remote: null,
+      ref: context.currentBranch,
+      relative: true,
+      depth: 5,
+      singleBranch: true
+    })
     //actions.getBranchCommits(branch, lastPageNumber+1)
   }
 

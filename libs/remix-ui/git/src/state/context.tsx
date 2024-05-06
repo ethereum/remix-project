@@ -1,20 +1,20 @@
 import { ReadCommitResult } from "isomorphic-git"
 import React from "react"
-import { branch, commitChange, fileStatusResult, gitLog, gitState, remote } from "../types"
+import { addInput, branch, checkoutInput, cloneInputType, commitChange, fetchInputType, fileStatusResult, gitLog, gitState, pullInputType, pushInputType, remote, rmInput } from "../types"
 
 export interface gitActions {
     removeRemote(remote: remote): void
-    clone(url: string, path: string, depth: number, singleBranch: boolean): Promise<void>
-    add(path: string): Promise<void>
-    rm(path: string): Promise<void>
+    clone(input: cloneInputType): Promise<void>
+    add(input: addInput): Promise<void>
+    rm(input: rmInput): Promise<void>
     commit(message: string): Promise<any>
     addall(files: fileStatusResult[]): Promise<void>
-    push(remote?: string, ref?: string, remoteRef?: string, force?: boolean): Promise<void>
-    pull(remote?: string, ref?: string, remoteRef?: string): Promise<void>
-    fetch(remote?: string, ref?: string, remoteRef?: string, depth?: number, singleBranch?: boolean, relative?: boolean, quiet?: boolean): Promise<void>
+    push(input: pushInputType): Promise<void>
+    pull(input: pullInputType): Promise<void>
+    fetch(input: fetchInputType): Promise<void>
     repositories(): Promise<any>
     checkoutfile(file: string): Promise<void>
-    checkout(cmd: any): Promise<void>
+    checkout(input: checkoutInput): Promise<void>
     createBranch(branch: string): Promise<void>
     remoteBranches(owner: string, repo: string): Promise<any>
     getCommitChanges(oid1: string, oid2: string, branch?: branch, remote?: remote): Promise<commitChange[] | boolean>

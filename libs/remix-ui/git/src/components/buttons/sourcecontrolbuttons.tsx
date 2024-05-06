@@ -29,17 +29,29 @@ export const SourceControlButtons = () => {
   }
 
   const pull = async () => {
-    await actions.pull(getRemoteName(), branch ? branch.name : context.currentBranch.name)
+    await actions.pull({
+      remote: getRemote(),
+      ref: branch ? branch : context.currentBranch
+    })
   }
 
   const push = async () => {
-    await actions.push(getRemoteName(), branch ? branch.name : context.currentBranch.name)
-    await actions.fetch(getRemoteName(), branch ? branch.name : context.currentBranch.name, null, null, true)
+    await actions.push({
+      remote: getRemote(),
+      ref: branch ? branch : context.currentBranch
+    })
+    await actions.fetch({
+      remote: getRemote(),
+      ref: branch ? branch : context.currentBranch,
+      relative: false,
+      depth: 1,
+      singleBranch: true
+    })
   }
 
   const sync = async () => {
-    await actions.pull(getRemoteName(), branch ? branch.name : context.currentBranch.name)
-    await actions.push(getRemoteName(), branch ? branch.name : context.currentBranch.name)
+    await pull()
+    await push()
   }
 
   const refresh = async() => {

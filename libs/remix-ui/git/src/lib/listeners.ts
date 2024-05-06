@@ -2,10 +2,12 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import React from "react";
 import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog } from "../state/gitpayload";
-import { gitActionDispatch } from "../types";
+import { CustomRemixApi, customDGitSystem, gitActionDispatch } from "../types";
+import { Plugin } from "@remixproject/engine";
 import { diffFiles, getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
+import { Profile } from "@remixproject/plugin-utils";
 
-let plugin: ViewPlugin, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
+let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
 let callBackEnabled: boolean = false
 let syncTimer: NodeJS.Timer = null
 
@@ -34,7 +36,7 @@ class AsyncDebouncedQueue {
 
 
 
-export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispatch<gitActionDispatch>, loaderDispatcher: React.Dispatch<any>) => {
+export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<gitActionDispatch>, loaderDispatcher: React.Dispatch<any>) => {
   plugin = viewPlugin
   gitDispatch = gitDispatcher
   loaderDispatch = loaderDispatcher
@@ -49,10 +51,10 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
     })
   });
 
-  plugin.on('dGitProvider', 'checkout' as any, async () => {
+  plugin.on('dgitApi', 'checkout', async () => {
     //await synTimerStart();
   })
-  plugin.on('dGitProvider', 'branch' as any, async () => {
+  plugin.on('dgitApi', 'branch', async () => {
     //await synTimerStart();
   })
 
@@ -98,23 +100,23 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
     //await synTimerStart();
   });
 
-  plugin.on('dGitProvider', 'checkout', async () => {
+  plugin.on('dgitApi', 'checkout', async () => {
    
   })
-  plugin.on('dGitProvider', 'init', async () => {
+  plugin.on('dgitApi', 'init', async () => {
     
   })
-  plugin.on('dGitProvider', 'add', async () => {
+  plugin.on('dgitApi', 'add', async () => {
     loadFileQueue.enqueue(async () => {
       loadFiles()
     }, 10)
   })
-  plugin.on('dGitProvider', 'rm', async () => {
+  plugin.on('dgitApi', 'rm', async () => {
     loadFileQueue.enqueue(async () => {
       loadFiles()
     }, 10)
   })
-  plugin.on('dGitProvider', 'commit', async () => {
+  plugin.on('dgitApi', 'commit', async () => {
     loadFileQueue.enqueue(async () => {
       gitlog()
     }, 10)
@@ -123,13 +125,13 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
       type: 'success'
     }))
   })
-  plugin.on('dGitProvider', 'branch', async () => {
+  plugin.on('dgitApi', 'branch', async () => {
     gitDispatch(setLog({
       message: "Created Branch",
       type: "success"
     }))
   })
-  plugin.on('dGitProvider', 'clone', async () => {
+  plugin.on('dgitApi', 'clone', async () => {
     gitDispatch(setLog({
       message: "Cloned Repository",
       type: "success"
@@ -138,17 +140,17 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
       loadFiles()
     })
   })
-  plugin.on('manager', 'pluginActivated', async (p: Plugin) => {
-    if (p.name === 'dGitProvider') {
+  plugin.on('manager', 'pluginActivated', async (p: Profile<any>) => {
+    if (p.name === 'dgitApi') {
       getGitHubUser();
       plugin.off('manager', 'pluginActivated');
     }
   })
 
-  plugin.on('config', 'configChanged', async () => {
+  plugin.on('config' as any, 'configChanged', async () => {
     await getGitConfig()
   })
-  plugin.on('settings', 'configChanged', async () => {
+  plugin.on('settings' as any, 'configChanged', async () => {
     await getGitConfig()
   })
 
@@ -156,9 +158,9 @@ export const setCallBacks = (viewPlugin: ViewPlugin, gitDispatcher: React.Dispat
 }
 
 export const getGitConfig = async () => {
-  const username = await plugin.call('settings', 'get', 'settings/github-user-name')
-  const email = await plugin.call('settings', 'get', 'settings/github-email')
-  const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
+  const username = await plugin.call('settings' as any, 'get', 'settings/github-user-name')
+  const email = await plugin.call('settings' as any, 'get', 'settings/github-email')
+  const token = await plugin.call('settings' as any, 'get', 'settings/gist-access-token')
   const config = { username, email, token }
   gitDispatch(setGItHubToken(config.token))
   return config
@@ -206,7 +208,7 @@ const getStorageUsed = async () => {
   try {
     const storageUsed = await plugin.call("storage" as any, "getStorage" as any);
   } catch (e) {
-    const storage: string = await plugin.call("dGitProvider", "localStorageUsed" as any);
+    const storage: string = await plugin.call('dgitApi', "localStorageUsed" as any);
     const storageUsed = {
       usage: parseFloat(storage) * 1000,
       quota: 10000000,

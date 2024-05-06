@@ -5,6 +5,7 @@ import { selectStyles, selectTheme } from "../../../types/styles";
 import Select, { Options, OptionsOrGroups } from 'react-select'
 import GitUIButton from "../../buttons/gituibutton";
 import { remote } from "../../../types";
+import { relative } from "path";
 
 export const PushPull = () => {
   const context = React.useContext(gitPluginContext)
@@ -47,12 +48,46 @@ export const PushPull = () => {
 
   const push = async () => {
     console.log('PUSH', context.upstream, localBranch, remoteBranch, force)
-    await actions.push(context.upstream.name, localBranch, remoteBranch, force)
-    await actions.fetch(context.upstream.name, localBranch, remoteBranch, 1, true)
+    await actions.push({
+      remote: context.upstream,
+      ref: {
+        name: localBranch,
+        remote: null
+      },
+      remoteRef: {
+        name: remoteBranch,
+        remote: null
+      },
+      force: force
+    })
+    await actions.fetch({
+      remote: context.upstream,
+      ref: {
+        name: localBranch,
+        remote: null
+      },
+      remoteRef: {
+        name: remoteBranch,
+        remote: null
+      },
+      depth: 1,
+      relative: true,
+      singleBranch: true
+    })
   }
 
   const pull = async () => {
-    actions.pull(context.upstream.name, localBranch, remoteBranch)
+    await actions.pull({
+      remote: context.upstream,
+      ref: {
+        name: localBranch,
+        remote: null
+      },
+      remoteRef: {
+        name: remoteBranch,
+        remote: null
+      },
+    })
   }
 
   useEffect(() => {

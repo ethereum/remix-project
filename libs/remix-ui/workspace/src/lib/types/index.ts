@@ -6,6 +6,7 @@ import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { appPlatformTypes } from '@remix-ui/app'
 import { Placement } from 'react-bootstrap/esm/Overlay'
+import { branch } from '@remix-ui/git'
 
 export type action = { name: string, type?: Array<WorkspaceElement>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number, platform?: appPlatformTypes }
 export interface JSONStandardInput {
@@ -51,7 +52,7 @@ export type WorkspaceMetadata = {
   name: string
   isGitRepo: boolean
   hasGitSubmodules?: boolean
-  branches?: {remote: any; name: string}[]
+  branches?: branch[]
   currentBranch?: string
   isGist: string
 }
@@ -244,14 +245,14 @@ export interface ActionPayloadTypes {
   SET_CURRENT_WORKSPACE: {
     name: string
     isGitRepo: boolean
-    branches?: {remote: string | undefined; name: string}[]
-    currentBranch?: string
+    branches?: branch[]
+    currentBranch?: branch
   },
   SET_WORKSPACES: {
     name: string
     isGitRepo: boolean
-    branches?: {remote: string | undefined; name: string}[]
-    currentBranch?: string
+    branches?: branch[]
+    currentBranch?: branch
   }[],
   SET_MODE: 'browser' | 'localhost',
   FETCH_DIRECTORY_REQUEST: undefined | null,
@@ -293,8 +294,8 @@ export interface ActionPayloadTypes {
   CREATE_WORKSPACE_SUCCESS: {
     name: string
     isGitRepo: boolean
-    branches?: { remote: string | undefined; name: string }[]
-    currentBranch?: string
+    branches?: branch[]
+    currentBranch?: branch
   },
   CREATE_WORKSPACE_ERROR: string,
   RENAME_WORKSPACE: { oldName: string; workspaceName: string },
@@ -317,8 +318,8 @@ export interface ActionPayloadTypes {
   CLONE_REPOSITORY_FAILED: undefined | null,
   FS_INITIALIZATION_COMPLETED: undefined | null,
   SET_FILE_DECORATION_SUCCESS: fileDecoration[],
-  SET_CURRENT_WORKSPACE_BRANCHES: { remote: string | undefined; name: string }[],
-  SET_CURRENT_WORKSPACE_CURRENT_BRANCH: string,
+  SET_CURRENT_WORKSPACE_BRANCHES: branch[],
+  SET_CURRENT_WORKSPACE_CURRENT_BRANCH: branch,
   SET_CURRENT_WORKSPACE_IS_GITREPO: boolean,
   SET_CURRENT_WORKSPACE_HAS_GIT_SUBMODULES: boolean,
   SET_GIT_CONFIG: {

@@ -10,7 +10,7 @@ declare global {
 const localPluginData: Profile & LocationProfile & ExternalProfile = {
   name: 'localPlugin',
   displayName: 'Local Plugin',
-  canActivate: ['dGitProvider', 'flattener', 'solidityUnitTesting', 'udapp', 'hardhat-provider'],
+  canActivate: ['dgitApi', 'flattener', 'solidityUnitTesting', 'udapp', 'hardhat-provider'],
   url: 'http://localhost:9999',
   location: 'sidePanel'
 }

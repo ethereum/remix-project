@@ -3,7 +3,7 @@
 import {
   Plugin
 } from '@remixproject/engine'
-import git, { ReadCommitResult } from 'isomorphic-git'
+import git, { ReadBlobResult, ReadCommitResult, StatusRow } from 'isomorphic-git'
 import IpfsHttpClient from 'ipfs-http-client'
 import {
   saveAs
@@ -19,7 +19,7 @@ import { Octokit, App } from "octokit"
 import { OctokitResponse } from '@octokit/types'
 import { Endpoints } from "@octokit/types"
 import { IndexedDBStorage } from './filesystems/indexedDB'
-import { GitHubUser, RateLimit, branch, commitChange, remote, pagedCommits } from '@remix-ui/git'
+import { GitHubUser, RateLimit, branch, commitChange, remote, pagedCommits, remoteCommitsInputType, cloneInputType, fetchInputType, pullInputType, pushInputType, currentBranchInput, branchInputType, addInput, rmInput, resolveRefInput, readBlobInput, repositoriesInput, commitInput, branchDifference, compareBranchesInput, initInput } from '@remix-ui/git'
 import { LibraryProfile, StatusEvents } from '@remixproject/plugin-utils'
 import { ITerminal } from '@remixproject/plugin-api/src/lib/terminal'
 
@@ -28,7 +28,7 @@ declare global {
 }
 
 const profile: LibraryProfile = {
-  name: 'dGitProvider',
+  name: 'dgitApi',
   displayName: 'Decentralized git',
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
@@ -128,10 +128,10 @@ class DGitProvider extends Plugin {
     return author
   }
 
-  async init(input?) {
+  async init(input?: initInput): Promise<void> {
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'init', {
-        defaultBranch: (input && input.branch) || 'main'
+        defaultBranch: (input && input.defaultBranch) || 'main'
       })
       this.emit('init')
       return
@@ -139,7 +139,7 @@ class DGitProvider extends Plugin {
 
     await git.init({
       ...await this.addIsomorphicGitConfigFS(),
-      defaultBranch: (input && input.branch) || 'main'
+      defaultBranch: (input && input.defaultBranch) || 'main'
     })
     this.emit('init')
   }
@@ -153,7 +153,7 @@ class DGitProvider extends Plugin {
     return version
   }
 
-  async status(cmd) {
+  async status(cmd): Promise<Array<StatusRow>> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'status', cmd)
@@ -169,7 +169,7 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async add(cmd) {
+  async add(cmd: addInput): Promise<void> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'add', cmd)
@@ -183,7 +183,7 @@ class DGitProvider extends Plugin {
     this.emit('add')
   }
 
-  async rm(cmd) {
+  async rm(cmd: rmInput) {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'rm', cmd)
@@ -252,7 +252,7 @@ class DGitProvider extends Plugin {
     this.emit('checkout')
   }
 
-  async log(cmd) {
+  async log(cmd:{ref:string}):Promise<ReadCommitResult[]> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'log', {
@@ -270,7 +270,7 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async compareBranches({ branch, remote }: { branch: branch, remote: remote }) {
+  async compareBranches({ branch, remote }: compareBranchesInput): Promise<branchDifference> {
     // Get current branch commits
     const headCommits = await git.log({
       ...await this.addIsomorphicGitConfigFS(),
@@ -280,7 +280,7 @@ class DGitProvider extends Plugin {
     // Get remote branch commits
     const remoteCommits = await git.log({
       ...await this.addIsomorphicGitConfigFS(),
-      ref: `${remote.remote}/${branch.name}`,
+      ref: `${remote.name}/${branch.name}`,
     });
 
     // Convert arrays of commit objects to sets of commit SHAs
@@ -299,7 +299,7 @@ class DGitProvider extends Plugin {
     };
   }
 
-  async getCommitChanges(commitHash1, commitHash2): Promise<commitChange[]> {
+  async getCommitChanges(commitHash1: string, commitHash2: string): Promise<commitChange[]> {
     //console.log(commitHash1, commitHash2, [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
     const result: commitChange[] = await git.walk({
       ...await this.addIsomorphicGitConfigFS(),
@@ -355,21 +355,23 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  async remotes(config) {
+  async remotes(config): Promise<remote[]> {
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'remotes', config)
     }
 
     let remotes: remote[] = []
     try {
-      remotes = await git.listRemotes({ ...config ? config : await this.addIsomorphicGitConfigFS() })
+      remotes = (await git.listRemotes({ ...config ? config : await this.addIsomorphicGitConfigFS() })).map((remote) => 
+        { return { name: remote.remote, url: remote.url } }
+      )
     } catch (e) {
       // do nothing
     }
     return remotes
   }
 
-  async branch(cmd, refresh = true) {
+  async branch(cmd: branchInputType): Promise<void> {
 
     let status
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
@@ -380,7 +382,7 @@ class DGitProvider extends Plugin {
         ...cmd
       })
     }
-    if (refresh) {
+    if (cmd.refresh) {
       setTimeout(async () => {
         await this.call('fileManager', 'refresh')
       }, 1000)
@@ -389,7 +391,7 @@ class DGitProvider extends Plugin {
     return status
   }
 
-  async currentbranch(config) {
+  async currentbranch(config: currentBranchInput): Promise<branch> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'currentbranch')
@@ -411,7 +413,7 @@ class DGitProvider extends Plugin {
             ...defaultConfig,
             path: `remote.${remoteName}.url`
           })
-          remote = { remote: remoteName, url: remoteUrl }
+          remote = { name: remoteName, url: remoteUrl }
         }
 
       } catch (e) {
@@ -427,7 +429,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async branches(config) {
+  async branches(config): Promise<branch[]> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'branches')
@@ -440,7 +442,7 @@ class DGitProvider extends Plugin {
       let branches: branch[] = []
       branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
       for (const remote of remotes) {
-        cmd.remote = remote.remote
+        cmd.remote = remote.name
         const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote, name: branch } })
         branches = [...branches, ...remotebranches]
       }
@@ -450,7 +452,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async commit(cmd) {
+  async commit(cmd: commitInput): Promise<string> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       try {
@@ -490,7 +492,7 @@ class DGitProvider extends Plugin {
     return filesInStaging
   }
 
-  async resolveref(cmd) {
+  async resolveref(cmd: resolveRefInput): Promise<string> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'resolveref', cmd)
@@ -503,7 +505,7 @@ class DGitProvider extends Plugin {
     return oid
   }
 
-  async readblob(cmd) {
+  async readblob(cmd: readBlobInput): Promise<ReadBlobResult> {
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const readBlobResult = await this.call('isogit', 'readblob', cmd)
       return readBlobResult
@@ -533,27 +535,27 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async addremote(input) {
+  async addremote(input: remote): Promise<void> {
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
-      await this.call('isogit', 'addremote', { url: input.url, remote: input.remote })
+      await this.call('isogit', 'addremote', { url: input.url, remote: input.name })
       return
     }
-    await git.addRemote({ ...await this.addIsomorphicGitConfigFS(), url: input.url, remote: input.remote })
+    await git.addRemote({ ...await this.addIsomorphicGitConfigFS(), url: input.url, remote: input.name })
   }
 
-  async delremote(input) {
+  async delremote(input: remote) {
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
-      await this.call('isogit', 'delremote', { remote: input.remote })
+      await this.call('isogit', 'delremote', { remote: input.name })
       return
     }
-    await git.deleteRemote({ ...await this.addIsomorphicGitConfigFS(), remote: input.remote })
+    await git.deleteRemote({ ...await this.addIsomorphicGitConfigFS(), remote: input.name })
   }
 
   async localStorageUsed() {
     return this.calculateLocalStorage()
   }
 
-  async clone(input, workspaceName, workspaceExists = false) {
+  async clone(input: cloneInputType) {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const folder = await this.call('fs', 'selectFolder', null, 'Select or create a folder to clone the repository in', 'Select as Repository Destination')
@@ -581,7 +583,7 @@ class DGitProvider extends Plugin {
       const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
       if (!permission) return false
       if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
-      if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
+      if (!input.workspaceExists) await this.call('filePanel', 'createWorkspace', input.workspaceName || `workspace_${Date.now()}`, true)
       const cmd = {
         url: input.url,
         singleBranch: input.singleBranch,
@@ -592,7 +594,7 @@ class DGitProvider extends Plugin {
       }
       this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
       const result = await git.clone(cmd)
-      if (!workspaceExists) {
+      if (!input.workspaceExists) {
         setTimeout(async () => {
           await this.call('fileManager', 'refresh')
         }, 1000)
@@ -733,13 +735,13 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async push(input) {
+  async push(input: pushInputType) {
     console.log('push input', input)
     const cmd = {
       force: input.force,
-      ref: input.ref,
-      remoteRef: input.remoteRef,
-      remote: input.remote,
+      ref: input.ref.name,
+      remoteRef: input.remoteRef.name,
+      remote: input.remote.name,
       author: await this.getCommandUser(input),
       input,
     }
@@ -762,12 +764,12 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async pull(input) {
+  async pull(input: pullInputType) {
     const cmd = {
-      ref: input.ref,
-      remoteRef: input.remoteRef,
+      ref: input.ref.name,
+      remoteRef: input.remoteRef.name,
       author: await this.getCommandUser(input),
-      remote: input.remote,
+      remote: input.remote.name,
       input,
     }
     let result
@@ -791,12 +793,12 @@ class DGitProvider extends Plugin {
     return result
   }
 
-  async fetch(input) {
+  async fetch(input: fetchInputType) {
     const cmd = {
-      ref: input.ref,
-      remoteRef: input.remoteRef,
+      ref: input.ref.name,
+      remoteRef: input.remoteRef.name,
       author: await this.getCommandUser(input),
-      remote: input.remote,
+      remote: input.remote.name,
       depth: input.depth || 5,
       singleBranch: input.singleBranch,
       relative: input.relative,
@@ -1033,7 +1035,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async remotecommits(input: { owner: string, repo: string, token: string, branch: string, length: number, page: number }): Promise<pagedCommits[]> {
+  async remotecommits(input: remoteCommitsInputType): Promise<pagedCommits[]> {
     const octokit = new Octokit({
       auth: input.token
     })
@@ -1095,7 +1097,7 @@ class DGitProvider extends Plugin {
     return pages
   }
 
-  async repositories(input: { token: string, page?: number, per_page?: number }) {
+  async repositories(input: repositoriesInput) {
 
     const accessToken = input.token;
 

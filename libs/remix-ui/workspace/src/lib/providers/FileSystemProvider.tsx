@@ -5,6 +5,7 @@ import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FileSystemContext } from '../contexts'
 import { browserReducer, browserInitialState } from '../reducers/workspace'
+import { branch } from '@remix-ui/git'
 import {
   initWorkspace,
   fetchDirectory,
@@ -209,7 +210,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await showAllBranches()
   }
 
-  const dispatchSwitchToBranch = async (branch: string) => {
+  const dispatchSwitchToBranch = async (branch: branch) => {
     await switchBranch(branch)
   }
 
@@ -217,8 +218,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createNewBranch(branch)
   }
 
-  const dispatchCheckoutRemoteBranch = async (branch: string, remote: string) => {
-    await checkoutRemoteBranch(branch, remote)
+  const dispatchCheckoutRemoteBranch = async (branch: branch) => {
+    await checkoutRemoteBranch(branch)
   }
 
   const dispatchCreateSolidityGithubAction = async () => {

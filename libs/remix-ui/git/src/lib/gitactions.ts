@@ -2,7 +2,7 @@ import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog } from "../state/gitpayload";
-import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult } from '../types';
+import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, customDGitSystem, cloneInputType, fetchInputType, pullInputType, pushInputType, CustomRemixApi, checkoutInput, rmInput, addInput, repository } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
@@ -37,8 +37,7 @@ const statusmatrix: statusMatrixType[] = fileStatuses.map((x: any) => {
   };
 });
 
-
-let plugin: Plugin, dispatch: React.Dispatch<gitActionDispatch>
+let plugin: Plugin<any, CustomRemixApi>, dispatch: React.Dispatch<gitActionDispatch>
 
 export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatch>) => {
   plugin = p
@@ -48,13 +47,13 @@ export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatc
 
 export const getBranches = async () => {
   console.log('getBranches')
-  const branches = await plugin.call("dGitProvider", "branches");
+  const branches = await plugin.call('dgitApi', "branches")
   console.log('branches :>>', branches)
   dispatch(setBranches(branches));
 }
 export const getRemotes = async () => {
   console.log('getRemotes')
-  const remotes: remote[] = await plugin.call("dGitProvider", "remotes" as any);
+  const remotes: remote[] = await plugin.call('dgitApi', "remotes");
   console.log('remotes :>>', remotes)
   dispatch(setRemotes(remotes));
 }
@@ -69,7 +68,7 @@ export const getFileStatusMatrix = async (filepaths: string[]) => {
     statusmatrix.map((sm) => {
       if (JSON.stringify(sm.status) === JSON.stringify(m.status)) {
         //Utils.log(m, sm);
-        m.statusNames = sm.matrix;
+        //m.statusNames = sm.matrix;
       }
     });
   });
@@ -87,7 +86,7 @@ export const getCommits = async () => {
   console.log('getCommits')
   try {
     const commits: ReadCommitResult[] = await plugin.call(
-      "dGitProvider",
+      'dgitApi',
       "log",
       { ref: "HEAD" }
     );
@@ -114,11 +113,7 @@ export const showCurrentBranch = async () => {
     const currentcommitoid = await getCommitFromRef("HEAD");
 
     if (typeof branch === "undefined" || branch.name === "") {
-      //toast.warn(`You are in a detached state`);
-      plugin.call('notification', 'alert', {
-        type: 'warning',
-        title: 'You are in a detached state',
-      })
+
       branch.name = `HEAD detached at ${currentcommitoid}`;
       //canCommit = false;
       dispatch(setCanCommit(false));
@@ -136,7 +131,7 @@ export const currentBranch = async () => {
   // eslint-disable-next-line no-useless-catch
   try {
     const branch: branch =
-      (await plugin.call("dGitProvider", "currentbranch")) || {
+      (await plugin.call('dgitApi', "currentbranch")) || {
         name: "",
         remote: {
           name: "",
@@ -152,14 +147,14 @@ export const currentBranch = async () => {
 export const createBranch = async (name: string = "") => {
   dispatch(setLoading(true))
   if (name) {
-    await plugin.call("dGitProvider", "branch", { ref: name });
-    await plugin.call("dGitProvider", "checkout", { ref: name });
+    await plugin.call('dgitApi', 'branch', { ref: name });
+    await plugin.call('dgitApi', 'checkout', { ref: name });
   }
   dispatch(setLoading(false))
 }
 
 export const getCommitFromRef = async (ref: string) => {
-  const commitOid = await plugin.call("dGitProvider", "resolveref", {
+  const commitOid = await plugin.call('dgitApi', "resolveref", {
     ref: ref,
   });
   return commitOid;
@@ -169,7 +164,7 @@ const settingsWarning = async () => {
   const username = await plugin.call('config' as any, 'getAppParameter', 'settings/github-user-name')
   const email = await plugin.call('config' as any, 'getAppParameter', 'settings/github-email')
   if (!username || !email) {
-    plugin.call('notification', 'toast', 'Please set your github username and email in the settings')
+    plugin.call('notification' as any, 'toast', 'Please set your github username and email in the settings')
     return false;
   } else {
     return {
@@ -188,21 +183,21 @@ export const commit = async (message: string = "") => {
       return
     }
 
-    const sha = await plugin.call("dGitProvider", "commit", {
+    const sha = await plugin.call('dgitApi', 'commit', {
       author: {
         name: credentials.username,
         email: credentials.email,
       },
       message: message,
     });
-    
+
     sendToGitLog({
-      type:'success',
+      type: 'success',
       message: `Commited: ${sha}`
     })
 
   } catch (err) {
-    plugin.call('notification', 'toast', `${err}`)
+    plugin.call('notification' as any, 'toast', `${err}`)
   }
 
 }
@@ -212,47 +207,29 @@ export const addall = async (files: fileStatusResult[]) => {
     console.log('addall', files.map(f => removeSlash(f.filename)))
     const filesToAdd = files.map(f => removeSlash(f.filename))
     try {
-      await plugin.call("dGitProvider", "add", {
-        filepath: filesToAdd,
-      });
+      add({ filepath: filesToAdd })
     } catch (e) { }
     sendToGitLog({
-      type:'success',
+      type: 'success',
       message: `Added all files to git`
     })
 
   } catch (e) {
-    plugin.call('notification', 'toast', `${e}`)
+    plugin.call('notification' as any, 'toast', `${e}`)
   }
 }
 
-export const add = async (args: string | undefined) => {
-  if (args !== undefined) {
-    let filename = args; // $(args[0].currentTarget).data('file')
-    let stagingfiles;
-    if (filename !== "/") {
-      filename = removeSlash(filename);
-      stagingfiles = [filename];
-    } else {
-      //await addall();
-      return;
-    }
-    try {
-      for (const filepath of stagingfiles) {
-        try {
-          await plugin.call("dGitProvider", "add", {
-            filepath: removeSlash(filepath),
-          });
-        } catch (e) { }
-      }
-      sendToGitLog({
-        type:'success',
-        message: `Added ${filename} to git`
-      })
-    } catch (e) {
-      plugin.call('notification', 'toast', `${e}`)
-    }
+export const add = async (filepath: addInput) => {
+  try {
+    await plugin.call('dgitApi', 'add', filepath);
+    sendToGitLog({
+      type: 'success',
+      message: `Added to git`
+    })
+  } catch (e) {
+    plugin.call('notification' as any, 'toast', `${e}`)
   }
+
 }
 
 const getLastCommmit = async () => {
@@ -265,14 +242,13 @@ const getLastCommmit = async () => {
   }
 }
 
-export const rm = async (args: any) => {
-  const filename = args;
-  await plugin.call("dGitProvider", "rm", {
-    filepath: removeSlash(filename),
+export const rm = async (args: rmInput) => {
+  await plugin.call('dgitApi', 'rm', {
+    filepath: removeSlash(args.filepath),
   });
   sendToGitLog({
-    type:'success',
-    message: `Removed ${filename} from git`
+    type: 'success',
+    message: `Removed from git`
   })
 }
 
@@ -280,10 +256,10 @@ export const checkoutfile = async (filename: string) => {
   const oid = await getLastCommmit();
   if (oid)
     try {
-      const commitOid = await plugin.call("dGitProvider", "resolveref", {
+      const commitOid = await plugin.call('dgitApi', 'resolveref', {
         ref: oid,
       });
-      const { blob } = await plugin.call("dGitProvider", "readblob", {
+      const { blob } = await plugin.call('dgitApi', 'readblob', {
         oid: commitOid,
         filepath: removeSlash(filename),
       });
@@ -298,47 +274,44 @@ export const checkoutfile = async (filename: string) => {
       );
       await enableCallBacks();
     } catch (e) {
-      plugin.call('notification', 'toast', `No such file`)
+      plugin.call('notification' as any, 'toast', `No such file`)
     }
 }
 
-export const checkout = async (cmd: any) => {
+export const checkout = async (cmd: checkoutInput) => {
   console.log(cmd)
   await disableCallBacks();
   await plugin.call('fileManager', 'closeAllFiles')
   try {
-    await plugin.call("dGitProvider", "checkout", cmd);
+    await plugin.call('dgitApi', 'checkout', cmd)
     gitlog();
   } catch (e) {
-    plugin.call('notification', 'toast', `${e}`)
+    plugin.call('notification' as any, 'toast', `${e}`)
   }
   await enableCallBacks();
 }
 
-export const clone = async (url: string, branch: string, depth: number, singleBranch: boolean) => {
-  console.log(url, branch, depth, singleBranch)
+export const clone = async (input: cloneInputType) => {
+
   dispatch(setLoading(true))
   try {
     await disableCallBacks()
     // get last part of url
-    const urlParts = url.split("/");
+    const urlParts = input.url.split("/");
     const lastPart = urlParts[urlParts.length - 1];
     const repoName = lastPart.split(".")[0];
     // add timestamp to repo name
     const timestamp = new Date().getTime();
     const repoNameWithTimestamp = `${repoName}-${timestamp}`;
     //const token = await tokenWarning();
-    const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
-    //if (!token) {
-    //    dispatch(setLoading(false))
-    //    return
-    //} else {
-    await plugin.call('dGitProvider' as any, 'clone', { url, branch, token, depth, singleBranch }, repoNameWithTimestamp);
+    const token = await plugin.call('config' as any, 'getAppParameter' as any, 'settings/gist-access-token')
+
+    await plugin.call('dgitApi', 'clone', { ...input, workspaceName: repoNameWithTimestamp });
     await enableCallBacks()
-    
+
     sendToGitLog({
-      type:'success',
-      message: `Cloned ${url} to ${repoNameWithTimestamp}`
+      type: 'success',
+      message: `Cloned ${input.url} to ${repoNameWithTimestamp}`
     })
     //}
   } catch (e: any) {
@@ -347,12 +320,12 @@ export const clone = async (url: string, branch: string, depth: number, singleBr
   dispatch(setLoading(false))
 }
 
-export const fetch = async (remote?: string, ref?: string, remoteRef?: string, depth?: number, singleBranch?: boolean, relative?: boolean, quiet?: boolean) => {
+export const fetch = async (input: fetchInputType) => {
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
-    await plugin.call('dGitProvider' as any, 'fetch', { remote, ref, remoteRef, depth, singleBranch, relative });
-    if (!quiet) {
+    await plugin.call('dgitApi', 'fetch', input);
+    if (!input.quiet) {
       await gitlog()
       await getBranches()
     }
@@ -364,11 +337,11 @@ export const fetch = async (remote?: string, ref?: string, remoteRef?: string, d
   await enableCallBacks()
 }
 
-export const pull = async (remote?: string, ref?: string, remoteRef?: string) => {
+export const pull = async (input: pullInputType) => {
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
-    await plugin.call('dGitProvider' as any, 'pull', { remote, ref, remoteRef })
+    await plugin.call('dgitApi', 'pull', input)
     await gitlog()
   } catch (e: any) {
     await parseError(e)
@@ -377,11 +350,11 @@ export const pull = async (remote?: string, ref?: string, remoteRef?: string) =>
   await enableCallBacks()
 }
 
-export const push = async (remote?: string, ref?: string, remoteRef?: string, force?: boolean) => {
+export const push = async (input: pushInputType) => {
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
-    await plugin.call('dGitProvider' as any, 'push', { remote, ref, remoteRef, force })
+    await plugin.call('dgitApi', 'push', input)
   } catch (e: any) {
     await parseError(e)
   }
@@ -390,7 +363,7 @@ export const push = async (remote?: string, ref?: string, remoteRef?: string, fo
 }
 
 const tokenWarning = async () => {
-  const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
+  const token = await plugin.call('config' as any, 'getAppParameter' as any, 'settings/gist-access-token')
   if (!token) {
     return false;
   } else {
@@ -402,7 +375,7 @@ const parseError = async (e: any) => {
   console.trace(e)
   // if message conttains 401 Unauthorized, show token warning
   if (e.message.includes('401')) {
-    const result = await plugin.call('notification', 'modal', {
+    const result = await plugin.call('notification' as any, 'modal' as any, {
       title: 'The GitHub token may be missing or invalid',
       message: 'Please check the GitHub token and try again. Error: 401 Unauthorized',
       okLabel: 'Go to settings',
@@ -413,7 +386,7 @@ const parseError = async (e: any) => {
   }
   // if message contains 404 Not Found, show repo not found
   else if (e.message.includes('404')) {
-    await plugin.call('notification', 'modal', {
+    await plugin.call('notification' as any, 'modal' as any, {
       title: 'Repository not found',
       message: 'Please check the URL and try again.',
       okLabel: 'Go to settings',
@@ -423,7 +396,7 @@ const parseError = async (e: any) => {
   }
   // if message contains 403 Forbidden
   else if (e.message.includes('403')) {
-    await plugin.call('notification', 'modal', {
+    await plugin.call('notification' as any, 'modal' as any, {
       title: 'The GitHub token may be missing or invalid',
       message: 'Please check the GitHub token and try again. Error: 403 Forbidden',
       okLabel: 'Go to settings',
@@ -431,14 +404,14 @@ const parseError = async (e: any) => {
       type: ModalTypes.confirm
     })
   } else if (e.toString().includes('NotFoundError') && !e.toString().includes('fetch')) {
-    await plugin.call('notification', 'modal', {
+    await plugin.call('notification' as any, 'modal', {
       title: 'Remote branch not found',
       message: 'The branch you are trying to fetch does not exist on the remote. If you have forked this branch from another branch, you may need to fetch the original branch first or publish this branch on the remote.',
       okLabel: 'OK',
       type: ModalTypes.alert
     })
   } else {
-    await plugin.call('notification', 'alert', {
+    await plugin.call('notification' as any, 'alert' as any, {
       title: 'Error',
       message: e.message
     })
@@ -449,13 +422,13 @@ export const repositories = async () => {
   try {
     const token = await tokenWarning();
     if (token) {
-      let repos = await plugin.call('dGitProvider' as any, 'repositories', { token, per_page: 100 })
+      let repos = await plugin.call('dgitApi', 'repositories', { token, per_page: 100 })
       dispatch(setRepos(repos))
       let page = 2
       let hasMoreData = true
       const per_page = 100
       while (hasMoreData) {
-        const pagedResponse = await plugin.call('dGitProvider' as any, 'repositories', { token, page: page, per_page: per_page })
+        const pagedResponse = await plugin.call('dgitApi', 'repositories', { token, page: page, per_page: per_page })
         if (pagedResponse.length < per_page) {
           hasMoreData = false
         }
@@ -465,7 +438,7 @@ export const repositories = async () => {
       }
 
     } else {
-      plugin.call('notification', 'alert', {
+      plugin.call('notification' as any, 'alert', {
         title: 'Error getting repositories',
         message: `Please check your GitHub token in the GitHub settings... cannot connect to GitHub`
       })
@@ -473,7 +446,7 @@ export const repositories = async () => {
     }
   } catch (e) {
     console.log(e)
-    plugin.call('notification', 'alert', {
+    plugin.call('notification' as any, 'alert', {
       title: 'Error getting repositories',
       message: `${e.message}: Please check your GitHub token in the GitHub settings.`
     })
@@ -485,13 +458,13 @@ export const remoteBranches = async (owner: string, repo: string) => {
   try {
     const token = await tokenWarning();
     if (token) {
-      let branches = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo, per_page: 100 });
+      let branches = await plugin.call('dgitApi' as any, 'remotebranches', { token, owner, repo, per_page: 100 });
       dispatch(setRemoteBranches(branches))
       let page = 2
       let hasMoreData = true
       const per_page = 100
       while (hasMoreData) {
-        const pagedResponse = await plugin.call('dGitProvider' as any, 'remotebranches', { token, owner, repo, page: page, per_page: per_page })
+        const pagedResponse = await plugin.call('dgitApi' as any, 'remotebranches', { token, owner, repo, page: page, per_page: per_page })
         if (pagedResponse.length < per_page) {
           hasMoreData = false
         }
@@ -500,7 +473,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
         page++
       }
     } else {
-      plugin.call('notification', 'alert', {
+      plugin.call('notification' as any, 'alert', {
         title: 'Error getting branches',
         message: `Please check your GitHub token in the GitHub settings. It needs to have access to the branches.`
       })
@@ -508,7 +481,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
     }
   } catch (e) {
     console.log(e)
-    plugin.call('notification', 'alert', {
+    plugin.call('notification' as any, 'alert', {
       title: 'Error',
       message: e.message
     })
@@ -532,7 +505,7 @@ export const remoteCommits = async (url: string, branch: string, length: number)
     const token = await tokenWarning();
     if (token) {
       console.log(token, owner, repo, branch, length)
-      const commits = await plugin.call('dGitProvider' as any, 'remotecommits', { token, owner, repo, branch, length });
+      const commits = await plugin.call('dgitApi' as any, 'remotecommits', { token, owner, repo, branch, length });
       console.log(commits, 'remote commits')
     } else {
       sendToGitLog({
@@ -542,7 +515,7 @@ export const remoteCommits = async (url: string, branch: string, length: number)
     }
   } catch (e) {
     console.log(e)
-    plugin.call('notification', 'alert', {
+    plugin.call('notification' as any, 'alert', {
       title: 'Error',
       message: e.message
     })
@@ -551,9 +524,9 @@ export const remoteCommits = async (url: string, branch: string, length: number)
 
 export const saveGitHubCredentials = async (credentials: { username: string, email: string, token: string }) => {
   try {
-    await plugin.call('config' as any, 'setAppParameter', 'settings/github-user-name', credentials.username)
-    await plugin.call('config' as any, 'setAppParameter', 'settings/github-email', credentials.email)
-    await plugin.call('config' as any, 'setAppParameter', 'settings/gist-access-token', credentials.token)
+    await plugin.call('config' as any, 'setAppParameter' as any, 'settings/github-user-name', credentials.username)
+    await plugin.call('config' as any, 'setAppParameter' as any, 'settings/github-email', credentials.email)
+    await plugin.call('config' as any, 'setAppParameter' as any, 'settings/gist-access-token', credentials.token)
   } catch (e) {
     console.log(e)
   }
@@ -562,9 +535,9 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
 export const getGitHubCredentials = async () => {
   if (!plugin) return
   try {
-    const username = await plugin.call('config' as any, 'getAppParameter', 'settings/github-user-name')
-    const email = await plugin.call('config' as any, 'getAppParameter', 'settings/github-email')
-    const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
+    const username = await plugin.call('config' as any, 'getAppParameter' as any, 'settings/github-user-name')
+    const email = await plugin.call('config' as any, 'getAppParameter' as any, 'settings/github-email')
+    const token = await plugin.call('config' as any, 'getAppParameter' as any, 'settings/gist-access-token')
     return {
       username,
       email,
@@ -584,7 +557,7 @@ export const getGitHubUser = async () => {
         user: GitHubUser,
         ratelimit: RateLimit
         scopes: string[]
-      } = await plugin.call('dGitProvider' as any, 'getGitHubUser', { token });
+      } = await plugin.call('dgitApi' as any, 'getGitHubUser', { token });
 
       console.log('GET USER"', data)
 
@@ -600,7 +573,7 @@ export const getGitHubUser = async () => {
 }
 
 export const statusMatrix = async (filepaths: string[]) => {
-  const matrix = await plugin.call("dGitProvider", "status", { ref: "HEAD", filepaths: filepaths || ['.']});
+  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.'] });
   const result = (matrix || []).map((x) => {
     return {
       filename: `/${x.shift()}`,
@@ -616,7 +589,7 @@ export const diffFiles = async (filename: string | undefined) => {
 }
 
 export const resolveRef = async (ref: string) => {
-  const oid = await plugin.call("dGitProvider", "resolveref", {
+  const oid = await plugin.call('dgitApi', "resolveref", {
     ref,
   });
   return oid;
@@ -636,7 +609,7 @@ export const diff = async (commitChange: commitChange) => {
   } else {
 
     try {
-      const modifiedContentReadBlobResult: ReadBlobResult = await plugin.call("dGitProvider", "readblob", {
+      const modifiedContentReadBlobResult: ReadBlobResult = await plugin.call('dgitApi', "readblob", {
         oid: commitChange.hashModified,
         filepath: removeSlash(commitChange.path),
       });
@@ -651,7 +624,7 @@ export const diff = async (commitChange: commitChange) => {
   }
 
   try {
-    const originalContentReadBlobResult: ReadBlobResult = await plugin.call("dGitProvider", "readblob", {
+    const originalContentReadBlobResult: ReadBlobResult = await plugin.call('dgitApi', "readblob", {
       oid: commitChange.hashOriginal,
       filepath: removeSlash(commitChange.path),
     });
@@ -672,7 +645,7 @@ export const getCommitChanges = async (oid1: string, oid2: string, branch?: bran
     let log
     try {
       // check if oid2 exists
-      log = await plugin.call('dGitProvider', 'log', {
+      log = await plugin.call('dgitApi', 'log', {
         ref: branch ? branch.name : 'HEAD',
       })
       console.log(log, 'log')
@@ -683,10 +656,19 @@ export const getCommitChanges = async (oid1: string, oid2: string, branch?: bran
       const foundCommit = log.find((commit: ReadCommitResult) => commit.oid === oid2)
       if (!foundCommit && remote) {
         console.log('getCommitChanges fetching remote')
-        await fetch(remote ? remote.name : null, branch ? branch.name : null, null, 5, true, true)
+        //await fetch(remote ? remote.name : null, branch ? branch.name : null, null, 5, true, true)
+        await fetch({
+          remote: remote,
+          singleBranch: true,
+          quiet: true,
+          relative: true,
+          depth: 5,
+          ref: branch,
+          remoteRef: null
+        })
       }
     }
-    const result: commitChange[] = await plugin.call('dGitProvider', 'getCommitChanges', oid1, oid2)
+    const result: commitChange[] = await plugin.call('dgitApi', 'getCommitChanges', oid1, oid2)
     dispatch(setCommitChanges(result))
     return result
   } catch (e) {
@@ -714,27 +696,27 @@ export const fetchBranch = async (branch: branch, page: number) => {
     dispatch(resetRemoteBranchCommits({ branch }))
   }
   const { owner, repo } = await getRepoDetails(branch.remote.url);
-  const rc = await plugin.call('dGitProvider' as any, 'remotecommits', { token, owner: owner, repo: repo, branch: branch.name, length, page });
+  const rc = await plugin.call('dgitApi', 'remotecommits', { token, owner: owner, repo: repo, branch: branch.name, length, page });
   console.log(rc, 'remote commits from octokit')
   dispatch(setRemoteBranchCommits({ branch, commits: rc }))
   return
 }
 
 export const getBranchDifferences = async (branch: branch, remote: remote, state: gitState) => {
-  if (!remote && state){
-    if (state.defaultRemote){
+  if (!remote && state) {
+    if (state.defaultRemote) {
       remote = state.defaultRemote
     } else {
       remote = state.remotes.find((remote: remote) => remote.name === 'origin')
     }
-    if (!remote && state.remotes[0]){
+    if (!remote && state.remotes[0]) {
       remote = state.remotes[0]
     }
   }
   if (!remote) return
   try {
     console.log('compare', branch, remote)
-    const branchDifference: branchDifference = await plugin.call('dGitProvider', 'compareBranches', {
+    const branchDifference: branchDifference = await plugin.call('dgitApi', 'compareBranches', {
       branch,
       remote
     })
@@ -746,7 +728,7 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
         branchDifference: branchDifference
       }))
   } catch (e) {
-      console.log(e)
+    console.log(e)
   }
 }
 
@@ -756,7 +738,7 @@ export const getBranchCommits = async (branch: branch, page: number) => {
   try {
     console.log(branch)
     if (!branch.remote) {
-      const commits: ReadCommitResult[] = await plugin.call('dGitProvider', 'log', {
+      const commits: ReadCommitResult[] = await plugin.call('dgitApi', 'log', {
         ref: branch.name,
       })
       console.log(commits)
@@ -778,7 +760,7 @@ export const setDefaultRemote = async (remote: remote) => {
 
 export const addRemote = async (remote: remote) => {
   try {
-    await plugin.call('dGitProvider', 'addremote', remote)
+    await plugin.call('dgitApi', 'addremote', remote)
     await getRemotes()
   } catch (e) {
     console.log(e)
@@ -787,7 +769,7 @@ export const addRemote = async (remote: remote) => {
 
 export const removeRemote = async (remote: remote) => {
   try {
-    await plugin.call('dGitProvider', 'delremote', remote)
+    await plugin.call('dgitApi', 'delremote', remote)
     await getRemotes()
   } catch (e) {
     console.log(e)

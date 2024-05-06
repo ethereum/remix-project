@@ -1,7 +1,163 @@
 import { Endpoints } from "@octokit/types"
-import { CommitObject, ReadCommitResult } from "isomorphic-git"
+import { IRemixApi } from "@remixproject/plugin-api"
+import { LibraryProfile, StatusEvents } from "@remixproject/plugin-utils"
+import { CommitObject, ReadBlobResult, ReadCommitResult, StatusRow } from "isomorphic-git"
 export type GitHubUser = Endpoints["GET /user"]["response"]['data']
 export type RateLimit = Endpoints["GET /rate_limit"]["response"]["data"]
+
+
+
+export interface customDGitSystem {
+    events: {
+        "checkout": () => void
+        "clone": () => void
+        "add": () => void
+        "rm": () => void
+        "commit": () => void
+        "branch": () => void
+        "init": () => void
+    } & StatusEvents,
+    methods: {
+        getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
+        //getBranchCommits(branch: branch): Promise<ReadCommitResult[]>
+        //fetchBranch(branch: branch): Promise<any>
+        //remotebranches(owner: string, repo: string): Promise<branch[]>
+        //remoteCommits(url: string, branch: string, length: number): Promise<ReadCommitResult[]>
+        repositories(input: repositoriesInput): Promise<repository[]>
+        clone(input: cloneInputType): Promise<any>
+        branches(input?: branchesInput): Promise<branch[]>,
+        remotes(): Promise<remote[]>,
+        log(cmd: { ref: string }): Promise<ReadCommitResult[]>,
+        remotecommits(input: remoteCommitsInputType): Promise<pagedCommits[]>
+        fetch(input: fetchInputType): Promise<any>
+        pull(input: pullInputType): Promise<any>
+        push(input: pushInputType): Promise<any>
+        //getGitHubUser(token: string): Promise<{ user: GitHubUser, ratelimit: RateLimit }>
+        //saveGitHubCredentials(credentials: { username: string, email: string, token: string }): Promise<any>
+        //getGitHubCredentials(): Promise<{ username: string, email: string, token: string }>
+        currentbranch(input?: currentBranchInput): Promise<branch>
+        branch(input: branchInputType): Promise<void>
+        checkout(input: checkoutInput): Promise<void>
+        add(input: addInput): Promise<void>
+        rm(input: rmInput): Promise<void>
+        resolveref(input: resolveRefInput): Promise<string>
+        readblob(input: readBlobInput): Promise<ReadBlobResult>
+        commit(input: commitInput): Promise<string>
+        addremote(input: remote): Promise<void>
+        delremote(input: remote): Promise<void>
+        status(input?: statusInput): Promise<Array<StatusRow>>
+        compareBranches(input: compareBranchesInput): Promise<branchDifference>
+        init(input?: initInput): Promise<void>
+        updateSubmodules: (input: updateSubmodulesInput) => Promise<void>
+    }
+}
+
+export interface ICustomRemixApi extends IRemixApi {
+    dgitApi: customDGitSystem
+}
+
+export declare type CustomRemixApi = Readonly<ICustomRemixApi>;
+
+export type initInput = {
+    defaultBranch: string
+}
+
+export type updateSubmodulesInput = {
+    dir?: string
+    token?: string
+}
+
+export type remoteCommitsInputType = {
+    owner: string, repo: string, token: string, branch: string, length: number, page: number
+}
+
+export type compareBranchesInput = {
+    branch: branch, remote: remote
+}
+
+export type fetchInputType = {
+    remote: remote, ref: branch, remoteRef?: branch, depth: number, singleBranch: boolean, relative: boolean, quiet?: boolean
+}
+
+export type pullInputType = {
+    remote: remote, ref: branch, remoteRef?: branch
+}
+
+export type pushInputType = {
+    remote: remote, ref: branch, remoteRef?: branch, force?: boolean
+}
+
+export type branchInputType = {
+    ref: string,
+    checkout?: boolean
+    refresh?: boolean
+}
+
+export type currentBranchInput = {
+    fs: any,
+    dir: string
+}
+
+export type checkoutInput = {
+    ref: string,
+    force?: boolean,
+    remote?: string
+    refresh?: boolean
+}
+
+export type addInput = {
+    filepath: string | string[]
+}
+
+export type rmInput = {
+    filepath: string
+}
+
+export type resolveRefInput = {
+    ref: string
+}
+
+export type readBlobInput = {
+    oid: string,
+    filepath: string
+}
+
+export type commitInput = {
+    author: {
+        name: string,
+        email: string,
+    },
+    message: string,
+}
+
+export type branchesInput = {
+    fs?: any
+    dir?: string
+}
+
+export interface cloneInputType {
+    url: string,
+    branch?: string,
+    depth?: number,
+    singleBranch?: boolean
+    workspaceName?: string
+    workspaceExists?: boolean
+    token?: string
+}
+
+export interface repositoriesInput { token: string, page?: number, per_page?: number }
+
+export interface statusInput { ref: string, filepaths?: string[] }
+
+export const dGitProfile: LibraryProfile<customDGitSystem> = {
+    name: 'dgitApi',
+    methods: ['clone', 'branches', 'remotes', 'getCommitChanges', 'log', 'remotecommits'],
+}
+
+
+export interface customGitApi extends IRemixApi {
+    dgit: customDGitSystem
+}
 
 export type gitState = {
     currentBranch: branch
@@ -38,7 +194,7 @@ export type gitState = {
     log: gitLog[]
 }
 export type gitLog = {
-    type: 'error' | 'warning' | 'info' |'success',
+    type: 'error' | 'warning' | 'info' | 'success',
     message: string
 }
 
@@ -117,46 +273,46 @@ export type remoteBranch = {
 }
 
 export const defaultGitState: gitState = {
-  currentBranch: { name: "", remote: { name: "", url: "" } },
-  commits: [],
-  branch: "",
-  canCommit: true,
-  branches: [],
-  remotes: [],
-  defaultRemote: null,
-  fileStatusResult: [],
-  staged: [],
-  untracked: [],
-  deleted: [],
-  modified: [],
-  allchangesnotstaged: [],
-  canUseApp: false,
-  loading: false,
-  storageUsed: {},
-  reponame: "",
-  repositories: [],
-  remoteBranches: [],
-  commitChanges: [],
-  remoteBranchCommits: {},
-  localBranchCommits: {},
-  branchDifferences: {},
-  syncStatus: syncStatus.none,
-  localCommitCount: 0,
-  remoteCommitCount: 0,
-  upstream: null,
-  gitHubUser: {} as GitHubUser,
-  rateLimit: {} as RateLimit,
-  gitHubScopes: [],
-  gitHubAccessToken: "",
-  log: []
+    currentBranch: { name: "", remote: { name: "", url: "" } },
+    commits: [],
+    branch: "",
+    canCommit: true,
+    branches: [],
+    remotes: [],
+    defaultRemote: null,
+    fileStatusResult: [],
+    staged: [],
+    untracked: [],
+    deleted: [],
+    modified: [],
+    allchangesnotstaged: [],
+    canUseApp: false,
+    loading: false,
+    storageUsed: {},
+    reponame: "",
+    repositories: [],
+    remoteBranches: [],
+    commitChanges: [],
+    remoteBranchCommits: {},
+    localBranchCommits: {},
+    branchDifferences: {},
+    syncStatus: syncStatus.none,
+    localCommitCount: 0,
+    remoteCommitCount: 0,
+    upstream: null,
+    gitHubUser: {} as GitHubUser,
+    rateLimit: {} as RateLimit,
+    gitHubScopes: [],
+    gitHubAccessToken: "",
+    log: []
 }
 
 export const defaultLoaderState: loaderState = {
-  branches: false,
-  commits: false,
-  sourcecontrol: false,
-  remotes: false,
-  plugin: false
+    branches: false,
+    commits: false,
+    sourcecontrol: false,
+    remotes: false,
+    plugin: false
 }
 
 export type fileStatusResult = {
