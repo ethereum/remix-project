@@ -7,7 +7,7 @@
   "description": "Remix IDE Desktop",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bunsenstraat/remix-desktop.git"
+    "url": "git+https://github.com/remix-project-org/remix-desktop.git"
   },
   "author": {
     "name": "Remix Team",
@@ -84,7 +84,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "bunsenstraat",
+        "owner": "remix-project-org",
         "repo": "remix-desktop",
         "releaseType": "draft",
         "publishAutoUpdate": true
