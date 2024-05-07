@@ -7,7 +7,7 @@ import {CustomTooltip, RenderIf, RenderIfNot} from '@remix-ui/helper'
 export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>,
   pinView?: (profile: PluginRecord['profile'], view: PluginRecord['view']) => void,
-  unPinView?: (profile: PluginRecord['profile'], view: PluginRecord['view']) => void
+  unPinView?: (profile: PluginRecord['profile']) => void
 }
 const RemixUIPanelHeader = (props: RemixPanelProps) => {
   const [plugin, setPlugin] = useState<PluginRecord>()
@@ -32,7 +32,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
   }
 
   const unPinPlugin = () => {
-    props.unPinView && props.unPinView(plugin.profile, plugin.view)
+    props.unPinView && props.unPinView(plugin.profile)
   }
 
   const tooltipChild = <i className={`px-1 ml-2 pt-1 pb-2 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>
