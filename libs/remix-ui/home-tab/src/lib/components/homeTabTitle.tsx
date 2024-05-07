@@ -149,21 +149,22 @@ function HomeTabTitle() {
         <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'webSite'])} target="__blank" href="https://remix-project.org">
           <FormattedMessage id="home.website" />
         </a>
-        <a
+        {/* <a
           className="pl-2 remixui_home_text"
           onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'documentation'])}
           target="__blank"
           href="https://remix-ide.readthedocs.io/en/latest"
         >
           <FormattedMessage id="home.documentation" />
-        </a>
+        </a> */}
         <a
           className="pl-2 remixui_home_text"
           onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixPlugin'])}
           target="__blank"
           href="https://remix-plugin-docs.readthedocs.io/en/latest/"
         >
-          <FormattedMessage id="home.remixPlugin" />
+          {/* <FormattedMessage id="home.remixPlugin" /> */}
+          Remix Desktop
         </a>
         <a
           className="pl-2 remixui_home_text"
