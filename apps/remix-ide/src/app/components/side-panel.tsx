@@ -72,8 +72,8 @@ export class SidePanel extends AbstractPanel {
     this.renderComponent()
   }
 
-  async pinView (profile, view) {
-    await this.call('pinnedPanel', 'pinView', profile, view)
+  async pinView (profile) {
+    await this.call('pinnedPanel', 'pinView', profile, this.plugins[profile.name].view)
     this.removeView(profile)
   }
 

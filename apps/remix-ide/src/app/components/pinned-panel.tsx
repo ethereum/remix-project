@@ -41,16 +41,18 @@ export class PinnedPanel extends AbstractPanel {
     this.plugins[profile.name].active = true
     this.renderComponent()
     this.events.emit('pinnedPlugin', profile.name)
+    this.emit('pinnedPlugin', profile.name)
   }
 
   async unPinView (profile) {
     const activePlugin = this.currentFocus()
 
-    if (activePlugin !== profile.name) throw new Error(`Plugin ${profile.name} already pinned`)
+    if (activePlugin !== profile.name) throw new Error(`Plugin ${profile.name} is not pinned`)
     await this.call('sidePanel', 'unPinView', profile, this.plugins[profile.name].view)
     super.remove(profile.name)
     this.renderComponent()
     this.events.emit('unPinnedPlugin', profile.name)
+    this.emit('unPinnedPlugin', profile.name)
   }
 
   setDispatch (dispatch: React.Dispatch<any>) {

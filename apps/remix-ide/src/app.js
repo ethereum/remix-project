@@ -571,12 +571,26 @@ class AppComponent {
                 }
               }
             }
+          }).then(async () => {
+            const lastPinned = localStorage.getItem('pinnedPlugin')
+
+            if (lastPinned) {
+              setTimeout(() => this.appManager.call('sidePanel', 'pinView', { name: lastPinned }), 500)
+            }
           })
           .catch(console.error)
       }
       const loadedElement = document.createElement('span')
       loadedElement.setAttribute('data-id', 'apploaded')
       document.body.appendChild(loadedElement)
+    })
+
+    this.appManager.on('pinnedPanel', 'pinnedPlugin', (pluginName) => {
+      localStorage.setItem('pinnedPlugin', pluginName)
+    })
+
+    this.appManager.on('pinnedPanel', 'unPinnedPlugin', () => {
+      localStorage.setItem('pinnedPlugin', '')
     })
 
     // activate solidity plugin
