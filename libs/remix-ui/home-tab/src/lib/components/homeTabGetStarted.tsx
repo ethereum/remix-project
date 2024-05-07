@@ -142,7 +142,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
   }
 
   const [activeButtonClass, setActiveButtonClass] = useState('')
-  const [activeButton, setActiveButton] = useState('homeTabGetStartedPlayground')
+  const [activeButton, setActiveButton] = useState('')
 
   useEffect(() => {
     const checkWorkspaceName = async () => {
@@ -163,7 +163,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
     const currentWorkspace = await plugin.call('filePanel', 'getCurrentWorkspace')
     const allworkspaces = await plugin.call('filePanel', 'getWorkspaces')
     console.log('currentWorkspace', { currentWorkspace, allworkspaces })
-    if (target.classList.contains('btn-primary') && target.dataset.id === activeButton) {
+    if (target.classList.contains('btn-primary') && target.dataset.id.includes(activeButton)) {
     }
   }
 
@@ -182,10 +182,10 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
                     key={index}
                     className={index === 0 ? 'btn btn-primary border p-2 text-nowrap mr-3' : index === workspaceTemplates.length - 1 ? 'btn border p-2 text-nowrap mr-2' : 'btn border p-2 text-nowrap mr-3'}
                     onClick={(e) => {
-                      manipulateClasses(e)
                       // createWorkspace(template.templateName)
+                      manipulateClasses(e)
                     }}
-                    data-id={`homeTabGetStarted${template.workspaceTitle}`}
+                    data-id={`homeTabGetStarted${template.templateName}`}
                   >
                     {template.workspaceTitle}
                   </button>
