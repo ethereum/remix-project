@@ -868,6 +868,7 @@ export function Workspace() {
             disabled={!global.fs.gitConfig.username || !global.fs.gitConfig.email}
             onChange={() => { }}
           />
+          {(platform == appPlatformTypes.desktop)? <></>:
           <label
             htmlFor="initGitRepository"
             data-id="initGitRepositoryLabel"
@@ -875,9 +876,9 @@ export function Workspace() {
             title={intl.formatMessage({id: 'filePanel.initGitRepoTitle'})}
           >
             <FormattedMessage id="filePanel.initGitRepositoryLabel" />
-          </label>
+          </label>}
         </div>
-        {!global.fs.gitConfig.username || !global.fs.gitConfig.email ? (
+        {(!global.fs.gitConfig.username || !global.fs.gitConfig.email ) && !(platform == appPlatformTypes.desktop) ? (
           <div className="text-warning">
             <FormattedMessage id="filePanel.initGitRepositoryWarning" />
           </div>
