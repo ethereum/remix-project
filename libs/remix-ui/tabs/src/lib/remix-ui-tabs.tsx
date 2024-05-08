@@ -64,7 +64,6 @@ export const TabsUI = (props: TabsUIProps) => {
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
   const [ai_switch, setAI_switch] = useState<boolean>(false)
-
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
 
@@ -76,6 +75,16 @@ export const TabsUI = (props: TabsUIProps) => {
       })
     }
   }, [tabsState.selectedIndex])
+
+  const getAI = async() => {
+    try {
+      return await props.plugin.call('settings', 'getCopilotSetting')
+    } catch (e){
+      return false
+    }
+  }
+
+  getAI().then(value => setAI_switch(value)).catch(error => console.log(error))
 
   const getFileDecorationClasses = (tab: any) => {
     const fileDecoration = tabsState.fileDecorations.find((fileDecoration: fileDecoration) => {
