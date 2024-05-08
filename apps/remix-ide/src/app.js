@@ -9,6 +9,7 @@ import {Web3ProviderModule} from './app/tabs/web3-provider'
 import {CompileAndRun} from './app/tabs/compile-and-run'
 import {PluginStateLogger} from './app/tabs/state-logger'
 import {SidePanel} from './app/components/side-panel'
+import {StatusBar} from './app/components/status-bar'
 import {HiddenPanel} from './app/components/hidden-panel'
 import {PinnedPanel} from './app/components/pinned-panel'
 import {VerticalIcons} from './app/components/vertical-icons'
@@ -301,7 +302,7 @@ class AppComponent {
     const permissionHandler = new PermissionHandlerPlugin()
     // ----------------- run script after each compilation results -----------
     const pluginStateLogger = new PluginStateLogger()
-    
+
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -339,7 +340,7 @@ class AppComponent {
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
-      externalHttpProvider,      
+      externalHttpProvider,
       this.walkthroughService,
       search,
       solidityumlgen,
@@ -381,6 +382,7 @@ class AppComponent {
     // those views depend on app_manager
     this.menuicons = new VerticalIcons()
     this.sidePanel = new SidePanel()
+    this.statusBar = new StatusBar()
     this.hiddenPanel = new HiddenPanel()
     this.pinnedPanel = new PinnedPanel()
 
@@ -389,7 +391,7 @@ class AppComponent {
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor, appManager)
 
-    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, filePanel, pluginManagerComponent, this.settings, this.pinnedPanel])
+    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, this.statusBar, filePanel, pluginManagerComponent, this.settings, this.pinnedPanel])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
     const openZeppelinProxy = new OpenZeppelinProxy(blockchain)
@@ -470,6 +472,7 @@ class AppComponent {
       'offsetToLineColumnConverter',
       'pluginStateLogger'
     ])
+    await this.appManager.activatePlugin(['statusBar'])
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['pinnedPanel'])
@@ -511,9 +514,9 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script'])
     await this.appManager.activatePlugin(['solcoder'])
 
-    
 
-    await this.appManager.activatePlugin(['filePanel'])    
+
+    await this.appManager.activatePlugin(['filePanel'])
 
     // Set workspace after initial activation
     this.appManager.on('editor', 'editorMounted', () => {

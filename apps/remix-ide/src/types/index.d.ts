@@ -1,14 +1,3 @@
-import { Profile } from '@remixproject/plugin-utils'
-import EventEmitter from 'events'
-
-export type PluginRecord = {
-    profile: Profile
-    view: any
-    active: boolean
-    pinned: boolean
-    class?: string
-    minimized?: boolean
-}
 
 export interface PluginProfile {
   name: string

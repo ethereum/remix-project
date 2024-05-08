@@ -218,7 +218,6 @@ const RemixApp = (props: IRemixAppUi) => {
                 ></DragBar>
               }
             </div>
-            <div>{props.app.hiddenPanel.render()}</div>
             <AppDialogs></AppDialogs>
             <DialogViewPlugin></DialogViewPlugin>
           </AppProvider>
