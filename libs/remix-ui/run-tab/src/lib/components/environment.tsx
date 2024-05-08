@@ -29,6 +29,11 @@ export function EnvironmentUI(props: EnvironmentProps) {
             <i style={{ fontSize: 'medium' }} className={'ml-2 fad fa-plug'} aria-hidden="true"></i>
           </a>
         </CustomTooltip>
+        <CustomTooltip placement={'right-start'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip" tooltipText={<FormattedMessage id="udapp.environmentDocs" />}>
+          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer">
+            <i className="udapp_infoDeployAction ml-2 fad fa-info"></i>
+          </a>
+        </CustomTooltip>
       </label>
       <div className="udapp_environment">
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
@@ -65,12 +70,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
             ))}
           </Dropdown.Menu>
         </Dropdown>
-
-        <CustomTooltip placement={'right-start'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip" tooltipText={<FormattedMessage id="udapp.environmentDocs" />}>
-          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer">
-            <i className="udapp_infoDeployAction ml-2 fas fa-info"></i>
-          </a>
-        </CustomTooltip>
       </div>
     </div>
   )
