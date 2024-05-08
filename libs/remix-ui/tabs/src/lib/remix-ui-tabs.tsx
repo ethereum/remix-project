@@ -5,6 +5,7 @@ import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-d
 import { FormattedMessage } from 'react-intl'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
+import { values } from 'lodash'
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
@@ -84,8 +85,6 @@ export const TabsUI = (props: TabsUIProps) => {
     }
   }
 
-  getAI().then(value => setAI_switch(value)).catch(error => console.log(error))
-
   const getFileDecorationClasses = (tab: any) => {
     const fileDecoration = tabsState.fileDecorations.find((fileDecoration: fileDecoration) => {
       if (`${fileDecoration.workspace.name}/${fileDecoration.path}` === tab.name) return true
@@ -101,7 +100,6 @@ export const TabsUI = (props: TabsUIProps) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
-
     return (
       <CustomTooltip tooltipId="tabsActive" tooltipText={tab.tooltip} placement="bottom-start">
         <div
@@ -142,6 +140,7 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const setFileDecorations = (fileStates: fileDecoration[]) => {
+    getAI().then(value => setAI_switch(value)).catch(error => console.log(error))
     dispatch({ type: 'SET_FILE_DECORATIONS', payload: fileStates })
   }
 
@@ -274,7 +273,7 @@ export const TabsUI = (props: TabsUIProps) => {
               data-id="remix_ai_switch"
               id='remix_ai_switch'
               className="btn ai-switch text-ai pl-2 pr-0 py-0 d-flex"
-              disabled={!(tabsState.currentExt === 'sol' )}
+              disabled={ !(tabsState.currentExt === 'sol' ) }
               onClick={async () => {
                 await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
                 setAI_switch(!ai_switch)
