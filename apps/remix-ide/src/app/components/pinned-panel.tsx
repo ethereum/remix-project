@@ -40,8 +40,8 @@ export class PinnedPanel extends AbstractPanel {
     this.plugins[profile.name].pinned = true
     this.plugins[profile.name].active = true
     this.renderComponent()
-    this.events.emit('pinnedPlugin', profile.name)
-    this.emit('pinnedPlugin', profile.name)
+    this.events.emit('pinnedPlugin', profile)
+    this.emit('pinnedPlugin', profile)
   }
 
   async unPinView (profile) {
@@ -51,8 +51,8 @@ export class PinnedPanel extends AbstractPanel {
     await this.call('sidePanel', 'unPinView', profile, this.plugins[profile.name].view)
     super.remove(profile.name)
     this.renderComponent()
-    this.events.emit('unPinnedPlugin', profile.name)
-    this.emit('unPinnedPlugin', profile.name)
+    this.events.emit('unPinnedPlugin', profile)
+    this.emit('unPinnedPlugin', profile)
   }
 
   setDispatch (dispatch: React.Dispatch<any>) {

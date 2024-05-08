@@ -211,6 +211,9 @@ const RemixApp = (props: IRemixAppUi) => {
                   <div className="remix-ui-tabs_end remix-bg-opacity position-absolute"></div>
                 </CustomTooltip> */}
               </div>
+              <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
+                {props.app.pinnedPanel.render()}
+              </div>
               <DragBar
                 resetTrigger={resetRightTrigger}
                 maximiseTrigger={maximiseRightTrigger}
@@ -220,9 +223,6 @@ const RemixApp = (props: IRemixAppUi) => {
                 setHideStatus={setHideSidePanel}
                 layoutPosition='right'
               ></DragBar>
-              <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
-                {props.app.pinnedPanel.render()}
-              </div>
             </div>
             <div>{props.app.hiddenPanel.render()}</div>
             <AppDialogs></AppDialogs>
