@@ -17,3 +17,4 @@ export interface StatusBarInterface extends Plugin {
   dispatch: React.Dispatch<any>
   setDispatch(dispatch: React.Dispatch<any>): void
 }
+
