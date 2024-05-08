@@ -386,6 +386,7 @@ class AppComponent {
     this.hiddenPanel = new HiddenPanel()
     this.pinnedPanel = new PinnedPanel()
 
+    console.log('statusplugin', this.statusBar)
     const pluginManagerComponent = new PluginManagerComponent(appManager, this.engine)
     const filePanel = new FilePanel(appManager)
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
@@ -472,8 +473,8 @@ class AppComponent {
       'offsetToLineColumnConverter',
       'pluginStateLogger'
     ])
-    await this.appManager.activatePlugin(['statusBar'])
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
+    await this.appManager.activatePlugin(['statusBar'])
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['pinnedPanel'])
     await this.appManager.activatePlugin(['home'])
