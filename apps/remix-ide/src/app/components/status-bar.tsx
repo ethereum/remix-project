@@ -4,7 +4,6 @@ import { Plugin } from '@remixproject/engine'
 import packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { PluginProfile } from '../../types'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { RemixUIStatusBar } from '@remix-ui/statusbar'
 
 const statusBarProfile: PluginProfile = {
