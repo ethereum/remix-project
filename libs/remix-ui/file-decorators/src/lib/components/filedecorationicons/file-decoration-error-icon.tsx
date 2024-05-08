@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 
-import {fileDecoration} from '../../types'
+import { fileDecoration } from '../../types'
 
 const FileDecorationErrorIcon = (props: {fileDecoration: fileDecoration}) => {
   return (

@@ -23,14 +23,14 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
       if (!accounts) accounts = []
 
       const loadedAccounts = {}
-      
+
       for (const account of accounts) {
         const balance = await plugin.blockchain.getBalanceInEther(account)
-        loadedAccounts[account] =  shortenAddress(account, balance)
+        loadedAccounts[account] = shortenAddress(account, balance)
       }
       const provider = plugin.blockchain.getProvider()
 
-      if (provider === 'injected') {
+      if (provider && provider.startsWith('injected')) {
         const selectedAddress = plugin.blockchain.getInjectedWeb3Address()
         if (!(Object.keys(loadedAccounts).includes(toChecksumAddress(selectedAddress)))) setAccount(dispatch, null)
       }
@@ -85,7 +85,6 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
     }
   )
 }
-
 
 export const signMessageWithAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => {
   plugin.blockchain.signMessage(message, account, passphrase, (err, msgHash, signedData) => {

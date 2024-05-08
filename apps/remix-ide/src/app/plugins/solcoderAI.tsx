@@ -1,11 +1,11 @@
 import { Plugin } from '@remixproject/engine'
 
 export type SuggestOptions = {
-  max_new_tokens: number, 
+  max_new_tokens: number,
   temperature: number,
   do_sample:boolean
   top_k: number,
-  top_p:number, 
+  top_p:number,
   stream_result:boolean
 }
 
@@ -41,18 +41,18 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt, "code_completion", "", false,1000,0.9,0.92,50]}),
+          body: JSON.stringify({ "data":[prompt, "code_completion", "", false,1000,0.9,0.92,50]}),
         })
       ).json()
       if ("error" in result){
-        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.error }) 
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.error })
         return result
       }
       return result.data
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
-    }finally {
+    } finally {
       this.emit("aiInferingDone")
     }
   }
@@ -69,24 +69,24 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt, "solidity_answer", false,1000,0.9,0.8,50]}),
+          body: JSON.stringify({ "data":[prompt, "solidity_answer", false,1000,0.9,0.8,50]}),
         })
       ).json()
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
-    }finally {
+    } finally {
       this.emit("aiInferingDone")
     }
     if (result) {
-      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0]})
-    } else if  (result.error) {
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
+    } else if (result.error) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "Error on request" })
     }
 
   }
 
-  async code_explaining(prompt): Promise<any> {
+  async code_explaining(prompt, context:string=""): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
     let result
@@ -98,17 +98,17 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt, "code_explaining", false,2000,0.9,0.8,50]}),
+          body: JSON.stringify({ "data":[prompt, "code_explaining", false,2000,0.9,0.8,50, context]}),
         })
       ).json()
       if (result) {
-        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0]})
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
       }
       return result.data[0]
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
-    }finally {
+    } finally {
       this.emit("aiInferingDone")
     }
   }
@@ -124,14 +124,14 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data": !options? [
-            prompt, // string  in 'context_code' Textbox component	
+          body: JSON.stringify({ "data": !options? [
+            prompt, // string  in 'context_code' Textbox component
             "code_completion",
-            "", // string  in 'comment' Textbox component		
-            false, // boolean  in 'stream_result' Checkbox component		
-            30, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component		
-            0.9, // number (numeric value between 0.01 and 1) in 'temperature' Slider component		
-            0.90, // number (numeric value between 0 and 1) in 'top_p' Slider component		
+            "", // string  in 'comment' Textbox component
+            false, // boolean  in 'stream_result' Checkbox component
+            30, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component
+            0.9, // number (numeric value between 0.01 and 1) in 'temperature' Slider component
+            0.90, // number (numeric value between 0 and 1) in 'top_p' Slider component
             50, // number (numeric value between 1 and 200) in 'top_k' Slider component
           ] : [
             prompt,
@@ -170,15 +170,15 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[
+          body: JSON.stringify({ "data":[
             msg_pfx, // Text before current cursor line
             "code_insertion",
             msg_sfx, // Text after current cursor line
-            1024, 
+            1024,
             0.5,
             0.92,
             50
-          ] }),
+          ]}),
         })
       ).json()
 
@@ -194,7 +194,5 @@ export class SolCoder extends Plugin {
       this.emit("aiInferingDone")
     }
   }
-
-
 
 }

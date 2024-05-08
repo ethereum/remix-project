@@ -76,7 +76,7 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       const toaster = toasterList[0]
       return { ...state, toasters: toasterList, focusToaster: toaster }
     } else {
-      return { ...state, toasters: [] }
+      return { ...state, toasters: []}
     }
   }
   }

@@ -8,6 +8,7 @@ import zhJson from './locales/zh'
 import esJson from './locales/es'
 import frJson from './locales/fr'
 import itJson from './locales/it'
+import ruJson from './locales/ru'
 const _paq = window._paq = window._paq || []
 
 const locales = [
@@ -15,6 +16,7 @@ const locales = [
   { code: 'en', name: 'English', localeName: 'English', messages: enJson },
   { code: 'fr', name: 'French', localeName: 'Français', messages: frJson },
   { code: 'it', name: 'Italian', localeName: 'Italiano', messages: itJson },
+  { code: 'ru', name: 'Russian', localeName: 'Русский', messages: ruJson },
   { code: 'es', name: 'Spanish', localeName: 'Español', messages: esJson }
 ]
 

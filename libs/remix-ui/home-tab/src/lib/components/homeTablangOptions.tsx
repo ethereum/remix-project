@@ -3,8 +3,6 @@ import { Dropdown, DropdownButton } from 'react-bootstrap'
 import DropdownItem from 'react-bootstrap/DropdownItem'
 import { localeLang } from './types/carouselTypes'
 
-
-
 export function LanguageOptions({ plugin }: { plugin: any }) {
   const [langOptions, setLangOptions] = useState<string>()
 
@@ -26,13 +24,13 @@ export function LanguageOptions({ plugin }: { plugin: any }) {
 
   return (
     <>
-      <div style={{position: 'absolute', right: "1rem", paddingTop: "0.4rem"}}>
+      <div style={{ position: 'absolute', right: "1rem", paddingTop: "0.4rem" }}>
         <Dropdown>
-          <Dropdown.Toggle title={langOptions} id="languagedropdown" size="sm" style={{backgroundColor: 'var(--secondary)', color: 'var(--text)'}}>
+          <Dropdown.Toggle title={langOptions} id="languagedropdown" size="sm" style={{ backgroundColor: 'var(--secondary)', color: 'var(--text)' }}>
             {langOptions}
           </Dropdown.Toggle>
-          <Dropdown.Menu className="dropdown-menu langSelector" style={{ paddingTop: "0px", paddingBottom: "0px", minWidth: 'fit-content', backgroundColor: 'var(--body-bg)'}}>
-            {['EN', 'ES', 'FR', 'IT', 'ZH'].map((lang, index) => (
+          <Dropdown.Menu className="dropdown-menu langSelector" style={{ paddingTop: "0px", paddingBottom: "0px", minWidth: 'fit-content', backgroundColor: 'var(--body-bg)' }}>
+            {['EN', 'ES', 'FR', 'IT', 'RU', 'ZH'].map((lang, index) => (
               <DropdownItem as={'span'} className={langOptions === lang ? "border border-primary px-2" : "px-2"} onClick={() =>
               {
                 changeLanguage(lang.toLowerCase())

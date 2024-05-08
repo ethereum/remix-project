@@ -1,9 +1,9 @@
 import React from 'react' // eslint-disable-line
-import {shortenHexData} from '@remix-ui/helper'
-import {execution} from '@remix-project/remix-lib'
+import { shortenHexData } from '@remix-ui/helper'
+import { execution } from '@remix-project/remix-lib'
 const typeConversion = execution.typeConversion
 
-const Context = ({opts, provider}: {opts; provider: string}) => {
+const Context = ({ opts, provider }: {opts; provider: string}) => {
   const data = opts.tx || ''
   const from = opts.from ? shortenHexData(opts.from) : ''
   let to = opts.to

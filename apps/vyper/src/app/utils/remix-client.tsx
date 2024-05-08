@@ -80,20 +80,20 @@ export class RemixClient extends PluginClient {
   async cloneVyperRepo() {
     try {
       // @ts-ignore
-      this.call('notification', 'toast', 'cloning Vyper repository...')
+      this.call('notification', 'toast', 'cloning Snekmate Vyper repository...')
       await this.call('manager', 'activatePlugin', 'dGitProvider')
       await this.call(
         'dGitProvider',
         'clone',
-        {url: 'https://github.com/vyperlang/vyper', token: null, branch: 'v0.3.10'},
+        {url: 'https://github.com/pcaversaccio/snekmate', token: null, branch: 'v0.0.5'},
         // @ts-ignore
-        'vyper-lang'
+        'snekmate'
       )
       this.call(
         // @ts-ignore
         'notification',
         'toast',
-        'Vyper repository cloned, the workspace Vyper has been created.'
+        'Snekmate Vyper repository cloned, the workspace snekmate has been created.'
       )
     } catch (e) {
       // @ts-ignore

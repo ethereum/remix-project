@@ -42,8 +42,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [contextMenuItems])
 
-
-
   useEffect(() => {
     if (removedContextMenuItems) {
       removeMenuItems(removedContextMenuItems)
@@ -357,8 +355,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
 
   }
-
-
 
   return (
     <div className="h-100 remixui_treeview" data-id="filePanelFileExplorerTree">

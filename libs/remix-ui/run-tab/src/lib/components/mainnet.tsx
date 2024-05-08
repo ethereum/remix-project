@@ -1,9 +1,9 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {fromWei, toBigInt, toWei} from 'web3-utils'
-import {MainnetProps} from '../types'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { fromWei, toBigInt, toWei } from 'web3-utils'
+import { MainnetProps } from '../types'
 
 export function MainnetPrompt(props: MainnetProps) {
   const intl = useIntl()
@@ -27,7 +27,7 @@ export function MainnetPrompt(props: MainnetProps) {
   const onMaxFeeChange = (value: string) => {
     const maxFee = value
     if (toBigInt(props.network.lastBlock.baseFeePerGas) > toBigInt(toWei(maxFee, 'Gwei'))) {
-      setTransactionFee(intl.formatMessage({id: 'udapp.transactionFee'}))
+      setTransactionFee(intl.formatMessage({ id: 'udapp.transactionFee' }))
       props.updateGasPriceStatus(false)
       props.updateConfirmSettings(true)
       return
@@ -66,9 +66,9 @@ export function MainnetPrompt(props: MainnetProps) {
   return (
     <div>
       <div className="text-dark">
-        <FormattedMessage id="udapp.mainnetText1" values={{name: props.network.name}} />
+        <FormattedMessage id="udapp.mainnetText1" values={{ name: props.network.name }} />
         <br />
-        <FormattedMessage id="udapp.mainnetText2" values={{name: props.network.name}} />
+        <FormattedMessage id="udapp.mainnetText2" values={{ name: props.network.name }} />
       </div>
       <div className="mt-3">
         <div>
@@ -77,13 +77,13 @@ export function MainnetPrompt(props: MainnetProps) {
         </div>
         <div>
           <span className="text-dark mr-2">To:</span>
-          <span>{props.tx.to ? props.tx.to : `(${intl.formatMessage({id: 'udapp.contractCreation'})})`}</span>
+          <span>{props.tx.to ? props.tx.to : `(${intl.formatMessage({ id: 'udapp.contractCreation' })})`}</span>
         </div>
         <div className="d-flex align-items-center">
           <span className="text-dark mr-2">Data:</span>
           <pre className="udapp_wrapword mb-0">
             {props.tx.data && props.tx.data.length > 50 ? props.tx.data.substring(0, 49) + '...' : props.tx.data}
-            <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={props.tx.data} />
+            <CopyToClipboard tip={intl.formatMessage({ id: 'udapp.copy' })} content={props.tx.data} />
           </pre>
         </div>
         <div className="mb-3">
@@ -106,14 +106,14 @@ export function MainnetPrompt(props: MainnetProps) {
         </div>
         {props.network.lastBlock.baseFeePerGas ? (
           <div>
-            <div className="align-items-center my-1" title={intl.formatMessage({id: 'udapp.title1'})}>
+            <div className="align-items-center my-1" title={intl.formatMessage({ id: 'udapp.title1' })}>
               <div className="d-flex">
                 <span className="text-dark mr-2 text-nowrap">
                   <FormattedMessage id="udapp.maxPriorityFee" />:
                 </span>
                 <input
                   className="form-control mr-1 text-right"
-                  style={{height: '1.2rem', width: '6rem'}}
+                  style={{ height: '1.2rem', width: '6rem' }}
                   id="maxpriorityfee"
                   onInput={(e: any) => onMaxPriorityFeeChange(e.target.value)}
                   defaultValue={props.maxPriorityFee}
@@ -121,14 +121,14 @@ export function MainnetPrompt(props: MainnetProps) {
                 <span title="visit https://ethgasstation.info for current gas price info.">Gwei</span>
               </div>
             </div>
-            <div className="align-items-center my-1" title={intl.formatMessage({id: 'udapp.title2'})}>
+            <div className="align-items-center my-1" title={intl.formatMessage({ id: 'udapp.title2' })}>
               <div className="d-flex">
                 <span className="text-dark mr-2 text-nowrap">
-                  <FormattedMessage id="udapp.maxFee" values={{baseFeePerGas: fromWei(toBigInt(props.network.lastBlock.baseFeePerGas), 'Gwei')}} />:
+                  <FormattedMessage id="udapp.maxFee" values={{ baseFeePerGas: fromWei(toBigInt(props.network.lastBlock.baseFeePerGas), 'Gwei') }} />:
                 </span>
                 <input
                   className="form-control mr-1 text-right"
-                  style={{height: '1.2rem', width: '6rem'}}
+                  style={{ height: '1.2rem', width: '6rem' }}
                   id="maxfee"
                   onInput={(e: any) => onMaxFeeChange(e.target.value)}
                   defaultValue={baseFee}
@@ -143,7 +143,7 @@ export function MainnetPrompt(props: MainnetProps) {
             <span className="text-dark mr-2 text-nowrap">
               <FormattedMessage id="udapp.gasPrice" />:
             </span>
-            <input className="form-control mr-1 text-right" style={{width: '40px', height: '28px'}} id="gasprice" onInput={(e: any) => onGasPriceChange(e.target.value)} />
+            <input className="form-control mr-1 text-right" style={{ width: '40px', height: '28px' }} id="gasprice" onInput={(e: any) => onGasPriceChange(e.target.value)} />
             <span>
               Gwei (
               <FormattedMessage

@@ -18,8 +18,8 @@ export const runTabInitialState: RunTabState = {
   },
   sendValue: '0',
   sendUnit: 'wei',
-  gasLimit: 3000000,
-  selectExEnv: 'vm-paris',
+  gasLimit: 0,
+  selectExEnv: 'vm-cancun',
   personalMode: false,
   networkName: 'VM',
   chainId:'-',
@@ -76,14 +76,6 @@ export const runTabInitialState: RunTabState = {
   proxy: {
     deployments: []
   }
-}
-
-type AddProvider = {
-  name: string,
-  displayName: string,
-  provider: any,
-  title?: string,
-  dataId?: string
 }
 
 export const runTabReducer = (state: RunTabState = runTabInitialState, action: Action) => {
@@ -174,7 +166,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
     return {
       ...state,
       selectExEnv: payload,
-      networkName: state.selectExEnv === 'vm-paris' ? 'VM' : state.networkName,
+      networkName: state.selectExEnv === 'vm-cancun' ? 'VM' : state.networkName,
       accounts: {
         ...state.accounts,
         selectedAccount: '',
@@ -223,13 +215,11 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case FETCH_PROVIDER_LIST_SUCCESS: {
-    const payload: { id?: string, dataId?: string, title?: string, value: string, fork?: string, content: string }[] = action.payload
-
     return {
       ...state,
       providers: {
         ...state.providers,
-        providerList: payload,
+        providerList: action.payload,
         isSuccessful: true,
         isRequesting: false,
         error: null
@@ -252,15 +242,23 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case ADD_PROVIDER: {
-    const payload: AddProvider = action.payload
-    const id = action.payload.name
-    state.providers.providerList.push({
-      content: payload.displayName,
-      dataId: payload.dataId,
-      id,
-      title: payload.title,
-      value: id
-    })
+    const payload = action.payload
+    const length = state.providers.providerList.length
+    if (state.providers.providerList.length === 0) {
+      state.providers.providerList.push(payload)
+    } else {
+      let index = 0
+      for (const provider of state.providers.providerList) {
+        if (provider.position >= payload.position) {
+          state.providers.providerList.splice(index, 0, payload)
+          break;
+        }
+        index++
+      }
+      if (length === state.providers.providerList.length) {
+        state.providers.providerList.push(payload)
+      }
+    }
     return {
       ...state,
       providers: {
@@ -271,8 +269,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case REMOVE_PROVIDER: {
-    const id: string = action.payload
-    const providers = state.providers.providerList.filter((el) => el.id !== id)
+    const name: string = action.payload
+    const providers = state.providers.providerList.filter((el) => el.name !== name)
     return {
       ...state,
       providers: {
@@ -649,7 +647,7 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
       ...state,
       contracts: {
         ...state.contracts,
-        deployOptions: {...state.contracts.deployOptions, ...payload }
+        deployOptions: { ...state.contracts.deployOptions, ...payload }
       }
     }
   }

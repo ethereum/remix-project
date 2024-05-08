@@ -1,7 +1,7 @@
-import {Plugin} from '@remixproject/engine'
-import {AppModal, AlertModal, ModalTypes} from '@remix-ui/app'
-import {Blockchain} from '../../blockchain/blockchain'
-import {ethers} from 'ethers'
+import { Plugin } from '@remixproject/engine'
+import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
+import { Blockchain } from '../../blockchain/blockchain'
+import { ethers } from 'ethers'
 
 export type JsonDataRequest = {
   id: number
@@ -66,7 +66,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
           okLabel: 'OK',
           cancelLabel: 'Cancel',
           validationFn: (value) => {
-            if (!value) return {valid: false, message: 'value is empty'}
+            if (!value) return { valid: false, message: 'value is empty' }
             if (value.startsWith('https://') || value.startsWith('http://')) {
               return {
                 valid: true,
@@ -102,7 +102,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
   sendAsync(data: JsonDataRequest): Promise<JsonDataResult> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
-      if (!this.provider) return reject({jsonrpc: '2.0', id: data.id, error: { message: 'provider node set', code: -32603 } } as JsonDataResult)
+      if (!this.provider) return reject({ jsonrpc: '2.0', id: data.id, error: { message: 'provider node set', code: -32603 } } as JsonDataResult)
       this.sendAsyncInternal(data, resolve, reject)
     })
   }
@@ -119,7 +119,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
       }
       this.call('notification', 'alert', modalContent)
     }
-    await this.call('udapp', 'setEnvironmentMode', {context: 'vm-paris'})
+    await this.call('udapp', 'setEnvironmentMode', { context: 'vm-cancun' })
     return
   }
 
@@ -127,17 +127,17 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
     if (this.provider) {
       try {
         const result = await this.provider.send(data.method, data.params)
-        resolve({jsonrpc: '2.0', result, id: data.id})
+        resolve({ jsonrpc: '2.0', result, id: data.id })
       } catch (error) {
         if (error && error.message && error.message.includes('net_version') && error.message.includes('SERVER_ERROR')) {
           this.switchAway(true)
         }
         error.code = -32603
-        reject({jsonrpc: '2.0', error, id: data.id})
+        reject({ jsonrpc: '2.0', error, id: data.id })
       }
     } else {
       const result = data.method === 'net_listening' ? 'canceled' : []
-      resolve({jsonrpc: '2.0', result: result, id: data.id})
+      resolve({ jsonrpc: '2.0', result: result, id: data.id })
     }
   }
 }

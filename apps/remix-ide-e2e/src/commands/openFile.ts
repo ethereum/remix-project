@@ -31,15 +31,15 @@ function openFile (browser: NightwatchBrowser, name: string, done: VoidFunction)
           done()
         })
       }
-      
-    })    
+
+    })
   })
-  .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"', 60000)
-  .click('li[data-id="treeViewLitreeViewItem' + name + '"')
-  .pause(2000)
-  .perform(() => {
-    done()
-  })
+    .waitForElementVisible('li[data-id="treeViewLitreeViewItem' + name + '"', 60000)
+    .click('li[data-id="treeViewLitreeViewItem' + name + '"')
+    .pause(2000)
+    .perform(() => {
+      done()
+    })
 }
 
 module.exports = OpenFile

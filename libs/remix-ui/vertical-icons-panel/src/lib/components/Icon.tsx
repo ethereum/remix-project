@@ -1,12 +1,12 @@
 import VerticalIconsContextMenu from '../vertical-icons-context-menu'
 // eslint-disable-next-line no-use-before-define
-import React, {Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState} from 'react'
-import {useIntl} from 'react-intl'
+import React, { Fragment, SyntheticEvent, useEffect, useReducer, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import Badge from './Badge'
-import {iconBadgeReducer, IconBadgeReducerAction} from '../reducers/iconBadgeReducer'
-import {Plugin} from '@remixproject/engine'
-import {IconRecord} from '../types'
-import {CustomTooltip} from '@remix-ui/helper'
+import { iconBadgeReducer, IconBadgeReducerAction } from '../reducers/iconBadgeReducer'
+import { Plugin } from '@remixproject/engine'
+import { IconRecord } from '../types'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export interface IconStatus {
   key: string
@@ -34,11 +34,11 @@ const initialState = {
   pluginName: ''
 }
 
-const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconProps) => {
+const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: IconProps) => {
   const intl = useIntl()
-  const {displayName, name, icon, documentation} = iconRecord.profile
+  const { displayName, name, icon, documentation } = iconRecord.profile
   const [title] = useState(() => {
-    const temp = name ? intl.formatMessage({id: `${name}.displayName`, defaultMessage: displayName || name}) : null
+    const temp = name ? intl.formatMessage({ id: `${name}.displayName`, defaultMessage: displayName || name }) : null
     return temp.replace(/^\w/, (word: string) => word.toUpperCase())
   })
   const [links, setLinks] = useState<{
@@ -57,9 +57,9 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
   const handleContextMenu = (e: SyntheticEvent & PointerEvent) => {
     const deactivationState = iconRecord.canbeDeactivated
     if (documentation && documentation.length > 0 && deactivationState) {
-      setLinks({Documentation: documentation, CanDeactivate: deactivationState})
+      setLinks({ Documentation: documentation, CanDeactivate: deactivationState })
     } else {
-      setLinks({Documentation: documentation, CanDeactivate: deactivationState})
+      setLinks({ Documentation: documentation, CanDeactivate: deactivationState })
     }
     setShowContext(false)
     setPageX(e.pageX)
@@ -75,7 +75,7 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
       iconStatus.pluginName = name
       const action: IconBadgeReducerAction = {
         type: name,
-        payload: {status: iconStatus, verticalIconPlugin: verticalIconPlugin}
+        payload: { status: iconStatus, verticalIconPlugin: verticalIconPlugin }
       }
       dispatchStatusUpdate(action)
     })
@@ -84,26 +84,25 @@ const Icon = ({iconRecord, verticalIconPlugin, contextMenuAction, theme}: IconPr
     }
   }, [])
 
-
   const stylePC = iconRecord.active ? 'flex-start' : 'center'
   return (
     <>
-      <div className='d-flex py-1' style={{width: 'auto', placeContent: stylePC}}>      
+      <div className='d-flex py-1' style={{ width: 'auto', placeContent: stylePC }}>
         {iconRecord.active && <div
           className='pt-1 bg-primary'
-          style={{width: "6px", height: "36px", position: 'relative', borderRadius: '24%'}}
+          style={{ width: "6px", height: "36px", position: 'relative', borderRadius: '24%' }}
         ></div>}
         <CustomTooltip
           placement={name === 'settings' ? 'right' : name === 'search' ? 'top' : name === 'udapp' ? 'bottom' : 'top'}
           tooltipText={title}
-          delay={{show: 1000, hide: 0}}
+          delay={{ show: 1000, hide: 0 }}
         >
           <div
             className={`remixui_icon m-0  pt-1`}
             onClick={() => {
               ;(verticalIconPlugin as any).toggle(name)
             }}
-            {...{plugin: name}}
+            {...{ plugin: name }}
             onContextMenu={(e: any) => {
               e.preventDefault()
               e.stopPropagation()

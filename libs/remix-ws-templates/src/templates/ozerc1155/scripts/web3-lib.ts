@@ -21,7 +21,7 @@ export const deploy = async (contractName: string, args: Array<any>, from?: stri
 
   const accounts = await web3.eth.getAccounts()
 
-  const contract: Contract  = new web3.eth.Contract(metadata.abi)
+  const contract: Contract = new web3.eth.Contract(metadata.abi)
 
   const contractSend: ContractSendMethod = contract.deploy({
     data: metadata.data.bytecode.object,
@@ -32,5 +32,5 @@ export const deploy = async (contractName: string, args: Array<any>, from?: stri
     from: from || accounts[0],
     gas: gas || 3600000
   })
-  return newContractInstance.options    
+  return newContractInstance.options
 }

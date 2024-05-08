@@ -52,12 +52,6 @@ let requiredModules = [ // services + layout views + system views
   'ganache-provider',
   'foundry-provider',
   'basic-http-provider',
-  'injected',
-  'injected-trustwallet',
-  'injected-optimism-provider',
-  'injected-arbitrum-one-provider',
-  'injected-ephemery-testnet-provider',
-  'injected-skale-chaos-testnet-provider',
   'vm-custom-fork',
   'vm-goerli-fork',
   'vm-mainnet-fork',
@@ -82,7 +76,8 @@ let requiredModules = [ // services + layout views + system views
   'home',
   'doc-viewer',
   'doc-gen',
-  'remix-templates'
+  'remix-templates',
+  'solhint'
 ]
 
 
@@ -98,7 +93,16 @@ const sensitiveCalls = {
   web3Provider: ['sendAsync']
 }
 
+const isInjectedProvider = (name) => {
+  return name.startsWith('injected')
+}
+
+const isVM = (name) => {
+  return name.startsWith('vm')
+}
+
 export function isNative(name) {
+  
   // nativePlugin allows to bypass the permission request
   const nativePlugins = [
     'vyper',
@@ -117,19 +121,16 @@ export function isNative(name) {
     'ganache-provider',
     'foundry-provider',
     'basic-http-provider',
-    'injected-optimism-provider',
     'tabs',
-    'injected-arbitrum-one-provider',
-    'injected-skale-chaos-testnet-provider',
-    'injected-ephemery-testnet-provider',
-    'injected',
     'doc-gen',
     'doc-viewer',
     'circuit-compiler',
     'compilationDetails',
-    'vyperCompilationDetails'
+    'vyperCompilationDetails',
+    'remixGuide',
+    'walletconnect'
   ]
-  return nativePlugins.includes(name) || requiredModules.includes(name)
+  return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
 }
 
 /**
@@ -163,7 +164,7 @@ export class RemixAppManager extends PluginManager {
   }
 
   async canDeactivatePlugin(from, to) {
-    if (requiredModules.includes(to.name)) return false
+    if (this.isRequired(to.name)) return false
     return isNative(from.name)
   }
 
@@ -208,7 +209,7 @@ export class RemixAppManager extends PluginManager {
     )
     this.event.emit('activate', plugin)
     this.emit('activate', plugin)
-    if (!requiredModules.includes(plugin.name)) _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
+    if (!this.isRequired(plugin.name)) _paq.push(['trackEvent', 'pluginManager', 'activate', plugin.name])
   }
 
   getAll() {
@@ -236,7 +237,7 @@ export class RemixAppManager extends PluginManager {
 
   isRequired(name) {
     // excluding internal use plugins
-    return requiredModules.includes(name)
+    return requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
   }
 
   async registeredPlugins() {

@@ -1,8 +1,8 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect} from 'react'
-import {Plugin} from '@remixproject/engine'
-import {IconRecord} from '../types'
+import React, { useEffect } from 'react'
+import { Plugin } from '@remixproject/engine'
+import { IconRecord } from '../types'
 import Icon from './Icon'
 interface OtherIconsProps {
   verticalIconsPlugin: Plugin<any, any>
@@ -11,7 +11,7 @@ interface OtherIconsProps {
   theme: string
 }
 
-function IconList({verticalIconsPlugin, itemContextAction, icons, theme}: OtherIconsProps) {
+function IconList({ verticalIconsPlugin, itemContextAction, icons, theme }: OtherIconsProps) {
   return (
     <div id="otherIcons" className="position-relative">
       {icons.map((p) => (

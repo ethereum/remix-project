@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {useEffect, useState} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {ThemeModule} from '../../types/theme-module'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { ThemeModule } from '../../types/theme-module'
 import './remix-ui-theme-module.module.css'
 
 /* eslint-disable-next-line */
@@ -9,7 +9,7 @@ export interface RemixUiThemeModuleProps {
   themeModule: ThemeModule
 }
 
-export function RemixUiThemeModule({themeModule}: RemixUiThemeModuleProps) {
+export function RemixUiThemeModule({ themeModule }: RemixUiThemeModuleProps) {
   const [themeName, setThemeName] = useState('')
 
   useEffect(() => {

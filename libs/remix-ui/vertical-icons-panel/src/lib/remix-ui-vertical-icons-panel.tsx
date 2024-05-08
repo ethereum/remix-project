@@ -8,7 +8,7 @@ import { Chevron } from './components/Chevron'
 import { IconRecord } from './types'
 import { onLineContext } from '@remix-ui/app'
 import { CustomTooltip } from '@remix-ui/helper'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: Plugin

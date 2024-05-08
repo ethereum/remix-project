@@ -77,7 +77,7 @@ export class RemixDefinitionProvider implements monaco.languages.DefinitionProvi
         return pos
       }
     }
-    const lastCompilationResult = await this.props.plugin.call('codeParser', 'getLastCompilationResult')  // await this.props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
+    const lastCompilationResult = await this.props.plugin.call('codeParser', 'getLastCompilationResult') // await this.props.plugin.call('compilerArtefacts', 'getLastCompilationResult')
     if (lastCompilationResult && lastCompilationResult.languageversion.indexOf('soljson') === 0 && lastCompilationResult.data) {
 
       const lineColumn = await this.props.plugin.call('codeParser', 'getLineColumnOfPosition', position)

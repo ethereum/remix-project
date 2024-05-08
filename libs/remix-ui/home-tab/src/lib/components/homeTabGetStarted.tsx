@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect, useRef, useContext} from 'react'
-import {useIntl, FormattedMessage} from 'react-intl'
-import {TEMPLATE_NAMES,TEMPLATE_METADATA} from '@remix-ui/workspace'
-import {ThemeContext} from '../themeContext'
+import React, { useEffect, useRef, useContext } from 'react'
+import { useIntl, FormattedMessage } from 'react-intl'
+import { TEMPLATE_NAMES,TEMPLATE_METADATA } from '@remix-ui/workspace'
+import { ThemeContext } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import WorkspaceTemplate from './workspaceTemplate'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
-
 
 declare global {
   interface Window {
@@ -20,7 +19,7 @@ interface HomeTabGetStartedProps {
   plugin: any
 }
 
-function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
+function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
   const platform = useContext(platformContext)
   const themeFilter = useContext(ThemeContext)
   const carouselRef = useRef<any>({})
@@ -63,7 +62,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
 
   const createWorkspace = async (templateName) => {
 
-    if(platform === appPlatformTypes.desktop){
+    if (platform === appPlatformTypes.desktop){
       await plugin.call('remix-templates', 'loadTemplateInNewWindow', templateName)
       return
     }
@@ -72,7 +71,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
     const metadata = TEMPLATE_METADATA[templateName]
     if (metadata) {
       if (metadata.type === 'git') {
-        await plugin.call('dGitProvider', 'clone', {url: metadata.url, branch: metadata.branch}, templateDisplayName)
+        await plugin.call('dGitProvider', 'clone', { url: metadata.url, branch: metadata.branch }, templateDisplayName)
       } else if (metadata && metadata.type === 'plugin') {
         await plugin.appManager.activatePlugin('filePanel')
         templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
@@ -93,7 +92,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
 
   return (
     <div className="pl-2" id="hTGetStartedSection">
-      <label style={{fontSize: '1.2rem'}}>
+      <label style={{ fontSize: '1.2rem' }}>
         <FormattedMessage id="home.projectTemplates" />
       </label>
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
@@ -108,11 +107,11 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
             showDots={false}
             responsive={{
               superLargeDesktop: {
-                breakpoint: {max: 4000, min: 3000},
+                breakpoint: { max: 4000, min: 3000 },
                 items: 5
               },
               desktop: {
-                breakpoint: {max: 3000, min: 1024},
+                breakpoint: { max: 3000, min: 1024 },
                 items: 5,
                 partialVisibilityGutter: 0
               }
@@ -145,7 +144,7 @@ function HomeTabGetStarted({plugin}: HomeTabGetStartedProps) {
             <WorkspaceTemplate
               gsID="sourcifyLogo"
               workspaceTitle="ERC20"
-              description={intl.formatMessage({id: 'home.ozerc20TemplateDesc'})}
+              description={intl.formatMessage({ id: 'home.ozerc20TemplateDesc' })}
               projectLogo="assets/img/openzeppelinLogo.png"
               callback={() => createWorkspace('ozerc20')}
             />

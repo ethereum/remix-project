@@ -29,6 +29,6 @@ export default async (opts) => {
     // @ts-ignore
     else filesObj['tests/MyToken_test.sol'] = (await import('raw-loader!./tests/MyToken_test.sol')).default
   }
-  
+
   return filesObj
 }

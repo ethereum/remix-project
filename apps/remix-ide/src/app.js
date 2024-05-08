@@ -42,6 +42,7 @@ import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { CompilationDetailsPlugin } from './app/plugins/compile-details'
 import { VyperCompilationDetailsPlugin } from './app/plugins/vyper-compilation-details'
+import { RemixGuidePlugin } from './app/plugins/remixGuide'
 import { ContractFlattener } from './app/plugins/contractFlattener'
 import { TemplatesPlugin } from './app/plugins/remix-templates'
 import { fsPlugin } from './app/plugins/electron/fsPlugin'
@@ -222,6 +223,10 @@ class AppComponent {
     // ----------------- Compilation Details ----------------------------
     const compilationDetails = new CompilationDetailsPlugin(appManager)
     const vyperCompilationDetails = new VyperCompilationDetailsPlugin(appManager)
+
+    // ----------------- Remix Guide ----------------------------
+    const remixGuide = new RemixGuidePlugin(appManager)
+
     // ----------------- ContractFlattener ----------------------------
     const contractFlattener = new ContractFlattener()
 
@@ -340,6 +345,7 @@ class AppComponent {
       solidityumlgen,
       compilationDetails,
       vyperCompilationDetails,
+      // remixGuide,
       contractFlattener,
       solidityScript,
       templates,
