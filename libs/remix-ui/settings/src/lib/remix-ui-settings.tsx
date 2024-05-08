@@ -56,7 +56,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [ipfsProtocol, setipfsProtocol] = useState('')
   const [ipfsProjectId, setipfsProjectId] = useState('')
   const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
-  const copilotDownload = useRef(null)
 
   const intl = useIntl()
   const initValue = () => {
@@ -143,8 +142,9 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     }
 
     const startCopilot = async () => {
-      copilotActivate(props.config, true, dispatch)
+      copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('terminal', 'log', { type: 'typewriterlog', value: `Solidity copilot activated!` })
+      //props.plugin.call('settings', 'updateCopilotChoice', props.useCopilot)
     }
 
     startCopilot()
