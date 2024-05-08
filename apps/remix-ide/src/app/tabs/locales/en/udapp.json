@@ -9,7 +9,7 @@
 
   "udapp._comment_value.tsx": "libs/remix-ui/run-tab/src/lib/components/value.tsx",
   "udapp.value": "Value",
-  "udapp.tooltipText5": "Enter an amount and choose its unit",
+  "udapp.tooltipText5": "Enter an amount to be sent with transaction and choose its unit",
 
   "udapp._comment_contractDropdownUI.tsx": "libs/remix-ui/run-tab/src/lib/components/contractDropdownUI.tsx",
   "udapp.contract": "Contract",
