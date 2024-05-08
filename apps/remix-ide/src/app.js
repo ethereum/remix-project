@@ -575,7 +575,7 @@ class AppComponent {
             const lastPinned = localStorage.getItem('pinnedPlugin')
 
             if (lastPinned) {
-              setTimeout(() => this.appManager.call('sidePanel', 'pinView', { name: lastPinned }), 500)
+              this.appManager.call('sidePanel', 'pinView', JSON.parse(lastPinned))
             }
           })
           .catch(console.error)
@@ -585,8 +585,8 @@ class AppComponent {
       document.body.appendChild(loadedElement)
     })
 
-    this.appManager.on('pinnedPanel', 'pinnedPlugin', (pluginName) => {
-      localStorage.setItem('pinnedPlugin', pluginName)
+    this.appManager.on('pinnedPanel', 'pinnedPlugin', (pluginProfile) => {
+      localStorage.setItem('pinnedPlugin', JSON.stringify(pluginProfile))
     })
 
     this.appManager.on('pinnedPanel', 'unPinnedPlugin', () => {
