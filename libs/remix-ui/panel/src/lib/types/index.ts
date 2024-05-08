@@ -1,5 +1,4 @@
 import { Profile } from '@remixproject/plugin-utils'
-import EventEmitter from 'events'
 
 export type PluginRecord = {
     profile: Profile
