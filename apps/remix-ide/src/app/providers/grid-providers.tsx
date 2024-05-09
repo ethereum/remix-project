@@ -107,9 +107,16 @@ export class GridProviders extends ViewPlugin {
               plugin={this}
               title={provider.name}
               pinned={this.pinnedProviders.includes(provider.name)}
-              pinStateCallback={(pinned: boolean) => {
-                this.emit(pinned ? 'providerPinned' : 'providerUnpinned', provider.name, provider)}
-              }
+              pinStateCallback={async (pinned: boolean) => {
+                const providerName = await this.call('blockchain', 'getProvider')
+                if (providerName !== provider.name) {
+                  this.emit(pinned ? 'providerPinned' : 'providerUnpinned', provider.name, provider)
+                  return true
+                } else {
+                  this.call('notification', 'toast', 'Cannot unpin the current selected provider')
+                  return false
+                }
+              }}
             >
               <div>{provider.name}</div>
             </RemixUIGridCell>
@@ -122,11 +129,18 @@ export class GridProviders extends ViewPlugin {
         >{this.providers['Remix VMs'].map(provider => {
             return <RemixUIGridCell
               plugin={this}
-              pinned={this.pinnedProviders.includes(provider.name)}
-              pinStateCallback={(pinned: boolean) => {
-                this.emit(pinned ? 'providerPinned' : 'providerUnpinned', provider.name, provider)}
-              }
               title={provider.name}
+              pinned={this.pinnedProviders.includes(provider.name)}
+              pinStateCallback={async (pinned: boolean) => {
+                const providerName = await this.call('blockchain', 'getProvider')
+                if (providerName !== provider.name) {
+                  this.emit(pinned ? 'providerPinned' : 'providerUnpinned', provider.name, provider)
+                  return true
+                } else {
+                  this.call('notification', 'toast', 'Cannot unpin the current selected provider')
+                  return false
+                }
+              }}
             >
               <div>{provider.name}</div>
             </RemixUIGridCell>
@@ -138,11 +152,18 @@ export class GridProviders extends ViewPlugin {
         >{this.providers['Externals'].map(provider => {
             return <RemixUIGridCell
               plugin={this}
-              pinned={this.pinnedProviders.includes(provider.name)}
-              pinStateCallback={(pinned: boolean) => {
-                this.emit(pinned ? 'providerPinned' : 'providerUnpinned', provider.name, provider)}
-              }
               title={provider.name}
+              pinned={this.pinnedProviders.includes(provider.name)}
+              pinStateCallback={async (pinned: boolean) => {
+                const providerName = await this.call('blockchain', 'getProvider')
+                if (providerName !== provider.name) {
+                  this.emit(pinned ? 'providerPinned' : 'providerUnpinned', provider.name, provider)
+                  return true
+                } else {
+                  this.call('notification', 'toast', 'Cannot unpin the current selected provider')
+                  return false
+                }
+              }}
             >
               <div>{provider.name}</div>
             </RemixUIGridCell>
