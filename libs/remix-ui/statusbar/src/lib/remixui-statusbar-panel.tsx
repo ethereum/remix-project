@@ -7,6 +7,12 @@ export interface RemixUIStatusBarProps {
 }
 
 export function RemixUIStatusBar ({ statusBarPlugin }: RemixUIStatusBarProps) {
+
+  const getGitBranchName = async () => {
+    return new Promise((resolve, recject) => {
+      return 0
+    })
+  }
   return (
     <div className="d-flex flex-row bg-primary">
       <GitStatus />
