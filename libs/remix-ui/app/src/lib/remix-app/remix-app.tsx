@@ -168,7 +168,7 @@ const RemixApp = (props: IRemixAppUi) => {
     }
 
   }
-
+  console.log('statusbar', props.app.statusBar)
   return (
     //@ts-ignore
     <IntlProvider locale={locale.code} messages={locale.messages}>

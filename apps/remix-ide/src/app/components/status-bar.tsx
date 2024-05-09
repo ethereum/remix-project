@@ -42,10 +42,9 @@ export class StatusBar extends Plugin {
   }
 
   render() {
-    <div data-id="status-bar-container">
-      test
+    return (<div data-id="status-bar-container">
       <PluginViewWrapper plugin={this} />
-    </div>
+    </div>)
   }
 
 }
