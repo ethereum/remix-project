@@ -531,7 +531,7 @@ export class Blockchain extends Plugin {
 
   changeExecutionContext(context, confirmCb, infoCb, cb) {
     if (context.context === 'item-another-chain') {
-      this.call('manager', 'activatePlugin', 'gridProviders')
+      this.call('manager', 'activatePlugin', 'gridProviders').then(() => this.call('tabs', 'focus', 'gridProviders'))
     } else {
       return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
     }
