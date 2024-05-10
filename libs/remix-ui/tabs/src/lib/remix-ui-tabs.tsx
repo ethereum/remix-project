@@ -270,12 +270,6 @@ export const TabsUI = (props: TabsUIProps) => {
               <i
                 className={ai_switch ? "fas fa-toggle-on" : "fas fa-toggle-off"}
               ></i>
-              <span
-                className="position-relative text-ai text-sm pl-1"
-                style={{ fontSize: "x-small", alignSelf: "end" }}
-              >
-                AI
-              </span>
             </button>
           </CustomTooltip>
 
