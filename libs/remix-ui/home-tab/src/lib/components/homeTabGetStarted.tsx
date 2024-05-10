@@ -29,10 +29,17 @@ type WorkspaceTemplate = {
 const workspaceTemplates: WorkspaceTemplate[] = [
   {
     gsID: 'sUTLogo',
-    workspaceTitle: 'Playground',
+    workspaceTitle: 'Start Coding',
     description: 'Create a new project using this template.',
     projectLogo: 'assets/img/remixverticaltextLogo.png',
-    templateName: 'playground',
+    templateName: 'default',
+  },
+  {
+    gsID: 'sUTLogo',
+    workspaceTitle: 'All Templates',
+    description: 'View all templates.',
+    projectLogo: 'assets/img/remixverticaltextLogo.png',
+    templateName: 'default',
   },
   {
     gsID: 'sUTLogo',
