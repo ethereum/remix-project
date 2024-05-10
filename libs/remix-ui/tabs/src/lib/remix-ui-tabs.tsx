@@ -208,7 +208,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className="fas fa-play"></i>
             </button>
           </CustomTooltip>
-          <div className= "d-flex"
+          <div className= "d-flex">
             <CustomTooltip
               placement="bottom"
               tooltipId="overlay-tooltip-explaination"
