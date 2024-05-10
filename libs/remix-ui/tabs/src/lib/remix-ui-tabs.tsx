@@ -283,26 +283,6 @@ export const TabsUI = (props: TabsUIProps) => {
               </span>
             </button>
           </CustomTooltip>
-          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-aiDocumentation" tooltipText={<FormattedMessage id="remixUiTabs.tooltipText8" />}>
-            <span
-              data-id="remix_ai_docs"
-              id="remix_ai_docs"
-              className="btn pl-2 pr-0 py-0 d-flex ai-docs"
-              role='link'
-              onClick={()=>{
-                window.open("https://remix-ide.readthedocs.io/en/latest/ai.html")
-                _paq.push(['trackEvent', 'ai', 'solcoder', 'documentation'])
-              }}
-            >
-              <i className="fa-solid fa-book text-ai"></i>
-              <span
-                className="position-relative text-ai text-sm pl-1"
-                style={{ fontSize: "x-small", alignSelf: "end" }}
-              >
-                AI
-              </span>
-            </span>
-          </CustomTooltip>
 
           <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
             <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" onClick={() => props.onZoomOut()}></span>
