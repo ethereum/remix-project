@@ -208,7 +208,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className="fas fa-play"></i>
             </button>
           </CustomTooltip>
-          <div className= "border-left ml-2" style={{height: "3em"}}></div>
+          <div className= "border-left ml-2" style={{ height: "3em" }}></div>
           <CustomTooltip
             placement="bottom"
             tooltipId="overlay-tooltip-explaination"
@@ -279,7 +279,7 @@ export const TabsUI = (props: TabsUIProps) => {
             </button>
           </CustomTooltip>
 
-          <div className= "border-left ml-2" style={{height: "3em"}}></div>
+          <div className= "border-left ml-2" style={{ height: "3em" }}></div>
 
           <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
             <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>

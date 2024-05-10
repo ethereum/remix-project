@@ -469,7 +469,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             <i aria-hidden="true" className="fas fa-book"></i>
           </span>
         </CustomTooltip>
-        
+
         <div className="pt-2 mb-0">
           <div className="text-secondary mb-0 h6">
             <div>
