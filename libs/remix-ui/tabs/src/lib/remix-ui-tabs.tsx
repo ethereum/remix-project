@@ -250,7 +250,7 @@ export const TabsUI = (props: TabsUIProps) => {
                     <FormattedMessage id="remixUiTabs.tooltipText6" />
                   ) : (<FormattedMessage id="remixUiTabs.tooltipText7" />)
                 ) : (
-                  <FormattedMessage id="remixUiTabs.tooltipText4" />
+                  <FormattedMessage id="remixUiTabs.tooltipTextDisabledCopilot" />
                 )}
               </span>
             }
