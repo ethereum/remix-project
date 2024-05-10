@@ -148,32 +148,6 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
     _paq.push(['trackEvent', 'hometab', 'homeGetStarted', templateName])
   }
 
-  const [activeButtonClass, setActiveButtonClass] = useState('')
-  const [activeButton, setActiveButton] = useState('')
-
-  useEffect(() => {
-    const checkWorkspaceName = async () => {
-      const currentWorkspace = await plugin.call('filePanel', 'getCurrentWorkspace')
-      const getWorkspaces = await plugin.call('filePanel', 'getWorkspaces')
-      // setActiveButton(currentWorkspace.name)
-      console.log('activeButton', { activeButton, currentWorkspace, getWorkspaces })
-    }
-    checkWorkspaceName()
-  }, [])
-  const manipulateClasses = async (e: SyntheticEvent) => {
-    const target = e.target as HTMLButtonElement
-    // if btn-primary is active, remove it based on the following conditions:
-    // 1. Most importantly, if the  activeButton is the same as the data-id of any of the buttons
-    // then that button should be active
-    // 2. If the activeButton is not the same as the data-id of any of the buttons
-    // then the first button should be active
-    const currentWorkspace = await plugin.call('filePanel', 'getCurrentWorkspace')
-    const allworkspaces = await plugin.call('filePanel', 'getWorkspaces')
-    console.log('currentWorkspace', { currentWorkspace, allworkspaces })
-    if (target.classList.contains('btn-primary') && target.dataset.id.includes(activeButton)) {
-    }
-  }
-
   return (
     <div className="pl-2" id="hTGetStartedSection">
       <label className="pt-3" style={{ fontSize: '1.2rem' }}>
@@ -189,8 +163,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
                     key={index}
                     className={index === 0 ? 'btn btn-primary border p-2 text-nowrap mr-3' : index === workspaceTemplates.length - 1 ? 'btn border p-2 text-nowrap mr-2' : 'btn border p-2 text-nowrap mr-3'}
                     onClick={(e) => {
-                      // createWorkspace(template.templateName)
-                      manipulateClasses(e)
+                      createWorkspace(template.templateName)
                     }}
                     data-id={`homeTabGetStarted${template.templateName}`}
                   >
