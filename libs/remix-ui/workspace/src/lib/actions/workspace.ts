@@ -746,7 +746,7 @@ export const getGitRepoBranches = async (workspacePath: string) => {
     fs: window.remixFileSystemCallback,
     dir: addSlash(workspacePath),
   }
-  const branches: { remote: any; name: string }[] = await dgitPlugin.call('dgitApi', 'branches', { ...gitConfig })
+  const branches: branch[] = await dgitPlugin.call('dgitApi', 'branches', { ...gitConfig })
   return branches
 }
 

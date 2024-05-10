@@ -46,7 +46,13 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
   }
 
   const fetchBranch = async () => {
-    actions.fetch(null, branch.name, null, null, false, true)
+    await actions.fetch({
+      remote: null,
+      ref: branch,
+      singleBranch: true,
+      relative: true
+    })
+    //actions.fetch(null, branch.name, null, null, false, true)
   }
 
   return (

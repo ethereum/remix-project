@@ -42,13 +42,15 @@ export const CommitMessage = () => {
     return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
   }
 
-  const getRemoteName = () => {
-    return getRemote() ? getRemote().name : ''
-  }
-
   const sync = async() => {
-    await actions.pull(getRemoteName(), context.currentBranch.name)
-    await actions.push(getRemoteName(), context.currentBranch.name)
+    await actions.pull({
+      remote: getRemote(),
+      ref: context.currentBranch
+    })
+    await actions.push({
+      remote: getRemote(),
+      ref: context.currentBranch
+    })
   }
   
   const commitNotAllowed = () => {

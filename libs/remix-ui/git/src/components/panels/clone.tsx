@@ -32,7 +32,13 @@ export const Clone = () => {
   );
 
   const clone = async () => {
-    await actions.clone(cloneUrl, cloneBranch, cloneDepth, !cloneAllBranches)
+    await actions.clone({
+      url: cloneUrl,
+      branch: cloneBranch,
+      depth: cloneDepth,
+      singleBranch: !cloneAllBranches
+    })
+    //await actions.clone(cloneUrl, cloneBranch, cloneDepth, !cloneAllBranches)
   }
 
   const onCloneBranchChange = (value: string) => {

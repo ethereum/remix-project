@@ -74,7 +74,15 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
     console.log('CHANGES', changes)
     if (!changes) {
       // try to fetch the data
-      await actions.fetch(branch.remote.name, branch.name,null,20, true, false, true)
+      //await actions.fetch(branch.remote.name, branch.name,null,20, true, false, true)
+      await actions.fetch({
+        remote: branch.remote,
+        ref: branch,
+        depth: 20,
+        singleBranch: true,
+        relative: false,
+        quiet: true
+      })
     }
   }
 

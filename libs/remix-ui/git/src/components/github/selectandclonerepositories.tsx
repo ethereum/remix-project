@@ -29,7 +29,13 @@ export const SelectAndCloneRepositories = (props: RepositoriesProps) => {
 
   const clone = async () => {
     try {
-      actions.clone(repo.html_url, branch.name, cloneDepth, !cloneAllBranches)
+      await actions.clone({
+        url: repo.html_url,
+        branch: branch.name,
+        depth: cloneDepth,
+        singleBranch: !cloneAllBranches
+      })
+      //actions.clone(repo.html_url, branch.name, cloneDepth, !cloneAllBranches)
     } catch (e) {
       // do nothing
     }

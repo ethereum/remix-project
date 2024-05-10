@@ -56,7 +56,9 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
           <GitUIButton className="btn btn-sm" onClick={setAsDefault}><FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon></GitUIButton>
         }
         <GitUIButton className="btn btn-sm" onClick={async () => {
-          await actions.fetch(remote.name)
+          await actions.fetch({
+            remote
+          })
         }}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon></GitUIButton>
         <GitUIButton className="btn btn-sm" onClick={() => actions.removeRemote(remote)}><FontAwesomeIcon className='text-danger' icon={faTrash} ></FontAwesomeIcon></GitUIButton>
         {remote?.url && <GitUIButton className="btn btn-sm pr-0" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}

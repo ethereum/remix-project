@@ -76,7 +76,13 @@ export type compareBranchesInput = {
 }
 
 export type fetchInputType = {
-    remote: remote, ref: branch, remoteRef?: branch, depth: number, singleBranch: boolean, relative: boolean, quiet?: boolean
+    remote: remote, 
+    ref?: branch, 
+    remoteRef?: branch, 
+    depth?: number, 
+    singleBranch?: boolean, 
+    relative?: boolean, 
+    quiet?: boolean
 }
 
 export type pullInputType = {
