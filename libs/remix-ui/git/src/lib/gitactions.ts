@@ -68,7 +68,7 @@ export const getFileStatusMatrix = async (filepaths: string[]) => {
     statusmatrix.map((sm) => {
       if (JSON.stringify(sm.status) === JSON.stringify(m.status)) {
         //Utils.log(m, sm);
-        //m.statusNames = sm.matrix;
+        m.statusNames = sm.matrix;
       }
     });
   });
@@ -578,6 +578,7 @@ export const statusMatrix = async (filepaths: string[]) => {
     return {
       filename: `/${x.shift()}`,
       status: x,
+      statusNames: []
     };
   });
 
