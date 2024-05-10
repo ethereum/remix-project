@@ -795,10 +795,10 @@ class DGitProvider extends Plugin {
 
   async fetch(input: fetchInputType) {
     const cmd = {
-      ref: input.ref.name,
-      remoteRef: input.remoteRef.name,
+      ref: input.ref && input.ref.name,
+      remoteRef: input.remoteRef && input.remoteRef.name,
       author: await this.getCommandUser(input),
-      remote: input.remote.name,
+      remote: input.remote && input.remote.name,
       depth: input.depth || 5,
       singleBranch: input.singleBranch,
       relative: input.relative,

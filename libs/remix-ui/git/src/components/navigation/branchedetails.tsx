@@ -66,7 +66,7 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
           <div className={`ml-1 ${context.currentBranch.name === branch.name ? 'text-success' : ''}`}>{branch.name} {branch.remote ? `on ${branch.remote.name}` : ''}</div>
 
         </div>
-        {context.currentBranch.name === branch.name ?
+        {context.currentBranch && context.currentBranch.name === branch.name ?
           <GitUIButton className="btn btn-sm p-0 mr-1" onClick={() => { }}>
             <FontAwesomeIcon className='pointer text-success' icon={faToggleOff} ></FontAwesomeIcon>
           </GitUIButton>

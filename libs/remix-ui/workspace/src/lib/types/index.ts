@@ -53,7 +53,7 @@ export type WorkspaceMetadata = {
   isGitRepo: boolean
   hasGitSubmodules?: boolean
   branches?: branch[]
-  currentBranch?: string
+  currentBranch?: branch
   isGist: string
 }
 
