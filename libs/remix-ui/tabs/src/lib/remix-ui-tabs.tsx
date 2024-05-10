@@ -208,72 +208,71 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className="fas fa-play"></i>
             </button>
           </CustomTooltip>
-          <div className= "border-left ml-2" style={{ height: "3em" }}></div>
-          <CustomTooltip
-            placement="bottom"
-            tooltipId="overlay-tooltip-explaination"
-            tooltipText={
-              <span>
-                {tabsState.currentExt === 'sol'? (
-                  <FormattedMessage id="remixUiTabs.tooltipText5" />
-                ) : (
-                  <FormattedMessage id="remixUiTabs.tooltipText4" />
-                )}
-              </span>
-            }
-          >
-            <button
-              data-id="explain-editor"
-              id='explain_btn'
-              className='btn text-ai pl-2 pr-0 py-0 d-flex'
-              disabled={!(tabsState.currentExt === 'sol') || explaining}
-              onClick={async () => {
-                const path = active().substr(active().indexOf('/') + 1, active().length)
-                const content = await props.plugin.call('fileManager', 'readFile', path)
-                if (tabsState.currentExt === 'sol') {
-                  setExplaining(true)
-                  await props.plugin.call('solcoder', 'code_explaining', content)
-                  setExplaining(false)
-                  _paq.push(['trackEvent', 'ai', 'solcoder', 'explain_file'])
-                }
-              }}
+          <div className= "d-flex"
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="overlay-tooltip-explaination"
+              tooltipText={
+                <span>
+                  {tabsState.currentExt === 'sol'? (
+                    <FormattedMessage id="remixUiTabs.tooltipText5" />
+                  ) : (
+                    <FormattedMessage id="remixUiTabs.tooltipText4" />
+                  )}
+                </span>
+              }
             >
-              <i className={`fas fa-user-robot ${explaining ? 'loadingExplanation' : ''}`}></i>
-            </button>
-          </CustomTooltip>
-          <CustomTooltip
-            placement="bottom"
-            tooltipId="overlay-tooltip-copilot"
-            tooltipText={
-              <span>
-                { tabsState.currentExt === 'sol'? (
-                  !ai_switch ? (
-                    <FormattedMessage id="remixUiTabs.tooltipText6" />
-                  ) : (<FormattedMessage id="remixUiTabs.tooltipText7" />)
-                ) : (
-                  <FormattedMessage id="remixUiTabs.tooltipTextDisabledCopilot" />
-                )}
-              </span>
-            }
-          >
-            <button
-              data-id="remix_ai_switch"
-              id='remix_ai_switch'
-              className="btn ai-switch text-ai pl-2 pr-0 py-0 d-flex"
-              disabled={!(tabsState.currentExt === 'sol' )}
-              onClick={async () => {
-                await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
-                setAI_switch(!ai_switch)
-                ai_switch ? _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_disabled'])
-              }}
+              <button
+                data-id="explain-editor"
+                id='explain_btn'
+                className='btn text-ai pl-2 pr-0 py-0 d-flex'
+                disabled={!(tabsState.currentExt === 'sol') || explaining}
+                onClick={async () => {
+                  const path = active().substr(active().indexOf('/') + 1, active().length)
+                  const content = await props.plugin.call('fileManager', 'readFile', path)
+                  if (tabsState.currentExt === 'sol') {
+                    setExplaining(true)
+                    await props.plugin.call('solcoder', 'code_explaining', content)
+                    setExplaining(false)
+                    _paq.push(['trackEvent', 'ai', 'solcoder', 'explain_file'])
+                  }
+                }}
+              >
+                <i className={`fas fa-user-robot ${explaining ? 'loadingExplanation' : ''}`}></i>
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="overlay-tooltip-copilot"
+              tooltipText={
+                <span>
+                  { tabsState.currentExt === 'sol'? (
+                    !ai_switch ? (
+                      <FormattedMessage id="remixUiTabs.tooltipText6" />
+                    ) : (<FormattedMessage id="remixUiTabs.tooltipText7" />)
+                  ) : (
+                    <FormattedMessage id="remixUiTabs.tooltipTextDisabledCopilot" />
+                  )}
+                </span>
+              }
             >
-              <i
-                className={ai_switch ? "fas fa-toggle-on" : "fas fa-toggle-off"}
-              ></i>
-            </button>
-          </CustomTooltip>
-
-          <div className= "border-left ml-2" style={{ height: "3em" }}></div>
+              <button
+                data-id="remix_ai_switch"
+                id='remix_ai_switch'
+                className="btn ai-switch text-ai pl-2 pr-0 py-0 d-flex"
+                disabled={!(tabsState.currentExt === 'sol' )}
+                onClick={async () => {
+                  await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
+                  setAI_switch(!ai_switch)
+                  ai_switch ? _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_disabled'])
+                }}
+              >
+                <i
+                  className={ai_switch ? "fas fa-toggle-on" : "fas fa-toggle-off"}
+                ></i>
+              </button>
+            </CustomTooltip>
+          </div>
 
           <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
             <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
