@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react'
 import { RunTab } from '../types/run-tab'
-import { resetAndInit, setupEvents } from './events'
+import { resetAndInit, setupEvents, setEventsDispatch } from './events'
 import { createNewBlockchainAccount, setExecutionContext, signMessageWithAddress } from './account'
 import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt,
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit,
@@ -25,8 +25,9 @@ let plugin: RunTab, dispatch: React.Dispatch<any> = () => {}
 export const initRunTab = (udapp: RunTab, resetEventsAndAccounts: boolean) => async (reducerDispatch: React.Dispatch<any>) => {
   plugin = udapp
   dispatch = reducerDispatch
+  setEventsDispatch(reducerDispatch)
   if (resetEventsAndAccounts) {
-    setupEvents(plugin, dispatch)  
+    setupEvents(plugin)  
     resetAndInit(plugin)
   }
 }
