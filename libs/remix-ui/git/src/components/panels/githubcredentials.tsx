@@ -1,4 +1,3 @@
-import { checkout, clone, ReadCommitResult } from "isomorphic-git";
 import React, { useEffect } from "react";
 import { gitActionsContext, pluginActionsContext } from "../../state/context";
 import { gitPluginContext, loaderContext } from "../gitui";
@@ -6,7 +5,6 @@ import { CustomTooltip } from "@remix-ui/helper";
 
 import { useIntl, FormattedMessage } from "react-intl";
 import { CopyToClipboard } from "@remix-ui/clipboard";
-import { FormControl, InputGroup } from "react-bootstrap";
 
 export const GitHubCredentials = () => {
   const context = React.useContext(gitPluginContext)
@@ -69,8 +67,8 @@ export const GitHubCredentials = () => {
           <CopyToClipboard content={githubToken} data-id='copyToClipboardCopyIcon' className='far fa-copy ml-1 p-2 mt-1' direction={"top"} />
         </div>
       </div>
-      <input name='githubUsername' onChange={e => handleChangeUserNameState(e.target.value)} value={githubUsername} className="form-control mb-1" placeholder="GitHub username" type="text" id="githubUsername" />
-      <input name='githubEmail' onChange={e => handleChangeEmailState(e.target.value)} value={githubEmail} className="form-control mb-1" placeholder="GitHub email" type="text" id="githubEmail" />
+      <input name='githubUsername' onChange={e => handleChangeUserNameState(e.target.value)} value={githubUsername} className="form-control mb-1" placeholder="Git username" type="text" id="githubUsername" />
+      <input name='githubEmail' onChange={e => handleChangeEmailState(e.target.value)} value={githubEmail} className="form-control mb-1" placeholder="Git email" type="text" id="githubEmail" />
       <div className="d-flex justify-content-between">
         <button className="btn btn-primary w-100" onClick={saveGithubToken}>
           <FormattedMessage id="save" defaultMessage="Save" />

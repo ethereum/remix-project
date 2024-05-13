@@ -29,6 +29,7 @@ import { SourceControlBase } from './buttons/sourceControlBase'
 import { BranchHeader } from './branchHeader'
 import { SourceControl } from './panels/sourcontrol'
 import { GitHubCredentials } from './panels/githubcredentials'
+import { Setup } from './panels/setup'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
@@ -127,7 +128,7 @@ export const GitUI = (props: IGitUi) => {
           <gitActionsContext.Provider value={gitActionsProviderValue}>
             <BranchHeader/>
             <pluginActionsContext.Provider value={pluginActionsProviderValue}>
-              
+              <Setup></Setup>
               <Accordion activeKey={activePanel} defaultActiveKey="0">
                 <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
                 

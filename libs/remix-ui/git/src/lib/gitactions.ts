@@ -524,9 +524,9 @@ export const remoteCommits = async (url: string, branch: string, length: number)
 
 export const saveGitHubCredentials = async (credentials: { username: string, email: string, token: string }) => {
   try {
-    await plugin.call('config' as any, 'setAppParameter' as any, 'settings/github-user-name', credentials.username)
-    await plugin.call('config' as any, 'setAppParameter' as any, 'settings/github-email', credentials.email)
-    await plugin.call('config' as any, 'setAppParameter' as any, 'settings/gist-access-token', credentials.token)
+    await plugin.call('config', 'setAppParameter', 'settings/github-user-name', credentials.username)
+    await plugin.call('config', 'setAppParameter', 'settings/github-email', credentials.email)
+    await plugin.call('config', 'setAppParameter', 'settings/gist-access-token', credentials.token)
   } catch (e) {
     console.log(e)
   }
@@ -535,9 +535,9 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
 export const getGitHubCredentials = async () => {
   if (!plugin) return
   try {
-    const username = await plugin.call('config' as any, 'getAppParameter' as any, 'settings/github-user-name')
-    const email = await plugin.call('config' as any, 'getAppParameter' as any, 'settings/github-email')
-    const token = await plugin.call('config' as any, 'getAppParameter' as any, 'settings/gist-access-token')
+    const username = await plugin.call('config', 'getAppParameter', 'settings/github-user-name')
+    const email = await plugin.call('config', 'getAppParameter', 'settings/github-email')
+    const token = await plugin.call('config', 'getAppParameter', 'settings/gist-access-token')
     return {
       username,
       email,
