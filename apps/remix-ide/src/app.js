@@ -354,6 +354,7 @@ class AppComponent {
       solidityScript,
       templates,
       openaigpt,
+      solcoder,
       git
     ])
 
