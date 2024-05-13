@@ -19,10 +19,6 @@ export interface customDGitSystem {
     } & StatusEvents,
     methods: {
         getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
-        //getBranchCommits(branch: branch): Promise<ReadCommitResult[]>
-        //fetchBranch(branch: branch): Promise<any>
-        //remotebranches(owner: string, repo: string): Promise<branch[]>
-        //remoteCommits(url: string, branch: string, length: number): Promise<ReadCommitResult[]>
         repositories(input: repositoriesInput): Promise<repository[]>
         clone(input: cloneInputType): Promise<any>
         branches(input?: branchesInput): Promise<branch[]>,
@@ -32,9 +28,6 @@ export interface customDGitSystem {
         fetch(input: fetchInputType): Promise<any>
         pull(input: pullInputType): Promise<any>
         push(input: pushInputType): Promise<any>
-        //getGitHubUser(token: string): Promise<{ user: GitHubUser, ratelimit: RateLimit }>
-        //saveGitHubCredentials(credentials: { username: string, email: string, token: string }): Promise<any>
-        //getGitHubCredentials(): Promise<{ username: string, email: string, token: string }>
         currentbranch(input?: currentBranchInput): Promise<branch>
         branch(input: branchInputType): Promise<void>
         checkout(input: checkoutInput): Promise<void>
