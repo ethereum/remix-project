@@ -5,8 +5,6 @@ import { CommitObject, ReadBlobResult, ReadCommitResult, StatusRow } from "isomo
 export type GitHubUser = Endpoints["GET /user"]["response"]['data']
 export type RateLimit = Endpoints["GET /rate_limit"]["response"]["data"]
 
-
-
 export interface customDGitSystem {
     events: {
         "checkout": () => void
@@ -44,12 +42,6 @@ export interface customDGitSystem {
         updateSubmodules: (input: updateSubmodulesInput) => Promise<void>
     }
 }
-
-export interface ICustomRemixApi extends IRemixApi {
-    dgitApi: customDGitSystem
-}
-
-export declare type CustomRemixApi = Readonly<ICustomRemixApi>;
 
 export type initInput = {
     defaultBranch: string

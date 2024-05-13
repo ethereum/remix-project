@@ -2,7 +2,7 @@ import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog } from "../state/gitpayload";
-import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, customDGitSystem, cloneInputType, fetchInputType, pullInputType, pushInputType, CustomRemixApi, checkoutInput, rmInput, addInput, repository } from '../types';
+import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, customDGitSystem, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
@@ -13,6 +13,7 @@ import { IDgitSystem, IRemixApi, RemixApi } from "@remixproject/plugin-api";
 import { Plugin } from "@remixproject/engine";
 import { AnyMxRecord } from "dns";
 import { StatusEvents } from "@remixproject/plugin-utils";
+import { CustomRemixApi } from "@remix-api";
 
 export const fileStatuses = [
   ["new,untracked", 0, 2, 0], // new, untracked

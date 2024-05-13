@@ -2,10 +2,11 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import React from "react";
 import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog } from "../state/gitpayload";
-import { CustomRemixApi, customDGitSystem, gitActionDispatch } from "../types";
+import { customDGitSystem, gitActionDispatch } from "../types";
 import { Plugin } from "@remixproject/engine";
 import { diffFiles, getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
 import { Profile } from "@remixproject/plugin-utils";
+import { CustomRemixApi } from "@remix-api";
 
 let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
 let callBackEnabled: boolean = false
