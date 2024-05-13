@@ -12,6 +12,11 @@ import { getNetworkProxyAddresses } from "./deploy"
 import { shortenAddress } from "@remix-ui/helper"
 
 const _paq = window._paq = window._paq || []
+let dispatch: React.Dispatch<any> = () => {}
+
+export const setEventsDispatch = (reducerDispatch: React.Dispatch<any>) => {
+  dispatch = reducerDispatch
+}
 
 export const setupEvents = (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   // This maintains current network state and update the pinned contracts list,
