@@ -5,7 +5,6 @@ import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntr
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
 import { defaultGitState, defaultLoaderState, gitState, loaderState } from '../types'
-
 import { Accordion } from "react-bootstrap";
 import { CommitMessage } from './buttons/commitmessage'
 import { Commits } from './panels/commits'
@@ -29,7 +28,6 @@ import LogViewer from './panels/log'
 import { SourceControlBase } from './buttons/sourceControlBase'
 import { BranchHeader } from './branchHeader'
 import { SourceControl } from './panels/sourcontrol'
-import { Settings } from './panels/settings'
 import { GitHubCredentials } from './panels/githubcredentials'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
@@ -44,7 +42,6 @@ export const GitUI = (props: IGitUi) => {
   const [gitState, gitDispatch] = useReducer(gitReducer, defaultGitState)
   const [loaderState, loaderDispatch] = useReducer(loaderReducer, defaultLoaderState)
   const [activePanel, setActivePanel] = useState<string>("0");
-  const [timeOut, setTimeOut] = useState<number>(null)
 
   useEffect(() => {
     setCallBacks(plugin, gitDispatch, loaderDispatch)
@@ -60,8 +57,6 @@ export const GitUI = (props: IGitUi) => {
       await setModifiedDecorator(gitState.modified)
       await setUntrackedDecorator(gitState.untracked)
     }
-
-    console.log('gitState.fileStatusResult', gitState.fileStatusResult)
 
     setTimeout(() => {
       setDecorators(gitState)

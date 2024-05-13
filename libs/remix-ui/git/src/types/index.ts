@@ -5,7 +5,7 @@ import { CommitObject, ReadBlobResult, ReadCommitResult, StatusRow } from "isomo
 export type GitHubUser = Endpoints["GET /user"]["response"]['data']
 export type RateLimit = Endpoints["GET /rate_limit"]["response"]["data"]
 
-export interface customDGitSystem {
+export interface IGitApi {
     events: {
         "checkout": () => void
         "clone": () => void
@@ -140,14 +140,14 @@ export interface repositoriesInput { token: string, page?: number, per_page?: nu
 
 export interface statusInput { ref: string, filepaths?: string[] }
 
-export const dGitProfile: LibraryProfile<customDGitSystem> = {
+export const dGitProfile: LibraryProfile<IGitApi> = {
     name: 'dgitApi',
     methods: ['clone', 'branches', 'remotes', 'getCommitChanges', 'log', 'remotecommits'],
 }
 
 
 export interface customGitApi extends IRemixApi {
-    dgit: customDGitSystem
+    dgit: IGitApi
 }
 
 export type gitState = {

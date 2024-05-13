@@ -2,7 +2,7 @@ import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog } from "../state/gitpayload";
-import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, customDGitSystem, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository } from '../types';
+import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
@@ -25,7 +25,6 @@ export const fileStatuses = [
   ["modified,staged,with unstaged changes", 1, 2, 3], // modified, staged, with unstaged changes
   ["deleted,unstaged", 1, 0, 1], // deleted, unstaged
   ["deleted,staged", 1, 0, 0],
-  //["deleted", 1, 1, 0], // deleted, staged
   ["unmodified", 1, 1, 3],
   ["deleted,not in git", 0, 0, 3],
   ["unstaged,modified", 1, 2, 0]
@@ -162,10 +161,10 @@ export const getCommitFromRef = async (ref: string) => {
 }
 
 const settingsWarning = async () => {
-  const username = await plugin.call('config' as any, 'getAppParameter', 'settings/github-user-name')
-  const email = await plugin.call('config' as any, 'getAppParameter', 'settings/github-email')
+  const username = await plugin.call('config', 'getAppParameter', 'settings/github-user-name')
+  const email = await plugin.call('config', 'getAppParameter', 'settings/github-email')
   if (!username || !email) {
-    plugin.call('notification' as any, 'toast', 'Please set your github username and email in the settings')
+    plugin.call('notification', 'toast', 'Please set your github username and email in the settings')
     return false;
   } else {
     return {
@@ -198,7 +197,7 @@ export const commit = async (message: string = "") => {
     })
 
   } catch (err) {
-    plugin.call('notification' as any, 'toast', `${err}`)
+    plugin.call('notification', 'toast', `${err}`)
   }
 
 }
@@ -216,7 +215,7 @@ export const addall = async (files: fileStatusResult[]) => {
     })
 
   } catch (e) {
-    plugin.call('notification' as any, 'toast', `${e}`)
+    plugin.call('notification', 'toast', `${e}`)
   }
 }
 
@@ -228,7 +227,7 @@ export const add = async (filepath: addInput) => {
       message: `Added to git`
     })
   } catch (e) {
-    plugin.call('notification' as any, 'toast', `${e}`)
+    plugin.call('notification', 'toast', `${e}`)
   }
 
 }
@@ -275,7 +274,7 @@ export const checkoutfile = async (filename: string) => {
       );
       await enableCallBacks();
     } catch (e) {
-      plugin.call('notification' as any, 'toast', `No such file`)
+      plugin.call('notification', 'toast', `No such file`)
     }
 }
 
@@ -287,7 +286,7 @@ export const checkout = async (cmd: checkoutInput) => {
     await plugin.call('dgitApi', 'checkout', cmd)
     gitlog();
   } catch (e) {
-    plugin.call('notification' as any, 'toast', `${e}`)
+    plugin.call('notification', 'toast', `${e}`)
   }
   await enableCallBacks();
 }
@@ -376,7 +375,7 @@ const parseError = async (e: any) => {
   console.trace(e)
   // if message conttains 401 Unauthorized, show token warning
   if (e.message.includes('401')) {
-    const result = await plugin.call('notification' as any, 'modal' as any, {
+    const result = await plugin.call('notification', 'modal' as any, {
       title: 'The GitHub token may be missing or invalid',
       message: 'Please check the GitHub token and try again. Error: 401 Unauthorized',
       okLabel: 'Go to settings',
@@ -387,7 +386,7 @@ const parseError = async (e: any) => {
   }
   // if message contains 404 Not Found, show repo not found
   else if (e.message.includes('404')) {
-    await plugin.call('notification' as any, 'modal' as any, {
+    await plugin.call('notification', 'modal' as any, {
       title: 'Repository not found',
       message: 'Please check the URL and try again.',
       okLabel: 'Go to settings',
@@ -397,7 +396,7 @@ const parseError = async (e: any) => {
   }
   // if message contains 403 Forbidden
   else if (e.message.includes('403')) {
-    await plugin.call('notification' as any, 'modal' as any, {
+    await plugin.call('notification', 'modal' as any, {
       title: 'The GitHub token may be missing or invalid',
       message: 'Please check the GitHub token and try again. Error: 403 Forbidden',
       okLabel: 'Go to settings',
@@ -405,14 +404,14 @@ const parseError = async (e: any) => {
       type: ModalTypes.confirm
     })
   } else if (e.toString().includes('NotFoundError') && !e.toString().includes('fetch')) {
-    await plugin.call('notification' as any, 'modal', {
+    await plugin.call('notification', 'modal', {
       title: 'Remote branch not found',
       message: 'The branch you are trying to fetch does not exist on the remote. If you have forked this branch from another branch, you may need to fetch the original branch first or publish this branch on the remote.',
       okLabel: 'OK',
       type: ModalTypes.alert
     })
   } else {
-    await plugin.call('notification' as any, 'alert' as any, {
+    await plugin.call('notification', 'alert' as any, {
       title: 'Error',
       message: e.message
     })
@@ -439,7 +438,7 @@ export const repositories = async () => {
       }
 
     } else {
-      plugin.call('notification' as any, 'alert', {
+      plugin.call('notification', 'alert', {
         title: 'Error getting repositories',
         message: `Please check your GitHub token in the GitHub settings... cannot connect to GitHub`
       })
@@ -447,7 +446,7 @@ export const repositories = async () => {
     }
   } catch (e) {
     console.log(e)
-    plugin.call('notification' as any, 'alert', {
+    plugin.call('notification', 'alert', {
       title: 'Error getting repositories',
       message: `${e.message}: Please check your GitHub token in the GitHub settings.`
     })
@@ -474,7 +473,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
         page++
       }
     } else {
-      plugin.call('notification' as any, 'alert', {
+      plugin.call('notification', 'alert', {
         title: 'Error getting branches',
         message: `Please check your GitHub token in the GitHub settings. It needs to have access to the branches.`
       })
@@ -482,7 +481,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
     }
   } catch (e) {
     console.log(e)
-    plugin.call('notification' as any, 'alert', {
+    plugin.call('notification', 'alert', {
       title: 'Error',
       message: e.message
     })
@@ -516,7 +515,7 @@ export const remoteCommits = async (url: string, branch: string, length: number)
     }
   } catch (e) {
     console.log(e)
-    plugin.call('notification' as any, 'alert', {
+    plugin.call('notification', 'alert', {
       title: 'Error',
       message: e.message
     })

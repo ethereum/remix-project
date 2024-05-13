@@ -1,16 +1,14 @@
 
-import { ViewPlugin } from "@remixproject/engine-web";
 import React from "react";
 import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog } from "../state/gitpayload";
-import { customDGitSystem, gitActionDispatch } from "../types";
+import { gitActionDispatch } from "../types";
 import { Plugin } from "@remixproject/engine";
-import { diffFiles, getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
+import { getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
 import { Profile } from "@remixproject/plugin-utils";
 import { CustomRemixApi } from "@remix-api";
 
 let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
 let callBackEnabled: boolean = false
-let syncTimer: NodeJS.Timer = null
 
 type AsyncCallback = () => Promise<void>;
 
@@ -27,7 +25,7 @@ class AsyncDebouncedQueue {
         }
 
         let timer = setTimeout(async () => {
-            await callback();  // Await the asynchronous operation
+            await callback(); 
             this.queues.delete(callback);
         }, customDelay || this.delay);
 
@@ -148,10 +146,10 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     }
   })
 
-  plugin.on('config' as any, 'configChanged', async () => {
+  plugin.on('config', 'configChanged', async () => {
     await getGitConfig()
   })
-  plugin.on('settings' as any, 'configChanged', async () => {
+  plugin.on('settings', 'configChanged', async () => {
     await getGitConfig()
   })
 
@@ -159,9 +157,9 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
 }
 
 export const getGitConfig = async () => {
-  const username = await plugin.call('settings' as any, 'get', 'settings/github-user-name')
-  const email = await plugin.call('settings' as any, 'get', 'settings/github-email')
-  const token = await plugin.call('settings' as any, 'get', 'settings/gist-access-token')
+  const username = await plugin.call('settings', 'get', 'settings/github-user-name')
+  const email = await plugin.call('settings', 'get', 'settings/github-email')
+  const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
   const config = { username, email, token }
   gitDispatch(setGItHubToken(config.token))
   return config
