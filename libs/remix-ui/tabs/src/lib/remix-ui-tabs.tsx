@@ -267,9 +267,7 @@ export const TabsUI = (props: TabsUIProps) => {
                   ai_switch ? _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_disabled'])
                 }}
               >
-                <i
-                  className={ai_switch ? "fas fa-toggle-on" : "fas fa-toggle-off"}
-                ></i>
+                <i className={ai_switch ? "fas fa-toggle-on fa-lg" : "fas fa-toggle-off fa-lg"}></i>
               </button>
             </CustomTooltip>
           </div>
