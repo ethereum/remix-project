@@ -144,7 +144,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     const startCopilot = async () => {
       copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('terminal', 'log', { type: 'typewriterlog', value: `Solidity copilot activated!` })
-      //props.plugin.call('settings', 'updateCopilotChoice', props.useCopilot)
     }
 
     startCopilot()
