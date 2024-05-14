@@ -208,7 +208,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className="fas fa-play"></i>
             </button>
           </CustomTooltip>
-          <div className= "d-flex">
+          <div className= "d-flex border-left ml-2 align-items-center" style={{ height: "3em"}}>
             <CustomTooltip
               placement="bottom"
               tooltipId="overlay-tooltip-explaination"
@@ -274,12 +274,14 @@ export const TabsUI = (props: TabsUIProps) => {
             </CustomTooltip>
           </div>
 
-          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
-            <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
-          </CustomTooltip>
-          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-zoom-in" tooltipText={<FormattedMessage id="remixUiTabs.zoomIn" />}>
-            <span data-id="tabProxyZoomIn" className="btn fas fa-search-plus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomIn()}></span>
-          </CustomTooltip>
+          <div className= "d-flex border-left ml-2 align-items-center" style={{ height: "3em"}}>
+            <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
+              <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
+            </CustomTooltip>
+            <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-zoom-in" tooltipText={<FormattedMessage id="remixUiTabs.zoomIn" />}>
+              <span data-id="tabProxyZoomIn" className="btn fas fa-search-plus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomIn()}></span>
+            </CustomTooltip>
+          </div>
         </div>
         <Tabs
           className="tab-scroll"
