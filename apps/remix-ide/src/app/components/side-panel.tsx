@@ -58,10 +58,8 @@ export class SidePanel extends AbstractPanel {
   }
 
   removeView(profile) {
-    if (this.plugins[profile.name].active) this.call('menuicons', 'select', 'filePanel')
+    if (this.plugins[profile.name] && this.plugins[profile.name].active) this.call('menuicons', 'select', 'filePanel')
     super.removeView(profile)
-    this.emit('pluginDisabled', profile.name)
-    this.call('menuicons', 'unlinkContent', profile)
     this.renderComponent()
   }
 
@@ -73,7 +71,10 @@ export class SidePanel extends AbstractPanel {
 
   async pinView (profile) {
     await this.call('pinnedPanel', 'pinView', profile, this.plugins[profile.name].view)
-    this.removeView(profile)
+    if (this.plugins[profile.name].active) this.call('menuicons', 'select', 'filePanel')
+    super.remove(profile.name)
+    this.call('menuicons', 'unlinkContent', profile)
+    this.renderComponent()
   }
 
   async unPinView (profile, view) {
