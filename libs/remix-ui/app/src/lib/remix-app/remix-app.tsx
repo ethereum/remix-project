@@ -98,7 +98,7 @@ const RemixApp = (props: IRemixAppUi) => {
 
     props.app.layout.event.on('minimizepinnedpanel', () => {
       setTimeout(() => {
-        setHideSidePanel(true)
+        setHidePinnedPanel(true)
       }, 1000)
     })
 
@@ -220,7 +220,7 @@ const RemixApp = (props: IRemixAppUi) => {
                 minWidth={285}
                 refObject={pinnedPanelRef}
                 hidden={hidePinnedPanel}
-                setHideStatus={setHideSidePanel}
+                setHideStatus={setHidePinnedPanel}
                 layoutPosition='right'
               ></DragBar>
             </div>
