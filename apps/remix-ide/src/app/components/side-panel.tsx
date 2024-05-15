@@ -16,7 +16,6 @@ const sidePanel = {
 }
 
 export class SidePanel extends AbstractPanel {
-  // lastPinned
   sideelement: any
   loggedState: any
   dispatch: React.Dispatch<any> = () => {}
