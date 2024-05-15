@@ -25,12 +25,18 @@ export class PinnedPanel extends AbstractPanel {
 
   onActivation() {
     this.renderComponent()
+    this.on('sidePanel', 'pluginDisabled', (name) => {
+      if (this.plugins[name] && this.plugins[name].active) {
+        this.emit('unPinnedPlugin', name)
+        this.events.emit('unPinnedPlugin', name)
+      }
+    })
   }
 
   async pinView (profile, view) {
     const activePlugin = this.currentFocus()
 
-    if (activePlugin === profile.name) throw new Error(`Plugin ${profile.name} already pinned`) 
+    if (activePlugin === profile.name) throw new Error(`Plugin ${profile.name} already pinned`)
     if (activePlugin) {
       await this.call('sidePanel', 'unPinView', this.plugins[activePlugin].profile, this.plugins[activePlugin].view)
       this.remove(activePlugin)
