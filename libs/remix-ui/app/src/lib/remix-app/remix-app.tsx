@@ -207,9 +207,6 @@ const RemixApp = (props: IRemixAppUi) => {
               ></DragBar>
               <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
                 <RemixUIMainPanel layout={props.app.layout}></RemixUIMainPanel>
-                {/* <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-all-tabs" tooltipText={<FormattedMessage id="remixApp.scrollToSeeAllTabs" />}>
-                  <div className="remix-ui-tabs_end remix-bg-opacity position-absolute"></div>
-                </CustomTooltip> */}
               </div>
               <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
                 {props.app.pinnedPanel.render()}
