@@ -27,7 +27,7 @@ export const initRunTab = (udapp: RunTab, resetEventsAndAccounts: boolean) => as
   dispatch = reducerDispatch
   setEventsDispatch(reducerDispatch)
   if (resetEventsAndAccounts) {
-    setupEvents(plugin)  
+    setupEvents(plugin)
     resetAndInit(plugin)
   }
 }
