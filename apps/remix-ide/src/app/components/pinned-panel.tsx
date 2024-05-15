@@ -29,6 +29,7 @@ export class PinnedPanel extends AbstractPanel {
       if (this.plugins[name] && this.plugins[name].active) {
         this.emit('unPinnedPlugin', name)
         this.events.emit('unPinnedPlugin', name)
+        super.remove(name)
       }
     })
   }
