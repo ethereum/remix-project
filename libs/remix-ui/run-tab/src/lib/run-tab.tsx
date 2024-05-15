@@ -78,7 +78,7 @@ export function RunTabUI(props: RunTabProps) {
 
   initialState.selectExEnv = plugin.blockchain.getProvider()
   const [runTab, dispatch] = useReducer(runTabReducer, initialState)
-  const REACT_API = {runTab}
+  const REACT_API = { runTab }
   const currentfile = plugin.config.get('currentFile')
 
   useEffect(() => {
