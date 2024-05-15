@@ -111,6 +111,7 @@ async function main() {
       tag_name: `v${version}`,
       name: `${version}`,
       draft: true,
+      prerelease: true,
       headers: headers,
     })
     release = r.data
