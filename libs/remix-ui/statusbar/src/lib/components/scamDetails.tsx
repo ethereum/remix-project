@@ -18,7 +18,7 @@ export default function ScamDetails ({ refs, floatStyle }: ScamDetailsProps) {
       className="py-2 ml-2 mb-1 align-self-end mb-2 d-flex w-25 bg-danger border border-danger"
     >
       <span className="align-self-center pl-4 mt-1">
-        <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }} className="pr-2 text-warning far fa-exclamation-triangle"></i>
+        <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter', color: 'orange' }} className="pr-2 far fa-exclamation-triangle"></i>
       </span>
       <div className="d-flex flex-column text-white">
         <span className="pl-4 mt-1">
