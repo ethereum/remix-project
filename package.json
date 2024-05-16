@@ -97,6 +97,7 @@
     "@ethereumjs/util": "9.0.3",
     "@ethereumjs/vm": "8.0.0",
     "@ethersphere/bee-js": "^3.2.0",
+    "@floating-ui/react": "^0.26.15",
     "@gradio/client": "^0.10.1",
     "@isomorphic-git/lightning-fs": "^4.4.1",
     "@microlink/react-json-view": "^1.23.0",
