@@ -22,14 +22,14 @@ const profile = {
 type ChatEntry = [string, string];
 
 enum BackendOPModel{
-  DeeSeek,
+  DeepSeek,
   CodeLLama,
   Mistral
 }
 
 const PromptBuilder = (inst, answr, modelop) => {
   if (modelop === BackendOPModel.CodeLLama) return "\n### INSTRUCTION:\n" + inst + "\n### RESPONSE:\n" + answr
-  if (modelop === BackendOPModel.DeeSeek) return ""
+  if (modelop === BackendOPModel.DeepSeek) return ""
   if (modelop === BackendOPModel.Mistral) return ""
 }
 
@@ -38,7 +38,7 @@ export class SolCoder extends Plugin {
   completion_url: string
   solgpt_chat_history:ChatEntry[]
   max_history = 7
-  model_op = BackendOPModel.CodeLLama
+  model_op = BackendOPModel.DeepSeek
 
   constructor() {
     super(profile)
