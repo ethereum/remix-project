@@ -17,7 +17,7 @@ function HomeTabFeatured() {
         <FormattedMessage id="home.featured" />
       </label>
       <div className="mb-2">
-        <div className="w-100 d-flex flex-column" style={{ height: '200px' }}>
+        <div className="w-100 d-flex flex-column" style={{ height: '300px' }}>
           <ThemeContext.Provider value={themeFilter}>
             <Carousel
               arrows={false}
@@ -43,7 +43,7 @@ function HomeTabFeatured() {
             >
               <div className="mr-1 pr-1 d-flex">
                 <a href={releaseDetails.moreLink} target="__blank">
-                  <img src={'assets/img/remi_drums_whatsnew.webp'} style={{ flex: '1', height: '170px', maxWidth: '170px' }} alt=""></img>
+                  <img src={'assets/img/remi_drums_whatsnew.webp'} style={{ flex: '1', height: '220px', maxWidth: '220px' }} alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4 align-self-center" style={{ flex: '1' }}>
                   <h5>{releaseDetails.version} {releaseDetails.title}</h5>
@@ -67,7 +67,7 @@ function HomeTabFeatured() {
               </div>
               <div className="mr-1 pr-1 d-flex">
                 <a href="https://remix-project.org" target="__blank">
-                  <img src={'assets/img/bgRemi_small.webp'} style={{ flex: '1', height: '170px', maxWidth: '170px' }} alt=""></img>
+                  <img src={'assets/img/bgRemi_small.webp'} style={{ flex: '1', height: '220px', maxWidth: '220px' }} alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
@@ -88,7 +88,7 @@ function HomeTabFeatured() {
               </div>
               <div className="mr-1 pr-1 d-flex">
                 <a href="https://www.youtube.com/@EthereumRemix/videos" target="__blank">
-                  <img src={'/assets/img/YouTubeLogo.webp'} style={{ flex: '1', height: '170px', maxWidth: '170px' }} alt=""></img>
+                  <img src={'/assets/img/YouTubeLogo.webp'} style={{ flex: '1', height: '220px', maxWidth: '220px' }} alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
@@ -112,7 +112,7 @@ function HomeTabFeatured() {
               </div>
               <div className="mr-1 pr-1 d-flex">
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform" target="__blank">
-                  <img src={'/assets/img/remixRewardBetaTester_small.webp'} style={{ flex: '1', height: '170px', maxWidth: '170px' }} alt=""></img>
+                  <img src={'/assets/img/remixRewardBetaTester_small.webp'} style={{ flex: '1', height: '220px', maxWidth: '220px' }} alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
