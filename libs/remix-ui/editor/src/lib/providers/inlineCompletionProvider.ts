@@ -46,6 +46,28 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       endColumn: getTextAtLine(model.getLineCount()).length + 1,
     });
 
+    if (this.isSolidityComment(word) &&
+        word.includes("sol-gen") &&
+        this.isGeneratingContract===false &&
+        word.split('\n')[word.split('\n').length-1].trim()===""){
+
+      this.isGeneratingContract = true
+      console.log("new contract generation")
+      const output = await this.props.plugin.call('solcoder', 'contract_generation', word)
+      _paq.push(['trackEvent', 'ai', 'solcoder', 'contract_generation'])
+      const handleCompletionTimer = new CompletionTimer(5000, () => { this.isGeneratingContract = false });
+      handleCompletionTimer.start()
+
+      const item: monacoTypes.languages.InlineCompletion = {
+        insertText: output[0]
+      };
+
+      return {
+        items: [item],
+        enableForwardStability: true
+      }
+    }
+
     if (!word.endsWith(' ') &&
       !word.endsWith('.') &&
       !word.endsWith('(')) {
@@ -83,25 +105,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     } catch (e) {
       console.error(e)
       return
-    }
-
-    console.log("is sol comment", this.isSolidityComment(word))
-    if (this.isSolidityComment(word) && word.includes("sol-gen") && this.isGeneratingContract===false){
-      this.isGeneratingContract = true
-      console.log("new contract generation")
-      const output = await this.props.plugin.call('solcoder', 'contract_generation', word)
-      _paq.push(['trackEvent', 'ai', 'solcoder', 'contract_generation'])
-      const handleCompletionTimer = new CompletionTimer(5000, () => { this.isGeneratingContract = false });
-      handleCompletionTimer.start()
-
-      const item: monacoTypes.languages.InlineCompletion = {
-        insertText: output[0]
-      };
-
-      return {
-        items: [item],
-        enableForwardStability: true
-      }
     }
 
     if (word.split('\n').at(-1).trimStart().startsWith('//') ||

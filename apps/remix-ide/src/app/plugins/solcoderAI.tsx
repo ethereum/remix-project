@@ -15,7 +15,7 @@ const profile = {
   name: 'solcoder',
   displayName: 'solcoder',
   description: 'solcoder',
-  methods: ['code_generation', 'code_completion', "solidity_answer", "code_explaining", "code_insertion"],
+  methods: ['code_generation', 'code_completion', "solidity_answer", "code_explaining", "code_insertion", "contract_generation"],
   events: [],
   maintainedBy: 'Remix',
 }
@@ -219,12 +219,12 @@ export class SolCoder extends Plugin {
     }
   }
 
-  async contract_genertion(prompt): Promise<any> {
+  async contract_generation(prompt): Promise<any> {
     this.emit("aiInfering")
     let result
     try {
       result = await(
-        await fetch(this.completion_url, {
+        await fetch(this.api_url, {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -254,7 +254,6 @@ export class SolCoder extends Plugin {
       this.emit("aiInferingDone")
     }
   }
-
 
   _build_solgpt_promt(user_promt:string){
     if (this.solgpt_chat_history.length === 0){
