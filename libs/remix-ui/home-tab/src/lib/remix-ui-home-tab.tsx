@@ -70,7 +70,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             <LanguageOptions plugin={plugin}/>
             <HomeTabFeatured></HomeTabFeatured>
             <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>
-            <HomeTabScamAlert></HomeTabScamAlert>
+            {/* <HomeTabScamAlert></HomeTabScamAlert> */}
           </div>
         </div>
       </ThemeContext.Provider>
