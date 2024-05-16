@@ -307,7 +307,7 @@ contract HelloWorld {
         {/* <label style={{ fontSize: '0.8rem' }} className="pt-3">
           <FormattedMessage id="home.loadFrom" />
         </label> */}
-        <div className="d-flex mt-2">
+        <div className="d-flex mt-2 align-items-end">
           {/* <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
             Gist
           </button>
