@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Read the version from package.json
-version=$(grep -oP '"version":\s*"\K[0-9a-zA-Z.-]+' package.json)
+version=$(awk -F'"' '/"version":/ {print $4}' package.json)
 
 # Determine the command to run based on the version
 if [[ $version == *"beta"* ]]; then
