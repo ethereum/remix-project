@@ -39,7 +39,7 @@ export function RemixUIStatusBar ({ statusBarPlugin }: RemixUIStatusBarProps) {
     <>
       {showScamDetails && (
         <FloatingFocusManager context={context} modal={false}>
-          <ScamDetails refs={refs} floatStyle={floatingStyles} getFloatingProps={getFloatingProps} />
+          <ScamDetails refs={refs} floatStyle={{ ...floatingStyles, minHeight: '300px', alignContent: 'center', paddingRight: '5px' }} getFloatingProps={getFloatingProps} />
         </FloatingFocusManager>)}
       <div className="d-flex flex-row bg-primary justify-content-between align-items-center">
         <div className="remixui_statusbar">
