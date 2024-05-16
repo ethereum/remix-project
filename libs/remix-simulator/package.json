@@ -33,7 +33,7 @@
     "ethjs-util": "^0.1.6",
     "express": "^4.16.3",
     "express-ws": "^4.0.0",
-    "merge": "^1.2.0",
+    "merge": "^2.1.1",
     "rlp": "^3.0.0",
     "string-similarity": "^4.0.4",
     "time-stamp": "^2.0.0",
