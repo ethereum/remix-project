@@ -5,6 +5,7 @@ import AIStatus from './components/aiStatus'
 import ScamAlertStatus from './components/scamAlertStatus'
 import ScamDetails from './components/scamDetails'
 import { FloatingFocusManager, autoUpdate, flip, offset, shift, useClick, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react'
+import axios from 'axios'
 
 export interface RemixUIStatusBarProps {
   statusBarPlugin: StatusBarInterface
@@ -30,8 +31,19 @@ export function RemixUIStatusBar ({ statusBarPlugin }: RemixUIStatusBarProps) {
     dismiss,
     role
   ])
+
+  const abortController = new AbortController()
+  const signal = abortController.signal
+  async function getScamAlerts() {
+    const response = await axios.get('https://raw.githubusercontent.com/remix-project-org/remix-dynamics/main/ide/scam-alerts.json', { signal })
+    if (signal.aborted) return
+    const tips = response.data
+    const index = Math.floor(Math.random() * (tips.length - 1))
+    // setTip(tips[index])
+  }
+
   const getGitBranchName = async () => {
-    return new Promise((resolve, recject) => {
+    return new Promise((resolve, reject) => {
       return 0
     })
   }

@@ -11,6 +11,7 @@ export interface ScamDetailsProps {
 }
 
 export default function ScamDetails ({ refs, floatStyle }: ScamDetailsProps) {
+
   return (
     <div
       ref={refs.setFloating}
