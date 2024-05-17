@@ -8,7 +8,6 @@
       "keccak256": "0x4a1c2a6a4896edefd3a4178a6c3ed8f1de625bd7c00dd7cc5781a9f36236e7db",
       "sha256": "0xee7ba01680ed3a1c1cda236189a51c1e6ff99f6dca602a580e5b16441772b50b",
       "urls": [
-        "bzzr://83e99aa35ae67e71bf77040e5b4686aeb3558919f172b6c28213a4dcd8d79e91",
         "dweb:/ipfs/Qme9brfZS3XhbiRbbNDKhBpgFknyD92omMmYa7XSf56bJP"
       ]
     },
@@ -20,7 +19,6 @@
       "keccak256": "0x07994ad8c59c498bf44ca8e84914e27b79be964d98a9556226db377819d67387",
       "sha256": "0xb83d2025e0bbc7f7f0dc9e47f5aa22eacb548b42c55add8f5f6822c105163500",
       "urls": [
-        "bzzr://414fc715062f91971c8e0d9fbdf470dd24a8a35f4f96df0ba79980cdb0ae7eaa",
         "dweb:/ipfs/QmcBZ6Q2iHmrf9omvD7Jyy8kgrqyPmZFwvKWqvVDaxo1Ta"
       ]
     },
@@ -32,7 +30,6 @@
       "keccak256": "0x4c358c2e90447ad9e7c1816b5be8edde1172f67dedf16755a6c7373ede46b245",
       "sha256": "0x9825565e1f199dbed6de01d27e10f83a9180300acab80f8469bf427e3cf92e96",
       "urls": [
-        "bzzr://6ecbe30c4c8530b82d55ed6bec12e63efbab1cb16868b020d65399a8793599a6",
         "dweb:/ipfs/QmcEK5gvWNeHUtjsF3B6j5AXb9uNoG3aHbPrCMJDx7C8TM"
       ]
     },
@@ -44,7 +41,6 @@
       "keccak256": "0xb67df5c37e8255e0de7918b6d3261f0f29e277d121bf5f414b66157a5b1070cd",
       "sha256": "0x67f8a94b60278cfb80d505c47a1a5e67ec2caf20167ef85f2bdf2a80a692bd1b",
       "urls": [
-        "bzzr://7ba69a10a4585d0a36e5843603476061e8b02878331fa580d5c2509ef01ddaa6",
         "dweb:/ipfs/QmVumPvgQVFLZvDvQddcDGcdxjbVWTTzxoQvJAECBBZ6Ju"
       ]
     },
@@ -56,7 +52,6 @@
       "keccak256": "0x62a65d0a951617f022524fc844ca11d90266f64e693343a2f41107183bf364c1",
       "sha256": "0x66da311056ec26c9c3fb501350ee22187c30e79c41bf2713eeff7d84479948c5",
       "urls": [
-        "bzzr://ccf4f1e05d942946bcca929e9263c541b2749bf1faf6dc6c211b4bf700344d71",
         "dweb:/ipfs/QmXf2cKYJ26tXAU6A6tmUk2dn4tuX3CWNaXJVnGLuoe15y"
       ]
     },
@@ -68,7 +63,6 @@
       "keccak256": "0x06afcb6dc23efb1482545b63c5e3983dded0c383ecc46c3ae319f7b868201e47",
       "sha256": "0x9e386edb2ee759ad65792f7d62c10ae7edf65c5b874a5451f1e695e586b69eea",
       "urls": [
-        "bzzr://e93e97b9989cd59673bb1fd64a0f940e8729c3c40b819593b8590480cba24bea",
         "dweb:/ipfs/QmSJFaZhpXQ2EPF2koyiTNAiiuJRykv1Q8yubhkmBhvYyu"
       ]
     },
@@ -80,7 +74,6 @@
       "keccak256": "0xcdf7c4d4c6b9331b755170fa927692019c94088f87f100d2c3c920bcc3740d0b",
       "sha256": "0x7184dae0b761485a5dce66b50075e17857c5b55fe3fa71fe22d4d5acc0839741",
       "urls": [
-        "bzzr://e21d2bd58112fb165fa2c253504bf49ceca661ac1009d270a31cb996560cfa34",
         "dweb:/ipfs/QmYJuZgMbeMiotHAFNWEXdxjTa5yi7GaV4UkgBYABomFpj"
       ]
     },
@@ -92,7 +85,6 @@
       "keccak256": "0x52ca702b8ed4b1e6d43d8a006b3d27f6dba611bac118c523711bfd209fb1cc9d",
       "sha256": "0x8db9466df3b91c52e3412cebd13176ea9fe16d3239d000828a081c34ce899337",
       "urls": [
-        "bzzr://24dc5536a4771b2336fa304f3cd38d5203b6ab49c78a3057ec578991f3fcf265",
         "dweb:/ipfs/QmZZ9hNntBxJw3G7LGW3e8nXtnGxLnaSMM44K4BbLrkELs"
       ]
     },
@@ -104,7 +96,6 @@
       "keccak256": "0xcd8a6a8b2626de75ef6ff73fb724f3ad5693a8902f86e88290f048b56182e7cc",
       "sha256": "0xd28a58fbc3ce56ff650d4daf3a1d8092e25cadf2a5b2769fd333b321dfc6a22d",
       "urls": [
-        "bzzr://6a5d22e366c35f184d5203f3e062131018d8a4d09cf770a0720cfaf4d7b49705",
         "dweb:/ipfs/QmfHjv4nYKuv3yFpWZqBYyiYEYmkQGydQmFT5b6mJkFpWp"
       ]
     },
@@ -116,7 +107,6 @@
       "keccak256": "0x43c96fc79cf288cecda12b23a17f30b1cf0427a19dc7c1c094bb461eabefe0df",
       "sha256": "0x9af176f42b63eaec838999a07e80484f92f41a0fc497adefa65baf88d8fbecaf",
       "urls": [
-        "bzzr://fc0e644a61e43592754b66f8d911c91312538debb89da29ffda3d3fd81ff70d9",
         "dweb:/ipfs/Qmf7WYJJ8y6oHr4RQ7HC4tXgFPGvsnp3Qf6TrMBdK52Y5Z"
       ]
     },
@@ -128,7 +118,6 @@
       "keccak256": "0xbe94ff397be2a951cbeb6c9c1a60ddf531d0ce76f45d51755386b6fa42cc2e2c",
       "sha256": "0x6ff1683eb76dc58c31043fea474be6da8535ec625d1cd8331a3daead84fd5564",
       "urls": [
-        "bzzr://6e134aa89a00a18d930924fc2fad2aa434f80b6a71085ff2ab379e3672c812e7",
         "dweb:/ipfs/QmeBWFbK1aAxnB6muXWStZJWndrFvMJt4xfAzEJD7AqaY3"
       ]
     },
@@ -140,7 +129,6 @@
       "keccak256": "0x178e51ad0c6a350ec4ed6fd07675dfd4d2581ee07b14b4954dd0b0f6d8633ca5",
       "sha256": "0xd70ca2f656a88a9be7a3f7d602f03b30149b3bda0d1057cfa3a3c5e3d6e07453",
       "urls": [
-        "bzzr://6e43013ff973198d7fcc4a43910041f2f07d0099f4252737a2a2545443b11105",
         "dweb:/ipfs/QmarthW41sfbrdkMmCK6jicXFZDGgvALzdgzygtUqEauae"
       ]
     },
@@ -152,7 +140,6 @@
       "keccak256": "0xb8c3f5654b323cea016c0cc1a4584069714cdf796489efe2496a13f8f83a0e63",
       "sha256": "0xdeb3c274f8b840d657e2f9b1dba602e89f58b1bf3fd7178c48c9033310a1f006",
       "urls": [
-        "bzzr://084452a20ae520bba965ba0b863f3d6de0516d1f92ddb512a138fb787d841c55",
         "dweb:/ipfs/QmNUf8dTW9xANAvJmV1ho279AyWSCCvDp6bXet1QTcS2z5"
       ]
     },
@@ -164,7 +151,6 @@
       "keccak256": "0x598af6fec02a6783d6a438a6bb0f7d3012716d003f7bf6c9ac5a4d2bc911941b",
       "sha256": "0xd522b307a014a32ed5815b05045c4396abc047e70c8a53c1e3ef92e14daa61c6",
       "urls": [
-        "bzzr://cef259b97217a7526819155f6dd513768be5f8718324ec3a63c315071e2f7c70",
         "dweb:/ipfs/QmWGK9FbQiNWNeqysvCNCBw3q7cR1dzpnD1EKtNija2zyK"
       ]
     },
@@ -176,7 +162,6 @@
       "keccak256": "0x93f7046d6e0ea2492ec5229936821b3b020dbe9eb2e1193953389293d64a190b",
       "sha256": "0x68ace74ca809ff47b09449d4054c77907d9412f14f6003d5475b60f4fec13709",
       "urls": [
-        "bzzr://8943b9e6d4ec52bda1b8fbd65509168ba3388651a30cb495d5280cfbf35614d7",
         "dweb:/ipfs/Qmco9fGHM6mdaPVYqeDQ11GB3BrCbwRcEzM5XzHpAdAVWc"
       ]
     },
@@ -188,7 +173,6 @@
       "keccak256": "0x7def3c264883cbe6ffbfc54894e48f9a0d2984ddbd1145eb898758d2a41d1559",
       "sha256": "0x54f3dc64f2ff5a5350410f6157a537d96fb4aeec90476e90a951ddfbd1fe4bca",
       "urls": [
-        "bzzr://3428015c422bb223c3fe8c3a85615081981c47ead375564c16701b261948f0f1",
         "dweb:/ipfs/QmXyyuEWhexuez2rzAeFjunpiAhncD1AfcXitGNHxpRWha"
       ]
     },
@@ -200,7 +184,6 @@
       "keccak256": "0x9ffa9ee890ec483580c0b4ed72270b16e92eb0b7a8a97fb00c257f8809aa4023",
       "sha256": "0x3e64525797e0b2d9abaeb022688cc02d63fc5820327e382fc6574a7de650dc97",
       "urls": [
-        "bzzr://395f2d903c162ddc9b6ebd76db450ca6cb9cf8bb276c3d705aa462ae560d23ab",
         "dweb:/ipfs/QmW2rPbEtiVAbWJxtizzDqTjwpRpXCxkpSR696g9GxAYKT"
       ]
     },
@@ -212,7 +195,6 @@
       "keccak256": "0xf0a6c32af3eaa2f8c6d9e6c8b90f3bac5e775c7f1c90a61c1e72b593fbb1528d",
       "sha256": "0x0e6d842e941cd8b76280c59f28f6d020af1afdea8e4be9d9da677ac5dbe860c6",
       "urls": [
-        "bzzr://f44b067fda20d169321fd3616f68633fd7a4277b6340f42f74203f33dad4a472",
         "dweb:/ipfs/QmSwumWbYwYe4xLcqpi38VNtw7xCgbNaUkRhiZro9EnqLt"
       ]
     },
@@ -224,7 +206,6 @@
       "keccak256": "0xeb8c3c474b5fa792f9b1b2ac6be945c32f835ccdc059deb562da4e99a031eab9",
       "sha256": "0x7fe677e8214d0486fa7164f797862fae0a0fefb7b72cf6ad8e728faa54f12b60",
       "urls": [
-        "bzzr://37026d0ee2865c52fff8f6311b67b94f96dbb52ce8af3f84c3a9aeb47b12bf47",
         "dweb:/ipfs/QmbgEAtdmSoxH4cfRJXj7mVpKv9rT5Cq2YmXmAnjgsyqBC"
       ]
     },
@@ -236,7 +217,6 @@
       "keccak256": "0xf824e695e8e66079b4b6063622c7dd80ed056d29969c8c3babac4fb572f3dfec",
       "sha256": "0x5bb50839ba5116bf31669f3de8dad72eaec298ba32a643be7d0dc2d1392c54d6",
       "urls": [
-        "bzzr://d847bc8f5d43cd348346c5bb253269de36f00810c2e189ca64a4becdb9e9312f",
         "dweb:/ipfs/Qmf5RrLbWeMykvWJbCyyThCLQ9YVmU8uWagMdSp9nNzZMc"
       ]
     },
@@ -248,7 +228,6 @@
       "keccak256": "0xa60eadfddbfda0daebb8a1b883b89d33b800cff7ce7e12458170ea17cd5ede58",
       "sha256": "0x8c2a69fbab9bdf503538028c697e09e51a7e699323ae7100c375cb35c415a819",
       "urls": [
-        "bzzr://87e29a7298d49b8b52ed01d6146b05aa41c11a85d1b805dd48181ac2ed5e9b22",
         "dweb:/ipfs/QmSZEQEGuVJ7hudg8FzfDMXKVtn5AVGKaxbhSSDXwpX73K"
       ]
     },
@@ -260,7 +239,6 @@
       "keccak256": "0x6c6dfa967526b7060634474ef730761711e5be662abf5ee02dc05985abfadec9",
       "sha256": "0x9852ad94048600cc5a1458b4a7ab625996844c809b314422693bdc81d953fcc0",
       "urls": [
-        "bzzr://3edc1542fb719d3e08138b492a5db06333fb36055a434c3b071b2dcb69e54fbc",
         "dweb:/ipfs/QmcsCpg6kfp7Vea4y9qPtfDXcaQJbDidb65n3t9f2MFDpR"
       ]
     },
@@ -272,7 +250,6 @@
       "keccak256": "0xd0f9a689670184ad874ca6a2cb40dfe57e9cf539d9330ca3f2501951478eace8",
       "sha256": "0x4197bb1cb0ea7e637ed8a0e7810f1bfe32c90d0151d6f423bb3dfeef9f6777c4",
       "urls": [
-        "bzzr://1abbc4967f3c6c5124f8876abe521d508c71b0d0d64dc066c1e7a1bfe6ba596d",
         "dweb:/ipfs/QmY7UN95hdfFSD1jwFANegze5eLX8PgP5BfWFH1usTB8Sw"
       ]
     },
@@ -284,7 +261,6 @@
       "keccak256": "0x50972c5b966188341d133aa58fbf895c54655d7bd733fb5ad58852e85f9f9444",
       "sha256": "0x73458d16a3e34fc7b489d2399b3680cccfc968d01abc9f1b61e438b6fb0c24a1",
       "urls": [
-        "bzzr://9eab5a9c94bde3d90eb76a1189febd5ae4d6c7bbc63cc1d76e8871e14e6e9b89",
         "dweb:/ipfs/QmPUJNa1LYaThwLQsw6fF5DMYyDfEg57gmD5wCsazkLS8c"
       ]
     },
@@ -296,7 +272,6 @@
       "keccak256": "0x74f927b4f520d8d31863996a100ebc7827f919c77f777f6d4d416c6e613a03c7",
       "sha256": "0x98c350cc41f873af84a78d1e24cbc8449045ee54923af0a39440e4d84600dc50",
       "urls": [
-        "bzzr://a052dbfe589a766af66d85d4d797829241e867e0ead93fbf3d5e492c71b6434f",
         "dweb:/ipfs/QmZbo5YkSbcenWrUDjiCvUZdQe4UrNBw9vtx9nbgcMdRAs"
       ]
     },
@@ -308,7 +283,6 @@
       "keccak256": "0x4cc2bb4c8894ad4349a88f330ba74d7ea643030d3f68037d1c94c370b6a25dd7",
       "sha256": "0xf83e8f7014ad6b8bc801dc3684c644e372673ed678425c35aea5d4b4fe37e922",
       "urls": [
-        "bzzr://2aae73578e361285488b6319e8e7b27e23b2736eeee3953cd65f1207cd849395",
         "dweb:/ipfs/QmauztXLDUdwJitA4Uc9MQYCTttUcivR5foTZYgwt4aAeC"
       ]
     },
@@ -320,7 +294,6 @@
       "keccak256": "0x92b9c5de10bd908527e9cfba3f04bbe637163b4a5313c5a69179ccddd5fa6685",
       "sha256": "0x782a999d3e1227c86854e7e29954ee856c6ae684124b9facf09f4f1724dc4e85",
       "urls": [
-        "bzzr://fb1e9b951ce8abe575f8514bff6baa01417a988a399fab1dd27a252e7812d1bc",
         "dweb:/ipfs/QmUtwmzqqCftcubfyGwAefLBQ8ffp8EFhW7HCEQfhaviFs"
       ]
     },
@@ -332,7 +305,6 @@
       "keccak256": "0xc9c60203789ef778b9104ae7a39e9090b3d1256b24983d49e40e7d1e3c3ed65d",
       "sha256": "0x264d0d25e31cb32f4369f82ba3ad0b6a84a8a1975b10bd738123ddf947618840",
       "urls": [
-        "bzzr://335a6b94d26623dcaa4590ccd6d7529db1e153b65af3bf7def45fffaf9ee256a",
         "dweb:/ipfs/QmRd1uRbHRvpybQk5TQ11zyqmG4wQqHnefgvYdJ14V5D8x"
       ]
     },
@@ -344,7 +316,6 @@
       "keccak256": "0x2921f518cf5a0627d96e07e8c3d2b5482dbbf14d7dc6bbb055481c46d98903f3",
       "sha256": "0xaf811843add541705ff65f0c20fd864bd0387116544524fa1830cf67a14af6c4",
       "urls": [
-        "bzzr://31231abb33dc43d0478f03a4c8b15b161b172097c884307cf6cf64aeb83a6dc9",
         "dweb:/ipfs/QmYLhaeGbq3tFdCUC2pvtA8QdGnCbA8kn24z3C741k5TUE"
       ]
     },
@@ -356,7 +327,6 @@
       "keccak256": "0x1980cf8a81c6bd2b371bf7d9145c819a7fb2d72e9aa462aaff0c10b4eccd595c",
       "sha256": "0x69cb1300b5f72eb128604507991d9ada97180d31afde7c59aa3fa3ae9ad5200d",
       "urls": [
-        "bzzr://7f35988e2c32ed2f3f1885fb81ace357b1555964d23085940980cacd29023da6",
         "dweb:/ipfs/QmPfxPYsYysRR8HFkWr47FMQ8ardmfmtrmdYc2ogT9Gfp9"
       ]
     },
@@ -368,7 +338,6 @@
       "keccak256": "0x3efd0585a3c00a1a2c62e590e22a69aa981d1b5148af2ebdbe1610dff93cea78",
       "sha256": "0xaff4ca62ac0b03cb4b9c50f8250e2e7307b5c75fefc9847f269bd05c20367148",
       "urls": [
-        "bzzr://e30e085b875fc291e5ee46ed7c88c28ec8e8c540ad8c799b106c365a52df9e97",
         "dweb:/ipfs/QmaZrQSg8njYzFXH2PzwxHDLKxkBhKmYmLm43DJWnurPeJ"
       ]
     },
@@ -380,7 +349,6 @@
       "keccak256": "0x9b7a39606c3c27a8619b3eb493efca512cbd26c5ab7fc95489564239aab32a50",
       "sha256": "0x24b4cbc28d68bde8455c14a46b55e4f292c3c295271e09991b2176a487cb4487",
       "urls": [
-        "bzzr://3bccb9b8cee48b99b39f2f1296f7353bcd39c1ae61b1e19e5add7cedd0256cb2",
         "dweb:/ipfs/QmQmkd5FGiKKg8eRmo3L7Cn62nuV1M6GRDUGiq5bAx4AWx"
       ]
     },
@@ -392,7 +360,6 @@
       "keccak256": "0x4a6244b03de1968f0a48800e75640921d62b7602d0301093e1c5c318d1effb36",
       "sha256": "0x91ed0cf4390f33174a4aaf49d1ce7cd9c72e28b95d2f9422314a29b2144b2042",
       "urls": [
-        "bzzr://a5ab50564d82e6d55b462f4f85284d3fac294c78f2699b680544bc7efde2fb16",
         "dweb:/ipfs/QmRPchg1b5ofkLnLTPuunfSMKnxbXcZyzSR4NkyJAYUTrR"
       ]
     },
@@ -404,7 +371,6 @@
       "keccak256": "0xf46cb35b3aefb9b3d59a1fb4c151eb23a0f0a05387b379b3e7fbed1c01c861df",
       "sha256": "0xaf812445476c101ae5ef92941c79eaebf57b39d455bdfb54a6a86b4ab6ca498c",
       "urls": [
-        "bzzr://2e72b599d5a700cbd03d9f7ca082464b4823dbaabfc5e1031075b9631c005d35",
         "dweb:/ipfs/QmPYEmgLWDjk7kPGovojurz7fzdGv8Ti3H66nEzRzdiGwh"
       ]
     },
@@ -416,7 +382,6 @@
       "keccak256": "0x66669372d2d958bfeb5129a387dbc3882a96e260fc12e2910a7eb148b8ea5dd6",
       "sha256": "0x9ffc04d0aee2c817ae6a897b1ba5aaca2bcd860416aaddfaa4de553fc1ad6e8e",
       "urls": [
-        "bzzr://5f5dbf4ebe3be5dbe3e917a2de3908b3a9ed24207a6406a6e434e6f041e993c4",
         "dweb:/ipfs/QmYWL8Z3yXfCuhrprimdLhYFkjR74TjFHULxcABbUipetv"
       ]
     },
@@ -428,7 +393,6 @@
       "keccak256": "0x27e324f75dd52eb180569e7a8865048253e5fcdaacc52e7c998ecaeb78dcdabd",
       "sha256": "0xfd7c4e652d5891c84d93b28c90b8ac58c9253d2a3677935883a337ee96087b8f",
       "urls": [
-        "bzzr://764a91ca290bfa564d890f3c1a5a88067b04e96398f223576cbdd17bbc1faee2",
         "dweb:/ipfs/QmdEr1zJrD2UYawZzeE6zPuYiYaSHdpLtKeHYixHgRp9ko"
       ]
     },
@@ -440,7 +404,6 @@
       "keccak256": "0x05c00863784c63220704197d8446ac1e277fe53c42b5264093960b7bb70b9792",
       "sha256": "0x25cfdd733e9c780ab85373268fde7bfa2e4b22093af57422ca3b586c7af7cd60",
       "urls": [
-        "bzzr://18fc5b15154aef1640559c31bbd91ae267def62a2b86e434564184b6d3d283ce",
         "dweb:/ipfs/QmSUakgiWEffZ82RrN7hgLaemdqtLSCD7pfGAKxGhDUJxB"
       ]
     },
@@ -452,7 +415,6 @@
       "keccak256": "0x7c967d9dc0fdca0db88a7cee22cf5886f65e8fa8b4a145eccd910fc81a1c949d",
       "sha256": "0x7d40c6325c0aa4635babdb8913626b7c4bac6a4f41e1c383de5f398e1fc98e1b",
       "urls": [
-        "bzzr://c1f03890d82592751d779ea2da8a690e15b0ccc5667314bf634c1f16ff4ed322",
         "dweb:/ipfs/QmZcHLPfa2Dz8M3justKYyDmDnaNo4pseTgAeQbtJNYywe"
       ]
     },
@@ -464,7 +426,6 @@
       "keccak256": "0x012ae146ebdd510b31c1e44a8d60071a66cdebc77f0e743a6ebc2fe68e67d297",
       "sha256": "0x566601442deff058d393359df59ed72b41e1f6a65b0aa371fab7f903c189b59d",
       "urls": [
-        "bzzr://47c24a09321abb781b5dbc05fffae84ece6844e41a295847dd68ad69633f60a4",
         "dweb:/ipfs/Qmej9jEnSsD2LqGnL4jgbUvHTxTwiFiHqeMpqyuPLaX1uw"
       ]
     },
@@ -476,7 +437,6 @@
       "keccak256": "0x4ba5500559a9ad03e4c1d3866ba9d915cdb5d7f2e326b4cb1fa0fe7bdf90dc27",
       "sha256": "0x89978dcef86244b8e7af95298abe26aaf4825df819d6c556e4323dc152c988ad",
       "urls": [
-        "bzzr://c609e5725e607a4d853f33c8d46064e0ab11b489f7a585134cfca570e29f447a",
         "dweb:/ipfs/QmdgDj3bPSKU1xKMY8FRHj8E6z9BQefeuaVuF27RpvZMXJ"
       ]
     },
@@ -488,7 +448,6 @@
       "keccak256": "0xcda83fe69ce2a319d0caa20c98b53ff36ea1886054ab3dab23fa80ede3dcdea0",
       "sha256": "0x1784f89fcfffccddaa94273a58e452682f61dea05d142406775f099c6ef5d61f",
       "urls": [
-        "bzzr://5eacd00f2f132ea8fbb308baed9753579ade721a44e94067debb602e193b7ae2",
         "dweb:/ipfs/QmPA1Uf4iwkr2ouguzxxFepVxaRg36XFXxiwqYUuwafQzQ"
       ]
     },
@@ -500,7 +459,6 @@
       "keccak256": "0x432dd5d662d88c2316b4df503f693ae9e6e8ed4216726db2fdb3e7f628523fe5",
       "sha256": "0x6e095eefc48dfc21fec18d0b63f229e929f881b5d6e8a999e1622c6b707a7f54",
       "urls": [
-        "bzzr://1b3ef14eabfe47ff614c088337dfdf163c695612c193aeab9ac5a2af69d30334",
         "dweb:/ipfs/QmSgJ8Ru6vraz9CyCDPMifVxpckkoooVSBj9vYcQqG4wG4"
       ]
     },
@@ -512,7 +470,6 @@
       "keccak256": "0x98e1027fbf3acb279f740c3b38df69d79ad3f2e6171414508d50604dc2dfc13e",
       "sha256": "0x43b85bc9941814b018065da5c6c8d40e2af49264d0d1f06bdefbfbe628e65ff8",
       "urls": [
-        "bzzr://b6283a40a65b321a0e88f61594fc8bed00fb21a53c7ac1bf5ae421706a372d01",
         "dweb:/ipfs/QmeXatGB9MdWA2NBLSNQbcKvuZpa4Sxem51vCrqyQGfXnU"
       ]
     },
@@ -524,7 +481,6 @@
       "keccak256": "0x6f9251f86fd798a3ae25688307ffc7a9984dcf0d809a1aef54f5c68b6cf9fb6a",
       "sha256": "0x0d34e4ed048bbf67daacdf36cd5ce0f553a32962967b52edab6afccaa071878b",
       "urls": [
-        "bzzr://e866e6bdb31fea0646b44a8e57acc9505932ffe813028ce1330ca49fe3edc4d0",
         "dweb:/ipfs/Qmdx3AHUB8bN6ZZs1XsTV3Gz9FV3gAB7x7JbYeUsn43Azu"
       ]
     },
@@ -536,7 +492,6 @@
       "keccak256": "0x6abf17bdb1b934d072739e0e083ecfd579c523d200d45184b8d3987924ca0454",
       "sha256": "0xa09c9cc2672678d461dc71100600bb58802db87be4de9424769241712ccbec03",
       "urls": [
-        "bzzr://9b51780766b138ee36e2796cee7bdd4cb494da5d925c36cc6101202818d37e42",
         "dweb:/ipfs/QmQjodGav6KhMDjuoyJ1ag8osgKLBsFC1E9LmaGP7qCRZ2"
       ]
     },
@@ -548,7 +503,6 @@
       "keccak256": "0x936e6bfbf4ea9ac32997adb893b0aeecd050cfef8b475f297dca1add0a1ff934",
       "sha256": "0x7fd1d3f1fddc615e117f7fb7586acabd60c649c390cf110c8fdc5ce159fa5734",
       "urls": [
-        "bzzr://949bfec63a83091f5d08d6d8df36fa34e674d75206e8a6476cc0ae18f3c57bb4",
         "dweb:/ipfs/QmNrRJwVHaJSZ3aAQZWZKjV9o8BqWKFP3RPYL6hKU65PAE"
       ]
     },
@@ -560,7 +514,6 @@
       "keccak256": "0xea559c55bf7046cb48378fe9b43eaab6e345700aa22d701fcf946a42ec6b1008",
       "sha256": "0xf22c63511a85230f7640ff5a77433db643d8d32be8b7c7f1dc24c1301a5158e9",
       "urls": [
-        "bzzr://471b0435c47963835dd0f70d67ec069fab5daadbe6c8bf760d2e50adfb839461",
         "dweb:/ipfs/QmTQPQb6br2VEzKTiXBEE6z69xRXEk24xi2R2gn8EsvGD9"
       ]
     },
@@ -572,7 +525,6 @@
       "keccak256": "0xb2657b5ce7a9b405a65e4a88845a51216cd7371e8f84861eef9cb0cb20d78081",
       "sha256": "0x3628fdefd6971ea9cc16acbf91e5f6d6cfb2079181784b47e4d24f4c5d92e4e4",
       "urls": [
-        "bzzr://7bc2dc95d81092991a4122b45aad03f9cc62bc98fa455f03fc9286445ef9de8e",
         "dweb:/ipfs/QmYWAkYAJo59kc5dHWaLuQqEm7xusESdu5meDzjpxnyXKt"
       ]
     },
@@ -584,7 +536,6 @@
       "keccak256": "0x7dc96455c864b49abc7dd5f38ba6a47904709ad132ea36babbfce98d42e962e6",
       "sha256": "0x25f564cbecc5bfe95d6d358e0e7543c31ece0ab1332c555ff323ca163711bd2b",
       "urls": [
-        "bzzr://f61230aa01565c8c24aa2ed50eec7dfd26195be35f5bbe4445c6a3efceaa4b7d",
         "dweb:/ipfs/QmaLUM18c7ecA911ig5u2HY6fAu4AiUbhJpnZwwCMc9cWi"
       ]
     },
@@ -596,7 +547,6 @@
       "keccak256": "0x39ae8b2f3ba05ed7d4a7c16f0a9f4f5118180a209379cfc9bdd2d4fb5d015dff",
       "sha256": "0xf89514dedd8cfb3c4d351580ff80b8444acde702f8be0e5fad710fe6e906c687",
       "urls": [
-        "bzzr://1d6deff5623d883b8d0b3a3a5539e4604925ce4c1677defb86e0e37838ea70c5",
         "dweb:/ipfs/Qmd9JfFpUXsUQrJad1u2QDuMxBMeVrcG8mrpfJVV9jiBXB"
       ]
     },
@@ -608,7 +558,6 @@
       "keccak256": "0x435820544c2598d4ffbfb6f11003364c883a0766c8ac2a03215dd73022b34679",
       "sha256": "0xa4fd5bb021259cdde001b03dac0e66353a3b066b47eb2476acb58b2610a224ca",
       "urls": [
-        "bzzr://62ef2a9bf7dbb8fd596b7c6ca6848d9b1a6c8562d10239659f0a56ee27c110ce",
         "dweb:/ipfs/QmTxzbPN4HwcK5YX7n3PNkb1BzKFiRwStsmBfgC9VwrtFt"
       ]
     },
@@ -620,7 +569,6 @@
       "keccak256": "0x6262768243c1ceaf91418e52dc6f52d2ce94d19c6e1065d54499b7bc4d6e14dc",
       "sha256": "0xf8f83757e73f33f44389d1fa72d013fb266454a8dd9bb6897c7776f8fc3b0231",
       "urls": [
-        "bzzr://ed91c1114615572c10a34f0ab28a3a159d2d433fabbcec9eae7253c25ecac8b4",
         "dweb:/ipfs/QmRUoBQeA5zpun1NK7BvBhQk6pTT4uZw7Jn2wZnWQETH9W"
       ]
     },
@@ -632,7 +580,6 @@
       "keccak256": "0x3c9cfccc78bf352f4c7901d7af76757bd228f93af2634af4cd16b4916c13e44e",
       "sha256": "0x09f6098026622c5c334c7798c3ad2b8f7c0ebc62f87846c7d5e7e725c3d1cbc2",
       "urls": [
-        "bzzr://ab23bd0e01952ee485f0426c9c4e47fcf6a508bc4919e83be31c0f9ea6e396ca",
         "dweb:/ipfs/QmRj2pxXxvmJ96i57maVjLMfs4DUtCuptM8vSVvvDweJ74"
       ]
     },
@@ -644,7 +591,6 @@
       "keccak256": "0xb463b6a61fc027247655a32cbfd50bf543eafa3a6b42ceacdda7293e3ada8866",
       "sha256": "0xb795f1b20f065a0aee492c24071fc1efa1633c3caab77cff20278a9ae822f04e",
       "urls": [
-        "bzzr://c82fea785ae31fb4847f5640e6305edc05d1a5b0b47552f60325c25cce280f75",
         "dweb:/ipfs/QmShUrNZf1dZFjziorJYE8fMGNUSMFsbaR3ipSvsCMvExM"
       ]
     },
@@ -656,7 +602,6 @@
       "keccak256": "0x537cefc0579dd9631ec952cae951b3df0a50a3e557b5638107a67275f7aacc07",
       "sha256": "0x3e8b01cbd194e40971b41017ada7c8b2fa941b0458cb701bdfb6a82257ca971b",
       "urls": [
-        "bzzr://130bff47eed9546c6a4d019c6281896186cf2368b766b16bc49b3d489b6cdb92",
         "dweb:/ipfs/Qmdq9AfwdmKfEGP8u7H9E4VYrKLVinRZPZD1EWRnXSn1oe"
       ]
     },
@@ -668,7 +613,6 @@
       "keccak256": "0xa2d4d3ebe5d52bfa7ddf1a1fcd9bfed81eaa8678e6a1dd5a1c84954dd064422c",
       "sha256": "0xf1724fd46b7a353561b3f8d473b0dc8c855b6d84b5af559d7e3326ac79b9d758",
       "urls": [
-        "bzzr://2c5fff6b816edb78adb2220f175591c9f4f6d38cfd27a83afb1849191cf9a524",
         "dweb:/ipfs/Qmad6iesaR5FQ45RRtMrt2Fa1EYDuq1oGoMJJB6beMHESn"
       ]
     },
@@ -680,7 +624,6 @@
       "keccak256": "0x620163da7ee7b2622c9ee48b06110a52739f633189555148a3b5ecf767e60cfb",
       "sha256": "0xfa27ce9d23bddaa76a4aefbafa48e48affde9a1ee7c8a5e8784cf8d4c390f655",
       "urls": [
-        "bzzr://823b4efe3ca2964d660348214fd1a44579e13e1e8ce69a81f447372a11d60316",
         "dweb:/ipfs/QmUinsRZvs2zFNG6FMWy7ngTYUnZccXq7MRtgpj1dPfxu4"
       ]
     },
@@ -692,7 +635,6 @@
       "keccak256": "0xf0abd02c495a0b4c5c9a7ff20de8b932e11fc3066d0b754422035ecd96fcdbbc",
       "sha256": "0x9778e4a7667d5fd7632caf3ef3791d390a7cc217f94f96e919a31e3be332386a",
       "urls": [
-        "bzzr://9f9244a3605543a67f5ff35f21e3d6d3331a6e1361f09b271c37f396b5b89bd5",
         "dweb:/ipfs/QmXyjgFNMyFD4fdf8wt9uvUU92MGdDVGmcPdMZhNEo1g8N"
       ]
     },
@@ -704,7 +646,6 @@
       "keccak256": "0xe1412d909a0dae79b13c0066b9bf08831c522daec00b273bbc19a799af213d6a",
       "sha256": "0x3e1956c550ca48e289044c7c0bd892403081b4b5e17e77ce707c815ce6c4228f",
       "urls": [
-        "bzzr://b69ab6704a1e42fddb326e91f331e35fdf071b158e8754e2c887c0e607aee7b0",
         "dweb:/ipfs/QmTs8PnAGr1ijXtWvMjoWraefAtVv2Y5ZnwkArz6NqJ93w"
       ]
     },
@@ -716,7 +657,6 @@
       "keccak256": "0x0c7a4386781683c327fde95363535f377941e14feffad5bb1134c7aa7eba726f",
       "sha256": "0xe7e1be3d0a67469f6a37cd676a22314c4faa8a22ff9d5ebde11302db754453eb",
       "urls": [
-        "bzzr://65dc33e3d9ef94defff1b24e66f093d9d15a92c59778c8eb26e76fd8b64bd3da",
         "dweb:/ipfs/QmQFhTptWdDzhemjGpa7Q65HKWGphs4nKKS13nzkcVE8pM"
       ]
     },
@@ -728,7 +668,6 @@
       "keccak256": "0x3502cf7933fbce9f1fe1d87a83d5b9df12eee36c03997c3b9821493ce03fcf3e",
       "sha256": "0x7fcc983c5149840a47b946fc51fc14f1c21cda07c01d650e4a1f814319cb1423",
       "urls": [
-        "bzzr://617dff84fd7dc06b476f93a95c015a561662d9ff1d3356ac6a3e5f5b09a636f0",
         "dweb:/ipfs/Qmdw9c3usmqgdV2w4JoNWJqscHzscKNVWsWtos1engJa1o"
       ]
     },
@@ -740,7 +679,6 @@
       "keccak256": "0x0c80a0bf9e17700249a04a80d7729ccb012a55a82cb0f9e412fa32cc14b09c2b",
       "sha256": "0xdfa3f2bb4589bdc9c054292173c82ee70e65af8d1971598f6e13b9b79ba94185",
       "urls": [
-        "bzzr://a45264806fb74fd38c19704070c83053972270b63bf7b09ddff3c3e15cd1baa0",
         "dweb:/ipfs/QmTNWY4vkVLgtNdfGXyH6CY8URmzr33VzMJNN37z5dsAgu"
       ]
     },
@@ -752,7 +690,6 @@
       "keccak256": "0xcf099e7057d6c3d5acac1f4e349798ad5a581b6cb7ffcebdf5b37b86eac4872d",
       "sha256": "0xcaf4b1f3e01fcf946aad2d22bbe046b9dc4fd50049a05c3458ff239e2c93a785",
       "urls": [
-        "bzzr://2f8ec45d2d7298ab1fa49f3568ada6c6e030c7dd7f490a1505ed9d4713d86dc8",
         "dweb:/ipfs/QmQMH2o7Nz3DaQ31hNYyHVAgejqTyZouvA35Zzzwe2UBPt"
       ]
     },
@@ -764,7 +701,6 @@
       "keccak256": "0x300330ecd127756b824aa13e843cb1f43c473cb22eaf3750d5fb9c99279af8c3",
       "sha256": "0x2b55ed5fec4d9625b6c7b3ab1abd2b7fb7dd2a9c68543bf0323db2c7e2d55af2",
       "urls": [
-        "bzzr://16c5f09109c793db99fe35f037c6092b061bd39260ee7a677c8a97f18c955ab1",
         "dweb:/ipfs/QmTLs5MuLEWXQkths41HiACoXDiH8zxyqBHGFDRSzVE5CS"
       ]
     },
@@ -776,7 +712,6 @@
       "keccak256": "0xfe223dd264421f9b96c3dd3c835a3d0d4d9cfa4c61f75ca0761860c9ae8906ca",
       "sha256": "0x2ee1c6434a32a40b137ac28be12ceeba64701bfad5e80239690803d9c139908e",
       "urls": [
-        "bzzr://d67cf500345ceca523e9bbe55dab9399e27321fd9005704a5b16bab82185260c",
         "dweb:/ipfs/Qmf5fpJmeHdwgmSjQPqdu25XtA9akTotakkNmrh4axgo8N"
       ]
     },
@@ -788,7 +723,6 @@
       "keccak256": "0xc68517effed7163db0c7f4559931a4c5530fe6f2a8a20596361640d9d7eff655",
       "sha256": "0xb94e69dfb056b3e26080f805ab43b668afbc0ac70bf124bfb7391ecfc0172ad2",
       "urls": [
-        "bzzr://523852f3e01b02ce947771e0279ffb6154d12700f809ba3606d908ba6271431c",
         "dweb:/ipfs/QmWjG6PLzF5M6kxkHujhEMg5znQCgf2m1cM1UptKA719Hy"
       ]
     },
@@ -800,7 +734,6 @@
       "keccak256": "0x08dd57a5cf5fd59accbd5b601909ffa22d28da756b5367c29b523ff17bbc2f99",
       "sha256": "0xc596765f9b3dce486cf596ea35676f37124d54f3ada0fcbc02f094c392066a59",
       "urls": [
-        "bzzr://7047ade6879aab4c825594dab0914b8ec673bb907eecc6dfbd68f63086e5a36e",
         "dweb:/ipfs/QmYh5C2rgDAx452f7HyHA8soLhnoL1GeeNNEWEuw9jKY8w"
       ]
     },
@@ -812,7 +745,6 @@
       "keccak256": "0x84a0e9282047512eeec499d55c83dbb6981430b08692d81d6c09730bb18e6cd8",
       "sha256": "0xf77f141e5fed9594b28342e2c630ac6d48f2a724e4383a457881acd7fa62b1cf",
       "urls": [
-        "bzzr://da8c5ea3f2ecd33d3f83ac2c276871f4ee41370fb55ae62c6c29835c9376bdec",
         "dweb:/ipfs/QmQ6W5VedQpZAwuGTtp1BhmNkvVheLnJq4xwN9Qmt9bAbH"
       ]
     },
@@ -824,7 +756,6 @@
       "keccak256": "0xd0c15275c5b0d03871332719def9b0f17e8860c7db60e0e71f18b971458a7391",
       "sha256": "0x015e83fb0b72ccdafb0c217961b21a0321adb2d3f2ad992f5e79635c2086e6dd",
       "urls": [
-        "bzzr://629ae5ad84c45c248144b5eec7827a9cd5b2f2779ef84ab251c8cd876347a098",
         "dweb:/ipfs/QmdfVfa2mhyosaJVeV7rbfnvQ95GTHPeRPzmvxcds7RYej"
       ]
     },
@@ -836,7 +767,6 @@
       "keccak256": "0x51777116af58223a41aa3016d0bf733bbb0f78ad9ba4bcc36487eba175f65015",
       "sha256": "0xb5cedfa8de5f9421fbdaccf9fd5038652c2632344b3b68e5278de81e9aeac210",
       "urls": [
-        "bzzr://c7d43da1bc5529d2cc311e00579c36dcff258c42b8ed240b6c4e97bd85492a64",
         "dweb:/ipfs/QmWbNMzJryhiZmyifLDQteGPwN4aTgXQB6barBvXYVw975"
       ]
     },
@@ -848,7 +778,6 @@
       "keccak256": "0x7e0bca960d11fb095798ff65d029436f23358ac060b25a0938acfcb4652da2ec",
       "sha256": "0x4a14c7bcaf0d988a829db2174b8f7731898aa8633216490603ad74bff64eca3c",
       "urls": [
-        "bzzr://7f33fe204160253c7ec23cb0ac83224bde3aca9f91a7a686cb67d99248c5fbb6",
         "dweb:/ipfs/QmPYDf4qYtZLNEAicW7hcvpUJ69FoHiXmUypipDpTKo9hU"
       ]
     },
@@ -860,7 +789,6 @@
       "keccak256": "0x6d6d75b033717aae0a728e527005d8d2cc7dbd0a835c8873c630a2a9689a2976",
       "sha256": "0x4af595f976235d33a22ffe223e9e3210b4ca510f6a93f153b3daed60f2b11fbc",
       "urls": [
-        "bzzr://d501ee8c460db75379b5716bcb5ae10e3e32625d6c9b08e319822a110f178906",
         "dweb:/ipfs/QmNWkyirqXy3gDHNXpPuVUbExMGWjMqPR82Xzs64RzgQzy"
       ]
     },
@@ -872,7 +800,6 @@
       "keccak256": "0x070e41c7f761ff1a8383a2c0d54c22aab0f115ca8c3790ecea27d6dde11611ca",
       "sha256": "0x06a671efd8865a6ecc0ad648076177b35abcd06a7059888ea65111272e33a57f",
       "urls": [
-        "bzzr://e4f8176cdb3a0f3ba0b7061079dd9d3495f6a2288bd724780337cacd96515148",
         "dweb:/ipfs/QmQre11ZPgWSx79Jzca1tkTYFyMbXz8H4kcrhfpWSj4qs8"
       ]
     },
@@ -884,7 +811,6 @@
       "keccak256": "0x8d6be9e58c33d265b5a8b1132a27fce126067419f3f4f15d3ef6b7147593b61d",
       "sha256": "0x663ba99f7c7ee907f0f03227502d48a78256c3c292ace3b79a5d3eb510665306",
       "urls": [
-        "bzzr://0bdbad1bdcc3a9775f16f20a35556be4baa0e6c9a9b9d820e8e2cdea80667c6a",
         "dweb:/ipfs/QmYv3Rsi9pL6PZAtc4XLHezPqti8yCRGEdDBqzEsQv57GV"
       ]
     },
@@ -896,7 +822,6 @@
       "keccak256": "0x56cb2f6978bf1213982ef217ee76b39dc97b6e66c92a7be7a1b44079c0236e5c",
       "sha256": "0x534b7d4079d13bb4cd10b7559dc105c2adec625df4105f20ebce47e6da60bfda",
       "urls": [
-        "bzzr://7543aa16521848b06a1359afcb9dbd7be1dd09a36f4ca53edd3ed3a512a475e9",
         "dweb:/ipfs/QmZaSrn3TPvPVoShtjSonQLFd3BV6RdgRMqw8GTzhnKYpm"
       ]
     },
@@ -908,7 +833,6 @@
       "keccak256": "0xbc470ab3442e78bb4d3f16c01c39b2f160f4f34eb4373efed11c234e1c7f6ca0",
       "sha256": "0x5b25f987aae32a0275fdc6c1be36cc47cf126024a04dafd8e4be39a1d1d1422c",
       "urls": [
-        "bzzr://83bf64f11a09845a6eb732da08283a58f877e9227190f489c9852f790c81d0c4",
         "dweb:/ipfs/QmfFq3MvisCSUJy8N8EVsBribgPbdpTZb7tQ2eHYw7dwag"
       ]
     },
@@ -920,7 +844,6 @@
       "keccak256": "0x3820aae0de50f10f62819d65f0b5a236ccffed11ab465a3295a5408fa47e24f5",
       "sha256": "0x5eaee3240a06891abf5ac70c75caf9a0c33ebe9a2736abdaa22a337f86c22933",
       "urls": [
-        "bzzr://5124a21890d6b0ae70bfd031f741d7edc74cff70a26ca74750d446b15a8efb06",
         "dweb:/ipfs/QmcsfYpEWbPXfVptzi1YvGokxi2FYCUzUr8rQYJCc5fEiB"
       ]
     },
@@ -932,7 +855,6 @@
       "keccak256": "0x798b23086ce1339e3d47b3648a1f3ae40561e2c9f66ffcc98e71fc14a7f77584",
       "sha256": "0x64117d4b13bfc5bc6e5f80823519b140e753a0c09e99edd756772dc3029bc1f8",
       "urls": [
-        "bzzr://0fd1c8db6338b2143ab0e49a33edaa133108ba77f1238408018b5b2a0ecdeb62",
         "dweb:/ipfs/QmNQTFQmfnjxnDmbguVSnZ5DiHGFQHCsffccW5c2DMcSsT"
       ]
     },
@@ -944,7 +866,6 @@
       "keccak256": "0xdd4ae95607655404b769fab5f949ac95c6a1a506330f512aef0d92974c390431",
       "sha256": "0xc2c4738c96ad329cbb9baea615ed50ffb5a53d93fed8e00785e47242581d3c60",
       "urls": [
-        "bzzr://38f396377d5a5a60d0b9d8c4dc1343485517ff31bcd281d531f98534dc79d811",
         "dweb:/ipfs/QmVdW2ygaT2vecoSUog3HUn8hZqXU4XXQZvuRSdpV6DJPL"
       ]
     },
@@ -956,7 +877,6 @@
       "keccak256": "0x9afa714859d1c8f8ed2fded497b83a7a420474282494d25d4c9f592667729f21",
       "sha256": "0x387343bcf8f2b77fe4cdcddcaa84361fabf8e1c3508f874fbbcbb9c313542f56",
       "urls": [
-        "bzzr://ade0fd040981c4e8c7adfe366296e452687c7bb6421de8546a0678be4add016a",
         "dweb:/ipfs/Qma9V9dJwmkim98H6DQX4f7RH395vsUuqHCDxbKetcbj18"
       ]
     },
@@ -968,7 +888,6 @@
       "keccak256": "0xb0f7f19a8590e5c0aaf779019c1deaafed170d8c26bec9bfd782d212e097619e",
       "sha256": "0x7c3b3d0066fd381283b1d8d9a86153b2ddb5c01da14a1ae015c05cfa484e81b6",
       "urls": [
-        "bzzr://fa438d41ed52c9e0cca556efee61486fc77e60df06081921abb0a0f19b602d35",
         "dweb:/ipfs/QmcM1TcDB4ta8ttNLWZ4d24M4Qs35rc91sQkdNmJMNbuvV"
       ]
     },
@@ -980,7 +899,6 @@
       "keccak256": "0x4f6cdc0f25e734bcb977bb6a3e22fa41d8a82cbd5f220a2e4238c2d233526d1a",
       "sha256": "0x71135e459d691767ce3453bab4564ef4a640dd50182da36517cbc1f96c1d4c7c",
       "urls": [
-        "bzzr://ac5baefba32f4779a03d1207d9f1ed69365280c702fd73002a729b7a3d52c425",
         "dweb:/ipfs/QmPiBrYZxxpNZPQ98GNyL7Xa1F9Dq7uHtdt9ESwhPNkHhc"
       ]
     },
@@ -992,7 +910,6 @@
       "keccak256": "0x331f4bc6de3d44d87b68629e83f711105325b482da7e9ca9bdbdd01371fee438",
       "sha256": "0x27b2820ef93805a65c76b7945a49432582d306fd17a28985709a51e6403677c2",
       "urls": [
-        "bzzr://af0d70945c85865298732ac2bfdacdf2774fb4daf793c94fafe135b839a60a5c",
         "dweb:/ipfs/QmWzBJ8gdccvRSSB5YsMKiF2qt3RFmAP2X25QEWqqQnR4y"
       ]
     },
@@ -1004,7 +921,6 @@
       "keccak256": "0x3f2be218cf4545b4d2e380417c6da1e008fdc4255ab38c9ee12f64c0e3f55ea9",
       "sha256": "0x617828e63be485c7cc2dbcbdd5a22b582b40fafaa41016ad595637b83c90656c",
       "urls": [
-        "bzzr://fe8da5b2531d31e4b67acdce09c81eccba1100550a7222722152ffdb16ea85ef",
         "dweb:/ipfs/QmTedx1wBKSUaLatuqXYngjfKQLD2cGqPKjdLYCnbMYwiz"
       ]
     },
@@ -1016,7 +932,6 @@
       "keccak256": "0x9a8fa4183ef95496045189b80dfb39f745db89a903b398e40131f500953e5d57",
       "sha256": "0xd82bdcba2c386d60b33aca148a9cfdf097551f68c5e45d8ec01aebbafacf5075",
       "urls": [
-        "bzzr://338117c2130fcb6bce3006330712b6e7ee99875b56ce4bb6182312f76e4a6bac",
         "dweb:/ipfs/QmcKzrqRBy7PeFQxzJDs1AZZzNHKaKbJces6zUDysXZofJ"
       ]
     },
@@ -1028,7 +943,6 @@
       "keccak256": "0x6be35b86f5656c06ae897ef311c28da375bdcbded68c4a81e124f2cb36adf830",
       "sha256": "0xe0b74e0a16e783a35169f74d1a615ecb48d07c30f97346b83cd587949268681e",
       "urls": [
-        "bzzr://434c17a0cc3bf371e5b9baa7f804b37ffd2dc141a98c59b2ba6021fc419a39c0",
         "dweb:/ipfs/QmPnhNtzrEBeWWQMXdAByQTDPoKXXV9NFXLk3YL4QbghMP"
       ]
     },
@@ -1040,7 +954,6 @@
       "keccak256": "0x3a420fa9963772eee5b9221ebb8cf9548eea8f88b09537390960ea9b440f333c",
       "sha256": "0x5c509f760dc110a695c8b39bbc21e08c17dee431aa14d606f59e623d7c3cc657",
       "urls": [
-        "bzzr://fdc05062e4c7ec85ed18ab17b6f04f3274a4b7caf0be483eb86007d708825fb0",
         "dweb:/ipfs/QmciAxUX2kfuoxitmMdkKSfWn2SfxQdieLRa3S5S2munot"
       ]
     },
@@ -1052,7 +965,6 @@
       "keccak256": "0x370efd28e2d28b6d0ba55e20d8994f3d286c3772552ed63586b5fe157c0d3c57",
       "sha256": "0x45bea352b41d04039e19439962ddef1d3e10cf2bc9526feba39f2cc79e3c5a17",
       "urls": [
-        "bzzr://5e66947c220c91a6cd39bc22965dcf861015b8613a6e09aa7fb7dc10f367b5d7",
         "dweb:/ipfs/QmXLgy6oexvCBWYS5pTpJWohsDNGqgdNFLRKX7JrE3NxYt"
       ]
     },
@@ -1064,7 +976,6 @@
       "keccak256": "0x907eeba6e6e0d6977ac5a8f50e4dd2762539ca827ceab1afb1f5a4f0f3ce3e0c",
       "sha256": "0x92d283c545395b91a656fa1ec94d567a464bca55aebcdbb99debf42b43026845",
       "urls": [
-        "bzzr://63ec828814e2b57db2a7a146061a96cc39797ba39a0063a7b664421a48f21c00",
         "dweb:/ipfs/Qma6o4e57YtWj8cQLQs12r2Enx9qmRA7VHtupCauXjYTAk"
       ]
     },
@@ -1076,7 +987,6 @@
       "keccak256": "0x743aaafac24d9740a0b71215f55a132f89336a662487944767ca4bfd66400769",
       "sha256": "0x9c681b165c8647867589c0a5ecdc8692637a935928a2b1bbea2ff4a1f4976985",
       "urls": [
-        "bzzr://6e70fe6bfe8c3fc63f8a3eba733731aab129e6e58828b78058e53bb50440709b",
         "dweb:/ipfs/QmZy5ho8W943FMGwppXZFS1WFrVwV3UXhUUwcD7oH5vrYe"
       ]
     },
@@ -1088,7 +998,6 @@
       "keccak256": "0x1b6ceeabad21bbb2011ba13373160f7c4d46c11371a354243ee1be07159345f3",
       "sha256": "0x11b054b55273ec55f6ab3f445eb0eb2c83a23fed43d10079d34ac3eabe6ed8b1",
       "urls": [
-        "bzzr://c604bdd6384bf73594cd0e5cfbe979048191549ebc88e70996346f3b744c0680",
         "dweb:/ipfs/QmW2SQbEhiz3n2qV5iL8WBgzapv6cXjkLStvTMpCZhvr2x"
       ]
     },
@@ -1100,7 +1009,6 @@
       "keccak256": "0x4639103a26b2f669bd3ecc22b1a1665819f2a2956f917ab91380bd9565dbcd01",
       "sha256": "0xf8c9554471ff2db3843167dffb7a503293b5dc728c8305b044ef9fd37d626ca7",
       "urls": [
-        "bzzr://d201e60bd46193b11382988a854132b9e7fb0e1574cc766cb7f9efe8e44a680c",
         "dweb:/ipfs/QmdduJxmPXungjJk2FBDw1bdDQ6ucHxYGLXRMBJqMFW7h9"
       ]
     }
