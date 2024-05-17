@@ -207,6 +207,7 @@ jobs:
               mkdir apps/remixdesktop/build
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
+              pip install setuptools
               yarn
               ./rundist.bash
               rm -rf release/*-unpacked
@@ -261,6 +262,7 @@ jobs:
               cd apps/remixdesktop/
               nvm use 20.0.0
               node -v
+              pip install setuptools
               yarn
               ./rundist.bash
       - run:
