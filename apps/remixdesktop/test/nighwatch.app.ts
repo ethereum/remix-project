@@ -1,4 +1,5 @@
 const os = require('os');
+const fs = require('fs');
 
 const http = require('http');
 import axios from 'axios';
@@ -6,6 +7,31 @@ import axios from 'axios';
 const useIsoGit = process.argv.includes('--useIsoGit');
 const useOffline = process.argv.includes('--useOffline');
 
+// Function to read JSON file
+function readJSONFile(filename) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filename, 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(JSON.parse(data));
+      }
+    });
+  });
+}
+
+const packageData: any = await readJSONFile('package.json');
+const version = packageData.version;
+
+let channel: string = ''
+
+if (version.includes('beta')) {
+  channel = 'beta';
+} else if (version.includes('alpha')) {
+  channel = 'alpha';
+} else if (version.includes('insiders')) {
+  channel = 'insiders';
+}
 
 // Determine if running on CircleCI or locally with --e2e-local
 const isLocalE2E = process.argv.includes('--e2e-local') && !process.env.CIRCLECI;
@@ -54,7 +80,7 @@ module.exports = {
 
             switch (type) {
               case 'Windows_NT':
-                binaryPath = "./release/win-unpacked/Remix-Desktop.exe";
+                binaryPath = `./release/win-unpacked/Remix-Desktop-${channel}.exe`;
                 break;
               case 'Darwin':
                 binaryPath = arch === 'x64' ? 
