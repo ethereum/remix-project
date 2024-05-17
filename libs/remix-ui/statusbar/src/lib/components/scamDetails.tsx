@@ -1,6 +1,7 @@
 import { ExtendedRefs, ReferenceType } from '@floating-ui/react'
 import React, { CSSProperties } from 'react'
 import { FormattedMessage } from 'react-intl'
+import { ScamAlert } from '../remixui-statusbar-panel'
 
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
@@ -8,9 +9,10 @@ export interface ScamDetailsProps {
   refs: ExtendedRefs<ReferenceType>
   floatStyle: CSSProperties
   getFloatingProps: (userProps?: React.HTMLProps<HTMLElement> | undefined) => Record<string, unknown>
+  scamAlerts: ScamAlert[]
 }
 
-export default function ScamDetails ({ refs, floatStyle }: ScamDetailsProps) {
+export default function ScamDetails ({ refs, floatStyle, scamAlerts }: ScamDetailsProps) {
 
   return (
     <div
@@ -22,31 +24,23 @@ export default function ScamDetails ({ refs, floatStyle }: ScamDetailsProps) {
         <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter', color: 'orange' }} className="pr-2 far fa-exclamation-triangle"></i>
       </span>
       <div className="d-flex flex-column text-white">
-        <span className="pl-4 mt-1">
-          <FormattedMessage id="home.scamAlertText" />
-        </span>
-        <span className="pl-4 mt-1">
-          <FormattedMessage id="home.scamAlertText2" />:
-          <a
-            className="pl-2 remixui_home_text text-white"
-            onClick={() => _paq.push(['trackEvent', 'hometab', 'scamAlert', 'learnMore'])}
-            target="__blank"
-            href="https://medium.com/remix-ide/remix-in-youtube-crypto-scams-71c338da32d"
-          >
-            <FormattedMessage id="home.learnMore" />
-          </a>
-        </span>
-        <span className="pl-4 mt-1">
-          <FormattedMessage id="home.scamAlertText3" />: &nbsp;
-          <a
-            className="remixui_home_text text-white"
-            onClick={() => _paq.push(['trackEvent', 'hometab', 'scamAlert', 'safetyTips'])}
-            target="__blank"
-            href="https://remix-ide.readthedocs.io/en/latest/security.html"
-          >
-            <FormattedMessage id="home.here" />
-          </a>
-        </span>
+        {scamAlerts && scamAlerts.map((alert, index) => (
+          <span className="pl-4 mt-1">
+            {alert.url.length < 1 ? <FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} />
+              : (<><FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} /> : &nbsp;
+                <a
+                  className={`remixui_home_text text-white ${index === 1 ? 'pl-2' : ''}`}
+                  onClick={() => {
+                    index === 1 && _paq.push(['trackEvent', 'hometab', 'scamAlert', 'learnMore'])
+                    index === 2 && _paq.push(['trackEvent', 'hometab', 'scamAlert', 'safetyTips'])
+                  }}
+                  target="__blank"
+                  href={scamAlerts[index].url}
+                >
+                  <FormattedMessage id="home.here" defaultMessage={scamAlerts[index].message} />
+                </a></>)}
+          </span>
+        ))}
       </div>
     </div>
   )
