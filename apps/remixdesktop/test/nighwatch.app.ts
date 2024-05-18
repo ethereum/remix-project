@@ -1,8 +1,7 @@
-const os = require('os');
-const fs = require('fs');
+import os from 'os';
+import fs from 'fs';
 
-const http = require('http');
-import axios from 'axios';
+
 
 const useIsoGit = process.argv.includes('--useIsoGit');
 const useOffline = process.argv.includes('--useOffline');
