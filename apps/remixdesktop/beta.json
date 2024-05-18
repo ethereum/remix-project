@@ -43,7 +43,7 @@
         "target": [
             "nsis"
         ],
-        "artifactName": "${productName}-Setup-${version}.${ext}",
+        "artifactName": "Remix-Desktop-Setup-${version}.${ext}",
         "icon": "assets/icon.png"
     },
     "deb": {},
