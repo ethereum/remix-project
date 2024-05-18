@@ -7,20 +7,17 @@ import axios from 'axios';
 const useIsoGit = process.argv.includes('--useIsoGit');
 const useOffline = process.argv.includes('--useOffline');
 
-// Function to read JSON file
-function readJSONFile(filename) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filename, 'utf8', (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(JSON.parse(data));
-      }
-    });
-  });
+// Function to read JSON file synchronously
+function readJSONFileSync(filename: string): any {
+  try {
+    const data = fs.readFileSync(filename, 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    throw err;
+  }
 }
 
-const packageData: any = await readJSONFile('package.json');
+const packageData: any = readJSONFileSync('package.json');
 const version = packageData.version;
 
 let channel: string = ''
