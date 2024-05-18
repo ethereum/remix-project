@@ -22,11 +22,11 @@ const version = packageData.version;
 let channel: string = ''
 
 if (version.includes('beta')) {
-  channel = 'beta';
+  channel = 'Beta';
 } else if (version.includes('alpha')) {
-  channel = 'alpha';
+  channel = 'Alpha';
 } else if (version.includes('insiders')) {
-  channel = 'insiders';
+  channel = 'Insiders';
 }
 
 // Determine if running on CircleCI or locally with --e2e-local
