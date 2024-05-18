@@ -94,6 +94,18 @@ async function hashFile(file): Promise<string> {
 async function main() {
   const allReleases = await getAllReleases()
   const version = await getVersionFromPackageJson()
+  let channel = 'latest'
+  if(version.includes('beta')) {
+    channel = 'beta'
+  }
+  if(version.includes('alpha')) {
+    channel = 'alpha'
+  }
+  if(version.includes('insiders')) {
+    channel = 'insiders'
+  }
+
+
   console.log(`preparing release version: ${version}`)
   let release
   allReleases.find((r) => {
@@ -119,7 +131,7 @@ async function main() {
 
 
   let ymlFiles = await readReleaseFilesFromLocalDirectory()
-  ymlFiles = ymlFiles.filter((file) => file.endsWith('.yml') && file.startsWith('latest'))
+  ymlFiles = ymlFiles.filter((file) => file.endsWith('.yml') && file.startsWith(channel))
 
   console.log(`Found ${ymlFiles.length} yml files to upload`)
 
@@ -174,10 +186,10 @@ async function main() {
   let files = await readReleaseFilesFromLocalDirectory()
 
   try {
-    if (fs.existsSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml')) && fs.existsSync(path.join(__dirname, '../../../release', 'latest-mac-x64.yml'))) {
+    if (fs.existsSync(path.join(__dirname, '../../../release', `${channel}-mac-arm64.yml`)) && fs.existsSync(path.join(__dirname, '../../../release', `${channel}-mac-x64.yml`))) {
       // combine the two files
-      const macArm64 = fs.readFileSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml'), 'utf8')
-      const mac = fs.readFileSync(path.join(__dirname, '../../../release', 'latest-mac-x64.yml'), 'utf8')
+      const macArm64 = fs.readFileSync(path.join(__dirname, '../../../release', `${channel}-mac-arm64.yml`), 'utf8')
+      const mac = fs.readFileSync(path.join(__dirname, '../../../release', `${channel}-mac-x64.yml`), 'utf8')
       const parsedMacArm64 = YAML.parse(macArm64)
       const parsedMac = YAML.parse(mac)
       console.log(parsedMacArm64)
@@ -191,17 +203,17 @@ async function main() {
       }
       console.log(combined)
       const newYml = YAML.stringify(combined)
-      fs.writeFileSync(path.join(__dirname, '../../../release', 'latest-mac.yml'), newYml)
+      fs.writeFileSync(path.join(__dirname, '../../../release', `${channel}-mac.yml`), newYml)
       // remove the arm64 file
-      fs.unlinkSync(path.join(__dirname, '../../../release', 'latest-mac-arm64.yml'))
-      fs.unlinkSync(path.join(__dirname, '../../../release', 'latest-mac-x64.yml'))
+      fs.unlinkSync(path.join(__dirname, '../../../release', `${channel}-mac-arm64.yml`))
+      fs.unlinkSync(path.join(__dirname, '../../../release', `${channel}-mac-x64.yml`))
     }
   } catch (e) {
     console.log(e)
   }
 
   files = await readReleaseFilesFromLocalDirectory()
-  files = files.filter((file) => file.endsWith('.zip') || file.endsWith('.dmg') || file.endsWith('.exe') || file.endsWith('.AppImage') || file.endsWith('.snap') || file.endsWith('.deb') || file.startsWith('latest'))
+  files = files.filter((file) => file.endsWith('.zip') || file.endsWith('.dmg') || file.endsWith('.exe') || file.endsWith('.AppImage') || file.endsWith('.snap') || file.endsWith('.deb') || file.startsWith(`${channel}`))
   console.log(`Found ${files.length} files to upload`)
   console.log(files)
   if (!release.draft) {
