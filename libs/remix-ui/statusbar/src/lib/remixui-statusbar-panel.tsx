@@ -6,8 +6,6 @@ import ScamAlertStatus from './components/scamAlertStatus'
 import ScamDetails from './components/scamDetails'
 import { FloatingFocusManager, autoUpdate, flip, offset, shift, useClick, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react'
 import axios from 'axios'
-import { get } from 'lodash'
-import { current } from '@reduxjs/toolkit'
 
 export interface RemixUIStatusBarProps {
   statusBarPlugin: StatusBarInterface
@@ -18,12 +16,11 @@ export type ScamAlert = {
   url: string
 }
 
-type GetCurrentWorkspace =
-  {
-    name: string
-    isLocalhost: boolean
-    absolutePath: string
-  }
+type GetCurrentWorkspace = {
+  name: string
+  isLocalhost: boolean
+  absolutePath: string
+}
 
 export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
   const [showScamDetails, setShowScamDetails] = useState(false)
@@ -54,31 +51,13 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
     }
   }, [])
 
-  useEffect(() => {
-    async function getGitBranchName() {
-      const gitRepo = await statusBarPlugin.call('fileManager', 'isGitRepo')
-      console.log('gitRepo', gitRepo)
-      return gitRepo
-    }
-    async function getWorkspaceName() {
-      const thing = await statusBarPlugin.call('filePanel', 'getCurrentWorkspace')
-      console.log('thing', thing)
-      return thing
-    }
-    async function getWorkspaceGitBranchName() {
-      if (!getGitBranchName()) return
-      let currentWorkspace: GetCurrentWorkspace = {} as GetCurrentWorkspace
-      currentWorkspace = await getWorkspaceName()
-      console.log('currentWorkspace', currentWorkspace)
-      setWorkspaceName(currentWorkspace?.name)
-    }
-    getWorkspaceGitBranchName()
-
-    return () => {
-      getWorkspaceGitBranchName()
-    }
-
-  }, [statusBarPlugin])
+  const t = async () => {
+    const isGit = await statusBarPlugin.call('fileManager', 'isGitRepo')
+    if (!isGit) return
+    const repoName = await statusBarPlugin.call('filePanel', 'getCurrentWorkspace')
+    repoName && repoName?.name.length > 0 ? statusBarPlugin.currentWorkspaceName = repoName.name : statusBarPlugin.currentWorkspaceName = ''
+    return { repoWorkspaceName: repoName }
+  }
 
   return (
     <>
@@ -89,7 +68,7 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
       )}
       <div className="d-flex flex-row bg-primary justify-content-between align-items-center">
         <div className="remixui_statusbar">
-          <GitStatus workspaceName={workspaceName ?? 'none'} />
+          <GitStatus plugin={statusBarPlugin} />
         </div>
         <div className="remixui_statusbar"></div>
         <div className="remixui_statusbar d-flex flex-row">

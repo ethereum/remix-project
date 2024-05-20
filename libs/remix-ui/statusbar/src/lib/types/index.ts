@@ -17,4 +17,6 @@ export interface StatusBarInterface extends Plugin {
   events: EventEmitter
   dispatch: React.Dispatch<any>
   setDispatch(dispatch: React.Dispatch<any>): void
+  getGitBranchName: () => Promise<any>
+  currentWorkspaceName: string
 }
