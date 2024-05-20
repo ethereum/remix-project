@@ -25,7 +25,7 @@ export default function ScamDetails ({ refs, floatStyle, scamAlerts }: ScamDetai
       </span>
       <div className="d-flex flex-column text-white">
         {scamAlerts && scamAlerts.map((alert, index) => (
-          <span className="pl-4 mt-1">
+          <span className="pl-4 mt-1" key={`${alert.url}${index}`}>
             {alert.url.length < 1 ? <FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} />
               : (<><FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} /> : &nbsp;
                 <a

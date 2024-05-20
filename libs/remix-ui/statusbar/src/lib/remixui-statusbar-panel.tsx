@@ -7,6 +7,7 @@ import ScamDetails from './components/scamDetails'
 import { FloatingFocusManager, autoUpdate, flip, offset, shift, useClick, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react'
 import axios from 'axios'
 import { get } from 'lodash'
+import { current } from '@reduxjs/toolkit'
 
 export interface RemixUIStatusBarProps {
   statusBarPlugin: StatusBarInterface
@@ -53,26 +54,31 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
     }
   }, [])
 
-  async function getGitBranchName() {
-    const gitRepo = await statusBarPlugin.call('fileManager', 'isGitRepo')
-    console.log('gitRepo', gitRepo)
-    return gitRepo
-  }
-  async function getWorkspaceName() {
-    console.log(statusBarPlugin)
-    const workspaceObject = await statusBarPlugin.call('filePanel', 'getCurrentWorkspace')
-    if (workspaceObject === null) {
-      console.log('workspaceObject is null or undefined')
-      return
+  useEffect(() => {
+    async function getGitBranchName() {
+      const gitRepo = await statusBarPlugin.call('fileManager', 'isGitRepo')
+      console.log('gitRepo', gitRepo)
+      return gitRepo
     }
-    console.log('workspaceObject', workspaceObject)
-  }
-  function getWorkspaceGitBranchName() {
-    if (!getGitBranchName()) return
-    getWorkspaceName()
-  }
+    async function getWorkspaceName() {
+      const thing = await statusBarPlugin.call('filePanel', 'getCurrentWorkspace')
+      console.log('thing', thing)
+      return thing
+    }
+    async function getWorkspaceGitBranchName() {
+      if (!getGitBranchName()) return
+      let currentWorkspace: GetCurrentWorkspace = {} as GetCurrentWorkspace
+      currentWorkspace = await getWorkspaceName()
+      console.log('currentWorkspace', currentWorkspace)
+      setWorkspaceName(currentWorkspace?.name)
+    }
+    getWorkspaceGitBranchName()
 
-  getWorkspaceGitBranchName()
+    return () => {
+      getWorkspaceGitBranchName()
+    }
+
+  }, [statusBarPlugin])
 
   return (
     <>
