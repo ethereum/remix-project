@@ -80,8 +80,8 @@ module.exports = {
                 break;
               case 'Darwin':
                 binaryPath = arch === 'x64' ? 
-                  `release/mac/Remix-Desktop.app/Contents/MacOS/Remix-Desktop-${channel}` :
-                  `release/mac-arm64/Remix-Desktop.app/Contents/MacOS/Remix-Desktop-${channel}`;
+                  `release/mac/Remix-Desktop-${channel}.app/Contents/MacOS/Remix-Desktop-${channel}` :
+                  `release/mac-arm64/Remix-Desktop-${channel}.app/Contents/MacOS/Remix-Desktop-${channel}`;
                 break;
               case 'Linux':
                 binaryPath = "release/linux-unpacked/remixdesktop";
