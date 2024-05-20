@@ -10,11 +10,12 @@ export default function GitStatus({ plugin }: GitStatusProps) {
   const [gitBranchName, setGitBranchName] = useState('')
 
   useEffect(() => {
-    plugin.on('filePanel', 'setWorkspace', async (workspace) => {
+    plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
       const isGit = await plugin.call('fileManager', 'isGitRepo')
-      console.log('workspacenow', workspace)
+      console.log('git', isGit)
       if (!isGit) return
-      workspace && workspace?.name.length > 0 ? setGitBranchName(workspace.name) : setGitBranchName('')
+      const workspaceName = localStorage.getItem('currentWorkspace')
+      workspaceName && workspaceName.length > 0 ? setGitBranchName(workspaceName) : setGitBranchName('')
     })
     // console.log('testing', plugin)
   }, [])
