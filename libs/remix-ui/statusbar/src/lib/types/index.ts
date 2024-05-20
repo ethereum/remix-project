@@ -1,4 +1,5 @@
 import EventEmitter from 'events'
+import { Plugin } from '@remixproject/engine'
 export interface PluginProfile {
   name: string
   displayName: string
