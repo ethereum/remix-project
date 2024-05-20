@@ -9,6 +9,16 @@ export default function GitStatus({ plugin }: GitStatusProps) {
 
   const [gitBranchName, setGitBranchName] = useState('')
 
+  useEffect(() => {
+    plugin.on('filePanel', 'setWorkspace', async (workspace) => {
+      const isGit = await plugin.call('fileManager', 'isGitRepo')
+      console.log('workspacenow', workspace)
+      if (!isGit) return
+      workspace && workspace?.name.length > 0 ? setGitBranchName(workspace.name) : setGitBranchName('')
+    })
+    // console.log('testing', plugin)
+  }, [])
+
   return (
     <div
       className="d-flex flex-row p-1 text-white justify-content-center align-items-center"
