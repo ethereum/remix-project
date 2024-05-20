@@ -26,7 +26,12 @@ export function EnvironmentUI(props: EnvironmentProps) {
 
         <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText2" />}>
           <a href="https://chainlist.org/" target="_blank">
-            <i style={{ fontSize: 'medium' }} className={'ml-2 fad fa-plug'} aria-hidden="true"></i>
+            <i className={'ml-2 fas fa-plug'} aria-hidden="true"></i>
+          </a>
+        </CustomTooltip>
+        <CustomTooltip placement={'right'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip" tooltipText={<FormattedMessage id="udapp.environmentDocs" />}>
+          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer">
+            <i className="udapp_infoDeployAction ml-2 fas fa-info-circle"></i>
           </a>
         </CustomTooltip>
       </label>
@@ -65,12 +70,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
             ))}
           </Dropdown.Menu>
         </Dropdown>
-
-        <CustomTooltip placement={'right-start'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip" tooltipText={<FormattedMessage id="udapp.environmentDocs" />}>
-          <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer">
-            <i className="udapp_infoDeployAction ml-2 fas fa-info"></i>
-          </a>
-        </CustomTooltip>
       </div>
     </div>
   )
