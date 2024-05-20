@@ -9,7 +9,7 @@
 
   "udapp._comment_value.tsx": "libs/remix-ui/run-tab/src/lib/components/value.tsx",
   "udapp.value": "Value",
-  "udapp.tooltipText5": "Enter an amount and choose its unit",
+  "udapp.tooltipText5": "Enter an amount to be sent with transaction and choose its unit",
 
   "udapp._comment_contractDropdownUI.tsx": "libs/remix-ui/run-tab/src/lib/components/contractDropdownUI.tsx",
   "udapp.contract": "Contract",
@@ -50,15 +50,15 @@
   "udapp.hash": "hash",
   "udapp.signature": "signature",
   "udapp.injectedTitle": "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type).",
-  "udapp.createNewAccount": "Create a new account",
+  "udapp.createNewAccount": "Create new account",
   "udapp.web3Title": "Creating an account is possible only in Personal mode. Please go to Settings to enable it.",
   "udapp.defaultTitle": "Unfortunately it's not possible to create an account using an external wallet ({selectExEnv}).",
   "udapp.text1": "Please provide a Passphrase for the account creation",
   "udapp.tooltipText1": "Account list is empty, please make sure the current provider is properly connected to remix",
   "udapp.modalTitle1": "Passphrase to sign a message",
   "udapp.modalMessage1": "Enter your passphrase for this account to sign the message",
-  "udapp.copyAccount": "Copy account to clipboard",
-  "udapp.signMsgUsingAccount": "Sign a message using this account",
+  "udapp.copyAccount": "Copy account",
+  "udapp.signMsgUsingAccount": "Sign using this account",
 
   "udapp._comment_environment.tsx": "libs/remix-ui/run-tab/src/lib/components/environment.tsx",
   "udapp.environment": "Environment",
