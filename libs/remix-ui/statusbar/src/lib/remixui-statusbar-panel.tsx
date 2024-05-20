@@ -71,7 +71,7 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
     if (!getGitBranchName()) return
     getWorkspaceName()
   }
-  // getWorkspaceName()
+
   getWorkspaceGitBranchName()
 
   return (

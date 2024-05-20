@@ -104,11 +104,6 @@ module.exports = class Filepanel extends ViewPlugin {
     })
   }
 
-  echoCall(args) {
-    console.log('echoCall', args)
-    return args
-  }
-
   /**
    * @param item { id: string, name: string, type?: string[], path?: string[], extension?: string[], pattern?: string[] }
    * typically:
@@ -153,7 +148,6 @@ module.exports = class Filepanel extends ViewPlugin {
   }
 
   getCurrentWorkspace() {
-    console.log('getCurrentWorkspace', this.currentWorkspaceMetadata)
     return this.currentWorkspaceMetadata
   }
 
