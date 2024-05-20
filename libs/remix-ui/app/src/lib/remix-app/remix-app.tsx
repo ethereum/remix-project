@@ -208,7 +208,7 @@ const RemixApp = (props: IRemixAppUi) => {
               <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
                 <RemixUIMainPanel layout={props.app.layout}></RemixUIMainPanel>
               </div>
-              <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
+              <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`flex-row-reverse pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
                 {props.app.pinnedPanel.render()}
               </div>
               <DragBar

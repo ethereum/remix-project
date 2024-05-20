@@ -35,8 +35,6 @@ pre {
   transition         : width 0.25s;
 }
 .pinnedpanel           {
-  display            : flex;
-  flex-direction     : row-reverse;
   width              : 320px;
   transition         : width 0.25s;
 }
