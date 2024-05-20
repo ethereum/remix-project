@@ -382,12 +382,12 @@ class AppComponent {
     // those views depend on app_manager
     this.menuicons = new VerticalIcons()
     this.sidePanel = new SidePanel()
-    this.statusBar = new StatusBar()
     this.hiddenPanel = new HiddenPanel()
     this.pinnedPanel = new PinnedPanel()
 
     const pluginManagerComponent = new PluginManagerComponent(appManager, this.engine)
     const filePanel = new FilePanel(appManager)
+    this.statusBar = new StatusBar(filePanel)
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor, appManager)
 

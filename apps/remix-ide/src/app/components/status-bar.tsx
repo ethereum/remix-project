@@ -5,6 +5,7 @@ import packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { PluginProfile, StatusBarInterface } from '../../types'
 import { RemixUIStatusBar } from '@remix-ui/statusbar'
+import { FilePanelType } from '@remix-ui/workspace'
 
 const statusBarProfile: PluginProfile = {
   name: 'statusBar',
@@ -17,10 +18,12 @@ const statusBarProfile: PluginProfile = {
 export class StatusBar extends Plugin implements StatusBarInterface {
   htmlElement: HTMLDivElement
   events: EventEmitter
+  filePanelPlugin: FilePanelType
   dispatch: React.Dispatch<any> = () => {}
   currentWorkspaceName: string = ''
-  constructor() {
+  constructor(filePanel: FilePanelType) {
     super(statusBarProfile)
+    this.filePanelPlugin = filePanel
     this.events = new EventEmitter()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'status-bar')
