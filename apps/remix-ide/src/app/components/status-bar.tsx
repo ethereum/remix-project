@@ -23,6 +23,7 @@ export class StatusBar extends Plugin implements StatusBarInterface {
   verticalIcons: VerticalIcons
   dispatch: React.Dispatch<any> = () => {}
   currentWorkspaceName: string = ''
+  isGitRepo: boolean = false
   constructor(filePanel: FilePanelType, veritcalIcons: VerticalIcons) {
     super(statusBarProfile)
     this.filePanelPlugin = filePanel
@@ -30,9 +31,40 @@ export class StatusBar extends Plugin implements StatusBarInterface {
     this.events = new EventEmitter()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'status-bar')
+    this.filePanelPlugin
+  }
+
+  async isWorkspaceAGitRepo() {
+    const isGit = await this.call('fileManager', 'isGitRepo')
+    if (!isGit) return
+    this.isGitRepo = true
+    this.renderComponent()
+  }
+
+  async setCurrentGitWorkspaceName() {
+    if (!this.isGitRepo) return
+    const workspaceName = localStorage.getItem('currentWorkspace')
+    workspaceName && workspaceName.length > 0 ? this.currentWorkspaceName = workspaceName : this.currentWorkspaceName = 'unknown'
+    this.renderComponent()
   }
 
   onActivation(): void {
+    this.on('filePanel', 'workspaceInitializationCompleted', async () => {
+      const isGit = await this.call('fileManager', 'isGitRepo')
+      if (!isGit) return
+      const workspaceName = localStorage.getItem('currentWorkspace')
+      workspaceName && workspaceName.length > 0 ? this.currentWorkspaceName = workspaceName : this.currentWorkspaceName = ''
+    })
+    this.on('filePanel', 'switchToWorkspace', async (workspace: string) => {
+      console.log('from status bar switchToWorkspace')
+      await this.isWorkspaceAGitRepo()
+      if (!this.isGitRepo) {
+        this.currentWorkspaceName = 'Not a git repo'
+        return
+      }
+      const workspaceName = localStorage.getItem('currentWorkspace')
+      workspaceName && workspaceName.length > 0 ? this.currentWorkspaceName = workspaceName : this.currentWorkspaceName = 'error'
+    })
     this.renderComponent()
   }
 
