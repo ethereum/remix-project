@@ -81,7 +81,6 @@ export class SolCoder extends Plugin {
     let result
     try {
       const main_prompt = this._build_solgpt_promt(prompt)
-      console.log(main_prompt.length)
       result = await(
         await fetch(this.api_url, {
           method: 'POST',
