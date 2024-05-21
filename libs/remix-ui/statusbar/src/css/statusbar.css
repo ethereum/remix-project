@@ -1,4 +1,9 @@
 
-remixui_statusbar :hover {
+remixui_statusbar:hover {
+  cursor: pointer;
+}
+
+.remixui_statusbar_gitstatus
+.remixui_statusbar_gitstatus:hover {
   cursor: pointer;
 }

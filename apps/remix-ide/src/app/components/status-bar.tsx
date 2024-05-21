@@ -6,12 +6,13 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 import { PluginProfile, StatusBarInterface } from '../../types'
 import { RemixUIStatusBar } from '@remix-ui/statusbar'
 import { FilePanelType } from '@remix-ui/workspace'
+import { VerticalIcons } from './vertical-icons'
 
 const statusBarProfile: PluginProfile = {
   name: 'statusBar',
   displayName: 'Status Bar',
   description: 'Remix IDE status bar panel',
-  methods: ['getGitBranchName'],
+  methods: [],
   version: packageJson.version,
 }
 
@@ -19,29 +20,20 @@ export class StatusBar extends Plugin implements StatusBarInterface {
   htmlElement: HTMLDivElement
   events: EventEmitter
   filePanelPlugin: FilePanelType
+  verticalIcons: VerticalIcons
   dispatch: React.Dispatch<any> = () => {}
   currentWorkspaceName: string = ''
-  constructor(filePanel: FilePanelType) {
+  constructor(filePanel: FilePanelType, veritcalIcons: VerticalIcons) {
     super(statusBarProfile)
     this.filePanelPlugin = filePanel
+    this.verticalIcons = veritcalIcons
     this.events = new EventEmitter()
     this.htmlElement = document.createElement('div')
     this.htmlElement.setAttribute('id', 'status-bar')
   }
 
   onActivation(): void {
-    this.on('filePanel', 'setWorkspace', async () => {
-      await this.getGitBranchName()
-    })
     this.renderComponent()
-  }
-
-  async getGitBranchName() {
-    const isGitRepo = await this.call('fileManager', 'isGitRepo')
-    if (!isGitRepo) return
-    const repoName = await this.call('filePanel', 'getCurrentWorkspace')
-    repoName && repoName?.name.length > 0 ? this.currentWorkspaceName = repoName.name : this.currentWorkspaceName = ''
-    return { repoWorkspaceName: repoName }
   }
 
   setDispatch(dispatch: React.Dispatch<any>) {
