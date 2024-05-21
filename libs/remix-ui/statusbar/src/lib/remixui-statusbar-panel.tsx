@@ -27,7 +27,8 @@ type GetCurrentWorkspace = {
 export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
   const [showScamDetails, setShowScamDetails] = useState(false)
   const [scamAlerts, setScamAlerts] = useState<ScamAlert[]>([])
-  const [workspaceName, setWorkspaceName] = useState('')
+  const [gitBranchName, setGitBranchName] = useState('')
+  const [isAiActive, setIsAiActive] = useState(false)
   const { refs, context, floatingStyles } = useFloating({
     open: showScamDetails,
     onOpenChange: setShowScamDetails,
@@ -53,12 +54,12 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
     }
   }, [])
 
-  const t = async () => {
-    const isGit = await statusBarPlugin.call('fileManager', 'isGitRepo')
-    if (!isGit) return
-    const repoName = await statusBarPlugin.call('filePanel', 'getCurrentWorkspace')
-    repoName && repoName?.name.length > 0 ? statusBarPlugin.currentWorkspaceName = repoName.name : statusBarPlugin.currentWorkspaceName = ''
-    return { repoWorkspaceName: repoName }
+  const lightAiUp = async () => {
+    const aiActive = await statusBarPlugin.call('settings', 'get', 'settings/copilot/suggest/activate')
+    console.log('ai', aiActive)
+    if (!aiActive) return
+    setIsAiActive(aiActive)
+    return aiActive
   }
 
   return (
@@ -70,12 +71,12 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
       )}
       <div className="d-flex flex-row bg-primary justify-content-between align-items-center">
         <div className="remixui_statusbar remixui_statusbar_gitstatus">
-          <GitStatus plugin={statusBarPlugin} />
+          <GitStatus plugin={statusBarPlugin} gitBranchName={gitBranchName} setGitBranchName={setGitBranchName} />
         </div>
         <div className="remixui_statusbar"></div>
         <div className="remixui_statusbar d-flex flex-row">
           <ScamAlertStatus refs={refs} getReferenceProps={getReferenceProps} />
-          <AIStatus />
+          <AIStatus plugin={statusBarPlugin} aiActive={lightAiUp} isAiActive={isAiActive} />
         </div>
       </div>
     </>
