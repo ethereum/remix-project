@@ -8,6 +8,8 @@ if [[ $version == *"beta"* ]]; then
   command="yarn dist -c beta.json"
 elif [[ $version == *"alpha"* ]]; then
   command="yarn dist -c alpha.json"
+elif [[ $version == *"insiders"* ]]; then
+  command="yarn dist -c insiders.json"
 else
   command="yarn dist -c latest.json"
 fi
