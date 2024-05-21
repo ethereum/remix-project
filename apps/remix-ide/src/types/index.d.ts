@@ -16,5 +16,4 @@ export interface StatusBarInterface {
   filePanelPlugin: FilePanelType
   dispatch: React.Dispatch<any>
   setDispatch(dispatch: React.Dispatch<any>): void
-  getGitBranchName: () => Promise<any>
 }

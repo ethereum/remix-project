@@ -6,9 +6,11 @@ import ScamAlertStatus from './components/scamAlertStatus'
 import ScamDetails from './components/scamDetails'
 import { FloatingFocusManager, autoUpdate, flip, offset, shift, useClick, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react'
 import axios from 'axios'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 
 export interface RemixUIStatusBarProps {
-  statusBarPlugin: StatusBarInterface
+  statusBarPlugin: StatusBar
 }
 
 export type ScamAlert = {
@@ -67,7 +69,7 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
         </FloatingFocusManager>
       )}
       <div className="d-flex flex-row bg-primary justify-content-between align-items-center">
-        <div className="remixui_statusbar">
+        <div className="remixui_statusbar remixui_statusbar_gitstatus">
           <GitStatus plugin={statusBarPlugin} />
         </div>
         <div className="remixui_statusbar"></div>
