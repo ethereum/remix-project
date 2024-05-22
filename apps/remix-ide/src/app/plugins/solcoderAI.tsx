@@ -50,6 +50,8 @@ export class SolCoder extends Plugin {
   async code_generation(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'code_generation'])
+
     let result
     try {
       result = await(
@@ -78,6 +80,9 @@ export class SolCoder extends Plugin {
   async solidity_answer(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for SOL-GPT answer...` })
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'answering'])
+
     let result
     try {
       const main_prompt = this._build_solgpt_promt(prompt)
@@ -112,6 +117,9 @@ export class SolCoder extends Plugin {
   async code_explaining(prompt, context:string=""): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for SOL-GPT answer...` })
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'explaining'])
+
     let result
     try {
       result = await(
@@ -138,6 +146,8 @@ export class SolCoder extends Plugin {
 
   async code_completion(prompt, options:SuggestOptions=null): Promise<any> {
     this.emit("aiInfering")
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'code_completion'])
+
     let result
     try {
       result = await(
@@ -184,6 +194,8 @@ export class SolCoder extends Plugin {
 
   async code_insertion(msg_pfx, msg_sfx): Promise<any> {
     this.emit("aiInfering")
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'code_insertion'])
+
     let result
     try {
       result = await(
@@ -222,6 +234,7 @@ export class SolCoder extends Plugin {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for SOL-GPT answer...` })
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'explaining'])
 
     let result
     try {
