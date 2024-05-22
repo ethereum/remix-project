@@ -11,7 +11,6 @@ import { WitnessToggler } from './witnessToggler'
 import { WitnessSection } from './witness'
 import { CompilerFeedback } from './feedback'
 import { CompilerReport, PrimeValue } from '../types'
-const _paq = (window._paq = window._paq || [])
 
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
@@ -54,7 +53,7 @@ export function Container () {
   const handleCircuitAutoCompile = (value: boolean) => {
     circuitApp.dispatch({ type: 'SET_AUTO_COMPILE', payload: value })
   }
-  
+
   const handleCircuitHideWarnings = (value: boolean) => {
     circuitApp.dispatch({ type: 'SET_HIDE_WARNINGS', payload: value })
   }
@@ -75,7 +74,6 @@ export function Container () {
           `
         // @ts-ignore
         await circuitApp.plugin.call('solcoder', 'error_explaining', message)
-        _paq.push(['trackEvent', 'ai', 'solcoder', 'error_explaining_circom'])
       } else {
         const message = `
           error message: ${error}
@@ -84,7 +82,6 @@ export function Container () {
           `
         // @ts-ignore
         await circuitApp.plugin.call('solcoder', 'error_explaining', message)
-        _paq.push(['trackEvent', 'ai', 'solcoder', 'error_explaining_circom'])
       }
     } else {
       const error = report.message
@@ -95,7 +92,6 @@ export function Container () {
       `
       // @ts-ignore
       await circuitApp.plugin.call('solcoder', 'error_explaining', message)
-      _paq.push(['trackEvent', 'ai', 'solcoder', 'error_explaining_circom'])
     }
   }
 
