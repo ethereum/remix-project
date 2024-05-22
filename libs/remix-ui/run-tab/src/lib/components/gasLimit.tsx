@@ -51,7 +51,7 @@ export function GasLimitUI(props: GasPriceProps) {
             <FormattedMessage id="udapp.gasLimitAuto" />
           </label>
         </div>
-        <div className="d-flex pb-1 custom-control custom-radio">
+        <div className="d-flex custom-control custom-radio align-items-baseline">
           <input
             className="custom-control-input"
             type="radio"
@@ -61,20 +61,20 @@ export function GasLimitUI(props: GasPriceProps) {
             checked={!gasLimitAuto}
             id="glManualConfig"
           />
-          <label className="mb-1 w-100 form-check-label custom-control-label" htmlFor="glManualConfig" data-id="glManualConfiguration">
+          <label className="mb-1 w-50 form-check-label custom-control-label" htmlFor="glManualConfig" data-id="glManualConfiguration">
             <FormattedMessage id="udapp.gasLimitManual" />
-            <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="remixGasPriceTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText4" />}>
-              <input
-                type="number"
-                ref={inputComponent}
-                disabled={gasLimitAuto}
-                className="mt-2 form-control"
-                id="gasLimit"
-                value={props.gasLimit === 0 ? currentGasLimit.current : props.gasLimit}
-                onChange={handleGasLimit}
-              />
-            </CustomTooltip>
           </label>
+          <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="remixGasPriceTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText4" />}>
+            <input
+              type="number"
+              ref={inputComponent}
+              disabled={gasLimitAuto}
+              className="form-control w-100 float-right"
+              id="gasLimit"
+              value={props.gasLimit === 0 ? currentGasLimit.current : props.gasLimit}
+              onChange={handleGasLimit}
+            />
+          </CustomTooltip>
         </div>
       </div>
     </div>

@@ -73,7 +73,10 @@ export class VerticalIcons extends Plugin {
       Object.keys(this.icons).map((o) => {
         this.icons[o].active = false
       })
-      this.icons[name].active = true
+
+      if (this.icons[name]) {
+        this.icons[name].active = true
+      }
       this.renderComponent()
     })
   }
