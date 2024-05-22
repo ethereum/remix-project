@@ -23,8 +23,7 @@ if(version.includes('insiders')) {
   channel = 'insiders'
 }
 
-if(channel === 'latest') repo = 'remix-desktop' 
-repo = `remix-desktop-${channel}`
+if(channel !== 'latest') repo = `remix-desktop-${channel}`
 
 const octokit = new Octokit({
   auth: process.env.GH_TOKEN_DESKTOP_PUBLISH,
