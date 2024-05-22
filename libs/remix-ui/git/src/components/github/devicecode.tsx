@@ -21,7 +21,7 @@ export const GetDeviceCode = () => {
       url: 'http://0.0.0.0:3000/github.com/login/device/code',
       data: {
         client_id: '2795b4e41e7197d6ea11',
-        scope: 'repo gist'
+        scope: 'repo gist user:email read:user'
       },
       headers: {
         'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export const GetDeviceCode = () => {
     if (response.access_token) {
       setAuthorized(true)
       await pluginActions.saveToken(response.access_token)
-      await actions.getGitHubUser()
+      await actions.loadGitHubUserFromToken()
     }
 
   }
@@ -72,11 +72,11 @@ export const GetDeviceCode = () => {
     setAuthorized(false)
     setGitHubResponse(null)
     await pluginActions.saveToken(null)
-    await actions.getGitHubUser()
+    await actions.loadGitHubUserFromToken()
   }
 
   const checkConnection = async () => {
-    //await actions.getGitHubUser()
+    //await actions.loadGitHubUserFromToken()
   }
 
   useEffect(() => {
@@ -131,6 +131,9 @@ export const GetDeviceCode = () => {
                 <Card.Text>
                   <img src={context.gitHubUser.avatar_url} className="w-100" />
                   <a target="_blank" href={context.gitHubUser.html_url}>{context.gitHubUser.html_url}</a>
+                  {context.userEmails && context.userEmails.filter((email: any) => email.primary).map((email: any) => {
+                    return <span key={email.email}><br></br>{email.email}</span>
+                  })}
                 </Card.Text>
               </Card.Body>
             </Card>

@@ -6,10 +6,12 @@ import { CustomTooltip } from "@remix-ui/helper";
 import { useIntl, FormattedMessage } from "react-intl";
 import { CopyToClipboard } from "@remix-ui/clipboard";
 
+
 export const GitHubCredentials = () => {
   const context = React.useContext(gitPluginContext)
   const pluginactions = React.useContext(pluginActionsContext)
   const loader = React.useContext(loaderContext)
+  const actions = React.useContext(gitActionsContext)
   const [githubToken, setGithubToken] = React.useState('')
   const [githubUsername, setGithubUsername] = React.useState('')
   const [githubEmail, setGithubEmail] = React.useState('')
@@ -17,7 +19,7 @@ export const GitHubCredentials = () => {
 
   useEffect(() => {
     refresh()
-  }, [loader.plugin, context.gitHubAccessToken])
+  }, [loader.plugin, context.gitHubAccessToken, context.userEmails, context.gitHubUser])
 
   function handleChangeTokenState(e: string): void {
     setGithubToken(e)
@@ -40,7 +42,7 @@ export const GitHubCredentials = () => {
   }
 
   async function refresh() {
-    const credentials = await pluginactions.getGitHubCredentials()
+    const credentials = await pluginactions.getGitHubCredentialsFromLocalStorage()
     if (!credentials) return
     console.log('credentials', credentials)
     setGithubToken(credentials.token || '')

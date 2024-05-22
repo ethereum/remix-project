@@ -19,7 +19,7 @@ import { Octokit, App } from "octokit"
 import { OctokitResponse } from '@octokit/types'
 import { Endpoints } from "@octokit/types"
 import { IndexedDBStorage } from './filesystems/indexedDB'
-import { GitHubUser, RateLimit, branch, commitChange, remote, pagedCommits, remoteCommitsInputType, cloneInputType, fetchInputType, pullInputType, pushInputType, currentBranchInput, branchInputType, addInput, rmInput, resolveRefInput, readBlobInput, repositoriesInput, commitInput, branchDifference, compareBranchesInput, initInput } from '@remix-ui/git'
+import { GitHubUser, RateLimit, branch, commitChange, remote, pagedCommits, remoteCommitsInputType, cloneInputType, fetchInputType, pullInputType, pushInputType, currentBranchInput, branchInputType, addInput, rmInput, resolveRefInput, readBlobInput, repositoriesInput, commitInput, branchDifference, compareBranchesInput, initInput, userEmails } from '@remix-ui/git'
 import { LibraryProfile, StatusEvents } from '@remixproject/plugin-utils'
 import { ITerminal } from '@remixproject/plugin-api/src/lib/terminal'
 
@@ -1004,7 +1004,8 @@ class DGitProvider extends Plugin {
 
   async getGitHubUser(input: { token: string }): Promise<{
     user: GitHubUser,
-    ratelimit: RateLimit
+    ratelimit: RateLimit,
+    emails: userEmails,
     scopes: string[]
   }> {
     const octokit = new Octokit({
@@ -1023,6 +1024,8 @@ class DGitProvider extends Plugin {
     console.log('rate limit', localResetTimeString)
 
     const user = await octokit.request('GET /user')
+    const emails = await octokit.request('GET /user/emails')
+  
 
     const scopes = user.headers['x-oauth-scopes'];
 
@@ -1030,6 +1033,7 @@ class DGitProvider extends Plugin {
 
     return {
       user: user.data,
+      emails: emails.data,
       ratelimit: ratelimit.data,
       scopes: scopes.split(',')
     }

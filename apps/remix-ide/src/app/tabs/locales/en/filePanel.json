@@ -78,7 +78,7 @@
   "filePanel.checkoutGitBranch": "Checkout Git Branch",
   "filePanel.findOrCreateABranch": "Find or create a branch.",
   "filePanel.initGitRepositoryLabel": "Initialize workspace as a new git repository",
-  "filePanel.initGitRepositoryWarning": "To use Git features, add username and email to the Github section of the Settings panel.",
+  "filePanel.initGitRepositoryWarning": "To use Git features, add username and email to the Github section of the Git plugin.",
   "filePanel.workspaceName": "Workspace name",
   "filePanel.customizeTemplate": "Customize template",
   "filePanel.features": "Features",

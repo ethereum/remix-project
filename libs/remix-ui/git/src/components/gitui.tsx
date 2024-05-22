@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, getGitHubUser, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentials, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
@@ -42,7 +42,8 @@ export const GitUI = (props: IGitUi) => {
   const plugin = props.plugin
   const [gitState, gitDispatch] = useReducer(gitReducer, defaultGitState)
   const [loaderState, loaderDispatch] = useReducer(loaderReducer, defaultLoaderState)
-  const [activePanel, setActivePanel] = useState<string>("0");
+  const [activePanel, setActivePanel] = useState<string>("0")
+  const [setup, setSetup] = useState<boolean>(false)
 
   useEffect(() => {
     setCallBacks(plugin, gitDispatch, loaderDispatch)
@@ -50,6 +51,18 @@ export const GitUI = (props: IGitUi) => {
     loaderDispatch({ type: 'plugin', payload: true })
     console.log(props)
   }, [])
+
+  useEffect(() => {
+    async function checkconfig() {
+      
+      const username = await plugin.call('settings', 'get', 'settings/github-user-name')
+      const email = await plugin.call('settings', 'get', 'settings/github-email')
+      const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
+      console.log('gitState', gitState, username, email, token)
+      setSetup(!(username && email))
+    }
+    checkconfig()
+  },[gitState.gitHubAccessToken, gitState.gitHubUser, gitState.userEmails])
 
   useEffect(() => {
 
@@ -97,7 +110,7 @@ export const GitUI = (props: IGitUi) => {
     diff,
     resolveRef,
     setUpstreamRemote,
-    getGitHubUser,
+    loadGitHubUserFromToken: loadGitHubUserFromToken,
     getBranches,
     getRemotes,
     fetch,
@@ -118,7 +131,7 @@ export const GitUI = (props: IGitUi) => {
     openDiff,
     saveToken,
     saveGitHubCredentials,
-    getGitHubCredentials
+    getGitHubCredentialsFromLocalStorage
   }
 
   return (
@@ -128,7 +141,7 @@ export const GitUI = (props: IGitUi) => {
           <gitActionsContext.Provider value={gitActionsProviderValue}>
             <BranchHeader/>
             <pluginActionsContext.Provider value={pluginActionsProviderValue}>
-              <Setup></Setup>
+              {setup? <Setup></Setup>: null}
               <Accordion activeKey={activePanel} defaultActiveKey="0">
                 <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
                 

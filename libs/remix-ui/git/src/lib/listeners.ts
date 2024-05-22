@@ -1,9 +1,9 @@
 
 import React from "react";
-import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog } from "../state/gitpayload";
+import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog, setGitHubUser, setUserEmails } from "../state/gitpayload";
 import { gitActionDispatch } from "../types";
 import { Plugin } from "@remixproject/engine";
-import { getBranches, getFileStatusMatrix, getGitHubUser, getRemotes, gitlog, setPlugin } from "./gitactions";
+import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, gitlog, setPlugin } from "./gitactions";
 import { Profile } from "@remixproject/plugin-utils";
 import { CustomRemixApi } from "@remix-api";
 
@@ -141,7 +141,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
   plugin.on('manager', 'pluginActivated', async (p: Profile<any>) => {
     if (p.name === 'dgitApi') {
-      getGitHubUser();
+      loadGitHubUserFromToken();
       plugin.off('manager', 'pluginActivated');
     }
   })
@@ -162,6 +162,10 @@ export const getGitConfig = async () => {
   const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
   const config = { username, email, token }
   gitDispatch(setGItHubToken(config.token))
+  gitDispatch(setGitHubUser({
+    login: config.username,
+  }))
+  gitDispatch(setUserEmails([{ email: email, primary: true, visibility: 'public', verified: true }]))
   return config
 }
 

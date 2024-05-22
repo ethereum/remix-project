@@ -1,13 +1,9 @@
 import { ReadCommitResult } from "isomorphic-git"
 import { allChangedButNotStagedFiles, getFilesByStatus, getFilesWithNotModifiedStatus } from "../lib/fileHelpers"
 import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setRemoteBranchCommitsAction, setLocalBranchCommitsAction, setBranchDifferencesAction, setDefaultRemoteAction, setRemotesAction, setUpstreamAction } from "../types"
+import { Actions } from "./actions"
 
-interface Action {
-    type: string
-    payload: any
-}
-
-export const gitReducer = (state: gitState = defaultGitState, action: Action): gitState => {
+export const gitReducer = (state: gitState = defaultGitState, action: Actions): gitState => {
   ///console.log(action, state)
   switch (action.type) {
 
@@ -104,7 +100,7 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
   case 'SET_UPSTREAM':
     return {
       ...state,
-      upstream: (action as setUpstreamAction).payload
+      upstream: action.payload
     }
 
   case 'SET_COMMIT_CHANGES':
@@ -119,8 +115,8 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
     }
 
   case 'RESET_REMOTE_BRANCH_COMMITS':
-    if (state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name]) {
-      delete state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name]
+    if (state.remoteBranchCommits[action.payload.branch.name]) {
+      delete state.remoteBranchCommits[action.payload.branch.name]
     }
     return {
       ...state,
@@ -128,10 +124,10 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
     }
 
   case 'SET_REMOTE_BRANCH_COMMITS':
-    if (state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name]) {
-      state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name].push(...(action as setRemoteBranchCommitsAction).payload.commits)
+    if (state.remoteBranchCommits[action.payload.branch.name]) {
+      state.remoteBranchCommits[action.payload.branch.name].push(...action.payload.commits)
     } else {
-      state.remoteBranchCommits[(action as setRemoteBranchCommitsAction).payload.branch.name] = (action as setRemoteBranchCommitsAction).payload.commits
+      state.remoteBranchCommits[action.payload.branch.name] = action.payload.commits
     }
     return {
       ...state,
@@ -140,7 +136,7 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
 
   case 'SET_LOCAL_BRANCH_COMMITS':
 
-    state.localBranchCommits[(action as setLocalBranchCommitsAction).payload.branch.name] = (action as setLocalBranchCommitsAction).payload.commits
+    state.localBranchCommits[action.payload.branch.name] = action.payload.commits
     return {
       ...state,
       localBranchCommits: { ...state.localBranchCommits }
@@ -148,7 +144,7 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
 
   case 'SET_BRANCH_DIFFERENCES':
 
-    state.branchDifferences[`${(action as setBranchDifferencesAction).payload.remote.name}/${(action as setBranchDifferencesAction).payload.branch.name}`] = (action as setBranchDifferencesAction).payload.branchDifference
+    state.branchDifferences[`${action.payload.remote.name}/${action.payload.branch.name}`] = action.payload.branchDifference
 
     return {
       ...state,
@@ -180,10 +176,17 @@ export const gitReducer = (state: gitState = defaultGitState, action: Action): g
       gitHubScopes: action.payload
     }
 
+  case 'SET_USER_EMAILS':
+    return {
+         ...state,
+          userEmails: action.payload
+    }
+
+
   case 'SET_DEFAULT_REMOTE':
     return {
       ...state,
-      defaultRemote: (action as setDefaultRemoteAction).payload
+      defaultRemote: action.payload
     }
 
   case 'SET_LOG':

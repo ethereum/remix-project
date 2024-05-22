@@ -160,7 +160,7 @@ export const createWorkspace = async (
 
       if (!currentBranch) {
         if (!name || !email) {
-          await plugin.call('notification', 'toast', 'To use Git features, add username and email to the Github section of the Settings panel.')
+          await plugin.call('notification', 'toast', 'To use Git features, add username and email to the Github section of the Git plugin.')
         } else {
           // commit the template as first commit
           plugin.call('notification', 'toast', 'Creating initial git commit ...')
@@ -691,7 +691,7 @@ export const cloneRepository = async (url: string) => {
             id: 'cloneGitRepository',
             title: 'Clone Git Repository',
             message:
-            'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin',
+            'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in the Git plugin',
             modalType: 'modal',
             okLabel: plugin.registry.get('platform').api.isDesktop() ? 'Select or create folder':'OK',
             okFn: async () => {

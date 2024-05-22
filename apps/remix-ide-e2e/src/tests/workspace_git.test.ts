@@ -139,7 +139,7 @@ module.exports = {
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .pause(5000)
       .waitForElementVisible('[data-id="cloneGitRepositoryModalDialogModalBody-react"]')
-      .waitForElementContainsText('[data-id="cloneGitRepositoryModalDialogModalBody-react"]', 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin')
+      .waitForElementContainsText('[data-id="cloneGitRepositoryModalDialogModalBody-react"]', 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in the Git plugin')
       .click('[data-id="cloneGitRepository-modal-footer-ok-react"]')
   },
 

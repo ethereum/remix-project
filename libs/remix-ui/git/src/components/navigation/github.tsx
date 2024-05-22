@@ -21,7 +21,7 @@ export const GitHubNavigation = ({ eventKey, activePanel, callback }) => {
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-1 nav form-check-label">GITHUB</label>
+          <label className="pl-1 nav form-check-label">GITHUB SETUP</label>
         </span>
       </div>
     </>

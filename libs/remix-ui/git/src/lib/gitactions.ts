@@ -1,8 +1,8 @@
 import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog } from "../state/gitpayload";
-import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository } from '../types';
+import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRateLimit, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails } from "../state/gitpayload";
+import { GitHubUser, RateLimit, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository, userEmails } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { AlertModal, ModalTypes } from "@remix-ui/app";
@@ -532,7 +532,7 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
   }
 }
 
-export const getGitHubCredentials = async () => {
+export const getGitHubCredentialsFromLocalStorage = async () => {
   if (!plugin) return
   try {
     const username = await plugin.call('config', 'getAppParameter', 'settings/github-user-name')
@@ -548,7 +548,7 @@ export const getGitHubCredentials = async () => {
   }
 }
 
-export const getGitHubUser = async () => {
+export const loadGitHubUserFromToken = async () => {
   if (!plugin) return
   try {
     const token = await tokenWarning();
@@ -557,14 +557,25 @@ export const getGitHubUser = async () => {
         user: GitHubUser,
         ratelimit: RateLimit
         scopes: string[]
+        emails: userEmails
       } = await plugin.call('dgitApi' as any, 'getGitHubUser', { token });
 
       console.log('GET USER"', data)
-
-      dispatch(setGitHubUser(data.user))
-      dispatch(setRateLimit(data.ratelimit))
-      dispatch(setScopes(data.scopes))
+      if (data && data.emails && data.user && data.user.login) {
+        const primaryEmail = data.emails.find(email => email.primary)
+        if (primaryEmail) await plugin.call('config', 'setAppParameter', 'settings/github-email', primaryEmail.email)
+        data.user && data.user.login && await plugin.call('config', 'setAppParameter', 'settings/github-user-name', data.user.login)
+        dispatch(setGitHubUser(data.user))
+        dispatch(setRateLimit(data.ratelimit))
+        dispatch(setScopes(data.scopes))
+        dispatch(setUserEmails(data.emails))
+      }
     } else {
+      const credentials = await getGitHubCredentialsFromLocalStorage()
+      if (credentials) {
+        //dispatch(setGitHubUser({ login: credentials.username }))
+        //dispatch(setUserEmails([{ email: credentials.email, primary: true, visibility: 'public', verified: true }]))
+      }
       dispatch(setGitHubUser(null))
     }
   } catch (e) {
@@ -583,10 +594,6 @@ export const statusMatrix = async (filepaths: string[]) => {
   });
 
   return result;
-}
-
-export const diffFiles = async (filename: string | undefined) => {
-
 }
 
 export const resolveRef = async (ref: string) => {

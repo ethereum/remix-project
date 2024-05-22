@@ -1,5 +1,5 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { GitHubUser, branch, commitChange, fileStatusResult, remote, pagedCommits, branchDifference, gitLog, repository } from "../types"
+import { GitHubUser, branch, commitChange, fileStatusResult, remote, pagedCommits, branchDifference, gitLog, repository, userEmails } from "../types"
 import { Endpoints } from "@octokit/types"
 
 export const fileStatus = (files: fileStatusResult[]) => {
@@ -44,10 +44,17 @@ export const setRemoteBranches = (branches: any[]) => {
   }
 }
 
-export const setGitHubUser = (user: any) => {
+export const setGitHubUser = (user: GitHubUser) => {
   return {
     type: 'SET_GITHUB_USER',
     payload: user
+  }
+}
+
+export const setUserEmails = (emails: userEmails) => {
+  return {
+    type: 'SET_USER_EMAILS',
+    payload: emails
   }
 }
 

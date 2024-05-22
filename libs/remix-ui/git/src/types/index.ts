@@ -2,8 +2,9 @@ import { Endpoints } from "@octokit/types"
 import { IRemixApi } from "@remixproject/plugin-api"
 import { LibraryProfile, StatusEvents } from "@remixproject/plugin-utils"
 import { CommitObject, ReadBlobResult, ReadCommitResult, StatusRow } from "isomorphic-git"
-export type GitHubUser = Endpoints["GET /user"]["response"]['data']
+export type GitHubUser = Partial<Endpoints["GET /user"]["response"]['data']>
 export type RateLimit = Endpoints["GET /rate_limit"]["response"]["data"]
+export type userEmails = Endpoints["GET /user/emails"]["response"]["data"]
 
 export interface IGitApi {
     events: {
@@ -180,6 +181,7 @@ export type gitState = {
     upstream: remote
     gitHubUser: GitHubUser
     rateLimit: RateLimit
+    userEmails: userEmails
     gitHubScopes: string[]
     gitHubAccessToken: string
     log: gitLog[]
@@ -293,6 +295,7 @@ export const defaultGitState: gitState = {
     upstream: null,
     gitHubUser: {} as GitHubUser,
     rateLimit: {} as RateLimit,
+    userEmails: [] as userEmails,
     gitHubScopes: [],
     gitHubAccessToken: "",
     log: []

@@ -20,7 +20,7 @@ export interface gitActions {
     getCommitChanges(oid1: string, oid2: string, branch?: branch, remote?: remote): Promise<commitChange[] | boolean>
     getBranchCommits(branch: branch, page: number): Promise<void>
     getBranchDifferences(branch: branch, remote?: remote, state?: gitState): Promise<void>
-    getGitHubUser(): Promise<any>
+    loadGitHubUserFromToken(): Promise<any>
     diff(commitChange: commitChange): Promise<void>
     resolveRef(ref: string): Promise<string>
     setUpstreamRemote(upstream: remote): Promise<void>
@@ -46,7 +46,7 @@ export interface pluginActions {
       email,
       token
     }): Promise<void>
-    getGitHubCredentials(): Promise<{
+    getGitHubCredentialsFromLocalStorage(): Promise<{
         username: string
         email: string
         token: string
