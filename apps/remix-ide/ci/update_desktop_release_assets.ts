@@ -13,17 +13,17 @@ const headers = {
 const version = getVersionFromPackageJson()
 let channel = 'latest'
 
-if(version.includes('beta')) {
+if (version.includes('beta')) {
   channel = 'beta'
 }
-if(version.includes('alpha')) {
+if (version.includes('alpha')) {
   channel = 'alpha'
 }
-if(version.includes('insiders')) {
+if (version.includes('insiders')) {
   channel = 'insiders'
 }
 
-if(channel !== 'latest') repo = `remix-desktop-${channel}`
+if (channel !== 'latest') repo = `remix-desktop-${channel}`
 
 const octokit = new Octokit({
   auth: process.env.GH_TOKEN_DESKTOP_PUBLISH,
@@ -52,7 +52,7 @@ async function uploadReleaseAsset(release, name, file) {
       name,
       label: name
     });
-  }else{
+  } else {
     console.log(`File ${file} does not exist. Skipping...`)
   }
 }
@@ -107,7 +107,7 @@ async function hashFile(file): Promise<string> {
 }
 
 async function main() {
-  
+
 
 
   const allReleases = await getAllReleases()
@@ -219,7 +219,9 @@ async function main() {
   }
 
   files = await readReleaseFilesFromLocalDirectory()
-  files = files.filter((file) => file.endsWith('.zip') || file.endsWith('.dmg') || file.endsWith('.exe') || file.endsWith('.AppImage') || file.endsWith('.snap') || file.endsWith('.deb') || file.startsWith(`latest`))
+  files = files.
+    filter((file) => file.endsWith('.zip') || file.endsWith('.dmg') || file.endsWith('.exe') || file.endsWith('.AppImage') || file.endsWith('.snap') || file.endsWith('.deb') || file.startsWith(`latest`))
+    .filter((file) => !file.startsWith('._'))
   console.log(`Found ${files.length} files to upload`)
   console.log(files)
   if (!release.draft) {
