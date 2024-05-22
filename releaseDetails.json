@@ -1,10 +1,10 @@
 {
-    "version": "v0.48.0",
+    "version": "v0.49.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "EIP6963 supported",
-    "highlight2": "PLONK scripts added for ZKP templates",
-    "highlight3": "Solidity scripts added to use CREATE2 for contract deployment",
+    "highlight1": "Syntax highlighting for .toml files added",
+    "highlight2": "'Deploy & Run Transactions' plugin's UI improved",
+    "highlight3": "Remix AI model improved",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-48-0-0f256b049ff6?source=friends_link&sk=31785d048aa0293ea7e952004ff7e3e4"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-49-0-b396ab7fff2b?source=friends_link&sk=2e3c6063841bbfa398e3e60d59d4fd48"
   }
