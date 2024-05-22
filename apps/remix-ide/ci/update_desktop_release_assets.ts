@@ -95,16 +95,6 @@ async function main() {
   const allReleases = await getAllReleases()
   const version = await getVersionFromPackageJson()
   let channel = 'latest'
-  if(version.includes('beta')) {
-    channel = 'beta'
-  }
-  if(version.includes('alpha')) {
-    channel = 'alpha'
-  }
-  if(version.includes('insiders')) {
-    channel = 'insiders'
-  }
-
 
   console.log(`preparing release version: ${version}`)
   let release

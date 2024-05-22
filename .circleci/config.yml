@@ -445,18 +445,6 @@ jobs:
               cat release/latest-mac.yml
               mv release/latest-mac.yml release/latest-mac-<< parameters.arch >>.yml
             fi
-            if [ -f release/alpha-mac.yml ]; then
-              cat release/alpha-mac.yml
-              mv release/alpha-mac.yml release/alpha-mac-<< parameters.arch >>.yml
-            fi
-            if [ -f release/beta-mac.yml ]; then
-              cat release/beta-mac.yml
-              mv release/beta-mac.yml release/beta-mac-<< parameters.arch >>.yml
-            fi
-            if [ -f release/insiders-mac.yml ]; then
-              cat release/insiders-mac.yml
-              mv release/insiders-mac.yml release/insiders-mac-<< parameters.arch >>.yml
-            fi
       - run:
           name: Notarize the app
           command: |
@@ -772,11 +760,6 @@ workflows:
       - uploadartifacts:
           requires:
             - build-remixdesktop-mac
-            - build-remixdesktop-linux
-            - sign-remixdesktop-windows
-            - test-remixdesktop-windows
-            - test-remixdesktop-linux
-            - test-remixdesktop-mac
       - build-plugin:
           matrix:
             parameters:

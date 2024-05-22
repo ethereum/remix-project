@@ -2,7 +2,7 @@
     "productName": "Remix-Desktop-Beta",
     "appId": "org.ethereum.remix-ide",
     "asar": true,
-    "generateUpdatesFilesForAllChannels": true,
+    "generateUpdatesFilesForAllChannels": false,
     "icon": "assets",
     "files": [
         "build/**/*"
@@ -13,10 +13,9 @@
         {
             "provider": "github",
             "owner": "remix-project-org",
-            "repo": "remix-desktop",
+            "repo": "remix-desktop-beta",
             "releaseType": "draft",
-            "publishAutoUpdate": true,
-            "channel": "beta"
+            "publishAutoUpdate": true
         }
     ],
     "mac": {
