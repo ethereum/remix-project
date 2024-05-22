@@ -5,8 +5,6 @@ import {PluginClient} from '@remixproject/plugin'
 import {Contract, compileContract} from './compiler'
 import {ExampleContract} from '../components/VyperResult'
 import EventEmitter from 'events'
-const _paq = (window._paq = window._paq || [])
-
 
 export type VyperComplierAddress = 'https://vyper2.remixproject.org/' | 'http://localhost:8000/'
 export class RemixClient extends PluginClient {
@@ -73,7 +71,6 @@ export class RemixClient extends PluginClient {
         can you explain why this error occurred and how to fix it?
       `
       await this.client.call('solcoder' as any, 'error_explaining', message)
-      _paq.push(['trackEvent', 'ai', 'solcoder', 'error_explaining'])
     } catch (err) {
       console.error('unable to askGpt')
       console.error(err)
