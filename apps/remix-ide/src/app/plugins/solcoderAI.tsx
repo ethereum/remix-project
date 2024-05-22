@@ -28,8 +28,8 @@ enum BackendOPModel{
 }
 
 const PromptBuilder = (inst, answr, modelop) => {
-  if (modelop === BackendOPModel.CodeLLama) return "\n### INSTRUCTION:\n" + inst + "\n### RESPONSE:\n" + answr
-  if (modelop === BackendOPModel.DeepSeek) return ""
+  if (modelop === BackendOPModel.CodeLLama) return ""
+  if (modelop === BackendOPModel.DeepSeek) return "\n### INSTRUCTION:\n" + inst + "\n### RESPONSE:\n" + answr
   if (modelop === BackendOPModel.Mistral) return ""
 }
 
@@ -81,7 +81,6 @@ export class SolCoder extends Plugin {
     let result
     try {
       const main_prompt = this._build_solgpt_promt(prompt)
-      console.log(main_prompt.length)
       result = await(
         await fetch(this.api_url, {
           method: 'POST',
