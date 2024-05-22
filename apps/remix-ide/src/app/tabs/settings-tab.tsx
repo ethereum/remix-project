@@ -15,7 +15,7 @@ const _paq = (window._paq = window._paq || [])
 const profile = {
   name: 'settings',
   displayName: 'Settings',
-  methods: ['get', 'updateCopilotChoice'],
+  methods: ['get', 'updateCopilotChoice', 'getCopilotSetting'],
   events: [],
   icon: 'assets/img/settings.webp',
   description: 'Remix-IDE settings',
@@ -52,7 +52,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'settingsTab')
     this.useMatomoAnalytics = null
-    this.useCopilot = false
+    this.useCopilot = this.get('settings/copilot/suggest/activate')
   }
 
   setDispatch(dispatch: React.Dispatch<any>) {
@@ -100,6 +100,10 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.dispatch({
       ...this
     })
+  }
+
+  getCopilotSetting(){
+    return this.useCopilot
   }
 
   updateMatomoAnalyticsChoice(isChecked) {
