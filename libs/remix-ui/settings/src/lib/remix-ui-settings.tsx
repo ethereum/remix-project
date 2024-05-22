@@ -1,5 +1,7 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import React, {useState, useRef, useReducer, useEffect, useCallback} from 'react' // eslint-disable-line
+import { CustomTooltip } from '@remix-ui/helper'
+const _paq = (window._paq = window._paq || [])
 
 import { AppModal, AlertModal, ModalTypes } from '@remix-ui/app'
 import { labels, textDark, textSecondary } from './constants'
@@ -56,7 +58,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const [ipfsProtocol, setipfsProtocol] = useState('')
   const [ipfsProjectId, setipfsProjectId] = useState('')
   const [ipfsProjectSecret, setipfsProjectSecret] = useState('')
-  const copilotDownload = useRef(null)
 
   const intl = useIntl()
   const initValue = () => {
@@ -143,7 +144,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
     }
 
     const startCopilot = async () => {
-      copilotActivate(props.config, true, dispatch)
+      copilotActivate(props.config, props.useCopilot, dispatch)
       props.plugin.call('terminal', 'log', { type: 'typewriterlog', value: `Solidity copilot activated!` })
     }
 
@@ -450,9 +451,23 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const copilotSettings = () => (
     <div className="border-top">
       <div className="card-body pt-3 pb-2">
-        <h6 className="card-title">
+        <h6 className="card-title d-inline">
           <FormattedMessage id="settings.copilot" />
         </h6>
+        <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-aiDocumentation" tooltipText={<FormattedMessage id="remixUiTabs.tooltipText8" />}>
+          <span
+            data-id="remix_ai_docs"
+            id="remix_ai_docs"
+            className="btn pl-2 pr-0 py-0 d-inline ai-docs"
+            role='link'
+            onClick={()=>{
+              window.open("https://remix-ide.readthedocs.io/en/latest/ai.html")
+              _paq.push(['trackEvent', 'ai', 'solcoder', 'documentation'])
+            }}
+          >
+            <i aria-hidden="true" className="fas fa-book"></i>
+          </span>
+        </CustomTooltip>
 
         <div className="pt-2 mb-0">
           <div className="text-secondary mb-0 h6">
