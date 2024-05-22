@@ -17,12 +17,10 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
       plugin.on('filePanel', 'setWorkspace', async (workspace) => {
         const isGit = await plugin.call('fileManager', 'isGitRepo')
         if (isGit) {
-          console.log(plugin.isGitRepo)
           setGitBranchName(workspace.name)
         } else {
           setGitBranchName('Not a git repo')
         }
-        console.log('setWorkspace on workspaceswitch',workspace)
       })
     }
     run()
@@ -33,17 +31,24 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
       plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
         const isGit = await plugin.call('fileManager', 'isGitRepo')
         if (isGit) {
-          console.log(plugin.isGitRepo)
           const workspace = localStorage.getItem('currentWorkspace')
           setGitBranchName(workspace)
         } else {
           setGitBranchName('Not a git repo')
         }
-        console.log('setWorkspace on workspaceswitch')
       })
     }
     run()
   }, [gitBranchName, plugin.isGitRepo])
+
+  useEffect(() => {
+    const run = async () => {
+      plugin.on('settings', 'copilotChoiceChanged', (isAiActive) => {
+        console.log('copilot active', isAiActive)
+      })
+    }
+    run()
+  }, [])
 
   const lightDgitUp = async () => {
     const isActive = await plugin.call('manager', 'isActive', 'dgit')

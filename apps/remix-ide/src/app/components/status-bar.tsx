@@ -24,6 +24,7 @@ export class StatusBar extends Plugin implements StatusBarInterface {
   dispatch: React.Dispatch<any> = () => {}
   currentWorkspaceName: string = ''
   isGitRepo: boolean = false
+  isAiActive: boolean = false
   constructor(filePanel: FilePanelType, veritcalIcons: VerticalIcons) {
     super(statusBarProfile)
     this.filePanelPlugin = filePanel
@@ -48,9 +49,17 @@ export class StatusBar extends Plugin implements StatusBarInterface {
     this.renderComponent()
   }
 
+  async isAIActive() {
+    const aiActive = await this.call('settings', 'get', 'settings/copilot/suggest/activate')
+    this.isAiActive = aiActive
+    this.renderComponent()
+    return aiActive
+  }
+
   onActivation(): void {
     this.on('filePanel', 'workspaceInitializationCompleted', async () => {
       const isGit = await this.call('fileManager', 'isGitRepo')
+      this.isAIActive()
       if (!isGit) return
       const workspaceName = localStorage.getItem('currentWorkspace')
       workspaceName && workspaceName.length > 0 ? this.currentWorkspaceName = workspaceName : this.currentWorkspaceName = ''
@@ -64,6 +73,9 @@ export class StatusBar extends Plugin implements StatusBarInterface {
       }
       const workspaceName = localStorage.getItem('currentWorkspace')
       workspaceName && workspaceName.length > 0 ? this.currentWorkspaceName = workspaceName : this.currentWorkspaceName = 'error'
+    })
+    this.on('settings', 'copilotChoiceChanged', (isAiActive) => {
+      this.isAiActive = isAiActive
     })
     this.renderComponent()
   }
