@@ -11,6 +11,7 @@ import { WitnessToggler } from './witnessToggler'
 import { WitnessSection } from './witness'
 import { CompilerFeedback } from './feedback'
 import { CompilerReport, PrimeValue } from '../types'
+const _paq = (window._paq = window._paq || [])
 
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
@@ -73,7 +74,8 @@ export function Container () {
           explain why the error occurred and how to fix it.
           `
         // @ts-ignore
-        await circuitApp.plugin.call('openaigpt', 'message', message)
+        await circuitApp.plugin.call('solcoder', 'error_explaining', message)
+        _paq.push(['trackEvent', 'ai', 'solcoder', 'error_explaining_circom'])
       } else {
         const message = `
           error message: ${error}
@@ -81,7 +83,8 @@ export function Container () {
           explain why the error occurred and how to fix it.
           `
         // @ts-ignore
-        await circuitApp.plugin.call('openaigpt', 'message', message)
+        await circuitApp.plugin.call('solcoder', 'error_explaining', message)
+        _paq.push(['trackEvent', 'ai', 'solcoder', 'error_explaining_circom'])
       }
     } else {
       const error = report.message
@@ -91,7 +94,8 @@ export function Container () {
       explain why the error occurred and how to fix it.
       `
       // @ts-ignore
-      await circuitApp.plugin.call('openaigpt', 'message', message)
+      await circuitApp.plugin.call('solcoder', 'error_explaining', message)
+      _paq.push(['trackEvent', 'ai', 'solcoder', 'error_explaining_circom'])
     }
   }
 
