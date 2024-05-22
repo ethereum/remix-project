@@ -15,7 +15,7 @@ const profile = {
   name: 'solcoder',
   displayName: 'solcoder',
   description: 'solcoder',
-  methods: ['code_generation', 'code_completion', "solidity_answer", "code_explaining", "code_insertion"],
+  methods: ['code_generation', 'code_completion', "solidity_answer", "code_explaining", "code_insertion", "error_explaining"],
   events: [],
   maintainedBy: 'Remix',
 }
@@ -212,6 +212,35 @@ export class SolCoder extends Plugin {
 
     } catch (e) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `Unable to get a response ${e.message}` })
+      return
+    } finally {
+      this.emit("aiInferingDone")
+    }
+  }
+
+  async error_explaining(prompt): Promise<any> {
+    this.emit("aiInfering")
+    this.call('layout', 'maximizeTerminal')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for SOL-GPT answer...` })
+
+    let result
+    try {
+      result = await(
+        await fetch(this.api_url, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ "data":[prompt, "error_explaining", false,2000,0.9,0.8,50]}),
+        })
+      ).json()
+      if (result) {
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
+      }
+      return result.data[0]
+    } catch (e) {
+      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
     } finally {
       this.emit("aiInferingDone")
