@@ -5,6 +5,7 @@ import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-d
 import { FormattedMessage } from 'react-intl'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
+import { values } from 'lodash'
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
@@ -64,7 +65,6 @@ export const TabsUI = (props: TabsUIProps) => {
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
   const [ai_switch, setAI_switch] = useState<boolean>(false)
-
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
 
@@ -76,6 +76,14 @@ export const TabsUI = (props: TabsUIProps) => {
       })
     }
   }, [tabsState.selectedIndex])
+
+  const getAI = async() => {
+    try {
+      return await props.plugin.call('settings', 'getCopilotSetting')
+    } catch (e){
+      return false
+    }
+  }
 
   const getFileDecorationClasses = (tab: any) => {
     const fileDecoration = tabsState.fileDecorations.find((fileDecoration: fileDecoration) => {
@@ -92,7 +100,6 @@ export const TabsUI = (props: TabsUIProps) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
-
     return (
       <CustomTooltip tooltipId="tabsActive" tooltipText={tab.tooltip} placement="bottom-start">
         <div
@@ -133,6 +140,7 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const setFileDecorations = (fileStates: fileDecoration[]) => {
+    getAI().then(value => setAI_switch(value)).catch(error => console.log(error))
     dispatch({ type: 'SET_FILE_DECORATIONS', payload: fileStates })
   }
 
@@ -208,6 +216,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <i className="fas fa-play"></i>
             </button>
           </CustomTooltip>
+
           <div className= "d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
             <CustomTooltip
               placement="bottom"
