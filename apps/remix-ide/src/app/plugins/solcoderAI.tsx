@@ -28,8 +28,8 @@ enum BackendOPModel{
 }
 
 const PromptBuilder = (inst, answr, modelop) => {
-  if (modelop === BackendOPModel.CodeLLama) return "\n### INSTRUCTION:\n" + inst + "\n### RESPONSE:\n" + answr
-  if (modelop === BackendOPModel.DeepSeek) return ""
+  if (modelop === BackendOPModel.CodeLLama) return ""
+  if (modelop === BackendOPModel.DeepSeek) return "\n### INSTRUCTION:\n" + inst + "\n### RESPONSE:\n" + answr
   if (modelop === BackendOPModel.Mistral) return ""
 }
 
