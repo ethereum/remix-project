@@ -18,7 +18,6 @@ export class AppUpdaterPlugin extends ElectronBasePlugin {
     this.methods = [...super.methods]
 
     autoUpdater.autoDownload = false
-    autoUpdater.channel = 'beta'
     autoUpdater.disableDifferentialDownload = true
 
     autoUpdater.on('checking-for-update', () => {

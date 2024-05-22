@@ -2,7 +2,7 @@
     "productName": "Remix-Desktop",
     "appId": "org.ethereum.remix-ide",
     "asar": true,
-    "generateUpdatesFilesForAllChannels": true,
+    "generateUpdatesFilesForAllChannels": false,
     "icon": "assets",
     "files": [
         "build/**/*"
@@ -15,8 +15,7 @@
             "owner": "remix-project-org",
             "repo": "remix-desktop",
             "releaseType": "draft",
-            "publishAutoUpdate": true,
-            "channel": "latest"
+            "publishAutoUpdate": true
         }
     ],
     "mac": {
