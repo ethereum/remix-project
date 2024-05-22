@@ -234,7 +234,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <button
                 data-id="explain-editor"
                 id='explain_btn'
-                className='btn text-ai pl-2 pr-0 py-0 d-flex'
+                className='btn text-ai pl-2 pr-0 py-0'
                 disabled={!(tabsState.currentExt === 'sol') || explaining}
                 onClick={async () => {
                   const path = active().substr(active().indexOf('/') + 1, active().length)
@@ -268,7 +268,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <button
                 data-id="remix_ai_switch"
                 id='remix_ai_switch'
-                className="btn ai-switch text-ai pl-2 pr-0 py-0 d-flex"
+                className="btn ai-switch text-ai pl-2 pr-0 py-0"
                 disabled={!(tabsState.currentExt === 'sol' )}
                 onClick={async () => {
                   await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
