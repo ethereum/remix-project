@@ -723,8 +723,8 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
-        await props.plugin.call('openaigpt', 'message', message)
-        _paq.push(['trackEvent', 'ai', 'openai', 'generateDocumentation'])
+        await props.plugin.call('solcoder', 'code_explaining', message)
+        _paq.push(['trackEvent', 'ai', 'solcoder', 'generateDocumentation'])
       },
     }
 
