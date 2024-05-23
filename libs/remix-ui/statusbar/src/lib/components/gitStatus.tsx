@@ -1,5 +1,4 @@
 import React, { useEffect, Dispatch } from 'react'
-import { StatusBarInterface } from '../types'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 import '../../css/statusbar.css'
