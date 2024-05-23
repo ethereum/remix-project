@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 interface AIStatusProps {
   plugin: StatusBar
   isAiActive: boolean
+  setIsAiActive: (isAiActive: boolean) => void
   aiActive: () => Promise<any>
 }
 
@@ -12,24 +13,26 @@ export default function AIStatus(props: AIStatusProps) {
   const [copilotActive, setCopilotActive] = useState(false)
   useEffect(() => {
     const run = async () => {
-      props.plugin.on('settings', 'copilotChoiceChanged', (isAiActive) => {
-        console.log('copilot active', isAiActive)
-        setCopilotActive(isAiActive)
+      props.plugin.on('fileManager', 'currentFileChanged', async (isAiActive) => {
+        const aiActivate = await props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
+        console.log('copilot active', aiActivate)
+        setCopilotActive(aiActivate)
       })
     }
     run()
-  }, [copilotActive, props.plugin.isAiActive])
+  }, [props.plugin.isAiActive, props.isAiActive])
 
   useEffect(() => {
     const run = async () => {
-      props.plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
-        const active = await props.plugin.isAIActive()
+      props.plugin.on('filePanel', 'workspaceInitializationCompleted', async (work) => {
+        const aiActivate = await props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
+        const active = await props.plugin.isAIActive(aiActivate)
         setCopilotActive(active)
       })
       console.log('copilot active', copilotActive)
     }
     run()
-  }, [copilotActive, props.plugin.isAiActive])
+  }, [props.plugin.isAiActive])
   return (
     <div className="d-flex flex-row p-1 text-white justify-content-center align-items-center">
       <span className={copilotActive === false ? "fa-regular fa-microchip-ai ml-1 text-danger" : "fa-regular fa-microchip-ai ml-1"}></span>

@@ -56,7 +56,6 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
 
   const lightAiUp = async () => {
     const aiActive = await statusBarPlugin.call('settings', 'get', 'settings/copilot/suggest/activate')
-    console.log('ai', aiActive)
     if (!aiActive) return
     setIsAiActive(aiActive)
     return aiActive
@@ -76,7 +75,7 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
         <div className="remixui_statusbar"></div>
         <div className="remixui_statusbar d-flex flex-row">
           <ScamAlertStatus refs={refs} getReferenceProps={getReferenceProps} />
-          <AIStatus plugin={statusBarPlugin} aiActive={lightAiUp} isAiActive={isAiActive} />
+          <AIStatus plugin={statusBarPlugin} aiActive={lightAiUp} isAiActive={isAiActive} setIsAiActive={setIsAiActive} />
         </div>
       </div>
     </>
