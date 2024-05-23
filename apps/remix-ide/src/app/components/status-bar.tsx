@@ -12,7 +12,7 @@ const statusBarProfile: PluginProfile = {
   name: 'statusBar',
   displayName: 'Status Bar',
   description: 'Remix IDE status bar panel',
-  methods: [],
+  methods: ['isAIActive'],
   version: packageJson.version,
 }
 
@@ -49,8 +49,7 @@ export class StatusBar extends Plugin implements StatusBarInterface {
     this.renderComponent()
   }
 
-  async isAIActive() {
-    const aiActive = await this.call('settings', 'get', 'settings/copilot/suggest/activate')
+  async isAIActive(aiActive: any) {
     this.isAiActive = aiActive
     this.renderComponent()
     return aiActive
@@ -59,7 +58,6 @@ export class StatusBar extends Plugin implements StatusBarInterface {
   onActivation(): void {
     this.on('filePanel', 'workspaceInitializationCompleted', async () => {
       const isGit = await this.call('fileManager', 'isGitRepo')
-      this.isAIActive()
       if (!isGit) return
       const workspaceName = localStorage.getItem('currentWorkspace')
       workspaceName && workspaceName.length > 0 ? this.currentWorkspaceName = workspaceName : this.currentWorkspaceName = ''
