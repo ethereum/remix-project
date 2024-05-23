@@ -302,24 +302,24 @@ contract HelloWorld {
             <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>
               Git Clone
             </button>
+            <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
+            Gist
+            </button>
+
+            <button
+              className="btn text-nowrap p-2 mr-2 border my-1"
+              onClick={() =>
+                showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
+              }
+            >
+            HTTPS
+            </button>
           </div>
         </div>
         {/* <label style={{ fontSize: '0.8rem' }} className="pt-3">
           <FormattedMessage id="home.loadFrom" />
         </label> */}
         <div className="d-flex mt-2 align-items-end">
-          {/* <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
-            Gist
-          </button>
-
-          <button
-            className="btn p-2 border"
-            onClick={() =>
-              showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
-            }
-          >
-            HTTPS
-          </button> */}
           <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
             <button className="btn btn-block w-100 text-nowrap p-2 border my-1" style={{ width: 'fit-content' }} onClick={() => connectToLocalhost()}>
               <FormattedMessage id="home.accessFileSystem" />
