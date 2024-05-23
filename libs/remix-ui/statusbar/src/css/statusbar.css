@@ -7,3 +7,10 @@ remixui_statusbar:hover {
 .remixui_statusbar_gitstatus:hover {
   cursor: pointer;
 }
+
+/**
+ * approximately same height with vscode statusbar
+ **/
+.remixui_statusbar_height {
+  height: 21px;
+}
