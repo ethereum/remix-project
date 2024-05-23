@@ -760,6 +760,11 @@ workflows:
       - uploadartifacts:
           requires:
             - build-remixdesktop-mac
+            - build-remixdesktop-linux
+            - sign-remixdesktop-windows
+            - test-remixdesktop-windows
+            - test-remixdesktop-linux
+            - test-remixdesktop-mac
       - build-plugin:
           matrix:
             parameters:
