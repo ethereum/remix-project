@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { FormattedMessage } from 'react-intl'
 import { ExtendedRefs, ReferenceType } from '@floating-ui/react'
 

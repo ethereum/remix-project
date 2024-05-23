@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { StatusBarInterface } from './types'
 import GitStatus from './components/gitStatus'
 import AIStatus from './components/aiStatus'
 import ScamAlertStatus from './components/scamAlertStatus'
@@ -16,12 +15,6 @@ export interface RemixUIStatusBarProps {
 export type ScamAlert = {
   message: string
   url: string
-}
-
-type GetCurrentWorkspace = {
-  name: string
-  isLocalhost: boolean
-  absolutePath: string
 }
 
 export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
