@@ -41,15 +41,6 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
     run()
   }, [gitBranchName, plugin.isGitRepo])
 
-  useEffect(() => {
-    const run = async () => {
-      plugin.on('settings', 'copilotChoiceChanged', (isAiActive) => {
-        console.log('copilot active', isAiActive)
-      })
-    }
-    run()
-  }, [])
-
   const lightDgitUp = async () => {
     const isActive = await plugin.call('manager', 'isActive', 'dgit')
     const isGit = await plugin.call('fileManager', 'isGitRepo')
@@ -61,7 +52,7 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
 
   return (
     <div
-      className="d-flex flex-row p-1 text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
+      className="d-flex flex-row pl-3 text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
       onClick={async () => await lightDgitUp()}
     >
       {gitBranchName.length > 0 && gitBranchName !== 'Not a git repo' && <span className="fa-regular fa-code-branch ml-1"></span>}
