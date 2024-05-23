@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { CustomTooltip } from '@remix-ui/helper'
 import { FormattedMessage } from 'react-intl'
 import { ExtendedRefs, ReferenceType } from '@floating-ui/react'
 
