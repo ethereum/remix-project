@@ -97,7 +97,7 @@ module.exports = class SettingsTab extends ViewPlugin {
   updateCopilotChoice(isChecked) {
     this.config.set('settings/copilot/suggest/activate', isChecked)
     this.useCopilot = isChecked
-    this.call('statusbar', 'isAIActive', isChecked)
+    this.emit('copilotChoiceUpdated', isChecked)
     this.dispatch({
       ...this
     })

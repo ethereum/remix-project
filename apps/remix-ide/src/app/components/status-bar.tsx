@@ -49,8 +49,12 @@ export class StatusBar extends Plugin implements StatusBarInterface {
     this.renderComponent()
   }
 
-  async isAIActive(aiActive: any) {
-    this.isAiActive = aiActive
+  async isAIActive() {
+    let aiActive
+    this.on('settings', 'copilotChoiceUpdated', async (isChecked) => {
+      aiActive = isChecked
+      this.isAiActive = isChecked
+    })
     this.renderComponent()
     return aiActive
   }
