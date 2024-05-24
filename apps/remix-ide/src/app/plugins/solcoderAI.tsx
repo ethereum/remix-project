@@ -80,7 +80,7 @@ export class SolCoder extends Plugin {
   async solidity_answer(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for SOL-GPT answer...` })
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for Remix AI answer...` })
     _paq.push(['trackEvent', 'ai', 'solcoder', 'answering'])
 
     let result
@@ -117,7 +117,7 @@ export class SolCoder extends Plugin {
   async code_explaining(prompt, context:string=""): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for SOL-GPT answer...` })
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for Remix AI answer...` })
     _paq.push(['trackEvent', 'ai', 'solcoder', 'explaining'])
 
     let result
@@ -233,7 +233,7 @@ export class SolCoder extends Plugin {
   async error_explaining(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for SOL-GPT answer...` })
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for Remix AI answer...` })
     _paq.push(['trackEvent', 'ai', 'solcoder', 'explaining'])
 
     let result
