@@ -14,7 +14,7 @@ export function getDependencyGraph(ast: { [name: string]: CompilationSource }, t
 
 export function concatSourceFiles(files: any[], sources: any, order: string[]) {
   let concat = ''
-  order.reverse().forEach((importName) => {
+  order.forEach((importName) => {
     for (const file of files) {
       if (file === importName) {
         const source = sources[file].content
@@ -23,11 +23,6 @@ export function concatSourceFiles(files: any[], sources: any, order: string[]) {
         concat += `\n// File: ${file}\n\n`
         concat += sourceWithoutSPDX
       }
-      const source = sources[importName].content
-      const sourceWithoutImport = source.replace(IMPORT_SOLIDITY_REGEX, '')
-      const sourceWithoutSPDX = sourceWithoutImport.replace(SPDX_SOLIDITY_REGEX, '')
-      concat += `\n// File: ${importName}\n\n`
-      concat += sourceWithoutSPDX
     }
   })
   return concat
