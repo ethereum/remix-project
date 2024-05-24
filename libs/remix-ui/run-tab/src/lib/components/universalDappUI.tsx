@@ -6,6 +6,7 @@ import { FuncABI } from '@remix-project/core-plugin'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from '@ethereumjs/util'
+import { AppModal } from '@remix-ui/app'
 import { ContractGUI } from './contractGUI'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { BN } from 'bn.js'
@@ -217,6 +218,20 @@ export function UniversalDappUI(props: UdappProps) {
     setCalldataValue(value)
   }
 
+  const askPermissionToScan = async () => {
+
+    const modal: AppModal = {
+      id: 'SolidityScanPermissionHandler',
+      title: <FormattedMessage id="udapp.solScan.modalTitle" />,
+      message: <FormattedMessage id="udapp.solScan.modalMessage" />,
+      okLabel: <FormattedMessage id="udapp.solScan.modalOkLabel" />,
+      cancelLabel: <FormattedMessage id="udapp.solScan.modalCancelLabel" />
+    }
+
+    const result = await props.plugin.call('notification', 'modal', modal)
+    console.log('askPermissionToScan----> result----->', result)
+  }
+
   const label = (key: string | number, value: string) => {
     return (
       <div className="d-flex mt-2 flex-row label_item">
@@ -308,7 +323,7 @@ export function UniversalDappUI(props: UdappProps) {
               </CustomTooltip>
             )}
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextSolScan" />}>
-              <i className="fas fa-qrcode btn btn-sm p-0"></i>
+              <i className="fas fa-qrcode btn btn-sm p-0" onClick={askPermissionToScan}></i>
             </CustomTooltip> 
           </div>
           { props.isPinnedContract && props.instance.pinnedAt ? (
