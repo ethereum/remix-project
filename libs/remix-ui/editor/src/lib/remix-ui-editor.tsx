@@ -738,13 +738,15 @@ export const EditorUI = (props: EditorUIProps) => {
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
         const cm = await props.plugin.call('solcoder', 'code_explaining', message)
 
-        const natspecCom = extractNatspecComments(cm)
+        const natspecCom = "\n" + extractNatspecComments(cm)
         const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
-        const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
+        const range = new monacoRef.current.Range(cln.start.line, editor.getModel().getLineMaxColumn(cln.start.line), cln.start.line, cln.start.column)
 
         // TODO: activate the provider to let the user accept the documentation suggestion
         // const provider = new RemixSolidityDocumentationProvider(natspecCom)
         // editor.inlineProviderDisposable = monacoRef.current.languages.registerInlineCompletionsProvider('remix-docu', provider)
+        // const acts = editor.getActions()
+        // console.log(acts)
 
         editor.executeEdits('inlineCompletionDocu', [
           {
@@ -753,6 +755,14 @@ export const EditorUI = (props: EditorUIProps) => {
             forceMoveMarkers: true,
           },
         ]);
+
+        const endline = cln.start.line + natspecCom.split('\n').length-1
+        const selection = new monacoRef.current.Selection(cln.start.line+1, 0, endline , editor.getModel().getLineMaxColumn(endline));
+        editor.setSelection(selection);
+        editor.revealLinesInCenter(cln.start.line+1, endline);
+
+        editor.trigger("editor", "editor.action.indentLines");
+
         _paq.push(['trackEvent', 'ai', 'solcoder', 'generateDocumentation'])
       },
     }
