@@ -80,6 +80,12 @@
   "udapp.pinnedAt": "Pinned at",
   "udapp.filePath": "File path",
 
+  "udapp.solScan.iconTooltip": "Run Solidity scan for contract",
+  "udapp.solScan.modalTitle": "Permission to share code",
+  "udapp.solScan.modalMessage": "Contract code will be shared to third party Solidity Scan.\n Would you like to continue?",
+  "udapp.solScan.modalOkLabel": "Continue",
+  "udapp.solScan.modalCancelLabel": "Cancel",
+
   "udapp._comment_recorderCardUI.tsx": "libs/remix-ui/run-tab/src/lib/components/recorderCardUI.tsx",
   "udapp.transactionsRecorded": "Transactions recorded",
   "udapp.transactionsCountTooltip": "The number of recorded transactions",
@@ -111,7 +117,6 @@
   "udapp.tooltipTextRemove": "Remove from the list",
   "udapp.tooltipTextEdit": "Create a DApp using this contract in the main panel",
   "udapp.tooltipTextPin": "Pin contract",
-  "udapp.tooltipTextSolScan": "Run Solidity scan for contract",
   "udapp.tooltipText8": "Click for docs about using 'receive'/'fallback'",
   "udapp.tooltipText9": "The Calldata to send to fallback function of the contract.",
   "udapp.tooltipText10": "Send data to contract.",
