@@ -22,7 +22,7 @@
     "@remix-project/remix-lib": "^0.5.57",
     "async": "^2.6.2",
     "eslint-scope": "^5.0.0",
-    "ethers": "^5.4.2",
+    "ethers": "^6.12.1",
     "ethjs-util": "^0.1.6",
     "minixhr": "^3.2.2",
     "semver": "^6.3.0",
