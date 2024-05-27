@@ -2,7 +2,7 @@ import type { CompilationSource, AstNode } from '@remix-project/remix-solidity'
 
 const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm
 const SPDX_SOLIDITY_REGEX = /^\s*\/\/ SPDX-License-Identifier:.*$/gm
-const PRAGMA_SOLIDITY_REGEX = /^pragma\s+.*$/gm
+const PRAGMA_SOLIDITY_REGEX = /^pragma experimental\s+.*$/gm
 
 type Visited = { [key: string]: number }
 export function getDependencyGraph(ast: { [name: string]: CompilationSource }, target: string, remappings: string[], order: string[]) {
