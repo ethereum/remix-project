@@ -44,6 +44,19 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
           {plugin?.profile?.name && <FormattedMessage id={`${plugin.profile.name}.displayName`} defaultMessage={plugin?.profile?.displayName || plugin?.profile?.name} />}
         </h6>
         <div className="d-flex flex-row">
+          {
+            plugin && plugin.profile.name !== 'filePanel' && (
+              <RenderIfNot condition={plugin.profile.name === 'filePanel'}>
+                <RenderIf condition={plugin.pinned}>
+                  <div className='d-flex' onClick={unPinPlugin}>
+                    <CustomTooltip placement="auto-end" tooltipId="unPinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.unPinnedMsg" />}>
+                      <i aria-hidden="true" className="mt-1 px-1 pl-2 fas fa-solid fa-square-left"></i>
+                    </CustomTooltip>
+                  </div>
+                </RenderIf>
+              </RenderIfNot>
+            )
+          }
           <div className="d-flex flex-row">
             {plugin?.profile?.maintainedBy?.toLowerCase() === 'remix' ? (
               <CustomTooltip placement="auto-end" tooltipId="maintainedByTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.maintainedByRemix" />}>
@@ -62,22 +75,13 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
           {
             plugin && plugin.profile.name !== 'filePanel' && (
               <RenderIfNot condition={plugin.profile.name === 'filePanel'}>
-                <>
-                  <RenderIf condition={plugin.pinned}>
-                    <div className='d-flex' onClick={unPinPlugin}>
-                      <CustomTooltip placement="auto-end" tooltipId="unPinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.unPinnedMsg" />}>
-                        <i aria-hidden="true" className="text-success mt-1 px-1 pl-2 fas fa-thumbtack"></i>
-                      </CustomTooltip>
-                    </div>
-                  </RenderIf>
-                  <RenderIfNot condition={plugin.pinned}>
-                    <div className='d-flex' onClick={pinPlugin}>
-                      <CustomTooltip placement="auto-end" tooltipId="pinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.pinnedMsg" />}>
-                        <i aria-hidden="true" className="mt-1 px-1 pl-2 fas fa-thumbtack"></i>
-                      </CustomTooltip>
-                    </div>
-                  </RenderIfNot>
-                </>
+                <RenderIfNot condition={plugin.pinned}>
+                  <div className='d-flex' onClick={pinPlugin}>
+                    <CustomTooltip placement="auto-end" tooltipId="pinnedMsg" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.pinnedMsg" />}>
+                      <i aria-hidden="true" className="mt-1 px-1 pl-2 fas fa-solid fa-square-right"></i>
+                    </CustomTooltip>
+                  </div>
+                </RenderIfNot>
               </RenderIfNot>
             )
           }
