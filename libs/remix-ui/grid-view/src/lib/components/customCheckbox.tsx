@@ -16,15 +16,16 @@ export const CustomCheckbox = (props: CustomCheckboxProps) => {
   if (!textColor || textColor == '') textColor = filterCon.keyValueMap[props.label].color
 
   return (
-    <div id={textColor + props.label} className="h-80 mx-1 align-items-center custom-control custom-checkbox" style={{ minWidth: '4rem' }}>
+    <div id={textColor + props.label}
+      className="h-80 mx-1 align-items-center custom-control custom-checkbox"
+      style={{ minWidth: '4rem' }}
+    >
       <input
         className="custom-control-input"
         id={"GVCheckbox" + props.label}
         defaultChecked={defChecked}
         onChange={e => {
-          if (props.label == 'no tag')
-            filterCon.showUntagged = ! filterCon.showUntagged
-          else filterCon.updateValue(props.label, e.target.checked, textColor)}}
+          filterCon.updateValue(props.label, e.target.checked, textColor)}}
         type="checkbox"
       />
       <label
