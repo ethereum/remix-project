@@ -18,6 +18,7 @@ import { RSS } from './hosts/rss';
 import morgan from 'morgan';
 import { StatusPlugin } from './hosts/status'
 import { mockChat } from './hosts/mock-ai-gpt'
+import { solidityScan } from './hosts/solidityscan'
 
 (async () => {
 
@@ -40,6 +41,7 @@ import { mockChat } from './hosts/mock-ai-gpt'
         app.use('/completion', solcompletion());
         app.use('/gpt-chat', gptchat());
         app.use('/chat/completions', mockChat());
+        app.use('/solidityscan', solidityScan());
     }else{
         port = Number(80);
         ssl_port = Number(443);
@@ -48,6 +50,7 @@ import { mockChat } from './hosts/mock-ai-gpt'
         app.use(vhost('solcoder.remixproject.org', solcoder()))
         app.use(vhost('completion.remixproject.org', solcompletion()))
         app.use(vhost('gpt-chat.remixproject.org', gptchat()))
+        app.use(vhost('solidityscan.remixproject.org', solidityScan()))
     }
 
     app.use(vhost('remixproject.org', remixProject()))
