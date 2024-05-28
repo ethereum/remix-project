@@ -123,6 +123,7 @@
   "udapp.llIError6": "Both 'receive' and 'fallback' functions are not defined",
   "udapp.llIError7": "Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers",
   "udapp.copy": "Copy",
+  "udapp.copyAddress": "Copy Address",
 
   "udapp._comment_mainnet.tsx": "libs/remix-ui/run-tab/src/lib/components/mainnet.tsx",
   "udapp.mainnetText1": "You are about to create a transaction on {name} Network. Confirm the details to send the info to your provider.",
