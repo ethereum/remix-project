@@ -128,7 +128,7 @@ export function isNative(name) {
     'circuit-compiler',
     'compilationDetails',
     'vyperCompilationDetails',
-    'remixGuide',
+    //'remixGuide',
     'walletconnect'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
