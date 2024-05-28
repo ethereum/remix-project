@@ -345,7 +345,7 @@ class AppComponent {
       solidityumlgen,
       compilationDetails,
       vyperCompilationDetails,
-      // remixGuide,
+      remixGuide,
       contractFlattener,
       solidityScript,
       templates,
