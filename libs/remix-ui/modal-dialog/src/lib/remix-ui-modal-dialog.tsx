@@ -47,7 +47,6 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }
 
   const modalKeyEvent = (keyCode) => {
-    console.log("modal key", keyCode)
     if (keyCode === 27) {
       // Esc
       if (props.cancelFn) props.cancelFn()
