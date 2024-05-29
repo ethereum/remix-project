@@ -247,7 +247,7 @@ contract HelloWorld {
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
         {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
-          <div className="d-flex flex-column mb-3">
+          <div className="d-flex flex-column mb-5">
             <label style={{ fontSize: '0.8rem' }} className="mt-3">
               Recent workspaces
             </label>
@@ -274,7 +274,7 @@ contract HelloWorld {
         <div className="d-flex flex-column">
           <div className="d-flex flex-row">
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.startCodingPlayground" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
-              <button className="btn btn-primary text-nowrap p-2 mr-2 border my-1" data-id="homeTabStartCoding" style={{ width: 'fit-content' }} onClick={() => startCoding()}>
+              <button className="btn btn-primary text-nowrap p-2 mr-2 border my-1" data-id="homeTabStartCoding" style={{ width: 'fit-content' }} onClick={async () => await plugin.call('filePanel', 'createNewFile')}>
                 <FormattedMessage id="home.startCoding" />
               </button>
             </CustomTooltip>
@@ -316,12 +316,10 @@ contract HelloWorld {
             </button>
           </div>
         </div>
-        {/* <label style={{ fontSize: '0.8rem' }} className="pt-3">
-          <FormattedMessage id="home.loadFrom" />
-        </label> */}
         <div className="d-flex mt-2 align-items-end">
           <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
             <button className="btn btn-block w-100 text-nowrap p-2 border my-1" style={{ width: 'fit-content' }} onClick={() => connectToLocalhost()}>
+              <i className="fa-regular fa-desktop pr-2"></i>
               <FormattedMessage id="home.accessFileSystem" />
             </button>
           </CustomTooltip>
