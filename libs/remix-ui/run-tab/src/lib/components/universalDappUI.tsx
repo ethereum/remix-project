@@ -6,6 +6,7 @@ import { FuncABI } from '@remix-project/core-plugin'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from '@ethereumjs/util'
+import axios from 'axios'
 import { AppModal } from '@remix-ui/app'
 import { ContractGUI } from './contractGUI'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
@@ -218,6 +219,99 @@ export function UniversalDappUI(props: UdappProps) {
     setCalldataValue(value)
   }
 
+  const handleScanContinue = async () => {
+    console.log('inside handleScanContinue')
+
+    const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
+    const fileName = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
+    console.log('fileName---->', fileName)
+    // const existsOrNot = await props.plugin.call('fileManager', 'exists', fileName)
+    // console.log('existsOrNot---->', existsOrNot)
+    // const file = await props.plugin.call('fileManager', 'readFile', fileName)
+    const file = `// SPDX-License-Identifier: GPL-3.0
+
+    pragma solidity >=0.8.2 <0.9.0;
+    
+    /**
+     * @title Storage
+     * @dev Store & retrieve value in a variable
+     * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
+     */
+    contract Storage {
+    
+        constructor() payable {}
+    
+        uint256 number;
+    
+        /**
+         * @dev Store value in variable
+         * @param num value to store
+         */
+        function store(uint256 num) public {
+            number = num;
+        }
+    
+        /**
+         * @dev Return value 
+         * @return value of 'number'
+         */
+        function retrieve() public view returns (uint256){
+            return number;
+        }
+    }`
+    console.log('file---->', file)
+
+    const urlResponse = await axios.post(`https://solidityscan.remixproject.org/`, {
+        file,
+        fileName
+    })
+    console.log('urlResponse----->', urlResponse.data)
+
+
+    // websocket connection
+
+    if (urlResponse.data.status === 'success') {
+      const ws = new WebSocket('wss://api-ws.solidityscan.com')
+      ws.addEventListener('error', console.error);
+      const bearerToken = ""
+ 
+      ws.addEventListener('open', (event) => {
+          const tokenRegRequest = {
+              "action": "message",
+              "payload": {
+                  "type": "auth_token_register",
+                  "body": {
+                      "auth_token": bearerToken
+                  }
+              }
+          }
+        ws.send(JSON.stringify(tokenRegRequest))
+      })
+
+      ws.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data)
+        if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
+
+          const request2 = {
+            "action": "message",
+            "payload": {
+                "type": "private_project_scan_initiate",
+                "body": {
+                    "file_urls": [
+                        urlResponse.data.result.url
+                    ],
+                    "project_name": "TestRemix",
+                    "project_type": "new"
+                }
+            }
+          }
+          ws.send(JSON.stringify(request2))
+        }
+        
+      })
+    }
+  }
+
   const askPermissionToScan = async () => {
 
     const modal: AppModal = {
@@ -225,6 +319,7 @@ export function UniversalDappUI(props: UdappProps) {
       title: <FormattedMessage id="udapp.solScan.modalTitle" />,
       message: <FormattedMessage id="udapp.solScan.modalMessage" />,
       okLabel: <FormattedMessage id="udapp.solScan.modalOkLabel" />,
+      okFn: handleScanContinue,
       cancelLabel: <FormattedMessage id="udapp.solScan.modalCancelLabel" />
     }
 
