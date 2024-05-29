@@ -42,7 +42,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
     console.log('expand ----> ', key)
   }
 
-  // The expanded widged should go to the grid-segment and be updated based on the expandedItem state variable of the plugin. 
+  // The expanded widged should go to the grid-segment and be updated based on the expandedItem state variable of the plugin.
   // The state var will work like theme dispattching is working.
 
   useEffect(() => {
@@ -61,11 +61,11 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
         <div className='d-flex flex-grid'>
           <div className={"d-flex mx-0 p-2 bg-light border border-secondary remixui_grid_cell_container " + props.classList || ''} data-id={"remixUIGS" + props.title}>
             <div className="d-flex remixui_grid_cell flex-column">
-              <div className='d-flex flex-row pb-1 align-items-end' style={{width: '8rem', height: '1rem'}}>
-                { props.logo && <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem'  }}/> }
+              <div className='d-flex flex-row pb-1 align-items-end' style={{ width: '8rem', height: '1rem' }}>
+                { props.logo && <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> }
                 { props.title && <label
                   className='m-0 p-0 align-items-left'
-                  style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 'xx-small'}}
+                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 'xx-small' }}
                 >
                   { props.title }
                 </label> }
