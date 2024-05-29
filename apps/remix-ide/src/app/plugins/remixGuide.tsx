@@ -101,13 +101,16 @@ export class RemixGuidePlugin extends ViewPlugin {
           showUntagged={true}
           showPin={true}
           tagList={[
-            ['beginner', 'danger'],
-            ['advanced', 'warning'],
+            ['Remix', 'primary'],
+            ['L2', 'primary'],
+            ['Beginner', 'danger'],
+            ['Advanced', 'warning'],
             ['AI', 'success'],
             ['plugins', 'secondary'],
-            ['solidity', 'primary'],
-            ['vyper', 'info'],
-            ['L2', 'danger']
+            ['Solidity', 'primary'],
+            ['Vyper', 'info'],
+            ['L2', 'danger'],
+            ['EVM', 'secondary']
           ]}
           title={Data.title}
           description={Data.description}
@@ -133,7 +136,7 @@ export class RemixGuidePlugin extends ViewPlugin {
                   }}
                   logo={cell.expandViewElement.logo}
                 >
-                  <img src={"//img.youtube.com/vi/" + this.videoID + "/0.jpg"} style={{ height: '70px', width: '70px' }}></img>
+                  <img src={"//img.youtube.com/vi/" + this.videoID + "/0.jpg"} style={{ height: '70px' }}></img>
                 </RemixUIGridCell>
               })}
             </RemixUIGridSection>
