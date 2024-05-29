@@ -28,8 +28,6 @@ export class RemixGuidePlugin extends ViewPlugin {
   handleKeyDown: any
   handleEscape: any
 
-  //sectionToExpandedCell: [string, string][]; // Array of pairs where key is the section name and the second value is the name of the cell
-
   constructor(appManager: RemixAppManager) {
     super(profile)
     this.appManager = appManager
