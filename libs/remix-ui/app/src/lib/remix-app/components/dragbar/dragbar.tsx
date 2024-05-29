@@ -32,22 +32,41 @@ const DragBar = (props: IRemixDragBarUi) => {
   useEffect(() => {
     initialWidth.current = props.refObject.current.clientWidth
     if (props.maximiseTrigger > 0) {
-      const width = 0.4 * window.innerWidth
-      if (width > props.refObject.current.offsetWidth) {
-        props.refObject.current.style.width = width + 'px'
-        setTimeout(() => {
-          setDragBarPosX(offset + width)
-        }, 300)
+      if (props.layoutPosition === 'left') {
+        const width = 0.4 * window.innerWidth
+
+        if (width > props.refObject.current.offsetWidth) {
+          props.refObject.current.style.width = width + 'px'
+          setTimeout(() => {
+            setDragBarPosX(offset + width)
+          }, 300)
+        }
+      } else if (props.layoutPosition === 'right') {
+        const width = 0.4 * window.innerWidth
+
+        if (width > props.refObject.current.offsetWidth) {
+          props.refObject.current.style.width = width + 'px'
+          setTimeout(() => {
+            setDragBarPosX(window.innerWidth - width)
+          }, 300)
+        }
       }
     }
   }, [props.maximiseTrigger])
 
   useEffect(() => {
     if (props.maximiseTrigger > 0) {
-      props.refObject.current.style.width = initialWidth.current + 'px'
-      setTimeout(() => {
-        setDragBarPosX(offset + initialWidth.current)
-      }, 300)
+      if (props.layoutPosition === 'left') {
+        props.refObject.current.style.width = initialWidth.current + 'px'
+        setTimeout(() => {
+          setDragBarPosX(offset + initialWidth.current)
+        }, 300)
+      } else if (props.layoutPosition === 'right') {
+        props.refObject.current.style.width = props.minWidth + 'px'
+        setTimeout(() => {
+          setDragBarPosX(window.innerWidth - props.minWidth)
+        }, 300)
+      }
     }
   }, [props.resetTrigger])
 

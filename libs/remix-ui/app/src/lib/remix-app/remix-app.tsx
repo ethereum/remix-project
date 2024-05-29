@@ -96,12 +96,6 @@ const RemixApp = (props: IRemixAppUi) => {
       })
     })
 
-    props.app.layout.event.on('minimizepinnedpanel', () => {
-      setTimeout(() => {
-        setHidePinnedPanel(true)
-      }, 1000)
-    })
-
     props.app.layout.event.on('maximisepinnedpanel', () => {
       setMaximiseRightTrigger((prev) => {
         return prev + 1
@@ -211,15 +205,18 @@ const RemixApp = (props: IRemixAppUi) => {
               <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`flex-row-reverse pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
                 {props.app.pinnedPanel.render()}
               </div>
-              <DragBar
-                resetTrigger={resetRightTrigger}
-                maximiseTrigger={maximiseRightTrigger}
-                minWidth={285}
-                refObject={pinnedPanelRef}
-                hidden={hidePinnedPanel}
-                setHideStatus={setHidePinnedPanel}
-                layoutPosition='right'
-              ></DragBar>
+              {
+                !hidePinnedPanel &&
+                <DragBar
+                  resetTrigger={resetRightTrigger}
+                  maximiseTrigger={maximiseRightTrigger}
+                  minWidth={331}
+                  refObject={pinnedPanelRef}
+                  hidden={hidePinnedPanel}
+                  setHideStatus={setHidePinnedPanel}
+                  layoutPosition='right'
+                ></DragBar>
+              }
             </div>
             <div>{props.app.hiddenPanel.render()}</div>
             <AppDialogs></AppDialogs>
