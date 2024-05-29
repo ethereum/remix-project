@@ -17,7 +17,7 @@ function HomeTabFeatured() {
         <FormattedMessage id="home.featured" />
       </label>
       <div className="mb-2">
-        <div className="w-100 d-flex flex-column rounded-3" style={{ height: '300px' }}>
+        <div className="w-100 d-flex flex-column rounded-3" style={{ height: '450px' }}>
           <ThemeContext.Provider value={themeFilter}>
             <Carousel
               arrows={false}
@@ -34,14 +34,14 @@ function HomeTabFeatured() {
               centerMode={false}
               autoPlay={true}
               keyBoardControl={true}
-              containerClass="border w-full carousel-container"
+              containerClass="border w-full carousel-container h-100 d-flex align-items-center"
               sliderClass="h-100 justify-content-between"
               deviceType={'desktop'}
               itemClass=""
               autoPlaySpeed={10000}
               dotListClass="position-relative mt-2"
             >
-              <div className="mr-1 pr-1 d-flex">
+              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <div className="h6 w-50 p-2 pl-4 align-self-center" style={{ flex: '1' }}>
                   <h5>{releaseDetails.version} {releaseDetails.title}</h5>
                   <div style={{ fontSize: '0.8rem' }} className="mb-3">
@@ -65,7 +65,7 @@ function HomeTabFeatured() {
                   <img src={'assets/img/remi_drums_whatsnew.webp'} style={{ flex: '1', height: '220px', maxWidth: '220px' }} alt=""></img>
                 </a>
               </div>
-              <div className="mr-1 pr-1 d-flex">
+              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                     <FormattedMessage id="home.jumpIntoWeb3" />
@@ -86,7 +86,7 @@ function HomeTabFeatured() {
                   <img src={'assets/img/bgRemi_small.webp'} style={{ flex: '1', height: '220px', maxWidth: '220px' }} alt=""></img>
                 </a>
               </div>
-              <div className="mr-1 pr-1 d-flex">
+              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                     <FormattedMessage id="home.remixYouTube" />
@@ -110,7 +110,7 @@ function HomeTabFeatured() {
                   <img src={'/assets/img/YouTubeLogo.webp'} style={{ flex: '1', height: '220px', maxWidth: '220px' }} alt=""></img>
                 </a>
               </div>
-              <div className="mr-1 pr-1 d-flex">
+              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                     <FormattedMessage id="home.betaTesting" />
