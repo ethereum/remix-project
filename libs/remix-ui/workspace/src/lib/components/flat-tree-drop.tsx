@@ -86,6 +86,7 @@ export const FlatTreeDrop = (props: FlatTreeDropProps) => {
         }
       })
     await Promise.all(promises)
+    props.resetMultiselect()
   }
 
   return (<div

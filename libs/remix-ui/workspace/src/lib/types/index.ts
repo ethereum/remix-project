@@ -346,6 +346,7 @@ export type Actions = {[A in keyof ActionPayloadTypes]: Action<A>}[keyof ActionP
 export type WorkspaceElement = 'folder' | 'file' | 'workspace'
 
 export interface FlatTreeDropProps {
+  resetMultiselect: () => void
   moveFolderSilently: (dest: string, src: string) => Promise<void>
   moveFileSilently: (dest: string, src: string) => Promise<void>
   setFilesSelected: Dispatch<React.SetStateAction<string[]>>

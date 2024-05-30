@@ -38,6 +38,7 @@ interface FlatTreeProps {
   handleClickFolder: (path: string, type: string) => void
   moveFolderSilently: (dest: string, src: string) => Promise<void>
   moveFileSilently: (dest: string, src: string) => Promise<void>
+  resetMultiselect: () => void
   setFilesSelected: Dispatch<React.SetStateAction<string[]>>
   fileState: fileDecoration[]
   createNewFile?: any
@@ -263,6 +264,7 @@ export const FlatTree = (props: FlatTreeProps) => {
         warnMovingItems={warnMovingItems}
         moveFolderSilently={moveFolderSilently}
         moveFileSilently={moveFileSilently}
+        resetMultiselect={props.resetMultiselect}
         setFilesSelected={setFilesSelected}
         handleClickFolder={handleClickFolder}
         expandPath={expandPath}
