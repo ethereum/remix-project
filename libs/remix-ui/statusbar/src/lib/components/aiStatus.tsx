@@ -33,7 +33,7 @@ export default function AIStatus(props: AIStatusProps) {
   return (
     <div className="d-flex flex-row pr-2 text-white justify-content-center align-items-center">
       <span className={copilotActive === false ? "fa-regular fa-microchip-ai ml-1 text-danger" : "fa-regular fa-microchip-ai ml-1"}></span>
-      <span className={copilotActive === false ? "small mx-1 text-danger" : "small mx-1" }>Remix Copilot</span>
+      <span className={copilotActive === false ? "small mx-1 text-danger semi-bold" : "small mx-1 semi-bold" }>Remix Copilot</span>
     </div>
   )
 }

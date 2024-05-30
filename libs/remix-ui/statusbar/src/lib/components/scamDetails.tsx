@@ -17,19 +17,19 @@ export default function ScamDetails ({ refs, floatStyle, scamAlerts }: ScamDetai
   return (
     <div
       ref={refs.setFloating}
-      style={floatStyle}
-      className="py-2 ml-1 mb-1 mb-2 d-flex w-25 bg-danger border border-danger"
+      style={ floatStyle }
+      className="py-2 ml-1 mb-1 mb-2 d-flex w-25 alert alert-danger border border-danger"
     >
       <span className="align-self-center pl-4 mt-1">
-        <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter', color: 'orange' }} className="pr-2 far fa-exclamation-triangle"></i>
+        <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }} className="pr-2 far text-danger fa-exclamation-triangle"></i>
       </span>
-      <div className="d-flex flex-column text-white">
+      <div className="d-flex flex-column text-danger">
         {scamAlerts && scamAlerts.map((alert, index) => (
           <span className="pl-4 mt-1" key={`${alert.url}${index}`}>
             {alert.url.length < 1 ? <FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} />
               : (<><FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} /> : &nbsp;
                 <a
-                  className={`remixui_home_text text-white ${index === 1 ? 'pl-2' : ''}`}
+                  className={`remixui_home_text text-danger ${index === 1 ? 'pl-2' : ''}`}
                   onClick={() => {
                     index === 1 && _paq.push(['trackEvent', 'hometab', 'scamAlert', 'learnMore'])
                     index === 2 && _paq.push(['trackEvent', 'hometab', 'scamAlert', 'safetyTips'])
