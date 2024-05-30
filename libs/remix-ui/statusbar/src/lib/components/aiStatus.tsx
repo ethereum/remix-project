@@ -1,5 +1,6 @@
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
+import { CustomTooltip } from '@remix-ui/helper'
 import React, { useEffect, useState } from 'react'
 
 interface AIStatusProps {
@@ -31,9 +32,13 @@ export default function AIStatus(props: AIStatusProps) {
     run()
   }, [props.plugin.isAiActive])
   return (
-    <div className="d-flex flex-row pr-2 text-white justify-content-center align-items-center">
-      <span className={copilotActive === false ? "fa-regular fa-microchip-ai ml-1 text-danger" : "fa-regular fa-microchip-ai ml-1"}></span>
-      <span className={copilotActive === false ? "small mx-1 text-danger semi-bold" : "small mx-1 semi-bold" }>Remix Copilot</span>
-    </div>
+    <CustomTooltip
+      tooltipText={copilotActive ? "Remix Copilot activated" : "Remix Copilot disabled."}
+    >
+      <div className="d-flex flex-row pr-2 text-white justify-content-center align-items-center">
+        <span className={copilotActive === false ? "fa-regular fa-microchip-ai ml-1 text-danger" : "fa-regular fa-microchip-ai ml-1"}></span>
+        <span className={copilotActive === false ? "small mx-1 text-danger semi-bold" : "small mx-1 semi-bold" }>Remix Copilot</span>
+      </div>
+    </CustomTooltip>
   )
 }
