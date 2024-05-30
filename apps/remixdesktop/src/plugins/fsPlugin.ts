@@ -9,7 +9,10 @@ import path from 'path'
 import {customAction} from '@remixproject/plugin-api'
 import { PluginEventDataBatcher } from '../utils/pluginEventDataBatcher'
 
-
+type recentFolder = {
+  timestamp: number,
+  path: string
+}
 
 const profile: Profile = {
   displayName: 'fs',
@@ -312,11 +315,37 @@ class FSPluginClient extends ElectronBasePluginClient {
     }
   }
 
+  async convertRecentFolders(): Promise<void> {
+    const config = await this.call('electronconfig' as any, 'readConfig')
+    if(config.recentFolders) {
+
+      const remaps = config.recentFolders.map((f: any) => {
+        // if type is string
+        if(typeof f ==='string') {
+          return {
+            path: f,
+            timestamp: new Date().getTime(),
+          }
+        }else{
+          return f
+        }
+      })
+
+      config.recentFolders = remaps
+      await writeConfig(config)
+    }
+  }
+
   async updateRecentFolders(path: string): Promise<void> {
+    await this.convertRecentFolders()
     const config = await this.call('electronconfig' as any, 'readConfig')
     config.recentFolders = config.recentFolders || []
     config.recentFolders = config.recentFolders.filter((p: string) => p !== path)
-    config.recentFolders.push(path)
+    const timestamp = new Date().getTime()
+    config.recentFolders.push({
+      path,
+      timestamp,
+    })
     writeConfig(config)
   }
 
@@ -336,16 +365,18 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async getRecentFolders(): Promise<string[]> {
+    await this.convertRecentFolders()
     const config = await this.call('electronconfig' as any, 'readConfig')
-    let folders: string[] = config.recentFolders || []
-    folders = folders.map((f: string) => convertPathToPosix(f))
+    let folders: string[] = []
+    folders = (config.recentFolders || []).map((f: recentFolder) => convertPathToPosix(f.path)).sort((a: recentFolder, b: recentFolder) => a.timestamp - b.timestamp).slice(-15).reverse()
     return folders
   }
 
   async removeRecentFolder(path: string): Promise<void> {
+    await this.convertRecentFolders()
     const config = await this.call('electronconfig' as any, 'readConfig')
     config.recentFolders = config.recentFolders || []
-    config.recentFolders = config.recentFolders.filter((p: string) => p !== path)
+    config.recentFolders = config.recentFolders.filter((p: recentFolder) => p.path !== path)
     writeConfig(config)
   }
 

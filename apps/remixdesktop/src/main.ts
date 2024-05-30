@@ -31,6 +31,7 @@ if (
 // get system home dir
 const homeDir = app.getPath('userData')
 
+
 const windowSet = new Set<BrowserWindow>([]);
 export const createWindow = async (dir?: string): Promise<void> => {
   // Create the browser window.
@@ -53,6 +54,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
     (process.env.NODE_ENV === 'production' || isPackaged) && !isE2ELocal ? `file://${__dirname}/remix-ide/index.html` + params :
       'http://localhost:8080' + params)
 
+  trackEvent('Instance', 'create_window', '', 1);  
 
   if (dir) {
     mainWindow.setTitle(dir)
@@ -74,6 +76,8 @@ export const createWindow = async (dir?: string): Promise<void> => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+  trackEvent('App', 'Launch', app.getVersion(), 1);
+  trackEvent('App', 'OS', process.platform, 1);
   require('./engine')
 });
 
@@ -120,6 +124,7 @@ import TerminalMenu from './menus/terminal';
 import HelpMenu from './menus/help';
 import { execCommand } from './menus/commands';
 import main from './menus/main';
+import { trackEvent } from './utils/matamo';
 
 
 const commandKeys: Record<string, string> = {
