@@ -74,18 +74,25 @@ export function RunTabUI(props: RunTabProps) {
     storage: null,
     contract: null
   })
-  runTabInitialState.selectExEnv = plugin.blockchain.getProvider()
-  const [runTab, dispatch] = useReducer(runTabReducer, runTabInitialState)
+  const initialState = props.initialState || runTabInitialState
+
+  initialState.selectExEnv = plugin.blockchain.getProvider()
+  const [runTab, dispatch] = useReducer(runTabReducer, initialState)
   const REACT_API = { runTab }
   const currentfile = plugin.config.get('currentFile')
 
   useEffect(() => {
-    initRunTab(plugin)(dispatch)
-    plugin.onInitDone()
+    if (!props.initialState) {
+      initRunTab(plugin, true)(dispatch)
+      plugin.onInitDone()
+    } else {
+      initRunTab(plugin, false)(dispatch)
+    }
   }, [plugin])
 
   useEffect(() => {
     plugin.onReady(runTab)
+    plugin.call('pluginStateLogger', 'logPluginState', 'udapp', runTab)
   }, [REACT_API])
 
   useEffect(() => {
