@@ -12,7 +12,7 @@ export default function ScamAlertStatus ({ refs, getReferenceProps }: ScamAlertS
   return (
     <>
       <div className="mr-2" id="hTScamAlertSection" ref={refs.setReference} {...getReferenceProps()}>
-        <span className="pr-2 text-danger far fa-exclamation-triangle" style={{ color: '#ff8559' }}></span>
+        <span className="pr-2 far fa-exclamation-triangle" style={{ color: '#ff8559' }}></span>
         <label className="text-white font-semibold">
           <FormattedMessage id="home.scamAlert" />
         </label>
