@@ -19,9 +19,12 @@ const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
           let view = props.pluginRecord.view
 
           if (props.initialState) {
+            let hasInitialProps = false
+
             view = React.Children.map((props.pluginRecord.view.props as any).children, child => {
-              if (React.isValidElement(child) && typeof child.type === 'function') {
-              // Safe to clone and pass `initialState`
+              if (React.isValidElement(child) && typeof child.type === 'function' && !hasInitialProps) {
+                hasInitialProps = true
+                // Safe to clone and pass `initialState`
                 return React.cloneElement(child, { ...props, initialState: props.initialState } as any)
               }
               return child
