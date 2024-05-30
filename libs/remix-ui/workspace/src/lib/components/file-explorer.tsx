@@ -315,6 +315,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
+  const resetMultiselect = () => {
+    setState((prevState) => {
+      return { ...prevState, ctrlKey: false }
+    })
+  }
+
   /**
    * This offers the ability to move a folder to a new location
    * without showing a modal dialong to the user.
@@ -420,6 +426,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           warnMovingItems={warnMovingItems}
           moveFolderSilently={moveFolderSilently}
           moveFileSilently={moveFileSilently}
+          resetMultiselect={resetMultiselect}
           setFilesSelected={setFilesSelected}
           handleClickFolder={handleClickFolder}
           createNewFile={props.createNewFile}
