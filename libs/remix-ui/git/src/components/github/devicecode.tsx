@@ -18,7 +18,7 @@ export const GetDeviceCode = () => {
     // Send a POST request
     const response = await axios({
       method: 'post',
-      url: 'http://0.0.0.0:3000/github.com/login/device/code',
+      url: 'https://github.remixproject.org/login/device/code',
       data: {
         client_id: '2795b4e41e7197d6ea11',
         scope: 'repo gist user:email read:user'
@@ -40,7 +40,7 @@ export const GetDeviceCode = () => {
     // poll https://github.com/login/oauth/access_token
     const accestokenresponse = await axios({
       method: 'post',
-      url: 'http://0.0.0.0:3000/github.com/login/oauth/access_token',
+      url: 'https://github.remixproject.org/login/oauth/access_token',
       data: {
         client_id: '2795b4e41e7197d6ea11',
         device_code: gitHubResponse.device_code,
