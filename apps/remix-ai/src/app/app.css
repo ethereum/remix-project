@@ -1,0 +1,268 @@
+* {
+  box-sizing: border-box;
+}
+html, body, #root, main {
+  height: 100%;
+  margin: 0;
+}
+
+#remix-ai-plugin header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  padding: 5px 15px;
+}
+
+#remix-ai-plugin header a,
+#remix-ai-plugin header .title {
+  display: flex;
+  height: 60%;
+}
+
+#remix-ai-plugin header svg,
+#remix-ai-plugin header img {
+  width: auto;
+  height: 100%;
+}
+
+#remix-ai-plugin section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: calc(100% - 50px);
+}
+
+.btn-group-toggle {
+  width: 90%;
+  text-transform: uppercase;
+  margin: 10px 0;
+}
+
+.btn-group-toggle .btn {
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+#local-url {
+
+}
+
+#result {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: 10px;
+  overflow: hidden;
+}
+
+#result.error {
+  justify-content: flex-start;
+}
+#result.error svg {
+  width: 40px;
+  height: 40px;
+  margin: 10px;
+}
+
+#result nav {
+  width: 100%;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+}
+
+
+#result nav a {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+
+#result .tab-content {
+  flex: 1;
+  width: 100%;
+  padding: 15px;
+  overflow: auto;
+}
+
+#result .tab-pane.active {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+#result .copy {
+  padding: 5x;
+  font-size: 0.8rem;
+  margin: 10px;
+}
+
+#result p {
+  text-align: center;
+  width: 100% !important;
+}
+
+#result .react-json-view {
+  overflow-y: auto;
+}
+
+#result textarea {
+  border: none;
+  height: 100%;
+  width: 100%;
+}
+
+
+
+.remixui_copyButton {
+  padding: 6px;
+  font-weight: bold;
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.remixui_contractHelperButtons {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  float: right;
+}
+.remixui_copyToClipboard {
+  font-size: 1rem;
+}
+.remixui_copyIcon {
+  margin-right: 5px;
+}
+.remixui_log {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+  overflow: visible;
+}
+.remixui_key {
+  margin-right: 5px;
+  text-transform: uppercase;
+  width: 100%;
+}
+.remixui_value {
+  display: flex;
+  width: 100%;
+  margin-top: 1.5%;
+}
+.remixui_questionMark {
+  margin-left: 2%;
+  cursor: pointer;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@-moz-keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@-o-keyframes spin {
+    0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@-ms-keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.remixui_bouncingIcon {
+  display: inline-block;
+  position: relative;
+  -moz-animation: bounce 2s infinite linear;
+  -o-animation: bounce 2s infinite linear;
+  -webkit-animation: bounce 2s infinite linear;
+  animation: bounce 2s infinite linear;
+}
+
+@-webkit-keyframes bounce {
+    0% { top: 0; }
+    50% { top: -0.2em; }
+    70% { top: -0.3em; }
+    100% { top: 0; }
+}
+@-moz-keyframes bounce {
+    0% { top: 0; }
+    50% { top: -0.2em; }
+    70% { top: -0.3em; }
+    100% { top: 0; }
+}
+@-o-keyframes bounce {
+    0% { top: 0; }
+    50% { top: -0.2em; }
+    70% { top: -0.3em; }
+    100% { top: 0; }
+}
+@-ms-keyframes bounce {
+    0% { top: 0; }
+    50% { top: -0.2em; }
+    70% { top: -0.3em; }
+    100% { top: 0; }
+}
+@keyframes bounce {
+    0% { top: 0; }
+    50% { top: -0.2em; }
+    70% { top: -0.3em; }
+    100% { top: 0; }
+}
+
+#compileDetails {
+  margin: 15px;
+  padding: 15px;
+}
+
+.cursor-status {
+
+}
+
+.cursor-status :hover {
+  cursor: pointer;
+}
+
+.accordion-background {
+  background-color: var(--body-bg);
+}
+
+.accordion-background:hover {
+  cursor: pointer;
+}
+
+.remix-ai-compile-warning,
+.remix-ai-compile-error {
+  white-space: pre-line;
+  word-wrap: break-word;
+  cursor: pointer;
+  position: relative;
+  margin: 0.5em 0 1em 0;
+  border-radius: 5px;
+  line-height: 20px;
+  padding: 8px 15px;
+}
+
+.remix-ai-compile-warning pre,
+.remix-ai-compile-error pre {
+  white-space: pre-line;
+  overflow-y: hidden;
+  background-color: transparent;
+  margin: 0;
+  font-size: 12px;
+  border: 0 none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.remix-ai-panel-width {
+  width: 94%;
+}
