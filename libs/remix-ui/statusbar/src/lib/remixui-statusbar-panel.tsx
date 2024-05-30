@@ -3,7 +3,7 @@ import GitStatus from './components/gitStatus'
 import AIStatus from './components/aiStatus'
 import ScamAlertStatus from './components/scamAlertStatus'
 import ScamDetails from './components/scamDetails'
-import { FloatingFocusManager, autoUpdate, flip, offset, shift, useClick, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react'
+import { FloatingFocusManager, autoUpdate, flip, offset, shift, size, useClick, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react'
 import axios from 'axios'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
@@ -25,7 +25,17 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
   const { refs, context, floatingStyles } = useFloating({
     open: showScamDetails,
     onOpenChange: setShowScamDetails,
-    middleware: [offset(10), flip({ fallbackAxisSideDirection: 'end' }), shift()],
+    middleware: [offset(10), flip({ fallbackAxisSideDirection: 'end' }), shift({
+      mainAxis: true, padding: 10
+    }), size({
+      apply({ availableWidth, availableHeight, elements, ...state }) {
+        console.log(state)
+        Object.assign(elements.floating.style, {
+          maxWidth: `${availableWidth}`,
+          maxHeight: `auto`
+        })
+      }
+    })],
     whileElementsMounted: autoUpdate,
   })
   const click = useClick(context)
@@ -58,7 +68,7 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
     <>
       {showScamDetails && (
         <FloatingFocusManager context={context} modal={false}>
-          <ScamDetails refs={refs} floatStyle={{ ...floatingStyles, minHeight: '300px', alignContent: 'center', paddingRight: '5px' }} getFloatingProps={getFloatingProps} scamAlerts={scamAlerts} />
+          <ScamDetails refs={refs} floatStyle={{ ...floatingStyles, minHeight: 'auto', alignContent: 'center', paddingRight: '0.5rem' }} getFloatingProps={getFloatingProps} scamAlerts={scamAlerts} />
         </FloatingFocusManager>
       )}
       <div className="d-flex remixui_statusbar_height flex-row bg-primary justify-content-between align-items-center">
