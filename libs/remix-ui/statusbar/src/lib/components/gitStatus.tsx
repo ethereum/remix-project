@@ -2,6 +2,7 @@ import React, { useEffect, Dispatch } from 'react'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 import '../../css/statusbar.css'
+import { CustomTooltip } from '@remix-ui/helper'
 
 export interface GitStatusProps {
   plugin: StatusBar
@@ -50,13 +51,17 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
   }
 
   return (
-    <div
-      className="d-flex flex-row pl-3 text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
-      onClick={async () => await lightDgitUp()}
+    <CustomTooltip
+      tooltipText={`${gitBranchName} (Git)`}
     >
-      {gitBranchName.length > 0 && gitBranchName !== 'Not a git repo' && <span className="fa-regular fa-code-branch ml-1"></span>}
-      <span className="small mx-1">{`${gitBranchName}`}</span>
-      {gitBranchName.length > 0 && gitBranchName !== 'Not a git repo' && <span className="fa-solid fa-arrows-rotate fa-1"></span>}
-    </div>
+      <div
+        className="d-flex flex-row pl-3 text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
+        onClick={async () => await lightDgitUp()}
+      >
+        {gitBranchName.length > 0 && gitBranchName !== 'Not a git repo' && <span className="fa-regular fa-code-branch ml-1"></span>}
+        <span className="small mx-1">{`${gitBranchName}`}</span>
+        {gitBranchName.length > 0 && gitBranchName !== 'Not a git repo' && <span className="fa-solid fa-arrows-rotate fa-1"></span>}
+      </div>
+    </CustomTooltip>
   )
 }
