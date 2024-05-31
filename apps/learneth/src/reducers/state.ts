@@ -1,5 +1,5 @@
 export const appInitialState: any = {
-  loading: {screen: true},
+  loading: { screen: true },
   remixide: {
     errors: [],
     success: false,
@@ -14,25 +14,25 @@ export const appInitialState: any = {
 
 export const appReducer = (state = appInitialState, action: any): any => {
   switch (action.type) {
-  case 'SET_LOADING':
-    return {
-      ...state,
-      loading: {...state.loading, ...action.payload},
-    }
+    case 'SET_LOADING':
+      return {
+        ...state,
+        loading: { ...state.loading, ...action.payload },
+      }
 
-  case 'SET_REMIXIDE':
-    return {
-      ...state,
-      remixide: {...state.remixide, ...action.payload},
-    }
+    case 'SET_REMIXIDE':
+      return {
+        ...state,
+        remixide: { ...state.remixide, ...action.payload },
+      }
 
-  case 'SET_WORKSHOP':
-    return {
-      ...state,
-      workshop: {...state.workshop, ...action.payload},
-    }
+    case 'SET_WORKSHOP':
+      return {
+        ...state,
+        workshop: { ...state.workshop, ...action.payload },
+      }
 
-  default:
-    throw new Error()
+    default:
+      throw new Error()
   }
 }

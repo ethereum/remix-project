@@ -1,8 +1,8 @@
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 import axios from 'axios'
 import groupBy from 'lodash/groupBy'
 import pick from 'lodash/pick'
-import {plugin, router} from '../App'
+import { plugin, router } from '../App'
 
 let dispatch, state
 
@@ -29,18 +29,7 @@ export const updateState = (_state) => {
 }
 
 export const initWorkshop = async (code) => {
-  const cache = localStorage.getItem('workshop.state')
-
-  if (cache) {
-    const workshopState = JSON.parse(cache)
-    console.log('loading from cache', workshopState)
-    await dispatch({
-      type: 'SET_WORKSHOP',
-      payload: workshopState,
-    })
-  } else {
-    await loadRepo(repoMap[code])
-  }
+  await loadRepo(repoMap[code])
 }
 
 export const loadRepo = async (payload) => {
@@ -53,18 +42,18 @@ export const loadRepo = async (payload) => {
     },
   })
 
-  const {list, detail} = state.workshop
+  const { list, detail } = state.workshop
 
   const url = `${apiUrl}/clone/${encodeURIComponent(payload.name)}/${payload.branch}?${Math.random()}`
-  console.log('loading ', url)
-  const {data} = await axios.get(url)
+
+  const { data } = await axios.get(url)
   const repoId = `${payload.name}-${payload.branch}`
 
   for (let i = 0; i < data.ids.length; i++) {
     const {
       steps,
       metadata: {
-        data: {steps: metadataSteps},
+        data: { steps: metadataSteps },
       },
     } = data.entities[data.ids[i]]
 
@@ -92,7 +81,8 @@ export const loadRepo = async (payload) => {
         const key = stepKeysWithFile[k]
         if (step[key]) {
           try {
-            step[key].content = (await plugin.call('contentImport', 'resolve', step[key].file)).content
+            step[key].content = '' // (await plugin.call('contentImport', 'resolve', step[key].file)).content
+            step[key].isLoaded = false
           } catch (error) {
             console.error(error)
           }
@@ -101,6 +91,8 @@ export const loadRepo = async (payload) => {
     }
     data.entities[data.ids[i]].steps = newSteps
   }
+
+
 
   const workshopState = {
     detail: {
@@ -132,8 +124,8 @@ export const loadRepo = async (payload) => {
   })
 
   if (payload.id) {
-    const {detail, selectedId} = workshopState
-    const {ids, entities} = detail[selectedId]
+    const { detail, selectedId } = workshopState
+    const { ids, entities } = detail[selectedId]
     for (let i = 0; i < ids.length; i++) {
       const entity = entities[ids[i]]
       if (entity.metadata.data.id === payload.id || i + 1 === payload.id) {
@@ -142,6 +134,15 @@ export const loadRepo = async (payload) => {
       }
     }
   }
+}
+
+export const loadStepContent = async (url: string) => {
+  
+  const file = await plugin.call('contentImport', 'resolve', url)
+  if (file && file.content) {
+    return file.content
+  }
+  return ''
 }
 
 export const resetAllWorkshop = async (code) => {
@@ -179,15 +180,15 @@ export const displayFile = async (step) => {
   let content = ''
   let path = ''
   if (step.solidity?.file) {
-    content = step.solidity.content
+    content = await loadStepContent(step.solidity.file)
     path = getFilePath(step.solidity.file)
   }
   if (step.js?.file) {
-    content = step.js.content
+    content = await loadStepContent(step.js.file)
     path = getFilePath(step.js.file)
   }
   if (step.vy?.file) {
-    content = step.vy.content
+    content = await loadStepContent(step.vy.file)
     path = getFilePath(step.vy.file)
   }
 
@@ -203,10 +204,9 @@ export const displayFile = async (step) => {
     },
   })
 
-  const {detail, selectedId} = state.workshop
+  const { detail, selectedId } = state.workshop
 
   const workshop = detail[selectedId]
-  console.log('loading ', step, workshop)
 
   path = `.learneth/${workshop.name}/${step.name}/${path}`
   try {
@@ -217,7 +217,7 @@ export const displayFile = async (step) => {
     await plugin.call('fileManager', 'switchFile', `${path}`)
     await dispatch({
       type: 'SET_REMIXIDE',
-      payload: {errorLoadingFile: false},
+      payload: { errorLoadingFile: false },
     })
     toast.dismiss()
   } catch (error) {
@@ -225,7 +225,7 @@ export const displayFile = async (step) => {
     toast.error('File could not be loaded. Please try again.')
     await dispatch({
       type: 'SET_REMIXIDE',
-      payload: {errorLoadingFile: true},
+      payload: { errorLoadingFile: true },
     })
   }
   await dispatch({
@@ -247,9 +247,9 @@ export const testStep = async (step) => {
   try {
     await dispatch({
       type: 'SET_REMIXIDE',
-      payload: {success: false},
+      payload: { success: false },
     })
-    const {detail, selectedId} = state.workshop
+    const { detail, selectedId } = state.workshop
 
     const workshop = detail[selectedId]
 
@@ -259,12 +259,11 @@ export const testStep = async (step) => {
       path = `.learneth/${workshop.name}/${step.name}/${path}`
       await plugin.call('fileManager', 'switchFile', `${path}`)
     }
-
-    console.log('testing ', step.test.content)
+    const content = await loadStepContent(step.test.file)
 
     path = getFilePath(step.test.file)
     path = `.learneth/${workshop.name}/${step.name}/${path}`
-    await plugin.call('fileManager', 'setFile', path, step.test.content)
+    await plugin.call('fileManager', 'setFile', path, content)
 
     const result = await plugin.call('solidityUnitTesting', 'testFromPath', path)
     console.log('result ', result)
@@ -272,7 +271,7 @@ export const testStep = async (step) => {
     if (!result) {
       await dispatch({
         type: 'SET_REMIXIDE',
-        payload: {errors: ['Compiler failed to test this file']},
+        payload: { errors: ['Compiler failed to test this file'] },
       })
     } else {
       const success = result.totalFailing === 0
@@ -280,13 +279,13 @@ export const testStep = async (step) => {
       if (success) {
         await dispatch({
           type: 'SET_REMIXIDE',
-          payload: {errors: [], success: true},
+          payload: { errors: [], success: true },
         })
       } else {
         await dispatch({
           type: 'SET_REMIXIDE',
           payload: {
-            errors: result.errors.map((error: {message: any}) => error.message),
+            errors: result.errors.map((error: { message: any }) => error.message),
           },
         })
       }
@@ -295,7 +294,7 @@ export const testStep = async (step) => {
     console.log('TESTING ERROR', err)
     await dispatch({
       type: 'SET_REMIXIDE',
-      payload: {errors: [String(err)]},
+      payload: { errors: [String(err)] },
     })
   }
   await dispatch({
@@ -317,11 +316,11 @@ export const showAnswer = async (step) => {
   toast.info('loading answer into IDE')
 
   try {
-    console.log('loading ', step)
-    const content = step.answer.content
+
+    const content = await loadStepContent(step.answer.file)
     let path = getFilePath(step.answer.file)
 
-    const {detail, selectedId} = state.workshop
+    const { detail, selectedId } = state.workshop
 
     const workshop = detail[selectedId]
     path = `.learneth/${workshop.name}/${step.name}/${path}`
@@ -330,7 +329,7 @@ export const showAnswer = async (step) => {
   } catch (err) {
     await dispatch({
       type: 'SET_REMIXIDE',
-      payload: {errors: [String(err)]},
+      payload: { errors: [String(err)] },
     })
   }
 

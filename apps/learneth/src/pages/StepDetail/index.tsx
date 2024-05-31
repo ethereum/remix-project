@@ -1,35 +1,48 @@
-import React, {useContext, useEffect} from 'react'
-import {useLocation, useNavigate} from 'react-router-dom'
+import React, { useContext, useEffect } from 'react'
+import { Form, useLocation, useNavigate } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
-import {FormattedMessage} from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import BackButton from '../../components/BackButton'
-import {AppContext} from '../../contexts'
-import {displayFile, showAnswer, testStep} from '../../actions'
+import { AppContext } from '../../contexts'
+import { displayFile, loadStepContent, showAnswer, testStep } from '../../actions'
 
 function StepDetailPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const {dispatch, appState} = useContext(AppContext)
+  const { dispatch, appState } = useContext(AppContext)
+  const [loaded, setLoaded] = React.useState(false)
+  const [content, setContent] = React.useState('loading...')
   const queryParams = new URLSearchParams(location.search)
   const id = queryParams.get('id') as string
   const stepId = Number(queryParams.get('stepId'))
   const {
-    workshop: {detail, selectedId},
-    remixide: {errorLoadingFile, errors, success},
+    workshop: { detail, selectedId },
+    remixide: { errorLoadingFile, errors, success },
   } = appState
   const entity = detail[selectedId].entities[id]
   const steps = entity.steps
   const step = steps[stepId]
-  //console.log(step)
 
   useEffect(() => {
     displayFile(step)
     dispatch({
       type: 'SET_REMIXIDE',
-      payload: {errors: [], success: false},
+      payload: { errors: [], success: false },
     })
     window.scrollTo(0, 0)
+    
+    if(step.markdown && !step.markdown?.isLoaded && step.markdown.file) {
+      loadStepContent(step.markdown.file).then((content) => {
+        setLoaded(true)
+        if(step.markdown){
+         setContent(content)
+        }
+      })
+    }else{
+      setLoaded(true)
+      setContent(step.markdown.content)
+    }
   }, [step])
 
   useEffect(() => {
@@ -38,6 +51,18 @@ function StepDetailPage() {
     }
   }, [errors, success])
 
+  if (!loaded) {
+    return <>
+      <div className="fixed-top">
+        <div className="bg-light">
+          <BackButton entity={entity} />
+        </div>
+      </div>
+      <div id="top">
+        <FormattedMessage id="learneth.loading" />
+      </div>
+    </>
+  }
   return (
     <>
       <div className="fixed-top">
@@ -52,8 +77,8 @@ function StepDetailPage() {
           <h1 className="pl-3 pr-3 pt-3 pb-1 text-break text-start">{step.name}</h1>
           <button
             className="w-100nav-item rounded-0 nav-link btn btn-success test"
-            onClick={() => {
-              displayFile(step)
+            onClick={async () => {
+              await displayFile(step)
             }}
           >
             <FormattedMessage id="learneth.loadFile" />
@@ -67,16 +92,16 @@ function StepDetailPage() {
         </>
       )}
       <div className="container-fluid">
-        <Markdown rehypePlugins={[rehypeRaw]}>{step.markdown?.content}</Markdown>
+        <Markdown rehypePlugins={[rehypeRaw]}>{content}</Markdown>
       </div>
-      {step.test?.content ? (
+      {step.test ? (
         <>
           <nav className="nav nav-pills nav-fill">
             {errorLoadingFile ? (
               <button
                 className="nav-item rounded-0 nav-link btn btn-warning test"
-                onClick={() => {
-                  displayFile(step)
+                onClick={async () => {
+                  await displayFile(step)
                 }}
               >
                 <FormattedMessage id="learneth.loadFile" />
@@ -93,7 +118,7 @@ function StepDetailPage() {
                     >
                       <FormattedMessage id="learneth.checkAnswer" />
                     </button>
-                    {step.answer?.content && (
+                    {step.answer && (
                       <button
                         className="nav-item rounded-0 nav-link btn btn-warning test"
                         onClick={() => {
@@ -116,7 +141,7 @@ function StepDetailPage() {
                         >
                           <FormattedMessage id="learneth.next" />
                         </button>
-                        {step.answer?.content && (
+                        {step.answer && (
                           <button
                             className="nav-item rounded-0 nav-link btn btn-warning test"
                             onClick={() => {
@@ -168,11 +193,11 @@ function StepDetailPage() {
       ) : (
         <>
           <nav className="nav nav-pills nav-fill">
-            {!errorLoadingFile && step.answer?.content && (
+            {!errorLoadingFile && step.answer && (
               <button
                 className="nav-item rounded-0 nav-link btn btn-warning test"
-                onClick={() => {
-                  showAnswer(step)
+                onClick={async () => {
+                  await showAnswer(step)
                 }}
               >
                 <FormattedMessage id="learneth.showAnswer" />

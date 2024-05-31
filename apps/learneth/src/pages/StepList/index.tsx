@@ -5,6 +5,7 @@ import BackButton from '../../components/BackButton'
 import SlideIn from '../../components/SlideIn'
 import {AppContext} from '../../contexts'
 import './index.scss'
+import { hyphenateString } from '../../utils'
 
 function StepListPage(): JSX.Element {
   const location = useLocation()
@@ -29,7 +30,7 @@ function StepListPage(): JSX.Element {
       <SlideIn>
         <article className="list-group m-3">
           {entity.steps.map((step: any, i: number) => (
-            <Link key={i} to={`/detail?id=${id}&stepId=${i}`} className="rounded-0 btn btn-light border-bottom text-left text-decoration-none">
+            <Link data-id={`steplist-${hyphenateString(step.name)}`} key={i} to={`/detail?id=${id}&stepId=${i}`} className="rounded-0 btn btn-light border-bottom text-left text-decoration-none">
               {step.name} »
             </Link>
           ))}

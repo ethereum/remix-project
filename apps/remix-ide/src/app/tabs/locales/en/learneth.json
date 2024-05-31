@@ -19,5 +19,6 @@
   "learneth.next": "Next",
   "learneth.wellDone": "Well done! No errors.",
   "learneth.errors": "Errors",
-  "learneth.finishTutorial": "Finish tutorial"
+  "learneth.finishTutorial": "Finish tutorial",
+  "learneth.loading": "Loading..."
 }

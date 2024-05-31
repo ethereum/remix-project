@@ -130,7 +130,8 @@ export function isNative(name) {
     'compilationDetails',
     'vyperCompilationDetails',
     'remixGuide',
-    'walletconnect'
+    'walletconnect',
+    'LearnEth'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
 }

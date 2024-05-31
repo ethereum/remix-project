@@ -7,6 +7,8 @@ import {AppContext} from '../../contexts'
 import RepoImporter from '../../components/RepoImporter'
 import {initWorkshop} from '../../actions'
 import './index.css'
+import { hyphenateString } from '../../utils'
+
 
 function HomePage(): JSX.Element {
   const [openKeys, setOpenKeys] = React.useState<string[]>([])
@@ -52,13 +54,14 @@ function HomePage(): JSX.Element {
                     </span>
                     <span
                       className="workshop-link"
+                      data-id={`workshop-link-${hyphenateString(selectedRepo.entities[item.id].name)}`}
                       onClick={() => {
                         handleClick(item.id)
                       }}
                     >
                       {selectedRepo.entities[item.id].name}
                     </span>
-                    <Link to={`/list?id=${item.id}`} className="text-decoration-none float-right">
+                    <Link data-id={`workshop-link-play-${hyphenateString(selectedRepo.entities[item.id].name)}`} to={`/list?id=${item.id}`} className="text-decoration-none float-right">
                       <i className="fas fa-play-circle fa-lg" />
                     </Link>
                   </div>
