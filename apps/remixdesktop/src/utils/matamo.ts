@@ -1,4 +1,4 @@
-import { isE2ELocal } from "../main";
+import { isE2E } from "../main";
 import { isPackaged } from "../main";
 
 var MatomoTracker = require('matomo-tracker');
@@ -10,7 +10,7 @@ export function trackEvent(category: string, action: string, name: string, value
     console.log('error tracking request: ', err);
   });
 
-  if ((process.env.NODE_ENV === 'production' || isPackaged) && !isE2ELocal) {
+  if ((process.env.NODE_ENV === 'production' || isPackaged) && !isE2E) {
     matomo.track({
       e_c: category,
       e_a: action,
