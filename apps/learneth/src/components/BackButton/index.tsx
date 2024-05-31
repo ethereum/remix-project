@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Link, useLocation, useNavigate} from 'react-router-dom'
 import {Button, Modal, Tooltip, OverlayTrigger} from 'react-bootstrap'
-import './index.scss'
+import {FormattedMessage} from 'react-intl'
 
 function BackButton({entity}: any) {
   const navigate = useNavigate()
@@ -22,7 +22,14 @@ function BackButton({entity}: any) {
             }}
             role="button"
           >
-            <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-right">Leave tutorial</Tooltip>}>
+            <OverlayTrigger
+              placement="right"
+              overlay={
+                <Tooltip id="tooltip-right">
+                  <FormattedMessage id="learneth.leaveTutorial" />
+                </Tooltip>
+              }
+            >
               <i className="fas fa-home pl-1" />
             </OverlayTrigger>
           </div>
@@ -57,9 +64,13 @@ function BackButton({entity}: any) {
         }}
       >
         <Modal.Header placeholder={''} closeButton>
-          <Modal.Title>Leave tutorial</Modal.Title>
+          <Modal.Title>
+            <FormattedMessage id="learneth.leaveTutorial" />
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to leave the tutorial?</Modal.Body>
+        <Modal.Body>
+          <FormattedMessage id="learneth.leaveTutorialConfirmText" />
+        </Modal.Body>
         <Modal.Footer>
           <Button
             variant="secondary"
@@ -67,7 +78,7 @@ function BackButton({entity}: any) {
               setShow(false)
             }}
           >
-            No
+            <FormattedMessage id="learneth.no" />
           </Button>
           <Button
             variant="success"
@@ -76,7 +87,7 @@ function BackButton({entity}: any) {
               navigate('/home')
             }}
           >
-            Yes
+            <FormattedMessage id="learneth.yes" />
           </Button>
         </Modal.Footer>
       </Modal>

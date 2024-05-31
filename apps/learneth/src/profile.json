@@ -11,6 +11,9 @@
   "kind": "none",
   "icon": "assets/img/learnEthLogo.webp",
   "location": "sidePanel",
+  "canActivate": [
+    "solidityUnitTesting"
+  ],
   "url": "plugins/learneth/index.html",
   "repo": "https://github.com/ethereum/remix-project/tree/master/apps/learneth",
   "maintainedBy": "Remix",
