@@ -1,7 +1,7 @@
-import {PluginClient} from '@remixproject/plugin'
-import {createClient} from '@remixproject/plugin-webview'
-import {loadRepo} from './actions'
-import {router} from './App'
+import { PluginClient } from '@remixproject/plugin'
+import { createClient } from '@remixproject/plugin-webview'
+import { loadRepo } from './actions'
+import { router } from './App'
 import EventManager from 'events'
 
 export class RemixClient extends PluginClient {
@@ -36,5 +36,4 @@ export class RemixClient extends PluginClient {
     })
   }
 }
-
 

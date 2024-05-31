@@ -92,8 +92,6 @@ export const loadRepo = async (payload) => {
     data.entities[data.ids[i]].steps = newSteps
   }
 
-
-
   const workshopState = {
     detail: {
       ...detail,
@@ -137,7 +135,7 @@ export const loadRepo = async (payload) => {
 }
 
 export const loadStepContent = async (url: string) => {
-  
+
   const file = await plugin.call('contentImport', 'resolve', url)
   if (file && file.content) {
     return file.content
@@ -271,7 +269,7 @@ export const testStep = async (step) => {
     if (!result) {
       await dispatch({
         type: 'SET_REMIXIDE',
-        payload: { errors: ['Compiler failed to test this file'] },
+        payload: { errors: ['Compiler failed to test this file']},
       })
     } else {
       const success = result.totalFailing === 0
@@ -294,7 +292,7 @@ export const testStep = async (step) => {
     console.log('TESTING ERROR', err)
     await dispatch({
       type: 'SET_REMIXIDE',
-      payload: { errors: [String(err)] },
+      payload: { errors: [String(err)]},
     })
   }
   await dispatch({
@@ -329,7 +327,7 @@ export const showAnswer = async (step) => {
   } catch (err) {
     await dispatch({
       type: 'SET_REMIXIDE',
-      payload: { errors: [String(err)] },
+      payload: { errors: [String(err)]},
     })
   }
 
