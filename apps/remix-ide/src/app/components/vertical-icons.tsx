@@ -79,6 +79,16 @@ export class VerticalIcons extends Plugin {
       }
       this.renderComponent()
     })
+
+    this.on('pinnedPanel', 'pinnedPlugin', (profile) => {
+      this.icons[profile.name].pinned = true
+      this.renderComponent()
+    })
+
+    this.on('pinnedPanel', 'unPinnedPlugin', (profile) => {
+      this.icons[profile.name].pinned = false
+      this.renderComponent()
+    })
   }
 
   async linkContent(profile: Profile) {
@@ -87,6 +97,7 @@ export class VerticalIcons extends Plugin {
     this.icons[profile.name] = {
       profile: profile,
       active: false,
+      pinned: false,
       canbeDeactivated: await this.call('manager', 'canDeactivate', this.profile, profile),
       timestamp: Date.now()
     }
