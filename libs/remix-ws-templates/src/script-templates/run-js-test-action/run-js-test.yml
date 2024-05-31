@@ -1,0 +1,26 @@
+name: Running Mocha Chai Solidity Unit Tests
+on: [push]
+
+jobs:
+  run_sample_test_job:
+    runs-on: ubuntu-latest
+    name: A job to run mocha and chai tests for solidity on github actions CI
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Environment Setup
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.0.0
+    - name: Run Mocha Chai Unit Test Action
+      uses: EthereumRemix/ts-sol-test@v1.3.1
+      with:
+        test-path: 'tests'
+        contract-path: 'contracts'
+        compiler-version: '0.8.7'
+//      evm-version: 'paris'
+//      optimize: true
+//      optimizer-runs: 200
+//      node-url: 'https://mainnet.infura.io/v3/08b2a484451e4635a28b3d8234f24332'
+//      block-number: 'latest'
+//      hard-fork: 'merge'
