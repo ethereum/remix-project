@@ -38,7 +38,7 @@ import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 import { FileTree, JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
-import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/constants'
+import { ROOT_PATH } from '../utils/constants'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
@@ -877,33 +877,6 @@ export const createNewBranch = async (branch: string) => {
       dispatch(cloneRepositoryFailed())
     })
   return promise
-}
-
-export const createSolidityGithubAction = async () => {
-  const path = '.github/workflows/run-solidity-unittesting.yml'
-
-  await plugin.call('fileManager', 'writeFile', path, solTestYml)
-  plugin.call('fileManager', 'open', path)
-}
-
-export const createTsSolGithubAction = async () => {
-  const path = '.github/workflows/run-js-test.yml'
-
-  await plugin.call('fileManager', 'writeFile', path, tsSolTestYml)
-  plugin.call('fileManager', 'open', path)
-}
-
-export const createSlitherGithubAction = async () => {
-  const path = '.github/workflows/run-slither-action.yml'
-
-  await plugin.call('fileManager', 'writeFile', path, slitherYml)
-  plugin.call('fileManager', 'open', path)
-}
-
-export const createHelperScripts = async (script: string) => {
-  if (!templates[script]) return
-  await templates[script](plugin)
-  plugin.call('notification', 'toast', `'${script}' added to the workspace.`)
 }
 
 export const updateGitSubmodules = async () => {
