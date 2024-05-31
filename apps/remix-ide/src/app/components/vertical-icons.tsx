@@ -92,7 +92,7 @@ export class VerticalIcons extends Plugin {
     })
 
     this.on('pinnedPanel', 'unPinnedPlugin', (profile) => {
-      this.icons[profile.name].pinned = false
+      if (this.icons[profile.name]) this.icons[profile.name].pinned = false
       this.renderComponent()
     })
   }
