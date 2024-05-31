@@ -145,7 +145,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
             return <RemixUIGridSection
               plugin={this}
               title={template.name}
-              hScrollable= {true}
+              hScrollable= {false}
             >
               {template.items.map(item => {
                 return <RemixUIGridCell
@@ -155,7 +155,10 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                   <div>
                     {item.displayName}
                     {JSON.stringify(item.opts)}
-                    <div><button data-id={`create-${item.value}${item.opts ? JSON.stringify(item.opts) : ''}`} onClick={async () => createWorkspace(item)} className="btn btn-secondary" >Create a new workspace</button><button data-id={`add-${item.value}`} onClick={async () => addToCurrentWorkspace(item)} className="btn btn-primary" >Add to current workspace</button></div>
+                    <div>
+                      {!template.IsArtefact && <button data-id={`create-${item.value}${item.opts ? JSON.stringify(item.opts) : ''}`} onClick={async () => createWorkspace(item)} className="btn btn-secondary" >Create a new workspace</button>}
+                      <button data-id={`add-${item.value}`} onClick={async () => addToCurrentWorkspace(item)} className="btn btn-primary" >Add to current workspace</button>
+                    </div>
                   </div>
                 </RemixUIGridCell>
               })}
