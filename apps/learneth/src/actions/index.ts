@@ -2,8 +2,7 @@ import {toast} from 'react-toastify'
 import axios from 'axios'
 import groupBy from 'lodash/groupBy'
 import pick from 'lodash/pick'
-import remixClient from '../remix-client'
-import {router} from '../App'
+import {plugin, router} from '../App'
 
 let dispatch, state
 
@@ -34,6 +33,7 @@ export const initWorkshop = async (code) => {
 
   if (cache) {
     const workshopState = JSON.parse(cache)
+    console.log('loading from cache', workshopState)
     await dispatch({
       type: 'SET_WORKSHOP',
       payload: workshopState,
@@ -92,7 +92,7 @@ export const loadRepo = async (payload) => {
         const key = stepKeysWithFile[k]
         if (step[key]) {
           try {
-            step[key].content = (await remixClient.call('contentImport', 'resolve', step[key].file)).content
+            step[key].content = (await plugin.call('contentImport', 'resolve', step[key].file)).content
           } catch (error) {
             console.error(error)
           }
@@ -160,19 +160,6 @@ export const resetAllWorkshop = async (code) => {
 }
 
 export const connectRemix = async () => {
-  toast.info('connecting to the REMIX IDE')
-
-  await dispatch({
-    type: 'SET_LOADING',
-    payload: {
-      screen: true,
-    },
-  })
-
-  await remixClient.onload()
-
-  toast.dismiss()
-
   await dispatch({
     type: 'SET_LOADING',
     payload: {
@@ -223,11 +210,11 @@ export const displayFile = async (step) => {
 
   path = `.learneth/${workshop.name}/${step.name}/${path}`
   try {
-    const isExist = await remixClient.call('fileManager', 'exists' as any, path)
+    const isExist = await plugin.call('fileManager', 'exists' as any, path)
     if (!isExist) {
-      await remixClient.call('fileManager', 'setFile', path, content)
+      await plugin.call('fileManager', 'setFile', path, content)
     }
-    await remixClient.call('fileManager', 'switchFile', `${path}`)
+    await plugin.call('fileManager', 'switchFile', `${path}`)
     await dispatch({
       type: 'SET_REMIXIDE',
       payload: {errorLoadingFile: false},
@@ -270,16 +257,16 @@ export const testStep = async (step) => {
     if (step.solidity.file) {
       path = getFilePath(step.solidity.file)
       path = `.learneth/${workshop.name}/${step.name}/${path}`
-      await remixClient.call('fileManager', 'switchFile', `${path}`)
+      await plugin.call('fileManager', 'switchFile', `${path}`)
     }
 
     console.log('testing ', step.test.content)
 
     path = getFilePath(step.test.file)
     path = `.learneth/${workshop.name}/${step.name}/${path}`
-    await remixClient.call('fileManager', 'setFile', path, step.test.content)
+    await plugin.call('fileManager', 'setFile', path, step.test.content)
 
-    const result = await remixClient.call('solidityUnitTesting', 'testFromPath', path)
+    const result = await plugin.call('solidityUnitTesting', 'testFromPath', path)
     console.log('result ', result)
 
     if (!result) {
@@ -338,8 +325,8 @@ export const showAnswer = async (step) => {
 
     const workshop = detail[selectedId]
     path = `.learneth/${workshop.name}/${step.name}/${path}`
-    await remixClient.call('fileManager', 'setFile', path, content)
-    await remixClient.call('fileManager', 'switchFile', `${path}`)
+    await plugin.call('fileManager', 'setFile', path, content)
+    await plugin.call('fileManager', 'switchFile', `${path}`)
   } catch (err) {
     await dispatch({
       type: 'SET_REMIXIDE',
@@ -358,7 +345,7 @@ export const showAnswer = async (step) => {
 
 export const testSolidityCompiler = async () => {
   try {
-    await remixClient.call('solidity', 'getCompilationResult')
+    await plugin.call('solidity', 'getCompilationResult')
   } catch (err) {
     const errors = state.remixide.errors
     await dispatch({

@@ -2,11 +2,19 @@ import {PluginClient} from '@remixproject/plugin'
 import {createClient} from '@remixproject/plugin-webview'
 import {loadRepo} from './actions'
 import {router} from './App'
+import EventManager from 'events'
 
-class RemixClient extends PluginClient {
+export class RemixClient extends PluginClient {
+  public internalEvents: EventManager
   constructor() {
     super()
+    this.internalEvents = new EventManager()
     createClient(this)
+    this.onload()
+  }
+
+  onActivation(): void {
+    this.internalEvents.emit('learneth_activated')
   }
 
   startTutorial(name: any, branch: any, id: any): void {
@@ -29,4 +37,4 @@ class RemixClient extends PluginClient {
   }
 }
 
-export default new RemixClient()
+

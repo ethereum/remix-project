@@ -21,7 +21,7 @@ function StepDetailPage() {
   const entity = detail[selectedId].entities[id]
   const steps = entity.steps
   const step = steps[stepId]
-  console.log(step)
+  //console.log(step)
 
   useEffect(() => {
     displayFile(step)
