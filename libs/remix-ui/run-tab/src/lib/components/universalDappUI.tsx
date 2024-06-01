@@ -220,11 +220,8 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const handleScanContinue = async () => {
-    console.log('inside handleScanContinue')
-
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const fileName = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
-    console.log('fileName---->', fileName)
     // const existsOrNot = await props.plugin.call('fileManager', 'exists', fileName)
     // console.log('existsOrNot---->', existsOrNot)
     // const file = await props.plugin.call('fileManager', 'readFile', fileName)
@@ -259,40 +256,27 @@ export function UniversalDappUI(props: UdappProps) {
             return number;
         }
     }`
-    console.log('file---->', file)
 
     const urlResponse = await axios.post(`https://solidityscan.remixproject.org/`, {
         file,
         fileName
     })
-    console.log('urlResponse----->', urlResponse.data)
-
 
     // websocket connection
 
     if (urlResponse.data.status === 'success') {
-      const ws = new WebSocket('wss://api-ws.solidityscan.com')
+      const ws = new WebSocket('wss://solidityscan.remixproject.org/solidityscan')
+
       ws.addEventListener('error', console.error);
-      const bearerToken = ""
  
       ws.addEventListener('open', (event) => {
-          const tokenRegRequest = {
-              "action": "message",
-              "payload": {
-                  "type": "auth_token_register",
-                  "body": {
-                      "auth_token": bearerToken
-                  }
-              }
-          }
-        ws.send(JSON.stringify(tokenRegRequest))
+        console.log('Connected to the server.')
       })
 
       ws.addEventListener('message', (event) => {
         const data = JSON.parse(event.data)
         if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
-
-          const request2 = {
+          const reqToInitScan = {
             "action": "message",
             "payload": {
                 "type": "private_project_scan_initiate",
@@ -300,12 +284,12 @@ export function UniversalDappUI(props: UdappProps) {
                     "file_urls": [
                         urlResponse.data.result.url
                     ],
-                    "project_name": "TestRemix",
+                    "project_name": "RemixProject",
                     "project_type": "new"
                 }
             }
           }
-          ws.send(JSON.stringify(request2))
+          ws.send(JSON.stringify(reqToInitScan))
         }
         
       })
