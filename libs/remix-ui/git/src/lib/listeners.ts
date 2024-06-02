@@ -147,11 +147,13 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
 
   plugin.on('config', 'configChanged', async () => {
+    console.log('config changed')
     await getGitConfig()
   })
   plugin.on('settings', 'configChanged', async () => {
+    console.log('settings changed')
     await getGitConfig()
-  })
+  }) 
 
   callBackEnabled = true;
 }
@@ -161,12 +163,10 @@ export const getGitConfig = async () => {
   const email = await plugin.call('settings', 'get', 'settings/github-email')
   const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
   const config = { username, email, token }
-  gitDispatch(setGItHubToken(config.token))
-  gitDispatch(setGitHubUser({
-    login: config.username,
-  }))
-  gitDispatch(setUserEmails([{ email: email, primary: true, visibility: 'public', verified: true }]))
-  return config
+
+  loadGitHubUserFromToken()
+  return 
+
 }
 
 const syncFromWorkspace = async (callback: Function, isLocalhost = false) => {

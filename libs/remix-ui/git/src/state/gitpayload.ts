@@ -45,6 +45,7 @@ export const setRemoteBranches = (branches: any[]) => {
 }
 
 export const setGitHubUser = (user: GitHubUser) => {
+  console.log('set user', user)
   return {
     type: 'SET_GITHUB_USER',
     payload: user

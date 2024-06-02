@@ -523,10 +523,16 @@ export const remoteCommits = async (url: string, branch: string, length: number)
 }
 
 export const saveGitHubCredentials = async (credentials: { username: string, email: string, token: string }) => {
+  console.log('saveGitHubCredentials', credentials)
   try {
-    await plugin.call('config', 'setAppParameter', 'settings/github-user-name', credentials.username)
-    await plugin.call('config', 'setAppParameter', 'settings/github-email', credentials.email)
-    await plugin.call('config', 'setAppParameter', 'settings/gist-access-token', credentials.token)
+    const storedEmail = await plugin.call('config', 'getAppParameter','settings/github-email')
+    const storedUsername = await plugin.call('config', 'getAppParameter','settings/github-user-name')
+    const storedToken = await plugin.call('config', 'getAppParameter','settings/gist-access-token')
+
+    if(storedUsername !== credentials.username)  await plugin.call('config', 'setAppParameter', 'settings/github-user-name', credentials.username)
+    if(storedEmail !== credentials.email) await plugin.call('config', 'setAppParameter', 'settings/github-email', credentials.email)
+    if(storedToken !== credentials.token) await plugin.call('config', 'setAppParameter', 'settings/gist-access-token', credentials.token)
+    
   } catch (e) {
     console.log(e)
   }
@@ -562,13 +568,19 @@ export const loadGitHubUserFromToken = async () => {
 
       console.log('GET USER"', data)
       if (data && data.emails && data.user && data.user.login) {
+        console.log('SET USER"', data)
         const primaryEmail = data.emails.find(email => email.primary)
-        if (primaryEmail) await plugin.call('config', 'setAppParameter', 'settings/github-email', primaryEmail.email)
-        data.user && data.user.login && await plugin.call('config', 'setAppParameter', 'settings/github-user-name', data.user.login)
+        
+        const storedEmail = await plugin.call('config', 'getAppParameter', 'settings/github-email')
+        if (primaryEmail && storedEmail !== primaryEmail.email) await plugin.call('config', 'setAppParameter', 'settings/github-email', primaryEmail.email)
+        const storedUsername = await plugin.call('config', 'getAppParameter', 'settings/github-user-name')
+        if(data.user && data.user.login && (storedUsername !== data.user.login)) await plugin.call('config', 'setAppParameter', 'settings/github-user-name', data.user.login)
+        
         dispatch(setGitHubUser(data.user))
         dispatch(setRateLimit(data.ratelimit))
         dispatch(setScopes(data.scopes))
         dispatch(setUserEmails(data.emails))
+      
       }
     } else {
       const credentials = await getGitHubCredentialsFromLocalStorage()
