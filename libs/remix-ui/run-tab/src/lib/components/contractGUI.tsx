@@ -373,10 +373,12 @@ export function ContractGUI(props: ContractGUIProps) {
                 <button
                   type="button"
                   data-id={buttonOptions.dataId}
-                  className={`udapp_instanceButton btn ${buttonOptions.classList}`}
+                  className={`udapp_instanceButton btn ${buttonOptions.classList} text-center d-flex justify-content-center align-items-center`}
                   disabled={props.disabled || (props.inputs !== '' && basicInput === '')}
                 >
-                  {buttonOptions.content}
+                  <div className="text-center d-flex justify-content-center align-items-center">
+                    {buttonOptions.content}
+                  </div>
                 </button>
               </div>
             </CustomTooltip>
