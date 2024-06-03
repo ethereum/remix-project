@@ -226,10 +226,7 @@ export function UniversalDappUI(props: UdappProps) {
     const filePath = `.workspaces/${fileName}`
     const file = await props.plugin.call('fileManager', 'readFile', filePath)
 
-    const urlResponse = await axios.post(`https://solidityscan.remixproject.org/`, {
-        file,
-        fileName
-    })
+    const urlResponse = await axios.post(`https://solidityscan.remixproject.org/uploadFile`, { file, fileName})
 
     if (urlResponse.data.status === 'success') {
       const ws = new WebSocket('wss://solidityscan.remixproject.org/solidityscan')
@@ -244,13 +241,14 @@ export function UniversalDappUI(props: UdappProps) {
         const data = JSON.parse(event.data)
         console.log('data---->', data)
         if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
+          // Message on Bearer token successful registration
           const reqToInitScan = {
             "action": "message",
             "payload": {
                 "type": "private_project_scan_initiate",
                 "body": {
                     "file_urls": [
-                        urlResponse.data.result.url
+                      urlResponse.data.result.url
                     ],
                     "project_name": "RemixProject",
                     "project_type": "new"
@@ -259,6 +257,8 @@ export function UniversalDappUI(props: UdappProps) {
           }
           ws.send(JSON.stringify(reqToInitScan))
         } else if (data.type === "scan_status" && data.payload.scan_status === "download_failed") {
+          // Message on failed scan
+
           const modal: AppModal = {
             id: 'SolidityScanError',
             title: <FormattedMessage id="udapp.solScan.errModalTitle" />,
@@ -267,12 +267,21 @@ export function UniversalDappUI(props: UdappProps) {
           }
           await props.plugin.call('notification', 'modal', modal)
         } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
+          // Message on successful scan
+
           console.log('data.payload--->', data.payload)
+          const url = data.payload.scan_details.link
+
+          const {data: scanData} = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
+          console.log('scanData--->', scanData)
+          const scanDetails = scanData.scan_report.multi_file_scan_details
+          console.log('scanDetails--->', scanDetails)
+
 
           const modal: AppModal = {
             id: 'SolidityScanSuccess',
             title: <FormattedMessage id="udapp.solScan.successModalTitle" />,
-            message: 'Scan successful',
+            message: `Scan successful`,
             okLabel: 'Close'
           }
           await props.plugin.call('notification', 'modal', modal)
