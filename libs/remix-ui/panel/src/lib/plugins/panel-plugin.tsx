@@ -43,7 +43,7 @@ const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
   }, [])
 
   useEffect(() => {
-    setShowHighlight(true)
+    if (props.highlightStamp) setShowHighlight(true)
   }, [props.highlightStamp])
 
   useEffect(() => {
