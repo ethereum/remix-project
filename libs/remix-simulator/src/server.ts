@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import expressWs from 'express-ws'
-import { Provider } from './provider'
+import { Provider, ProviderOptions } from './provider'
 import { log } from './utils/logs'
 const app = express()
 
@@ -10,7 +10,7 @@ class Server {
   provider
   rpcOnly
 
-  constructor (options) {
+  constructor (options?:ProviderOptions) {
     this.provider = new Provider(options)
     this.provider.init().then(() => {
       log('Provider initiated')
