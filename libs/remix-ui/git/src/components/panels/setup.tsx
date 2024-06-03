@@ -6,7 +6,6 @@ export const Setup = () => {
 
   const [screen, setScreen] = useState(0)
 
-
   if (screen === 0) {
     return (
       <>
@@ -22,7 +21,7 @@ export const Setup = () => {
         </div>
       </>
     )
-  }else if (screen === 1) {
+  } else if (screen === 1) {
     return (
       <>
         <h5>SETUP</h5>

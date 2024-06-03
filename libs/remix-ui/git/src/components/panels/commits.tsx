@@ -40,7 +40,6 @@ export const Commits = () => {
     return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
   }
 
-
   const getCommitChanges = async (commit: ReadCommitResult) => {
     await actions.getCommitChanges(commit.oid, commit.commit.parent[0],null, getRemote())
   }

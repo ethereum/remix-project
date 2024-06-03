@@ -128,19 +128,17 @@ export const showCurrentBranch = async () => {
 }
 
 export const currentBranch = async () => {
-  try {
-    const branch: branch =
-      (await plugin.call('dgitApi', "currentbranch")) || {
+
+  const branch: branch =
+    (await plugin.call('dgitApi', "currentbranch")) || {
+      name: "",
+      remote: {
         name: "",
-        remote: {
-          name: "",
-          url: "",
-        },
-      };
-    return branch;
-  } catch (e) {
-    throw e;
-  }
+        url: "",
+      },
+    };
+  return branch;
+
 }
 
 export const createBranch = async (name: string = "") => {
@@ -595,7 +593,7 @@ export const loadGitHubUserFromToken = async () => {
 }
 
 export const statusMatrix = async (filepaths: string[]) => {
-  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.'] });
+  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.']});
   const result = (matrix || []).map((x) => {
     return {
       filename: `/${x.shift()}`,

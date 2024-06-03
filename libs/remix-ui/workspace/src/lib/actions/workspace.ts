@@ -204,11 +204,7 @@ export const createWorkspace = async (
       }, 5000)
     } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
     cb && cb(null, workspaceName)
-    if (isGitRepo && false) {
-      await checkGit()
-      const isActive = await plugin.call('manager', 'isActive', 'dgit')
-      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-    }
+
     if (workspaceTemplateName === 'semaphore' || workspaceTemplateName === 'hashchecker' || workspaceTemplateName === 'rln') {
       const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
       if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
@@ -513,10 +509,7 @@ export const switchToWorkspace = async (name: string) => {
     await plugin.fileProviders.workspace.setWorkspace(name)
     await plugin.setWorkspace({ name, isLocalhost: false })
     const isGitRepo = await plugin.fileManager.isGitRepo()
-    if (isGitRepo && false) {
-      const isActive = await plugin.call('manager', 'isActive', 'dgit')
-      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-    }
+
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace({ name, isGitRepo }))
     dispatch(setReadOnlyMode(false))
@@ -669,7 +662,7 @@ export const cloneRepository = async (url: string) => {
       const repoName = await getRepositoryTitle(url)
 
       await createWorkspace(repoName, 'blank', null, true, null, true, false)
-      const promise = dgitPlugin.call('dgitApi', 'clone', {...repoConfig, workspaceExists: true, workspaceName: repoName})
+      const promise = dgitPlugin.call('dgitApi', 'clone', { ...repoConfig, workspaceExists: true, workspaceName: repoName })
 
       dispatch(cloneRepositoryRequest())
       promise
@@ -800,7 +793,7 @@ export const switchBranch = async (branch: branch) => {
       okLabel: 'Force Checkout',
       okFn: async () => {
         dispatch(cloneRepositoryRequest())
-        plugin 
+        plugin
           .call('dgitApi', 'checkout', { ref: branch, force: true }, false)
           .then(async () => {
             await fetchWorkspaceDirectory(ROOT_PATH)

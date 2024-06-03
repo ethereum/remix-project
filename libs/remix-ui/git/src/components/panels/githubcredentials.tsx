@@ -6,7 +6,6 @@ import { CustomTooltip } from "@remix-ui/helper";
 import { useIntl, FormattedMessage } from "react-intl";
 import { CopyToClipboard } from "@remix-ui/clipboard";
 
-
 export const GitHubCredentials = () => {
   const context = React.useContext(gitPluginContext)
   const pluginactions = React.useContext(pluginActionsContext)

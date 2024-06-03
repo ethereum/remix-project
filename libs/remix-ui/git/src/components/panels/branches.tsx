@@ -24,11 +24,9 @@ export const Branches = () => {
     }
   };
 
-
   useEffect(() => {
     console.log("branches", context.branches)
   }, [context.branches])
-
 
   return (
     <>

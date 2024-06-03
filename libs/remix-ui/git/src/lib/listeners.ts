@@ -14,27 +14,25 @@ let callBackEnabled: boolean = false
 type AsyncCallback = () => Promise<void>;
 
 class AsyncDebouncedQueue {
-    private queues: Map<AsyncCallback, { timer: any, lastCall: number }>;
+  private queues: Map<AsyncCallback, { timer: any, lastCall: number }>;
 
-    constructor(private delay: number = 300) {
-        this.queues = new Map();
+  constructor(private delay: number = 300) {
+    this.queues = new Map();
+  }
+
+  enqueue(callback: AsyncCallback, customDelay?:number): void {
+    if (this.queues.has(callback)) {
+      clearTimeout(this.queues.get(callback)!.timer);
     }
 
-    enqueue(callback: AsyncCallback, customDelay?:number): void {
-        if (this.queues.has(callback)) {
-            clearTimeout(this.queues.get(callback)!.timer);
-        }
+    const timer = setTimeout(async () => {
+      await callback();
+      this.queues.delete(callback);
+    }, customDelay || this.delay);
 
-        let timer = setTimeout(async () => {
-            await callback(); 
-            this.queues.delete(callback);
-        }, customDelay || this.delay);
-
-        this.queues.set(callback, { timer, lastCall: Date.now() });
-    }
+    this.queues.set(callback, { timer, lastCall: Date.now() });
+  }
 }
-
-
 
 export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<gitActionDispatch>, loaderDispatcher: React.Dispatch<any>) => {
   plugin = viewPlugin
@@ -101,7 +99,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   });
 
   plugin.on('dgitApi', 'checkout', async () => {
-   
+
   })
   plugin.on('dgitApi', 'init', async () => {
     loadFileQueue.enqueue(async () => {
@@ -156,7 +154,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   plugin.on('settings', 'configChanged', async () => {
     console.log('settings changed')
     await getGitConfig()
-  }) 
+  })
 
   callBackEnabled = true;
 }
@@ -168,64 +166,23 @@ export const getGitConfig = async () => {
   const config = { username, email, token }
 
   loadGitHubUserFromToken()
-  return 
+  return
 
-}
-
-const syncFromWorkspace = async (callback: Function, isLocalhost = false) => {
-  //gitDispatch(setLoading(true));
-  await disableCallBacks();
-  if (isLocalhost) {
-    gitDispatch(setCanUseApp(false));
-    gitDispatch(setLoading(false));
-    await enableCallBacks();
-    return;
-  }
-  try {
-    const workspace = await plugin.call(
-      "filePanel",
-      "getCurrentWorkspace"
-    );
-    if (workspace.isLocalhost) {
-      gitDispatch(setCanUseApp(false));
-      await enableCallBacks();
-      return
-    }
-
-    gitDispatch(setRepoName(workspace.name));
-    gitDispatch(setCanUseApp(true));
-  } catch (e) {
-    gitDispatch(setCanUseApp(false));
-  }
-  await callback();
-  await enableCallBacks();
 }
 
 export const loadFiles = async (filepaths: string[] = null) => {
   try {
     const branch = await plugin.call('dgitApi', "currentbranch")
     console.log('load files', branch)
-    if(branch) {
+    if (branch) {
       await getFileStatusMatrix(filepaths);
-    }else{
+    } else {
       await plugin.call('fileDecorator', 'clearFileDecorators')
       statusChanged(0)
     }
   } catch (e) {
     // TODO: handle error
     console.error(e);
-  }
-}
-
-const getStorageUsed = async () => {
-  try {
-    const storageUsed = await plugin.call("storage" as any, "getStorage" as any);
-  } catch (e) {
-    const storage: string = await plugin.call('dgitApi', "localStorageUsed" as any);
-    const storageUsed = {
-      usage: parseFloat(storage) * 1000,
-      quota: 10000000,
-    };
   }
 }
 

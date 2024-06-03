@@ -50,7 +50,6 @@ export const GitUI = (props: IGitUi) => {
   const [needsInit, setNeedsInit] = useState<boolean>(true)
   const [appLoaded, setAppLoaded] = useState<boolean>(false)
 
-
   useEffect(() => {
     plugin.emit('statusChanged', {
       key:'loading',
@@ -63,7 +62,7 @@ export const GitUI = (props: IGitUi) => {
   },[])
 
   useEffect(() => {
-    if(!appLoaded) return
+    if (!appLoaded) return
     setCallBacks(plugin, gitDispatch, loaderDispatch)
     setPlugin(plugin, gitDispatch, loaderDispatch)
     loaderDispatch({ type: 'plugin', payload: true })
@@ -71,9 +70,9 @@ export const GitUI = (props: IGitUi) => {
   }, [appLoaded])
 
   useEffect(() => {
-    if(!appLoaded) return
+    if (!appLoaded) return
     async function checkconfig() {
-      
+
       const username = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
       const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
@@ -84,7 +83,7 @@ export const GitUI = (props: IGitUi) => {
   }, [gitState.gitHubAccessToken, gitState.gitHubUser, gitState.userEmails])
 
   useEffect(() => {
-    if(!appLoaded) return
+    if (!appLoaded) return
     async function setDecorators(gitState: gitState) {
       await plugin.call('fileDecorator', 'clearFileDecorators')
       await setModifiedDecorator(gitState.modified)
@@ -98,7 +97,7 @@ export const GitUI = (props: IGitUi) => {
   }, [gitState.fileStatusResult])
 
   useEffect(() => {
-    if(!appLoaded) return
+    if (!appLoaded) return
     async function updatestate() {
       console.log('updatestate', gitState)
       if (gitState.currentBranch && gitState.currentBranch.remote && gitState.currentBranch.remote.url) {
@@ -112,7 +111,6 @@ export const GitUI = (props: IGitUi) => {
     setNeedsInit(!(gitState.currentBranch && gitState.currentBranch.name !== ''))
 
   }, [gitState.gitHubUser, gitState.currentBranch, gitState.remotes, gitState.gitHubAccessToken])
-
 
   const gitActionsProviderValue = {
     commit,

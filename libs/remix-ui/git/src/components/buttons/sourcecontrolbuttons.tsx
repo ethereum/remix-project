@@ -71,7 +71,7 @@ export const SourceControlButtons = () => {
     <span className='d-flex justify-content-end align-items-center'>
       <CustomTooltip tooltipText={getTooltipText('git.pull')}>
         <GitUIButton disabledCondition={buttonsDisabled()} onClick={pull} className='btn btn-sm pl-0 pr-2'>
-        <div className="d-flex align-items-baseline">
+          <div className="d-flex align-items-baseline">
             {syncState.commitsBehind.length ? <div className="badge badge-pill pl-0">
               {syncState.commitsBehind.length}
             </div> : null}

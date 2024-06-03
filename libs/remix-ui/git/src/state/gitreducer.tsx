@@ -178,10 +178,9 @@ export const gitReducer = (state: gitState = defaultGitState, action: Actions): 
 
   case 'SET_USER_EMAILS':
     return {
-         ...state,
-          userEmails: action.payload
+      ...state,
+      userEmails: action.payload
     }
-
 
   case 'SET_DEFAULT_REMOTE':
     return {

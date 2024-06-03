@@ -50,8 +50,8 @@ export const CommitSummary = (props: CommitSummaryProps) => {
   }
 
   const openRemote = () => {
-    if(getRemote())
-    window.open(`${getRemote().url}/commit/${commit.oid}`, '_blank');
+    if (getRemote())
+      window.open(`${getRemote().url}/commit/${commit.oid}`, '_blank');
   }
 
   return (

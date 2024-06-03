@@ -26,16 +26,16 @@ export const BranchDifferences = (props: BrancheDetailsProps) => {
   }, [context.branchDifferences])
 
   const commitsAhead = (remote: remote) => {
-    if(!remote) return [];
+    if (!remote) return [];
     return context.branchDifferences[`${remote.name}/${branch.name}`]?.uniqueHeadCommits || [];
   }
 
   const commitsBehind = (remote: remote) => {
-    if(!remote) return [];
+    if (!remote) return [];
     return context.branchDifferences[`${remote.name}/${branch.name}`]?.uniqueRemoteCommits || [];
   }
 
-  if(!getRemote()) return null;
+  if (!getRemote()) return null;
 
   return (
 

@@ -62,12 +62,12 @@ export type compareBranchesInput = {
 }
 
 export type fetchInputType = {
-    remote: remote, 
-    ref?: branch, 
-    remoteRef?: branch, 
-    depth?: number, 
-    singleBranch?: boolean, 
-    relative?: boolean, 
+    remote: remote,
+    ref?: branch,
+    remoteRef?: branch,
+    depth?: number,
+    singleBranch?: boolean,
+    relative?: boolean,
     quiet?: boolean
 }
 
@@ -142,10 +142,9 @@ export interface repositoriesInput { token: string, page?: number, per_page?: nu
 export interface statusInput { ref: string, filepaths?: string[] }
 
 export const dGitProfile: LibraryProfile<IGitApi> = {
-    name: 'dgitApi',
-    methods: ['clone', 'branches', 'remotes', 'getCommitChanges', 'log', 'remotecommits'],
+  name: 'dgitApi',
+  methods: ['clone', 'branches', 'remotes', 'getCommitChanges', 'log', 'remotecommits'],
 }
-
 
 export interface customGitApi extends IRemixApi {
     dgit: IGitApi
@@ -266,47 +265,47 @@ export type remoteBranch = {
 }
 
 export const defaultGitState: gitState = {
-    currentBranch: { name: "", remote: { name: "", url: "" } },
-    commits: [],
-    branch: "",
-    canCommit: true,
-    branches: [],
-    remotes: [],
-    defaultRemote: null,
-    fileStatusResult: [],
-    staged: [],
-    untracked: [],
-    deleted: [],
-    modified: [],
-    allchangesnotstaged: [],
-    canUseApp: false,
-    loading: false,
-    storageUsed: {},
-    reponame: "",
-    repositories: [],
-    remoteBranches: [],
-    commitChanges: [],
-    remoteBranchCommits: {},
-    localBranchCommits: {},
-    branchDifferences: {},
-    syncStatus: syncStatus.none,
-    localCommitCount: 0,
-    remoteCommitCount: 0,
-    upstream: null,
-    gitHubUser: {} as GitHubUser,
-    rateLimit: {} as RateLimit,
-    userEmails: [] as userEmails,
-    gitHubScopes: [],
-    gitHubAccessToken: "",
-    log: []
+  currentBranch: { name: "", remote: { name: "", url: "" } },
+  commits: [],
+  branch: "",
+  canCommit: true,
+  branches: [],
+  remotes: [],
+  defaultRemote: null,
+  fileStatusResult: [],
+  staged: [],
+  untracked: [],
+  deleted: [],
+  modified: [],
+  allchangesnotstaged: [],
+  canUseApp: false,
+  loading: false,
+  storageUsed: {},
+  reponame: "",
+  repositories: [],
+  remoteBranches: [],
+  commitChanges: [],
+  remoteBranchCommits: {},
+  localBranchCommits: {},
+  branchDifferences: {},
+  syncStatus: syncStatus.none,
+  localCommitCount: 0,
+  remoteCommitCount: 0,
+  upstream: null,
+  gitHubUser: {} as GitHubUser,
+  rateLimit: {} as RateLimit,
+  userEmails: [] as userEmails,
+  gitHubScopes: [],
+  gitHubAccessToken: "",
+  log: []
 }
 
 export const defaultLoaderState: loaderState = {
-    branches: false,
-    commits: false,
-    sourcecontrol: false,
-    remotes: false,
-    plugin: false
+  branches: false,
+  commits: false,
+  sourcecontrol: false,
+  remotes: false,
+  plugin: false
 }
 
 export type fileStatusResult = {

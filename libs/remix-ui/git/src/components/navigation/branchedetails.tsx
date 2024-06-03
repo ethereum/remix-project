@@ -89,7 +89,7 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
           <GitUIButton className="btn btn-sm p-0 mr-1 text-muted" onClick={() => openRemote()}>
             <FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon>
           </GitUIButton>
-          </>}
+        </>}
 
       </div>
     </>

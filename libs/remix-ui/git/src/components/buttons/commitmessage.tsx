@@ -8,7 +8,7 @@ import { syncStateContext } from "./sourceControlBase";
 
 enum buttonStateValues {
   Commit ,
-  Sync  = 1,
+  Sync = 1,
   PublishBranch = 2
 }
 
@@ -52,7 +52,7 @@ export const CommitMessage = () => {
       ref: context.currentBranch
     })
   }
-  
+
   const commitNotAllowed = () => {
     return context.canCommit === false || message.value === "" || ( context.staged.length === 0 && context.allchangesnotstaged.length == 0 )
   }
@@ -92,20 +92,20 @@ export const CommitMessage = () => {
   }
 
   const setButtonStateValues = () => {
-    console.log('setButtonStateValues', context) 
-    if(!commitNotAllowed() || context.allchangesnotstaged.length > 0 || context.staged.length > 0){
-      if(context.allchangesnotstaged.length == 0 && context.staged.length == 0 &&  message.value === "" && publishEnabled()){
+    console.log('setButtonStateValues', context)
+    if (!commitNotAllowed() || context.allchangesnotstaged.length > 0 || context.staged.length > 0){
+      if (context.allchangesnotstaged.length == 0 && context.staged.length == 0 && message.value === "" && publishEnabled()){
         setButtonState(buttonStateValues.PublishBranch)
         return
       }
       setButtonState(buttonStateValues.Commit)
       return
     }
-    if(syncEnabled()){
+    if (syncEnabled()){
       setButtonState(buttonStateValues.Sync)
       return
     }
-    if(publishEnabled()){
+    if (publishEnabled()){
       setButtonState(buttonStateValues.PublishBranch)
       return
     }
@@ -115,7 +115,6 @@ export const CommitMessage = () => {
   useEffect(() => {
     setButtonStateValues()
   },[context.canCommit, context.staged, context.allchangesnotstaged, context.currentBranch, syncState.commitsAhead, syncState.commitsBehind, message.value])
-
 
   return (
     <>
