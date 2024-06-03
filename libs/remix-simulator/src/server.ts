@@ -6,7 +6,7 @@ import { Provider, ProviderOptions } from './provider'
 import { log } from './utils/logs'
 const app = express()
 
-class Server {
+export class Server {
   provider
   rpcOnly
 
@@ -68,4 +68,3 @@ class Server {
   }
 }
 
-module.exports = Server

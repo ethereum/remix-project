@@ -32,7 +32,7 @@ program
     console.log('details: ', option.details)
     console.log('host: ', option.ip)
     console.log('port: ', option.port)
-    const Server = require('../src/server')
+    const { Server } = require('../src/server')
     const server = new Server({
       coinbase: option.coinbase,
       rpc: option.rpc,
