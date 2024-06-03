@@ -9,7 +9,7 @@ export function SolScanTable(props: SolScanTableProps) {
   const { scanDetails } = props
 
   return (
-    <table className="table h6 table-sm">
+    <table className="table table-bordered table-hover">
       <thead>
         <tr>
           <td scope="col">ID</td>
@@ -22,7 +22,7 @@ export function SolScanTable(props: SolScanTableProps) {
         {
           Array.from(scanDetails, (template) => {
             return (
-              <tr>
+              <tr key={template.template_details.issue_id}>
                 <td scope="col">{template.template_details.issue_id}</td>
                 <td scope="col">{template.template_details.issue_name}</td>
                 <td scope="col">{template.template_details.issue_severity}</td>
