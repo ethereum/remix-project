@@ -267,7 +267,7 @@ export function UniversalDappUI(props: UdappProps) {
             </span>) }
           </div>
           <div className="btn" style={{ padding: '0.15rem' }}>
-            <CopyToClipboard tip={intl.formatMessage({ id: 'udapp.copy' })} content={address} direction={'top'} />
+            <CopyToClipboard tip={intl.formatMessage({ id: 'udapp.copyAddress' })} content={address} direction={'top'} />
           </div>
           { props.isPinnedContract ? ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>

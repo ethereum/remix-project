@@ -524,7 +524,7 @@ export function GeCompletionUnits(range: monacoTypes.IRange, monaco): monacoType
     if (unit !== 'years') {
       completionItem.detail = unit + ': time unit';
     } else {
-      completionItem.detail = 'DEPRECATED: ' + unit + ': time unit';
+      completionItem.detail = 'REMOVED in v0.5.0: ' + unit + ': time unit';
     }
     completionItems.push(completionItem);
   });
