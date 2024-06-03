@@ -231,8 +231,6 @@ export function UniversalDappUI(props: UdappProps) {
         fileName
     })
 
-    // websocket connection
-
     if (urlResponse.data.status === 'success') {
       const ws = new WebSocket('wss://solidityscan.remixproject.org/solidityscan')
 
@@ -265,6 +263,16 @@ export function UniversalDappUI(props: UdappProps) {
             id: 'SolidityScanError',
             title: <FormattedMessage id="udapp.solScan.errModalTitle" />,
             message: data.payload.scan_status_err_message,
+            okLabel: 'Close'
+          }
+          await props.plugin.call('notification', 'modal', modal)
+        } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
+          console.log('data.payload--->', data.payload)
+
+          const modal: AppModal = {
+            id: 'SolidityScanSuccess',
+            title: <FormattedMessage id="udapp.solScan.successModalTitle" />,
+            message: 'Scan successful',
             okLabel: 'Close'
           }
           await props.plugin.call('notification', 'modal', modal)
