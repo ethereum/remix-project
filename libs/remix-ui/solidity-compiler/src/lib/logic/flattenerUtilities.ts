@@ -1,42 +1,49 @@
 import type { CompilationSource, AstNode } from '@remix-project/remix-solidity'
 
-const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm;
-const SPDX_SOLIDITY_REGEX = /^\s*\/\/ SPDX-License-Identifier:.*$/gm;
+const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm
+const SPDX_SOLIDITY_REGEX = /^\s*\/\/ SPDX-License-Identifier:.*$/gm
+const PRAGMA_SOLIDITY_REGEX = /^pragma experimental\s+.*$/gm
 
 type Visited = { [key: string]: number }
-export function getDependencyGraph(ast: { [name: string]: CompilationSource }, target: string, remappings: string[]) {
-  const graph = tsort();
-  const visited = {};
-  visited[target] = 1;
-  _traverse(graph, visited, ast, target, remappings);
-  return graph;
+export function getDependencyGraph(ast: { [name: string]: CompilationSource }, target: string, remappings: string[], order: string[]) {
+  const graph = tsort()
+  const visited = {}
+  visited[target] = 1
+  _traverse(graph, visited, ast, target, remappings, order)
+  return graph
 }
 
-export function concatSourceFiles(files: any[], sources: any) {
-  let concat = '';
-  for (const file of files) {
-    const source = sources[file].content;
-    const sourceWithoutImport = source.replace(IMPORT_SOLIDITY_REGEX, '');
-    const sourceWithoutSPDX = sourceWithoutImport.replace(SPDX_SOLIDITY_REGEX, '');
-    concat += `\n// File: ${file}\n\n`;
-    concat += sourceWithoutSPDX;
-  }
-  return concat;
+export function concatSourceFiles(files: any[], sources: any, order: string[]) {
+  let concat = ''
+  order.forEach((importName) => {
+    for (const file of files) {
+      if (file === importName) {
+        const source = sources[file].content
+        const sourceWithoutImport = source.replace(IMPORT_SOLIDITY_REGEX, '')
+        const sourceWithoutSPDX = sourceWithoutImport.replace(SPDX_SOLIDITY_REGEX, '')
+        const sourceWithoutDuplicatePragma = sourceWithoutSPDX.replace(PRAGMA_SOLIDITY_REGEX, '')
+        concat += `\n// File: ${file}\n\n`
+        concat += sourceWithoutDuplicatePragma
+      }
+    }
+  })
+  return concat
 }
 
-function _traverse(graph: Graph, visited: Visited, ast: { [name: string]: CompilationSource }, name: string, remappings: string[]) {
+function _traverse(graph: Graph, visited: Visited, ast: { [name: string]: CompilationSource }, name: string, remappings: string[], order: string[]) {
   let currentAst = null
   currentAst = ast[name].ast
-  const dependencies = _getDependencies(currentAst);
+  const dependencies = _getDependencies(currentAst)
   for (const dependency of dependencies) {
-    const path = resolve(name, dependency, remappings);
+    const path = resolve(name, dependency, remappings)
     if (path in visited) {
-      // continue; // fixes wrong ordering of source in flattened file
+      continue; // fixes wrong ordering of source in flattened file
     }
-    visited[path] = 1;
-    graph.add(name, path);
-    _traverse(graph, visited, ast, path, remappings);
+    visited[path] = 1
+    graph.add(name, path)
+    _traverse(graph, visited, ast, path, remappings, order)
   }
+  order.push(name)
 }
 
 function _getDependencies(ast: AstNode) {

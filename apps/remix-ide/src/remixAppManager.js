@@ -78,7 +78,9 @@ let requiredModules = [ // services + layout views + system views
   'doc-gen',
   'remix-templates',
   'solhint',
-  'dgit'
+  'dgit',
+  'pinnedPanel',
+  'pluginStateLogger'
 ]
 
 
