@@ -73,7 +73,7 @@ export class PinnedPanel extends AbstractPanel {
 
   render() {
     return (
-      <section className='panel pinned-panel highlight'> <PluginViewWrapper plugin={this} /></section>
+      <section className='panel pinned-panel'> <PluginViewWrapper plugin={this} /></section>
     )
   }
 
