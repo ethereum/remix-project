@@ -19,6 +19,8 @@ export class Server {
     this.provider = new Provider(options)
     this.provider.init().then(() => {
       log('Provider initiated')
+      log('Test accounts:')
+      log(Object.keys(this.provider.Accounts.accounts))
     }).catch((error) => {
       log(error)
     })    
