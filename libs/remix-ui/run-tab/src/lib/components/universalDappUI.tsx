@@ -220,6 +220,7 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const handleScanContinue = async () => {
+    await props.plugin.call('notification', 'toast', 'Running scan...')
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const fileName = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
     // const existsOrNot = await props.plugin.call('fileManager', 'exists', fileName)
@@ -270,10 +271,10 @@ export function UniversalDappUI(props: UdappProps) {
       ws.addEventListener('error', console.error);
  
       ws.addEventListener('open', (event) => {
-        console.log('Connected to the server.')
+        console.log('Connected to the solidityscan server.')
       })
 
-      ws.addEventListener('message', (event) => {
+      ws.addEventListener('message', async (event) => {
         const data = JSON.parse(event.data)
         if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
           const reqToInitScan = {
@@ -290,6 +291,14 @@ export function UniversalDappUI(props: UdappProps) {
             }
           }
           ws.send(JSON.stringify(reqToInitScan))
+        } else if (data.type === "scan_status" && data.payload.scan_status === "download_failed") {
+          const modal: AppModal = {
+            id: 'SolidityScanError',
+            title: <FormattedMessage id="udapp.solScan.errModalTitle" />,
+            message: data.payload.scan_status_err_message,
+            okLabel: 'Close'
+          }
+          await props.plugin.call('notification', 'modal', modal)
         }
         
       })
@@ -304,11 +313,10 @@ export function UniversalDappUI(props: UdappProps) {
       message: <FormattedMessage id="udapp.solScan.modalMessage" />,
       okLabel: <FormattedMessage id="udapp.solScan.modalOkLabel" />,
       okFn: handleScanContinue,
-      cancelLabel: <FormattedMessage id="udapp.solScan.modalCancelLabel" />
+      cancelLabel: <FormattedMessage id="udapp.solScan.modalCancelLabel" />,
     }
 
-    const result = await props.plugin.call('notification', 'modal', modal)
-    console.log('askPermissionToScan----> result----->', result)
+    await props.plugin.call('notification', 'modal', modal)
   }
 
   const label = (key: string | number, value: string) => {
