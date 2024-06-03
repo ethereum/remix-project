@@ -6,6 +6,12 @@ import { Provider, ProviderOptions } from './provider'
 import { log } from './utils/logs'
 const app = express()
 
+export type CliOptions = {
+  rpc?: boolean,
+  port: number
+  ip: string
+}
+
 export class Server {
   provider
 
