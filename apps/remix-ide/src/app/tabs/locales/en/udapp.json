@@ -86,6 +86,8 @@
   "udapp.solScan.modalOkLabel": "Continue",
   "udapp.solScan.modalCancelLabel": "Cancel",
   "udapp.solScan.errModalTitle": "Scanning error",
+  "udapp.solScan.successModalTitle": "Scanning successful",
+  
 
   "udapp._comment_recorderCardUI.tsx": "libs/remix-ui/run-tab/src/lib/components/recorderCardUI.tsx",
   "udapp.transactionsRecorded": "Transactions recorded",
