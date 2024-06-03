@@ -85,6 +85,7 @@
   "udapp.solScan.modalMessage": "Contract code will be shared to third party Solidity Scan.\n Would you like to continue?",
   "udapp.solScan.modalOkLabel": "Continue",
   "udapp.solScan.modalCancelLabel": "Cancel",
+  "udapp.solScan.errModalTitle": "Error",
 
   "udapp._comment_recorderCardUI.tsx": "libs/remix-ui/run-tab/src/lib/components/recorderCardUI.tsx",
   "udapp.transactionsRecorded": "Transactions recorded",
