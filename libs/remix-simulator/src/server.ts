@@ -1,10 +1,7 @@
-import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import expressWs from 'express-ws'
 import { Provider, ProviderOptions } from './provider'
-import { log } from './utils/logs'
-const app = express()
+import { log, error } from './utils/logs'
 
 export type CliOptions = {
   rpc?: boolean,
@@ -26,7 +23,10 @@ export class Server {
     })
   }
 
-  start (cliOptions: CliOptions) {
+  async start (cliOptions: CliOptions) {
+    const expressWs = (await import('express-ws')).default
+    const express = (await import('express')).default
+    const app = express()
     const wsApp = expressWs(app)
 
     app.use(cors())
@@ -40,16 +40,16 @@ export class Server {
     if (cliOptions.rpc) {
       app.use((req, res) => {
         if (req && req.body && (req.body.method === 'eth_sendTransaction' || req.body.method === 'eth_call')) {
-          console.log('Receiving call/transaction:')
-          console.log(req.body.params)
+          log('Receiving call/transaction:')
+          log(req.body.params)
         }
         this.provider.sendAsync(req.body, (err, jsonResponse) => {
           if (err) {
-            console.error(err)
+            error(err)
             return res.send(JSON.stringify({ error: err }))
           }
           if (req && req.body && (req.body.method === 'eth_sendTransaction' || req.body.method === 'eth_call')) {
-            console.log(jsonResponse)
+            log(jsonResponse)
           }
           res.send(jsonResponse)
         })
@@ -59,16 +59,16 @@ export class Server {
         ws.on('message', (msg) => {
           const body = JSON.parse(msg.toString())
           if (body && (body.method === 'eth_sendTransaction' || body.method === 'eth_call')) {
-            console.log('Receiving call/transaction:')
-            console.log(body.params)
+            log('Receiving call/transaction:')
+            log(body.params)
           }
           this.provider.sendAsync(body, (err, jsonResponse) => {
             if (err) {
-              console.error(err)
+              error(err)
               return ws.send(JSON.stringify({ error: err }))
             }
             if (body && (body.method === 'eth_sendTransaction' || body.method === 'eth_call')) {
-              console.log(jsonResponse)
+              log(jsonResponse)
             }
             ws.send(JSON.stringify(jsonResponse))
           })
