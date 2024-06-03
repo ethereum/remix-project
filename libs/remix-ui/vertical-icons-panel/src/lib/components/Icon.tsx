@@ -101,7 +101,7 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
             className={`remixui_icon m-0  pt-1`}
             onClick={() => {
               if (iconRecord.pinned) {
-                console.log('called an already pinned plugin')
+                verticalIconPlugin.call('pinnedPanel', 'highlight')
               } else {
                 (verticalIconPlugin as any).toggle(name)
               }
