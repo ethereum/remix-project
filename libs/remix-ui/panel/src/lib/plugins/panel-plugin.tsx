@@ -5,12 +5,15 @@ import './panel.css'
 interface panelPLuginProps {
   pluginRecord: PluginRecord,
   initialState?: any,
+  highlightStamp?: number,
   children?: any
 }
 
 const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
   const localRef = useRef<HTMLDivElement>(null)
   const [view, setView] = useState<JSX.Element | HTMLDivElement>()
+  const [showHighlight, setShowHighlight] = useState<boolean>(false)
+
   useEffect(() => {
     const ref: any = panelRef || localRef
     if (ref.current) {
@@ -39,8 +42,20 @@ const RemixUIPanelPlugin = (props: panelPLuginProps, panelRef: any) => {
     }
   }, [])
 
+  useEffect(() => {
+    setShowHighlight(true)
+  }, [props.highlightStamp])
+
+  useEffect(() => {
+    if (showHighlight) {
+      setTimeout(() => {
+        setShowHighlight(false)
+      }, 500)
+    }
+  }, [showHighlight])
+
   return (
-    <div className={props.pluginRecord.active ? `${props.pluginRecord.class}` : 'd-none'} ref={panelRef || localRef}>
+    <div className={`${props.pluginRecord.active ? `${props.pluginRecord.class}` : 'd-none'} ${showHighlight ? 'highlight' : ''}`} ref={panelRef || localRef}>
       <>{view}</>
     </div>
   )
