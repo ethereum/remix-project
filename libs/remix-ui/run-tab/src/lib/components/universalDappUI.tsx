@@ -9,6 +9,7 @@ import * as ethJSUtil from '@ethereumjs/util'
 import axios from 'axios'
 import { AppModal } from '@remix-ui/app'
 import { ContractGUI } from './contractGUI'
+import { SolScanTable } from './solScanTable'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { BN } from 'bn.js'
 import { CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
@@ -220,7 +221,7 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const handleScanContinue = async () => {
-    await props.plugin.call('notification', 'toast', 'Running scan...')
+    await props.plugin.call('notification', 'toast', 'Processing data to scan...')
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const fileName = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
     const filePath = `.workspaces/${fileName}`
@@ -233,8 +234,8 @@ export function UniversalDappUI(props: UdappProps) {
 
       ws.addEventListener('error', console.error);
  
-      ws.addEventListener('open', (event) => {
-        console.log('Connected to the server.')
+      ws.addEventListener('open', async (event) => {
+        await props.plugin.call('notification', 'toast', 'Initiating scan...')
       })
 
       ws.addEventListener('message', async (event) => {
@@ -273,15 +274,12 @@ export function UniversalDappUI(props: UdappProps) {
           const url = data.payload.scan_details.link
 
           const {data: scanData} = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
-          console.log('scanData--->', scanData)
-          const scanDetails = scanData.scan_report.multi_file_scan_details
-          console.log('scanDetails--->', scanDetails)
-
+          const scanDetails: Record<string, any>[] = scanData.scan_report.multi_file_scan_details
 
           const modal: AppModal = {
             id: 'SolidityScanSuccess',
             title: <FormattedMessage id="udapp.solScan.successModalTitle" />,
-            message: `Scan successful`,
+            message: <SolScanTable scanDetails={scanDetails} />,
             okLabel: 'Close'
           }
           await props.plugin.call('notification', 'modal', modal)
