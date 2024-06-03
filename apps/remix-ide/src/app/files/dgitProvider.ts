@@ -362,8 +362,8 @@ class DGitProvider extends Plugin {
 
     let remotes: remote[] = []
     try {
-      remotes = (await git.listRemotes({ ...config ? config : await this.addIsomorphicGitConfigFS() })).map((remote) => 
-        { return { name: remote.remote, url: remote.url } }
+      remotes = (await git.listRemotes({ ...config ? config : await this.addIsomorphicGitConfigFS() })).map((remote) =>
+      { return { name: remote.remote, url: remote.url } }
       )
     } catch (e) {
       // do nothing
@@ -1025,7 +1025,6 @@ class DGitProvider extends Plugin {
 
     const user = await octokit.request('GET /user')
     const emails = await octokit.request('GET /user/emails')
-  
 
     const scopes = user.headers['x-oauth-scopes'];
 
