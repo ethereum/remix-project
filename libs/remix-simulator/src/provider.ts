@@ -38,6 +38,7 @@ export type ProviderOptions = {
   logDetails?: boolean
   blocks?: string[],
   coinbase?: string
+  rpc?: boolean
 }
 
 export class Provider {
