@@ -36,7 +36,7 @@ program
     const server = new Server({
       coinbase: option.coinbase,
       rpc: option.rpc,
-      logDetails: option.details
+      details: option.details
     })
     server.start(option.ip, option.port)
   })
