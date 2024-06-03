@@ -8,19 +8,17 @@ const app = express()
 
 export class Server {
   provider
-  rpcOnly
 
-  constructor (options?:ProviderOptions) {
+  constructor (options?: ProviderOptions) {
     this.provider = new Provider(options)
     this.provider.init().then(() => {
       log('Provider initiated')
     }).catch((error) => {
       log(error)
-    })
-    this.rpcOnly = options.rpc
+    })    
   }
 
-  start (host, port) {
+  start (cliOptions: CliOptions) {
     const wsApp = expressWs(app)
 
     app.use(cors())
@@ -31,7 +29,7 @@ export class Server {
       res.send('Welcome to remix-simulator')
     })
 
-    if (this.rpcOnly) {
+    if (cliOptions.rpc) {
       app.use((req, res) => {
         this.provider.sendAsync(req.body, (err, jsonResponse) => {
           if (err) {
@@ -57,12 +55,12 @@ export class Server {
       })
     }
 
-    app.listen(port, host, () => {
-      if (!this.rpcOnly) {
-        log('Remix Simulator listening on ws://' + host + ':' + port)
+    app.listen(cliOptions.port, cliOptions.ip, () => {
+      if (!cliOptions.rpc) {
+        log('Remix Simulator listening on ws://' + cliOptions.ip + ':' + cliOptions.port)
         log('http json-rpc is deprecated and disabled by default. To enable it use --rpc')
       } else {
-        log('Remix Simulator listening on http://' + host + ':' + port)
+        log('Remix Simulator listening on http://' + cliOptions.ip + ':' + cliOptions.port)
       }
     })
   }
