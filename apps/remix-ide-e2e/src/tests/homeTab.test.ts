@@ -10,8 +10,45 @@ module.exports = {
 
   'Should start coding': function (browser: NightwatchBrowser) {
     browser
-      .waitForElementVisible('*[data-id="homeTabStartCoding"]')
-      .click('*[data-id="homeTabStartCoding"]')
-      .waitForElementVisible('div[data-id="treeViewDivtreeViewItemcontracts/HelloWorld.sol"]')
+      .waitForElementVisible('*[data-id="homeTabGetStartedremixDefault"]')
+      .click('*[data-id="homeTabGetStartedremixDefault"]')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemcontracts/1_Storage.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"')
+      .waitForElementVisible('*[data-id="treeViewDivDraggableItemREADME.txt"')
+      .click('*[data-id="treeViewDivtreeViewItemcontracts/1_Storage.sol"]')
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'pragma')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((editorContent) => {
+        browser.assert.ok(editorContent.indexOf(`pragma solidity`) !== -1, 'unexpected content encountered!')
+      })
+  },
+
+  'Should start with ERC20 workspace': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-path="home"')
+      .waitForElementVisible('*[data-id="homeTabGetStartedERC20"]')
+      .click('*[data-id="homeTabGetStartedERC20"')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
+      .waitForElementVisible('*[data-id="treeViewDivtreeViewItemtests/MyToken_test.sol"]')
+      .click('*[data-id="treeViewDivtreeViewItemtests/MyToken_test.sol"]')
+      .waitForElementPresent({
+        selector: "//div[contains(@class, 'view-line') and contains(.//span, 'pragma')]",
+        locateStrategy: 'xpath'
+      })
+      .getEditorValue((editorContent) => {
+        browser.assert.ok(editorContent.indexOf(`import "../contracts/MyToken.sol";`) !== -1, 'unexpected content encountered!')
+      })
+  },
+  'Should create a new file in the current workspace': function (browser: NightwatchBrowser) {
+    browser
+      .click('*[data-path="home"]')
+      .waitForElementVisible('*[data-id="homeTabNewFile"]')
+      .click('*[data-id="homeTabNewFile"]')
+      .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', 'HometabNewFile.txt')
+      .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemHometabNewFile.txt"]', 7000)
   }
 }

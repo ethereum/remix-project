@@ -39,7 +39,7 @@ const workspaceTemplates: WorkspaceTemplate[] = [
     workspaceTitle: 'All Templates',
     description: 'View all templates.',
     projectLogo: 'assets/img/remixverticaltextLogo.png',
-    templateName: 'default',
+    templateName: '',
   },
   {
     gsID: 'sUTLogo',
