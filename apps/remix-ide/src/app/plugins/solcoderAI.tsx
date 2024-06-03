@@ -19,14 +19,32 @@ const profile = {
   events: [],
   maintainedBy: 'Remix',
 }
+type ChatEntry = [string, string];
+
+enum BackendOPModel{
+  DeepSeek,
+  CodeLLama,
+  Mistral
+}
+
+const PromptBuilder = (inst, answr, modelop) => {
+  if (modelop === BackendOPModel.CodeLLama) return ""
+  if (modelop === BackendOPModel.DeepSeek) return "\n### INSTRUCTION:\n" + inst + "\n### RESPONSE:\n" + answr
+  if (modelop === BackendOPModel.Mistral) return ""
+}
 
 export class SolCoder extends Plugin {
   api_url: string
   completion_url: string
+  solgpt_chat_history:ChatEntry[]
+  max_history = 7
+  model_op = BackendOPModel.DeepSeek
+
   constructor() {
     super(profile)
     this.api_url = "https://solcoder.remixproject.org"
     this.completion_url = "https://completion.remixproject.org"
+    this.solgpt_chat_history = []
   }
 
   async code_generation(prompt): Promise<any> {
@@ -62,6 +80,7 @@ export class SolCoder extends Plugin {
     this.call('layout', 'maximizeTerminal')
     let result
     try {
+      const main_prompt = this._build_solgpt_promt(prompt)
       result = await(
         await fetch(this.api_url, {
           method: 'POST',
@@ -69,17 +88,21 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ "data":[prompt, "solidity_answer", false,1000,0.9,0.8,50]}),
+          body: JSON.stringify({ "data":[main_prompt, "solidity_answer", false,1000,0.9,0.8,50]}),
         })
       ).json()
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
+      this.solgpt_chat_history = []
       return
     } finally {
       this.emit("aiInferingDone")
     }
     if (result) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
+      const chat:ChatEntry = [prompt, result.data[0]]
+      this.solgpt_chat_history.push(chat)
+      if (this.solgpt_chat_history.length >this.max_history){this.solgpt_chat_history.shift()}
     } else if (result.error) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "Error on request" })
     }
@@ -192,6 +215,20 @@ export class SolCoder extends Plugin {
       return
     } finally {
       this.emit("aiInferingDone")
+    }
+  }
+
+  _build_solgpt_promt(user_promt:string){
+    if (this.solgpt_chat_history.length === 0){
+      return user_promt
+    } else {
+      let new_promt = ""
+      for (const [question, answer] of this.solgpt_chat_history) {
+        new_promt += PromptBuilder(question.split('sol-gpt')[1], answer, this.model_op)
+      }
+      // finaly
+      new_promt = "sol-gpt " + new_promt + PromptBuilder(user_promt.split('sol-gpt')[1], "", this.model_op)
+      return new_promt
     }
   }
 

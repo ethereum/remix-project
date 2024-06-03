@@ -15,10 +15,10 @@ export function EnvironmentUI(props: EnvironmentProps) {
   const currentProvider = props.providers.providerList.find((exEnv) => exEnv.name === props.selectedEnv)
   const bridges = {
     'L2 - Optimism': 'https://app.optimism.io/bridge/deposit',
-    'L2 - Arbitrum One': 'https://bridge.arbitrum.io/'
+    'L2 - Arbitrum': 'https://bridge.arbitrum.io/'
   }
 
-  const isL2 = (providerDisplayName: string) => providerDisplayName === 'Optimism Provider' || providerDisplayName === 'Arbitrum One Provider'
+  const isL2 = (providerDisplayName: string) => providerDisplayName === 'L2 - Optimism' || providerDisplayName === 'L2 - Arbitrum'
   return (
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel">
@@ -38,16 +38,16 @@ export function EnvironmentUI(props: EnvironmentProps) {
       <div className="udapp_environment">
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
-            {isL2(currentProvider && currentProvider.displayName) && 'L2 - '}
+            {isL2(currentProvider && currentProvider.displayName)}
             {currentProvider && currentProvider.displayName}
-            {currentProvider && bridges[currentProvider.name] && (
+            {currentProvider && bridges[currentProvider.displayName] && (
               <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
                 <i
                   style={{ fontSize: 'medium' }}
                   className={'ml-2 fa fa-rocket-launch'}
                   aria-hidden="true"
                   onClick={() => {
-                    window.open(bridges[currentProvider.name], '_blank')
+                    window.open(bridges[currentProvider.displayName], '_blank')
                   }}
                 ></i>
               </CustomTooltip>
@@ -63,7 +63,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
                 data-id={`dropdown-item-${name}`}
               >
                 <span className="">
-                  {isL2(displayName) && 'L2 - '}
+                  {isL2(displayName)}
                   {displayName}
                 </span>
               </Dropdown.Item>

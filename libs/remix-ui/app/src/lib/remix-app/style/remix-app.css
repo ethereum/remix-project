@@ -34,6 +34,10 @@ pre {
   width              : 320px;
   transition         : width 0.25s;
 }
+.pinnedpanel           {
+  width              : 320px;
+  transition         : width 0.25s;
+}
 .highlightcode       {
   position           : absolute;
   z-index            : 20;
