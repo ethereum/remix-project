@@ -11,12 +11,13 @@ const pinnedPanel = {
   displayName: 'Pinned Panel',
   description: 'Remix IDE pinned panel',
   version: packageJson.version,
-  methods: ['addView', 'removeView', 'currentFocus', 'pinView', 'unPinView']
+  methods: ['addView', 'removeView', 'currentFocus', 'pinView', 'unPinView', 'highlight']
 }
 
 export class PinnedPanel extends AbstractPanel {
   dispatch: React.Dispatch<any> = () => {}
-  loggedState: any
+  loggedState: Record<string, any>
+  highlightStamp: number
 
   constructor() {
     super(pinnedPanel)
@@ -61,24 +62,30 @@ export class PinnedPanel extends AbstractPanel {
     this.emit('unPinnedPlugin', profile)
   }
 
+  highlight () {
+    this.highlightStamp = Date.now()
+    this.renderComponent()
+  }
+
   setDispatch (dispatch: React.Dispatch<any>) {
     this.dispatch = dispatch
   }
 
   render() {
     return (
-      <section className='panel pinned-panel'> <PluginViewWrapper plugin={this} /></section>
+      <section className='panel pinned-panel highlight'> <PluginViewWrapper plugin={this} /></section>
     )
   }
 
   updateComponent(state: any) {
-    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins} pinView={this.pinView.bind(this)} unPinView={this.unPinView.bind(this)}></RemixUIPanelHeader>} plugins={state.plugins} pluginState={state.pluginState} />
+    return <RemixPluginPanel header={<RemixUIPanelHeader plugins={state.plugins} pinView={this.pinView.bind(this)} unPinView={this.unPinView.bind(this)}></RemixUIPanelHeader>} { ...state } />
   }
 
   renderComponent() {
     this.dispatch({
       plugins: this.plugins,
-      pluginState: this.loggedState
+      pluginState: this.loggedState,
+      highlightStamp: this.highlightStamp
     })
   }
 }
