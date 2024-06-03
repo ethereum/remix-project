@@ -223,40 +223,8 @@ export function UniversalDappUI(props: UdappProps) {
     await props.plugin.call('notification', 'toast', 'Running scan...')
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const fileName = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
-    // const existsOrNot = await props.plugin.call('fileManager', 'exists', fileName)
-    // console.log('existsOrNot---->', existsOrNot)
-    // const file = await props.plugin.call('fileManager', 'readFile', fileName)
-    const file = `// SPDX-License-Identifier: GPL-3.0
-
-    pragma solidity >=0.8.2 <0.9.0;
-    
-    /**
-     * @title Storage
-     * @dev Store & retrieve value in a variable
-     * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
-     */
-    contract Storage {
-    
-        constructor() payable {}
-    
-        uint256 number;
-    
-        /**
-         * @dev Store value in variable
-         * @param num value to store
-         */
-        function store(uint256 num) public {
-            number = num;
-        }
-    
-        /**
-         * @dev Return value 
-         * @return value of 'number'
-         */
-        function retrieve() public view returns (uint256){
-            return number;
-        }
-    }`
+    const filePath = `.workspaces/${fileName}`
+    const file = await props.plugin.call('fileManager', 'readFile', filePath)
 
     const urlResponse = await axios.post(`https://solidityscan.remixproject.org/`, {
         file,
@@ -271,11 +239,12 @@ export function UniversalDappUI(props: UdappProps) {
       ws.addEventListener('error', console.error);
  
       ws.addEventListener('open', (event) => {
-        console.log('Connected to the solidityscan server.')
+        console.log('Connected to the server.')
       })
 
       ws.addEventListener('message', async (event) => {
         const data = JSON.parse(event.data)
+        console.log('data---->', data)
         if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
           const reqToInitScan = {
             "action": "message",
