@@ -38,7 +38,6 @@ export type ProviderOptions = {
   details?: boolean
   blocks?: string[],
   coinbase?: string
-  rpc?: boolean
 }
 
 export class Provider {
