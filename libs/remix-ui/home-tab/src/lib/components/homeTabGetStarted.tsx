@@ -32,7 +32,7 @@ const workspaceTemplates: WorkspaceTemplate[] = [
     workspaceTitle: 'Start Coding',
     description: 'Create a new project using this template.',
     projectLogo: 'assets/img/remixverticaltextLogo.png',
-    templateName: 'playground',
+    templateName: 'remixDefault',
   },
   {
     gsID: 'sUTLogo',
