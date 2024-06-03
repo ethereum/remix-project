@@ -23,7 +23,7 @@ export class Server {
       log(Object.keys(this.provider.Accounts.accounts))
     }).catch((error) => {
       log(error)
-    })    
+    })
   }
 
   start (cliOptions: CliOptions) {
@@ -41,7 +41,7 @@ export class Server {
       app.use((req, res) => {
         if (req && req.body && (req.body.method === 'eth_sendTransaction' || req.body.method === 'eth_call')) {
           console.log('Receiving call/transaction:')
-          console.log(req.body.params)           
+          console.log(req.body.params)
         }
         this.provider.sendAsync(req.body, (err, jsonResponse) => {
           if (err) {
@@ -49,7 +49,7 @@ export class Server {
             return res.send(JSON.stringify({ error: err }))
           }
           if (req && req.body && (req.body.method === 'eth_sendTransaction' || req.body.method === 'eth_call')) {
-            console.log(jsonResponse)           
+            console.log(jsonResponse)
           }
           res.send(jsonResponse)
         })
@@ -60,7 +60,7 @@ export class Server {
           const body = JSON.parse(msg.toString())
           if (body && (body.method === 'eth_sendTransaction' || body.method === 'eth_call')) {
             console.log('Receiving call/transaction:')
-            console.log(body.params)           
+            console.log(body.params)
           }
           this.provider.sendAsync(body, (err, jsonResponse) => {
             if (err) {
@@ -68,7 +68,7 @@ export class Server {
               return ws.send(JSON.stringify({ error: err }))
             }
             if (body && (body.method === 'eth_sendTransaction' || body.method === 'eth_call')) {
-              console.log(jsonResponse)           
+              console.log(jsonResponse)
             }
             ws.send(JSON.stringify(jsonResponse))
           })
