@@ -37,9 +37,17 @@ export class Server {
 
     if (cliOptions.rpc) {
       app.use((req, res) => {
+        if (req && req.body && (req.body.method === 'eth_sendTransaction' || req.body.method === 'eth_call')) {
+          console.log('Receiving call/transaction:')
+          console.log(req.body.params)           
+        }
         this.provider.sendAsync(req.body, (err, jsonResponse) => {
           if (err) {
+            console.error(err)
             return res.send(JSON.stringify({ error: err }))
+          }
+          if (req && req.body && (req.body.method === 'eth_sendTransaction' || req.body.method === 'eth_call')) {
+            console.log(jsonResponse)           
           }
           res.send(jsonResponse)
         })
@@ -47,9 +55,18 @@ export class Server {
     } else {
       wsApp.app.ws('/', (ws, req) => {
         ws.on('message', (msg) => {
-          this.provider.sendAsync(JSON.parse(msg.toString()), (err, jsonResponse) => {
+          const body = JSON.parse(msg.toString())
+          if (body && (body.method === 'eth_sendTransaction' || body.method === 'eth_call')) {
+            console.log('Receiving call/transaction:')
+            console.log(body.params)           
+          }
+          this.provider.sendAsync(body, (err, jsonResponse) => {
             if (err) {
+              console.error(err)
               return ws.send(JSON.stringify({ error: err }))
+            }
+            if (body && (body.method === 'eth_sendTransaction' || body.method === 'eth_call')) {
+              console.log(jsonResponse)           
             }
             ws.send(JSON.stringify(jsonResponse))
           })
