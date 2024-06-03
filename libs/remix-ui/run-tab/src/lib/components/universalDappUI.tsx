@@ -227,13 +227,13 @@ export function UniversalDappUI(props: UdappProps) {
     const filePath = `.workspaces/${fileName}`
     const file = await props.plugin.call('fileManager', 'readFile', filePath)
 
-    const urlResponse = await axios.post(`https://solidityscan.remixproject.org/uploadFile`, { file, fileName})
+    const urlResponse = await axios.post(`https://solidityscan.remixproject.org/uploadFile`, { file, fileName })
 
     if (urlResponse.data.status === 'success') {
       const ws = new WebSocket('wss://solidityscan.remixproject.org/solidityscan')
 
       ws.addEventListener('error', console.error);
- 
+
       ws.addEventListener('open', async (event) => {
         await props.plugin.call('notification', 'toast', 'Initiating scan...')
       })
@@ -246,14 +246,14 @@ export function UniversalDappUI(props: UdappProps) {
           const reqToInitScan = {
             "action": "message",
             "payload": {
-                "type": "private_project_scan_initiate",
-                "body": {
-                    "file_urls": [
-                      urlResponse.data.result.url
-                    ],
-                    "project_name": "RemixProject",
-                    "project_type": "new"
-                }
+              "type": "private_project_scan_initiate",
+              "body": {
+                "file_urls": [
+                  urlResponse.data.result.url
+                ],
+                "project_name": "RemixProject",
+                "project_type": "new"
+              }
             }
           }
           ws.send(JSON.stringify(reqToInitScan))
@@ -273,7 +273,7 @@ export function UniversalDappUI(props: UdappProps) {
           console.log('data.payload--->', data.payload)
           const url = data.payload.scan_details.link
 
-          const {data: scanData} = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
+          const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
           const scanDetails: Record<string, any>[] = scanData.scan_report.multi_file_scan_details
 
           const modal: AppModal = {
@@ -284,7 +284,7 @@ export function UniversalDappUI(props: UdappProps) {
           }
           await props.plugin.call('notification', 'modal', modal)
         }
-        
+
       })
     }
   }
