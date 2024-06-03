@@ -15,5 +15,6 @@
   "git.refresh": "refresh",
   "git.unstageall": "unstage all",
   "git.stageall": "stage all",
-  "git.noremote": "this repo has no remotes"
+  "git.noremote": "this repo has no remotes",
+  "git.init": "Initialize repository"
 }

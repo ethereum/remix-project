@@ -6,6 +6,7 @@ import { Plugin } from "@remixproject/engine";
 import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, gitlog, setPlugin } from "./gitactions";
 import { Profile } from "@remixproject/plugin-utils";
 import { CustomRemixApi } from "@remix-api";
+import { statusChanged } from "./pluginActions";
 
 let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
 let callBackEnabled: boolean = false
@@ -103,7 +104,9 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
    
   })
   plugin.on('dgitApi', 'init', async () => {
-    
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    }, 10)
   })
   plugin.on('dgitApi', 'add', async () => {
     loadFileQueue.enqueue(async () => {
@@ -200,7 +203,14 @@ const syncFromWorkspace = async (callback: Function, isLocalhost = false) => {
 
 export const loadFiles = async (filepaths: string[] = null) => {
   try {
-    await getFileStatusMatrix(filepaths);
+    const branch = await plugin.call('dgitApi', "currentbranch")
+    console.log('load files', branch)
+    if(branch) {
+      await getFileStatusMatrix(filepaths);
+    }else{
+      await plugin.call('fileDecorator', 'clearFileDecorators')
+      statusChanged(0)
+    }
   } catch (e) {
     // TODO: handle error
     console.error(e);

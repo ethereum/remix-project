@@ -45,6 +45,13 @@ export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatc
   console.log('setPlugin')
 }
 
+export const init = async () => {
+  console.log('gitInit')
+  await plugin.call('dgitApi', "init");
+  await gitlog();
+  await getBranches();
+}
+
 export const getBranches = async () => {
   console.log('getBranches')
   const branches = await plugin.call('dgitApi', "branches")
@@ -110,25 +117,17 @@ export const gitlog = async () => {
 export const showCurrentBranch = async () => {
   try {
     const branch = await currentBranch();
-    const currentcommitoid = await getCommitFromRef("HEAD");
+    console.log('branch :>>', branch)
 
-    if (typeof branch === "undefined" || branch.name === "") {
+    dispatch(setCanCommit((branch && branch.name !== "")));
+    dispatch(setCurrentBranch(branch));
 
-      branch.name = `HEAD detached at ${currentcommitoid}`;
-      //canCommit = false;
-      dispatch(setCanCommit(false));
-    } else {
-      //canCommit = true;
-      dispatch(setCanCommit(true));
-      dispatch(setCurrentBranch(branch));
-    }
   } catch (e) {
     // show empty branch
   }
 }
 
 export const currentBranch = async () => {
-  // eslint-disable-next-line no-useless-catch
   try {
     const branch: branch =
       (await plugin.call('dgitApi', "currentbranch")) || {
@@ -525,14 +524,14 @@ export const remoteCommits = async (url: string, branch: string, length: number)
 export const saveGitHubCredentials = async (credentials: { username: string, email: string, token: string }) => {
   console.log('saveGitHubCredentials', credentials)
   try {
-    const storedEmail = await plugin.call('config', 'getAppParameter','settings/github-email')
-    const storedUsername = await plugin.call('config', 'getAppParameter','settings/github-user-name')
-    const storedToken = await plugin.call('config', 'getAppParameter','settings/gist-access-token')
+    const storedEmail = await plugin.call('config', 'getAppParameter', 'settings/github-email')
+    const storedUsername = await plugin.call('config', 'getAppParameter', 'settings/github-user-name')
+    const storedToken = await plugin.call('config', 'getAppParameter', 'settings/gist-access-token')
 
-    if(storedUsername !== credentials.username)  await plugin.call('config', 'setAppParameter', 'settings/github-user-name', credentials.username)
-    if(storedEmail !== credentials.email) await plugin.call('config', 'setAppParameter', 'settings/github-email', credentials.email)
-    if(storedToken !== credentials.token) await plugin.call('config', 'setAppParameter', 'settings/gist-access-token', credentials.token)
-    
+    if (storedUsername !== credentials.username) await plugin.call('config', 'setAppParameter', 'settings/github-user-name', credentials.username)
+    if (storedEmail !== credentials.email) await plugin.call('config', 'setAppParameter', 'settings/github-email', credentials.email)
+    if (storedToken !== credentials.token) await plugin.call('config', 'setAppParameter', 'settings/gist-access-token', credentials.token)
+
   } catch (e) {
     console.log(e)
   }
@@ -570,17 +569,17 @@ export const loadGitHubUserFromToken = async () => {
       if (data && data.emails && data.user && data.user.login) {
         console.log('SET USER"', data)
         const primaryEmail = data.emails.find(email => email.primary)
-        
+
         const storedEmail = await plugin.call('config', 'getAppParameter', 'settings/github-email')
         if (primaryEmail && storedEmail !== primaryEmail.email) await plugin.call('config', 'setAppParameter', 'settings/github-email', primaryEmail.email)
         const storedUsername = await plugin.call('config', 'getAppParameter', 'settings/github-user-name')
-        if(data.user && data.user.login && (storedUsername !== data.user.login)) await plugin.call('config', 'setAppParameter', 'settings/github-user-name', data.user.login)
-        
+        if (data.user && data.user.login && (storedUsername !== data.user.login)) await plugin.call('config', 'setAppParameter', 'settings/github-user-name', data.user.login)
+
         dispatch(setGitHubUser(data.user))
         dispatch(setRateLimit(data.ratelimit))
         dispatch(setScopes(data.scopes))
         dispatch(setUserEmails(data.emails))
-      
+
       }
     } else {
       const credentials = await getGitHubCredentialsFromLocalStorage()

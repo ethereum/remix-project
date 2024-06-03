@@ -1,13 +1,14 @@
-import { ViewPlugin } from "@remixproject/engine-web"
+
 import { commitChange, fileStatusResult, gitActionDispatch, gitState } from "../types"
 import { fileDecoration, fileDecorationType } from "@remix-ui/file-decorators"
 import { removeSlash } from "../utils"
-import path from "path"
-import { getFilesByStatus, getFilesWithNotModifiedStatus } from "./fileHelpers"
+import { getFilesByStatus } from "./fileHelpers"
+import { CustomRemixApi } from "@remix-api";
+import { Plugin } from "@remixproject/engine";
 
-let plugin: ViewPlugin, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>
+let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>
 
-export const setPlugin = (p: ViewPlugin, gitDispatcher: React.Dispatch<gitActionDispatch>, loaderDispatcher: React.Dispatch<any>) => {
+export const setPlugin = (p: Plugin<any, CustomRemixApi>, gitDispatcher: React.Dispatch<gitActionDispatch>, loaderDispatcher: React.Dispatch<any>) => {
   plugin = p
   gitDispatch = gitDispatcher
   loaderDispatch = loaderDispatcher
