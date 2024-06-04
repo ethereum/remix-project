@@ -11,31 +11,31 @@ const sources = [
       content: `
       // SPDX-License-Identifier: MIT
       pragma solidity ^0.8.20;
-      
+
       import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
       import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
       import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
       import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-      
+
       contract MyToken is Initializable, ERC721Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
           /// @custom:oz-upgrades-unsafe-allow constructor
           constructor() {
               _disableInitializers();
           }
-      
+
           function initialize(address initialOwner) initializer public {
               __ERC721_init("MyToken", "MTK");
               __Ownable_init(initialOwner);
               __UUPSUpgradeable_init();
           }
-      
+
           function _authorizeUpgrade(address newImplementation)
               internal
               onlyOwner
               override
           {}
       }
-          
+
         `
     }
   }
@@ -117,7 +117,7 @@ module.exports = {
       })
   },
 
-  'Should load Blockscout verified contracts from URL "address" and "blockscout" params (single source)': function (browser: NightwatchBrowser) {
+  'Should load Blockscout verified contracts from URL "address" and "blockscout" params (single source)': ''+function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#address=0xdAC17F958D2ee523a2206206994597C13D831ec7&blockscout=eth.blockscout.com')
       .refreshPage()
