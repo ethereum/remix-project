@@ -1,0 +1,20 @@
+{
+  "git.push": "push",
+  "git.pull": "pull",
+  "git.commit": "commit",
+  "git.sync": "sync",
+  "git.syncchanges": "sync changes",
+  "git.publish": "publish",
+  "git.ignore": "ignore",
+  "git.createBranch": "create branch",
+  "git.deleteBranch": "delete branch",
+  "git.mergeBranch": "merge branch",
+  "git.rebaseBranch": "rebase branch",
+  "git.checkout": "checkout",
+  "git.fetch": "fetch",
+  "git.refresh": "refresh",
+  "git.unstageall": "unstage all",
+  "git.stageall": "stage all",
+  "git.noremote": "this repo has no remotes",
+  "git.init": "Initialize repository"
+}

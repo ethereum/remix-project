@@ -81,14 +81,17 @@ export class RemixClient extends PluginClient {
     try {
       // @ts-ignore
       this.call('notification', 'toast', 'cloning Snekmate Vyper repository...')
-      await this.call('manager', 'activatePlugin', 'dGitProvider')
+      
+      await this.call('manager', 'activatePlugin', 'dgitApi')
+      /*
       await this.call(
-        'dGitProvider',
+        'dgitApi',
         'clone',
         {url: 'https://github.com/pcaversaccio/snekmate', token: null, branch: 'v0.0.5'},
         // @ts-ignore
         'snekmate'
       )
+      */
       this.call(
         // @ts-ignore
         'notification',

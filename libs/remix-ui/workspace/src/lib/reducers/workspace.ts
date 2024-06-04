@@ -5,6 +5,7 @@ import { fileDecoration } from '@remix-ui/file-decorators'
 import { ROOT_PATH } from '../utils/constants'
 import isElectron from 'is-electron'
 import { fileKeySort } from '../utils'
+import { branch } from '@remix-ui/git'
 export interface BrowserState {
   browser: {
     currentWorkspace: string
@@ -12,11 +13,8 @@ export interface BrowserState {
       name: string
       isGitRepo: boolean
       hasGitSubmodules?: boolean
-      branches?: {
-        remote: any
-        name: string
-      }[]
-      currentBranch?: string
+      branches?: branch[]
+      currentBranch?: branch
       isGist: string
     }[]
     files: {[x: string]: Record<string, FileType>}

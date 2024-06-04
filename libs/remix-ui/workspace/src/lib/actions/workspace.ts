@@ -42,7 +42,10 @@ import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/consta
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
+import { branch, cloneInputType, IGitApi } from '@remix-ui/git'
 import * as templates from '@remix-project/remix-ws-templates'
+import { Plugin } from "@remixproject/engine";
+import { CustomRemixApi } from '@remix-api'
 
 declare global {
   interface Window {
@@ -55,27 +58,28 @@ const NO_WORKSPACE = ' - none - '
 const ELECTRON = 'electron'
 const queryParams = new QueryParams()
 const _paq = (window._paq = window._paq || []) //eslint-disable-line
-let plugin, dispatch: React.Dispatch<any>
+let plugin: any, dgitPlugin: Plugin<any, CustomRemixApi>,dispatch: React.Dispatch<any>
 
 export const setPlugin = (filePanelPlugin, reducerDispatch) => {
   plugin = filePanelPlugin
+  dgitPlugin = filePanelPlugin
   dispatch = reducerDispatch
-  plugin.on('dGitProvider', 'checkout', async () => {
+  dgitPlugin.on('dgitApi', 'checkout', async () => {
     await checkGit()
   })
-  plugin.on('dGitProvider', 'init', async () => {
+  dgitPlugin.on('dgitApi', 'init', async () => {
     await checkGit()
   })
-  plugin.on('dGitProvider', 'add', async () => {
+  dgitPlugin.on('dgitApi', 'add', async () => {
     await checkGit()
   })
-  plugin.on('dGitProvider', 'commit', async () => {
+  dgitPlugin.on('dgitApi', 'commit', async () => {
     await checkGit()
   })
-  plugin.on('dGitProvider', 'branch', async () => {
+  dgitPlugin.on('dgitApi', 'branch', async () => {
     await checkGit()
   })
-  plugin.on('dGitProvider', 'clone', async () => {
+  dgitPlugin.on('dgitApi', 'clone', async () => {
     await checkGit()
   })
   plugin.on('config', 'configChanged', async () => {
@@ -152,31 +156,31 @@ export const createWorkspace = async (
     if (isGitRepo && createCommit) {
       const name = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
-      const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
+      const currentBranch: branch = await dgitPlugin.call('dgitApi', 'currentbranch')
 
       if (!currentBranch) {
         if (!name || !email) {
-          await plugin.call('notification', 'toast', 'To use Git features, add username and email to the Github section of the Settings panel.')
+          await plugin.call('notification', 'toast', 'To use Git features, add username and email to the Github section of the Git plugin.')
         } else {
           // commit the template as first commit
           plugin.call('notification', 'toast', 'Creating initial git commit ...')
 
-          await plugin.call('dGitProvider', 'init')
+          await dgitPlugin.call('dgitApi', 'init')
           if (!isEmpty) await loadWorkspacePreset(workspaceTemplateName, opts)
-          const status = await plugin.call('dGitProvider', 'status', { ref: 'HEAD' })
+          const status = await dgitPlugin.call('dgitApi', 'status', { ref: 'HEAD' })
 
           Promise.all(
             status.map(([filepath, , worktreeStatus]) =>
               worktreeStatus
-                ? plugin.call('dGitProvider', 'add', {
+                ? dgitPlugin.call('dgitApi', 'add', {
                   filepath: removeSlash(filepath),
                 })
-                : plugin.call('dGitProvider', 'rm', {
+                : dgitPlugin.call('dgitApi', 'rm', {
                   filepath: removeSlash(filepath),
                 })
             )
           ).then(async () => {
-            await plugin.call('dGitProvider', 'commit', {
+            await dgitPlugin.call('dgitApi', 'commit', {
               author: {
                 name,
                 email,
@@ -200,11 +204,7 @@ export const createWorkspace = async (
       }, 5000)
     } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
     cb && cb(null, workspaceName)
-    if (isGitRepo) {
-      await checkGit()
-      const isActive = await plugin.call('manager', 'isActive', 'dgit')
-      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-    }
+
     if (workspaceTemplateName === 'semaphore' || workspaceTemplateName === 'hashchecker' || workspaceTemplateName === 'rln') {
       const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
       if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
@@ -224,7 +224,7 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: W
   if ((await workspaceExists(workspaceName)) && template === 'remixDefault') throw new Error('workspace already exists')
   else if (metadata && metadata.type === 'git') {
     dispatch(cloneRepositoryRequest())
-    await plugin.call('dGitProvider', 'clone', { url: metadata.url, branch: metadata.branch }, workspaceName)
+    await dgitPlugin.call('dgitApi', 'clone', { url: metadata.url, branch: metadata.branch, workspaceName: workspaceName })
     dispatch(cloneRepositorySuccess())
   } else {
     const workspaceProvider = plugin.fileProviders.workspace
@@ -509,10 +509,7 @@ export const switchToWorkspace = async (name: string) => {
     await plugin.fileProviders.workspace.setWorkspace(name)
     await plugin.setWorkspace({ name, isLocalhost: false })
     const isGitRepo = await plugin.fileManager.isGitRepo()
-    if (isGitRepo) {
-      const isActive = await plugin.call('manager', 'isActive', 'dgit')
-      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-    }
+
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace({ name, isGitRepo }))
     dispatch(setReadOnlyMode(false))
@@ -648,11 +645,11 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
 export const cloneRepository = async (url: string) => {
   const config = plugin.registry.get('config').api
   const token = config.get('settings/gist-access-token')
-  const repoConfig = { url, token }
+  const repoConfig: cloneInputType = { url, token }
 
   if (plugin.registry.get('platform').api.isDesktop()) {
     try {
-      await plugin.call('dGitProvider', 'clone', repoConfig)
+      await dgitPlugin.call('dgitApi', 'clone', repoConfig)
     } catch (e) {
       console.log(e)
       plugin.call('notification', 'alert', {
@@ -665,7 +662,7 @@ export const cloneRepository = async (url: string) => {
       const repoName = await getRepositoryTitle(url)
 
       await createWorkspace(repoName, 'blank', null, true, null, true, false)
-      const promise = plugin.call('dGitProvider', 'clone', repoConfig, repoName, true)
+      const promise = dgitPlugin.call('dgitApi', 'clone', { ...repoConfig, workspaceExists: true, workspaceName: repoName })
 
       dispatch(cloneRepositoryRequest())
       promise
@@ -687,7 +684,7 @@ export const cloneRepository = async (url: string) => {
             id: 'cloneGitRepository',
             title: 'Clone Git Repository',
             message:
-            'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin',
+            'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in the Git plugin',
             modalType: 'modal',
             okLabel: plugin.registry.get('platform').api.isDesktop() ? 'Select or create folder':'OK',
             okFn: async () => {
@@ -714,7 +711,7 @@ export const checkGit = async () => {
     dispatch(setCurrentWorkspaceIsGitRepo(isGitRepo))
     dispatch(setCurrentWorkspaceHasGitSubmodules(hasGitSubmodule))
     await refreshBranches()
-    const currentBranch = await plugin.call('dGitProvider', 'currentbranch')
+    const currentBranch: branch = await dgitPlugin.call('dgitApi', 'currentbranch')
     dispatch(setCurrentWorkspaceCurrentBranch(currentBranch))
   } catch (e) {}
 }
@@ -743,7 +740,7 @@ export const getGitRepoBranches = async (workspacePath: string) => {
     fs: window.remixFileSystemCallback,
     dir: addSlash(workspacePath),
   }
-  const branches: { remote: any; name: string }[] = await plugin.call('dGitProvider', 'branches', { ...gitConfig })
+  const branches: branch[] = await dgitPlugin.call('dgitApi', 'branches', { ...gitConfig })
   return branches
 }
 
@@ -752,7 +749,7 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
     fs: window.remixFileSystemCallback,
     dir: addSlash(workspaceName),
   }
-  const currentBranch: string = await plugin.call('dGitProvider', 'currentbranch', { ...gitConfig })
+  const currentBranch: branch = await dgitPlugin.call('dgitApi', 'currentbranch', { ...gitConfig })
   return currentBranch
 }
 
@@ -781,7 +778,7 @@ const refreshBranches = async () => {
   dispatch(setCurrentWorkspaceBranches(branches))
 }
 
-export const switchBranch = async (branch: string) => {
+export const switchBranch = async (branch: branch) => {
   await plugin.call('fileManager', 'closeAllFiles')
   const localChanges = await hasLocalChanges()
 
@@ -797,7 +794,7 @@ export const switchBranch = async (branch: string) => {
       okFn: async () => {
         dispatch(cloneRepositoryRequest())
         plugin
-          .call('dGitProvider', 'checkout', { ref: branch, force: true }, false)
+          .call('dgitApi', 'checkout', { ref: branch, force: true }, false)
           .then(async () => {
             await fetchWorkspaceDirectory(ROOT_PATH)
             dispatch(setCurrentWorkspaceCurrentBranch(branch))
@@ -815,7 +812,7 @@ export const switchBranch = async (branch: string) => {
   } else {
     dispatch(cloneRepositoryRequest())
     plugin
-      .call('dGitProvider', 'checkout', { ref: branch, force: true }, false)
+      .call('dgitApi', 'checkout', { ref: branch, force: true }, false)
       .then(async () => {
         await fetchWorkspaceDirectory(ROOT_PATH)
         dispatch(setCurrentWorkspaceCurrentBranch(branch))
@@ -828,13 +825,16 @@ export const switchBranch = async (branch: string) => {
 }
 
 export const createNewBranch = async (branch: string) => {
-  const promise = plugin.call('dGitProvider', 'branch', { ref: branch, checkout: true }, false)
+  const promise = dgitPlugin.call('dgitApi', 'branch', { ref: branch, checkout: true, refresh: false })
 
   dispatch(cloneRepositoryRequest())
   promise
     .then(async () => {
       await fetchWorkspaceDirectory(ROOT_PATH)
-      dispatch(setCurrentWorkspaceCurrentBranch(branch))
+      dispatch(setCurrentWorkspaceCurrentBranch({
+        remote: null,
+        name: branch,
+      }))
       const workspacesPath = plugin.fileProviders.workspace.workspacesPath
       const workspaceName = plugin.fileProviders.workspace.workspace
       const branches = await getGitRepoBranches(workspacesPath + '/' + workspaceName)
@@ -880,11 +880,11 @@ export const updateGitSubmodules = async () => {
   const config = plugin.registry.get('config').api
   const token = config.get('settings/gist-access-token')
   const repoConfig = { token }
-  await plugin.call('dGitProvider', 'updateSubmodules', repoConfig)
+  await dgitPlugin.call('dgitApi', 'updateSubmodules', repoConfig)
   dispatch(cloneRepositorySuccess())
 }
 
-export const checkoutRemoteBranch = async (branch: string, remote: string) => {
+export const checkoutRemoteBranch = async (branch: branch) => {
   const localChanges = await hasLocalChanges()
 
   if (Array.isArray(localChanges) && localChanges.length > 0) {
@@ -899,7 +899,10 @@ export const checkoutRemoteBranch = async (branch: string, remote: string) => {
       okFn: async () => {
         dispatch(cloneRepositoryRequest())
         plugin
-          .call('dGitProvider', 'checkout', { ref: branch, remote, force: true }, false)
+          .call('dgitApi', 'checkout', {
+            ref: branch,
+            force: true,
+          })
           .then(async () => {
             await fetchWorkspaceDirectory(ROOT_PATH)
             dispatch(setCurrentWorkspaceCurrentBranch(branch))
@@ -922,7 +925,10 @@ export const checkoutRemoteBranch = async (branch: string, remote: string) => {
   } else {
     dispatch(cloneRepositoryRequest())
     plugin
-      .call('dGitProvider', 'checkout', { ref: branch, remote, force: true }, false)
+      .call('dgitApi', 'checkout',{
+        ref: branch,
+        force: true,
+      }, false)
       .then(async () => {
         await fetchWorkspaceDirectory(ROOT_PATH)
         dispatch(setCurrentWorkspaceCurrentBranch(branch))
@@ -955,7 +961,7 @@ export const removeRecentElectronFolder = async (path: string) => {
 }
 
 export const hasLocalChanges = async () => {
-  const filesStatus = await plugin.call('dGitProvider', 'status')
+  const filesStatus = await dgitPlugin.call('dgitApi', 'status')
   const uncommittedFiles = getUncommittedFiles(filesStatus)
 
   return uncommittedFiles
