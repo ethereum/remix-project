@@ -52,8 +52,8 @@ import { electronTemplates } from './app/plugins/electron/templatesPlugin'
 import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
-import {SolCoder} from './app/plugins/solcoderAI'
-import { RemixAIPlugin } from './app/plugins/remixAI'
+import { SolCoder } from './app/plugins/solcoderAI'
+import { RemixAIPlugin, remixAIDesktopPlugin } from './app/plugins/electron/remixAIPlugin'
 
 const isElectron = require('is-electron')
 
@@ -231,7 +231,6 @@ class AppComponent {
 
     // ----------------- AI --------------------------------------
     const solcoder = new SolCoder()
-    const remixAI = new RemixAIPlugin()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -349,7 +348,6 @@ class AppComponent {
       solidityScript,
       templates,
       solcoder,
-      remixAI
     ])
 
     //---- fs plugin
@@ -370,6 +368,9 @@ class AppComponent {
 
     const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
     this.engine.register([compilerloader])
+
+    const remixAI = isElectron()? new remixAIDesktopPlugin(): new RemixAIPlugin()
+    this.engine.register([remixAI])
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
