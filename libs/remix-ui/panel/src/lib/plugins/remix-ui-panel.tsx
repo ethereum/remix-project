@@ -9,6 +9,7 @@ export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>,
   header: JSX.Element,
   pluginState?: any,
+  highlightStamp?: number
 }
 
 export function RemixPluginPanel(props: RemixPanelProps) {
@@ -18,7 +19,7 @@ export function RemixPluginPanel(props: RemixPanelProps) {
       <div className="pluginsContainer">
         <div className="plugins" id="plugins">
           {Object.values(props.plugins).map((pluginRecord) => {
-            return <RemixUIPanelPlugin key={pluginRecord.profile.name} pluginRecord={pluginRecord} initialState={props.pluginState} />
+            return <RemixUIPanelPlugin key={pluginRecord.profile.name} pluginRecord={pluginRecord} initialState={props.pluginState} highlightStamp={props.highlightStamp} />
           })}
         </div>
       </div>
