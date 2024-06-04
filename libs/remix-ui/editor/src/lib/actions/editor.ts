@@ -58,7 +58,9 @@ export const reducerActions = (models = initialState, action: Action) => {
       if (!editors) return models
       const line = action.payload.line
       const column = action.payload.column
+
       editors.map((editor) => {
+
         editor.revealLine(line)
         editor.setPosition({ column, lineNumber: line })
       })
