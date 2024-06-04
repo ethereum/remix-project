@@ -1,7 +1,7 @@
 {
     "version": "v0.50.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Pin a plugin on the right side",
+    "highlight1": "Pin a plugin to the new right side panel",
     "highlight2": "'zksync-ethers' NPM module supported in js/ts scripts",
     "highlight3": "latest Solidity compiler version set to v0.8.26",
     "highlight4": "",
