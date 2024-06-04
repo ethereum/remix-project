@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import React from 'react'
 import { Plugin } from '@remixproject/engine'
 import { customAction } from '@remixproject/plugin-api'
@@ -57,11 +58,12 @@ export class ContractFlattener extends Plugin {
     let sorted
     let result
     let sources
+    let order: string[] = []
     try {
-      dependencyGraph = getDependencyGraph(ast, filePath, input.settings.remappings)
+      dependencyGraph = getDependencyGraph(ast, filePath, input.settings.remappings, order)
       sorted = dependencyGraph.isEmpty() ? [filePath] : dependencyGraph.sort().reverse()
       sources = source.sources
-      result = concatSourceFiles(sorted, sources)
+      result = concatSourceFiles(sorted, sources, order)
     } catch (err) {
       console.warn(err)
     }
