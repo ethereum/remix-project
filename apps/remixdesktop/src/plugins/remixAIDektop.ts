@@ -4,23 +4,17 @@ import { app } from 'electron';
 // import { isE2E } from "../main";
 
 const profile = {
-  name: 'remixAI',
-  displayName: 'Remix AI',
+  name: 'remixAID',
+  displayName: 'Remix AI for desktops',
   methods: [''],
-  events: [],
-  icon: 'assets/img/remix-logo-blue.png',
-  description: 'Remix AI provides AI services to Remix IDE.',
-  kind: '',
-  location: 'sidePanel',
-  documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
-  maintainedBy: 'Remix'
+  maintainedBy: 'Remix',
 }
 
-export class RemixAIPlugin extends ElectronBasePlugin {
-  clients: RemixAIPluginClient[] = []
+export class RemixAIDesktopPlugin extends ElectronBasePlugin {
+  clients: RemixAIDesktopPluginClient[] = []
   constructor() {
     console.log("loading the remix plugin")
-    super(profile, clientProfile, RemixAIPluginClient)
+    super(profile, clientProfile, RemixAIDesktopPluginClient)
     this.methods = [...super.methods]
 
     for (const client of this.clients) {
@@ -31,15 +25,14 @@ export class RemixAIPlugin extends ElectronBasePlugin {
 }
 
 const clientProfile: Profile = {
-  name: 'remixAI',
-  displayName: 'remixAI',
-  description: 'remixAI',
+  name: 'remixAID',
+  displayName: 'remixAI for desktops',
   methods: ['enable'],
+  maintainedBy: 'Remix',
 }
 
-class RemixAIPluginClient extends ElectronBasePluginClient {
+class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
   constructor (webContentsId: number, profile: Profile){
-    console.log("loading the remix plugin client")
     console.log("loading the remix plugin client ........................")
     super(webContentsId, profile)
   }

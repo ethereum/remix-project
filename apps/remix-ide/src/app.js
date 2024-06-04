@@ -53,7 +53,8 @@ import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 import { appUpdaterPlugin } from './app/plugins/electron/appUpdaterPlugin'
-import { RemixAIPlugin, remixAIDesktopPlugin } from './app/plugins/electron/remixAIPlugin' 
+import { remixAIDesktopPlugin } from './app/plugins/electron/remixAIDesktopPlugin' 
+import { RemixAIPlugin } from './app/plugins/remixAIPlugin'
 import {SolCoder} from './app/plugins/solcoderAI'
 
 const isElectron = require('is-electron')
@@ -367,12 +368,14 @@ class AppComponent {
       this.engine.register([ripgrep])
       const appUpdater = new appUpdaterPlugin()
       this.engine.register([appUpdater])
+      const remixAIDesktop = new remixAIDesktopPlugin()
+      this.engine.register([remixAIDesktop])
     }
 
     const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
     this.engine.register([compilerloader])
 
-    const remixAI = isElectron()? new remixAIDesktopPlugin(): new RemixAIPlugin()
+    const remixAI = new RemixAIPlugin()
     this.engine.register([remixAI])
 
     // LAYOUT & SYSTEM VIEWS
@@ -494,7 +497,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()){
-      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater'])
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'remixAID'])
     }
 
     this.appManager.on(
