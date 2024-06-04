@@ -172,6 +172,9 @@
             "@remix-ui/xterm": [
               "libs/remix-ui/xterm/src/index.ts"
             ],
+            "@remix-ui/remix-ai": [
+              "libs/remix-ui/remix-ai/src/index.ts"
+            ],
 
         }
     }
