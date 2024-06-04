@@ -75,8 +75,8 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     try {
       const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
       const message = intl.formatMessage({ id: 'solidity.openaigptMessage' }, { content, messageText })
-      await plugin.call('openaigpt', 'message', message)
-      _paq.push(['trackEvent', 'ai', 'openai', 'explainSolidityError'])
+      await plugin.call('solcoder', 'error_explaining', message)
+      _paq.push(['trackEvent', 'ai', 'solcoder', 'error_explaining_SolidityError'])
     } catch (err) {
       console.error('unable to askGtp')
       console.error(err)
@@ -111,7 +111,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
               onClick={() => { askGtp() }}
               style={{ borderColor: "var(--ai)" }}
             >
-              ASK GPT
+              Ask RemixAI
             </span>
 
           </div>
