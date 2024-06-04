@@ -1,10 +1,10 @@
 {
-    "version": "v0.49.0",
+    "version": "v0.50.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Syntax highlighting for .toml files added",
-    "highlight2": "'Deploy & Run Transactions' plugin's UI improved",
-    "highlight3": "Remix AI model improved",
+    "highlight1": "Pin a plugin to the new right side panel",
+    "highlight2": "'zksync-ethers' NPM module supported in js/ts scripts",
+    "highlight3": "latest Solidity compiler version set to v0.8.26",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-49-0-b396ab7fff2b?source=friends_link&sk=2e3c6063841bbfa398e3e60d59d4fd48"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-50-0-1b0ca47ce2d9?source=friends_link&sk=a1cec61a506047186cd8e0c4349cdb86"
   }
