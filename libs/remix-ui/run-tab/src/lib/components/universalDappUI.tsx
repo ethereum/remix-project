@@ -240,7 +240,6 @@ export function UniversalDappUI(props: UdappProps) {
 
       ws.addEventListener('message', async (event) => {
         const data = JSON.parse(event.data)
-        console.log('data---->', data)
         if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
           // Message on Bearer token successful registration
           const reqToInitScan = {
@@ -269,8 +268,7 @@ export function UniversalDappUI(props: UdappProps) {
           await props.plugin.call('notification', 'modal', modal)
         } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
           // Message on successful scan
-
-          console.log('data.payload--->', data.payload)
+          
           const url = data.payload.scan_details.link
 
           const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
