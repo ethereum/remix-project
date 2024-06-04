@@ -53,7 +53,7 @@ export function Container () {
   const handleCircuitAutoCompile = (value: boolean) => {
     circuitApp.dispatch({ type: 'SET_AUTO_COMPILE', payload: value })
   }
-  
+
   const handleCircuitHideWarnings = (value: boolean) => {
     circuitApp.dispatch({ type: 'SET_HIDE_WARNINGS', payload: value })
   }
@@ -73,7 +73,7 @@ export function Container () {
           explain why the error occurred and how to fix it.
           `
         // @ts-ignore
-        await circuitApp.plugin.call('openaigpt', 'message', message)
+        await circuitApp.plugin.call('solcoder', 'error_explaining', message)
       } else {
         const message = `
           error message: ${error}
@@ -81,7 +81,7 @@ export function Container () {
           explain why the error occurred and how to fix it.
           `
         // @ts-ignore
-        await circuitApp.plugin.call('openaigpt', 'message', message)
+        await circuitApp.plugin.call('solcoder', 'error_explaining', message)
       }
     } else {
       const error = report.message
@@ -91,7 +91,7 @@ export function Container () {
       explain why the error occurred and how to fix it.
       `
       // @ts-ignore
-      await circuitApp.plugin.call('openaigpt', 'message', message)
+      await circuitApp.plugin.call('solcoder', 'error_explaining', message)
     }
   }
 
