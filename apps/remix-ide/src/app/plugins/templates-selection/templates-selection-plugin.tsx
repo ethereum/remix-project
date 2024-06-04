@@ -1,6 +1,7 @@
 
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { CustomTooltip } from "@remix-ui/helper"
 import { AppModal } from '@remix-ui/app'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
@@ -94,7 +95,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       }
       const modalResult = await this.call('notification', 'modal', modal)
       if (!modalResult) return
-      this.emit('createWorkspaceReducerEvent', workspaceName, item.value, item.opts, false, (e, data) => {
+      this.emit('createWorkspaceReducerEvent', workspaceName, item.value, item.opts, false, async (e, data) => {
         if (e) {
           const modal: AppModal = {
             id: 'TemplatesSelection',
@@ -103,7 +104,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
             okLabel: window._intl.formatMessage({ id: 'filePanel.ok' }),
             cancelLabel: window._intl.formatMessage({ id: 'filePanel.cancel' })
           }
-          this.call('notification', 'modal', modal)
+          await this.call('notification', 'modal', modal)
           console.error(e)
         }
 
@@ -111,7 +112,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     }
 
     const addToCurrentWorkspace = async (item) => {
-      this.emit('addTemplateToWorkspaceReducerEvent', item.value, item.opts, false, (e, data) => {
+      this.emit('addTemplateToWorkspaceReducerEvent', item.value, item.opts, false, async (e, data) => {
         if (e) {
           const modal: AppModal = {
             id: 'TemplatesSelection',
@@ -120,7 +121,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
             okLabel: window._intl.formatMessage({ id: 'filePanel.ok' }),
             cancelLabel: window._intl.formatMessage({ id: 'filePanel.cancel' })
           }
-          this.call('notification', 'modal', modal)
+          await this.call('notification', 'modal', modal)
           console.error(e)
         }
 
@@ -131,33 +132,62 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       <RemixUIGridView
         plugin={this}
         styleList={""}
-        logo='/assets/img/YouTubeLogo.webp'
+        logo='/assets/img/bgRemi.webp'
         enableFilter={true}
         showUntagged={true}
         showPin={false}
-        tagList={[]}
-        title='Remix Guide'
-        description="Template Selection"
+        tagList={[
+          ['Solidity', 'danger'],
+          ['ZKP', 'warning'],
+          ['ERC20', 'success'],
+          ['ERC721', 'secondary'],
+          ['ERC1155', 'primary'],
+        ]}
+        title='Template explorer'
+        description="Select the template to create a workspace"
       >
         {
-
           templates(window._intl).map(template => {
             return <RemixUIGridSection
               plugin={this}
               title={template.name}
-              hScrollable= {false}
+              hScrollable={false}
             >
               {template.items.map(item => {
                 return <RemixUIGridCell
                   plugin={this}
                   title={item.displayName}
+                  tagList={item.tagList}
                 >
                   <div>
                     {item.displayName}
-                    {JSON.stringify(item.opts)}
-                    <div>
-                      {!template.IsArtefact && <button data-id={`create-${item.value}${item.opts ? JSON.stringify(item.opts) : ''}`} onClick={async () => createWorkspace(item)} className="btn btn-secondary" >Create a new workspace</button>}
-                      <button data-id={`add-${item.value}`} onClick={async () => addToCurrentWorkspace(item)} className="btn btn-primary" >Add to current workspace</button>
+                    <div className='align-items-center justify-content-between w-100 d-flex pt-2 flex-row'>
+                      {!template.IsArtefact && <CustomTooltip
+                        placement="auto"
+                        tooltipId={`overlay-tooltip-new${item.name}`}
+                        tooltipText="Create a new workspace"
+                      >
+                        <span
+                          data-id={`create-${item.value}${item.opts ? JSON.stringify(item.opts) : ''}`}
+                          onClick={async () => createWorkspace(item)}
+                          className="btn btn-sm mr-2 border border-primary"
+                        >
+                          Create
+                        </span>
+                      </CustomTooltip>}
+                      <CustomTooltip
+                        placement="auto"
+                        tooltipId={`overlay-tooltip-add${item.name}`}
+                        tooltipText="Add template files to current workspace"
+                      >
+                        <span
+                          data-id={`add-${item.value}`}
+                          onClick={async () => addToCurrentWorkspace(item)}
+                          className="btn btn-sm border"
+                        >
+                          Add to current
+                        </span>
+                      </CustomTooltip>
                     </div>
                   </div>
                 </RemixUIGridCell>
