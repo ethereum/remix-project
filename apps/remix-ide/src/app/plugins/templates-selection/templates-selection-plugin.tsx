@@ -147,7 +147,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
           ['ERC1155', 'primary'],
         ]}
         title='Template explorer'
-        description="Select a template to create a workspace or to get it added to current workspace"
+        description="Select a template to create a workspace or to add it to current workspace."
       >
         {
           templates(window._intl).map(template => {
