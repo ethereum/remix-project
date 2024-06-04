@@ -38,7 +38,7 @@ module.exports = {
         locateStrategy: 'xpath'
       })
       .getEditorValue((editorContent) => {
-        browser.assert.ok(editorContent.indexOf(`import "../contracts/MyToken.sol";`) !== -1, 'unexpected content encountered!')
+        browser.assert.ok(editorContent.indexOf(`import "../contracts/MyToken.sol";`) !== -1, 'content encountered!')
       })
   },
   'Should create a new file in the current workspace': function (browser: NightwatchBrowser) {
