@@ -510,9 +510,6 @@ class AppComponent {
     )
     await this.appManager.activatePlugin(['solidity-script'])
     await this.appManager.activatePlugin(['solcoder'])
-
-    
-
     await this.appManager.activatePlugin(['filePanel'])    
 
     // Set workspace after initial activation
