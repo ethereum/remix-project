@@ -222,6 +222,7 @@ export function UniversalDappUI(props: UdappProps) {
 
   const handleScanContinue = async () => {
     await props.plugin.call('notification', 'toast', 'Processing data to scan...')
+    _paq.push(['trackEvent', 'udapp', 'solidityScan', 'initiateScan'])
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const fileName = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
     const filePath = `.workspaces/${fileName}`
@@ -258,7 +259,7 @@ export function UniversalDappUI(props: UdappProps) {
           ws.send(JSON.stringify(reqToInitScan))
         } else if (data.type === "scan_status" && data.payload.scan_status === "download_failed") {
           // Message on failed scan
-
+          _paq.push(['trackEvent', 'udapp', 'solidityScan', 'scanFailed'])
           const modal: AppModal = {
             id: 'SolidityScanError',
             title: <FormattedMessage id="udapp.solScan.errModalTitle" />,
@@ -268,7 +269,7 @@ export function UniversalDappUI(props: UdappProps) {
           await props.plugin.call('notification', 'modal', modal)
         } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
           // Message on successful scan
-          
+          _paq.push(['trackEvent', 'udapp', 'solidityScan', 'scanSuccess'])
           const url = data.payload.scan_details.link
 
           const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
@@ -288,7 +289,7 @@ export function UniversalDappUI(props: UdappProps) {
   }
 
   const askPermissionToScan = async () => {
-
+    _paq.push(['trackEvent', 'udapp', 'solidityScan', 'askPermissionToScan'])
     const modal: AppModal = {
       id: 'SolidityScanPermissionHandler',
       title: <FormattedMessage id="udapp.solScan.modalTitle" />,
