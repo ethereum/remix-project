@@ -10,6 +10,7 @@ import { TemplatesPlugin } from './plugins/templates';
 import { RipgrepPlugin } from './plugins/ripgrepPlugin';
 import { CompilerLoaderPlugin } from './plugins/compilerLoader';
 import { AppUpdaterPlugin } from './plugins/appUpdater';
+import { RemixAIPlugin } from './plugins/remixAIDektop';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -21,6 +22,7 @@ const templatesPlugin = new TemplatesPlugin()
 const ripgrepPlugin = new RipgrepPlugin()
 const compilerLoaderPlugin = new CompilerLoaderPlugin()
 const appUpdaterPlugin = new AppUpdaterPlugin()
+const remixAIPlugin = new RemixAIPlugin()
 
 engine.register(appManager)
 engine.register(fsPlugin)
@@ -31,6 +33,7 @@ engine.register(templatesPlugin)
 engine.register(ripgrepPlugin)
 engine.register(compilerLoaderPlugin)
 engine.register(appUpdaterPlugin)
+engine.register(remixAIPlugin)
 
 appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')

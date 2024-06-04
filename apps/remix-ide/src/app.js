@@ -53,8 +53,7 @@ import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 import { appUpdaterPlugin } from './app/plugins/electron/appUpdaterPlugin'
- 
-import {OpenAIGpt} from './app/plugins/openaigpt'
+import { RemixAIPlugin, remixAIDesktopPlugin } from './app/plugins/electron/remixAIPlugin' 
 import {SolCoder} from './app/plugins/solcoderAI'
 
 const isElectron = require('is-electron')
@@ -232,7 +231,6 @@ class AppComponent {
     const contractFlattener = new ContractFlattener()
 
     // ----------------- AI --------------------------------------
-    const openaigpt = new OpenAIGpt()
     const solcoder = new SolCoder()
 
     // ----------------- import content service ------------------------
@@ -350,7 +348,6 @@ class AppComponent {
       contractFlattener,
       solidityScript,
       templates,
-      openaigpt,
       solcoder,
     ])
 
@@ -374,6 +371,9 @@ class AppComponent {
 
     const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
     this.engine.register([compilerloader])
+
+    const remixAI = isElectron()? new remixAIDesktopPlugin(): new RemixAIPlugin()
+    this.engine.register([remixAI])
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
@@ -508,7 +508,7 @@ class AppComponent {
         await this.appManager.registerContextMenuItems()
       }
     )
-    await this.appManager.activatePlugin(['solidity-script', 'openaigpt'])
+    await this.appManager.activatePlugin(['solidity-script'])
     await this.appManager.activatePlugin(['solcoder'])
 
     

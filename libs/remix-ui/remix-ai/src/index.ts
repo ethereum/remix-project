@@ -1,0 +1,1 @@
+export { RemixAITab } from './lib/components/RemixAI'
