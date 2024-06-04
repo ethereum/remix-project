@@ -49,7 +49,6 @@ module.exports = {
       .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
       .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', 'HometabNewFile.txt')
       .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
-      .pause(2000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemHometabNewFile.txt"]', 7000)
   }
 }
