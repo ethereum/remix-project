@@ -24,7 +24,7 @@ export function FeedbackAlert ({ message, askGPT }: FeedbackAlertProps) {
           <span className="border border-success text-success btn-sm" onClick={(e) => {
             e.stopPropagation()
             askGPT()
-          }}>ASK Remix AI</span>
+          }}>Ask Remix AI</span>
         </div>
       </>
     </RenderIf>
