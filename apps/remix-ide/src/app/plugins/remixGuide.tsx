@@ -97,7 +97,7 @@ export class RemixGuidePlugin extends ViewPlugin {
           logo='/assets/img/YouTubeLogo.webp'
           enableFilter={true}
           showUntagged={true}
-          showPin={true}
+          showPin={false}
           tagList={[
             ['beginner', 'danger'],
             ['advanced', 'warning'],
@@ -131,7 +131,9 @@ export class RemixGuidePlugin extends ViewPlugin {
                   }}
                   logo={cell.expandViewElement.logo}
                 >
-                  <img src={"//img.youtube.com/vi/" + this.videoID + "/0.jpg"} style={{ height: '70px', width: '70px' }}></img>
+                  <a href={"https://www.youtube.com/@" + cell.authorURL} target="__blank">
+                    <img src={"//img.youtube.com/vi/" + this.videoID + "/0.jpg"} style={{ height: '70px', width: '70px' }}></img>
+                  </a>
                 </RemixUIGridCell>
               })}
             </RemixUIGridSection>
