@@ -5,8 +5,9 @@ import { app } from 'electron';
 
 const profile = {
   name: 'remixAID',
-  displayName: 'Remix AI for desktops',
+  displayName: 'RemixAI desktop',
   methods: [''],
+  description: 'RemixAI provides AI services to Remix IDE Desktop.',
   maintainedBy: 'Remix',
 }
 
@@ -26,8 +27,9 @@ export class RemixAIDesktopPlugin extends ElectronBasePlugin {
 
 const clientProfile: Profile = {
   name: 'remixAID',
-  displayName: 'remixAI for desktops',
+  displayName: 'RemixAI desktop',
   methods: ['enable'],
+  description: 'RemixAI provides AI services to Remix IDE Desktop.',
   maintainedBy: 'Remix',
 }
 
