@@ -30,7 +30,7 @@ export function LanguageOptions({ plugin }: { plugin: any }) {
             {langOptions}
           </Dropdown.Toggle>
           <Dropdown.Menu className="dropdown-menu langSelector" style={{ paddingTop: "0px", paddingBottom: "0px", minWidth: 'fit-content', backgroundColor: 'var(--body-bg)' }}>
-            {['EN', 'ES', 'FR', 'IT', 'RU', 'ZH'].map((lang, index) => (
+            {['EN', 'ES', 'FR', 'IT', 'KO', 'RU', 'ZH'].map((lang, index) => (
               <DropdownItem as={'span'} className={langOptions === lang ? "border border-primary px-2" : "px-2"} onClick={() =>
               {
                 changeLanguage(lang.toLowerCase())
