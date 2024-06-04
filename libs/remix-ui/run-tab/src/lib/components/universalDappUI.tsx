@@ -28,8 +28,16 @@ export function UniversalDappUI(props: UdappProps) {
   const [evmBC, setEvmBC] = useState(null)
   const [instanceBalance, setInstanceBalance] = useState(0)
 
-  const getVersion = () => window.location.href.split('=')[5].split('+')[0].split('-')[1]
-
+  const getVersion = () => {
+    let version = ''
+    try {
+      version = window.location.href.split('=')[5].split('+')[0].split('-')[1]
+      console.log('try part to see what version is', version)
+    } catch {
+      version = window.location.href.split('=')[5].split('+')[0].split('-')[1]
+      console.log('there was an error so retrying. lets see what version is now', version)
+    }
+  }
   useEffect(() => {
     if (!props.instance.abi) {
       const abi = txHelper.sortAbiFunction(props.instance.contractData.abi)
