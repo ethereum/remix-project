@@ -17,20 +17,19 @@ export class RemixClient extends PluginClient {
     this.internalEvents.emit('learneth_activated')
   }
 
-  startTutorial(name: any, branch: any, id: any): void {
-    console.log('start tutorial', name, branch, id)
+  async startTutorial(name: any, branch: any, id: any): Promise<void> {
     void router.navigate('/home')
-    loadRepo({
+    await loadRepo({
       name,
       branch,
       id,
     })
   }
 
-  addRepository(name: any, branch: any) {
+  async addRepository(name: any, branch: any) {
     console.log('add repo', name, branch)
     void router.navigate('/home')
-    loadRepo({
+    await loadRepo({
       name,
       branch,
     })

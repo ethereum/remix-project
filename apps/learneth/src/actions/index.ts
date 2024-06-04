@@ -109,7 +109,7 @@ export const loadRepo = async (payload) => {
   }
   await dispatch({
     type: 'SET_WORKSHOP',
-    payload: workshopState,
+    payload: { ...workshopState },
   })
   localStorage.setItem('workshop.state', JSON.stringify(workshopState))
 
@@ -120,18 +120,10 @@ export const loadRepo = async (payload) => {
       screen: false,
     },
   })
-
   if (payload.id) {
-    const { detail, selectedId } = workshopState
-    const { ids, entities } = detail[selectedId]
-    for (let i = 0; i < ids.length; i++) {
-      const entity = entities[ids[i]]
-      if (entity.metadata.data.id === payload.id || i + 1 === payload.id) {
-        await router.navigate(`/list?id=${ids[i]}`)
-        break
-      }
-    }
+    await router.navigate(`/list?id=${payload.id}`)
   }
+
 }
 
 export const loadStepContent = async (url: string) => {
@@ -269,7 +261,7 @@ export const testStep = async (step) => {
     if (!result) {
       await dispatch({
         type: 'SET_REMIXIDE',
-        payload: { errors: ['Compiler failed to test this file']},
+        payload: { errors: ['Compiler failed to test this file'] },
       })
     } else {
       const success = result.totalFailing === 0
@@ -292,7 +284,7 @@ export const testStep = async (step) => {
     console.log('TESTING ERROR', err)
     await dispatch({
       type: 'SET_REMIXIDE',
-      payload: { errors: [String(err)]},
+      payload: { errors: [String(err)] },
     })
   }
   await dispatch({
@@ -327,7 +319,7 @@ export const showAnswer = async (step) => {
   } catch (err) {
     await dispatch({
       type: 'SET_REMIXIDE',
-      payload: { errors: [String(err)]},
+      payload: { errors: [String(err)] },
     })
   }
 

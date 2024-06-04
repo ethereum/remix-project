@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, {useContext, useEffect} from 'react'
 import {Link, useLocation} from 'react-router-dom'
 import Markdown from 'react-markdown'
 import BackButton from '../../components/BackButton'
@@ -12,8 +12,23 @@ function StepListPage(): JSX.Element {
   const queryParams = new URLSearchParams(location.search)
   const id = queryParams.get('id') as string
   const {appState} = useContext(AppContext)
-  const {detail, selectedId} = appState.workshop
-  const entity = detail[selectedId].entities[id]
+  const [entity, setEntity] = React.useState(null)
+
+  useEffect(() => {
+    const { detail, selectedId } = appState.workshop
+    const { ids, entities } = detail[selectedId]
+    for (let i = 0; i < ids.length; i++) {
+      const entity = entities[ids[i]]
+      if (entity.metadata.data.id === id) {
+        setEntity(entity)
+        break
+      }
+    }
+  },[appState])
+
+  if(!entity) {
+    return null
+  }
 
   return (
     <>
