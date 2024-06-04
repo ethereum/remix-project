@@ -35,6 +35,8 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
     if (props.tagList) setAnyEnabled(props.tagList.some((key) => filterCon.keyValueMap[key]?.enabled))
     else setAnyEnabled(filterCon?.keyValueMap['no tag']?.enabled)
     if (filterCon.filter != '') setAnyEnabled(anyEnabled && props.title.toLowerCase().includes(filterCon.filter))
+    console.log("pin ", pinned)
+
   }, [filterCon, props.tagList])
 
   /*const listenOnExpand = (key) => {
@@ -65,7 +67,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
                 { props.logo && <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> }
                 { props.title && <label
                   className='m-0 p-0 align-items-left'
-                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 'xx-small' }}
+                  style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 'xx-small'}}
                 >
                   { props.title }
                 </label> }
@@ -80,7 +82,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
               props.pinStateCallback()
             }}
           ></button>}
-          { props.tagList && <div className='d-flex flex-column align-items-begin remixui_grid_cell_tags'>
+          { props.tagList && <div className={`d-flex flex-column align-items-begin ` +`${filterCon.showPin ? 'remixui_grid_cell_tags' : 'remixui_grid_cell_tags_no_pin'}`}>
             { Object.keys(props.tagList).map((key) => (
               filterCon.keyValueMap[props.tagList[key]].enabled && (
                 <CustomTooltip
