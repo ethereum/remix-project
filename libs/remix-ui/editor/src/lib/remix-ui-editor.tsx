@@ -535,6 +535,7 @@ export const EditorUI = (props: EditorUIProps) => {
     for (const filePath in allMarkersPerfile) {
       const model = editorModelsState[filePath]?.model
       if (model) {
+        console.log('MONACO REF CURRENT', monacoRef.current)
         monacoRef.current.editor.setModelMarkers(model, from, allMarkersPerfile[filePath])
       }
     }
@@ -629,18 +630,24 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
+  function setReducerListener() {
+    if(diffEditorRef.current && diffEditorRef.current.getModifiedEditor() && editorRef.current){
+      reducerListener(props.plugin, dispatch, monacoRef.current, [diffEditorRef.current.getModifiedEditor(), editorRef.current], props.events)
+    }
+  }
+
   function handleDiffEditorDidMount(editor: any) {
     console.log('diff editor mounted')
     diffEditorRef.current = editor
     defineAndSetTheme(monacoRef.current)
-    reducerListener(props.plugin, dispatch, monacoRef.current, diffEditorRef.current.getModifiedEditor(), props.events)
+    setReducerListener()
     props.events.onEditorMounted()
   }
 
   function handleEditorDidMount(editor) {
     editorRef.current = editor
     defineAndSetTheme(monacoRef.current)
-    reducerListener(props.plugin, dispatch, monacoRef.current, editorRef.current, props.events)
+    setReducerListener()
     props.events.onEditorMounted()
     editor.onMouseUp((e) => {
       // see https://microsoft.github.io/monaco-editor/typedoc/enums/editor.MouseTargetType.html
