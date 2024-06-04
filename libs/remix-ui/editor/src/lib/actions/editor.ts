@@ -5,14 +5,14 @@ export interface Action {
   type: string;
   payload: Record<string, any>
   monaco: any,
-  editor: any
+  editors: any[]
 }
 
 export const initialState = {}
 
 export const reducerActions = (models = initialState, action: Action) => {
   const monaco = action.monaco
-  const editors = action.editor as any[]
+  const editors = action.editors as any[]
   switch (action.type) {
     case 'ADD_MODEL': {
       if (!editors) return models
@@ -23,6 +23,7 @@ export const reducerActions = (models = initialState, action: Action) => {
       if (models[uri]) return models // already existing
       models[uri] = { language, uri, readOnly }
       let model
+      
       try {
         model = monaco.editor.createModel(value, language, monaco.Uri.parse(uri))
       } catch (e) {
