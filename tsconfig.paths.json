@@ -94,6 +94,9 @@
             "@remix-ui/search": [
               "libs/remix-ui/search/src/index.ts"
             ],
+            "@remix-ui/remix-ai": [
+              "libs/remix-ui/remix-ai/src/index.ts"
+            ],
             "@remix-ui/settings": [
               "libs/remix-ui/settings/src/index.ts"
             ],

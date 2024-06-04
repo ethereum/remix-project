@@ -53,6 +53,7 @@ import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 import {SolCoder} from './app/plugins/solcoderAI'
+import { RemixAIPlugin } from './app/plugins/remixAI'
 
 const isElectron = require('is-electron')
 
@@ -230,6 +231,7 @@ class AppComponent {
 
     // ----------------- AI --------------------------------------
     const solcoder = new SolCoder()
+    const remixAI = new RemixAIPlugin()
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -347,6 +349,7 @@ class AppComponent {
       solidityScript,
       templates,
       solcoder,
+      remixAI
     ])
 
     //---- fs plugin
