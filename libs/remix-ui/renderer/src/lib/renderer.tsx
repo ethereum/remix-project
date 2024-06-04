@@ -111,7 +111,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
               onClick={() => { askGtp() }}
               style={{ borderColor: "var(--ai)" }}
             >
-              Ask Remix AI
+              Ask RemixAI
             </span>
 
           </div>
