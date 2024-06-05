@@ -82,7 +82,8 @@ let requiredModules = [ // services + layout views + system views
   'pinnedPanel',
   'pluginStateLogger',
   'remixGuide',
-  'matomo'
+  'matomo',
+  'walletconnect'
 ]
 
 
@@ -389,7 +390,16 @@ class PluginLoader {
 
   constructor() {
     const queryParams = new QueryParams()
-    this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
+    // some plugins should not be activated at page load.
+    this.donotAutoReload = [
+      'remixd',
+      'environmentExplorer',
+      'templateSelection',
+      'compilationDetails',
+      'walletconnect',
+      'dapp-draft',
+      'solidityumlgen'
+    ]
     this.loaders = {}
     this.loaders.localStorage = {
       set: (plugin, actives) => {
