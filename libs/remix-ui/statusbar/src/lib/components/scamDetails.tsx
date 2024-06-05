@@ -2,6 +2,7 @@ import { ExtendedRefs, ReferenceType } from '@floating-ui/react'
 import React, { CSSProperties } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { ScamAlert } from '../remixui-statusbar-panel'
+import '../../css/statusbar.css'
 
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
@@ -29,7 +30,7 @@ export default function ScamDetails ({ refs, floatStyle, scamAlerts }: ScamDetai
             {alert.url.length < 1 ? <FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} />
               : (<><FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} /> : &nbsp;
                 <a
-                  className={`remixui_home_text text-danger ${index === 1 ? 'pl-2' : ''}`}
+                  className={`remixui_home_text text-decoration-none text-danger ${index === 1 ? 'pl-2' : ''}`}
                   onClick={() => {
                     index === 1 && _paq.push(['trackEvent', 'hometab', 'scamAlert', 'learnMore'])
                     index === 2 && _paq.push(['trackEvent', 'hometab', 'scamAlert', 'safetyTips'])
