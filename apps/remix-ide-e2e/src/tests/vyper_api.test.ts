@@ -158,7 +158,7 @@ module.exports = {
       .openFile('src')
       .openFile('src/snekmate')
       .openFile('src/snekmate/auth')
-      .openFile('src/snekmate/auth/Ownable.vy')
+      .openFile('src/snekmate/auth/ownable.vy')
       .rightClick('*[data-id="treeViewLitreeViewItemsrc/snekmate/auth/ownable.vy"]')
       .waitForElementVisible('*[data-id="contextMenuItemvyper"]')
       .click('*[data-id="contextMenuItemvyper"]')
