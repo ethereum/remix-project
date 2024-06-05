@@ -400,7 +400,6 @@ class DGitProvider extends Plugin {
       const defaultConfig = await this.addIsomorphicGitConfigFS()
       const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
       const name = await git.currentBranch(cmd)
-      console.log('current branch', name)
       let remote: remote = undefined
       try {
         const remoteName = await git.getConfig({

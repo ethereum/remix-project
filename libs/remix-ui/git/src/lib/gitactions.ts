@@ -563,7 +563,7 @@ export const loadGitHubUserFromToken = async () => {
           type: 'success',
           message: `Github user loaded...`
         })
-      }else{
+      } else {
         sendToGitLog({
           type: 'error',
           message: `Please check your GitHub token in the GitHub settings.`

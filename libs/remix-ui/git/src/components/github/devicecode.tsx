@@ -73,7 +73,6 @@ export const GetDeviceCode = () => {
     await actions.loadGitHubUserFromToken()
   }
 
-
   return (
     <>
       {(context.gitHubUser && context.gitHubUser.login) ? null :
