@@ -73,12 +73,12 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
 
     if (metadata) {
       if (metadata.type === 'git') {
-        await (plugin as Plugin<any, CustomRemixApi>).call('dgitApi', 'clone', 
-        { 
-          url: metadata.url, 
-          branch: metadata.branch,
-          workspaceName: templateDisplayName 
-        })
+        await (plugin as Plugin<any, CustomRemixApi>).call('dgitApi', 'clone',
+          {
+            url: metadata.url,
+            branch: metadata.branch,
+            workspaceName: templateDisplayName
+          })
       } else if (metadata && metadata.type === 'plugin') {
         await plugin.appManager.activatePlugin('filePanel')
         templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)

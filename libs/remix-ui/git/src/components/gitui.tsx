@@ -99,7 +99,7 @@ export const GitUI = (props: IGitUi) => {
   useEffect(() => {
     if (!appLoaded) return
     async function updatestate() {
-  
+
       if (gitState.currentBranch && gitState.currentBranch.remote && gitState.currentBranch.remote.url) {
         remoteCommits(gitState.currentBranch.remote.url, gitState.currentBranch.name, 1)
       }

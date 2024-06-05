@@ -58,7 +58,7 @@ export const getBranches = async () => {
   dispatch(setBranches(branches));
 }
 export const getRemotes = async () => {
-  
+
   const remotes: remote[] = await plugin.call('dgitApi', "remotes");
 
   dispatch(setRemotes(remotes));
@@ -115,7 +115,6 @@ export const gitlog = async () => {
 export const showCurrentBranch = async () => {
   try {
     const branch = await currentBranch();
-
 
     dispatch(setCanCommit((branch && branch.name !== "")));
     dispatch(setCurrentBranch(branch));
@@ -490,7 +489,6 @@ export const remoteBranches = async (owner: string, repo: string) => {
 export const remoteCommits = async (url: string, branch: string, length: number) => {
   const urlParts = url.split("/");
 
-
   // check if it's github
   if (!urlParts[urlParts.length - 3].includes('github')) {
     return
@@ -563,7 +561,6 @@ export const loadGitHubUserFromToken = async () => {
         scopes: string[]
         emails: userEmails
       } = await plugin.call('dgitApi' as any, 'getGitHubUser', { token });
-
 
       if (data && data.emails && data.user && data.user.login) {
 
