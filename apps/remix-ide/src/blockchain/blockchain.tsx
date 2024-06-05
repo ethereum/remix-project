@@ -109,8 +109,7 @@ export class Blockchain extends Plugin {
     this.networkcallid = 0
     this.networkStatus = { network: { name: ' - ', id: ' - ' } }
     this.registeredPluginEvents = []
-    this.pinnedProviders = ['vm-cancun', 'vm-shanghai', 'vm-berlin', 'vm-paris', 'vm-london', 'vm-sepolia-fork', 'vm-mainnet-fork', 'vm-custom-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'ganache-provider', 'hardhat-provider', 'foundry-provider']
-
+    this.pinnedProviders = ['vm-cancun', 'vm-shanghai', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'ganache-provider', 'hardhat-provider', 'foundry-provider']
     this.setupEvents()
     this.setupProviders()
   }
@@ -135,11 +134,11 @@ export class Blockchain extends Plugin {
       }
     })
 
-    this.on('gridProviders', 'providerPinned', (name, provider) => {
+    this.on('environmentExplorer', 'providerPinned', (name, provider) => {
       this.emit('shouldAddProvidertoUdapp', name, provider)
     })
 
-    this.on('gridProviders', 'providerUnpinned', (name, provider) => {
+    this.on('environmentExplorer', 'providerUnpinned', (name, provider) => {
       this.emit('shouldRemoveProviderFromUdapp', name, provider)
     })
   }
@@ -531,7 +530,7 @@ export class Blockchain extends Plugin {
 
   changeExecutionContext(context, confirmCb, infoCb, cb) {
     if (context.context === 'item-another-chain') {
-      this.call('manager', 'activatePlugin', 'gridProviders').then(() => this.call('tabs', 'focus', 'gridProviders'))
+      this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs', 'focus', 'environmentExplorer'))
     } else {
       return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
     }

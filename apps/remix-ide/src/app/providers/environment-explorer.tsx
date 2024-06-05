@@ -11,10 +11,10 @@ import * as packageJson from '../../../../../package.json'
 const _paq = (window._paq = window._paq || [])
 
 const profile = {
-  name: 'gridProviders',
-  displayName: 'Grid providers',
-  icon: 'assets/img/deployAndRun.webp',
-  description: 'Pin web3 providers',
+  name: 'environmentExplorer',
+  displayName: 'Environment Explorer',
+  icon: 'assets/img/EnvironmentExplorerLogo.webp',
+  description: 'Explore providers and customize web3 provider list',
   location: 'mainPanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
   version: packageJson.version,
@@ -26,7 +26,7 @@ const profile = {
 
 type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals'
 
-export class GridProviders extends ViewPlugin {
+export class EnvironmentExplorer extends ViewPlugin {
   providers: { [key in ProvidersSection]: Provider[] }
   providersFlat: { [key: string]: Provider }
   pinnedProviders: string[]
@@ -64,7 +64,7 @@ export class GridProviders extends ViewPlugin {
   }
   render() {
     return (
-      <div className="bg-dark" id="gridproviders">
+      <div className="bg-dark" id="environmentExplorer">
         <PluginViewWrapper plugin={this} />
       </div>
     )
@@ -90,17 +90,17 @@ export class GridProviders extends ViewPlugin {
       <RemixUIGridView
         plugin={this}
         styleList={""}
-        logo='/assets/img/YouTubeLogo.webp'
+        logo={profile.icon}
         enableFilter={true}
         showUntagged={true}
         showPin={true}
-        title='Select a Web3 provider'
+        title={profile.description}
         description="Choose how you would like to interact with a chain."
       >
         <RemixUIGridSection
           plugin={this}
           title='Injected'
-          hScrollable= {true}
+          hScrollable={true}
         >
           {this.providers['Injected'].map(provider => {
             return <RemixUIGridCell
