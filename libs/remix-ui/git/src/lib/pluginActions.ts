@@ -29,7 +29,6 @@ export const openFile = async (path: string) => {
 }
 
 export const openDiff = async (change: commitChange) => {
-  console.log('openDiff', change)
   if (!plugin) return
   plugin.call('fileManager', 'diff', change)
 }

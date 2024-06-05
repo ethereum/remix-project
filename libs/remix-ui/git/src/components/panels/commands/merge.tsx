@@ -16,7 +16,6 @@ export const Merge = () => {
   }, [context.currentBranch])
 
   const onLocalBranchChange = (value: any) => {
-    console.log('onLocalBranchChange', value)
     setLocalBranch(value)
   }
 

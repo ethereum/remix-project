@@ -17,9 +17,7 @@ export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
   const pluginActions = React.useContext(pluginActionsContext)
 
   const openChanges = async (change: commitChange) => {
-    console.log("open changes", change);
     await actions.diff(change)
-    console.log("open changes", change);
     await pluginActions.openDiff(change)
   }
 

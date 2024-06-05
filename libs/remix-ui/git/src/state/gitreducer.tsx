@@ -4,7 +4,6 @@ import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setR
 import { Actions } from "./actions"
 
 export const gitReducer = (state: gitState = defaultGitState, action: Actions): gitState => {
-  ///console.log(action, state)
   switch (action.type) {
 
   case 'FILE_STATUS':

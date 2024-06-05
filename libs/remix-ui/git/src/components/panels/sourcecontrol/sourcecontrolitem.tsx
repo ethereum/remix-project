@@ -18,8 +18,6 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
   const pluginActions = React.useContext(pluginActionsContext)
 
   async function fileClick(file: fileStatusResult) {
-    console.log(file)
-    //let status = fileservice.getFileStatusForFile(file.filename || "");
     if (file.statusNames && file.statusNames.indexOf("modified") !== -1) {
       const headHash = await actions.resolveRef("HEAD")
       const change: commitChange = {
@@ -31,8 +29,6 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
       }
       await actions.diff(change)
       await pluginActions.openDiff(change)
-      console.log("diff", change)
-
     } else {
       await pluginActions.openFile(file.filename)
       //await client.call('fileManager', 'open', file.filename)

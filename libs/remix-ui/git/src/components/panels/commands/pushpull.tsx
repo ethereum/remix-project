@@ -47,7 +47,6 @@ export const PushPull = () => {
   }
 
   const push = async () => {
-    console.log('PUSH', context.upstream, localBranch, remoteBranch, force)
     await actions.push({
       remote: context.upstream,
       ref: {

@@ -43,7 +43,6 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   setPlugin(viewPlugin, gitDispatcher)
 
   plugin.on("fileManager", "fileSaved", async (file: string) => {
-    //console.log(file)
     loadFileQueue.enqueue(async () => {
       loadFiles()
     })
@@ -60,7 +59,6 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   });
 
   plugin.on("fileManager", "currentFileChanged", async (e) => {
-    //console.log('current file change', e)
     //await synTimerStart();
   });
 
@@ -92,7 +90,6 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   });
 
   plugin.on('dgitApi', 'checkout', async () => {
-    console.log('checkout callback')
     loadFileQueue.enqueue(async () => {
       gitlog()
     })
@@ -129,7 +126,6 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     }))
   })
   plugin.on('dgitApi', 'branch', async () => {
-    console.log('branch callback')
     loadFileQueue.enqueue(async () => {
       gitlog()
     })
@@ -158,11 +154,9 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
 
   plugin.on('config', 'configChanged', async () => {
-    //console.log('config changed')
     await getGitConfig()
   })
   plugin.on('settings', 'configChanged', async () => {
-    //console.log('settings changed')
     await getGitConfig()
   })
 
@@ -183,7 +177,6 @@ export const getGitConfig = async () => {
 export const loadFiles = async (filepaths: string[] = null) => {
   try {
     const branch = await plugin.call('dgitApi', "currentbranch")
-    //console.log('load files', branch)
     if (branch) {
       await getFileStatusMatrix(filepaths);
     } else {
@@ -191,7 +184,6 @@ export const loadFiles = async (filepaths: string[] = null) => {
       statusChanged(0)
     }
   } catch (e) {
-    // TODO: handle error
     console.error(e);
   }
 }

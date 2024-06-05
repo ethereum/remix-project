@@ -644,13 +644,11 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function handleDiffEditorDidMount(editor: any) {
-    console.log('diff editor mounted')
     diffEditorRef.current = editor
     setReducerListener()
   }
 
   function handleEditorDidMount(editor) {
-    console.log('editor mounted')
     editorRef.current = editor
     defineAndSetTheme(monacoRef.current)
     setReducerListener()

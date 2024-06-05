@@ -32,7 +32,7 @@ export const SourceControlBase = (props: SourceControlButtonsProps) => {
   const [commitsBehind, setCommitsBehind] = useState<ReadCommitResult[]>([])
 
   useEffect(() => {
-    //console.log('BRANCH DIFF SourceControlButtons',branch, remote, context.branchDifferences, context.currentBranch)
+    
     setDefaultRemote()
     if (remote && branch && context.branchDifferences && context.branchDifferences[`${remote.name}/${branch.name}`]) {
       setCommitsAhead(context.branchDifferences[`${remote.name}/${branch.name}`]?.uniqueHeadCommits)

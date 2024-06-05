@@ -37,7 +37,7 @@ export const RemotesImport = () => {
       setShow(true)
       setLoading(true)
       setRepoOptions([])
-      console.log(await actions.repositories())
+      await actions.repositories()
     } catch (e) {
       // do nothing
     }
@@ -46,10 +46,6 @@ export const RemotesImport = () => {
   const selectRepo = async (repo: repository) => {
     setRepo(repo)
   }
-
-  useEffect(() => {
-    console.log('OTIONS', repoOtions)
-  },[repoOtions])
 
   const addRemote = async () => {
     try {

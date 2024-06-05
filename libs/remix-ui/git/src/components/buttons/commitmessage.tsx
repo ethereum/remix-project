@@ -24,12 +24,6 @@ export const CommitMessage = () => {
     setMessage({ value: e.currentTarget.value })
   }
 
-  useEffect(() => {
-    if (context.fileStatusResult) {
-      console.log(context.staged.length + ' staged')
-    }
-  }, [context.fileStatusResult])
-
   const commit = async() => {
     if (context.staged.length === 0 && context.allchangesnotstaged.length == 0) return
     if (context.staged.length === 0)
@@ -92,7 +86,7 @@ export const CommitMessage = () => {
   }
 
   const setButtonStateValues = () => {
-    console.log('setButtonStateValues', context)
+   
     if (!commitNotAllowed() || context.allchangesnotstaged.length > 0 || context.staged.length > 0){
       if (context.allchangesnotstaged.length == 0 && context.staged.length == 0 && message.value === "" && publishEnabled()){
         setButtonState(buttonStateValues.PublishBranch)

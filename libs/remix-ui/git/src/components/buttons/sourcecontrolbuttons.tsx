@@ -16,10 +16,6 @@ export const SourceControlButtons = () => {
   const [branch, setBranch] = useState<branch>(syncState.branch)
   const [remote, setRemote] = useState<remote>(syncState.remote)
 
-  useEffect(() => {
-    console.log('SC BUTTONS', branch, remote)
-  }, [])
-
   const getRemote = () => {
     return remote ? remote : context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
   }

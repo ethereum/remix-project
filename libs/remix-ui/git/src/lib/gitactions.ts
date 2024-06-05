@@ -1,18 +1,12 @@
-import { ViewPlugin } from "@remixproject/engine-web";
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails } from "../state/gitpayload";
 import { GitHubUser, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository, userEmails } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
-import { AlertModal, ModalTypes } from "@remix-ui/app";
-import { gitActions, gitActionsContext } from "../state/context";
-import { gitPluginContext } from "../components/gitui";
+import { ModalTypes } from "@remix-ui/app";
 import { setFileDecorators } from "./pluginActions";
-import { IDgitSystem, IRemixApi, RemixApi } from "@remixproject/plugin-api";
 import { Plugin } from "@remixproject/engine";
-import { AnyMxRecord } from "dns";
-import { StatusEvents } from "@remixproject/plugin-utils";
 import { CustomRemixApi } from "@remix-api";
 
 export const fileStatuses = [
@@ -73,12 +67,10 @@ export const getFileStatusMatrix = async (filepaths: string[]) => {
   fileStatusResult.map((m) => {
     statusmatrix.map((sm) => {
       if (JSON.stringify(sm.status) === JSON.stringify(m.status)) {
-        //Utils.log(m, sm);
         m.statusNames = sm.matrix;
       }
     });
   });
-  //console.log(fileStatusResult);
   if (!filepaths) {
     dispatch(fileStatus(fileStatusResult))
   } else {
@@ -95,7 +87,7 @@ export const getCommits = async () => {
       "log",
       { ref: "HEAD" }
     );
-    console.log('commits :>>', commits)
+
     return commits;
   } catch (e) {
     return [];
@@ -198,7 +190,6 @@ export const commit = async (message: string = "") => {
 
 export const addall = async (files: fileStatusResult[]) => {
   try {
-    console.log('addall', files.map(f => removeSlash(f.filename)))
     const filesToAdd = files.map(f => removeSlash(f.filename))
     try {
       add({ filepath: filesToAdd })
@@ -379,7 +370,6 @@ const parseError = async (e: any) => {
       cancelLabel: 'Close',
       type: ModalTypes.confirm
     })
-    console.log(result)
   }
   // if message contains 404 Not Found, show repo not found
   else if (e.message.includes('404')) {
@@ -648,8 +638,6 @@ export const diff = async (commitChange: commitChange) => {
 }
 
 export const getCommitChanges = async (oid1: string, oid2: string, branch?: branch, remote?: remote) => {
-  console.log(oid1, oid2, branch, remote)
-
   try {
     let log
     try {
@@ -700,13 +688,11 @@ async function getRepoDetails(url: string) {
 export const fetchBranch = async (branch: branch, page: number) => {
   if (!branch.remote || !branch.remote.url) return
   const token = await tokenWarning();
-  console.log('fetch', branch)
   if (page == 1) {
     dispatch(resetRemoteBranchCommits({ branch }))
   }
   const { owner, repo } = await getRepoDetails(branch.remote.url);
   const rc = await plugin.call('dgitApi', 'remotecommits', { token, owner: owner, repo: repo, branch: branch.name, length, page });
-  console.log(rc, 'remote commits from octokit')
   dispatch(setRemoteBranchCommits({ branch, commits: rc }))
   return
 }
@@ -724,7 +710,7 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
   }
   if (!remote) return
   try {
-    console.log('compare', branch, remote)
+  
     const branchDifference: branchDifference = await plugin.call('dgitApi', 'compareBranches', {
       branch,
       remote
@@ -737,7 +723,7 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
         branchDifference: branchDifference
       }))
   } catch (e) {
-    console.log(e)
+    // do nothing
   }
 }
 
@@ -745,12 +731,10 @@ export const getBranchCommits = async (branch: branch, page: number) => {
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
-    console.log(branch)
     if (!branch.remote) {
       const commits: ReadCommitResult[] = await plugin.call('dgitApi', 'log', {
         ref: branch.name,
       })
-      console.log(commits)
       dispatch(setLocalBranchCommits({ branch, commits }))
     } else {
       await fetchBranch(branch, page)

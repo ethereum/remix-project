@@ -40,7 +40,6 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
   }
 
   const loadNextPage = () => {
-    console.log('LOAD NEXT PAGE', lastPageNumber + 1)
     actions.getBranchCommits(branch, lastPageNumber + 1)
   }
 

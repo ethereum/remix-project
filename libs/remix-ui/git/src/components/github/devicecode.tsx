@@ -31,7 +31,6 @@ export const GetDeviceCode = () => {
 
     // convert response to json
     const githubrespone = await response.data;
-    console.log('json', githubrespone)
 
     setGitHubResponse(githubrespone)
   }
@@ -54,7 +53,6 @@ export const GetDeviceCode = () => {
 
     // convert response to json
     const response = await accestokenresponse.data;
-    console.log('json2', response)
 
     if (response.error) {
 

@@ -54,7 +54,6 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
   }
 
   const loadNextPage = () => {
-    console.log('LOAD NEXT PAGE', lastPageNumber + 1)
     actions.getBranchCommits(branch, lastPageNumber + 1)
   }
 
@@ -70,7 +69,6 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
 
   const getCommitChanges = async (commit: ReadCommitResult) => {
     const changes = await actions.getCommitChanges(commit.oid, commit.commit.parent[0], branch, branch.remote)
-    console.log('CHANGES', changes)
     if (!changes) {
       // try to fetch the data
       //await actions.fetch(branch.remote.name, branch.name,null,20, true, false, true)

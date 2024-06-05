@@ -22,7 +22,6 @@ export const CommitDetails = (props: CommitDetailsProps) => {
 
   useEffect(() => {
     if (activePanel === "0") {
-      console.log(context)
       getCommitChanges(commit)
     }
   }, [activePanel])
@@ -41,7 +40,6 @@ export const CommitDetails = (props: CommitDetailsProps) => {
   }
 
   const openFileOnRemote = (file: string, hash: string) => {
-    console.log("open file on remote", file, hash, getRemote() ? `${getRemote().name}/${branch.name}/commit/${hash}/${file}` : "")
     if (!getRemote()) return
     window.open(`${getRemote() ? `${getRemote().url}/blob/${hash}/${file}` : ""}`, "_blank")
   }

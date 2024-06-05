@@ -66,7 +66,7 @@ export const GitUI = (props: IGitUi) => {
     setCallBacks(plugin, gitDispatch, loaderDispatch)
     setPlugin(plugin, gitDispatch, loaderDispatch)
     loaderDispatch({ type: 'plugin', payload: true })
-    //console.log(props)
+
   }, [appLoaded])
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export const GitUI = (props: IGitUi) => {
       const username = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
       const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
-      //console.log('gitState', gitState, username, email, token)
+
       setSetup(!(username && email))
     }
     checkconfig()

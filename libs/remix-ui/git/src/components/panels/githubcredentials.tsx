@@ -43,7 +43,6 @@ export const GitHubCredentials = () => {
   async function refresh() {
     const credentials = await pluginactions.getGitHubCredentialsFromLocalStorage()
     if (!credentials) return
-    console.log('credentials', credentials)
     setGithubToken(credentials.token || '')
     setGithubUsername(credentials.username || '')
     setGithubEmail(credentials.email || '')

@@ -57,7 +57,7 @@ const RepositorySelect = (props: RepositorySelectProps) => {
       setShow(true)
       setLoading(true)
       setRepoOptions([])
-      console.log(await actions.repositories())
+      await actions.repositories()
     } catch (e) {
       // do nothing
     }
