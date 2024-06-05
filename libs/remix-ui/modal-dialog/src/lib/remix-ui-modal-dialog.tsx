@@ -85,7 +85,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
       style={{ display: props.hide ? 'none' : 'block' }}
       role="dialog"
     >
-      <div className="modal-dialog" role="document">
+      <div className={'modal-dialog ' + (props.modalParentClass ? props.modalParentClass : '')} role="document">
         <div
           ref={modal}
           tabIndex={-1}
