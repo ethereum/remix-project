@@ -9,7 +9,6 @@ export const BranchHeader = () => {
 
   useEffect(() => {
     if (context.currentBranch) {
-      console.log('GET BRANCH COMMITS', context.currentBranch)
       actions.getBranchDifferences(context.currentBranch, null, context)
     }
   }, [context.currentBranch, context.commits, context.branches, context.remotes])

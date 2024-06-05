@@ -66,7 +66,7 @@ export const GitUI = (props: IGitUi) => {
     setCallBacks(plugin, gitDispatch, loaderDispatch)
     setPlugin(plugin, gitDispatch, loaderDispatch)
     loaderDispatch({ type: 'plugin', payload: true })
-    console.log(props)
+    //console.log(props)
   }, [appLoaded])
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export const GitUI = (props: IGitUi) => {
       const username = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
       const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
-      console.log('gitState', gitState, username, email, token)
+      //console.log('gitState', gitState, username, email, token)
       setSetup(!(username && email))
     }
     checkconfig()
@@ -99,7 +99,7 @@ export const GitUI = (props: IGitUi) => {
   useEffect(() => {
     if (!appLoaded) return
     async function updatestate() {
-      console.log('updatestate', gitState)
+  
       if (gitState.currentBranch && gitState.currentBranch.remote && gitState.currentBranch.remote.url) {
         remoteCommits(gitState.currentBranch.remote.url, gitState.currentBranch.name, 1)
       }

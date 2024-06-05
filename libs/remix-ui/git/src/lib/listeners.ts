@@ -43,7 +43,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   setPlugin(viewPlugin, gitDispatcher)
 
   plugin.on("fileManager", "fileSaved", async (file: string) => {
-    console.log(file)
+    //console.log(file)
     loadFileQueue.enqueue(async () => {
       loadFiles()
     })
@@ -67,7 +67,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   });
 
   plugin.on("fileManager", "currentFileChanged", async (e) => {
-    console.log('current file change', e)
+    //console.log('current file change', e)
     //await synTimerStart();
   });
 
@@ -148,11 +148,11 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
 
   plugin.on('config', 'configChanged', async () => {
-    console.log('config changed')
+    //console.log('config changed')
     await getGitConfig()
   })
   plugin.on('settings', 'configChanged', async () => {
-    console.log('settings changed')
+    //console.log('settings changed')
     await getGitConfig()
   })
 
@@ -173,7 +173,7 @@ export const getGitConfig = async () => {
 export const loadFiles = async (filepaths: string[] = null) => {
   try {
     const branch = await plugin.call('dgitApi', "currentbranch")
-    console.log('load files', branch)
+    //console.log('load files', branch)
     if (branch) {
       await getFileStatusMatrix(filepaths);
     } else {

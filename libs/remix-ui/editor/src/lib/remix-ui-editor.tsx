@@ -561,6 +561,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.getValue = (uri: string) => {
     if (!editorRef.current) return
+
     const model = editorModelsState[uri]?.model
     if (model) {
       return model.getValue()
@@ -645,12 +646,11 @@ export const EditorUI = (props: EditorUIProps) => {
   function handleDiffEditorDidMount(editor: any) {
     console.log('diff editor mounted')
     diffEditorRef.current = editor
-    defineAndSetTheme(monacoRef.current)
     setReducerListener()
-    props.events.onEditorMounted()
   }
 
   function handleEditorDidMount(editor) {
+    console.log('editor mounted')
     editorRef.current = editor
     defineAndSetTheme(monacoRef.current)
     setReducerListener()

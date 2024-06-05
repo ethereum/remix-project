@@ -42,26 +42,25 @@ let plugin: Plugin<any, CustomRemixApi>, dispatch: React.Dispatch<gitActionDispa
 export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatch>) => {
   plugin = p
   dispatch = dispatcher
-  console.log('setPlugin')
 }
 
 export const init = async () => {
-  console.log('gitInit')
+
   await plugin.call('dgitApi', "init");
   await gitlog();
   await getBranches();
 }
 
 export const getBranches = async () => {
-  console.log('getBranches')
+
   const branches = await plugin.call('dgitApi', "branches")
-  console.log('branches :>>', branches)
+
   dispatch(setBranches(branches));
 }
 export const getRemotes = async () => {
-  console.log('getRemotes')
+  
   const remotes: remote[] = await plugin.call('dgitApi', "remotes");
-  console.log('remotes :>>', remotes)
+
   dispatch(setRemotes(remotes));
 }
 
@@ -89,8 +88,7 @@ export const getFileStatusMatrix = async (filepaths: string[]) => {
 }
 
 export const getCommits = async () => {
-  //Utils.log("get commits");
-  console.log('getCommits')
+
   try {
     const commits: ReadCommitResult[] = await plugin.call(
       'dgitApi',
@@ -117,7 +115,7 @@ export const gitlog = async () => {
 export const showCurrentBranch = async () => {
   try {
     const branch = await currentBranch();
-    console.log('branch :>>', branch)
+
 
     dispatch(setCanCommit((branch && branch.name !== "")));
     dispatch(setCurrentBranch(branch));
@@ -279,7 +277,7 @@ export const checkoutfile = async (filename: string) => {
 }
 
 export const checkout = async (cmd: checkoutInput) => {
-  console.log(cmd)
+
   await disableCallBacks();
   await plugin.call('fileManager', 'closeAllFiles')
   try {
@@ -492,7 +490,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
 export const remoteCommits = async (url: string, branch: string, length: number) => {
   const urlParts = url.split("/");
 
-  console.log(urlParts, 'urlParts')
+
   // check if it's github
   if (!urlParts[urlParts.length - 3].includes('github')) {
     return
@@ -504,9 +502,9 @@ export const remoteCommits = async (url: string, branch: string, length: number)
   try {
     const token = await tokenWarning();
     if (token) {
-      console.log(token, owner, repo, branch, length)
+
       const commits = await plugin.call('dgitApi' as any, 'remotecommits', { token, owner, repo, branch, length });
-      console.log(commits, 'remote commits')
+
     } else {
       sendToGitLog({
         type: 'error',
@@ -523,7 +521,7 @@ export const remoteCommits = async (url: string, branch: string, length: number)
 }
 
 export const saveGitHubCredentials = async (credentials: { username: string, email: string, token: string }) => {
-  console.log('saveGitHubCredentials', credentials)
+
   try {
     const storedEmail = await plugin.call('config', 'getAppParameter', 'settings/github-email')
     const storedUsername = await plugin.call('config', 'getAppParameter', 'settings/github-user-name')
@@ -566,9 +564,9 @@ export const loadGitHubUserFromToken = async () => {
         emails: userEmails
       } = await plugin.call('dgitApi' as any, 'getGitHubUser', { token });
 
-      console.log('GET USER"', data)
+
       if (data && data.emails && data.user && data.user.login) {
-        console.log('SET USER"', data)
+
         const primaryEmail = data.emails.find(email => email.primary)
 
         const storedEmail = await plugin.call('config', 'getAppParameter', 'settings/github-email')
@@ -635,7 +633,7 @@ export const diff = async (commitChange: commitChange) => {
       });
 
       const modifiedContent = Buffer.from(modifiedContentReadBlobResult.blob).toString("utf8");
-      console.log(modifiedContent)
+
       commitChange.modified = modifiedContent;
       commitChange.readonly = true;
     } catch (e) {
@@ -650,7 +648,7 @@ export const diff = async (commitChange: commitChange) => {
     });
 
     const originalContent = Buffer.from(originalContentReadBlobResult.blob).toString("utf8");
-    console.log(originalContent)
+
     commitChange.original = originalContent;
   } catch (e) {
     commitChange.original = "";
@@ -668,14 +666,14 @@ export const getCommitChanges = async (oid1: string, oid2: string, branch?: bran
       log = await plugin.call('dgitApi', 'log', {
         ref: branch ? branch.name : 'HEAD',
       })
-      console.log(log, 'log')
+
     } catch (e) {
       console.log(e, 'log error')
     }
     if (log) {
       const foundCommit = log.find((commit: ReadCommitResult) => commit.oid === oid2)
       if (!foundCommit && remote) {
-        console.log('getCommitChanges fetching remote')
+
         //await fetch(remote ? remote.name : null, branch ? branch.name : null, null, 5, true, true)
         await fetch({
           remote: remote,

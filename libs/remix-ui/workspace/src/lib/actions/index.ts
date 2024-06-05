@@ -60,6 +60,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
     let filePathToOpen = null
     let workspaces = []
     plugin.on('editor', 'editorMounted', async () => {
+      console.log('editor mounted')
       editorMounted = true
       if (filePathToOpen){
         setTimeout(async () => {
