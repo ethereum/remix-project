@@ -1008,7 +1008,6 @@ class DGitProvider extends Plugin {
     scopes: string[]
   }> {
     try {
-      console.log('getGitHubUser', input)
       const octokit = new Octokit({
         auth: input.token
       })
