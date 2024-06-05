@@ -8,7 +8,8 @@ import WorkspaceTemplate from './workspaceTemplate'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
-
+import { Plugin } from "@remixproject/engine";
+import { CustomRemixApi } from '@remix-api'
 declare global {
   interface Window {
     _paq: any
@@ -69,9 +70,15 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
 
     let templateDisplayName = TEMPLATE_NAMES[templateName]
     const metadata = TEMPLATE_METADATA[templateName]
+
     if (metadata) {
       if (metadata.type === 'git') {
-        await plugin.call('dgitApi', 'clone', { url: metadata.url, branch: metadata.branch }, templateDisplayName)
+        await (plugin as Plugin<any, CustomRemixApi>).call('dgitApi', 'clone', 
+        { 
+          url: metadata.url, 
+          branch: metadata.branch,
+          workspaceName: templateDisplayName 
+        })
       } else if (metadata && metadata.type === 'plugin') {
         await plugin.appManager.activatePlugin('filePanel')
         templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
