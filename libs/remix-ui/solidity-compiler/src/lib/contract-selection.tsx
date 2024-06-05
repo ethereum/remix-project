@@ -272,7 +272,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               }}
             >
               <CustomTooltip
-                placement="right"
+                placement={'auto-end'}
                 tooltipId="publishOnIpfsTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={`${intl.formatMessage({
@@ -295,7 +295,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               }}
             >
               <CustomTooltip
-                placement="right"
+                placement={'auto-end'}
                 tooltipId="publishOnSwarmTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={`${intl.formatMessage({
@@ -320,7 +320,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               }}
             >
               <CustomTooltip
-                placement="right"
+                placement={'auto-end'}
                 tooltipId="CompilationDetailsTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={<FormattedMessage id="solidity.displayContractDetails" />}

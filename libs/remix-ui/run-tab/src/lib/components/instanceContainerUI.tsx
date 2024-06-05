@@ -64,7 +64,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         </CustomTooltip>
         {instanceList.length > 0 ? (
           <CustomTooltip
-            placement="right"
+            placement={'auto-end'}
             tooltipClasses="text-nowrap"
             tooltipId="deployAndRunClearInstancesTooltip"
             tooltipText={<FormattedMessage id="udapp.deployAndRunClearInstances" />}
