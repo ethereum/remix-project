@@ -1016,14 +1016,12 @@ class DGitProvider extends Plugin {
       const user = await octokit.request('GET /user')
       const emails = await octokit.request('GET /user/emails')
 
-      const scopes = user.headers['x-oauth-scopes'];
-
-      console.log('scopes', scopes)
+      const scopes = user.headers['x-oauth-scopes'] || ''
 
       return {
         user: user.data,
         emails: emails.data,
-        scopes: scopes.split(',')
+        scopes: scopes && scopes.split(',')
       }
     } catch (e) {
       return null

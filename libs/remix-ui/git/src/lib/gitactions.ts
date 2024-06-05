@@ -559,14 +559,22 @@ export const loadGitHubUserFromToken = async () => {
         dispatch(setGitHubUser(data.user))
         dispatch(setScopes(data.scopes))
         dispatch(setUserEmails(data.emails))
-
+        sendToGitLog({
+          type: 'success',
+          message: `Github user loaded...`
+        })
+      }else{
+        sendToGitLog({
+          type: 'error',
+          message: `Please check your GitHub token in the GitHub settings.`
+        })
+        dispatch(setGitHubUser(null))
       }
     } else {
-      const credentials = await getGitHubCredentialsFromLocalStorage()
-      if (credentials) {
-        //dispatch(setGitHubUser({ login: credentials.username }))
-        //dispatch(setUserEmails([{ email: credentials.email, primary: true, visibility: 'public', verified: true }]))
-      }
+      sendToGitLog({
+        type: 'error',
+        message: `Please check your GitHub token in the GitHub settings.`
+      })
       dispatch(setGitHubUser(null))
     }
   } catch (e) {

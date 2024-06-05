@@ -24,7 +24,7 @@ const LogViewer = () => {
 
     return (
       <div className="p-1">
-        {context.log && context.log.map((log, index) => (
+        {context.log && context.log.reverse().map((log, index) => (
           <div key={index} className={`log-entry ${typeToCssClass(log.type)}`}>
             [{log.type.toUpperCase()}] {log.message}
           </div>

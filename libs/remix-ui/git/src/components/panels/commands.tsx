@@ -10,7 +10,5 @@ export const Commands = () => {
       <PushPull></PushPull>
       <hr></hr>
       <Fetch></Fetch>
-      <hr></hr>
-      <Merge></Merge>
     </>)
 }

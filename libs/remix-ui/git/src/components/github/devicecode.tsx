@@ -73,13 +73,6 @@ export const GetDeviceCode = () => {
     await actions.loadGitHubUserFromToken()
   }
 
-  const checkConnection = async () => {
-    //await actions.loadGitHubUserFromToken()
-  }
-
-  useEffect(() => {
-
-  }, [])
 
   return (
     <>
