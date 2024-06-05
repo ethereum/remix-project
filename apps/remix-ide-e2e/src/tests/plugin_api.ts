@@ -11,7 +11,7 @@ const localPluginData: Profile & LocationProfile & ExternalProfile = {
   name: 'localPlugin',
   displayName: 'Local Plugin',
   canActivate: ['dgitApi', 'flattener', 'solidityUnitTesting', 'udapp', 'hardhat-provider'],
-  url: 'http://localhost:2020',
+  url: 'http://localhost:9999',
   location: 'sidePanel'
 }
 
