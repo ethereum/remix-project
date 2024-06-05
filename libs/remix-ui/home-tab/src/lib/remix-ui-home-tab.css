@@ -117,8 +117,11 @@
 
 .remix_ui-carousel-container {
   container: remix_ui-carousel-container / inline-size;
+  height: 450px;
 }
 
 @container remix_ui-carousel-container (inline-size < 700px) {
-
+  .remix_ui-carousel-container {
+    height: 320px;
+  }
 }
