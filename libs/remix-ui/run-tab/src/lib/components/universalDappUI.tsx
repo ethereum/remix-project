@@ -279,7 +279,8 @@ export function UniversalDappUI(props: UdappProps) {
             id: 'SolidityScanSuccess',
             title: <FormattedMessage id="udapp.solScan.successModalTitle" />,
             message: <SolScanTable scanDetails={scanDetails} />,
-            okLabel: 'Close'
+            okLabel: 'Close',
+            modalParentClass: 'modal-lg'
           }
           await props.plugin.call('notification', 'modal', modal)
         }
@@ -296,7 +297,7 @@ export function UniversalDappUI(props: UdappProps) {
       message: <FormattedMessage id="udapp.solScan.modalMessage" />,
       okLabel: <FormattedMessage id="udapp.solScan.modalOkLabel" />,
       okFn: handleScanContinue,
-      cancelLabel: <FormattedMessage id="udapp.solScan.modalCancelLabel" />,
+      cancelLabel: <FormattedMessage id="udapp.solScan.modalCancelLabel" />
     }
 
     await props.plugin.call('notification', 'modal', modal)
@@ -392,7 +393,7 @@ export function UniversalDappUI(props: UdappProps) {
                 ></i>
               </CustomTooltip>
             )}
-            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextSolScan" />}>
+            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.solScan.iconTooltip" />}>
               <i className="fas fa-qrcode btn btn-sm p-0" onClick={askPermissionToScan}></i>
             </CustomTooltip> 
           </div>

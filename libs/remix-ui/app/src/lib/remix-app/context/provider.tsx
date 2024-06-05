@@ -23,7 +23,7 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
   }
 
   const modal = (modalData: AppModal) => {
-    const { id, title, message, validationFn, okLabel, okFn, cancelLabel, cancelFn, modalType, defaultValue, hideFn, data } = modalData
+    const { id, title, message, validationFn, okLabel, okFn, cancelLabel, cancelFn, modalType, modalParentClass, defaultValue, hideFn, data } = modalData
     return new Promise((resolve, reject) => {
       dispatch({
         type: modalActionTypes.setModal,
@@ -37,6 +37,7 @@ export const ModalProvider = ({ children = [], reducer = modalReducer, initialSt
           cancelLabel,
           cancelFn,
           modalType: modalType || ModalTypes.default,
+          modalParentClass,
           defaultValue: defaultValue,
           hideFn,
           resolve,
