@@ -218,7 +218,7 @@ export const addall = async (files: fileStatusResult[]) => {
 
 export const add = async (filepath: addInput) => {
   try {
-    if(typeof filepath.filepath === "string") {
+    if (typeof filepath.filepath === "string") {
       filepath.filepath = removeSlash(filepath.filepath)
     }
     await plugin.call('dgitApi', 'add', filepath);

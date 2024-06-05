@@ -637,7 +637,7 @@ export const EditorUI = (props: EditorUIProps) => {
     // if(diffEditorRef.current && diffEditorRef.current.getModifiedEditor() && !editorRef.current){
     //   reducerListener(props.plugin, dispatch, monacoRef.current, [diffEditorRef.current.getModifiedEditor()], props.events)
     // }
-    if(diffEditorRef.current && diffEditorRef.current.getModifiedEditor() && editorRef.current){
+    if (diffEditorRef.current && diffEditorRef.current.getModifiedEditor() && editorRef.current){
       reducerListener(props.plugin, dispatch, monacoRef.current, [diffEditorRef.current.getModifiedEditor(), editorRef.current], props.events)
     }
   }
@@ -975,7 +975,7 @@ export const EditorUI = (props: EditorUIProps) => {
         width='100%'
         height={props.isDiff ? '100%' : '0%'}
         className={props.isDiff ? "d-block" : "d-none"}
-        
+
       />
       <Editor
         width="100%"
