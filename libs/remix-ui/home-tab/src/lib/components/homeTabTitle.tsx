@@ -148,14 +148,6 @@ function HomeTabTitle() {
         </a> */}
         <a
           className="pl-2 remixui_home_text"
-          onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixPlugin'])}
-          target="__blank"
-          href="https://remix-plugin-docs.readthedocs.io/en/latest/"
-        >
-          Remix Desktop
-        </a>
-        <a
-          className="pl-2 remixui_home_text"
           onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixDesktop'])}
           target="__blank"
           href="https://github.com/ethereum/remix-desktop/releases"
