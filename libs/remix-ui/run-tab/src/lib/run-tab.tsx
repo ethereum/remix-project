@@ -356,7 +356,7 @@ export function RunTabUI(props: RunTabProps) {
             getFuncABIInputs={getFuncABIValues}
             exEnvironment={runTab.selectExEnv}
             editInstance={(instance) => {
-              plugin.call('dapp-draft', 'edit', {
+              plugin.call('quick-dapp', 'edit', {
                 address: instance.address,
                 abi: instance.contractData.abi,
                 name: instance.name,
