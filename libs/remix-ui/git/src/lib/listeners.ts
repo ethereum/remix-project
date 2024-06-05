@@ -49,13 +49,6 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     })
   });
 
-  plugin.on('dgitApi', 'checkout', async () => {
-    //await synTimerStart();
-  })
-  plugin.on('dgitApi', 'branch', async () => {
-    //await synTimerStart();
-  })
-
   plugin.on("fileManager", "fileAdded", async (e) => {
     loadFileQueue.enqueue(async () => {
       loadFiles()
@@ -99,7 +92,17 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   });
 
   plugin.on('dgitApi', 'checkout', async () => {
-
+    console.log('checkout callback')
+    loadFileQueue.enqueue(async () => {
+      gitlog()
+    })
+    loadFileQueue.enqueue(async () => {
+      getBranches()
+    })
+    gitDispatch(setLog({
+      message: "Checkout",
+      type: "success"
+    }))
   })
   plugin.on('dgitApi', 'init', async () => {
     loadFileQueue.enqueue(async () => {
@@ -126,6 +129,13 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     }))
   })
   plugin.on('dgitApi', 'branch', async () => {
+    console.log('branch callback')
+    loadFileQueue.enqueue(async () => {
+      gitlog()
+    })
+    loadFileQueue.enqueue(async () => {
+      getBranches()
+    })
     gitDispatch(setLog({
       message: "Created Branch",
       type: "success"

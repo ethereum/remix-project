@@ -24,7 +24,7 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
 
   useEffect(() => {
     if (activePanel === "0") {
-      console.log('GET BRANCH COMMITS', branch)
+
       if (lastPageNumber === 0)
         actions.getBranchCommits(branch, 1)
     }
@@ -33,7 +33,6 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
   useEffect(() => {
     let hasNextPage = false
     let lastPageNumber = 0
-    console.log('BRANCH COMMITS', context.remoteBranchCommits)
     context.remoteBranchCommits && Object.entries(context.remoteBranchCommits).map(([key, value]) => {
       if (key == branch.name) {
         value.map((page, index) => {

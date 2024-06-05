@@ -13,17 +13,9 @@ export const BranchDifferences = (props: BrancheDetailsProps) => {
   const { branch, showSummary } = props;
   const context = React.useContext(gitPluginContext)
 
-  useEffect(() => {
-    console.log('GET BRANCH DIFF', branch)
-  }, [])
-
   const getRemote = (): remote | null => {
     return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
   }
-
-  useEffect(() => {
-    console.log('BRANCH DIFF', context.branchDifferences)
-  }, [context.branchDifferences])
 
   const commitsAhead = (remote: remote) => {
     if (!remote) return [];

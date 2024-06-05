@@ -70,7 +70,7 @@ export const SourceControlBase = (props: SourceControlButtonsProps) => {
   }, [])
 
   useEffect(() => {
-    console.log('context', context.defaultRemote, context.currentBranch)
+    
     if (!props.branch) {
       setBranch(context.currentBranch)
     }

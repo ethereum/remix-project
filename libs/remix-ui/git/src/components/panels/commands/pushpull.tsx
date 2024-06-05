@@ -91,8 +91,7 @@ export const PushPull = () => {
   }
 
   useEffect(() => {
-    console.log('context branches', context.branches)
-    // map context.repositories to options
+  
     const localBranches = context.branches && context.branches.length > 0 && context.branches
       .filter(branch => !branch.remote)
       .map(repo => {
@@ -111,7 +110,7 @@ export const PushPull = () => {
   }, [context.branches])
 
   useEffect(() => {
-    console.log('context', context.remotes)
+    
     // map context.repositories to options
     const options = context.remotes && context.remotes.length > 0 && context.remotes
       .map(repo => {

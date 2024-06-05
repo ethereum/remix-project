@@ -779,6 +779,7 @@ const refreshBranches = async () => {
 }
 
 export const switchBranch = async (branch: branch) => {
+  console.log('switch', branch)
   await plugin.call('fileManager', 'closeAllFiles')
   const localChanges = await hasLocalChanges()
 
@@ -793,8 +794,8 @@ export const switchBranch = async (branch: branch) => {
       okLabel: 'Force Checkout',
       okFn: async () => {
         dispatch(cloneRepositoryRequest())
-        plugin
-          .call('dgitApi', 'checkout', { ref: branch, force: true }, false)
+        dgitPlugin
+          .call('dgitApi', 'checkout', { ref: branch.name, force: true, refresh: false })
           .then(async () => {
             await fetchWorkspaceDirectory(ROOT_PATH)
             dispatch(setCurrentWorkspaceCurrentBranch(branch))
@@ -811,8 +812,8 @@ export const switchBranch = async (branch: branch) => {
     plugin.call('notification', 'modal', cloneModal)
   } else {
     dispatch(cloneRepositoryRequest())
-    plugin
-      .call('dgitApi', 'checkout', { ref: branch, force: true }, false)
+    dgitPlugin
+      .call('dgitApi', 'checkout', { ref: branch.name, force: true, refresh: false })
       .then(async () => {
         await fetchWorkspaceDirectory(ROOT_PATH)
         dispatch(setCurrentWorkspaceCurrentBranch(branch))
@@ -898,9 +899,9 @@ export const checkoutRemoteBranch = async (branch: branch) => {
       okLabel: 'Force Checkout',
       okFn: async () => {
         dispatch(cloneRepositoryRequest())
-        plugin
+        dgitPlugin
           .call('dgitApi', 'checkout', {
-            ref: branch,
+            ref: branch.name,
             force: true,
           })
           .then(async () => {
@@ -924,11 +925,12 @@ export const checkoutRemoteBranch = async (branch: branch) => {
     plugin.call('notification', 'modal', cloneModal)
   } else {
     dispatch(cloneRepositoryRequest())
-    plugin
+    dgitPlugin
       .call('dgitApi', 'checkout',{
-        ref: branch,
+        ref: branch.name,
         force: true,
-      }, false)
+        refresh: false,
+      })
       .then(async () => {
         await fetchWorkspaceDirectory(ROOT_PATH)
         dispatch(setCurrentWorkspaceCurrentBranch(branch))

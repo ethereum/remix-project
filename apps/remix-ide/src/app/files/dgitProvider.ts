@@ -19,7 +19,7 @@ import { Octokit, App } from "octokit"
 import { OctokitResponse } from '@octokit/types'
 import { Endpoints } from "@octokit/types"
 import { IndexedDBStorage } from './filesystems/indexedDB'
-import { GitHubUser, branch, commitChange, remote, pagedCommits, remoteCommitsInputType, cloneInputType, fetchInputType, pullInputType, pushInputType, currentBranchInput, branchInputType, addInput, rmInput, resolveRefInput, readBlobInput, repositoriesInput, commitInput, branchDifference, compareBranchesInput, initInput, userEmails } from '@remix-ui/git'
+import { GitHubUser, branch, commitChange, remote, pagedCommits, remoteCommitsInputType, cloneInputType, fetchInputType, pullInputType, pushInputType, currentBranchInput, branchInputType, addInput, rmInput, resolveRefInput, readBlobInput, repositoriesInput, commitInput, branchDifference, compareBranchesInput, initInput, userEmails, checkoutInput } from '@remix-ui/git'
 import { LibraryProfile, StatusEvents } from '@remixproject/plugin-utils'
 import { ITerminal } from '@remixproject/plugin-api/src/lib/terminal'
 
@@ -211,7 +211,7 @@ class DGitProvider extends Plugin {
     }
   }
 
-  async checkout(cmd, refresh = true) {
+  async checkout(cmd: checkoutInput): Promise<void> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'checkout', cmd)
@@ -243,7 +243,7 @@ class DGitProvider extends Plugin {
         }
       }
     }
-    if (refresh) {
+    if (cmd.refresh) {
       setTimeout(async () => {
         await this.call('fileManager', 'refresh')
       }, 1000)

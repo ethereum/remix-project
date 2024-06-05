@@ -18,16 +18,6 @@ export const Remoteselect = (props: RemoteSelectProps) => {
   const actions = React.useContext(gitActionsContext)
   const [activePanel, setActivePanel] = useState<string>("");
 
-  useEffect(() => {
-    if (activePanel === "0") {
-      console.log('fetching', remote)
-    }
-  }, [activePanel])
-
-  useEffect(() => {
-    console.log('remote branches', context.branches)
-  }, [context.branches])
-
   return (
     <>
       <Accordion activeKey={activePanel} defaultActiveKey="">
