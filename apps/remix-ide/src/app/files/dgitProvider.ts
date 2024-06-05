@@ -19,7 +19,7 @@ import { Octokit, App } from "octokit"
 import { OctokitResponse } from '@octokit/types'
 import { Endpoints } from "@octokit/types"
 import { IndexedDBStorage } from './filesystems/indexedDB'
-import { GitHubUser, RateLimit, branch, commitChange, remote, pagedCommits, remoteCommitsInputType, cloneInputType, fetchInputType, pullInputType, pushInputType, currentBranchInput, branchInputType, addInput, rmInput, resolveRefInput, readBlobInput, repositoriesInput, commitInput, branchDifference, compareBranchesInput, initInput, userEmails } from '@remix-ui/git'
+import { GitHubUser, branch, commitChange, remote, pagedCommits, remoteCommitsInputType, cloneInputType, fetchInputType, pullInputType, pushInputType, currentBranchInput, branchInputType, addInput, rmInput, resolveRefInput, readBlobInput, repositoriesInput, commitInput, branchDifference, compareBranchesInput, initInput, userEmails } from '@remix-ui/git'
 import { LibraryProfile, StatusEvents } from '@remixproject/plugin-utils'
 import { ITerminal } from '@remixproject/plugin-api/src/lib/terminal'
 
@@ -252,7 +252,7 @@ class DGitProvider extends Plugin {
     this.emit('checkout')
   }
 
-  async log(cmd:{ref:string}):Promise<ReadCommitResult[]> {
+  async log(cmd: { ref: string }): Promise<ReadCommitResult[]> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'log', {
@@ -362,8 +362,7 @@ class DGitProvider extends Plugin {
 
     let remotes: remote[] = []
     try {
-      remotes = (await git.listRemotes({ ...config ? config : await this.addIsomorphicGitConfigFS() })).map((remote) =>
-      { return { name: remote.remote, url: remote.url } }
+      remotes = (await git.listRemotes({ ...config ? config : await this.addIsomorphicGitConfigFS() })).map((remote) => { return { name: remote.remote, url: remote.url } }
       )
     } catch (e) {
       // do nothing
@@ -573,7 +572,7 @@ class DGitProvider extends Plugin {
         const result = await this.call('isogit', 'clone', cmd)
         this.call('fs', 'openWindow', folder)
         return result
-      } catch (e){
+      } catch (e) {
         this.call('notification', 'alert', {
           id: 'dgitAlert',
           message: 'Unexpected error while cloning the repository: \n' + e.toString(),
@@ -710,8 +709,9 @@ class DGitProvider extends Plugin {
                 this.call('terminal', 'log', {
                   type: 'error',
                   value: `Could not checkout submodule to ${result[0]}`
-                })} else {
-                this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
+                })
+              } else {
+                this.call('terminal', 'logHtml', `Checked out submodule ${dir} to ${result[0]}`)
               }
             }
 
@@ -1004,37 +1004,29 @@ class DGitProvider extends Plugin {
 
   async getGitHubUser(input: { token: string }): Promise<{
     user: GitHubUser,
-    ratelimit: RateLimit,
     emails: userEmails,
     scopes: string[]
   }> {
-    const octokit = new Octokit({
-      auth: input.token
-    })
+    try {
+      console.log('getGitHubUser', input)
+      const octokit = new Octokit({
+        auth: input.token
+      })
 
-    const ratelimit = await octokit.request('GET /rate_limit', {
-      headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
+      const user = await octokit.request('GET /user')
+      const emails = await octokit.request('GET /user/emails')
+
+      const scopes = user.headers['x-oauth-scopes'];
+
+      console.log('scopes', scopes)
+
+      return {
+        user: user.data,
+        emails: emails.data,
+        scopes: scopes.split(',')
       }
-    })
-    // epoch timestamp to local date time
-    const localResetTime = ratelimit.data.rate.reset * 1000
-    const localResetTimeString = new Date(localResetTime).toLocaleString()
-
-    console.log('rate limit', localResetTimeString)
-
-    const user = await octokit.request('GET /user')
-    const emails = await octokit.request('GET /user/emails')
-
-    const scopes = user.headers['x-oauth-scopes'];
-
-    console.log('scopes', scopes)
-
-    return {
-      user: user.data,
-      emails: emails.data,
-      ratelimit: ratelimit.data,
-      scopes: scopes.split(',')
+    } catch (e) {
+      return null
     }
   }
 

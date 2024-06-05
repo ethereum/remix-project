@@ -83,10 +83,6 @@ export const GetDeviceCode = () => {
 
   }, [])
 
-  useEffect(() => {
-    console.log('context.rateLimit', context.rateLimit)
-  }, [context.rateLimit])
-
   return (
     <>
       {(context.gitHubUser && context.gitHubUser.login) ? null :

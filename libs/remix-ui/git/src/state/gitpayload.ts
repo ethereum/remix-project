@@ -59,12 +59,6 @@ export const setUserEmails = (emails: userEmails) => {
   }
 }
 
-export const setRateLimit = (rateLimit: any) => {
-  return {
-    type: 'SET_RATE_LIMIT',
-    payload: rateLimit
-  }
-}
 
 export const setScopes = (scopes: string[]) => {
   return {
