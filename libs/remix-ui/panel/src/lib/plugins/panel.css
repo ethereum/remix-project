@@ -106,3 +106,7 @@ iframe {
 
 .terminal-wrap.minimized.desktop {
 }
+
+.highlight {
+    animation: highlight 2s forwards;
+}
