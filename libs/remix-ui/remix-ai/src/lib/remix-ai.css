@@ -122,14 +122,14 @@
     font-size: x-small;
 }
 
-.remix_ai_plugin_find_container {
+.remix_ai_plugin_search_container {
     display: flex;
     flex-direction: row;
     justify-content: center;
     margin-top: 20px;
 }
 
-.remix_ai_plugin_find_container_internal {
+.remix_ai_plugin_search_container_internal {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -137,7 +137,7 @@
     align-items: center;
 }
 
-.remix_ai_plugin_find_container_arrow {
+.remix_ai_plugin_search_container_arrow {
     display: flex !important;
     align-items: center;
     cursor: pointer !important;

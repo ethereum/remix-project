@@ -375,7 +375,7 @@ class AppComponent {
     const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
     this.engine.register([compilerloader])
 
-    const remixAI = new RemixAIPlugin()
+    const remixAI = new RemixAIPlugin(isElectron())
     this.engine.register([remixAI])
 
     // LAYOUT & SYSTEM VIEWS

@@ -7,14 +7,26 @@ export const Default = () => {
 
   return (
     <div>
-      <div className="remix_ai_plugin_find_container">
+      <div className="remix_ai_plugin_search_container">
         <input
           type="text"
           className="remix_ai_plugin_search-input"
           placeholder="Search..."
           value={searchText}
           onChange={() => console.log('searchText not implememted')}
-        />
+        ></input>
+        <button
+          className="remix_ai_plugin_search_button text-ai pl-2 pr-0 py-0 d-flex"
+          onClick={() => console.log('searchText not implememted')}
+        >
+          <i
+            className="fa-solid fa-arrow-right"
+            style={{ color: 'black' }}
+          ></i>
+          <span className="position-relative text-ai text-sm pl-1"
+            style={{fontSize: "x-small", alignSelf: "end"}}>Search</span>
+        </button>
+
       </div>
       <div className="remix_ai_plugin_find_container_internal">
         <textarea
