@@ -20,16 +20,25 @@ const profile = {
 
 
 export class RemixAIPlugin extends ViewPlugin {
-  constructor() {
+  isOnDesktop:boolean = false
+  aiIsActivated:boolean = false
+  constructor(inDesktop:boolean) {
     console.log('remixAIPlugin')
     super(profile)
+    this.isOnDesktop = inDesktop
+  }
+
+  onActivation(): void {
+    
+    if (this.isOnDesktop) {
+      console.log('Activating RemixAIPlugin on desktop')
+      // Do some desktop specific stuff
+    }
   }
 
   render() {
     return (
-      <div id="remixAITab">
-        <RemixAITab plugin={this}></RemixAITab>
-      </div>
+      <RemixAITab plugin={this}></RemixAITab>
     )
   }
 }
