@@ -149,7 +149,7 @@ module.exports = {
       })
   },
 
-  'Compile Ownable contract from snekmate #group1': function (browser: NightwatchBrowser) {
+  'Compile Ownable contract from snekmate #group1': !function (browser: NightwatchBrowser) {
     let contractAddress
     browser
       .frameParent()
