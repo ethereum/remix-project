@@ -59,7 +59,6 @@ export const setUserEmails = (emails: userEmails) => {
   }
 }
 
-
 export const setScopes = (scopes: string[]) => {
   return {
     type: 'SET_SCOPES',
