@@ -710,7 +710,7 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
   }
   if (!remote) return
   try {
-  
+
     const branchDifference: branchDifference = await plugin.call('dgitApi', 'compareBranches', {
       branch,
       remote

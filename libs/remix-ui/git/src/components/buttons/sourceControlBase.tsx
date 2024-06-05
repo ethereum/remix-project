@@ -32,7 +32,7 @@ export const SourceControlBase = (props: SourceControlButtonsProps) => {
   const [commitsBehind, setCommitsBehind] = useState<ReadCommitResult[]>([])
 
   useEffect(() => {
-    
+
     setDefaultRemote()
     if (remote && branch && context.branchDifferences && context.branchDifferences[`${remote.name}/${branch.name}`]) {
       setCommitsAhead(context.branchDifferences[`${remote.name}/${branch.name}`]?.uniqueHeadCommits)
@@ -70,7 +70,7 @@ export const SourceControlBase = (props: SourceControlButtonsProps) => {
   }, [])
 
   useEffect(() => {
-    
+
     if (!props.branch) {
       setBranch(context.currentBranch)
     }

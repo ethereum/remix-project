@@ -86,7 +86,7 @@ export const CommitMessage = () => {
   }
 
   const setButtonStateValues = () => {
-   
+
     if (!commitNotAllowed() || context.allchangesnotstaged.length > 0 || context.staged.length > 0){
       if (context.allchangesnotstaged.length == 0 && context.staged.length == 0 && message.value === "" && publishEnabled()){
         setButtonState(buttonStateValues.PublishBranch)

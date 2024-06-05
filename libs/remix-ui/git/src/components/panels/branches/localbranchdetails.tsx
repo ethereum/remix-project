@@ -25,7 +25,7 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
 
   useEffect(() => {
     if (activePanel === "0") {
-      
+
       if (lastPageNumber === 0)
         actions.getBranchCommits(branch, 1)
       actions.getBranchDifferences(branch, null, context)
