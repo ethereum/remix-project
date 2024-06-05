@@ -82,12 +82,11 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
   async cloneVyperRepo() {
     try {
       // @ts-ignore
-      this.call('notification', 'toast', 'cloning Snekmate Vyper repository...')
-      const timestamp = new Date().getTime()      
+      this.call('notification', 'toast', 'cloning Snekmate Vyper repository...')     
       await this.call(
         'dgitApi',
         'clone',
-        {url: 'https://github.com/pcaversaccio/snekmate', token: null, branch: 'main', singleBranch: true, workspaceName: 'snekmate' + timestamp},
+        {url: 'https://github.com/pcaversaccio/snekmate', token: null, branch: 'main', singleBranch: true, workspaceName: 'snekmate'},
       )
       
       await this.call('dgitApi', 'checkout', {
