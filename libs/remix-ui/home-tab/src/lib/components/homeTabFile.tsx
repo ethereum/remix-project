@@ -249,7 +249,7 @@ contract HelloWorld {
         {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
           <div className="d-flex flex-column mb-5">
             <label style={{ fontSize: '0.8rem' }} className="mt-3">
-              Recent workspaces
+              Recent Workspaces
             </label>
             {state.recentWorkspaces[0] && state.recentWorkspaces[0] !== '' && (
               <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[0])}>
