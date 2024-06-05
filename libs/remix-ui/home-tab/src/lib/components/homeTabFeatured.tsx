@@ -16,7 +16,7 @@ function HomeTabFeatured() {
       <label style={{ fontSize: '1.2rem' }}>
         <FormattedMessage id="home.featured" />
       </label>
-      <div className="mb-2">
+      <div className="mb-2 remix_ui-carousel-container">
         <div className="w-100 d-flex flex-column rounded-3" style={{ height: '450px' }}>
           <ThemeContext.Provider value={themeFilter}>
             <Carousel
