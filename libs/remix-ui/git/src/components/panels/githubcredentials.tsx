@@ -19,7 +19,7 @@ export const GitHubCredentials = () => {
 
   useEffect(() => {
     refresh()
-    setScopeWarning(!(context.gitHubScopes && context.gitHubScopes.length > 0)) 
+    setScopeWarning(!(context.gitHubScopes && context.gitHubScopes.length > 0))
   }, [loader.plugin, context.gitHubAccessToken, context.userEmails, context.gitHubUser, context.gitHubScopes])
 
   function handleChangeTokenState(e: string): void {
@@ -79,7 +79,7 @@ export const GitHubCredentials = () => {
         </button>
       </div>
       {scopeWarning?
-      <div className="text-warning">Your GitHub token may not have the correct permissions. Please use the login with GitHub feature.</div>:null}
+        <div className="text-warning">Your GitHub token may not have the correct permissions. Please use the login with GitHub feature.</div>:null}
       <hr />
     </>
   );
