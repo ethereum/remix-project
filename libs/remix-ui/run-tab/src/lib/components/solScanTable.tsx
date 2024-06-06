@@ -3,13 +3,17 @@ import React from 'react'
 import parse from 'html-react-parser';
 
 interface SolScanTableProps {
-  scanDetails: Record<string, any>[]
+  scanDetails: Record<string, any>[],
+  fileName: string
 }
 
 export function SolScanTable(props: SolScanTableProps) {
-  const { scanDetails } = props
+  const { scanDetails, fileName } = props
 
   return (
+    <>
+    <p>Scanning successful! <b>{scanDetails.length} warnings </b> found for file: <b>{fileName}</b></p>
+    <p>See the warning details below. For more details, <a href="https://solidityscan.com/signup">Sign up with SolidityScan</a></p>
     <table className="table table-bordered table-hover">
       <thead>
         <tr>
@@ -35,5 +39,6 @@ export function SolScanTable(props: SolScanTableProps) {
 
       </tbody>
     </table>
+    </>
   )
 }
