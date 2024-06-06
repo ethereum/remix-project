@@ -64,7 +64,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
             {!(platform === appPlatformTypes.desktop) ?
               <HomeTabFile plugin={plugin} />:
               <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>}
-            <HomeTabLearn plugin={plugin} />
+            {/* <HomeTabLearn plugin={plugin} /> */}
           </div>
           <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{ width: '65%' }} id="remixUIHTRight">
             <LanguageOptions plugin={plugin}/>
