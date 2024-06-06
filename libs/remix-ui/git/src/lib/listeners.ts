@@ -120,6 +120,9 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     loadFileQueue.enqueue(async () => {
       gitlog()
     }, 10)
+    loadFileQueue.enqueue(async () => {
+      getBranches()
+    }, 20)
     gitDispatch(setLog({
       message: 'Committed changes...',
       type: 'success'

@@ -82,6 +82,7 @@ export type branchInputType = {
     ref: string,
     checkout?: boolean
     refresh?: boolean
+    force?: boolean
 }
 
 export type currentBranchInput = {
@@ -94,6 +95,7 @@ export type checkoutInput = {
     force?: boolean,
     remote?: string
     refresh?: boolean
+    fetch?: boolean
 }
 
 export type addInput = {
@@ -151,6 +153,7 @@ export interface customGitApi extends IRemixApi {
 
 export type gitState = {
     currentBranch: branch
+    currentHead: string
     commits: ReadCommitResult[]
     branch: string
     canCommit: boolean
@@ -264,6 +267,7 @@ export type remoteBranch = {
 
 export const defaultGitState: gitState = {
   currentBranch: { name: "", remote: { name: "", url: "" } },
+  currentHead: "",
   commits: [],
   branch: "",
   canCommit: true,
@@ -370,6 +374,11 @@ export interface setCurrentBranchAction {
     payload: branch
 }
 
+export interface setCurrentHeadAction {
+    type: string,
+    payload: string
+}
+
 export interface setRemotesAction {
     type: string,
     payload: remote[]
@@ -424,4 +433,4 @@ export interface clearLogAction {
     type: string
 }
 
-export type gitActionDispatch = clearLogAction | setLogAction | setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export type gitActionDispatch = setCurrentHeadAction | clearLogAction | setLogAction | setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

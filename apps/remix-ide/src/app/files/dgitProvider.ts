@@ -446,6 +446,7 @@ class DGitProvider extends Plugin {
       }
       return branches
     } catch (e) {
+      console.log(e)
       return []
     }
   }
@@ -803,7 +804,7 @@ class DGitProvider extends Plugin {
       relative: input.relative,
       input
     }
-    console.log('fetch input', cmd)
+
     let result
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       result = await this.call('isogit', 'fetch', cmd)
@@ -816,7 +817,7 @@ class DGitProvider extends Plugin {
         ...await this.addIsomorphicGitConfigFS(),
         ...cmd2
       })
-      console.log('fetch result', cmd2, result)
+
     }
 
     setTimeout(async () => {
@@ -1066,7 +1067,6 @@ class DGitProvider extends Plugin {
       readCommitResults.push(readCommitResult)
     }
 
-    console.log(readCommitResults)
 
     // Check for the Link header to determine pagination
     const linkHeader = response.headers.link;
@@ -1077,7 +1077,7 @@ class DGitProvider extends Plugin {
       hasNextPage = linkHeader.includes('rel="next"');
     }
 
-    console.log("Has next page:", hasNextPage);
+
     pages.push({
       page: input.page,
       perPage: input.length,

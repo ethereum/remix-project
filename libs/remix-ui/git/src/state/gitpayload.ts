@@ -101,6 +101,13 @@ export const setCurrentBranch = (currentBranch: branch) => {
   }
 }
 
+export const setCurrenHead = (currentHead: string) => {
+  return {
+    type: 'SET_CURRENT_HEAD',
+    payload: currentHead
+  }
+}
+
 export const setCanCommit = (canCommit: boolean) => {
   return {
     type: 'SET_CAN_COMMIT',

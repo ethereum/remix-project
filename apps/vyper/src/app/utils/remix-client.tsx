@@ -86,7 +86,17 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
       await this.call(
         'dgitApi',
         'clone',
-        {url: 'https://github.com/pcaversaccio/snekmate', token: null, branch: 'main', singleBranch: true, workspaceName: 'snekmate'},
+        {url: 'https://github.com/pcaversaccio/snekmate', token: null, branch: 'main', singleBranch: false, workspaceName: 'snekmate'},
+      )
+
+      await this.call(
+        'dgitApi',
+        'checkout',
+        {
+          ref:'v0.0.5',
+          force: true,
+          refresh: true,
+        }
       )
             
       this.call(

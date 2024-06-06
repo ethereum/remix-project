@@ -1,6 +1,6 @@
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails } from "../state/gitpayload";
+import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails, setCurrenHead } from "../state/gitpayload";
 import { GitHubUser, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository, userEmails } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
@@ -107,13 +107,22 @@ export const gitlog = async () => {
 export const showCurrentBranch = async () => {
   try {
     const branch = await currentBranch();
-
     dispatch(setCanCommit((branch && branch.name !== "")));
     dispatch(setCurrentBranch(branch));
-
   } catch (e) {
-    // show empty branch
+    console.log(e)
+    dispatch(setCanCommit(false));
+    dispatch(setCurrentBranch({ name: "", remote: { name: "", url: "" } }));
   }
+
+  try {
+    const currentHead = await getCommitFromRef('HEAD');
+    dispatch(setCurrenHead(currentHead));
+  } catch (e) {
+    console.log(e)
+    dispatch(setCurrenHead(''));
+  }
+
 }
 
 export const currentBranch = async () => {
@@ -133,8 +142,7 @@ export const currentBranch = async () => {
 export const createBranch = async (name: string = "") => {
   dispatch(setLoading(true))
   if (name) {
-    await plugin.call('dgitApi', 'branch', { ref: name });
-    await plugin.call('dgitApi', 'checkout', { ref: name });
+    await plugin.call('dgitApi', 'branch', { ref: name, force: true, checkout: true });
   }
   dispatch(setLoading(false))
 }
@@ -272,8 +280,8 @@ export const checkout = async (cmd: checkoutInput) => {
   await plugin.call('fileManager', 'closeAllFiles')
   try {
     await plugin.call('dgitApi', 'checkout', cmd)
-    gitlog();
   } catch (e) {
+    console.log(e)
     plugin.call('notification', 'toast', `${e}`)
   }
   await enableCallBacks();
@@ -534,6 +542,13 @@ export const getGitHubCredentialsFromLocalStorage = async () => {
   } catch (e) {
     console.log(e)
   }
+}
+
+export const showAlert = async ({ title, message }: { title: string, message: string }) => {
+  await plugin.call('notification', 'alert', {
+    title: title,
+    message: message
+  })
 }
 
 export const loadGitHubUserFromToken = async () => {

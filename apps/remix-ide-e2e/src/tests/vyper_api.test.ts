@@ -40,7 +40,7 @@ module.exports = {
       .openFile('src')
       .openFile('src/snekmate')
       .openFile('src/snekmate/tokens')
-      .openFile('src/snekmate/tokens/erc721.vy')
+      .openFile('src/snekmate/tokens/ERC721.vy')
   },
   // 'Add vyper file to run tests #group1': function (browser: NightwatchBrowser) {
   //   browser.addFile('TestBallot.sol', sources[0]['TestBallot.sol'])
@@ -149,7 +149,7 @@ module.exports = {
       })
   },
 
-  'Compile Ownable contract from snekmate #group1': !function (browser: NightwatchBrowser) {
+  'Compile Ownable contract from snekmate #group1': function (browser: NightwatchBrowser) {
     let contractAddress
     browser
       .frameParent()
@@ -158,8 +158,8 @@ module.exports = {
       .openFile('src')
       .openFile('src/snekmate')
       .openFile('src/snekmate/auth')
-      .openFile('src/snekmate/auth/ownable.vy')
-      .rightClick('*[data-id="treeViewLitreeViewItemsrc/snekmate/auth/ownable.vy"]')
+      .openFile('src/snekmate/auth/Ownable.vy')
+      .rightClick('*[data-id="treeViewLitreeViewItemsrc/snekmate/auth/Ownable.vy"]')
       .waitForElementVisible('*[data-id="contextMenuItemvyper"]')
       .click('*[data-id="contextMenuItemvyper"]')
       .clickLaunchIcon('vyper')

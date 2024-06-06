@@ -332,7 +332,6 @@ export const EditorUI = (props: EditorUIProps) => {
   })
 
   useEffect(() => {
-    console.log(props.isDiff, props.currentFile)
     if (!(editorRef.current || diffEditorRef.current ) || !props.currentFile) return
     currentFileRef.current = props.currentFile
     props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => (currentUrlRef.current = url.file))

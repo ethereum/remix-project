@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init } from '../lib/gitactions'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init, showAlert } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
@@ -52,14 +52,14 @@ export const GitUI = (props: IGitUi) => {
 
   useEffect(() => {
     plugin.emit('statusChanged', {
-      key:'loading',
+      key: 'loading',
       type: 'info',
       title: 'Loading Git Plugin'
     })
     setTimeout(() => {
       setAppLoaded(true)
     }, 2000)
-  },[])
+  }, [])
 
   useEffect(() => {
     if (!appLoaded) return
@@ -108,9 +108,14 @@ export const GitUI = (props: IGitUi) => {
       updatestate()
     })
 
-    setNeedsInit(!(gitState.currentBranch && gitState.currentBranch.name !== ''))
+    let needsInit = false
+    if (!(gitState.currentBranch && gitState.currentBranch.name !== '') && gitState.currentHead === '') {
+      needsInit = true
+    }
 
-  }, [gitState.gitHubUser, gitState.currentBranch, gitState.remotes, gitState.gitHubAccessToken])
+    setNeedsInit(needsInit)
+
+  }, [gitState.gitHubUser, gitState.currentBranch, gitState.remotes, gitState.gitHubAccessToken, gitState.currentHead])
 
   const gitActionsProviderValue = {
     commit,
@@ -151,7 +156,8 @@ export const GitUI = (props: IGitUi) => {
     openDiff,
     saveToken,
     saveGitHubCredentials,
-    getGitHubCredentialsFromLocalStorage
+    getGitHubCredentialsFromLocalStorage,
+    showAlert
   }
 
   return (
@@ -159,8 +165,9 @@ export const GitUI = (props: IGitUi) => {
       <gitPluginContext.Provider value={gitState}>
         <loaderContext.Provider value={loaderState}>
           <gitActionsContext.Provider value={gitActionsProviderValue}>
-            <BranchHeader />
             <pluginActionsContext.Provider value={pluginActionsProviderValue}>
+              <BranchHeader />
+
               {setup && !needsInit ? <Setup></Setup> : null}
               {needsInit ? <Init></Init> : null}
               {!setup && !needsInit ?

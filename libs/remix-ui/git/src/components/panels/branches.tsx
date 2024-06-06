@@ -16,14 +16,6 @@ export const Branches = () => {
     setNewBranch({ value: e.currentTarget.value });
   };
 
-  const checkout = async (oid: string, remote: remote) => {
-    try {
-      actions.checkout({ ref: oid, remote: remote.name });
-    } catch (e) {
-      // do nothing
-    }
-  };
-
   return (
     <>
       <div className="pt-1">
@@ -35,25 +27,31 @@ export const Branches = () => {
               );
             })}
             <hr />
-            <label>create branch</label>
-            <div className="form-group">
 
-              <input
-                placeholder="branch name"
-                onChange={handleChange}
-                className="form-control w-md-25 w-100"
-                type="text"
-                id="newbranchname"
-              />
-            </div>
-            <GitUIButton
-              onClick={async () => actions.createBranch(newBranch.value)}
-              className="btn w-md-25 w-100 btn-primary"
-              id="createbranch-btn"
-            >
-              create new branch
-            </GitUIButton>
-          </div> : <div className="text-muted">No branches</div>}
+          </div> : null}
+        {context.currentBranch
+          && context.currentBranch.name !== ''
+          && (!context.branches || context.branches.length === 0) ?
+          <div className="text-muted">Current branch is `{context.currentBranch.name}` but you have no commits.<hr /></div>
+          : null}
+        <label>create branch</label>
+        <div className="form-group">
+
+          <input
+            placeholder="branch name"
+            onChange={handleChange}
+            className="form-control w-md-25 w-100"
+            type="text"
+            id="newbranchname"
+          />
+        </div>
+        <GitUIButton
+          onClick={async () => actions.createBranch(newBranch.value)}
+          className="btn w-md-25 w-100 btn-primary"
+          id="createbranch-btn"
+        >
+          create new branch
+        </GitUIButton>
       </div>
     </>
   );

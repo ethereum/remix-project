@@ -35,7 +35,8 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
   const checkout = (branch: branch) => {
     actions.checkout({
       ref: branch.name,
-      remote: branch.remote && branch.remote.name || null
+      remote: branch.remote && branch.remote.name || null,
+      refresh: true
     });
   }
 
@@ -45,11 +46,11 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
 
   const checkoutCommit = async (oid: string) => {
     try {
-      //await ModalRef.current?.show();
+
       actions.checkout({ ref: oid })
-      //Utils.log("yes");
+      ;
     } catch (e) {
-      //Utils.log("no");
+      //
     }
   };
 

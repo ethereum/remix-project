@@ -7,6 +7,7 @@ export interface ActionPayloadTypes {
   SET_COMMITS: ReadCommitResult[]
   SET_BRANCHES: branch[]
   SET_CURRENT_BRANCH: branch
+  SET_CURRENT_HEAD: string
   SET_CAN_USE_APP: boolean
   SET_REPO_NAME: string
   SET_LOADING: boolean

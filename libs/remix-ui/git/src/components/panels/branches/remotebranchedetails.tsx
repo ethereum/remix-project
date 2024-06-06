@@ -46,9 +46,18 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
   }, [context.remoteBranchCommits])
 
   const checkout = async (branch: branch) => {
+    await actions.fetch({
+      remote: branch.remote,
+      ref: branch,
+      depth: 20,
+      singleBranch: true,
+      relative: false,
+      quiet: true
+    })
     await actions.checkout({
       ref: branch.name,
-      remote: branch.remote && branch.remote.name || null
+      remote: branch.remote && branch.remote.name || null,
+      refresh: true
     });
     await actions.getBranches()
   }

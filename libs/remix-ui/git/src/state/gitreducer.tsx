@@ -56,6 +56,12 @@ export const gitReducer = (state: gitState = defaultGitState, action: Actions): 
       currentBranch: action.payload
     }
 
+  case 'SET_CURRENT_HEAD':
+    return {
+      ...state,
+      currentHead: action.payload
+    }
+
   case 'SET_CAN_USE_APP':
     return {
       ...state,
