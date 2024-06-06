@@ -116,7 +116,7 @@
 }
 
 .remixui_recentworkspace {
-  height: 11.4rem;
+  height: 2.4rem;
 }
 
 .remixui_carouselImage {
@@ -125,20 +125,24 @@
   width: 20rem;
 }
 
+.remixui_carouselbox {
+  min-height: 25.12rem;
+}
+
 .remix_ui-carousel-container {
   container: remix_ui-carousel-container / inline-size;
-  height: 450px;
 }
 
 @container remix_ui-carousel-container (inline-size < 700px) {
-  .remix_ui-carousel-container {
-    height: 200px;
+  .remix_ui-carouselbox {
+    min-height: 20rem;
   }
   .remixui_carouselImage {
     height: 12.5rem;
     width: 12.5rem;
   }
+
   .remixui_recentworkspace {
-    height: 6rem;
+    height: 0.2rem;
   }
 }
