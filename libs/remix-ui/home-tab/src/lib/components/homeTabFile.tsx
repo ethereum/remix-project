@@ -246,83 +246,87 @@ contract HelloWorld {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
-        {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
-          <div className="d-flex flex-column mb-5 remixui_recentworkspace">
-            <label style={{ fontSize: '0.8rem' }} className="mt-3">
+        <div>
+          {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
+            <div className="d-flex flex-column mb-5 remixui_recentworkspace">
+              <label style={{ fontSize: '0.8rem' }} className="mt-3">
               Recent Workspaces
-            </label>
-            {state.recentWorkspaces[0] && state.recentWorkspaces[0] !== '' && (
-              <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[0])}>
-                {state.recentWorkspaces[0]}
-              </a>
-            )}
-            {state.recentWorkspaces[1] && state.recentWorkspaces[1] !== '' && (
-              <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[1])}>
-                {state.recentWorkspaces[1]}
-              </a>
-            )}
-            {state.recentWorkspaces[2] && state.recentWorkspaces[2] !== '' && (
-              <a className="cursor-pointer ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[2])}>
-                {state.recentWorkspaces[2]}
-              </a>
-            )}
+              </label>
+              {state.recentWorkspaces[0] && state.recentWorkspaces[0] !== '' && (
+                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[0])}>
+                  {state.recentWorkspaces[0]}
+                </a>
+              )}
+              {state.recentWorkspaces[1] && state.recentWorkspaces[1] !== '' && (
+                <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[1])}>
+                  {state.recentWorkspaces[1]}
+                </a>
+              )}
+              {state.recentWorkspaces[2] && state.recentWorkspaces[2] !== '' && (
+                <a className="cursor-pointer ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[2])}>
+                  {state.recentWorkspaces[2]}
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+        <div>
+          <label style={{ fontSize: '1.2rem' }}>
+            <FormattedMessage id="home.files" />
+          </label>
+          <div className="d-flex flex-column">
+            <div className="d-flex flex-row">
+              <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.startCodingPlayground" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
+                <button className="btn btn-primary text-nowrap p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={async () => await plugin.call('filePanel', 'createNewFile')}>
+                  <FormattedMessage id="home.newFile" />
+                </button>
+              </CustomTooltip>
+              <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.openFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
+                <span>
+                  <label className="btn text-nowrap p-2 mr-2 border my-1" style={{ width: 'fit-content', cursor: 'pointer' }} htmlFor="openFileInput">
+                    <FormattedMessage id="home.openFile" />
+                  </label>
+                  <input
+                    title="open file"
+                    type="file"
+                    id="openFileInput"
+                    onChange={(event) => {
+                      event.stopPropagation()
+                      plugin.verticalIcons.select('filePanel')
+                      uploadFile(event.target)
+                    }}
+                    multiple
+                  />
+                </span>
+              </CustomTooltip>
+              <button className="btn text-nowrap p-2 mr-2 border my-1" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')}>
+              IPFS
+              </button>
+              <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>
+              Git Clone
+              </button>
+              <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
+            Gist
+              </button>
+
+              <button
+                className="btn text-nowrap p-2 mr-2 border my-1"
+                onClick={() =>
+                  showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
+                }
+              >
+            HTTPS
+              </button>
+            </div>
           </div>
-        )}
-        <label style={{ fontSize: '1.2rem' }}>
-          <FormattedMessage id="home.files" />
-        </label>
-        <div className="d-flex flex-column">
-          <div className="d-flex flex-row">
-            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.startCodingPlayground" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
-              <button className="btn btn-primary text-nowrap p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={async () => await plugin.call('filePanel', 'createNewFile')}>
-                <FormattedMessage id="home.newFile" />
+          <div className="d-flex mt-2 align-items-end">
+            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
+              <button className="btn btn-block w-100 text-nowrap p-2 border my-1" style={{ width: 'fit-content' }} onClick={() => connectToLocalhost()}>
+                <i className="fa-regular fa-desktop pr-2"></i>
+                <FormattedMessage id="home.accessFileSystem" />
               </button>
             </CustomTooltip>
-            <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.openFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
-              <span>
-                <label className="btn text-nowrap p-2 mr-2 border my-1" style={{ width: 'fit-content', cursor: 'pointer' }} htmlFor="openFileInput">
-                  <FormattedMessage id="home.openFile" />
-                </label>
-                <input
-                  title="open file"
-                  type="file"
-                  id="openFileInput"
-                  onChange={(event) => {
-                    event.stopPropagation()
-                    plugin.verticalIcons.select('filePanel')
-                    uploadFile(event.target)
-                  }}
-                  multiple
-                />
-              </span>
-            </CustomTooltip>
-            <button className="btn text-nowrap p-2 mr-2 border my-1" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')}>
-              IPFS
-            </button>
-            <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>
-              Git Clone
-            </button>
-            <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
-            Gist
-            </button>
-
-            <button
-              className="btn text-nowrap p-2 mr-2 border my-1"
-              onClick={() =>
-                showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
-              }
-            >
-            HTTPS
-            </button>
           </div>
-        </div>
-        <div className="d-flex mt-2 align-items-end">
-          <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
-            <button className="btn btn-block w-100 text-nowrap p-2 border my-1" style={{ width: 'fit-content' }} onClick={() => connectToLocalhost()}>
-              <i className="fa-regular fa-desktop pr-2"></i>
-              <FormattedMessage id="home.accessFileSystem" />
-            </button>
-          </CustomTooltip>
         </div>
       </div>
     </>
