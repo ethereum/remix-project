@@ -19,8 +19,6 @@ const profile = {
 
 export class GitPlugin extends ViewPlugin {
 
-  
-
   constructor() {
 
     super(profile)

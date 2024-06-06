@@ -544,6 +544,7 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
         verified: null,
         visibility: null
       }]))
+      dispatch(setScopes([]))
     }
 
   } catch (e) {

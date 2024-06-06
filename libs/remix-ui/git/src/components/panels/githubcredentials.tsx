@@ -14,11 +14,13 @@ export const GitHubCredentials = () => {
   const [githubToken, setGithubToken] = React.useState('')
   const [githubUsername, setGithubUsername] = React.useState('')
   const [githubEmail, setGithubEmail] = React.useState('')
+  const [scopeWarning, setScopeWarning] = React.useState(false)
   const intl = useIntl()
 
   useEffect(() => {
     refresh()
-  }, [loader.plugin, context.gitHubAccessToken, context.userEmails, context.gitHubUser])
+    setScopeWarning(!(context.gitHubScopes && context.gitHubScopes.length > 0)) 
+  }, [loader.plugin, context.gitHubAccessToken, context.userEmails, context.gitHubUser, context.gitHubScopes])
 
   function handleChangeTokenState(e: string): void {
     setGithubToken(e)
@@ -76,6 +78,8 @@ export const GitHubCredentials = () => {
         <button className="btn btn-danger far fa-trash-alt" onClick={removeToken}>
         </button>
       </div>
+      {scopeWarning?
+      <div className="text-warning">Your GitHub token may not have the correct permissions. Please use the login with GitHub feature.</div>:null}
       <hr />
     </>
   );
