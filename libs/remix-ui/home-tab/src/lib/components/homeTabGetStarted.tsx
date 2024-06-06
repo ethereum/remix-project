@@ -150,10 +150,10 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
 
   return (
     <div className="pl-2" id="hTGetStartedSection">
-      <label className="pt-3" style={{ fontSize: '1.2rem' }}>
+      {/* <label className="pt-3" style={{ fontSize: '1.2rem' }}>
         <FormattedMessage id="home.projectTemplates" />
-      </label>
-      <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
+      </label> */}
+      <div ref={carouselRefDiv} className="w-100 d-flex flex-column pt-3">
         <ThemeContext.Provider value={themeFilter}>
           <div className="pt-3">
             <div className="d-flex flex-row align-items-center mb-3 flex-nowrap">
