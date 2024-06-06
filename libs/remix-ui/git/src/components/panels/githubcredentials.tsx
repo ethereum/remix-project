@@ -19,9 +19,9 @@ export const GitHubCredentials = () => {
 
   useEffect(() => {
     refresh()
-    if(context.gitHubUser){
+    if (context.gitHubUser){
       setScopeWarning(!(context.gitHubScopes && context.gitHubScopes.length > 0))
-    }else{
+    } else {
       setScopeWarning(false)
     }
   }, [loader.plugin, context.gitHubAccessToken, context.userEmails, context.gitHubUser, context.gitHubScopes])
