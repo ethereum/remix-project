@@ -283,7 +283,7 @@ export function UniversalDappUI(props: UdappProps) {
               title: <FormattedMessage id="udapp.solScan.successModalTitle" />,
               message: <SolScanTable scanDetails={scanDetails} fileName={fileName}/>,
               okLabel: 'Close',
-              modalParentClass: 'modal-lg'
+              modalParentClass: 'modal-xl'
             }
           } else {
             modal = {
