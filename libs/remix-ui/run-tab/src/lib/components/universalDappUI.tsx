@@ -28,14 +28,41 @@ export function UniversalDappUI(props: UdappProps) {
   const [evmBC, setEvmBC] = useState(null)
   const [instanceBalance, setInstanceBalance] = useState(0)
 
-  const getVersion = () => {
-    let version = ''
-    try {
-      version = window.location.href.split('=')[5].split('+')[0].split('-')[1]
-    } catch {
-      version = window.location.href.split('=')[5].split('+')[0].split('-')[1]
+  const UrlLink = () => {
+
+    const getVersion = () => {
+      let version = ''
+      try {
+        version = window.location.href.split('=')[5].split('+')[0].split('-')[1]
+      } catch {
+        version = window.location.href.split('=')[5].split('+')[0].split('-')[1]
+      }
+      return version
     }
-    return version
+
+    return (
+      <div className="d-flex flex-row justify-content-between mt-2">
+        <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
+          <FormattedMessage id="udapp.lowLevelInteractions" />
+        </div>
+        <CustomTooltip
+          placement={'bottom-end'}
+          tooltipClasses="text-wrap"
+          tooltipId="receiveEthDocstoolTip"
+          tooltipText={<FormattedMessage id="udapp.tooltipText8" />}
+        >
+          {
+            parseFloat(getVersion()) < 0.6 ? (
+              <a href={`https://solidity.readthedocs.io/en/${getVersion()}/contracts.html`} target="_blank" rel="noreferrer">
+                <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+              </a>
+            ) :<a href={`https://solidity.readthedocs.io/en/${getVersion()}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
+              <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+            </a>
+          }
+        </CustomTooltip>
+      </div>
+    )
   }
   useEffect(() => {
     if (!props.instance.abi) {
@@ -472,16 +499,7 @@ export function UniversalDappUI(props: UdappProps) {
             })}
         </div>
         <div className="d-flex flex-column">
-          <div className="d-flex flex-row justify-content-between mt-2">
-            <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
-              <FormattedMessage id="udapp.lowLevelInteractions" />
-            </div>
-            <CustomTooltip placement={'bottom-end'} tooltipClasses="text-wrap" tooltipId="receiveEthDocstoolTip" tooltipText={<FormattedMessage id="udapp.tooltipText8" />}>
-              <a href={`https://solidity.readthedocs.io/en/${getVersion()}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
-                <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
-              </a>
-            </CustomTooltip>
-          </div>
+          <UrlLink />
           <div className="d-flex flex-column align-items-start">
             <label className="">CALLDATA</label>
             <div className="d-flex justify-content-end w-100 align-items-center">
