@@ -17,7 +17,7 @@ function HomeTabFeatured() {
         <FormattedMessage id="home.featured" />
       </label>
       <div className="mb-2 remix_ui-carousel-container">
-        <div className="w-100 d-flex flex-column rounded-3 remix_ui-carousel-container">
+        <div className="w-100 d-flex flex-column rounded-3 remix_ui-carouselbox">
           <ThemeContext.Provider value={themeFilter}>
             <Carousel
               arrows={false}
@@ -34,7 +34,7 @@ function HomeTabFeatured() {
               centerMode={false}
               autoPlay={true}
               keyBoardControl={true}
-              containerClass="border w-full carousel-container remix_ui-carousel-container h-100 d-flex align-items-center"
+              containerClass="border w-full carousel-container d-flex align-items-center"
               sliderClass="h-100 justify-content-between"
               deviceType={'desktop'}
               itemClass=""
@@ -62,7 +62,7 @@ function HomeTabFeatured() {
                   </a>
                 </div>
                 <a href={releaseDetails.moreLink} target="__blank">
-                  <img src={'assets/img/remi_drums_whatsnew.webp'} style={{ flex: '1', height: '320px', maxWidth: '320px' }} alt=""></img>
+                  <img src={'assets/img/remi_drums_whatsnew.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
               </div>
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
@@ -83,7 +83,7 @@ function HomeTabFeatured() {
                   </a>
                 </div>
                 <a href="https://remix-project.org" target="__blank">
-                  <img src={'assets/img/bgRemi_small.webp'} style={{ flex: '1', height: '320px', maxWidth: '320px' }} alt=""></img>
+                  <img src={'assets/img/bgRemi_small.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
               </div>
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
@@ -107,7 +107,7 @@ function HomeTabFeatured() {
                   </a>
                 </div>
                 <a href="https://www.youtube.com/@EthereumRemix/videos" target="__blank">
-                  <img src={'/assets/img/YouTubeLogo.webp'} style={{ flex: '1', height: '320px', maxWidth: '320px' }} alt=""></img>
+                  <img src={'/assets/img/YouTubeLogo.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
               </div>
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
@@ -131,7 +131,7 @@ function HomeTabFeatured() {
                   </a>
                 </div>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform" target="__blank">
-                  <img src={'/assets/img/remixRewardBetaTester_small.webp'} style={{ flex: '1', height: '320px', maxWidth: '320px' }} alt=""></img>
+                  <img src={'/assets/img/remixRewardBetaTester_small.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
               </div>
             </Carousel>
