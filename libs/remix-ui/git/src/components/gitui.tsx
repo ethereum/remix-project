@@ -134,7 +134,7 @@ export const GitUI = (props: IGitUi) => {
     diff,
     resolveRef,
     setUpstreamRemote,
-    loadGitHubUserFromToken: loadGitHubUserFromToken,
+    loadGitHubUserFromToken,
     getBranches,
     getRemotes,
     fetch,
