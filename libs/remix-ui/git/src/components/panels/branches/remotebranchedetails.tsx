@@ -68,11 +68,9 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
 
   const checkoutCommit = async (oid: string) => {
     try {
-      //await ModalRef.current?.show();
       actions.checkout({ ref: oid })
-      //Utils.log("yes");
     } catch (e) {
-      //Utils.log("no");
+      //
     }
   };
 
