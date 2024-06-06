@@ -113,6 +113,7 @@ function HomeTabTitle() {
         <span className="d-flex flex-nowrap align-self-end">
           {iconButtons.map((button, index) => (
             <CustomTooltip
+              key={index}
               placement={button.placement}
               tooltipId="overlay-tooltip"
               tooltipClasses="text-nowrap"

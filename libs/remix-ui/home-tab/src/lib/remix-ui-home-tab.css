@@ -115,6 +115,10 @@
   color: var(--text);
 }
 
+.remixui_recentworkspace {
+  height: 11.4rem;
+}
+
 .remix_ui-carousel-container {
   container: remix_ui-carousel-container / inline-size;
   height: 450px;
