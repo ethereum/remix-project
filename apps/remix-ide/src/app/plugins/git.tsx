@@ -19,6 +19,8 @@ const profile = {
 
 export class GitPlugin extends ViewPlugin {
 
+  
+
   constructor() {
 
     super(profile)
@@ -27,6 +29,10 @@ export class GitPlugin extends ViewPlugin {
   onDeactivation(): void {
     this.call('fileDecorator', 'clearFileDecorators')
     this.call('manager', 'activatePlugin', 'dgitApi')
+  }
+
+  async open(panel:string) {
+    this.emit('openPanel', panel)
   }
 
   render() {

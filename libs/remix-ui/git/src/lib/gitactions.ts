@@ -63,6 +63,7 @@ export const setUpstreamRemote = async (remote: remote) => {
 }
 
 export const getFileStatusMatrix = async (filepaths: string[]) => {
+  dispatch(setLoading(true))
   const fileStatusResult = await statusMatrix(filepaths);
   fileStatusResult.map((m) => {
     statusmatrix.map((sm) => {
@@ -77,6 +78,7 @@ export const getFileStatusMatrix = async (filepaths: string[]) => {
     dispatch(fileStatusMerge(fileStatusResult))
     setFileDecorators(fileStatusResult)
   }
+  dispatch(setLoading(false))
 }
 
 export const getCommits = async () => {
@@ -95,6 +97,7 @@ export const getCommits = async () => {
 }
 
 export const gitlog = async () => {
+  dispatch(setLoading(true))
   let commits = []
   try {
     commits = await getCommits()
@@ -102,6 +105,7 @@ export const gitlog = async () => {
   }
   dispatch(setCommits(commits))
   await showCurrentBranch()
+  dispatch(setLoading(false))
 }
 
 export const showCurrentBranch = async () => {

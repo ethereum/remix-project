@@ -786,7 +786,6 @@ class DGitProvider extends Plugin {
         ...cmd2
       })
     }
-    console.log('pull result', result)
     setTimeout(async () => {
       await this.call('fileManager', 'refresh')
     }, 1000)

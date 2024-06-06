@@ -34,7 +34,7 @@ class AsyncDebouncedQueue {
   }
 }
 
-export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<gitActionDispatch>, loaderDispatcher: React.Dispatch<any>) => {
+export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<gitActionDispatch>, loaderDispatcher: React.Dispatch<any>, setAtivePanel:  React.Dispatch<React.SetStateAction<string>>) => {
   plugin = viewPlugin
   gitDispatch = gitDispatcher
   loaderDispatch = loaderDispatcher
@@ -161,6 +161,14 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
   plugin.on('settings', 'configChanged', async () => {
     await getGitConfig()
+  })
+
+  plugin.on('dgit' as any, 'openPanel', async (panel: string) => {
+    const panels = {
+      'branches': '2'
+    }
+    const panelNumber = panels[panel]
+    setAtivePanel(panelNumber)
   })
 
   callBackEnabled = true;

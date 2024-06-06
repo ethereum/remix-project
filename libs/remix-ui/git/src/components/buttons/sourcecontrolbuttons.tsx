@@ -51,7 +51,8 @@ export const SourceControlButtons = () => {
   }
 
   const refresh = async() => {
-    actions.getFileStatusMatrix(null)
+    await actions.getFileStatusMatrix(null)
+    await actions.gitlog()
   }
 
   const buttonsDisabled = () => {

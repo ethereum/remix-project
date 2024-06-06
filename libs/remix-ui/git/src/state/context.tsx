@@ -31,6 +31,7 @@ export interface gitActions {
     sendToGitLog: (message: gitLog) => Promise<void>
     clearGitLog: () => Promise<void>
     getFileStatusMatrix(filespaths:[]): Promise<void>
+    gitlog(): Promise<void>
     init(): Promise<void>
 }
 
