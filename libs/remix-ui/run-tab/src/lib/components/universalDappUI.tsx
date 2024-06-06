@@ -390,23 +390,26 @@ export function UniversalDappUI(props: UdappProps) {
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
-          <div className="d-flex justify-content-between" data-id="instanceContractBal">
-            <label>
+          <div className="d-flex flex-row justify-content-between align-items-center" data-id="instanceContractBal">
+            <span className="runtab-text">
               <b><FormattedMessage id="udapp.balance" />:</b> {instanceBalance} ETH
-            </label>
-            {props.exEnvironment && props.exEnvironment.startsWith('injected') && (
-              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappEditTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextEdit" />}>
-                <i
-                  className="fas fa-edit btn btn-sm p-0"
-                  onClick={() => {
-                    props.editInstance(props.instance)
-                  }}
-                ></i>
+            </span>
+            <div></div>
+            <div>
+              {props.exEnvironment && props.exEnvironment.startsWith('injected') && (
+                <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappEditTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextEdit" />}>
+                  <span
+                    className="fas fa-edit btn btn-sm p-2 mr-1 runtab-text"
+                    onClick={() => {
+                      props.editInstance(props.instance)
+                    }}
+                  ></span>
+                </CustomTooltip>
+              )}
+              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.solScan.iconTooltip" />}>
+                <span className="fas fa-qrcode btn btn-sm p-0 runtab-text" onClick={askPermissionToScan}></span>
               </CustomTooltip>
-            )}
-            <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.solScan.iconTooltip" />}>
-              <i className="fas fa-qrcode btn btn-sm p-0" onClick={askPermissionToScan}></i>
-            </CustomTooltip>
+            </div>
           </div>
           { props.isPinnedContract && props.instance.pinnedAt ? (
             <div className="d-flex" data-id="instanceContractPinnedAt">
