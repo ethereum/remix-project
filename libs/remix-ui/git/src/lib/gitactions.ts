@@ -523,6 +523,25 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
     if (storedEmail !== credentials.email) await plugin.call('config', 'setAppParameter', 'settings/github-email', credentials.email)
     if (storedToken !== credentials.token) await plugin.call('config', 'setAppParameter', 'settings/gist-access-token', credentials.token)
 
+    const userFetched = await loadGitHubUserFromToken()
+    if (!userFetched) {
+      if (credentials.username && credentials.email) {
+        await plugin.call('notification', 'alert', {
+          title: 'Error',
+          message: `Could not retreive the user from GitHub. You can continue to use the app, but you will not be able to push or pull.`
+        })
+      }
+      dispatch(setGitHubUser({
+        login: credentials.username,
+      }))
+      dispatch(setUserEmails([{
+        email: credentials.email,
+        primary: true,
+        verified: null,
+        visibility: null
+      }]))
+    }
+
   } catch (e) {
     console.log(e)
   }
@@ -578,12 +597,14 @@ export const loadGitHubUserFromToken = async () => {
           type: 'success',
           message: `Github user loaded...`
         })
+        return true
       } else {
         sendToGitLog({
           type: 'error',
           message: `Please check your GitHub token in the GitHub settings.`
         })
         dispatch(setGitHubUser(null))
+        return false
       }
     } else {
       sendToGitLog({
@@ -591,9 +612,11 @@ export const loadGitHubUserFromToken = async () => {
         message: `Please check your GitHub token in the GitHub settings.`
       })
       dispatch(setGitHubUser(null))
+      return false
     }
   } catch (e) {
     console.log(e)
+    return false
   }
 }
 

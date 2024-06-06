@@ -1067,7 +1067,6 @@ class DGitProvider extends Plugin {
       readCommitResults.push(readCommitResult)
     }
 
-
     // Check for the Link header to determine pagination
     const linkHeader = response.headers.link;
 
@@ -1076,7 +1075,6 @@ class DGitProvider extends Plugin {
       // A simple check for the presence of a 'next' relation in the Link header
       hasNextPage = linkHeader.includes('rel="next"');
     }
-
 
     pages.push({
       page: input.page,
