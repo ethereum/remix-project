@@ -19,7 +19,11 @@ export const GitHubCredentials = () => {
 
   useEffect(() => {
     refresh()
-    setScopeWarning(!(context.gitHubScopes && context.gitHubScopes.length > 0))
+    if(context.gitHubUser){
+      setScopeWarning(!(context.gitHubScopes && context.gitHubScopes.length > 0))
+    }else{
+      setScopeWarning(false)
+    }
   }, [loader.plugin, context.gitHubAccessToken, context.userEmails, context.gitHubUser, context.gitHubScopes])
 
   function handleChangeTokenState(e: string): void {
