@@ -119,6 +119,12 @@
   height: 11.4rem;
 }
 
+.remixui_carouselImage {
+  flex: 1;
+  height: 20rem;
+  width: 20rem;
+}
+
 .remix_ui-carousel-container {
   container: remix_ui-carousel-container / inline-size;
   height: 450px;
@@ -127,5 +133,12 @@
 @container remix_ui-carousel-container (inline-size < 700px) {
   .remix_ui-carousel-container {
     height: 200px;
+  }
+  .remixui_carouselImage {
+    height: 12.5rem;
+    width: 12.5rem;
+  }
+  .remixui_recentworkspace {
+    height: 6rem;
   }
 }
