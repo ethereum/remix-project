@@ -275,12 +275,23 @@ export function UniversalDappUI(props: UdappProps) {
           const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
           const scanDetails: Record<string, any>[] = scanData.scan_report.multi_file_scan_details
 
-          const modal: AppModal = {
-            id: 'SolidityScanSuccess',
-            title: <FormattedMessage id="udapp.solScan.successModalTitle" />,
-            message: <SolScanTable scanDetails={scanDetails} />,
-            okLabel: 'Close',
-            modalParentClass: 'modal-lg'
+          let modal: AppModal
+
+          if (scanDetails && scanDetails.length) {
+            modal = {
+              id: 'SolidityScanSuccess',
+              title: <FormattedMessage id="udapp.solScan.successModalTitle" />,
+              message: <SolScanTable scanDetails={scanDetails} fileName={fileName}/>,
+              okLabel: 'Close',
+              modalParentClass: 'modal-lg'
+            }
+          } else {
+            modal = {
+              id: 'SolidityScanError',
+              title: <FormattedMessage id="udapp.solScan.errModalTitle" />,
+              message: "Some error occurred! Please try again",
+              okLabel: 'Close'
+            }
           }
           await props.plugin.call('notification', 'modal', modal)
         }
