@@ -34,7 +34,7 @@ function HomeTabFeatured() {
               centerMode={false}
               autoPlay={true}
               keyBoardControl={true}
-              containerClass="border w-full carousel-container h-100 d-flex align-items-center"
+              containerClass="border w-full carousel-container remix_ui-carousel-container h-100 d-flex align-items-center"
               sliderClass="h-100 justify-content-between"
               deviceType={'desktop'}
               itemClass=""
