@@ -246,7 +246,7 @@ contract HelloWorld {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
-        <div>
+        <div className="mb-3">
           {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
             <div className="d-flex flex-column mb-5 remixui_recentworkspace">
               <label style={{ fontSize: '0.8rem' }} className="mt-3">
