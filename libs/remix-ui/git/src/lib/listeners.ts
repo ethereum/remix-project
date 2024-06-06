@@ -55,15 +55,15 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   });
 
   plugin.on("fileManager", "fileRemoved", async (e) => {
-    //await synTimerStart();
-  });
-
-  plugin.on("fileManager", "currentFileChanged", async (e) => {
-    //await synTimerStart();
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    })
   });
 
   plugin.on("fileManager", "fileRenamed", async (oldfile, newfile) => {
-    //await synTimerStart();
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    })
   });
 
   plugin.on("filePanel", "setWorkspace", async (x: any) => {
@@ -79,14 +79,6 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     loadFileQueue.enqueue(async () => {
       getRemotes()
     })
-  });
-
-  plugin.on("filePanel", "deleteWorkspace" as any, async (x: any) => {
-    //await synTimerStart();
-  });
-
-  plugin.on("filePanel", "renameWorkspace" as any, async (x: any) => {
-    //await synTimerStart();
   });
 
   plugin.on('dgitApi', 'checkout', async () => {

@@ -15,16 +15,13 @@ export const Commits = () => {
 
   const checkout = async (oid: string) => {
     try {
-      //await ModalRef.current?.show();
       actions.checkout({ ref: oid })
-      //Utils.log("yes");
     } catch (e) {
-      //Utils.log("no");
+      //
     }
   };
 
   const loadNextPage = () => {
-    //actions.fetch(null, context.currentBranch.name, null, 5, true, true)
     actions.fetch({
       remote: null,
       ref: context.currentBranch,
@@ -32,7 +29,7 @@ export const Commits = () => {
       depth: 5,
       singleBranch: true
     })
-    //actions.getBranchCommits(branch, lastPageNumber+1)
+
   }
 
   const getRemote = () => {
