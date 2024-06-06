@@ -631,12 +631,6 @@ export const EditorUI = (props: EditorUIProps) => {
   }
 
   function setReducerListener() {
-    // if(!diffEditorRef.current && editorRef.current){
-    //   reducerListener(props.plugin, dispatch, monacoRef.current, [editorRef.current], props.events)
-    // }
-    // if(diffEditorRef.current && diffEditorRef.current.getModifiedEditor() && !editorRef.current){
-    //   reducerListener(props.plugin, dispatch, monacoRef.current, [diffEditorRef.current.getModifiedEditor()], props.events)
-    // }
     if (diffEditorRef.current && diffEditorRef.current.getModifiedEditor() && editorRef.current){
       reducerListener(props.plugin, dispatch, monacoRef.current, [diffEditorRef.current.getModifiedEditor(), editorRef.current], props.events)
     }
