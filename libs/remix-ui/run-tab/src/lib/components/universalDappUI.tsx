@@ -37,9 +37,9 @@ export function UniversalDappUI(props: UdappProps) {
       } catch {
         version = window.location.href.split('=')[5].split('+')[0].split('-')[1]
       }
-      return version
+      return [version, parseFloat(version.slice(1))]
     }
-
+    console.log('getVersion', getVersion()[1])
     return (
       <div className="d-flex flex-row justify-content-between mt-2">
         <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
@@ -51,12 +51,12 @@ export function UniversalDappUI(props: UdappProps) {
           tooltipId="receiveEthDocstoolTip"
           tooltipText={<FormattedMessage id="udapp.tooltipText8" />}
         >
-          {
-            parseFloat(getVersion()) < 0.6 ? (
-              <a href={`https://solidity.readthedocs.io/en/${getVersion()}/contracts.html`} target="_blank" rel="noreferrer">
+          { // receive method added to solidity v0.6.x. use this as diff.
+            (getVersion()[1] as number) < 0.6 ? (
+              <a href={`https://solidity.readthedocs.io/en/${getVersion()[0]}/contracts.html`} target="_blank" rel="noreferrer">
                 <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
               </a>
-            ) :<a href={`https://solidity.readthedocs.io/en/${getVersion()}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
+            ) :<a href={`https://solidity.readthedocs.io/en/${getVersion()[0]}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
               <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
             </a>
           }
