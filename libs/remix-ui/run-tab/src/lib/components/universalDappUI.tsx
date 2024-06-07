@@ -390,24 +390,24 @@ export function UniversalDappUI(props: UdappProps) {
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
-          <div className="d-flex flex-row justify-content-between align-items-center" data-id="instanceContractBal">
-            <span className="runtab-text">
+          <div className="d-flex flex-row justify-content-between align-items-center pb-2" data-id="instanceContractBal">
+            <span className="remixui_runtabBalancelabel run-tab">
               <b><FormattedMessage id="udapp.balance" />:</b> {instanceBalance} ETH
             </span>
             <div></div>
-            <div>
+            <div className="d-flex align-self-center">
               {props.exEnvironment && props.exEnvironment.startsWith('injected') && (
                 <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappEditTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextEdit" />}>
-                  <span
-                    className="fas fa-edit btn btn-sm p-2 mr-1 runtab-text"
+                  <i
+                    className="fas fa-edit pr-3"
                     onClick={() => {
                       props.editInstance(props.instance)
                     }}
-                  ></span>
+                  ></i>
                 </CustomTooltip>
               )}
               <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.solScan.iconTooltip" />}>
-                <span className="fas fa-qrcode btn btn-sm p-0 runtab-text" onClick={askPermissionToScan}></span>
+                <i className="fas fa-qrcode p-0" onClick={askPermissionToScan}></i>
               </CustomTooltip>
             </div>
           </div>
