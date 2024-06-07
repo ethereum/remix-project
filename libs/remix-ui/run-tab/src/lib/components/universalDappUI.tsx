@@ -27,43 +27,22 @@ export function UniversalDappUI(props: UdappProps) {
   const [calldataValue, setCalldataValue] = useState<string>('')
   const [evmBC, setEvmBC] = useState(null)
   const [instanceBalance, setInstanceBalance] = useState(0)
+  // const [solcVersion, setSolcVersion] = useState({ version: '', canReceive: true })
 
-  const UrlLink = () => {
-
-    const getVersion = () => {
-      let version = ''
-      try {
-        version = window.location.href.split('=')[5].split('+')[0].split('-')[1]
-      } catch {
-        version = window.location.href.split('=')[5].split('+')[0].split('-')[1]
-      }
-      return [version, parseFloat(version.slice(1))]
-    }
-
-    return (
-      <div className="d-flex flex-row justify-content-between mt-2">
-        <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
-          <FormattedMessage id="udapp.lowLevelInteractions" />
-        </div>
-        <CustomTooltip
-          placement={'bottom-end'}
-          tooltipClasses="text-wrap"
-          tooltipId="receiveEthDocstoolTip"
-          tooltipText={<FormattedMessage id="udapp.tooltipText8" />}
-        >
-          { // receive method added to solidity v0.6.x. use this as diff.
-            (getVersion()[1] as number) < 0.6 ? (
-              <a href={`https://solidity.readthedocs.io/en/${getVersion()[0]}/contracts.html`} target="_blank" rel="noreferrer">
-                <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
-              </a>
-            ) :<a href={`https://solidity.readthedocs.io/en/${getVersion()[0]}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
-              <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
-            </a>
-          }
-        </CustomTooltip>
-      </div>
-    )
-  }
+  // const getVersion = () => {
+  //   let version = ''
+  //   try {
+  //     version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1)
+  //     if (parseFloat(version) < 0.6) {
+  //       setSolcVersion({ version: version, canReceive: false })
+  //     }
+  //     setSolcVersion({ version: version, canReceive: false })
+  //   } catch (e) {
+  //     version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1)
+  //     console.log(e)
+  //   }
+  //   return version
+  // }
   useEffect(() => {
     if (!props.instance.abi) {
       const abi = txHelper.sortAbiFunction(props.instance.contractData.abi)
@@ -469,6 +448,7 @@ export function UniversalDappUI(props: UdappProps) {
               return (
                 <div key={index}>
                   <ContractGUI
+                    getVersion={props.getVersion}
                     funcABI={funcABI}
                     clickCallBack={(valArray: {name: string; type: string}[], inputsValues: string) => {
                       runTransaction(lookupOnly, funcABI, valArray, inputsValues, index)
@@ -499,7 +479,27 @@ export function UniversalDappUI(props: UdappProps) {
             })}
         </div>
         <div className="d-flex flex-column">
-          <UrlLink />
+          <div className="d-flex flex-row justify-content-between mt-2">
+            <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
+              <FormattedMessage id="udapp.lowLevelInteractions" />
+            </div>
+            <CustomTooltip
+              placement={'bottom-end'}
+              tooltipClasses="text-wrap"
+              tooltipId="receiveEthDocstoolTip"
+              tooltipText={<FormattedMessage id="udapp.tooltipText8" />}
+            >
+              { // receive method added to solidity v0.6.x. use this as diff.
+                props.solcVersion.canReceive === false ? (
+                  <a href={`https://solidity.readthedocs.io/en/v${props.solcVersion.version}/contracts.html`} target="_blank" rel="noreferrer">
+                    <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+                  </a>
+                ) :<a href={`https://solidity.readthedocs.io/en/v${props.solcVersion.version}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
+                  <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+                </a>
+              }
+            </CustomTooltip>
+          </div>
           <div className="d-flex flex-column align-items-start">
             <label className="">CALLDATA</label>
             <div className="d-flex justify-content-end w-100 align-items-center">
