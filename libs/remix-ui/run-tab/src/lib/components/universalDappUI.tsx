@@ -39,7 +39,7 @@ export function UniversalDappUI(props: UdappProps) {
       }
       return [version, parseFloat(version.slice(1))]
     }
-    console.log('getVersion', getVersion()[1])
+
     return (
       <div className="d-flex flex-row justify-content-between mt-2">
         <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
