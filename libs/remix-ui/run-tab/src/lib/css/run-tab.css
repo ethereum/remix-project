@@ -525,10 +525,8 @@
   width: 100%;
 }
 
-.runtab-text {
-    color: #8A93B0;
-}
-
-.runtab-text:hover {
-    color: #8A93B0;
+.remixui_runtabBalancelabel {
+  font-size: 0.688rem;
+  line-height: 0.75rem;
+  color: var(--runtab);
 }
