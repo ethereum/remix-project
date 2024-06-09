@@ -734,7 +734,10 @@ export const EditorUI = (props: EditorUIProps) => {
       label: intl.formatMessage({ id: 'editor.explainFunction' }),
       contextMenuOrder: 1, // choose the order
       contextMenuGroupId: 'gtp', // create a new grouping
-      keybindings: [],
+      keybindings: [
+        // Keybinding for Ctrl + Shift + E
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyMod.Shift | monacoRef.current.KeyCode.KeyE
+      ],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
