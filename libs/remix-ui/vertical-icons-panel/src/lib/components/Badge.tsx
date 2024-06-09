@@ -16,7 +16,7 @@ function Badge({ badgeStatus }: BadgeProps) {
    * @param {Object} key
    * @param {Object} type
    */
-  function resolveClasses(key: string, type: string) {
+  function resolveClasses(key: string | number, type: string) {
     let classes = 'remixui_status'
     switch (key) {
     case 'succeed':
@@ -38,7 +38,7 @@ function Badge({ badgeStatus }: BadgeProps) {
     return classes
   }
 
-  function checkStatusKeyValue(value: any, type: string) {
+  function checkStatusKeyValue(value: any, type: BadgeStatus['type']) {
     if (
       value === 'succeed' ||
       value === 'edited' ||
