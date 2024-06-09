@@ -45,6 +45,10 @@ export const CommitMessage = () => {
       remote: getRemote(),
       ref: context.currentBranch
     })
+    await actions.pull({
+      remote: getRemote(),
+      ref: context.currentBranch
+    })
   }
 
   const commitNotAllowed = () => {

@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start:server": "npx ts-node server.ts"
+  },
   "dependencies": {
     "body-parser": "^1.20.2",
     "child_process": "^1.0.2",

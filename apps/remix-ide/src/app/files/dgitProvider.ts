@@ -87,8 +87,9 @@ class DGitProvider extends Plugin {
 
   async addIsomorphicGitConfig(input) {
     const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
-    return {
-      //corsProxy: 'http://192.168.1.7:39049',
+    
+    let config = {
+      corsProxy: null,
       http,
       onAuth: url => {
         url
@@ -99,6 +100,27 @@ class DGitProvider extends Plugin {
         return auth
       }
     }
+    if(input.url) {
+
+      const url = new URL(input.url)
+      if (url.hostname.includes('github.com')) {
+        config = {
+          ...config,
+          corsProxy: 'https://corsproxy.remixproject.org/',
+        }
+      }
+    }
+    if((input.remote && input.remote.url)) {
+
+      const url = new URL(input.remote.url)
+      if (url.hostname.includes('github.com')) {
+        config = {
+          ...config,
+          corsProxy: 'https://corsproxy.remixproject.org/',
+        }
+      }
+    }
+    return config
   }
 
   async getCommandUser(input) {
@@ -117,9 +139,9 @@ class DGitProvider extends Plugin {
         author.name = username
         author.email = email
       } else if (token) {
-        console.log('token', token)
+
         const gitHubUser = await this.getGitHubUser({ token })
-        console.log('gitHubUser', gitHubUser)
+
         if (gitHubUser) {
           author.name = gitHubUser.user.login
         }
@@ -300,14 +322,11 @@ class DGitProvider extends Plugin {
   }
 
   async getCommitChanges(commitHash1: string, commitHash2: string): Promise<commitChange[]> {
-    //console.log(commitHash1, commitHash2, [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })])
-    const result: commitChange[] = await git.walk({
+      const result: commitChange[] = await git.walk({
       ...await this.addIsomorphicGitConfigFS(),
       trees: [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })],
       map: async function (filepath, [A, B]) {
-        // ignore directories
 
-        //console.log(filepath, A, B)
 
         if (filepath === '.') {
           return
@@ -330,8 +349,7 @@ class DGitProvider extends Plugin {
           path: filepath,
         }
 
-        //console.log('Aoid', Aoid, 'Boid', Boid, commitChange)
-
+       
         // determine modification type
         if (Aoid !== Boid) {
           commitChange.type = "modified"
@@ -351,7 +369,7 @@ class DGitProvider extends Plugin {
           return undefined
       },
     })
-    //console.log(result)
+
     return result
   }
 
@@ -591,7 +609,7 @@ class DGitProvider extends Plugin {
         ...await this.addIsomorphicGitConfig(input),
         ...await this.addIsomorphicGitConfigFS()
       }
-      console.log(cmd)
+
       this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
       const result = await git.clone(cmd)
       if (!input.workspaceExists) {
@@ -737,7 +755,7 @@ class DGitProvider extends Plugin {
   }
 
   async push(input: pushInputType) {
-    console.log('push input', input)
+
     const cmd = {
       force: input.force,
       ref: input.ref.name,
@@ -754,18 +772,19 @@ class DGitProvider extends Plugin {
         ...cmd,
         ...await this.addIsomorphicGitConfig(input),
       }
-      console.log('push cmd', cmd2)
+
       const result = await git.push({
         ...await this.addIsomorphicGitConfigFS(),
         ...cmd2
       })
-      console.log('push result', cmd2, result)
+
       return result
 
     }
   }
 
   async pull(input: pullInputType) {
+
     const cmd = {
       ref: input.ref.name,
       remoteRef: input.remoteRef && input.remoteRef.name,
@@ -986,7 +1005,7 @@ class DGitProvider extends Plugin {
   // OCTOKIT FEATURES
 
   async remotebranches(input: { owner: string, repo: string, token: string, page: number, per_page: number }) {
-    console.log(input)
+
 
     const octokit = new Octokit({
       auth: input.token

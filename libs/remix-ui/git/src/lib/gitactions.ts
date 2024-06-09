@@ -299,6 +299,7 @@ export const clone = async (input: cloneInputType) => {
   const repoName = lastPart.split(".")[0];
   const timestamp = new Date().getTime();
   const repoNameWithTimestamp = `${repoName}-${timestamp}`;
+
   try {
     await disableCallBacks()
     const token = await plugin.call('config' as any, 'getAppParameter' as any, 'settings/gist-access-token')
@@ -310,9 +311,8 @@ export const clone = async (input: cloneInputType) => {
       type: 'success',
       message: `Cloned ${input.url} to ${repoNameWithTimestamp}`
     })
-    //}
+
   } catch (e: any) {
-    //await plugin.call('filePanel', 'deleteWorkspace', repoNameWithTimestamp)
     await parseError(e)
   }
   dispatch(setLoading(false))
@@ -342,6 +342,7 @@ export const pull = async (input: pullInputType) => {
     await plugin.call('dgitApi', 'pull', input)
     await gitlog()
   } catch (e: any) {
+    console.log(e)
     await parseError(e)
   }
   dispatch(setLoading(false))
@@ -354,6 +355,7 @@ export const push = async (input: pushInputType) => {
   try {
     await plugin.call('dgitApi', 'push', input)
   } catch (e: any) {
+    console.log(e)
     await parseError(e)
   }
   dispatch(setLoading(false))
