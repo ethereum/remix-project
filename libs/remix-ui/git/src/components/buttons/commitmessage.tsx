@@ -92,7 +92,7 @@ export const CommitMessage = () => {
       singleBranch: false,
       relative: true
     })
-    
+
   }
 
   const messageEnabled = () => {
