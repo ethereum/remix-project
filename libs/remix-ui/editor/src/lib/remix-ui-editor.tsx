@@ -718,7 +718,10 @@ export const EditorUI = (props: EditorUIProps) => {
       label: intl.formatMessage({ id: 'editor.generateDocumentation' }),
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'gtp', // create a new grouping
-      keybindings: [],
+      keybindings: [
+        // Keybinding for Ctrl + D
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KeyD
+      ],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
