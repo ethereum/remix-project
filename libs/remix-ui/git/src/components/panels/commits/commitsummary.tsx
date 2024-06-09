@@ -28,10 +28,10 @@ export const CommitSummary = (props: CommitSummaryProps) => {
         return "today at " + dateFormat(timestamp * 1000, "HH:MM");
       } else
 
-      if (diff < 1) {
-        // return how many hours ago
-        return `${Math.floor(diff * 24)} hour(s) ago`;
-      }
+        if (diff < 1) {
+          // return how many hours ago
+          return `${Math.floor(diff * 24)} hour(s) ago`;
+        }
 
       if (diff < 7) {
         // return how many days ago
@@ -53,10 +53,13 @@ export const CommitSummary = (props: CommitSummaryProps) => {
     if (getRemote())
       window.open(`${getRemote().url}/commit/${commit.oid}`, '_blank');
   }
+  function removeLineBreaks(str: string): string {
+    return str.replace(/(\r\n|\n|\r)/gm, '');
+  }
 
   return (
     <>
-      <div className="long-and-truncated ml-2">
+      <div data-id={`commit-summary-${removeLineBreaks(commit.commit.message)}-${isAheadOfRepo ? 'ahead' : null}`} className="long-and-truncated ml-2">
         {commit.commit.message}
       </div>
       {commit.commit.author.name || ""}

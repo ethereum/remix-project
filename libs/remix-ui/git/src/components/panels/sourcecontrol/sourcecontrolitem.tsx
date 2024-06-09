@@ -49,7 +49,7 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
 
   }
   return (<>
-    <div className="d-flex w-100 d-flex flex-row align-items-center">
+    <div data-status={file.statusNames.join('-')} data-file={file.filename} className="d-flex w-100 d-flex flex-row align-items-center">
       <div className='pointer gitfile long-and-truncated' onClick={async () => await fileClick(file)}>
         <span className='font-weight-bold long-and-truncated'>{path.basename(file.filename)}</span>
         <div className='text-secondary long-and-truncated'> {file.filename}</div>

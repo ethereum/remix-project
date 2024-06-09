@@ -23,7 +23,7 @@ module.exports = {
             done()
         })
     },
-    'Update settings for git': function (browser) {
+    'Update settings for git #group1': function (browser) {
         browser.
         clickLaunchIcon('dgit')
         .waitForElementVisible('*[data-id="initgit-btn"]')
@@ -34,7 +34,7 @@ module.exports = {
         .modalFooterOKClick('github-credentials-error')
         .pause(2000)
     },
-    'clone a repo': function (browser) {
+    'clone a repo #group1': function (browser) {
         browser
         .waitForElementVisible('*[data-id="clone-panel"]')
         .click('*[data-id="clone-panel"]')
@@ -44,8 +44,33 @@ module.exports = {
         .click('*[data-id="clone-btn"]')
         .clickLaunchIcon('filePanel')
         .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
-        .addFile('testFile.text', { content: 'hello world' }, 'README.md')
-        .pause(10000)
+    
+    },
+    'check file added #group1': function (browser) {
+        browser.    
+        addFile('test.txt', { content: 'hello world' }, 'README.md')
+        .clickLaunchIcon('dgit')
+        .click('*[data-id="sourcecontrol-panel"]')
+        .waitForElementVisible({
+            selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",
+            locateStrategy: 'xpath'
+        })
+        .waitForElementVisible('*[data-id="addToGitChangestest.txt"]')
+        .click('*[data-id="addToGitChangestest.txt"]')
+        .waitForElementVisible({
+            selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
+            locateStrategy: 'xpath'
+        })
+        .setValue('*[data-id="commitMessage"]', 'testcommit')
+        .click('*[data-id="commitButton"]')
+    },
+    'look at the commit #group1': function (browser) {
+        browser
+        .click('*[data-id="commits-panel"]')
+        .waitForElementPresent({
+            selector: '//*[@data-id="commit-summary-testcommit-ahead"]',
+            locateStrategy: 'xpath'
+        })
     }
 }
 
