@@ -22,6 +22,7 @@ import { IndexedDBStorage } from './filesystems/indexedDB'
 import { GitHubUser, branch, commitChange, remote, pagedCommits, remoteCommitsInputType, cloneInputType, fetchInputType, pullInputType, pushInputType, currentBranchInput, branchInputType, addInput, rmInput, resolveRefInput, readBlobInput, repositoriesInput, commitInput, branchDifference, compareBranchesInput, initInput, userEmails, checkoutInput } from '@remix-ui/git'
 import { LibraryProfile, StatusEvents } from '@remixproject/plugin-utils'
 import { ITerminal } from '@remixproject/plugin-api/src/lib/terminal'
+import { partial } from 'lodash'
 
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; remixFileSystem: any; }
@@ -86,6 +87,7 @@ class DGitProvider extends Plugin {
   }
 
   async addIsomorphicGitConfig(input) {
+
     const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
     
     let config = {
@@ -120,6 +122,14 @@ class DGitProvider extends Plugin {
         }
       }
     }
+
+    if(input.provider && input.provider === 'github') {
+      config = {
+        ...config,
+        corsProxy: 'https://corsproxy.remixproject.org/',
+      }
+    }
+
     return config
   }
 
@@ -685,7 +695,10 @@ class DGitProvider extends Plugin {
               url: module.url,
               singleBranch: true,
               depth: 1,
-              ...await this.addIsomorphicGitConfig(input),
+              ...await this.addIsomorphicGitConfig({
+                ...input,
+                provider: 'github'
+              }),
               ...await this.addIsomorphicGitConfigFS(dir)
             }
             this.call('terminal', 'logHtml', `Cloning submodule ${dir}...`)
@@ -709,7 +722,10 @@ class DGitProvider extends Plugin {
             if (result && result.length) {
               this.call('terminal', 'logHtml', `Checking out submodule ${dir} to ${result[0]} in directory ${dir}`)
               await git.fetch({
-                ...await this.addIsomorphicGitConfig(input),
+                ...await this.addIsomorphicGitConfig({
+                  ...input,
+                  provider: 'github'
+                }),
                 ...await this.addIsomorphicGitConfigFS(dir),
                 singleBranch: true,
                 ref: result[0]
