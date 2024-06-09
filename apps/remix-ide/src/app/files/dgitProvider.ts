@@ -88,7 +88,7 @@ class DGitProvider extends Plugin {
   async addIsomorphicGitConfig(input) {
     const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
     return {
-      corsProxy: 'https://corsproxy.remixproject.org/',
+      //corsProxy: 'http://192.168.1.7:39049',
       http,
       onAuth: url => {
         url
@@ -591,6 +591,7 @@ class DGitProvider extends Plugin {
         ...await this.addIsomorphicGitConfig(input),
         ...await this.addIsomorphicGitConfigFS()
       }
+      console.log(cmd)
       this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
       const result = await git.clone(cmd)
       if (!input.workspaceExists) {
@@ -740,7 +741,7 @@ class DGitProvider extends Plugin {
     const cmd = {
       force: input.force,
       ref: input.ref.name,
-      remoteRef: input.remoteRef.name,
+      remoteRef: input.remoteRef && input.remoteRef.name,
       remote: input.remote.name,
       author: await this.getCommandUser(input),
       input,
@@ -767,7 +768,7 @@ class DGitProvider extends Plugin {
   async pull(input: pullInputType) {
     const cmd = {
       ref: input.ref.name,
-      remoteRef: input.remoteRef.name,
+      remoteRef: input.remoteRef && input.remoteRef.name,
       author: await this.getCommandUser(input),
       remote: input.remote.name,
       input,
