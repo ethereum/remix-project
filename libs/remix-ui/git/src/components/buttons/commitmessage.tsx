@@ -86,10 +86,13 @@ export const CommitMessage = () => {
       remote: getRemote(),
       ref: context.currentBranch
     })
-    await actions.pull({
+    await actions.fetch({
       remote: getRemote(),
-      ref: context.currentBranch
+      ref: context.currentBranch,
+      singleBranch: false,
+      relative: true
     })
+    
   }
 
   const messageEnabled = () => {

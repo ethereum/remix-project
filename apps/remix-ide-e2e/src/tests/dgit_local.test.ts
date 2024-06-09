@@ -182,7 +182,39 @@ module.exports = {
         .setValue('*[data-id="newbranchname"]', 'testbranch')
         .click('*[data-id="sourcecontrol-create-branch"]')
         .waitForElementVisible('*[data-id="branches-current-branch-testbranch"]')
+        .pause(1000)
+    },
+    'publish the branch #group2': function (browser: NightwatchBrowser) {
+        browser
+        .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
+        .click('*[data-id="sourcecontrol-panel"]')
+        .pause(1000)
+        .click('*[data-id="publishBranchButton"]')
+        .pause(2000)
+        .waitForElementNotVisible('*[data-id="publishBranchButton"]')
+    },
+    'check if the branch is published #group2': async function (browser: NightwatchBrowser) {
+        const branches = await getBranches('/tmp/git/bare.git')
+        browser.assert.ok(branches.includes('testbranch'))
     }
+}
+
+async function getBranches(path: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const git = spawn('git', ['branch'], { cwd: path })
+        let branches = ''
+        git.stdout.on('data', function (data) {
+            console.log('stdout git branches', data.toString())
+            branches += data.toString()
+        })
+        git.stderr.on('data', function (data) {
+            console.log('stderr git branches', data.toString())
+            reject(data.toString())
+        })
+        git.on('close', function () {
+            resolve(branches)
+        })
+    })
 }
 
 async function getGitLog(path: string): Promise<string> {
