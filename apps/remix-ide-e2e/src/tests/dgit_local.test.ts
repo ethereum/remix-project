@@ -2,6 +2,7 @@ import { ChildProcess, spawn } from "child_process"
 import kill from 'tree-kill'
 import init from "../helpers/init"
 let gitserver: ChildProcess
+// if needed kill the server: kill -9 $(sudo lsof -t -i:6868)
 module.exports = {
     '@disabled': true,
     before: function (browser, done) {
@@ -42,8 +43,8 @@ module.exports = {
         .waitForElementVisible('*[data-id="clone-btn"]')
         .click('*[data-id="clone-btn"]')
         .clickLaunchIcon('filePanel')
-        .waitForElementVisible('*[data-id="treeViewDivtreeViewItem.git"]')
-        .addFile('test.txt')
+        .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
+        .addFile('testFile.text', { content: 'hello world' }, 'README.md')
         .pause(10000)
     }
 }
