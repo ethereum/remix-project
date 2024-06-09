@@ -8,8 +8,6 @@ import * as hardhatCompilation from '../helpers/hardhat_compilation_7839ba878952
 import * as hardhat_compilation_Lock_dbg from '../helpers/hardhat_compilation_Lock.dbg.json'
 import * as hardhat_compilation_Lock from '../helpers/hardhat_compilation_Lock.json'
 
-import * as foundryCompilation from '../helpers/foundry_compilation.json'
-import * as truffle_compilation from '../helpers/truffle_compilation.json'
 import kill from 'tree-kill'
 
 let remixd: ChildProcess
@@ -84,7 +82,7 @@ module.exports = {
   'Import from node_modules #group1': function (browser) {
     /*
       when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
-      remix (as well as truffle) try to resolve it against the node_modules and installed_contracts folder.
+      remix try to resolve it against the node_modules and installed_contracts folder.
     */
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
@@ -236,34 +234,7 @@ module.exports = {
       })
 
 
-  },
-
-  'Should listen on compilation result from truffle #group8': function (browser: NightwatchBrowser) {
-
-    browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/truffle'))
-      console.log('working directory', process.cwd())
-      connectRemixd(browser, done)
-    })
-      .perform((done) => {
-        writeFileSync('./apps/remix-ide/contracts/truffle/build/contracts/Migrations.json', JSON.stringify(truffle_compilation))
-        done()
-      })
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Truffle').before(60000)
-
-    browser.clickLaunchIcon('filePanel')
-      .openFile('contracts')
-      .openFile('contracts/Migrations.sol')
-      .clickLaunchIcon('udapp')
-      .selectContract('Migrations')
-      .createContract('')
-      .testFunction('last',
-        {
-          status: '0x1 Transaction mined and execution succeed'
-        })
-
-
-  }
+  }  
 }
 
 function runTests(browser: NightwatchBrowser, done: any) {
