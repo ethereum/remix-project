@@ -67,7 +67,7 @@ export const SourceControlButtons = () => {
   return (
     <span className='d-flex justify-content-end align-items-center'>
       <CustomTooltip tooltipText={getTooltipText('git.pull')}>
-        <GitUIButton disabledCondition={buttonsDisabled()} onClick={pull} className='btn btn-sm pl-0 pr-2'>
+        <GitUIButton data-id='sourcecontrol-button-pull' disabledCondition={buttonsDisabled()} onClick={pull} className='btn btn-sm pl-0 pr-2'>
           <div className="d-flex align-items-baseline">
             {syncState.commitsBehind.length ? <div className="badge badge-pill pl-0">
               {syncState.commitsBehind.length}
@@ -77,7 +77,7 @@ export const SourceControlButtons = () => {
         </GitUIButton>
       </CustomTooltip>
       <CustomTooltip tooltipText={getTooltipText('git.push')}>
-        <GitUIButton disabledCondition={buttonsDisabled()} onClick={push} className='btn btn-sm pl-0 pr-2'>
+        <GitUIButton data-id='sourcecontrol-button-push' disabledCondition={buttonsDisabled()} onClick={push} className='btn btn-sm pl-0 pr-2'>
           <div className="d-flex align-items-baseline">
             {syncState.commitsAhead.length ? <div className="badge badge-pill pl-0">
               {syncState.commitsAhead.length}
@@ -87,7 +87,7 @@ export const SourceControlButtons = () => {
         </GitUIButton>
       </CustomTooltip>
       <CustomTooltip tooltipText={getTooltipText('git.sync')}>
-        <GitUIButton disabledCondition={buttonsDisabled()} onClick={sync} className='btn btn-sm  pl-0 pr-2'><FontAwesomeIcon icon={faArrowsUpDown} className="" /></GitUIButton>
+        <GitUIButton data-id='sourcecontrol-button-sync' disabledCondition={buttonsDisabled()} onClick={sync} className='btn btn-sm  pl-0 pr-2'><FontAwesomeIcon icon={faArrowsUpDown} className="" /></GitUIButton>
       </CustomTooltip>
       <CustomTooltip tooltipText={<FormattedMessage id="git.refresh" />}>
         <GitUIButton onClick={refresh} className='btn btn-sm'><FontAwesomeIcon icon={faArrowRotateRight} className="" /></GitUIButton>

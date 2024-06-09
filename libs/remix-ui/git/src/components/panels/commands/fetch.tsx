@@ -13,10 +13,10 @@ export const Fetch = () => {
   return (
     <>
       <div className="btn-group w-100" role="group">
-        <GitUIButton disabledCondition={fetchIsDisabled()} type="button" onClick={async () => actions.fetch({
+        <GitUIButton data-id='sourcecontrol-fetch-remote' disabledCondition={fetchIsDisabled()} type="button" onClick={async () => actions.fetch({
           remote: context.upstream,
         })} className="btn btn-primary mr-1 w-50"><div>Fetch {context.upstream && context.upstream.name}</div></GitUIButton>
-        <GitUIButton disabledCondition={fetchIsDisabled()} type="button" onClick={async () => actions.fetch({
+        <GitUIButton data-id='sourcecontrol-fetch-branch' disabledCondition={fetchIsDisabled()} type="button" onClick={async () => actions.fetch({
           remote: context.upstream,
           ref: context.currentBranch
         })} className="btn btn-primary w-50 long-and-truncated">Fetch {context.currentBranch.name}</GitUIButton>
