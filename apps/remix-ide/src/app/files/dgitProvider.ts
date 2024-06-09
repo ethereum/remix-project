@@ -91,7 +91,7 @@ class DGitProvider extends Plugin {
     const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
     
     let config = {
-      corsProxy: null,
+      corsProxy: 'https://corsproxy.remixproject.org/',
       http,
       onAuth: url => {
         url
@@ -105,20 +105,20 @@ class DGitProvider extends Plugin {
     if(input.url) {
 
       const url = new URL(input.url)
-      if (url.hostname.includes('github.com')) {
+      if (url.hostname.includes('localhost')) {
         config = {
           ...config,
-          corsProxy: 'https://corsproxy.remixproject.org/',
+          corsProxy: null
         }
       }
     }
     if((input.remote && input.remote.url)) {
 
       const url = new URL(input.remote.url)
-      if (url.hostname.includes('github.com')) {
+      if (url.hostname.includes('localhost')) {
         config = {
           ...config,
-          corsProxy: 'https://corsproxy.remixproject.org/',
+          corsProxy: null,
         }
       }
     }
@@ -127,6 +127,13 @@ class DGitProvider extends Plugin {
       config = {
         ...config,
         corsProxy: 'https://corsproxy.remixproject.org/',
+      }
+    }
+
+    if(input.provider && input.provider === 'localhost') {
+      config = {
+        ...config,
+        corsProxy: null
       }
     }
 
