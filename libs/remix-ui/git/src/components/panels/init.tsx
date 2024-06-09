@@ -20,7 +20,7 @@ export const Init = () => {
           <GitUIButton
             onClick={init}
             className="btn w-md-25 w-100 btn-primary"
-            id="initgit-btn"
+            data-id="initgit-btn"
           ><FormattedMessage id='git.init'/></GitUIButton>
         </div>
       </div>

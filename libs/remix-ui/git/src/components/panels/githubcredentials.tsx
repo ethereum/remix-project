@@ -68,15 +68,15 @@ export const GitHubCredentials = () => {
   return (
     <>
       <div className="input-group text-secondary mb-1 h6">
-        <input type="password" value={githubToken} placeholder="GitHub token" className="form-control" name='githubToken' onChange={e => handleChangeTokenState(e.target.value)} />
+        <input data-id='githubToken' type="password" value={githubToken} placeholder="GitHub token" className="form-control" name='githubToken' onChange={e => handleChangeTokenState(e.target.value)} />
         <div className="input-group-append">
           <CopyToClipboard content={githubToken} data-id='copyToClipboardCopyIcon' className='far fa-copy ml-1 p-2 mt-1' direction={"top"} />
         </div>
       </div>
-      <input name='githubUsername' onChange={e => handleChangeUserNameState(e.target.value)} value={githubUsername} className="form-control mb-1" placeholder="Git username" type="text" id="githubUsername" />
-      <input name='githubEmail' onChange={e => handleChangeEmailState(e.target.value)} value={githubEmail} className="form-control mb-1" placeholder="Git email" type="text" id="githubEmail" />
+      <input data-id='gitubUsername' name='githubUsername' onChange={e => handleChangeUserNameState(e.target.value)} value={githubUsername} className="form-control mb-1" placeholder="Git username" type="text" id="githubUsername" />
+      <input data-id='githubEmail' name='githubEmail' onChange={e => handleChangeEmailState(e.target.value)} value={githubEmail} className="form-control mb-1" placeholder="Git email" type="text" id="githubEmail" />
       <div className="d-flex justify-content-between">
-        <button className="btn btn-primary w-100" onClick={saveGithubToken}>
+        <button data-id='saveGitHubCredentials' className="btn btn-primary w-100" onClick={saveGithubToken}>
           <FormattedMessage id="save" defaultMessage="Save" />
         </button>
         <button className="btn btn-danger far fa-trash-alt" onClick={removeToken}>

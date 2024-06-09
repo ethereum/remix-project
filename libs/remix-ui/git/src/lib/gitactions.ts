@@ -438,6 +438,7 @@ export const repositories = async () => {
 
     } else {
       plugin.call('notification', 'alert', {
+        id: 'github-token-error',
         title: 'Error getting repositories',
         message: `Please check your GitHub token in the GitHub settings... cannot connect to GitHub`
       })
@@ -446,6 +447,7 @@ export const repositories = async () => {
   } catch (e) {
     console.log(e)
     plugin.call('notification', 'alert', {
+      id: 'github-token-error',
       title: 'Error getting repositories',
       message: `${e.message}: Please check your GitHub token in the GitHub settings.`
     })
@@ -474,6 +476,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
     } else {
       plugin.call('notification', 'alert', {
         title: 'Error getting branches',
+        id: 'github-token-error',
         message: `Please check your GitHub token in the GitHub settings. It needs to have access to the branches.`
       })
       dispatch(setRemoteBranches([]))
@@ -482,6 +485,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
     console.log(e)
     plugin.call('notification', 'alert', {
       title: 'Error',
+      id: 'github-error',
       message: e.message
     })
     dispatch(setRemoteBranches([]))
@@ -530,8 +534,9 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
     const userFetched = await loadGitHubUserFromToken()
     if (!userFetched) {
       if (credentials.username && credentials.email) {
-        await plugin.call('notification', 'alert', {
+        await plugin.call('notification', 'alert' , {
           title: 'Error',
+          id: 'github-credentials-error',
           message: `Could not retreive the user from GitHub. You can continue to use the app, but you will not be able to push or pull.`
         })
       }
@@ -570,6 +575,7 @@ export const getGitHubCredentialsFromLocalStorage = async () => {
 
 export const showAlert = async ({ title, message }: { title: string, message: string }) => {
   await plugin.call('notification', 'alert', {
+    id: 'github-alert',
     title: title,
     message: message
   })

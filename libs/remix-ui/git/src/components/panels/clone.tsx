@@ -65,11 +65,11 @@ export const Clone = () => {
   return (
     <>
       <InputGroup className="mb-1">
-        <FormControl id="cloneulr" placeholder="url" name='cloneurl' value={cloneUrl} onChange={e => onGitHubCloneUrlChange(e.target.value)} aria-describedby="urlprepend" />
+        <FormControl data-id="clone-url" id="cloneulr" placeholder="url" name='cloneurl' value={cloneUrl} onChange={e => onGitHubCloneUrlChange(e.target.value)} aria-describedby="urlprepend" />
       </InputGroup>
 
       <input name='clonebranch' onChange={e => onCloneBranchChange(e.target.value)} value={cloneBranch} className="form-control mb-1 mt-2" placeholder="branch" type="text" id="clonebranch" />
-      <GitUIButton disabledCondition={!cloneUrl} data-id='clonebtn' className='btn btn-primary mt-1 w-100' onClick={async () => {
+      <GitUIButton disabledCondition={!cloneUrl} data-id='clone-btn' className='btn btn-primary mt-1 w-100' onClick={async () => {
         clone()
       }}>clone</GitUIButton>
       <hr />

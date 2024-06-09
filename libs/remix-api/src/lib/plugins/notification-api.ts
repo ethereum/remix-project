@@ -9,10 +9,12 @@ export interface INotificationApi {
     toast(key: string): Promise<void>,
     alert({
       title,
-      message
+      message,
+      id
     }:{
       title: string,
       message: string,
+      id: string
     }): Promise<void>,
     modal({
       title,

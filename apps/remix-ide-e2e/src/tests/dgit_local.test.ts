@@ -22,15 +22,36 @@ module.exports = {
             done()
         })
     },
-    'clone a repository': function (browser) {
-        console.log('cloning')
+    'Update settings for git': function (browser) {
+        browser.
+        clickLaunchIcon('dgit')
+        .waitForElementVisible('*[data-id="initgit-btn"]')
+        .click('*[data-id="initgit-btn"]')
+        .setValue('*[data-id="gitubUsername"]', 'git')
+        .setValue('*[data-id="githubEmail"]', 'git@example.com')
+        .click('*[data-id="saveGitHubCredentials"]')
+        .modalFooterOKClick('github-credentials-error')
+        .pause(2000)
+    },
+    'clone a repo': function (browser) {
+        browser
+        .waitForElementVisible('*[data-id="clone-panel"]')
+        .click('*[data-id="clone-panel"]')
+        .waitForElementVisible('*[data-id="clone-url"]')
+        .setValue('*[data-id="clone-url"]', 'http://localhost:6868/bare.git')
+        .waitForElementVisible('*[data-id="clone-btn"]')
+        .click('*[data-id="clone-btn"]')
+        .clickLaunchIcon('filePanel')
+        .waitForElementVisible('*[data-id="treeViewDivtreeViewItem.git"]')
+        .addFile('test.txt')
+        .pause(10000)
     }
 }
 
 async function spawnGitServer(path: string): Promise<ChildProcess> {
     console.log(process.cwd())
     try {
-        const server = spawn('yarn && npx ts-node server.ts', [`${path}`], { cwd: process.cwd() + '/apps/remix-ide-e2e/src/githttpbackend/', shell: true, detached: true })
+        const server = spawn('yarn && sh setup.sh && npx ts-node server.ts', [`${path}`], { cwd: process.cwd() + '/apps/remix-ide-e2e/src/githttpbackend/', shell: true, detached: true })
         console.log('spawned', server.stdout.closed, server.stderr.closed)
         return new Promise((resolve, reject) => {
             server.stdout.on('data', function (data) {

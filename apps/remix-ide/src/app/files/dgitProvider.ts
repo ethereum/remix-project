@@ -89,7 +89,7 @@ class DGitProvider extends Plugin {
   async addIsomorphicGitConfig(input) {
 
     const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
-    
+
     let config = {
       corsProxy: 'https://corsproxy.remixproject.org/',
       http,
@@ -102,7 +102,7 @@ class DGitProvider extends Plugin {
         return auth
       }
     }
-    if(input.url) {
+    if (input.url) {
 
       const url = new URL(input.url)
       if (url.hostname.includes('localhost')) {
@@ -112,7 +112,7 @@ class DGitProvider extends Plugin {
         }
       }
     }
-    if((input.remote && input.remote.url)) {
+    if ((input.remote && input.remote.url)) {
 
       const url = new URL(input.remote.url)
       if (url.hostname.includes('localhost')) {
@@ -123,14 +123,14 @@ class DGitProvider extends Plugin {
       }
     }
 
-    if(input.provider && input.provider === 'github') {
+    if (input.provider && input.provider === 'github') {
       config = {
         ...config,
         corsProxy: 'https://corsproxy.remixproject.org/',
       }
     }
 
-    if(input.provider && input.provider === 'localhost') {
+    if (input.provider && input.provider === 'localhost') {
       config = {
         ...config,
         corsProxy: null
@@ -339,11 +339,10 @@ class DGitProvider extends Plugin {
   }
 
   async getCommitChanges(commitHash1: string, commitHash2: string): Promise<commitChange[]> {
-      const result: commitChange[] = await git.walk({
+    const result: commitChange[] = await git.walk({
       ...await this.addIsomorphicGitConfigFS(),
       trees: [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })],
       map: async function (filepath, [A, B]) {
-
 
         if (filepath === '.') {
           return
@@ -366,7 +365,6 @@ class DGitProvider extends Plugin {
           path: filepath,
         }
 
-       
         // determine modification type
         if (Aoid !== Boid) {
           commitChange.type = "modified"
@@ -1028,7 +1026,6 @@ class DGitProvider extends Plugin {
   // OCTOKIT FEATURES
 
   async remotebranches(input: { owner: string, repo: string, token: string, page: number, per_page: number }) {
-
 
     const octokit = new Octokit({
       auth: input.token
