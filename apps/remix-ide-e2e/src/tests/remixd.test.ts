@@ -137,59 +137,73 @@ module.exports = {
       .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
   },
 
+  'Should setup a hardhat project #group5': function (browser: NightwatchBrowser) {
+    browser.perform(async (done) => {
+      await setupHardhatProject()
+      done()
+    })
+  },
+
   'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hardhat-boilerplate'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
-      .perform((done) => {
+      .perform(async (done) => {
         console.log('generating compilation result')
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/build-info/7839ba878952cc00ff316061405f273a.json', JSON.stringify(hardhatCompilation))
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.json', JSON.stringify(hardhat_compilation_Lock))
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
+        await compileHardhatProject()
         done()
       })
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
-
+    
+    let addressRef
     browser.clickLaunchIcon('filePanel')
       .openFile('contracts')
-      .openFile('contracts/Lock.sol')
+      .openFile('contracts/Token.sol')
       .clickLaunchIcon('udapp')
-      .selectContract('Lock')
-      .createContract('1')
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
-
-
+      .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
+      .selectContract('Token')
+      .createContract('')
+      .clickInstance(0)
+      .clickFunction('balanceOf - call', { types: 'address account', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c' })
+      .getAddressAtPosition(0, (address) => {
+        addressRef = address
+      })
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 1000000'])
+          .perform(() => done())
+      })
   },
 
-  'Should load compilation result from hardhat when remixd connects #group6': function (browser: NightwatchBrowser) {
-    // artifacts/build-info/c7062fdd360381a85af23eeef31c98f8.json has already been created
-
+  'Should load compilation result from hardhat when remixd connects #group5': function (browser: NightwatchBrowser) {
+    let addressRef
     browser
-      .perform((done) => {
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.dbg.json', JSON.stringify(hardhat_compilation_Lock_dbg))
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/contracts/Lock.sol/Lock.json', JSON.stringify(hardhat_compilation_Lock))
-        writeFileSync('./apps/remix-ide/contracts/hardhat/artifacts/build-info/7839ba878952cc00ff316061405f273a.json', JSON.stringify(hardhatCompilation))
-        done()
-      })
+      .refresh()
       .perform(async (done) => {
-        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hardhat-boilerplate'))
         console.log('working directory', process.cwd())
         connectRemixd(browser, done)
       })
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
 
-    browser.clickLaunchIcon('filePanel')
+      browser.clickLaunchIcon('filePanel')
       .openFile('contracts')
-      .openFile('contracts/Lock.sol')
+      .openFile('contracts/Token.sol')
       .clickLaunchIcon('udapp')
-      .selectContract('Lock')
-      .createContract('1')
-      .expect.element('*[data-id="terminalJournal"]').text.to.contain('Unlock time should be in the future').before(60000)
-
-
+      .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
+      .selectContract('Token')
+      .createContract('')
+      .clickInstance(0)
+      .clickFunction('balanceOf - call', { types: 'address account', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c' })
+      .getAddressAtPosition(0, (address) => {
+        addressRef = address
+      })
+      .perform((done) => {
+        browser.verifyCallReturnValue(addressRef, ['0:uint256: 1000000'])
+          .perform(() => done())
+      })
   },
 
   'Should install foundry #group7': function (browser: NightwatchBrowser) {
@@ -322,6 +336,54 @@ function connectRemixd(browser: NightwatchBrowser, done: any) {
     .click('*[data-id="remixdConnect-modal-footer-ok-react"]')
     .pause(5000)
     .perform(() => done())
+}
+
+async function setupHardhatProject(): Promise<void> {
+  console.log(process.cwd())
+  try {
+      const server = spawn('git clone https://github.com/NomicFoundation/hardhat-boilerplate && cd hardhat-boilerplate &&  npm install && echo "END"', [], { cwd: process.cwd() + '/apps/remix-ide', shell: true, detached: true })
+      return new Promise((resolve, reject) => {
+          server.stdout.on('data', function (data) {
+              console.log(data.toString())
+              if (
+                  data.toString().includes("END")
+              ) {
+                  console.log('resolving')
+                  resolve()
+              }
+          })
+          server.stderr.on('err', function (data) {
+              console.log(data.toString())
+              reject(data.toString())
+          })
+      })
+  } catch (e) {
+      console.log(e)
+  }
+}
+
+async function compileHardhatProject(): Promise<void> {
+  console.log(process.cwd())
+  try {
+      const server = spawn('npx hardhat compile', [], { cwd: process.cwd() + '/apps/remix-ide/hardhat-boilerplate', shell: true, detached: true })
+      return new Promise((resolve, reject) => {
+          server.stdout.on('data', function (data) {
+              console.log(data.toString())
+              if (
+                  data.toString().includes("END")
+              ) {
+                  console.log('resolving')
+                  resolve()
+              }
+          })
+          server.stderr.on('err', function (data) {
+              console.log(data.toString())
+              reject(data.toString())
+          })
+      })
+  } catch (e) {
+      console.log(e)
+  }
 }
 
 async function downloadFoundry(): Promise<void> {
