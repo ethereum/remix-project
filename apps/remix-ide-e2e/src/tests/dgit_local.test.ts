@@ -3,7 +3,13 @@ import kill from 'tree-kill'
 import init from "../helpers/init"
 import { Nightwatch, NightwatchBrowser } from "nightwatch"
 let gitserver: ChildProcess
-// if needed kill the server: kill -9 $(sudo lsof -t -i:6868)
+
+/* 
+/ uses the git-http-backend package to create a git server ( if needed kill the server: kill -9 $(sudo lsof -t -i:6868)  )
+/ GROUP 1: file operations PUSH PULL COMMIT SYNC FETCH CLONE ADD
+/ GROUP 2: branch operations CREATE & PUBLISH
+*/
+
 module.exports = {
     '@disabled': true,
     before: function (browser, done) {
@@ -17,14 +23,14 @@ module.exports = {
         })
     },
 
-    'run server #group1': function (browser: NightwatchBrowser) {
+    'run server #group1 #group2': function (browser: NightwatchBrowser) {
         browser.perform(async (done) => {
             gitserver = await spawnGitServer('/tmp/')
             console.log('working directory', process.cwd())
             done()
         })
     },
-    'Update settings for git #group1': function (browser: NightwatchBrowser) {
+    'Update settings for git #group1 #group2': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="initgit-btn"]')
@@ -35,7 +41,7 @@ module.exports = {
             .modalFooterOKClick('github-credentials-error')
             .pause(2000)
     },
-    'clone a repo #group1': function (browser: NightwatchBrowser) {
+    'clone a repo #group1 #group2': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="clone-panel"]')
             .click('*[data-id="clone-panel"]')
@@ -47,6 +53,9 @@ module.exports = {
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
 
     },
+
+    // GROUP 1
+
     'check file added #group1': function (browser: NightwatchBrowser) {
         browser.
             addFile('test.txt', { content: 'hello world' }, 'README.md')
@@ -94,7 +103,7 @@ module.exports = {
         console.log(logs)
         browser.assert.ok(logs.includes('testcommit'))
     },
-    'change a file': function (browser: NightwatchBrowser) {
+    'change a file #group1': function (browser: NightwatchBrowser) {
         browser.
             openFile('test.txt').
             pause(1000).
@@ -163,6 +172,16 @@ module.exports = {
         browser
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest2.txt"]')
+    },
+    // GROUP 2 
+    'create a branch #group2': function (browser: NightwatchBrowser) {
+        browser
+        .clickLaunchIcon('dgit')
+        .click('*[data-id="branches-panel"]')
+        .waitForElementVisible('*[data-id="newbranchname"]')
+        .setValue('*[data-id="newbranchname"]', 'testbranch')
+        .click('*[data-id="sourcecontrol-create-branch"]')
+        .waitForElementVisible('*[data-id="branches-current-branch-testbranch"]')
     }
 }
 

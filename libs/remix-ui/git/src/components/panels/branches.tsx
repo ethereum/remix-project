@@ -41,11 +41,13 @@ export const Branches = () => {
             placeholder="branch name"
             onChange={handleChange}
             className="form-control w-md-25 w-100"
+            data-id="newbranchname"
             type="text"
             id="newbranchname"
           />
         </div>
         <GitUIButton
+          data-id="sourcecontrol-create-branch"
           onClick={async () => actions.createBranch(newBranch.value)}
           className="btn w-md-25 w-100 btn-primary"
           id="createbranch-btn"
