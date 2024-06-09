@@ -204,7 +204,7 @@ module.exports = {
   'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hello_foundry'))
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hello_foundry'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -232,8 +232,6 @@ module.exports = {
           done()
         })
       })
-
-
   }  
 }
 
@@ -377,7 +375,7 @@ async function installFoundry(): Promise<void> {
 async function initFoundryProject(): Promise<void> {
   console.log(process.cwd())
   try {
-      const server = spawn('forge init hello_foundry', [], { cwd: process.cwd() + '/apps/remix-ide/contracts', shell: true, detached: true })
+      const server = spawn('forge init hello_foundry', [], { cwd: process.cwd() + '/apps/remix-ide', shell: true, detached: true })
       return new Promise((resolve, reject) => {
           server.stdout.on('data', function (data) {
               console.log(data.toString())
