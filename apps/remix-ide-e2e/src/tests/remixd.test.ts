@@ -194,15 +194,24 @@ module.exports = {
 
   },
 
+  'Should install foundry #group7': function (browser: NightwatchBrowser) {
+    browser.perform(async (done) => {
+      await downloadFoundry()
+      await installFoundry()
+      await initFoundryProject()
+      done()
+    })
+  },
+
   'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/foundry'))
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hello_foundry'))
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
-      .perform((done) => {
-        writeFileSync('./apps/remix-ide/contracts/foundry/out/Counter.sol/Counter.json', JSON.stringify(foundryCompilation))
+      .perform(async (done) => {
+        await buildFoundryProject()
         done()
       })
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Foundry').before(60000)
@@ -346,3 +355,98 @@ function connectRemixd(browser: NightwatchBrowser, done: any) {
     .perform(() => done())
 }
 
+async function downloadFoundry(): Promise<void> {
+  console.log(process.cwd())
+  try {
+      const server = spawn('curl -L https://foundry.paradigm.xyz | bash', [], { cwd: process.cwd(), shell: true, detached: true })
+      return new Promise((resolve, reject) => {
+          server.stdout.on('data', function (data) {
+              console.log(data.toString())
+              if (
+                  data.toString().includes("simply run 'foundryup' to install Foundry")
+              ) {
+                  console.log('resolving')
+                  resolve()
+              }
+          })
+          server.stderr.on('err', function (data) {
+              console.log(data.toString())
+              reject(data.toString())
+          })
+      })
+  } catch (e) {
+      console.log(e)
+  }
+}
+
+async function installFoundry(): Promise<void> {
+  console.log(process.cwd())
+  try {
+      const server = spawn('foundryup', [], { cwd: process.cwd(), shell: true, detached: true })
+      return new Promise((resolve, reject) => {
+          server.stdout.on('data', function (data) {
+              console.log(data.toString())
+              if (
+                  data.toString().includes("foundryup: done!")
+              ) {
+                  console.log('resolving')
+                  resolve()
+              }
+          })
+          server.stderr.on('err', function (data) {
+              console.log(data.toString())
+              reject(data.toString())
+          })
+      })
+  } catch (e) {
+      console.log(e)
+  }
+}
+
+async function initFoundryProject(): Promise<void> {
+  console.log(process.cwd())
+  try {
+      const server = spawn('forge init hello_foundry', [], { cwd: process.cwd() + '/apps/remix-ide/contracts', shell: true, detached: true })
+      return new Promise((resolve, reject) => {
+          server.stdout.on('data', function (data) {
+              console.log(data.toString())
+              if (
+                  data.toString().includes("Initialized forge project")
+              ) {
+                  console.log('resolving')
+                  resolve()
+              }
+          })
+          server.stderr.on('err', function (data) {
+              console.log(data.toString())
+              reject(data.toString())
+          })
+      })
+  } catch (e) {
+      console.log(e)
+  }
+}
+
+async function buildFoundryProject(): Promise<void> {
+  console.log(process.cwd())
+  try {
+      const server = spawn('forge build', [], { cwd: process.cwd() + '/apps/remix-ide/contracts/hello_foundry', shell: true, detached: true })
+      return new Promise((resolve, reject) => {
+          server.stdout.on('data', function (data) {
+              console.log(data.toString())
+              if (
+                  data.toString().includes("Compiler run successful!")
+              ) {
+                  console.log('resolving')
+                  resolve()
+              }
+          })
+          server.stderr.on('err', function (data) {
+              console.log(data.toString())
+              reject(data.toString())
+          })
+      })
+  } catch (e) {
+      console.log(e)
+  }
+}
