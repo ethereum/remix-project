@@ -632,7 +632,7 @@ export const loadGitHubUserFromToken = async () => {
 }
 
 export const statusMatrix = async (filepaths: string[]) => {
-  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.'] });
+  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.']});
   const result = (matrix || []).map((x) => {
     return {
       filename: `/${x.shift()}`,

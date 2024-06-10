@@ -48,7 +48,7 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
     try {
 
       actions.checkout({ ref: oid })
-        ;
+      ;
     } catch (e) {
       //
     }
