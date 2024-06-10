@@ -445,6 +445,7 @@ module.exports = {
   },
   'check source controle panel again #group5': function (browser: NightwatchBrowser) {
     browser
+      .pause(5000)
       .clickLaunchIcon('dgit')
       .waitForElementVisible('*[data-id="initgit-btn"]')
       .click('*[data-id="initgit-btn"]')
@@ -476,6 +477,7 @@ module.exports = {
   },
   'check source controle panel for uniswap #group5': function (browser: NightwatchBrowser) {
     browser
+      .pause(5000)
       .clickLaunchIcon('dgit')
       .click('*[data-id="remotes-panel"]')
       .waitForElementVisible('*[data-id="remotes-panel-content"]')
