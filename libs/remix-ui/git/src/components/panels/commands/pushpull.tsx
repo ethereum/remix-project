@@ -23,7 +23,7 @@ export const PushPull = () => {
     if ((!context.upstream) && context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.name) {
       actions.setUpstreamRemote(context.currentBranch.remote)
     }
-  }, [context.currentBranch])
+  }, [context.currentBranch, context.remotes, context.branches])
 
   const onRemoteBranchChange = (value: string) => {
     setRemoteBranch(value)
