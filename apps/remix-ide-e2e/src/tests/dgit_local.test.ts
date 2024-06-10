@@ -173,7 +173,7 @@ module.exports = {
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest2.txt"]')
     },
-    
+
     // group 3
     'rename a file #group3': function (browser: NightwatchBrowser) {
         browser
@@ -205,6 +205,20 @@ module.exports = {
                 selector: "//*[@data-status='added-staged' and @data-file='/test_rename.txt']",
                 locateStrategy: 'xpath'
             })
+    },
+    'undo the rename #group3': function (browser: NightwatchBrowser) {
+        browser
+
+            .click('*[data-id="unDoStagedtest.txt"]')
+            .waitForElementNotPresent({
+                selector: "//*[@data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
+    },
+    'check if file is returned #group3': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('filePanel')
+            .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.txt"]')
     },
 
     // GROUP 2 
