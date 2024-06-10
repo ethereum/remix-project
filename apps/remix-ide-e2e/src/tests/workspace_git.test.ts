@@ -60,7 +60,7 @@ module.exports = {
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
       .waitForElementContainsText('[data-id="workspaceGitBranchesDropdown"]', 'main')
   },
-  'check git for the commit #group1 #group2 #group3': function (browser: NightwatchBrowser) {
+  'check git for the commit #group1': function (browser: NightwatchBrowser) {
     browser.
       clickLaunchIcon('dgit')
       .click('*[data-id="commits-panel"]')
