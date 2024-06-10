@@ -407,7 +407,7 @@ export function UniversalDappUI(props: UdappProps) {
                 </CustomTooltip>
               )}
               <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.solScan.iconTooltip" />}>
-                <i className="fas fa-qrcode p-0" onClick={askPermissionToScan}></i>
+                <i className="fas fa-qrcode p-0" style={{padding: "0.15rem"}} onClick={askPermissionToScan}></i>
               </CustomTooltip>
             </div>
           </div>
