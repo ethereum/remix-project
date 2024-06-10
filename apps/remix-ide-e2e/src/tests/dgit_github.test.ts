@@ -78,5 +78,83 @@ module.exports = {
         browser
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
+    },
+    'check the remotes #group1': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('dgit')
+            .click('*[data-id="remotes-panel"]')
+            .waitForElementVisible('*[data-id="remotes-panel-content"]')
+            .click({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin"]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-current-branch-master"]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-sync-origin"]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-branch-links"]',
+                locateStrategy: 'xpath'
+            })
+
+    },
+    'check the commits of branch links #group1': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-branch-links"]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-branch-links"]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="commit-summary-linking fixed-"]',
+                locateStrategy: 'xpath'
+            })
+    },
+    'switch to branch links #group1': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-branch-links"]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-toggle-branch-links"]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-toggle-current-branch-links"]',
+                locateStrategy: 'xpath'
+            })
+    },
+    'check the local branches #group1': function (browser: NightwatchBrowser) {
+        browser
+            .click('*[data-id="branches-panel"]')
+            .waitForElementVisible({
+                selector: '//*[@data-id="branches-panel-content"]//*[@data-id="branches-toggle-current-branch-links"]',
+                locateStrategy: 'xpath'
+            })
+    },
+    'check the local commits #group1': function (browser: NightwatchBrowser) {
+        browser
+            .click('*[data-id="commits-panel"]')
+            .pause()
+            .waitForElementVisible({
+                selector: '//*[@data-id="commits-current-branch-links"]//*[@data-id="commit-summary-linking fixed-"]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="commits-current-branch-links"]//*[@data-id="commit-summary-linking fixed-"]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="commits-current-branch-links"]//*[@data-id="commit-change-modified-README.md"]',
+                locateStrategy: 'xpath'
+            })
     }
 }

@@ -39,7 +39,7 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
   return (
     <>
       <div className="d-flex flex-row w-100 mb-2 mt-2">
-        <div onClick={() => handleClick()} role={'button'} className='pointer long-and-truncated d-flex flex-row commit-navigation'>
+        <div data-id={`remote-detail-${remote.name}${context.defaultRemote && context.defaultRemote?.url === remote.url ? '-default' : ''}`} onClick={() => handleClick()} role={'button'} className='pointer long-and-truncated d-flex flex-row commit-navigation'>
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
@@ -55,7 +55,7 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
           :
           <GitUIButton className="btn btn-sm" onClick={setAsDefault}><FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon></GitUIButton>
         }
-        <GitUIButton className="btn btn-sm" onClick={async () => {
+        <GitUIButton data-id={`remote-sync-${remote.name}`} className="btn btn-sm" onClick={async () => {
           await actions.fetch({
             remote
           })

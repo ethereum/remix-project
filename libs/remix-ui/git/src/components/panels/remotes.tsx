@@ -26,28 +26,28 @@ export const Remotes = () => {
 
   return (
     <>
+      <div data-id="remotes-panel-content">
+        {context.remotes && context.remotes.length ?
+          <>
 
-      {context.remotes && context.remotes.length ?
-        <>
+            {context.remotes && context.remotes.map((remote, index) => {
 
-          {context.remotes && context.remotes.map((remote, index) => {
+              return (
+                <Remoteselect key={index} remote={remote}></Remoteselect>
+              );
+            })}
+          </> : <>No remotes</>}
+        <hr></hr>
 
-            return (
-              <Remoteselect key={index} remote={remote}></Remoteselect>
-            );
-          })}
-        </> : <>No remotes</>}
-      <hr></hr>
+        <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
+        <input placeholder="remote url" name='remoteurl' onChange={e => onUrlChange(e.target.value)} value={url} className="form-control" type="text" id="remoteurl" />
 
-      <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
-      <input placeholder="remote url" name='remoteurl' onChange={e => onUrlChange(e.target.value)} value={url} className="form-control" type="text" id="remoteurl" />
-
-      <button disabled={(remoteName && url)?false:true} className='btn btn-primary mt-1 w-100' onClick={async () => {
-        addRemote();
-      }}>add remote</button>
-      <hr />
-      <RemotesImport />
-      <hr />
-
+        <button disabled={(remoteName && url) ? false : true} className='btn btn-primary mt-1 w-100' onClick={async () => {
+          addRemote();
+        }}>add remote</button>
+        <hr />
+        <RemotesImport />
+        <hr />
+      </div>
     </>)
 }
