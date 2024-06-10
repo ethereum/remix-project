@@ -69,7 +69,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'run Remixd tests #group4': function (browser) {
+  'run Remixd tests #group1': function (browser) {
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
@@ -79,7 +79,7 @@ module.exports = {
         runTests(browser, done)
       })
   },
-  'Import from node_modules #group1': function (browser) {
+  'Import from node_modules #group2': function (browser) {
     /*
       when a relative import is used (i.e import "openzeppelin-solidity/contracts/math/SafeMath.sol")
       remix try to resolve it against the node_modules and installed_contracts folder.
@@ -94,7 +94,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.5.0+commit.1d4f565a.js')
       .testContracts('test_import_node_modules.sol', sources[3]['test_import_node_modules.sol'], ['SafeMath'])
   },
-  'Import from node_modules and reference a github import #group2': function (browser) {
+  'Import from node_modules and reference a github import #group3': function (browser) {
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       console.log('working directory', process.cwd())
@@ -105,46 +105,15 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js') // open-zeppelin moved to pragma ^0.8.20
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
-  'Static Analysis run with remixd #group3': '' + function (browser) {
-    browser.testContracts('test_static_analysis_with_remixd_and_hardhat.sol', sources[5]['test_static_analysis_with_remixd_and_hardhat.sol'], ['test5']).pause(2000)
-      .clickLaunchIcon('solidityStaticAnalysis')
-    /*
-    .click('#staticanalysisButton button').pause(4000)
-    .waitForElementPresent('#staticanalysisresult .warning', 2000, true, function () {
-      browser
-        .waitForElementVisible('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
-        .click('[data-id="staticAnalysisModuleMiscellaneous1Button"]')
-        .waitForElementVisible('.highlightLine16', 60000)
-        .getEditorValue((content) => {
-          browser.assert.ok(content.indexOf(
-            'function _sendLogPayload(bytes memory payload) private view {') !== -1,
-          'code has not been loaded')
-        })
-    })
-    */
-  },
-
-  'Run git status': '' + function (browser) {
-    browser
-      .executeScriptInTerminal('git status')
-      .pause(3000)
-      .journalLastChildIncludes('On branch ')
-  },
-
-  'Close Remixd #group3': '' + function (browser) {
-    browser
-      .clickLaunchIcon('pluginManager')
-      .scrollAndClick('#pluginManager *[data-id="pluginManagerComponentDeactivateButtonremixd"]')
-  },
-
-  'Should setup a hardhat project #group5': function (browser: NightwatchBrowser) {
+ 
+  'Should setup a hardhat project #group4': function (browser: NightwatchBrowser) {
     browser.perform(async (done) => {
       await setupHardhatProject()
       done()
     })
   },
 
-  'Should listen on compilation result from hardhat #group5': function (browser: NightwatchBrowser) {
+  'Should listen on compilation result from hardhat #group4': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hardhat-boilerplate'))
@@ -177,7 +146,7 @@ module.exports = {
       })
   },
 
-  'Should load compilation result from hardhat when remixd connects #group5': function (browser: NightwatchBrowser) {
+  'Should load compilation result from hardhat when remixd connects #group4': function (browser: NightwatchBrowser) {
     let addressRef
     browser
       .refresh()
@@ -206,7 +175,7 @@ module.exports = {
       })
   },
 
-  'Should install foundry #group7': function (browser: NightwatchBrowser) {
+  'Should install foundry #group5': function (browser: NightwatchBrowser) {
     browser.perform(async (done) => {
       await downloadFoundry()
       await installFoundry()
@@ -215,7 +184,7 @@ module.exports = {
     })
   },
 
-  'Should listen on compilation result from foundry #group7': function (browser: NightwatchBrowser) {
+  'Should listen on compilation result from foundry #group5': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hello_foundry'))
