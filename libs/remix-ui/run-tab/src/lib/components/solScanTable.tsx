@@ -17,11 +17,11 @@ export function SolScanTable(props: SolScanTableProps) {
       <table className="table table-bordered table-hover">
         <thead>
           <tr>
-            <td scope="col">NAME</td>
-            <td scope="col">SEVERITY</td>
-            <td scope="col">CONFIDENCE</td>
-            <td scope="col">DESCRIPTION</td>
-            <td scope="col">REMEDIATION</td>
+            <td scope="col" style={{wordBreak: "keep-all"}}>NAME</td>
+            <td scope="col" style={{wordBreak: "keep-all"}}>SEVERITY</td>
+            <td scope="col" style={{wordBreak: "keep-all"}}>CONFIDENCE</td>
+            <td scope="col" style={{wordBreak: "keep-all"}}>DESCRIPTION</td>
+            <td scope="col" style={{wordBreak: "keep-all"}}>REMEDIATION</td>
           </tr>
         </thead>
         <tbody>
