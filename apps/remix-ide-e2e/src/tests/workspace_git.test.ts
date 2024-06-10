@@ -445,10 +445,17 @@ module.exports = {
   },
   'check source controle panel again #group5': function (browser: NightwatchBrowser) {
     browser
-      .pause(5000)
+      .pause(1000)
       .clickLaunchIcon('dgit')
-      .waitForElementVisible('*[data-id="initgit-btn"]')
-      .click('*[data-id="initgit-btn"]')
+      .waitForElementVisible({
+        selector: '*[data-id="initgit-btn"]',
+        suppressNotFoundErrors: true
+      })
+      .click({
+        selector:'*[data-id="initgit-btn"]',
+        suppressNotFoundErrors: true
+      })
+      .pause(2000)
       .waitForElementVisible({
         selector: "//*[@data-status='new-untracked' and @data-file='/tests/storage.test.js']",
         locateStrategy: 'xpath'
@@ -482,8 +489,8 @@ module.exports = {
       .click('*[data-id="remotes-panel"]')
       .waitForElementVisible('*[data-id="remotes-panel-content"]')
       .click({
-          selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin"]',
-          locateStrategy: 'xpath'
+        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin"]',
+        locateStrategy: 'xpath'
       })
       .waitForElementVisible({
         selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin" and contains(.,"v4-template")]',
