@@ -165,8 +165,8 @@ module.exports = {
     },
     'run pull from the header #group1': function (browser: NightwatchBrowser) {
         browser.
-        click('*[data-id="sourcecontrol-button-pull"]')
-        .waitForElementNotPresent('*[data-id="commits-panel-behind"]')
+            click('*[data-id="sourcecontrol-button-pull"]')
+            .waitForElementNotPresent('*[data-id="commits-panel-behind"]')
     },
     'check if the file is added #group1': function (browser: NightwatchBrowser) {
         browser
@@ -176,26 +176,93 @@ module.exports = {
     // GROUP 2 
     'create a branch #group2': function (browser: NightwatchBrowser) {
         browser
-        .clickLaunchIcon('dgit')
-        .click('*[data-id="branches-panel"]')
-        .waitForElementVisible('*[data-id="newbranchname"]')
-        .setValue('*[data-id="newbranchname"]', 'testbranch')
-        .click('*[data-id="sourcecontrol-create-branch"]')
-        .waitForElementVisible('*[data-id="branches-current-branch-testbranch"]')
-        .pause(1000)
+            .clickLaunchIcon('dgit')
+            .click('*[data-id="branches-panel"]')
+            .waitForElementVisible('*[data-id="newbranchname"]')
+            .setValue('*[data-id="newbranchname"]', 'testbranch')
+            .click('*[data-id="sourcecontrol-create-branch"]')
+            .waitForElementVisible('*[data-id="branches-current-branch-testbranch"]')
+            .pause(1000)
     },
     'publish the branch #group2': function (browser: NightwatchBrowser) {
         browser
-        .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
-        .click('*[data-id="sourcecontrol-panel"]')
-        .pause(1000)
-        .click('*[data-id="publishBranchButton"]')
-        .pause(2000)
-        .waitForElementNotVisible('*[data-id="publishBranchButton"]')
+            .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
+            .click('*[data-id="sourcecontrol-panel"]')
+            .pause(1000)
+            .click('*[data-id="publishBranchButton"]')
+            .pause(2000)
+            .waitForElementNotVisible('*[data-id="publishBranchButton"]')
     },
     'check if the branch is published #group2': async function (browser: NightwatchBrowser) {
         const branches = await getBranches('/tmp/git/bare.git')
         browser.assert.ok(branches.includes('testbranch'))
+    },
+    'add file to new branch #group2': function (browser: NightwatchBrowser) {
+        browser.
+            addFile('test.txt', { content: 'hello world' }, 'README.md')
+            .clickLaunchIcon('dgit')
+            .waitForElementVisible({
+                selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible('*[data-id="addToGitChangestest.txt"]')
+            .pause(1000)
+            .click('*[data-id="addToGitChangestest.txt"]')
+            .waitForElementVisible({
+                selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
+            .setValue('*[data-id="commitMessage"]', 'testcommit')
+            .click('*[data-id="commitButton"]')
+            .pause(1000)
+    },
+    'check if the commit is ahead in the branches list #group2': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="branches-panel"]')
+            .click('*[data-id="branches-panel"]')
+            .waitForElementVisible('*[data-id="branches-current-branch-testbranch"]')
+            .click({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-current-branch-testbranch']",
+                locateStrategy: 'xpath',
+                suppressNotFoundErrors: true
+            })
+            .click({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='commits-panel-ahead']",
+                locateStrategy: 'xpath',
+                suppressNotFoundErrors: true
+            })
+            .click({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='branchdifference-commits-testbranch-ahead']//*[@data-id='commit-summary-testcommit-ahead']",
+                locateStrategy: 'xpath',
+            })
+            .click({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='branchdifference-commits-testbranch-ahead']//*[@data-id='commit-change-added-test.txt']",
+                locateStrategy: 'xpath',
+            })
+            .click({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='local-branch-commits-testbranch']//*[@data-id='commit-summary-testcommit-ahead']",
+                locateStrategy: 'xpath',
+            })
+            .waitForElementVisible({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='local-branch-commits-testbranch']//*[@data-id='commit-change-added-test.txt']",
+                locateStrategy: 'xpath',
+            })
+    },
+    'switch back to master #group2': function (browser: NightwatchBrowser) {
+        browser
+            .click({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-branch-master']",
+                locateStrategy: 'xpath',
+            })
+            .waitForElementVisible({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-current-branch-master']",
+                locateStrategy: 'xpath',
+            })
+    },
+    'check if test file is gone #group2': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('filePanel')
+            .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.txt"]')
     }
 }
 

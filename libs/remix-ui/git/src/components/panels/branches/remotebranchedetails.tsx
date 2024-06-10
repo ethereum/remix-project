@@ -92,7 +92,7 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
     <BrancheDetailsNavigation checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
     <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
       <>
-        <div className="ml-1">
+        <div data-id={`remote-branch-commits-${branch && branch.name}`} className="ml-1">
           {context.remoteBranchCommits && Object.entries(context.remoteBranchCommits).map(([key, value]) => {
             if (key == branch.name) {
               return value.map((page, index) => {

@@ -48,7 +48,7 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
     try {
 
       actions.checkout({ ref: oid })
-      ;
+        ;
     } catch (e) {
       //
     }
@@ -68,14 +68,16 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
       <>
         <div className="ml-1">
           <BranchDifferences branch={branch}></BranchDifferences>
-          {context.localBranchCommits && Object.entries(context.localBranchCommits).map(([key, value]) => {
-            if (key == branch.name) {
-              return value.map((commit, index) => {
-                return (<CommitDetails branch={branch} key={index} getCommitChanges={getCommitChanges} checkout={checkoutCommit} commit={commit}></CommitDetails>)
-              })
-            }
-          })}
+          <div data-id={`local-branch-commits-${branch && branch.name}`}>
+            {context.localBranchCommits && Object.entries(context.localBranchCommits).map(([key, value]) => {
 
+              if (key == branch.name) {
+                return value.map((commit, index) => {
+                  return (<CommitDetails branch={branch} key={index} getCommitChanges={getCommitChanges} checkout={checkoutCommit} commit={commit}></CommitDetails>)
+                })
+              }
+            })}
+          </div>
         </div>
         {hasNextPage && <GitUIButton className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
       </>

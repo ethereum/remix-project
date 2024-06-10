@@ -18,7 +18,7 @@ export const Branches = () => {
 
   return (
     <>
-      <div className="pt-1">
+      <div data-id='branches-panel-content' className="pt-1">
         {context.branches && context.branches.length ?
           <div>
             {context.branches && context.branches.filter((branch, index) => !branch.remote).map((branch, index) => {

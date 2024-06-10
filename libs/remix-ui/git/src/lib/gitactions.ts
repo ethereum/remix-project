@@ -534,7 +534,7 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
     const userFetched = await loadGitHubUserFromToken()
     if (!userFetched) {
       if (credentials.username && credentials.email) {
-        await plugin.call('notification', 'alert' , {
+        await plugin.call('notification', 'alert', {
           title: 'Error',
           id: 'github-credentials-error',
           message: `Could not retreive the user from GitHub. You can continue to use the app, but you will not be able to push or pull.`
@@ -632,7 +632,7 @@ export const loadGitHubUserFromToken = async () => {
 }
 
 export const statusMatrix = async (filepaths: string[]) => {
-  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.']});
+  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.'] });
   const result = (matrix || []).map((x) => {
     return {
       filename: `/${x.shift()}`,
@@ -748,9 +748,16 @@ export const fetchBranch = async (branch: branch, page: number) => {
   if (page == 1) {
     dispatch(resetRemoteBranchCommits({ branch }))
   }
-  const { owner, repo } = await getRepoDetails(branch.remote.url);
-  const rc = await plugin.call('dgitApi', 'remotecommits', { token, owner: owner, repo: repo, branch: branch.name, length, page });
-  dispatch(setRemoteBranchCommits({ branch, commits: rc }))
+  try {
+    const { owner, repo } = await getRepoDetails(branch.remote.url);
+    const rc = await plugin.call('dgitApi', 'remotecommits', { token, owner: owner, repo: repo, branch: branch.name, length, page });
+    dispatch(setRemoteBranchCommits({ branch, commits: rc }))
+  } catch (e) {
+    sendToGitLog({
+      type: 'error',
+      message: `Error fetching remote commits: ${e.message}`
+    })
+  }
   return
 }
 
