@@ -156,7 +156,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column pt-3">
         <ThemeContext.Provider value={themeFilter}>
           <div className="pt-3">
-            <div className="d-flex flex-row align-items-center mb-3 flex-nowrap">
+            <div className="d-flex flex-row align-items-center mb-3 flex-wrap">
               {workspaceTemplates.slice(0, 3).map((template, index) => (
                 <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="top-start" key={`${template.gsID}-${template.workspaceTitle}-${index}`}>
                   <button
@@ -172,7 +172,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
                 </CustomTooltip>
               ))}
             </div>
-            <div className="d-flex flex-row align-items-center mb-2 flex-nowrap">
+            <div className="d-flex flex-row align-items-center mb-2 flex-wrap">
               {workspaceTemplates.slice(3, workspaceTemplates.length).map((template, index) => (
                 <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="bottom-start" key={`${template.gsID}-${template.workspaceTitle}-${index}`}>
                   <button
