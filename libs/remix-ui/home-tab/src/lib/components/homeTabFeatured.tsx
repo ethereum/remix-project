@@ -13,9 +13,9 @@ function HomeTabFeatured() {
 
   return (
     <div className="pt-3 pl-2" id="hTFeaturedeSection">
-      <label style={{ fontSize: '1.2rem' }}>
+      {/* <label style={{ fontSize: '1.2rem' }}>
         <FormattedMessage id="home.featured" />
-      </label>
+      </label> */}
       <div className="mb-2 remix_ui-carousel-container">
         <div className="w-100 d-flex flex-column rounded-3 remix_ui-carouselbox">
           <ThemeContext.Provider value={themeFilter}>

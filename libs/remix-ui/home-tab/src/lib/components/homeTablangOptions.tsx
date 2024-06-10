@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Dropdown, DropdownButton } from 'react-bootstrap'
 import DropdownItem from 'react-bootstrap/DropdownItem'
 import { localeLang } from './types/carouselTypes'
+import { FormattedMessage } from 'react-intl'
 
 export function LanguageOptions({ plugin }: { plugin: any }) {
   const [langOptions, setLangOptions] = useState<string>()
@@ -24,7 +25,11 @@ export function LanguageOptions({ plugin }: { plugin: any }) {
 
   return (
     <>
-      <div style={{ position: 'absolute', right: "1rem", paddingTop: "0.4rem" }}>
+      {/* <div className="" style={{ position: 'absolute', right: "1rem", paddingTop: "0.4rem" }}> */}
+      <div className="d-flex justify-content-between w-100 align-items-center">
+        <label style={{ fontSize: '1.2rem' }}>
+          <FormattedMessage id="home.featured" />
+        </label>
         <Dropdown>
           <Dropdown.Toggle title={langOptions} id="languagedropdown" size="sm" style={{ backgroundColor: 'var(--secondary)', color: 'var(--text)' }}>
             {langOptions}
