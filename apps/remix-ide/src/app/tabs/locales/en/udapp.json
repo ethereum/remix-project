@@ -80,6 +80,15 @@
   "udapp.pinnedAt": "Pinned at",
   "udapp.filePath": "File path",
 
+  "udapp.solScan.iconTooltip": "Click to scan this contract for vulnerabilities using third-party SolidityScan [BETA]",
+  "udapp.solScan.modalTitle": "Permission to share code",
+  "udapp.solScan.modalMessage": "To scan the contract for vulnerabilities & possible risks, smart contract code will be shared to third-party SolidityScan (https://solidityscan.com/).\n\n Would you like to continue?",
+  "udapp.solScan.modalOkLabel": "Continue",
+  "udapp.solScan.modalCancelLabel": "Cancel",
+  "udapp.solScan.errModalTitle": "Scan error",
+  "udapp.solScan.successModalTitle": "Scan result",
+  
+
   "udapp._comment_recorderCardUI.tsx": "libs/remix-ui/run-tab/src/lib/components/recorderCardUI.tsx",
   "udapp.transactionsRecorded": "Transactions recorded",
   "udapp.transactionsCountTooltip": "The number of recorded transactions",

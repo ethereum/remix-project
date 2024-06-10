@@ -136,10 +136,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
           if (!etherscanKey) etherscanKey = '2HKUX5ZVASZIKWJM8MIQVCRUVZ6JAWT531'
           const networks = [
             { id: 1, name: 'mainnet' },
-            { id: 3, name: 'ropsten' },
-            { id: 4, name: 'rinkeby' },
-            { id: 42, name: 'kovan' },
-            { id: 5, name: 'goerli' }
+            { id: 11155111, name: 'sepolia' }
           ]
           let found = false
           const workspaceName = 'code-sample'
