@@ -8,6 +8,7 @@ import { ModalTypes } from "@remix-ui/app";
 import { setFileDecorators } from "./pluginActions";
 import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi } from "@remix-api";
+import { file } from "jszip";
 
 export const fileStatuses = [
   ["new,untracked", 0, 2, 0], // new, untracked
@@ -202,7 +203,12 @@ export const commit = async (message: string = "") => {
 
 export const addall = async (files: fileStatusResult[]) => {
   try {
-    const filesToAdd = files.map(f => removeSlash(f.filename))
+    const filesToAdd = files
+      .filter(f => !f.statusNames.includes('deleted'))
+      .map(f => removeSlash(f.filename))
+    const filesToRemove = files
+      .filter(f => f.statusNames.includes('deleted'))
+      .map(f => removeSlash(f.filename))
     try {
       add({ filepath: filesToAdd })
     } catch (e) { }
@@ -210,6 +216,10 @@ export const addall = async (files: fileStatusResult[]) => {
       type: 'success',
       message: `Added all files to git`
     })
+
+    try {
+      filesToRemove.map(f => rm({ filepath: f }))
+    } catch (e) { }
 
   } catch (e) {
     plugin.call('notification', 'toast', `${e}`)
@@ -632,7 +642,7 @@ export const loadGitHubUserFromToken = async () => {
 }
 
 export const statusMatrix = async (filepaths: string[]) => {
-  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.']});
+  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.'] });
   const result = (matrix || []).map((x) => {
     return {
       filename: `/${x.shift()}`,

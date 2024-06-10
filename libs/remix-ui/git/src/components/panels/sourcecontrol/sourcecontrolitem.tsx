@@ -46,8 +46,10 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
       {status && status.indexOf("added") === -1 ? <></> : <span>A</span>}
       {status && status.indexOf("untracked") === -1 ? <></> : <span>U</span>}
     </>)
-
   }
+
+  if(!file.statusNames || file.statusNames.length === 0) return null
+
   return (<>
     <div data-status={file.statusNames.join('-')} data-file={file.filename} className="d-flex w-100 d-flex flex-row align-items-center">
       <div className='pointer gitfile long-and-truncated' onClick={async () => await fileClick(file)}>

@@ -8,6 +8,7 @@ let gitserver: ChildProcess
 / uses the git-http-backend package to create a git server ( if needed kill the server: kill -9 $(sudo lsof -t -i:6868)  )
 / GROUP 1: file operations PUSH PULL COMMIT SYNC FETCH CLONE ADD
 / GROUP 2: branch operations CREATE & PUBLISH
+/ GROUP 3: file operations rename delete
 */
 
 module.exports = {
@@ -23,14 +24,14 @@ module.exports = {
         })
     },
 
-    'run server #group1 #group2': function (browser: NightwatchBrowser) {
+    'run server #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser.perform(async (done) => {
             gitserver = await spawnGitServer('/tmp/')
             console.log('working directory', process.cwd())
             done()
         })
     },
-    'Update settings for git #group1 #group2': function (browser: NightwatchBrowser) {
+    'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="initgit-btn"]')
@@ -41,7 +42,7 @@ module.exports = {
             .modalFooterOKClick('github-credentials-error')
             .pause(2000)
     },
-    'clone a repo #group1 #group2': function (browser: NightwatchBrowser) {
+    'clone a repo #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="clone-panel"]')
             .click('*[data-id="clone-panel"]')
@@ -55,7 +56,7 @@ module.exports = {
 
     // GROUP 1
 
-    'check file added #group1': function (browser: NightwatchBrowser) {
+    'check file added #group1 #group3': function (browser: NightwatchBrowser) {
         browser.
             addFile('test.txt', { content: 'hello world' }, 'README.md')
             .clickLaunchIcon('dgit')
@@ -172,6 +173,40 @@ module.exports = {
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest2.txt"]')
     },
+    
+    // group 3
+    'rename a file #group3': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('filePanel')
+            .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.txt"]')
+            .click('*[data-id="treeViewLitreeViewItemtest.txt"]')
+            .renamePath('test.txt', 'test_rename', 'test_rename.txt')
+            .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest_rename.txt"]')
+            .pause(1000)
+    },
+    'stage renamed file #group3': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('dgit')
+            .waitForElementVisible({
+                selector: "//*[@data-status='deleted-unstaged' and @data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible('*[data-id="addToGitChangestest.txt"]')
+            .waitForElementVisible({
+                selector: "//*[@data-status='new-untracked' and @data-file='/test_rename.txt']",
+                locateStrategy: 'xpath'
+            })
+            .click('*[data-id="sourcecontrol-add-all"]')
+            .waitForElementVisible({
+                selector: "//*[@data-status='deleted-staged' and @data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: "//*[@data-status='added-staged' and @data-file='/test_rename.txt']",
+                locateStrategy: 'xpath'
+            })
+    },
+
     // GROUP 2 
     'create a branch #group2': function (browser: NightwatchBrowser) {
         browser
