@@ -197,6 +197,7 @@ module.exports = {
                 locateStrategy: 'xpath'
             })
             .click('*[data-id="sourcecontrol-add-all"]')
+            .pause(2000)
             .waitForElementVisible({
                 selector: "//*[@data-status='deleted-staged' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
@@ -210,6 +211,7 @@ module.exports = {
         browser
 
             .click('*[data-id="unDoStagedtest.txt"]')
+            .pause(1000)
             .waitForElementNotPresent({
                 selector: "//*[@data-file='/test.txt']",
                 locateStrategy: 'xpath'
