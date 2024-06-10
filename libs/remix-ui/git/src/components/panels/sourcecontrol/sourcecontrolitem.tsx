@@ -48,7 +48,7 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
     </>)
   }
 
-  if(!file.statusNames || file.statusNames.length === 0) return null
+  if (!file.statusNames || file.statusNames.length === 0) return null
 
   return (<>
     <div data-status={file.statusNames.join('-')} data-file={file.filename} className="d-flex w-100 d-flex flex-row align-items-center">

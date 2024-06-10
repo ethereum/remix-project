@@ -22,23 +22,23 @@ export const SourceControlItemButtons = (props: SourceControlItemButtonsProps) =
       return <>
 
         {status && status.indexOf("modified") === -1 ? <></> :
-          <button 
+          <button
             data-id={`unDo${group.name}${path.basename(file.filename)}`}
             onClick={async () => await actions.checkoutfile(file.filename)} className='btn btn-sm btn-secondary mr-1 '>
             <FontAwesomeIcon icon={faUndo} className="" /></button>
         }
         {status && status.indexOf("deleted") === -1 ? <></> :
-          <button 
+          <button
             data-id={`unDo${group.name}${path.basename(file.filename)}`}
             onClick={async () => {
-            await actions.checkoutfile(file.filename)
-            await actions.add({ filepath: file.filename })  
-          }} className='btn btn-sm btn-secondary mr-1 '>
+              await actions.checkoutfile(file.filename)
+              await actions.add({ filepath: file.filename })
+            }} className='btn btn-sm btn-secondary mr-1 '>
             <FontAwesomeIcon icon={faUndo} className="" /></button>
         }
         {status && status.indexOf("deleted") !== -1 ? <></> :
-          <button data-id={`unStage${group.name}${path.basename(file.filename)}`} 
-          onClick={async () => await actions.rm({ filepath: file.filename })} className='btn btn-sm btn-secondary mr-1 '>
+          <button data-id={`unStage${group.name}${path.basename(file.filename)}`}
+            onClick={async () => await actions.rm({ filepath: file.filename })} className='btn btn-sm btn-secondary mr-1 '>
             <FontAwesomeIcon icon={faMinus} className="" /></button>
         }
 
@@ -51,7 +51,7 @@ export const SourceControlItemButtons = (props: SourceControlItemButtonsProps) =
           <><button onClick={async () => await actions.checkoutfile(file.filename)} data-id={`undo${group.name}${path.basename(file.filename)}`} className='btn btn-sm btn-secondary mr-1 '>
             <FontAwesomeIcon icon={faUndo} className="" />
           </button><button data-id={`addToGit${group.name}${path.basename(file.filename)}`} onClick={async () => await actions.rm({ filepath: file.filename })} className='btn btn-sm btn-secondary mr-1 '>
-              <FontAwesomeIcon icon={faPlus} className="" /></button></>
+            <FontAwesomeIcon icon={faPlus} className="" /></button></>
         }
         {status && status.indexOf("modified") === -1 ? <></> :
           <button onClick={async () => await actions.checkoutfile(file.filename)} data-id={`undo${group.name}${path.basename(file.filename)}`} className='btn btn-sm btn-secondary mr-1 '>
