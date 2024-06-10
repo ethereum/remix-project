@@ -20,15 +20,15 @@ export const PushPull = () => {
   useEffect(() => {
     setRemoteBranch(context.currentBranch.name)
     setLocalBranch(context.currentBranch.name)
-   
-    let currentUpstreamIsInRemotes = context.upstream && context.remotes.find(r => r.name === context.upstream.name)
+
+    const currentUpstreamIsInRemotes = context.upstream && context.remotes.find(r => r.name === context.upstream.name)
     if (!context.upstream || !currentUpstreamIsInRemotes) {
       if (context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.name) {
         actions.setUpstreamRemote(context.currentBranch.remote)
       } else {
         if (context.remotes && context.remotes.length > 0) {
           actions.setUpstreamRemote(context.remotes[0])
-        } else{
+        } else {
           actions.setUpstreamRemote(null)
         }
       }
