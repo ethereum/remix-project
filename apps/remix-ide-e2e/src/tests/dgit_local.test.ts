@@ -221,6 +221,7 @@ module.exports = {
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.txt"]')
     },
 
+
     // GROUP 2 
     'create a branch #group2': function (browser: NightwatchBrowser) {
         browser
@@ -232,8 +233,15 @@ module.exports = {
             .waitForElementVisible('*[data-id="branches-current-branch-testbranch"]')
             .pause(1000)
     },
+    'check if the branch is in the filePanel #group2': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('filePanel')
+            .click('[data-id="workspaceGitBranchesDropdown"]')
+            .expect.element('[data-id="workspaceGit-testbranch"]').text.to.contain('✓ ')
+    },
     'publish the branch #group2': function (browser: NightwatchBrowser) {
         browser
+            .clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
             .click('*[data-id="sourcecontrol-panel"]')
             .pause(1000)
