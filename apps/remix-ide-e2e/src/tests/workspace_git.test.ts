@@ -39,7 +39,7 @@ module.exports = {
       .setValue('[data-id="settingsTabGithubEmail"]', 'remix@circleci.com')
       .click('[data-id="settingsTabSaveGistToken"]')
   },
- 
+
 
   'Should create and initialize a GIT repository #group1': function (browser: NightwatchBrowser) {
     browser
@@ -65,13 +65,13 @@ module.exports = {
       clickLaunchIcon('dgit')
       .click('*[data-id="commits-panel"]')
       .waitForElementPresent({
-          selector: '//*[@data-id="commits-current-branch-main"]//*[@data-id="commit-summary-Initial commit: remix template blank-"]',
-          locateStrategy: 'xpath'
+        selector: '//*[@data-id="commits-current-branch-main"]//*[@data-id="commit-summary-Initial commit: remix template blank-"]',
+        locateStrategy: 'xpath'
       })
       .click('*[data-id="branches-panel"]')
       .waitForElementPresent({
-          selector: '//*[@data-id="branches-panel-content"]//*[@data-id="branches-current-branch-main"]',
-          locateStrategy: 'xpath'
+        selector: '//*[@data-id="branches-panel-content"]//*[@data-id="branches-current-branch-main"]',
+        locateStrategy: 'xpath'
       })
   },
 
@@ -403,8 +403,93 @@ module.exports = {
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Counter is BaseHook {`) !== -1,
           'Incorrect content')
+      }).pause()
+  },
+
+  'Should create Remix default workspace with files #group5': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      // eslint-disable-next-line dot-notation
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=ozerc20]')
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'new_workspace' })
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .waitForElementVisible('*[data-id="treeViewDivDraggableItemtests/MyToken_test.sol"]')
+  },
+  'Update settings for git #group5': function (browser: NightwatchBrowser) {
+    browser.
+      clickLaunchIcon('dgit')
+      .waitForElementVisible('*[data-id="initgit-btn"]')
+      .click('*[data-id="initgit-btn"]')
+      .setValue('*[data-id="gitubUsername"]', 'git')
+      .setValue('*[data-id="githubEmail"]', 'git@example.com')
+      .click('*[data-id="saveGitHubCredentials"]')
+      .modalFooterOKClick('github-credentials-error')
+  },
+  'check source controle panel #group5': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible({
+        selector: "//*[@data-status='new-untracked' and @data-file='/tests/MyToken_test.sol']",
+        locateStrategy: 'xpath'
       })
   },
+  'switch workspace and check git #group5': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .switchWorkspace('default_workspace')
+  },
+  'check source controle panel again #group5': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('dgit')
+      .waitForElementVisible('*[data-id="initgit-btn"]')
+      .click('*[data-id="initgit-btn"]')
+      .waitForElementVisible({
+        selector: "//*[@data-status='new-untracked' and @data-file='/tests/storage.test.js']",
+        locateStrategy: 'xpath'
+      })
+  },
+  'Should create a git workspace (uniswapV4Template) #group5': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
+      .click('select[id="wstemplate"]')
+      .click('select[id="wstemplate"] option[value=uniswapV4Template]')
+      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .pause(100)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
+      .openFile('src')
+      .openFile('src/Counter.sol')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`contract Counter is BaseHook {`) !== -1,
+          'Incorrect content')
+      })
+  },
+  'check source controle panel for uniswap #group5': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('dgit')
+      .click('*[data-id="remotes-panel"]')
+      .waitForElementVisible('*[data-id="remotes-panel-content"]')
+      .click({
+          selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin"]',
+          locateStrategy: 'xpath'
+      })
+      .waitForElementVisible({
+        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin" and contains(.,"v4-template")]',
+        locateStrategy: 'xpath'
+      })
+  },
+
+
 
   // GIT WORKSPACE E2E ENDS
 
