@@ -27,22 +27,7 @@ export function UniversalDappUI(props: UdappProps) {
   const [calldataValue, setCalldataValue] = useState<string>('')
   const [evmBC, setEvmBC] = useState(null)
   const [instanceBalance, setInstanceBalance] = useState(0)
-  // const [solcVersion, setSolcVersion] = useState({ version: '', canReceive: true })
 
-  // const getVersion = () => {
-  //   let version = ''
-  //   try {
-  //     version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1)
-  //     if (parseFloat(version) < 0.6) {
-  //       setSolcVersion({ version: version, canReceive: false })
-  //     }
-  //     setSolcVersion({ version: version, canReceive: false })
-  //   } catch (e) {
-  //     version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1)
-  //     console.log(e)
-  //   }
-  //   return version
-  // }
   useEffect(() => {
     if (!props.instance.abi) {
       const abi = txHelper.sortAbiFunction(props.instance.contractData.abi)
