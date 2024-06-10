@@ -37,10 +37,6 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 1200000
       })
-      .openFile('src')
-      .openFile('src/snekmate')
-      .openFile('src/snekmate/tokens')
-      .openFile('src/snekmate/tokens/ERC721.vy')
   },
   // 'Add vyper file to run tests #group1': function (browser: NightwatchBrowser) {
   //   browser.addFile('TestBallot.sol', sources[0]['TestBallot.sol'])
