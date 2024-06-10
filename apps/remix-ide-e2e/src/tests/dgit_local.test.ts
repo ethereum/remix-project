@@ -51,7 +51,6 @@ module.exports = {
             .click('*[data-id="clone-btn"]')
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
-
     },
 
     // GROUP 1
@@ -198,8 +197,9 @@ module.exports = {
         browser.assert.ok(branches.includes('testbranch'))
     },
     'add file to new branch #group2': function (browser: NightwatchBrowser) {
-        browser.
-            addFile('test.txt', { content: 'hello world' }, 'README.md')
+        browser
+            .pause(1000)
+            .addFile('test.txt', { content: 'hello world' }, 'README.md')
             .clickLaunchIcon('dgit')
             .waitForElementVisible({
                 selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",

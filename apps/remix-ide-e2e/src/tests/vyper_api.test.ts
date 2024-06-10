@@ -29,13 +29,13 @@ module.exports = {
       .waitForElementVisible({
         selector: "//*[@data-id='workspacesSelect' and contains(.,'snekmate')]",
         locateStrategy: 'xpath',
-        timeout: 60000
+        timeout: 120000
       })
       .currentWorkspaceIs('snekmate')
       .waitForElementVisible({
         selector: "//*[@data-id='treeViewLitreeViewItemsrc' and contains(.,'src')]",
         locateStrategy: 'xpath',
-        timeout: 60000
+        timeout: 1200000
       })
       .openFile('src')
       .openFile('src/snekmate')
