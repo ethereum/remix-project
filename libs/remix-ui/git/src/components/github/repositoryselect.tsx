@@ -64,7 +64,7 @@ const RepositorySelect = (props: RepositorySelectProps) => {
   };
 
   return (
-    <><Button onClick={fetchRepositories} className="w-100 mt-1">
+    <><Button data-id='fetch-repositories' onClick={fetchRepositories} className="w-100 mt-1">
       <i className="fab fa-github mr-1"></i>Fetch Repositories from GitHub
     </Button>
     {
@@ -72,6 +72,7 @@ const RepositorySelect = (props: RepositorySelectProps) => {
         <Select
           options={repoOtions}
           className="mt-1"
+          id="repository-select"
           onChange={(e: any) => selectRepo(e)}
           theme={selectTheme}
           styles={selectStyles}

@@ -64,37 +64,39 @@ export const Clone = () => {
 
   return (
     <>
-      <InputGroup className="mb-1">
-        <FormControl data-id="clone-url" id="cloneulr" placeholder="url" name='cloneurl' value={cloneUrl} onChange={e => onGitHubCloneUrlChange(e.target.value)} aria-describedby="urlprepend" />
-      </InputGroup>
+      <div data-id="clone-panel-content">
+        <InputGroup className="mb-1">
+          <FormControl data-id="clone-url" id="cloneulr" placeholder="url" name='cloneurl' value={cloneUrl} onChange={e => onGitHubCloneUrlChange(e.target.value)} aria-describedby="urlprepend" />
+        </InputGroup>
 
-      <input name='clonebranch' onChange={e => onCloneBranchChange(e.target.value)} value={cloneBranch} className="form-control mb-1 mt-2" placeholder="branch" type="text" id="clonebranch" />
-      <GitUIButton disabledCondition={!cloneUrl} data-id='clone-btn' className='btn btn-primary mt-1 w-100' onClick={async () => {
-        clone()
-      }}>clone</GitUIButton>
-      <hr />
-      <SelectAndCloneRepositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} />
-      <hr />
-      <label>options</label>
-      <InputGroup className="mt-1 mb-1">
-        <InputGroup.Prepend>
-          <InputGroup.Text id="clonedepthprepend">
-                        --depth
-          </InputGroup.Text>
-        </InputGroup.Prepend>
-        <FormControl id="clonedepth" type="number" value={cloneDepth} onChange={e => onDepthChange(parseInt(e.target.value))} aria-describedby="clonedepthprepend" />
-      </InputGroup>
+        <input name='clonebranch' onChange={e => onCloneBranchChange(e.target.value)} value={cloneBranch} className="form-control mb-1 mt-2" placeholder="branch" type="text" id="clonebranch" />
+        <GitUIButton disabledCondition={!cloneUrl} data-id='clone-btn' className='btn btn-primary mt-1 w-100' onClick={async () => {
+          clone()
+        }}>clone</GitUIButton>
+        <hr />
+        <SelectAndCloneRepositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} />
+        <hr />
+        <label>options</label>
+        <InputGroup className="mt-1 mb-1">
+          <InputGroup.Prepend>
+            <InputGroup.Text id="clonedepthprepend">
+              --depth
+            </InputGroup.Text>
+          </InputGroup.Prepend>
+          <FormControl id="clonedepth" type="number" value={cloneDepth} onChange={e => onDepthChange(parseInt(e.target.value))} aria-describedby="clonedepthprepend" />
+        </InputGroup>
 
-      <RemixUiCheckbox
-        id={`cloneAllBranches`}
-        inputType="checkbox"
-        name="cloneAllBranches"
-        label={`Clone all branches`}
-        onClick={() => onAllBranchChange()}
-        checked={cloneAllBranches}
-        onChange={() => { }}
-      />
+        <RemixUiCheckbox
+          id={`cloneAllBranches`}
+          inputType="checkbox"
+          name="cloneAllBranches"
+          label={`Clone all branches`}
+          onClick={() => onAllBranchChange()}
+          checked={cloneAllBranches}
+          onChange={() => { }}
+        />
 
-      <hr></hr>
+        <hr></hr>
+      </div>
     </>)
 }
