@@ -23,7 +23,17 @@ const DragBar = (props: IRemixDragBarUi) => {
     if (props.hidden) {
       setDragBarPosX(offset)
     } else if (props.layoutPosition === 'left') {
-      setDragBarPosX(props.minWidth + 50)
+      const checkResolution = () => {
+        const width = window.innerWidth
+        const height = window.innerHeight
+
+        if (height < 781 && width < 1150) {
+          setDragBarPosX(props.minWidth + 50)
+        } else {
+          setDragBarPosX(props.minWidth)
+        }
+      }
+      checkResolution()
       props.refObject.current.style.width = props.minWidth + 'px'
     } else if (props.layoutPosition === 'right') {
       setDragBarPosX(offset)
