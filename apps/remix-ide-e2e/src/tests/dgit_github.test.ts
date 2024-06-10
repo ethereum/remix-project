@@ -13,7 +13,7 @@ module.exports = {
             done()
         })
     },
-    'Update settings for git #group1': function (browser: NightwatchBrowser) {
+    'Update settings for git #group1 #group2': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="initgit-btn"]')
@@ -23,7 +23,7 @@ module.exports = {
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .click('*[data-id="saveGitHubCredentials"]')
     },
-    'check if the settings are loaded #group1': function (browser: NightwatchBrowser) {
+    'check if the settings are loaded #group1 #group2': function (browser: NightwatchBrowser) {
         browser.
             click('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
@@ -94,11 +94,11 @@ module.exports = {
             .waitForElementVisible({
                 selector: "//div[@id='commands-local-branch-select']//div[contains(@class, 'singleValue') and contains(text(), 'master')]",
                 locateStrategy: 'xpath'
-            })  
+            })
     },
     'check the remotes #group1': function (browser: NightwatchBrowser) {
         browser
-            
+
             .click('*[data-id="remotes-panel"]')
             .waitForElementVisible('*[data-id="remotes-panel-content"]')
             .click({
@@ -188,6 +188,125 @@ module.exports = {
             .waitForElementVisible({
                 selector: "//div[@id='commands-local-branch-select']//div[contains(@class, 'singleValue') and contains(text(), 'links')]",
                 locateStrategy: 'xpath'
-            })   
-    }
+            })
+    },
+
+    'add a remote #group2': function (browser: NightwatchBrowser) {
+        browser
+            .pause(1000)
+            .click('*[data-id="remotes-panel"]')
+            .click({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="fetch-repositories"]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@id="repository-select"]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@id="repository-select"]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[contains(text(), "awesome-remix")]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="remotes-panel-content"]//*[contains(text(), "awesome-remix")]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-panel-remotename"]',
+                locateStrategy: 'xpath'
+            })
+            .setValue({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-panel-remotename"]',
+                locateStrategy: 'xpath'
+            }, 'newremote')
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-panel-addremote"]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-panel-addremote"]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-newremote"]',
+                locateStrategy: 'xpath'
+            })
+    },
+    'check the commands panel for newremote #group2': function (browser: NightwatchBrowser) {
+        browser
+            .pause(1000)
+            .click('*[data-id="commands-panel"]')
+            .waitForElementVisible({
+                selector: "//div[@id='commands-remote-branch-select']//div[contains(@class, 'singleValue') and contains(text(), 'main')]",
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: "//div[@id='commands-remote-origin-select']//div[contains(@class, 'singleValue') and contains(text(), 'newremote')]",
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: "//div[@id='commands-local-branch-select']//div[contains(@class, 'singleValue') and contains(text(), 'main')]",
+                locateStrategy: 'xpath'
+            })
+            .getAttribute({
+                selector: '//*[@data-id="sourcecontrol-pull"]',
+                locateStrategy: 'xpath'
+            }, 'disabled', (result) => {
+                if (result.value) {
+                    browser.assert.fail('Button is disabled')
+                } else {
+                    browser.assert.ok(true)
+                }
+            })
+    },
+    'remove the remove #group2': function (browser: NightwatchBrowser) {
+        browser
+            .pause(1000)
+            .click('*[data-id="remotes-panel"]')
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-rm-newremote"]',
+                locateStrategy: 'xpath'
+            })
+            .pause(2000)
+            .click({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-rm-newremote"]',
+                locateStrategy: 'xpath'
+            })
+            .pause(1000)
+            .waitForElementNotPresent({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-newremote"]',
+                locateStrategy: 'xpath'
+            })
+    },
+    'check the commands panel for removed remote #group2': function (browser: NightwatchBrowser) {
+        browser
+            .pause(1000)
+            .click('*[data-id="commands-panel"]')
+            .waitForElementVisible({
+                selector: "//div[@id='commands-remote-branch-select']//div[contains(@class, 'singleValue') and contains(text(), 'main')]",
+                locateStrategy: 'xpath'
+            })
+            .waitForElementNotPresent({
+                selector: "//div[@id='commands-remote-origin-select']//div[contains(@class, 'singleValue') and contains(text(), 'newremote')]",
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: "//div[@id='commands-local-branch-select']//div[contains(@class, 'singleValue') and contains(text(), 'main')]",
+                locateStrategy: 'xpath'
+            })
+            .getAttribute({
+                selector: '//*[@data-id="sourcecontrol-pull"]',
+                locateStrategy: 'xpath'
+            }, 'disabled', (result) => {
+                if (result.value) {
+                    browser.assert.ok(true)
+                } else {
+                    browser.assert.fail('Button is not disabled')
+                }
+            })
+    },
 }

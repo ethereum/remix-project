@@ -68,11 +68,11 @@ export const RemotesImport = () => {
       <RepositorySelect select={selectRepo} />
 
       {repo ?
-        <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
+        <input data-id='remote-panel-remotename' placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
         : null}
 
       {repo && remoteName ?
-        <button data-id='clonebtn' className='btn btn-primary mt-1 w-100' onClick={async () => {
+        <button data-id='remote-panel-addremote' className='btn btn-primary mt-1 w-100' onClick={async () => {
           await addRemote()
         }}>add {remoteName}:{repo.full_name}</button> : null}
 
