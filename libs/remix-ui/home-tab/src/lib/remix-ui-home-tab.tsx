@@ -32,6 +32,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   }>({
     themeQuality: themes.light
   })
+  const [carouselWidth, setCarouselWidth] = useState('65%')
 
   useEffect(() => {
     plugin.call('theme', 'currentTheme').then((theme) => {
@@ -53,6 +54,23 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       })
     })
   }, [])
+
+  useEffect(() => {
+    const checkResolution = () => {
+      const width = window.innerWidth
+      const height = window.innerHeight
+
+      if (height < 781 && width < 1150) {
+        setCarouselWidth('70%')
+      }
+    }
+    checkResolution()
+
+    return () => {
+      checkResolution()
+    }
+  }, [])
+
   //  border-right
   return (
     <div className="d-flex flex-column w-100 h-100" data-id="remixUIHTAll">
