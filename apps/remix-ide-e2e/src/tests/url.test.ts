@@ -98,8 +98,7 @@ module.exports = {
       .pause(7000)
       .currentWorkspaceIs('code-sample')
       .waitForElementVisible('*[data-id=treeViewLitreeViewItemsepolia]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsepolia/0xdac17f958d2ee523a2206206994597c13d831ec7"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsepolia/0xdac17f958d2ee523a2206206994597c13d831ec7/MetaMultiSigWallet.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsepolia/0xdac17f958d2ee523a2206206994597c13d831ec7/contracts/MetaMultiSigWallet.sol"]')
       .getEditorValue((content) => {
         browser.assert.ok(content && content.indexOf(
           'contract MetaMultiSigWallet {') !== -1)
