@@ -80,7 +80,7 @@ export const GitUI = (props: IGitUi) => {
       setSetup(!(username && email))
     }
     checkconfig()
-  }, [gitState.gitHubAccessToken, gitState.gitHubUser, gitState.userEmails])
+  }, [gitState.gitHubAccessToken, gitState.gitHubUser, gitState.userEmails, gitState.commits, gitState.branches])
 
   useEffect(() => {
     if (!appLoaded) return

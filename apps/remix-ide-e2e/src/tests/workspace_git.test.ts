@@ -39,6 +39,7 @@ module.exports = {
       .setValue('[data-id="settingsTabGithubEmail"]', 'remix@circleci.com')
       .click('[data-id="settingsTabSaveGistToken"]')
   },
+ 
 
   'Should create and initialize a GIT repository #group1': function (browser: NightwatchBrowser) {
     browser
@@ -58,6 +59,20 @@ module.exports = {
       .pause(100)
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
       .waitForElementContainsText('[data-id="workspaceGitBranchesDropdown"]', 'main')
+  },
+  'check git for the commit #group1 #group2 #group3': function (browser: NightwatchBrowser) {
+    browser.
+      clickLaunchIcon('dgit')
+      .click('*[data-id="commits-panel"]')
+      .waitForElementPresent({
+          selector: '//*[@data-id="commits-current-branch-main"]//*[@data-id="commit-summary-Initial commit: remix template blank-"]',
+          locateStrategy: 'xpath'
+      })
+      .click('*[data-id="branches-panel"]')
+      .waitForElementPresent({
+          selector: '//*[@data-id="branches-panel-content"]//*[@data-id="branches-current-branch-main"]',
+          locateStrategy: 'xpath'
+      })
   },
 
   // CLONE REPOSITORY E2E START
@@ -311,66 +326,66 @@ module.exports = {
   },
   'When switching branches the submodules should disappear #group4': function (browser: NightwatchBrowser) {
     browser
-    .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
-    .click('[data-id="workspaceGitBranchesDropdown"]')
-    .waitForElementVisible('[data-id="custom-dropdown-menu"]')
-    .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/empty')
-    .waitForElementPresent('[data-id="workspaceGit-origin/empty"]')
-    .click('[data-id="workspaceGit-origin/empty"]')
-    .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemlibdeep"]')
-    .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
-    .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
+      .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
+      .click('[data-id="workspaceGitBranchesDropdown"]')
+      .waitForElementVisible('[data-id="custom-dropdown-menu"]')
+      .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/empty')
+      .waitForElementPresent('[data-id="workspaceGit-origin/empty"]')
+      .click('[data-id="workspaceGit-origin/empty"]')
+      .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemlibdeep"]')
+      .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
   },
   'When switching to main update the modules #group4': function (browser: NightwatchBrowser) {
     browser
-    .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
-    .click('[data-id="workspaceGitBranchesDropdown"]')
-    .waitForElementVisible('[data-id="custom-dropdown-menu"]')
-    .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/main')
-    .waitForElementPresent('[data-id="workspaceGit-origin/main"]')
-    .click('[data-id="workspaceGit-origin/main"]')
-    .waitForElementVisible('[data-id="updatesubmodules"]')
-    .click('[data-id="updatesubmodules"]')
-    .waitForElementPresent('.fa-spinner')
-    .waitForElementVisible({
-      selector: '*[data-id="treeViewLitreeViewItem.git"]',
-      timeout: 240000
-    })
-    .pause(2000)
-    // check recursive submodule
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
-    .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
-    .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2"]')
-    .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2"]')
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2/submodule2.ts"]')
-    // check test-branch-submodule-2 submodule
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
-    .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
-    .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2/submodule2.ts"]')
-    // check libdeep submodule
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep"]')
-    .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
-    .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2"]')
-    .click('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2"]')
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2/submodule2.ts"]')
-    // check libdeep2 submodule
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2"]')
-    .click('[data-id="treeViewDivtreeViewItemlibdeep2"]')
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive"]')
-    .click('[data-id="treeViewDivtreeViewItemlibdeep2/recursive"]')
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2"]')
-    .click('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2"]')
-    .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2/submodule2.ts"]')
+      .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
+      .click('[data-id="workspaceGitBranchesDropdown"]')
+      .waitForElementVisible('[data-id="custom-dropdown-menu"]')
+      .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/main')
+      .waitForElementPresent('[data-id="workspaceGit-origin/main"]')
+      .click('[data-id="workspaceGit-origin/main"]')
+      .waitForElementVisible('[data-id="updatesubmodules"]')
+      .click('[data-id="updatesubmodules"]')
+      .waitForElementPresent('.fa-spinner')
+      .waitForElementVisible({
+        selector: '*[data-id="treeViewLitreeViewItem.git"]',
+        timeout: 240000
+      })
+      .pause(2000)
+      // check recursive submodule
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2"]')
+      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2/submodule2.ts"]')
+      // check test-branch-submodule-2 submodule
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
+      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
+      .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2/submodule2.ts"]')
+      // check libdeep submodule
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep"]')
+      .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
+      .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2"]')
+      .click('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2/submodule2.ts"]')
+      // check libdeep2 submodule
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2"]')
+      .click('[data-id="treeViewDivtreeViewItemlibdeep2"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive"]')
+      .click('[data-id="treeViewDivtreeViewItemlibdeep2/recursive"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2"]')
+      .click('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2"]')
+      .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2/submodule2.ts"]')
   },
 
-   // GIT SUBMODULES E2E ENDS
+  // GIT SUBMODULES E2E ENDS
 
-   // GIT WORKSPACE E2E STARTS
+  // GIT WORKSPACE E2E STARTS
 
-   'Should create a git workspace (uniswapV4Template) #group4': function (browser: NightwatchBrowser) {
+  'Should create a git workspace (uniswapV4Template) #group4': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
@@ -389,7 +404,7 @@ module.exports = {
         browser.assert.ok(content.indexOf(`contract Counter is BaseHook {`) !== -1,
           'Incorrect content')
       })
-  }, 
+  },
 
   // GIT WORKSPACE E2E ENDS
 
