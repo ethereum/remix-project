@@ -23,7 +23,8 @@ const DragBar = (props: IRemixDragBarUi) => {
     if (props.hidden) {
       setDragBarPosX(offset)
     } else if (props.layoutPosition === 'left') {
-      setDragBarPosX(offset + props.refObject.current.offsetWidth)
+      setDragBarPosX(props.minWidth + 50)
+      props.refObject.current.style.width = props.minWidth + 'px'
     } else if (props.layoutPosition === 'right') {
       setDragBarPosX(offset)
     }
