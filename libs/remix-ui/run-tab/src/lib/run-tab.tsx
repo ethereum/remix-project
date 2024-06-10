@@ -85,13 +85,13 @@ export function RunTabUI(props: RunTabProps) {
   const getVersion = () => {
     let version = ''
     try {
-      version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1)
+      version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1) ?? 'v0.8.25'
       if (parseFloat(version) < 0.6) {
         setSolcVersion({ version: version, canReceive: false })
       }
       setSolcVersion({ version: version, canReceive: true })
     } catch (e) {
-      version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1)
+      version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1) ?? 'v0.8.25'
       console.log(e)
     }
     return version

@@ -32,23 +32,6 @@ export function ContractGUI(props: ContractGUIProps) {
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
   const intl = useIntl()
-  // const [solcVersion, setSolcVersion] = useState({ version: '', canReceive: true })
-
-  // const getVersion = () => {
-  //   let version = ''
-  //   try {
-  //     version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1)
-  //     if (parseFloat(version) < 0.6) {
-  //       setSolcVersion({ version: version, canReceive: false })
-  //     }
-  //     setSolcVersion({ version: version, canReceive: false })
-  //   } catch (e) {
-  //     version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1)
-  //     console.log(e)
-  //   }
-  //   return version
-  // }
-
   useEffect(() => {
     if (props.deployOption && Array.isArray(props.deployOption)) {
       if (props.deployOption[0] && props.deployOption[0].title === 'Deploy with Proxy' && props.deployOption[0].active) handleDeployProxySelect(true)
@@ -316,8 +299,8 @@ export function ContractGUI(props: ContractGUIProps) {
           <div className="d-flex p-0 wrapperElement" onClick={handleActionClick} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>
             <button
               className={`udapp_instanceButton text-nowrap overflow-hidden text-truncate ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
-              data-id={buttonOptions.dataId}
-              data-title={buttonOptions.title}
+              data-id={`${buttonOptions.dataId}firstbullseye`}
+              data-title={`${buttonOptions.title}bullseye`}
               disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !== '' && basicInput === '')}
             >
               {title}
