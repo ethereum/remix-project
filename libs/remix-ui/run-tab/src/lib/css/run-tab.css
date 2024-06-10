@@ -525,3 +525,8 @@
   width: 100%;
 }
 
+.remixui_runtabBalancelabel {
+  font-size: 0.688rem;
+  line-height: 0.75rem;
+  color: var(--runtab);
+}

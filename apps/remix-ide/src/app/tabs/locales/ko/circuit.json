@@ -1,0 +1,15 @@
+{
+  "circuit.compiler": "컴파일러",
+  "circuit.autoCompile": "자동 컴파일",
+  "circuit.hideWarnings": "경고 숨기기",
+  "circuit.advancedConfigurations": "고급 설정",
+  "circuit.compilerConfiguration": "컴파일러 설정",
+  "circuit.prime": "프라임",
+  "circuit.useConfigurationFile": "설정 파일 사용",
+  "circuit.compile": "컴파일",
+  "circuit.noFileSelected": "선택된 파일 없음",
+  "circuit.generateR1cs": "R1CS 생성",
+  "circuit.computeWitness": "\b증명 계산",
+  "circuit.signalInput": "시그널 입력",
+  "circuit.compute": "계산"
+}

@@ -17,6 +17,7 @@ export interface ModalDialogProps {
   cancelLabel?: string | JSX.Element,
   cancelFn?: () => void,
   modalClass?: string,
+  modalParentClass?: string
   showCancelIcon?: boolean,
   hide?: boolean,
   handleHide: (hideState?: boolean) => void,

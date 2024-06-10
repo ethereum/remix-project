@@ -6,7 +6,6 @@ import {Contract, compileContract} from './compiler'
 import {ExampleContract} from '../components/VyperResult'
 import EventEmitter from 'events'
 
-
 export type VyperComplierAddress = 'https://vyper2.remixproject.org/' | 'http://localhost:8000/'
 export class RemixClient extends PluginClient {
   private client = createClient<Api, Readonly<RemixApi>>(this)
@@ -66,11 +65,12 @@ export class RemixClient extends PluginClient {
       return
     }
     try {
+      // TODO: remove! no formatting required since already handled on server
       const formattedMessage = `
         ${message}
         can you explain why this error occurred and how to fix it?
       `
-      await this.client.call('openaigpt' as any, 'message', formattedMessage)
+      await this.client.call('solcoder' as any, 'error_explaining', message)
     } catch (err) {
       console.error('unable to askGpt')
       console.error(err)
