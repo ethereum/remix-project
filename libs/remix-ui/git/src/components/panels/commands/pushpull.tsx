@@ -135,6 +135,7 @@ export const PushPull = () => {
 
       <label>Local Branch</label>
       <Select
+        id='commands-local-branch-select'
         options={localBranchOptions}
         isDisabled={context.branches.length === 0}
         onChange={(e: any) => e && onLocalBranchChange(e.value)}
@@ -147,6 +148,7 @@ export const PushPull = () => {
 
       <label>Remote Branch</label>
       <Select
+        id='commands-remote-branch-select'
         options={remoteBranchOptions}
         isDisabled={context.branches.length === 0}
         onChange={(e: any) => e && onRemoteBranchChange(e.value)}
@@ -159,6 +161,7 @@ export const PushPull = () => {
 
       <label>Remote</label>
       <Select
+        id='commands-remote-origin-select'
         options={localRemotesOptions}
         isDisabled={context.remotes.length === 0}
         onChange={(e: any) => e && onRemoteChange(e.value)}
