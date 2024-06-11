@@ -5,9 +5,11 @@ import {PluginClient} from '@remixproject/plugin'
 import {Contract, compileContract} from './compiler'
 import {ExampleContract} from '../components/VyperResult'
 import EventEmitter from 'events'
+import { Plugin } from "@remixproject/engine";
+import { CustomRemixApi } from '@remix-api'
 
 export type VyperComplierAddress = 'https://vyper2.remixproject.org/' | 'http://localhost:8000/'
-export class RemixClient extends PluginClient {
+export class RemixClient extends PluginClient<any, CustomRemixApi> {
   private client = createClient<Api, Readonly<RemixApi>>(this)
   compilerUrl: VyperComplierAddress = 'https://vyper2.remixproject.org/'
   compilerOutput: any
@@ -80,15 +82,23 @@ export class RemixClient extends PluginClient {
   async cloneVyperRepo() {
     try {
       // @ts-ignore
-      this.call('notification', 'toast', 'cloning Snekmate Vyper repository...')
-      await this.call('manager', 'activatePlugin', 'dGitProvider')
+      this.call('notification', 'toast', 'cloning Snekmate Vyper repository...')     
       await this.call(
-        'dGitProvider',
+        'dgitApi',
         'clone',
-        {url: 'https://github.com/pcaversaccio/snekmate', token: null, branch: 'v0.0.5'},
-        // @ts-ignore
-        'snekmate'
+        {url: 'https://github.com/pcaversaccio/snekmate', token: null, branch: 'main', singleBranch: false, workspaceName: 'snekmate'},
       )
+
+      await this.call(
+        'dgitApi',
+        'checkout',
+        {
+          ref:'v0.0.5',
+          force: true,
+          refresh: true,
+        }
+      )
+            
       this.call(
         // @ts-ignore
         'notification',

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { isArray } from 'lodash'
-import Editor, { loader, Monaco } from '@monaco-editor/react'
+import Editor, { DiffEditor, loader, Monaco } from '@monaco-editor/react'
 import { AlertModal } from '@remix-ui/app'
 import { ConsoleLogs, QueryParams } from '@remix-project/remix-lib'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
@@ -135,6 +135,8 @@ export interface EditorUIProps {
   activated: boolean
   themeType: string
   currentFile: string
+  currentDiffFile: string
+  isDiff: boolean
   events: {
     onBreakPointAdded: (file: string, line: number) => void
     onBreakPointCleared: (file: string, line: number) => void
@@ -147,6 +149,8 @@ export interface EditorUIProps {
 export const EditorUI = (props: EditorUIProps) => {
   const intl = useIntl()
   const [, setCurrentBreakpoints] = useState({})
+  const [isDiff, setIsDiff] = useState(false)
+  const [isSplit, setIsSplit] = useState(true)
   const defaultEditorValue = `
   \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____ 
   \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
@@ -171,6 +175,8 @@ export const EditorUI = (props: EditorUIProps) => {
   const pasteCodeRef = useRef(false)
   const editorRef = useRef(null)
   const monacoRef = useRef<Monaco>(null)
+  const diffEditorRef = useRef<any>(null)
+
   const currentFunction = useRef('')
   const currentFileRef = useRef('')
   const currentUrlRef = useRef('')
@@ -326,11 +332,19 @@ export const EditorUI = (props: EditorUIProps) => {
   })
 
   useEffect(() => {
-    if (!editorRef.current || !props.currentFile) return
+    if (!(editorRef.current || diffEditorRef.current ) || !props.currentFile) return
     currentFileRef.current = props.currentFile
     props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => (currentUrlRef.current = url.file))
 
     const file = editorModelsState[props.currentFile]
+
+    props.isDiff && diffEditorRef && diffEditorRef.current && diffEditorRef.current.setModel({
+      original: editorModelsState[props.currentDiffFile].model,
+      modified: file.model
+    })
+
+    props.isDiff && diffEditorRef.current.getModifiedEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
+
     editorRef.current.setModel(file.model)
     editorRef.current.updateOptions({
       readOnly: editorModelsState[props.currentFile].readOnly,
@@ -348,7 +362,7 @@ export const EditorUI = (props: EditorUIProps) => {
     } else if (file.language === 'toml') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-toml')
     }
-  }, [props.currentFile])
+  }, [props.currentFile, props.isDiff])
 
   const convertToMonacoDecoration = (decoration: lineText | sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
     if (typeOfDecoration === 'sourceAnnotationsPerFile') {
@@ -520,6 +534,7 @@ export const EditorUI = (props: EditorUIProps) => {
     for (const filePath in allMarkersPerfile) {
       const model = editorModelsState[filePath]?.model
       if (model) {
+        console.log('MONACO REF CURRENT', monacoRef.current)
         monacoRef.current.editor.setModelMarkers(model, from, allMarkersPerfile[filePath])
       }
     }
@@ -545,6 +560,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.getValue = (uri: string) => {
     if (!editorRef.current) return
+
     const model = editorModelsState[uri]?.model
     if (model) {
       return model.getValue()
@@ -614,10 +630,21 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
+  function setReducerListener() {
+    if (diffEditorRef.current && diffEditorRef.current.getModifiedEditor() && editorRef.current){
+      reducerListener(props.plugin, dispatch, monacoRef.current, [diffEditorRef.current.getModifiedEditor(), editorRef.current], props.events)
+    }
+  }
+
+  function handleDiffEditorDidMount(editor: any) {
+    diffEditorRef.current = editor
+    setReducerListener()
+  }
+
   function handleEditorDidMount(editor) {
     editorRef.current = editor
     defineAndSetTheme(monacoRef.current)
-    reducerListener(props.plugin, dispatch, monacoRef.current, editorRef.current, props.events)
+    setReducerListener()
     props.events.onEditorMounted()
     editor.onMouseUp((e) => {
       // see https://microsoft.github.io/monaco-editor/typedoc/enums/editor.MouseTargetType.html
@@ -928,8 +955,22 @@ export const EditorUI = (props: EditorUIProps) => {
 
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
+
+      <DiffEditor
+        originalLanguage={'remix-solidity'}
+        modifiedLanguage={'remix-solidity'}
+        original={''}
+        modified={''}
+        onMount={handleDiffEditorDidMount}
+        options={{ readOnly: false, renderSideBySide: isSplit }}
+        width='100%'
+        height={props.isDiff ? '100%' : '0%'}
+        className={props.isDiff ? "d-block" : "d-none"}
+
+      />
       <Editor
         width="100%"
+        height={props.isDiff ? '0%' : '100%'}
         path={props.currentFile}
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
@@ -942,6 +983,7 @@ export const EditorUI = (props: EditorUIProps) => {
           }
         }}
         defaultValue={defaultEditorValue}
+        className={props.isDiff ? "d-none" : "d-block"}
       />
       {editorModelsState[props.currentFile]?.readOnly && (
         <span className="pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">
