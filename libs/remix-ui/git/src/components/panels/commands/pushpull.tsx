@@ -129,7 +129,6 @@ export const PushPull = () => {
       .map(repo => {
         return { value: repo.name, label: repo.name }
       })
-    console.log('options', options)
     setLocalRemotesOptions(options)
 
   }, [context.remotes])
