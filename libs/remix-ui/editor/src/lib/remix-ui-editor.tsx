@@ -733,6 +733,7 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KeyD
       ],
       run: async () => {
+        const unsupportedDocTags = ['@title'] // these tags are not supported by the current docstring parser
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
@@ -740,28 +741,37 @@ export const EditorUI = (props: EditorUIProps) => {
 
         const natspecCom = "\n" + extractNatspecComments(cm)
         const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
-        const range = new monacoRef.current.Range(cln.start.line, editor.getModel().getLineMaxColumn(cln.start.line), cln.start.line, cln.start.column)
+        const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
+
+        const lines = natspecCom.split('\n')
+        const newnatspeccom = [] //natspecCom.split('\n').map((line => ' '.repeat(cln.start.column) + line.trimStart())).join('\n')
+
+        for (let i = 0; i < lines.length; i++) {
+          let cont = false
+
+          for (let j = 0; j < unsupportedDocTags.length; j++) {
+            if (lines[i].includes(unsupportedDocTags[j])) {
+              cont = true
+              break
+            }
+          }
+          if (cont) {continue}
+
+          if (i <= 1) { newnatspeccom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
+          else { newnatspeccom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
+        }
 
         // TODO: activate the provider to let the user accept the documentation suggestion
         // const provider = new RemixSolidityDocumentationProvider(natspecCom)
-        // editor.inlineProviderDisposable = monacoRef.current.languages.registerInlineCompletionsProvider('remix-docu', provider)
-        // const acts = editor.getActions()
-        // console.log(acts)
+        // monacoRef.current.languages.registerInlineCompletionsProvider('solidity', provider)
 
-        editor.executeEdits('inlineCompletionDocu', [
+        editor.executeEdits('clipboard', [
           {
             range: range,
-            text: natspecCom,
+            text: newnatspeccom.join('\n'),
             forceMoveMarkers: true,
           },
         ]);
-
-        const endline = cln.start.line + natspecCom.split('\n').length-1
-        const selection = new monacoRef.current.Selection(cln.start.line+1, 0, endline , editor.getModel().getLineMaxColumn(endline));
-        editor.setSelection(selection);
-        editor.revealLinesInCenter(cln.start.line+1, endline);
-
-        editor.trigger("editor", "editor.action.indentLines");
 
         _paq.push(['trackEvent', 'ai', 'solcoder', 'generateDocumentation'])
       },
