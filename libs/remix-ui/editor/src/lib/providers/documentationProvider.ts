@@ -31,4 +31,9 @@ export class RemixSolidityDocumentationProvider implements monacoTypes.languages
   freeInlineCompletions(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>): void {
 
   }
+  groupId?: string;
+  yieldsToGroupIds?: string[];
+  toString?(): string {
+    throw new Error('Method not implemented.');
+  }
 }
