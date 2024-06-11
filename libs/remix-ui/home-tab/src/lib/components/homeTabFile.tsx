@@ -319,9 +319,9 @@ contract HelloWorld {
               </button>
             </div>
           </div>
-          <div className="d-flex mt-2 align-items-end">
+          <div className="d-flex mt-2 align-items-end w-100">
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
-              <button className="btn btn-block w-100 text-nowrap p-2 border my-1" style={{ width: 'fit-content' }} onClick={() => connectToLocalhost()}>
+              <button className="btn btn-block text-nowrap p-2 border my-1" onClick={() => connectToLocalhost()}>
                 <i className="fa-regular fa-desktop pr-2"></i>
                 <FormattedMessage id="home.accessFileSystem" />
               </button>

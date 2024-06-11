@@ -61,7 +61,7 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
       const height = window.innerHeight
 
       if (height < 781 && width < 1150) {
-        setCarouselWidth(80)
+        setCarouselWidth(75)
       }
     }
     checkResolution()
