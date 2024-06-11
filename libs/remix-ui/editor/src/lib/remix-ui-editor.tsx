@@ -744,7 +744,7 @@ export const EditorUI = (props: EditorUIProps) => {
         const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
 
         const lines = natspecCom.split('\n')
-        const newnatspeccom = [] //natspecCom.split('\n').map((line => ' '.repeat(cln.start.column) + line.trimStart())).join('\n')
+        const newnatspeccom = []
 
         for (let i = 0; i < lines.length; i++) {
           let cont = false
