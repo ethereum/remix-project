@@ -116,7 +116,7 @@ export class FoundryClient extends PluginClient {
             contracts: {},
             sources: {}
           },
-          inputSources: { sources: {}, target: ''},
+          inputSources: { sources: {}, target: '' },
           solcVersion: null,
           compilationTarget: null
         }
@@ -158,7 +158,7 @@ export class FoundryClient extends PluginClient {
   }
 
   async readContract(contractFolder, compilationResultPart, cache) {
-    const files = await fs.readdir(contractFolder)  
+    const files = await fs.readdir(contractFolder)
     for (const file of files) {
       const path = join(contractFolder, file)
       const content = await fs.readFile(path, { encoding: 'utf-8' })
@@ -172,7 +172,7 @@ export class FoundryClient extends PluginClient {
     const contractName = basename(path).replace('.json', '')
 
     let sourcePath = ''
-    for (let key in contentJSON.metadata.settings.compilationTarget) {
+    for (const key in contentJSON.metadata.settings.compilationTarget) {
       if (contentJSON.metadata.settings.compilationTarget[key] === contractName) {
         sourcePath = key
         break
@@ -205,7 +205,6 @@ export class FoundryClient extends PluginClient {
     } else {
       console.log('\x1b[32m%s\x1b[0m', 'sources input not found, please update Foundry to the latest version.')
     }
-
 
     compilationResultPart.compilationTarget = sourcePath
     // extract data
