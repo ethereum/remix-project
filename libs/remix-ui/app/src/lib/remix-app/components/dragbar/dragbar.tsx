@@ -27,7 +27,7 @@ const DragBar = (props: IRemixDragBarUi) => {
         const width = window.innerWidth
         const height = window.innerHeight
 
-        if (height < 781 && width < 1150) {
+        if (height <= 781 && width <= 1150) {
           setDragBarPosX(props.minWidth + 50)
         } else {
           setDragBarPosX(props.minWidth)
