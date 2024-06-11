@@ -176,6 +176,10 @@
               "libs/remix-ui/remix-ai/src/index.ts"
             ],
 
+            "@remix/remix-ai-core": [
+              "libs/remix-ai-core/src/index.ts"
+            ],
+
         }
     }
 }

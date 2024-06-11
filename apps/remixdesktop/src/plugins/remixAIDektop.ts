@@ -28,7 +28,7 @@ export class RemixAIDesktopPlugin extends ElectronBasePlugin {
 const clientProfile: Profile = {
   name: 'remixAID',
   displayName: 'RemixAI desktop',
-  methods: ['enable'],
+  methods: ['enable', 'downloadModel'],
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   maintainedBy: 'Remix',
 }
@@ -54,6 +54,7 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     console.log('Remix AI desktop plugin enabled')
     this.emit('enabled')
   }
+  
 
 }
 
