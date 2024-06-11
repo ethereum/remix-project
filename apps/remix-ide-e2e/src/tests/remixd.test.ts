@@ -254,6 +254,28 @@ module.exports = {
         })
 
 
+  },
+  'Should disable git when running remixd #group9': function (browser: NightwatchBrowser) {
+
+    browser.perform(async (done) => {
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+      console.log('working directory', process.cwd())
+      connectRemixd(browser, done)
+    })
+    browser
+      .clickLaunchIcon('dgit')
+      .waitForElementVisible('*[data-id="disabled"]')
+      .pause(2000)
+      .clickLaunchIcon('filePanel')
+      .switchWorkspace('default_workspace')
+      .click({
+        selector:'[data-path="connectionAlert-modal-footer-ok-react"]',
+        suppressNotFoundErrors: true,
+        timeout: 2000
+      })
+      .pause(2000)
+      .clickLaunchIcon('dgit')
+      .waitForElementNotPresent('*[data-id="disabled"]')
   }
 }
 
@@ -310,11 +332,11 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
   const remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
-      if(
-        data.toString().includes('is listening') 
+      if (
+        data.toString().includes('is listening')
         || data.toString().includes('There is already a client running')
-        ) {
-        
+      ) {
+
         resolve(remixd)
       }
     })
