@@ -36,13 +36,6 @@ const workspaceTemplates: WorkspaceTemplate[] = [
   },
   {
     gsID: 'sUTLogo',
-    workspaceTitle: 'All Templates',
-    description: 'View all templates.',
-    projectLogo: 'assets/img/remixverticaltextLogo.png',
-    templateName: '',
-  },
-  {
-    gsID: 'sUTLogo',
     workspaceTitle: 'Circom',
     description: 'Create a new ZK Project with Circom using this template.',
     projectLogo: 'assets/img/circom.webp',
