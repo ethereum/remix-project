@@ -83,18 +83,18 @@ export function RunTabUI(props: RunTabProps) {
   const [solcVersion, setSolcVersion] = useState<{version: string, canReceive: boolean}>({ version: '', canReceive: true })
 
   const getVersion = () => {
-    let version = ''
+    let version = '0.8.25'
     try {
-      version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1) ?? 'v0.8.25'
+      version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1) ?? '0.8.25'
       if (parseFloat(version) < 0.6) {
         setSolcVersion({ version: version, canReceive: false })
+      } else {
+        setSolcVersion({ version: version, canReceive: true })
       }
-      setSolcVersion({ version: version, canReceive: true })
     } catch (e) {
-      version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1) ?? 'v0.8.25'
+      setSolcVersion({ version, canReceive: true })
       console.log(e)
     }
-    return version
   }
 
   useEffect(() => {

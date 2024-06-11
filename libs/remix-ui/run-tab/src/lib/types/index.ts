@@ -283,7 +283,7 @@ export interface ContractDropdownProps {
   setCompilerVersion: React.Dispatch<React.SetStateAction<{
     version: string;
     canReceive: boolean;}>>
-  getCompilerVersion: () => string
+  getCompilerVersion: () => void
 }
 
 export interface RecorderProps {
@@ -349,7 +349,7 @@ export interface InstanceContainerProps {
   editInstance: (instance) => void
   plugin: RunTab
   solcVersion: { version: string, canReceive: boolean }
-  getVersion: () => string
+  getVersion: any
 }
 
 export interface Modal {
@@ -408,7 +408,7 @@ export interface ContractGUIProps {
   setSolcVersion?: React.Dispatch<React.SetStateAction<{
     version: string;
     canReceive: boolean;}>>
-  getVersion: () => string
+  getVersion: () => void
 }
 export interface MainnetProps {
   network: Network,
