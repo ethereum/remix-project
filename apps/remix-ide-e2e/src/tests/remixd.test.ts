@@ -3,10 +3,7 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import { join } from 'path'
 import { ChildProcess, spawn } from 'child_process'
-import { writeFileSync } from 'fs'
-import * as hardhatCompilation from '../helpers/hardhat_compilation_7839ba878952cc00ff316061405f273a.json'
-import * as hardhat_compilation_Lock_dbg from '../helpers/hardhat_compilation_Lock.dbg.json'
-import * as hardhat_compilation_Lock from '../helpers/hardhat_compilation_Lock.json'
+import { homedir } from 'os'
 
 import kill from 'tree-kill'
 
@@ -190,8 +187,8 @@ module.exports = {
   'Should listen on compilation result from foundry #group5': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hello_foundry'))
-      console.log('working directory', process.cwd())
+      remixd = await spawnRemixd(join(homedir() + '/hello_foundry'))
+      console.log('working directory', homedir() + '/hello_foundry')
       connectRemixd(browser, done)
     })
       .perform(async (done) => {
@@ -368,7 +365,7 @@ async function compileHardhatProject(): Promise<void> {
 }
 
 async function downloadFoundry(): Promise<void> {
-  console.log(process.cwd())
+  console.log('downloadFoundry', process.cwd())
   try {
       const server = spawn('curl -L https://foundry.paradigm.xyz | bash', [], { cwd: process.cwd(), shell: true, detached: true })
       return new Promise((resolve, reject) => {
@@ -392,7 +389,7 @@ async function downloadFoundry(): Promise<void> {
 }
 
 async function installFoundry(): Promise<void> {
-  console.log(process.cwd())
+  console.log('installFoundry', process.cwd())
   try {
       const server = spawn('foundryup', [], { cwd: process.cwd(), shell: true, detached: true })
       return new Promise((resolve, reject) => {
@@ -416,22 +413,14 @@ async function installFoundry(): Promise<void> {
 }
 
 async function initFoundryProject(): Promise<void> {
-  console.log(process.cwd())
+  console.log('initFoundryProject', homedir())
   try {
-      const server = spawn('forge init hello_foundry', [], { cwd: process.cwd() + '/apps/remix-ide', shell: true, detached: true })
+      const server = spawn('forge init hello_foundry', [], { cwd: homedir(), shell: true, detached: true })
       return new Promise((resolve, reject) => {
-          server.stdout.on('data', function (data) {
-              console.log(data.toString())
-              if (
-                  data.toString().includes("Initialized forge project")
-              ) {
-                  console.log('resolving')
-                  resolve()
-              }
-          })
-          server.stderr.on('err', function (data) {
-              console.log(data.toString())
-              reject(data.toString())
+          server.on('exit', function (exitCode) {
+            console.log("Child exited with code: " + exitCode);
+            console.log('end')
+            resolve()
           })
       })
   } catch (e) {
@@ -440,22 +429,14 @@ async function initFoundryProject(): Promise<void> {
 }
 
 async function buildFoundryProject(): Promise<void> {
-  console.log(process.cwd())
+  console.log('buildFoundryProject', homedir())
   try {
-      const server = spawn('forge build', [], { cwd: process.cwd() + '/apps/remix-ide/contracts/hello_foundry', shell: true, detached: true })
+      const server = spawn('forge build', [], { cwd: homedir() + '/hello_foundry', shell: true, detached: true })
       return new Promise((resolve, reject) => {
-          server.stdout.on('data', function (data) {
-              console.log(data.toString())
-              if (
-                  data.toString().includes("Compiler run successful!")
-              ) {
-                  console.log('resolving')
-                  resolve()
-              }
-          })
-          server.stderr.on('err', function (data) {
-              console.log(data.toString())
-              reject(data.toString())
+          server.on('exit', function (exitCode) {
+            console.log("Child exited with code: " + exitCode);
+            console.log('end')
+            resolve()
           })
       })
   } catch (e) {
