@@ -339,7 +339,7 @@ function connectRemixd(browser: NightwatchBrowser, done: any) {
 async function setupHardhatProject(): Promise<void> {
   console.log(process.cwd())
   try {
-      const server = spawn('git clone https://github.com/NomicFoundation/hardhat-boilerplate && cd hardhat-boilerplate && yarn install && echo "END"', [], { cwd: process.cwd() + '/apps/remix-ide', shell: true, detached: true })
+      const server = spawn('git clone https://github.com/NomicFoundation/hardhat-boilerplate && cd hardhat-boilerplate && yarn install && yarn add "@typechain/ethers-v5@^10.1.0" && yarn add "@typechain/hardhat@^6.1.2" && yarn add "typechain@^8.1.0" && echo "END"', [], { cwd: process.cwd() + '/apps/remix-ide', shell: true, detached: true })
       return new Promise((resolve, reject) => {
           server.on('exit', function (exitCode) {
             console.log("Child exited with code: " + exitCode);
