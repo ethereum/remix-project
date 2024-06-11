@@ -280,7 +280,7 @@ export const defaultGitState: gitState = {
   deleted: [],
   modified: [],
   allchangesnotstaged: [],
-  canUseApp: false,
+  canUseApp: true,
   loading: false,
   storageUsed: {},
   reponame: "",
