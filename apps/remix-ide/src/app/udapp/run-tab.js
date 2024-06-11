@@ -161,7 +161,6 @@ export class RunTab extends ViewPlugin {
       await addProvider(position, name, displayName, true, false, false)
     }
     const registerInjectedProvider = async (event) => {
-      console.log('registerInjectedProvider', event)
       const name = 'injected-' + event.detail.info.name
       const displayName = 'Injected Provider - ' + event.detail.info.name
       await this.engine.register([new InjectedProviderDefault(event.detail.provider, name)])

@@ -1,4 +1,5 @@
 import { fileDecoration } from '@remix-ui/file-decorators'
+import { branch } from '@remix-ui/git';
 import { Action, ActionPayloadTypes, FileTree, WorkspaceElement, action } from '../types'
 
 export const setCurrentWorkspace = (workspace: { name: string; isGitRepo: boolean; }): Action<'SET_CURRENT_WORKSPACE'> => {
@@ -280,7 +281,7 @@ export const setCurrentWorkspaceBranches = (branches?: { remote: any, name: stri
   }
 }
 
-export const setCurrentWorkspaceCurrentBranch = (currentBranch?: string): Action<'SET_CURRENT_WORKSPACE_CURRENT_BRANCH'> => {
+export const setCurrentWorkspaceCurrentBranch = (currentBranch?: branch): Action<'SET_CURRENT_WORKSPACE_CURRENT_BRANCH'> => {
   return {
     type: 'SET_CURRENT_WORKSPACE_CURRENT_BRANCH',
     payload: currentBranch
