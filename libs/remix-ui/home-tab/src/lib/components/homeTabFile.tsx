@@ -309,14 +309,26 @@ contract HelloWorld {
             Gist
               </button>
 
-              <button
-                className="btn text-nowrap p-2 mr-2 border my-1"
-                onClick={() =>
-                  showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
-                }
-              >
+              {innerHeight <= 781 && innerWidth <= 1150 ? (
+                <button
+                  className="btn text-nowrap p-2 mr-2 border my-1"
+                  onClick={() =>
+                    showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
+                  }
+                  style={{ opacity: 0 }}
+                >
             HTTPS
-              </button>
+                </button>
+              ) : (
+                <button
+                  className="btn text-nowrap p-2 mr-2 border my-1"
+                  onClick={() =>
+                    showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
+                  }
+                >
+            HTTPS
+                </button>
+              )}
             </div>
           </div>
           <div className="d-flex mt-2 align-items-end w-100">
