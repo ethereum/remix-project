@@ -28,9 +28,9 @@ const DragBar = (props: IRemixDragBarUi) => {
         const height = window.innerHeight
 
         if (height <= 781 && width <= 1150) {
-          setDragBarPosX(props.minWidth + 50)
+          setDragBarPosX(props.minWidth - 50)
         } else {
-          setDragBarPosX(props.minWidth)
+          setDragBarPosX(props.minWidth + 50)
         }
       }
       checkResolution()
