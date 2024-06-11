@@ -71,7 +71,11 @@ module.exports = {
   },
   'run Remixd tests #group1': function (browser) {
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      try {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      } catch (err) {
+        console.error(err)
+      }      
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -267,10 +271,34 @@ function testImportFromRemixd(browser: NightwatchBrowser, callback: VoidFunction
     .perform(() => { callback() })
 }
 
+async function installRemixd(): Promise<void> {
+  console.log('installRemixd')
+  const remixd = spawn('yarn install', [], { cwd: process.cwd() + '/dist/libs/remixd', shell: true, detached: true })
+  return new Promise((resolve, reject) => {
+    remixd.stdout.on('data', function (data) {
+      console.log(data.toString())
+      if(
+        data.toString().includes('success Saved lockfile') 
+        || data.toString().includes('success Already up-to-date')
+        ) {
+        
+        resolve()
+      }
+    })
+    remixd.stderr.on('err', function (data) {
+      console.log(data.toString())
+      reject(data.toString())
+    })
+  })
+}
+
 async function spawnRemixd(path: string): Promise<ChildProcess> {
+  console.log('spawnRemixd', path)
+  await installRemixd()
   const remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
+      console.log(data.toString())
       if(
         data.toString().includes('is listening') 
         || data.toString().includes('There is already a client running')
@@ -280,6 +308,7 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
       }
     })
     remixd.stderr.on('err', function (data) {
+      console.log(data.toString())
       reject(data.toString())
     })
   })
@@ -310,20 +339,12 @@ function connectRemixd(browser: NightwatchBrowser, done: any) {
 async function setupHardhatProject(): Promise<void> {
   console.log(process.cwd())
   try {
-      const server = spawn('git clone https://github.com/NomicFoundation/hardhat-boilerplate && cd hardhat-boilerplate &&  npm install && echo "END"', [], { cwd: process.cwd() + '/apps/remix-ide', shell: true, detached: true })
+      const server = spawn('git clone https://github.com/NomicFoundation/hardhat-boilerplate && cd hardhat-boilerplate && yarn install && echo "END"', [], { cwd: process.cwd() + '/apps/remix-ide', shell: true, detached: true })
       return new Promise((resolve, reject) => {
-          server.stdout.on('data', function (data) {
-              console.log(data.toString())
-              if (
-                  data.toString().includes("END")
-              ) {
-                  console.log('resolving')
-                  resolve()
-              }
-          })
-          server.stderr.on('err', function (data) {
-              console.log(data.toString())
-              reject(data.toString())
+          server.on('exit', function (exitCode) {
+            console.log("Child exited with code: " + exitCode);
+            console.log('end')
+            resolve()
           })
       })
   } catch (e) {
@@ -336,18 +357,10 @@ async function compileHardhatProject(): Promise<void> {
   try {
       const server = spawn('npx hardhat compile', [], { cwd: process.cwd() + '/apps/remix-ide/hardhat-boilerplate', shell: true, detached: true })
       return new Promise((resolve, reject) => {
-          server.stdout.on('data', function (data) {
-              console.log(data.toString())
-              if (
-                  data.toString().includes("END")
-              ) {
-                  console.log('resolving')
-                  resolve()
-              }
-          })
-          server.stderr.on('err', function (data) {
-              console.log(data.toString())
-              reject(data.toString())
+          server.on('exit', function (exitCode) {
+            console.log("Child exited with code: " + exitCode);
+            console.log('end')
+            resolve()
           })
       })
   } catch (e) {
