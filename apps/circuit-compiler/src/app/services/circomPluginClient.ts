@@ -119,6 +119,7 @@ export class CircomPluginClient extends PluginClient {
         } else {
           // @ts-ignore
           await this.call('editor', 'clearErrorMarkers', [path])
+          this.emit('statusChanged', { key: 'none' })
         }
       }
 
@@ -130,6 +131,7 @@ export class CircomPluginClient extends PluginClient {
 
   async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
     this.internalEvents.emit('circuit_compiling_start')
+    this.emit('statusChanged', { key: 'loading', title: 'Compiling...', type: 'info' })
     // @ts-ignore
     this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
     const [parseErrors, filePathToId] = await this.parse(path)
@@ -145,6 +147,7 @@ export class CircomPluginClient extends PluginClient {
       }
     } else {
       this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
+      this.emit('statusChanged', { key: 'succeed', title: 'circuit compiled successfully', type: 'success' })
     }
     if (compilationConfig) {
       const { prime, version } = compilationConfig
@@ -188,6 +191,7 @@ export class CircomPluginClient extends PluginClient {
 
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
     this.internalEvents.emit('circuit_generating_r1cs_start')
+    this.emit('statusChanged', { key: 'loading', title: 'Generating...', type: 'info' })
     // @ts-ignore
     this.call('terminal', 'log', { type: 'log', value: 'Generating R1CS for ' + path })
     const [parseErrors, filePathToId] = await this.parse(path)
@@ -203,6 +207,7 @@ export class CircomPluginClient extends PluginClient {
       }
     } else {
       this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
+      this.emit('statusChanged', { key: 'succeed', title: 'r1cs generated successfully', type: 'success' })
     }
     if (compilationConfig) {
       const { prime, version } = compilationConfig
@@ -235,6 +240,7 @@ export class CircomPluginClient extends PluginClient {
 
   async computeWitness (input: string): Promise<void> {
     this.internalEvents.emit('circuit_computing_witness_start')
+    this.emit('statusChanged', { key: 'loading', title: 'Computing...', type: 'info' })
     const wasmPath = this.lastCompiledCircuitPath
 
     if (!wasmPath) throw new Error('No wasm file found')
@@ -245,6 +251,7 @@ export class CircomPluginClient extends PluginClient {
     // @ts-ignore
     await this.call('fileManager', 'writeFile', wasmPath.replace('.wasm', '.wtn'), witness, true)
     this.internalEvents.emit('circuit_computing_witness_done')
+    this.emit('statusChanged', { key: 'succeed', title: 'witness computed successfully', type: 'success' })
   }
 
   async resolveDependencies(filePath: string, fileContent: string, output?: Record<string, string>, depPath: string = '', blackPath: string[] = []): Promise<Record<string, string>> {
@@ -403,7 +410,13 @@ export class CircomPluginClient extends PluginClient {
 
   async logCompilerReport (report: CompilerReport[]): Promise<void> {
     this.call('terminal', 'log', { type: 'log', value: JSON.stringify(report, null, 2) })
-    if (report[0].type === 'Error') this.call('terminal', 'log', { type: 'error', value: 'previous errors were found' })
-    if (report[0].type === 'Warning') this.call('terminal', 'log', { type: 'log', value: 'previous warnings were found' })
+    if (report[0].type === 'Error') {
+      this.call('terminal', 'log', { type: 'error', value: 'previous errors were found' })
+      this.emit('statusChanged', { key: report.length, title: `You have ${report.length} problem${report.length === 1 ? '' : 's'}`, type: 'error' })
+    }
+    if (report[0].type === 'Warning') {
+      this.call('terminal', 'log', { type: 'log', value: 'previous warnings were found' })
+      this.emit('statusChanged', { key: report.length, title: `You have ${report.length} problem${report.length === 1 ? '' : 's'}`, type: 'warning' })
+    }
   }
 }
