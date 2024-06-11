@@ -373,6 +373,7 @@ async function downloadFoundry(): Promise<void> {
               console.log(data.toString())
               if (
                   data.toString().includes("simply run 'foundryup' to install Foundry")
+                  || data.toString().includes("foundryup: could not detect shell, manually add")
               ) {
                   console.log('resolving')
                   resolve()
@@ -391,7 +392,7 @@ async function downloadFoundry(): Promise<void> {
 async function installFoundry(): Promise<void> {
   console.log('installFoundry', process.cwd())
   try {
-      const server = spawn('foundryup', [], { cwd: process.cwd(), shell: true, detached: true })
+      const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && foundryup', [], { cwd: process.cwd(), shell: true, detached: true })
       return new Promise((resolve, reject) => {
           server.stdout.on('data', function (data) {
               console.log(data.toString())
