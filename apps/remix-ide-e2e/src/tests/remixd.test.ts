@@ -155,7 +155,6 @@ module.exports = {
     browser
       .refresh()
       .perform(async (done) => {
-        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hardhat-boilerplate'))
         console.log('working directory', process.cwd())
         connectRemixd(browser, done)
       })
