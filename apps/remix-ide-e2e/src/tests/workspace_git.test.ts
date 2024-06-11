@@ -159,11 +159,13 @@ module.exports = {
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/ioedeveloper/test-branch-change')
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .waitForElementPresent('.fa-spinner')
-      .pause(5000)
+      .pause(7000)
       .waitForElementNotPresent('.fa-spinner')
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'test-branch-change')
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
+      .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
+      .pause()
       .waitForElementVisible('[data-id="custom-dropdown-menu"]')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/dev')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/production')
@@ -312,6 +314,7 @@ module.exports = {
   'When switching branches the submodules should disappear #group4': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
+      .pause()
       .click('[data-id="workspaceGitBranchesDropdown"]')
       .waitForElementVisible('[data-id="custom-dropdown-menu"]')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/empty')
