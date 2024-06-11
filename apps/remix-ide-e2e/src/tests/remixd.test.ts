@@ -187,14 +187,42 @@ module.exports = {
   'Should listen on compilation result from foundry #group5': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
-      remixd = await spawnRemixd(join(homedir() + '/hello_foundry'))
-      console.log('working directory', homedir() + '/hello_foundry')
+      console.log('working directory', homedir() + '/foundry_tmp/hello_foundry')
+      remixd = await spawnRemixd(join(homedir(), '/foundry_tmp/hello_foundry'))      
       connectRemixd(browser, done)
     })
       .perform(async (done) => {
         await buildFoundryProject()
         done()
       })
+      .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Foundry').before(60000)
+
+    let contractAaddress
+    browser.clickLaunchIcon('filePanel')
+      .openFile('src')
+      .openFile('src/Counter.sol')
+      .clickLaunchIcon('udapp')
+      .selectContract('Counter')
+      .createContract('')
+      .getAddressAtPosition(0, (address) => {
+        console.log(contractAaddress)
+        contractAaddress = address
+      })
+      .clickInstance(0)
+      .clickFunction('increment - transact (not payable)')
+      .perform((done) => {
+        browser.testConstantFunction(contractAaddress, 'number - call', null, '0:\nuint256: 1').perform(() => {
+          done()
+        })
+      })
+  },
+
+  'Should load compilation result from hardhat when remixd connects #group5': function (browser: NightwatchBrowser) {
+
+    browser.refresh().perform(async (done) => {
+      console.log('working directory', homedir() + '/foundry_tmp/hello_foundry')
+      connectRemixd(browser, done)
+    })
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Foundry').before(60000)
 
     let contractAaddress
@@ -415,8 +443,12 @@ async function installFoundry(): Promise<void> {
 
 async function initFoundryProject(): Promise<void> {
   console.log('initFoundryProject', homedir())
-  try {
-      const server = spawn('forge init hello_foundry', [], { cwd: homedir(), shell: true, detached: true })
+  try {    
+      spawn('git config --global user.email \"you@example.com\"', [], { cwd: homedir(), shell: true, detached: true })
+      spawn('git config --global user.name \"Your Name\"', [], { cwd: homedir(), shell: true, detached: true })
+      spawn('mkdir foundry_tmp', [], { cwd: homedir(), shell: true, detached: true })
+      const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && forge init hello_foundry', [], { cwd: homedir() + '/foundry_tmp', shell: true, detached: true })
+      server.stdout.pipe(process.stdout)
       return new Promise((resolve, reject) => {
           server.on('exit', function (exitCode) {
             console.log("Child exited with code: " + exitCode);
@@ -432,7 +464,8 @@ async function initFoundryProject(): Promise<void> {
 async function buildFoundryProject(): Promise<void> {
   console.log('buildFoundryProject', homedir())
   try {
-      const server = spawn('forge build', [], { cwd: homedir() + '/hello_foundry', shell: true, detached: true })
+      const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && forge build', [], { cwd: homedir() + '/foundry_tmp/hello_foundry', shell: true, detached: true })
+      server.stdout.pipe(process.stdout)
       return new Promise((resolve, reject) => {
           server.on('exit', function (exitCode) {
             console.log("Child exited with code: " + exitCode);
