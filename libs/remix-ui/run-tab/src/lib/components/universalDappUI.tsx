@@ -305,8 +305,9 @@ export function UniversalDappUI(props: UdappProps) {
       id: 'SolidityScanPermissionHandler',
       title: <FormattedMessage id="udapp.solScan.modalTitle" />,
       message: <div className='d-flex flex-column'>
-        <FormattedMessage id="udapp.solScan.modalMessage" />
-        <a href={'https://solidityscan.com'} target="_blank" >Learn more</a>
+        <span><FormattedMessage id="udapp.solScan.modalMessage" />
+        <a href={'https://solidityscan.com'} target="_blank" >Learn more</a></span><br/>
+        <FormattedMessage id="udapp.solScan.likeToContinue" />
       </div>,
       okLabel: <FormattedMessage id="udapp.solScan.modalOkLabel" />,
       okFn: handleScanContinue,
