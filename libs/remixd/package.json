@@ -31,6 +31,7 @@
     "@remixproject/plugin-api": "0.3.33",
     "@remixproject/plugin-utils": "0.3.33",
     "@remixproject/plugin-ws": "0.3.33",
+    "@remix-project/remix-solidity": "^0.5.36",
     "axios": "1.6.0",
     "chokidar": "^2.1.8",
     "commander": "^9.4.1",
