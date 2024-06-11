@@ -260,6 +260,7 @@ module.exports = {
             .pause(1000)
             .addFile('test.txt', { content: 'hello world' }, 'README.md')
             .clickLaunchIcon('dgit')
+            .pause(2000)
             .waitForElementVisible({
                 selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
