@@ -162,8 +162,6 @@ export const GitUI = (props: IGitUi) => {
     showAlert
   }
 
-
-
   return (
     <>{(!gitState.canUseApp) ? <Disabled></Disabled> :
       <div className="m-1">

@@ -15,6 +15,7 @@ export const PushPull = () => {
   const [localBranchOptions, setLocalBranchOptions] = useState<any>([]);
   const [remoteBranchOptions, setRemoteBranchOptions] = useState<any>([]);
   const [localRemotesOptions, setLocalRemotesOptions] = useState<any>([]);
+  const [disabled, setDisabled] = useState(false)
   const [force, setForce] = useState(false)
 
   useEffect(() => {
@@ -25,11 +26,14 @@ export const PushPull = () => {
     if (!context.upstream || !currentUpstreamIsInRemotes) {
       if (context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.name) {
         actions.setUpstreamRemote(context.currentBranch.remote)
+        setDisabled(false)
       } else {
         if (context.remotes && context.remotes.length > 0) {
           actions.setUpstreamRemote(context.remotes[0])
+          setDisabled(false)
         } else {
           actions.setUpstreamRemote(null)
+          setDisabled(true)
         }
       }
     }
@@ -136,7 +140,9 @@ export const PushPull = () => {
 
   return (
     <>
-
+      {disabled? <div data-id='disabled' className='text-sm w-100 alert alert-warning mt-1'>
+        You cannot push or pull because you haven't connected to or selected a remote.
+      </div>: null}
       <div className="btn-group w-100 mt-2" role="group">
 
         <GitUIButton data-id='sourcecontrol-pull' disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => pull()} className="btn btn-primary mr-1">Pull</GitUIButton>
