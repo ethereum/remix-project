@@ -534,7 +534,6 @@ export const EditorUI = (props: EditorUIProps) => {
     for (const filePath in allMarkersPerfile) {
       const model = editorModelsState[filePath]?.model
       if (model) {
-        console.log('MONACO REF CURRENT', monacoRef.current)
         monacoRef.current.editor.setModelMarkers(model, from, allMarkersPerfile[filePath])
       }
     }
