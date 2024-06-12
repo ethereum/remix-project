@@ -128,7 +128,7 @@ export class FoundryClient extends PluginClient {
       clearTimeout(this.logTimeout)
       this.logTimeout = setTimeout(() => {
         // @ts-ignore
-        this.call('terminal', 'log', { type: 'log', value: `receiving compilation result from Foundry` })
+        this.call('terminal', 'log', { type: 'log', value: `receiving compilation result from Foundry. Select a file to populate the contract interaction interface.` })
         console.log('Syncing compilation result from Foundry')
       }, 1000)
 
