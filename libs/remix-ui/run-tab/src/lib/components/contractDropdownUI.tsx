@@ -483,6 +483,9 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 isValidProxyUpgrade={isValidProxyUpgrade}
                 modal={props.modal}
                 disabled={props.selectedAccount === ''}
+                solcVersion={props.solCompilerVersion}
+                setSolcVersion={props.setCompilerVersion}
+                getVersion={props.getCompilerVersion}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
