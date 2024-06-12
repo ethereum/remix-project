@@ -123,7 +123,6 @@ export class FoundryClient extends PluginClient {
         compilationResult.inputSources.target = file
         await this.readContract(path, compilationResult, cache)
         this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
-        this.call('compilerArtefacts' as any, 'saveCompilerAbstract', file, new CompilerAbstract(compilationResult.solcVersion, compilationResult.output, compilationResult.inputSources))
       }
 
       clearTimeout(this.logTimeout)
