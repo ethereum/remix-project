@@ -32,7 +32,6 @@ export function ContractGUI(props: ContractGUIProps) {
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
   const intl = useIntl()
-
   useEffect(() => {
     if (props.deployOption && Array.isArray(props.deployOption)) {
       if (props.deployOption[0] && props.deployOption[0].title === 'Deploy with Proxy' && props.deployOption[0].active) handleDeployProxySelect(true)
@@ -173,6 +172,7 @@ export function ContractGUI(props: ContractGUIProps) {
   }
 
   const handleActionClick = async () => {
+    props.getVersion()
     if (deployState.deploy) {
       const proxyInitializeString = getMultiValsString(initializeFields.current)
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
@@ -299,8 +299,8 @@ export function ContractGUI(props: ContractGUIProps) {
           <div className="d-flex p-0 wrapperElement" onClick={handleActionClick} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>
             <button
               className={`udapp_instanceButton text-nowrap overflow-hidden text-truncate ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
-              data-id={buttonOptions.dataId}
-              data-title={buttonOptions.title}
+              data-id={`${buttonOptions.dataId}`}
+              data-title={`${buttonOptions.title}`}
               disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !== '' && basicInput === '')}
             >
               {title}

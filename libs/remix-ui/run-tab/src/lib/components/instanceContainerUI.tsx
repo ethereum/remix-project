@@ -44,6 +44,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 plugin={props.plugin}
                 exEnvironment={props.exEnvironment}
                 editInstance={props.editInstance}
+                solcVersion={props.solcVersion}
+                getVersion={props.getVersion}
               />
             )
           })}
@@ -92,6 +94,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 plugin={props.plugin}
                 exEnvironment={props.exEnvironment}
                 editInstance={props.editInstance}
+                solcVersion={props.solcVersion}
+                getVersion={props.getVersion}
               />
             )
           })}
