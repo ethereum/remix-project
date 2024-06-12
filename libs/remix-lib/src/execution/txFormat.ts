@@ -88,7 +88,7 @@ export function encodeParams (params, funAbi, callback?) {
     const result = { data: data, dataHex: dataHex, funArgs: funArgs }
     callback && callback(null, result)
     resolve(result)
-  })  
+  })
 }
 
 /**
@@ -409,7 +409,7 @@ export function decodeResponse (response, fnabi) {
         const name = fnabi.outputs[i].name
         json[i] = outputTypes[i] + ': ' + (name ? name + ' ' + decodedObj[i] : decodedObj[i])
       }
-      
+
       return json
     } catch (e) {
       return { error: 'Failed to decode output: ' + e }
@@ -485,16 +485,16 @@ export const normalizeParam = (param) => {
       try {
         let paramTrimmed = param.replace(/^'/g, '').replace(/'$/g, '')
         paramTrimmed = paramTrimmed.replace(/^"/g, '').replace(/"$/g, '')
-        param = fromExponential(paramTrimmed)     
+        param = fromExponential(paramTrimmed)
       } catch (e) {
         console.log(e)
       }
     }
-  }  
+  }
 
-  if (typeof param === 'string') {          
+  if (typeof param === 'string') {
     if (param === 'true') param = true
-    if (param === 'false') param = false        
+    if (param === 'false') param = false
   }
   return param
 }

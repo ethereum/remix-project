@@ -1,7 +1,6 @@
 import { EOL } from 'os'
 import { SearchResultLineLine } from '../../types'
-import {Registry} from '@remix-project/remix-lib'
-
+import { Registry } from '@remix-project/remix-lib'
 
 export const getDirectory = async (dir: string, plugin: any) => {
   let result = []
@@ -112,6 +111,4 @@ export const replaceTextInLine = (str: string, searchResultLine: SearchResultLin
       return line
     }).join(getEOL(str))
 }
-
-
 

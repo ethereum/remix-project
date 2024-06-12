@@ -1,6 +1,6 @@
 import { Plugin } from '@remixproject/engine'
 import { QueryParams } from '@remix-project/remix-lib'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 
 const profile = {
   name: 'config',

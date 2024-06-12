@@ -1,15 +1,15 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-use-before-define
 import React from 'react'
-import {FormattedMessage} from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import '../remix-ui-plugin-manager.css'
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 interface PluginCardProps {
   profile: any
   buttonText: string
   deactivatePlugin: (pluginName: string) => void
 }
 
-function ActivePluginCard({profile, buttonText, deactivatePlugin}: PluginCardProps) {
+function ActivePluginCard({ profile, buttonText, deactivatePlugin }: PluginCardProps) {
   return (
     <div className="list-group list-group-flush plugins-list-group" data-id="pluginManagerComponentActiveTile">
       <article className="list-group-item py-1 mb-1 plugins-list-group-item">
@@ -72,7 +72,7 @@ function ActivePluginCard({profile, buttonText, deactivatePlugin}: PluginCardPro
                 placement="right"
                 tooltipId={`pluginManagerInactiveActiveBtn${profile.name}`}
                 tooltipClasses="text-nowrap"
-                tooltipText={<FormattedMessage id="pluginManager.deactivatePlugin" values={{pluginName: profile.displayName || profile.name}} />}
+                tooltipText={<FormattedMessage id="pluginManager.deactivatePlugin" values={{ pluginName: profile.displayName || profile.name }} />}
               >
                 <button
                   onClick={() => {

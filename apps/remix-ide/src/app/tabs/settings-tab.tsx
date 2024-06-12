@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react' // eslint-disable-line
-import {ViewPlugin} from '@remixproject/engine-web'
+import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import {RemixUiSettings} from '@remix-ui/settings' //eslint-disable-line
-import {Registry} from '@remix-project/remix-lib'
-import {PluginViewWrapper} from '@remix-ui/helper'
+import { Registry } from '@remix-project/remix-lib'
+import { PluginViewWrapper } from '@remix-ui/helper'
 declare global {
   interface Window {
     _paq: any
@@ -15,7 +15,7 @@ const _paq = (window._paq = window._paq || [])
 const profile = {
   name: 'settings',
   displayName: 'Settings',
-  methods: ['get', 'updateCopilotChoice'],
+  methods: ['get', 'updateCopilotChoice', 'getCopilotSetting'],
   events: [],
   icon: 'assets/img/settings.webp',
   description: 'Remix-IDE settings',
@@ -52,7 +52,7 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'settingsTab')
     this.useMatomoAnalytics = null
-    this.useCopilot = false
+    this.useCopilot = this.get('settings/copilot/suggest/activate')
   }
 
   setDispatch(dispatch: React.Dispatch<any>) {
@@ -62,7 +62,7 @@ module.exports = class SettingsTab extends ViewPlugin {
 
   onActivation(): void {
   }
-  
+
   render() {
     return (
       <div id="settingsTab">
@@ -100,6 +100,10 @@ module.exports = class SettingsTab extends ViewPlugin {
     this.dispatch({
       ...this
     })
+  }
+
+  getCopilotSetting(){
+    return this.useCopilot
   }
 
   updateMatomoAnalyticsChoice(isChecked) {

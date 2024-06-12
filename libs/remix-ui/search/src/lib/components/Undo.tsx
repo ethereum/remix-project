@@ -1,13 +1,13 @@
-import {useDialogDispatchers} from '@remix-ui/app'
+import { useDialogDispatchers } from '@remix-ui/app'
 import React from 'react'
-import {useContext} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {SearchContext} from '../context/context'
+import { useContext } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { SearchContext } from '../context/context'
 import * as path from 'path'
 
 export const Undo = () => {
-  const {state, undoReplace} = useContext(SearchContext)
-  const {alert} = useDialogDispatchers()
+  const { state, undoReplace } = useContext(SearchContext)
+  const { alert } = useDialogDispatchers()
 
   const undo = async () => {
     try {
@@ -31,7 +31,7 @@ export const Undo = () => {
           className="undo-button btn btn-secondary btn-block my-3"
         >
           <div className="fas fa-undo mr-2"></div>
-          <FormattedMessage id="search.undoChanges" values={{path: path.basename(state.undoBuffer[`${state.workspace}/${state.currentFile}`].path)}} />
+          <FormattedMessage id="search.undoChanges" values={{ path: path.basename(state.undoBuffer[`${state.workspace}/${state.currentFile}`].path) }} />
         </button>
       ) : null}
     </>

@@ -1,4 +1,4 @@
-import {CompilationResult, ABIDescription} from '@remixproject/plugin-api'
+import { CompilationResult, ABIDescription } from '@remixproject/plugin-api'
 
 export interface VyperCompilationResult {
   status: 'success'
@@ -17,7 +17,6 @@ export interface VyperCompilationError {
   line?: number
   message: string
 }
-
 
 export type VyperCompilationResultType = {
   buildDependencies: any
@@ -85,68 +84,68 @@ export type VyperCompilationResultType = {
 }
 
 export interface PackageManifest {
-  title:       string;
+  title: string;
   description: string;
-  type:        TypeEnum;
-  required:    string[];
-  version:     string;
-  properties:  PackageManifestProperties;
+  type: TypeEnum;
+  required: string[];
+  version: string;
+  properties: PackageManifestProperties;
   definitions: Definitions;
 }
 
 export interface Definitions {
-  packageMeta:                 ByteString;
-  contractType:                ByteString;
-  contractInstance:            ContractInstance;
-  byteString:                  ByteString;
-  bytecodeObject:              BytecodeObject;
-  linkReference:               LinkReference;
-  linkValue:                   LinkValue;
-  identifier:                  ByteString;
-  contractInstanceName:        ByteString;
-  deployment:                  Deployment;
+  packageMeta: ByteString;
+  contractType: ByteString;
+  contractInstance: ContractInstance;
+  byteString: ByteString;
+  bytecodeObject: BytecodeObject;
+  linkReference: LinkReference;
+  linkValue: LinkValue;
+  identifier: ByteString;
+  contractInstanceName: ByteString;
+  deployment: Deployment;
   packageContractInstanceName: ByteString;
-  compilerInformation:         CompilerInformation;
-  address:                     Address;
-  transactionHash:             Address;
-  blockHash:                   Address;
-  contentURI:                  ByteString;
+  compilerInformation: CompilerInformation;
+  address: Address;
+  transactionHash: Address;
+  blockHash: Address;
+  contentURI: ByteString;
 }
 
 export interface Address {
-  title:       string;
+  title: string;
   description: string;
-  allOf:       AllOf[];
+  allOf: AllOf[];
 }
 
 export interface AllOf {
-  ref?:       string;
+  ref?: string;
   minLength?: number;
   maxLength?: number;
 }
 
 export interface ByteStringProperties {
-  contractName?:       ByteString;
+  contractName?: ByteString;
   deploymentBytecode?: Meta;
-  runtimeBytecode?:    Meta;
-  abi?:                ByteString;
-  natspec?:            ByteString;
-  compiler?:           Meta;
-  authors?:            ByteString;
-  license?:            ByteString;
-  description?:        ByteString;
-  keywords?:           ByteString;
-  links?:              Links;
+  runtimeBytecode?: Meta;
+  abi?: ByteString;
+  natspec?: ByteString;
+  compiler?: Meta;
+  authors?: ByteString;
+  license?: ByteString;
+  description?: ByteString;
+  keywords?: ByteString;
+  links?: Links;
 }
 
 export interface ByteString {
-  title:              string;
-  description?:       string;
-  type:               TypeEnum;
-  pattern?:           string;
-  format?:            string;
-  items?:             Items;
-  properties?:        ByteStringProperties;
+  title: string;
+  description?: string;
+  type: TypeEnum;
+  pattern?: string;
+  format?: string;
+  items?: Items;
+  properties?: ByteStringProperties;
   patternProperties?: { [key: string]: Meta };
 }
 
@@ -155,29 +154,29 @@ export interface Meta {
 }
 
 export interface Links {
-  title:                string;
-  descriptions:         string;
-  type:                 TypeEnum;
+  title: string;
+  descriptions: string;
+  type: TypeEnum;
   additionalProperties: AdditionalProperties;
 }
 
 export interface AdditionalProperties {
-  type:   TypeEnum;
+  type: TypeEnum;
   format: string;
 }
 
 export type TypeEnum = "string" | "array" | "object";
 
 export interface Items {
-  ref?:  string;
+  ref?: string;
   type?: TypeEnum;
 }
 
 export interface BytecodeObject {
-  title:      string
-  type:       TypeEnum
+  title: string
+  type: TypeEnum
   offsets: number[]
-  anyOf:      BytecodeObjectAnyOf[]
+  anyOf: BytecodeObjectAnyOf[]
   properties: BytecodeObjectProperties
   bytecode: string
   linkReferences?: { offset?: any; length?: number; name?: string}[]
@@ -188,56 +187,56 @@ export interface BytecodeObjectAnyOf {
 }
 
 export interface BytecodeObjectProperties {
-  bytecode:         Meta;
-  linkReferences:   Link;
+  bytecode: Meta;
+  linkReferences: Link;
   linkDependencies: Link;
 }
 
 export interface Link {
-  type:  TypeEnum;
+  type: TypeEnum;
   items: Meta;
 }
 
 export interface CompilerInformation {
-  title:       string;
+  title: string;
   description: string;
-  type:        TypeEnum;
-  required:    string[];
-  properties:  CompilerInformationProperties;
+  type: TypeEnum;
+  required: string[];
+  properties: CompilerInformationProperties;
 }
 
 export interface CompilerInformationProperties {
-  name:     Name;
-  version:  Name;
+  name: Name;
+  version: Name;
   settings: Name;
 }
 
 export interface Name {
   description: string;
-  type:        TypeEnum;
+  type: TypeEnum;
 }
 
 export interface ContractInstance {
-  title:       string;
+  title: string;
   description: string;
-  type:        TypeEnum;
-  required:    string[];
-  properties:  ContractInstanceProperties;
+  type: TypeEnum;
+  required: string[];
+  properties: ContractInstanceProperties;
 }
 
 export interface ContractInstanceProperties {
-  contractType:     ByteString;
-  address:          Meta;
-  transaction:      Meta;
-  block:            Meta;
-  runtimeBytecode:  Meta;
-  compiler:         Meta;
+  contractType: ByteString;
+  address: Meta;
+  transaction: Meta;
+  block: Meta;
+  runtimeBytecode: Meta;
+  compiler: Meta;
   linkDependencies: ByteString;
 }
 
 export interface Deployment {
-  title:             string;
-  type:              TypeEnum;
+  title: string;
+  type: TypeEnum;
   patternProperties: DeploymentPatternProperties;
 }
 
@@ -246,36 +245,36 @@ export interface DeploymentPatternProperties {
 }
 
 export interface LinkReference {
-  title:       string;
+  title: string;
   description: string;
-  type:        TypeEnum;
-  required:    string[];
-  properties:  LinkReferenceProperties;
+  type: TypeEnum;
+  required: string[];
+  properties: LinkReferenceProperties;
 }
 
 export interface LinkReferenceProperties {
   offsets: Offsets;
-  length:  Length;
-  name:    Meta;
+  length: Length;
+  name: Meta;
 }
 
 export interface Length {
-  type:    string;
+  type: string;
   minimum: number;
 }
 
 export interface Offsets {
-  type:  TypeEnum;
+  type: TypeEnum;
   items: Length;
 }
 
 export interface LinkValue {
-  title:       string;
+  title: string;
   description: string;
-  type:        TypeEnum;
-  required:    string[];
-  properties:  LinkValueProperties;
-  oneOf:       OneOf[];
+  type: TypeEnum;
+  required: string[];
+  properties: LinkValueProperties;
+  oneOf: OneOf[];
 }
 
 export interface OneOf {
@@ -283,7 +282,7 @@ export interface OneOf {
 }
 
 export interface OneOfProperties {
-  type:  TypeClass;
+  type: TypeClass;
   value: PurpleValue;
 }
 
@@ -292,14 +291,14 @@ export interface TypeClass {
 }
 
 export interface PurpleValue {
-  ref?:   string;
+  ref?: string;
   anyOf?: Meta[];
 }
 
 export interface LinkValueProperties {
   offsets: Offsets;
-  type:    Name;
-  value:   FluffyValue;
+  type: Name;
+  value: FluffyValue;
 }
 
 export interface FluffyValue {
@@ -307,19 +306,19 @@ export interface FluffyValue {
 }
 
 export interface PackageManifestProperties {
-  manifestVersion:   ManifestVersion;
-  packageName:       ByteString;
-  meta:              Meta;
-  version:           Version;
-  sources:           Sources;
-  contractTypes:     ByteString;
-  deployments:       ByteString;
+  manifestVersion: ManifestVersion;
+  packageName: ByteString;
+  meta: Meta;
+  version: Version;
+  sources: Sources;
+  contractTypes: ByteString;
+  deployments: ByteString;
   buildDependencies: BuildDependencies;
 }
 
 export interface BuildDependencies {
-  title:             string;
-  type:              TypeEnum;
+  title: string;
+  type: TypeEnum;
   patternProperties: BuildDependenciesPatternProperties;
 }
 
@@ -328,16 +327,16 @@ export interface BuildDependenciesPatternProperties {
 }
 
 export interface ManifestVersion {
-  type:        TypeEnum;
-  title:       string;
+  type: TypeEnum;
+  title: string;
   description: string;
-  default:     string;
-  enum:        string[];
+  default: string;
+  enum: string[];
 }
 
 export interface Sources {
-  title:             string;
-  type:              TypeEnum;
+  title: string;
+  type: TypeEnum;
   patternProperties: SourcesPatternProperties;
 }
 
@@ -351,13 +350,13 @@ export interface Empty {
 
 export interface AnyOf {
   title?: string;
-  type?:  TypeEnum;
-  ref?:   string;
+  type?: TypeEnum;
+  ref?: string;
 }
 
 export interface Version {
   title: string;
-  type:  TypeEnum;
+  type: TypeEnum;
 }
 
 export type CompileFormat = {
@@ -448,7 +447,6 @@ deployments: {
   [contractName: string]: ContractInstanceObject
 }
 
-
 }
 
 export type CompilerInformationObject = {
@@ -496,45 +494,45 @@ export type ContractInstanceObject = {
 
 export type ASTSrc = {
   jumpCode: string;
-  length:   number;
+  length: number;
 }
 
 export type Child = {
-  astType:        string;
-  children:       Child[];
+  astType: string;
+  children: Child[];
   classification: number;
-  colOffset:      number;
-  endColOffset:   number;
-  endLineno:      number;
-  lineno:         number;
-  name?:          string;
-  src:            ChildSrc;
-  docStr?:        Child;
+  colOffset: number;
+  endColOffset: number;
+  endLineno: number;
+  lineno: number;
+  name?: string;
+  src: ChildSrc;
+  docStr?: Child;
 }
 
 export type ChildSrc = {
   jumpCode: string;
-  length:   number;
-  start:    number;
+  length: number;
+  start: number;
 }
 
 export type AST = {
-  astType:        string;
-  children:       Child[];
+  astType: string;
+  children: Child[];
   classification: number;
-  colOffset:      number;
-  endColOffset:   number;
-  endLineno:      number;
-  lineno:         number;
-  name:           string;
-  src:            ASTSrc;
+  colOffset: number;
+  endColOffset: number;
+  endLineno: number;
+  lineno: number;
+  name: string;
+  src: ASTSrc;
 }
 
 export type ABI = {
-  anonymous?:       boolean;
-  inputs:           any[];
-  name?:            string;
-  type:             any
+  anonymous?: boolean;
+  inputs: any[];
+  name?: string;
+  type: any
   stateMutability?: any;
-  outputs?:         any[];
+  outputs?: any[];
 }

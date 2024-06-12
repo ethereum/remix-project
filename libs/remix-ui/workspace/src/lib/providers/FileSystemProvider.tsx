@@ -1,10 +1,11 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useReducer, useState, useEffect, SyntheticEvent} from 'react'
+import React, { useReducer, useState, useEffect, SyntheticEvent } from 'react'
 import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
 import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {FileSystemContext} from '../contexts'
-import {browserReducer, browserInitialState} from '../reducers/workspace'
+import { FileSystemContext } from '../contexts'
+import { browserReducer, browserInitialState } from '../reducers/workspace'
+import { branch } from '@remix-ui/git'
 import {
   initWorkspace,
   fetchDirectory,
@@ -47,18 +48,18 @@ import {
   createTsSolGithubAction,
   createSlitherGithubAction,
   createHelperScripts,
-  openElectronFolder, 
-  getElectronRecentFolders, 
+  openElectronFolder,
+  getElectronRecentFolders,
   removeRecentElectronFolder,
   updateGitSubmodules
 } from '../actions'
-import {Modal, WorkspaceProps, WorkspaceTemplate} from '../types'
+import { Modal, WorkspaceProps, WorkspaceTemplate } from '../types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {Workspace} from '../remix-ui-workspace'
-import {customAction} from '@remixproject/plugin-api'
+import { Workspace } from '../remix-ui-workspace'
+import { customAction } from '@remixproject/plugin-api'
 
 export const FileSystemProvider = (props: WorkspaceProps) => {
-  const {plugin} = props
+  const { plugin } = props
   const [fs, fsDispatch] = useReducer(browserReducer, browserInitialState)
   const [focusModal, setFocusModal] = useState<Modal>({
     hide: true,
@@ -98,7 +99,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
       await fetchWorkspaceDirectory(path)
     } catch (err) {
       console.warn(err)
-    }    
+    }
   }
 
   const dispatchSwitchToWorkspace = async (name: string) => {
@@ -209,7 +210,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await showAllBranches()
   }
 
-  const dispatchSwitchToBranch = async (branch: string) => {
+  const dispatchSwitchToBranch = async (branch: branch) => {
     await switchBranch(branch)
   }
 
@@ -217,8 +218,8 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await createNewBranch(branch)
   }
 
-  const dispatchCheckoutRemoteBranch = async (branch: string, remote: string) => {
-    await checkoutRemoteBranch(branch, remote)
+  const dispatchCheckoutRemoteBranch = async (branch: branch) => {
+    await checkoutRemoteBranch(branch)
   }
 
   const dispatchCreateSolidityGithubAction = async () => {
@@ -248,7 +249,6 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
   const dispatchRemoveRecentFolder = async (path: string) => {
     await removeRecentElectronFolder(path)
   }
-
 
   const dispatchUpdateGitSubmodules = async () => {
     await updateGitSubmodules()
@@ -309,13 +309,13 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const handleHideModal = () => {
     setFocusModal((modal) => {
-      return {...modal, hide: true, message: null}
+      return { ...modal, hide: true, message: null }
     })
   }
 
   const modal = (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void) => {
     setModals((modals) => {
-      modals.push({message, title, okLabel, okFn, cancelLabel, cancelFn})
+      modals.push({ message, title, okLabel, okFn, cancelLabel, cancelFn })
       return [...modals]
     })
   }

@@ -1,6 +1,6 @@
 import { ViewPlugin } from '@remixproject/engine-web'
 import { customAction } from '@remixproject/plugin-api'
-import type {CompilerInput} from '@remix-project/remix-solidity'
+import type { CompilerInput } from '@remix-project/remix-solidity'
 import React from 'react'
 
 export interface ISolidityUmlGen extends ViewPlugin {

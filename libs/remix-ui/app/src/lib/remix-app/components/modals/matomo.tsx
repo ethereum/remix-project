@@ -1,7 +1,7 @@
-import React, {useContext, useEffect, useState} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {AppContext} from '../../context/context'
-import {useDialogDispatchers} from '../../context/provider'
+import React, { useContext, useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { AppContext } from '../../context/context'
+import { useDialogDispatchers } from '../../context/provider'
 declare global {
   interface Window {
     _paq: any
@@ -15,8 +15,8 @@ interface MatomoDialogProps {
 }
 
 const MatomoDialog = (props: MatomoDialogProps) => {
-  const {settings, showMatamo, appManager} = useContext(AppContext)
-  const {modal} = useDialogDispatchers()
+  const { settings, showMatamo, appManager } = useContext(AppContext)
+  const { modal } = useDialogDispatchers()
   const [visible, setVisible] = useState<boolean>(props.hide)
 
   const message = () => {

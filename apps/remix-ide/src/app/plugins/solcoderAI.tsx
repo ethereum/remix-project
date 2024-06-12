@@ -1,11 +1,11 @@
 import { Plugin } from '@remixproject/engine'
 
 export type SuggestOptions = {
-  max_new_tokens: number, 
+  max_new_tokens: number,
   temperature: number,
   do_sample:boolean
   top_k: number,
-  top_p:number, 
+  top_p:number,
   stream_result:boolean
 }
 
@@ -15,23 +15,43 @@ const profile = {
   name: 'solcoder',
   displayName: 'solcoder',
   description: 'solcoder',
-  methods: ['code_generation', 'code_completion', "solidity_answer", "code_explaining", "code_insertion"],
+  methods: ['code_generation', 'code_completion', "solidity_answer", "code_explaining", "code_insertion", "error_explaining"],
   events: [],
   maintainedBy: 'Remix',
+}
+type ChatEntry = [string, string];
+
+enum BackendOPModel{
+  DeepSeek,
+  CodeLLama,
+  Mistral
+}
+
+const PromptBuilder = (inst, answr, modelop) => {
+  if (modelop === BackendOPModel.CodeLLama) return ""
+  if (modelop === BackendOPModel.DeepSeek) return "\n### INSTRUCTION:\n" + inst + "\n### RESPONSE:\n" + answr
+  if (modelop === BackendOPModel.Mistral) return ""
 }
 
 export class SolCoder extends Plugin {
   api_url: string
   completion_url: string
+  solgpt_chat_history:ChatEntry[]
+  max_history = 7
+  model_op = BackendOPModel.DeepSeek
+
   constructor() {
     super(profile)
     this.api_url = "https://solcoder.remixproject.org"
     this.completion_url = "https://completion.remixproject.org"
+    this.solgpt_chat_history = []
   }
 
   async code_generation(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'code_generation'])
+
     let result
     try {
       result = await(
@@ -41,18 +61,18 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt, "code_completion", "", false,1000,0.9,0.92,50]}),
+          body: JSON.stringify({ "data":[prompt, "code_completion", "", false,1000,0.9,0.92,50]}),
         })
       ).json()
       if ("error" in result){
-        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.error }) 
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.error })
         return result
       }
       return result.data
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
-    }finally {
+    } finally {
       this.emit("aiInferingDone")
     }
   }
@@ -60,8 +80,12 @@ export class SolCoder extends Plugin {
   async solidity_answer(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'answering'])
+
     let result
     try {
+      const main_prompt = this._build_solgpt_promt(prompt)
       result = await(
         await fetch(this.api_url, {
           method: 'POST',
@@ -69,18 +93,22 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt, "solidity_answer", false,1000,0.9,0.8,50]}),
+          body: JSON.stringify({ "data":[main_prompt, "solidity_answer", false,1000,0.9,0.8,50]}),
         })
       ).json()
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
+      this.solgpt_chat_history = []
       return
-    }finally {
+    } finally {
       this.emit("aiInferingDone")
     }
     if (result) {
-      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0]})
-    } else if  (result.error) {
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
+      const chat:ChatEntry = [prompt, result.data[0]]
+      this.solgpt_chat_history.push(chat)
+      if (this.solgpt_chat_history.length >this.max_history){this.solgpt_chat_history.shift()}
+    } else if (result.error) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "Error on request" })
     }
 
@@ -89,6 +117,9 @@ export class SolCoder extends Plugin {
   async code_explaining(prompt, context:string=""): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'explaining'])
+
     let result
     try {
       result = await(
@@ -98,23 +129,25 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[prompt, "code_explaining", false,2000,0.9,0.8,50, context]}),
+          body: JSON.stringify({ "data":[prompt, "code_explaining", false,2000,0.9,0.8,50, context]}),
         })
       ).json()
       if (result) {
-        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0]})
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
       }
       return result.data[0]
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
-    }finally {
+    } finally {
       this.emit("aiInferingDone")
     }
   }
 
   async code_completion(prompt, options:SuggestOptions=null): Promise<any> {
     this.emit("aiInfering")
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'code_completion'])
+
     let result
     try {
       result = await(
@@ -124,14 +157,14 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data": !options? [
-            prompt, // string  in 'context_code' Textbox component	
+          body: JSON.stringify({ "data": !options? [
+            prompt, // string  in 'context_code' Textbox component
             "code_completion",
-            "", // string  in 'comment' Textbox component		
-            false, // boolean  in 'stream_result' Checkbox component		
-            30, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component		
-            0.9, // number (numeric value between 0.01 and 1) in 'temperature' Slider component		
-            0.90, // number (numeric value between 0 and 1) in 'top_p' Slider component		
+            "", // string  in 'comment' Textbox component
+            false, // boolean  in 'stream_result' Checkbox component
+            30, // number (numeric value between 0 and 2000) in 'max_new_tokens' Slider component
+            0.9, // number (numeric value between 0.01 and 1) in 'temperature' Slider component
+            0.90, // number (numeric value between 0 and 1) in 'top_p' Slider component
             50, // number (numeric value between 1 and 200) in 'top_k' Slider component
           ] : [
             prompt,
@@ -161,6 +194,8 @@ export class SolCoder extends Plugin {
 
   async code_insertion(msg_pfx, msg_sfx): Promise<any> {
     this.emit("aiInfering")
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'code_insertion'])
+
     let result
     try {
       result = await(
@@ -170,15 +205,15 @@ export class SolCoder extends Plugin {
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"data":[
+          body: JSON.stringify({ "data":[
             msg_pfx, // Text before current cursor line
             "code_insertion",
             msg_sfx, // Text after current cursor line
-            1024, 
+            1024,
             0.5,
             0.92,
             50
-          ] }),
+          ]}),
         })
       ).json()
 
@@ -195,6 +230,48 @@ export class SolCoder extends Plugin {
     }
   }
 
+  async error_explaining(prompt): Promise<any> {
+    this.emit("aiInfering")
+    this.call('layout', 'maximizeTerminal')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'explaining'])
 
+    let result
+    try {
+      result = await(
+        await fetch(this.api_url, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ "data":[prompt, "error_explaining", false,2000,0.9,0.8,50]}),
+        })
+      ).json()
+      if (result) {
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
+      }
+      return result.data[0]
+    } catch (e) {
+      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
+      return
+    } finally {
+      this.emit("aiInferingDone")
+    }
+  }
+
+  _build_solgpt_promt(user_promt:string){
+    if (this.solgpt_chat_history.length === 0){
+      return user_promt
+    } else {
+      let new_promt = ""
+      for (const [question, answer] of this.solgpt_chat_history) {
+        new_promt += PromptBuilder(question.split('sol-gpt')[1], answer, this.model_op)
+      }
+      // finaly
+      new_promt = "sol-gpt " + new_promt + PromptBuilder(user_promt.split('sol-gpt')[1], "", this.model_op)
+      return new_promt
+    }
+  }
 
 }

@@ -16,8 +16,8 @@ export function encodeParams (funABI, args) {
       const type = funABI.inputs[i].type
       if (type === 'bool') {
         if (args[i] === false || args[i] === 'false' || args[i] === '0' || args[i] === 0) args[i] = false
-        else if (args[i] === true || args[i] === 'true' || args[i] === '1' || args[i] === 1) args[i] = true   
-        else throw new Error(`provided value for boolean is invalid: ${args[i]}`)    
+        else if (args[i] === true || args[i] === 'true' || args[i] === '1' || args[i] === 1) args[i] = true
+        else throw new Error(`provided value for boolean is invalid: ${args[i]}`)
       }
       types.push(type.indexOf('tuple') === 0 ? makeFullTypeDefinition(funABI.inputs[i]) : type)
       if (args.length < types.length) {
@@ -66,7 +66,7 @@ export function sortAbiFunction (contractabi) {
 }
 
 export function getConstructorInterface (abi) {
-  const funABI = { name: '', inputs: [], type: 'constructor', payable: false, outputs: [] }
+  const funABI = { name: '', inputs: [], type: 'constructor', payable: false, outputs: []}
   if (typeof abi === 'string') {
     try {
       abi = JSON.parse(abi)

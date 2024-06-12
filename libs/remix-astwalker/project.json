@@ -24,7 +24,8 @@
         "executor": "@nrwl/linter:eslint",
         "outputs": ["{options.outputFile}"],
         "options": {
-          "lintFilePatterns": ["libs/remix-astwalker/**/*.ts"]
+          "lintFilePatterns": ["libs/remix-astwalker/**/*.ts"],
+          "eslintConfig": "libs/remix-astwalker/.eslintrc"
         }
       }
     },

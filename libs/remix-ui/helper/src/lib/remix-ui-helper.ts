@@ -113,7 +113,7 @@ export const isHexadecimal = (value) => {
   return /^[0-9a-fA-F]+$/.test(value) && (value.length % 2 === 0)
 }
 
-export const isValidHash  = (hash) =>  { // 0x prefixed, hexadecimal, 64digit
+export const isValidHash = (hash) => { // 0x prefixed, hexadecimal, 64digit
   const hexValue = hash.slice(2, hash.length)
   return is0XPrefixed(hash) && /^[0-9a-fA-F]{64}$/.test(hexValue)
 }
@@ -138,6 +138,6 @@ export const shortenProxyAddress = (address: string) => {
 
 export const shortenDate = (dateString: string) => {
   const date = new Date(dateString)
-  
+
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + ', ' + date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
 }

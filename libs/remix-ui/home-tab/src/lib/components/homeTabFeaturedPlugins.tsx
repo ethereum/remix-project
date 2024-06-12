@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect, useRef, useContext} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
+import React, { useEffect, useRef, useContext } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import PluginButton from './pluginButton'
-import {ThemeContext} from '../themeContext'
+import { ThemeContext } from '../themeContext'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 import CustomNavButtons from './customNavButtons'
@@ -17,7 +17,7 @@ interface HomeTabFeaturedPluginsProps {
   plugin: any
 }
 
-function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
+function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
   const themeFilter = useContext(ThemeContext)
   const carouselRef = useRef<any>({})
   const carouselRefDiv = useRef(null)
@@ -85,7 +85,7 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
 
   return (
     <div className="pl-2 w-100" id="hTFeaturedPlugins">
-      <label className="" style={{fontSize: '1.2rem'}}>
+      <label className="" style={{ fontSize: '1.2rem' }}>
         <FormattedMessage id="home.featuredPlugins" />
       </label>
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column">
@@ -100,11 +100,11 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
             showDots={false}
             responsive={{
               superLargeDesktop: {
-                breakpoint: {max: 4000, min: 3000},
+                breakpoint: { max: 4000, min: 3000 },
                 items: itemsToShow
               },
               desktop: {
-                breakpoint: {max: 3000, min: 1024},
+                breakpoint: { max: 3000, min: 1024 },
                 items: itemsToShow
               }
             }}
@@ -129,7 +129,7 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
               imgPath="assets/img/cookbook.webp"
               envID="cookbookLogo"
               envText="Cookbook"
-              description={intl.formatMessage({id: 'home.cookbookDesc'})}
+              description={intl.formatMessage({ id: 'home.cookbookDesc' })}
               remixMaintained={false}
               callback={() => startCookbook()}
             />
@@ -137,7 +137,7 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
               imgPath="assets/img/solidityLogo.webp"
               envID="solidityLogo"
               envText="Solidity"
-              description={intl.formatMessage({id: 'home.solidityPluginDesc'})}
+              description={intl.formatMessage({ id: 'home.solidityPluginDesc' })}
               remixMaintained={true}
               callback={() => startSolidity()}
             />
@@ -145,14 +145,14 @@ function HomeTabFeaturedPlugins({plugin}: HomeTabFeaturedPluginsProps) {
               imgPath="assets/img/sourcifyNewLogo.webp"
               envID="sourcifyLogo"
               envText="Sourcify"
-              description={intl.formatMessage({id: 'home.sourcifyPluginDesc'})}
+              description={intl.formatMessage({ id: 'home.sourcifyPluginDesc' })}
               callback={() => startSourceVerify()}
             />
             <PluginButton
               imgPath="assets/img/unitTesting.webp"
               envID="sUTLogo"
               envText="Solidity unit testing"
-              description={intl.formatMessage({id: 'home.unitTestPluginDesc'})}
+              description={intl.formatMessage({ id: 'home.unitTestPluginDesc' })}
               remixMaintained={true}
               callback={() => startSolidityUnitTesting()}
             />

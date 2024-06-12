@@ -117,7 +117,7 @@ export const settingReducer = (state, action) => {
     return {
       ...state
     }
-    
+
   case 'useAutoCompletion':
     state.elementState.map(element => {
       if (element.name === 'useAutoCompletion') {
@@ -192,7 +192,7 @@ export const settingReducer = (state, action) => {
   default:
     return initialState
   }
-  
+
 }
 
 export const toastInitialState = {

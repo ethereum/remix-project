@@ -1,4 +1,4 @@
-import {prove} from './utils'
+import { prove } from './utils'
 
 // You must modify the input signals to include the data you're trying to generate a proof for.
 const signals: {[name: string]: number | string} = {}

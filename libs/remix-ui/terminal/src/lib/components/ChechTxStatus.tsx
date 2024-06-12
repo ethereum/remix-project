@@ -1,6 +1,6 @@
 import React from 'react' // eslint-disable-line
 
-const CheckTxStatus = ({tx, type}) => {
+const CheckTxStatus = ({ tx, type }) => {
   if (tx.status === 1 || tx.status === '0x1' || tx.status === true) {
     return <i className="remix_ui_terminal_txStatus remix_ui_terminal_succeeded fas fa-check-circle"></i>
   }

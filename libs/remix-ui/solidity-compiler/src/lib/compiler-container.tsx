@@ -1,22 +1,21 @@
 import React, {useEffect, useState, useRef, useReducer, useContext} from 'react' // eslint-disable-line
-import {FormattedMessage, useIntl} from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import semver from 'semver'
-import {CompilerContainerProps} from './types'
-import {ConfigurationSettings} from '@remix-project/remix-lib'
-import {checkSpecialChars, CustomTooltip, extractNameFromKey} from '@remix-ui/helper'
-import {canUseWorker, urlFromVersion, pathToURL} from '@remix-project/remix-solidity'
-import {compilerReducer, compilerInitialState} from './reducers/compiler'
-import {listenToEvents} from './actions/compiler'
-import {getValidLanguage} from '@remix-project/remix-solidity'
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {configFileContent} from './compilerConfiguration'
+import { CompilerContainerProps } from './types'
+import { ConfigurationSettings } from '@remix-project/remix-lib'
+import { checkSpecialChars, CustomTooltip, extractNameFromKey } from '@remix-ui/helper'
+import { canUseWorker, urlFromVersion, pathToURL } from '@remix-project/remix-solidity'
+import { compilerReducer, compilerInitialState } from './reducers/compiler'
+import { listenToEvents } from './actions/compiler'
+import { getValidLanguage } from '@remix-project/remix-solidity'
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { configFileContent } from './compilerConfiguration'
 import { appPlatformTypes, platformContext, onLineContext } from '@remix-ui/app'
 import * as packageJson from '../../../../../package.json'
 
 import './css/style.css'
 
 import { CompilerDropdown } from './components/compiler-dropdown'
-
 
 const defaultPath = 'compiler_config.json'
 
@@ -110,12 +109,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [state.useFileConfiguration])
 
   useEffect(() => {
-    if(online && state.onlyDownloaded){
+    if (online && state.onlyDownloaded){
       // @ts-ignore
       api.call('compilerloader','getJsonBinData')
     }
     setState((prevState) => {
-      return {...prevState, onlyDownloaded: !online}
+      return { ...prevState, onlyDownloaded: !online }
     })
   },[online])
 
@@ -136,30 +135,29 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
   }, [])
 
   useEffect(() => {
-    if(!solJsonBinData) return
-    if(!state.updatedVersionSelectorFromUrlQuery && solJsonBinData.binList && solJsonBinData.binList.length) {
+    if (!solJsonBinData) return
+    if (!state.updatedVersionSelectorFromUrlQuery && solJsonBinData.binList && solJsonBinData.binList.length) {
       const versionFromQueryParameter = getSelectVersionFromQueryParam()
       if (versionFromQueryParameter.isURL) _updateVersionSelector(state.defaultVersion, versionFromQueryParameter.selectedVersion)
-      else{
+      else {
         setState((prevState) => {
-          return {...prevState, selectedVersion: versionFromQueryParameter.selectedVersion}
+          return { ...prevState, selectedVersion: versionFromQueryParameter.selectedVersion }
         })
         updateCurrentVersion(versionFromQueryParameter.selectedVersion)
         _updateVersionSelector(versionFromQueryParameter.selectedVersion)
       }
       setState((prevState) => {
-        return {...prevState, updatedVersionSelectorFromUrlQuery: true}
+        return { ...prevState, updatedVersionSelectorFromUrlQuery: true }
       })
-    } else if(!solJsonBinData.binList || (solJsonBinData.binList && solJsonBinData.binList.length == 0)){
+    } else if (!solJsonBinData.binList || (solJsonBinData.binList && solJsonBinData.binList.length == 0)){
       const version = 'builtin'
       setState((prevState) => {
-        return {...prevState, selectedVersion: version}
+        return { ...prevState, selectedVersion: version }
       })
       updateCurrentVersion(version)
       _updateVersionSelector(version, '', false)
     }
   }, [solJsonBinData])
-
 
   useEffect(() => {
     const currentFileName = api.currentFile
@@ -207,7 +205,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
     setDisableCompileButton(isDisabled)
     setState((prevState) => {
-      return {...prevState, compiledFileName}
+      return { ...prevState, compiledFileName }
     })
   }, [compiledFileName])
 
@@ -241,7 +239,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       } else if (compilerContainer.editor.mode.startsWith('contentChanged')) {
         contentChanged()
         return
-      }      
+      }
     }
   }, [compilerContainer.editor.mode])
 
@@ -263,13 +261,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           if (!exists || state.useFileConfiguration) createNewConfigFile()
         })
         setState((prevState) => {
-          return {...prevState, createFileOnce: false}
+          return { ...prevState, createFileOnce: false }
         })
       }
 
     setState((prevState) => {
       api.setAppParameter('useFileConfiguration', !state.useFileConfiguration)
-      return {...prevState, useFileConfiguration: !state.useFileConfiguration}
+      return { ...prevState, useFileConfiguration: !state.useFileConfiguration }
     })
   }
 
@@ -307,12 +305,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         setShowFilePathInput(false)
       } else {
         modal(
-          intl.formatMessage({id: 'solidity.newConfigFileTitle'}),
-          intl.formatMessage({id: 'solidity.newConfigFileMessage'}, {configFilePathInput: configFilePathInput.current.value}),
-          intl.formatMessage({id: 'solidity.create'}),
+          intl.formatMessage({ id: 'solidity.newConfigFileTitle' }),
+          intl.formatMessage({ id: 'solidity.newConfigFileMessage' }, { configFilePathInput: configFilePathInput.current.value }),
+          intl.formatMessage({ id: 'solidity.create' }),
           async () => await createNewConfigFile(),
           false,
-          intl.formatMessage({id: 'solidity.cancel'}),
+          intl.formatMessage({ id: 'solidity.cancel' }),
           () => {
             setShowFilePathInput(false)
           }
@@ -351,12 +349,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           if (selectedVersionArr.length) selectedVersion = selectedVersionArr[0].path
         }
       }
-    
+
     } catch (e) {
-      tooltip(intl.formatMessage({id: 'solidity.tooltipText5'}) + e)
+      tooltip(intl.formatMessage({ id: 'solidity.tooltipText5' }) + e)
     }
 
-    return {selectedVersion, isURL}
+    return { selectedVersion, isURL }
   }
 
   /**
@@ -369,13 +367,13 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const compiledFileName = name.split('/').pop()
 
     setState((prevState) => {
-      return {...prevState, compiledFileName}
+      return { ...prevState, compiledFileName }
     })
   }
 
   // Load solc compiler version according to pragma in contract file
   const _setCompilerVersionFromPragma = (filename: string) => {
-    if (!solJsonBinData.selectorList) return
+    if (solJsonBinData && !solJsonBinData.selectorList) return
     api.readFile(filename).then((data) => {
       if (!data) return
       const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
@@ -398,9 +396,9 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
           const compilerPath = solJsonBinData.selectorList.filter((obj) => !obj.prerelease && obj.version === compilerToLoad)[0].path
           if (state.selectedVersion !== compilerPath) {
             // @ts-ignore
-            api.call('notification', 'toast', intl.formatMessage({id: 'solidity.toastMessage'}, {version: _retrieveVersion(compilerPath)}))
+            api.call('notification', 'toast', intl.formatMessage({ id: 'solidity.toastMessage' }, { version: _retrieveVersion(compilerPath) }))
             setState((prevState) => {
-              return {...prevState, selectedVersion: compilerPath}
+              return { ...prevState, selectedVersion: compilerPath }
             })
             _updateVersionSelector(compilerPath)
           }
@@ -442,12 +440,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   const loadingCompiler = () => {
     if (!compileIcon.current) return
-    compileIcon.current.setAttribute('title', intl.formatMessage({id: 'solidity.compileIconAttribute'}))
+    compileIcon.current.setAttribute('title', intl.formatMessage({ id: 'solidity.compileIconAttribute' }))
     compileIcon.current.classList.add('remixui_spinningIcon')
     setState((prevState) => {
       return {
         ...prevState,
-        compilerLicense: intl.formatMessage({id: 'solidity.compilerLicenseMsg1'})
+        compilerLicense: intl.formatMessage({ id: 'solidity.compilerLicenseMsg1' })
       }
     })
     _updateLanguageSelector()
@@ -461,7 +459,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     setState((prevState) => {
       return {
         ...prevState,
-        compilerLicense: license ? license : intl.formatMessage({id: 'solidity.compilerLicenseMsg2'})
+        compilerLicense: license ? license : intl.formatMessage({ id: 'solidity.compilerLicenseMsg2' })
       }
     })
     if (state.autoCompile) compile()
@@ -492,7 +490,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       _paq.push(['trackEvent', 'compiler', 'compiled', 'with_version_' + _retrieveVersion()])
       if (state.autoCompile && state.matomoAutocompileOnce) {
         setState((prevState) => {
-          return {...prevState, matomoAutocompileOnce: false}
+          return { ...prevState, matomoAutocompileOnce: false }
         })
       }
     }
@@ -506,7 +504,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     }, state.timeout)
 
     setState((prevState) => {
-      return {...prevState, compileTimeout}
+      return { ...prevState, compileTimeout }
     })
   }
 
@@ -539,12 +537,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (!selectedVersion || !_shouldBeAdded(selectedVersion)) {
       selectedVersion = state.defaultVersion
       setState((prevState) => {
-        return {...prevState, selectedVersion}
+        return { ...prevState, selectedVersion }
       })
     }
     updateCurrentVersion(selectedVersion)
-    if(setQueryParameter)
-      api.setCompilerQueryParameters({version: selectedVersion})
+    if (setQueryParameter)
+      api.setCompilerQueryParameters({ version: selectedVersion })
     let url
 
     if (customUrl !== '') {
@@ -558,8 +556,8 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
       })
       updateCurrentVersion(selectedVersion)
       url = customUrl
-      if(setQueryParameter)
-        api.setCompilerQueryParameters({version: selectedVersion})
+      if (setQueryParameter)
+        api.setCompilerQueryParameters({ version: selectedVersion })
     } else {
       if (checkSpecialChars(selectedVersion)) {
         return console.log('loading ' + selectedVersion + ' not allowed, special chars not allowed.')
@@ -593,19 +591,19 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
         id: 'solidity.addACustomCompiler'
       }),
       promptMessage('URL'),
-      intl.formatMessage({id: 'solidity.ok'}),
+      intl.formatMessage({ id: 'solidity.ok' }),
       addCustomCompiler,
       false,
-      intl.formatMessage({id: 'solidity.cancel'}),
+      intl.formatMessage({ id: 'solidity.cancel' }),
       () => {}
     )
   }
 
   const showCompilerLicense = () => {
     modal(
-      intl.formatMessage({id: 'solidity.compilerLicense'}),
-      state.compilerLicense ? state.compilerLicense : intl.formatMessage({id: 'solidity.compilerLicenseMsg3'}),
-      intl.formatMessage({id: 'solidity.ok'}),
+      intl.formatMessage({ id: 'solidity.compilerLicense' }),
+      state.compilerLicense ? state.compilerLicense : intl.formatMessage({ id: 'solidity.compilerLicenseMsg3' }),
+      intl.formatMessage({ id: 'solidity.ok' }),
       () => {}
     )
   }
@@ -623,15 +621,15 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const url = promptMessageInput.current.value
 
     setState((prevState) => {
-      return {...prevState, selectedVersion: url}
+      return { ...prevState, selectedVersion: url }
     })
     _updateVersionSelector(state.defaultVersion, url)
   }
 
   const handleLoadVersion = (value) => {
-    if(value !== 'builtin' && !pathToURL[value]) return
+    if (value !== 'builtin' && !pathToURL[value]) return
     setState((prevState) => {
-      return {...prevState, selectedVersion: value, matomoAutocompileOnce: true}
+      return { ...prevState, selectedVersion: value, matomoAutocompileOnce: true }
     })
     updateCurrentVersion(value)
     _updateVersionSelector(value)
@@ -672,7 +670,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     }
     state.autoCompile && compile()
     setState((prevState) => {
-      return {...prevState, optimize: checked}
+      return { ...prevState, optimize: checked }
     })
   }
 
@@ -682,7 +680,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileTabLogic.setRuns(parseInt(runs))
     state.autoCompile && compile()
     setState((prevState) => {
-      return {...prevState, runs}
+      return { ...prevState, runs }
     })
   }
 
@@ -692,7 +690,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     api.setAppParameter('hideWarnings', checked)
     state.autoCompile && compile()
     setState((prevState) => {
-      return {...prevState, hideWarnings: checked}
+      return { ...prevState, hideWarnings: checked }
     })
   }
 
@@ -702,7 +700,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     if (!checked) handleLoadVersion(state.defaultVersion)
     api.setAppParameter('includeNightlies', checked)
     setState((prevState) => {
-      return {...prevState, includeNightlies: checked}
+      return { ...prevState, includeNightlies: checked }
     })
   }
 
@@ -710,7 +708,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     const checked = e.target.checked
     if (!checked) handleLoadVersion(state.defaultVersion)
     setState((prevState) => {
-      return {...prevState, onlyDownloaded: checked}
+      return { ...prevState, onlyDownloaded: checked }
     })
   }
 
@@ -718,7 +716,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileTabLogic.setLanguage(value)
     state.autoCompile && compile()
     setState((prevState) => {
-      return {...prevState, language: value}
+      return { ...prevState, language: value }
     })
   }
 
@@ -731,7 +729,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
     compileTabLogic.setEvmVersion(v)
     state.autoCompile && compile()
     setState((prevState) => {
-      return {...prevState, evmVersion: value}
+      return { ...prevState, evmVersion: value }
     })
   }
 
@@ -807,7 +805,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               <FormattedMessage id="solidity.includeNightlyBuilds" />
             </label>
           </div>
-          {platform === appPlatformTypes.desktop ?     
+          {platform === appPlatformTypes.desktop ?
             <div className="mb-2 flex-row-reverse remixui_nightlyBuilds custom-control custom-checkbox">
               <input className="mr-2 custom-control-input" id="downloadedcompilers" type="checkbox" onChange={handleOnlyDownloadedChange} checked={state.onlyDownloaded} />
               <label htmlFor="downloadedcompilers" data-id="compilerNightliesBuild" className="form-check-label custom-control-label">
@@ -860,12 +858,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   tooltipClasses="text-nowrap"
                   tooltipId="overlay-tooltip-hardhat"
                   tooltipText={
-                    <span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px'}}>
+                    <span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>
                       <FormattedMessage id="solidity.learnHardhat" />
                     </span>
                   }
                 >
-                  <i style={{fontSize: 'medium'}} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
+                  <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
                 </CustomTooltip>
               </a>
             </div>
@@ -889,12 +887,12 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   tooltipClasses="text-nowrap"
                   tooltipId="overlay-tooltip-truffle"
                   tooltipText={
-                    <span className="border bg-light text-dark p-1 pr-3" style={{minWidth: '230px'}}>
+                    <span className="border bg-light text-dark p-1 pr-3" style={{ minWidth: '230px' }}>
                       <FormattedMessage id="solidity.learnTruffle" />
                     </span>
                   }
                 >
-                  <i style={{fontSize: 'medium'}} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
+                  <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
                 </CustomTooltip>
               </a>
             </div>
@@ -1003,7 +1001,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   placeholder="200"
                   value={state.runs}
                   type="number"
-                  title={intl.formatMessage({id: 'solidity.inputTitle2'})}
+                  title={intl.formatMessage({ id: 'solidity.inputTitle2' })}
                   onChange={(e) => onChangeRuns(e.target.value)}
                   disabled={!state.optimize || state.useFileConfiguration}
                 />
@@ -1046,7 +1044,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                   }
                   className="py-2 remixui_compilerConfigPath"
                 >
-                  {configFilePath === '' ? intl.formatMessage({id: 'solidity.noFileSelected1'}) : configFilePath}
+                  {configFilePath === '' ? intl.formatMessage({ id: 'solidity.noFileSelected1' }) : configFilePath}
                 </span>
               </CustomTooltip>
             )}
@@ -1055,7 +1053,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               ref={configFilePathInput}
               className={`py-0 my-0 form-control ${showFilePathInput ? 'd-flex' : 'd-none'}`}
               placeholder={'/folder_path/file_name.json'}
-              title={intl.formatMessage({id: 'solidity.inputTitle1'})}
+              title={intl.formatMessage({ id: 'solidity.inputTitle1' })}
               disabled={!state.useFileConfiguration}
               data-id="scConfigFilePathInput"
               onKeyPress={(event) => {
@@ -1177,7 +1175,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                 <i className="pl-2 ml-2 fas fa-info text-dark"></i>
               </a>
             </CustomTooltip>
-            <CopyToClipboard tip={intl.formatMessage({id: 'solidity.copyNatSpecTag'})} getContent={() => '@custom:dev-run-script file_path'} direction="top">
+            <CopyToClipboard tip={intl.formatMessage({ id: 'solidity.copyNatSpecTag' })} getContent={() => '@custom:dev-run-script file_path'} direction="top">
               <button className="btn remixui_copyButton  ml-2 my-1 text-dark">
                 <i className="remixui_copyIcon far fa-copy" aria-hidden="true"></i>
               </button>

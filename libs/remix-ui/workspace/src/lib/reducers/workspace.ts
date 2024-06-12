@@ -1,10 +1,11 @@
-import {extractNameFromKey, extractParentFromKey} from '@remix-ui/helper'
-import {action, Actions, FileType, WorkspaceElement} from '../types'
+import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
+import { action, Actions, FileType, WorkspaceElement } from '../types'
 import * as _ from 'lodash'
-import {fileDecoration} from '@remix-ui/file-decorators'
-import {ROOT_PATH} from '../utils/constants'
+import { fileDecoration } from '@remix-ui/file-decorators'
+import { ROOT_PATH } from '../utils/constants'
 import isElectron from 'is-electron'
 import { fileKeySort } from '../utils'
+import { branch } from '@remix-ui/git'
 export interface BrowserState {
   browser: {
     currentWorkspace: string
@@ -12,11 +13,8 @@ export interface BrowserState {
       name: string
       isGitRepo: boolean
       hasGitSubmodules?: boolean
-      branches?: {
-        remote: any
-        name: string
-      }[]
-      currentBranch?: string
+      branches?: branch[]
+      currentBranch?: branch
       isGist: string
     }[]
     files: {[x: string]: Record<string, FileType>}
@@ -126,7 +124,7 @@ export const browserInitialState: BrowserState = {
   focusEdit: '',
   focusElement: [],
   initializingFS: true,
-  gitConfig: {username: '', email: '', token: ''}
+  gitConfig: { username: '', email: '', token: '' }
 }
 
 export const browserReducer = (state = browserInitialState, action: Actions) => {
@@ -134,7 +132,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'SET_CURRENT_WORKSPACE': {
     const payload = action.payload
     const workspaces = state.browser.workspaces.find(
-      ({name}) => name === payload.name
+      ({ name }) => name === payload.name
     )
       ? state.browser.workspaces
       : [...state.browser.workspaces, action.payload]
@@ -336,7 +334,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     const payload = action.payload
     const fd = fileAdded(state, payload)
     const dir = extractParentFromKey(payload)
-    const browserExpandPath = state.mode === 'browser'  && !isElectron() ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
+    const browserExpandPath = state.mode === 'browser' && !isElectron() ? [...new Set([...state.browser.expandPath, payload])] : state.browser.expandPath
     const localhostExpandPath = state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload])] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
     return {
@@ -367,7 +365,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'FOLDER_ADDED_SUCCESS': {
     const payload = action.payload
     const fd = fetchDirectoryContent(state, payload)
-    const browserExpandPath = state.mode === 'browser'  && !isElectron() ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
+    const browserExpandPath = state.mode === 'browser' && !isElectron() ? [...new Set([...state.browser.expandPath, payload.folderPath])] : state.browser.expandPath
     const localhostExpandPath = state.mode === 'localhost' ? [...new Set([...state.localhost.expandPath, payload.folderPath])] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
     return {
@@ -398,10 +396,10 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'FILE_REMOVED_SUCCESS': {
     const payload = action.payload
     const fd = fileRemoved(state, payload)
-    const browserExpandPath = state.mode === 'browser'  && !isElectron() ? [...state.browser.expandPath.filter((path) => path !== payload)] : state.browser.expandPath
+    const browserExpandPath = state.mode === 'browser' && !isElectron() ? [...state.browser.expandPath.filter((path) => path !== payload)] : state.browser.expandPath
     const localhostExpandPath = state.mode === 'localhost' ? [...state.localhost.expandPath.filter((path) => path !== payload)] : state.localhost.expandPath
     const flatTree = flattenTree(fd, state.mode === 'browser'? browserExpandPath : localhostExpandPath)
-    
+
     return {
       ...state,
       browser: {
@@ -540,7 +538,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'CREATE_WORKSPACE_SUCCESS': {
     const payload = action.payload
     const workspaces = state.browser.workspaces.find(
-      ({name}) => name === payload.name
+      ({ name }) => name === payload.name
     )
       ? state.browser.workspaces
       : [...state.browser.workspaces, action.payload]
@@ -574,7 +572,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     const payload = action.payload
     let renamedWorkspace
     const workspaces = state.browser.workspaces.filter(
-      ({name, isGitRepo, branches, currentBranch}) => {
+      ({ name, isGitRepo, branches, currentBranch }) => {
         if (name && name !== payload.oldName) {
           return true
         } else {
@@ -603,7 +601,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
   case 'DELETE_WORKSPACE': {
     const payload = action.payload
     const workspaces = state.browser.workspaces.filter(
-      ({name}) => name && name !== payload
+      ({ name }) => name && name !== payload
     )
 
     return {
@@ -630,7 +628,7 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
       popup: ''
     }
   }
-  
+
   case 'SET_FOCUS_ELEMENT': {
     const payload = action.payload
 
@@ -690,12 +688,12 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
       ...state,
       browser: {
         ...state.browser,
-        flatTree: state.mode === 'browser' ?  flatTree : state.browser.flatTree,
+        flatTree: state.mode === 'browser' ? flatTree : state.browser.flatTree,
         expandPath: payload
       },
       localhost: {
         ...state.localhost,
-        flatTree: state.mode === 'localhost' ?  flatTree : state.localhost.flatTree,
+        flatTree: state.mode === 'localhost' ? flatTree : state.localhost.flatTree,
         expandPath: payload
       }
     }
@@ -862,7 +860,6 @@ export const browserReducer = (state = browserInitialState, action: Actions) => 
     }
   }
 
-
   case 'SET_ELECTRON_RECENT_FOLDERS': {
     const payload: string[] = action.payload
     return {
@@ -897,7 +894,7 @@ const flattenTree = (files, expandPath: string[]) =>{
     if (!file || !file.path) return
 
     flatTree.push(file)
-    
+
     if (file.isDirectory && file.child && expandPath && expandPath.find((path) => path === file.path || path.startsWith(file.path + '/')) ) {
       const sorted = fileKeySort(file.child)
       Object.keys(sorted).map((key) => {
@@ -905,13 +902,13 @@ const flattenTree = (files, expandPath: string[]) =>{
       })
     }
   }
-  if(files){
+  if (files){
     const sorted = fileKeySort(files[ROOT_PATH])
     Object.keys(sorted).map((key) => {
       mapChild(sorted[key])
     })
   }
-  
+
   return flatTree
 }
 
@@ -936,7 +933,7 @@ const fileAdded = (
     Object
   )
   const prevFiles = _.get(files, childPath)
-  
+
   files = _.setWith(
     files,
     childPath,
@@ -945,7 +942,7 @@ const fileAdded = (
     },
     Object
   )
-  
+
   return files
 }
 
@@ -1011,7 +1008,7 @@ const fetchDirectoryContent = (
       let files = normalize(payload.fileTree, ROOT_PATH, payload.type)
       files = _.merge(files, state.browser.files[ROOT_PATH])
       if (deletePath) delete files[deletePath]
-      return {[ROOT_PATH]: files}
+      return { [ROOT_PATH]: files }
     } else {
       let files = state.browser.files
       const _path = splitPath(state, payload.path)
@@ -1056,7 +1053,7 @@ const fetchDirectoryContent = (
       let files = normalize(payload.fileTree, ROOT_PATH, payload.type)
       files = _.merge(files, state.localhost.files[ROOT_PATH])
       if (deletePath) delete files[deletePath]
-      return {[ROOT_PATH]: files}
+      return { [ROOT_PATH]: files }
     } else {
       let files = state.localhost.files
       const _path = splitPath(state, payload.path)
@@ -1095,7 +1092,7 @@ const fetchWorkspaceDirectoryContent = (
 ): {[x: string]: Record<string, FileType>} => {
   const files = normalize(payload.fileTree, ROOT_PATH)
 
-  return {[ROOT_PATH]: files}
+  return { [ROOT_PATH]: files }
 }
 
 const normalize = (

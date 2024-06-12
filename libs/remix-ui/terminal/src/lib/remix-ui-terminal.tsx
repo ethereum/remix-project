@@ -122,7 +122,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         }
         scriptRunnerDispatch({
           type: message.type ? message.type : 'log',
-          payload: { message: [message.value] },
+          payload: { message: [message.value]},
         })
       },
     })
@@ -205,7 +205,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   const _shell = async (script, scopedCommands, done) => {
     // default shell
     if (script.indexOf('remix:') === 0) {
-      return done(null, intl.formatMessage({id: 'terminal.text1'}))
+      return done(null, intl.formatMessage({ id: 'terminal.text1' }))
     }
     if (script.indexOf('remix.') === 0) {
       // we keep the old feature. This will basically only be called when the command is querying the "remix" object.
@@ -235,15 +235,16 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     try {
       if (script.trim().startsWith('git')) {
         // await this.call('git', 'execute', script) code might be used in the future
+        // TODO: rm gpt or redirect gpt to sol-pgt
       } else if (script.trim().startsWith('gpt')) {
         call('terminal', 'log',{ type: 'warn', value: `> ${script}` })
-        await call('openaigpt', 'message', script)
-        _paq.push(['trackEvent', 'ai', 'openai', 'askFromTerminal'])
+        await call('solcoder', 'solidity_answer', script)
+        _paq.push(['trackEvent', 'ai', 'solcoder', 'askFromTerminal'])
       } else if (script.trim().startsWith('sol-gpt')) {
         call('terminal', 'log',{ type: 'warn', value: `> ${script}` })
         await call('solcoder', 'solidity_answer', script)
         _paq.push(['trackEvent', 'ai', 'solcoder', 'askFromTerminal'])
-      }else {
+      } else {
         await call('scriptRunner', 'execute', script)
       }
       done()
@@ -401,7 +402,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
   }
 
   useEffect(() => {
-    if(terminalState.clearConsole){
+    if (terminalState.clearConsole){
       typeWriterIndexes.current = []
       inputEl.current.focus()
     }
@@ -433,7 +434,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       if (textList.length === 1) {
         setAutoCompleteState((prevState) => ({
           ...prevState,
-          data: { _options: [] },
+          data: { _options: []},
         }))
         const result = Objectfilter(allPrograms, autoCompletState.userInput)
         setAutoCompleteState((prevState) => ({
@@ -443,7 +444,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
       } else {
         setAutoCompleteState((prevState) => ({
           ...prevState,
-          data: { _options: [] },
+          data: { _options: []},
         }))
         const result = Objectfilter(allCommands, autoCompletState.userInput)
         setAutoCompleteState((prevState) => ({
@@ -591,7 +592,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     } catch (e) {
       console.error(e)
       return true
-    }    
+    }
   }
 
   return (
@@ -773,13 +774,13 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
           cancelFn={modalState.cancelFn}
           handleHide={handleHideModal}
         />
-        {toaster && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg1'})} />}
-        {toastProvider.show && <Toaster message={intl.formatMessage({id: 'terminal.toasterMsg2'}, {fileName: toastProvider.fileName})} />}
+        {toaster && <Toaster message={intl.formatMessage({ id: 'terminal.toasterMsg1' })} />}
+        {toastProvider.show && <Toaster message={intl.formatMessage({ id: 'terminal.toasterMsg2' }, { fileName: toastProvider.fileName })} />}
       </div>
     ))
 }
 
-const typewrite = (elementsRef, message, callback) => {  
+const typewrite = (elementsRef, message, callback) => {
   (() => {
     let count = 0
     const id = setInterval(() => {

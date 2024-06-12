@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react'
-import {SearchResult} from '../../types'
-import {CustomTooltip, getPathIcon} from '@remix-ui/helper'
+import React, { useEffect, useState } from 'react'
+import { SearchResult } from '../../types'
+import { CustomTooltip, getPathIcon } from '@remix-ui/helper'
 import * as path from 'path'
 interface ResultItemProps {
   file: SearchResult

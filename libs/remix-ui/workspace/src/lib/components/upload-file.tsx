@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react'
+import React, { useEffect, useRef } from 'react'
 
 type UploadFileProps = {
   onUpload: (target: EventTarget & HTMLInputElement, files?: FileList) => void
@@ -17,7 +17,7 @@ const UploadFile = (props: UploadFileProps) => {
     }
   }, [])
 
-  return <input ref={ref} style={{display: 'none'}} accept={props.accept} multiple={props.multiple} type="file" />
+  return <input ref={ref} style={{ display: 'none' }} accept={props.accept} multiple={props.multiple} type="file" />
 }
 
 export default UploadFile

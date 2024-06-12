@@ -33,7 +33,8 @@
         "executor": "@nrwl/linter:eslint",
         "outputs": ["{options.outputFile}"],
         "options": {
-          "lintFilePatterns": ["libs/remix-simulator/**/*.ts"]
+          "lintFilePatterns": ["libs/remix-simulator/**/*.ts"],
+          "eslintConfig": "libs/remix-simulator/.eslintrc"
         }
       }
     },

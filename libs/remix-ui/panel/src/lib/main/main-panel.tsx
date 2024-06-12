@@ -2,7 +2,7 @@
 import React, {useContext, useEffect, useRef, useState} from 'react' // eslint-disable-line
 import DragBar from '../dragbar/dragbar'
 import RemixUIPanelPlugin from '../plugins/panel-plugin'
-import {PluginRecord} from '../types'
+import { PluginRecord } from '../types'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import './main-panel.css'
 
@@ -12,7 +12,7 @@ export type RemixUIMainPanelProps = {
 
 const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
   const platform = useContext(platformContext)
-  const {layout} = props
+  const { layout } = props
   const [plugins, setPlugins] = useState<PluginRecord[]>([])
   const editorRef = useRef<HTMLDivElement>(null)
   const mainPanelRef = useRef<HTMLDivElement>(null)
@@ -30,7 +30,8 @@ const RemixUIMainPanel = (props: RemixUIMainPanelProps) => {
           active: panel.active,
           view: panel.plugin.profile.name === 'tabs' ? panel.plugin.renderTabsbar() : panel.plugin.render(),
           class: panel.plugin.profile.name + '-wrap ' + (panel.minimized ? 'minimized ' : ' ') + ((platform === appPlatformTypes.desktop)? 'desktop' : ''),
-          minimized: panel.minimized
+          minimized: panel.minimized,
+          pinned: panel.pinned
         })
       })
       setPlugins(pluginPanels)

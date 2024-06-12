@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react' //eslint-disable-line
-import {useIntl} from 'react-intl'
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {helper} from '@remix-project/remix-solidity'
+import { useIntl } from 'react-intl'
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { helper } from '@remix-project/remix-solidity'
 import './renderer.css'
 const _paq = (window._paq = window._paq || [])
 
@@ -11,7 +11,7 @@ interface RendererProps {
   plugin: any
 }
 
-export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
+export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
   const intl = useIntl()
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState({
@@ -74,9 +74,9 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
   const askGtp = async () => {
     try {
       const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
-      const message = intl.formatMessage({id: 'solidity.openaigptMessage'}, {content, messageText})
-      await plugin.call('openaigpt', 'message', message)
-      _paq.push(['trackEvent', 'ai', 'openai', 'explainSolidityError'])
+      const message = intl.formatMessage({ id: 'solidity.openaigptMessage' }, { content, messageText })
+      await plugin.call('solcoder', 'error_explaining', message)
+      _paq.push(['trackEvent', 'ai', 'solcoder', 'error_explaining_SolidityError'])
     } catch (err) {
       console.error('unable to askGtp')
       console.error(err)
@@ -103,17 +103,17 @@ export const Renderer = ({message, opt = {}, plugin}: RendererProps) => {
             </span>
             <span
               className="position-relative text-ai text-sm pl-0 pr-2"
-              style={{fontSize: "x-small", alignSelf: "end"}}
+              style={{ fontSize: "x-small", alignSelf: "end" }}
             >
             </span>
             <span
               className="button border text-ai btn-sm"
               onClick={() => { askGtp() }}
-              style={{borderColor: "var(--ai)"}}
+              style={{ borderColor: "var(--ai)" }}
             >
-              ASK GPT
+              Ask RemixAI
             </span>
-            
+
           </div>
         </div>
       )}

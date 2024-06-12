@@ -1,15 +1,18 @@
 // eslint-disable-next-line no-use-before-define
-import React, {useEffect, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {UdappProps} from '../types'
-import {FuncABI} from '@remix-project/core-plugin'
-import {CopyToClipboard} from '@remix-ui/clipboard'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { UdappProps } from '../types'
+import { FuncABI } from '@remix-project/core-plugin'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from '@ethereumjs/util'
-import {ContractGUI} from './contractGUI'
-import {TreeView, TreeViewItem} from '@remix-ui/tree-view'
-import {BN} from 'bn.js'
-import {CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress} from '@remix-ui/helper'
+import axios from 'axios'
+import { AppModal } from '@remix-ui/app'
+import { ContractGUI } from './contractGUI'
+import { SolScanTable } from './solScanTable'
+import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
+import { BN } from 'bn.js'
+import { CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || [])
 
 const txHelper = remixLib.execution.txHelper
@@ -73,30 +76,30 @@ export function UniversalDappUI(props: UdappProps) {
     if (amount !== '0') {
       // check for numeric and receive/fallback
       if (!isNumeric(amount)) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError1'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError1' }))
       } else if (!receive && !(fallback && fallback.stateMutability === 'payable')) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError2'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError2' }))
       }
     }
     let calldata = calldataValue
 
     if (calldata) {
       if (calldata.length < 4 && is0XPrefixed(calldata)) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError3'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError3' }))
       } else {
         if (is0XPrefixed(calldata)) {
           calldata = calldata.substr(2, calldata.length)
         }
         if (!isHexadecimal(calldata)) {
-          return setLlIError(intl.formatMessage({id: 'udapp.llIError4'}))
+          return setLlIError(intl.formatMessage({ id: 'udapp.llIError4' }))
         }
       }
       if (!fallback) {
-        return setLlIError(intl.formatMessage({id: 'udapp.llIError5'}))
+        return setLlIError(intl.formatMessage({ id: 'udapp.llIError5' }))
       }
     }
 
-    if (!receive && !fallback) return setLlIError(intl.formatMessage({id: 'udapp.llIError6'}))
+    if (!receive && !fallback) return setLlIError(intl.formatMessage({ id: 'udapp.llIError6' }))
 
     // we have to put the right function ABI:
     // if receive is defined and that there is no calldata => receive function is called
@@ -104,7 +107,7 @@ export function UniversalDappUI(props: UdappProps) {
     if (receive && !calldata) args.funcABI = receive
     else if (fallback) args.funcABI = fallback
 
-    if (!args.funcABI) return setLlIError(intl.formatMessage({id: 'udapp.llIError7'}))
+    if (!args.funcABI) return setLlIError(intl.formatMessage({ id: 'udapp.llIError7' }))
     runTransaction(false, args.funcABI, null, calldataValue)
   }
 
@@ -179,14 +182,14 @@ export function UniversalDappUI(props: UdappProps) {
     } else {
       if (item instanceof Array) {
         ret.children = item.map((item, index) => {
-          return {key: index, value: item}
+          return { key: index, value: item }
         })
         ret.self = 'Array'
         ret.isNode = true
         ret.isLeaf = false
       } else if (item instanceof Object) {
         ret.children = Object.keys(item).map((key) => {
-          return {key: key, value: item[key]}
+          return { key: key, value: item[key] }
         })
         ret.self = 'Object'
         ret.isNode = true
@@ -215,6 +218,100 @@ export function UniversalDappUI(props: UdappProps) {
     const value = e.target.value
 
     setCalldataValue(value)
+  }
+
+  const handleScanContinue = async () => {
+    await props.plugin.call('notification', 'toast', 'Processing data to scan...')
+    _paq.push(['trackEvent', 'udapp', 'solidityScan', 'initiateScan'])
+    const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
+    const fileName = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
+    const filePath = `.workspaces/${fileName}`
+    const file = await props.plugin.call('fileManager', 'readFile', filePath)
+
+    const urlResponse = await axios.post(`https://solidityscan.remixproject.org/uploadFile`, { file, fileName })
+
+    if (urlResponse.data.status === 'success') {
+      const ws = new WebSocket('wss://solidityscan.remixproject.org/solidityscan')
+
+      ws.addEventListener('error', console.error);
+
+      ws.addEventListener('open', async (event) => {
+        await props.plugin.call('notification', 'toast', 'Initiating scan...')
+      })
+
+      ws.addEventListener('message', async (event) => {
+        const data = JSON.parse(event.data)
+        if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
+          // Message on Bearer token successful registration
+          const reqToInitScan = {
+            "action": "message",
+            "payload": {
+              "type": "private_project_scan_initiate",
+              "body": {
+                "file_urls": [
+                  urlResponse.data.result.url
+                ],
+                "project_name": "RemixProject",
+                "project_type": "new"
+              }
+            }
+          }
+          ws.send(JSON.stringify(reqToInitScan))
+        } else if (data.type === "scan_status" && data.payload.scan_status === "download_failed") {
+          // Message on failed scan
+          _paq.push(['trackEvent', 'udapp', 'solidityScan', 'scanFailed'])
+          const modal: AppModal = {
+            id: 'SolidityScanError',
+            title: <FormattedMessage id="udapp.solScan.errModalTitle" />,
+            message: data.payload.scan_status_err_message,
+            okLabel: 'Close'
+          }
+          await props.plugin.call('notification', 'modal', modal)
+        } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
+          // Message on successful scan
+          _paq.push(['trackEvent', 'udapp', 'solidityScan', 'scanSuccess'])
+          const url = data.payload.scan_details.link
+
+          const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
+          const scanDetails: Record<string, any>[] = scanData.scan_report.multi_file_scan_details
+
+          let modal: AppModal
+
+          if (scanDetails && scanDetails.length) {
+            modal = {
+              id: 'SolidityScanSuccess',
+              title: <FormattedMessage id="udapp.solScan.successModalTitle" />,
+              message: <SolScanTable scanDetails={scanDetails} fileName={fileName}/>,
+              okLabel: 'Close',
+              modalParentClass: 'modal-xl'
+            }
+          } else {
+            modal = {
+              id: 'SolidityScanError',
+              title: <FormattedMessage id="udapp.solScan.errModalTitle" />,
+              message: "Some error occurred! Please try again",
+              okLabel: 'Close'
+            }
+          }
+          await props.plugin.call('notification', 'modal', modal)
+        }
+
+      })
+    }
+  }
+
+  const askPermissionToScan = async () => {
+    _paq.push(['trackEvent', 'udapp', 'solidityScan', 'askPermissionToScan'])
+    const modal: AppModal = {
+      id: 'SolidityScanPermissionHandler',
+      title: <FormattedMessage id="udapp.solScan.modalTitle" />,
+      message: <FormattedMessage id="udapp.solScan.modalMessage" />,
+      okLabel: <FormattedMessage id="udapp.solScan.modalOkLabel" />,
+      okFn: handleScanContinue,
+      cancelLabel: <FormattedMessage id="udapp.solScan.modalCancelLabel" />
+    }
+
+    await props.plugin.call('notification', 'modal', modal)
   }
 
   const label = (key: string | number, value: string) => {
@@ -253,7 +350,7 @@ export function UniversalDappUI(props: UdappProps) {
       data-id={props.isPinnedContract ? `pinnedInstance${address}` : `unpinnedInstance${address}`}
     >
       <div className="udapp_title pb-0 alert alert-secondary">
-        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass} style={{padding: "0.45rem"}}>
+        <span data-id={`universalDappUiTitleExpander${props.index}`} className="btn udapp_titleExpander" onClick={toggleClass} style={{ padding: "0.45rem" }}>
           <i className={`fas ${toggleExpander ? 'fa-angle-right' : 'fa-angle-down'}`} aria-hidden="true"></i>
         </span>
         <div className="input-group udapp_nameNbuts">
@@ -266,38 +363,53 @@ export function UniversalDappUI(props: UdappProps) {
               {props.instance.name} at {shortenAddress(address)} ({props.context})
             </span>) }
           </div>
-          <div className="btn" style={{padding: '0.15rem'}}>
-            <CopyToClipboard tip={intl.formatMessage({id: 'udapp.copy'})} content={address} direction={'top'} />
+          <div className="btn" style={{ padding: '0.15rem' }}>
+            <CopyToClipboard tip={intl.formatMessage({ id: 'udapp.copyAddress' })} content={address} direction={'top'} />
           </div>
-          { props.isPinnedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+          { props.isPinnedContract ? ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
               <i className="fas fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={remove}></i>
-            </CustomTooltip> 
-          </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+            </CustomTooltip>
+          </div> ) : ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappPinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPin" />}>
               <i className="far fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappPin" onClick={pinContract}></i>
             </CustomTooltip>
           </div> )
           }
         </div>
-        { props.isPinnedContract ? ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+        { props.isPinnedContract ? ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
           <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
             <i className="far fa-trash p-2" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={deletePinnedContract}></i>
-          </CustomTooltip> 
-        </div> ) : ( <div className="btn" style={{padding: '0.15rem', marginLeft: '-0.5rem'}}>
+          </CustomTooltip>
+        </div> ) : ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
           <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextRemove" />}>
             <i className="fas fa-times p-2" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
-          </CustomTooltip> 
+          </CustomTooltip>
         </div> )
         }
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
-          <div className="d-flex justify-content-between" data-id="instanceContractBal">
-            <label>
+          <div className="d-flex flex-row justify-content-between align-items-center pb-2" data-id="instanceContractBal">
+            <span className="remixui_runtabBalancelabel run-tab">
               <b><FormattedMessage id="udapp.balance" />:</b> {instanceBalance} ETH
-            </label>
-            {props.exEnvironment && props.exEnvironment.startsWith('injected') && <i className="fas fa-edit btn btn-sm p-0" onClick={() => {props.editInstance(props.instance)}}></i>}
+            </span>
+            <div></div>
+            <div className="d-flex align-self-center">
+              {props.exEnvironment && props.exEnvironment.startsWith('injected') && (
+                <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappEditTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextEdit" />}>
+                  <i
+                    className="fas fa-edit pr-3"
+                    onClick={() => {
+                      props.editInstance(props.instance)
+                    }}
+                  ></i>
+                </CustomTooltip>
+              )}
+              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.solScan.iconTooltip" />}>
+                <i className="fas fa-qrcode p-0" onClick={askPermissionToScan}></i>
+              </CustomTooltip>
+            </div>
           </div>
           { props.isPinnedContract && props.instance.pinnedAt ? (
             <div className="d-flex" data-id="instanceContractPinnedAt">
@@ -307,7 +419,7 @@ export function UniversalDappUI(props: UdappProps) {
             </div>
           ) : null }
           { props.isPinnedContract && props.instance.filePath ? (
-            <div className="d-flex" data-id="instanceContractFilePath" style={{textAlign: "start", lineBreak: "anywhere"}}>
+            <div className="d-flex" data-id="instanceContractFilePath" style={{ textAlign: "start", lineBreak: "anywhere" }}>
               <label>
                 <b><FormattedMessage id="udapp.filePath" />:</b> {props.instance.filePath}
               </label>

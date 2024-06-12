@@ -1,10 +1,11 @@
-import {fileDecoration, FileDecorationIcons} from '@remix-ui/file-decorators'
-import {CustomTooltip} from '@remix-ui/helper'
-import {Plugin} from '@remixproject/engine'
+import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators'
+import { CustomTooltip } from '@remix-ui/helper'
+import { Plugin } from '@remixproject/engine'
 import React, {useState, useRef, useEffect, useReducer} from 'react' // eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs'
+import { FormattedMessage } from 'react-intl'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import './remix-ui-tabs.css'
+import { values } from 'lodash'
 const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
@@ -64,7 +65,6 @@ export const TabsUI = (props: TabsUIProps) => {
   const tabsRef = useRef({})
   const tabsElement = useRef(null)
   const [ai_switch, setAI_switch] = useState<boolean>(false)
-
   const tabs = useRef(props.tabs)
   tabs.current = props.tabs // we do this to pass the tabs list to the onReady callbacks
 
@@ -77,6 +77,14 @@ export const TabsUI = (props: TabsUIProps) => {
     }
   }, [tabsState.selectedIndex])
 
+  const getAI = async() => {
+    try {
+      return await props.plugin.call('settings', 'getCopilotSetting')
+    } catch (e){
+      return false
+    }
+  }
+
   const getFileDecorationClasses = (tab: any) => {
     const fileDecoration = tabsState.fileDecorations.find((fileDecoration: fileDecoration) => {
       if (`${fileDecoration.workspace.name}/${fileDecoration.path}` === tab.name) return true
@@ -85,14 +93,13 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const getFileDecorationIcons = (tab: any) => {
-    return <FileDecorationIcons file={{path: tab.name}} fileDecorations={tabsState.fileDecorations} />
+    return <FileDecorationIcons file={{ path: tab.name }} fileDecorations={tabsState.fileDecorations} />
   }
 
   const renderTab = (tab, index) => {
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
-
     return (
       <CustomTooltip tooltipId="tabsActive" tooltipText={tab.tooltip} placement="bottom-start">
         <div
@@ -103,7 +110,7 @@ export const TabsUI = (props: TabsUIProps) => {
           data-id={index === currentIndexRef.current ? 'tab-active' : ''}
           data-path={tab.name}
         >
-          {tab.icon ? <img className="my-1 mr-1 iconImage" style={{filter: invert}} src={tab.icon} /> : <i className={classNameImg}></i>}
+          {tab.icon ? <img className="my-1 mr-1 iconImage" style={{ filter: invert }} src={tab.icon} /> : <i className={classNameImg}></i>}
           <span className={`title-tabs ${getFileDecorationClasses(tab)}`}>{tab.title}</span>
           {getFileDecorationIcons(tab)}
           <span
@@ -129,11 +136,12 @@ export const TabsUI = (props: TabsUIProps) => {
   const activateTab = (name: string) => {
     const index = tabs.current.findIndex((tab) => tab.name === name)
     currentIndexRef.current = index
-    dispatch({type: 'SELECT_INDEX', payload: index, ext: getExt(name)})
+    dispatch({ type: 'SELECT_INDEX', payload: index, ext: getExt(name) })
   }
 
   const setFileDecorations = (fileStates: fileDecoration[]) => {
-    dispatch({type: 'SET_FILE_DECORATIONS', payload: fileStates})
+    getAI().then(value => setAI_switch(value)).catch(error => console.log(error))
+    dispatch({ type: 'SET_FILE_DECORATIONS', payload: fileStates })
   }
 
   const transformScroll = (event) => {
@@ -166,7 +174,7 @@ export const TabsUI = (props: TabsUIProps) => {
 
   return (
     <div className="remix-ui-tabs d-flex justify-content-between border-0 header nav-tabs" data-id="tabs-component">
-      <div className="d-flex flex-row" style={{maxWidth: 'fit-content', width: '99%'}}>
+      <div className="d-flex flex-row" style={{ maxWidth: 'fit-content', width: '99%' }}>
         <div className="d-flex flex-row justify-content-center align-items-center m-1 mt-1">
           <CustomTooltip
             placement="bottom"
@@ -175,7 +183,7 @@ export const TabsUI = (props: TabsUIProps) => {
               <span>
                 {tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' ? (
                   <FormattedMessage id="remixUiTabs.tooltipText1" />
-                ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom'  || tabsState.currentExt === 'vy' ? (
+                ) : tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy' ? (
                   <FormattedMessage id="remixUiTabs.tooltipText2" />
                 ) : (
                   <FormattedMessage id="remixUiTabs.tooltipText3" />
@@ -185,7 +193,7 @@ export const TabsUI = (props: TabsUIProps) => {
           >
             <button
               data-id="play-editor"
-              className="btn text-success py-0"
+              className="btn text-success pr-0 py-0 d-flex"
               disabled={!(tabsState.currentExt === 'js' || tabsState.currentExt === 'ts' || tabsState.currentExt === 'sol' || tabsState.currentExt === 'circom' || tabsState.currentExt === 'vy')}
               onClick={async () => {
                 const path = active().substr(active().indexOf('/') + 1, active().length)
@@ -205,111 +213,82 @@ export const TabsUI = (props: TabsUIProps) => {
                 }
               }}
             >
-              <i className="fad fa-play"></i>
+              <i className="fas fa-play"></i>
             </button>
           </CustomTooltip>
-          <CustomTooltip
-            placement="bottom"
-            tooltipId="overlay-tooltip-explaination"
-            tooltipText={
-              <span>
-                {tabsState.currentExt === 'sol'? (
-                  <FormattedMessage id="remixUiTabs.tooltipText5" />
-                ) : (
-                  <FormattedMessage id="remixUiTabs.tooltipText4" />
-                )}
-              </span>
-            }
-          >
-            <button
-              data-id="explain-editor"
-              id='explain_btn'
-              className='btn py-0 text-ai px-0 d-flex'
-              disabled={!(tabsState.currentExt === 'sol') || explaining}
-              onClick={async () => {
-                const path = active().substr(active().indexOf('/') + 1, active().length)
-                const content = await props.plugin.call('fileManager', 'readFile', path)
-                if (tabsState.currentExt === 'sol') {
-                  setExplaining(true)
-                  await props.plugin.call('solcoder', 'code_explaining', content)
-                  setExplaining(false)
-                  _paq.push(['trackEvent', 'ai', 'solcoder', 'explain_file'])
-                }
-              }}
+
+          <div className= "d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="overlay-tooltip-explaination"
+              tooltipText={
+                <span>
+                  {tabsState.currentExt === 'sol'? (
+                    <FormattedMessage id="remixUiTabs.tooltipText5" />
+                  ) : (
+                    <FormattedMessage id="remixUiTabs.tooltipText4" />
+                  )}
+                </span>
+              }
             >
-              <i className={`fa-solid fa-user-robot ${explaining ? 'loadingExplanation' : ''}`}></i>
-              <span
-                className="position-relative text-ai text-sm pl-1"
-                style={{fontSize: "x-small", alignSelf: "end"}}
+              <button
+                data-id="explain-editor"
+                id='explain_btn'
+                className='btn text-ai pl-2 pr-0 py-0'
+                disabled={!(tabsState.currentExt === 'sol') || explaining}
+                onClick={async () => {
+                  const path = active().substr(active().indexOf('/') + 1, active().length)
+                  const content = await props.plugin.call('fileManager', 'readFile', path)
+                  if (tabsState.currentExt === 'sol') {
+                    setExplaining(true)
+                    await props.plugin.call('solcoder', 'code_explaining', content)
+                    setExplaining(false)
+                    _paq.push(['trackEvent', 'ai', 'solcoder', 'explain_file'])
+                  }
+                }}
               >
-                AI
-              </span>
-            </button>
-          </CustomTooltip>
-          <CustomTooltip
-            placement="bottom"
-            tooltipId="overlay-tooltip-copilot"
-            tooltipText={
-              <span>
-                { tabsState.currentExt === 'sol'? (
-                  !ai_switch ? (
-                    <FormattedMessage id="remixUiTabs.tooltipText6" />
-                  ) : (<FormattedMessage id="remixUiTabs.tooltipText7" />)
-                ) : (
-                  <FormattedMessage id="remixUiTabs.tooltipText4" />
-                )}
-              </span>
-            }
-          >
-            <button
-              data-id="remix_ai_switch"
-              id='remix_ai_switch'
-              className="btn ai-switch text-ai pl-2 pr-0 py-0 d-flex"
-              disabled={!(tabsState.currentExt === 'sol' )}
-              onClick={async () => {
-                await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
-                setAI_switch(!ai_switch)
-                ai_switch ? _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_disabled'])
-              }}
+                <i className={`fas fa-user-robot ${explaining ? 'loadingExplanation' : ''}`}></i>
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement="bottom"
+              tooltipId="overlay-tooltip-copilot"
+              tooltipText={
+                <span>
+                  { tabsState.currentExt === 'sol'? (
+                    !ai_switch ? (
+                      <FormattedMessage id="remixUiTabs.tooltipText6" />
+                    ) : (<FormattedMessage id="remixUiTabs.tooltipText7" />)
+                  ) : (
+                    <FormattedMessage id="remixUiTabs.tooltipTextDisabledCopilot" />
+                  )}
+                </span>
+              }
             >
-              <i
-                className={ai_switch ? "fa-solid fa-toggle-on" : "fa-solid fa-toggle-off"}
-              ></i>
-              <span
-                className="position-relative text-ai text-sm pl-1"
-                style={{fontSize: "x-small", alignSelf: "end"}}
+              <button
+                data-id="remix_ai_switch"
+                id='remix_ai_switch'
+                className="btn ai-switch text-ai pl-2 pr-0 py-0"
+                disabled={!(tabsState.currentExt === 'sol' )}
+                onClick={async () => {
+                  await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
+                  setAI_switch(!ai_switch)
+                  ai_switch ? _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_disabled'])
+                }}
               >
-                AI
-              </span>
-            </button>
-          </CustomTooltip>
-          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-aiDocumentation" tooltipText={<FormattedMessage id="remixUiTabs.tooltipText8" />}>
-            <span 
-              data-id="remix_ai_docs"
-              id="remix_ai_docs"
-              className="btn pl-2 pr-0 py-0 d-flex ai-docs"
-              role='link'
-              onClick={()=>{
-                window.open("https://remix-ide.readthedocs.io/en/latest/ai.html")
-                _paq.push(['trackEvent', 'ai', 'solcoder', 'documentation'])
-              }}
-            >
-              <i className="fa-solid fa-book text-ai"></i>
-              <span
-                className="position-relative text-ai text-sm pl-1"
-                style={{fontSize: "x-small", alignSelf: "end"}}
-              >
-                AI
-              </span>
-            </span>
-          </CustomTooltip>
-          
-          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
-            <span data-id="tabProxyZoomOut" className="btn btn-sm px-2 fas fa-search-minus text-dark" onClick={() => props.onZoomOut()}></span>
-          </CustomTooltip>
-          <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-zoom-in" tooltipText={<FormattedMessage id="remixUiTabs.zoomIn" />}>
-            <span data-id="tabProxyZoomIn" className="btn btn-sm px-2 fas fa-search-plus text-dark" onClick={() => props.onZoomIn()}></span>
-          </CustomTooltip>
+                <i className={ai_switch ? "fas fa-toggle-on fa-lg" : "fas fa-toggle-off fa-lg"}></i>
+              </button>
+            </CustomTooltip>
+          </div>
+
+          <div className= "d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
+            <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-zoom-out" tooltipText={<FormattedMessage id="remixUiTabs.zoomOut" />}>
+              <span data-id="tabProxyZoomOut" className="btn fas fa-search-minus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomOut()}></span>
+            </CustomTooltip>
+            <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-run-zoom-in" tooltipText={<FormattedMessage id="remixUiTabs.zoomIn" />}>
+              <span data-id="tabProxyZoomIn" className="btn fas fa-search-plus text-dark pl-2 pr-0 py-0 d-flex" onClick={() => props.onZoomIn()}></span>
+            </CustomTooltip>
+          </div>
         </div>
         <Tabs
           className="tab-scroll"
@@ -335,7 +314,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 {renderTab(tab, i)}
               </Tab>
             ))}
-            <div style={{minWidth: '4rem', height: '1rem'}} id="dummyElForLastXVisibility"></div>
+            <div style={{ minWidth: '4rem', height: '1rem' }} id="dummyElForLastXVisibility"></div>
           </TabList>
           {props.tabs.map((tab) => (
             <TabPanel key={tab.name}></TabPanel>

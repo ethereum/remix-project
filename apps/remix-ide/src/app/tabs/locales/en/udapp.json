@@ -9,7 +9,7 @@
 
   "udapp._comment_value.tsx": "libs/remix-ui/run-tab/src/lib/components/value.tsx",
   "udapp.value": "Value",
-  "udapp.tooltipText5": "Enter an amount and choose its unit",
+  "udapp.tooltipText5": "Enter an amount to be sent with transaction and choose its unit",
 
   "udapp._comment_contractDropdownUI.tsx": "libs/remix-ui/run-tab/src/lib/components/contractDropdownUI.tsx",
   "udapp.contract": "Contract",
@@ -50,15 +50,15 @@
   "udapp.hash": "hash",
   "udapp.signature": "signature",
   "udapp.injectedTitle": "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type).",
-  "udapp.createNewAccount": "Create a new account",
+  "udapp.createNewAccount": "Create new account",
   "udapp.web3Title": "Creating an account is possible only in Personal mode. Please go to Settings to enable it.",
   "udapp.defaultTitle": "Unfortunately it's not possible to create an account using an external wallet ({selectExEnv}).",
   "udapp.text1": "Please provide a Passphrase for the account creation",
   "udapp.tooltipText1": "Account list is empty, please make sure the current provider is properly connected to remix",
   "udapp.modalTitle1": "Passphrase to sign a message",
   "udapp.modalMessage1": "Enter your passphrase for this account to sign the message",
-  "udapp.copyAccount": "Copy account to clipboard",
-  "udapp.signMsgUsingAccount": "Sign a message using this account",
+  "udapp.copyAccount": "Copy account",
+  "udapp.signMsgUsingAccount": "Sign using this account",
 
   "udapp._comment_environment.tsx": "libs/remix-ui/run-tab/src/lib/components/environment.tsx",
   "udapp.environment": "Environment",
@@ -79,6 +79,15 @@
   "udapp.tooltipTextUnpin": "Unpin contract",
   "udapp.pinnedAt": "Pinned at",
   "udapp.filePath": "File path",
+
+  "udapp.solScan.iconTooltip": "Click to scan this contract for vulnerabilities using third-party SolidityScan [BETA]",
+  "udapp.solScan.modalTitle": "Permission to share code",
+  "udapp.solScan.modalMessage": "To scan the contract for vulnerabilities & possible risks, smart contract code will be shared to third-party SolidityScan (https://solidityscan.com/).\n\n Would you like to continue?",
+  "udapp.solScan.modalOkLabel": "Continue",
+  "udapp.solScan.modalCancelLabel": "Cancel",
+  "udapp.solScan.errModalTitle": "Scan error",
+  "udapp.solScan.successModalTitle": "Scan result",
+  
 
   "udapp._comment_recorderCardUI.tsx": "libs/remix-ui/run-tab/src/lib/components/recorderCardUI.tsx",
   "udapp.transactionsRecorded": "Transactions recorded",
@@ -109,6 +118,7 @@
 
   "udapp._comment_universalDappUI.tsx": "libs/remix-ui/run-tab/src/lib/components/universalDappUI.tsx",
   "udapp.tooltipTextRemove": "Remove from the list",
+  "udapp.tooltipTextEdit": "Create a DApp using this contract in the main panel",
   "udapp.tooltipTextPin": "Pin contract",
   "udapp.tooltipText8": "Click for docs about using 'receive'/'fallback'",
   "udapp.tooltipText9": "The Calldata to send to fallback function of the contract.",
@@ -123,6 +133,7 @@
   "udapp.llIError6": "Both 'receive' and 'fallback' functions are not defined",
   "udapp.llIError7": "Please define a 'Fallback' function to send calldata and a either 'Receive' or payable 'Fallback' to send ethers",
   "udapp.copy": "Copy",
+  "udapp.copyAddress": "Copy Address",
 
   "udapp._comment_mainnet.tsx": "libs/remix-ui/run-tab/src/lib/components/mainnet.tsx",
   "udapp.mainnetText1": "You are about to create a transaction on {name} Network. Confirm the details to send the info to your provider.",
