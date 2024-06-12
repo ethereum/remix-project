@@ -27,13 +27,11 @@ const NavItem = ({to, icon, title}: NavItemProps) => {
 
 export const NavMenu = () => {
   return (
-    <div className="d-flex justify-content-between">
-      <div className="nav">
-        <NavItem to="/" icon={<i className="fas fa-home"></i>} title="Verify" />
-        <NavItem to="/receipts" icon={<i className="fas fa-home"></i>} title="Receipts" />
-        <NavItem to="/lookup" icon={<i className="fas fa-receipt"></i>} title="Lookup" />
-        <NavItem to="/settings" icon={<i className="fas fa-cog"></i>} title="Settings" />
-      </div>
-    </div>
+    <nav className="d-flex flex-row justify-content-between">
+      <NavItem to="/" icon={<i className="fas fa-home"></i>} title="Verify" />
+      <NavItem to="/receipts" icon={<i className="fas fa-receipt"></i>} title="Receipts" />
+      <NavItem to="/lookup" icon={<i className="fas fa-search"></i>} title="Lookup" />
+      <NavItem to="/settings" icon={<i className="fas fa-cog"></i>} title="Settings" />
+    </nav>
   )
 }
