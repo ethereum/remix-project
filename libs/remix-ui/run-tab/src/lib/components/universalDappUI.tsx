@@ -295,7 +295,6 @@ export function UniversalDappUI(props: UdappProps) {
           }
           await props.plugin.call('notification', 'modal', modal)
         }
-
       })
     }
   }
@@ -305,7 +304,11 @@ export function UniversalDappUI(props: UdappProps) {
     const modal: AppModal = {
       id: 'SolidityScanPermissionHandler',
       title: <FormattedMessage id="udapp.solScan.modalTitle" />,
-      message: <FormattedMessage id="udapp.solScan.modalMessage" />,
+      message: <div className='d-flex flex-column'>
+        <span><FormattedMessage id="udapp.solScan.modalMessage" />
+          <a href={'https://solidityscan.com'} target="_blank" >Learn more</a></span><br/>
+        <FormattedMessage id="udapp.solScan.likeToContinue" />
+      </div>,
       okLabel: <FormattedMessage id="udapp.solScan.modalOkLabel" />,
       okFn: handleScanContinue,
       cancelLabel: <FormattedMessage id="udapp.solScan.modalCancelLabel" />
@@ -407,7 +410,7 @@ export function UniversalDappUI(props: UdappProps) {
                 </CustomTooltip>
               )}
               <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.solScan.iconTooltip" />}>
-                <i className="fas fa-qrcode p-0" onClick={askPermissionToScan}></i>
+                <i className="fas fa-qrcode p-0" style={{ padding: "0.15rem" }} onClick={askPermissionToScan}></i>
               </CustomTooltip>
             </div>
           </div>
