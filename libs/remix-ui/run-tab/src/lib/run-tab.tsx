@@ -80,6 +80,22 @@ export function RunTabUI(props: RunTabProps) {
   const [runTab, dispatch] = useReducer(runTabReducer, initialState)
   const REACT_API = { runTab }
   const currentfile = plugin.config.get('currentFile')
+  const [solcVersion, setSolcVersion] = useState<{version: string, canReceive: boolean}>({ version: '', canReceive: true })
+
+  const getVersion = () => {
+    let version = '0.8.25'
+    try {
+      version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1) ?? '0.8.25'
+      if (parseFloat(version) < 0.6) {
+        setSolcVersion({ version: version, canReceive: false })
+      } else {
+        setSolcVersion({ version: version, canReceive: true })
+      }
+    } catch (e) {
+      setSolcVersion({ version, canReceive: true })
+      console.log(e)
+    }
+  }
 
   useEffect(() => {
     if (!props.initialState) {
@@ -306,6 +322,9 @@ export function RunTabUI(props: RunTabProps) {
             isValidProxyAddress={isValidProxyAddress}
             isValidProxyUpgrade={isValidProxyUpgrade}
             proxy={runTab.proxy}
+            solCompilerVersion={solcVersion}
+            setCompilerVersion={setSolcVersion}
+            getCompilerVersion={getVersion}
           />
           <RecorderUI
             plugin={plugin}
@@ -330,6 +349,8 @@ export function RunTabUI(props: RunTabProps) {
             mainnetPrompt={mainnetPrompt}
             runTransactions={executeTransactions}
             sendValue={runTab.sendValue}
+            solcVersion={solcVersion}
+            getVersion={getVersion}
             getFuncABIInputs={getFuncABIValues}
             exEnvironment={runTab.selectExEnv}
             editInstance={(instance) => {
