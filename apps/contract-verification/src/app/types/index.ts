@@ -1,2 +1,1 @@
-export * from "./Receipt"
-export * from "./ThemeType"
+export * from './ThemeType'
