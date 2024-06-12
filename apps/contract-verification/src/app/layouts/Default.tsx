@@ -1,6 +1,6 @@
 import React, {PropsWithChildren} from 'react'
 
-import {HeaderWithSettings} from '../components'
+import {NavMenu} from '../components/NavMenu'
 
 interface Props {
   from: string
@@ -10,7 +10,7 @@ interface Props {
 export const DefaultLayout = ({children, from, title}) => {
   return (
     <div>
-      <HeaderWithSettings from={from} title={title} />
+      <NavMenu />
       {children}
     </div>
   )

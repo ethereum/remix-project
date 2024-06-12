@@ -1,10 +1,10 @@
 import React from 'react'
 import {HashRouter as Router, Route, Routes, RouteProps} from 'react-router-dom'
 
-import {ErrorView, HomeView, ReceiptsView, CaptureKeyView} from './views'
+import {HomeView} from './views'
 import {DefaultLayout} from './layouts'
 
-export const DisplayRoutes = () => (
+const DisplayRoutes = () => (
   <Router>
     <Routes>
       <Route
@@ -15,23 +15,8 @@ export const DisplayRoutes = () => (
           </DefaultLayout>
         }
       />
-      <Route path="/error" element={<ErrorView />} />
-      <Route
-        path="/receipts"
-        element={
-          <DefaultLayout from="/receipts" title="Check Receipt GUID Status">
-            <ReceiptsView />
-          </DefaultLayout>
-        }
-      />
-      <Route
-        path="/settings"
-        element={
-          <DefaultLayout from="/settings" title="Set Explorer API Key">
-            <CaptureKeyView />
-          </DefaultLayout>
-        }
-      />
     </Routes>
   </Router>
 )
+
+export default DisplayRoutes
