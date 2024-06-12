@@ -391,8 +391,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
               />
             </label>
           )}
-        </div>
-        {props.remixdActivated ? (
+          {props.remixdActivated ? (
           <CustomTooltip
             placement={'right'}
             tooltipClasses="text-wrap text-left"
@@ -403,17 +402,13 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
               </span>
             }
           >
-            <button
-              className="btn d-flex py-0"
-              onClick={(_) => {
+            <i style={{ cursor: 'pointer' }} onClick={(_) => {
                 props.syncContracts()
                 _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource ? compilationSource : 'compilationSourceNotYetSet'])
-              }}
-            >
-              <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
-            </button>
+              }} className="udapp_syncFramework udapp_icon fa fa-refresh" aria-hidden="true"></i>
           </CustomTooltip>
         ) : null}
+        </div>        
       </div>
       <div className="udapp_subcontainer">
         <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap text-left" tooltipId="remixUdappContractNamesTooltip" tooltipText={contractOptions.title}>
