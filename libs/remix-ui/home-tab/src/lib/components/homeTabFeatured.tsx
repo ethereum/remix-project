@@ -39,6 +39,9 @@ function HomeTabFeatured() {
               dotListClass="position-relative mt-2"
             >
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
+                <a href={releaseDetails.moreLink} target="__blank">
+                  <img src={'assets/img/remi_drums_whatsnew.webp'} className="remixui_carouselImage" alt=""></img>
+                </a>
                 <div className="h6 w-50 p-2 pl-4 align-self-center" style={{ flex: '1' }}>
                   <h5>{releaseDetails.version} {releaseDetails.title}</h5>
                   <div style={{ fontSize: '0.8rem' }} className="mb-3">
@@ -58,11 +61,11 @@ function HomeTabFeatured() {
                     {releaseDetails.more}
                   </a>
                 </div>
-                <a href={releaseDetails.moreLink} target="__blank">
-                  <img src={'assets/img/remi_drums_whatsnew.webp'} className="remixui_carouselImage" alt=""></img>
-                </a>
               </div>
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
+                <a href="https://remix-project.org" target="__blank">
+                  <img src={'assets/img/bgRemi_small.webp'} className="remixui_carouselImage" alt=""></img>
+                </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                     <FormattedMessage id="home.jumpIntoWeb3" />
@@ -79,11 +82,11 @@ function HomeTabFeatured() {
                     <FormattedMessage id="home.jumpIntoWeb3More" />
                   </a>
                 </div>
-                <a href="https://remix-project.org" target="__blank">
-                  <img src={'assets/img/bgRemi_small.webp'} className="remixui_carouselImage" alt=""></img>
-                </a>
               </div>
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
+                <a href="https://www.youtube.com/@EthereumRemix/videos" target="__blank">
+                  <img src={'/assets/img/YouTubeLogo.webp'} className="remixui_carouselImage" alt=""></img>
+                </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                     <FormattedMessage id="home.remixYouTube" />
@@ -103,11 +106,11 @@ function HomeTabFeatured() {
                     <FormattedMessage id="home.remixYouTubeMore" />
                   </a>
                 </div>
-                <a href="https://www.youtube.com/@EthereumRemix/videos" target="__blank">
-                  <img src={'/assets/img/YouTubeLogo.webp'} className="remixui_carouselImage" alt=""></img>
-                </a>
               </div>
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform" target="__blank">
+                  <img src={'/assets/img/remixRewardBetaTester_small.webp'} className="remixui_carouselImage" alt=""></img>
+                </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                     <FormattedMessage id="home.betaTesting" />
@@ -127,9 +130,6 @@ function HomeTabFeatured() {
                     <FormattedMessage id="home.betaTestingMore" />
                   </a>
                 </div>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform" target="__blank">
-                  <img src={'/assets/img/remixRewardBetaTester_small.webp'} className="remixui_carouselImage" alt=""></img>
-                </a>
               </div>
             </Carousel>
           </ThemeContext.Provider>

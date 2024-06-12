@@ -270,7 +270,7 @@ contract HelloWorld {
             </div>
           )}
         </div>
-        <div className="d-flex flex-column flex-wrap">
+        <div className="d-flex flex-column flex-wrap pt-3">
           <label style={{ fontSize: '1.2rem' }}>
             <FormattedMessage id="home.files" />
           </label>

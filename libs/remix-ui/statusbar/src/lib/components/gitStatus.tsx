@@ -72,7 +72,7 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
 
   return (
     <CustomTooltip
-      tooltipText={`${gitBranchName} (Git)`}
+      tooltipText={`${gitBranchName === 'Not a git repo' ? 'Initialize as a git repo' : gitBranchName} (Git)`}
     >
       <div
         className="d-flex flex-row pl-3 text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
