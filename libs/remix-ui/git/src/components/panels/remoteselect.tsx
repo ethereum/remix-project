@@ -5,7 +5,7 @@ import { gitPluginContext } from "../gitui";
 import { default as dateFormat } from "dateformat";
 import { RemotesDetailsNavigation } from "../navigation/remotesdetails";
 import { Accordion } from "react-bootstrap";
-import { remote } from "../../types";
+import { remote } from "@remix-api";
 import { RemoteBranchDetails } from "./branches/remotebranchedetails";
 
 export interface RemoteSelectProps {

@@ -4,7 +4,7 @@ import { Accordion } from "react-bootstrap";
 import { CommitDetailsNavigation } from "../../navigation/commitdetails";
 import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
-import { branch } from "../../../types";
+import { branch } from "@remix-api";
 import { BrancheDetailsNavigation } from "../../navigation/branchedetails";
 import { CommitDetailsItems } from "../commits/commitdetailsitem";
 import { CommitDetails } from "../commits/commitdetails";

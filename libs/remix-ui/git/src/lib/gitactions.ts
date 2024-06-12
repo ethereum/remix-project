@@ -1,13 +1,13 @@
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails, setCurrenHead } from "../state/gitpayload";
-import { GitHubUser, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository, userEmails } from '../types';
+import { GitHubUser, gitActionDispatch, statusMatrixType, gitState, gitLog, fileStatusResult, userEmails } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { ModalTypes } from "@remix-ui/app";
 import { setFileDecorators } from "./pluginActions";
 import { Plugin } from "@remixproject/engine";
-import { CustomRemixApi } from "@remix-api";
+import { addInputType, branch, branchDifference, checkoutInputType, cloneInputType, commitChange, CustomRemixApi, fetchInputType, pullInputType, pushInputType, remote, rmInputType } from "@remix-api";
 import { file } from "jszip";
 
 export const fileStatuses = [
@@ -54,7 +54,7 @@ export const getBranches = async () => {
 }
 export const getRemotes = async () => {
 
-  const remotes: remote[] = await plugin.call('dgitApi', "remotes");
+  const remotes: remote[] = await plugin.call('dgitApi', 'remotes');
 
   dispatch(setRemotes(remotes));
 }
@@ -226,7 +226,7 @@ export const addall = async (files: fileStatusResult[]) => {
   }
 }
 
-export const add = async (filepath: addInput) => {
+export const add = async (filepath: addInputType) => {
   try {
     if (typeof filepath.filepath === "string") {
       filepath.filepath = removeSlash(filepath.filepath)
@@ -252,7 +252,7 @@ const getLastCommmit = async () => {
   }
 }
 
-export const rm = async (args: rmInput) => {
+export const rm = async (args: rmInputType) => {
   await plugin.call('dgitApi', 'rm', {
     filepath: removeSlash(args.filepath),
   });
@@ -288,7 +288,7 @@ export const checkoutfile = async (filename: string) => {
     }
 }
 
-export const checkout = async (cmd: checkoutInput) => {
+export const checkout = async (cmd: checkoutInputType) => {
 
   await disableCallBacks();
   await plugin.call('fileManager', 'closeAllFiles')

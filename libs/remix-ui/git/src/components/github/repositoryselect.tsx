@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { gitActionsContext } from '../../state/context';
-import { repository } from '../../types';
+import { repository } from '@remix-api';
 import { selectStyles, selectTheme } from '../../types/styles';
 import { gitPluginContext } from '../gitui';
 import { TokenWarning } from '../panels/tokenWarning';
