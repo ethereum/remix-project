@@ -374,6 +374,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
       evmVersion = JSON.parse(loadedContractData.metadata).settings.evmVersion
     }
   } catch (err) {}
+  console.log('current file', currentFile)
   return (
     <div className="udapp_container mb-2" data-id="contractDropdownContainer">
       <div className="d-flex justify-content-between">
@@ -392,23 +393,23 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             </label>
           )}
           {props.remixdActivated ? (
-          <CustomTooltip
-            placement={'right'}
-            tooltipClasses="text-wrap text-left"
-            tooltipId="info-sync-compiled-contract"
-            tooltipText={
-              <span className="text-left">
-                <FormattedMessage id="udapp.infoSyncCompiledContractTooltip" values={{ br: <br /> }} />
-              </span>
-            }
-          >
+            <CustomTooltip
+              placement={'right'}
+              tooltipClasses="text-wrap text-left"
+              tooltipId="info-sync-compiled-contract"
+              tooltipText={
+                <span className="text-left">
+                  <FormattedMessage id="udapp.infoSyncCompiledContractTooltip" values={{ br: <br /> }} />
+                </span>
+              }
+            >
             <i style={{ cursor: 'pointer' }} onClick={(_) => {
                 props.syncContracts()
                 _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource ? compilationSource : 'compilationSourceNotYetSet'])
               }} className="udapp_syncFramework udapp_icon fa fa-refresh" aria-hidden="true"></i>
-          </CustomTooltip>
-        ) : null}
-        </div>        
+            </CustomTooltip>
+          ) : null}
+        </div>
       </div>
       <div className="udapp_subcontainer">
         <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap text-left" tooltipId="remixUdappContractNamesTooltip" tooltipText={contractOptions.title}>
