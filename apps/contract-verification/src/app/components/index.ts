@@ -1,2 +1,1 @@
-export { HeaderWithSettings } from "./HeaderWithSettings"
-export { SubmitButton } from "./SubmitButton"
+export {NavMenu} from './NavMenu'
