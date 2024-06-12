@@ -171,6 +171,7 @@ export class FoundryClient extends PluginClient {
     const contractName = basename(path).replace('.json', '')
 
     let sourcePath = ''
+    console.log('feedContractArtifactFile', contentJSON)
     for (const key in contentJSON.metadata.settings.compilationTarget) {
       if (contentJSON.metadata.settings.compilationTarget[key] === contractName) {
         sourcePath = key

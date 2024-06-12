@@ -403,7 +403,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 </span>
               }
             >
-            <i style={{ cursor: 'pointer' }} onClick={(_) => {
+              <i style={{ cursor: 'pointer' }} onClick={(_) => {
                 props.syncContracts()
                 _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource ? compilationSource : 'compilationSourceNotYetSet'])
               }} className="udapp_syncFramework udapp_icon fa fa-refresh" aria-hidden="true"></i>
