@@ -8,6 +8,7 @@ import {CustomTooltip} from '@remix-ui/helper'
 import {ThemeType} from './types'
 
 import './App.css'
+import {CompilationFileSources, CompilationResult} from '@remixproject/plugin-api'
 
 const plugin = new ContractVerificationPluginClient()
 
@@ -15,17 +16,41 @@ const App = () => {
   const [themeType, setThemeType] = useState<ThemeType>('dark')
   const [chains, setChains] = useState([]) // State to hold the chains data
   const [selectedChain, setSelectedChain] = useState(null)
+  const [targetFileName, setTargetFileName] = useState('')
+  const [contractNames, setContractNames] = useState([])
 
   useEffect(() => {
+    // TODO: Fix 'compilationFinished' event types. The interface is outdated at https://github.com/ethereum/remix-plugin/blob/master/packages/api/src/lib/compiler/api.ts. It does not include data, input, or version. See the current parameters: https://github.com/ethereum/remix-project/blob/9f6c5be882453a555055f07171701459e4ae88a4/libs/remix-solidity/src/compiler/compiler.ts#L189
+    // Because of this reason we use @ts-expect-error for the next line
+    // @ts-expect-error:next-line
+    plugin.on('solidity', 'compilationFinished', (fileName: string, source: CompilationFileSources, languageVersion: string, data: CompilationResult, input: string, version: string) => {
+      console.log('Compilation output')
+      console.log(data)
+      console.log('File Name:', fileName)
+      console.log('Source:', source)
+      console.log('Language Version:', languageVersion)
+      console.log('Compilation Result:', data)
+      // console.log('Input:', input)
+      console.log('Compiler Version:', version)
+      console.log('contractNames')
+      console.log(Object.keys(data.contracts[fileName]))
+
+      setTargetFileName(fileName)
+      setContractNames(Object.keys(data.contracts[fileName]))
+    })
     // Fetch chains.json and update state
     fetch('https://chainid.network/chains.json')
       .then((response) => response.json())
       .then((data) => setChains(data))
       .catch((error) => console.error('Failed to fetch chains.json:', error))
+
+    return () => {
+      plugin.off('solidity', 'compilationFinished') // Clean up on unmount
+    }
   }, [])
 
   return (
-    <AppContext.Provider value={{themeType, setThemeType, chains, selectedChain, setSelectedChain}}>
+    <AppContext.Provider value={{themeType, setThemeType, chains, selectedChain, setSelectedChain, contractNames}}>
       <DisplayRoutes />
     </AppContext.Provider>
   )
