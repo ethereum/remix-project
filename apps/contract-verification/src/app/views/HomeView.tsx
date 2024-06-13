@@ -1,16 +1,17 @@
 import React from 'react'
 
 import {AppContext} from '../AppContext'
-import {Dropdown} from '../components/Input/Dropdown'
+import {Dropdown} from '../components'
+import {SearchableDropdown} from '../components'
 
 export const HomeView = () => {
-  const {chains} = React.useContext(AppContext)
+  const {chains, selectedChain, setSelectedChain} = React.useContext(AppContext)
 
-  const ethereumChainIds = [1, 11155111, 17000]
+  const ethereumChainIds = [1, 3, 4, 5, 11155111, 17000]
 
   // Add Ethereum chains to the head of the chains list. Sort the rest alphabetically
   const dropdownChains = chains
-    .map((chain) => ({value: chain.chainId, text: `${chain.name} (${chain.chainId})`}))
+    .map((chain) => ({value: chain.chainId, name: `${chain.title || chain.name} (${chain.chainId})`}))
     .sort((a, b) => {
       const isAInEthereum = ethereumChainIds.includes(a.value)
       const isBInEthereum = ethereumChainIds.includes(b.value)
@@ -19,7 +20,7 @@ export const HomeView = () => {
       if (!isAInEthereum && isBInEthereum) return 1
       if (isAInEthereum && isBInEthereum) return ethereumChainIds.indexOf(a.value) - ethereumChainIds.indexOf(b.value)
 
-      return a.text.localeCompare(b.text)
+      return a.name.localeCompare(b.name)
     })
 
   return (
@@ -31,17 +32,19 @@ export const HomeView = () => {
         </p>
       </div>
       <div>
-        <Dropdown label="Network" items={dropdownChains} id="network-dropdown" />
+        <SearchableDropdown label="Contract Chain" options={dropdownChains} id="network-dropdown" value={selectedChain} onChange={setSelectedChain} />
+
         <div className="form-group">
           <label htmlFor="contract-address">Contract Address</label>
           <input type="text" className="form-control" id="contract-address" placeholder="0x2738d13E81e..." />
         </div>
+
         <Dropdown
           label="Contract Name"
           items={[
-            {value: 'ERC20', text: 'ERC20'},
-            {value: 'ERC721', text: 'ERC721'},
-            {value: 'ERC1155', text: 'ERC1155'},
+            {value: 'ERC20', name: 'ERC20'},
+            {value: 'ERC721', name: 'ERC721'},
+            {value: 'ERC1155', name: 'ERC1155'},
           ]}
           id="contract-name-dropdown"
         />
