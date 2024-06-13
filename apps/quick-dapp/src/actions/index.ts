@@ -8,6 +8,8 @@ import { themeMap } from '../components/DeployPanel/theme';
 const { encodeFunctionId } = execution.txHelper;
 
 const surgeClient = new SurgeClient({
+  // surge backend doesn't support cross-domain, that's why the proxy goes
+  // here is the codebase of proxy: https://github.com/drafish/vercel-proxy
   proxy: 'https://vercel-proxy-bice-six.vercel.app',
   onError: (err: Error) => {
     console.log(err);
@@ -137,6 +139,8 @@ export const deploy = async (payload: any, callback: any) => {
   }
 
   const { data } = await axios.get(
+    // It's the json file contains all the static files paths of dapp-template.
+    // It's generated through the build process automatically.
     'https://remix-dapp.pages.dev/manifest.json'
   );
   const { src, file, css, assets } = data['index.html'];
@@ -161,6 +165,8 @@ export const deploy = async (payload: any, callback: any) => {
 
   for (let index = 0; index < paths.length; index++) {
     const path = paths[index];
+    // download all the static files from the dapp-template domain.
+    // here is the codebase of dapp-template: https://github.com/drafish/remix-dapp
     const resp = await axios.get(`https://remix-dapp.pages.dev/${path}`);
     files[`dir/${path}`] = resp.data;
   }
