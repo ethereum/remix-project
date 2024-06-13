@@ -1,8 +1,8 @@
 import React from 'react'
 
 import {AppContext} from '../AppContext'
-import {Dropdown} from '../components'
 import {SearchableDropdown} from '../components'
+import {ContractDropdown} from '../components/ContractDropdown'
 
 export const HomeView = () => {
   const {chains, selectedChain, setSelectedChain, compilationOutput} = React.useContext(AppContext)
@@ -41,7 +41,7 @@ export const HomeView = () => {
           <input type="text" className="form-control" id="contract-address" placeholder="0x2738d13E81e..." />
         </div>
 
-        {contractNames && contractNames.length > 0 ? <Dropdown label="Contract Name" items={contractNames.map((item) => ({value: item, name: item}))} id="contract-name-dropdown" /> : <div> No compiled contracts </div>}
+        <ContractDropdown label="Contract Name" contractNames={contractNames?.map((item) => ({value: item, name: item}))} id="contract-name-dropdown" />
         <div>
           <div>Constructor Arguments</div>
           {/* TODO: Add input fields for constructor arguments */}
