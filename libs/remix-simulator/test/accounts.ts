@@ -68,13 +68,14 @@ describe('Accounts', () => {
           ],
         },
       };
-      web3.currentProvider.sendAsync({
+      const result = await web3.currentProvider.sendAsync({
         method: 'eth_signTypedData',
-        params: [accounts[0], typedData]
-      }, function (err, result) {
-        console.log(err, result)
-        assert.equal(result.result, '0xe4ee76332af49888d86a09eea70dfd5b9a7085e2e013cbba4c0cb41766eab69a6216f18b80d9277241ce35b74b6c46add36d5189eb5a94a258f076dfc4dd21161b')
+        params: [accounts[0], typedData],
+        id: 0,
+        jsonrpc: '2.0'
       })
+      console.log(result)
+      assert.equal(result, '0xe4ee76332af49888d86a09eea70dfd5b9a7085e2e013cbba4c0cb41766eab69a6216f18b80d9277241ce35b74b6c46add36d5189eb5a94a258f076dfc4dd21161b')
     })
   })
 })
