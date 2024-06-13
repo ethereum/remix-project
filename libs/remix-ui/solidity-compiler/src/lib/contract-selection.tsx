@@ -311,25 +311,25 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               </CustomTooltip>
             </button>
 
-            <button
-              data-id="compilation-details"
-              className="btn btn-secondary btn-block"
-              onClick={async () => {
-                details()
-                await (api as any).call('compilationDetails', 'showDetails', payload)
-              }}
+            <CustomTooltip
+              placement={'right-end'}
+              tooltipId="CompilationDetailsTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={<FormattedMessage id="solidity.displayContractDetails" />}
             >
-              <CustomTooltip
-                placement={'auto-end'}
-                tooltipId="CompilationDetailsTooltip"
-                tooltipClasses="text-nowrap"
-                tooltipText={<FormattedMessage id="solidity.displayContractDetails" />}
+              <button
+                data-id="compilation-details"
+                className="btn btn-secondary btn-block"
+                onClick={async () => {
+                  details()
+                  await (api as any).call('compilationDetails', 'showDetails', payload)
+                }}
               >
                 <span>
                   <FormattedMessage id="solidity.compilationDetails" />
                 </span>
-              </CustomTooltip>
-            </button>
+              </button>
+            </CustomTooltip>
             {/* Copy to Clipboard */}
             <div className="remixui_contractHelperButtons">
               <div className="input-group">
