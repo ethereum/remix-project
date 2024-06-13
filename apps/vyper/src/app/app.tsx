@@ -1,18 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import { remixClient } from './utils'
 import { CompilationResult } from '@remixproject/plugin-api'
 
 // Components
 import CompilerButton from './components/CompilerButton'
-import WarnRemote from './components/WarnRemote'
 import VyperResult from './components/VyperResult'
 import LocalUrlInput from './components/LocalUrl'
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
-import ToggleButton from 'react-bootstrap/ToggleButton'
 import Button from 'react-bootstrap/Button'
 import Accordion from 'react-bootstrap/Accordion'
-import Card from 'react-bootstrap/Card'
 
 import './app.css'
 import { CustomTooltip } from '@remix-ui/helper'
