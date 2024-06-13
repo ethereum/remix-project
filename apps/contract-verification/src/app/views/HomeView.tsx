@@ -5,9 +5,11 @@ import {Dropdown} from '../components'
 import {SearchableDropdown} from '../components'
 
 export const HomeView = () => {
-  const {chains, selectedChain, setSelectedChain, contractNames} = React.useContext(AppContext)
+  const {chains, selectedChain, setSelectedChain, compilationOutput} = React.useContext(AppContext)
 
   const ethereumChainIds = [1, 3, 4, 5, 11155111, 17000]
+
+  const contractNames = compilationOutput?.contracts && Object.keys(compilationOutput?.contracts)
 
   // Add Ethereum chains to the head of the chains list. Sort the rest alphabetically
   const dropdownChains = chains
@@ -39,7 +41,7 @@ export const HomeView = () => {
           <input type="text" className="form-control" id="contract-address" placeholder="0x2738d13E81e..." />
         </div>
 
-        {contractNames.length > 0 ? <Dropdown label="Contract Name" items={contractNames.map((item) => ({value: item, name: item}))} id="contract-name-dropdown" /> : <div> No compiled contracts </div>}
+        {contractNames && contractNames.length > 0 ? <Dropdown label="Contract Name" items={contractNames.map((item) => ({value: item, name: item}))} id="contract-name-dropdown" /> : <div> No compiled contracts </div>}
         <div>
           <div>Constructor Arguments</div>
           {/* TODO: Add input fields for constructor arguments */}
