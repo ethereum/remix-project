@@ -124,45 +124,45 @@ export class Web3Accounts {
   eth_signTypedData_v4 (payload, cb) {
     const address: string = payload.params[0]
     const typedData: TypedMessage<MessageTypes> = payload.params[1]
-    
+
     try {
       if (this.accounts[toChecksumAddress(address)] == null) {
         throw new Error("cannot sign data; no private key");
       }
-  
+
       if (typeof typedData === "string") {
         throw new Error("cannot sign data; string sent, expected object");
       }
-  
+
       if (!typedData.types) {
         throw new Error("cannot sign data; types missing");
       }
-  
+
       if (!typedData.types.EIP712Domain) {
         throw new Error("cannot sign data; EIP712Domain definition missing");
       }
-  
+
       if (!typedData.domain) {
         throw new Error("cannot sign data; domain missing");
       }
-  
+
       if (!typedData.primaryType) {
         throw new Error("cannot sign data; primaryType missing");
       }
-  
+
       if (!typedData.message) {
         throw new Error("cannot sign data; message missing");
       }
-  
+
       const ret = signTypedData({
         privateKey: Buffer.from(this.accounts[toChecksumAddress(address)].privateKey),
         data: typedData,
-        version: SignTypedDataVersion.V4  
+        version: SignTypedDataVersion.V4
       })
 
       cb(null, ret)
     } catch (e) {
       cb(e.message)
-    }    
+    }
   }
 }
