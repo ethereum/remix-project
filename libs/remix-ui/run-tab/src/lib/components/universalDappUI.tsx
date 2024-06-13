@@ -28,8 +28,6 @@ export function UniversalDappUI(props: UdappProps) {
   const [evmBC, setEvmBC] = useState(null)
   const [instanceBalance, setInstanceBalance] = useState(0)
 
-  const getVersion = () => window.location.href.split('=')[5].split('+')[0].split('-')[1]
-
   useEffect(() => {
     if (!props.instance.abi) {
       const abi = txHelper.sortAbiFunction(props.instance.contractData.abi)
@@ -295,7 +293,6 @@ export function UniversalDappUI(props: UdappProps) {
           }
           await props.plugin.call('notification', 'modal', modal)
         }
-
       })
     }
   }
@@ -305,7 +302,11 @@ export function UniversalDappUI(props: UdappProps) {
     const modal: AppModal = {
       id: 'SolidityScanPermissionHandler',
       title: <FormattedMessage id="udapp.solScan.modalTitle" />,
-      message: <FormattedMessage id="udapp.solScan.modalMessage" />,
+      message: <div className='d-flex flex-column'>
+        <span><FormattedMessage id="udapp.solScan.modalMessage" />
+          <a href={'https://solidityscan.com'} target="_blank" >Learn more</a></span><br/>
+        <FormattedMessage id="udapp.solScan.likeToContinue" />
+      </div>,
       okLabel: <FormattedMessage id="udapp.solScan.modalOkLabel" />,
       okFn: handleScanContinue,
       cancelLabel: <FormattedMessage id="udapp.solScan.modalCancelLabel" />
@@ -407,7 +408,7 @@ export function UniversalDappUI(props: UdappProps) {
                 </CustomTooltip>
               )}
               <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.solScan.iconTooltip" />}>
-                <i className="fas fa-qrcode p-0" onClick={askPermissionToScan}></i>
+                <i className="fas fa-qrcode p-0" style={{ padding: "0.15rem" }} onClick={askPermissionToScan}></i>
               </CustomTooltip>
             </div>
           </div>
@@ -435,6 +436,7 @@ export function UniversalDappUI(props: UdappProps) {
               return (
                 <div key={index}>
                   <ContractGUI
+                    getVersion={props.getVersion}
                     funcABI={funcABI}
                     clickCallBack={(valArray: {name: string; type: string}[], inputsValues: string) => {
                       runTransaction(lookupOnly, funcABI, valArray, inputsValues, index)
@@ -469,10 +471,21 @@ export function UniversalDappUI(props: UdappProps) {
             <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
               <FormattedMessage id="udapp.lowLevelInteractions" />
             </div>
-            <CustomTooltip placement={'bottom-end'} tooltipClasses="text-wrap" tooltipId="receiveEthDocstoolTip" tooltipText={<FormattedMessage id="udapp.tooltipText8" />}>
-              <a href={`https://solidity.readthedocs.io/en/${getVersion()}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
-                <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
-              </a>
+            <CustomTooltip
+              placement={'bottom-end'}
+              tooltipClasses="text-wrap"
+              tooltipId="receiveEthDocstoolTip"
+              tooltipText={<FormattedMessage id="udapp.tooltipText8" />}
+            >
+              { // receive method added to solidity v0.6.x. use this as diff.
+                props.solcVersion.canReceive === false ? (
+                  <a href={`https://solidity.readthedocs.io/en/v${props.solcVersion.version}/contracts.html`} target="_blank" rel="noreferrer">
+                    <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+                  </a>
+                ) :<a href={`https://solidity.readthedocs.io/en/v${props.solcVersion.version}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
+                  <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+                </a>
+              }
             </CustomTooltip>
           </div>
           <div className="d-flex flex-column align-items-start">
