@@ -5,7 +5,7 @@ import git from 'isomorphic-git'
 import http from 'isomorphic-git/http/web'
 import { gitProxy } from "../tools/git";
 
-import { branchInputType, cloneInputType, commitInputType, currentBranchInput, fetchInputType, initInputType, logInputType, pullInputType, pushInputType, remote } from "@remix-api";
+import { branchInputType, cloneInputType, commitInputType, currentBranchInput, fetchInputType, initInputType, logInputType, pullInputType, pushInputType, remote, statusInput } from "@remix-api";
 
 const profile: Profile = {
   name: 'isogit',
@@ -76,8 +76,8 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
   }
 
-  async status(cmd: any) {
-
+  async status(cmd: statusInput) {
+    console.log('status', cmd)
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
@@ -101,7 +101,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async log(cmd: logInputType) {
-
+    console.log('LOG', cmd)
     /* we will use isomorphic git for now
     if(this.gitIsInstalled){
       const log = await gitProxy.log(this.workingDir, cmd.ref)
@@ -280,7 +280,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async fetch(cmd: fetchInputType) {
-
+    console.log('FETCH', cmd)
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
@@ -351,6 +351,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
 
   async remotes  () {
+    console.log('REMOTES')
     if (!this.workingDir || this.workingDir === '') {
       return []
     }
@@ -361,6 +362,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async currentbranch(input: currentBranchInput) {
+    console.log('CURRENT BRANCH', input)
     if (!this.workingDir || this.workingDir === '') {
       return ''
     }
@@ -368,6 +370,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     try {
       const defaultConfig = await this.getGitConfig()
       const cmd = input ? defaultConfig ? { ...defaultConfig, ...input } : input : defaultConfig
+      console.log('CMD', cmd)
       const name = await git.currentBranch(cmd)
       let remote: remote = undefined
       try {
@@ -375,18 +378,22 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
           ...defaultConfig,
           path: `branch.${name}.remote`
         })
+        console.log('REMOTE NAME', remoteName)
         if (remoteName) {
           const remoteUrl = await git.getConfig({
             ...defaultConfig,
             path: `remote.${remoteName}.url`
           })
+          console.log('REMOTE URL', remoteUrl)
           remote = { name: remoteName, url: remoteUrl }
         }
 
       } catch (e) {
         // do nothing
       }
-
+      console.log('NAME', name)
+      console.log('REMOTE', remote)
+      
       return {
         remote: remote,
         name: name || ''
@@ -398,6 +405,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
 
   async branches() {
+    console.log('BRANCHES')
     if (!this.workingDir || this.workingDir === '') {
       return []
     }

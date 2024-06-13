@@ -45,15 +45,26 @@ export const gitProxy = {
     },
 
     async push(path: string, input: pushInputType) {
-        const { stdout, stderr } = await execAsync(`git push  ${input.force ? ' -f' : ''}  ${input.remote.name} ${input.ref}:${input.remoteRef}`, { cwd: path });
+        const { stdout, stderr } = await execAsync(`git push  ${input.force ? ' -f' : ''}  ${input.remote.name} ${input.ref.name}:${input.remoteRef.name}`, { cwd: path });
     },
 
     async pull(path: string, input: pullInputType) {
-        const { stdout, stderr } = await execAsync(`git pull ${input.remote.name} ${input.ref}:${input.remoteRef}`, { cwd: path });
+        const { stdout, stderr } = await execAsync(`git pull ${input.remote.name} ${input.ref.name}:${input.remoteRef.name}`, { cwd: path });
     },
 
     async fetch(path: string, input: fetchInputType) {
-        const { stdout, stderr } = await execAsync(`git fetch ${input.remote.name} ${input.ref}}`, { cwd: path });
+        console.log('fetch', input, path);
+        try {
+            const { stdout, stderr } = await execAsync(`git fetch ${input.remote.name} ${(input.ref && input.ref.name)? input.ref.name:''}`, { cwd: path });
+            if (stdout) {
+                console.log('stdout:', stdout);
+            }
+            if (stderr) {
+                console.error('stderr:', stderr);
+            }
+        } catch (error) {
+            console.error('Error during fetch:', error);
+        }
     },
 
     async commit(path: string, input: commitInputType) {
@@ -104,7 +115,7 @@ export const gitProxy = {
             return 0
         })
 
-
+        console.log('files', files)
         return files
     },
 
