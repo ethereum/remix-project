@@ -13,11 +13,10 @@ const NavItem = ({to, icon, title}: NavItemProps) => {
     <NavLink
       // data-id="home"
       to={to}
-      className={({isActive}) => (isActive ? 'border border-secondary shadow-none btn p-1 m-0' : 'border-0 shadow-none btn p-1 m-0')}
-      style={({isActive}) => (!isActive ? {width: '1.8rem', filter: 'contrast(0.5)'} : {width: '1.8rem'})}
+      className={({isActive}) => 'p-2 ' + (isActive ? 'bg-primary text-white' : 'bg-secondary')}
       // state={from}
     >
-      <div>
+      <div className="d-flex flex-column align-items-center justify-content-center">
         <div>{icon}</div>
         <div>{title}</div>
       </div>
@@ -27,7 +26,7 @@ const NavItem = ({to, icon, title}: NavItemProps) => {
 
 export const NavMenu = () => {
   return (
-    <nav className="d-flex flex-row justify-content-between">
+    <nav className="d-flex flex-row justify-content-around">
       <NavItem to="/" icon={<i className="fas fa-home"></i>} title="Verify" />
       <NavItem to="/receipts" icon={<i className="fas fa-receipt"></i>} title="Receipts" />
       <NavItem to="/lookup" icon={<i className="fas fa-search"></i>} title="Lookup" />
