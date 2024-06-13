@@ -13,9 +13,18 @@ const plugin = new ContractVerificationPluginClient()
 
 const App = () => {
   const [themeType, setThemeType] = useState<ThemeType>('dark')
+  const [chains, setChains] = useState([]) // State to hold the chains data
+
+  useEffect(() => {
+    // Fetch chains.json and update state
+    fetch('https://chainid.network/chains.json')
+      .then((response) => response.json())
+      .then((data) => setChains(data))
+      .catch((error) => console.error('Failed to fetch chains.json:', error))
+  }, [])
 
   return (
-    <AppContext.Provider value={{themeType, setThemeType}}>
+    <AppContext.Provider value={{themeType, setThemeType, chains}}>
       <DisplayRoutes />
     </AppContext.Provider>
   )
