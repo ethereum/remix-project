@@ -47,7 +47,6 @@ export class RemixGuidePlugin extends ViewPlugin {
     // Read the data
     this.payload.data = Data
     this.handleKeyDown = (event) => {
-      console.log("key down")
       if (event.key === 'Escape') {
         this.showVideo = false
         this.renderComponent()
