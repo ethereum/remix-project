@@ -7,7 +7,7 @@ interface Props {
   title?: string
 }
 
-export const DefaultLayout = ({children, from, title}) => {
+export const DefaultLayout = ({children}: PropsWithChildren<Props>) => {
   return (
     <div>
       <NavMenu />

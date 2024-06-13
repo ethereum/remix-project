@@ -14,10 +14,11 @@ const plugin = new ContractVerificationPluginClient()
 
 const App = () => {
   const [themeType, setThemeType] = useState<ThemeType>('dark')
-  const [chains, setChains] = useState([]) // State to hold the chains data
-  const [selectedChain, setSelectedChain] = useState(null)
+  // TODO: Types for chains
+  const [chains, setChains] = useState<any>([]) // State to hold the chains data
+  const [selectedChain, setSelectedChain] = useState<any | undefined>()
   const [targetFileName, setTargetFileName] = useState('')
-  const [contractNames, setContractNames] = useState([])
+  const [compilationOutput, setCompilationOutput] = useState<CompilationResult | undefined>()
 
   useEffect(() => {
     // TODO: Fix 'compilationFinished' event types. The interface is outdated at https://github.com/ethereum/remix-plugin/blob/master/packages/api/src/lib/compiler/api.ts. It does not include data, input, or version. See the current parameters: https://github.com/ethereum/remix-project/blob/9f6c5be882453a555055f07171701459e4ae88a4/libs/remix-solidity/src/compiler/compiler.ts#L189
@@ -36,7 +37,7 @@ const App = () => {
       console.log(Object.keys(data.contracts[fileName]))
 
       setTargetFileName(fileName)
-      setContractNames(Object.keys(data.contracts[fileName]))
+      setCompilationOutput(undefined)
     })
     // Fetch chains.json and update state
     fetch('https://chainid.network/chains.json')
@@ -50,7 +51,7 @@ const App = () => {
   }, [])
 
   return (
-    <AppContext.Provider value={{themeType, setThemeType, chains, selectedChain, setSelectedChain, contractNames}}>
+    <AppContext.Provider value={{themeType, setThemeType, chains, selectedChain, setSelectedChain, compilationOutput}}>
       <DisplayRoutes />
     </AppContext.Provider>
   )
