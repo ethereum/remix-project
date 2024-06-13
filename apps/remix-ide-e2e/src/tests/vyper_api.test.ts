@@ -388,6 +388,6 @@ def auctionEnd():
 
     # Transfer funds to beneficiary
     send(self.beneficiary, self.highestBid)
-`}
+` }
 }
 ]
