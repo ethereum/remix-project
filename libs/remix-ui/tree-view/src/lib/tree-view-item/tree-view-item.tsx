@@ -12,7 +12,13 @@ export const TreeViewItem = (props: TreeViewItemProps) => {
   }, [expand])
 
   return (
-    <li ref={innerRef} key={`treeViewLi${id}`} data-id={`treeViewLi${id}`} className="li_tv" {...otherProps}>
+    <li
+      ref={innerRef}
+      key={`treeViewLi${id}`}
+      data-id={`treeViewLi${id}`}
+      className={`li_tv remixui_mouseover`}
+      {...otherProps}
+    >
       <div
         key={`treeViewDiv${id}`}
         data-id={`treeViewDiv${id}`}
@@ -28,7 +34,9 @@ export const TreeViewItem = (props: TreeViewItemProps) => {
         ) : null}
         <span className="w-100 ml-1 pl-2">{label}</span>
       </div>
-      {isExpanded ? children : null}
+      {isExpanded ? <div className="pl-3">
+        {children}
+      </div> : null}
     </li>
   )
 }
