@@ -32,7 +32,6 @@
 
 ![Remix screenshot](https://github.com/ethereum/remix-project/raw/master/apps/remix-ide/remix-screenshot-400h.png)
 
-**VSCode extension**, see: [Ethereum-Remix](https://marketplace.visualstudio.com/items?itemName=RemixProject.ethereum-remix)
 
 ## Remix libraries 
 Remix libraries are essential for Remix IDE's native plugins. Read more about libraries [here](libs/README.md)

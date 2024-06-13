@@ -118,7 +118,7 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
           >
             <img
               data-id={iconRecord.active ? `selected` : ''}
-              className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}` : ''}`}
+              className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active || iconRecord.pinned ? `selected-${theme}` : ''}`}
               src={icon}
               alt={name}
             />

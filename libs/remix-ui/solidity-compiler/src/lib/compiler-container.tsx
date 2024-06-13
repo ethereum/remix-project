@@ -1127,7 +1127,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
             >
               <CustomTooltip
-                placement="right"
+                placement={'auto-end'}
                 tooltipId="overlay-tooltip-compile-run"
                 tooltipText={
                   <div className="text-left">

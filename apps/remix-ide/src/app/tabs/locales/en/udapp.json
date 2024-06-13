@@ -82,7 +82,8 @@
 
   "udapp.solScan.iconTooltip": "Click to scan this contract for vulnerabilities using third-party SolidityScan [BETA]",
   "udapp.solScan.modalTitle": "Permission to share code",
-  "udapp.solScan.modalMessage": "To scan the contract for vulnerabilities & possible risks, smart contract code will be shared to third-party SolidityScan (https://solidityscan.com/).\n\n Would you like to continue?",
+  "udapp.solScan.modalMessage": "To scan the contract for vulnerabilities & possible risks, smart contract code will be shared to third-party SolidityScan. ",
+  "udapp.solScan.likeToContinue": "Would you like to continue?",
   "udapp.solScan.modalOkLabel": "Continue",
   "udapp.solScan.modalCancelLabel": "Cancel",
   "udapp.solScan.errModalTitle": "Scan error",

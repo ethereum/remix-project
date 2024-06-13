@@ -167,7 +167,7 @@ module.exports = {
   },
   'Should print hardhat logs #group4': function (browser: NightwatchBrowser) {
     browser
-      .addFile('printHardhatlog.sol',  { content: hardhatLog })
+      .addFile('printHardhatlog.sol', { content: hardhatLog })
       .clickLaunchIcon('solidity')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .waitForElementVisible('[for="autoCompile"]')
@@ -266,22 +266,22 @@ module.exports = {
           if (Array.isArray(result.value) && result.value.length > 0) {
             console.log('Found ' + result.value.length + ' transactions')
             browser
-            .click({
-              selector: '[data-id="listenNetworkCheckInput"]',
-            })
-            .click({
-              selector: '*[data-id="terminalClearConsole"]',
-            })
-            .click({
-              selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
-            })
-            .pause(10000)
-            .waitForElementNotPresent({
-              locateStrategy: 'xpath',
-              selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
-              timeout: 120000
-            })
-            .end()
+              .click({
+                selector: '[data-id="listenNetworkCheckInput"]',
+              })
+              .click({
+                selector: '*[data-id="terminalClearConsole"]',
+              })
+              .click({
+                selector: '*[data-id="compilerContainerCompileAndRunBtn"]',
+              })
+              .pause(10000)
+              .waitForElementNotPresent({
+                locateStrategy: 'xpath',
+                selector: "//*[@class='remix_ui_terminal_log' and contains(.,'to:') and contains(.,'from:')]",
+                timeout: 120000
+              })
+              .end()
           } else {
             browser
               .assert.fail('No transaction found')
@@ -309,7 +309,7 @@ module.exports = {
       .switchEnvironment('vm-custom-fork')
       .waitForElementVisible('[data-id="vm-custom-fork-modal-footer-ok-react"]')
       .execute(() => {
-          (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
+        (document.querySelector('*[data-id="vm-custom-forkModalDialogContainer-react"] input[data-id="CustomForkNodeUrl"]') as any).focus()
       }, [], () => { })
       .clearValue('*[data-id="CustomForkNodeUrl"]').pause(1000).setValue('*[data-id="CustomForkNodeUrl"]', 'https://go.getblock.io/ee42d0a88f314707be11dd799b122cb9')
       .execute(() => {
@@ -331,7 +331,7 @@ module.exports = {
       .executeScriptInTerminal(`web3.eth.getCode('0x75F509A4eDA030470272DfBAf99A47D587E76709')`) // sepolia contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
       .click('*[data-id="terminalClearConsole"]')
-  },  
+  },
 
   'Should run a free function while being connected to mainnet #group9': function (browser: NightwatchBrowser) {
     const script = `
@@ -359,10 +359,10 @@ module.exports = {
       .switchEnvironment('vm-mainnet-fork')
       .clickLaunchIcon('filePanel')
       .addFile('test_mainnet.sol', { content: script })
-      
-    const path = "//*[@class='view-line' and contains(.,'resolveENS') and contains(.,'view')]//span//span[contains(.,'(')]"    
+
+    const path = "//*[@class='view-line' and contains(.,'resolveENS') and contains(.,'view')]//span//span[contains(.,'(')]"
     const pathRunFunction = `//li//*[@aria-label='Run the free function "resolveENS"']`
-    browser.waitForElementVisible('#editorView')      
+    browser.waitForElementVisible('#editorView')
       //.waitForElementPresent(pathRunFunction)
       .pause(10000) // the parser need to parse the code
       .useXpath()
@@ -371,25 +371,25 @@ module.exports = {
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions
-            .keyDown(this.Keys.SHIFT)
-            .keyDown(this.Keys.ALT)
-            .sendKeys('r')
+          .keyDown(this.Keys.SHIFT)
+          .keyDown(this.Keys.ALT)
+          .sendKeys('r')
       })
       .useCss()
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', 120000)
   },
-  
+
   'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
     const script = `import "hardhat/console.sol";
 
     function runSomething () view {
         console.log("test running free function");
-    } 
+    }
     `
     browser
       .addFile('test.sol', { content: script })
       .scrollToLine(3)
-    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"    
+    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"
     const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething"']`
     browser.waitForElementVisible('#editorView')
       .useXpath()
@@ -398,17 +398,14 @@ module.exports = {
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions
-            .keyDown(this.Keys.SHIFT)
-            .keyDown(this.Keys.ALT)
-            .sendKeys('r')
+          .keyDown(this.Keys.SHIFT)
+          .keyDown(this.Keys.ALT)
+          .sendKeys('r')
       })
       .useCss()
       .waitForElementContainsText('*[data-id="terminalJournal"]', 'test running free function', 120000)
   }
 }
-
-
-
 
 const asyncAwait = `
   var p = function () {
@@ -417,7 +414,7 @@ const asyncAwait = `
             resolve("Promise Resolved")
         }, 5000)
     })
-  } 
+  }
 
   var run = async () => {
     console.log('Waiting Promise')
@@ -455,7 +452,7 @@ const resolveExternalUrlAndSave = `
   } catch (e) {
       console.log(e.message)
   }
-})()  
+})()
 `
 
 const resolveExternalUrlAndSaveToaPath = `
@@ -466,7 +463,7 @@ const resolveExternalUrlAndSaveToaPath = `
   } catch (e) {
       console.log(e.message)
   }
-})()  
+})()
 `
 
 const resolveUrl = `
@@ -477,7 +474,7 @@ const resolveUrl = `
   } catch (e) {
       console.log(e.message)
   }
-})()  
+})()
 `
 
 const deployWithEthersJs = `
@@ -485,32 +482,32 @@ const deployWithEthersJs = `
 (async () => {
     try {
         console.log('Running deployWithEthers script...')
-    
+
         const constructorArgs = []    // Put constructor args (if any) here for your contract
 
         // Note that the script needs the ABI which is generated from the compilation artifact.
         // Make sure contract is compiled and artifacts are generated
         const artifactsPath = 'contracts/artifacts/Owner.json' // Change this for different path
-    
+
         const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
         // 'web3Provider' is a remix global variable object
         const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
-    
+
         let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
-    
+
         let contract = await factory.deploy(...constructorArgs);
-    
+
         console.log('Contract Address: ', contract.address);
-    
+
         // The contract is NOT deployed yet; we must wait until it is mined
         await contract.deployed()
         console.log('Deployment successful.')
-        
+
         contract.on('OwnerSet', (previousOwner, newOwner) => {
             console.log('previousOwner' , previousOwner)
             console.log('newOwner' , newOwner)
         })
-       
+
         console.log('ok')
     } catch (e) {
         console.log(e.message)
@@ -577,12 +574,12 @@ contract StorageWithLib {
      * @dev Store valrue in variable
      * @param num value to store
      */
-    function store(uint256 num) public {        
-        number = num;        
+    function store(uint256 num) public {
+        number = num;
     }
 
     /**
-     * @dev Return value 
+     * @dev Return value
      * @return value of 'number'
      */
     function retrieve() public view returns (uint256){
@@ -629,11 +626,11 @@ describe("Storage", function () {
             deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
         }
         const options = {
-            libraries: { 
+            libraries: {
                 'Lib': lib.address
             }
         }
-        
+
         const factory = await ethers.getContractFactoryFromArtifact(artifact, options)
         const storage = await factory.deploy();
         await storage.deployed()
@@ -657,10 +654,10 @@ import "hardhat/console.sol";
 contract OwnerTest {
 
     address private owner;
-    
+
     // event for EVM logging
     event OwnerSet(address indexed oldOwner, address indexed newOwner);
-    
+
     // modifier to check if caller is owner
     modifier isOwner() {
         // If the first argument of 'require' evaluates to 'false', execution terminates and all
@@ -671,7 +668,7 @@ contract OwnerTest {
         require(msg.sender == owner, "Caller is not owner");
         _;
     }
-    
+
     /**
      * @dev Set contract deployer as owner
      */
@@ -692,7 +689,7 @@ contract OwnerTest {
     }
 
     /**
-     * @dev Return owner address 
+     * @dev Return owner address
      * @return address of owner
      */
     function getOwner() external view returns (address) {
@@ -705,39 +702,39 @@ const scriptAutoExec = {
   contract: `// SPDX-License-Identifier: GPL-3.0
 
   pragma solidity >=0.8.2 <0.9.0;
-  
+
   library lib {
       function test () public view returns (uint) {
-  
+
           return 147;
       }
   }
-  
+
   /**
    * @title Storage
    * @dev Store & retrieve value inr a variable
    * @custom:dev-run-script ./scripts/deploy_storage.js
    */
   contract Storage {
-  
+
       uint256 number;
-  
+
       /**
        * @dev Store valrue in variable
        * @param num value to store
        */
       function store(uint256 num) public {
-          number = num;        
+          number = num;
       }
-  
+
       /**
-       * @dev Return value 
+       * @dev Return value
        * @return value of 'number'
        */
       function retrieve() public view returns (uint256){
           return number;
       }
-  
+
       function getFromLib() public view returns (uint) {
           return lib.test();
       }
@@ -747,16 +744,16 @@ const scriptAutoExec = {
   // Right click on the script name and hit "Run" to execute
   const { expect } = require("chai");
   const { ethers } = require("hardhat");
-  
+
   (async () => {
       try {
           // function getContractFactoryFromArtifact(artifact: Artifact, signer?: ethers.Signer): Promise<ethers.ContractFactory>;
-  
+
           // function getContractFactoryFromArtifact(artifact: Artifact, factoryOptions: FactoryOptions): Promise<ethers.ContractFactory>;
-          
+
           const metadataLib = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/lib.json'))
           console.log('deploying lib:')
-          
+
           const artifactLib  = {
               contractName: 'Lib',
               sourceName: 'contracts/1_Storage.sol',
@@ -767,15 +764,15 @@ const scriptAutoExec = {
               deployedLinkReferences: metadataLib.data.deployedBytecode.linkReferences,
           }
           const optionsLib = {}
-          
+
           const factoryLib = await ethers.getContractFactoryFromArtifact(artifactLib, optionsLib)
-          
+
           const lib = await factoryLib.deploy();
-  
+
           await lib.deployed()
-  
+
           console.log('lib deployed', lib.address)
-  
+
           const metadata = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/Storage.json'))
           const artifact  = {
               contractName: 'Storage',
@@ -787,25 +784,25 @@ const scriptAutoExec = {
               deployedLinkReferences: metadata.data.deployedBytecode.linkReferences,
           }
           const options = {
-              libraries: { 
+              libraries: {
                   'lib': lib.address
               }
           }
-          
+
           const factory = await ethers.getContractFactoryFromArtifact(artifact, options)
-  
+
           const storage = await factory.deploy();
-          
+
           await storage.deployed()
-  
+
           const storeValue = await storage.store(333);
-  
+
           // wait until the transaction is mined
           await storeValue.wait();
-  
+
           console.log((await storage.getFromLib()).toString())
           // expect((await storage.getFromLib()).toString()).to.equal('34');
-  
+
       } catch (e) {
           console.error(e.message)
       }
