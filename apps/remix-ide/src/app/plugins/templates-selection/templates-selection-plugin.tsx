@@ -157,7 +157,8 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
               key={template.name}
               title={template.name}
               hScrollable={false}
-            >
+              header={template.source === 'plugin' ? <button className="btn border" onClick={() => { this.call('manager', 'activatePlugin', template.payload.pluginName)  }}>Open Cookbook to load more contracts</button> : ''}
+            >              
               {template.items.map(item => {
                 return <RemixUIGridCell
                   plugin={this}
