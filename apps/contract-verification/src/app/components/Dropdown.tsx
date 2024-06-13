@@ -2,7 +2,7 @@ import React from 'react'
 
 interface DropdownItem {
   value: string
-  text: string
+  name: string
 }
 
 interface DropdownProps {
@@ -18,7 +18,7 @@ export const Dropdown: React.FC<DropdownProps> = ({label, items, id}) => {
       <select className="form-control custom-select pr-4" id={id}>
         {items.map((item, index) => (
           <option value={item.value} key={index}>
-            {item.text}
+            {item.name}
           </option>
         ))}
       </select>
