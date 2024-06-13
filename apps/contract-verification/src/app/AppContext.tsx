@@ -7,4 +7,6 @@ export const AppContext = React.createContext({
     console.log('Calling Set Theme Type')
   },
   chains: [],
+  selectedChain: null,
+  setSelectedChain: (chain: string) => {},
 })

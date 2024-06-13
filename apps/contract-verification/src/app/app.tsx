@@ -14,6 +14,7 @@ const plugin = new ContractVerificationPluginClient()
 const App = () => {
   const [themeType, setThemeType] = useState<ThemeType>('dark')
   const [chains, setChains] = useState([]) // State to hold the chains data
+  const [selectedChain, setSelectedChain] = useState(null)
 
   useEffect(() => {
     // Fetch chains.json and update state
@@ -24,7 +25,7 @@ const App = () => {
   }, [])
 
   return (
-    <AppContext.Provider value={{themeType, setThemeType, chains}}>
+    <AppContext.Provider value={{themeType, setThemeType, chains, selectedChain, setSelectedChain}}>
       <DisplayRoutes />
     </AppContext.Provider>
   )
