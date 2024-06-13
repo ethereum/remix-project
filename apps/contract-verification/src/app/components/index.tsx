@@ -1,3 +1,3 @@
 export {NavMenu} from './NavMenu'
-export {Dropdown} from './Dropdown'
+export {ContractDropdown} from './ContractDropdown'
 export {SearchableDropdown} from './SearchableDropdown'
