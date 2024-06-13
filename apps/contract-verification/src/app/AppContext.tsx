@@ -9,4 +9,5 @@ export const AppContext = React.createContext({
   chains: [],
   selectedChain: null,
   setSelectedChain: (chain: string) => {},
+  contractNames: [],
 })

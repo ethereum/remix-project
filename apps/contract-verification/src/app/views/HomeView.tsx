@@ -5,7 +5,7 @@ import {Dropdown} from '../components'
 import {SearchableDropdown} from '../components'
 
 export const HomeView = () => {
-  const {chains, selectedChain, setSelectedChain} = React.useContext(AppContext)
+  const {chains, selectedChain, setSelectedChain, contractNames} = React.useContext(AppContext)
 
   const ethereumChainIds = [1, 3, 4, 5, 11155111, 17000]
 
@@ -39,15 +39,7 @@ export const HomeView = () => {
           <input type="text" className="form-control" id="contract-address" placeholder="0x2738d13E81e..." />
         </div>
 
-        <Dropdown
-          label="Contract Name"
-          items={[
-            {value: 'ERC20', name: 'ERC20'},
-            {value: 'ERC721', name: 'ERC721'},
-            {value: 'ERC1155', name: 'ERC1155'},
-          ]}
-          id="contract-name-dropdown"
-        />
+        {contractNames.length > 0 ? <Dropdown label="Contract Name" items={contractNames.map((item) => ({value: item, name: item}))} id="contract-name-dropdown" /> : <div> No compiled contracts </div>}
         <div>
           <div>Constructor Arguments</div>
           {/* TODO: Add input fields for constructor arguments */}
