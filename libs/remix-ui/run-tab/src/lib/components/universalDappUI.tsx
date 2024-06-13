@@ -304,8 +304,8 @@ export function UniversalDappUI(props: UdappProps) {
       title: <FormattedMessage id="udapp.solScan.modalTitle" />,
       message: <div className='d-flex flex-column'>
         <span><FormattedMessage id="udapp.solScan.modalMessage" />
-          <a href={'https://solidityscan.com'} 
-            target="_blank" 
+          <a href={'https://solidityscan.com'}
+            target="_blank"
             onClick={() => _paq.push(['trackEvent', 'udapp', 'solidityScan', 'learnMore'])}>
               Learn more
           </a>
