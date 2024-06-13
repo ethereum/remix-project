@@ -39,4 +39,42 @@ describe('Accounts', () => {
       assert.deepEqual(typeof signature === 'string' ? signature.length : signature.signature.length, 132)
     })
   })
+
+  describe('eth_signTypedData', () => {
+    it('should sign typed data', async () => {
+      const accounts: string[] = await web3.eth.getAccounts()
+      const typedData = {
+        domain: {
+          chainId: 1,
+          name: "Example App",
+          verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+          version: "1",
+        },
+        message: {
+          prompt: "Welcome! In order to authenticate to this website, sign this request and your public address will be sent to the server in a verifiable way.",
+          createdAt: `${Date.now()}`,
+        },
+        primaryType: 'AuthRequest',
+        types: {
+          EIP712Domain: [
+            { name: 'name', type: 'string' },
+            { name: 'version', type: 'string' },
+            { name: 'chainId', type: 'uint256' },
+            { name: 'verifyingContract', type: 'address' },
+          ],
+          AuthRequest: [
+            { name: 'prompt', type: 'string' },
+            { name: 'createdAt', type: 'uint256' },
+          ],
+        },
+      };
+      web3.currentProvider.sendAsync({
+        method: 'eth_signTypedData',
+        params: [accounts[0], typedData]
+      }, function (err, result) {
+        console.log(err, result)
+        assert.equal(result.result, '0xe4ee76332af49888d86a09eea70dfd5b9a7085e2e013cbba4c0cb41766eab69a6216f18b80d9277241ce35b74b6c46add36d5189eb5a94a258f076dfc4dd21161b')
+      })
+    })
+  })
 })
