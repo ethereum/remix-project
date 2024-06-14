@@ -1,30 +1,66 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 
 import {AppContext} from '../AppContext'
 import {SearchableDropdown} from '../components'
 import {ContractDropdown} from '../components/ContractDropdown'
+// INSERT_YOUR_CODE
+import {ethers} from 'ethers/'
+import {Chain} from '../types/VerificationTypes'
 
 export const HomeView = () => {
-  const {chains, selectedChain, setSelectedChain, compilationOutput} = React.useContext(AppContext)
+  const {chains, compilationOutput, sourcifyVerifiers, selectedContractFileAndName} = React.useContext(AppContext)
+  const [contractAddress, setContractAddress] = useState('')
+  const [contractAddressError, setContractAddressError] = useState('')
+  const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
+
+  useEffect(() => {
+    console.log('Selected chain changed', selectedChain)
+  }, [selectedChain])
 
   const ethereumChainIds = [1, 3, 4, 5, 11155111, 17000]
 
-  const contractNames = compilationOutput?.contracts && Object.keys(compilationOutput?.contracts)
-
   // Add Ethereum chains to the head of the chains list. Sort the rest alphabetically
-  const dropdownChains = chains
-    .map((chain) => ({value: chain.chainId, name: `${chain.title || chain.name} (${chain.chainId})`}))
-    .sort((a, b) => {
-      const isAInEthereum = ethereumChainIds.includes(a.value)
-      const isBInEthereum = ethereumChainIds.includes(b.value)
+  const dropdownChains = chains.sort((a, b) => {
+    const isAInEthereum = ethereumChainIds.includes(a.chainId)
+    const isBInEthereum = ethereumChainIds.includes(b.chainId)
 
-      if (isAInEthereum && !isBInEthereum) return -1
-      if (!isAInEthereum && isBInEthereum) return 1
-      if (isAInEthereum && isBInEthereum) return ethereumChainIds.indexOf(a.value) - ethereumChainIds.indexOf(b.value)
+    if (isAInEthereum && !isBInEthereum) return -1
+    if (!isAInEthereum && isBInEthereum) return 1
+    if (isAInEthereum && isBInEthereum) return ethereumChainIds.indexOf(a.chainId) - ethereumChainIds.indexOf(b.chainId)
 
-      return a.name.localeCompare(b.name)
+    return (a.title || a.name).localeCompare(b.title || b.name)
+  })
+
+  const handleVerify = async (e) => {
+    e.preventDefault() // Don't change the page
+    const [selectedFileName, selectedContractName] = selectedContractFileAndName.split(':')
+    const selectedContractAbstract = compilationOutput?.[selectedFileName || '']
+    const selectedContractMetadataStr = selectedContractAbstract.data.contracts[selectedFileName][selectedContractName].metadata
+    console.log('selectedFileName:', selectedFileName)
+    console.log('selectedContractName:', selectedContractName)
+    console.log('selectedContractAbstract:', selectedContractAbstract)
+    console.log('selectedContractMetadataStr:', selectedContractMetadataStr)
+    console.log('sourcifyVerifiers:', sourcifyVerifiers)
+    console.log('selectedChain:', selectedChain)
+    console.log('contractAddress:', contractAddress)
+    const sourcifyPromises = sourcifyVerifiers.map((sourcifyVerifier) => {
+      return sourcifyVerifier.verify(selectedChain.chainId.toString(), contractAddress, selectedContractAbstract.source.sources, selectedContractMetadataStr)
     })
 
+    const results = await Promise.all(sourcifyPromises)
+    console.log('results', results)
+  }
+
+  const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isValidAddress = ethers.utils.isAddress(event.target.value)
+    setContractAddress(event.target.value)
+    if (!isValidAddress) {
+      setContractAddressError('Invalid contract address')
+      console.error('Invalid contract address')
+      return
+    }
+    setContractAddressError('')
+  }
   return (
     <div className="my-4">
       <div>
@@ -33,20 +69,22 @@ export const HomeView = () => {
           Verify compiled contracts on different verification services
         </p>
       </div>
-      <div>
-        <SearchableDropdown label="Contract Chain" options={dropdownChains} id="network-dropdown" value={selectedChain} onChange={setSelectedChain} />
+      <form onSubmit={handleVerify}>
+        <SearchableDropdown label="Contract Chain" chains={dropdownChains} id="network-dropdown" setSelectedChain={setSelectedChain} selectedChain={selectedChain} />
 
         <div className="form-group">
           <label htmlFor="contract-address">Contract Address</label>
-          <input type="text" className="form-control" id="contract-address" placeholder="0x2738d13E81e..." />
+          <div>{contractAddressError && <div className="text-danger">{contractAddressError}</div>}</div>
+          <input type="text" className="form-control" id="contract-address" placeholder="0x2738d13E81e..." value={contractAddress} onChange={handleAddressChange} />
         </div>
 
-        <ContractDropdown label="Contract Name" contractNames={contractNames?.map((item) => ({value: item, name: item}))} id="contract-name-dropdown" />
-        <div>
-          <div>Constructor Arguments</div>
-          {/* TODO: Add input fields for constructor arguments */}
-        </div>
-      </div>
+        <ContractDropdown label="Contract Name" id="contract-dropdown-1" />
+
+        <button type="submit" className="btn btn-primary">
+          {' '}
+          Verify{' '}
+        </button>
+      </form>
     </div>
   )
 }
