@@ -4,24 +4,34 @@ import {ContractVerificationPluginClient} from './ContractVerificationPluginClie
 
 import {AppContext} from './AppContext'
 import DisplayRoutes from './routes'
-import {CustomTooltip} from '@remix-ui/helper'
 import {ThemeType} from './types'
 
 import './App.css'
-import {CompilationFileSources, CompilationResult, CompiledContract} from '@remixproject/plugin-api'
+import {Chain, VerifiedContract} from './types/VerificationTypes'
+import {SourcifyVerifier} from './Verifiers/SourcifyVerifier'
+import {CompilerAbstract} from '@remix-project/remix-solidity'
 
 const plugin = new ContractVerificationPluginClient()
 
 const App = () => {
   const [themeType, setThemeType] = useState<ThemeType>('dark')
   // TODO: Types for chains
-  const [chains, setChains] = useState<any>([]) // State to hold the chains data
-  const [selectedChain, setSelectedChain] = useState<any | undefined>()
+  const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [targetFileName, setTargetFileName] = useState('')
-  const [compilationOutput, setCompilationOutput] = useState<CompilationResult | undefined>()
-  const [selectedContract, setSelectedContract] = useState<CompiledContract | undefined>()
+  const [compilationOutput, setCompilationOutput] = useState<{[key: string]: CompilerAbstract} | undefined>()
+  // Contract file and name in format contracts/Storage.sol:Storage
+  const [selectedContractFileAndName, setSelectedContractFileAndName] = useState<string | undefined>()
+  const [verifiedContracts, setVerifiedContracts] = useState<VerifiedContract[]>([])
+  const [sourcifyVerifiers, setSourcifyVerifiers] = useState<SourcifyVerifier[]>([])
 
   useEffect(() => {
+    console.log('Selected Contract File And Name Changed', selectedContractFileAndName)
+  }, [selectedContractFileAndName])
+
+  useEffect(() => {
+    // const sourcifyVerifier = new SourcifyVerifier('http://sourcify.dev/server/', 'Sourcify')
+    const sourcifyVerifier = new SourcifyVerifier('http://localhost:5555/', 'Sourcify Localhost')
+    setSourcifyVerifiers([sourcifyVerifier])
     // TODO: Fix 'compilationFinished' event types. The interface is outdated at https://github.com/ethereum/remix-plugin/blob/master/packages/api/src/lib/compiler/api.ts. It does not include data, input, or version. See the current parameters: https://github.com/ethereum/remix-project/blob/9f6c5be882453a555055f07171701459e4ae88a4/libs/remix-solidity/src/compiler/compiler.ts#L189
     // Because of this reason we use @ts-expect-error for the next line
     // // @ts-expect-error:next-line
@@ -60,12 +70,11 @@ const App = () => {
     //   console.log(data)
     // })
 
-    plugin.call('compilerArtefacts' as any, 'getAllCompilerAbstracts').then((data: any) => {
+    plugin.call('compilerArtefacts' as any, 'getAllCompilerAbstracts').then((obj: any) => {
       console.log('compilerArtefacts.getAllCompilerAbstracts')
-      console.log(data)
-      setCompilationOutput(data)
+      console.log(obj)
+      setCompilationOutput(obj)
     })
-
     // Fetch chains.json and update state
     fetch('https://chainid.network/chains.json')
       .then((response) => response.json())
@@ -77,7 +86,7 @@ const App = () => {
   }, [])
 
   return (
-    <AppContext.Provider value={{themeType, setThemeType, chains, selectedChain, setSelectedChain, compilationOutput, selectedContract, setSelectedContract, targetFileName}}>
+    <AppContext.Provider value={{themeType, setThemeType, chains, compilationOutput, selectedContractFileAndName, setSelectedContractFileAndName, targetFileName, verifiedContracts, setVerifiedContracts, sourcifyVerifiers}}>
       <DisplayRoutes />
     </AppContext.Provider>
   )
