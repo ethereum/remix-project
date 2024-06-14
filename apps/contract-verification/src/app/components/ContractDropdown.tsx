@@ -8,21 +8,30 @@ interface ContractDropdownItem {
 
 interface ContractDropdownProps {
   label: string
-  contractNames: ContractDropdownItem[]
   id: string
 }
 
 // Chooses one contract from the compilation output.
 export const ContractDropdown: React.FC<ContractDropdownProps> = ({label, id}) => {
-  const {setSelectedContract, compilationOutput} = useContext(AppContext)
-  const [chosenContractFileAndName, setChosenContractFileAndName] = useState('')
+  const {setSelectedContractFileAndName, compilationOutput} = useContext(AppContext)
 
   useEffect(() => {
     console.log('CompiilationOutput chainged', compilationOutput)
+    if (!compilationOutput) return
+    const isOnlyOneFileCompiled = Object.keys(compilationOutput).length === 1
+    if (isOnlyOneFileCompiled) {
+      const onlyFileName = Object.keys(compilationOutput)[0]
+      const isOnlyOneContractCompiled = Object.keys(compilationOutput[onlyFileName].data.contracts[onlyFileName]).length === 1
+      if (isOnlyOneContractCompiled) {
+        const onlyContractName = Object.keys(compilationOutput[onlyFileName].data.contracts[onlyFileName])[0]
+        setSelectedContractFileAndName(onlyFileName + ':' + onlyContractName)
+      }
+    }
   }, [compilationOutput])
 
   const handleSelectContract = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log('contractName', event.target.value)
+    console.log('selecting ', event.target.value)
+    setSelectedContractFileAndName(event.target.value)
   }
 
   const hasContracts = compilationOutput && Object.keys(compilationOutput).length > 0
