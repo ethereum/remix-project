@@ -131,7 +131,7 @@ export const Toaster = (props: ToasterProps) => {
       {!state.hide && (
         <div
           data-shared="tooltipPopup"
-          className={`remixui_tooltip alert alert-info p-2 ${state.hiding ? 'remixui_animateTop' : 'remixui_animateBottom'}`}
+          className={`remixui_tooltip mb-4 alert alert-info p-2 ${state.hiding ? 'remixui_animateTop' : 'remixui_animateBottom'}`}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >

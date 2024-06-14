@@ -110,3 +110,7 @@ iframe {
 .highlight {
     animation: highlight 2s forwards;
 }
+
+.remixui_height {
+  height: 97vh;
+}
