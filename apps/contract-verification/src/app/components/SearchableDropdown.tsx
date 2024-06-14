@@ -1,39 +1,34 @@
 import React, {useState, useEffect, useRef} from 'react'
 import Fuse from 'fuse.js'
-
-interface DropdownItem {
-  value: string
-  name: string
-}
+import {Chain} from '../types/VerificationTypes'
 
 interface DropdownProps {
   label: string
-  options: DropdownItem[]
+  chains: Chain[]
   id: string
-  value: string
-  onChange: (value: string) => void
+  setSelectedChain: (chain: Chain) => void
+  selectedChain: Chain
 }
 
-export const SearchableDropdown: React.FC<DropdownProps> = ({options, label, id, value, onChange}) => {
+export const SearchableDropdown: React.FC<DropdownProps> = ({chains, label, id, setSelectedChain, selectedChain}) => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedOption, setSelectedOption] = useState<DropdownItem | null>(null)
   const [isOpen, setIsOpen] = useState(false)
-  const [filteredOptions, setFilteredOptions] = useState<DropdownItem[]>(options)
+  const [filteredOptions, setFilteredOptions] = useState<Chain[]>(chains)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const fuse = new Fuse(options, {
+  const fuse = new Fuse(chains, {
     keys: ['name'],
     threshold: 0.3,
   })
 
   useEffect(() => {
     if (searchTerm === '') {
-      setFilteredOptions(options)
+      setFilteredOptions(chains)
     } else {
       const result = fuse.search(searchTerm)
       setFilteredOptions(result.map(({item}) => item))
     }
-  }, [searchTerm, options])
+  }, [searchTerm, chains])
 
   // Close dropdown when user clicks outside
   useEffect(() => {
@@ -50,12 +45,11 @@ export const SearchableDropdown: React.FC<DropdownProps> = ({options, label, id,
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value)
-    onChange(e.target.value)
     setIsOpen(true)
   }
 
-  const handleOptionClick = (option: DropdownItem) => {
-    setSelectedOption(option)
+  const handleOptionClick = (option: Chain) => {
+    setSelectedChain(option)
     setSearchTerm(option.name)
     setIsOpen(false)
   }
@@ -65,7 +59,7 @@ export const SearchableDropdown: React.FC<DropdownProps> = ({options, label, id,
     setSearchTerm('')
   }
 
-  if (!options || options.length === 0) {
+  if (!chains || chains.length === 0) {
     return (
       <div className="dropdown">
         <label htmlFor={id}>{label}</label>
@@ -82,9 +76,9 @@ export const SearchableDropdown: React.FC<DropdownProps> = ({options, label, id,
       <input type="text" value={searchTerm} onChange={handleInputChange} onClick={openDropdown} placeholder="Select a chain" className="form-control" />
       {isOpen && (
         <ul className="dropdown-menu show w-100" style={{maxHeight: '400px', overflowY: 'auto'}}>
-          {filteredOptions.map((option) => (
-            <li key={option.value} onClick={() => handleOptionClick(option)} className={`dropdown-item ${selectedOption === option ? 'active' : ''}`} style={{cursor: 'pointer', whiteSpace: 'normal'}}>
-              {option.name}
+          {filteredOptions.map((chain) => (
+            <li key={chain.chainId} onClick={() => handleOptionClick(chain)} className={`dropdown-item ${selectedChain?.chainId === chain.chainId ? 'active' : ''}`} style={{cursor: 'pointer', whiteSpace: 'normal'}}>
+              {chain.title || chain.name} ({chain.chainId})
             </li>
           ))}
         </ul>

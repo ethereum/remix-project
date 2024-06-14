@@ -1,18 +1,21 @@
 import React from 'react'
 import {ThemeType} from './types'
-import {CompilationResult, CompiledContract} from '@remixproject/plugin-api'
+import {Chain, VerifiedContract} from './types/VerificationTypes'
+import {SourcifyVerifier} from './Verifiers/SourcifyVerifier'
+import {CompilerAbstract} from '@remix-project/remix-solidity'
 
 // Define the type for the context
 type AppContextType = {
   themeType: ThemeType
   setThemeType: (themeType: ThemeType) => void
-  chains: any[]
-  selectedChain: any | undefined
-  setSelectedChain: (chain: string) => void
-  compilationOutput: CompilationResult | undefined
-  selectedContract: CompiledContract | undefined
-  setSelectedContract: (contract: CompiledContract) => void
+  chains: Chain[]
+  compilationOutput: {[key: string]: CompilerAbstract} | undefined
+  selectedContractFileAndName: string | undefined
+  setSelectedContractFileAndName: (contract: string) => void
   targetFileName: string | undefined
+  verifiedContracts: VerifiedContract[]
+  setVerifiedContracts: (verifiedContracts: VerifiedContract[]) => void
+  sourcifyVerifiers: SourcifyVerifier[]
 }
 
 // Provide a default value with the appropriate types
@@ -22,12 +25,13 @@ const defaultContextValue: AppContextType = {
     console.log('Calling Set Theme Type')
   },
   chains: [],
-  selectedChain: undefined,
-  setSelectedChain: (chain: string) => {},
   compilationOutput: undefined,
-  selectedContract: undefined,
-  setSelectedContract: (contract: CompiledContract) => {},
+  selectedContractFileAndName: undefined,
+  setSelectedContractFileAndName: (contract: string) => {},
   targetFileName: undefined,
+  verifiedContracts: [],
+  setVerifiedContracts: (verifiedContracts: VerifiedContract[]) => {},
+  sourcifyVerifiers: [],
 }
 
 // Create the context with the type
