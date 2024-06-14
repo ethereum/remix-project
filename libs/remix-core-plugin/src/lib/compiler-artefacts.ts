@@ -34,8 +34,8 @@ export class CompilerArtefacts extends Plugin {
 
   onActivation() {
     const saveCompilationResult = (file, source, languageVersion, data, input?) => {
-      this.compilersArtefacts.__last = new CompilerAbstract(languageVersion, data, source, input)
       this.compilersArtefactsPerFile[file] = new CompilerAbstract(languageVersion, data, source, input)
+      this.compilersArtefacts.__last = this.compilersArtefactsPerFile[file]
     }
 
     this.on('solidity', 'compilationFinished', saveCompilationResult)
