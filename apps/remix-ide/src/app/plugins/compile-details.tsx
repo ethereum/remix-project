@@ -6,32 +6,38 @@ import { RemixUiCompileDetails } from '@remix-ui/solidity-compile-details'
 
 const _paq = (window._paq = window._paq || [])
 
+type CompileDetailsPayload = {
+  contractProperties: any,
+  selectedContract: string,
+  help: any,
+  insertValue: any,
+  saveAs: any,
+}
+
+interface ICompilationDetailsPlugin extends ViewPlugin {
+  showDetails: (payload: any) => void
+}
+
 const profile = {
   name: 'compilationDetails',
   displayName: 'Solidity Compile Details',
   description: 'Displays details from solidity compiler',
   location: 'mainPanel',
-  methods: ['showDetails'],
+  methods: ['showDetails', 'getTabHeadDetails'],
   events: []
 }
 
-export class CompilationDetailsPlugin extends ViewPlugin {
+export class CompilationDetailsPlugin extends ViewPlugin implements ICompilationDetailsPlugin {
   dispatch: React.Dispatch<any> = () => {}
   appManager: RemixAppManager
   element: HTMLDivElement
-  payload: any
+  payload: CompileDetailsPayload
   constructor(appManager: RemixAppManager) {
     super(profile)
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'compileDetails')
-    this.payload = {
-      contractProperties: {} as any,
-      selectedContract: '',
-      help: {} as any,
-      insertValue: {} as any,
-      saveAs: {} as any,
-    }
+    this.payload
   }
 
   async onActivation() {
@@ -44,8 +50,7 @@ export class CompilationDetailsPlugin extends ViewPlugin {
 
   async showDetails(sentPayload: any) {
     await this.call('tabs', 'focus', 'compilationDetails')
-    setTimeout(() => {
-      // TODO: use the react API to render when the tab is focused and the plugin in the view.
+    setTimeout(async () => {
       this.payload = sentPayload
       this.renderComponent()
     }, 2000)

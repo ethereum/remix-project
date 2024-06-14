@@ -16,7 +16,7 @@ export const TreeViewItem = (props: TreeViewItemProps) => {
       ref={innerRef}
       key={`treeViewLi${id}`}
       data-id={`treeViewLi${id}`}
-      className={`li_tv remixui_mouseover`}
+      className="li_tv remixui_mouseover"
       {...otherProps}
     >
       <div
