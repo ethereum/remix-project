@@ -151,7 +151,7 @@ function HomeTabTitle() {
           className="pl-2 remixui_home_text"
           onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixDesktop'])}
           target="__blank"
-          href="https://github.com/ethereum/remix-desktop/releases"
+          href="https://github.com/remix-project-org/remix-desktop-insiders"
         >
           <FormattedMessage id="home.remixDesktop" />
         </a>
