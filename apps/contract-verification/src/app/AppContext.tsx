@@ -1,6 +1,6 @@
 import React from 'react'
 import {ThemeType} from './types'
-import {CompilationResult} from '@remixproject/plugin-api'
+import {CompilationResult, CompiledContract} from '@remixproject/plugin-api'
 
 // Define the type for the context
 type AppContextType = {
@@ -10,6 +10,9 @@ type AppContextType = {
   selectedChain: any | undefined
   setSelectedChain: (chain: string) => void
   compilationOutput: CompilationResult | undefined
+  selectedContract: CompiledContract | undefined
+  setSelectedContract: (contract: CompiledContract) => void
+  targetFileName: string | undefined
 }
 
 // Provide a default value with the appropriate types
@@ -22,6 +25,9 @@ const defaultContextValue: AppContextType = {
   selectedChain: undefined,
   setSelectedChain: (chain: string) => {},
   compilationOutput: undefined,
+  selectedContract: undefined,
+  setSelectedContract: (contract: CompiledContract) => {},
+  targetFileName: undefined,
 }
 
 // Create the context with the type
