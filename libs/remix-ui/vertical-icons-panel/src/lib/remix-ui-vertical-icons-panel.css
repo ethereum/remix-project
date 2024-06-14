@@ -84,7 +84,7 @@
     padding-left: 5px;
     padding-right: 5px;
   }
-  
+
   .remixui_verticalIconContextcontainer {
     display: block;
     position: fixed;
@@ -105,7 +105,7 @@
   .remixui_liitem:hover {
     background-color: var(--secondary);
   }
-  
+
   .remixui_scrollbar {
     overflow-y: scroll;
     scrollbar-width: none; /* Firefox hide scrollbar */
@@ -139,6 +139,10 @@
 
   .remixui_settings {
     flex-basis: 50px;
+  }
+
+  .remixui_icons_height {
+    height: 97vh;
   }
 
   #menuitems {
