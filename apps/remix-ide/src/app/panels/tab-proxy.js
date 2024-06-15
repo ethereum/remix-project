@@ -241,15 +241,7 @@ export class TabProxy extends Plugin {
       icon = 'assets/img/vyperLogo2.webp'
     }
     if (title === 'Solidity Compile Details') {
-      let updatedName = this.fileManager.currentFile()
       icon = 'assets/img/solidity.webp'
-      name = updatedName.split('/')[1]
-      let newTitle = ''
-      title.split(' ').forEach((x, index) => {
-        if (index !== 0) {
-          newTitle += ` ${x}`
-        }})
-      title = `${name} - ${newTitle}`
     }
 
 
