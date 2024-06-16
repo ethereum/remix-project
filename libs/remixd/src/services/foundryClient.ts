@@ -179,7 +179,7 @@ export class FoundryClient extends PluginClient {
         }
       }
     }
-    
+
     if (!sourcePath) return
 
     const currentCache = cache.files[sourcePath]
