@@ -52,7 +52,7 @@ describe('Accounts', () => {
         },
         message: {
           prompt: "Welcome! In order to authenticate to this website, sign this request and your public address will be sent to the server in a verifiable way.",
-          createdAt: `${Date.now()}`,
+          createdAt: 1718570375196,
         },
         primaryType: 'AuthRequest',
         types: {
@@ -68,14 +68,11 @@ describe('Accounts', () => {
           ],
         },
       };
-      const result = await web3.currentProvider.sendAsync({
+      const result = await web3.currentProvider.request({
         method: 'eth_signTypedData',
-        params: [accounts[0], typedData],
-        id: 0,
-        jsonrpc: '2.0'
+        params: [accounts[0], typedData]
       })
-      console.log(result)
-      assert.equal(result, '0xe4ee76332af49888d86a09eea70dfd5b9a7085e2e013cbba4c0cb41766eab69a6216f18b80d9277241ce35b74b6c46add36d5189eb5a94a258f076dfc4dd21161b')
+      assert.equal(result, '0x248d23de0e23231370db8aa21ad5908ca90c33ae2b8c611b906674bda6b1a8b85813f945c2ea896316e240089029619ab3d801a1b098c199bd462dd8026349da1c')
     })
   })
 })
