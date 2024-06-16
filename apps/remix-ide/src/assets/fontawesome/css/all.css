@@ -19391,6 +19391,8 @@ readers do not read off random characters that represent icons */
 
 .fak.fa-cairo::before, .fa-kit.fa-cairo::before { content: "\e000"; }
 .fak.fa-circom::before, .fa-kit.fa-circom::before { content: "\e001"; }
+.fak.fa-fa-dock-l::before, .fa-kit.fa-fa-dock-l::before { content: "\e007"; }
+.fak.fa-fa-dock-r::before, .fa-kit.fa-fa-dock-r::before { content: "\e006"; }
 .fak.fa-lexon::before, .fa-kit.fa-lexon::before { content: "\e004"; }
 .fak.fa-solidity-mono::before, .fa-kit.fa-solidity-mono::before { content: "\e005"; }
 .fak.fa-ts-logo::before, .fa-kit.fa-ts-logo::before { content: "\e003"; }

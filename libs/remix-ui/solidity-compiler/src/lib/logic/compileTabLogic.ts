@@ -104,7 +104,7 @@ export class CompileTabLogic {
    * @param {string} target the path to the file to compile
    */
   compileFile (target) {
-    if (!target) throw new Error('No target provided for compiliation')
+    if (!target) throw new Error('No target provided for compilation')
     return new Promise((resolve, reject) => {
       this.api.readFile(target).then(async(content) => {
         const sources = { [target]: { content } }

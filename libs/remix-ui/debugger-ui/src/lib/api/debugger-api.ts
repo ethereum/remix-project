@@ -183,14 +183,26 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   showMessage (title: string, message: string) {}
 
-  onStartDebugging (debuggerBackend: any) {
-    this.call('layout', 'maximiseSidePanel')
+  async onStartDebugging (debuggerBackend: any) {
+    const pinnedPlugin = await this.call('pinnedPanel', 'currentFocus')
+
+    if (pinnedPlugin === 'debugger') {
+      this.call('layout', 'maximisePinnedPanel')
+    } else {
+      this.call('layout', 'maximiseSidePanel')
+    }
     this.emit('startDebugging')
     this.debuggerBackend = debuggerBackend
   }
 
-  onStopDebugging () {
-    this.call('layout', 'resetSidePanel')
+  async onStopDebugging () {
+    const pinnedPlugin = await this.call('pinnedPanel', 'currentFocus')
+
+    if (pinnedPlugin === 'debugger') {
+      this.call('layout', 'resetPinnedPanel')
+    } else {
+      this.call('layout', 'resetSidePanel')
+    }
     this.emit('stopDebugging')
     this.debuggerBackend = null
   }

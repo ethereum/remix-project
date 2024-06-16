@@ -416,7 +416,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
         ) : null}
       </div>
       <div className="udapp_subcontainer">
-        <CustomTooltip placement={'right'} tooltipClasses="text-nowrap text-left" tooltipId="remixUdappContractNamesTooltip" tooltipText={contractOptions.title}>
+        <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap text-left" tooltipId="remixUdappContractNamesTooltip" tooltipText={contractOptions.title}>
           <select
             ref={contractsRef}
             value={currentContract}
@@ -447,7 +447,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
       </div>
       {evmVersion && loadedContractData && (
         <CustomTooltip
-          placement={'right'}
+          placement={'auto-end'}
           tooltipClasses="text-wrap text-left"
           tooltipId="info-evm-version-warn"
           tooltipText={
@@ -483,6 +483,9 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 isValidProxyUpgrade={isValidProxyUpgrade}
                 modal={props.modal}
                 disabled={props.selectedAccount === ''}
+                solcVersion={props.solCompilerVersion}
+                setSolcVersion={props.setCompilerVersion}
+                getVersion={props.getCompilerVersion}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
@@ -494,7 +497,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                   checked={props.ipfsCheckedState}
                 />
                 <CustomTooltip
-                  placement={'right'}
+                  placement={'auto-end'}
                   tooltipClasses="text-wrap text-left"
                   tooltipId="remixIpfsUdappTooltip"
                   tooltipText={

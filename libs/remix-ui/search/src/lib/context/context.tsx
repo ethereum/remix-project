@@ -443,6 +443,7 @@ export const SearchProvider = ({ children = [], reducer = SearchReducer, initial
         }
       })()
     }
+    plugin.call('pluginStateLogger', 'logPluginState', 'search', state)
   }, [state.timeStamp])
 
   return (

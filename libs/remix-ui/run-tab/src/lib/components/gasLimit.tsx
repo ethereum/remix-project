@@ -64,7 +64,7 @@ export function GasLimitUI(props: GasPriceProps) {
           <label className="mb-1 w-50 form-check-label custom-control-label" htmlFor="glManualConfig" data-id="glManualConfiguration">
             <FormattedMessage id="udapp.gasLimitManual" />
           </label>
-          <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="remixGasPriceTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText4" />}>
+          <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="remixGasPriceTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText4" />}>
             <input
               type="number"
               ref={inputComponent}

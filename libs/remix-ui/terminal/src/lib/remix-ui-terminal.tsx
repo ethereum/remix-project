@@ -235,10 +235,11 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
     try {
       if (script.trim().startsWith('git')) {
         // await this.call('git', 'execute', script) code might be used in the future
+        // TODO: rm gpt or redirect gpt to sol-pgt
       } else if (script.trim().startsWith('gpt')) {
         call('terminal', 'log',{ type: 'warn', value: `> ${script}` })
-        await call('openaigpt', 'message', script)
-        _paq.push(['trackEvent', 'ai', 'openai', 'askFromTerminal'])
+        await call('solcoder', 'solidity_answer', script)
+        _paq.push(['trackEvent', 'ai', 'solcoder', 'askFromTerminal'])
       } else if (script.trim().startsWith('sol-gpt')) {
         call('terminal', 'log',{ type: 'warn', value: `> ${script}` })
         await call('solcoder', 'solidity_answer', script)
@@ -596,7 +597,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
 
   return (
     ( props.visible &&
-      <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel h-100" ref={panelRef}>
+      <div style={{ flexGrow: 1 }} className="remix_ui_terminal_panel h-100 mb-2" ref={panelRef}>
         <div tabIndex={-1} className="remix_ui_terminal_container d-flex h-100 m-0 flex-column" data-id="terminalContainer">
           {handleAutoComplete()}
           <div className="position-relative d-flex flex-column-reverse h-100">

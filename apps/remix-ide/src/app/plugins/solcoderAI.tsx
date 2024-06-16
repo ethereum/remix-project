@@ -15,21 +15,21 @@ const profile = {
   name: 'solcoder',
   displayName: 'solcoder',
   description: 'solcoder',
-  methods: ['code_generation', 'code_completion', "solidity_answer", "code_explaining", "code_insertion"],
+  methods: ['code_generation', 'code_completion', "solidity_answer", "code_explaining", "code_insertion", "error_explaining"],
   events: [],
   maintainedBy: 'Remix',
 }
 type ChatEntry = [string, string];
 
 enum BackendOPModel{
-  DeeSeek,
+  DeepSeek,
   CodeLLama,
   Mistral
 }
 
 const PromptBuilder = (inst, answr, modelop) => {
-  if (modelop === BackendOPModel.CodeLLama) return "\n### INSTRUCTION:\n" + inst + "\n### RESPONSE:\n" + answr
-  if (modelop === BackendOPModel.DeeSeek) return ""
+  if (modelop === BackendOPModel.CodeLLama) return ""
+  if (modelop === BackendOPModel.DeepSeek) return "\n### INSTRUCTION:\n" + inst + "\n### RESPONSE:\n" + answr
   if (modelop === BackendOPModel.Mistral) return ""
 }
 
@@ -38,7 +38,7 @@ export class SolCoder extends Plugin {
   completion_url: string
   solgpt_chat_history:ChatEntry[]
   max_history = 7
-  model_op = BackendOPModel.CodeLLama
+  model_op = BackendOPModel.DeepSeek
 
   constructor() {
     super(profile)
@@ -50,6 +50,8 @@ export class SolCoder extends Plugin {
   async code_generation(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'code_generation'])
+
     let result
     try {
       result = await(
@@ -78,6 +80,9 @@ export class SolCoder extends Plugin {
   async solidity_answer(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'answering'])
+
     let result
     try {
       const main_prompt = this._build_solgpt_promt(prompt)
@@ -112,6 +117,9 @@ export class SolCoder extends Plugin {
   async code_explaining(prompt, context:string=""): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'explaining'])
+
     let result
     try {
       result = await(
@@ -138,6 +146,8 @@ export class SolCoder extends Plugin {
 
   async code_completion(prompt, options:SuggestOptions=null): Promise<any> {
     this.emit("aiInfering")
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'code_completion'])
+
     let result
     try {
       result = await(
@@ -184,6 +194,8 @@ export class SolCoder extends Plugin {
 
   async code_insertion(msg_pfx, msg_sfx): Promise<any> {
     this.emit("aiInfering")
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'code_insertion'])
+
     let result
     try {
       result = await(
@@ -212,6 +224,36 @@ export class SolCoder extends Plugin {
 
     } catch (e) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `Unable to get a response ${e.message}` })
+      return
+    } finally {
+      this.emit("aiInferingDone")
+    }
+  }
+
+  async error_explaining(prompt): Promise<any> {
+    this.emit("aiInfering")
+    this.call('layout', 'maximizeTerminal')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
+    _paq.push(['trackEvent', 'ai', 'solcoder', 'explaining'])
+
+    let result
+    try {
+      result = await(
+        await fetch(this.api_url, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ "data":[prompt, "error_explaining", false,2000,0.9,0.8,50]}),
+        })
+      ).json()
+      if (result) {
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
+      }
+      return result.data[0]
+    } catch (e) {
+      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return
     } finally {
       this.emit("aiInferingDone")

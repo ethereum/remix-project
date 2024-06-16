@@ -35,7 +35,7 @@ export type ProviderOptions = {
   nodeUrl?: string,
   blockNumber?: number | 'latest',
   stateDb?: State,
-  logDetails?: boolean
+  details?: boolean
   blocks?: string[],
   coinbase?: string
 }
@@ -90,12 +90,12 @@ export class Provider {
       return
     }
     const method = this.methods[payload.method]
-    if (this.options.logDetails) {
+    if (this.options.details) {
       info(payload)
     }
     if (method) {
       return method.call(method, payload, (err, result) => {
-        if (this.options.logDetails) {
+        if (this.options.details) {
           info(err)
           info(result)
         }

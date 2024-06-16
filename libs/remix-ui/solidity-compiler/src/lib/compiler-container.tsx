@@ -373,7 +373,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
 
   // Load solc compiler version according to pragma in contract file
   const _setCompilerVersionFromPragma = (filename: string) => {
-    if (!solJsonBinData.selectorList) return
+    if (solJsonBinData && !solJsonBinData.selectorList) return
     api.readFile(filename).then((data) => {
       if (!data) return
       const pragmaArr = data.match(/(pragma solidity (.+?);)/g)
@@ -1127,7 +1127,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               disabled={(configFilePath === '' && state.useFileConfiguration) || disableCompileButton}
             >
               <CustomTooltip
-                placement="right"
+                placement={'auto-end'}
                 tooltipId="overlay-tooltip-compile-run"
                 tooltipText={
                   <div className="text-left">

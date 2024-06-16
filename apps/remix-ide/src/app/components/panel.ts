@@ -15,9 +15,11 @@ export class AbstractPanel extends HostPlugin {
   }
 
   currentFocus (): string {
-    return Object.values(this.plugins).find(plugin => {
+    const activePlugin = Object.values(this.plugins).find(plugin => {
       return plugin.active
-    }).profile.name
+    })
+
+    return activePlugin ? activePlugin.profile.name : null
   }
 
   addView (profile, view) {
@@ -26,6 +28,7 @@ export class AbstractPanel extends HostPlugin {
       profile: profile,
       view: view,
       active: false,
+      pinned: false,
       class: 'plugItIn active'
     }
   }
