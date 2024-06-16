@@ -9,14 +9,14 @@ import { IconRecord } from '../types'
 import { CustomTooltip } from '@remix-ui/helper'
 
 export interface IconStatus {
-  key: string
+  key: string | number
   title: string
-  type: string
+  type: 'danger' | 'error' | 'success' | 'info' | 'warning'
   pluginName?: string
 }
 
 export interface BadgeStatus extends IconStatus {
-  text: string
+  text: string | number
 }
 
 interface IconProps {
@@ -30,7 +30,7 @@ const initialState = {
   text: '',
   key: '',
   title: '',
-  type: '',
+  type: null,
   pluginName: ''
 }
 
@@ -88,10 +88,10 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
   return (
     <>
       <div className='d-flex py-1' style={{ width: 'auto', placeContent: stylePC }}>
-        {iconRecord.active && <div
-          className='pt-1 bg-primary'
+        <div
+          className={`pt-1 ${iconRecord.active ? 'bg-primary' : 'bg-transparent'}`}
           style={{ width: "6px", height: "36px", position: 'relative', borderRadius: '24%' }}
-        ></div>}
+        ></div>
         <CustomTooltip
           placement={name === 'settings' ? 'right' : name === 'search' ? 'top' : name === 'udapp' ? 'bottom' : 'top'}
           tooltipText={title}
@@ -100,7 +100,11 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
           <div
             className={`remixui_icon m-0  pt-1`}
             onClick={() => {
-              ;(verticalIconPlugin as any).toggle(name)
+              if (iconRecord.pinned) {
+                verticalIconPlugin.call('pinnedPanel', 'highlight')
+              } else {
+                (verticalIconPlugin as any).toggle(name)
+              }
             }}
             {...{ plugin: name }}
             onContextMenu={(e: any) => {
@@ -114,7 +118,7 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
           >
             <img
               data-id={iconRecord.active ? `selected` : ''}
-              className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}` : ''}`}
+              className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active || iconRecord.pinned ? `selected-${theme}` : ''}`}
               src={icon}
               alt={name}
             />
@@ -133,6 +137,10 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
             contextMenuAction={contextMenuAction}
           />
         ) : null}
+        <div
+          className={`pt-1 ${iconRecord.pinned ? 'bg-primary' : 'bg-transparent'}`}
+          style={{ width: "6px", height: "36px", position: 'relative', borderRadius: '24%', marginLeft: 'auto' }}
+        ></div>
       </div>
     </>
   )

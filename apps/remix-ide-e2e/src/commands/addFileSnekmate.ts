@@ -60,7 +60,7 @@ function addFileSnekmate(browser: NightwatchBrowser, name: string, content: Nigh
           })
           .setEditorValue(content.content)
           .getEditorValue((result) => {
-            if(result != content.content) {
+            if (result != content.content) {
               browser.setEditorValue(content.content)
             }
           })

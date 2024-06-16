@@ -6,7 +6,6 @@ const checkBrowserIsChrome = function (browser: NightwatchBrowser) {
   return browser.browserName.indexOf('chrome') > -1
 }
 
-
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -97,7 +96,5 @@ module.exports = {
         })
     }
   }
-
-
 
 }

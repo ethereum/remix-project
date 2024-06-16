@@ -103,6 +103,7 @@
   "udapp.llIError6": "Обе функции 'receive' и 'fallback' не определены",
   "udapp.llIError7": "Пожалуйста, определите функцию 'Fallback' для отправки вызываемых данных или 'Receive' или оплачиваемую функцию 'Fallback' для отправки эфира",
   "udapp.copy": "Копировать",
+  "udapp.copyAddress": "Copy Address",
   "udapp._comment_mainnet.tsx": "libs/remix-ui/run-tab/src/lib/components/mainnet.tsx",
   "udapp.mainnetText1": "Вы собираетесь создать транзакцию в сети {name}. Подтвердите данные для отправки информации вашему провайдеру.",
   "udapp.mainnetText2": "Провайдером для многих пользователей является MetaMask. Провайдер попросит вас подписать транзакцию перед отправкой ее в сеть {name}.",
