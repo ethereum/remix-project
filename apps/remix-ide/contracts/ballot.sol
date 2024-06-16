@@ -101,6 +101,7 @@ contract Ballot {
         Voter storage sender = voters[msg.sender];
         require(sender.weight != 0, "Has no right to vote");
         require(!sender.voted, "Already voted.");
+        require(proposal < proposals.length, "Invalid proposal index.");
         sender.voted = true;
         sender.vote = proposal;
 
