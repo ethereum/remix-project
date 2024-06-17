@@ -11,7 +11,6 @@ import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
 import { VMContext } from './vm-context'
 import { Web3PluginBase } from 'web3'
-import { Block } from '@ethereumjs/block'
 
 export interface JSONRPCRequestPayload {
   params: any[];
@@ -109,11 +108,11 @@ export class Provider {
     callback(new Error('unknown method ' + payload.method))
   }
 
-  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) => void) {
+  async sendAsync (payload: JSONRPCRequestPayload, callback?: (err: Error, result?: JSONRPCResponsePayload) => void) : Promise<JSONRPCResponsePayload> {
     return new Promise((resolve,reject)=>{
       const cb = (err, result) => {
         if (typeof callback==='function'){
-          callback(err,result)
+          return callback(err, result)
         }
         if (err){
           return reject(err)
@@ -125,7 +124,12 @@ export class Provider {
   }
 
   send (payload, callback) {
-    return this.sendAsync(payload,callback)
+    this.sendAsync(payload, callback)
+  }
+
+  async request (payload: JSONRPCRequestPayload) : Promise<any> {
+    const ret = await this.sendAsync(payload)
+    return ret.result
   }
 
   isConnected () {
