@@ -12,12 +12,9 @@ function HomeTabFeatured() {
   const themeFilter = useContext(ThemeContext)
 
   return (
-    <div className="pt-3 pl-2" id="hTFeaturedeSection">
-      <label style={{ fontSize: '1.2rem' }}>
-        <FormattedMessage id="home.featured" />
-      </label>
-      <div className="mb-2">
-        <div className="w-100 d-flex flex-column" style={{ height: '200px' }}>
+    <div className="pt-1 pl-2" id="hTFeaturedeSection">
+      <div className="mb-2 remix_ui-carousel-container">
+        <div className="w-100 d-flex flex-column rounded-3 remix_ui-carouselbox">
           <ThemeContext.Provider value={themeFilter}>
             <Carousel
               arrows={false}
@@ -34,16 +31,16 @@ function HomeTabFeatured() {
               centerMode={false}
               autoPlay={true}
               keyBoardControl={true}
-              containerClass="border w-full carousel-container"
+              containerClass="border w-full carousel-container d-flex align-items-center"
               sliderClass="h-100 justify-content-between"
               deviceType={'desktop'}
               itemClass=""
               autoPlaySpeed={10000}
               dotListClass="position-relative mt-2"
             >
-              <div className="mr-1 pr-1 d-flex">
+              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <a href={releaseDetails.moreLink} target="__blank">
-                  <img src={'assets/img/remi_drums_whatsnew.webp'} style={{ flex: '1', height: '170px', maxWidth: '170px' }} alt=""></img>
+                  <img src={'assets/img/remi_drums_whatsnew.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4 align-self-center" style={{ flex: '1' }}>
                   <h5>{releaseDetails.version} {releaseDetails.title}</h5>
@@ -65,9 +62,9 @@ function HomeTabFeatured() {
                   </a>
                 </div>
               </div>
-              <div className="mr-1 pr-1 d-flex">
+              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <a href="https://remix-project.org" target="__blank">
-                  <img src={'assets/img/bgRemi_small.webp'} style={{ flex: '1', height: '170px', maxWidth: '170px' }} alt=""></img>
+                  <img src={'assets/img/bgRemi_small.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
@@ -86,9 +83,9 @@ function HomeTabFeatured() {
                   </a>
                 </div>
               </div>
-              <div className="mr-1 pr-1 d-flex">
+              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <a href="https://www.youtube.com/@EthereumRemix/videos" target="__blank">
-                  <img src={'/assets/img/YouTubeLogo.webp'} style={{ flex: '1', height: '170px', maxWidth: '170px' }} alt=""></img>
+                  <img src={'/assets/img/YouTubeLogo.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
@@ -110,9 +107,9 @@ function HomeTabFeatured() {
                   </a>
                 </div>
               </div>
-              <div className="mr-1 pr-1 d-flex">
+              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform" target="__blank">
-                  <img src={'/assets/img/remixRewardBetaTester_small.webp'} style={{ flex: '1', height: '170px', maxWidth: '170px' }} alt=""></img>
+                  <img src={'/assets/img/remixRewardBetaTester_small.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
