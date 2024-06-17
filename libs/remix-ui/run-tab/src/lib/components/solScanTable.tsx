@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import parse from 'html-react-parser';
+import parse from 'html-react-parser'
+const _paq = (window._paq = window._paq || [])
 
 interface SolScanTableProps {
   scanDetails: Record<string, any>[],
@@ -13,7 +14,13 @@ export function SolScanTable(props: SolScanTableProps) {
   return (
     <>
       <p>Scanning successful! <b>{scanDetails.length} warnings </b> found for file: <b>{fileName}</b></p>
-      <p>See the warning details below. For more details, <a href="https://solidityscan.com/signup" target='blank'>Go to SolidityScan</a></p>
+      <p>See the warning details below. For more details,&nbsp;
+        <a href="https://solidityscan.com/signup"
+          target='_blank'
+          onClick={() => _paq.push(['trackEvent', 'udapp', 'solidityScan', 'goToSolidityScan'])}>
+            go to SolidityScan.
+        </a>
+      </p>
       <table className="table table-bordered table-hover">
         <thead>
           <tr>

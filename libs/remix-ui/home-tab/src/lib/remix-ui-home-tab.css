@@ -76,7 +76,7 @@
   text-align: left;
 }
 .remixui_home_cursorStyle {
-  cursor: pointer;  
+  cursor: pointer;
   font-weight: 900;
 }
 .remixui_home_envButton {
@@ -113,4 +113,37 @@
 .langSelectorbg {
   background-color: var(--body-bg);
   color: var(--text);
+}
+
+.remixui_recentworkspace {
+  height: 2.4rem;
+}
+
+.remixui_carouselImage {
+  flex: 1;
+  height: 20rem;
+  width: 20rem;
+}
+
+.remixui_carouselbox {
+  min-height: 25.12rem;
+}
+
+.remix_ui-carousel-container {
+  container: remix_ui-carousel-container / inline-size;
+}
+
+@container remix_ui-carousel-container (inline-size < 700px) {
+  .remix_ui-carouselbox {
+    min-height: 20rem;
+    margin-right: 10rem;
+  }
+  .remixui_carouselImage {
+    height: 12.5rem;
+    width: 12.5rem;
+  }
+
+  .remixui_recentworkspace {
+    height: 0.2rem;
+  }
 }
