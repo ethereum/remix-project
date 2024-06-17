@@ -8,7 +8,7 @@ import {ethers} from 'ethers/'
 import {Chain} from '../types/VerificationTypes'
 
 export const VerifyView = () => {
-  const {chains, compilationOutput, sourcifyVerifiers, selectedContractFileAndName} = React.useContext(AppContext)
+  const {chains, compilationOutput, verifiers, setVerifiers, selectedContractFileAndName} = React.useContext(AppContext)
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
@@ -40,11 +40,11 @@ export const VerifyView = () => {
     console.log('selectedContractName:', selectedContractName)
     console.log('selectedContractAbstract:', selectedContractAbstract)
     console.log('selectedContractMetadataStr:', selectedContractMetadataStr)
-    console.log('sourcifyVerifiers:', sourcifyVerifiers)
+    console.log('sourcifyVerifiers:', verifiers)
     console.log('selectedChain:', selectedChain)
     console.log('contractAddress:', contractAddress)
-    const sourcifyPromises = sourcifyVerifiers.map((sourcifyVerifier) => {
-      return sourcifyVerifier.verify(selectedChain.chainId.toString(), contractAddress, selectedContractAbstract.source.sources, selectedContractMetadataStr)
+    const sourcifyPromises = verifiers.map((verifier) => {
+      return verifier.verify(selectedChain.chainId.toString(), contractAddress, selectedContractAbstract.source.sources, selectedContractMetadataStr)
     })
 
     const results = await Promise.all(sourcifyPromises)
@@ -61,6 +61,9 @@ export const VerifyView = () => {
     }
     setContractAddressError('')
   }
+
+  console.log('sourcifyVerifiers:', verifiers)
+
   return (
     <div className="my-4">
       <div>
@@ -84,6 +87,29 @@ export const VerifyView = () => {
           {' '}
           Verify{' '}
         </button>
+
+        <div>
+          {verifiers?.length > 0 &&
+            verifiers.map((verifier) => (
+              <div key={verifier.name} className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id={`verifier-${verifier.name}`}
+                  checked={verifier.enabled}
+                  onChange={(e) => {
+                    verifier.enabled = e.target.checked
+                    // Trigger a re-render or state update if necessary
+                    // For example, you might need to update the state that holds the verifiers
+                    setVerifiers([...verifiers])
+                  }}
+                />
+                <label className="form-check-label" htmlFor={`verifier-${verifier.name}`}>
+                  {verifier.name} ({verifier.apiUrl})
+                </label>
+              </div>
+            ))}
+        </div>
       </form>
     </div>
   )

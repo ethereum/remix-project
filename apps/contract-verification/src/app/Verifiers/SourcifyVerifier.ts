@@ -1,13 +1,9 @@
 import {SourcesCode} from '@remix-project/remix-solidity'
 import {AbstractVerifier} from './AbstractVerifier'
 
-export class SourcifyVerifier {
-  name: string
-  apiUrl: string
-
+export class SourcifyVerifier extends AbstractVerifier {
   constructor(apiUrl: string, name: string = 'Sourcify') {
-    this.apiUrl = apiUrl
-    this.name = name
+    super(apiUrl, name)
   }
 
   async verify(chainId: string, address: string, sources: SourcesCode, metadataStr: string): Promise<boolean> {

@@ -23,6 +23,7 @@ const App = () => {
   const [selectedContractFileAndName, setSelectedContractFileAndName] = useState<string | undefined>()
   const [verifiedContracts, setVerifiedContracts] = useState<VerifiedContract[]>([])
   const [sourcifyVerifiers, setSourcifyVerifiers] = useState<SourcifyVerifier[]>([])
+  const [verifiers, setVerifiers] = useState<SourcifyVerifier[]>([])
 
   useEffect(() => {
     console.log('Selected Contract File And Name Changed', selectedContractFileAndName)
@@ -31,7 +32,7 @@ const App = () => {
   useEffect(() => {
     // const sourcifyVerifier = new SourcifyVerifier('http://sourcify.dev/server/', 'Sourcify')
     const sourcifyVerifier = new SourcifyVerifier('http://localhost:5555/', 'Sourcify Localhost')
-    setSourcifyVerifiers([sourcifyVerifier])
+    setVerifiers([sourcifyVerifier])
     // TODO: Fix 'compilationFinished' event types. The interface is outdated at https://github.com/ethereum/remix-plugin/blob/master/packages/api/src/lib/compiler/api.ts. It does not include data, input, or version. See the current parameters: https://github.com/ethereum/remix-project/blob/9f6c5be882453a555055f07171701459e4ae88a4/libs/remix-solidity/src/compiler/compiler.ts#L189
 
     // Fetch compiler artefacts initially
@@ -63,7 +64,7 @@ const App = () => {
   }, [])
 
   return (
-    <AppContext.Provider value={{themeType, setThemeType, chains, compilationOutput, selectedContractFileAndName, setSelectedContractFileAndName, targetFileName, verifiedContracts, setVerifiedContracts, sourcifyVerifiers}}>
+    <AppContext.Provider value={{themeType, setThemeType, chains, compilationOutput, selectedContractFileAndName, setSelectedContractFileAndName, targetFileName, verifiedContracts, setVerifiedContracts, verifiers, setVerifiers}}>
       <DisplayRoutes />
     </AppContext.Provider>
   )
