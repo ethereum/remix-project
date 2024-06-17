@@ -15,7 +15,8 @@ type AppContextType = {
   targetFileName: string | undefined
   verifiedContracts: VerifiedContract[]
   setVerifiedContracts: (verifiedContracts: VerifiedContract[]) => void
-  sourcifyVerifiers: SourcifyVerifier[]
+  verifiers: SourcifyVerifier[]
+  setVerifiers: (verifiers: SourcifyVerifier[]) => void
 }
 
 // Provide a default value with the appropriate types
@@ -31,7 +32,8 @@ const defaultContextValue: AppContextType = {
   targetFileName: undefined,
   verifiedContracts: [],
   setVerifiedContracts: (verifiedContracts: VerifiedContract[]) => {},
-  sourcifyVerifiers: [],
+  verifiers: [],
+  setVerifiers: (verifiers: SourcifyVerifier[]) => {},
 }
 
 // Create the context with the type
