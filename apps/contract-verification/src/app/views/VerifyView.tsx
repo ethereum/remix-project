@@ -7,7 +7,7 @@ import {ContractDropdown} from '../components/ContractDropdown'
 import {ethers} from 'ethers/'
 import {Chain} from '../types/VerificationTypes'
 
-export const HomeView = () => {
+export const VerifyView = () => {
   const {chains, compilationOutput, sourcifyVerifiers, selectedContractFileAndName} = React.useContext(AppContext)
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
