@@ -53,6 +53,15 @@ import { MainnetPrompt } from './components/mainnet'
 import { ScenarioPrompt } from './components/scenario'
 import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
 
+type CompilerParams = {
+  evmVersion: null
+  lang: string
+  language: string
+  optimize: boolean
+  runs: string
+  version: string
+}
+
 export function RunTabUI(props: RunTabProps) {
   const { plugin } = props
   const [focusModal, setFocusModal] = useState<Modal>({
@@ -82,14 +91,22 @@ export function RunTabUI(props: RunTabProps) {
   const currentfile = plugin.config.get('currentFile')
   const [solcVersion, setSolcVersion] = useState<{version: string, canReceive: boolean}>({ version: '', canReceive: true })
 
-  const getVersion = () => {
-    let version = '0.8.25'
+  const getVersion = async () => {
+    let version = ''
     try {
-      version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1) ?? '0.8.25'
+      const params: CompilerParams = await plugin.call('solidity', 'getCompilerQueryParameters')
+      let temp = params?.version
+      let flipped = temp.split('-')[1].split('+')[0].split('')
+      version = flipped.splice(1).join('')
+      console.log(version)
       if (parseFloat(version) < 0.6) {
         setSolcVersion({ version: version, canReceive: false })
+        temp = null
+        flipped = null
       } else {
         setSolcVersion({ version: version, canReceive: true })
+        temp = null
+        flipped = null
       }
     } catch (e) {
       setSolcVersion({ version, canReceive: true })
