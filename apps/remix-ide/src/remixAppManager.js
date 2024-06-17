@@ -159,7 +159,6 @@ export class RemixAppManager extends PluginManager {
     if (Registry.getInstance().get('platform').api.isDesktop()) {
       requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep']
     }
-
   }
 
   async canActivatePlugin(from, to) {

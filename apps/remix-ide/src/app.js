@@ -346,7 +346,7 @@ class AppComponent {
       solidityumlgen,
       compilationDetails,
       vyperCompilationDetails,
-      // remixGuide,
+      remixGuide,
       contractFlattener,
       solidityScript,
       templates,
@@ -513,10 +513,7 @@ class AppComponent {
     )
     await this.appManager.activatePlugin(['solidity-script'])
     await this.appManager.activatePlugin(['solcoder'])
-
-
-
-    await this.appManager.activatePlugin(['filePanel'])
+    await this.appManager.activatePlugin(['filePanel'])    
 
     // Set workspace after initial activation
     this.appManager.on('editor', 'editorMounted', () => {
