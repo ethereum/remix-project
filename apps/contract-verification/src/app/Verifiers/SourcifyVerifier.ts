@@ -1,4 +1,4 @@
-import {SourcesCode} from '@remix-project/remix-solidity'
+import {CompilerAbstract, SourcesCode} from '@remix-project/remix-solidity'
 import {AbstractVerifier} from './AbstractVerifier'
 
 export class SourcifyVerifier extends AbstractVerifier {
@@ -6,7 +6,18 @@ export class SourcifyVerifier extends AbstractVerifier {
     super(apiUrl, name)
   }
 
-  async verify(chainId: string, address: string, sources: SourcesCode, metadataStr: string): Promise<boolean> {
+  async verify(chainId: string, address: string, compilationOutput: {[fileName: string]: CompilerAbstract}, selectedContractFileAndName: string): Promise<any> {
+    const [selectedFileName, selectedContractName] = selectedContractFileAndName.split(':')
+    const compilerAbstract = compilationOutput?.[selectedFileName || '']
+    const metadataStr = compilerAbstract.data.contracts[selectedFileName][selectedContractName].metadata
+    const sources = compilerAbstract.source.sources
+    console.log('selectedFileName:', selectedFileName)
+    console.log('selectedContractName:', selectedContractName)
+    console.log('compilerAbstract:', compilerAbstract)
+    console.log('selectedContractMetadataStr:', metadataStr)
+    console.log('chainId:', chainId)
+    console.log('address:', address)
+
     // from { "filename.sol": {content: "contract MyContract { ... }"} }
     // to { "filename.sol": "contract MyContract { ... }" }
     const formattedSources = Object.entries(sources).reduce((acc, [fileName, {content}]) => {

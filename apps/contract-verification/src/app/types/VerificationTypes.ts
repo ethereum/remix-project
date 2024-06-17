@@ -1,11 +1,11 @@
-import {SourcifyVerifier} from '../Verifiers/SourcifyVerifier'
+import {AbstractVerifier} from '../Verifiers/AbstractVerifier'
 
 export interface VerifiedContract {
   name: string
   address: string
   chainId: string
   date: Date
-  verifier: SourcifyVerifier
+  verifier: AbstractVerifier
   status: string
   receipt?: string
 }

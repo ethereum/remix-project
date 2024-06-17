@@ -1,3 +1,5 @@
+import {CompilerAbstract} from '@remix-project/remix-solidity'
+
 export abstract class AbstractVerifier {
   name: string
   apiUrl: string
@@ -8,4 +10,6 @@ export abstract class AbstractVerifier {
     this.name = name
     this.enabled = true
   }
+
+  abstract verify(chainId: string, address: string, compilationOutput: {[fileName: string]: CompilerAbstract}, selectedContractFileAndName: string): Promise<any>
 }

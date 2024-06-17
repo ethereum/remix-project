@@ -1,8 +1,8 @@
 import React from 'react'
 import {ThemeType} from './types'
 import {Chain, VerifiedContract} from './types/VerificationTypes'
-import {SourcifyVerifier} from './Verifiers/SourcifyVerifier'
 import {CompilerAbstract} from '@remix-project/remix-solidity'
+import {AbstractVerifier} from './Verifiers/AbstractVerifier'
 
 // Define the type for the context
 type AppContextType = {
@@ -15,8 +15,8 @@ type AppContextType = {
   targetFileName: string | undefined
   verifiedContracts: VerifiedContract[]
   setVerifiedContracts: (verifiedContracts: VerifiedContract[]) => void
-  verifiers: SourcifyVerifier[]
-  setVerifiers: (verifiers: SourcifyVerifier[]) => void
+  verifiers: AbstractVerifier[]
+  setVerifiers: (verifiers: AbstractVerifier[]) => void
 }
 
 // Provide a default value with the appropriate types
@@ -33,7 +33,7 @@ const defaultContextValue: AppContextType = {
   verifiedContracts: [],
   setVerifiedContracts: (verifiedContracts: VerifiedContract[]) => {},
   verifiers: [],
-  setVerifiers: (verifiers: SourcifyVerifier[]) => {},
+  setVerifiers: (verifiers: AbstractVerifier[]) => {},
 }
 
 // Create the context with the type

@@ -33,18 +33,8 @@ export const VerifyView = () => {
 
   const handleVerify = async (e) => {
     e.preventDefault() // Don't change the page
-    const [selectedFileName, selectedContractName] = selectedContractFileAndName.split(':')
-    const selectedContractAbstract = compilationOutput?.[selectedFileName || '']
-    const selectedContractMetadataStr = selectedContractAbstract.data.contracts[selectedFileName][selectedContractName].metadata
-    console.log('selectedFileName:', selectedFileName)
-    console.log('selectedContractName:', selectedContractName)
-    console.log('selectedContractAbstract:', selectedContractAbstract)
-    console.log('selectedContractMetadataStr:', selectedContractMetadataStr)
-    console.log('sourcifyVerifiers:', verifiers)
-    console.log('selectedChain:', selectedChain)
-    console.log('contractAddress:', contractAddress)
     const sourcifyPromises = verifiers.map((verifier) => {
-      return verifier.verify(selectedChain.chainId.toString(), contractAddress, selectedContractAbstract.source.sources, selectedContractMetadataStr)
+      return verifier.verify(selectedChain.chainId.toString(), contractAddress, compilationOutput, selectedContractFileAndName)
     })
 
     const results = await Promise.all(sourcifyPromises)

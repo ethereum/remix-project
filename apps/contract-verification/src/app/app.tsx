@@ -8,8 +8,10 @@ import {ThemeType} from './types'
 
 import './App.css'
 import {Chain, VerifiedContract} from './types/VerificationTypes'
-import {SourcifyVerifier} from './Verifiers/SourcifyVerifier'
 import {CompilerAbstract} from '@remix-project/remix-solidity'
+import {AbstractVerifier} from './Verifiers/AbstractVerifier'
+import {SourcifyVerifier} from './Verifiers/SourcifyVerifier'
+import {EtherscanVerifier} from './Verifiers/EtherscanVerifier'
 
 const plugin = new ContractVerificationPluginClient()
 
@@ -22,8 +24,7 @@ const App = () => {
   // Contract file and name in format contracts/Storage.sol:Storage
   const [selectedContractFileAndName, setSelectedContractFileAndName] = useState<string | undefined>()
   const [verifiedContracts, setVerifiedContracts] = useState<VerifiedContract[]>([])
-  const [sourcifyVerifiers, setSourcifyVerifiers] = useState<SourcifyVerifier[]>([])
-  const [verifiers, setVerifiers] = useState<SourcifyVerifier[]>([])
+  const [verifiers, setVerifiers] = useState<AbstractVerifier[]>([])
 
   useEffect(() => {
     console.log('Selected Contract File And Name Changed', selectedContractFileAndName)
@@ -32,7 +33,8 @@ const App = () => {
   useEffect(() => {
     // const sourcifyVerifier = new SourcifyVerifier('http://sourcify.dev/server/', 'Sourcify')
     const sourcifyVerifier = new SourcifyVerifier('http://localhost:5555/', 'Sourcify Localhost')
-    setVerifiers([sourcifyVerifier])
+    const etherscanVerifier = new EtherscanVerifier('https://api.etherscan.io', 'Etherscan', 'API_KEY')
+    setVerifiers([sourcifyVerifier, etherscanVerifier])
     // TODO: Fix 'compilationFinished' event types. The interface is outdated at https://github.com/ethereum/remix-plugin/blob/master/packages/api/src/lib/compiler/api.ts. It does not include data, input, or version. See the current parameters: https://github.com/ethereum/remix-project/blob/9f6c5be882453a555055f07171701459e4ae88a4/libs/remix-solidity/src/compiler/compiler.ts#L189
 
     // Fetch compiler artefacts initially
