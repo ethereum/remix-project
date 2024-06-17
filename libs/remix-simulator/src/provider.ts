@@ -124,7 +124,7 @@ export class Provider {
   }
 
   send (payload, callback) {
-    return this.sendAsync(payload, callback)
+    this.sendAsync(payload, callback)
   }
 
   async request (payload: JSONRPCRequestPayload) : Promise<any> {
