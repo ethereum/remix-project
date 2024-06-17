@@ -1,5 +1,4 @@
-
-export const templates = (intl) => {
+export const templates = (intl, plugin) => {
   return [
     {
       name: "Generic",
@@ -260,9 +259,9 @@ export const templates = (intl) => {
     },
     {
       name: "Cookbook",
-      source: "plugin",
-      payload: {
-        pluginName: 'cookbookdev'
+      tooltip: "Cookbook is a smart contract search tool. Click here to open cookbook and browse contracts.",
+      onClick: () => {
+        plugin.call('manager', 'activatePlugin', 'cookbookdev')
       },
       items: [
         { value: "token-sale", displayName: 'Token Sale' },

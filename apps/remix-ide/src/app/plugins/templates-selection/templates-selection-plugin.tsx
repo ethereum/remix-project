@@ -151,13 +151,14 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
         description="Select a template to create a workspace or to add it to current workspace"
       >
         {
-          templates(window._intl).map(template => {
+          templates(window._intl, this).map(template => {
             return <RemixUIGridSection
               plugin={this}
               key={template.name}
               title={template.name}
+              tooltipTitle={template.tooltip}
+              onClickTitle={template.onClick}
               hScrollable={false}
-              header={template.source === 'plugin' ? <button className="btn border" onClick={() => { this.call('manager', 'activatePlugin', template.payload.pluginName)  }}>Open Cookbook to load more contracts</button> : ''}
             >              
               {template.items.map(item => {
                 return <RemixUIGridCell
