@@ -98,7 +98,6 @@ export function RunTabUI(props: RunTabProps) {
       let temp = params?.version
       let flipped = temp.split('-')[1].split('+')[0].split('')
       version = flipped.splice(1).join('')
-      console.log(version)
       if (parseFloat(version) < 0.6) {
         setSolcVersion({ version: version, canReceive: false })
         temp = null
