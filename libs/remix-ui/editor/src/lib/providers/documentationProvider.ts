@@ -14,8 +14,6 @@ export class RemixSolidityDocumentationProvider implements monacoTypes.languages
     const item: monacoTypes.languages.InlineCompletion = {
       insertText: this.completion
     };
-    console.log("provided docu completion")
-
     return {
       items: [item],
       enableForwardStability: true
