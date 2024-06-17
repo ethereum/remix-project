@@ -13,46 +13,31 @@ export interface GitStatusProps {
 export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: GitStatusProps) {
 
   useEffect(() => {
-    const run = async () => {
-      plugin.on('filePanel', 'setWorkspace', async (workspace) => {
-        const isGit = await plugin.call('fileManager', 'isGitRepo')
-        if (isGit) {
-          setGitBranchName(workspace.name)
-        } else {
-          setGitBranchName('Not a git repo')
-        }
-      })
-    }
-    run()
-  }, [gitBranchName, plugin.isGitRepo])
-
-  useEffect(() => {
-    const run = async () => {
-      plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
-        const isGit = await plugin.call('fileManager', 'isGitRepo')
-        if (isGit) {
-          const workspace = localStorage.getItem('currentWorkspace')
-          setGitBranchName(workspace)
-        } else {
-          setGitBranchName('Not a git repo')
-        }
-      })
-    }
-    run()
-  }, [gitBranchName, plugin.isGitRepo])
-
-  useEffect(() => {
-    const run = async () => {
-      plugin.on('dGitProvider', 'init', async () => {
-        const isGit = await plugin.call('fileManager', 'isGitRepo')
-        if (isGit) {
-          const workspace = localStorage.getItem('currentWorkspace')
-          setGitBranchName(workspace)
-        }
-      })
-    }
-    run()
-  }, [gitBranchName, plugin.isGitRepo])
+    plugin.on('filePanel', 'setWorkspace', async (workspace) => {
+      const isGit = await plugin.call('fileManager', 'isGitRepo')
+      if (isGit) {
+        setGitBranchName(workspace.name)
+      } else {
+        setGitBranchName('Not a git repo')
+      }
+    })
+    plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
+      const isGit = await plugin.call('fileManager', 'isGitRepo')
+      if (isGit) {
+        const workspace = localStorage.getItem('currentWorkspace')
+        setGitBranchName(workspace)
+      } else {
+        setGitBranchName('Not a git repo')
+      }
+    })
+    plugin.on('dGitProvider', 'init', async () => {
+      const isGit = await plugin.call('fileManager', 'isGitRepo')
+      if (isGit) {
+        const workspace = localStorage.getItem('currentWorkspace')
+        setGitBranchName(workspace)
+      }
+    })
+  }, [])
 
   const lightDgitUp = async () => {
     const isActive = await plugin.call('manager', 'isActive', 'dgit')
