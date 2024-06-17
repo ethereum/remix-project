@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useContext, useRef, ReactNode} from 'react' // eslint-disable-line
+import { CustomTooltip } from "@remix-ui/helper";
 
 import './remix-ui-grid-section.css'
 import FiltersContext from "./filtersContext"
@@ -13,6 +14,8 @@ const _paq = window._paq = window._paq || []
 interface RemixUIGridSectionProps {
   plugin: any
   title?: string
+  onClickTitle?: () => void
+  tooltipTitle?: string
   hScrollable: boolean
   classList?: string
   styleList?: any
