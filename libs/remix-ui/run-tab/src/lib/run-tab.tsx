@@ -92,7 +92,7 @@ export function RunTabUI(props: RunTabProps) {
   const [solcVersion, setSolcVersion] = useState<{version: string, canReceive: boolean}>({ version: '', canReceive: true })
 
   const getVersion = async () => {
-    let version = ''
+    let version = '0.8.26'
     try {
       const params: CompilerParams = await plugin.call('solidity', 'getCompilerQueryParameters')
       let temp = params?.version
