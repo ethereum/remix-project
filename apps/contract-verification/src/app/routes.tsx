@@ -1,7 +1,7 @@
 import React from 'react'
 import {HashRouter as Router, Route, Routes, RouteProps} from 'react-router-dom'
 
-import {HomeView} from './views'
+import {VerifyView} from './views'
 import {DefaultLayout} from './layouts'
 
 const DisplayRoutes = () => (
@@ -11,7 +11,7 @@ const DisplayRoutes = () => (
         path="/"
         element={
           <DefaultLayout from="/" title="Verify Smart Contracts">
-            <HomeView />
+            <VerifyView />
           </DefaultLayout>
         }
       />
