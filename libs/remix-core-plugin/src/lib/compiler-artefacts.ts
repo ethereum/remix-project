@@ -6,7 +6,7 @@ import {CompilerAbstract} from '@remix-project/remix-solidity'
 const profile = {
   name: 'compilerArtefacts',
   methods: ['get', 'addResolvedContract', 'getCompilerAbstract', 'getAllContractDatas', 'getLastCompilationResult', 'getArtefactsByContractName', 'getContractDataFromAddress', 'getContractDataFromByteCode', 'saveCompilerAbstract', 'getAllCompilerAbstracts'],
-  events: [],
+  events: ['compilationSaved'],
   version: '0.0.1',
 }
 
@@ -36,6 +36,7 @@ export class CompilerArtefacts extends Plugin {
     const saveCompilationResult = (file, source, languageVersion, data, input?) => {
       this.compilersArtefactsPerFile[file] = new CompilerAbstract(languageVersion, data, source, input)
       this.compilersArtefacts.__last = this.compilersArtefactsPerFile[file]
+      this.emit('compilationSaved', {[file]: this.compilersArtefactsPerFile[file]})
     }
 
     this.on('solidity', 'compilationFinished', saveCompilationResult)
