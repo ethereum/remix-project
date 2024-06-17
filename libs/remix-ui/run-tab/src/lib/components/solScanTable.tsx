@@ -14,11 +14,11 @@ export function SolScanTable(props: SolScanTableProps) {
   return (
     <>
       <p>Scanning successful! <b>{scanDetails.length} warnings </b> found for file: <b>{fileName}</b></p>
-      <p>See the warning details below. For more details,
+      <p>See the warning details below. For more details,&nbsp; 
         <a href="https://solidityscan.com/signup"
           target='_blank'
           onClick={() => _paq.push(['trackEvent', 'udapp', 'solidityScan', 'goToSolidityScan'])}>
-            Go to SolidityScan
+            go to SolidityScan
         </a>
       </p>
       <table className="table table-bordered table-hover">
