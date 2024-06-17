@@ -130,7 +130,7 @@ export class Provider {
   async request (payload: JSONRPCRequestPayload) : Promise<any> {
     const ret = await this.sendAsync(payload)
     return ret.result
-  } 
+  }
 
   isConnected () {
     return true
