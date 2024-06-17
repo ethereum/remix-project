@@ -374,7 +374,6 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
       evmVersion = JSON.parse(loadedContractData.metadata).settings.evmVersion
     }
   } catch (err) {}
-  console.log('current file', currentFile)
   return (
     <div className="udapp_container mb-2" data-id="contractDropdownContainer">
       <div className="d-flex justify-content-between">
