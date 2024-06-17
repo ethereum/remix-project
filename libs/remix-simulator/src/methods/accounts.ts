@@ -80,7 +80,7 @@ export class Web3Accounts {
       eth_getBalance: this.eth_getBalance.bind(this),
       eth_sign: this.eth_sign.bind(this),
       eth_chainId: this.eth_chainId.bind(this),
-      eth_signTypedData: this.eth_signTypedData.bind(this),
+      eth_signTypedData: this.eth_signTypedData_v4.bind(this), // default call is using V4
       eth_signTypedData_v4: this.eth_signTypedData_v4.bind(this)
     }
   }
@@ -115,10 +115,6 @@ export class Web3Accounts {
 
   eth_chainId (_payload, cb) {
     return cb(null, '0x539') // 0x539 is hex of 1337
-  }
-
-  eth_signTypedData (payload, cb) {
-    this.eth_signTypedData_v4(payload, cb)
   }
 
   eth_signTypedData_v4 (payload, cb) {
