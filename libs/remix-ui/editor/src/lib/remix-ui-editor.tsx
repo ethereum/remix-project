@@ -739,12 +739,12 @@ export const EditorUI = (props: EditorUIProps) => {
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
         const cm = await props.plugin.call('solcoder', 'code_explaining', message)
 
-        const natspecCom = "\n" + extractNatspecComments(cm)
+        const natSpecCom = "\n" + extractNatspecComments(cm)
         const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
         const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
 
-        const lines = natspecCom.split('\n')
-        const newnatspeccom = []
+        const lines = natSpecCom.split('\n')
+        const newNatSpecCom = []
 
         for (let i = 0; i < lines.length; i++) {
           let cont = false
@@ -757,8 +757,8 @@ export const EditorUI = (props: EditorUIProps) => {
           }
           if (cont) {continue}
 
-          if (i <= 1) { newnatspeccom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
-          else { newnatspeccom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
+          if (i <= 1) { newNatSpecCom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
+          else { newNatSpecCom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
         }
 
         // TODO: activate the provider to let the user accept the documentation suggestion
@@ -768,7 +768,7 @@ export const EditorUI = (props: EditorUIProps) => {
         editor.executeEdits('clipboard', [
           {
             range: range,
-            text: newnatspeccom.join('\n'),
+            text: newNatSpecCom.join('\n'),
             forceMoveMarkers: true,
           },
         ]);

@@ -50,7 +50,7 @@ export class SolCoder extends Plugin {
   pushChatHistory(prompt, result){
     const chat:ChatEntry = [prompt, result.data[0]]
     this.solgpt_chat_history.push(chat)
-    if (this.solgpt_chat_history.length >this.max_history){this.solgpt_chat_history.shift()}
+    if (this.solgpt_chat_history.length > this.max_history){this.solgpt_chat_history.shift()}
   }
 
   async code_generation(prompt): Promise<any> {
