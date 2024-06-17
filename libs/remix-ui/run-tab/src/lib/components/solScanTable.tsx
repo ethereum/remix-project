@@ -18,7 +18,7 @@ export function SolScanTable(props: SolScanTableProps) {
         <a href="https://solidityscan.com/signup"
           target='_blank'
           onClick={() => _paq.push(['trackEvent', 'udapp', 'solidityScan', 'goToSolidityScan'])}>
-            go to SolidityScan
+            go to SolidityScan.
         </a>
       </p>
       <table className="table table-bordered table-hover">
