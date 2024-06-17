@@ -88,7 +88,7 @@ export function RunTabUI(props: RunTabProps) {
     try {
       const regVersion = window.location.href.match(/soljson-v(.*)\+commit/g)
       if (regVersion && regVersion[1]) version = regVersion[1]
-      if (semver.lt(version, '0.6')) {
+      if (semver.lt(version, '0.6.0')) {
         setSolcVersion({ version: version, canReceive: false })
       } else {
         setSolcVersion({ version: version, canReceive: true })
