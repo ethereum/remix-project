@@ -1,7 +1,6 @@
 import { RemixApp } from '@remix-ui/app'
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
-import { createRoot } from 'react-dom/client'
 import * as packageJson from '../../../../../package.json'
 import { fileSystem, fileSystems } from '../files/fileSystem'
 import { indexedDBFileSystem } from '../files/filesystems/indexedDB'
@@ -31,10 +30,8 @@ export const Preload = (props: any) => {
   )
 
   function loadAppComponent() {
-    console.log('loading remix in the preloader')
     import('../../app')
       .then((AppComponent) => {
-        console.log('loading remix in the preloader', AppComponent)
         const appComponent = new AppComponent.default()
         appComponent.run().then(() => {
           props.root.render(<RemixApp app={appComponent} />)
@@ -70,7 +67,6 @@ export const Preload = (props: any) => {
     if (fsLoaded) {
       console.log(fsLoaded.name + ' activated')
       _paq.push(['trackEvent', 'Storage', 'activate', fsLoaded.name])
-      console.log('loading remix in the preloader')
       loadAppComponent()
     } else {
       _paq.push(['trackEvent', 'Storage', 'error', 'no supported storage'])

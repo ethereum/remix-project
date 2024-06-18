@@ -67,7 +67,6 @@ export class StatusBar extends Plugin implements StatusBarInterface {
       workspaceName && workspaceName.length > 0 ? this.currentWorkspaceName = workspaceName : this.currentWorkspaceName = ''
     })
     this.on('filePanel', 'switchToWorkspace', async (workspace: string) => {
-      console.log('from status bar switchToWorkspace')
       await this.isWorkspaceAGitRepo()
       if (!this.isGitRepo) {
         this.currentWorkspaceName = 'Not a git repo'
