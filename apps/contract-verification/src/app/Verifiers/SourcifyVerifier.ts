@@ -1,14 +1,15 @@
 import {CompilerAbstract, SourcesCode} from '@remix-project/remix-solidity'
 import {AbstractVerifier} from './AbstractVerifier'
+import {SourcifyReceipt} from '../Receipts/SourcifyReceipt'
+import {SourcifyVerificationError, SourcifyVerificationResponse} from '../types/VerificationTypes'
 
 export class SourcifyVerifier extends AbstractVerifier {
   constructor(apiUrl: string, name: string = 'Sourcify') {
     super(apiUrl, name)
   }
 
-  async verify(chainId: string, address: string, compilationOutput: {[fileName: string]: CompilerAbstract}, selectedContractFileAndName: string): Promise<any> {
+  async verify(chainId: string, address: string, compilerAbstract: CompilerAbstract, selectedContractFileAndName: string) {
     const [selectedFileName, selectedContractName] = selectedContractFileAndName.split(':')
-    const compilerAbstract = compilationOutput?.[selectedFileName || '']
     const metadataStr = compilerAbstract.data.contracts[selectedFileName][selectedContractName].metadata
     const sources = compilerAbstract.source.sources
     console.log('selectedFileName:', selectedFileName)
@@ -44,13 +45,13 @@ export class SourcifyVerifier extends AbstractVerifier {
     })
 
     if (!response.ok) {
-      throw new Error(`Error on Sourcify verification at ${this.apiUrl}: Status:${response.status} Response: ${await response.text()}`)
+      const errorResponse: SourcifyVerificationError = await response.json()
+      console.error('Error on Sourcify verification at', this.apiUrl, 'Status:', response.status, 'Response:', JSON.stringify(errorResponse))
+      throw new Error(errorResponse.error)
     }
 
-    const data = await response.json()
-    console.log(data)
-
-    return data.result
+    const jsonResponse: SourcifyVerificationResponse = await response.json()
+    return jsonResponse
   }
 
   async lookup(): Promise<any> {
