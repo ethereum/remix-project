@@ -342,9 +342,10 @@ module.exports = {
     browser
       .url('http://127.0.0.1:8080/#ghfolder=https://github.com/ethereum/remix-project/tree/master/apps/remix-ide/contracts/hardhat')
       .refreshPage()
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]', 40000)
       .currentWorkspaceIs('code-sample')
       .openFile('contracts')
-      .openFile('Lock.sol')
+      .openFile('contracts/Lock.sol')
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('contract Lock {') !== -1, 'content does contain "contract Lock {"')
       })      
