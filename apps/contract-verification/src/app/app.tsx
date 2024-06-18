@@ -7,11 +7,11 @@ import DisplayRoutes from './routes'
 import {ThemeType} from './types'
 
 import './App.css'
-import {Chain, VerifiedContract} from './types/VerificationTypes'
+import {Chain, SubmittedContracts} from './types/VerificationTypes'
 import {CompilerAbstract} from '@remix-project/remix-solidity'
-import {AbstractVerifier} from './Verifiers/AbstractVerifier'
 import {SourcifyVerifier} from './Verifiers/SourcifyVerifier'
 import {EtherscanVerifier} from './Verifiers/EtherscanVerifier'
+import {AbstractVerifier} from './Verifiers/AbstractVerifier'
 
 const plugin = new ContractVerificationPluginClient()
 
@@ -23,8 +23,8 @@ const App = () => {
   const [compilationOutput, setCompilationOutput] = useState<{[key: string]: CompilerAbstract} | undefined>()
   // Contract file and name in format contracts/Storage.sol:Storage
   const [selectedContractFileAndName, setSelectedContractFileAndName] = useState<string | undefined>()
-  const [verifiedContracts, setVerifiedContracts] = useState<VerifiedContract[]>([])
   const [verifiers, setVerifiers] = useState<AbstractVerifier[]>([])
+  const [submittedContracts, setSubmittedContracts] = useState<SubmittedContracts>({})
 
   useEffect(() => {
     console.log('Selected Contract File And Name Changed', selectedContractFileAndName)
@@ -66,7 +66,7 @@ const App = () => {
   }, [])
 
   return (
-    <AppContext.Provider value={{themeType, setThemeType, chains, compilationOutput, selectedContractFileAndName, setSelectedContractFileAndName, targetFileName, verifiedContracts, setVerifiedContracts, verifiers, setVerifiers}}>
+    <AppContext.Provider value={{themeType, setThemeType, chains, compilationOutput, selectedContractFileAndName, setSelectedContractFileAndName, targetFileName, verifiers, setVerifiers, submittedContracts, setSubmittedContracts}}>
       <DisplayRoutes />
     </AppContext.Provider>
   )

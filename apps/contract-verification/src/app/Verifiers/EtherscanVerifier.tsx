@@ -1,5 +1,7 @@
 import {CompilerAbstract} from '@remix-project/remix-solidity'
 import {AbstractVerifier} from './AbstractVerifier'
+import {EtherscanReceipt} from '../Receipts/EtherscanReceipt'
+import {EtherscanResponse} from '../types/VerificationTypes'
 
 export class EtherscanVerifier extends AbstractVerifier {
   apiKey: string
@@ -9,11 +11,10 @@ export class EtherscanVerifier extends AbstractVerifier {
     this.apiKey = apiKey
   }
 
-  async verify(chainId: string, address: string, compilationOutput: {[fileName: string]: CompilerAbstract}, selectedContractFileAndName: string) {
+  async verify(chainId: string, address: string, compilerAbstract: CompilerAbstract, selectedContractFileAndName: string) {
     const CODE_FORMAT = 'solidity-standard-json-input'
 
     const [selectedFileName, selectedContractName] = selectedContractFileAndName.split(':')
-    const compilerAbstract = compilationOutput?.[selectedFileName || '']
     // TODO: Handle version Vyper contracts. This relies on Solidity metadata.
     const metadata = JSON.parse(compilerAbstract.data.contracts[selectedFileName][selectedContractName].metadata)
     const body = {
@@ -39,14 +40,25 @@ export class EtherscanVerifier extends AbstractVerifier {
     })
 
     if (!response.ok) {
-      throw new Error(`Error on Etherscan verification at ${this.apiUrl}: Status:${response.status} Response: ${await response.text()}`)
+      throw new Error(`Request error Status:${response.status} Response: ${await response.text()}`)
     }
-    const data = await response.json()
 
+    const data: EtherscanResponse = await response.json()
+    console.log(data)
     if (data.status !== '1' || data.message !== 'OK') {
-      throw new Error(`Error on Etherscan verification at ${this.apiUrl}: ${data.message}`)
+      console.error(`Error on Etherscan verification at ${this.apiUrl}: ${data.result}`)
+      throw new Error(data.result)
     }
 
-    return data.result
+    return data
+  }
+
+  async lookup(): Promise<any> {
+    // Implement the lookup logic here
+    console.log('Etherscan lookup started')
+    // Placeholder logic for lookup
+    const lookupResult = {} // Replace with actual lookup logic
+    console.log('Etherscan lookup completed')
+    return lookupResult
   }
 }
