@@ -27,6 +27,7 @@ export type UrlParametersType = {
   address: string
   opendir: string,
   blockscout: string,
+  ghfolder: string
 }
 
 const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
@@ -78,7 +79,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       plugin.setWorkspace({ name, isLocalhost: false })
       dispatch(setCurrentWorkspace({ name, isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
-    } else if (params.code || params.url || params.shareCode) {
+    } else if (params.code || params.url || params.shareCode || params.ghfolder) {
       await createWorkspaceTemplate('code-sample', 'code-template')
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
