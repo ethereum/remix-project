@@ -215,8 +215,7 @@ export class CompilerImports extends Plugin {
 
   async resolveGithubFolder (url) {
     const ghFolder = {}
-    const token = await this.call('settings', 'get', 'settings/gist-access-token')
-    await githubFolderResolver(url, ghFolder, token)
+    await githubFolderResolver(url, ghFolder, 3)
     return ghFolder
   }
 }
