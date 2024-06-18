@@ -1,14 +1,9 @@
+import {CompilerAbstract} from '@remix-project/remix-solidity'
 import {AbstractVerifier} from '../Verifiers/AbstractVerifier'
+import {SourcifyVerifier} from '../Verifiers/SourcifyVerifier'
+import {EtherscanVerifier} from '../Verifiers/EtherscanVerifier'
 
-export interface VerifiedContract {
-  name: string
-  address: string
-  chainId: string
-  date: Date
-  verifier: AbstractVerifier
-  status: string
-  receipt?: string
-}
+export type SourcifyVerificationStatus = 'perfect' | 'partial' | null
 
 interface Currency {
   name: string
@@ -27,4 +22,49 @@ export interface Chain {
   rpc: Array<string>
   faucets?: string[]
   infoURL?: string
+}
+
+export interface VerificationReceipt {
+  receiptId?: string
+  verifier: AbstractVerifier
+  status: SourcifyVerificationStatus | 'error' | null
+  message?: string
+}
+
+export interface SubmittedContract {
+  id: string
+  filePath: string
+  contractName: string
+  chainId: string
+  address: string
+  compilerAbstract: CompilerAbstract
+  date: Date
+  receipts: VerificationReceipt[]
+}
+
+export interface SubmittedContracts {
+  [id: string]: SubmittedContract
+}
+
+export interface SourcifyVerificationResponse {
+  result: [
+    {
+      address: string
+      chainId: string
+      status: SourcifyVerificationStatus
+      libraryMap: {
+        [key: string]: string
+      }
+    }
+  ]
+}
+
+export interface SourcifyVerificationError {
+  error: 'string'
+}
+
+export interface EtherscanResponse {
+  status: '0' | '1'
+  message: string
+  result: string
 }
