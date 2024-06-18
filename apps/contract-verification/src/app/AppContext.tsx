@@ -1,6 +1,6 @@
 import React from 'react'
 import {ThemeType} from './types'
-import {Chain, VerifiedContract} from './types/VerificationTypes'
+import {Chain, SubmittedContracts} from './types/VerificationTypes'
 import {CompilerAbstract} from '@remix-project/remix-solidity'
 import {AbstractVerifier} from './Verifiers/AbstractVerifier'
 
@@ -11,12 +11,12 @@ type AppContextType = {
   chains: Chain[]
   compilationOutput: {[key: string]: CompilerAbstract} | undefined
   selectedContractFileAndName: string | undefined
-  setSelectedContractFileAndName: (contract: string) => void
+  setSelectedContractFileAndName: React.Dispatch<React.SetStateAction<string>>
   targetFileName: string | undefined
-  verifiedContracts: VerifiedContract[]
-  setVerifiedContracts: (verifiedContracts: VerifiedContract[]) => void
   verifiers: AbstractVerifier[]
-  setVerifiers: (verifiers: AbstractVerifier[]) => void
+  setVerifiers: React.Dispatch<React.SetStateAction<AbstractVerifier[]>>
+  submittedContracts: SubmittedContracts
+  setSubmittedContracts: React.Dispatch<React.SetStateAction<SubmittedContracts>>
 }
 
 // Provide a default value with the appropriate types
@@ -30,10 +30,10 @@ const defaultContextValue: AppContextType = {
   selectedContractFileAndName: undefined,
   setSelectedContractFileAndName: (contract: string) => {},
   targetFileName: undefined,
-  verifiedContracts: [],
-  setVerifiedContracts: (verifiedContracts: VerifiedContract[]) => {},
   verifiers: [],
   setVerifiers: (verifiers: AbstractVerifier[]) => {},
+  submittedContracts: {},
+  setSubmittedContracts: (submittedContracts: SubmittedContracts) => {},
 }
 
 // Create the context with the type
