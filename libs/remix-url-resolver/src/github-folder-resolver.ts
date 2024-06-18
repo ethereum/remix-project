@@ -9,7 +9,7 @@ export const githubFolderResolver = async (url, obj = {}, maxDepth, depth?, root
   const pathname = urlObj.pathname;
   const pathParts = pathname.split('/');
   const folderPath = pathParts.slice(5).join('/');
-  rootPath =  rootPath || folderPath
+  rootPath = rootPath || folderPath
   for (const item of child) {
     if (item.type === 'file') {
       const response: AxiosResponse = await axios.get(item.download_url, { transformResponse: res => res })
