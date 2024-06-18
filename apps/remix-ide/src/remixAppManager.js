@@ -79,7 +79,8 @@ let requiredModules = [ // services + layout views + system views
   'remix-templates',
   'solhint',
   'pinnedPanel',
-  'pluginStateLogger'
+  'pluginStateLogger',
+  'remixGuide'
 ]
 
 
