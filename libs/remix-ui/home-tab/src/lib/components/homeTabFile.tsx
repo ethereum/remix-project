@@ -305,15 +305,18 @@ contract HelloWorld {
               IPFS
               </button> */}
               {/* <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}> */}
-              <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.openFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+              <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gitCloneTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
               >
                 <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>
                 Git Clone
                 </button>
               </CustomTooltip>
-              <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
+              <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gistTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+              >
+                <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
                 Gist
-              </button>
+                </button>
+              </CustomTooltip>
             </div>
           </div>
           <div className="d-flex mt-2 align-items-end w-100">

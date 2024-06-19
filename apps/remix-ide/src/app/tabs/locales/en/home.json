@@ -66,6 +66,8 @@
   "home.resources": "Resources",
   "home.connectToLocalhost": "Connect to Localhost",
   "home.seeAllTutorials": "See all tutorials",
-  "home.maintainedByRemix": "Maintained by Remix"
+  "home.maintainedByRemix": "Maintained by Remix",
+  "home.gitCloneTooltip": "Clone a github repo to a new workspace",
+  "home.gistTooltip": "Import a gist to a workspace"
 }
 
