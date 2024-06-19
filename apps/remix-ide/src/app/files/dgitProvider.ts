@@ -436,7 +436,7 @@ class DGitProvider extends Plugin {
       const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
       if (!permission) return false
       if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
-      if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
+      if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, '', true)
       const cmd = {
         url: input.url,
         singleBranch: input.singleBranch,
@@ -445,7 +445,7 @@ class DGitProvider extends Plugin {
         ...await this.parseInput(input),
         ...await this.getGitConfig()
       }
-      this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
+      this.call('terminal', 'logHtml', `Cloning ${input.url}... please wait...`)
       const result = await git.clone(cmd)
       if (!workspaceExists) {
         setTimeout(async () => {
@@ -453,6 +453,9 @@ class DGitProvider extends Plugin {
         }, 1000)
       }
       this.emit('clone')
+      this.call('fileManager', 'hasGitSubmodules').then((submodules) => {
+        if (submodules) this.call('terminal', 'log', { type: 'warn', value: 'This repository has submodules. Please update submodules to pull all the dependencies.'})
+      })
       return result
     }
   }
