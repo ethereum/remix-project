@@ -30,6 +30,7 @@ export function Workspace() {
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const [showIconsMenu, hideIconsMenu] = useState<boolean>(false)
   const [showBranches, setShowBranches] = useState<boolean>(false)
+  const [highlightUpdateSubmodules, setHighlightUpdateSubmodules] = useState<boolean>(false)
   const [branchFilter, setBranchFilter] = useState<string>('')
   const displayOzCustomRef = useRef<HTMLDivElement>()
   const mintableCheckboxRef = useRef()
@@ -123,6 +124,10 @@ export function Workspace() {
         cloneGitRepository()
       }
     }
+
+    global.plugin.on('dGitProvider', 'repositoryWithSubmodulesCloned', () => {
+      setHighlightUpdateSubmodules(true)
+    })
   }, [])
 
   useEffect(() => {
@@ -677,6 +682,7 @@ export function Workspace() {
 
   const updateSubModules = async () => {
     try {
+      setHighlightUpdateSubmodules(false)
       await global.dispatchUpdateGitSubmodules()
     } catch (e) {
       console.error(e)
@@ -1208,7 +1214,7 @@ export function Workspace() {
             {selectedWorkspace.hasGitSubmodules?
               <div className="pt-1 mr-1">
                 {global.fs.browser.isRequestingCloning ? <div style={{ height: 30 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div> :
-                  <div style={{ height: 30 }} onClick={updateSubModules} data-id='updatesubmodules' className='btn btn-sm border text-muted small'>update submodules</div>}
+                  <div style={{ height: 30 }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border small ${highlightUpdateSubmodules ? 'text-warning' : 'text-muted'}`}>update submodules</div>}
               </div>
               : null}
             <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
