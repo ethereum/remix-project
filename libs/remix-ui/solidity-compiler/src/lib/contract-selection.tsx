@@ -312,7 +312,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </button>
 
             <CustomTooltip
-              placement={'right-end'}
+              placement={'auto-end'}
               tooltipId="CompilationDetailsTooltip"
               tooltipClasses="text-nowrap"
               tooltipText={<FormattedMessage id="solidity.displayContractDetails" />}
