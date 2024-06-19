@@ -216,7 +216,9 @@ contract HelloWorld {
 
   return (
     <>
-      <ModalDialog id="homeTab" title={'Import from ' + state.modalInfo.title} okLabel="Import" hide={!state.showModalDialog} handleHide={() => hideFullMessage()} okFn={() => processLoading(state.modalInfo.title)}>
+      <ModalDialog id="homeTab" title={'Import from ' + state.modalInfo.title}
+        okLabel="Import" hide={!state.showModalDialog} handleHide={() => hideFullMessage()}
+        okFn={() => processLoading(state.modalInfo.title)}>
         <div className="p-2 user-select-auto">
           {state.modalInfo.loadItem !== '' && <span>Enter the {state.modalInfo.loadItem} you would like to load.</span>}
           {state.modalInfo.examples.length !== 0 && (
@@ -250,7 +252,7 @@ contract HelloWorld {
           {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
             <div className="d-flex flex-column mb-5 remixui_recentworkspace">
               <label style={{ fontSize: '0.8rem' }} className="mt-3">
-              Recent Workspaces
+                Recent Workspaces
               </label>
               {state.recentWorkspaces[0] && state.recentWorkspaces[0] !== '' && (
                 <a className="cursor-pointer mb-1 ml-2" href="#" onClick={(e) => handleSwichToRecentWorkspace(e, state.recentWorkspaces[0])}>
@@ -270,7 +272,7 @@ contract HelloWorld {
             </div>
           )}
         </div>
-        <div className="d-flex flex-column flex-nowrap pt-3">
+        <div className="d-flex flex-column flex-nowrap pt-5">
           <label style={{ fontSize: '1.2rem' }}>
             <FormattedMessage id="home.files" />
           </label>
@@ -302,24 +304,24 @@ contract HelloWorld {
               <button className="btn text-nowrap p-2 mr-2 border my-1" onClick={() => showFullMessage('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')}>
               IPFS
               </button>
+              {/* <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}> */}
               <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGitHubButton" onClick={() => showFullMessage('GitHub', 'github URL', ['https://github.com/0xcert/ethereum-erc721/src/contracts/tokens/nf-token-metadata.sol', 'https://github.com/OpenZeppelin/openzeppelin-solidity/blob/67bca857eedf99bf44a4b6a0fc5b5ed553135316/contracts/access/Roles.sol'])}>
               Git Clone
               </button>
               <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
-            Gist
-              </button>
-
-              <button
-                className="btn text-nowrap p-2 mr-2 border my-1"
-                onClick={() =>
-                  showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
-                }
-              >
-            HTTPS
+                Gist
               </button>
             </div>
           </div>
           <div className="d-flex mt-2 align-items-end w-100">
+            <button
+              className="btn text-nowrap p-2 mr-2 border my-1"
+              onClick={() =>
+                showFullMessage('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
+              }
+            >
+            HTTPS
+            </button>
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
               <button className="btn btn-block text-nowrap p-2 border my-1" onClick={() => connectToLocalhost()}>
                 <i className="fa-regular fa-desktop pr-2"></i>
