@@ -117,7 +117,6 @@ const App = () => {
             <Button data-id="add-repository" className="w-100 btn btn-secondary" onClick={() => {
               {cloneCount === 0 ? remixClient.cloneVyperRepo() : remixClient.cloneVyperRepo(cloneCount)}
               setCloneCount((prev) => {
-                console.log(prev)
                 return ++prev
               })
             }}>
