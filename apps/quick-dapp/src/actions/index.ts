@@ -202,8 +202,12 @@ export const deploy = async (payload: any, callback: any) => {
       },
       onTick: (tick: string) => {},
     });
-  } catch (error) {
-    callback({ code: 'ERROR', error: 'this domain belongs to someone else' });
+  } catch ({ message }: any) {
+    if (message === '403') {
+      callback({ code: 'ERROR', error: 'this domain belongs to someone else' });
+    } else {
+      callback({ code: 'ERROR', error: 'unknow error, please try again' });
+    }
     return;
   }
 

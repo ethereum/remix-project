@@ -33,10 +33,10 @@
   dependencies:
     tslib "^2.0.0"
 
-"@drafish/surge-client@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/@drafish/surge-client/-/surge-client-1.1.1.tgz#c457f0988e2c11a6867fa42c0189d8f0fa3d3511"
-  integrity sha512-xTRCZfeAaoImYAV72YStozKcMjYs9RhKgLqEvXDx6QyHSI9udiSUyBxtYtt1ymwiF8qBxLwdVcjIUTI7pg+qnA==
+"@drafish/surge-client@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.npmjs.org/@drafish/surge-client/-/surge-client-1.1.4.tgz#786c257ca8e0d6907a02d8e4f885b9358d328d22"
+  integrity sha512-2OfX2fqcykay0BYnodLYEhLKGfehuTRVEuwLbkwOD8ZSpeH2hSvCBGRZgaEvCpznGfU0QNwVZbq2dJVKLxi2Mg==
   dependencies:
     buffer "^6.0.3"
     pako "^2.1.0"
