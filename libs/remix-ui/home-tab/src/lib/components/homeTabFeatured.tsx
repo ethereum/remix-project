@@ -12,7 +12,7 @@ function HomeTabFeatured() {
   const themeFilter = useContext(ThemeContext)
 
   return (
-    <div className="pt-1 pl-2" id="hTFeaturedeSection">
+    <div className="pt-1 pl-2 h-100" id="hTFeaturedeSection">
       <div className="mb-2 remix_ui-carousel-container">
         <div className="w-100 d-flex flex-column rounded-3 remix_ui-carouselbox">
           <ThemeContext.Provider value={themeFilter}>
