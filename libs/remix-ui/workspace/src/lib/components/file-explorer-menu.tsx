@@ -50,7 +50,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       {
         action: 'importFromHttps',
         title: 'Import files with https',
-        icon: 'far fa-cloud-arrow-down',
+        icon: 'far fa-globe',
         placement: 'top',
         platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
       }
