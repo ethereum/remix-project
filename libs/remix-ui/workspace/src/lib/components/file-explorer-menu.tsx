@@ -39,6 +39,20 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         icon: 'far fa-folder-upload',
         placement: 'top',
         platforms:[appPlatformTypes.web]
+      },
+      {
+        action: 'importFromIpfs',
+        title: 'Import files from ipfs',
+        icon: 'far fa-folder-arrow-down',
+        placement: 'top',
+        platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
+      },
+      {
+        action: 'importFromHttps',
+        title: 'Import files with https',
+        icon: 'far fa-cloud-arrow-down',
+        placement: 'top',
+        platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
       }
     ].filter(
       (item) =>
