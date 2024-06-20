@@ -240,6 +240,14 @@ export function Workspace() {
     })
   }
 
+  const importFromIpfs = () => {
+
+  }
+
+  const importFromHttps = () => {
+
+  }
+
   const cloneGitRepository = () => {
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.clone' }),
