@@ -9,10 +9,10 @@ export class SourcifyVerifier extends AbstractVerifier {
   }
 
   async verify(chainId: string, address: string, compilerAbstract: CompilerAbstract, selectedContractFileAndName: string) {
-    const [selectedFileName, selectedContractName] = selectedContractFileAndName.split(':')
-    const metadataStr = compilerAbstract.data.contracts[selectedFileName][selectedContractName].metadata
+    const [_triggerFileName, selectedFilePath, selectedContractName] = selectedContractFileAndName.split(':')
+    const metadataStr = compilerAbstract.data.contracts[selectedFilePath][selectedContractName].metadata
     const sources = compilerAbstract.source.sources
-    console.log('selectedFileName:', selectedFileName)
+    console.log('selectedFilePath:', selectedFilePath)
     console.log('selectedContractName:', selectedContractName)
     console.log('compilerAbstract:', compilerAbstract)
     console.log('selectedContractMetadataStr:', metadataStr)
