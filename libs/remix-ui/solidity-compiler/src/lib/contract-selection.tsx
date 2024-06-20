@@ -381,7 +381,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 tooltipId="runStaticAnalysisTooltip"
                 tooltipClasses="text-nowrap"
                 tooltipText={`${intl.formatMessage({
-                  id: 'solidity.runStaticAnalysis'
+                  id: 'solidity.runStaticAnalysis.iconTooltip'
                 })}`}
               >
                 <span>
