@@ -14,8 +14,8 @@ export function SolScanTable(props: SolScanTableProps) {
   return (
     <>
       <br/>
-      <p className='text-success'>Scanning successful! <b>{scanDetails.length} warnings </b> found for file: <b>{fileName}</b></p>
-      <p>See the warning details below. For more details,&nbsp;
+      <h6>SolidityScan result for <b>{fileName}</b>:</h6>
+      <p className='text-success'><b>{scanDetails.length} warnings </b> found. See the warning details below. For more details,&nbsp;
         <a href="https://solidityscan.com/signup"
           target='_blank'
           onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'goToSolidityScan'])}>
@@ -38,7 +38,7 @@ export function SolScanTable(props: SolScanTableProps) {
             Array.from(scanDetails, (template, index) => {
               return (
                 <tr key={template.template_details.issue_id}>
-                  <td scope="col">{index + 1}</td>
+                  <td scope="col">{index + 1}.</td>
                   <td scope="col">{template.template_details.issue_name}</td>
                   <td scope="col">{template.template_details.issue_severity}</td>
                   <td scope="col">{template.template_details.issue_confidence}</td>
