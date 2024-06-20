@@ -35,7 +35,7 @@ export default function AIStatus(props: AIStatusProps) {
     <CustomTooltip
       tooltipText={copilotActive ? "Remix Copilot activated" : "Remix Copilot disabled."}
     >
-      <div className="d-flex flex-row pr-2 text-white justify-content-center align-items-center">
+      <div className="d-flex flex-row pr-2 text-white justify-content-center align-items-center remixui_statusbar_aistatus">
         <span className={copilotActive === false ? "fa-regular fa-microchip-ai ml-1 text-white" : "fa-regular fa-microchip-ai ml-1"}></span>
         <span className={copilotActive === false ? "small mx-1 text-white semi-bold" : "small mx-1 semi-bold" }>Remix Copilot</span>
       </div>
