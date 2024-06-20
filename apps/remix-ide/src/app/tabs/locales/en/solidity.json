@@ -53,6 +53,8 @@
   "solidity._comment_contract-selection.tsx": "libs/remix-ui/solidity-compiler/src/lib/contract-selection.tsx",
   "solidity.publishOn": "Publish on",
   "solidity.runStaticAnalysis": "Run Static Analysis",
+  "solidity.runStaticAnalysis.iconTooltip": "Click to analyze this contract for vulnerabilities using Remix, Solhint and Slither analyzers",
+
 
   "solidity.runSolidityScan": "Run Solidity Scan",
   "solidity.solScan.iconTooltip": "Click to scan this contract for vulnerabilities using SolidityScan, a third-party provider [BETA]",
