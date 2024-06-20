@@ -276,13 +276,7 @@ export function UniversalDappUI(props: UdappProps) {
           let modal: AppModal
 
           if (scanDetails && scanDetails.length) {
-            modal = {
-              id: 'SolidityScanSuccess',
-              title: <FormattedMessage id="udapp.solScan.successModalTitle" />,
-              message: <SolScanTable scanDetails={scanDetails} fileName={fileName}/>,
-              okLabel: 'Close',
-              modalParentClass: 'modal-xl'
-            }
+            await props.plugin.call('terminal', 'logHtml', <SolScanTable scanDetails={scanDetails} fileName={fileName}/>)
           } else {
             modal = {
               id: 'SolidityScanError',
