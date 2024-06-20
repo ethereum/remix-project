@@ -1,37 +1,48 @@
-import React, {useEffect} from 'react'
-import {useLocation, useNavigate} from 'react-router-dom'
+import React, { useContext, useEffect } from 'react'
+import { Form, useLocation, useNavigate } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
+import { FormattedMessage } from 'react-intl'
 import BackButton from '../../components/BackButton'
-import {useAppSelector, useAppDispatch} from '../../redux/hooks'
-import './index.scss'
+import { AppContext } from '../../contexts'
+import { displayFile, loadStepContent, showAnswer, testStep } from '../../actions'
 
 function StepDetailPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const dispatch = useAppDispatch()
+  const { dispatch, appState } = useContext(AppContext)
+  const [loaded, setLoaded] = React.useState(false)
+  const [content, setContent] = React.useState('loading...')
   const queryParams = new URLSearchParams(location.search)
   const id = queryParams.get('id') as string
   const stepId = Number(queryParams.get('stepId'))
   const {
-    workshop: {detail, selectedId},
-    remixide: {errorLoadingFile, errors, success},
-  } = useAppSelector((state: any) => state)
+    workshop: { detail, selectedId },
+    remixide: { errorLoadingFile, errors, success },
+  } = appState
   const entity = detail[selectedId].entities[id]
   const steps = entity.steps
   const step = steps[stepId]
-  console.log(step)
 
   useEffect(() => {
+    displayFile(step)
     dispatch({
-      type: 'remixide/displayFile',
-      payload: step,
-    })
-    dispatch({
-      type: 'remixide/save',
-      payload: {errors: [], success: false},
+      type: 'SET_REMIXIDE',
+      payload: { errors: [], success: false },
     })
     window.scrollTo(0, 0)
+    
+    if(step.markdown && !step.markdown?.isLoaded && step.markdown.file) {
+      loadStepContent(step.markdown.file).then((content) => {
+        setLoaded(true)
+        if(step.markdown){
+         setContent(content)
+        }
+      })
+    }else{
+      setLoaded(true)
+      setContent(step.markdown.content)
+    }
   }, [step])
 
   useEffect(() => {
@@ -40,6 +51,18 @@ function StepDetailPage() {
     }
   }, [errors, success])
 
+  if (!loaded) {
+    return <>
+      <div className="fixed-top">
+        <div className="bg-light">
+          <BackButton entity={entity} />
+        </div>
+      </div>
+      <div id="top">
+        <FormattedMessage id="learneth.loading" />
+      </div>
+    </>
+  }
   return (
     <>
       <div className="fixed-top">
@@ -50,44 +73,38 @@ function StepDetailPage() {
       <div id="top"></div>
       {errorLoadingFile ? (
         <>
-          <div className="errorloadingspacer"></div>
-          <h1 className="pl-3 pr-3 pt-3 pb-1">{step.name}</h1>
+          <div className="pt-5"></div>
+          <h1 className="pl-3 pr-3 pt-3 pb-1 text-break text-start">{step.name}</h1>
           <button
             className="w-100nav-item rounded-0 nav-link btn btn-success test"
-            onClick={() => {
-              dispatch({
-                type: 'remixide/displayFile',
-                payload: step,
-              })
+            onClick={async () => {
+              await displayFile(step)
             }}
           >
-            Load the file
+            <FormattedMessage id="learneth.loadFile" />
           </button>
           <div className="mb-4"></div>
         </>
       ) : (
         <>
-          <div className="menuspacer"></div>
-          <h1 className="pr-3 pl-3 pt-3 pb-1">{step.name}</h1>
+          <div className="pt-5"></div>
+          <h1 className="pr-3 pl-3 pt-3 pb-1 text-break text-start">{step.name}</h1>
         </>
       )}
       <div className="container-fluid">
-        <Markdown rehypePlugins={[rehypeRaw]}>{step.markdown?.content}</Markdown>
+        <Markdown rehypePlugins={[rehypeRaw]}>{content}</Markdown>
       </div>
-      {step.test?.content ? (
+      {step.test ? (
         <>
           <nav className="nav nav-pills nav-fill">
             {errorLoadingFile ? (
               <button
                 className="nav-item rounded-0 nav-link btn btn-warning test"
-                onClick={() => {
-                  dispatch({
-                    type: 'remixide/displayFile',
-                    payload: step,
-                  })
+                onClick={async () => {
+                  await displayFile(step)
                 }}
               >
-                Load the file
+                <FormattedMessage id="learneth.loadFile" />
               </button>
             ) : (
               <>
@@ -96,25 +113,19 @@ function StepDetailPage() {
                     <button
                       className="nav-item rounded-0 nav-link btn btn-info test"
                       onClick={() => {
-                        dispatch({
-                          type: 'remixide/testStep',
-                          payload: step,
-                        })
+                        testStep(step)
                       }}
                     >
-                      Check Answer
+                      <FormattedMessage id="learneth.checkAnswer" />
                     </button>
-                    {step.answer?.content && (
+                    {step.answer && (
                       <button
                         className="nav-item rounded-0 nav-link btn btn-warning test"
                         onClick={() => {
-                          dispatch({
-                            type: 'remixide/showAnswer',
-                            payload: step,
-                          })
+                          showAnswer(step)
                         }}
                       >
-                        Show answer
+                        <FormattedMessage id="learneth.showAnswer" />
                       </button>
                     )}
                   </>
@@ -128,19 +139,16 @@ function StepDetailPage() {
                             navigate(stepId === steps.length - 1 ? `/list?id=${id}` : `/detail?id=${id}&stepId=${stepId + 1}`)
                           }}
                         >
-                          Next
+                          <FormattedMessage id="learneth.next" />
                         </button>
-                        {step.answer?.content && (
+                        {step.answer && (
                           <button
                             className="nav-item rounded-0 nav-link btn btn-warning test"
                             onClick={() => {
-                              dispatch({
-                                type: 'remixide/showAnswer',
-                                payload: step,
-                              })
+                              showAnswer(step)
                             }}
                           >
-                            Show answer
+                            <FormattedMessage id="learneth.showAnswer" />
                           </button>
                         )}
                       </>
@@ -157,20 +165,20 @@ function StepDetailPage() {
                 navigate(stepId === steps.length - 1 ? `/list?id=${id}` : `/detail?id=${id}&stepId=${stepId + 1}`)
               }}
             >
-              Next
+              <FormattedMessage id="learneth.next" />
             </button>
           )}
           <div id="errors">
             {success && (
               <div className="alert rounded-0 alert-success mb-0 mt-0" role="alert">
-                Well done! No errors.
+                <FormattedMessage id="learneth.wellDone" />
               </div>
             )}
             {errors.length > 0 && (
               <>
                 {!success && (
                   <div className="alert rounded-0 alert-danger mb-0 mt-0" role="alert">
-                    Errors
+                    <FormattedMessage id="learneth.errors" />
                   </div>
                 )}
                 {errors.map((error: string, index: number) => (
@@ -185,17 +193,14 @@ function StepDetailPage() {
       ) : (
         <>
           <nav className="nav nav-pills nav-fill">
-            {!errorLoadingFile && step.answer?.content && (
+            {!errorLoadingFile && step.answer && (
               <button
                 className="nav-item rounded-0 nav-link btn btn-warning test"
-                onClick={() => {
-                  dispatch({
-                    type: 'remixide/showAnswer',
-                    payload: step,
-                  })
+                onClick={async () => {
+                  await showAnswer(step)
                 }}
               >
-                Show answer
+                <FormattedMessage id="learneth.showAnswer" />
               </button>
             )}
           </nav>
@@ -206,7 +211,7 @@ function StepDetailPage() {
                 navigate(`/detail?id=${id}&stepId=${stepId + 1}`)
               }}
             >
-              Next
+              <FormattedMessage id="learneth.next" />
             </button>
           )}
           {stepId === steps.length - 1 && (
@@ -216,7 +221,7 @@ function StepDetailPage() {
                 navigate(`/list?id=${id}`)
               }}
             >
-              Finish tutorial
+              <FormattedMessage id="learneth.finishTutorial" />
             </button>
           )}
         </>

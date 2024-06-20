@@ -18,7 +18,6 @@
         "polyfills": "apps/learneth/src/polyfills.ts",
         "tsConfig": "apps/learneth/tsconfig.app.json",
         "assets": ["apps/learneth/src/profile.json"],
-        "styles": ["apps/learneth/src/index.css"],
         "scripts": [],
         "webpackConfig": "apps/learneth/webpack.config.js"
       },

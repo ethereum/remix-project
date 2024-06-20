@@ -1,38 +1,38 @@
 import { PluginClient } from '@remixproject/plugin'
 import { createClient } from '@remixproject/plugin-webview'
-import { store } from './redux/store'
+import { loadRepo } from './actions'
 import { router } from './App'
+import EventManager from 'events'
 
-class RemixClient extends PluginClient {
+export class RemixClient extends PluginClient {
+  public internalEvents: EventManager
   constructor() {
     super()
+    this.internalEvents = new EventManager()
     createClient(this)
+    this.onload()
   }
 
-  startTutorial(name: any, branch: any, id: any): void {
-    console.log('start tutorial', name, branch, id)
+  onActivation(): void {
+    this.internalEvents.emit('learneth_activated')
+  }
+
+  async startTutorial(name: any, branch: any, id: any): Promise<void> {
     void router.navigate('/home')
-    store.dispatch({
-      type: 'workshop/loadRepo',
-      payload: {
-        name,
-        branch,
-        id,
-      },
+    await loadRepo({
+      name,
+      branch,
+      id,
     })
   }
 
-  addRepository(name: any, branch: any) {
+  async addRepository(name: any, branch: any) {
     console.log('add repo', name, branch)
     void router.navigate('/home')
-    store.dispatch({
-      type: 'workshop/loadRepo',
-      payload: {
-        name,
-        branch,
-      },
+    await loadRepo({
+      name,
+      branch,
     })
   }
 }
 
-export default new RemixClient()
