@@ -383,6 +383,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   publishToGist={publishToGist}
                   uploadFile={uploadFile}
                   uploadFolder={uploadFolder}
+                  importFromHttps={props.importFromHttps}
+                  importFromIpfs={props.importFromIpfs}
                 />
               </div>
             </span>
