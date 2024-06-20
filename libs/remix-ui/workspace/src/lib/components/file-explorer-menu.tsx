@@ -43,14 +43,14 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       {
         action: 'importFromIpfs',
         title: 'Import files from ipfs',
-        icon: 'far fa-folder-arrow-down',
+        icon: 'fa-regular fa-cube',
         placement: 'top',
         platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
       },
       {
         action: 'importFromHttps',
         title: 'Import files with https',
-        icon: 'far fa-globe',
+        icon: 'fa-solid fa-link',
         placement: 'top',
         platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
       }
