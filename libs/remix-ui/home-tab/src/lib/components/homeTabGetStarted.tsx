@@ -36,14 +36,14 @@ const workspaceTemplates: WorkspaceTemplate[] = [
   },
   {
     gsID: 'sUTLogo',
-    workspaceTitle: 'Circom',
+    workspaceTitle: 'Zk Semaphore',
     description: 'Create a new ZK Project with Circom using this template.',
     projectLogo: 'assets/img/circom.webp',
     templateName: 'semaphore',
   },
   {
     gsID: 'sUTLogo',
-    workspaceTitle: 'Uniswap',
+    workspaceTitle: 'Uniswap V4 Basic Hook',
     description: 'Create a new MultiSig wallet using this template.',
     projectLogo: 'assets/img/gnosissafeLogo.png',
     templateName: 'uniswapV4Template',
