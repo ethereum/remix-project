@@ -388,7 +388,12 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                   runStaticAnalysis()
                 }}
               >
-                <FormattedMessage id="solidity.runStaticAnalysis" />
+                <span>
+                  <span>
+                    <FormattedMessage id="solidity.runStaticAnalysis" />
+                  </span>
+                  <img id="ssaLogo" className="remixui_storageLogo ml-2" src="assets/img/staticAnalysis.webp" />
+                </span>
               </button>
             </CustomTooltip>
             <CustomTooltip
