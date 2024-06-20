@@ -8,6 +8,7 @@ import {Chain, SubmittedContract, VerificationReceipt} from '../types/Verificati
 import {SourcifyVerifier} from '../Verifiers/SourcifyVerifier'
 import {EtherscanVerifier} from '../Verifiers/EtherscanVerifier'
 import {useNavigate} from 'react-router-dom'
+import {ConstructorArguments} from '../components/ConstructorArguments'
 
 export const VerifyView = () => {
   const {chains, compilationOutput, verifiers, setVerifiers, selectedContractFileAndName, setSubmittedContracts} = React.useContext(AppContext)
@@ -149,6 +150,9 @@ export const VerifyView = () => {
                 </label>
               </div>
             ))}
+        </div>
+        <div>
+          <ConstructorArguments />
         </div>
       </form>
     </div>
