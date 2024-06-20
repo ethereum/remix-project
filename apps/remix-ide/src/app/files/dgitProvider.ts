@@ -455,7 +455,7 @@ class DGitProvider extends Plugin {
       this.emit('clone')
       this.call('fileManager', 'hasGitSubmodules').then((submodules) => {
         if (submodules) {
-          this.call('terminal', 'log', { type: 'warn', value: 'This repository has submodules. Please update submodules to pull all the dependencies.'})
+          this.call('terminal', 'log', { type: 'warn', value: 'This repository has submodules. Please update submodules to pull all the dependencies.' })
           this.emit('repositoryWithSubmodulesCloned')
         }
       })
