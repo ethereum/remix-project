@@ -56,7 +56,7 @@
   "solidity.runStaticAnalysis.iconTooltip": "Click to analyze this contract for vulnerabilities using Remix, Solhint and Slither analyzers",
 
 
-  "solidity.runSolidityScan": "Run Solidity Scan",
+  "solidity.runSolidityScan": "Run SolidityScan",
   "solidity.solScan.iconTooltip": "Click to scan this contract for vulnerabilities using SolidityScan, a third-party provider [BETA]",
   "solidity.solScan.modalTitle": "Permission to share code",
   "solidity.solScan.modalMessage": "To scan and analyze the contract for risks and vulnerabilities, its code will be shared with SolidityScan, a third-party provider. ",

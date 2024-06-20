@@ -13,17 +13,19 @@ export function SolScanTable(props: SolScanTableProps) {
 
   return (
     <>
-      <p>Scanning successful! <b>{scanDetails.length} warnings </b> found for file: <b>{fileName}</b></p>
+      <br/>
+      <p className='text-success'>Scanning successful! <b>{scanDetails.length} warnings </b> found for file: <b>{fileName}</b></p>
       <p>See the warning details below. For more details,&nbsp;
         <a href="https://solidityscan.com/signup"
           target='_blank'
-          onClick={() => _paq.push(['trackEvent', 'udapp', 'solidityScan', 'goToSolidityScan'])}>
+          onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'goToSolidityScan'])}>
             go to SolidityScan.
         </a>
       </p>
       <table className="table table-bordered table-hover">
         <thead>
           <tr>
+            <td scope="col" style={{ wordBreak: "keep-all" }}>#</td>
             <td scope="col" style={{ wordBreak: "keep-all" }}>NAME</td>
             <td scope="col" style={{ wordBreak: "keep-all" }}>SEVERITY</td>
             <td scope="col" style={{ wordBreak: "keep-all" }}>CONFIDENCE</td>
@@ -33,9 +35,10 @@ export function SolScanTable(props: SolScanTableProps) {
         </thead>
         <tbody>
           {
-            Array.from(scanDetails, (template) => {
+            Array.from(scanDetails, (template, index) => {
               return (
                 <tr key={template.template_details.issue_id}>
+                  <td scope="col">{index + 1}</td>
                   <td scope="col">{template.template_details.issue_name}</td>
                   <td scope="col">{template.template_details.issue_severity}</td>
                   <td scope="col">{template.template_details.issue_confidence}</td>

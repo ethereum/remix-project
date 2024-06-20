@@ -274,7 +274,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       ws.addEventListener('error', console.error);
 
       ws.addEventListener('open', async (event) => {
-        await plugin.call('notification', 'toast', 'Fetching result in Remix terminal ...')
+        await plugin.call('notification', 'toast', 'Loading scan result in Remix terminal...')
       })
 
       ws.addEventListener('message', async (event) => {
@@ -427,7 +427,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
 
                 <span>
                   <span>
-                    <FormattedMessage id="solidity.publishOn" /> Ipfs
+                    <FormattedMessage id="solidity.publishOn" /> IPFS
                   </span>
                   <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
                 </span>
