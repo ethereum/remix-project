@@ -14,9 +14,9 @@ export class EtherscanVerifier extends AbstractVerifier {
   async verify(chainId: string, address: string, compilerAbstract: CompilerAbstract, selectedContractFileAndName: string) {
     const CODE_FORMAT = 'solidity-standard-json-input'
 
-    const [selectedFileName, selectedContractName] = selectedContractFileAndName.split(':')
+    const [_triggerFilePath, selectedFilePath, selectedContractName] = selectedContractFileAndName.split(':')
     // TODO: Handle version Vyper contracts. This relies on Solidity metadata.
-    const metadata = JSON.parse(compilerAbstract.data.contracts[selectedFileName][selectedContractName].metadata)
+    const metadata = JSON.parse(compilerAbstract.data.contracts[selectedFilePath][selectedContractName].metadata)
     const body = {
       chainId,
       codeformat: CODE_FORMAT,

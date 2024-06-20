@@ -39,20 +39,24 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({label, id}) =
   return (
     <div className="form-group">
       <label htmlFor={id}>{label}</label>
-
       <select className={`form-control custom-select pr-4 ${!hasContracts ? 'disabled-cursor' : ''}`} id={id} disabled={!hasContracts} onChange={handleSelectContract}>
         {hasContracts ? (
-          Object.keys(compilationOutput).map((fileName) =>
-            Object.keys(compilationOutput[fileName].data.contracts).map((fileName2) => (
-              <optgroup key={fileName2 + '-lower'} label={fileName2}>
-                {Object.keys(compilationOutput[fileName].data.contracts[fileName2]).map((contractName) => (
-                  <option key={fileName2 + ':' + contractName} value={fileName2 + ':' + contractName}>
-                    {contractName}
+          Object.keys(compilationOutput).map((compilationTriggerFileName) => (
+            <optgroup key={compilationTriggerFileName} label={`[Compilation Trigger File]: ${compilationTriggerFileName}`}>
+              {Object.keys(compilationOutput[compilationTriggerFileName].data.contracts).map((fileName2) => (
+                <>
+                  <option disabled style={{fontWeight: 'bold'}}>
+                    [File]: {fileName2}
                   </option>
-                ))}
-              </optgroup>
-            ))
-          )
+                  {Object.keys(compilationOutput[compilationTriggerFileName].data.contracts[fileName2]).map((contractName) => (
+                    <option key={fileName2 + ':' + contractName} value={compilationTriggerFileName + ':' + fileName2 + ':' + contractName}>
+                      {'\u00A0\u00A0\u00A0' + contractName} {/* Indentation for contract names */}
+                    </option>
+                  ))}
+                </>
+              ))}
+            </optgroup>
+          ))
         ) : (
           <option>No Compiled Contracts. Please compile and select a contract</option>
         )}
