@@ -9,7 +9,6 @@ import { AppModal } from '@remix-ui/app'
 import { SolScanTable } from './solScanTable'
 import axios from 'axios'
 
-
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
 const _paq = (window._paq = window._paq || [])
@@ -325,7 +324,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             }
             await plugin.call('notification', 'modal', modal)
           }
-          
+
         }
       })
     }
@@ -374,83 +373,80 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-          <button
-              id="runStaticAnalysis"
-              className="btn btn-outline-secondary btn-block"
-              onClick={() => {
-                runStaticAnalysis()
-              }}
+            <CustomTooltip
+              placement={'auto-end'}
+              tooltipId="runStaticAnalysisTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={`${intl.formatMessage({
+                id: 'solidity.runStaticAnalysis.iconTooltip'
+              })}`}
             >
-              <CustomTooltip
-                placement={'auto-end'}
-                tooltipId="runStaticAnalysisTooltip"
-                tooltipClasses="text-nowrap"
-                tooltipText={`${intl.formatMessage({
-                  id: 'solidity.runStaticAnalysis.iconTooltip'
-                })}`}
+              <button
+                id="runStaticAnalysis"
+                className="btn border btn-block"
+                onClick={() => {
+                  runStaticAnalysis()
+                }}
               >
-                <span>
-                  <FormattedMessage id="solidity.runStaticAnalysis" />
-                </span>
-              </CustomTooltip>
-            </button>
-            <button
-              id="runSolidityScan"
-              className="btn btn-outline-secondary btn-block"
-              onClick={() => {
-                runSolidityScan()
-              }}
+                <FormattedMessage id="solidity.runStaticAnalysis" />
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement={'auto-end'}
+              tooltipId="runSolidityScanTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={`${intl.formatMessage({
+                id: 'solidity.solScan.iconTooltip'
+              })}`}
             >
-              <CustomTooltip
-                placement={'auto-end'}
-                tooltipId="runSolidityScanTooltip"
-                tooltipClasses="text-nowrap"
-                tooltipText={`${intl.formatMessage({
-                  id: 'solidity.solScan.iconTooltip'
-                })}`}
+              <button
+                id="runSolidityScan"
+                className="btn border btn-block"
+                onClick={() => {
+                  runSolidityScan()
+                }}
               >
-                <span>
-                  <FormattedMessage id="solidity.runSolidityScan" />
-                </span>
-              </CustomTooltip>
-            </button>
-            <button
-              id="publishOnIpfs"
-              className="btn btn-outline-secondary btn-block"
-              onClick={() => {
-                handlePublishToStorage('ipfs')
-              }}
+                <FormattedMessage id="solidity.runSolidityScan" />
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement={'auto-end'}
+              tooltipId="publishOnIpfsTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={`${intl.formatMessage({
+                id: 'solidity.publishOn'
+              })} Ipfs`}
             >
-              <CustomTooltip
-                placement={'auto-end'}
-                tooltipId="publishOnIpfsTooltip"
-                tooltipClasses="text-nowrap"
-                tooltipText={`${intl.formatMessage({
-                  id: 'solidity.publishOn'
-                })} Ipfs`}
+              <button
+                id="publishOnIpfs"
+                className="btn border btn-block"
+                onClick={() => {
+                  handlePublishToStorage('ipfs')
+                }}
               >
+
                 <span>
                   <span>
                     <FormattedMessage id="solidity.publishOn" /> Ipfs
                   </span>
                   <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
                 </span>
-              </CustomTooltip>
-            </button>
-            <button
-              id="publishOnSwarm"
-              className="btn btn-outline-secondary btn-block"
-              onClick={() => {
-                handlePublishToStorage('swarm')
-              }}
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement={'auto-end'}
+              tooltipId="publishOnSwarmTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={`${intl.formatMessage({
+                id: 'solidity.publishOn'
+              })} Swarm`}
             >
-              <CustomTooltip
-                placement={'auto-end'}
-                tooltipId="publishOnSwarmTooltip"
-                tooltipClasses="text-nowrap"
-                tooltipText={`${intl.formatMessage({
-                  id: 'solidity.publishOn'
-                })} Swarm`}
+              <button
+                id="publishOnSwarm"
+                className="btn border btn-block"
+                onClick={() => {
+                  handlePublishToStorage('swarm')
+                }}
               >
                 <span>
                   <span>
@@ -458,9 +454,8 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                   </span>
                   <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
                 </span>
-              </CustomTooltip>
-            </button>
-
+              </button>
+            </CustomTooltip>
             <CustomTooltip
               placement={'auto-end'}
               tooltipId="CompilationDetailsTooltip"
@@ -469,7 +464,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 data-id="compilation-details"
-                className="btn btn-outline-secondary btn-block"
+                className="btn border btn-block"
                 onClick={async () => {
                   details()
                   await (api as any).call('compilationDetails', 'showDetails', payload)
