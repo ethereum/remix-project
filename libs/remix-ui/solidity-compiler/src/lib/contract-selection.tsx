@@ -256,7 +256,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   const handleScanContinue = async () => {
     const plugin = api as any
     await plugin.call('notification', 'toast', 'Processing data to scan...')
-    _paq.push(['trackEvent', 'udapp', 'solidityScan', 'initiateScan'])
+    _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'initiateScan'])
     const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
     const fileName = `${workspace.name}/${props.compiledFileName}`
     const filePath = `.workspaces/${fileName}`
@@ -270,7 +270,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       ws.addEventListener('error', console.error);
 
       ws.addEventListener('open', async (event) => {
-        await plugin.call('notification', 'toast', 'Fetching result in terminal ...')
+        await plugin.call('notification', 'toast', 'Fetching result in Remix terminal ...')
       })
 
       ws.addEventListener('message', async (event) => {
@@ -293,7 +293,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           ws.send(JSON.stringify(reqToInitScan))
         } else if (data.type === "scan_status" && data.payload.scan_status === "download_failed") {
           // Message on failed scan
-          _paq.push(['trackEvent', 'udapp', 'solidityScan', 'scanFailed'])
+          _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanFailed'])
           const modal: AppModal = {
             id: 'SolidityScanError',
             title: <FormattedMessage id="solidity.solScan.errModalTitle" />,
@@ -303,7 +303,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           await plugin.call('notification', 'modal', modal)
         } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
           // Message on successful scan
-          _paq.push(['trackEvent', 'udapp', 'solidityScan', 'scanSuccess'])
+          _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanSuccess'])
           const url = data.payload.scan_details.link
 
           const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
@@ -327,7 +327,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
   }
 
   const runSolidityScan = async () => {
-    _paq.push(['trackEvent', 'udapp', 'solidityScan', 'askPermissionToScan'])
+    _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'askPermissionToScan'])
     const modal: AppModal = {
       id: 'SolidityScanPermissionHandler',
       title: <FormattedMessage id="solidity.solScan.modalTitle" />,
@@ -335,7 +335,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
         <span><FormattedMessage id="solidity.solScan.modalMessage" />
           <a href={'https://solidityscan.com'}
             target="_blank"
-            onClick={() => _paq.push(['trackEvent', 'udapp', 'solidityScan', 'learnMore'])}>
+            onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'learnMore'])}>
               Learn more
           </a>
         </span>
