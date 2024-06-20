@@ -68,6 +68,7 @@
   "home.seeAllTutorials": "See all tutorials",
   "home.maintainedByRemix": "Maintained by Remix",
   "home.gitCloneTooltip": "Clone a Github repo to a new workspace",
-  "home.gistTooltip": "Import gist to a workspace"
+  "home.gistTooltip": "Import gist to a workspace",
+  "home.newFileTooltip": "Add a new file to a workspace"
 }
 
