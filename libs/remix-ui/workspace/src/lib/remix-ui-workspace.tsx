@@ -50,7 +50,6 @@ export function Workspace() {
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
 
   const [canPaste, setCanPaste] = useState(false)
-  console.log('what is plugin here ', global.plugin.contentImport)
 
   const [state, setState] = useState<WorkSpaceState>({
     ctrlKey: false,
@@ -241,12 +240,11 @@ export function Workspace() {
       return { ...prevState, actions }
     })
   }
-
-  const importFromIpfs = () => showModalForIpfsImport()
-
-  const importFromHttps = () => {
-    return ''
-  }
+  /**
+   * show modal for either ipfs or https icons in file explorer menu
+   * @returns void
+   */
+  const importFromUrl = () => showModalForIpfsImport()
 
   const cloneGitRepository = () => {
     global.modal(
@@ -1146,8 +1144,8 @@ export function Workspace() {
                   createNewFolder={handleNewFolderInput}
                   deletePath={deletePath}
                   renamePath={editModeOn}
-                  importFromHttps={importFromHttps}
-                  importFromIpfs={importFromIpfs}
+                  importFromIpfs={importFromUrl}
+                  importFromHttps={importFromUrl}
                 />
 
               )}
@@ -1212,8 +1210,8 @@ export function Workspace() {
                   deletePath={deletePath}
                   renamePath={editModeOn}
                   dragStatus={dragStatus}
-                  importFromHttps={importFromHttps}
-                  importFromIpfs={importFromIpfs}
+                  importFromIpfs={importFromUrl}
+                  importFromHttps={importFromUrl}
                 />
               )}
             </div>
