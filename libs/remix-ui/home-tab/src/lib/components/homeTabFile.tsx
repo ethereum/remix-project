@@ -314,7 +314,7 @@ contract HelloWorld {
               <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gistTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
               >
                 <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
-                Gist
+                Open Gist Repo
                 </button>
               </CustomTooltip>
             </div>
