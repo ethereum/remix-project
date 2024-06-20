@@ -89,7 +89,8 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 export const signMessageWithAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => {
   plugin.blockchain.signMessage(message, account, passphrase, (err, msgHash, signedData) => {
     if (err) {
-      return plugin.call('notification', 'toast', err)
+      console.error(err)
+      return plugin.call('notification', 'toast', typeof err === 'string' ? err : err.message)
     }
     dispatch(displayNotification('Signed Message', modalContent(msgHash, signedData), 'OK', null, () => {}, null))
   })
