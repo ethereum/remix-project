@@ -157,6 +157,10 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                         props.createNewFolder()
                       } else if (action === 'publishToGist' || action == 'updateGist') {
                         props.publishToGist()
+                      } else if (action === 'importFromIpfs') {
+                        props.importFromIpfs()
+                      } else if (action === 'importFromHttps') {
+                        props.importFromHttps
                       } else {
                         state.actions[action]()
                       }
