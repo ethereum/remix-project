@@ -245,6 +245,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return bytecodeObj.object
   }
 
+  const runStaticAnalysis = () => {
+    console.log('runStaticAnalysis')
+  }
+
   return (
     // define swarm logo
     <>
@@ -264,6 +268,26 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
+          <button
+              id="runStaticAnalysis"
+              className="btn btn-secondary btn-block"
+              onClick={() => {
+                handlePublishToStorage('ipfs')
+              }}
+            >
+              <CustomTooltip
+                placement={'auto-end'}
+                tooltipId="runStaticAnalysisTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={`${intl.formatMessage({
+                  id: 'solidity.runStaticAnalysis'
+                })}`}
+              >
+                <span>
+                  <FormattedMessage id="solidity.runStaticAnalysis" />
+                </span>
+              </CustomTooltip>
+            </button>
             <button
               id="publishOnIpfs"
               className="btn btn-secondary btn-block"
