@@ -248,7 +248,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
       </ModalDialog>
       <Toaster message={state.toasterMsg} />
       <div className="justify-content-start mt-1 p-2 d-flex flex-column" id="hTFileSection">
-        <div className="mb-3">
+        <div className="mb-1">
           {(state.recentWorkspaces[0] || state.recentWorkspaces[1] || state.recentWorkspaces[2]) && (
             <div className="d-flex flex-column mb-5 remixui_recentworkspace">
               <label style={{ fontSize: '0.8rem' }} className="mt-1">
@@ -272,7 +272,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
             </div>
           )}
         </div>
-        <div className="d-flex flex-column flex-nowrap pt-5">
+        <div className="d-flex flex-column flex-nowrap">
           <label style={{ fontSize: '1.2rem' }}>
             <FormattedMessage id="home.files" />
           </label>

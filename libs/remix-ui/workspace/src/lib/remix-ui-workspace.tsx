@@ -16,6 +16,7 @@ import { customAction } from '@remixproject/plugin-api'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
+import { showModalForIpfsImport } from './actions'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -49,6 +50,7 @@ export function Workspace() {
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
 
   const [canPaste, setCanPaste] = useState(false)
+  console.log('what is plugin here ', global.plugin.contentImport)
 
   const [state, setState] = useState<WorkSpaceState>({
     ctrlKey: false,
@@ -240,9 +242,7 @@ export function Workspace() {
     })
   }
 
-  const importFromIpfs = () => {
-    return ''
-  }
+  const importFromIpfs = () => showModalForIpfsImport()
 
   const importFromHttps = () => {
     return ''
