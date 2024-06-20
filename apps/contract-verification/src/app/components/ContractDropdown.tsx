@@ -18,13 +18,15 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({label, id}) =
   useEffect(() => {
     console.log('CompiilationOutput chainged', compilationOutput)
     if (!compilationOutput) return
-    const isOnlyOneFileCompiled = Object.keys(compilationOutput).length === 1
-    if (isOnlyOneFileCompiled) {
-      const onlyFileName = Object.keys(compilationOutput)[0]
-      const isOnlyOneContractCompiled = Object.keys(compilationOutput[onlyFileName].data.contracts[onlyFileName]).length === 1
-      if (isOnlyOneContractCompiled) {
-        const onlyContractName = Object.keys(compilationOutput[onlyFileName].data.contracts[onlyFileName])[0]
-        setSelectedContractFileAndName(onlyFileName + ':' + onlyContractName)
+    // Otherwise select the first by default
+    const triggerFilePath = Object.keys(compilationOutput)[0]
+    const contracts = compilationOutput[triggerFilePath]?.data?.contracts
+    if (contracts && Object.keys(contracts).length) {
+      const firstFilePath = Object.keys(contracts)[0]
+      const contractsInFile = contracts[firstFilePath]
+      if (contractsInFile && Object.keys(contractsInFile).length) {
+        const firstContractName = Object.keys(contractsInFile)[0]
+        setSelectedContractFileAndName(triggerFilePath + ':' + firstFilePath + ':' + firstContractName)
       }
     }
   }, [compilationOutput])
