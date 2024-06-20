@@ -255,6 +255,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     if (!isStaticAnalyzersActive) {
       await plugin.call('manager', 'activatePlugin', 'solidityStaticAnalysis')
     }
+    plugin.call('menuicons', 'select', 'solidityStaticAnalysis')
   }
 
   const handleScanContinue = async () => {
