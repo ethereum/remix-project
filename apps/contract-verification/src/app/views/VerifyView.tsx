@@ -15,6 +15,7 @@ export const VerifyView = () => {
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
+  const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = React.useState<string>('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -79,7 +80,7 @@ export const VerifyView = () => {
         }
       } else if (verifier instanceof EtherscanVerifier) {
         try {
-          const response = await verifier.verify(selectedChain?.chainId.toString(), contractAddress, compilerAbstract, selectedContractFileAndName)
+          const response = await verifier.verify(selectedChain?.chainId.toString(), contractAddress, compilerAbstract, selectedContractFileAndName, abiEncodedConstructorArgs)
           receipt.status = 'perfect'
         } catch (e) {
           const err = e as Error
@@ -152,7 +153,7 @@ export const VerifyView = () => {
             ))}
         </div>
         <div>
-          <ConstructorArguments />
+          <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} />
         </div>
       </form>
     </div>
