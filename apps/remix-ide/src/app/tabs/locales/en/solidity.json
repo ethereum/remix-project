@@ -53,6 +53,7 @@
   "solidity._comment_contract-selection.tsx": "libs/remix-ui/solidity-compiler/src/lib/contract-selection.tsx",
   "solidity.publishOn": "Publish on",
   "solidity.runStaticAnalysis": "Run Static Analysis",
+  "solidity.runSolidityScan": "Run Solidity Scan",
   "solidity.flatten": "Flatten contracts before UML generation.",
   "solidity.generateUML": "Generate a UML diagram of your contract.",
   "solidity.flattenLabel": "Flatten",
