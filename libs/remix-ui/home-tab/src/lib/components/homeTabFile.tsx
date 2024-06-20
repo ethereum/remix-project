@@ -146,16 +146,16 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
     await plugin.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false }) // calling once is not working.
     const content = `// SPDX-License-Identifier: MIT
-pragma solidity >=0.6.12 <0.9.0;
+        pragma solidity >=0.6.12 <0.9.0;
 
-contract HelloWorld {
-  /**
-   * @dev Prints Hello World string
-   */
-  function print() public pure returns (string memory) {
-    return "Hello World!";
-  }
-}
+        contract HelloWorld {
+          /**
+           * @dev Prints Hello World string
+           */
+          function print() public pure returns (string memory) {
+            return "Hello World!";
+          }
+        }
       `
     if (createFile) {
       const { newPath } = await plugin.call('fileManager', 'writeFileNoRewrite', '/contracts/HelloWorld.sol', content)
@@ -278,7 +278,7 @@ contract HelloWorld {
           </label>
           <div className="d-flex flex-column">
             <div className="d-flex flex-row">
-              <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.startCodingPlayground" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
+              <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.newFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
                 <button className="btn btn-primary text-nowrap p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={async () => await plugin.call('filePanel', 'createNewFile')}>
                   <FormattedMessage id="home.newFile" />
                 </button>
