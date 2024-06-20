@@ -37,9 +37,9 @@ export const VerifyView = () => {
   const handleVerify = async (e) => {
     e.preventDefault() // Don't change the page
 
-    const [filePath, contractName] = selectedContractFileAndName.split(':')
+    const [triggerFilePath, filePath, contractName] = selectedContractFileAndName.split(':')
     const enabledVerifiers = verifiers.filter((verifier) => verifier.enabled)
-    const compilerAbstract = compilationOutput[filePath]
+    const compilerAbstract = compilationOutput[triggerFilePath]
     if (!compilerAbstract) {
       throw new Error(`Error: Compilation output not found for ${selectedContractFileAndName}`)
     }

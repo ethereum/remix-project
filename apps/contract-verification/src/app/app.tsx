@@ -21,7 +21,8 @@ const App = () => {
   const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [targetFileName, setTargetFileName] = useState('')
   const [compilationOutput, setCompilationOutput] = useState<{[key: string]: CompilerAbstract} | undefined>()
-  // Contract file and name in format contracts/Storage.sol:Storage
+  // Contract file and name in format contracts/Storage.sol:contracts/Owner.sol:Owner
+  // TODO: What happens if contract or filepath contains ":"" ?
   const [selectedContractFileAndName, setSelectedContractFileAndName] = useState<string | undefined>()
   const [verifiers, setVerifiers] = useState<AbstractVerifier[]>([])
   const [submittedContracts, setSubmittedContracts] = useState<SubmittedContracts>({})
