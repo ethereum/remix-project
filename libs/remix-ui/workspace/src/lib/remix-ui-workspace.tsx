@@ -241,11 +241,11 @@ export function Workspace() {
   }
 
   const importFromIpfs = () => {
-
+    return ''
   }
 
   const importFromHttps = () => {
-
+    return ''
   }
 
   const cloneGitRepository = () => {
@@ -1093,7 +1093,8 @@ export function Workspace() {
                 <FileExplorer
                   fileState={global.fs.browser.fileState}
                   name={currentWorkspace}
-                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '']}
+                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '', 'importFromIpfs',
+                    'importFromHttps']}
                   contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                   removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                   files={global.fs.browser.files}
@@ -1145,6 +1146,8 @@ export function Workspace() {
                   createNewFolder={handleNewFolderInput}
                   deletePath={deletePath}
                   renamePath={editModeOn}
+                  importFromHttps={importFromHttps}
+                  importFromIpfs={importFromIpfs}
                 />
 
               )}
@@ -1209,6 +1212,8 @@ export function Workspace() {
                   deletePath={deletePath}
                   renamePath={editModeOn}
                   dragStatus={dragStatus}
+                  importFromHttps={importFromHttps}
+                  importFromIpfs={importFromIpfs}
                 />
               )}
             </div>
