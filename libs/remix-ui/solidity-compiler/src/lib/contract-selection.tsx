@@ -249,8 +249,13 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return bytecodeObj.object
   }
 
-  const runStaticAnalysis = () => {
-    console.log('runStaticAnalysis')
+  const runStaticAnalysis = async () => {
+    _paq.push(['trackEvent', 'solidityCompiler', 'runStaticAnalysis', 'initiate'])
+    const plugin = api as any
+    const isStaticAnalyzersActive = await plugin.call('manager', 'isActive', 'solidityStaticAnalysis')
+    if (!isStaticAnalyzersActive) {
+      await plugin.call('manager', 'activatePlugin', 'solidityStaticAnalysis')
+    }
   }
 
   const handleScanContinue = async () => {
