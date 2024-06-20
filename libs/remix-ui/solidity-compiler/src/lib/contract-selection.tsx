@@ -274,7 +274,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           <article className="mt-2 pb-0">
           <button
               id="runStaticAnalysis"
-              className="btn btn-secondary btn-block"
+              className="btn btn-outline-secondary btn-block"
               onClick={() => {
                 runStaticAnalysis()
               }}
@@ -294,7 +294,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </button>
             <button
               id="runSolidityScan"
-              className="btn btn-secondary btn-block"
+              className="btn btn-outline-secondary btn-block"
               onClick={() => {
                 runSolidityScan()
               }}
@@ -314,7 +314,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </button>
             <button
               id="publishOnIpfs"
-              className="btn btn-secondary btn-block"
+              className="btn btn-outline-secondary btn-block"
               onClick={() => {
                 handlePublishToStorage('ipfs')
               }}
@@ -337,7 +337,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </button>
             <button
               id="publishOnSwarm"
-              className="btn btn-secondary btn-block"
+              className="btn btn-outline-secondary btn-block"
               onClick={() => {
                 handlePublishToStorage('swarm')
               }}
@@ -367,7 +367,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             >
               <button
                 data-id="compilation-details"
-                className="btn btn-secondary btn-block"
+                className="btn btn-outline-secondary btn-block"
                 onClick={async () => {
                   details()
                   await (api as any).call('compilationDetails', 'showDetails', payload)
