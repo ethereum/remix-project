@@ -249,6 +249,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     console.log('runStaticAnalysis')
   }
 
+  const runSolidityScan = () => {
+    console.log('runSolidityScan')
+  }
+
   return (
     // define swarm logo
     <>
@@ -272,7 +276,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               id="runStaticAnalysis"
               className="btn btn-secondary btn-block"
               onClick={() => {
-                handlePublishToStorage('ipfs')
+                runStaticAnalysis()
               }}
             >
               <CustomTooltip
@@ -285,6 +289,26 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               >
                 <span>
                   <FormattedMessage id="solidity.runStaticAnalysis" />
+                </span>
+              </CustomTooltip>
+            </button>
+            <button
+              id="runSolidityScan"
+              className="btn btn-secondary btn-block"
+              onClick={() => {
+                runSolidityScan()
+              }}
+            >
+              <CustomTooltip
+                placement={'auto-end'}
+                tooltipId="runSolidityScanTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={`${intl.formatMessage({
+                  id: 'solidity.runSolidityScan'
+                })}`}
+              >
+                <span>
+                  <FormattedMessage id="solidity.runSolidityScan" />
                 </span>
               </CustomTooltip>
             </button>
