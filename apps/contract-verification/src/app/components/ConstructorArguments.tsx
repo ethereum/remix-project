@@ -5,10 +5,14 @@ import {AppContext} from '../AppContext'
 
 const abiCoder = new ethers.utils.AbiCoder()
 
-export const ConstructorArguments = () => {
+interface ConstructorArgumentsProps {
+  abiEncodedConstructorArgs: string
+  setAbiEncodedConstructorArgs: React.Dispatch<React.SetStateAction<string>>
+}
+
+export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({abiEncodedConstructorArgs, setAbiEncodedConstructorArgs}) => {
   const {selectedContractFileAndName, compilationOutput} = React.useContext(AppContext)
   const [constructorArgsValues, setConstructorArgsValues] = React.useState<string[]>([])
-  const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = React.useState<string>('')
   const [abiEncodingError, setAbiEncodingError] = React.useState<string | null>('')
   const [toggleRawInput, setToggleRawInput] = React.useState<boolean>(false)
 
