@@ -1,6 +1,6 @@
-import {CompilerAbstract} from '@remix-project/remix-solidity'
-import {SourcifyReceipt} from '../Receipts/SourcifyReceipt'
-import {EtherscanReceipt} from '../Receipts/EtherscanReceipt'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { SourcifyReceipt } from '../Receipts/SourcifyReceipt'
+import { EtherscanReceipt } from '../Receipts/EtherscanReceipt'
 
 export abstract class AbstractVerifier {
   name: string
