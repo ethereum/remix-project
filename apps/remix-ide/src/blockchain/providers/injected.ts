@@ -37,12 +37,13 @@ export class InjectedProvider {
     this.executionContext.web3().eth.getGasPrice().then((result => cb(null, result)))
   }
 
-  signMessage (message, account, _passphrase, cb) {
+  signMessage (message, account, passphrase, cb) {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
       message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
-      this.executionContext.web3().eth.personal.sign(message, account).then((error, signedData) => {
-        cb(error, bytesToHex(messageHash), signedData)
+      const password = passphrase || ''
+      this.executionContext.web3().eth.personal.sign(message, account, password).then((signedData) => {
+        cb(null, bytesToHex(messageHash), signedData)
       }).catch((error => cb(error)))
     } catch (e) {
       cb(e.message)
