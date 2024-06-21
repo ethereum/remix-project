@@ -412,7 +412,12 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                   runSolidityScan()
                 }}
               >
-                <FormattedMessage id="solidity.runSolidityScan" />
+                <span>
+                  <span>
+                    <FormattedMessage id="solidity.runSolidityScan" />
+                  </span>
+                  <img id="solscanLogo" className="remixui_storageLogo ml-2" src="assets/img/solidityScanLogo.webp" />
+                </span>
               </button>
             </CustomTooltip>
             <CustomTooltip
