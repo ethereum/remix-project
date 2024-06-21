@@ -1,5 +1,5 @@
 import { CustomTooltip } from '@remix-ui/helper'
-import React, {useState, useEffect, useContext} from 'react' //eslint-disable-line
+import React, {useState, useEffect, useContext, useRef, useReducer} from 'react' //eslint-disable-line
 import { FormattedMessage } from 'react-intl'
 import { Placement } from 'react-bootstrap/esm/Overlay'
 import { FileExplorerMenuProps } from '../types'
@@ -63,6 +63,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     ),
     actions: {}
   })
+
   const enableDirUpload = { directory: '', webkitdirectory: '' }
 
   return (
@@ -158,9 +159,9 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                       } else if (action === 'publishToGist' || action == 'updateGist') {
                         props.publishToGist()
                       } else if (action === 'importFromIpfs') {
-                        props.importFromIpfs()
+                        props.importFromIpfs('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')
                       } else if (action === 'importFromHttps') {
-                        props.importFromHttps()
+                        props.importFromHttps('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
                       } else {
                         state.actions[action]()
                       }

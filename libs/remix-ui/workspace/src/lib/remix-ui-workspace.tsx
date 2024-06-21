@@ -1,9 +1,10 @@
-import React, {useState, useEffect, useRef, useContext, ChangeEvent} from 'react' // eslint-disable-line
+import React, {useState, useEffect, useRef, useContext, ChangeEvent, useReducer} from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Dropdown } from 'react-bootstrap'
 import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import {FileExplorer} from './components/file-explorer' // eslint-disable-line
+import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
 import { ROOT_PATH, TEMPLATE_NAMES } from './utils/constants'
@@ -16,7 +17,6 @@ import { customAction } from '@remixproject/plugin-api'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
-import { showModalForIpfsImport } from './actions'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -105,6 +105,126 @@ export function Workspace() {
       ])
     }
   }, [canPaste])
+
+  const [modalState, setModalState] = useState<{
+    searchInput: string
+    showModalDialog: boolean
+    modalInfo: {
+      title: string
+      loadItem: string
+      examples: Array<string>
+      prefix?: string
+    }
+    importSource: string
+    toasterMsg: string
+    recentWorkspaces: Array<string>
+  }>({
+    searchInput: '',
+    showModalDialog: false,
+    modalInfo: { title: '', loadItem: '', examples: [], prefix: '' },
+    importSource: '',
+    toasterMsg: '',
+    recentWorkspaces: [],
+  })
+  const loadingInitialState = {
+    tooltip: '',
+    showModalDialog: false,
+    importSource: '',
+  }
+
+  const loadingReducer = (state = loadingInitialState, action) => {
+    return {
+      ...state,
+      tooltip: action.tooltip,
+      showModalDialog: false,
+      importSource: '',
+    }
+  }
+  const inputValue = useRef(null)
+  const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
+
+  const toast = (message: string) => {
+    setModalState((prevState) => {
+      return { ...prevState, toasterMsg: message }
+    })
+  }
+
+  const showFullMessage = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
+    console.log('showFullMessage')
+    setModalState((prevState) => {
+      return {
+        ...prevState,
+        showModalDialog: true,
+        modalInfo: {
+          title: title,
+          loadItem: loadItem,
+          examples: examples,
+          prefix,
+        },
+      }
+    })
+  }
+
+  const hideFullMessage = () => {
+    //eslint-disable-line
+    setState((prevState) => {
+      return { ...prevState, showModalDialog: false, importSource: '' }
+    })
+  }
+
+  const examples = modalState.modalInfo.examples.map((urlEl, key) => (
+    <div key={key} className="p-1 user-select-auto">
+      <a>{urlEl}</a>
+    </div>
+  ))
+
+  const processLoading = (type: string) => {
+    console.log('type', type)
+    _paq.push(['trackEvent', 'hometab', 'filesSection', 'importFrom' + type])
+    const contentImport = global.plugin.contentImport
+    const workspace = global.plugin.fileManager.getProvider('workspace')
+    const startsWith = modalState.importSource.substring(0, 4)
+    const d = { type } as any
+    d.importSource = modalState.importSource
+    console.log('type and importSource', d)
+    if ((type === 'ipfs' || type === 'IPFS') && startsWith !== 'ipfs' && startsWith !== 'IPFS') {
+      console.log('type and importSource', d)
+      setState((prevState) => {
+        return { ...prevState, importSource: startsWith + modalState.importSource }
+      })
+    }
+    contentImport.import(
+      modalState.modalInfo.prefix + modalState.importSource,
+      (loadingMsg) => dispatch({ tooltip: loadingMsg }),
+      async (error, content, cleanUrl, type, url) => {
+        if (error) {
+          toast(error.message || error)
+        } else {
+          try {
+            if (await workspace.exists(type + '/' + cleanUrl)) toast('File already exists in workspace')
+            else {
+              workspace.addExternal(type + '/' + cleanUrl, content, url)
+              global.plugin.call('menuicons', 'select', 'filePanel')
+            }
+          } catch (e) {
+            toast(e.message)
+          }
+        }
+      }
+    )
+    setModalState((prevState) => {
+      return { ...prevState, showModalDialog: false, importSource: '' }
+    })
+  }
+
+  /**
+   * show modal for either ipfs or https icons in file explorer menu
+   * @returns void
+   */
+  const importFromUrl = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
+    console.log('hi', { title, loadItem, examples, prefix })
+    showFullMessage(title, loadItem, examples, prefix)
+  }
 
   useEffect(() => {
     let workspaceName = localStorage.getItem('currentWorkspace')
@@ -240,11 +360,6 @@ export function Workspace() {
       return { ...prevState, actions }
     })
   }
-  /**
-   * show modal for either ipfs or https icons in file explorer menu
-   * @returns void
-   */
-  const importFromUrl = () => showModalForIpfsImport()
 
   const cloneGitRepository = () => {
     global.modal(
@@ -1344,6 +1459,36 @@ export function Workspace() {
           downloadPath={downloadPath}
         />
       )}
+      <ModalDialog id="homeTab" title={'Import from ' + modalState.modalInfo.title}
+        okLabel="Import" hide={!modalState.showModalDialog} handleHide={() => hideFullMessage()}
+        okFn={() => processLoading(modalState.modalInfo.title)}>
+        <div className="p-2 user-select-auto">
+          {modalState.modalInfo.loadItem !== '' && <span>Enter the {modalState.modalInfo.loadItem} you would like to load.</span>}
+          {modalState.modalInfo.examples.length !== 0 && (
+            <>
+              <div>e.g</div>
+              <div>{examples}</div>
+            </>
+          )}
+          <div className="d-flex flex-row">
+            {modalState.modalInfo.prefix && <span className="text-nowrap align-self-center mr-2">ipfs://</span>}
+            <input
+              ref={inputValue}
+              type="text"
+              name="prompt_text"
+              id="inputPrompt_text"
+              className="w-100 mt-1 form-control"
+              data-id="homeTabModalDialogCustomPromptText"
+              value={modalState.importSource}
+              onInput={(e) => {
+                setModalState((prevState) => {
+                  return { ...prevState, importSource: inputValue.current.value }
+                })
+              }}
+            />
+          </div>
+        </div>
+      </ModalDialog>
     </div>
   )
 }
