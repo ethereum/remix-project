@@ -167,7 +167,7 @@ export function Workspace() {
 
   const hideFullMessage = () => {
     //eslint-disable-line
-    setState((prevState) => {
+    setModalState((prevState) => {
       return { ...prevState, showModalDialog: false, importSource: '' }
     })
   }
