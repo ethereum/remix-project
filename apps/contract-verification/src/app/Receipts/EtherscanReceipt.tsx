@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react'
-import {EtherscanVerifier} from '../Verifiers/EtherscanVerifier'
-import {ReceiptProps} from './props'
+import React, { useState, useEffect } from 'react'
+import { EtherscanVerifier } from '../Verifiers/EtherscanVerifier'
+import { ReceiptProps } from './props'
 
-export const EtherscanReceipt: React.FC<ReceiptProps> = ({verifyPromise, address, chainId, verifier}) => {
+export const EtherscanReceipt: React.FC<ReceiptProps> = ({ verifyPromise, address, chainId, verifier }) => {
   const [status, setStatus] = useState<string | null>(null)
   const [submissionDate] = useState(new Date())
 

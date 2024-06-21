@@ -1,15 +1,15 @@
 import React from 'react'
-import {ThemeType} from './types'
-import {Chain, SubmittedContracts} from './types/VerificationTypes'
-import {CompilerAbstract} from '@remix-project/remix-solidity'
-import {AbstractVerifier} from './Verifiers/AbstractVerifier'
+import { ThemeType } from './types'
+import { Chain, SubmittedContracts } from './types/VerificationTypes'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { AbstractVerifier } from './Verifiers/AbstractVerifier'
 
 // Define the type for the context
 type AppContextType = {
   themeType: ThemeType
   setThemeType: (themeType: ThemeType) => void
   chains: Chain[]
-  compilationOutput: {[key: string]: CompilerAbstract} | undefined
+  compilationOutput: { [key: string]: CompilerAbstract } | undefined
   selectedContractFileAndName: string | undefined
   setSelectedContractFileAndName: React.Dispatch<React.SetStateAction<string>>
   targetFileName: string | undefined

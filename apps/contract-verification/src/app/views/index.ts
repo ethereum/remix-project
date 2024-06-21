@@ -1,1 +1,1 @@
-export {VerifyView} from './VerifyView'
+export { VerifyView } from './VerifyView'

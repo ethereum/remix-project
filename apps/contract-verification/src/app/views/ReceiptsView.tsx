@@ -1,8 +1,8 @@
 import React from 'react'
-import {AppContext} from '../AppContext'
+import { AppContext } from '../AppContext'
 import example from './example.js'
-import {AccordionReceipt} from '../components/AccordionReceipt'
-import {SubmittedContract} from '../types/VerificationTypes'
+import { AccordionReceipt } from '../components/AccordionReceipt'
+import { SubmittedContract } from '../types/VerificationTypes'
 
 export const ReceiptsView = () => {
   // const {submittedContracts} = React.useContext(AppContext);

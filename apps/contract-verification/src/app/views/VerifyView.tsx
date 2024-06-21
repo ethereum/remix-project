@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 
-import {AppContext} from '../AppContext'
-import {SearchableDropdown} from '../components'
-import {ContractDropdown} from '../components/ContractDropdown'
-import {ethers} from 'ethers/'
-import {Chain, SubmittedContract, VerificationReceipt} from '../types/VerificationTypes'
-import {SourcifyVerifier} from '../Verifiers/SourcifyVerifier'
-import {EtherscanVerifier} from '../Verifiers/EtherscanVerifier'
-import {useNavigate} from 'react-router-dom'
-import {ConstructorArguments} from '../components/ConstructorArguments'
+import { AppContext } from '../AppContext'
+import { SearchableDropdown } from '../components'
+import { ContractDropdown } from '../components/ContractDropdown'
+import { ethers } from 'ethers/'
+import { Chain, SubmittedContract, VerificationReceipt } from '../types/VerificationTypes'
+import { SourcifyVerifier } from '../Verifiers/SourcifyVerifier'
+import { EtherscanVerifier } from '../Verifiers/EtherscanVerifier'
+import { useNavigate } from 'react-router-dom'
+import { ConstructorArguments } from '../components/ConstructorArguments'
 
 export const VerifyView = () => {
-  const {chains, compilationOutput, verifiers, setVerifiers, selectedContractFileAndName, setSubmittedContracts} = React.useContext(AppContext)
+  const { chains, compilationOutput, verifiers, setVerifiers, selectedContractFileAndName, setSubmittedContracts } = React.useContext(AppContext)
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
@@ -49,7 +49,7 @@ export const VerifyView = () => {
 
     const date = new Date()
     // A receipt for each verifier
-    const receipts: VerificationReceipt[] = enabledVerifiers.map((verifier) => ({verifier, status: null, receiptId: null, message: null}))
+    const receipts: VerificationReceipt[] = enabledVerifiers.map((verifier) => ({ verifier, status: null, receiptId: null, message: null }))
     const newSubmittedContract: SubmittedContract = {
       id: selectedChain?.chainId + '-' + contractAddress + '-' + date.toString(),
       address: contractAddress,
@@ -60,7 +60,7 @@ export const VerifyView = () => {
       date,
       receipts,
     }
-    setSubmittedContracts((prev) => ({...prev, [newSubmittedContract.id]: newSubmittedContract}))
+    setSubmittedContracts((prev) => ({ ...prev, [newSubmittedContract.id]: newSubmittedContract }))
 
     console.log('newSubmittedContract:', newSubmittedContract)
 
@@ -69,7 +69,7 @@ export const VerifyView = () => {
 
     // Verify for each verifier. forEach does not wait for await and each promise will execute in parallel
     receipts.forEach(async (receipt) => {
-      const {verifier} = receipt
+      const { verifier } = receipt
       if (verifier instanceof SourcifyVerifier) {
         try {
           const response = await verifier.verify(selectedChain?.chainId.toString(), contractAddress, compilerAbstract, selectedContractFileAndName)
@@ -91,7 +91,7 @@ export const VerifyView = () => {
       }
 
       // Update the UI
-      setSubmittedContracts((prev) => ({...prev, [newSubmittedContract.id]: newSubmittedContract}))
+      setSubmittedContracts((prev) => ({ ...prev, [newSubmittedContract.id]: newSubmittedContract }))
     })
   }
 
@@ -112,7 +112,7 @@ export const VerifyView = () => {
     <div className="my-4">
       <div>
         <h2 className="text-center text-uppercase font-weight-bold">Verify</h2>
-        <p className="text-center" style={{fontSize: '0.8rem'}}>
+        <p className="text-center" style={{ fontSize: '0.8rem' }}>
           Verify compiled contracts on different verification services
         </p>
       </div>

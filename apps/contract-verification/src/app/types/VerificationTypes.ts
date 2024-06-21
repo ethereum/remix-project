@@ -1,7 +1,7 @@
-import {CompilerAbstract} from '@remix-project/remix-solidity'
-import {AbstractVerifier} from '../Verifiers/AbstractVerifier'
-import {SourcifyVerifier} from '../Verifiers/SourcifyVerifier'
-import {EtherscanVerifier} from '../Verifiers/EtherscanVerifier'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { AbstractVerifier } from '../Verifiers/AbstractVerifier'
+import { SourcifyVerifier } from '../Verifiers/SourcifyVerifier'
+import { EtherscanVerifier } from '../Verifiers/EtherscanVerifier'
 
 export type SourcifyVerificationStatus = 'perfect' | 'partial' | null
 

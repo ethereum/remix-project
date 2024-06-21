@@ -1,7 +1,7 @@
-import React, {useEffect} from 'react'
-import {ethers} from 'ethers'
+import React, { useEffect } from 'react'
+import { ethers } from 'ethers'
 
-import {AppContext} from '../AppContext'
+import { AppContext } from '../AppContext'
 
 const abiCoder = new ethers.utils.AbiCoder()
 
@@ -10,8 +10,8 @@ interface ConstructorArgumentsProps {
   setAbiEncodedConstructorArgs: React.Dispatch<React.SetStateAction<string>>
 }
 
-export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({abiEncodedConstructorArgs, setAbiEncodedConstructorArgs}) => {
-  const {selectedContractFileAndName, compilationOutput} = React.useContext(AppContext)
+export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiEncodedConstructorArgs, setAbiEncodedConstructorArgs }) => {
+  const { selectedContractFileAndName, compilationOutput } = React.useContext(AppContext)
   const [constructorArgsValues, setConstructorArgsValues] = React.useState<string[]>([])
   const [abiEncodingError, setAbiEncodingError] = React.useState<string | null>('')
   const [toggleRawInput, setToggleRawInput] = React.useState<boolean>(false)
@@ -101,7 +101,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({abiEn
               <label className="form-check-label" htmlFor="rawAbiEncodingResult">
                 ABI Encoded contructor arguments:
               </label>
-              <textarea className="form-control" rows={5} disabled value={abiEncodedConstructorArgs} id="rawAbiEncodingResult" style={{opacity: 0.5}} />
+              <textarea className="form-control" rows={5} disabled value={abiEncodedConstructorArgs} id="rawAbiEncodingResult" style={{ opacity: 0.5 }} />
             </div>
           )}
           {abiEncodingError && <div className="text-danger small">{abiEncodingError}</div>}

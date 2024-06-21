@@ -1,17 +1,17 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
-import {ContractVerificationPluginClient} from './ContractVerificationPluginClient'
+import { ContractVerificationPluginClient } from './ContractVerificationPluginClient'
 
-import {AppContext} from './AppContext'
+import { AppContext } from './AppContext'
 import DisplayRoutes from './routes'
-import {ThemeType} from './types'
+import { ThemeType } from './types'
 
 import './App.css'
-import {Chain, SubmittedContracts} from './types/VerificationTypes'
-import {CompilerAbstract} from '@remix-project/remix-solidity'
-import {SourcifyVerifier} from './Verifiers/SourcifyVerifier'
-import {EtherscanVerifier} from './Verifiers/EtherscanVerifier'
-import {AbstractVerifier} from './Verifiers/AbstractVerifier'
+import { Chain, SubmittedContracts } from './types/VerificationTypes'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { SourcifyVerifier } from './Verifiers/SourcifyVerifier'
+import { EtherscanVerifier } from './Verifiers/EtherscanVerifier'
+import { AbstractVerifier } from './Verifiers/AbstractVerifier'
 
 const plugin = new ContractVerificationPluginClient()
 
@@ -20,7 +20,7 @@ const App = () => {
   // TODO: Types for chains
   const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [targetFileName, setTargetFileName] = useState('')
-  const [compilationOutput, setCompilationOutput] = useState<{[key: string]: CompilerAbstract} | undefined>()
+  const [compilationOutput, setCompilationOutput] = useState<{ [key: string]: CompilerAbstract } | undefined>()
   // Contract file and name in format contracts/Storage.sol:contracts/Owner.sol:Owner
   // TODO: What happens if contract or filepath contains ":"" ?
   const [selectedContractFileAndName, setSelectedContractFileAndName] = useState<string | undefined>()
@@ -46,10 +46,10 @@ const App = () => {
     })
 
     // Subscribe to compilations
-    plugin.on('compilerArtefacts' as any, 'compilationSaved', (compilerAbstract: {[key: string]: CompilerAbstract}) => {
+    plugin.on('compilerArtefacts' as any, 'compilationSaved', (compilerAbstract: { [key: string]: CompilerAbstract }) => {
       console.log('compilerArtefacts.compilationSaved')
       console.log(compilerAbstract)
-      setCompilationOutput((prev) => ({...(prev || {}), ...compilerAbstract}))
+      setCompilationOutput((prev) => ({ ...(prev || {}), ...compilerAbstract }))
     })
 
     // TODO: Is there a way to get all compilations from the `build-info` files without having to compile again?
@@ -67,7 +67,7 @@ const App = () => {
   }, [])
 
   return (
-    <AppContext.Provider value={{themeType, setThemeType, chains, compilationOutput, selectedContractFileAndName, setSelectedContractFileAndName, targetFileName, verifiers, setVerifiers, submittedContracts, setSubmittedContracts}}>
+    <AppContext.Provider value={{ themeType, setThemeType, chains, compilationOutput, selectedContractFileAndName, setSelectedContractFileAndName, targetFileName, verifiers, setVerifiers, submittedContracts, setSubmittedContracts }}>
       <DisplayRoutes />
     </AppContext.Provider>
   )

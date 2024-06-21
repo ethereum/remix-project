@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {NavLink} from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 interface NavItemProps {
   to: string
@@ -8,12 +8,12 @@ interface NavItemProps {
   title: string
 }
 
-const NavItem = ({to, icon, title}: NavItemProps) => {
+const NavItem = ({ to, icon, title }: NavItemProps) => {
   return (
     <NavLink
       // data-id="home"
       to={to}
-      className={({isActive}) => 'p-2 ' + (isActive ? 'bg-primary text-white' : 'bg-secondary')}
+      className={({ isActive }) => 'p-2 ' + (isActive ? 'bg-primary text-white' : 'bg-secondary')}
       // state={from}
     >
       <div className="d-flex flex-column align-items-center justify-content-center">

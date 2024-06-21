@@ -1,7 +1,7 @@
-import {CompilerAbstract} from '@remix-project/remix-solidity'
-import {AbstractVerifier} from './AbstractVerifier'
-import {EtherscanReceipt} from '../Receipts/EtherscanReceipt'
-import {EtherscanRequest, EtherscanResponse} from '../types/VerificationTypes'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { AbstractVerifier } from './AbstractVerifier'
+import { EtherscanReceipt } from '../Receipts/EtherscanReceipt'
+import { EtherscanRequest, EtherscanResponse } from '../types/VerificationTypes'
 
 export class EtherscanVerifier extends AbstractVerifier {
   apiKey: string

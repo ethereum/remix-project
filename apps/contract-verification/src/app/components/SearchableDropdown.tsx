@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Fuse from 'fuse.js'
-import {Chain} from '../types/VerificationTypes'
+import { Chain } from '../types/VerificationTypes'
 
 interface DropdownProps {
   label: string
@@ -10,7 +10,7 @@ interface DropdownProps {
   selectedChain: Chain
 }
 
-export const SearchableDropdown: React.FC<DropdownProps> = ({chains, label, id, setSelectedChain, selectedChain}) => {
+export const SearchableDropdown: React.FC<DropdownProps> = ({ chains, label, id, setSelectedChain, selectedChain }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [filteredOptions, setFilteredOptions] = useState<Chain[]>(chains)
@@ -26,7 +26,7 @@ export const SearchableDropdown: React.FC<DropdownProps> = ({chains, label, id, 
       setFilteredOptions(chains)
     } else {
       const result = fuse.search(searchTerm)
-      setFilteredOptions(result.map(({item}) => item))
+      setFilteredOptions(result.map(({ item }) => item))
     }
   }, [searchTerm, chains])
 
@@ -75,9 +75,9 @@ export const SearchableDropdown: React.FC<DropdownProps> = ({chains, label, id, 
       <label htmlFor={id}>{label}</label>
       <input type="text" value={searchTerm} onChange={handleInputChange} onClick={openDropdown} placeholder="Select a chain" className="form-control" />
       {isOpen && (
-        <ul className="dropdown-menu show w-100" style={{maxHeight: '400px', overflowY: 'auto'}}>
+        <ul className="dropdown-menu show w-100" style={{ maxHeight: '400px', overflowY: 'auto' }}>
           {filteredOptions.map((chain) => (
-            <li key={chain.chainId} onClick={() => handleOptionClick(chain)} className={`dropdown-item ${selectedChain?.chainId === chain.chainId ? 'active' : ''}`} style={{cursor: 'pointer', whiteSpace: 'normal'}}>
+            <li key={chain.chainId} onClick={() => handleOptionClick(chain)} className={`dropdown-item ${selectedChain?.chainId === chain.chainId ? 'active' : ''}`} style={{ cursor: 'pointer', whiteSpace: 'normal' }}>
               {chain.title || chain.name} ({chain.chainId})
             </li>
           ))}
