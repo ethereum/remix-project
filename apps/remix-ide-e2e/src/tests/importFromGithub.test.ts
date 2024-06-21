@@ -22,11 +22,11 @@ module.exports = {
       .waitForElementVisible('button[data-id="landingPageImportFromGitHubButton"]')
       .pause(1000)
       .click('button[data-id="landingPageImportFromGitHubButton"]')
-      .waitForElementVisible('*[data-id="homeTabModalDialogModalTitle-react"]')
+      .waitForElementVisible('*[data-id="fileSystemModalDialogModalTitle-react"]')
       .assert.containsText('*[data-id="homeTabModalDialogModalTitle-react"]', 'Import from GitHub')
-      .waitForElementVisible('*[data-id="homeTabModalDialogModalBody-react"]')
-      .assert.containsText('*[data-id="homeTabModalDialogModalBody-react"]', 'Enter the github URL you would like to load.')
-      .waitForElementVisible('input[data-id="homeTabModalDialogCustomPromptText"]')
+      .waitForElementVisible('*[data-id="fileSystemModalDialogModalBody-react"]')
+      .assert.containsText('*[data-id="fileSystemModalDialogModalBody-react"]', 'Enter the github URL you would like to load.')
+      .waitForElementVisible('input[data-id="modalDialogCustomPromptTextClone"]')
   },
 
   'Display Error Message For Invalid GitHub URL Modal #group1': function (browser: NightwatchBrowser) {
@@ -35,8 +35,8 @@ module.exports = {
         (document.querySelector('input[data-id="homeTabModalDialogCustomPromptText"]') as any).focus()
       }, [], () => { })
       .setValue('input[data-id="homeTabModalDialogCustomPromptText"]', testData.invalidURL)
-      .waitForElementVisible('*[data-id="homeTab-modal-footer-ok-react"]')
-      .click('[data-id="homeTab-modal-footer-ok-react"]') // submitted
+      .waitForElementVisible('*[data-id="cloneGitRepositoryModalDialogModalFooter-react"]')
+      .click('[data-id="cloneGitRepository-modal-footer-ok-react"]') // submitted
       //.waitForElementVisible('*[data-shared="tooltipPopup"]')
       //.waitForElementContainsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
   },
