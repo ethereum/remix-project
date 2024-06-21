@@ -39,6 +39,7 @@ export const VerifyView = () => {
   const handleVerify = async (e) => {
     e.preventDefault() // Don't change the page
 
+    console.log('selectedContractFileAndName', selectedContractFileAndName)
     const [triggerFilePath, filePath, contractName] = selectedContractFileAndName.split(':')
     const enabledVerifiers = verifiers.filter((verifier) => verifier.enabled)
     const compilerAbstract = compilationOutput[triggerFilePath]
