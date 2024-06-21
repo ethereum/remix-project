@@ -1,9 +1,9 @@
 import React from 'react'
-import {HashRouter as Router, Route, Routes} from 'react-router-dom'
+import { HashRouter as Router, Route, Routes } from 'react-router-dom'
 
-import {VerifyView} from './views'
-import {DefaultLayout} from './layouts'
-import {ReceiptsView} from './views/ReceiptsView'
+import { VerifyView } from './views'
+import { DefaultLayout } from './layouts'
+import { ReceiptsView } from './views/ReceiptsView'
 
 const DisplayRoutes = () => (
   <Router>
