@@ -150,7 +150,6 @@ export function Workspace() {
   }
 
   const showFullMessage = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
-    console.log('showFullMessage')
     setModalState((prevState) => {
       return {
         ...prevState,
@@ -179,16 +178,11 @@ export function Workspace() {
   ))
 
   const processLoading = (type: string) => {
-    console.log('type', type)
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'importFrom' + type])
     const contentImport = global.plugin.contentImport
     const workspace = global.plugin.fileManager.getProvider('workspace')
     const startsWith = modalState.importSource.substring(0, 4)
-    const d = { type } as any
-    d.importSource = modalState.importSource
-    console.log('type and importSource', d)
     if ((type === 'ipfs' || type === 'IPFS') && startsWith !== 'ipfs' && startsWith !== 'IPFS') {
-      console.log('type and importSource', d)
       setState((prevState) => {
         return { ...prevState, importSource: startsWith + modalState.importSource }
       })
@@ -222,7 +216,6 @@ export function Workspace() {
    * @returns void
    */
   const importFromUrl = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
-    console.log('hi', { title, loadItem, examples, prefix })
     showFullMessage(title, loadItem, examples, prefix)
   }
 
