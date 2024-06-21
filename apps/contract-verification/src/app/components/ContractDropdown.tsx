@@ -1,6 +1,6 @@
-import React, {useEffect, useState, useContext} from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import './ContractDropdown.css'
-import {AppContext} from '../AppContext'
+import { AppContext } from '../AppContext'
 interface ContractDropdownItem {
   value: string
   name: string
@@ -12,8 +12,8 @@ interface ContractDropdownProps {
 }
 
 // Chooses one contract from the compilation output.
-export const ContractDropdown: React.FC<ContractDropdownProps> = ({label, id}) => {
-  const {setSelectedContractFileAndName, compilationOutput} = useContext(AppContext)
+export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id }) => {
+  const { setSelectedContractFileAndName, compilationOutput } = useContext(AppContext)
 
   useEffect(() => {
     console.log('CompiilationOutput chainged', compilationOutput)
@@ -47,7 +47,7 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({label, id}) =
             <optgroup key={compilationTriggerFileName} label={`[Compilation Trigger File]: ${compilationTriggerFileName}`}>
               {Object.keys(compilationOutput[compilationTriggerFileName].data.contracts).map((fileName2) => (
                 <>
-                  <option disabled style={{fontWeight: 'bold'}}>
+                  <option disabled style={{ fontWeight: 'bold' }}>
                     [File]: {fileName2}
                   </option>
                   {Object.keys(compilationOutput[compilationTriggerFileName].data.contracts[fileName2]).map((contractName) => (

@@ -1,7 +1,7 @@
-import {CompilerAbstract, SourcesCode} from '@remix-project/remix-solidity'
-import {AbstractVerifier} from './AbstractVerifier'
-import {SourcifyReceipt} from '../Receipts/SourcifyReceipt'
-import {SourcifyVerificationError, SourcifyVerificationResponse} from '../types/VerificationTypes'
+import { CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity'
+import { AbstractVerifier } from './AbstractVerifier'
+import { SourcifyReceipt } from '../Receipts/SourcifyReceipt'
+import { SourcifyVerificationError, SourcifyVerificationResponse } from '../types/VerificationTypes'
 
 export class SourcifyVerifier extends AbstractVerifier {
   constructor(apiUrl: string, name: string = 'Sourcify') {
@@ -21,7 +21,7 @@ export class SourcifyVerifier extends AbstractVerifier {
 
     // from { "filename.sol": {content: "contract MyContract { ... }"} }
     // to { "filename.sol": "contract MyContract { ... }" }
-    const formattedSources = Object.entries(sources).reduce((acc, [fileName, {content}]) => {
+    const formattedSources = Object.entries(sources).reduce((acc, [fileName, { content }]) => {
       acc[fileName] = content
       return acc
     }, {})

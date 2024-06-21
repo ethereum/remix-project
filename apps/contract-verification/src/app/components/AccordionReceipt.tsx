@@ -1,12 +1,12 @@
 import React from 'react'
-import {SubmittedContract} from '../types/VerificationTypes'
+import { SubmittedContract } from '../types/VerificationTypes'
 
 interface AccordionReceiptProps {
   contract: SubmittedContract
   index: number
 }
 
-export const AccordionReceipt: React.FC<AccordionReceiptProps> = ({contract, index}) => {
+export const AccordionReceipt: React.FC<AccordionReceiptProps> = ({ contract, index }) => {
   const [expanded, setExpanded] = React.useState(false)
 
   const toggleAccordion = () => {
