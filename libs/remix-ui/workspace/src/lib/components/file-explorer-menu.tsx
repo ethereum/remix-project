@@ -160,7 +160,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                       } else if (action === 'importFromIpfs') {
                         props.importFromIpfs()
                       } else if (action === 'importFromHttps') {
-                        props.importFromHttps
+                        props.importFromHttps()
                       } else {
                         state.actions[action]()
                       }
