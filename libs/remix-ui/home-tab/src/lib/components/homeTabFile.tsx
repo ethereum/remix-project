@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useRef, useReducer, useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
-import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
 import {Toaster} from '@remix-ui/toaster' // eslint-disable-line
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 import { CustomTooltip } from '@remix-ui/helper'
-import { TEMPLATE_NAMES } from '@remix-ui/workspace'
 
 interface HomeTabFileProps {
   plugin: any
