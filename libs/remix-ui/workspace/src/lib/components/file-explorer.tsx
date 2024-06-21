@@ -414,4 +414,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
   )
 }
 
+export const MessageWrapper = () => {
+  return (
+    <p>e.g ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH</p>
+  )
+}
+
 export default FileExplorer

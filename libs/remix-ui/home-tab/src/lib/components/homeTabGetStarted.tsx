@@ -43,17 +43,17 @@ const workspaceTemplates: WorkspaceTemplate[] = [
   },
   {
     gsID: 'sUTLogo',
-    workspaceTitle: 'Uniswap V4 Basic Hook',
-    description: 'Create a new MultiSig wallet using this template.',
-    projectLogo: 'assets/img/gnosissafeLogo.png',
-    templateName: 'uniswapV4Template',
-  },
-  {
-    gsID: 'sUTLogo',
     workspaceTitle: 'ERC20',
     description: 'Create a new ERC20 token using this template.',
     projectLogo: 'assets/img/oxprojectLogo.png',
     templateName: 'ozerc20',
+  },
+  {
+    gsID: 'sUTLogo',
+    workspaceTitle: 'Uniswap V4 Basic',
+    description: 'Create a new MultiSig wallet using this template.',
+    projectLogo: 'assets/img/gnosissafeLogo.png',
+    templateName: 'uniswapV4Template',
   },
   {
     gsID: 'sUTLogo',
