@@ -391,32 +391,27 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
               />
             </label>
           )}
-        </div>
-        {props.remixdActivated ? (
-          <CustomTooltip
-            placement={'right'}
-            tooltipClasses="text-wrap text-left"
-            tooltipId="info-sync-compiled-contract"
-            tooltipText={
-              <span className="text-left">
-                <FormattedMessage id="udapp.infoSyncCompiledContractTooltip" values={{ br: <br /> }} />
-              </span>
-            }
-          >
-            <button
-              className="btn d-flex py-0"
-              onClick={(_) => {
+          {props.remixdActivated ? (
+            <CustomTooltip
+              placement={'right'}
+              tooltipClasses="text-wrap text-left"
+              tooltipId="info-sync-compiled-contract"
+              tooltipText={
+                <span className="text-left">
+                  <FormattedMessage id="udapp.infoSyncCompiledContractTooltip" values={{ br: <br /> }} />
+                </span>
+              }
+            >
+              <i style={{ cursor: 'pointer' }} onClick={(_) => {
                 props.syncContracts()
                 _paq.push(['trackEvent', 'udapp', 'syncContracts', compilationSource ? compilationSource : 'compilationSourceNotYetSet'])
-              }}
-            >
-              <i style={{ cursor: 'pointer' }} className="fa fa-refresh mr-2 mt-2" aria-hidden="true"></i>
-            </button>
-          </CustomTooltip>
-        ) : null}
+              }} className="udapp_syncFramework udapp_icon fa fa-refresh" aria-hidden="true"></i>
+            </CustomTooltip>
+          ) : null}
+        </div>
       </div>
       <div className="udapp_subcontainer">
-        <CustomTooltip placement={'right'} tooltipClasses="text-nowrap text-left" tooltipId="remixUdappContractNamesTooltip" tooltipText={contractOptions.title}>
+        <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap text-left" tooltipId="remixUdappContractNamesTooltip" tooltipText={contractOptions.title}>
           <select
             ref={contractsRef}
             value={currentContract}
@@ -447,7 +442,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
       </div>
       {evmVersion && loadedContractData && (
         <CustomTooltip
-          placement={'right'}
+          placement={'auto-end'}
           tooltipClasses="text-wrap text-left"
           tooltipId="info-evm-version-warn"
           tooltipText={
@@ -483,6 +478,9 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 isValidProxyUpgrade={isValidProxyUpgrade}
                 modal={props.modal}
                 disabled={props.selectedAccount === ''}
+                solcVersion={props.solCompilerVersion}
+                setSolcVersion={props.setCompilerVersion}
+                getVersion={props.getCompilerVersion}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input
@@ -494,7 +492,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                   checked={props.ipfsCheckedState}
                 />
                 <CustomTooltip
-                  placement={'right'}
+                  placement={'auto-end'}
                   tooltipClasses="text-wrap text-left"
                   tooltipId="remixIpfsUdappTooltip"
                   tooltipText={

@@ -69,7 +69,7 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
 
   return (
     <div id="iconsP" className="h-100">
-      <div className="remixui_icons d-flex flex-column vh-100" ref={iconPanelRef}>
+      <div className="remixui_icons d-flex flex-column remixui_icons_height" ref={iconPanelRef}>
         <Home verticalIconPlugin={verticalIconsPlugin} />
         <div
           className={

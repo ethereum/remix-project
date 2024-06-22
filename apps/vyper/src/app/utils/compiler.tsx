@@ -1,8 +1,7 @@
-import { ABIDescription} from '@remixproject/plugin-api'
+import { ABIDescription } from '@remixproject/plugin-api'
 import axios from 'axios'
 import { remixClient } from './remix-client'
 import _ from 'lodash'
-
 
 export interface Contract {
   name: string
@@ -72,8 +71,8 @@ const buildError = (output) => {
     const line = output.line
     if (line) {
       const lineColumnPos = {
-        start: {line: line - 1, column: 10},
-        end: {line: line - 1, column: 10}
+        start: { line: line - 1, column: 10 },
+        end: { line: line - 1, column: 10 }
       }
       // remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
     } else {
@@ -92,8 +91,8 @@ const buildError = (output) => {
           }
           if (location?.length > 0) {
             const lineColumnPos = {
-              start: {line: parseInt(location[0]) - 1, column: 10},
-              end: {line: parseInt(location[0]) - 1, column: 10}
+              start: { line: parseInt(location[0]) - 1, column: 10 },
+              end: { line: parseInt(location[0]) - 1, column: 10 }
             }
             // remixClient.highlight(lineColumnPos as any, _contract.name, message)
           }
@@ -175,13 +174,11 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     throw new Error('Use extension .vy for Vyper.')
   }
 
-
-
   let contractName = contract['name']
   const compilePackage = {
     manifest: 'ethpm/3',
     sources: {
-      [contractName] : {content : fixContractContent(contract.content)}
+      [contractName] : { content : fixContractContent(contract.content) }
     }
   }
   let response = await axios.post(`${url}compile`, compilePackage )
@@ -266,7 +263,6 @@ export function toStandardOutput(fileName: string, compilationResult: any): any 
   }
 }
 
-
 export async function compileContract(contract: string, compilerUrl: string, setOutput?: any, setLoadingSpinnerState?: React.Dispatch<React.SetStateAction<boolean>>, spinner?: boolean) {
   remixClient.eventEmitter.emit('resetCompilerState', {})
   spinner && spinner === true ? setLoadingSpinnerState && setLoadingSpinnerState(true) : null
@@ -301,7 +297,7 @@ export async function compileContract(contract: string, compilerUrl: string, set
       })
 
       setLoadingSpinnerState && setLoadingSpinnerState(false)
-      remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: output.message, title: 'Error compiling...', line: output.line, column: output.column, key: 1 })
+      remixClient.eventEmitter.emit('setOutput', { status: 'failed', message: output.message, title: 'Error compiling...', line: output.line, column: output.column, key: 1 })
       output = null
       return
     }
@@ -332,12 +328,9 @@ export async function compileContract(contract: string, compilerUrl: string, set
     })
 
     setLoadingSpinnerState && setLoadingSpinnerState(false)
-    remixClient.eventEmitter.emit('setOutput', {status: 'failed', message: err.message})
+    remixClient.eventEmitter.emit('setOutput', { status: 'failed', message: err.message })
   }
 }
-
-
-
 
 export type StandardOutput = {
   sources: {

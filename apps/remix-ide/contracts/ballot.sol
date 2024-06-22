@@ -60,7 +60,7 @@ contract Ballot {
             !voters[voter].voted,
             "The voter already voted."
         );
-        require(voters[voter].weight == 0);
+        require(voters[voter].weight == 0, "Voter already has the right to vote.");
         voters[voter].weight = 1;
     }
 
@@ -101,6 +101,7 @@ contract Ballot {
         Voter storage sender = voters[msg.sender];
         require(sender.weight != 0, "Has no right to vote");
         require(!sender.voted, "Already voted.");
+        require(proposal < proposals.length, "Invalid proposal index.");
         sender.voted = true;
         sender.vote = proposal;
 

@@ -29,16 +29,19 @@ export default function SolidityCompile({ contractProperties, selectedContract, 
               </span>
             )
             const questionMark = (
-              <span className="remixui_questionMark">
-                <i
-                  title={intl.formatMessage({
-                    id: `solidity.${propertyName}`,
-                    defaultMessage: help[propertyName]
-                  })}
-                  className="fas fa-question-circle"
-                  aria-hidden="true"
-                ></i>
-              </span>
+              <CustomTooltip
+                tooltipText={intl.formatMessage({
+                  id: `solidity.${propertyName}`,
+                  defaultMessage: help[propertyName]
+                })}
+              >
+                <span className="remixui_questionMark">
+                  <i
+                    className="fas fa-info-circle"
+                    aria-hidden="true"
+                  ></i>
+                </span>
+              </CustomTooltip>
             )
 
             return (

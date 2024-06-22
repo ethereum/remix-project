@@ -1,11 +1,17 @@
+import { signTypedData, SignTypedDataVersion, TypedMessage, MessageTypes } from '@metamask/eth-sig-util'
 import { privateToAddress, toChecksumAddress, isValidPrivate, Address, toBytes, bytesToHex, Account } from '@ethereumjs/util'
 import { privateKeyToAccount } from 'web3-eth-accounts'
 import { toBigInt } from 'web3-utils'
 import * as crypto from 'crypto'
 
+type AccountType = {
+  nonce: number,
+  privateKey: Uint8Array
+}
+
 export class Web3Accounts {
-  accounts: Record<string, unknown>
-  accountsKeys: Record<string, unknown>
+  accounts: Record<string, AccountType>
+  accountsKeys: Record<string, string>
   vmContext
 
   constructor (vmContext) {
@@ -73,7 +79,9 @@ export class Web3Accounts {
       eth_accounts: this.eth_accounts.bind(this),
       eth_getBalance: this.eth_getBalance.bind(this),
       eth_sign: this.eth_sign.bind(this),
-      eth_chainId: this.eth_chainId.bind(this)
+      eth_chainId: this.eth_chainId.bind(this),
+      eth_signTypedData: this.eth_signTypedData_v4.bind(this), // default call is using V4
+      eth_signTypedData_v4: this.eth_signTypedData_v4.bind(this)
     }
   }
 
@@ -107,5 +115,50 @@ export class Web3Accounts {
 
   eth_chainId (_payload, cb) {
     return cb(null, '0x539') // 0x539 is hex of 1337
+  }
+
+  eth_signTypedData_v4 (payload, cb) {
+    const address: string = payload.params[0]
+    const typedData: TypedMessage<MessageTypes> = payload.params[1]
+
+    try {
+      if (this.accounts[toChecksumAddress(address)] == null) {
+        throw new Error("cannot sign data; no private key");
+      }
+
+      if (typeof typedData === "string") {
+        throw new Error("cannot sign data; string sent, expected object");
+      }
+
+      if (!typedData.types) {
+        throw new Error("cannot sign data; types missing");
+      }
+
+      if (!typedData.types.EIP712Domain) {
+        throw new Error("cannot sign data; EIP712Domain definition missing");
+      }
+
+      if (!typedData.domain) {
+        throw new Error("cannot sign data; domain missing");
+      }
+
+      if (!typedData.primaryType) {
+        throw new Error("cannot sign data; primaryType missing");
+      }
+
+      if (!typedData.message) {
+        throw new Error("cannot sign data; message missing");
+      }
+
+      const ret = signTypedData({
+        privateKey: Buffer.from(this.accounts[toChecksumAddress(address)].privateKey),
+        data: typedData,
+        version: SignTypedDataVersion.V4
+      })
+
+      cb(null, ret)
+    } catch (e) {
+      cb(e.message)
+    }
   }
 }

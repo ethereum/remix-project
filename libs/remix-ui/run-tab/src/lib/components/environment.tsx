@@ -24,12 +24,12 @@ export function EnvironmentUI(props: EnvironmentProps) {
       <label id="selectExEnv" className="udapp_settingsLabel">
         <FormattedMessage id="udapp.environment" />
 
-        <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText2" />}>
+        <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText2" />}>
           <a href="https://chainlist.org/" target="_blank">
             <i className={'ml-2 fas fa-plug'} aria-hidden="true"></i>
           </a>
         </CustomTooltip>
-        <CustomTooltip placement={'right'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip" tooltipText={<FormattedMessage id="udapp.environmentDocs" />}>
+        <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip" tooltipText={<FormattedMessage id="udapp.environmentDocs" />}>
           <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer">
             <i className="udapp_infoDeployAction ml-2 fas fa-info-circle"></i>
           </a>
@@ -41,7 +41,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
             {isL2(currentProvider && currentProvider.displayName)}
             {currentProvider && currentProvider.displayName}
             {currentProvider && bridges[currentProvider.displayName] && (
-              <CustomTooltip placement={'right'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
+              <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
                 <i
                   style={{ fontSize: 'medium' }}
                   className={'ml-2 fa fa-rocket-launch'}

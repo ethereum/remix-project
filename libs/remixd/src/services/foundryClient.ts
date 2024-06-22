@@ -1,5 +1,6 @@
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 import * as chokidar from 'chokidar'
 import * as utils from '../utils'
 import * as fs from 'fs-extra'
@@ -115,9 +116,11 @@ export class FoundryClient extends PluginClient {
             contracts: {},
             sources: {}
           },
+          inputSources: { sources: {}, target: '' },
           solcVersion: null,
           compilationTarget: null
         }
+        compilationResult.inputSources.target = file
         await this.readContract(path, compilationResult, cache)
         this.emit('compilationFinished', compilationResult.compilationTarget, { sources: compilationResult.input }, 'soljson', compilationResult.output, compilationResult.solcVersion)
       }
@@ -125,7 +128,7 @@ export class FoundryClient extends PluginClient {
       clearTimeout(this.logTimeout)
       this.logTimeout = setTimeout(() => {
         // @ts-ignore
-        this.call('terminal', 'log', { type: 'log', value: `receiving compilation result from Foundry` })
+        this.call('terminal', 'log', { type: 'log', value: `receiving compilation result from Foundry. Select a file to populate the contract interaction interface.` })
         console.log('Syncing compilation result from Foundry')
       }, 1000)
 
@@ -155,10 +158,10 @@ export class FoundryClient extends PluginClient {
 
   async readContract(contractFolder, compilationResultPart, cache) {
     const files = await fs.readdir(contractFolder)
-
     for (const file of files) {
       const path = join(contractFolder, file)
       const content = await fs.readFile(path, { encoding: 'utf-8' })
+      compilationResultPart.inputSources.sources[file] = { content }
       await this.feedContractArtifactFile(file, content, compilationResultPart, cache)
     }
   }
@@ -167,7 +170,19 @@ export class FoundryClient extends PluginClient {
     const contentJSON = JSON.parse(content)
     const contractName = basename(path).replace('.json', '')
 
-    const currentCache = cache.files[contentJSON.ast.absolutePath]
+    let sourcePath = ''
+    if (contentJSON?.metadata?.settings?.compilationTarget) {
+      for (const key in contentJSON.metadata.settings.compilationTarget) {
+        if (contentJSON.metadata.settings.compilationTarget[key] === contractName) {
+          sourcePath = key
+          break
+        }
+      }
+    }
+
+    if (!sourcePath) return
+
+    const currentCache = cache.files[sourcePath]
     if (!currentCache.artifacts[contractName]) return
 
     // extract source and version
@@ -193,18 +208,18 @@ export class FoundryClient extends PluginClient {
       console.log('\x1b[32m%s\x1b[0m', 'sources input not found, please update Foundry to the latest version.')
     }
 
-    compilationResultPart.compilationTarget = contentJSON.ast.absolutePath
+    compilationResultPart.compilationTarget = sourcePath
     // extract data
-    if (!compilationResultPart.output['sources'][contentJSON.ast.absolutePath]) compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {}
-    compilationResultPart.output['sources'][contentJSON.ast.absolutePath] = {
+    if (!compilationResultPart.output['sources'][sourcePath]) compilationResultPart.output['sources'][sourcePath] = {}
+    compilationResultPart.output['sources'][sourcePath] = {
       ast: contentJSON['ast'],
       id: contentJSON['id']
     }
-    if (!compilationResultPart.output['contracts'][contentJSON.ast.absolutePath]) compilationResultPart.output['contracts'][contentJSON.ast.absolutePath] = {}
+    if (!compilationResultPart.output['contracts'][sourcePath]) compilationResultPart.output['contracts'][sourcePath] = {}
 
     contentJSON.bytecode.object = contentJSON.bytecode.object.replace('0x', '')
     contentJSON.deployedBytecode.object = contentJSON.deployedBytecode.object.replace('0x', '')
-    compilationResultPart.output['contracts'][contentJSON.ast.absolutePath][contractName] = {
+    compilationResultPart.output['contracts'][sourcePath][contractName] = {
       abi: contentJSON.abi,
       evm: {
         bytecode: contentJSON.bytecode,
