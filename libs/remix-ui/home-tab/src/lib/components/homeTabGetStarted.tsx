@@ -51,7 +51,7 @@ const workspaceTemplates: WorkspaceTemplate[] = [
   {
     gsID: 'sUTLogo',
     workspaceTitle: 'Uniswap V4 Hooks',
-    description: 'Create a new MultiSig wallet using this template.',
+    description: 'Create a new workspace based on this template.',
     projectLogo: 'assets/img/gnosissafeLogo.png',
     templateName: 'uniswapV4Template',
   },
