@@ -5,12 +5,9 @@ import { Container } from './components/container'
 import { CircuitAppContext } from './contexts'
 import { appInitialState, appReducer } from './reducers/state'
 import { CircomPluginClient } from './services/circomPluginClient'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { circomPlugin as CircomPluginDesktopClient } from '../../../remix-ide/src/app/plugins/electron/circomElectronPlugin'
-import isElectron from 'is-electron'
 import { compileCircuit } from './actions'
 
-const plugin = isElectron() ? new CircomPluginDesktopClient() : new CircomPluginClient()
+const plugin = new CircomPluginClient()
 
 function App() {
   const [appState, dispatch] = useReducer(appReducer, appInitialState)
