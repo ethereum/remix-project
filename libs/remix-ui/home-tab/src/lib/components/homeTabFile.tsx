@@ -38,8 +38,11 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
       if (!recents) {
         recents = []
       } else {
+        const filtered = recents.filter((workspace) => {
+          return workspace !== null
+        })
         setState((prevState) => {
-          return { ...prevState, recentWorkspaces: recents.slice(0, recents.length <= 3 ? recents.length : 3) }
+          return { ...prevState, recentWorkspaces: filtered.slice(0, filtered.length <= 3 ? filtered.length : 3) }
         })
       }
     })

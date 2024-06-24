@@ -4,7 +4,7 @@ import { Dropdown } from 'react-bootstrap'
 import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import {FileExplorer} from './components/file-explorer' // eslint-disable-line
-import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
+import {ModalDialog, ValidationResult} from '@remix-ui/modal-dialog' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
 import { ROOT_PATH, TEMPLATE_NAMES } from './utils/constants'
@@ -109,6 +109,7 @@ export function Workspace() {
   const [modalState, setModalState] = useState<{
     searchInput: string
     showModalDialog: boolean
+    // modalValidation?: ValidationResult
     modalInfo: {
       title: string
       loadItem: string
@@ -117,15 +118,17 @@ export function Workspace() {
     }
     importSource: string
     toasterMsg: string
-    recentWorkspaces: Array<string>
   }>({
     searchInput: '',
     showModalDialog: false,
+    // modalValidation: {} as ValidationResult,
     modalInfo: { title: '', loadItem: '', examples: [], prefix: '' },
     importSource: '',
-    toasterMsg: '',
-    recentWorkspaces: [],
+    toasterMsg: ''
   })
+
+  const [validationResult, setValidationResult] = useState<ValidationResult>({ valid: true, message: '' })
+
   const loadingInitialState = {
     tooltip: '',
     showModalDialog: false,
@@ -186,6 +189,14 @@ export function Workspace() {
       setState((prevState) => {
         return { ...prevState, importSource: startsWith + modalState.importSource }
       })
+    } else {
+      global.plugin.call('notification', 'alert', { id: 'homeTabAlert', message: 'The provided value is invalid!' })
+      return
+    }
+
+    if (!startsWith.startsWith('https://') || !startsWith.startsWith('http://')) {
+      global.plugin.call('notification', 'alert', { id: 'homeTabAlert', message: 'The provided value is invalid!' })
+      return
     }
     contentImport.import(
       modalState.modalInfo.prefix + modalState.importSource,
@@ -217,6 +228,20 @@ export function Workspace() {
    */
   const importFromUrl = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
     showFullMessage(title, loadItem, examples, prefix)
+  }
+
+  /**
+   * Validate the url fed into the modal for ipfs and https imports
+   */
+  const validateUrlForImport = (input: any) => {
+    if ((input.trim().startsWith('ipfs://') && input.length > 7) || input.trim().startsWith('https://') || input.trim() !== '') {
+      setValidationResult({ valid: true, message: '' })
+      return validationResult
+    } else {
+      global.plugin.call('notification', 'alert', { id: 'homeTabAlert', message: 'The provided value is invalid!' })
+      setValidationResult({ valid: false, message: 'The provided value is invalid!' })
+      return validationResult
+    }
   }
 
   useEffect(() => {
@@ -1454,7 +1479,8 @@ export function Workspace() {
       )}
       <ModalDialog id="homeTab" title={'Import from ' + modalState.modalInfo.title}
         okLabel="Import" hide={!modalState.showModalDialog} handleHide={() => hideFullMessage()}
-        okFn={() => processLoading(modalState.modalInfo.title)}>
+        okFn={() => processLoading(modalState.modalInfo.title)} validationFn={validateUrlForImport}
+      >
         <div className="p-2 user-select-auto">
           {modalState.modalInfo.loadItem !== '' && <span>Enter the {modalState.modalInfo.loadItem} you would like to load.</span>}
           {modalState.modalInfo.examples.length !== 0 && (
