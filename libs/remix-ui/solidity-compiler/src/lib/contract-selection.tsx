@@ -390,10 +390,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 }}
               >
                 <span>
+                  <img id="ssaLogo" className="remixui_storageLogo mr-2" src="assets/img/staticAnalysisColorLight.webp" />
                   <span>
                     <FormattedMessage id="solidity.runStaticAnalysis" />
                   </span>
-                  <img id="ssaLogo" className="remixui_storageLogo ml-2" src="assets/img/staticAnalysis.webp" />
                 </span>
               </button>
             </CustomTooltip>
@@ -413,10 +413,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 }}
               >
                 <span>
+                  <img id="solscanLogo" className="remixui_storageLogo mr-2" src="assets/img/solidityScanLogo.webp" />
                   <span>
                     <FormattedMessage id="solidity.runSolidityScan" />
                   </span>
-                  <img id="solscanLogo" className="remixui_storageLogo ml-2" src="assets/img/solidityScanLogo.webp" />
                 </span>
               </button>
             </CustomTooltip>
@@ -437,10 +437,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
               >
 
                 <span>
+                  <img id="ipfsLogo" className="remixui_storageLogo mr-2" src="assets/img/ipfs.webp" />
                   <span>
                     <FormattedMessage id="solidity.publishOn" /> IPFS
                   </span>
-                  <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
                 </span>
               </button>
             </CustomTooltip>
@@ -460,10 +460,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 }}
               >
                 <span>
+                  <img id="swarmLogo" className="remixui_storageLogo mr-2" src="assets/img/swarmColor.webp" />
                   <span>
                     <FormattedMessage id="solidity.publishOn" /> Swarm
                   </span>
-                  <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
                 </span>
               </button>
             </CustomTooltip>
@@ -482,7 +482,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 }}
               >
                 <span>
-                  <FormattedMessage id="solidity.compilationDetails" />
+                  <i className="fa-regular fa-memo-pad mr-2"></i>
+                  <span>
+                    <FormattedMessage id="solidity.compilationDetails" />
+                  </span>
                 </span>
               </button>
             </CustomTooltip>
