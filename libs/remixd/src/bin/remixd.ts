@@ -28,7 +28,7 @@ const services = {
   git: (readOnly: boolean) => new servicesList.GitClient(readOnly),
   hardhat: (readOnly: boolean) => new servicesList.HardhatClient(readOnly),
   truffle: (readOnly: boolean) => new servicesList.TruffleClient(readOnly),
-  slither: (readOnly: boolean) => new servicesList.SlitherClient(readOnly),
+  slither: (readOnly: boolean) => new servicesList.SlitherClient(),
   folder: (readOnly: boolean) => new servicesList.Sharedfolder(readOnly),
   foundry: (readOnly: boolean) => new servicesList.FoundryClient(readOnly)
 }
@@ -110,10 +110,12 @@ function errorHandler (error: any, service: string) {
         sharedFolderClient.setupNotifications(options.sharedFolder)
         sharedFolderClient.sharedFolder(options.sharedFolder)
       })
-      startService('slither', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
-        sharedFolderClient.setWebSocket(ws)
-        sharedFolderClient.sharedFolder(options.sharedFolder)
-      })
+      if (!options.readOnly) {
+        startService('slither', (ws: WS, sharedFolderClient: servicesList.Sharedfolder) => {
+          sharedFolderClient.setWebSocket(ws)
+          sharedFolderClient.sharedFolder(options.sharedFolder)
+        })
+      }      
       // Run truffle service if a truffle project is shared as folder
       const truffleConfigFilePath = absolutePath('./', options.sharedFolder) + '/truffle-config.js'
       if (existsSync(truffleConfigFilePath)) {

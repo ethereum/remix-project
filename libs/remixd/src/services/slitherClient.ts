@@ -3,26 +3,27 @@
 import * as WS from 'ws' // eslint-disable-line
 import { PluginClient } from '@remixproject/plugin'
 import { existsSync, readFileSync, readdirSync, unlinkSync } from 'fs'
-import { OutputStandard } from '../types' // eslint-disable-line
 import * as utils from '../utils'
 const { spawn, execSync } = require('child_process') // eslint-disable-line
 
-export class SlitherClient extends PluginClient {
+export interface OutputStandard {
+  description: string
+  title: string
+  confidence: string
+  severity: string
+  sourceMap: any
+  category?: string
+  reference?: string
+  example?: any
+  [key: string]: any
+}
+
+export const SlitherClientMixin = (Base) => class extends Base {
   methods: Array<string>
-  websocket: WS
   currentSharedFolder: string
 
-  constructor (private readOnly = false) {
-    super()
-    this.methods = ['analyse']
-  }
-
-  setWebSocket (websocket: WS): void {
-    this.websocket = websocket
-  }
-
-  sharedFolder (currentSharedFolder: string): void {
-    this.currentSharedFolder = currentSharedFolder
+  constructor(...args: any[]) {
+    super(...args); // Ensure the parent constructor is called
   }
 
   mapNpmDepsDir (list) {
@@ -72,10 +73,6 @@ export class SlitherClient extends PluginClient {
 
   analyse (filePath: string, compilerConfig: Record<string, any>) {
     return new Promise((resolve, reject) => {
-      if (this.readOnly) {
-        const errMsg = '[Slither Analysis]: Cannot analyse in read-only mode'
-        return reject(new Error(errMsg))
-      }
       const options = { cwd: this.currentSharedFolder, shell: true }
       const { currentVersion, optimize, evmVersion } = compilerConfig
       if (currentVersion && currentVersion.includes('+commit')) {
@@ -177,3 +174,17 @@ export class SlitherClient extends PluginClient {
     })
   }
 }
+
+export class SlitherClient extends SlitherClientMixin(PluginClient) {
+    websocket: WS
+
+    setWebSocket (websocket: WS): void {
+        this.websocket = websocket
+    }
+    
+    sharedFolder (currentSharedFolder: string): void {
+        this.currentSharedFolder = currentSharedFolder
+    }
+}
+
+

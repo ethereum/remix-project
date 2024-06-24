@@ -1,6 +1,6 @@
 import { ResolveDirectory, Filelist } from './types' // eslint-disable-line
 import * as fs from 'fs-extra'
-import * as isbinaryfile from 'isbinaryfile'
+import { isBinaryFileSync } from 'isbinaryfile'
 import * as pathModule from 'path'
 /**
  * returns the absolute path of the given @arg path
@@ -76,7 +76,7 @@ function walkSync (dir: string, filelist: Filelist, sharedFolder: string): Filel
       } else {
         const relative = relativePath(subElement, sharedFolder)
 
-        filelist[relative] = isbinaryfile.sync(subElement)
+        filelist[relative] = isBinaryFileSync(subElement).toString()
       }
     }
   })

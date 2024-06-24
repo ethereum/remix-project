@@ -4,7 +4,7 @@ import * as WS from 'ws' // eslint-disable-line
 import * as utils from '../utils'
 import * as chokidar from 'chokidar'
 import * as fs from 'fs-extra'
-import * as isbinaryfile from 'isbinaryfile'
+import { isBinaryFile } from 'isbinaryfile'
 import * as pathModule from 'path'
 
 export class RemixdClient extends PluginClient {
@@ -63,8 +63,7 @@ export class RemixdClient extends PluginClient {
           return reject(new Error('File not found ' + path))
         }
         if (!isRealPath(path)) return
-        isbinaryfile.default(path, (error: Error, isBinary: boolean) => {
-          if (error) console.log(error)
+        isBinaryFile(path).then((isBinary: boolean) => {
           if (isBinary) {
             resolve({ content: '<binary content not displayed>', readonly: true })
           } else {
@@ -73,6 +72,8 @@ export class RemixdClient extends PluginClient {
               resolve({ content: data, readonly: false })
             })
           }
+        }).catch((error) => {
+          console.log(error)
         })
       })
     } catch (error) {

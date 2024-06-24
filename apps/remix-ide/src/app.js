@@ -53,6 +53,9 @@ import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 import { appUpdaterPlugin } from './app/plugins/electron/appUpdaterPlugin'
+import { SlitherHandleDesktop } from './app/plugins/electron/slitherPlugin'
+
+import { SlitherHandle } from './app/files/slither-handle'
  
 import {OpenAIGpt} from './app/plugins/openaigpt'
 import {SolCoder} from './app/plugins/solcoderAI'
@@ -375,6 +378,10 @@ class AppComponent {
     const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
     this.engine.register([compilerloader])
 
+    // slither analyzer plugin (remixd / desktop)
+    const slitherPlugin = isElectron() ? new SlitherHandleDesktop() : new SlitherHandle()
+    this.engine.register([slitherPlugin])
+
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
     Registry.getInstance().put({api: this.mainview, name: 'mainview'})
@@ -430,7 +437,6 @@ class AppComponent {
       filePanel.hardhatHandle,
       filePanel.foundryHandle,
       filePanel.truffleHandle,
-      filePanel.slitherHandle,
       linkLibraries,
       deployLibraries,
       openZeppelinProxy,
@@ -494,7 +500,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()){
-      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater'])
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'slither'])
     }
 
     this.appManager.on(

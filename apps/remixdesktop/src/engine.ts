@@ -9,6 +9,7 @@ import { ConfigPlugin } from './plugins/configPlugin';
 import { TemplatesPlugin } from './plugins/templates';
 import { RipgrepPlugin } from './plugins/ripgrepPlugin';
 import { CompilerLoaderPlugin } from './plugins/compilerLoader';
+import { SlitherPlugin } from './plugins/slitherPlugin';
 import { AppUpdaterPlugin } from './plugins/appUpdater';
 
 const engine = new Engine()
@@ -20,6 +21,7 @@ const configPlugin = new ConfigPlugin()
 const templatesPlugin = new TemplatesPlugin()
 const ripgrepPlugin = new RipgrepPlugin()
 const compilerLoaderPlugin = new CompilerLoaderPlugin()
+const slitherPlugin = new SlitherPlugin()
 const appUpdaterPlugin = new AppUpdaterPlugin()
 
 engine.register(appManager)
@@ -30,6 +32,7 @@ engine.register(configPlugin)
 engine.register(templatesPlugin)
 engine.register(ripgrepPlugin)
 engine.register(compilerLoaderPlugin)
+engine.register(slitherPlugin)
 engine.register(appUpdaterPlugin)
 
 appManager.activatePlugin('electronconfig')
