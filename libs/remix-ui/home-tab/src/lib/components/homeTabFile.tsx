@@ -168,7 +168,11 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
           <div className="d-flex flex-column">
             <div className="d-flex flex-row">
               <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.newFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
-                <button className="btn btn-primary text-nowrap p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={async () => await plugin.call('filePanel', 'createNewFile')}>
+                <button className="btn btn-primary text-nowrap p-2 mr-2 border my-1" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={async () => {
+                  _paq.push(['trackEvent', 'hometab', 'filesSection', 'newFile'])
+                  await plugin.call('menuicons', 'select', 'filePanel')
+                  await plugin.call('filePanel', 'createNewFile')
+                }}>
                   <FormattedMessage id="home.newFile" />
                 </button>
               </CustomTooltip>
@@ -181,9 +185,9 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                     title="open file"
                     type="file"
                     id="openFileInput"
-                    onChange={(event) => {
+                    onChange={async (event) => {
                       event.stopPropagation()
-                      plugin.verticalIcons.select('filePanel')
+                      await plugin.call('menuicons', 'select', 'filePanel')
                       uploadFile(event.target)
                     }}
                     multiple
@@ -193,6 +197,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
               <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gitCloneTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
               >
                 <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGitHubButton" onClick={async () => {
+                  _paq.push(['trackEvent', 'hometab', 'filesSection', 'Git Clone'])
                   await plugin.call('filePanel', 'clone')
                 }}>
                 Git Clone
