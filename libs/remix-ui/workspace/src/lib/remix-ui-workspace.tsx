@@ -152,7 +152,7 @@ export function Workspace() {
     })
   }
 
-  const showFullMessage = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
+  const showFullMessage = async (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
     setModalState((prevState) => {
       return {
         ...prevState,
@@ -186,18 +186,11 @@ export function Workspace() {
     const workspace = global.plugin.fileManager.getProvider('workspace')
     const startsWith = modalState.importSource.substring(0, 4)
     if ((type === 'ipfs' || type === 'IPFS') && startsWith !== 'ipfs' && startsWith !== 'IPFS') {
-      setState((prevState) => {
+      setModalState((prevState) => {
         return { ...prevState, importSource: startsWith + modalState.importSource }
       })
-    } else {
-      global.plugin.call('notification', 'alert', { id: 'homeTabAlert', message: 'The provided value is invalid!' })
-      return
     }
 
-    if (!startsWith.startsWith('https://') || !startsWith.startsWith('http://')) {
-      global.plugin.call('notification', 'alert', { id: 'homeTabAlert', message: 'The provided value is invalid!' })
-      return
-    }
     contentImport.import(
       modalState.modalInfo.prefix + modalState.importSource,
       (loadingMsg) => dispatch({ tooltip: loadingMsg }),
@@ -232,15 +225,14 @@ export function Workspace() {
 
   /**
    * Validate the url fed into the modal for ipfs and https imports
+   * @returns {ValidationResult}
    */
   const validateUrlForImport = (input: any) => {
     if ((input.trim().startsWith('ipfs://') && input.length > 7) || input.trim().startsWith('https://') || input.trim() !== '') {
-      setValidationResult({ valid: true, message: '' })
-      return validationResult
+      return { valid: true, message: '' }
     } else {
       global.plugin.call('notification', 'alert', { id: 'homeTabAlert', message: 'The provided value is invalid!' })
-      setValidationResult({ valid: false, message: 'The provided value is invalid!' })
-      return validationResult
+      return { valid: false, message: 'The provided value is invalid!' }
     }
   }
 
@@ -1477,6 +1469,7 @@ export function Workspace() {
           downloadPath={downloadPath}
         />
       )}
+
       <ModalDialog id="homeTab" title={'Import from ' + modalState.modalInfo.title}
         okLabel="Import" hide={!modalState.showModalDialog} handleHide={() => hideFullMessage()}
         okFn={() => processLoading(modalState.modalInfo.title)} validationFn={validateUrlForImport}

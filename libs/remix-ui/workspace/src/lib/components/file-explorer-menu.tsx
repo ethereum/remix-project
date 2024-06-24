@@ -159,8 +159,10 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                       } else if (action === 'publishToGist' || action == 'updateGist') {
                         props.publishToGist()
                       } else if (action === 'importFromIpfs') {
+                        _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                         props.importFromIpfs('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')
                       } else if (action === 'importFromHttps') {
+                        _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                         props.importFromHttps('Https', 'http/https raw content', ['https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC20/ERC20.sol'])
                       } else {
                         state.actions[action]()
