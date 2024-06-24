@@ -390,7 +390,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 }}
               >
                 <span>
-                  <img id="ssaLogo" className="remixui_storageLogo mr-2" src="assets/img/staticAnalysisColorLight.webp" />
+                  <img id="ssaLogo" className="remixui_storageLogo mr-2" src="assets/img/staticAnalysisColorBlue.webp" />
                   <span>
                     <FormattedMessage id="solidity.runStaticAnalysis" />
                   </span>
@@ -482,7 +482,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
                 }}
               >
                 <span>
-                  <i className="fa-regular fa-memo-pad mr-2"></i>
+                  <i className="fa-regular fa-memo-pad mr-2 text-primary"></i>
                   <span>
                     <FormattedMessage id="solidity.compilationDetails" />
                   </span>
