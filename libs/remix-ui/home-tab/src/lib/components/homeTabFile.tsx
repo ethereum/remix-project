@@ -173,14 +173,14 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                   await plugin.call('menuicons', 'select', 'filePanel')
                   await plugin.call('filePanel', 'createNewFile')
                 }}>
-                  <i className="far fa-file pr-1"></i>
+                  <i className="far fa-file pl-1 pr-2"></i>
                   <FormattedMessage id="home.newFile" />
                 </button>
               </CustomTooltip>
               <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.openFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
                 <span>
                   <label className="btn text-nowrap p-2 mr-2 border my-1" style={{ width: 'fit-content', cursor: 'pointer' }} htmlFor="openFileInput">
-                    <i className="far fa-upload pr-1"></i>
+                    <i className="far fa-upload pl-1 pr-2"></i>
                     <FormattedMessage id="home.openFile" />
                   </label>
                   <input
@@ -196,24 +196,15 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                   />
                 </span>
               </CustomTooltip>
-              {/* <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gitCloneTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
-              >
-                <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGitHubButton" onClick={async () => {
-                  _paq.push(['trackEvent', 'hometab', 'filesSection', 'Git Clone'])
-                  await plugin.call('filePanel', 'clone')
-                }}>
-                  Git Clone
-                </button>
-              </CustomTooltip> */}
               <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gistTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
               >
                 <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
-                  <i className="fab fa-github pr-1"></i>
+                  <i className="fab fa-github pl-1 pr-2"></i>
                   Gist
                 </button>
               </CustomTooltip>
               <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
-                <button className="btn btn-block text-nowrap p-2 border my-1" onClick={() => connectToLocalhost()}>
+                <button className="btn text-nowrap p-2 border my-1" onClick={() => connectToLocalhost()}>
                   <i className="fa-regular fa-desktop pr-2"></i>
                   <FormattedMessage id="home.accessFileSystem" />
                 </button>
