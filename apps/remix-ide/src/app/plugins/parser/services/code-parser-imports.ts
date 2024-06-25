@@ -1,5 +1,5 @@
 'use strict'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 import { CodeParser } from "../code-parser";
 
 export type CodeParserImportsData = {
@@ -20,7 +20,7 @@ export default class CodeParserImports {
   }
 
   async getImports(){
-    if(!this.data || !this.data.files || !this.data.timestamp || this.data.timestamp != this.directoryUpdateCacheTimeStamp){
+    if (!this.data || !this.data.files || !this.data.timestamp || this.data.timestamp != this.directoryUpdateCacheTimeStamp){
       await this.setFileTree()
     }
     return this.data
@@ -33,13 +33,13 @@ export default class CodeParserImports {
       .filter(x => x !== '')
       .map(x => x.replace('./node_modules/', ''))
       .filter(x => {
-        if(x.includes('@openzeppelin')) {
+        if (x.includes('@openzeppelin')) {
           return !x.includes('mock')
-        }else{
+        } else {
           return true
-        } 
+        }
       })
-            
+
     // get unique first words of the values in the array
     this.data.packages = [...new Set(this.data.modules.map(x => x.split('/')[0]))]
   }
@@ -79,7 +79,7 @@ export default class CodeParserImports {
         files = await this.plugin.call('fileManager', 'readdir', dir)
       }
     } catch (e) {}
-        
+
     const fileArray = this.normalize(files)
     for (const fi of fileArray) {
       if (fi) {

@@ -1,11 +1,11 @@
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react'
-import {DeployInputProps} from '../types'
-import {DeployButton} from './deployButton'
+import { DeployInputProps } from '../types'
+import { DeployButton } from './deployButton'
 
 export function DeployInput(props: DeployInputProps) {
   return (
-    <div className="udapp_contractActionsContainerSingle" style={{display: 'flex'}}>
+    <div className="udapp_contractActionsContainerSingle" style={{ display: 'flex' }}>
       <DeployButton
         buttonOptions={props.buttonOptions}
         selectedIndex={props.selectedIndex}

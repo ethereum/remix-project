@@ -1,9 +1,56 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import React, {useEffect, useState, useRef, useContext} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {CustomTooltip} from '@remix-ui/helper'
+import React, { useEffect, useState, useRef, useContext } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { CustomTooltip } from '@remix-ui/helper'
+import { Placement } from 'react-bootstrap/esm/Overlay'
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
+
+type HometabIconSection = {
+  textToolip: JSX.Element
+  urlLink: string
+  iconClass: 'fa-youtube'|'fa-x-twitter'|'fa-linkedin'|'fa-medium'|'fa-discord'
+  placement: Placement
+  matomoTrackingEntry: string[]
+}
+
+const iconButtons: HometabIconSection[] = [
+  {
+    textToolip: <FormattedMessage id="home.remixYoutubePlaylist" />,
+    matomoTrackingEntry: ['trackEvent', 'hometab', 'socialMedia', 'youtube'],
+    urlLink: 'https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA',
+    iconClass: 'fa-youtube',
+    placement: 'top'
+  },
+  {
+    textToolip: <FormattedMessage id="home.remixTwitterProfile" />,
+    matomoTrackingEntry: ['trackEvent', 'hometab', 'socialMedia', 'twitter'],
+    urlLink: 'https://twitter.com/EthereumRemix',
+    iconClass: 'fa-x-twitter',
+    placement: 'top'
+  },
+  {
+    textToolip: <FormattedMessage id="home.remixLinkedinProfile" />,
+    matomoTrackingEntry: ['trackEvent', 'hometab', 'socialmedia', 'linkedin'],
+    urlLink: 'https://www.linkedin.com/company/ethereum-remix/',
+    iconClass: 'fa-linkedin',
+    placement: 'top'
+  },
+  {
+    textToolip: <FormattedMessage id="home.remixMediumPosts" />,
+    matomoTrackingEntry: ['trackEvent', 'hometab', 'socialmedia', 'medium'],
+    urlLink: 'https://medium.com/remix-ide',
+    iconClass: 'fa-medium',
+    placement: 'top'
+  },
+  {
+    textToolip: <FormattedMessage id="home.joinUsOnDiscord" />,
+    matomoTrackingEntry: ['trackEvent', 'hometab', 'socialmedia', 'discord'],
+    urlLink: 'https://discord.gg/mh9hFCKkEq',
+    iconClass: 'fa-discord',
+    placement: 'top'
+  }
+]
 
 function HomeTabTitle() {
   useEffect(() => {
@@ -53,123 +100,58 @@ function HomeTabTitle() {
     <div className="px-2 pb-2 pt-2 d-flex flex-column border-bottom" id="hTTitleSection">
       <div className="d-flex py-2 justify-content-between">
         <div className="d-flex justify-content-start">
-          <span className="h-80 text-uppercase" style={{fontSize: 'xx-large', fontFamily: 'Noah, sans-serif'}}>
+          <span className="h-80 text-uppercase" style={{ fontSize: 'xx-large', fontFamily: 'Noah, sans-serif' }}>
             Remix
           </span>
           <div className="ml-2 d-flex">
             <div onClick={() => playRemi()}>
-              <img className="" src="assets/img/guitarRemiCroped.webp" style={{height: '3rem'}} alt=""></img>
+              <img className="" src="assets/img/guitarRemiCroped.webp" style={{ height: '3rem' }} alt=""></img>
             </div>
             <audio id="remiAudio" muted={false} src="assets/audio/remiGuitar-single-power-chord-A-minor.mp3" ref={remiAudioEl}></audio>
           </div>
         </div>
         <span className="d-flex flex-nowrap align-self-end">
-          <CustomTooltip
-            placement={'top'}
-            tooltipId="overlay-tooltip"
-            tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.remixYoutubePlaylist" />}
-            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
-          >
-            <button
-              onClick={() => {
-                openLink('https://www.youtube.com/channel/UCjTUPyFEr2xDGN6Cg8nKDaA')
-                _paq.push(['trackEvent', 'hometab', 'socialMedia', 'youtube'])
-              }}
-              className="border-0 px-1 h-100 btn fab fa-youtube"
-            ></button>
-          </CustomTooltip>
-          <CustomTooltip
-            placement={'top'}
-            tooltipId="overlay-tooltip"
-            tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.remixTwitterProfile" />}
-            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
-          >
-            <button
-              onClick={() => {
-                openLink('https://twitter.com/EthereumRemix')
-                _paq.push(['trackEvent', 'hometab', 'socialMedia', 'twitter'])
-              }}
-              className="border-0 px-1 h-100 btn fab fa-x-twitter"
-            ></button>
-          </CustomTooltip>
-          <CustomTooltip
-            placement={'top'}
-            tooltipId="overlay-tooltip"
-            tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.remixLinkedinProfile" />}
-            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
-          >
-            <button
-              onClick={() => {
-                openLink('https://www.linkedin.com/company/ethereum-remix/')
-                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'linkedin'])
-              }}
-              className="border-0 px-1 h-100 btn fab fa-linkedin"
-            ></button>
-          </CustomTooltip>
-          <CustomTooltip
-            placement={'top'}
-            tooltipId="overlay-tooltip"
-            tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.remixMediumPosts" />}
-            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
-          >
-            <button
-              onClick={() => {
-                openLink('https://medium.com/remix-ide')
-                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'medium'])
-              }}
-              className="border-0 h-100 px-1 btn fab fa-medium"
-            ></button>
-          </CustomTooltip>
-
-          <CustomTooltip
-            placement={'top'}
-            tooltipId="overlay-tooltip"
-            tooltipClasses="text-nowrap"
-            tooltipText={<FormattedMessage id="home.joinUsOnDiscord" />}
-            tooltipTextClasses="border bg-light text-dark p-1 pr-3"
-          >
-            <button
-              onClick={() => {
-                openLink('https://discord.gg/mh9hFCKkEq')
-                _paq.push(['trackEvent', 'hometab', 'socialmedia', 'discord'])
-              }}
-              className="border-0 h-100 pl-1 pr-0 btn fab fa-discord"
-            ></button>
-          </CustomTooltip>
+          {iconButtons.map((button, index) => (
+            <CustomTooltip
+              key={index}
+              placement={button.placement}
+              tooltipId="overlay-tooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={button.textToolip}
+              tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+            >
+              <button
+                key={index}
+                onClick={() => {
+                  openLink(button.urlLink)
+                  _paq.push(button.matomoTrackingEntry)
+                }}
+                className={`border-0 h-100 pl-1 pr-0 btn fab ${button.iconClass}`}
+              ></button>
+            </CustomTooltip>
+          ))}
         </span>
       </div>
-      <b className="py-1 text-dark" style={{fontStyle: 'italic'}}>
+      <b className="py-1 text-dark" style={{ fontStyle: 'italic' }}>
         <FormattedMessage id="home.nativeIDE" />
       </b>
       <div className="pb-1" id="hTGeneralLinks">
         <a className="remixui_home_text" onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'webSite'])} target="__blank" href="https://remix-project.org">
           <FormattedMessage id="home.website" />
         </a>
-        <a
+        {/* <a
           className="pl-2 remixui_home_text"
           onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'documentation'])}
           target="__blank"
           href="https://remix-ide.readthedocs.io/en/latest"
         >
           <FormattedMessage id="home.documentation" />
-        </a>
-        <a
-          className="pl-2 remixui_home_text"
-          onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixPlugin'])}
-          target="__blank"
-          href="https://remix-plugin-docs.readthedocs.io/en/latest/"
-        >
-          <FormattedMessage id="home.remixPlugin" />
-        </a>
+        </a> */}
         <a
           className="pl-2 remixui_home_text"
           onClick={() => _paq.push(['trackEvent', 'hometab', 'header', 'remixDesktop'])}
           target="__blank"
-          href="https://github.com/ethereum/remix-desktop/releases"
+          href="https://github.com/remix-project-org/remix-desktop-insiders"
         >
           <FormattedMessage id="home.remixDesktop" />
         </a>
@@ -180,7 +162,7 @@ function HomeTabTitle() {
           type="text"
           className="border form-control border-right-0"
           id="homeTabSearchInput"
-          placeholder={intl.formatMessage({id: 'home.searchDocumentation'})}
+          placeholder={intl.formatMessage({ id: 'home.searchDocumentation' })}
           data-id="terminalInputSearchHome"
         />
         <button
@@ -190,7 +172,7 @@ function HomeTabTitle() {
             openLink()
           }}
           disabled={state.searchDisable}
-          style={{width: '3rem'}}
+          style={{ width: '3rem' }}
         ></button>
       </div>
     </div>

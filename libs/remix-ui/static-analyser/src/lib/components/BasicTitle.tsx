@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import {ErrorRendererOptions} from '../../staticanalyser'
+import React, { useEffect, useState } from 'react'
+import { ErrorRendererOptions } from '../../staticanalyser'
 
 type BasicTitleProps = {
   warningStateEntries: any
@@ -28,7 +28,7 @@ export function calculateWarningStateEntries(entries: [string, any][]) {
   entries.forEach((entry) => {
     errors = entry[1].filter((x) => x.options.type === 'error')
   })
-  return {length: warninglength, errors}
+  return { length: warninglength, errors }
 }
 
 export function BasicTitle(props: BasicTitleProps) {

@@ -4,7 +4,7 @@ import { scanAPIurls } from "./networks"
 type RemixClient = PluginClient
 
 /*
-  status: 0=Error, 1=Pass 
+  status: 0=Error, 1=Pass
   message: OK, NOTOK
   result: explanation
 */
@@ -14,7 +14,7 @@ export type receiptStatus = {
   status: string
 }
 
-export const getEtherScanApi = (networkId: any) => { 
+export const getEtherScanApi = (networkId: any) => {
   if (!(networkId in scanAPIurls)) {
     throw new Error("no known network to verify against")
   }
@@ -26,7 +26,7 @@ export const getNetworkName = async (client: RemixClient) => {
   const network = await client.call("network", "detectNetwork")
   if (!network) {
     throw new Error("no known network to verify against")
-  } 
+  }
   return { network: network.name!.toLowerCase(), networkId: network.id }
 }
 

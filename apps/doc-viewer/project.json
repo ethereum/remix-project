@@ -38,6 +38,14 @@
         }
       }
     },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/doc-viewer/**/*.ts"],
+        "eslintConfig": "apps/doc-viewer/.eslintrc"
+      }
+    },
     "serve": {
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",

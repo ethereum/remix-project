@@ -87,7 +87,7 @@ export const reducerActions = (models = initialState, action: Action) => {
     const size = action.payload.size
     if (size === 1) {
       editor.trigger('keyboard', 'editor.action.fontZoomIn', {});
-    } else{
+    } else {
       editor.trigger('keyboard', 'editor.action.fontZoomOut', {});
     }
     return models

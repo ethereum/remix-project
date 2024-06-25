@@ -34,7 +34,7 @@ export const Toaster = (props: ToasterProps) => {
     if (props.message) {
       const timeOutId = setTimeout(() => {
         setState((prevState) => {
-          return {...prevState, hiding: true}
+          return { ...prevState, hiding: true }
         })
       }, state.timeOut)
 
@@ -74,14 +74,14 @@ export const Toaster = (props: ToasterProps) => {
 
   const showFullMessage = () => {
     setState((prevState) => {
-      return {...prevState, showModal: true}
+      return { ...prevState, showModal: true }
     })
   }
 
   const hideFullMessage = () => {
     //eslint-disable-line
     setState((prevState) => {
-      return {...prevState, showModal: false}
+      return { ...prevState, showModal: false }
     })
   }
 
@@ -107,7 +107,7 @@ export const Toaster = (props: ToasterProps) => {
       clearTimeout(state.timeOutId)
     }
     setState((prevState) => {
-      return {...prevState, timeOutId: null}
+      return { ...prevState, timeOutId: null }
     })
   }
 
@@ -115,12 +115,12 @@ export const Toaster = (props: ToasterProps) => {
     if (!state.timeOutId) {
       const timeOutId = setTimeout(() => {
         setState((prevState) => {
-          return {...prevState, hiding: true}
+          return { ...prevState, hiding: true }
         })
       }, state.timeOut)
 
       setState((prevState) => {
-        return {...prevState, timeOutId}
+        return { ...prevState, timeOutId }
       })
     }
   }
@@ -131,19 +131,19 @@ export const Toaster = (props: ToasterProps) => {
       {!state.hide && (
         <div
           data-shared="tooltipPopup"
-          className={`remixui_tooltip alert alert-info p-2 ${state.hiding ? 'remixui_animateTop' : 'remixui_animateBottom'}`}
+          className={`remixui_tooltip mb-4 alert alert-info p-2 ${state.hiding ? 'remixui_animateTop' : 'remixui_animateBottom'}`}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
           <span className="px-2">
             {state.message}
             {state.showFullBtn && (
-              <button className="btn btn-secondary btn-sm mx-3" style={{whiteSpace: 'nowrap'}} onClick={showFullMessage}>
+              <button className="btn btn-secondary btn-sm mx-3" style={{ whiteSpace: 'nowrap' }} onClick={showFullMessage}>
                 Show full message
               </button>
             )}
           </span>
-          <span style={{alignSelf: 'baseline'}}>
+          <span style={{ alignSelf: 'baseline' }}>
             <button data-id="tooltipCloseButton" className="fas fa-times btn-info mx-1 p-0" onClick={closeTheToaster}></button>
           </span>
         </div>

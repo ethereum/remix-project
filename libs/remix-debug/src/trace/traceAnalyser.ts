@@ -1,5 +1,5 @@
 'use strict'
-import {  util } from '@remix-project/remix-lib'
+import { util } from '@remix-project/remix-lib'
 import { bytesToHex } from '@ethereumjs/util'
 const { toHexPaddedString } = util
 import * as traceHelper from './traceHelper'

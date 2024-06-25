@@ -1,5 +1,5 @@
 import sindriClient from 'sindri'
-import type {CircuitInfoResponse, ProofInfoResponse} from 'sindri'
+import type { CircuitInfoResponse, ProofInfoResponse } from 'sindri'
 
 sindriClient.logLevel = 'info'
 
@@ -9,7 +9,7 @@ const authorize = async () => {
     if (!apiKey) {
       throw new Error('Missing API key.')
     }
-    sindriClient.authorize({apiKey})
+    sindriClient.authorize({ apiKey })
   } catch {
     const message = 'No Sindri API key found. Please click the gear in the lower left corner to open the settings page, and add your API key under "Sindri Credentials".'
     await remix.call('notification', 'toast', message)

@@ -1,10 +1,10 @@
 import axios from 'axios'
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 import groupBy from 'lodash/groupBy'
 import pick from 'lodash/pick'
-import {type ModelType} from '../store'
+import { type ModelType } from '../store'
 import remixClient from '../../remix-client'
-import {router} from '../../App'
+import { router } from '../../App'
 
 // const apiUrl = 'http://localhost:3001';
 const apiUrl = 'https://static.220.14.12.49.clients.your-server.de:3000'
@@ -17,12 +17,12 @@ const Model: ModelType = {
     selectedId: '',
   },
   reducers: {
-    save(state, {payload}) {
-      return {...state, ...payload}
+    save(state, { payload }) {
+      return { ...state, ...payload }
     },
   },
   effects: {
-    *init(_, {put}) {
+    *init(_, { put }) {
       const cache = localStorage.getItem('workshop.state')
 
       if (cache) {
@@ -41,7 +41,7 @@ const Model: ModelType = {
         })
       }
     },
-    *loadRepo({payload}, {put, select}) {
+    *loadRepo({ payload }, { put, select }) {
       toast.info(`loading ${payload.name}/${payload.branch}`)
 
       yield put({
@@ -51,18 +51,18 @@ const Model: ModelType = {
         },
       })
 
-      const {list, detail} = yield select((state) => state.workshop)
+      const { list, detail } = yield select((state) => state.workshop)
 
       const url = `${apiUrl}/clone/${encodeURIComponent(payload.name)}/${payload.branch}?${Math.random()}`
       console.log('loading ', url)
-      const {data} = yield axios.get(url)
+      const { data } = yield axios.get(url)
       const repoId = `${payload.name}-${payload.branch}`
 
       for (let i = 0; i < data.ids.length; i++) {
         const {
           steps,
           metadata: {
-            data: {steps: metadataSteps},
+            data: { steps: metadataSteps },
           },
         } = data.entities[data.ids[i]]
 
@@ -130,8 +130,8 @@ const Model: ModelType = {
       })
 
       if (payload.id) {
-        const {detail, selectedId} = workshopState
-        const {ids, entities} = detail[selectedId]
+        const { detail, selectedId } = workshopState
+        const { ids, entities } = detail[selectedId]
         for (let i = 0; i < ids.length; i++) {
           const entity = entities[ids[i]]
           if (entity.metadata.data.id === payload.id || i + 1 === payload.id) {
@@ -141,7 +141,7 @@ const Model: ModelType = {
         }
       }
     },
-    *resetAll(_, {put}) {
+    *resetAll(_, { put }) {
       yield put({
         type: 'workshop/save',
         payload: {

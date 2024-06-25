@@ -31,16 +31,16 @@ export const StepManager = ({
 
   const setRevertWarning = (warning) => {
     setState((prevState) => {
-      return {...prevState, revertWarning: warning}
+      return { ...prevState, revertWarning: warning }
     })
   }
 
   const updateStep = (step, stepState, jumpOutDisabled) => {
     setState((prevState) => {
-      return {...prevState, sliderValue: step, stepState, jumpOutDisabled}
+      return { ...prevState, sliderValue: step, stepState, jumpOutDisabled }
     })
   }
-  const {sliderValue, revertWarning, stepState, jumpOutDisabled} = state
+  const { sliderValue, revertWarning, stepState, jumpOutDisabled } = state
 
   return (
     <div className="py-1">

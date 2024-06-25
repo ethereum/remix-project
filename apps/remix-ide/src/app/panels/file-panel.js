@@ -34,6 +34,7 @@ const profile = {
   methods: [
     'createNewFile',
     'uploadFile',
+    'echoCall',
     'getCurrentWorkspace',
     'getAvailableWorkspaceName',
     'getWorkspaces',
@@ -43,7 +44,7 @@ const profile = {
     'registerContextMenuItem',
     'renameWorkspace',
     'deleteWorkspace',
-    'loadTemplate', 
+    'loadTemplate',
     'clone',
     'isExpanded',
     'isGist'
@@ -154,10 +155,10 @@ module.exports = class Filepanel extends ViewPlugin {
     return this.workspaces
   }
 
-  getAvailableWorkspaceName(name) {    
+  getAvailableWorkspaceName(name) {
     if (!this.workspaces) return name
     let index = 1
-    let workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)    
+    let workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)
     while (workspace) {
       index++
       workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)

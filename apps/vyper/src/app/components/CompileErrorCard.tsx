@@ -21,7 +21,7 @@ export function CompileErrorCard(props: { output: any, plugin: RemixClient }) {
       <div className="d-flex flex-column pt-3 align-items-end mb-2">
         <div>
           <span className="border border-ai text-ai btn-sm" onClick={async () => await props.plugin.askGpt(props.output.message)}>
-            Ask GPT
+            Ask RemixAI
           </span>
           <span className="ml-3 pt-1 py-1">
             <CopyToClipboard content={props.output.message} className={`p-0 m-0 far fa-copy alert alert-danger`} direction={'top'} />

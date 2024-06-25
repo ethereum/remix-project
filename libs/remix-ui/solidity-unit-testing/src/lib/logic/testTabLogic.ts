@@ -13,7 +13,7 @@ export class TestTabLogic {
   }
 
   setCurrentPath (path: string) {
-    if (path === '/') { 
+    if (path === '/') {
       this.currentPath = '/'
       return
     }
@@ -27,7 +27,7 @@ export class TestTabLogic {
     if (!path || !(/\S/.test(path))) return
     path = this.helper.removeMultipleSlashes(path)
     const fileProvider = this.fileManager.fileProviderOf(path.split('/')[0])
-    if(!await fileProvider.exists(path)) fileProvider.createDir(path)
+    if (!await fileProvider.exists(path)) fileProvider.createDir(path)
   }
 
   async pathExists (path: string) {
@@ -48,11 +48,11 @@ export class TestTabLogic {
     const fileNameToImport = (!hasCurrent) ? fileName : this.currentPath + '/' + splittedFileName[splittedFileName.length - 1]
     this.helper.createNonClashingNameWithPrefix(fileNameToImport, fileProvider, '_test', async (error: Error, newFile: string) => {
       if (error) return errorCb('Failed to create file. ' + newFile + ' ' + error)
-      try{
+      try {
         await fileProvider.set(newFile, this.generateTestContractSample(hasCurrent, fileName))
         await this.fileManager.open(newFile)
         await this.fileManager.syncEditor(newFile)
-      }catch(e){
+      } catch (e){
         return errorCb('Failed to create test file ' + newFile)
       }
     })

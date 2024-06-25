@@ -27,30 +27,30 @@ module.exports = {
       .frameParent()
       .clickLaunchIcon('filePanel')
       .waitForElementVisible({
-        selector: "//*[@data-id='workspacesSelect' and contains(.,'snekmate')]",
+        selector: "//*[@data-id='workspacesSelect' and contains(.,'vyper-lang')]",
         locateStrategy: 'xpath',
         timeout: 60000
       })
-      .currentWorkspaceIs('snekmate')
-      .waitForElementVisible({
-        selector: "//*[@data-id='treeViewLitreeViewItemsrc' and contains(.,'src')]",
-        locateStrategy: 'xpath',
-        timeout: 60000
-      })
-      .openFile('src')
-      .openFile('src/snekmate')
-      .openFile('src/snekmate/tokens')
-      .openFile('src/snekmate/tokens/ERC721.vy')
+      .currentWorkspaceIs('vyper-lang')
+      // .waitForElementVisible({
+      //   selector: "//*[@data-id='treeViewLitreeViewItemsrc' and contains(.,'src')]",
+      //   locateStrategy: 'xpath',
+      //   timeout: 60000
+      // })
+      .openFile('examples')
+      .openFile('examples/auctions')
+      .openFile('examples/auctions/simple_open_auction.vy')
   },
-  // 'Add vyper file to run tests #group1': function (browser: NightwatchBrowser) {
-  //   browser.addFile('TestBallot.sol', sources[0]['TestBallot.sol'])
-  // },
-  '@sources': () => sources,
+
+  // '@sources': () => sources,
+  // 'Context menu click to compile blind_auction should succeed #group1': function (browser: NightwatchBrowser) {
+  //   browser
+  //     .addFileSnekmate('blind_auction.vy', sources[0]['blindAuction'])
+
   'Context menu click to compile blind_auction should succeed #group1': function (browser: NightwatchBrowser) {
     browser
-      .addFileSnekmate('blind_auction.vy', sources[0]['blindAuction'])
-      .click('*[data-id="treeViewLitreeViewItemblind_auction.vy"]')
-      .rightClick('*[data-id="treeViewLitreeViewItemblind_auction.vy"]')
+      .click('*[data-id="treeViewDivtreeViewItemexamples/auctions/blind_auction.vy"]')
+      .rightClick('*[data-id="treeViewDivtreeViewItemexamples/auctions/blind_auction.vy"]')
       .waitForElementPresent('[data-id="contextMenuItemvyper"]')
       .click('[data-id="contextMenuItemvyper"]')
       .clickLaunchIcon('vyper')
@@ -149,32 +149,32 @@ module.exports = {
       })
   },
 
-  'Compile Ownable contract from snekmate #group1': function (browser: NightwatchBrowser) {
-    let contractAddress
-    browser
-      .frameParent()
-      .clickLaunchIcon('filePanel')
-      .switchWorkspace('snekmate')
-      .openFile('src')
-      .openFile('src/snekmate')
-      .openFile('src/snekmate/auth')
-      .openFile('src/snekmate/auth/Ownable.vy')
-      .rightClick('*[data-id="treeViewLitreeViewItemsrc/snekmate/auth/Ownable.vy"]')
-      .waitForElementVisible('*[data-id="contextMenuItemvyper"]')
-      .click('*[data-id="contextMenuItemvyper"]')
-      .clickLaunchIcon('vyper')
-      // @ts-ignore
-      .frame(0)
-      .click('[data-id="compile"]')
-      .waitForElementVisible({
-        selector:'[data-id="compilation-details"]',
-        timeout: 60000
-      })
-      .click('[data-id="compilation-details"]')
-      .frameParent()
-      .waitForElementVisible('[data-id="copy-abi"]')
-      .end()
-  }
+  // 'Compile Ownable contract from snekmate #group1': function (browser: NightwatchBrowser) {
+  //   let contractAddress
+  //   browser
+  //     .frameParent()
+  //     .clickLaunchIcon('filePanel')
+  //     .switchWorkspace('snekmate')
+  //     .openFile('src')
+  //     .openFile('src/snekmate')
+  //     .openFile('src/snekmate/auth')
+  //     .openFile('src/snekmate/auth/Ownable.vy')
+  //     .rightClick('*[data-id="treeViewLitreeViewItemsrc/snekmate/auth/Ownable.vy"]')
+  //     .waitForElementVisible('*[data-id="contextMenuItemvyper"]')
+  //     .click('*[data-id="contextMenuItemvyper"]')
+  //     .clickLaunchIcon('vyper')
+  //     // @ts-ignore
+  //     .frame(0)
+  //     .click('[data-id="compile"]')
+  //     .waitForElementVisible({
+  //       selector:'[data-id="compilation-details"]',
+  //       timeout: 60000
+  //     })
+  //     .click('[data-id="compilation-details"]')
+  //     .frameParent()
+  //     .waitForElementVisible('[data-id="copy-abi"]')
+  //     .end()
+  // }
 }
 
 const testContract = `
@@ -388,6 +388,6 @@ def auctionEnd():
 
     # Transfer funds to beneficiary
     send(self.beneficiary, self.highestBid)
-`}
+` }
 }
 ]

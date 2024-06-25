@@ -26,7 +26,7 @@ export class CompileAndRun extends Plugin {
     super(profile)
     this.executionListener = async (e) => {
       // ctrl+e or command+e
-      
+
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.keyCode === 83) {
         const file = await this.call('fileManager', 'file')
         if (file) {
@@ -51,7 +51,7 @@ export class CompileAndRun extends Plugin {
   }
 
   async runScript (fileName, clearAllInstances) {
-    await this.call('terminal', 'log', { value: `running ${fileName} ...`, type: 'info'  })
+    await this.call('terminal', 'log', { value: `running ${fileName} ...`, type: 'info' })
     try {
       const exists = await this.call('fileManager', 'exists', fileName)
       if (!exists) {
@@ -65,7 +65,7 @@ export class CompileAndRun extends Plugin {
       await this.call('scriptRunner', 'execute', content, fileName)
     } catch (e) {
       this.call('notification', 'toast', e.message || e)
-    }    
+    }
   }
 
   onActivation () {

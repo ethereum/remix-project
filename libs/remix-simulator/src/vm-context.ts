@@ -59,7 +59,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
   }
 
   shallowCopy(): StateManagerCommonStorageDump {
-    const copyState =  new StateManagerCommonStorageDump({
+    const copyState = new StateManagerCommonStorageDump({
       trie: this._trie.shallowCopy(false),
     })
     copyState.keyHashes = this.keyHashes
@@ -93,7 +93,7 @@ class StateManagerCommonStorageDump extends DefaultStateManager {
         })
       } catch (e) {
         reject(e)
-      }      
+      }
     })
   }
 }
@@ -110,7 +110,7 @@ export interface CustomEthersStateManagerOpts {
 class CustomEthersStateManager extends StateManagerCommonStorageDump {
   private provider: ethers.providers.StaticJsonRpcProvider | ethers.providers.JsonRpcProvider
   private blockTag: string
-  
+
   constructor(opts: CustomEthersStateManagerOpts) {
     super(opts)
     if (typeof opts.provider === 'string') {
@@ -188,7 +188,7 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
   async accountExists(address: Address): Promise<boolean> {
     const account = await super.getAccount(address)
     if (!account.isEmpty()) return true
-    
+
     // Get merkle proof for `address` from provider
     const proof = await this.provider.send('eth_getProof', [address.toString(), [], this.blockTag])
 
@@ -245,11 +245,10 @@ class CustomEthersStateManager extends StateManagerCommonStorageDump {
         codeHash: hexToBytes(codeHash)
         // storageRoot: toBuffer([]), // we have to remove this in order to force the creation of the Trie in the local state.
       })
-    }    
+    }
     return account
   }
 }
-
 
 export type CurrentVm = {
   vm: VM,
@@ -263,7 +262,7 @@ export class VMCommon extends Common {
   /**
     * Always return the fork set at initialization
     */
-  setHardforkBy() {    
+  setHardforkBy() {
     return this._hardfork;
   }
 }
@@ -281,7 +280,7 @@ export class VMContext {
   txByHash: Record<string, TypedTransaction>
   currentVm: CurrentVm
   web3vm: VmProxy
-  logsManager: any // LogsManager 
+  logsManager: any // LogsManager
   exeResults: Record<string, TypedTransaction>
   nodeUrl: string
   blockNumber: number | 'latest'
@@ -332,7 +331,7 @@ export class VMContext {
       const db = this.stateDb ? new Map(Object.entries(this.stateDb).map(([k, v]) => [k, hexToBytes(v)])) : new Map()
       const mapDb = new MapDB(db)
       const trie = await Trie.create({ useKeyHashing: true, db: mapDb, useRootPersistence: true })
-      
+
       stateManager = new StateManagerCommonStorageDump({ trie })
     }
 
@@ -357,7 +356,7 @@ export class VMContext {
 
     const blockchain = await Blockchain.create({ common, validateBlocks: false, validateConsensus: false, genesisBlock })
     const evm = await EVM.create({ common, allowUnlimitedContractSize: true, stateManager, blockchain })
-     
+
     const vm = await VM.create({
       common,
       activatePrecompiles: true,

@@ -18,6 +18,7 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       cancelLabel: action.payload.cancelLabel,
       cancelFn: action.payload.cancelFn,
       modalType: action.payload.modalType,
+      modalParentClass: action.payload.modalParentClass,
       defaultValue: action.payload.defaultValue,
       hideFn: action.payload.hideFn,
       resolve: action.payload.resolve,
@@ -76,7 +77,7 @@ export const modalReducer = (state: ModalState = ModalInitialState, action: Moda
       const toaster = toasterList[0]
       return { ...state, toasters: toasterList, focusToaster: toaster }
     } else {
-      return { ...state, toasters: [] }
+      return { ...state, toasters: []}
     }
   }
   }

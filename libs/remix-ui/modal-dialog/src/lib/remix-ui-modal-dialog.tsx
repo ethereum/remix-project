@@ -57,12 +57,12 @@ export const ModalDialog = (props: ModalDialogProps) => {
     } else if (keyCode === 37) {
       // todo && footerIsActive) { // Arrow Left
       setState((prevState) => {
-        return {...prevState, toggleBtn: true}
+        return { ...prevState, toggleBtn: true }
       })
     } else if (keyCode === 39) {
       // todo && footerIsActive) { // Arrow Right
       setState((prevState) => {
-        return {...prevState, toggleBtn: false}
+        return { ...prevState, toggleBtn: false }
       })
     }
   }
@@ -82,15 +82,15 @@ export const ModalDialog = (props: ModalDialogProps) => {
       data-backdrop="static"
       data-keyboard="false"
       className="modal"
-      style={{display: props.hide ? 'none' : 'block'}}
+      style={{ display: props.hide ? 'none' : 'block' }}
       role="dialog"
     >
-      <div className="modal-dialog" role="document">
+      <div className={'modal-dialog ' + (props.modalParentClass ? props.modalParentClass : '')} role="document">
         <div
           ref={modal}
           tabIndex={-1}
           className={'modal-content remixModalContent ' + (props.modalClass ? props.modalClass : '')}
-          onKeyDown={({keyCode}) => {
+          onKeyDown={({ keyCode }) => {
             modalKeyEvent(keyCode)
           }}
         >

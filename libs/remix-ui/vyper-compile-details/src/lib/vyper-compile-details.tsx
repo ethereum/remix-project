@@ -2,7 +2,6 @@ import React from 'react'
 import VyperCompile from './vyperCompile'
 import { ThemeKeys, ThemeObject } from '@microlink/react-json-view'
 
-
 interface RemixUiVyperCompileDetailsProps {
   payload: any
   theme?: ThemeKeys | ThemeObject
@@ -21,7 +20,7 @@ export function RemixUiVyperCompileDetails({ payload, theme, themeStyle }: Remix
   return (
     <>
       <VyperCompile
-        result={{bytecode: bcode, bytecodeRuntime: runtimeBcode, ir: ir, methodIdentifiers: methodIdentifiers, abi: abi, compilerVersion: compilerVersion, evmVersion: emvVersion}}
+        result={{ bytecode: bcode, bytecodeRuntime: runtimeBcode, ir: ir, methodIdentifiers: methodIdentifiers, abi: abi, compilerVersion: compilerVersion, evmVersion: emvVersion }}
         theme={theme}
         themeStyle={themeStyle}
       />

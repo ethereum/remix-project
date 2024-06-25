@@ -1,7 +1,7 @@
-import {PluginClient} from '@remixproject/plugin'
-import {createClient} from '@remixproject/plugin-webview'
-import {store} from './redux/store'
-import {router} from './App'
+import { PluginClient } from '@remixproject/plugin'
+import { createClient } from '@remixproject/plugin-webview'
+import { store } from './redux/store'
+import { router } from './App'
 
 class RemixClient extends PluginClient {
   constructor() {

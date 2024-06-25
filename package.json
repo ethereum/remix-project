@@ -1,10 +1,10 @@
 {
   "name": "remix-project",
-  "version": "0.48.0-dev",
+  "version": "0.51.0-dev",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "main": "index.js",
-  "defaultVersion": "soljson-v0.8.25+commit.b61c2a91.js",
+  "defaultVersion": "soljson-v0.8.26+commit.8a97fa7a.js",
   "keywords": [
     "ethereum",
     "solidity",
@@ -97,8 +97,10 @@
     "@ethereumjs/util": "9.0.3",
     "@ethereumjs/vm": "8.0.0",
     "@ethersphere/bee-js": "^3.2.0",
+    "@floating-ui/react": "^0.26.15",
     "@gradio/client": "^0.10.1",
     "@isomorphic-git/lightning-fs": "^4.4.1",
+    "@metamask/eth-sig-util": "^7.0.2",
     "@microlink/react-json-view": "^1.23.0",
     "@openzeppelin/contracts": "^5.0.0",
     "@openzeppelin/upgrades-core": "^1.30.0",
@@ -362,6 +364,7 @@
     "webpack-cli": "^4.10.0"
   },
   "resolutions": {
+    "@metamask/eth-sig-util/@ethereumjs/util": "^8.1.0",
     "@types/react": "^18.2.0",
     "@ethereumjs/blockchain": "7.2.0",
     "@ethereumjs/block": "5.2.0",

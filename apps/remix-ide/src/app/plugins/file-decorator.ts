@@ -55,8 +55,8 @@ export class FileDecorator extends Plugin {
     if (!from) return
 
     const filteredState = this._fileStates.filter((state) => {
-      if(state.owner != from) return true
-      if(path && state.path != path) return true
+      if (state.owner != from) return true
+      if (path && state.path != path) return true
     })
     const newState = [...filteredState].sort(sortByPath)
 

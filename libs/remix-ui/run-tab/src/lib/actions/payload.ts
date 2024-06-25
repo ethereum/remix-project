@@ -247,10 +247,10 @@ export const addNewPinnedInstance = (instance: { contractData?: ContractData, ad
 export const removeExistingInstance = (index: number, isPinnedContract: boolean, shouldDelete: boolean) => {
   return {
     type: REMOVE_INSTANCE,
-    payload: { 
+    payload: {
       index,
       isPinnedContract,
-      shouldDelete 
+      shouldDelete
     }
   }
 }

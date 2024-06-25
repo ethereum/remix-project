@@ -1,13 +1,13 @@
 import { PluginClient } from "@remixproject/plugin";
 import { createClient } from "@remixproject/plugin-webview";
-import { IDebuggerApi, LineColumnLocation, 
+import { IDebuggerApi, LineColumnLocation,
   onBreakpointClearedListener, onBreakpointAddedListener, onEditorContentChanged, onEnvChangedListener, TransactionReceipt } from '@remix-ui/debugger-ui'
 import { DebuggerApiMixin } from '@remix-ui/debugger-ui'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 
-export class DebuggerClientApi extends DebuggerApiMixin(PluginClient) {  
+export class DebuggerClientApi extends DebuggerApiMixin(PluginClient) {
   constructor () {
-    super()    
+    super()
     createClient(this as any)
     this.initDebuggerApi()
   }

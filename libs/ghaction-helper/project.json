@@ -22,7 +22,8 @@
         "executor": "@nrwl/linter:eslint",
         "outputs": ["{options.outputFile}"],
         "options": {
-          "lintFilePatterns": ["libs/ghaction-helper/**/*.ts"]
+          "lintFilePatterns": ["libs/ghaction-helper/**/*.ts"],
+          "eslintConfig": "libs/ghaction-helper/.eslintrc"
         }
       }
     },

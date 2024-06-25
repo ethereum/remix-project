@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
-import {OverlayTrigger, Popover} from 'react-bootstrap'
-import {TooltipPopupProps} from '../types'
+import React, { useState } from 'react'
+import { OverlayTrigger, Popover } from 'react-bootstrap'
+import { TooltipPopupProps } from '../types'
 import './tooltip-popup.module.css'
 
 const popover = (title?: string, content?: string | React.ReactNode) => (

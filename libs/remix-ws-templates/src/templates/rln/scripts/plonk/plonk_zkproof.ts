@@ -45,13 +45,13 @@ function hashNullifier(message: any): bigint {
 async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
   console.log('calculate')
   await snarkjs.wtns.calculate(signals, wasm, wtns);
-  
+
   console.log('check')
-  await snarkjs.wtns.check(r1cs, wtns, logger);  
+  await snarkjs.wtns.check(r1cs, wtns, logger);
 
   console.log('prove')
   const { proof, publicSignals } = await snarkjs.plonk.prove(zkey_final, wtns);
-  
+
   const verified = await snarkjs.plonk.verify(vKey, publicSignals, proof, logger);
   console.log('zk proof validity', verified);
 
@@ -84,7 +84,7 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
       ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_zw).toHexString(), 32),
     ]
   }, null, 2))
-  
+
   console.log('proof done.')
   return {
     proof,
@@ -104,8 +104,8 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
     // @ts-ignore
     const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.wasm', { encoding: null });
     // @ts-ignore
-    const wasm = new Uint8Array(wasmBuffer);   
-     
+    const wasm = new Uint8Array(wasmBuffer);
+
     const zkey_final = {
       type: "mem",
       // @ts-ignore
@@ -114,24 +114,24 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
     const wtns = { type: "mem" };
 
     const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/plonk/verification_key.json'))
-  
+
     // build list of identity commitments
     const secrets = []
     const identityCommitments = []
     const rateCommitments = []
     const userMessageLimit = 0x2
-    for (let k = 0; k < 2; k++) {      
+    for (let k = 0; k < 2; k++) {
       const identitySecret = BigInt(ethers.utils.hexlify(ethers.utils.randomBytes(32)))
       secrets.push(identitySecret)
-  
+
       const identityCommitment = poseidon([identitySecret])
       const rateCommitment = poseidon([identityCommitment, userMessageLimit])
       identityCommitments.push(identityCommitment)
       rateCommitments.push(rateCommitment)
     }
-    
+
     let tree
-  
+
     try {
       tree = new IncrementalMerkleTree(poseidon, 20, BigInt(0), 2, rateCommitments) // Binary tree.
     } catch (e) {
@@ -154,7 +154,7 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
       externalNullifier: 0xa // hash(epoch, appId)
     }
     const proof1 = await prove(signals1, wasm, wtns, r1cs, zkey_final, vKey)
-    
+
     const signals2 = {
       identitySecret: secrets[0],
       userMessageLimit,
@@ -170,12 +170,12 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
 
     console.log(secret.toString(10))
     console.log(Fq.normalize(secrets[0]))
-    
+
     const templates = {
       plonk: await remix.call('fileManager', 'readFile', 'templates/plonk_verifier.sol.ejs')
     }
     const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
-    
+
     await remix.call('fileManager', 'writeFile', './zk/build/plonk/zk_verifier.sol', solidityContract)
   } catch (e) {
     console.error(e.message)

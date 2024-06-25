@@ -1,7 +1,7 @@
 import React, {useState, useEffect, forwardRef} from 'react' // eslint-disable-line
-import {ElectronPlugin} from '@remixproject/engine-electron'
-import {Xterm} from './xterm-wrap'
-import {FitAddon} from './xterm-fit-addOn'
+import { ElectronPlugin } from '@remixproject/engine-electron'
+import { Xterm } from './xterm-wrap'
+import { FitAddon } from './xterm-fit-addOn'
 
 const config = {
   fontSize: 12,
@@ -30,7 +30,7 @@ export interface RemixUiXtermProps {
 }
 
 const RemixUiXterm = (props: RemixUiXtermProps) => {
-  const {plugin, pid, send, timeStamp, theme, resize} = props
+  const { plugin, pid, send, timeStamp, theme, resize } = props
   const xtermRef = React.useRef(null)
 
   useEffect(() => {
@@ -59,11 +59,11 @@ const RemixUiXterm = (props: RemixUiXtermProps) => {
       addons={[fitAddon]}
       onResize={onResize}
       onRender={() => fitAddon.fit()}
-      options={{	
-        fontFamily: config.fontFamily,	
-        fontSize: config.fontSize,	
-        letterSpacing: config.letterSpacing,	
-        lineHeight: config.lineHeight,	
+      options={{
+        fontFamily: config.fontFamily,
+        fontSize: config.fontSize,
+        letterSpacing: config.letterSpacing,
+        lineHeight: config.lineHeight,
       }}
       ref={xtermRef}
       onData={(data) => {

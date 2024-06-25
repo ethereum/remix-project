@@ -1,0 +1,7 @@
+{
+  "remixUiTabs.tooltipText1": "스크립트 실행 (CTRL + SHIFT + S)",
+  "remixUiTabs.tooltipText2": "컴파일 CTRL + S",
+  "remixUiTabs.tooltipText3": "컴파일할 .sol 또는 .yul 파일을 선택하거나 .ts 또는 .js 파일을 선택하고 실행하세요",
+  "remixUiTabs.zoomOut": "축소",
+  "remixUiTabs.zoomIn": "확대"
+}

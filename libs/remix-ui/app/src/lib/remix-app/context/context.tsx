@@ -1,6 +1,6 @@
 import React from 'react'
-import {AlertModal, AppModal} from '../interface'
-import {ModalInitialState} from '../state/modals'
+import { AlertModal, AppModal } from '../interface'
+import { ModalInitialState } from '../state/modals'
 
 export type appProviderContextType = {
   settings: any,
@@ -10,7 +10,7 @@ export type appProviderContextType = {
   modal: any
 }
 
-export enum appPlatformTypes  {
+export enum appPlatformTypes {
   web = 'web',
   desktop = 'desktop'
 }

@@ -47,6 +47,14 @@
         "parallel": false
       }
     },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/solhint/**/*.ts"],
+        "eslintConfig": "apps/solhint/.eslintrc"
+      }
+    },
     "serve": {
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",
