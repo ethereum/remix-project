@@ -200,13 +200,13 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                   _paq.push(['trackEvent', 'hometab', 'filesSection', 'Git Clone'])
                   await plugin.call('filePanel', 'clone')
                 }}>
-                Git Clone
+                  Git Clone
                 </button>
               </CustomTooltip>
               <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.gistTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3"
               >
                 <button className="btn text-nowrap p-2 mr-2 border my-1" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>
-                Gist
+                  Gist
                 </button>
               </CustomTooltip>
             </div>
