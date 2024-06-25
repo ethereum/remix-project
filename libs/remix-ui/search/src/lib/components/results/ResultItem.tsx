@@ -1,10 +1,10 @@
-import {useDialogDispatchers} from '@remix-ui/app'
-import React, {useContext, useEffect, useRef, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {SearchContext} from '../../context/context'
-import {SearchResult, SearchResultLine} from '../../types'
-import {ResultFileName} from './ResultFileName'
-import {ResultSummary} from './ResultSummary'
+import { useDialogDispatchers } from '@remix-ui/app'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { SearchContext } from '../../context/context'
+import { SearchResult, SearchResultLine } from '../../types'
+import { ResultFileName } from './ResultFileName'
+import { ResultSummary } from './ResultSummary'
 
 interface ResultItemProps {
   file: SearchResult
@@ -13,14 +13,14 @@ interface ResultItemProps {
 
 export const ResultItem = (props: ResultItemProps) => {
   const intl = useIntl()
-  const {state, findText, disableForceReload, updateCount, replaceAllInFile} = useContext(SearchContext)
+  const { state, findText, disableForceReload, updateCount, replaceAllInFile } = useContext(SearchContext)
   const [loading, setLoading] = useState<boolean>(false)
   const [lines, setLines] = useState<SearchResultLine[]>([])
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
   const reloadTimeOut = useRef(null)
   const loadTimeout = useRef(null)
   const subscribed = useRef(true)
-  const {modal} = useDialogDispatchers()
+  const { modal } = useDialogDispatchers()
 
   useEffect(() => {
     reload()
@@ -72,18 +72,18 @@ export const ResultItem = (props: ResultItemProps) => {
     } else {
       modal({
         id: 'confirmreplace',
-        title: intl.formatMessage({id: 'search.replace'}),
+        title: intl.formatMessage({ id: 'search.replace' }),
         message: intl.formatMessage(
-          {id: 'search.confirmreplaceMsg'},
+          { id: 'search.confirmreplaceMsg' },
           {
             find: state.find,
             replace: state.replace,
             filename: props.file.filename
           }
         ),
-        okLabel: intl.formatMessage({id: 'search.yes'}),
+        okLabel: intl.formatMessage({ id: 'search.yes' }),
         okFn: confirmReplace,
-        cancelLabel: intl.formatMessage({id: 'search.no'}),
+        cancelLabel: intl.formatMessage({ id: 'search.no' }),
         cancelFn: () => {},
         data: null
       })

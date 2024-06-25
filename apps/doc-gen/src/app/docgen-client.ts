@@ -17,7 +17,7 @@ export class DocGenClient extends PluginClient {
   public docs: string[] = []
   private fileName: string = ''
   private contractPath: string = ''
-  
+
   constructor() {
     super()
     this.eventEmitter = new EventEmitter()
@@ -30,7 +30,7 @@ export class DocGenClient extends PluginClient {
 
   async setListeners() {
     this.currentTheme = await this.call('theme', 'currentTheme')
-    
+
     this.on('theme', 'themeChanged', (theme: any) => {
       this.currentTheme = theme
       this.eventEmitter.emit('themeChanged', this.currentTheme)
@@ -50,7 +50,7 @@ export class DocGenClient extends PluginClient {
       }
       const segmentedPathList = normalizeContractPath(fileName)
       this.fileName = segmentedPathList[segmentedPathList.length - 1]
-      this.contractPath =  segmentedPathList[0]
+      this.contractPath = segmentedPathList[0]
       this.eventEmitter.emit('compilationFinished', this.build, this.fileName)
     })
   }

@@ -102,6 +102,7 @@
   "udapp.llIError6": "'receive' 和 'fallback' 函数都未定义",
   "udapp.llIError7": "定义一个 'Fallback' 函数来发送 calldata ，并且定义一个 'Receive' 或 可支付的 'Fallback' 来发送以太币",
   "udapp.copy": "复制",
+  "udapp.copyAddress": "Copy Address",
   "udapp._comment_mainnet.tsx": "libs/remix-ui/run-tab/src/lib/components/mainnet.tsx",
   "udapp.mainnetText1": "您即将在 {name} 网络上创建一笔交易。确认详细信息，将信息发送给您的 provider 。",
   "udapp.mainnetText2": "许多用户的 provider 是 MetaMask。在将交易发送到 {name} 网络之前，provider 会要求您签署交易。",

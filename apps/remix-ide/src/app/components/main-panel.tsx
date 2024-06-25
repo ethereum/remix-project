@@ -1,8 +1,8 @@
 import React from 'react' // eslint-disable-line
-import {AbstractPanel} from './panel'
-import {RemixPluginPanel} from '@remix-ui/panel'
+import { AbstractPanel } from './panel'
+import { RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
-import {PluginViewWrapper} from '@remix-ui/helper'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'mainPanel',
@@ -60,7 +60,7 @@ export class MainPanel extends AbstractPanel {
 
   render() {
     return (
-      <div style={{height: '100%', width: '100%'}} data-id="mainPanelPluginsContainer">
+      <div style={{ height: '100%', width: '100%' }} data-id="mainPanelPluginsContainer">
         <PluginViewWrapper plugin={this} />
       </div>
     )

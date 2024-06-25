@@ -19,7 +19,8 @@
         "executor": "@nrwl/linter:eslint",
         "outputs": ["{options.outputFile}"],
         "options": {
-          "lintFilePatterns": ["libs/remix-core-plugin/**/*.ts"]
+          "lintFilePatterns": ["libs/remix-core-plugin/**/*.ts"],
+          "eslintConfig": "libs/remix-core-plugin/.eslintrc"
         }
       }
     },

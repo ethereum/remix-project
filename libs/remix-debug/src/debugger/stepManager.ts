@@ -77,7 +77,7 @@ export class DebuggerStepManager {
           const revertedReason = this.currentCall.outofgas ? 'outofgas' : 'reverted'
           this.revertionPoint = this.currentCall.return
           this.event.trigger('revertWarning', [revertedReason])
-          return 
+          return
         }
         for (let k = callsPath.length - 2; k >= 0; k--) {
           const parent = callsPath[k]

@@ -1,6 +1,6 @@
 import React from 'react'
 import { ViewPlugin } from '@remixproject/engine-web'
-import {PluginViewWrapper} from '@remix-ui/helper'
+import { PluginViewWrapper } from '@remix-ui/helper'
 import { RemixAppManager } from '../../remixAppManager'
 import { RemixUiCompileDetails } from '@remix-ui/solidity-compile-details'
 
@@ -45,7 +45,6 @@ export class CompilationDetailsPlugin extends ViewPlugin {
   async showDetails(sentPayload: any) {
     await this.call('tabs', 'focus', 'compilationDetails')
     setTimeout(() => {
-      // TODO: use the react API to render when the tab is focused and the plugin in the view.
       this.payload = sentPayload
       this.renderComponent()
     }, 2000)

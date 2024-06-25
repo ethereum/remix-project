@@ -31,14 +31,14 @@ export const useExtractData = (json, extractFunc?: ExtractFunc): Array<{key: str
 
     if (item instanceof Array) {
       ret.children = item.map((item, index) => {
-        return {key: index, value: item}
+        return { key: index, value: item }
       })
       ret.self = 'Array'
       ret.isNode = true
       ret.isLeaf = false
     } else if (item instanceof Object) {
       ret.children = Object.keys(item).map((key) => {
-        return {key: key, value: item[key]}
+        return { key: key, value: item[key] }
       })
       ret.self = 'Object'
       ret.isNode = true

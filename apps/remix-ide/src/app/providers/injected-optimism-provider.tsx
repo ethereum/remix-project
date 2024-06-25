@@ -1,5 +1,5 @@
 import * as packageJson from '../../../../../package.json'
-import {InjectedCustomProvider} from './injected-custom-provider'
+import { InjectedCustomProvider } from './injected-custom-provider'
 
 const profile = {
   name: 'injected-optimism-provider',

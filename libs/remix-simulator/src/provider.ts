@@ -11,7 +11,6 @@ import { Transactions } from './methods/transactions'
 import { Debug } from './methods/debug'
 import { VMContext } from './vm-context'
 import { Web3PluginBase } from 'web3'
-import { Block } from '@ethereumjs/block'
 
 export interface JSONRPCRequestPayload {
   params: any[];
@@ -26,7 +25,7 @@ export interface JSONRPCResponsePayload {
   jsonrpc: string;
 }
 
-export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePayload) =>  void
+export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePayload) => void
 
 export type State = Record<string, string>
 
@@ -35,7 +34,7 @@ export type ProviderOptions = {
   nodeUrl?: string,
   blockNumber?: number | 'latest',
   stateDb?: State,
-  logDetails?: boolean
+  details?: boolean
   blocks?: string[],
   coinbase?: string
 }
@@ -83,19 +82,19 @@ export class Provider {
     }
   }
 
-  _send(payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
+  _send(payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) => void) {
     // log.info('payload method is ', payload.method) // commented because, this floods the IDE console
     if (!this.initialized) {
       this.pendingRequests.push({ payload, callback })
       return
     }
     const method = this.methods[payload.method]
-    if (this.options.logDetails) {
+    if (this.options.details) {
       info(payload)
     }
     if (method) {
       return method.call(method, payload, (err, result) => {
-        if (this.options.logDetails) {
+        if (this.options.details) {
           info(err)
           info(result)
         }
@@ -109,13 +108,13 @@ export class Provider {
     callback(new Error('unknown method ' + payload.method))
   }
 
-  sendAsync (payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) =>  void) {
+  async sendAsync (payload: JSONRPCRequestPayload, callback?: (err: Error, result?: JSONRPCResponsePayload) => void) : Promise<JSONRPCResponsePayload> {
     return new Promise((resolve,reject)=>{
       const cb = (err, result) => {
-        if(typeof callback==='function'){
-          callback(err,result)
+        if (typeof callback==='function'){
+          return callback(err, result)
         }
-        if(err){
+        if (err){
           return reject(err)
         }
         return resolve(result)
@@ -125,7 +124,12 @@ export class Provider {
   }
 
   send (payload, callback) {
-    return this.sendAsync(payload,callback)
+    this.sendAsync(payload, callback)
+  }
+
+  async request (payload: JSONRPCRequestPayload) : Promise<any> {
+    const ret = await this.sendAsync(payload)
+    return ret.result
   }
 
   isConnected () {
@@ -146,7 +150,7 @@ export class Provider {
 }
 
 export function extend (web3) {
-  if(!web3.remix){
+  if (!web3.remix){
     web3.registerPlugin(new Web3TestPlugin())
   }
 }

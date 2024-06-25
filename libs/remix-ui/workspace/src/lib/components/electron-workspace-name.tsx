@@ -2,7 +2,6 @@ import { CustomTooltip } from "@remix-ui/helper"
 import React from "react"
 import path from 'path'
 
-
 interface ElectronWorkspaceNameProps {
   path: string
   plugin: any
@@ -10,8 +9,8 @@ interface ElectronWorkspaceNameProps {
 
 export const ElectronWorkspaceName = (props: ElectronWorkspaceNameProps) => {
   const { path: dir } = props
-  
-  const parsePath = () => {    
+
+  const parsePath = () => {
     const pathArray = dir.split(path.posix.sep)
     return pathArray[pathArray.length - 1]
   }

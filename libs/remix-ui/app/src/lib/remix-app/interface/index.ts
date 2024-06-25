@@ -18,6 +18,7 @@ export interface AppModal {
     cancelLabel?: string | JSX.Element
     cancelFn?: () => void,
     modalType?: ModalTypes,
+    modalParentClass?: string
     defaultValue?: string
     hideFn?: () => void,
     resolve?: (value?:any) => void,
@@ -35,7 +36,7 @@ export interface ModalState {
     modals: AppModal[],
     toasters: {message: (string | JSX.Element), timestamp: number }[],
     focusModal: AppModal,
-    focusToaster:  {message: (string | JSX.Element), timestamp: number }
+    focusToaster: {message: (string | JSX.Element), timestamp: number }
 }
 
 export interface forceChoiceModal {

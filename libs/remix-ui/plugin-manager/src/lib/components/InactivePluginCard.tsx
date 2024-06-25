@@ -1,9 +1,9 @@
-import {Profile} from '@remixproject/plugin-utils'
+import { Profile } from '@remixproject/plugin-utils'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-use-before-define
 import React, { useContext, useEffect, useState } from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import '../remix-ui-plugin-manager.css'
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 import { onLineContext } from '@remix-ui/app'
 interface PluginCardProps {
   profile: any
@@ -11,18 +11,18 @@ interface PluginCardProps {
   activatePlugin: (plugin: string) => void
 }
 
-function InactivePluginCard({profile, buttonText, activatePlugin}: PluginCardProps) {
+function InactivePluginCard({ profile, buttonText, activatePlugin }: PluginCardProps) {
   const online = useContext(onLineContext)
   const [canBeActivated, setCanBeActivated] = useState(false)
   const intl = useIntl()
   useEffect(() => {
-    if(!online) {
-      if(profile.url && (!profile.url.includes('http') || profile.url.includes('localhost') || profile.url.includes('127.0.0.1'))) {
+    if (!online) {
+      if (profile.url && (!profile.url.includes('http') || profile.url.includes('localhost') || profile.url.includes('127.0.0.1'))) {
         setCanBeActivated(true)
-      }else{
+      } else {
         setCanBeActivated(false)
       }
-    }else{
+    } else {
       setCanBeActivated(true)
     }
   },[online])
@@ -89,9 +89,9 @@ function InactivePluginCard({profile, buttonText, activatePlugin}: PluginCardPro
                 placement="right"
                 tooltipId={`pluginManagerInactiveActiveBtn${profile.name}`}
                 tooltipClasses="text-nowrap"
-                tooltipText={<FormattedMessage id="pluginManager.activatePlugin" values={{pluginName: profile.displayName || profile.name}} />}
+                tooltipText={<FormattedMessage id="pluginManager.activatePlugin" values={{ pluginName: profile.displayName || profile.name }} />}
               >
-                {!canBeActivated ? <button className="btn btn-secondary btn-sm">{intl.formatMessage({id: 'pluginManager.UnavailableOffline'})}</button> : (
+                {!canBeActivated ? <button className="btn btn-secondary btn-sm">{intl.formatMessage({ id: 'pluginManager.UnavailableOffline' })}</button> : (
                   <button
                     onClick={() => {
                       activatePlugin(profile.name)

@@ -38,7 +38,7 @@ export class TxRunnerVM {
     this.logsManager = new LogsManager()
     // has a default for now for backwards compatibility
     this.getVMObject = getVMObject
-    this.commonContext = this.getVMObject().common    
+    this.commonContext = this.getVMObject().common
     this.pendingTxs = {}
     this.vmaccounts = vmaccounts
     this.queusTxs = []
@@ -137,7 +137,7 @@ export class TxRunnerVM {
         })
       } else {
         this.blockParentHash = block.hash()
-        this.runBlockInVm(tx, block, async  (err, result) => {
+        this.runBlockInVm(tx, block, async (err, result) => {
           if (!err) {
             if (!useCall) {
               this.getVMObject().vm.blockchain.putBlock(block)

@@ -46,7 +46,7 @@ test('setup', function (t: test.Test) {
 
     testFiles.forEach((fileName) => {
       const content: string = readFileSync(join(__dirname, 'test-contracts/' + folder, fileName), 'utf8')
-      // Latest AST is available under 'compileStandardWrapper' under solc for, 0.4.12 <= version < 0.5.0 
+      // Latest AST is available under 'compileStandardWrapper' under solc for, 0.4.12 <= version < 0.5.0
       compilationResults[fileName] = JSON.parse(compiler.compile(compilerInput(content)))
     })
 
@@ -820,5 +820,5 @@ function runModuleOnFiles (Module: any, t: test.Test, cb: ((fname: string, repor
       t.comment('Error while executing Module: ' + JSON.stringify(report))
     }
     cb(fileName, report)
-  })      
+  })
 }

@@ -8,13 +8,13 @@ function convertToPrefixedHex (input) {
   if (input === undefined || input === null || isHexString(input)) {
     return input
   }
-  if ((input.constructor && input.constructor.name === 'BigNumber') 
-      || BN.isBN(input) 
+  if ((input.constructor && input.constructor.name === 'BigNumber')
+      || BN.isBN(input)
       || isBigInt(input)
       || typeof input === 'number') {
     return '0x' + input.toString(16)
   }
-  
+
   try {
     return bytesToHex(input)
   } catch (e) {
@@ -26,7 +26,7 @@ function convertToPrefixedHex (input) {
     return '0x' + input.toString(16)
   } catch (e) {
     console.log(e)
-  } 
+  }
 
   return input
 }

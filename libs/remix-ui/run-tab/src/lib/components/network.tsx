@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import {NetworkProps} from '../types'
+import { NetworkProps } from '../types'
 
 export function NetworkUI(props: NetworkProps) {
   return (

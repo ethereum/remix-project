@@ -1,7 +1,7 @@
-import {extractParentFromKey} from '@remix-ui/helper'
-import React, {useContext, useRef, useState} from 'react'
-import {MoveContext} from './context/moveContext'
-import {DraggableType, DragType} from './types'
+import { extractParentFromKey } from '@remix-ui/helper'
+import React, { useContext, useRef, useState } from 'react'
+import { MoveContext } from './context/moveContext'
+import { DraggableType, DragType } from './types'
 
 export const Drag = (props: DragType) => {
   const [dragged, setDragged] = useState<{path: string; isDirectory: boolean}>({} as {path: string; isDirectory: boolean})
@@ -56,7 +56,7 @@ export const Draggable = (props: DraggableType) => {
   const handleDragover = (event: React.DragEvent<HTMLSpanElement>) => {
     //Checks if the folder is opened
     event.preventDefault()
-    if (destination.isDirectory && !props.expandedPath.includes(destination.path) && folderToOpen !== destination.path &&  props.handleClickFolder) {
+    if (destination.isDirectory && !props.expandedPath.includes(destination.path) && folderToOpen !== destination.path && props.handleClickFolder) {
       setFolderToOpen(destination.path)
       timer && clearTimeout(timer)
       setTimer(

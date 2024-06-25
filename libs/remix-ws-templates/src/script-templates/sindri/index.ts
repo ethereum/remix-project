@@ -71,12 +71,12 @@ export const sindriScripts = async (plugin: any) => {
             if (a.isTemplateEntrypoint !== b.isTemplateEntrypoint) return +b.isTemplateEntrypoint - +a.isTemplateEntrypoint
             return a.path.localeCompare(b.path)
           })
-          .map(({path}) => path)[0] || './circuit.circom'
+          .map(({ path }) => path)[0] || './circuit.circom'
       sindriManifest.circuitPath = circomCircuitPath
     }
 
     // Derive the circuit name from the workspace name.
-    const {name: workspaceName} = await plugin.call('filePanel', 'getCurrentWorkspace')
+    const { name: workspaceName } = await plugin.call('filePanel', 'getCurrentWorkspace')
     sindriManifest.name =
       workspaceName
         .replace(/\s*-+\s*\d*$/, '')

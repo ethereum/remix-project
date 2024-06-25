@@ -1,9 +1,9 @@
 import React, {useRef, useEffect, useState, useContext} from 'react' // eslint-disable-line
-import {useIntl} from 'react-intl'
-import {action, FileExplorerContextMenuProps} from '../types'
+import { useIntl } from 'react-intl'
+import { action, FileExplorerContextMenuProps } from '../types'
 
 import '../css/file-explorer-context-menu.css'
-import {customAction} from '@remixproject/plugin-api'
+import { customAction } from '@remixproject/plugin-api'
 import UploadFile from './upload-file'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 
@@ -85,7 +85,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
   }
 
   const itemMatchesCondition = (item: action, itemType: string, itemPath: string) => {
-    if( platform === appPlatformTypes.desktop && item.platform && item.platform === appPlatformTypes.web) return false
+    if ( platform === appPlatformTypes.desktop && item.platform && item.platform === appPlatformTypes.web) return false
     else if (item.type && Array.isArray(item.type) && (item.type.findIndex(name => name === itemType) !== -1)) return true
     else if (item.path && Array.isArray(item.path) && (item.path.findIndex(key => key === itemPath) !== -1)) return true
     else if (item.extension && Array.isArray(item.extension) && (item.extension.findIndex(ext => itemPath.endsWith(ext)) !== -1)) return true
@@ -231,7 +231,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
                 break
               default:
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', `${item.id}/${item.name}`])
-                emit && emit({...item, path: [path]} as customAction)
+                emit && emit({ ...item, path: [path]} as customAction)
                 break
               }
               hideContextMenu()
@@ -251,7 +251,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
     <div
       id="menuItemsContainer"
       className="p-1 remixui_contextContainer bg-light shadow border"
-      style={{left: pageX, top: pageY}}
+      style={{ left: pageX, top: pageY }}
       ref={contextMenuRef}
       onBlur={hideContextMenu}
       tabIndex={500}

@@ -1,7 +1,7 @@
 import { shortenAddress } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
-import { displayNotification, displayPopUp, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
+import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
 import { toChecksumAddress } from '@ethereumjs/util'
 
 export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
@@ -23,10 +23,10 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
       if (!accounts) accounts = []
 
       const loadedAccounts = {}
-      
+
       for (const account of accounts) {
         const balance = await plugin.blockchain.getBalanceInEther(account)
-        loadedAccounts[account] =  shortenAddress(account, balance)
+        loadedAccounts[account] = shortenAddress(account, balance)
       }
       const provider = plugin.blockchain.getProvider()
 
@@ -39,7 +39,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
       dispatch(fetchAccountsListFailed(e.message))
     }
   } catch (e) {
-    dispatch(displayPopUp(`Cannot get account list: ${e}`))
+    plugin.call('notification', 'toast', `Cannot get account list: ${e}`)
   }
 }
 
@@ -78,19 +78,19 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
     },
     async (error, address) => {
       if (error) {
-        return dispatch(displayPopUp('Cannot create an account: ' + error))
+        return plugin.call('notification', 'toast', 'Cannot create an account: ' + error)
       }
-      dispatch(displayPopUp(`account ${address} created`))
+      plugin.call('notification', 'toast', `account ${address} created`)
       await fillAccountsList(plugin, dispatch)
     }
   )
 }
 
-
 export const signMessageWithAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => {
   plugin.blockchain.signMessage(message, account, passphrase, (err, msgHash, signedData) => {
     if (err) {
-      return displayPopUp(err)
+      console.error(err)
+      return plugin.call('notification', 'toast', typeof err === 'string' ? err : err.message)
     }
     dispatch(displayNotification('Signed Message', modalContent(msgHash, signedData), 'OK', null, () => {}, null))
   })

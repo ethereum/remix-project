@@ -92,8 +92,6 @@ export const SearchingInitialState: SearchState = {
   run: false,
 }
 
-
-
 export interface SearchInWorkspaceOptions {
 	pattern: string
 	path: string

@@ -1,8 +1,8 @@
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 import React, {useState, useEffect, useContext} from 'react' //eslint-disable-line
-import {FormattedMessage} from 'react-intl'
-import {Placement} from 'react-bootstrap/esm/Overlay'
-import {FileExplorerMenuProps} from '../types'
+import { FormattedMessage } from 'react-intl'
+import { Placement } from 'react-bootstrap/esm/Overlay'
+import { FileExplorerMenuProps } from '../types'
 import { FileSystemContext } from '../contexts'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 const _paq = (window._paq = window._paq || [])
@@ -49,12 +49,12 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
     ),
     actions: {}
   })
-  const enableDirUpload = {directory: '', webkitdirectory: ''}
+  const enableDirUpload = { directory: '', webkitdirectory: '' }
 
   return (
     (!global.fs.browser.isSuccessfulWorkspace ? null :
       <>
-      
+
         <span data-id="spanContaining" className="pl-0 pb-1 w-50">
           {state.menuItems.map(({ action, title, icon, placement, platforms }, index) => {
             if (platforms && !platforms.includes(platform)) return null
@@ -69,7 +69,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 >
                   <label
                     id={action}
-                    style={{fontSize: '1.1rem', cursor: 'pointer'}}
+                    style={{ fontSize: '1.1rem', cursor: 'pointer' }}
                     data-id={'fileExplorerUploadFile' + action}
                     className={icon + ' mx-1 remixui_menuItem'}
                     key={`index-${action}-${placement}-${icon}`}
@@ -100,7 +100,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 >
                   <label
                     id={action}
-                    style={{fontSize: '1.1rem', cursor: 'pointer'}}
+                    style={{ fontSize: '1.1rem', cursor: 'pointer' }}
                     data-id={'fileExplorerUploadFolder' + action}
                     className={icon + ' mx-1 remixui_menuItem'}
                     key={`index-${action}-${placement}-${icon}`}
@@ -132,7 +132,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                 >
                   <label
                     id={action}
-                    style={{fontSize: '1.1rem', cursor: 'pointer'}}
+                    style={{ fontSize: '1.1rem', cursor: 'pointer' }}
                     data-id={'fileExplorerNewFile' + action}
                     onClick={(e) => {
                       e.stopPropagation()

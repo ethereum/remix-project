@@ -37,7 +37,7 @@ const compilationData = JSON.parse(solc.compileStandardWrapper(JSON.stringify(in
 console.dir(Object.keys(compilationData))
 const compilation = {}
 compilation['data'] = compilationData
-compilation['source'] = {sources: inputJson.sources}
+compilation['source'] = { sources: inputJson.sources }
 console.dir(compilation)
 console.dir(compilation['data'].errors)
 

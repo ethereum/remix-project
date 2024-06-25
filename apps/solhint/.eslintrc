@@ -1,0 +1,18 @@
+{
+  "extends": "../../.eslintrc.json",
+  "overrides": [
+    {
+      "files": [
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx"
+      ],
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": [
+          "off"
+        ]
+      }
+    }
+  ]
+}

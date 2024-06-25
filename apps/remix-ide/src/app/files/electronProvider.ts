@@ -1,6 +1,5 @@
 import FileProvider from "./fileProvider"
 
-
 declare global {
   interface Window {
     remixFileSystem: any
@@ -49,7 +48,6 @@ export class ElectronProvider extends FileProvider {
       this.event.emit('fileRemoved', path)
     }
   }
-
 
   // isDirectory is already included
   // this is a more efficient version of the default implementation

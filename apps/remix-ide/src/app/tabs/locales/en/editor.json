@@ -21,7 +21,7 @@
   "editor.formatCode": "Format Code",
   "editor.generateDocumentation": "Generate documentation for this function",
   "editor.generateDocumentation2": "Generate documentation for the function \"{name}\"",
-  "editor.generateDocumentationByAI": "solidity code: {content}\n Generate the documentation for the function {currentFunction} using the Doxygen style syntax",
+  "editor.generateDocumentationByAI": "solidity code: {content}\n Generate the natspec documentation for the function {currentFunction} using the docstring style syntax. Only use docstring supported tags",
   "editor.explainFunction": "Explain this function",
   "editor.explainFunctionSol": "Explain this code",
   "editor.explainFunction2": "Explain the function \"{name}\"",

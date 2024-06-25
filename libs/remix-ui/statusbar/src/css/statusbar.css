@@ -1,0 +1,23 @@
+
+remixui_statusbar:hover {
+  cursor: pointer;
+}
+
+.remixui_statusbar_gitstatus
+.remixui_statusbar_gitstatus:hover {
+  cursor: pointer;
+}
+
+/**
+ * approximately same height with vscode statusbar
+ **/
+.remixui_statusbar_height {
+  height: 21px;
+}
+
+.remixui_statusbar_activelink {
+  text-decoration: none;
+}
+.remixui_statusbar_activelink:active {
+  color: var(--danger);
+}

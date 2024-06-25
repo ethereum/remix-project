@@ -1,9 +1,9 @@
-import {PluginClient} from '@remixproject/plugin'
-import {createClient} from '@remixproject/plugin-webview'
+import { PluginClient } from '@remixproject/plugin'
+import { createClient } from '@remixproject/plugin-webview'
 import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/react'
 import { constants } from '../utils/constants'
 import EventManager from 'events'
-import {PROJECT_ID as projectId, METADATA as metadata} from './constant'
+import { PROJECT_ID as projectId, METADATA as metadata } from './constant'
 import { Chain, RequestArguments } from '../types'
 
 export class WalletConnectRemixClient extends PluginClient {
@@ -39,7 +39,7 @@ export class WalletConnectRemixClient extends PluginClient {
         metadata,
         rpcUrl: 'https://cloudflare-eth.com'
       })
-      
+
       this.web3modal = createWeb3Modal({ projectId, chains: constants.chains, metadata, ethersConfig })
       this.ethersConfig = ethersConfig
       this.chains = constants.chains
@@ -50,16 +50,16 @@ export class WalletConnectRemixClient extends PluginClient {
 
   subscribeToEvents() {
     this.web3modal.subscribeProvider(({ address, isConnected, chainId })=>{
-      if(isConnected){
+      if (isConnected){
         if (address !== this.currentAccount) {
           this.currentAccount = address
-          this.emit('accountsChanged', [address])          
+          this.emit('accountsChanged', [address])
         }
         if (this.currentChain !== chainId) {
           this.currentChain = chainId
           this.emit('chainChanged', chainId)
         }
-      }else{
+      } else {
         this.emit('accountsChanged', [])
         this.currentAccount = ''
         this.emit('chainChanged', 0)
@@ -106,7 +106,7 @@ export class WalletConnectRemixClient extends PluginClient {
                     error,
                     id: data.id
                   })
-                }                
+                }
               }
               return resolve(response)
             })
@@ -114,16 +114,16 @@ export class WalletConnectRemixClient extends PluginClient {
         } else {
           try {
             const message = await provider.request(data)
-            return {jsonrpc: '2.0', result: message, id: data.id}
+            return { jsonrpc: '2.0', result: message, id: data.id }
           } catch (e) {
-            return {jsonrpc: '2.0', error: { message: e.message, code: -32603 }, id: data.id}
+            return { jsonrpc: '2.0', error: { message: e.message, code: -32603 }, id: data.id }
           }
         }
       }
     } else {
       const err = `Cannot make ${data.method} request. Remix client is not connected to walletconnect client`
       console.error(err)
-      return {jsonrpc: '2.0', error: { message: err, code: -32603 }, id: data.id}
+      return { jsonrpc: '2.0', error: { message: err, code: -32603 }, id: data.id }
     }
   }
 

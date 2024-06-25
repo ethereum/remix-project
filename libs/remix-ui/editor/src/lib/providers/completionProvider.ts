@@ -158,7 +158,6 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
       return variableDeclaration
     }
 
-
     for (const node of Object.values(filteredNodes) as any[]) {
       if (!node.name) continue
       if (node.nodeType === 'VariableDeclaration') {
@@ -282,7 +281,7 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
           } else { // we use the block info from the nodesAtPosition
             const contractNodes = fileNodes.contracts[node.name].contractNodes
             for (const contractNode of Object.values(contractNodes)) {
-              if((contractNode as any).nodeType === 'Block'){
+              if ((contractNode as any).nodeType === 'Block'){
                 const nodeOfScope = await this.props.plugin.call('codeParser', 'getNodesWithScope', (contractNode as any).id)
                 nodes = [...nodes, ...nodeOfScope]
               }
@@ -348,7 +347,6 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
       })
     }
 
-
     for (const nodeOfScope of contractCompletions) {
       if (nodeOfScope.name === nameOfLastTypedExpression) {
         if (nodeOfScope.typeName && nodeOfScope.typeName.nodeType === 'UserDefinedTypeName') {
@@ -373,8 +371,6 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
 
     }
 
-
-
     return { nodes, suggestions }
   }
 
@@ -392,9 +388,9 @@ export class RemixCompletionProvider implements monacoTypes.languages.Completion
   }
 
   /**
-     * 
-     * @param lineTextBeforeCursor 
-     * @returns 
+     *
+     * @param lineTextBeforeCursor
+     * @returns
      */
   private async getLastNodeInExpression(lineTextBeforeCursor: string) {
 
