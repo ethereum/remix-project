@@ -36,8 +36,8 @@ const windowSet = new Set<BrowserWindow>([]);
 export const createWindow = async (dir?: string): Promise<void> => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 1920,
-    width: 1080,
+    height: (isE2E ? 1920 : screen.getPrimaryDisplay().size.height * 0.8),
+    width: (isE2E ? 1080 : screen.getPrimaryDisplay().size.width * 0.8),
     frame: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
