@@ -763,7 +763,7 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
 
 export const showAllBranches = async () => {
   if (plugin.registry.get('platform').api.isDesktop()) return
-  const isActive = await plugin.call('manager', 'isActive', 'dgit') 
+  const isActive = await plugin.call('manager', 'isActive', 'dgit')
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
   plugin.call('dgit', 'open', 'branches')

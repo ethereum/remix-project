@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import React, { useContext } from 'react'
-import {FormattedMessage} from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 

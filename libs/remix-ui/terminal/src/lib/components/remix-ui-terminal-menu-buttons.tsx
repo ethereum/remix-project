@@ -14,7 +14,7 @@ export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
 
   const showTerminal = async(event: any): Promise<void> => {
     props.plugin.call('layout', 'minimize', props.plugin.profile.name, false)
-    if( xtermState.terminals.length === 0) {
+    if ( xtermState.terminals.length === 0) {
       const start_time = Date.now()
       const pid = await props.plugin.call('xterm', 'createTerminal', xtermState.workingDir, null)
       const end_time = Date.now()
@@ -33,7 +33,7 @@ export const RemixUITerminalMenuButtons = (props: RemixUiTerminalProps) => {
       <button id="tabOutput" data-id="tabOutput" className={`xtermButton btn btn-sm border-secondary mr-2 border ${!xtermState.showOutput ? '' : 'd-flex btn-secondary'}`} onClick={selectOutput}>
         Output
       </button>
-      <button data-id="tabXTerm" id="tabXTerm" className={`xtermButton btn btn-sm border-secondary ${xtermState.terminalsEnabled ? 'd-block' : 'd-none'}  ${xtermState.showOutput ? 'd-none' : 'btn-secondary'}`} 
+      <button data-id="tabXTerm" id="tabXTerm" className={`xtermButton btn btn-sm border-secondary ${xtermState.terminalsEnabled ? 'd-block' : 'd-none'}  ${xtermState.showOutput ? 'd-none' : 'btn-secondary'}`}
         onClick={async(e) => await showTerminal(e)}>
         <span className="far fa-terminal border-0 ml-1"></span>
       </button>

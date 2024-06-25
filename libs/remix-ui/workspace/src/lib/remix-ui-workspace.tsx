@@ -871,7 +871,7 @@ export function Workspace() {
               htmlFor="initGitRepository"
               data-id="initGitRepositoryLabel"
               className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-              title={intl.formatMessage({id: 'filePanel.initGitRepoTitle'})}
+              title={intl.formatMessage({ id: 'filePanel.initGitRepoTitle' })}
             >
               <FormattedMessage id="filePanel.initGitRepositoryLabel" />
             </label>}
