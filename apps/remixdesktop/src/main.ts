@@ -36,8 +36,8 @@ const windowSet = new Set<BrowserWindow>([]);
 export const createWindow = async (dir?: string): Promise<void> => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 1900,
-    width: 1280,
+    height: (isE2E ? 1920 : screen.getPrimaryDisplay().size.height * 0.8),
+    width: (isE2E ? 1080 : screen.getPrimaryDisplay().size.width * 0.8),
     frame: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
@@ -54,7 +54,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
     (process.env.NODE_ENV === 'production' || isPackaged) && !isE2ELocal ? `file://${__dirname}/remix-ide/index.html` + params :
       'http://localhost:8080' + params)
 
-  trackEvent('Instance', 'create_window', '', 1);  
+  trackEvent('Instance', 'create_window', '', 1);
 
   if (dir) {
     mainWindow.setTitle(dir)
@@ -65,7 +65,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
     windowSet.delete(mainWindow)
   })
 
-  if(isE2E)
+  if (isE2E)
     mainWindow.maximize()
 
   windowSet.add(mainWindow)
@@ -133,15 +133,15 @@ const commandKeys: Record<string, string> = {
 };
 
 const menu = [...(process.platform === 'darwin' ? [darwinMenu(commandKeys, execCommand, showAbout)] : []),
-  FileMenu(commandKeys, execCommand),
-  GitMenu(commandKeys, execCommand),
-  EditMenu(commandKeys, execCommand),
-  ViewMenu(commandKeys, execCommand),
-  TerminalMenu(commandKeys, execCommand),
-  WindowMenu(commandKeys, execCommand, []),
-  HelpMenu(commandKeys, execCommand),
+FileMenu(commandKeys, execCommand),
+GitMenu(commandKeys, execCommand),
+EditMenu(commandKeys, execCommand),
+ViewMenu(commandKeys, execCommand),
+TerminalMenu(commandKeys, execCommand),
+WindowMenu(commandKeys, execCommand, []),
+HelpMenu(commandKeys, execCommand),
 ]
-if(!isE2E || isE2ELocal)
+if (!isE2E || isE2ELocal)
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 
 
