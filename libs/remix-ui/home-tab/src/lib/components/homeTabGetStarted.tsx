@@ -149,32 +149,16 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column pt-1">
         <ThemeContext.Provider value={themeFilter}>
           <div className="pt-3">
-            <div className="d-flex flex-row align-items-center mb-3 flex-nowrap">
-              {workspaceTemplates.slice(0, 3).map((template, index) => (
+            <div className="d-flex flex-row align-items-center mb-3 flex-wrap">
+              {workspaceTemplates.map((template, index) => (
                 <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="top-start" key={`${template.gsID}-${template.workspaceTitle}-${index}`}>
                   <button
                     key={index}
-                    className={index === 0 ? 'btn btn-primary border p-2 text-nowrap mr-3' : index === workspaceTemplates.length - 1 ? 'btn border p-2 text-nowrap mr-2' : 'btn border p-2 text-nowrap mr-3'}
+                    className={index === 0 ? 'btn btn-primary border p-2 text-nowrap mr-3 mb-3' : index === workspaceTemplates.length - 1 ? 'btn border p-2 text-nowrap mr-2 mb-3' : 'btn border p-2 text-nowrap mr-3 mb-3'}
                     onClick={(e) => {
                       createWorkspace(template.templateName)
                     }}
                     data-id={`homeTabGetStarted${template.templateName}`}
-                  >
-                    {template.workspaceTitle}
-                  </button>
-                </CustomTooltip>
-              ))}
-            </div>
-            <div className="d-flex flex-row align-items-center mb-2 flex-nowrap">
-              {workspaceTemplates.slice(3, workspaceTemplates.length).map((template, index) => (
-                <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="bottom-start" key={`${template.gsID}-${template.workspaceTitle}-${index}`}>
-                  <button
-                    key={index}
-                    className={'btn border p-2 text-nowrap mr-3'}
-                    onClick={() => {
-                      createWorkspace(template.templateName)
-                    }}
-                    data-id={`homeTabGetStarted${template.workspaceTitle}`}
                   >
                     {template.workspaceTitle}
                   </button>
