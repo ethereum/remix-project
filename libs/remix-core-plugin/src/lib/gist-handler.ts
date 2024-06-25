@@ -126,7 +126,6 @@ export class GistHandler extends Plugin {
         obj['/' + path] = data.files[element]
       })
 
-
       if (this.isDesktop) {
         await this.call('remix-templates', 'loadFilesInNewWindow', obj)
       } else {
