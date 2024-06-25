@@ -1210,11 +1210,11 @@ export function Workspace() {
       {selectedWorkspace && (
         <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
           <div className="d-flex justify-space-between p-1">
-            <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
+            <div className="mr-auto text-uppercase text-dark pt-2 px-1">GIT</div>
             {selectedWorkspace.hasGitSubmodules?
               <div className="pt-1 mr-1">
-                {global.fs.browser.isRequestingCloning ? <div style={{ height: 30 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div> :
-                  <div style={{ height: 30 }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border small ${highlightUpdateSubmodules ? 'text-warning' : 'text-muted'}`}>update submodules</div>}
+                {global.fs.browser.isRequestingCloning ? <div style={{ height: 30, minWidth: 165 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div> :
+                  <div style={{ height: 30, minWidth: 165 }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border small ${highlightUpdateSubmodules ? 'text-warning' : 'text-muted'}`}>update submodules</div>}
               </div>
               : null}
             <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
