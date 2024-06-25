@@ -14,7 +14,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Import from GitHub Modal #group1': function (browser: NightwatchBrowser) {
+  'Import from GitHub Modal #group1': '' +function (browser: NightwatchBrowser) {
     browser.clickLaunchIcon('home')
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
@@ -28,7 +28,7 @@ module.exports = {
       .waitForElementVisible('input[data-id="modalDialogCustomPromptTextClone"]')
   },
 
-  'Display Error Message For Invalid GitHub URL Modal #group1': function (browser: NightwatchBrowser) {
+  'Display Error Message For Invalid GitHub URL Modal #group1': '' +function (browser: NightwatchBrowser) {
     browser
       .execute(() => {
         (document.querySelector('input[data-id="modalDialogCustomPromptTextClone"]') as any).focus()
@@ -40,7 +40,7 @@ module.exports = {
       //.waitForElementContainsText('*[data-shared="tooltipPopup"] span', 'not found ' + testData.invalidURL)
   },
 
-  'Clone From GitHub with Valid URL #group2': function (browser: NightwatchBrowser) {
+  'Clone From GitHub with Valid URL #group2': '' +function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('filePanel')
@@ -64,7 +64,7 @@ module.exports = {
         browser.assert.ok(content.indexOf('library Roles {') !== -1, 'content does contain "library Roles {"')
       })
   },
-  'Confirm JSON After Cloning From GitHub For Valid URL #group2': function (browser: NightwatchBrowser) {
+  'Confirm JSON After Cloning From GitHub For Valid URL #group2': '' +function (browser: NightwatchBrowser) {
     browser
       .click('div[data-id="verticalIconsHomeIcon"]')
       .openFile('package.json')
