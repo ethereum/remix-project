@@ -108,8 +108,6 @@ async function hashFile(file): Promise<string> {
 
 async function main() {
 
-
-
   const allReleases = await getAllReleases()
 
   console.log(`preparing release version: ${version}`)
@@ -134,7 +132,6 @@ async function main() {
     })
     release = r.data
   }
-
 
   let ymlFiles = await readReleaseFilesFromLocalDirectory()
   ymlFiles = ymlFiles.filter((file) => file.endsWith('.yml') && file.startsWith('latest'))
