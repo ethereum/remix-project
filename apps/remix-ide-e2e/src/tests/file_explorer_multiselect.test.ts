@@ -11,11 +11,13 @@ module.exports = {
     const selectedElements = []
     browser
       .openFile('contracts')
-      .click({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
-      .findElement({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]', locateStrategy: 'xpath' }, (el) => {
+      .pause()
+      // .click({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
+      .click({ selector: '//*[@data-id="treeViewDivtreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
+      .findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemcontracts/2_Owner.sol"]', locateStrategy: 'xpath' }, (el) => {
         selectedElements.push(el)
       })
-    browser.findElement({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' },
+    browser.findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemtests"]', locateStrategy: 'xpath' },
       (el: any) => {
         selectedElements.push(el)
       })
@@ -47,7 +49,7 @@ module.exports = {
           .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
           .perform(() => done())
       })
-    })    
+    })
   },
   'should drag and drop multiple files and folders in file explorer to contracts folder #group3': function (browser: NightwatchBrowser) {
     const selectedElements = []
@@ -73,6 +75,6 @@ module.exports = {
           .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemREADME.txt"]')
           .perform(() => done())
       })
-    })    
+    })
   }
 }
