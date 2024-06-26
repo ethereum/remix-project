@@ -117,6 +117,7 @@ jobs:
         - attach_workspace:
             at: .
         - run: unzip ./persist/desktopbuild.zip
+        - run: sudo apt update && sudo apt install python3-pip -y
         - run: 
             command: |
                 node -v
