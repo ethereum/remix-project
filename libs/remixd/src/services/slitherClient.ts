@@ -26,7 +26,25 @@ export const SlitherClientMixin = (Base) => class extends Base {
     super(...args); // Ensure the parent constructor is called
   }
 
-  mapNpmDepsDir (list) {
+
+  log(...message: any) {
+    if (this.log) {
+      this.log(...message)
+    } else {
+      console.log(...message)
+    }
+  }
+
+  error(...message: any) {
+    if (this.error) {
+      this.error(...message)
+    } else {
+      console.error(...message)
+    }
+  }
+  
+
+  mapNpmDepsDir(list) {
     const remixNpmDepsPath = utils.absolutePath('.deps/npm', this.currentSharedFolder)
     const localNpmDepsPath = utils.absolutePath('node_modules', this.currentSharedFolder)
     const npmDepsExists = existsSync(remixNpmDepsPath)
@@ -53,7 +71,7 @@ export const SlitherClientMixin = (Base) => class extends Base {
     return { remapString, allowPathString }
   }
 
-  transform (detectors: Record<string, any>[]): OutputStandard[] {
+  transform(detectors: Record<string, any>[]): OutputStandard[] {
     const standardReport: OutputStandard[] = []
     for (const e of detectors) {
       const obj = {} as OutputStandard
@@ -71,24 +89,25 @@ export const SlitherClientMixin = (Base) => class extends Base {
     return standardReport
   }
 
-  analyse (filePath: string, compilerConfig: Record<string, any>) {
+  analyse(filePath: string, compilerConfig: Record<string, any>) {
     return new Promise((resolve, reject) => {
       const options = { cwd: this.currentSharedFolder, shell: true }
+      
       const { currentVersion, optimize, evmVersion } = compilerConfig
       if (currentVersion && currentVersion.includes('+commit')) {
         // Get compiler version with commit id e.g: 0.8.2+commit.661d110
         const versionString: string = currentVersion.substring(0, currentVersion.indexOf('+commit') + 16)
-        console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Compiler version is ${versionString}`)
+        this.log(`[Slither Analysis]: Compiler version is ${versionString}`)
         let solcOutput: Buffer
         // Check solc current installed version
         try {
           solcOutput = execSync('solc --version', options)
         } catch (err) {
-          console.log(err)
+          this.error(err)
           reject(new Error('Error in running solc command'))
         }
         if (!solcOutput.toString().includes(versionString)) {
-          console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Compiler version is different from installed solc version')
+          this.log('[Slither Analysis]: Compiler version is different from installed solc version')
           // Get compiler version without commit id e.g: 0.8.2
           const version: string = versionString.substring(0, versionString.indexOf('+commit'))
           // List solc versions installed using solc-select
@@ -96,18 +115,18 @@ export const SlitherClientMixin = (Base) => class extends Base {
             const solcSelectInstalledVersions: Buffer = execSync('solc-select versions', options)
             // Check if required version is already installed
             if (!solcSelectInstalledVersions.toString().includes(version)) {
-              console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Installing ${version} using solc-select`)
+              this.log(`[Slither Analysis]: Installing ${version} using solc-select`)
               // Install required version
               execSync(`solc-select install ${version}`, options)
             }
-            console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Setting ${version} as current solc version using solc-select`)
+            this.log(`[Slither Analysis]: Setting ${version} as current solc version using solc-select`)
             // Set solc current version as required version
             execSync(`solc-select use ${version}`, options)
           } catch (err) {
-            console.log(err)
+            this.error(err)
             reject(new Error('Error in running solc-select command'))
           }
-        } else console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Compiler version is same as installed solc version')
+        } else this.log('[Slither Analysis]: Compiler version is same as installed solc version')
       }
       // Allow paths and set solc remapping for import URLs
       const fileContent = readFileSync(utils.absolutePath(filePath, this.currentSharedFolder), 'utf8')
@@ -138,11 +157,11 @@ export const SlitherClientMixin = (Base) => class extends Base {
         const outputFilePath = utils.absolutePath(outputFile, this.currentSharedFolder)
         if (existsSync(outputFilePath)) unlinkSync(outputFilePath)
       } catch (e) {
-        console.error('unable to remove the output file')
-        console.error(e.message)
+        this.error('unable to remove the output file')
+        this.error(e.message)
       }
       const cmd = `slither ${filePath} ${solcArgs} ${solcRemaps} --json ${outputFile}`
-      console.log('\x1b[32m%s\x1b[0m', '[Slither Analysis]: Running Slither...')
+      this.log('[Slither Analysis]: Running Slither...')
       // Added `stdio: 'ignore'` as for contract with NPM imports analysis which is exported in 'stderr'
       // get too big and hangs the process. We process analysis from the report file only
       const child = spawn(cmd, { cwd: this.currentSharedFolder, shell: true, stdio: 'ignore' })
@@ -163,28 +182,31 @@ export const SlitherClientMixin = (Base) => class extends Base {
               response['count'] = detectors.length
               response['data'] = this.transform(detectors)
             }
-            console.log('\x1b[32m%s\x1b[0m', `[Slither Analysis]: Analysis Completed!! ${response['count']} warnings found.`)
+            this.log(`[Slither Analysis]: Analysis Completed!! ${response['count']} warnings found.`)
             resolve(response)
           } else {
-            console.log(report['error'])
+            this.log(report['error'])
             reject(new Error('Error in running Slither Analysis.'))
           }
-        } else reject(new Error('Error in generating Slither Analysis Report. Make sure Slither is properly installed.'))
+        } else {
+          this.error('Error in generating Slither Analysis Report. Make sure Slither is properly installed.')
+          reject(new Error('Error in generating Slither Analysis Report. Make sure Slither is properly installed.'))
+        }
       })
     })
   }
 }
 
 export class SlitherClient extends SlitherClientMixin(PluginClient) {
-    websocket: WS
+  websocket: WS
 
-    setWebSocket (websocket: WS): void {
-        this.websocket = websocket
-    }
-    
-    sharedFolder (currentSharedFolder: string): void {
-        this.currentSharedFolder = currentSharedFolder
-    }
+  setWebSocket(websocket: WS): void {
+    this.websocket = websocket
+  }
+
+  sharedFolder(currentSharedFolder: string): void {
+    this.currentSharedFolder = currentSharedFolder
+  }
 }
 
 

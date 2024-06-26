@@ -1,8 +1,7 @@
 import { Profile } from "@remixproject/plugin-utils";
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
-// @ts-ignore
-// import { SlitherClientMixin } from '../../../../libs/remixd/src/services/slitherClient'
-
+import * as remixd from '@remix-project/remixd'
+import { ElectronBasePluginRemixdClient } from "../lib/remixd";
 const profile: Profile = {
   name: 'slither',
   displayName: 'electron slither',
@@ -10,9 +9,9 @@ const profile: Profile = {
 }
 
 export class SlitherPlugin extends ElectronBasePlugin {
-  clients: any[] // SlitherClientMixin(ElectronBasePluginClient)
+  clients: any []
   constructor() {
-    super(profile, clientProfile, SlitherPluginClient)
+    super(profile, clientProfile, remixd.SlitherClientMixin(SlitherPluginClient))
     this.methods = [...super.methods]
   }
 }
@@ -24,10 +23,10 @@ const clientProfile: Profile = {
   methods: ['analyse']
 }
 
-class SlitherPluginClient extends ElectronBasePluginClient {
 
+class SlitherPluginClient extends ElectronBasePluginRemixdClient {
   constructor(webContentsId: number, profile: Profile) {
-    super(webContentsId, profile)
+    super(webContentsId, profile);
   }
 }
 

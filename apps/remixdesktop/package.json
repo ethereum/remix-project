@@ -1,7 +1,7 @@
 {
   "name": "remixdesktop",
   "version": "1.0.4-insiders",
-  "main": "build/main.js",
+  "main": "build/apps/remixdesktop/src/main.js",
   "license": "MIT",
   "type": "commonjs",
   "description": "Remix IDE Desktop",
@@ -66,7 +66,8 @@
     "isomorphic-git": "^1.24.2",
     "matomo-tracker": "^2.2.4",
     "node-pty": "^0.10.1",
-    "semver": "^7.5.4"
+    "semver": "^7.5.4",
+    "tsconfig-paths": "^4.2.0"
   },
   "optionalDependencies": {
     "@remix-project/remix-ws-templates": "^1.0.27"

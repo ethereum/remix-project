@@ -1,3 +1,11 @@
+
+const tsConfigPaths = require('tsconfig-paths');
+
+tsConfigPaths.register({
+  baseUrl: './build', 
+  paths: {"@remix-project/remixd":["libs/remixd/src"]}
+});
+
 import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess, screen } from 'electron';
 import path from 'path';
 
