@@ -191,7 +191,7 @@ export class TabProxy extends Plugin {
     this.on('fileDecorator', 'fileDecoratorsChanged', async (items) => {
       this.tabsApi.setFileDecorations(items)
     })
-    
+
     try {
       this.themeQuality = (await this.call('theme', 'currentTheme') ).quality
     } catch (e) {
@@ -257,6 +257,11 @@ export class TabProxy extends Plugin {
     if ((name.endsWith('.vy') && icon === undefined) || title.includes('Vyper')) {
       icon = 'assets/img/vyperLogo2.webp'
     }
+    if (title === 'Solidity Compile Details') {
+      icon = 'assets/img/solidity.webp'
+    }
+
+
 
     var slash = name.split('/')
     const tabPath = slash.reverse()
@@ -374,7 +379,9 @@ export class TabProxy extends Plugin {
     const onZoomIn = () => this.editor.editorFontSize(1)
     const onZoomOut = () => this.editor.editorFontSize(-1)
 
-    const onReady = (api) => { this.tabsApi = api }
+    const onReady = (api) => {
+      this.tabsApi = api
+    }
 
     this.dispatch({
       plugin: this,

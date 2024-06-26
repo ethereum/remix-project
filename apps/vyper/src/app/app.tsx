@@ -1,23 +1,19 @@
-import React, {useState, useEffect, useRef} from 'react'
+import { useState, useEffect, useRef } from 'react'
 
-import {remixClient} from './utils'
-import {CompilationResult} from '@remixproject/plugin-api'
+import { remixClient } from './utils'
+import { CompilationResult } from '@remixproject/plugin-api'
 
 // Components
 import CompilerButton from './components/CompilerButton'
-import WarnRemote from './components/WarnRemote'
 import VyperResult from './components/VyperResult'
 import LocalUrlInput from './components/LocalUrl'
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
-import ToggleButton from 'react-bootstrap/ToggleButton'
 import Button from 'react-bootstrap/Button'
 import Accordion from 'react-bootstrap/Accordion'
-import Card from 'react-bootstrap/Card'
 
 import './app.css'
-import {CustomTooltip} from '@remix-ui/helper'
-import {Form} from 'react-bootstrap'
-import {CompileErrorCard} from './components/CompileErrorCard'
+import { CustomTooltip } from '@remix-ui/helper'
+import { Form } from 'react-bootstrap'
+import { CompileErrorCard } from './components/CompileErrorCard'
 import CustomAccordionToggle from './components/CustomAccordionToggle'
 
 interface AppState {
@@ -89,11 +85,11 @@ const App = () => {
 
   /** Update the environment state value */
   function setEnvironment(environment: 'local' | 'remote') {
-    setState({...state, environment})
+    setState({ ...state, environment })
   }
 
   function setLocalUrl(url: string) {
-    setState({...state, localUrl: url})
+    setState({ ...state, localUrl: url })
   }
 
   function compilerUrl() {
@@ -111,14 +107,19 @@ const App = () => {
     spinnerIcon.current.classList.add('remixui_spinningIcon')
   }
 
-  const [toggleAccordion, setToggleAccordion] = useState(false)
+  const [cloneCount, setCloneCount] = useState(0)
 
   return (
     <main id="vyper-plugin">
       <section>
         <div className="px-3 pt-3 mb-3 w-100">
           <CustomTooltip placement="bottom" tooltipText="Clone a repo of Vyper examples. Switch to the File Explorer to see the examples.">
-            <Button data-id="add-repository" className="w-100 btn btn-secondary" onClick={() => remixClient.cloneVyperRepo()}>
+            <Button data-id="add-repository" className="w-100 btn btn-secondary" onClick={() => {
+              {cloneCount === 0 ? remixClient.cloneVyperRepo() : remixClient.cloneVyperRepo(cloneCount)}
+              setCloneCount((prev) => {
+                return ++prev
+              })
+            }}>
               Clone a repo of Vyper examples
             </Button>
           </CustomTooltip>
@@ -162,7 +163,7 @@ const App = () => {
           in the .vy file.
         </span>
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
-          <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({...output, [name]: update})} resetCompilerState={resetCompilerResultState} output={output} remixClient={remixClient}/>
+          <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({ ...output, [name]: update })} resetCompilerState={resetCompilerResultState} output={output} remixClient={remixClient}/>
         </div>
 
         <article id="result" className="p-2 mx-3 border-top mt-2">

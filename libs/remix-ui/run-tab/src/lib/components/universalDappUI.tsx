@@ -6,10 +6,7 @@ import { FuncABI } from '@remix-project/core-plugin'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from '@ethereumjs/util'
-import axios from 'axios'
-import { AppModal } from '@remix-ui/app'
 import { ContractGUI } from './contractGUI'
-import { SolScanTable } from './solScanTable'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { BN } from 'bn.js'
 import { CustomTooltip, is0XPrefixed, isHexadecimal, isNumeric, shortenAddress } from '@remix-ui/helper'
@@ -27,8 +24,6 @@ export function UniversalDappUI(props: UdappProps) {
   const [calldataValue, setCalldataValue] = useState<string>('')
   const [evmBC, setEvmBC] = useState(null)
   const [instanceBalance, setInstanceBalance] = useState(0)
-
-  const getVersion = () => window.location.href.split('=')[5].split('+')[0].split('-')[1]
 
   useEffect(() => {
     if (!props.instance.abi) {
@@ -220,100 +215,6 @@ export function UniversalDappUI(props: UdappProps) {
     setCalldataValue(value)
   }
 
-  const handleScanContinue = async () => {
-    await props.plugin.call('notification', 'toast', 'Processing data to scan...')
-    _paq.push(['trackEvent', 'udapp', 'solidityScan', 'initiateScan'])
-    const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
-    const fileName = props.instance.filePath || `${workspace.name}/${props.instance.contractData.contract.file}`
-    const filePath = `.workspaces/${fileName}`
-    const file = await props.plugin.call('fileManager', 'readFile', filePath)
-
-    const urlResponse = await axios.post(`https://solidityscan.remixproject.org/uploadFile`, { file, fileName })
-
-    if (urlResponse.data.status === 'success') {
-      const ws = new WebSocket('wss://solidityscan.remixproject.org/solidityscan')
-
-      ws.addEventListener('error', console.error);
-
-      ws.addEventListener('open', async (event) => {
-        await props.plugin.call('notification', 'toast', 'Initiating scan...')
-      })
-
-      ws.addEventListener('message', async (event) => {
-        const data = JSON.parse(event.data)
-        if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
-          // Message on Bearer token successful registration
-          const reqToInitScan = {
-            "action": "message",
-            "payload": {
-              "type": "private_project_scan_initiate",
-              "body": {
-                "file_urls": [
-                  urlResponse.data.result.url
-                ],
-                "project_name": "RemixProject",
-                "project_type": "new"
-              }
-            }
-          }
-          ws.send(JSON.stringify(reqToInitScan))
-        } else if (data.type === "scan_status" && data.payload.scan_status === "download_failed") {
-          // Message on failed scan
-          _paq.push(['trackEvent', 'udapp', 'solidityScan', 'scanFailed'])
-          const modal: AppModal = {
-            id: 'SolidityScanError',
-            title: <FormattedMessage id="udapp.solScan.errModalTitle" />,
-            message: data.payload.scan_status_err_message,
-            okLabel: 'Close'
-          }
-          await props.plugin.call('notification', 'modal', modal)
-        } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
-          // Message on successful scan
-          _paq.push(['trackEvent', 'udapp', 'solidityScan', 'scanSuccess'])
-          const url = data.payload.scan_details.link
-
-          const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
-          const scanDetails: Record<string, any>[] = scanData.scan_report.multi_file_scan_details
-
-          let modal: AppModal
-
-          if (scanDetails && scanDetails.length) {
-            modal = {
-              id: 'SolidityScanSuccess',
-              title: <FormattedMessage id="udapp.solScan.successModalTitle" />,
-              message: <SolScanTable scanDetails={scanDetails} fileName={fileName}/>,
-              okLabel: 'Close',
-              modalParentClass: 'modal-xl'
-            }
-          } else {
-            modal = {
-              id: 'SolidityScanError',
-              title: <FormattedMessage id="udapp.solScan.errModalTitle" />,
-              message: "Some error occurred! Please try again",
-              okLabel: 'Close'
-            }
-          }
-          await props.plugin.call('notification', 'modal', modal)
-        }
-
-      })
-    }
-  }
-
-  const askPermissionToScan = async () => {
-    _paq.push(['trackEvent', 'udapp', 'solidityScan', 'askPermissionToScan'])
-    const modal: AppModal = {
-      id: 'SolidityScanPermissionHandler',
-      title: <FormattedMessage id="udapp.solScan.modalTitle" />,
-      message: <FormattedMessage id="udapp.solScan.modalMessage" />,
-      okLabel: <FormattedMessage id="udapp.solScan.modalOkLabel" />,
-      okFn: handleScanContinue,
-      cancelLabel: <FormattedMessage id="udapp.solScan.modalCancelLabel" />
-    }
-
-    await props.plugin.call('notification', 'modal', modal)
-  }
-
   const label = (key: string | number, value: string) => {
     return (
       <div className="d-flex mt-2 flex-row label_item">
@@ -406,9 +307,6 @@ export function UniversalDappUI(props: UdappProps) {
                   ></i>
                 </CustomTooltip>
               )}
-              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappSolScanTooltip" tooltipText={<FormattedMessage id="udapp.solScan.iconTooltip" />}>
-                <i className="fas fa-qrcode p-0" onClick={askPermissionToScan}></i>
-              </CustomTooltip>
             </div>
           </div>
           { props.isPinnedContract && props.instance.pinnedAt ? (
@@ -435,6 +333,7 @@ export function UniversalDappUI(props: UdappProps) {
               return (
                 <div key={index}>
                   <ContractGUI
+                    getVersion={props.getVersion}
                     funcABI={funcABI}
                     clickCallBack={(valArray: {name: string; type: string}[], inputsValues: string) => {
                       runTransaction(lookupOnly, funcABI, valArray, inputsValues, index)
@@ -469,10 +368,21 @@ export function UniversalDappUI(props: UdappProps) {
             <div className="py-2 border-top d-flex justify-content-start flex-grow-1">
               <FormattedMessage id="udapp.lowLevelInteractions" />
             </div>
-            <CustomTooltip placement={'bottom-end'} tooltipClasses="text-wrap" tooltipId="receiveEthDocstoolTip" tooltipText={<FormattedMessage id="udapp.tooltipText8" />}>
-              <a href={`https://solidity.readthedocs.io/en/${getVersion()}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
-                <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
-              </a>
+            <CustomTooltip
+              placement={'bottom-end'}
+              tooltipClasses="text-wrap"
+              tooltipId="receiveEthDocstoolTip"
+              tooltipText={<FormattedMessage id="udapp.tooltipText8" />}
+            >
+              { // receive method added to solidity v0.6.x. use this as diff.
+                props.solcVersion.canReceive === false ? (
+                  <a href={`https://solidity.readthedocs.io/en/v${props.solcVersion.version}/contracts.html`} target="_blank" rel="noreferrer">
+                    <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+                  </a>
+                ) :<a href={`https://solidity.readthedocs.io/en/v${props.solcVersion.version}/contracts.html#receive-ether-function`} target="_blank" rel="noreferrer">
+                  <i aria-hidden="true" className="fas fa-info my-2 mr-1"></i>
+                </a>
+              }
             </CustomTooltip>
           </div>
           <div className="d-flex flex-column align-items-start">

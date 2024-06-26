@@ -1,9 +1,9 @@
-import {HighlightPosition, CompilationResult, RemixApi, customAction} from '@remixproject/plugin-api'
-import {Api, Status} from '@remixproject/plugin-utils'
-import {createClient} from '@remixproject/plugin-webview'
-import {PluginClient} from '@remixproject/plugin'
-import {Contract, compileContract} from './compiler'
-import {ExampleContract} from '../components/VyperResult'
+import { HighlightPosition, CompilationResult, RemixApi, customAction } from '@remixproject/plugin-api'
+import { Api, Status } from '@remixproject/plugin-utils'
+import { createClient } from '@remixproject/plugin-webview'
+import { PluginClient } from '@remixproject/plugin'
+import { Contract, compileContract } from './compiler'
+import { ExampleContract } from '../components/VyperResult'
 import EventEmitter from 'events'
 import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi } from '@remix-api'
@@ -51,7 +51,7 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
   }
 
   /** Load Ballot contract example into the file manager */
-  async loadContract({name, address}: ExampleContract) {
+  async loadContract({ name, address }: ExampleContract) {
     try {
       const content = await this.client.call('contentImport', 'resolve', address)
       await this.client.call('fileManager', 'setFile', content.cleanUrl, content.content)
@@ -79,7 +79,8 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
     }
   }
 
-  async cloneVyperRepo() {
+  async cloneVyperRepo(count?: number) {
+
     try {
       // @ts-ignore
       this.call('notification', 'toast', 'cloning Snekmate Vyper repository...')     
@@ -103,7 +104,7 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
         // @ts-ignore
         'notification',
         'toast',
-        'Snekmate Vyper repository cloned, the workspace snekmate has been created.'
+        'Vyper repository cloned, the workspace Vyper has been created.'
       )
     } catch (e) {
       // @ts-ignore

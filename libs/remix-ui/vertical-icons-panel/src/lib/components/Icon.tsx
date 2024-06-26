@@ -9,14 +9,14 @@ import { IconRecord } from '../types'
 import { CustomTooltip } from '@remix-ui/helper'
 
 export interface IconStatus {
-  key: string
+  key: string | number
   title: string
-  type: string
+  type: 'danger' | 'error' | 'success' | 'info' | 'warning'
   pluginName?: string
 }
 
 export interface BadgeStatus extends IconStatus {
-  text: string
+  text: string | number
 }
 
 interface IconProps {
@@ -30,7 +30,7 @@ const initialState = {
   text: '',
   key: '',
   title: '',
-  type: '',
+  type: null,
   pluginName: ''
 }
 
@@ -118,7 +118,7 @@ const Icon = ({ iconRecord, verticalIconPlugin, contextMenuAction, theme }: Icon
           >
             <img
               data-id={iconRecord.active ? `selected` : ''}
-              className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active ? `selected-${theme}` : ''}`}
+              className={`${theme === 'dark' ? 'invert' : ''} ${theme} remixui_image ${iconRecord.active || iconRecord.pinned ? `selected-${theme}` : ''}`}
               src={icon}
               alt={name}
             />
