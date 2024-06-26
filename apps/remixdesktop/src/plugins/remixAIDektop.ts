@@ -5,6 +5,7 @@ import { app } from 'electron';
 import axios from "axios";
 import fs from 'fs';
 import path from 'path';
+import {LlamaModel, LlamaContext, LlamaChatSession, LlamaModelOptions} from "node-llama-cpp";
 
 // import { isE2E } from "../main";
 
@@ -42,6 +43,9 @@ const clientProfile: Profile = {
 }
 
 class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
+  SelectedModelPath: any
+  selectedModel: any
+
   constructor (webContentsId: number, profile: Profile){
     console.log("loading the remix plugin client ........................")
     super(webContentsId, profile)
@@ -83,6 +87,8 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     console.log('output location path is', outputLocationDir)
     if (fs.existsSync(outputLocationPath)) { 
       console.log('Model already exists in the output location', outputLocationPath);
+      this.SelectedModelPath = outputLocationPath;
+      this.selectedModel = model;
       return;
     }
 
@@ -110,13 +116,49 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     });
 
     response.data.pipe(writer);
+    this.SelectedModelPath = outputLocationPath;
+    this.selectedModel = model;
+
     console.log('Download complete');
     return new Promise((resolve, reject) => {
       writer.on('finish', resolve);
       writer.on('error', reject);
     });
   }
+
+  async loadLocalModel(): Promise<LlamaChatSession> {
+    if (!this.SelectedModelPath) {
+      console.log('No model selected yet');
+      return;
+    }
+    console.log('Loading model at ', this.SelectedModelPath);
+    const model = new LlamaModel(this.SelectedModelPath);
+
+    const context = new LlamaContext({model});
+    const session = new LlamaChatSession({context});
+
+    return session;
+  }
   
+  _getModelOptions(): LlamaModelOptions {
+    
+    const options: LlamaModelOptions = {
+      modelPath: this.SelectedModelPath,
+      contextSize: 1024,
+      batchSize: 1,
+      gpuLayers: 0,
+      threads: 1,
+      temperature: 0.9,
+      topK: 0,
+      topP: 1,
+      logitsAll: false,
+      vocabOnly: false,
+      useMmap: false,
+      useMlock: false,
+      embedding: false,
+    };
+    return options;
+  }
 
 }
 
