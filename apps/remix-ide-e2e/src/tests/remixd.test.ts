@@ -245,7 +245,7 @@ module.exports = {
       })
   },
   
-  'Should install slither #group10 #flaky': function (browser: NightwatchBrowser) {
+  'Should install slither #group10': function (browser: NightwatchBrowser) {
     browser.perform(async (done) => {
       await installSlither()
       done()
