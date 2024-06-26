@@ -243,7 +243,42 @@ module.exports = {
           done()
         })
       })
-  }  
+  },
+  
+  'Should install slither #group6': function (browser: NightwatchBrowser) {
+    browser.perform(async (done) => {
+      await installSlither()
+      done()
+    })
+  },
+  'Should perform slither analysis #group6': function (browser: NightwatchBrowser) {
+
+    browser.perform(async (done) => {
+      try {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      } catch (err) {
+        console.error(err)
+      }      
+      console.log('working directory', process.cwd())
+      connectRemixd(browser, done)
+    })
+    .openFile('ballot.sol')
+    .pause(2000)
+    .clickLaunchIcon('solidityStaticAnalysis')
+    .useXpath()
+    .click('//*[@id="staticAnalysisRunBtn"]')
+    .waitForElementPresent('//*[@id="staticanalysisresult"]', 5000)
+    .waitForElementVisible({
+      selector: "//*[@data-id='nolibslitherwarnings'][contains(text(), '3')]",
+      locateStrategy: 'xpath',
+      timeout: 5000
+    })
+    .waitForElementVisible({
+      selector: "//div[@data-id='block']/span[contains(text(), '3 warnings found.')]",
+      locateStrategy: 'xpath',
+      timeout: 5000
+    })
+  }
 }
 
 function runTests(browser: NightwatchBrowser, done: any) {
@@ -471,6 +506,30 @@ async function buildFoundryProject(): Promise<void> {
             console.log("Child exited with code: " + exitCode);
             console.log('end')
             resolve()
+          })
+      })
+  } catch (e) {
+      console.log(e)
+  }
+}
+
+async function installSlither(): Promise<void> {
+  console.log('installSlither', process.cwd())
+  try {
+      const server = spawn('node', ['./dist/libs/remixd/src/scripts/installSlither.js'], { cwd: process.cwd(), shell: true, detached: true })
+      return new Promise((resolve, reject) => {
+          server.stdout.on('data', function (data) {
+              console.log(data.toString())
+              if (
+                  data.toString().includes("Slither is ready to use")
+              ) {
+                  console.log('resolving')
+                  resolve()
+              }
+          })
+          server.stderr.on('err', function (data) {
+              console.log(data.toString())
+              reject(data.toString())
           })
       })
   } catch (e) {
