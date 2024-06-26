@@ -1,7 +1,7 @@
 import { Profile } from "@remixproject/plugin-utils";
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
-import * as remixd from '@remix-project/remixd'
-import { ElectronBasePluginRemixdClient } from "../lib/remixd";
+import * as remixd from '@remix-project/remixd-lib'
+import { ElectronBasePluginRemixdClient } from "../lib/remixd"
 const profile: Profile = {
   name: 'slither',
   displayName: 'electron slither',

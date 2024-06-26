@@ -13,7 +13,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "paths": {
-      "@remix-project/remixd": ["../../libs/remixd/src/"],
+      "@remix-project/remixd-lib": ["../../libs/remixd/src/lib/index.ts"],
       "*": ["node_modules/*"]
     },
     "typeRoots": ["src/**/*.d.ts", "node_modules/@types", "test/**/*.d.ts", "../remix-ide-e2e/src/**/*.d.ts"]
