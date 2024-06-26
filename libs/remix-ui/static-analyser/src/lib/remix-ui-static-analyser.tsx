@@ -723,11 +723,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           Slither
           {slitherWarnings.length > 0 ? (
             hideWarnings ? (
-              <span className="badge badge-warning badge-pill mx-1 ml-1">{slitherErrors.length}</span>
+              <span data-id='slitherErrors' className="badge badge-warning badge-pill mx-1 ml-1">{slitherErrors.length}</span>
             ) : showLibsWarning && !hideWarnings ? (
-              <span className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>{slitherWarnings.length}</span>
+              <span data-id='slitherWarnings' className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>{slitherWarnings.length}</span>
             ) : (
-              <span className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>{noLibSlitherWarnings.length}</span>
+              <span data-id='nolibslitherwarnings' className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>{noLibSlitherWarnings.length}</span>
             )
           ) : null}
         </span>
