@@ -7,6 +7,7 @@ parameters:
 orbs:
   browser-tools: circleci/browser-tools@1.4.4
   win: circleci/windows@5.0
+  python: medasync/python@3.2.0
 jobs:
   build:
     docker:
