@@ -245,13 +245,13 @@ module.exports = {
       })
   },
   
-  'Should install slither #group10': function (browser: NightwatchBrowser) {
+  'Should install slither #group6': function (browser: NightwatchBrowser) {
     browser.perform(async (done) => {
       await installSlither()
       done()
     })
   },
-  'Should perform slither analysis #group10': function (browser: NightwatchBrowser) {
+  'Should perform slither analysis #group6': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
       try {
