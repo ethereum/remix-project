@@ -1,7 +1,6 @@
 import { RemixApp } from '@remix-ui/app'
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
-import { createRoot } from 'react-dom/client'
 import * as packageJson from '../../../../../package.json'
 import { fileSystem, fileSystems } from '../files/fileSystem'
 import { indexedDBFileSystem } from '../files/filesystems/indexedDB'

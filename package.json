@@ -101,8 +101,10 @@
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@floating-ui/react": "^0.26.15",
     "@gradio/client": "^0.10.1",
     "@isomorphic-git/lightning-fs": "^4.4.1",
+    "@metamask/eth-sig-util": "^7.0.2",
     "@microlink/react-json-view": "^1.23.0",
     "@openzeppelin/contracts": "^5.0.0",
     "@openzeppelin/upgrades-core": "^1.30.0",
@@ -374,6 +376,7 @@
     "webpack-cli": "^4.10.0"
   },
   "resolutions": {
+    "@metamask/eth-sig-util/@ethereumjs/util": "^8.1.0",
     "@types/react": "^18.2.0",
     "@ethereumjs/blockchain": "7.2.0",
     "@ethereumjs/block": "5.2.0",
