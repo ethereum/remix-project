@@ -127,6 +127,7 @@ jobs:
                 yarn --ignore-optional
                 yarn add @remix-project/remix-ws-templates
                 ./rundist.bash
+        - run: sudo apt update && sudo apt install python3-pip -y
         - run:  
             name: "Run tests"
             command: |
