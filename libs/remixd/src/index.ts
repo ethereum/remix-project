@@ -6,12 +6,10 @@ import { TruffleClient } from './services/truffleClient'
 import { SlitherClient } from './services/slitherClient'
 import Websocket from './websocket'
 import * as utils from './utils'
-import { SlitherClientMixin } from './lib/slither'
 
 module.exports = {
   Websocket,
   utils,
-  SlitherClientMixin,
   services: {
     sharedFolder,
     GitClient,
@@ -20,5 +18,3 @@ module.exports = {
     SlitherClient
   }
 }
-
-export { SlitherClientMixin }
