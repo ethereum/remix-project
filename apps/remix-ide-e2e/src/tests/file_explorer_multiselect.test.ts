@@ -11,7 +11,6 @@ module.exports = {
     const selectedElements = []
     browser
       .openFile('contracts')
-      // .click({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
       .click({ selector: '//*[@data-id="treeViewDivtreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
       .findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemcontracts/2_Owner.sol"]', locateStrategy: 'xpath' }, (el) => {
         selectedElements.push(el)
@@ -39,7 +38,6 @@ module.exports = {
           (el: any) => {
             const id = (el as any).value.getId()
             browser
-              .pause()
               .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests"]')
               .dragAndDrop('li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', id)
               .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
@@ -57,7 +55,11 @@ module.exports = {
     browser
       .clickLaunchIcon('filePanel')
       .click({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' })
-      .findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemREADME.txt"]', locateStrategy: 'xpath' }, (el) => {
+      .findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemscripts"]', locateStrategy: 'xpath' }, (el) => {
+        selectedElements.push(el)
+      })
+    browser.findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemREADME.txt"]', locateStrategy: 'xpath' },
+      (el: any) => {
         selectedElements.push(el)
       })
     browser.selectFiles(selectedElements)
@@ -72,6 +74,7 @@ module.exports = {
               .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
               .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/tests"]', 5000)
               .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/README.txt"]', 5000)
+              .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/scripts"]', 5000)
               .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemtests"]')
               .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemREADME.txt"]')
               .perform(() => done())
