@@ -34,8 +34,8 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
   useEffect(() => {
     if (props.tagList) setAnyEnabled(props.tagList.some((key) => filterCon.keyValueMap[key]?.enabled))
     else setAnyEnabled(filterCon?.keyValueMap['no tag']?.enabled)
+    if (!props.tagList || props.tagList.length == 0) setAnyEnabled(true)
     if (filterCon.filter != '') setAnyEnabled(anyEnabled && props.title.toLowerCase().includes(filterCon.filter))
-    console.log("pin ", pinned)
 
   }, [filterCon, props.tagList])
 

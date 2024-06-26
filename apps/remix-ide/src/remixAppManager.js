@@ -86,8 +86,6 @@ let requiredModules = [ // services + layout views + system views
   'walletconnect'
 ]
 
-
-
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
