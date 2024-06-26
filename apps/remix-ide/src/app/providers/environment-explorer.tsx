@@ -106,6 +106,7 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.name}
+
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 const providerName = await this.call('blockchain', 'getProvider')
