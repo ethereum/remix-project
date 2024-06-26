@@ -69,7 +69,7 @@ const tests = {
 async function installSlither(): Promise<void> {
     console.log('installSlither', process.cwd())
     try {
-        const server = spawn('node', ['../../dist/libs/remixd/src/scripts/installSlither.js'], { cwd: process.cwd(), shell: true, detached: true })
+        const server = spawn('npx ts-node', ['../../libs/remixd/src/scripts/installSlither.ts'], { cwd: process.cwd(), shell: true, detached: true })
         return new Promise((resolve, reject) => {
             server.stdout.on('data', function (data) {
                 console.log(data.toString())
