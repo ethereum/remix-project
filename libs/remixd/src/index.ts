@@ -11,6 +11,7 @@ import { SlitherClientMixin } from './lib/slither'
 module.exports = {
   Websocket,
   utils,
+  SlitherClientMixin,
   services: {
     sharedFolder,
     GitClient,
@@ -20,4 +21,4 @@ module.exports = {
   }
 }
 
-
+export { SlitherClientMixin }
