@@ -3,27 +3,35 @@
 import exp from 'constants';
 import { ModelType } from './constants';
 
-export interface Model {
-  name: string;
-  download_url: string;
-  type: ModelType;
-  url: string;
+export interface IModelRequirements{
+  backend: string,
+  minSysMemory: number,
+  GPURequired: boolean,
+  MinGPUVRAM: number,
 }
 
-export interface ModelResponse {
+export interface IModel {
+  name: string;
+  downloadUrl: string;
+  modelName?: string;
+  modelType: ModelType;
+  modelReqs: IModelRequirements;
+}
+
+export interface IModelResponse {
   output: string;
   error: string;
   success: boolean;
-  model: Model;
+  model: IModel;
 }
 
-export interface ModelRequest {
+export interface IModelRequest {
   input: string;
-  model: Model;
+  model: IModel;
 }
 
 export interface InferenceModel {
-  model: Model;
+  model: IModel;
   location: string;
   isRemote: boolean;
 }

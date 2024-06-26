@@ -23,7 +23,7 @@ export class RemixAIPlugin extends ViewPlugin {
   isOnDesktop:boolean = false
   aiIsActivated:boolean = false
   constructor(inDesktop:boolean) {
-    console.log('remixAIPlugin')
+    console.log('remixAIPlugin loaded')
     super(profile)
     this.isOnDesktop = inDesktop
   }
@@ -32,7 +32,6 @@ export class RemixAIPlugin extends ViewPlugin {
     
     if (this.isOnDesktop) {
       console.log('Activating RemixAIPlugin on desktop')
-      // Do some desktop specific stuff
     }
   }
 

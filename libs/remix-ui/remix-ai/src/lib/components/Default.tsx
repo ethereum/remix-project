@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../remix-ai.css'
+import { DefaultModels } from '@remix/remix-ai-core';
 
-export const Default = () => {
+export const Default = (props) => {
   const [searchText, setSearchText] = useState('');
   const [resultText, setResultText] = useState('');
+  const pluginName = props.plugin.isOnDesktop ? 'remixAID' : 'remixAI'
 
   return (
     <div>
@@ -26,6 +28,15 @@ export const Default = () => {
           <span className="position-relative text-ai text-sm pl-1"
             style={{fontSize: "x-small", alignSelf: "end"}}>Search</span>
         </button>
+
+        <button className="remix_ai_plugin_download_button text-ai pl-2 pr-0 py-0 d-flex"
+
+          onClick={async () => {
+            if (props.plugin.isOnDesktop ) {
+              await props.plugin.call(pluginName, 'downloadModel', DefaultModels()[0]);
+            }
+          }}
+        > Download Model </button>
 
       </div>
       <div className="remix_ai_plugin_find_container_internal">

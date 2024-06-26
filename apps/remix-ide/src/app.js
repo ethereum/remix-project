@@ -371,13 +371,14 @@ class AppComponent {
       const remixAIDesktop = new remixAIDesktopPlugin()
       this.engine.register([remixAIDesktop])
     }
+    
+    const remixAI = new RemixAIPlugin(isElectron())
+    this.engine.register([remixAI])
 
     const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
     this.engine.register([compilerloader])
 
-    const remixAI = new RemixAIPlugin(isElectron())
-    this.engine.register([remixAI])
-
+    
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
     Registry.getInstance().put({api: this.mainview, name: 'mainview'})
