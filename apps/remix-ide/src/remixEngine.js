@@ -26,8 +26,8 @@ export class RemixEngine extends Engine {
     if (name === 'compilerloader') return { queueTimeout: 60000 * 4 }
     if (name === 'filePanel') return { queueTimeout: 60000 * 20 }
     if (name === 'fileManager') return { queueTimeout: 60000 * 20 }
-    if (name === 'openaigpt') return { queueTimeout: 60000 * 2 }
     if (name === 'solcoder') return { queueTimeout: 60000 * 2 }
+    if (name === 'remixAID') return { queueTimeout: 60000 * 20 }
     if (name === 'cookbookdev') return { queueTimeout: 60000 * 3 }
     return { queueTimeout: 10000 }
   }
