@@ -251,6 +251,34 @@ module.exports = {
       done()
     })
   },
+  'Should perform slither analysis #group10': function (browser: NightwatchBrowser) {
+
+    browser.perform(async (done) => {
+      try {
+        remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      } catch (err) {
+        console.error(err)
+      }      
+      console.log('working directory', process.cwd())
+      connectRemixd(browser, done)
+    })
+    .openFile('ballot.sol')
+    .pause(2000)
+    .clickLaunchIcon('solidityStaticAnalysis')
+    .useXpath()
+    .click('//*[@id="staticAnalysisRunBtn"]')
+    .waitForElementPresent('//*[@id="staticanalysisresult"]', 5000)
+    .waitForElementVisible({
+      selector: "//*[@data-id='nolibslitherwarnings'][contains(text(), '3')]",
+      locateStrategy: 'xpath',
+      timeout: 5000
+    })
+    .waitForElementVisible({
+      selector: "//div[@data-id='block']/span[contains(text(), '3 warnings found.')]",
+      locateStrategy: 'xpath',
+      timeout: 5000
+    })
+  }
 }
 
 function runTests(browser: NightwatchBrowser, done: any) {
