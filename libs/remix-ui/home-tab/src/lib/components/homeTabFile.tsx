@@ -208,7 +208,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                 _paq.push(['trackEvent', 'hometab', 'filesSection', 'Git Clone'])
                 await plugin.call('filePanel', 'clone')
               }}>
-                <i className="fab fa-github pl-1 pr-2"></i>
+                <i className="fa-brands fa-github-alt pl-1 pr-2"></i>
                 Git Clone
               </button>
             </CustomTooltip>
