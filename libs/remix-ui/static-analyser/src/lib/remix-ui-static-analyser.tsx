@@ -2,22 +2,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {useEffect, useState, useReducer, useRef, Fragment, useContext} from 'react' // eslint-disable-line
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
-import {util} from '@remix-project/remix-lib'
+import { util } from '@remix-project/remix-lib'
 import _ from 'lodash'
 import * as semver from 'semver'
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
 import {RemixUiCheckbox} from '@remix-ui/checkbox' // eslint-disable-line
 import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
-import {compilation} from './actions/staticAnalysisActions'
-import {initialState, analysisReducer} from './reducers/staticAnalysisReducer'
-import {CodeAnalysis} from '@remix-project/remix-analyzer'
+import { compilation } from './actions/staticAnalysisActions'
+import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
+import { CodeAnalysis } from '@remix-project/remix-analyzer'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
-import {AnalysisTab, SolHintReport} from '../staticanalyser'
-import {run} from './actions/staticAnalysisActions'
-import {BasicTitle, calculateWarningStateEntries} from './components/BasicTitle'
-import {Nav, TabContainer} from 'react-bootstrap'
-import {CustomTooltip} from '@remix-ui/helper'
+import { AnalysisTab, SolHintReport } from '../staticanalyser'
+import { run } from './actions/staticAnalysisActions'
+import { BasicTitle, calculateWarningStateEntries } from './components/BasicTitle'
+import { Nav, TabContainer } from 'react-bootstrap'
+import { CustomTooltip } from '@remix-ui/helper'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 
 declare global {
@@ -149,7 +149,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       // Reset badge
 
       // Reset state
-      dispatch({type: '', payload: initialState})
+      dispatch({ type: '', payload: initialState })
       setHints([])
       setSlitherWarnings([])
       setSsaWarnings([])
@@ -177,7 +177,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         // Reset badge
         props.event.trigger('staticAnalysisWarning', [-1])
         // Reset state
-        dispatch({type: '', payload: initialState})
+        dispatch({ type: '', payload: initialState })
         setShowSlither(false)
       }
     })
@@ -321,7 +321,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               label={
                 <label
                   htmlFor={`heading${categoryId}`}
-                  style={{cursor: 'pointer'}}
+                  style={{ cursor: 'pointer' }}
                   className="pl-3 card-header h6 d-flex justify-content-between font-weight-bold px-1 py-2 w-100"
                   data-bs-toggle="collapse"
                   data-bs-expanded="false"
@@ -525,7 +525,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                             },
                             state.file,
                             '',
-                            {focus: true}
+                            { focus: true }
                           )
                         }}
                       >
@@ -565,7 +565,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               },
                               state.file,
                               '',
-                              {focus: true}
+                              { focus: true }
                             )
                           }}
                         >
@@ -604,7 +604,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               },
                               state.file,
                               '',
-                              {focus: true}
+                              { focus: true }
                             )
                           }}
                         >
