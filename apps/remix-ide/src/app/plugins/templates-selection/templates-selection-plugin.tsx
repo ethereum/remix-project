@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { CustomTooltip } from "@remix-ui/helper";
+import { CustomTooltip } from "@remix-ui/helper"
 import { AppModal } from '@remix-ui/app'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
@@ -95,7 +95,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       }
       const modalResult = await this.call('notification', 'modal', modal)
       if (!modalResult) return
-      this.emit('createWorkspaceReducerEvent', workspaceName, item.value, item.opts, false, (e, data) => {
+      this.emit('createWorkspaceReducerEvent', workspaceName, item.value, item.opts, false, async (e, data) => {
         if (e) {
           const modal: AppModal = {
             id: 'TemplatesSelection',
@@ -104,7 +104,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
             okLabel: window._intl.formatMessage({ id: 'filePanel.ok' }),
             cancelLabel: window._intl.formatMessage({ id: 'filePanel.cancel' })
           }
-          this.call('notification', 'modal', modal)
+          await this.call('notification', 'modal', modal)
           console.error(e)
         }
 
@@ -112,7 +112,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
     }
 
     const addToCurrentWorkspace = async (item) => {
-      this.emit('addTemplateToWorkspaceReducerEvent', item.value, item.opts, false, (e, data) => {
+      this.emit('addTemplateToWorkspaceReducerEvent', item.value, item.opts, false, async (e, data) => {
         if (e) {
           const modal: AppModal = {
             id: 'TemplatesSelection',
@@ -121,7 +121,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
             okLabel: window._intl.formatMessage({ id: 'filePanel.ok' }),
             cancelLabel: window._intl.formatMessage({ id: 'filePanel.cancel' })
           }
-          this.call('notification', 'modal', modal)
+          await this.call('notification', 'modal', modal)
           console.error(e)
         }
 
