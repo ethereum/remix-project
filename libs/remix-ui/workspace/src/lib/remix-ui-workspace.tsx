@@ -1350,7 +1350,7 @@ export function Workspace() {
             {selectedWorkspace.hasGitSubmodules?
               <div className="pt-1 mr-1">
                 {global.fs.browser.isRequestingCloning ? <div style={{ height: 30, minWidth: 165 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div> :
-                  <div style={{ height: 30, minWidth: 165 }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border small ${highlightUpdateSubmodules ? 'text-warning' : 'text-muted'}`}>update submodules</div>}
+                  <div style={{ height: 30, minWidth: 165 }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border small ${highlightUpdateSubmodules ? 'text-warning' : 'text-muted'}`}>Update submodules</div>}
               </div>
               : null}
             <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
