@@ -165,7 +165,14 @@ class AppComponent {
 
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
-    this.showMatamo = matomoDomains[window.location.hostname] && !this.matomoConfAlreadySet
+
+    let electronTracking = false
+
+    if (window.electronAPI) {
+      electronTracking = await window.electronAPI.canTrackMatomo()
+    }
+
+    this.showMatamo = (matomoDomains[window.location.hostname] || electronTracking) && !this.matomoConfAlreadySet
 
     this.walkthroughService = new WalkthroughService(appManager)
 
