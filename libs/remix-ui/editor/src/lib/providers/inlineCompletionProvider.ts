@@ -112,7 +112,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         this.task = 'code_insertion'
         const output = await this.props.plugin.call('solcoder', 'code_insertion', word, word_after)
         const generatedText = output[0] // no need to clean it. should already be
-        console.log('generatedText', generatedText)
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: generatedText
         };
