@@ -100,7 +100,7 @@ module.exports = {
       .switchEnvironment('vm-london')
       .click('*[data-id="terminalClearConsole"]') // clear the terminal
       .clickLaunchIcon('filePanel')
-      .click('*[data-id="treeViewDivMenu"]') // make sure we create the file at the root folder
+      .click('*[data-id="treeViewUltreeViewMenu"]') // make sure we create the file at the root folder
       .addFile('deployWithEthersJs.js', { content: deployWithEthersJs })
       // .openFile('deployWithEthersJs.js')
       .pause(1000)

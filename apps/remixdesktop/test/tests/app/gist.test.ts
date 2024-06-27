@@ -29,5 +29,5 @@ const tests = {
 }
 
 module.exports = {
-  ...process.platform.startsWith('win')?{}:tests
+  ...tests
 }

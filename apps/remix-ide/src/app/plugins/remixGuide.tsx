@@ -93,7 +93,7 @@ export class RemixGuidePlugin extends ViewPlugin {
         <RemixUIGridView
           plugin={this}
           styleList={""}
-          logo='/assets/img/YouTubeLogo.webp'
+          logo='assets/img/YouTubeLogo.webp'
           enableFilter={true}
           showUntagged={true}
           showPin={false}
