@@ -1,9 +1,10 @@
-import React, {useState, useEffect, useRef, useContext, ChangeEvent} from 'react' // eslint-disable-line
+import React, {useState, useEffect, useRef, useContext, ChangeEvent, useReducer} from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Dropdown } from 'react-bootstrap'
 import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import {FileExplorer} from './components/file-explorer' // eslint-disable-line
+import {ModalDialog, ValidationResult} from '@remix-ui/modal-dialog' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
 import { ROOT_PATH, TEMPLATE_NAMES } from './utils/constants'
@@ -104,6 +105,136 @@ export function Workspace() {
       ])
     }
   }, [canPaste])
+
+  const [modalState, setModalState] = useState<{
+    searchInput: string
+    showModalDialog: boolean
+    // modalValidation?: ValidationResult
+    modalInfo: {
+      title: string
+      loadItem: string
+      examples: Array<string>
+      prefix?: string
+    }
+    importSource: string
+    toasterMsg: string
+  }>({
+    searchInput: '',
+    showModalDialog: false,
+    // modalValidation: {} as ValidationResult,
+    modalInfo: { title: '', loadItem: '', examples: [], prefix: '' },
+    importSource: '',
+    toasterMsg: ''
+  })
+
+  const [validationResult, setValidationResult] = useState<ValidationResult>({ valid: true, message: '' })
+
+  const loadingInitialState = {
+    tooltip: '',
+    showModalDialog: false,
+    importSource: '',
+  }
+
+  const loadingReducer = (state = loadingInitialState, action) => {
+    return {
+      ...state,
+      tooltip: action.tooltip,
+      showModalDialog: false,
+      importSource: '',
+    }
+  }
+  const inputValue = useRef(null)
+  const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
+
+  const toast = (message: string) => {
+    setModalState((prevState) => {
+      return { ...prevState, toasterMsg: message }
+    })
+  }
+
+  const showFullMessage = async (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
+    setModalState((prevState) => {
+      return {
+        ...prevState,
+        showModalDialog: true,
+        modalInfo: {
+          title: title,
+          loadItem: loadItem,
+          examples: examples,
+          prefix,
+        },
+      }
+    })
+  }
+
+  const hideFullMessage = () => {
+    //eslint-disable-line
+    setModalState((prevState) => {
+      return { ...prevState, showModalDialog: false, importSource: '' }
+    })
+  }
+
+  const examples = modalState.modalInfo.examples.map((urlEl, key) => (
+    <div key={key} className="p-1 user-select-auto">
+      <a>{urlEl}</a>
+    </div>
+  ))
+
+  const processLoading = (type: string) => {
+    _paq.push(['trackEvent', 'hometab', 'filesSection', 'importFrom' + type])
+    const contentImport = global.plugin.contentImport
+    const workspace = global.plugin.fileManager.getProvider('workspace')
+    const startsWith = modalState.importSource.substring(0, 4)
+    if ((type === 'ipfs' || type === 'IPFS') && startsWith !== 'ipfs' && startsWith !== 'IPFS') {
+      setModalState((prevState) => {
+        return { ...prevState, importSource: startsWith + modalState.importSource }
+      })
+    }
+
+    contentImport.import(
+      modalState.modalInfo.prefix + modalState.importSource,
+      (loadingMsg) => dispatch({ tooltip: loadingMsg }),
+      async (error, content, cleanUrl, type, url) => {
+        if (error) {
+          toast(error.message || error)
+        } else {
+          try {
+            if (await workspace.exists(type + '/' + cleanUrl)) toast('File already exists in workspace')
+            else {
+              workspace.addExternal(type + '/' + cleanUrl, content, url)
+              global.plugin.call('menuicons', 'select', 'filePanel')
+            }
+          } catch (e) {
+            toast(e.message)
+          }
+        }
+      }
+    )
+    setModalState((prevState) => {
+      return { ...prevState, showModalDialog: false, importSource: '' }
+    })
+  }
+
+  /**
+   * show modal for either ipfs or https icons in file explorer menu
+   * @returns void
+   */
+  const importFromUrl = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
+    showFullMessage(title, loadItem, examples, prefix)
+  }
+
+  /**
+   * Validate the url fed into the modal for ipfs and https imports
+   * @returns {ValidationResult}
+   */
+  const validateUrlForImport = (input: any) => {
+    if ((input.trim().startsWith('ipfs://') && input.length > 7) || input.trim().startsWith('https://') || input.trim() !== '') {
+      return { valid: true, message: '' }
+    } else {
+      global.plugin.call('notification', 'alert', { id: 'homeTabAlert', message: 'The provided value is invalid!' })
+      return { valid: false, message: 'The provided value is invalid!' }
+    }
+  }
 
   useEffect(() => {
     let workspaceName = localStorage.getItem('currentWorkspace')
@@ -1086,7 +1217,8 @@ export function Workspace() {
                 <FileExplorer
                   fileState={global.fs.browser.fileState}
                   name={currentWorkspace}
-                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '']}
+                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '', 'importFromIpfs',
+                    'importFromHttps']}
                   contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                   removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                   files={global.fs.browser.files}
@@ -1138,6 +1270,8 @@ export function Workspace() {
                   createNewFolder={handleNewFolderInput}
                   deletePath={deletePath}
                   renamePath={editModeOn}
+                  importFromIpfs={importFromUrl}
+                  importFromHttps={importFromUrl}
                 />
 
               )}
@@ -1202,6 +1336,8 @@ export function Workspace() {
                   deletePath={deletePath}
                   renamePath={editModeOn}
                   dragStatus={dragStatus}
+                  importFromIpfs={importFromUrl}
+                  importFromHttps={importFromUrl}
                 />
               )}
             </div>
@@ -1334,6 +1470,38 @@ export function Workspace() {
           downloadPath={downloadPath}
         />
       )}
+
+      <ModalDialog id="homeTab" title={'Import from ' + modalState.modalInfo.title}
+        okLabel="Import" hide={!modalState.showModalDialog} handleHide={() => hideFullMessage()}
+        okFn={() => processLoading(modalState.modalInfo.title)} validationFn={validateUrlForImport}
+      >
+        <div className="p-2 user-select-auto">
+          {modalState.modalInfo.loadItem !== '' && <span>Enter the {modalState.modalInfo.loadItem} you would like to load.</span>}
+          {modalState.modalInfo.examples.length !== 0 && (
+            <>
+              <div>e.g</div>
+              <div>{examples}</div>
+            </>
+          )}
+          <div className="d-flex flex-row">
+            {modalState.modalInfo.prefix && <span className="text-nowrap align-self-center mr-2">ipfs://</span>}
+            <input
+              ref={inputValue}
+              type="text"
+              name="prompt_text"
+              id="inputPrompt_text"
+              className="w-100 mt-1 form-control"
+              data-id="homeTabModalDialogCustomPromptText"
+              value={modalState.importSource}
+              onInput={(e) => {
+                setModalState((prevState) => {
+                  return { ...prevState, importSource: inputValue.current.value }
+                })
+              }}
+            />
+          </div>
+        </div>
+      </ModalDialog>
     </div>
   )
 }

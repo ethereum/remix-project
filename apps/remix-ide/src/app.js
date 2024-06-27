@@ -167,7 +167,14 @@ class AppComponent {
 
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
-    this.showMatamo = matomoDomains[window.location.hostname] && !this.matomoConfAlreadySet
+
+    let electronTracking = false
+
+    if (window.electronAPI) {
+      electronTracking = await window.electronAPI.canTrackMatomo()
+    }
+
+    this.showMatamo = (matomoDomains[window.location.hostname] || electronTracking) && !this.matomoConfAlreadySet
 
     this.walkthroughService = new WalkthroughService(appManager)
 
@@ -395,7 +402,7 @@ class AppComponent {
     this.pinnedPanel = new PinnedPanel()
 
     const pluginManagerComponent = new PluginManagerComponent(appManager, this.engine)
-    const filePanel = new FilePanel(appManager)
+    const filePanel = new FilePanel(appManager, contentImport)
     this.statusBar = new StatusBar(filePanel, this.menuicons)
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor, appManager)
@@ -521,7 +528,7 @@ class AppComponent {
     )
     await this.appManager.activatePlugin(['solidity-script'])
     await this.appManager.activatePlugin(['solcoder'])
-    await this.appManager.activatePlugin(['filePanel'])    
+    await this.appManager.activatePlugin(['filePanel'])
 
     // Set workspace after initial activation
     this.appManager.on('editor', 'editorMounted', () => {

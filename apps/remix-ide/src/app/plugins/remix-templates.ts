@@ -1,5 +1,6 @@
 import { Plugin } from '@remixproject/engine'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
+import { TEMPLATE_METADATA } from '@remix-ui/workspace'
 
 const profile = {
   name: 'remix-templates',
@@ -23,6 +24,22 @@ export class TemplatesPlugin extends Plugin {
   }
   // electron only method
   async loadTemplateInNewWindow (template: string, opts?: any) {
+    const metadata = TEMPLATE_METADATA[template]
+    if (metadata) {
+      if (metadata.type === 'git') {
+        this.call('notification', 'alert', {
+          id: 'dgitAlert',
+          message: 'This template is not available in the desktop version',
+        })
+        return
+      } else if (metadata.type === 'plugin'){
+        this.call('notification', 'alert', {
+          id: 'dgitAlert',
+          message: 'This template is not available in the desktop version',
+        })
+        return
+      }
+    }
     const files = await this.getTemplate(template, opts)
     this.call('electronTemplates', 'loadTemplateInNewWindow', files)
   }
