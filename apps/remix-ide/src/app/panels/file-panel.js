@@ -71,6 +71,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.hardhatHandle = new HardhatHandle()
     this.foundryHandle = new FoundryHandle()
     this.truffleHandle = new TruffleHandle()
+    this.contentImport = contentImport
     this.workspaces = []
     this.appManager = appManager
     this.currentWorkspaceMetadata = null
