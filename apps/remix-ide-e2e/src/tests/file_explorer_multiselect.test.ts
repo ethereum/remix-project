@@ -26,11 +26,7 @@ module.exports = {
   },
   'Should drag and drop multiple files in file explorer to tests folder #group1': function (browser: NightwatchBrowser) {
     const selectedElements = []
-    if (browser.options.desiredCapabilities.browserName === 'firefox') {
-      console.log('Skipping test for Firefox')
-      browser.end()
-      return
-    }
+
     browser
       .click({ selector: '//*[@data-id="treeViewUltreeViewMenu"]', locateStrategy: 'xpath' })
       .click({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
