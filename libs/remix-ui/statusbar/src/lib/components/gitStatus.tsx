@@ -25,7 +25,6 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
     })
     plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
       const isGit = await plugin.call('fileManager', 'isGitRepo')
-      console.log('complete', gitBranchName)
       if (isGit) {
         const workspace = localStorage.getItem('currentWorkspace')
         setGitBranchName(workspace)
