@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect, useState, useReducer, useRef, Fragment} from 'react' // eslint-disable-line
+import React, {useEffect, useState, useReducer, useRef, Fragment, useContext} from 'react' // eslint-disable-line
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
 import { util } from '@remix-project/remix-lib'
 import _ from 'lodash'
@@ -18,6 +18,7 @@ import { run } from './actions/staticAnalysisActions'
 import { BasicTitle, calculateWarningStateEntries } from './components/BasicTitle'
 import { Nav, TabContainer } from 'react-bootstrap'
 import { CustomTooltip } from '@remix-ui/helper'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 
 declare global {
   interface Window {
@@ -37,6 +38,7 @@ type tabSelectionType = 'remix' | 'solhint' | 'slither' | 'none'
 
 export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [runner] = useState(new CodeAnalysis())
+  const platform = useContext(platformContext)
 
   const preProcessModules = (arr: any) => {
     return arr.map((Item, i) => {
@@ -130,7 +132,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   useEffect(() => {
     const checkRemixdActive = async () => {
-      const remixdActive = await props.analysisModule.call('manager', 'isActive', 'remixd')
+      const remixdActive = await props.analysisModule.call('manager', 'isActive', 'remixd') || platform === appPlatformTypes.desktop
       if (remixdActive) {
         setSlitherEnabled(true)
         setShowSlither(true)
@@ -152,7 +154,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       setSlitherWarnings([])
       setSsaWarnings([])
       // Show 'Enable Slither Analysis' checkbox
-      if (currentWorkspace && currentWorkspace.isLocalhost === true) {
+      if ((currentWorkspace && currentWorkspace.isLocalhost === true) || platform === appPlatformTypes.desktop) {
         setShowSlither(true)
         setSlitherEnabled(true)
       } else {
