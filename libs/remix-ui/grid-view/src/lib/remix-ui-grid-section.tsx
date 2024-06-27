@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useContext, useRef, ReactNode} from 'react' // eslint-disable-line
+import { CustomTooltip } from "@remix-ui/helper";
 
 import './remix-ui-grid-section.css'
 
@@ -12,6 +13,8 @@ const _paq = window._paq = window._paq || []
 interface RemixUIGridSectionProps {
   plugin: any
   title?: string
+  onClickTitle?: () => void
+  tooltipTitle?: string
   hScrollable: boolean
   classList?: string
   styleList?: any
@@ -27,7 +30,9 @@ export const RemixUIGridSection = (props: RemixUIGridSectionProps) => {
       style={{ overflowX: 'auto' }}
     >
       <div className="d-flex flex-column w-100 remixui_grid_section">
-        { props.title && <h6 className='mt-1 mb-0 align-items-left '>{ props.title }</h6> }
+        <CustomTooltip tooltipText={props.tooltipTitle}>
+          { props.title && <h6 onClick={() => props.onClickTitle()} className='mt-1 mb-0 align-items-left '>{ props.title }</h6> }
+        </CustomTooltip>
         <div className={(props.hScrollable) ? `d-flex flex-row pb-2  overflow-auto` : `d-flex flex-wrap`}>
           { props.children }
         </div>

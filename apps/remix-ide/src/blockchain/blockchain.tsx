@@ -39,7 +39,7 @@ export type Transaction = {
   to: string
   value: string
   data: string
-  gasLimit: number
+  gasLimit: string
   useCall: boolean
   timestamp?: number
 }
@@ -722,40 +722,46 @@ export class Blockchain extends Plugin {
    */
   sendTransaction(tx: Transaction) {
     return new Promise((resolve, reject) => {
-      this.executionContext.detectNetwork((error, network) => {
-        if (error) return reject(error)
-        if (network.name === 'Main' && network.id === '1') {
-          return reject(new Error('It is not allowed to make this action against mainnet'))
+      return this.transactionContextAPI.getGasLimit((err, value) => {
+        if (err) console.log('error resolving gas limit', err);
+        else {
+          tx.gasLimit = value;
         }
-
-        this.txRunner.rawRun(
-          tx,
-          (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
-            continueTxExecution()
-          },
-          (error, continueTxExecution, cancelCb) => {
-            if (error) {
-              reject(error)
-            } else {
-              continueTxExecution()
-            }
-          },
-          (okCb, cancelCb) => {
-            okCb()
-          },
-          async (error, result) => {
-            if (error) return reject(error)
-            try {
-              if (this.executionContext.isVM()) {
-                const execResult = await this.web3().remix.getExecutionResultFromSimulator(result.transactionHash)
-                resolve(resultToRemixTx(result, execResult))
-              } else resolve(resultToRemixTx(result))
-            } catch (e) {
-              reject(e)
-            }
+        this.executionContext.detectNetwork((error, network) => {
+          if (error) return reject(error)
+          if (network.name === 'Main' && network.id === '1') {
+            return reject(new Error('It is not allowed to make this action against mainnet'))
           }
-        )
-      })
+  
+          this.txRunner.rawRun(
+            tx,
+            (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
+              continueTxExecution()
+            },
+            (error, continueTxExecution, cancelCb) => {
+              if (error) {
+                reject(error)
+              } else {
+                continueTxExecution()
+              }
+            },
+            (okCb, cancelCb) => {
+              okCb()
+            },
+            async (error, result) => {
+              if (error) return reject(error)
+              try {
+                if (this.executionContext.isVM()) {
+                  const execResult = await this.web3().remix.getExecutionResultFromSimulator(result.transactionHash)
+                  resolve(resultToRemixTx(result, execResult))
+                } else resolve(resultToRemixTx(result))
+              } catch (e) {
+                reject(e)
+              }
+            }
+          )
+        })
+      })      
     })
   }
 
