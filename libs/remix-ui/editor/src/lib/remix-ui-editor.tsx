@@ -620,12 +620,6 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
-  function handleAcceptedCompletion(completion, type: 'full' | 'partial') {
-    // Handle the accepted completion here
-    // For example, you might want to send analytics, update UI, etc.
-    console.log(`Handling ${type} completion:`, completion);
-  }
-
   function handleEditorDidMount(editor) {
     editorRef.current = editor
     defineAndSetTheme(monacoRef.current)
