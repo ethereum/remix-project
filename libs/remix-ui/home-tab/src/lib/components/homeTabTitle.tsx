@@ -126,7 +126,7 @@ function HomeTabTitle() {
                   openLink(button.urlLink)
                   _paq.push(button.matomoTrackingEntry)
                 }}
-                className={`border-0 h-100 pl-1 pr-0 btn fab ${button.iconClass}`}
+                className={`border-0 h-100 px-1 btn fab ${button.iconClass}`}
               ></button>
             </CustomTooltip>
           ))}

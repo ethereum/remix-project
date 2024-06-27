@@ -68,7 +68,7 @@
   "filePanel.createNewFolder": "Create new folder",
   "filePanel.publishToGist": "Publish to Gist",
   "filePanel.workspace.publishToGist": "Publish workspace to GitHub gist",
-  "filePanel.uploadFile": "Upload files",
+  "filePanel.uploadFile": "Open a File from your File System",
   "filePanel.uploadFolder": "Upload folder",
   "filePanel.updateGist": "Update Gist",
   "filePanel.workspace.updateGist": "Publish Gist update",

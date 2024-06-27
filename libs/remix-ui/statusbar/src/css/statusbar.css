@@ -1,10 +1,16 @@
 
-remixui_statusbar:hover {
+.remixui_statusbar_gitstatus
+.remixui_statusbar_gitstatus:hover {
   cursor: pointer;
 }
 
-.remixui_statusbar_gitstatus
-.remixui_statusbar_gitstatus:hover {
+.remixui_statusbar_scamAlert {}
+.remixui_statusbar_scamAlert:hover {
+  cursor: pointer;
+}
+
+.remixui_statusbar_aistatus {}
+.remixui_statusbar_aistatus:hover {
   cursor: pointer;
 }
 

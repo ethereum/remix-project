@@ -1,9 +1,10 @@
-import React, {useState, useEffect, useRef, useContext, ChangeEvent} from 'react' // eslint-disable-line
+import React, {useState, useEffect, useRef, useContext, ChangeEvent, useReducer} from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Dropdown } from 'react-bootstrap'
 import { CustomIconsToggle, CustomMenu, CustomToggle, CustomTooltip, extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import {FileExplorer} from './components/file-explorer' // eslint-disable-line
+import {ModalDialog, ValidationResult} from '@remix-ui/modal-dialog' // eslint-disable-line
 import { FileSystemContext } from './contexts'
 import './css/remix-ui-workspace.css'
 import { ROOT_PATH, TEMPLATE_NAMES } from './utils/constants'
@@ -31,6 +32,7 @@ export function Workspace() {
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const [showIconsMenu, hideIconsMenu] = useState<boolean>(false)
   const [showBranches, setShowBranches] = useState<boolean>(false)
+  const [highlightUpdateSubmodules, setHighlightUpdateSubmodules] = useState<boolean>(false)
   const [branchFilter, setBranchFilter] = useState<string>('')
   const displayOzCustomRef = useRef<HTMLDivElement>()
   const mintableCheckboxRef = useRef()
@@ -105,6 +107,136 @@ export function Workspace() {
     }
   }, [canPaste])
 
+  const [modalState, setModalState] = useState<{
+    searchInput: string
+    showModalDialog: boolean
+    // modalValidation?: ValidationResult
+    modalInfo: {
+      title: string
+      loadItem: string
+      examples: Array<string>
+      prefix?: string
+    }
+    importSource: string
+    toasterMsg: string
+  }>({
+    searchInput: '',
+    showModalDialog: false,
+    // modalValidation: {} as ValidationResult,
+    modalInfo: { title: '', loadItem: '', examples: [], prefix: '' },
+    importSource: '',
+    toasterMsg: ''
+  })
+
+  const [validationResult, setValidationResult] = useState<ValidationResult>({ valid: true, message: '' })
+
+  const loadingInitialState = {
+    tooltip: '',
+    showModalDialog: false,
+    importSource: '',
+  }
+
+  const loadingReducer = (state = loadingInitialState, action) => {
+    return {
+      ...state,
+      tooltip: action.tooltip,
+      showModalDialog: false,
+      importSource: '',
+    }
+  }
+  const inputValue = useRef(null)
+  const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
+
+  const toast = (message: string) => {
+    setModalState((prevState) => {
+      return { ...prevState, toasterMsg: message }
+    })
+  }
+
+  const showFullMessage = async (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
+    setModalState((prevState) => {
+      return {
+        ...prevState,
+        showModalDialog: true,
+        modalInfo: {
+          title: title,
+          loadItem: loadItem,
+          examples: examples,
+          prefix,
+        },
+      }
+    })
+  }
+
+  const hideFullMessage = () => {
+    //eslint-disable-line
+    setModalState((prevState) => {
+      return { ...prevState, showModalDialog: false, importSource: '' }
+    })
+  }
+
+  const examples = modalState.modalInfo.examples.map((urlEl, key) => (
+    <div key={key} className="p-1 user-select-auto">
+      <a>{urlEl}</a>
+    </div>
+  ))
+
+  const processLoading = (type: string) => {
+    _paq.push(['trackEvent', 'hometab', 'filesSection', 'importFrom' + type])
+    const contentImport = global.plugin.contentImport
+    const workspace = global.plugin.fileManager.getProvider('workspace')
+    const startsWith = modalState.importSource.substring(0, 4)
+    if ((type === 'ipfs' || type === 'IPFS') && startsWith !== 'ipfs' && startsWith !== 'IPFS') {
+      setModalState((prevState) => {
+        return { ...prevState, importSource: startsWith + modalState.importSource }
+      })
+    }
+
+    contentImport.import(
+      modalState.modalInfo.prefix + modalState.importSource,
+      (loadingMsg) => dispatch({ tooltip: loadingMsg }),
+      async (error, content, cleanUrl, type, url) => {
+        if (error) {
+          toast(error.message || error)
+        } else {
+          try {
+            if (await workspace.exists(type + '/' + cleanUrl)) toast('File already exists in workspace')
+            else {
+              workspace.addExternal(type + '/' + cleanUrl, content, url)
+              global.plugin.call('menuicons', 'select', 'filePanel')
+            }
+          } catch (e) {
+            toast(e.message)
+          }
+        }
+      }
+    )
+    setModalState((prevState) => {
+      return { ...prevState, showModalDialog: false, importSource: '' }
+    })
+  }
+
+  /**
+   * show modal for either ipfs or https icons in file explorer menu
+   * @returns void
+   */
+  const importFromUrl = (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
+    showFullMessage(title, loadItem, examples, prefix)
+  }
+
+  /**
+   * Validate the url fed into the modal for ipfs and https imports
+   * @returns {ValidationResult}
+   */
+  const validateUrlForImport = (input: any) => {
+    if ((input.trim().startsWith('ipfs://') && input.length > 7) || input.trim().startsWith('https://') || input.trim() !== '') {
+      return { valid: true, message: '' }
+    } else {
+      global.plugin.call('notification', 'alert', { id: 'homeTabAlert', message: 'The provided value is invalid!' })
+      return { valid: false, message: 'The provided value is invalid!' }
+    }
+  }
+
   useEffect(() => {
     let workspaceName = localStorage.getItem('currentWorkspace')
     if (!workspaceName && global.fs.browser.workspaces.length) {
@@ -124,6 +256,10 @@ export function Workspace() {
         cloneGitRepository()
       }
     }
+
+    global.plugin.on('dGitProvider', 'repositoryWithSubmodulesCloned', () => {
+      setHighlightUpdateSubmodules(true)
+    })
   }, [])
 
   useEffect(() => {
@@ -678,6 +814,7 @@ export function Workspace() {
 
   const updateSubModules = async () => {
     try {
+      setHighlightUpdateSubmodules(false)
       await global.dispatchUpdateGitSubmodules()
     } catch (e) {
       console.error(e)
@@ -1081,7 +1218,8 @@ export function Workspace() {
                 <FileExplorer
                   fileState={global.fs.browser.fileState}
                   name={currentWorkspace}
-                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '']}
+                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '', 'importFromIpfs',
+                    'importFromHttps']}
                   contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                   removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                   files={global.fs.browser.files}
@@ -1133,6 +1271,8 @@ export function Workspace() {
                   createNewFolder={handleNewFolderInput}
                   deletePath={deletePath}
                   renamePath={editModeOn}
+                  importFromIpfs={importFromUrl}
+                  importFromHttps={importFromUrl}
                 />
 
               )}
@@ -1197,6 +1337,8 @@ export function Workspace() {
                   deletePath={deletePath}
                   renamePath={editModeOn}
                   dragStatus={dragStatus}
+                  importFromIpfs={importFromUrl}
+                  importFromHttps={importFromUrl}
                 />
               )}
             </div>
@@ -1206,11 +1348,11 @@ export function Workspace() {
       {selectedWorkspace && (
         <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
           <div className="d-flex justify-space-between p-1">
-            <div className="mr-auto text-uppercase text-dark pt-2 pl-2">GIT</div>
+            <div className="mr-auto text-uppercase text-dark pt-2 px-1">GIT</div>
             {selectedWorkspace.hasGitSubmodules?
               <div className="pt-1 mr-1">
-                {global.fs.browser.isRequestingCloning ? <div style={{ height: 30 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div> :
-                  <div style={{ height: 30 }} onClick={updateSubModules} data-id='updatesubmodules' className='btn btn-sm border text-muted small'>update submodules</div>}
+                {global.fs.browser.isRequestingCloning ? <div style={{ height: 30, minWidth: 165 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div> :
+                  <div style={{ height: 30, minWidth: 165 }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border small ${highlightUpdateSubmodules ? 'text-warning' : 'text-muted'}`}>update submodules</div>}
               </div>
               : null}
             <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
@@ -1329,6 +1471,38 @@ export function Workspace() {
           downloadPath={downloadPath}
         />
       )}
+
+      <ModalDialog id="homeTab" title={'Import from ' + modalState.modalInfo.title}
+        okLabel="Import" hide={!modalState.showModalDialog} handleHide={() => hideFullMessage()}
+        okFn={() => processLoading(modalState.modalInfo.title)} validationFn={validateUrlForImport}
+      >
+        <div className="p-2 user-select-auto">
+          {modalState.modalInfo.loadItem !== '' && <span>Enter the {modalState.modalInfo.loadItem} you would like to load.</span>}
+          {modalState.modalInfo.examples.length !== 0 && (
+            <>
+              <div>e.g</div>
+              <div>{examples}</div>
+            </>
+          )}
+          <div className="d-flex flex-row">
+            {modalState.modalInfo.prefix && <span className="text-nowrap align-self-center mr-2">ipfs://</span>}
+            <input
+              ref={inputValue}
+              type="text"
+              name="prompt_text"
+              id="inputPrompt_text"
+              className="w-100 mt-1 form-control"
+              data-id="homeTabModalDialogCustomPromptText"
+              value={modalState.importSource}
+              onInput={(e) => {
+                setModalState((prevState) => {
+                  return { ...prevState, importSource: inputValue.current.value }
+                })
+              }}
+            />
+          </div>
+        </div>
+      </ModalDialog>
     </div>
   )
 }
