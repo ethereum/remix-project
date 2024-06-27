@@ -59,7 +59,7 @@ const profile = {
   maintainedBy: 'Remix'
 }
 module.exports = class Filepanel extends ViewPlugin {
-  constructor(appManager) {
+  constructor(appManager, contentImport) {
     super(profile)
     this.registry = Registry.getInstance()
     this.fileProviders = this.registry.get('fileproviders').api
@@ -73,6 +73,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.foundryHandle = new FoundryHandle()
     this.truffleHandle = new TruffleHandle()
     this.slitherHandle = new SlitherHandle()
+    this.contentImport = contentImport
     this.workspaces = []
     this.appManager = appManager
     this.currentWorkspaceMetadata = null
