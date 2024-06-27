@@ -1343,22 +1343,34 @@ export function Workspace() {
           </div>
         </div>
       </div>
-      {selectedWorkspace && (
+      { selectedWorkspace && (
         <div className={`bg-light border-top ${selectedWorkspace.isGitRepo && currentBranch ? 'd-block' : 'd-none'}`} data-id="workspaceGitPanel">
-          <div className="d-flex justify-space-between p-1">
-            <div className="mr-auto text-uppercase text-dark pt-2 px-1">GIT</div>
-            {selectedWorkspace.hasGitSubmodules?
-              <div className="pt-1 mr-1">
-                {global.fs.browser.isRequestingCloning ? <div style={{ height: 30, minWidth: 165 }} className='btn btn-sm border text-muted small'><i className="fad fa-spinner fa-spin"></i> updating submodules</div> :
-                  <div style={{ height: 30, minWidth: 165 }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border small ${highlightUpdateSubmodules ? 'text-warning' : 'text-muted'}`}>update submodules</div>}
-              </div>
+          <div className="d-flex justify-content-between p-1">
+            <div className="text-uppercase text-dark pt-1 px-1">GIT</div>
+            { selectedWorkspace.hasGitSubmodules?
+              <CustomTooltip
+                placement="top"
+                tooltipId="updateSubmodules"
+                tooltipClasses="text-nowrap"
+                tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
+              >
+                <div className="pr-1">
+                {global.fs.browser.isRequestingCloning ? <button style={{ height: 30, minWidth: "8rem" }} className='btn btn-sm border text-dark'>
+                  <i className="fad fa-spinner fa-spin"></i>
+                  Updating submodules
+                </button> :
+                  <button style={{ height: 30, minWidth: "8rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
+                    Update submodules
+                  </button> }
+                </div>
+              </CustomTooltip>
               : null}
-            <div className="pt-1 mr-1" data-id="workspaceGitBranchesDropdown">
-              <Dropdown style={{ height: 30, minWidth: 80 }} onToggle={toggleBranches} show={showBranches} drop={'up'}>
+            <div className="pt-0 mr-2" data-id="workspaceGitBranchesDropdown">
+              <Dropdown style={{ height: 30, width: "7rem" }} onToggle={toggleBranches} show={showBranches} drop={'up'}>
                 <Dropdown.Toggle
                   as={CustomToggle}
                   id="dropdown-custom-components"
-                  className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark"
+                  className="btn btn-sm btn-light btn-block w-100 d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark"
                   icon={null}
                 >
                   {global.fs.browser.isRequestingCloning ? <i className="fad fa-spinner fa-spin"></i> : currentBranch || '-none-'}
