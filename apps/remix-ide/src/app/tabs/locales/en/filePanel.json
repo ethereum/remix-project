@@ -142,5 +142,5 @@
   "filePanel.movingFolderFailedMsg": "Unexpected error while moving folder: {src}",
   "filePanel.workspaceActions": "Workspace actions",
   "filePanel.saveCodeSample": "This code-sample workspace will not be persisted. Click here to save it.",
-  "filePanel.updateSubmodules": "Update all submodules."
+  "filePanel.updateSubmodules": "Update all submodules of repository. Click to pull dependencies."
 }
