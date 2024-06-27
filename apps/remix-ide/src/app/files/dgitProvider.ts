@@ -624,8 +624,7 @@ class DGitProvider extends Plugin {
         ...await this.addIsomorphicGitConfig(input),
         ...await this.addIsomorphicGitConfigFS()
       }
-
-      this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
+      this.call('terminal', 'logHtml', `Cloning ${input.url}... please wait...`)
       const result = await git.clone(cmd)
       if (!input.workspaceExists) {
         setTimeout(async () => {
@@ -633,6 +632,12 @@ class DGitProvider extends Plugin {
         }, 1000)
       }
       this.emit('clone')
+      this.call('fileManager', 'hasGitSubmodules').then((submodules) => {
+        if (submodules) {
+          this.call('terminal', 'log', { type: 'warn', value: 'This repository has submodules. Please update submodules to pull all the dependencies.' })
+          this.emit('repositoryWithSubmodulesCloned')
+        }
+      })
       return result
     }
   }
