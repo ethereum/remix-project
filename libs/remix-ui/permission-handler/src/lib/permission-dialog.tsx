@@ -19,11 +19,11 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
   }
 
   const imgFrom = () => {
-    if (!from.icon || from.icon === '') from.icon = "/assets/img/pluginManager.webp"
+    if (!from.icon || from.icon === '') from.icon = "assets/img/pluginManager.webp"
     return <img className={`opacity(0.5);`} alt="" id="permissionModalImagesFrom" src={from.icon} />
   }
   const imgTo = () => {
-    if (!to.icon || to.icon === '') to.icon = "/assets/img/pluginManager.webp"
+    if (!to.icon || to.icon === '') to.icon = "assets/img/pluginManager.webp"
     return <img className={`opacity(0.5);`} alt="" id="permissionModalImagesTo" src={to.icon} />
   }
   const pluginsImages = () => {

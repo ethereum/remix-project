@@ -15,11 +15,14 @@ ipcRenderer.invoke('getWebContentsID').then((id: number) => {
 })
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  isPackaged: () => ipcRenderer.invoke('config:isPackaged'),
+  isE2E: () => ipcRenderer.invoke('config:isE2E'),
+  canTrackMatomo: () => ipcRenderer.invoke('config:canTrackMatomo'),
+  trackEvent: (args: any[]) => ipcRenderer.invoke('matomo:trackEvent', args), 
+
   activatePlugin: (name: string) => {
     return ipcRenderer.invoke('manager:activatePlugin', name)
   },
-
-  getWindowId: () => ipcRenderer.invoke('getWindowID'),
 
   plugins: exposedPLugins.map(name => {
     return {

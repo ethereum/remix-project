@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess, screen } from 'electron';
+import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess, screen, ipcMain } from 'electron';
 import path from 'path';
 
 
@@ -41,6 +41,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
     frame: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
+
     },
   });
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -76,7 +77,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-  trackEvent('App', 'Launch', app.getVersion(), 1);
+  trackEvent('App', 'Launch', app.getVersion(), 1, 1);
   trackEvent('App', 'OS', process.platform, 1);
   require('./engine')
 });
@@ -143,6 +144,26 @@ HelpMenu(commandKeys, execCommand),
 ]
 if (!isE2E || isE2ELocal)
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
+
+
+ipcMain.handle('config:isPackaged', async () => {
+  return isPackaged
+})
+
+ipcMain.handle('config:isE2E', async () => {
+  return isE2E
+})
+
+ipcMain.handle('config:canTrackMatomo', async (event, name: string) => {
+  console.log('config:canTrackMatomo', ((process.env.NODE_ENV === 'production' || isPackaged) && !isE2E))
+  return ((process.env.NODE_ENV === 'production' || isPackaged) && !isE2E)
+})
+
+ipcMain.handle('matomo:trackEvent', async (event, data) => {
+  if (data && data[0] && data[0] === 'trackEvent') {
+    trackEvent(data[1], data[2], data[3], data[4])
+  }
+})
 
 
 
