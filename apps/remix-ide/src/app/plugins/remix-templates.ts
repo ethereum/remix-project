@@ -32,7 +32,7 @@ export class TemplatesPlugin extends Plugin {
           message: 'This template is not available in the desktop version',
         })
         return
-      }else if(metadata.type === 'plugin'){
+      } else if (metadata.type === 'plugin'){
         this.call('notification', 'alert', {
           id: 'dgitAlert',
           message: 'This template is not available in the desktop version',
