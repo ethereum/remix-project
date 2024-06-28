@@ -279,6 +279,11 @@ export interface ContractDropdownProps {
   isValidProxyAddress?: (address: string) => Promise<boolean>,
   isValidProxyUpgrade?: (proxyAddress: string, contractName: string, solcInput: SolcInput, solcOuput: SolcOutput, solcVersion: string) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: boolean }>,
   proxy: { deployments: { address: string, date: string, contractName: string }[] }
+  solCompilerVersion: { version: string, canReceive: boolean }
+  setCompilerVersion: React.Dispatch<React.SetStateAction<{
+    version: string;
+    canReceive: boolean;}>>
+  getCompilerVersion: () => void
 }
 
 export interface RecorderProps {
@@ -343,6 +348,8 @@ export interface InstanceContainerProps {
   exEnvironment: string
   editInstance: (instance) => void
   plugin: RunTab
+  solcVersion: { version: string, canReceive: boolean }
+  getVersion: any
 }
 
 export interface Modal {
@@ -397,6 +404,11 @@ export interface ContractGUIProps {
   isValidProxyAddress?: (address: string) => Promise<boolean>,
   isValidProxyUpgrade?: (proxyAddress: string) => Promise<LayoutCompatibilityReport | { ok: boolean, pass: boolean, warning: boolean }>,
   modal?: (title: string, message: string | JSX.Element, okLabel: string, okFn: () => void, cancelLabel?: string, cancelFn?: () => void, okBtnClass?: string, cancelBtnClass?: string) => void
+  solcVersion?: { version: string, canReceive: boolean }
+  setSolcVersion?: React.Dispatch<React.SetStateAction<{
+    version: string;
+    canReceive: boolean;}>>
+  getVersion: () => void
 }
 export interface MainnetProps {
   network: Network,
@@ -452,6 +464,8 @@ export interface UdappProps {
   exEnvironment: string
   editInstance: (instance) => void
   plugin: RunTab
+  solcVersion: { version: string, canReceive: boolean }
+  getVersion: () => string
 }
 
 export interface DeployButtonProps {

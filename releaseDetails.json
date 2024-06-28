@@ -1,10 +1,10 @@
 {
-    "version": "v0.50.0",
+    "version": "v0.51.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Pin a plugin to the new right side panel",
-    "highlight2": "'zksync-ethers' NPM module supported in js/ts scripts",
-    "highlight3": "latest Solidity compiler version set to v0.8.26",
+    "highlight1": "Integration of SolidityScan to analyze code for vulnerabilities",
+    "highlight2": "'eth_signTypedData' supported in remix-simulator",
+    "highlight3": "Home tab updated & status bar introduced",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-50-0-1b0ca47ce2d9?source=friends_link&sk=a1cec61a506047186cd8e0c4349cdb86"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-51-0-ffe0260a9ad5?source=friends_link&sk=8c739ab9148dfae968108a90d9d0c6c3"
   }

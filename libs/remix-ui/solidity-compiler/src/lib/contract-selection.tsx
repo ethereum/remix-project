@@ -5,6 +5,9 @@ import {PublishToStorage} from '@remix-ui/publish-to-storage' // eslint-disable-
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
 import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
 import { saveAs } from 'file-saver'
+import { AppModal } from '@remix-ui/app'
+import { SolScanTable } from './solScanTable'
+import axios from 'axios'
 
 import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
@@ -77,7 +80,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           key={keyPath}
           label={
             <div className="d-flex mt-2 flex-row remixui_label_item">
-              <label className="small font-weight-bold pr-1 remixui_label_key">{key}:</label>
+              <label className="font-weight-bold pr-1 remixui_label_key">{key}:</label>
               <label className="m-0 remixui_label_value">{typeof data.self === 'boolean' ? `${data.self}` : data.self}</label>
             </div>
           }
@@ -94,7 +97,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           key={keyPath}
           label={
             <div className="d-flex mt-2 flex-row remixui_label_item">
-              <label className="small font-weight-bold pr-1 remixui_label_key">{key}:</label>
+              <label className="font-weight-bold pr-1 remixui_label_key">{key}:</label>
               <label className="m-0 remixui_label_value">{typeof data.self === 'boolean' ? `${data.self}` : data.self}</label>
             </div>
           }
@@ -245,6 +248,113 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     return bytecodeObj.object
   }
 
+  const runStaticAnalysis = async () => {
+    _paq.push(['trackEvent', 'solidityCompiler', 'runStaticAnalysis', 'initiate'])
+    const plugin = api as any
+    const isStaticAnalyzersActive = await plugin.call('manager', 'isActive', 'solidityStaticAnalysis')
+    if (!isStaticAnalyzersActive) {
+      await plugin.call('manager', 'activatePlugin', 'solidityStaticAnalysis')
+    }
+    plugin.call('menuicons', 'select', 'solidityStaticAnalysis')
+  }
+
+  const handleScanContinue = async () => {
+    const plugin = api as any
+    await plugin.call('notification', 'toast', 'Processing data to scan...')
+    _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'initiateScan'])
+    const workspace = await plugin.call('filePanel', 'getCurrentWorkspace')
+    const fileName = `${workspace.name}/${props.compiledFileName}`
+    const filePath = `.workspaces/${fileName}`
+    const file = await plugin.call('fileManager', 'readFile', filePath)
+
+    const urlResponse = await axios.post(`https://solidityscan.remixproject.org/uploadFile`, { file, fileName })
+
+    if (urlResponse.data.status === 'success') {
+      const ws = new WebSocket('wss://solidityscan.remixproject.org/solidityscan')
+
+      ws.addEventListener('error', console.error);
+
+      ws.addEventListener('open', async (event) => {
+        await plugin.call('notification', 'toast', 'Loading scan result in Remix terminal...')
+      })
+
+      ws.addEventListener('message', async (event) => {
+        const data = JSON.parse(event.data)
+        if (data.type === "auth_token_register" && data.payload.message === "Auth token registered.") {
+          // Message on Bearer token successful registration
+          const reqToInitScan = {
+            "action": "message",
+            "payload": {
+              "type": "private_project_scan_initiate",
+              "body": {
+                "file_urls": [
+                  urlResponse.data.result.url
+                ],
+                "project_name": "RemixProject",
+                "project_type": "new"
+              }
+            }
+          }
+          ws.send(JSON.stringify(reqToInitScan))
+        } else if (data.type === "scan_status" && data.payload.scan_status === "download_failed") {
+          // Message on failed scan
+          _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanFailed'])
+          const modal: AppModal = {
+            id: 'SolidityScanError',
+            title: <FormattedMessage id="solidity.solScan.errModalTitle" />,
+            message: data.payload.scan_status_err_message,
+            okLabel: 'Close'
+          }
+          await plugin.call('notification', 'modal', modal)
+        } else if (data.type === "scan_status" && data.payload.scan_status === "scan_done") {
+          // Message on successful scan
+          _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'scanSuccess'])
+          const url = data.payload.scan_details.link
+
+          const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
+          const scanDetails: Record<string, any>[] = scanData.scan_report.multi_file_scan_details
+
+          if (scanDetails && scanDetails.length) {
+            await plugin.call('terminal', 'logHtml', <SolScanTable scanDetails={scanDetails} fileName={fileName}/>)
+          } else {
+            const modal: AppModal = {
+              id: 'SolidityScanError',
+              title: <FormattedMessage id="solidity.solScan.errModalTitle" />,
+              message: "Some error occurred! Please try again",
+              okLabel: 'Close'
+            }
+            await plugin.call('notification', 'modal', modal)
+          }
+
+        }
+      })
+    }
+  }
+
+  const runSolidityScan = async () => {
+    _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'askPermissionToScan'])
+    const modal: AppModal = {
+      id: 'SolidityScanPermissionHandler',
+      title: <FormattedMessage id="solidity.solScan.modalTitle" />,
+      message: <div className='d-flex flex-column'>
+        <span><FormattedMessage id="solidity.solScan.modalMessage" />
+          <a href={'https://solidityscan.com'}
+            target="_blank"
+            onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'learnMore'])}>
+              Learn more
+          </a>
+        </span>
+        <br/>
+        <FormattedMessage id="solidity.solScan.likeToContinue" />
+      </div>,
+      okLabel: <FormattedMessage id="solidity.solScan.modalOkLabel" />,
+      okFn: handleScanContinue,
+      cancelLabel: <FormattedMessage id="solidity.solScan.modalCancelLabel" />
+    }
+
+    await (api as any).call('notification', 'modal', modal)
+  }
+
   return (
     // define swarm logo
     <>
@@ -264,72 +374,121 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             </select>
           </div>
           <article className="mt-2 pb-0">
-            <button
-              id="publishOnIpfs"
-              className="btn btn-secondary btn-block"
-              onClick={() => {
-                handlePublishToStorage('ipfs')
-              }}
+            <CustomTooltip
+              placement={'auto-end'}
+              tooltipId="runStaticAnalysisTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={`${intl.formatMessage({
+                id: 'solidity.runStaticAnalysis.iconTooltip'
+              })}`}
             >
-              <CustomTooltip
-                placement="right"
-                tooltipId="publishOnIpfsTooltip"
-                tooltipClasses="text-nowrap"
-                tooltipText={`${intl.formatMessage({
-                  id: 'solidity.publishOn'
-                })} Ipfs`}
+              <button
+                id="runStaticAnalysis"
+                className="btn border btn-block"
+                onClick={() => {
+                  runStaticAnalysis()
+                }}
               >
                 <span>
+                  <img id="ssaLogo" className="remixui_storageLogo mr-2" src="assets/img/staticAnalysisColorBlue.webp" />
                   <span>
-                    <FormattedMessage id="solidity.publishOn" /> Ipfs
+                    <FormattedMessage id="solidity.runStaticAnalysis" />
                   </span>
-                  <img id="ipfsLogo" className="remixui_storageLogo ml-2" src="assets/img/ipfs.webp" />
                 </span>
-              </CustomTooltip>
-            </button>
-            <button
-              id="publishOnSwarm"
-              className="btn btn-secondary btn-block"
-              onClick={() => {
-                handlePublishToStorage('swarm')
-              }}
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement={'auto-end'}
+              tooltipId="runSolidityScanTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={`${intl.formatMessage({
+                id: 'solidity.solScan.iconTooltip'
+              })}`}
             >
-              <CustomTooltip
-                placement="right"
-                tooltipId="publishOnSwarmTooltip"
-                tooltipClasses="text-nowrap"
-                tooltipText={`${intl.formatMessage({
-                  id: 'solidity.publishOn'
-                })} Swarm`}
+              <button
+                id="runSolidityScan"
+                className="btn border btn-block"
+                onClick={() => {
+                  runSolidityScan()
+                }}
               >
                 <span>
+                  <img id="solscanLogo" className="remixui_storageLogo mr-2" src="assets/img/solidityScanLogo.webp" />
+                  <span>
+                    <FormattedMessage id="solidity.runSolidityScan" />
+                  </span>
+                </span>
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement={'auto-end'}
+              tooltipId="publishOnIpfsTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={`${intl.formatMessage({
+                id: 'solidity.publishOn'
+              })} Ipfs`}
+            >
+              <button
+                id="publishOnIpfs"
+                className="btn border btn-block"
+                onClick={() => {
+                  handlePublishToStorage('ipfs')
+                }}
+              >
+
+                <span>
+                  <img id="ipfsLogo" className="remixui_storageLogo mr-2" src="assets/img/ipfs.webp" />
+                  <span>
+                    <FormattedMessage id="solidity.publishOn" /> IPFS
+                  </span>
+                </span>
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement={'auto-end'}
+              tooltipId="publishOnSwarmTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={`${intl.formatMessage({
+                id: 'solidity.publishOn'
+              })} Swarm`}
+            >
+              <button
+                id="publishOnSwarm"
+                className="btn border btn-block"
+                onClick={() => {
+                  handlePublishToStorage('swarm')
+                }}
+              >
+                <span>
+                  <img id="swarmLogo" className="remixui_storageLogo mr-2" src="assets/img/swarmColor.webp" />
                   <span>
                     <FormattedMessage id="solidity.publishOn" /> Swarm
                   </span>
-                  <img id="swarmLogo" className="remixui_storageLogo ml-2" src="assets/img/swarm.webp" />
                 </span>
-              </CustomTooltip>
-            </button>
-
-            <button
-              data-id="compilation-details"
-              className="btn btn-secondary btn-block"
-              onClick={async () => {
-                details()
-                await (api as any).call('compilationDetails', 'showDetails', payload)
-              }}
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              placement={'auto-end'}
+              tooltipId="CompilationDetailsTooltip"
+              tooltipClasses="text-nowrap"
+              tooltipText={<FormattedMessage id="solidity.displayContractDetails" />}
             >
-              <CustomTooltip
-                placement="right"
-                tooltipId="CompilationDetailsTooltip"
-                tooltipClasses="text-nowrap"
-                tooltipText={<FormattedMessage id="solidity.displayContractDetails" />}
+              <button
+                data-id="compilation-details"
+                className="btn border btn-block"
+                onClick={async () => {
+                  details()
+                  await (api as any).call('compilationDetails', 'showDetails', payload)
+                }}
               >
                 <span>
-                  <FormattedMessage id="solidity.compilationDetails" />
+                  <i className="fa-regular fa-memo-pad mr-2 text-primary"></i>
+                  <span>
+                    <FormattedMessage id="solidity.compilationDetails" />
+                  </span>
                 </span>
-              </CustomTooltip>
-            </button>
+              </button>
+            </CustomTooltip>
             {/* Copy to Clipboard */}
             <div className="remixui_contractHelperButtons">
               <div className="input-group">

@@ -4,6 +4,7 @@
   "sourceRoot": "libs/remixd/src",
   "projectType": "library",
   "implicitDependencies": [
+    "remix-solidity"
   ],
   "targets": {
     "build": {
