@@ -1355,11 +1355,11 @@ export function Workspace() {
                 tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
               >
                 <div className="pr-1">
-                {global.fs.browser.isRequestingCloning ? <button style={{ height: 30, minWidth: "8rem" }} className='btn btn-sm border text-dark'>
+                { global.fs.browser.isRequestingCloning ? <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
                   <i className="fad fa-spinner fa-spin"></i>
                   Updating submodules
                 </button> :
-                  <button style={{ height: 30, minWidth: "8rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
+                  <button style={{ height: 30, minWidth: "9rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
                     Update submodules
                   </button> }
                 </div>
@@ -1367,17 +1367,17 @@ export function Workspace() {
               : null
             }
             <CustomTooltip
-              placement="top"
+              placement="right"
               tooltipId="branchesDropdown"
               tooltipClasses="text-nowrap"
               tooltipText={'Current branch: ' + currentBranch || 'Branches'}
             >
               <div className="pt-0 mr-2" data-id="workspaceGitBranchesDropdown">
-                <Dropdown style={{ height: 30, width: "7rem" }} onToggle={toggleBranches} show={showBranches} drop={'up'}>
+                <Dropdown style={{ height: 30, maxWidth: "6rem", minWidth: "6rem" }} onToggle={toggleBranches} show={showBranches} drop={'up'}>
                   <Dropdown.Toggle
                     as={CustomToggle}
                     id="dropdown-custom-components"
-                    className="btn btn-sm btn-light btn-block w-100 d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark"
+                    className="btn btn-sm btn-light d-inline-block border border-dark form-control h-100 p-0 pl-2 pr-2 text-dark"
                     icon={null}
                   >
                     {global.fs.browser.isRequestingCloning ? <i className="fad fa-spinner fa-spin"></i> : currentBranch || '-none-'}
@@ -1447,11 +1447,9 @@ export function Workspace() {
                         )}
                       </div>
                       {(selectedWorkspace.branches || []).length > 4 && (
-                        <div className="text-center border-top pt-2">
-                          <label style={{ fontSize: 12, cursor: 'pointer' }} onClick={showAllBranches}>
-                            <FormattedMessage id="filePanel.viewAllBranches" />
-                          </label>
-                        </div>
+                        <button className="btn btn-sm w-100" style={{ cursor: "pointer" }} onClick={showAllBranches}>
+                          <FormattedMessage id="filePanel.viewAllBranches" />
+                        </button>
                       )}
                     </div>
                   </Dropdown.Menu>
