@@ -109,54 +109,46 @@ export const VerifyView = () => {
   console.log('sourcifyVerifiers:', verifiers)
 
   return (
-    <div className="my-4">
-      <div>
-        <h2 className="text-center text-uppercase font-weight-bold">Verify</h2>
-        <p className="text-center" style={{ fontSize: '0.8rem' }}>
-          Verify compiled contracts on different verification services
-        </p>
+    <form onSubmit={handleVerify}>
+      <SearchableDropdown label="Contract Chain" chains={dropdownChains} id="network-dropdown" setSelectedChain={setSelectedChain} selectedChain={selectedChain} />
+
+      <div className="form-group">
+        <label htmlFor="contract-address">Contract Address</label>
+        <div>{contractAddressError && <div className="text-danger">{contractAddressError}</div>}</div>
+        <input type="text" className="form-control" id="contract-address" placeholder="0x2738d13E81e..." value={contractAddress} onChange={handleAddressChange} />
       </div>
-      <form onSubmit={handleVerify}>
-        <SearchableDropdown label="Contract Chain" chains={dropdownChains} id="network-dropdown" setSelectedChain={setSelectedChain} selectedChain={selectedChain} />
 
-        <div className="form-group">
-          <label htmlFor="contract-address">Contract Address</label>
-          <div>{contractAddressError && <div className="text-danger">{contractAddressError}</div>}</div>
-          <input type="text" className="form-control" id="contract-address" placeholder="0x2738d13E81e..." value={contractAddress} onChange={handleAddressChange} />
-        </div>
+      <ContractDropdown label="Contract Name" id="contract-dropdown-1" />
 
-        <ContractDropdown label="Contract Name" id="contract-dropdown-1" />
+      <button type="submit" className="btn btn-primary">
+        {' '}
+        Verify{' '}
+      </button>
 
-        <button type="submit" className="btn btn-primary">
-          {' '}
-          Verify{' '}
-        </button>
-
-        <div>
-          {verifiers?.length > 0 &&
-            verifiers.map((verifier) => (
-              <div key={verifier.name} className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id={`verifier-${verifier.name}`}
-                  checked={verifier.enabled}
-                  onChange={(e) => {
-                    verifier.enabled = e.target.checked
-                    // Trigger a re-render
-                    setVerifiers([...verifiers])
-                  }}
-                />
-                <label className="form-check-label" htmlFor={`verifier-${verifier.name}`}>
-                  {verifier.name} ({verifier.apiUrl})
-                </label>
-              </div>
-            ))}
-        </div>
-        <div>
-          <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} />
-        </div>
-      </form>
-    </div>
+      <div>
+        {verifiers?.length > 0 &&
+          verifiers.map((verifier) => (
+            <div key={verifier.name} className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id={`verifier-${verifier.name}`}
+                checked={verifier.enabled}
+                onChange={(e) => {
+                  verifier.enabled = e.target.checked
+                  // Trigger a re-render
+                  setVerifiers([...verifiers])
+                }}
+              />
+              <label className="form-check-label" htmlFor={`verifier-${verifier.name}`}>
+                {verifier.name} ({verifier.apiUrl})
+              </label>
+            </div>
+          ))}
+      </div>
+      <div>
+        <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} />
+      </div>
+    </form>
   )
 }

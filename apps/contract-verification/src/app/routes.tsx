@@ -11,7 +11,7 @@ const DisplayRoutes = () => (
       <Route
         path="/"
         element={
-          <DefaultLayout from="/" title="Verify Smart Contracts">
+          <DefaultLayout from="/" title="Verify" description="Verify compiled contracts on different verification services">
             <VerifyView />
           </DefaultLayout>
         }
@@ -20,7 +20,7 @@ const DisplayRoutes = () => (
       <Route
         path="/receipts"
         element={
-          <DefaultLayout from="/" title="Receipts">
+          <DefaultLayout from="/" title="Receipts" description="Check the verification statuses of contracts submitted for verification">
             <ReceiptsView />
           </DefaultLayout>
         }

@@ -7,13 +7,13 @@ import { SubmittedContract } from '../types/VerificationTypes'
 export const ReceiptsView = () => {
   // const {submittedContracts} = React.useContext(AppContext);
 
-  const submittedContracts = example as unknown as SubmittedContract
+  const submittedContracts = example as unknown as Record<string,SubmittedContract>
   console.log('submittedContracts', submittedContracts)
   return (
-    <div className="my-4">
+    <>
       {Object.values(submittedContracts).map((contract, index) => (
         <AccordionReceipt contract={contract} index={index} />
       ))}
-    </div>
+    </>
   )
 }
