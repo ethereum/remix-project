@@ -361,30 +361,31 @@ module.exports = {
         console.log(resolver.addr(node));
     }
     `
-    if (runMasterTests)
+    if (runMasterTests) {
       browser
         // .clickLaunchIcon('udapp')
         .switchEnvironment('vm-mainnet-fork')
         .clickLaunchIcon('filePanel')
         .addFile('test_mainnet.sol', { content: script })
 
-    const path = "//*[@class='view-line' and contains(.,'resolveENS') and contains(.,'view')]//span//span[contains(.,'(')]"
-    const pathRunFunction = `//li//*[@aria-label='Run the free function "resolveENS"']`
-    browser.waitForElementVisible('#editorView')
-      //.waitForElementPresent(pathRunFunction)
-      .pause(10000) // the parser need to parse the code
-      .useXpath()
-      .scrollToLine(16)
-      .click(path)
-      .perform(function () {
-        const actions = this.actions({ async: true });
-        return actions
-          .keyDown(this.Keys.SHIFT)
-          .keyDown(this.Keys.ALT)
-          .sendKeys('r')
-      })
-      .useCss()
-      .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', 120000)
+      const path = "//*[@class='view-line' and contains(.,'resolveENS') and contains(.,'view')]//span//span[contains(.,'(')]"
+      const pathRunFunction = `//li//*[@aria-label='Run the free function "resolveENS"']`
+      browser.waitForElementVisible('#editorView')
+        //.waitForElementPresent(pathRunFunction)
+        .pause(10000) // the parser need to parse the code
+        .useXpath()
+        .scrollToLine(16)
+        .click(path)
+        .perform(function () {
+          const actions = this.actions({ async: true });
+          return actions
+            .keyDown(this.Keys.SHIFT)
+            .keyDown(this.Keys.ALT)
+            .sendKeys('r')
+        })
+        .useCss()
+        .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', 120000)
+    }
   },
 
   'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
