@@ -1,12 +1,12 @@
 
-import React from 'react'
+import React, {useState} from 'react' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { RemixAppManager } from '../../remixAppManager'
 import { RemixUIGridView } from '@remix-ui/remix-ui-grid-view'
 import { RemixUIGridSection } from '@remix-ui/remix-ui-grid-section'
 import { RemixUIGridCell } from '@remix-ui/remix-ui-grid-cell'
-import { ThemeKeys, ThemeObject } from '@microlink/react-json-view'
+import * as Data from './remixGuideData.json'
 //@ts-ignore
 const _paq = (window._paq = window._paq || [])
 
@@ -15,7 +15,6 @@ const profile = {
   displayName: 'Remix Guide',
   description: 'Learn remix with videos',
   location: 'mainPanel',
-  methods: ['showDetails'],
   events: []
 }
 
@@ -24,13 +23,20 @@ export class RemixGuidePlugin extends ViewPlugin {
   appManager: RemixAppManager
   element: HTMLDivElement
   payload: any
-  themeStyle: any
-  theme: ThemeKeys | ThemeObject
+  showVideo: boolean
+  videoID: string
+  handleKeyDown: any
+  handleEscape: any
+
   constructor(appManager: RemixAppManager) {
     super(profile)
     this.appManager = appManager
     this.element = document.createElement('div')
     this.element.setAttribute('id', 'remixGuideEl')
+    this.payload = {
+      sectionToExpandedCell: [['', '']],
+      data: {}
+    }
   }
 
   async onActivation() {
@@ -38,24 +44,23 @@ export class RemixGuidePlugin extends ViewPlugin {
     await this.call('tabs', 'focus', 'remixGuide')
     this.renderComponent()
     _paq.push(['trackEvent', 'plugin', 'activated', 'remixGuide'])
+    // Read the data
+    this.payload.data = Data
+    this.handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        this.showVideo = false
+        this.renderComponent()
+      }
+    }
+    document.addEventListener('keydown', this.handleKeyDown);
   }
 
   onDeactivation(): void {
-  }
-
-  async showDetails(sentPayload: any) {
-    const contractName = Object.entries(sentPayload).find(([key, value]) => key)
-    await this.call('tabs', 'focus', 'remixGuide')
-    this.profile.displayName = `${contractName[0]}`
-    this.payload = sentPayload
-    const active = await this.call('theme', 'currentTheme')
-
-    this.renderComponent()
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
   private handleThemeChange() {
     this.on('theme', 'themeChanged', (theme: any) => {
-
       this.renderComponent()
     })
   }
@@ -64,6 +69,7 @@ export class RemixGuidePlugin extends ViewPlugin {
     this.dispatch = dispatch
     this.renderComponent()
   }
+
   render() {
     return (
       <div className="bg-dark" id="remixGuide">
@@ -76,168 +82,88 @@ export class RemixGuidePlugin extends ViewPlugin {
     this.dispatch({
       ...this,
       ...this.payload,
-      themeStyle: this.themeStyle,
-      theme: this.theme
+      showVideo: this.showVideo,
+      videoID: this.videoID
     })
   }
 
   updateComponent(state: any) {
     return (
-      <RemixUIGridView
-        plugin={this}
-        styleList={""}
-        logo='/assets/img/YouTubeLogo.webp'
-        enableFilter={true}
-        showUntagged={true}
-        showPin={true}
-        tagList={[
-          ['beginner', 'danger'],
-          ['advanced', 'warning'],
-          ['AI', 'success'],
-          ['plugins', 'secondary'],
-          ['solidity', 'primary'],
-          ['vyper', 'info'],
-          ['L2', 'danger']
-        ]}
-        title='Remix Guide'
-        description="Streamlined access to categorized video tutorials for mastering Remix IDE. From fundamentals to advanced techniques, level up your development skills with ease."
-      //themeStyle={state.themeStyle}
-      >
-        <RemixUIGridSection
+      <div className='d-flex'>
+        <RemixUIGridView
           plugin={this}
-          title='Basics'
-          hScrollable= {true}
+          styleList={""}
+          logo='/assets/img/YouTubeLogo.webp'
+          enableFilter={true}
+          showUntagged={true}
+          showPin={false}
+          tagList={[
+            ['beginner', 'danger'],
+            ['advanced', 'warning'],
+            ['AI', 'success'],
+            ['plugins', 'secondary'],
+            ['solidity', 'primary'],
+            ['vyper', 'info'],
+            ['L2', 'danger']
+          ]}
+          title={Data.title}
+          description={Data.description}
         >
-          <RemixUIGridCell
-            plugin={this}
-            title="first item"
-            tagList={['L2', 'AI']}
-            logo='/assets/img/soliditySurvey2023.webp'
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="next"
-            pinned={true}
-            tagList={['L2', 'plugins']}
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell> <RemixUIGridCell
-            plugin={this}
-            title="something"
-            pinned={false}
-            tagList={['solidity', 'plugins']}
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="1"
-            tagList={['solidity']}
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell> <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="Something very very long"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell> <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-        </RemixUIGridSection>
-        <RemixUIGridSection
-          plugin={this}
-          title='Basics not scrollable'
-          hScrollable= {false}
+          { Data.sections.map(section => {
+            return <RemixUIGridSection
+              plugin={this}
+              title={section.title}
+              hScrollable= {true}
+            >
+              { section.cells.map(cell => {
+                return <RemixUIGridCell
+                  plugin={this}
+                  title={cell.title}
+                  tagList={cell.tagList}
+                  expandViewEl={
+                    cell.expandViewElement
+                  }
+                  handleExpand={() => {
+                    this.showVideo = true
+                    this.videoID = cell.expandViewElement.videoID
+                    this.renderComponent()
+                  }}
+                  logo={cell.expandViewElement.logo}
+                >
+                  <a href={"https://www.youtube.com/@" + cell.authorURL} target="__blank">
+                    <img src={"//img.youtube.com/vi/" + this.videoID + "/0.jpg"} style={{ height: '70px', width: '70px' }}></img>
+                  </a>
+                </RemixUIGridCell>
+              })}
+            </RemixUIGridSection>
+          })}
+        </RemixUIGridView>
+        { state.showVideo && <div
+          data-id={`EnterModalDialogContainer-react`}
+          data-backdrop="static"
+          data-keyboard="false"
+          className={"modal d-flex"}
+          role="dialog"
+          style={{ justifyContent: "center" }}
         >
-          <RemixUIGridCell
-            plugin={this}
-            title="first item"
-            logo='/assets/img/soliditySurvey2023.webp'
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="next"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell> <RemixUIGridCell
-            plugin={this}
-            title="something"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell> <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell> <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-          <RemixUIGridCell
-            plugin={this}
-            title="1"
-          >
-            <img src={'/assets/img/soliditySurvey2023.webp'} style={{ height: '70px', width: '70px' }} alt=""></img>
-          </RemixUIGridCell>
-        </RemixUIGridSection>
-      </RemixUIGridView>
+          <div className="align-self-center pb-4" role="document">
+            <div
+              tabIndex={-1}
+              className={'modal-content remixModalContent mb-4'}
+            >
+              <div className="text-break remixModalBody d-flex flex-column p-3 justify-content-between" data-id={`EnterModalDialogModalBody-react`}>
+                <iframe style={{ minHeight: "500px", minWidth: "1000px" }} width="1000" height="500" src={"https://www.youtube.com/embed/" + this.videoID + "?si=ZdckOaSPR7VsLj_2"} allowFullScreen></iframe>
+              </div>
+              <div className="modal-footer d-flex flex-column">
+                <button onClick={() => {
+                  this.showVideo = false
+                  this.renderComponent()
+                }}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>}
+      </div>
     )
   }
 

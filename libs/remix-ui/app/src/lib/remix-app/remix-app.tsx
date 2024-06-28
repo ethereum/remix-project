@@ -217,8 +217,11 @@ const RemixApp = (props: IRemixAppUi) => {
                   layoutPosition='right'
                 ></DragBar>
               }
+              <div>{props.app.hiddenPanel.render()}</div>
+              <div className="statusBar fixed-bottom">
+                {props.app.statusBar.render()}
+              </div>
             </div>
-            <div>{props.app.hiddenPanel.render()}</div>
             <AppDialogs></AppDialogs>
             <DialogViewPlugin></DialogViewPlugin>
           </AppProvider>

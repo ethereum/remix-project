@@ -1,0 +1,47 @@
+{
+  "logo": "/assets/img/YouTubeLogo.webp",
+  "title": "Remix Guide",
+  "description": "Streamlined access to categorized video tutorials for mastering Remix IDE. From fundamentals to advanced techniques, level up your development skills with ease.",
+  "sections": [
+    {
+      "title": "Basics",
+      "hScrollable": "true",
+      "cells": [
+        {
+          "title": "first item",
+          "tagList": [
+            "L2",
+            "AI" 
+          ],
+          "authorURL": "EatTheBlocks",
+          "expandViewElement": {
+            "videoID": "vH8T3In6ZkE",
+            "logo": "https://yt3.ggpht.com/9NFZbC9mkA152sSWJJgNBls6GlBdknsF-9gi6ZVk_xsHjmc82j3q1Pd5a--GCnOKUrP-YtNbHls=s48-c-k-c0x00ffffff-no-rj"
+          }
+        },
+        {
+          "title": "second item",
+          "tagList": [
+            "solidity",
+            "AI" 
+          ],
+          "expandViewElement": {
+            "videoID": "vH8T3In6ZkE",
+            "logo": "https://yt3.ggpht.com/9NFZbC9mkA152sSWJJgNBls6GlBdknsF-9gi6ZVk_xsHjmc82j3q1Pd5a--GCnOKUrP-YtNbHls=s48-c-k-c0x00ffffff-no-rj"
+          }
+        },
+        {
+          "title": "third item",
+          "tagList": [
+            "vyper",
+            "AI" 
+          ],
+          "expandViewElement": {
+            "videoID": "vH8T3In6ZkE",
+            "logo": "https://yt3.ggpht.com/9NFZbC9mkA152sSWJJgNBls6GlBdknsF-9gi6ZVk_xsHjmc82j3q1Pd5a--GCnOKUrP-YtNbHls=s48-c-k-c0x00ffffff-no-rj"
+          }
+        }
+      ]
+    }
+  ]
+}

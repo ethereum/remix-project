@@ -131,7 +131,7 @@ export class HardhatClient extends PluginClient {
 
     clearTimeout(this.logTimeout)
     this.logTimeout = setTimeout(() => {
-      this.call('terminal', 'log', { value: 'receiving compilation result from Hardhat', type: 'log' })
+      this.call('terminal', 'log', { value: 'receiving compilation result from Hardhat. Select a file to populate the contract interaction interface.', type: 'log' })
       if (targetsSynced.length) {
         console.log(`Processing artifacts for files: ${[...new Set(targetsSynced)].join(', ')}`)
         // @ts-ignore
