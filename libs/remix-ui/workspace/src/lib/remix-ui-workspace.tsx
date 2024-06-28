@@ -1355,13 +1355,13 @@ export function Workspace() {
                 tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
               >
                 <div className="pr-1">
-                { global.fs.browser.isRequestingCloning ? <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
-                  <i className="fad fa-spinner fa-spin"></i>
+                  { global.fs.browser.isRequestingCloning ? <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
+                    <i className="fad fa-spinner fa-spin"></i>
                   Updating submodules
-                </button> :
-                  <button style={{ height: 30, minWidth: "9rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
+                  </button> :
+                    <button style={{ height: 30, minWidth: "9rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
                     Update submodules
-                  </button> }
+                    </button> }
                 </div>
               </CustomTooltip>
               : null
