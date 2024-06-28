@@ -2,11 +2,6 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
-
-const branch = process.env.CIRCLE_BRANCH;
-const isMasterBranch = branch === 'master';
-const runMasterTests: boolean = (branch ? (isMasterBranch ? true : false) : true)
-
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -214,7 +209,6 @@ module.exports = {
   },
 
   'Should run a script which log transaction and block using web3.js and ethers #group7': function (browser: NightwatchBrowser) {
-    if(runMasterTests){
     browser
       .clickLaunchIcon('udapp')
       .switchEnvironment('basic-http-provider')
@@ -235,7 +229,6 @@ module.exports = {
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x0fbbd94c448fe6949f848380a1d145a974f386624b4b10aa40f9afb212b3ddeb', 120000) // hash of 4757766
       // check if the logsBloom is being logged (ethers.js call)
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x9db899cb75888a630ba50a1644c243b83d2eb38525eb828a06a5e8bb5663c0b0', 120000) // hash of 4757767
-    }
   },
 
   'Should listen on all transactions #group8': function (browser: NightwatchBrowser) {
@@ -298,7 +291,6 @@ module.exports = {
   },
 
   'Should connect to mainnet fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
-    if(runMasterTests){
     browser
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-mainnet-fork')
@@ -310,11 +302,9 @@ module.exports = {
       .executeScriptInTerminal(`web3.eth.getCode('0x180587b00c8642e2c7ac3a758712d97e6f7bdcc7')`) // mainnet contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0x608060405260043610601f5760003560e01c80635c60da1b14603157602b565b36602b576029605f565b005b6029605f565b348015603c57600080fd5b5060436097565b6040516001600160a01b03909116815260200160405180910390f35b609560917f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b60d1565b565b600060c97f360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc546001600160a01b031690565b905090565b90565b3660008037600080366000845af43d6000803e80801560ef573d6000f35b3d6000fdfea2646970667358221220969dbb4b1d8aec2bb348e26488dc1a33b6bcf0190f567d161312ab7ca9193d8d64736f6c63430008110033', 120000)
       .click('*[data-id="terminalClearConsole"]')
-    }
   },
 
   'Should connect to the sepolia fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
-    if(runMasterTests){
     browser
       .switchEnvironment('vm-custom-fork')
       .waitForElementVisible('[data-id="vm-custom-fork-modal-footer-ok-react"]')
@@ -341,7 +331,6 @@ module.exports = {
       .executeScriptInTerminal(`web3.eth.getCode('0x75F509A4eDA030470272DfBAf99A47D587E76709')`) // sepolia contract
       .waitForElementContainsText('*[data-id="terminalJournal"]', byteCodeInSepolia, 120000)
       .click('*[data-id="terminalClearConsole"]')
-    }
   },  
 
   'Should run a free function while being connected to mainnet #group9': function (browser: NightwatchBrowser) {
@@ -365,7 +354,6 @@ module.exports = {
         console.log(resolver.addr(node));
     }
     `
-    if(runMasterTests){
     browser
       // .clickLaunchIcon('udapp')
       .switchEnvironment('vm-mainnet-fork')
@@ -389,7 +377,6 @@ module.exports = {
       })
       .useCss()
       .waitForElementContainsText('*[data-id="terminalJournal"]', '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', 120000)
-    }
   },
   
   'Should run free function which logs in the terminal #group10': function (browser: NightwatchBrowser) {
