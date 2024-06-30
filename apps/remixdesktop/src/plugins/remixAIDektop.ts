@@ -5,7 +5,7 @@ import { app } from 'electron';
 import axios from "axios";
 import fs from 'fs';
 import path from 'path';
-import {LlamaModel, LlamaContext, LlamaChatSession, LlamaModelOptions} from "node-llama-cpp";
+//import {LlamaModel, LlamaContext, LlamaChatSession, LlamaModelOptions} from "node-llama-cpp";
 
 // import { isE2E } from "../main";
 
@@ -39,7 +39,7 @@ const clientProfile: Profile = {
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   kind: '',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
-  methods: ['downloadModel']
+  methods: ['downloadModel', 'getInferenceModel']
 }
 
 class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
@@ -66,8 +66,6 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     console.log('Remix AI desktop plugin enabled')
     this.emit('enabled')
   }
-
-
   
   async downloadModel(model): Promise<void> {
     console.log('Downloading the model model', model)
@@ -124,41 +122,46 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
       writer.on('finish', resolve);
       writer.on('error', reject);
     });
+
   }
 
-  async loadLocalModel(): Promise<LlamaChatSession> {
-    if (!this.SelectedModelPath) {
-      console.log('No model selected yet');
-      return;
-    }
-    console.log('Loading model at ', this.SelectedModelPath);
-    const model = new LlamaModel(this.SelectedModelPath);
+  // async _loadLocalModel(): Promise<LlamaChatSession> {
+  //   if (!this.SelectedModelPath) {
+  //     console.log('No model selected yet');
+  //     return;
+  //   }
+  //   console.log('Loading model at ', this.SelectedModelPath);
+  //   const model = new LlamaModel(this._getModelOptions());
 
-    const context = new LlamaContext({model});
-    const session = new LlamaChatSession({context});
+  //   const context = new LlamaContext({model});
+  //   const session = new LlamaChatSession({context});
 
-    return session;
-  }
+  //   return session;
+  // }
   
-  _getModelOptions(): LlamaModelOptions {
-    
-    const options: LlamaModelOptions = {
-      modelPath: this.SelectedModelPath,
-      contextSize: 1024,
-      batchSize: 1,
-      gpuLayers: 0,
-      threads: 1,
-      temperature: 0.9,
-      topK: 0,
-      topP: 1,
-      logitsAll: false,
-      vocabOnly: false,
-      useMmap: false,
-      useMlock: false,
-      embedding: false,
-    };
-    return options;
-  }
+  // _getModelOptions(): LlamaModelOptions {
+
+  //   const options: LlamaModelOptions = {
+  //     modelPath: this.SelectedModelPath? this.SelectedModelPath: null,
+  //     contextSize: 1024,
+  //     batchSize: 1,
+  //     gpuLayers: this.selectedModel.modelReqs.GPURequired? -1: 0,
+  //     threads: 1,
+  //     temperature: 0.9,
+  //     topK: 0,
+  //     topP: 1,
+  //     logitsAll: false,
+  //     vocabOnly: false,
+  //     useMmap: false,
+  //     useMlock: false,
+  //     embedding: false,
+  //   };
+  //   return options;
+  // }
+
+  // async getInferenceModel(): Promise<LlamaChatSession> {
+  //   return this._loadLocalModel();
+  // } 
 
 }
 

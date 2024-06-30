@@ -13,7 +13,7 @@ export interface IModelRequirements{
 export interface IModel {
   name: string;
   downloadUrl: string;
-  modelName?: string;
+  modelName: string;
   modelType: ModelType;
   modelReqs: IModelRequirements;
 }
@@ -34,4 +34,9 @@ export interface InferenceModel {
   model: IModel;
   location: string;
   isRemote: boolean;
+}
+
+export interface ICompletions{
+  code_completion(context): Promise<any>;
+  code_insertion(msg_pfx, msg_sfx): Promise<any>;
 }
