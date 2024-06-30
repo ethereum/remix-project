@@ -76,7 +76,7 @@ export class SolCoder extends Plugin {
       }
       return result.data
     } catch (e) {
-      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
+      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ` })
       return
     } finally {
       this.emit("aiInferingDone")
@@ -103,7 +103,7 @@ export class SolCoder extends Plugin {
         })
       ).json()
     } catch (e) {
-      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
+      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ` })
       this.solgpt_chat_history = []
       return
     } finally {
@@ -142,7 +142,7 @@ export class SolCoder extends Plugin {
       }
       return result.data[0]
     } catch (e) {
-      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
+      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ` })
       return
     } finally {
       this.emit("aiInferingDone")
@@ -190,7 +190,7 @@ export class SolCoder extends Plugin {
       return result.data
 
     } catch (e) {
-      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `Unable to get a response ${e.message}` })
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `Unable to get a response ` })
       return
     } finally {
       this.emit("aiInferingDone")
@@ -228,7 +228,7 @@ export class SolCoder extends Plugin {
       return result.data
 
     } catch (e) {
-      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `Unable to get a response ${e.message}` })
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `Unable to get a response` })
       return
     } finally {
       this.emit("aiInferingDone")
@@ -259,7 +259,7 @@ export class SolCoder extends Plugin {
       }
       return result.data[0]
     } catch (e) {
-      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
+      this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ` })
       return
     } finally {
       this.emit("aiInferingDone")
