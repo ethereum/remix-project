@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../remix-ai.css'
 import { DefaultModels } from '@remix/remix-ai-core';
+import { InlineCompletionServiceTransformer} from '@remix/remix-ai-core';
 
 export const Default = (props) => {
   const [searchText, setSearchText] = useState('');
@@ -39,6 +40,7 @@ export const Default = (props) => {
         > Download Model </button>
 
       </div>
+      
       <div className="remix_ai_plugin_find_container_internal">
         <textarea
           className="remix_ai_plugin_search_result_textbox"
@@ -48,6 +50,27 @@ export const Default = (props) => {
           value={resultText}
           readOnly
         />
+        <button className="remix_ai_plugin_download_button text-ai pl-2 pr-0 py-0 d-flex"
+
+          onClick={async () => {
+            if (props.plugin.isOnDesktop ) {
+              const completer = new InlineCompletionServiceTransformer();
+              if (!completer.ready) {
+                await completer.init();
+              }
+
+              const code = completer.code_completion("pragma solidity ^0.8.0;\n")
+              console.log("Got code completion ",code);
+
+              // const inferenceModel = await props.plugin.call(pluginName, 'getInferenceModel');
+              // console.log("Got inference model ",inferenceModel);
+
+              // const result = await inferenceModel.prompt("What is the meaning of life?");
+              // console.log("Got result ",result);
+
+            }
+          }}
+        > Test inference </button>
       </div>
       <div className="remix_ai_plugin_find-part">
         <a href="#" className="remix_ai_plugin_search_result_item_title">/fix the problems in my code</a>

@@ -6,10 +6,6 @@ import axios, {AxiosResponse} from 'axios'
 import { slice } from 'lodash';
 const _paq = (window._paq = window._paq || [])
 
-const controller = new AbortController();
-const { signal } = controller;
-const result: string = ''
-
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
   props: EditorUIProps
   monaco: any
@@ -127,7 +123,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       }
     }
 
-    let result
     try {
       // Code completion
       const output = await this.props.plugin.call('solcoder', 'code_completion', word)

@@ -20,8 +20,15 @@ const DefaultModels = (): IModel[] => {
     modelType: ModelType.GENERAL,
     modelReqs: { backend: 'llamacpp', minSysMemory: 8, GPURequired: true, MinGPUVRAM: 8}
   };
+  const model3: IModel = {
+    name: 'DeepSeekTransformer',
+    modelName: 'Xenova/deepseek-coder-1.3b-base',
+    downloadUrl: 'Xenova/deepseek-coder-1.3b-base',
+    modelType: ModelType.CODE_COMPLETION_INSERTION,
+    modelReqs: { backend: 'transformer', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2}
+  };
   
-  return [model1, model2];
+  return [model1, model2, model3];
 }
 
 const getModel = async (name: string): Promise<IModel | undefined> => {
