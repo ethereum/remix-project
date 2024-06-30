@@ -12,7 +12,7 @@ import { AppContext } from '../../contexts';
 
 function DeployPanel(): JSX.Element {
   const { appState, dispatch } = useContext(AppContext);
-  const { verified, natSpec } = appState.instance;
+  const { verified, natSpec, noTerminal } = appState.instance;
   const [formVal, setFormVal] = useState<any>({
     email: localStorage.getItem('__SURGE_EMAIL') || '',
     password: localStorage.getItem('__SURGE_PASSWORD') || '',
@@ -220,6 +220,33 @@ function DeployPanel(): JSX.Element {
               style={{ paddingTop: 1 }}
             >
               Verified
+            </label>
+          </div>
+        </Form.Group>
+        <Form.Group className="mb-2" controlId="formNoTerminal">
+          <Form.Label className="text-uppercase mb-0">
+            No Terminal (Optional)
+          </Form.Label>
+          <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+            <input
+              id="inline-checkbox-4"
+              className="form-check-input custom-control-input"
+              type="checkbox"
+              onChange={(e) => {
+                dispatch({
+                  type: 'SET_INSTANCE',
+                  payload: { noTerminal: e.target.checked },
+                });
+              }}
+              checked={noTerminal}
+            />
+
+            <label
+              htmlFor="inline-checkbox-4"
+              className="m-0 form-check-label custom-control-label"
+              style={{ paddingTop: 1 }}
+            >
+              No Terminal
             </label>
           </div>
         </Form.Group>
