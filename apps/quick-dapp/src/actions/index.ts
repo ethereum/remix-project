@@ -36,6 +36,9 @@ export const connectRemix = async () => {
 
   await remixClient.onload();
 
+  // @ts-expect-error
+  await remixClient.call('layout', 'minimize', 'terminal', true);
+
   await dispatch({
     type: 'SET_LOADING',
     payload: {
