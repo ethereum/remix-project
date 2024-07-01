@@ -1,11 +1,10 @@
-import React, {useEffect, useReducer, useState} from 'react'
-import {RenderIf} from '@remix-ui/helper'
-import {IntlProvider} from 'react-intl'
-
+import React, { useEffect, useReducer, useState } from 'react'
+import { RenderIf } from '@remix-ui/helper'
+import { IntlProvider } from 'react-intl'
 import { Container } from './components/container'
-import {CircuitAppContext} from './contexts'
-import {appInitialState, appReducer} from './reducers/state'
-import {CircomPluginClient} from './services/circomPluginClient'
+import { CircuitAppContext } from './contexts'
+import { appInitialState, appReducer } from './reducers/state'
+import { CircomPluginClient } from './services/circomPluginClient'
 import { compileCircuit } from './actions'
 
 const plugin = new CircomPluginClient()
@@ -100,7 +99,7 @@ function App() {
       (async () => {
         if (appState.autoCompile) await compileCircuit(plugin, appState)
       })()
-      dispatch({ type: 'SET_SIGNAL_INPUTS', payload: [] })
+      dispatch({ type: 'SET_SIGNAL_INPUTS', payload: []})
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
     }
