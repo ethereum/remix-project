@@ -28,6 +28,7 @@ const json = {
         message: 'Failed to fetch',
       },
     ],
+    chainId: "1"
   },
 }
 
