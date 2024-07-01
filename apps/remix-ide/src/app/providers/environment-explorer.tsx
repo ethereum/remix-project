@@ -109,9 +109,13 @@ export class EnvironmentExplorer extends ViewPlugin {
 
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
+                if (pinned) {
+                  this.emit('providerPinned', provider.name, provider)
+                  return true
+                }
                 const providerName = await this.call('blockchain', 'getProvider')
                 if (providerName !== provider.name) {
-                  this.emit(pinned ? 'providerPinned' : 'providerUnpinned', provider.name, provider)
+                  this.emit('providerUnpinned', provider.name, provider)
                   return true
                 } else {
                   this.call('notification', 'toast', 'Cannot unpin the current selected provider')
@@ -133,9 +137,13 @@ export class EnvironmentExplorer extends ViewPlugin {
               title={provider.name}
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
+                if (pinned) {
+                  this.emit('providerPinned', provider.name, provider)
+                  return true
+                }
                 const providerName = await this.call('blockchain', 'getProvider')
                 if (providerName !== provider.name) {
-                  this.emit(pinned ? 'providerPinned' : 'providerUnpinned', provider.name, provider)
+                  this.emit('providerUnpinned', provider.name, provider)
                   return true
                 } else {
                   this.call('notification', 'toast', 'Cannot unpin the current selected provider')
@@ -156,9 +164,13 @@ export class EnvironmentExplorer extends ViewPlugin {
               title={provider.name}
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
+                if (pinned) {
+                  this.emit('providerPinned', provider.name, provider)
+                  return true
+                }
                 const providerName = await this.call('blockchain', 'getProvider')
                 if (providerName !== provider.name) {
-                  this.emit(pinned ? 'providerPinned' : 'providerUnpinned', provider.name, provider)
+                  this.emit('providerUnpinned', provider.name, provider)
                   return true
                 } else {
                   this.call('notification', 'toast', 'Cannot unpin the current selected provider')
