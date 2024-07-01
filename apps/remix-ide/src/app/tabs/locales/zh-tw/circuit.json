@@ -1,0 +1,16 @@
+{
+  "circuit-compiler.displayName": "Circuit 編譯器",
+  "circuit.compiler": "Compiler",
+  "circuit.autoCompile": "自動編譯",
+  "circuit.hideWarnings": "隱藏警告",
+  "circuit.advancedConfigurations": "高級配置",
+  "circuit.compilerConfiguration": "編譯器配置",
+  "circuit.prime": "質數",
+  "circuit.useConfigurationFile": "使用設定檔案",
+  "circuit.compile": "編譯",
+  "circuit.noFileSelected": "未選中文件",
+  "circuit.generateR1cs": "生成R1CS",
+  "circuit.computeWitness": "證人計算器",
+  "circuit.signalInput": "輸入信號",
+  "circuit.compute": "計算"
+}
