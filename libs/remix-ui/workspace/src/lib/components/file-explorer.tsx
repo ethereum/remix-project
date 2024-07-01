@@ -96,6 +96,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [treeRef.current])
 
+  useEffect(() => {
+    const deleteKeyPressHandler = (eve: KeyboardEvent) => {
+      if (eve.key === 'Delete' || eve.key === 'Backspace' ) {
+        console.log('delete key was pressed')
+      }
+    }
+
+    treeRef.current?.addEventListener('keydown', deleteKeyPressHandler)
+    return () => {
+      treeRef.current?.removeEventListener('keydown', deleteKeyPressHandler)
+    }
+  }, [])
+
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
     else return false
