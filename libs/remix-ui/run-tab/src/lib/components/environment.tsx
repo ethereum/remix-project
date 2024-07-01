@@ -58,11 +58,11 @@ export function EnvironmentUI(props: EnvironmentProps) {
             )}
           </Dropdown.Toggle>
           <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
-            {props.providers.providerList.length === 0 ? <Dropdown.Item>
+            {props.providers.providerList.length === 0 && <Dropdown.Item>
               <span className="">
                 No provider pinned
               </span>
-            </Dropdown.Item> : ''}
+            </Dropdown.Item>}
             { (props.providers.providerList.filter((provider) => { return provider.isInjected })).map(({ name, displayName }) => (
               <Dropdown.Item
                 key={name}
@@ -77,7 +77,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
                 </span>
               </Dropdown.Item>
             ))}
-            { props.providers.providerList.filter((provider) => { return provider.isInjected }).length && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
+            { props.providers.providerList.filter((provider) => { return provider.isInjected }).length !== 0 && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
             { (props.providers.providerList.filter((provider) => { return provider.isVM })).map(({ displayName, name }) => (
               <Dropdown.Item
                 key={name}
@@ -92,7 +92,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
                 </span>
               </Dropdown.Item>
             ))}
-            { props.providers.providerList.filter((provider) => { return provider.isVM }).length && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
+            { props.providers.providerList.filter((provider) => { return provider.isVM }).length !== 0 && <Dropdown.Divider className='border-secondary'></Dropdown.Divider> }
             { (props.providers.providerList.filter((provider) => { return !(provider.isVM || provider.isInjected) })).map(({ displayName, name }) => (
               <Dropdown.Item
                 key={name}
