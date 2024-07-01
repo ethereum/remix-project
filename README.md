@@ -13,7 +13,7 @@
 [![Awesome Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/ethereum/awesome-remix)
 ![GitHub](https://img.shields.io/github/license/ethereum/remix-project)
 [![Discord](https://img.shields.io/badge/join-discord-brightgreen.svg?style=flat&logo=discord)](https://discord.gg/mh9hFCKkEq)
-[![Twitter Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=twitter&color=green)](https://twitter.com/ethereumremix)
+[![X Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=x&color=green)](https://x.com/ethereumremix)
 
 </div>
 
@@ -266,5 +266,5 @@ parameters:
 - Official documentation: https://remix-ide.readthedocs.io/en/latest/
 - Curated list of Remix resources: https://github.com/ethereum/awesome-remix
 - Medium: https://medium.com/remix-ide
-- Twitter: https://twitter.com/ethereumremix
+- X: https://x.com/ethereumremix
 - Join Discord: https://discord.gg/mh9hFCKkEq
