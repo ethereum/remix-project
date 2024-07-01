@@ -1,4 +1,4 @@
-export const contractDeployerScripts = async (plugin) => {
+export const contractDeployerScripts = async (opts, plugin) => {
   await plugin.call('fileManager', 'writeFile',
     'scripts/contract-deployer/create2-factory-deploy.ts' ,
     // @ts-ignore

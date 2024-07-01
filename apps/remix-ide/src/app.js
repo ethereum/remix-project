@@ -57,6 +57,8 @@ import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 import {SolCoder} from './app/plugins/solcoderAI'
 
+import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
+
 const isElectron = require('is-electron')
 
 const remixLib = require('@remix-project/remix-lib')
@@ -300,6 +302,9 @@ class AppComponent {
     this.layout = new Layout()
 
     const permissionHandler = new PermissionHandlerPlugin()
+
+    const templateSelection = new TemplatesSelectionPlugin()
+
     // ----------------- run script after each compilation results -----------
     const pluginStateLogger = new PluginStateLogger()
 
@@ -351,6 +356,7 @@ class AppComponent {
       solidityScript,
       templates,
       solcoder,
+      templateSelection,
       pluginStateLogger
     ])
 

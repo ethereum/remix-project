@@ -5,7 +5,7 @@ import React from 'react'
 import { action, FileTree, WorkspaceTemplate } from '../types'
 import { ROOT_PATH } from '../utils/constants'
 import { displayNotification, displayPopUp, fileAddedSuccess, fileRemovedSuccess, fileRenamedSuccess, folderAddedSuccess, loadLocalhostError, loadLocalhostRequest, loadLocalhostSuccess, removeContextMenuItem, removeFocus, rootFolderChangedSuccess, setContextMenuItem, setMode, setReadOnlyMode, setFileDecorationSuccess } from './payload'
-import { addInputField, createWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
+import { addInputField, createWorkspace, populateWorkspace, deleteWorkspace, fetchWorkspaceDirectory, renameWorkspace, switchToWorkspace, uploadFile } from './workspace'
 
 const LOCALHOST = ' - connect to localhost - '
 let plugin, dispatch: React.Dispatch<any>
@@ -13,8 +13,16 @@ let plugin, dispatch: React.Dispatch<any>
 export const listenOnPluginEvents = (filePanelPlugin) => {
   plugin = filePanelPlugin
 
-  plugin.on('filePanel', 'createWorkspaceReducerEvent', (name: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
-    createWorkspace(name, workspaceTemplateName, null, isEmpty, cb)
+  plugin.on('templateSelection', 'createWorkspaceReducerEvent', (name: string, workspaceTemplateName: WorkspaceTemplate, opts: any, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean) => {
+    createWorkspace(name, workspaceTemplateName, opts, isEmpty, cb, isGitRepo)
+  })
+
+  plugin.on('templateSelection', 'addTemplateToWorkspaceReducerEvent', (workspaceTemplateName: WorkspaceTemplate, opts: any, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {
+    populateWorkspace(workspaceTemplateName, opts, isEmpty, cb)
+  })
+
+  plugin.on('filePanel', 'createWorkspaceReducerEvent', (name: string, workspaceTemplateName: WorkspaceTemplate, isEmpty = false, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void, isGitRepo: boolean) => {
+    createWorkspace(name, workspaceTemplateName, null, isEmpty, cb, isGitRepo)
   })
 
   plugin.on('filePanel', 'renameWorkspaceReducerEvent', (oldName: string, workspaceName: string, cb: (err: Error, result?: string | number | boolean | Record<string, any>) => void) => {

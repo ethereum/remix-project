@@ -195,7 +195,7 @@ module.exports = class Filepanel extends ViewPlugin {
         if (err) reject(err)
         else resolve(data || true)
       })
-    })
+    }, false)
   }
 
   renameWorkspace(oldName, workspaceName) {

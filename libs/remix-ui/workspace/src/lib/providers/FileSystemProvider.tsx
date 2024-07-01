@@ -43,10 +43,6 @@ import {
   switchBranch,
   createNewBranch,
   checkoutRemoteBranch,
-  createSolidityGithubAction,
-  createTsSolGithubAction,
-  createSlitherGithubAction,
-  createHelperScripts,
   openElectronFolder,
   getElectronRecentFolders,
   removeRecentElectronFolder,
@@ -221,22 +217,6 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await checkoutRemoteBranch(branch, remote)
   }
 
-  const dispatchCreateSolidityGithubAction = async () => {
-    await createSolidityGithubAction()
-  }
-
-  const dispatchCreateTsSolGithubAction = async () => {
-    await createTsSolGithubAction()
-  }
-
-  const dispatchCreateSlitherGithubAction = async () => {
-    await createSlitherGithubAction()
-  }
-
-  const dispatchCreateHelperScripts = async (script: string) => {
-    await createHelperScripts(script)
-  }
-
   const dispatchOpenElectronFolder = async (path: string) => {
     await openElectronFolder(path)
   }
@@ -372,10 +352,6 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchSwitchToBranch,
     dispatchCreateNewBranch,
     dispatchCheckoutRemoteBranch,
-    dispatchCreateSolidityGithubAction,
-    dispatchCreateTsSolGithubAction,
-    dispatchCreateSlitherGithubAction,
-    dispatchCreateHelperScripts,
     dispatchOpenElectronFolder,
     dispatchGetElectronRecentFolders,
     dispatchRemoveRecentFolder,

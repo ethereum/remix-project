@@ -211,7 +211,7 @@ export const VerifyView = ({apiKey, client, contracts, onVerifiedContract, netwo
                   type="button"
                   className="mr-2 mb-2 py-1 px-2 btn btn-secondary btn-block"
                   onClick={async () => {
-                    etherscanScripts(client)
+                    etherscanScripts({}, client)
                   }}
                 >
                   Generate Verification Scripts

@@ -1,4 +1,4 @@
-export const contractCreate2Factory = async (plugin) => {
+export const contractCreate2Factory = async (opts, plugin) => {
   await plugin.call('fileManager', 'writeFile',
     'contracts/libs/create2-factory.sol' ,
     // @ts-ignore
