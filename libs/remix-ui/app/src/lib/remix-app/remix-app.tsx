@@ -193,7 +193,7 @@ const RemixApp = (props: IRemixAppUi) => {
               <DragBar
                 resetTrigger={resetLeftTrigger}
                 maximiseTrigger={maximiseLeftTrigger}
-                minWidth={285}
+                minWidth={320}
                 refObject={sidePanelRef}
                 hidden={hideSidePanel}
                 setHideStatus={setHideSidePanel}
