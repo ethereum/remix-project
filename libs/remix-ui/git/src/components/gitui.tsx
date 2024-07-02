@@ -178,7 +178,7 @@ export const GitUI = (props: IGitUi) => {
                     <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
 
                     <Accordion.Collapse className='bg-light' eventKey="0">
-                      <div className="px-3">
+                      <div className="px-2 py-2">
                         <SourceControlBase><CommitMessage /></SourceControlBase>
                         <SourceControl />
                       </div>
@@ -186,9 +186,9 @@ export const GitUI = (props: IGitUi) => {
                     <hr></hr>
                     <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className="bg-light" eventKey="1">
-                      <>
+                      <div className="px-2 py-2">
                         <Commands></Commands>
-                      </>
+                      </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <CommitsNavigation title={`COMMITS`} eventKey="3" activePanel={activePanel} callback={setActivePanel} showButtons={true} />
