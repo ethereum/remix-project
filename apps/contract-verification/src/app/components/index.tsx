@@ -1,3 +1,4 @@
 export { NavMenu } from './NavMenu'
 export { ContractDropdown } from './ContractDropdown'
-export { SearchableDropdown } from './SearchableDropdown'
+export { SearchableChainDropdown } from './SearchableChainDropdown'
+export { ContractAddressInput } from './ContractAddressInput'
