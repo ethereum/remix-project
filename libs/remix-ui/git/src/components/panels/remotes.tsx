@@ -1,10 +1,14 @@
-import React, { useEffect } from "react";
-import { gitActionsContext } from "../../state/context";
-import { gitPluginContext } from "../gitui";
-import { Remoteselect } from "./remoteselect";
-import { RemotesImport } from "./remotesimport";
+import React, { useEffect } from "react"
+import { gitActionsContext } from "../../state/context"
+import { gitPluginContext } from "../gitui"
+import { Remoteselect } from "./remoteselect"
+import { RemotesImport } from "./remotesimport"
 
-export const Remotes = () => {
+export interface RemotesProps {
+  plugin: any
+}
+
+export const Remotes = (props: RemotesProps) => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const [remoteName, setRemoteName] = React.useState<string>('')
@@ -46,7 +50,7 @@ export const Remotes = () => {
           addRemote();
         }}>add remote</button>
         <hr />
-        <RemotesImport />
+        <RemotesImport plugin={props.plugin} />
         <hr />
       </div>
     </>)
