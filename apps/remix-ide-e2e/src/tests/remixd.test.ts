@@ -72,7 +72,7 @@ module.exports = {
         remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       } catch (err) {
         console.error(err)
-      }      
+      }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -106,7 +106,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.20+commit.a1b79de6.js') // open-zeppelin moved to pragma ^0.8.20
       .testContracts('test_import_node_modules_with_github_import.sol', sources[4]['test_import_node_modules_with_github_import.sol'], ['ERC20', 'test11'])
   },
- 
+
   'Should setup a hardhat project #group4': function (browser: NightwatchBrowser) {
     browser.perform(async (done) => {
       await setupHardhatProject()
@@ -127,7 +127,7 @@ module.exports = {
         done()
       })
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
-    
+
     let addressRef
     browser.clickLaunchIcon('filePanel')
       .openFile('contracts')
@@ -157,7 +157,7 @@ module.exports = {
       })
       .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
 
-      browser.clickLaunchIcon('filePanel')
+    browser.clickLaunchIcon('filePanel')
       .openFile('contracts')
       .openFile('contracts/Token.sol')
       .clickLaunchIcon('udapp')
@@ -188,7 +188,7 @@ module.exports = {
 
     browser.perform(async (done) => {
       console.log('working directory', homedir() + '/foundry_tmp/hello_foundry')
-      remixd = await spawnRemixd(join(homedir(), '/foundry_tmp/hello_foundry'))      
+      remixd = await spawnRemixd(join(homedir(), '/foundry_tmp/hello_foundry'))
       connectRemixd(browser, done)
     })
       .perform(async (done) => {
@@ -242,9 +242,32 @@ module.exports = {
         browser.testConstantFunction(contractAaddress, 'number - call', null, '0:\nuint256: 1').perform(() => {
           done()
         })
+
       })
   },
-  
+
+  'Should disable git when running remixd #group9': function (browser: NightwatchBrowser) {
+
+    browser.perform(async (done) => {
+      remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+      console.log('working directory', process.cwd())
+      connectRemixd(browser, done)
+    })
+    browser
+      .clickLaunchIcon('dgit')
+      .waitForElementVisible('*[data-id="disabled"]')
+      .pause(2000)
+      .clickLaunchIcon('filePanel')
+      .switchWorkspace('default_workspace')
+      .click({
+        selector: '[data-path="connectionAlert-modal-footer-ok-react"]',
+        suppressNotFoundErrors: true,
+        timeout: 2000
+      })
+      .pause(2000)
+      .clickLaunchIcon('dgit')
+      .waitForElementNotPresent('*[data-id="disabled"]')
+  },
   'Should install slither #group6': function (browser: NightwatchBrowser) {
     browser.perform(async (done) => {
       await installSlither()
@@ -258,26 +281,26 @@ module.exports = {
         remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       } catch (err) {
         console.error(err)
-      }      
+      }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
-    .openFile('ballot.sol')
-    .pause(2000)
-    .clickLaunchIcon('solidityStaticAnalysis')
-    .useXpath()
-    .click('//*[@id="staticAnalysisRunBtn"]')
-    .waitForElementPresent('//*[@id="staticanalysisresult"]', 5000)
-    .waitForElementVisible({
-      selector: "//*[@data-id='nolibslitherwarnings'][contains(text(), '3')]",
-      locateStrategy: 'xpath',
-      timeout: 5000
-    })
-    .waitForElementVisible({
-      selector: "//div[@data-id='block']/span[contains(text(), '3 warnings found.')]",
-      locateStrategy: 'xpath',
-      timeout: 5000
-    })
+      .openFile('ballot.sol')
+      .pause(2000)
+      .clickLaunchIcon('solidityStaticAnalysis')
+      .useXpath()
+      .click('//*[@id="staticAnalysisRunBtn"]')
+      .waitForElementPresent('//*[@id="staticanalysisresult"]', 5000)
+      .waitForElementVisible({
+        selector: "//*[@data-id='nolibslitherwarnings'][contains(text(), '3')]",
+        locateStrategy: 'xpath',
+        timeout: 5000
+      })
+      .waitForElementVisible({
+        selector: "//div[@data-id='block']/span[contains(text(), '3 warnings found.')]",
+        locateStrategy: 'xpath',
+        timeout: 5000
+      })
   }
 }
 
@@ -336,11 +359,11 @@ async function installRemixd(): Promise<void> {
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
       console.log(data.toString())
-      if(
-        data.toString().includes('success Saved lockfile') 
+      if (
+        data.toString().includes('success Saved lockfile')
         || data.toString().includes('success Already up-to-date')
-        ) {
-        
+      ) {
+
         resolve()
       }
     })
@@ -357,12 +380,11 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
   const remixd = spawn('chmod +x dist/libs/remixd/src/bin/remixd.js && dist/libs/remixd/src/bin/remixd.js --remix-ide http://127.0.0.1:8080', [`-s ${path}`], { cwd: process.cwd(), shell: true, detached: true })
   return new Promise((resolve, reject) => {
     remixd.stdout.on('data', function (data) {
-      console.log(data.toString())
-      if(
-        data.toString().includes('is listening') 
+      if (
+        data.toString().includes('is listening')
         || data.toString().includes('There is already a client running')
-        ) {
-        
+      ) {
+
         resolve(remixd)
       }
     })
@@ -398,141 +420,141 @@ function connectRemixd(browser: NightwatchBrowser, done: any) {
 async function setupHardhatProject(): Promise<void> {
   console.log(process.cwd())
   try {
-      const server = spawn('git clone https://github.com/NomicFoundation/hardhat-boilerplate && cd hardhat-boilerplate && yarn install && yarn add "@typechain/ethers-v5@^10.1.0" && yarn add "@typechain/hardhat@^6.1.2" && yarn add "typechain@^8.1.0" && echo "END"', [], { cwd: process.cwd() + '/apps/remix-ide', shell: true, detached: true })
-      return new Promise((resolve, reject) => {
-          server.on('exit', function (exitCode) {
-            console.log("Child exited with code: " + exitCode);
-            console.log('end')
-            resolve()
-          })
+    const server = spawn('git clone https://github.com/NomicFoundation/hardhat-boilerplate && cd hardhat-boilerplate && yarn install && yarn add "@typechain/ethers-v5@^10.1.0" && yarn add "@typechain/hardhat@^6.1.2" && yarn add "typechain@^8.1.0" && echo "END"', [], { cwd: process.cwd() + '/apps/remix-ide', shell: true, detached: true })
+    return new Promise((resolve, reject) => {
+      server.on('exit', function (exitCode) {
+        console.log("Child exited with code: " + exitCode);
+        console.log('end')
+        resolve()
       })
+    })
   } catch (e) {
-      console.log(e)
+    console.log(e)
   }
 }
 
 async function compileHardhatProject(): Promise<void> {
   console.log(process.cwd())
   try {
-      const server = spawn('npx hardhat compile', [], { cwd: process.cwd() + '/apps/remix-ide/hardhat-boilerplate', shell: true, detached: true })
-      return new Promise((resolve, reject) => {
-          server.on('exit', function (exitCode) {
-            console.log("Child exited with code: " + exitCode);
-            console.log('end')
-            resolve()
-          })
+    const server = spawn('npx hardhat compile', [], { cwd: process.cwd() + '/apps/remix-ide/hardhat-boilerplate', shell: true, detached: true })
+    return new Promise((resolve, reject) => {
+      server.on('exit', function (exitCode) {
+        console.log("Child exited with code: " + exitCode);
+        console.log('end')
+        resolve()
       })
+    })
   } catch (e) {
-      console.log(e)
+    console.log(e)
   }
 }
 
 async function downloadFoundry(): Promise<void> {
   console.log('downloadFoundry', process.cwd())
   try {
-      const server = spawn('curl -L https://foundry.paradigm.xyz | bash', [], { cwd: process.cwd(), shell: true, detached: true })
-      return new Promise((resolve, reject) => {
-          server.stdout.on('data', function (data) {
-              console.log(data.toString())
-              if (
-                  data.toString().includes("simply run 'foundryup' to install Foundry")
-                  || data.toString().includes("foundryup: could not detect shell, manually add")
-              ) {
-                  console.log('resolving')
-                  resolve()
-              }
-          })
-          server.stderr.on('err', function (data) {
-              console.log(data.toString())
-              reject(data.toString())
-          })
+    const server = spawn('curl -L https://foundry.paradigm.xyz | bash', [], { cwd: process.cwd(), shell: true, detached: true })
+    return new Promise((resolve, reject) => {
+      server.stdout.on('data', function (data) {
+        console.log(data.toString())
+        if (
+          data.toString().includes("simply run 'foundryup' to install Foundry")
+          || data.toString().includes("foundryup: could not detect shell, manually add")
+        ) {
+          console.log('resolving')
+          resolve()
+        }
       })
+      server.stderr.on('err', function (data) {
+        console.log(data.toString())
+        reject(data.toString())
+      })
+    })
   } catch (e) {
-      console.log(e)
+    console.log(e)
   }
 }
 
 async function installFoundry(): Promise<void> {
   console.log('installFoundry', process.cwd())
   try {
-      const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && foundryup', [], { cwd: process.cwd(), shell: true, detached: true })
-      return new Promise((resolve, reject) => {
-          server.stdout.on('data', function (data) {
-              console.log(data.toString())
-              if (
-                  data.toString().includes("foundryup: done!")
-              ) {
-                  console.log('resolving')
-                  resolve()
-              }
-          })
-          server.stderr.on('err', function (data) {
-              console.log(data.toString())
-              reject(data.toString())
-          })
+    const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && foundryup', [], { cwd: process.cwd(), shell: true, detached: true })
+    return new Promise((resolve, reject) => {
+      server.stdout.on('data', function (data) {
+        console.log(data.toString())
+        if (
+          data.toString().includes("foundryup: done!")
+        ) {
+          console.log('resolving')
+          resolve()
+        }
       })
+      server.stderr.on('err', function (data) {
+        console.log(data.toString())
+        reject(data.toString())
+      })
+    })
   } catch (e) {
-      console.log(e)
+    console.log(e)
   }
 }
 
 async function initFoundryProject(): Promise<void> {
   console.log('initFoundryProject', homedir())
-  try {    
-      spawn('git config --global user.email \"you@example.com\"', [], { cwd: homedir(), shell: true, detached: true })
-      spawn('git config --global user.name \"Your Name\"', [], { cwd: homedir(), shell: true, detached: true })
-      spawn('mkdir foundry_tmp', [], { cwd: homedir(), shell: true, detached: true })
-      const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && forge init hello_foundry', [], { cwd: homedir() + '/foundry_tmp', shell: true, detached: true })
-      server.stdout.pipe(process.stdout)
-      return new Promise((resolve, reject) => {
-          server.on('exit', function (exitCode) {
-            console.log("Child exited with code: " + exitCode);
-            console.log('end')
-            resolve()
-          })
+  try {
+    spawn('git config --global user.email \"you@example.com\"', [], { cwd: homedir(), shell: true, detached: true })
+    spawn('git config --global user.name \"Your Name\"', [], { cwd: homedir(), shell: true, detached: true })
+    spawn('mkdir foundry_tmp', [], { cwd: homedir(), shell: true, detached: true })
+    const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && forge init hello_foundry', [], { cwd: homedir() + '/foundry_tmp', shell: true, detached: true })
+    server.stdout.pipe(process.stdout)
+    return new Promise((resolve, reject) => {
+      server.on('exit', function (exitCode) {
+        console.log("Child exited with code: " + exitCode);
+        console.log('end')
+        resolve()
       })
+    })
   } catch (e) {
-      console.log(e)
+    console.log(e)
   }
 }
 
 async function buildFoundryProject(): Promise<void> {
   console.log('buildFoundryProject', homedir())
   try {
-      const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && forge build', [], { cwd: homedir() + '/foundry_tmp/hello_foundry', shell: true, detached: true })
-      server.stdout.pipe(process.stdout)
-      return new Promise((resolve, reject) => {
-          server.on('exit', function (exitCode) {
-            console.log("Child exited with code: " + exitCode);
-            console.log('end')
-            resolve()
-          })
+    const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && forge build', [], { cwd: homedir() + '/foundry_tmp/hello_foundry', shell: true, detached: true })
+    server.stdout.pipe(process.stdout)
+    return new Promise((resolve, reject) => {
+      server.on('exit', function (exitCode) {
+        console.log("Child exited with code: " + exitCode);
+        console.log('end')
+        resolve()
       })
+    })
   } catch (e) {
-      console.log(e)
+    console.log(e)
   }
 }
 
 async function installSlither(): Promise<void> {
   console.log('installSlither', process.cwd())
   try {
-      const server = spawn('node', ['./dist/libs/remixd/src/scripts/installSlither.js'], { cwd: process.cwd(), shell: true, detached: true })
-      return new Promise((resolve, reject) => {
-          server.stdout.on('data', function (data) {
-              console.log(data.toString())
-              if (
-                  data.toString().includes("Slither is ready to use")
-              ) {
-                  console.log('resolving')
-                  resolve()
-              }
-          })
-          server.stderr.on('err', function (data) {
-              console.log(data.toString())
-              reject(data.toString())
-          })
+    const server = spawn('node', ['./dist/libs/remixd/src/scripts/installSlither.js'], { cwd: process.cwd(), shell: true, detached: true })
+    return new Promise((resolve, reject) => {
+      server.stdout.on('data', function (data) {
+        console.log(data.toString())
+        if (
+          data.toString().includes("Slither is ready to use")
+        ) {
+          console.log('resolving')
+          resolve()
+        }
       })
+      server.stderr.on('err', function (data) {
+        console.log(data.toString())
+        reject(data.toString())
+      })
+    })
   } catch (e) {
-      console.log(e)
+    console.log(e)
   }
 }

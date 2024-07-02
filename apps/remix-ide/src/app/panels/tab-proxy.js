@@ -146,6 +146,23 @@ export class TabProxy extends Plugin {
       }
     })
 
+    this.on('fileManager', 'openDiff', (commit) => {
+      const hash = commit.hashModified? commit.hashModified.substring(0,6): 'Working Tree'
+      const name =  `${commit.path} (${hash})`
+      this.addTab(name, name, async () => {
+        await this.fileManager.diff(commit)
+        this.event.emit('openDiff', commit)
+        this.emit('openDiff', commit)
+      },
+      async () => {
+        this.removeTab(name)
+        await this.fileManager.closeDiff(commit)
+        this.event.emit('closeDiff', commit)
+        this.emit('closeDiff', commit)
+      })
+      this.tabsApi.activateTab(name)
+    })
+
     this.on('manager', 'pluginActivated', ({ name, location, displayName, icon, description }) => {
       if (location === 'mainPanel') {
         this.addTab(
