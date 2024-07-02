@@ -32,6 +32,7 @@ export interface VerificationReceipt {
 }
 
 export interface SubmittedContract {
+  type: 'contract'
   id: string
   filePath: string
   contractName: string
@@ -42,8 +43,23 @@ export interface SubmittedContract {
   receipts: VerificationReceipt[]
 }
 
+export interface SubmittedProxyContract {
+  type: 'proxy'
+  id: string
+  implementation: SubmittedContract
+  proxy: SubmittedContract
+}
+
 export interface SubmittedContracts {
-  [id: string]: SubmittedContract
+  [id: string]: SubmittedContract | SubmittedProxyContract
+}
+
+export function isProxy(contract: SubmittedContract | SubmittedProxyContract): contract is SubmittedProxyContract {
+  return contract.type === 'proxy'
+}
+
+export function isContract(contract: SubmittedContract | SubmittedProxyContract): contract is SubmittedContract {
+  return contract.type === 'contract'
 }
 
 export interface SourcifyVerificationResponse {

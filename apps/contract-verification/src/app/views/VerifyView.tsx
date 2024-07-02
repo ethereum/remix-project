@@ -51,6 +51,7 @@ export const VerifyView = () => {
     // A receipt for each verifier
     const receipts: VerificationReceipt[] = enabledVerifiers.map((verifier) => ({ verifier, status: null, receiptId: null, message: null }))
     const newSubmittedContract: SubmittedContract = {
+      type: 'contract',
       id: selectedChain?.chainId + '-' + contractAddress + '-' + date.toString(),
       address: contractAddress,
       chainId: selectedChain?.chainId.toString(),
