@@ -200,16 +200,16 @@ export const GitUI = (props: IGitUi) => {
                     <hr></hr>
                     <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="2">
-                      <div className="px-3">
+                      <div className="px-2">
                         <Branches />
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="5">
-                      <>
+                      <div className="px-2">
                         <Remotes plugin={plugin}></Remotes>
-                      </>
+                      </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
