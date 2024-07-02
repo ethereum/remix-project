@@ -6,6 +6,7 @@ import git from 'isomorphic-git'
 import { dialog } from "electron";
 import http from 'isomorphic-git/http/web'
 import { gitProxy } from "../tools/git";
+import { remote } from "../types";
 
 const profile: Profile = {
   name: 'isogit',
@@ -328,9 +329,9 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   async clone(cmd: any) {
 
     if (this.gitIsInstalled) {
-      try{
+      try {
         await gitProxy.clone(cmd.url, cmd.dir)
-      }catch(e){
+      } catch (e) {
         throw e
       }
     } else {
@@ -376,8 +377,9 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     if (!this.workingDir || this.workingDir === '') {
       return []
     }
-    let remotes = []
-    remotes = await git.listRemotes({ ...await this.getGitConfig() })
+    let remotes: remote[] = []
+    remotes = (await git.listRemotes({ ...await this.getGitConfig() })).map((remote) => { return { name: remote.remote, url: remote.url } }
+    )
     return remotes
   }
 
@@ -408,10 +410,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       for (const remote of remotes) {
         cmd = {
           ...cmd,
-          remote: remote.remote
+          remote: remote.name
         }
 
-        const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote.remote, name: branch } })
+        const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote.name, name: branch } })
         branches = [...branches, ...remotebranches]
 
       }
