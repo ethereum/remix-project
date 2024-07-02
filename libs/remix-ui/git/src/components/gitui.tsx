@@ -178,10 +178,10 @@ export const GitUI = (props: IGitUi) => {
                     <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
 
                     <Accordion.Collapse className='bg-light' eventKey="0">
-                      <>
+                      <div className="px-3">
                         <SourceControlBase><CommitMessage /></SourceControlBase>
                         <SourceControl />
-                      </>
+                      </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />

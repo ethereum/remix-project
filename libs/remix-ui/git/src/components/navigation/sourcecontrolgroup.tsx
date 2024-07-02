@@ -31,17 +31,15 @@ export const SourceControlGroupNavigation = (props: SourceControlGroupNavigation
     <>
       <div className={'d-flex justify-content-between  pt-1 ' + (activePanel === eventKey? 'bg-light': '')}>
         <span onClick={()=>handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'>
-          {
-            activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
-          }
+          <i className={ activePanel !== eventKey ? "fa fa-caret-right" : "fa fa-caret-down" }></i>
           <label className="pl-1 nav form-check-label">{group.name}</label>
         </span>
         {
           activePanel === eventKey ?
-            <span className='d-flex justify-content-end align-items-center w-25'>
+            <span className='d-flex justify-content-end align-items-center w-25 py-2'>
               {group.name === 'Changes' ?
                 <CustomTooltip tooltipText={<FormattedMessage id="git.stageall" />}>
-                  <button data-id='sourcecontrol-add-all' onClick={async () => { await actions.addall(context.allchangesnotstaged) }} className='btn btn-sm'><FontAwesomeIcon icon={faPlus} className="" /></button>
+                  <button data-id='sourcecontrol-add-all' onClick={async () => { await actions.addall(context.allchangesnotstaged) }} className='btn btn-sm' style={{ marginLeft: '1rem', marginRight: '1.9rem' }}><FontAwesomeIcon icon={faPlus} className="" /></button>
                 </CustomTooltip>: null}
 
             </span> : null
