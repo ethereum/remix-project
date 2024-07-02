@@ -185,7 +185,7 @@ export const GitUI = (props: IGitUi) => {
                     </Accordion.Collapse>
                     <hr></hr>
                     <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="1">
+                    <Accordion.Collapse className="bg-light" eventKey="1">
                       <>
                         <Commands></Commands>
                       </>
