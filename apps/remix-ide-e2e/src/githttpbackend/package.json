@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "start:server": "npx ts-node server.ts"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "child_process": "^1.0.2",
+    "express": "^4.19.2",
+    "git-http-backend": "^1.1.2",
+    "path": "^0.12.7",
+    "zlib": "^1.0.5"
+  }
+}
