@@ -11,6 +11,8 @@ import { RipgrepPlugin } from './plugins/ripgrepPlugin';
 import { CompilerLoaderPlugin } from './plugins/compilerLoader';
 import { SlitherPlugin } from './plugins/slitherPlugin';
 import { AppUpdaterPlugin } from './plugins/appUpdater';
+import { FoundryPlugin } from './plugins/foundryPlugin';
+import { HardhatPlugin } from './plugins/hardhatPlugin';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -23,6 +25,8 @@ const ripgrepPlugin = new RipgrepPlugin()
 const compilerLoaderPlugin = new CompilerLoaderPlugin()
 const slitherPlugin = new SlitherPlugin()
 const appUpdaterPlugin = new AppUpdaterPlugin()
+const foundryPlugin = new FoundryPlugin()
+const hardhatPlugin = new HardhatPlugin()
 
 engine.register(appManager)
 engine.register(fsPlugin)
@@ -33,7 +37,9 @@ engine.register(templatesPlugin)
 engine.register(ripgrepPlugin)
 engine.register(compilerLoaderPlugin)
 engine.register(slitherPlugin)
+engine.register(foundryPlugin)
 engine.register(appUpdaterPlugin)
+engine.register(hardhatPlugin)
 
 appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')
