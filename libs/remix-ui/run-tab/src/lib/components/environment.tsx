@@ -72,7 +72,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
                 data-id={`dropdown-item-${name}`}
               >
                 <span className="">
-                  {isL2(displayName) && 'L2 - '}
                   {displayName}
                 </span>
               </Dropdown.Item>
@@ -87,7 +86,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
                 data-id={`dropdown-item-${name}`}
               >
                 <span className="">
-                  {isL2(displayName) && 'L2 - '}
                   {displayName}
                 </span>
               </Dropdown.Item>
