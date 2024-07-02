@@ -21,10 +21,8 @@ export const SettingsNavigation = ({ eventKey, activePanel, callback }) => {
     <>
       <div className={'d-flex justify-content-between ' + (activePanel === eventKey ? 'bg-light' : '')}>
         <span onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'>
-          {
-            activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
-          }
-          <label className="nav pl-1 form-check-label">SETTINGS</label>
+          <i className={ activePanel !== eventKey ? "fa fa-caret-right" : "fa fa-caret-down" }></i>
+          <label className="nav pl-2 form-check-label">SETTINGS</label>
 
         </span>
 

@@ -43,14 +43,11 @@ export const CommitsNavigation = ({ eventKey, activePanel, callback, title, bran
     <>
       <div className={`d-flex justify-content-between ${activePanel === eventKey ? 'bg-light' : ''} ${ahead || behind? 'text-success':''}`}>
         <span data-id={`commits-panel${ahead?'-ahead':''}${behind?'-behind':''}`} onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-100'>
-          {
-            activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
-          }
+          <i className={ activePanel !== eventKey ? "fa fa-caret-right" : "fa fa-caret-down" }></i>
           {ahead? <FontAwesomeIcon className='ml-1' icon={faCloudArrowUp}></FontAwesomeIcon> : null}
           {behind? <FontAwesomeIcon className='ml-1' icon={faCloudArrowDown}></FontAwesomeIcon> : null}
-          <label className={`pl-1 nav form-check-label ${ahead || behind? 'text-success':''}`}>{title}</label>
+          <label className={`pl-2 nav form-check-label ${ahead || behind? 'text-success':''}`}>{title}</label>
           <LoaderIndicator></LoaderIndicator>
-
         </span>
         {showButtons ?
           <SourceControlBase branch={branch} remote={remote}>
