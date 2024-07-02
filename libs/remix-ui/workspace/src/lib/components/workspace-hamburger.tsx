@@ -52,7 +52,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
       ></HamburgerMenuItem>
       <HamburgerMenuItem
         kind="clone"
-        fa="fab fa-github"
+        fa="fa-brands fa-github-alt"
         hideOption={hideWorkspaceOptions}
         actionOnClick={() => {
           props.cloneGitRepository()
