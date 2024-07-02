@@ -1,12 +1,12 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
-import { RemixURLResolver } from '@remix-project/remix-url-resolver'
+import { RemixURLResolver, githubFolderResolver } from '@remix-project/remix-url-resolver'
 
 const profile = {
   name: 'contentImport',
   displayName: 'content import',
   version: '0.0.1',
-  methods: ['resolve', 'resolveAndSave', 'isExternalUrl']
+  methods: ['resolve', 'resolveAndSave', 'isExternalUrl', 'resolveGithubFolder']
 }
 
 export type ResolvedImport = {
@@ -211,5 +211,11 @@ export class CompilerImports extends Plugin {
     } catch (e) {
       throw new Error(e)
     }
+  }
+
+  async resolveGithubFolder (url) {
+    const ghFolder = {}
+    await githubFolderResolver(url, ghFolder, 3)
+    return ghFolder
   }
 }
