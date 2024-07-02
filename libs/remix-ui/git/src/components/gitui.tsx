@@ -207,14 +207,14 @@ export const GitUI = (props: IGitUi) => {
                     <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="5">
                       <>
-                        <Remotes></Remotes>
+                        <Remotes plugin={plugin}></Remotes>
                       </>
                     </Accordion.Collapse>
                     <hr></hr>
                     <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="4">
                       <>
-                        <Clone /></>
+                        <Clone plugin={plugin} /></>
                     </Accordion.Collapse>
                     <hr></hr>
                     <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />

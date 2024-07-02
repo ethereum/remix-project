@@ -28,9 +28,17 @@
 .gitfile:hover              {
     background-color             : var(--custom-select);
 }
-  
+
 hr {
     background-color: var(--custom-select);
 }
 
+.messageTip {
+
+}
+
+.messageTip:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
 
