@@ -1,0 +1,27 @@
+{
+  "debugger.displayName": "調試器",
+  "debugger.debuggerConfiguration": "調試器配置",
+  "debugger.stopDebugging": "停止調試",
+  "debugger.provideTxNumber": "請輸入有效的交易雜湊",
+  "debugger.startDebugging": "開始調試",
+  "debugger.placeholder": "交易雜湊, 應該以 0x 開頭",
+  "debugger.debugLocaNodeLabel": "強制使用本地節點",
+  "debugger.useGeneratedSources": "使用生成的源",
+  "debugger.debugWithGeneratedSources": "使用生成的源進行調試",
+  "debugger.introduction": "當使用交易雜湊調試時, 如果該合約已被驗證, Remix 會試圖從 Sourcify 或 Etherscan 獲取源碼. 在 Remix 中設置您的 Etherscan API key. 有關受支援的網路，請參閱",
+  "debugger.forceToUseCurrentLocalNode": "強制調試器使用當前本地節點",
+  "debugger.sourceLocationStatus1": "正在定位中斷點，請稍候...",
+  "debugger.sourceLocationStatus2": "源碼沒有找到，既不在 Sourcify 上，也不在 Etherscan 上。請確認 settings 中已設置了 Etherscan api key 。",
+  "debugger.sourcifyDocs": "Sourcify 文檔",
+  "debugger.noDataAvailable": "無可用資料",
+  "debugger.loadMore": "載入更多",
+  "debugger.copy": "複製",
+  "debugger.stepOverBack": "單步向後回退",
+  "debugger.stepBack": "單步回退",
+  "debugger.stepInto": "單步進入",
+  "debugger.stepOverForward": "單步向前跳過",
+  "debugger.jumpPreviousBreakpoint": "跳轉到上一個中斷點",
+  "debugger.jumpOut": "跳出",
+  "debugger.jumpNextBreakpoint": "跳轉到下一個中斷點"
+  }
+  
