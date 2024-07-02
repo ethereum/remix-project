@@ -123,8 +123,11 @@ export class ExecutionContext {
   addProvider (network) {
     if (network && network.name && !this.customNetWorks[network.name]) {
       this.customNetWorks[network.name] = network
-      this.event.trigger('addProvider', [network])
     }
+  }
+
+  getAllProviders () {
+    return this.customNetWorks
   }
 
   internalWeb3 () {

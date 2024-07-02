@@ -34,8 +34,8 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
   useEffect(() => {
     if (props.tagList) setAnyEnabled(props.tagList.some((key) => filterCon.keyValueMap[key]?.enabled))
     else setAnyEnabled(filterCon?.keyValueMap['no tag']?.enabled)
+    if (!props.tagList || props.tagList.length == 0) setAnyEnabled(true)
     if (filterCon.filter != '') setAnyEnabled(anyEnabled && props.title.toLowerCase().includes(filterCon.filter))
-    console.log("pin ", pinned)
 
   }, [filterCon, props.tagList])
 
@@ -75,34 +75,34 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
               { props.children }
             </div>
           </div>
-          { filterCon.showPin && <button
-            className={`${pinned ? 'fa-duotone' : 'fa-light'}` + ` fa-map-pin text-info border-0 mb-0 remixui_grid_cell_pin`}
-            onClick={() => {
-              setPinned(!pinned)
-              props.pinStateCallback()
-            }}
-          ></button>}
-          { props.tagList && <div className={`d-flex flex-column align-items-begin ` +`${filterCon.showPin ? 'remixui_grid_cell_tags' : 'remixui_grid_cell_tags_no_pin'}`}>
-            { Object.keys(props.tagList).map((key) => (
-              filterCon.keyValueMap[props.tagList[key]].enabled && (
-                <CustomTooltip
-                  placement="right"
-                  tooltipId="pluginManagerInactiveTitleLinkToDoc"
-                  tooltipClasses="text-nowrap"
-                  tooltipText={props.tagList[key]}
-                >
-                  <span key={props.tagList[key]}
-                    className={'remixui_grid_cell_tag bg-' + filterCon.keyValueMap[props.tagList[key]].color}
-                  >
-                  </span>
-                </CustomTooltip>
-              )
-            )) }
-          </div> }
-          { !props.tagList && <span
-            className={'remixui_grid_cell_tags'}>
-          </span> }
         </div>
+        { filterCon.showPin && <button
+          className={`${pinned ? 'fa-duotone' : 'fa-light'}` + ` fa-map-pin text-primary border-0 mb-0 remixui_grid_cell_pin`}
+          style={{ fontSize: 'large' }}
+          onClick={async () => {
+            if (!props.pinStateCallback) setPinned(!pinned)
+            if (await props.pinStateCallback(!pinned)) setPinned(!pinned)
+          }}
+        ></button>}
+        { props.tagList && <div className={`d-flex flex-column align-items-begin ` +`${filterCon.showPin ? 'remixui_grid_cell_tags' : 'remixui_grid_cell_tags_no_pin'}`}>
+          { Object.keys(props.tagList).map((key) => (
+            filterCon.keyValueMap[props.tagList[key]].enabled && (
+              <CustomTooltip
+                placement="right"
+                tooltipId="pluginManagerInactiveTitleLinkToDoc"
+                tooltipClasses="text-nowrap"
+                tooltipText={props.tagList[key]}
+              >
+                <span key={props.tagList[key]}
+                  className={'remixui_grid_cell_tag bg-' + filterCon.keyValueMap[props.tagList[key]].color}
+                ></span>
+              </CustomTooltip>
+            )
+          )) }
+        </div>}
+        { !props.tagList && <span
+          className={'remixui_grid_cell_tags'}>
+        </span> }
         { expand && <div>
           { props.expandViewEl }
         </div>
