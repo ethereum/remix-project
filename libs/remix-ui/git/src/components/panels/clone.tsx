@@ -68,6 +68,8 @@ export const Clone = ({ plugin }: CloneProps) => {
   return (
     <>
       <div data-id="clone-panel-content" className="px-3 py-2">
+        <SelectAndCloneRepositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} plugin={plugin} />
+        <hr />
         <InputGroup className="mb-2 pb-1">
           <FormControl data-id="clone-url" id="cloneulr" placeholder="url" name='cloneurl' value={cloneUrl} onChange={e => onGitHubCloneUrlChange(e.target.value)} aria-describedby="urlprepend" />
         </InputGroup>
@@ -76,8 +78,6 @@ export const Clone = ({ plugin }: CloneProps) => {
         <GitUIButton disabledCondition={!cloneUrl} data-id='clone-btn' className='btn btn-primary mt-1 w-100' onClick={async () => {
           clone()
         }}>clone</GitUIButton>
-        <hr />
-        <SelectAndCloneRepositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} plugin={plugin} />
         <hr />
         <label>Options</label>
         <InputGroup className="mt-1 mb-1">
