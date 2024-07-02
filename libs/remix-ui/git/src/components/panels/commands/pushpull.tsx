@@ -148,7 +148,7 @@ export const PushPull = () => {
         <GitUIButton data-id='sourcecontrol-push' disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => push()} className="btn btn-primary">Push</GitUIButton>
       </div>
 
-      <label className="pt-3">Local Branch</label>
+      <label className="pt-3 text-uppercase">Local Branch</label>
       <Select
         id='commands-local-branch-select'
         options={localBranchOptions}
@@ -161,7 +161,7 @@ export const PushPull = () => {
         placeholder="Type to search for a branch..."
       />
 
-      <label className="pt-3">Remote Branch</label>
+      <label className="pt-3 text-uppercase">Remote Branch</label>
       <Select
         id='commands-remote-branch-select'
         options={remoteBranchOptions}
@@ -174,7 +174,7 @@ export const PushPull = () => {
         placeholder="Type to search for a branch..."
       />
 
-      <label className="pt-3">Remote</label>
+      <label className="pt-3 text-uppercase">Remote</label>
       <Select
         id='commands-remote-origin-select'
         options={localRemotesOptions}
