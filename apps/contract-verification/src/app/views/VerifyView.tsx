@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { AppContext } from '../AppContext'
-import { SearchableDropdown } from '../components'
-import { ContractDropdown } from '../components/ContractDropdown'
-import { ethers } from 'ethers/'
+import { SearchableChainDropdown, ContractDropdown, ContractAddressInput } from '../components'
 import { Chain, SubmittedContract, VerificationReceipt } from '../types/VerificationTypes'
 import { SourcifyVerifier } from '../Verifiers/SourcifyVerifier'
 import { EtherscanVerifier } from '../Verifiers/EtherscanVerifier'
@@ -11,9 +9,8 @@ import { useNavigate } from 'react-router-dom'
 import { ConstructorArguments } from '../components/ConstructorArguments'
 
 export const VerifyView = () => {
-  const { chains, compilationOutput, verifiers, setVerifiers, selectedContractFileAndName, setSubmittedContracts } = React.useContext(AppContext)
+  const { compilationOutput, verifiers, setVerifiers, selectedContractFileAndName, setSubmittedContracts } = React.useContext(AppContext)
   const [contractAddress, setContractAddress] = useState('')
-  const [contractAddressError, setContractAddressError] = useState('')
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
   const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = React.useState<string>('')
   const navigate = useNavigate()
@@ -21,20 +18,6 @@ export const VerifyView = () => {
   useEffect(() => {
     console.log('Selected chain changed', selectedChain)
   }, [selectedChain])
-
-  const ethereumChainIds = [1, 3, 4, 5, 11155111, 17000]
-
-  // Add Ethereum chains to the head of the chains list. Sort the rest alphabetically
-  const dropdownChains = chains.sort((a, b) => {
-    const isAInEthereum = ethereumChainIds.includes(a.chainId)
-    const isBInEthereum = ethereumChainIds.includes(b.chainId)
-
-    if (isAInEthereum && !isBInEthereum) return -1
-    if (!isAInEthereum && isBInEthereum) return 1
-    if (isAInEthereum && isBInEthereum) return ethereumChainIds.indexOf(a.chainId) - ethereumChainIds.indexOf(b.chainId)
-
-    return (a.title || a.name).localeCompare(b.title || b.name)
-  })
 
   const handleVerify = async (e) => {
     e.preventDefault() // Don't change the page
@@ -96,34 +79,18 @@ export const VerifyView = () => {
     })
   }
 
-  const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const isValidAddress = ethers.utils.isAddress(event.target.value)
-    setContractAddress(event.target.value)
-    if (!isValidAddress) {
-      setContractAddressError('Invalid contract address')
-      console.error('Invalid contract address')
-      return
-    }
-    setContractAddressError('')
-  }
-
   console.log('sourcifyVerifiers:', verifiers)
 
   return (
     <form onSubmit={handleVerify}>
-      <SearchableDropdown label="Contract Chain" chains={dropdownChains} id="network-dropdown" setSelectedChain={setSelectedChain} selectedChain={selectedChain} />
+      <SearchableChainDropdown label="Chain" id="network-dropdown" setSelectedChain={setSelectedChain} selectedChain={selectedChain} />
 
-      <div className="form-group">
-        <label htmlFor="contract-address">Contract Address</label>
-        <div>{contractAddressError && <div className="text-danger">{contractAddressError}</div>}</div>
-        <input type="text" className="form-control" id="contract-address" placeholder="0x2738d13E81e..." value={contractAddress} onChange={handleAddressChange} />
-      </div>
+      <ContractAddressInput label="Contract Address" id="contract-address" setContractAddress={setContractAddress} contractAddress={contractAddress} />
 
       <ContractDropdown label="Contract Name" id="contract-dropdown-1" />
 
       <button type="submit" className="btn btn-primary">
-        {' '}
-        Verify{' '}
+        Verify
       </button>
 
       <div>

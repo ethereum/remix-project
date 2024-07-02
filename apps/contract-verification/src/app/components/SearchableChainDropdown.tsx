@@ -1,34 +1,53 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import Fuse from 'fuse.js'
 import { Chain } from '../types/VerificationTypes'
+import { AppContext } from '../AppContext'
 
 interface DropdownProps {
   label: string
-  chains: Chain[]
   id: string
   setSelectedChain: (chain: Chain) => void
   selectedChain: Chain
 }
 
-export const SearchableDropdown: React.FC<DropdownProps> = ({ chains, label, id, setSelectedChain, selectedChain }) => {
+export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, setSelectedChain, selectedChain }) => {
+  const { chains } = React.useContext(AppContext)
+  const ethereumChainIds = [1, 3, 4, 5, 11155111, 17000]
+
+  // Add Ethereum chains to the head of the chains list. Sort the rest alphabetically
+  const dropdownChains = useMemo(
+    () =>
+      chains.sort((a, b) => {
+        const isAInEthereum = ethereumChainIds.includes(a.chainId)
+        const isBInEthereum = ethereumChainIds.includes(b.chainId)
+
+        if (isAInEthereum && !isBInEthereum) return -1
+        if (!isAInEthereum && isBInEthereum) return 1
+        if (isAInEthereum && isBInEthereum) return ethereumChainIds.indexOf(a.chainId) - ethereumChainIds.indexOf(b.chainId)
+
+        return (a.title || a.name).localeCompare(b.title || b.name)
+      }),
+    [chains]
+  )
+
   const [searchTerm, setSearchTerm] = useState('')
   const [isOpen, setIsOpen] = useState(false)
-  const [filteredOptions, setFilteredOptions] = useState<Chain[]>(chains)
+  const [filteredOptions, setFilteredOptions] = useState<Chain[]>(dropdownChains)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const fuse = new Fuse(chains, {
+  const fuse = new Fuse(dropdownChains, {
     keys: ['name'],
     threshold: 0.3,
   })
 
   useEffect(() => {
     if (searchTerm === '') {
-      setFilteredOptions(chains)
+      setFilteredOptions(dropdownChains)
     } else {
       const result = fuse.search(searchTerm)
       setFilteredOptions(result.map(({ item }) => item))
     }
-  }, [searchTerm, chains])
+  }, [searchTerm, dropdownChains])
 
   // Close dropdown when user clicks outside
   useEffect(() => {
@@ -59,7 +78,7 @@ export const SearchableDropdown: React.FC<DropdownProps> = ({ chains, label, id,
     setSearchTerm('')
   }
 
-  if (!chains || chains.length === 0) {
+  if (!dropdownChains || dropdownChains.length === 0) {
     return (
       <div className="dropdown">
         <label htmlFor={id}>{label}</label>
