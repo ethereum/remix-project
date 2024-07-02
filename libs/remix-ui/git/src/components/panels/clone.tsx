@@ -63,7 +63,7 @@ export const Clone = () => {
 
   return (
     <>
-      <div data-id="clone-panel-content">
+      <div data-id="clone-panel-content" className="px-3 py-2">
         <InputGroup className="mb-1">
           <FormControl data-id="clone-url" id="cloneulr" placeholder="url" name='cloneurl' value={cloneUrl} onChange={e => onGitHubCloneUrlChange(e.target.value)} aria-describedby="urlprepend" />
         </InputGroup>

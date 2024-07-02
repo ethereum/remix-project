@@ -31,8 +31,8 @@ import { SourceControl } from './panels/sourcontrol'
 import { GitHubCredentials } from './panels/githubcredentials'
 import { Setup } from './panels/setup'
 import { Init } from './panels/init'
-import { CustomRemixApi } from "@remix-api";
-import { Plugin } from "@remixproject/engine";
+import { CustomRemixApi } from "@remix-api"
+import { Plugin } from "@remixproject/engine"
 import { Disabled } from './disabled'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
@@ -174,7 +174,7 @@ export const GitUI = (props: IGitUi) => {
                 {setup && !needsInit ? <Setup></Setup> : null}
                 {needsInit ? <Init></Init> : null}
                 {!setup && !needsInit ?
-                  <Accordion activeKey={activePanel} defaultActiveKey="0">
+                  <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
                     <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
 
                     <Accordion.Collapse className='bg-light' eventKey="0">
