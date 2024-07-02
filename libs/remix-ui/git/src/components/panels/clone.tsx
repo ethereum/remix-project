@@ -82,7 +82,7 @@ export const Clone = ({ plugin }: CloneProps) => {
         <label>Options</label>
         <InputGroup className="mt-1 mb-1">
           <InputGroup.Prepend className="bg-secondary">
-            <InputGroup.Text id="clonedepthprepend">
+            <InputGroup.Text id="clonedepthprepend" className="text-dark">
               --depth
             </InputGroup.Text>
           </InputGroup.Prepend>
