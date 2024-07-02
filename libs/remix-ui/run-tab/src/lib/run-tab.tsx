@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { Fragment, useEffect, useReducer, useState } from 'react'
+import semver from 'semver'
 import { FormattedMessage } from 'react-intl'
 import { ModalDialog } from '@remix-ui/modal-dialog'
 // eslint-disable-next-line no-unused-vars
@@ -85,8 +86,9 @@ export function RunTabUI(props: RunTabProps) {
   const getVersion = () => {
     let version = '0.8.25'
     try {
-      version = window.location.href.split('=')[5].split('+')[0].split('-')[1].slice(1) ?? '0.8.25'
-      if (parseFloat(version) < 0.6) {
+      const regVersion = window.location.href.match(/soljson-v(.*)\+commit/g)
+      if (regVersion && regVersion[1]) version = regVersion[1]
+      if (semver.lt(version, '0.6.0')) {
         setSolcVersion({ version: version, canReceive: false })
       } else {
         setSolcVersion({ version: version, canReceive: true })

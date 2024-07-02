@@ -36,7 +36,7 @@ let requiredModules = [ // services + layout views + system views
   'pluginManager',
   'tabs',
   'udapp',
-  'dGitProvider',
+  'dgitApi',
   'solidity',
   'solidity-logic',
   'gistHandler',
@@ -78,8 +78,10 @@ let requiredModules = [ // services + layout views + system views
   'doc-gen',
   'remix-templates',
   'solhint',
+  'dgit',
   'pinnedPanel',
-  'pluginStateLogger'
+  'pluginStateLogger',
+  'remixGuide'
 ]
 
 
@@ -159,7 +161,6 @@ export class RemixAppManager extends PluginManager {
     if (Registry.getInstance().get('platform').api.isDesktop()) {
       requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep']
     }
-
   }
 
   async canActivatePlugin(from, to) {
@@ -249,6 +250,7 @@ export class RemixAppManager extends PluginManager {
       const res = await fetch(this.pluginsDirectory)
       plugins = await res.json()
       plugins = plugins.filter((plugin) => {
+        if (plugin.name === 'dgit') return false
         if (plugin.targets && Array.isArray(plugin.targets) && plugin.targets.length > 0) {
           return plugin.targets.includes('remix')
         }

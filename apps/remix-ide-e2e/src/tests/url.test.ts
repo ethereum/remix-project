@@ -175,6 +175,7 @@ module.exports = {
         'code has been loaded')
       })
       .url('http://127.0.0.1:8080') // refresh without loading the code sample
+      .pause(2000)
       .currentWorkspaceIs('default_workspace')
       .execute(() => {
         return document.querySelector('[data-id="dropdown-item-code-sample"]') === null

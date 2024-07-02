@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useReducer } from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
 import { isArray } from 'lodash'
-import Editor, { loader, Monaco } from '@monaco-editor/react'
+import Editor, { DiffEditor, loader, Monaco } from '@monaco-editor/react'
 import { AlertModal } from '@remix-ui/app'
 import { ConsoleLogs, QueryParams } from '@remix-project/remix-lib'
 import { reducerActions, reducerListener, initialState } from './actions/editor'
@@ -16,6 +16,7 @@ import { retrieveNodesAtPosition } from './helpers/retrieveNodesAtPosition'
 import { RemixHoverProvider } from './providers/hoverProvider'
 import { RemixReferenceProvider } from './providers/referenceProvider'
 import { RemixCompletionProvider } from './providers/completionProvider'
+import { RemixSolidityDocumentationProvider } from './providers/documentationProvider'
 import { RemixHighLightProvider } from './providers/highlightProvider'
 import { RemixDefinitionProvider } from './providers/definitionProvider'
 import { RemixCodeActionProvider } from './providers/codeActionProvider'
@@ -23,6 +24,7 @@ import './remix-ui-editor.css'
 import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { IPosition } from 'monaco-editor'
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
+import { providers } from 'ethers'
 const _paq = (window._paq = window._paq || [])
 
 enum MarkerSeverity {
@@ -135,6 +137,8 @@ export interface EditorUIProps {
   activated: boolean
   themeType: string
   currentFile: string
+  currentDiffFile: string
+  isDiff: boolean
   events: {
     onBreakPointAdded: (file: string, line: number) => void
     onBreakPointCleared: (file: string, line: number) => void
@@ -147,6 +151,8 @@ export interface EditorUIProps {
 export const EditorUI = (props: EditorUIProps) => {
   const intl = useIntl()
   const [, setCurrentBreakpoints] = useState({})
+  const [isDiff, setIsDiff] = useState(false)
+  const [isSplit, setIsSplit] = useState(true)
   const defaultEditorValue = `
   \t\t\t\t\t\t\t ____    _____   __  __   ___  __  __   ___   ____    _____
   \t\t\t\t\t\t\t|  _ \\  | ____| |  \\/  | |_ _| \\ \\/ /  |_ _| |  _ \\  | ____|
@@ -164,16 +170,20 @@ export const EditorUI = (props: EditorUIProps) => {
   \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text1' })}: https://remix-project.org/\n
   \t\t\t\t\t\t\t\t${intl.formatMessage({ id: 'editor.importantLinks.text2' })}: https://remix-ide.readthedocs.io/en/latest/\n
   \t\t\t\t\t\t\t\tGithub: https://github.com/ethereum/remix-project\n
-  \t\t\t\t\t\t\t\tGitter: https://gitter.im/ethereum/remix\n
+  \t\t\t\t\t\t\t\tDiscord: https://discord.gg/mh9hFCKkEq\n
   \t\t\t\t\t\t\t\tMedium: https://medium.com/remix-ide\n
-  \t\t\t\t\t\t\t\tTwitter: https://twitter.com/ethereumremix\n
+  \t\t\t\t\t\t\t\tX: https://x.com/ethereumremix\n
   `
   const pasteCodeRef = useRef(false)
   const editorRef = useRef(null)
   const monacoRef = useRef<Monaco>(null)
+  const diffEditorRef = useRef<any>(null)
+
   const currentFunction = useRef('')
   const currentFileRef = useRef('')
   const currentUrlRef = useRef('')
+  let currenFunctionNode = useRef('')
+
   // const currentDecorations = useRef({ sourceAnnotationsPerFile: {}, markerPerFile: {} }) // decorations that are currently in use by the editor
   // const registeredDecorations = useRef({}) // registered decorations
 
@@ -326,11 +336,19 @@ export const EditorUI = (props: EditorUIProps) => {
   })
 
   useEffect(() => {
-    if (!editorRef.current || !props.currentFile) return
+    if (!(editorRef.current || diffEditorRef.current ) || !props.currentFile) return
     currentFileRef.current = props.currentFile
     props.plugin.call('fileManager', 'getUrlFromPath', currentFileRef.current).then((url) => (currentUrlRef.current = url.file))
 
     const file = editorModelsState[props.currentFile]
+
+    props.isDiff && diffEditorRef && diffEditorRef.current && diffEditorRef.current.setModel({
+      original: editorModelsState[props.currentDiffFile].model,
+      modified: file.model
+    })
+
+    props.isDiff && diffEditorRef.current.getModifiedEditor().updateOptions({ readOnly: editorModelsState[props.currentFile].readOnly })
+
     editorRef.current.setModel(file.model)
     editorRef.current.updateOptions({
       readOnly: editorModelsState[props.currentFile].readOnly,
@@ -348,7 +366,9 @@ export const EditorUI = (props: EditorUIProps) => {
     } else if (file.language === 'toml') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-toml')
     }
-  }, [props.currentFile])
+  }, [props.currentFile, props.isDiff])
+
+  const inlineCompletionProvider = new RemixInLineCompletionProvider(props, monacoRef.current)
 
   const convertToMonacoDecoration = (decoration: lineText | sourceAnnotation | sourceMarker, typeOfDecoration: string) => {
     if (typeOfDecoration === 'sourceAnnotationsPerFile') {
@@ -545,6 +565,7 @@ export const EditorUI = (props: EditorUIProps) => {
 
   props.editorAPI.getValue = (uri: string) => {
     if (!editorRef.current) return
+
     const model = editorModelsState[uri]?.model
     if (model) {
       return model.getValue()
@@ -614,10 +635,21 @@ export const EditorUI = (props: EditorUIProps) => {
     }
   }
 
+  function setReducerListener() {
+    if (diffEditorRef.current && diffEditorRef.current.getModifiedEditor() && editorRef.current){
+      reducerListener(props.plugin, dispatch, monacoRef.current, [diffEditorRef.current.getModifiedEditor(), editorRef.current], props.events)
+    }
+  }
+
+  function handleDiffEditorDidMount(editor: any) {
+    diffEditorRef.current = editor
+    setReducerListener()
+  }
+
   function handleEditorDidMount(editor) {
     editorRef.current = editor
     defineAndSetTheme(monacoRef.current)
-    reducerListener(props.plugin, dispatch, monacoRef.current, editorRef.current, props.events)
+    setReducerListener()
     props.events.onEditorMounted()
     editor.onMouseUp((e) => {
       // see https://microsoft.github.io/monaco-editor/typedoc/enums/editor.MouseTargetType.html
@@ -670,6 +702,17 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     })
 
+    editor.onDidChangeModelContent((e) => {
+      if (inlineCompletionProvider.currentCompletion) {
+        const changes = e.changes;
+        // Check if the change matches the current completion
+        if (changes.some(change => change.text === inlineCompletionProvider.currentCompletion.item.insertText)) {
+          _paq.push(['trackEvent', 'ai', 'solcoder', inlineCompletionProvider.currentCompletion.task + '_accepted'])
+          inlineCompletionProvider.currentCompletion = null;
+        }
+      }
+    });
+
     // add context menu items
     const zoominAction = {
       id: 'zoomIn',
@@ -713,6 +756,12 @@ export const EditorUI = (props: EditorUIProps) => {
     }
 
     let gptGenerateDocumentationAction
+    const extractNatspecComments = (codeString: string): string => {
+      const natspecCommentRegex = /\/\*\*[\s\S]*?\*\//g;
+      const comments = codeString.match(natspecCommentRegex);
+      return comments ? comments[0] : "";
+    }
+
     const executeGptGenerateDocumentationAction = {
       id: 'generateDocumentation',
       label: intl.formatMessage({ id: 'editor.generateDocumentation' }),
@@ -723,10 +772,46 @@ export const EditorUI = (props: EditorUIProps) => {
         monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KeyD
       ],
       run: async () => {
+        const unsupportedDocTags = ['@title'] // these tags are not supported by the current docstring parser
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
-        await props.plugin.call('solcoder', 'code_explaining', message)
+        const cm = await props.plugin.call('solcoder', 'code_explaining', message)
+
+        const natSpecCom = "\n" + extractNatspecComments(cm)
+        const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
+        const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
+
+        const lines = natSpecCom.split('\n')
+        const newNatSpecCom = []
+
+        for (let i = 0; i < lines.length; i++) {
+          let cont = false
+
+          for (let j = 0; j < unsupportedDocTags.length; j++) {
+            if (lines[i].includes(unsupportedDocTags[j])) {
+              cont = true
+              break
+            }
+          }
+          if (cont) {continue}
+
+          if (i <= 1) { newNatSpecCom.push(' '.repeat(cln.start.column) + lines[i].trimStart()) }
+          else { newNatSpecCom.push(' '.repeat(cln.start.column + 1) + lines[i].trimStart()) }
+        }
+
+        // TODO: activate the provider to let the user accept the documentation suggestion
+        // const provider = new RemixSolidityDocumentationProvider(natspecCom)
+        // monacoRef.current.languages.registerInlineCompletionsProvider('solidity', provider)
+
+        editor.executeEdits('clipboard', [
+          {
+            range: range,
+            text: newNatSpecCom.join('\n'),
+            forceMoveMarkers: true,
+          },
+        ]);
+
         _paq.push(['trackEvent', 'ai', 'solcoder', 'generateDocumentation'])
       },
     }
@@ -845,6 +930,8 @@ export const EditorUI = (props: EditorUIProps) => {
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
       if (functionImpl) {
         currentFunction.current = functionImpl.name
+        currenFunctionNode = functionImpl
+
         executeGptGenerateDocumentationAction.label = intl.formatMessage({ id: 'editor.generateDocumentation2' }, { name: functionImpl.name })
         gptGenerateDocumentationAction = editor.addAction(executeGptGenerateDocumentationAction)
         executegptExplainFunctionAction.label = intl.formatMessage({ id: 'editor.explainFunction2' }, { name: functionImpl.name })
@@ -929,7 +1016,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.registerReferenceProvider('remix-solidity', new RemixReferenceProvider(props, monaco))
     monacoRef.current.languages.registerHoverProvider('remix-solidity', new RemixHoverProvider(props, monaco))
     monacoRef.current.languages.registerCompletionItemProvider('remix-solidity', new RemixCompletionProvider(props, monaco))
-    monacoRef.current.languages.registerInlineCompletionsProvider('remix-solidity', new RemixInLineCompletionProvider(props, monaco))
+    monacoRef.current.languages.registerInlineCompletionsProvider('remix-solidity', inlineCompletionProvider)
     monaco.languages.registerCodeActionProvider('remix-solidity', new RemixCodeActionProvider(props, monaco))
 
     loadTypes(monacoRef.current)
@@ -937,8 +1024,22 @@ export const EditorUI = (props: EditorUIProps) => {
 
   return (
     <div className="w-100 h-100 d-flex flex-column-reverse">
+
+      <DiffEditor
+        originalLanguage={'remix-solidity'}
+        modifiedLanguage={'remix-solidity'}
+        original={''}
+        modified={''}
+        onMount={handleDiffEditorDidMount}
+        options={{ readOnly: false, renderSideBySide: isSplit }}
+        width='100%'
+        height={props.isDiff ? '100%' : '0%'}
+        className={props.isDiff ? "d-block" : "d-none"}
+
+      />
       <Editor
         width="100%"
+        height={props.isDiff ? '0%' : '100%'}
         path={props.currentFile}
         language={editorModelsState[props.currentFile] ? editorModelsState[props.currentFile].language : 'text'}
         onMount={handleEditorDidMount}
@@ -951,6 +1052,7 @@ export const EditorUI = (props: EditorUIProps) => {
           }
         }}
         defaultValue={defaultEditorValue}
+        className={props.isDiff ? "d-none" : "d-block"}
       />
       {editorModelsState[props.currentFile]?.readOnly && (
         <span className="pl-4 h6 mb-0 w-100 alert-info position-absolute bottom-0 end-0">

@@ -45,7 +45,7 @@
   "home.remixAdvanced": "Deploying with Libraries",
   "home.remixAdvancedDesc": "Learn to deploy with libraries in Remix",
   "home.remixYoutubePlaylist": "Remix Youtube Playlist",
-  "home.remixTwitterProfile": "Remix Twitter Profile",
+  "home.remixTwitterProfile": "Remix X Profile",
   "home.remixLinkedinProfile": "Remix Linkedin Profile",
   "home.remixMediumPosts": "Remix Medium Posts",
   "home.joinUsOnDiscord": "Join us on Discord",
@@ -66,6 +66,9 @@
   "home.resources": "Resources",
   "home.connectToLocalhost": "Connect to Localhost",
   "home.seeAllTutorials": "See all tutorials",
-  "home.maintainedByRemix": "Maintained by Remix"
+  "home.maintainedByRemix": "Maintained by Remix",
+  "home.gitCloneTooltip": "Clone a Github repo to a new workspace",
+  "home.gistTooltip": "Open Gist repo",
+  "home.newFileTooltip": "Add a new file to a workspace"
 }
 

@@ -55,6 +55,8 @@ import { electronTemplates } from './app/plugins/electron/templatesPlugin'
 import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
+import { GitPlugin } from './app/plugins/git'
+
 import {SolCoder} from './app/plugins/solcoderAI'
 
 const isElectron = require('is-electron')
@@ -218,6 +220,9 @@ class AppComponent {
     //---- templates
     const templates = new TemplatesPlugin()
 
+    //---- git
+    const git = new GitPlugin()
+
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 
@@ -346,11 +351,12 @@ class AppComponent {
       solidityumlgen,
       compilationDetails,
       vyperCompilationDetails,
-      // remixGuide,
+      remixGuide,
       contractFlattener,
       solidityScript,
       templates,
       solcoder,
+      git,
       pluginStateLogger
     ])
 
@@ -386,7 +392,7 @@ class AppComponent {
     this.pinnedPanel = new PinnedPanel()
 
     const pluginManagerComponent = new PluginManagerComponent(appManager, this.engine)
-    const filePanel = new FilePanel(appManager)
+    const filePanel = new FilePanel(appManager, contentImport)
     this.statusBar = new StatusBar(filePanel, this.menuicons)
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor, appManager)
@@ -493,7 +499,7 @@ class AppComponent {
     ])
     await this.appManager.activatePlugin(['settings'])
 
-    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
+    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'dgit'])
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()){
@@ -513,9 +519,6 @@ class AppComponent {
     )
     await this.appManager.activatePlugin(['solidity-script'])
     await this.appManager.activatePlugin(['solcoder'])
-
-
-
     await this.appManager.activatePlugin(['filePanel'])
 
     // Set workspace after initial activation

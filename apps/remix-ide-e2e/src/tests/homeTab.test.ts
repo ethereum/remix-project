@@ -28,8 +28,8 @@ module.exports = {
   'Should start with ERC20 workspace #group1': function (browser: NightwatchBrowser) {
     browser
       .click('*[data-path="home"')
-      .waitForElementVisible('*[data-id="homeTabGetStartedERC20"]')
-      .click('*[data-id="homeTabGetStartedERC20"')
+      .waitForElementVisible('*[data-id="homeTabGetStartedozerc20"]')
+      .click('*[data-id="homeTabGetStartedozerc20"')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/MyToken.sol"]')
       .waitForElementVisible('*[data-id="treeViewDivtreeViewItemtests/MyToken_test.sol"]')
       .click('*[data-id="treeViewDivtreeViewItemtests/MyToken_test.sol"]')

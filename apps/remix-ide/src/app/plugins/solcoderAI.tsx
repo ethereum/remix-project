@@ -47,6 +47,12 @@ export class SolCoder extends Plugin {
     this.solgpt_chat_history = []
   }
 
+  pushChatHistory(prompt, result){
+    const chat:ChatEntry = [prompt, result.data[0]]
+    this.solgpt_chat_history.push(chat)
+    if (this.solgpt_chat_history.length > this.max_history){this.solgpt_chat_history.shift()}
+  }
+
   async code_generation(prompt): Promise<any> {
     this.emit("aiInfering")
     this.call('layout', 'maximizeTerminal')
@@ -105,9 +111,7 @@ export class SolCoder extends Plugin {
     }
     if (result) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
-      const chat:ChatEntry = [prompt, result.data[0]]
-      this.solgpt_chat_history.push(chat)
-      if (this.solgpt_chat_history.length >this.max_history){this.solgpt_chat_history.shift()}
+      this.pushChatHistory(prompt, result)
     } else if (result.error) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "Error on request" })
     }
@@ -134,6 +138,7 @@ export class SolCoder extends Plugin {
       ).json()
       if (result) {
         this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
+        this.pushChatHistory(prompt, result)
       }
       return result.data[0]
     } catch (e) {
@@ -250,6 +255,7 @@ export class SolCoder extends Plugin {
       ).json()
       if (result) {
         this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
+        this.pushChatHistory(prompt, result)
       }
       return result.data[0]
     } catch (e) {

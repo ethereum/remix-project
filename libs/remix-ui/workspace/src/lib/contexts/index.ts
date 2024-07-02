@@ -1,3 +1,4 @@
+import { branch } from '@remix-ui/git'
 import { customAction } from '@remixproject/plugin-api'
 import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
@@ -40,9 +41,9 @@ export const FileSystemContext = createContext<{
   dispatchMoveFile: (src: string, dest: string) => Promise<void>,
   dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
   dispatchShowAllBranches: () => Promise<void>,
-  dispatchSwitchToBranch: (branch: string) => Promise<void>,
-  dispatchCreateNewBranch: (branch: string) => Promise<void>,
-  dispatchCheckoutRemoteBranch: (branch: string, remote: string) => Promise<void>,
+  dispatchSwitchToBranch: (branch: branch) => Promise<void>,
+  dispatchCreateNewBranch: (name: string) => Promise<void>,
+  dispatchCheckoutRemoteBranch: (branch: branch) => Promise<void>,
   dispatchCreateSolidityGithubAction: () => Promise<void>,
   dispatchCreateTsSolGithubAction: () => Promise<void>,
   dispatchCreateSlitherGithubAction: () => Promise<void>

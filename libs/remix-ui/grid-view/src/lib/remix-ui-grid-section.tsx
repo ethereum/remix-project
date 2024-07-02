@@ -16,6 +16,7 @@ interface RemixUIGridSectionProps {
   classList?: string
   styleList?: any
   children?: ReactNode
+  expandedCell?: any
 }
 
 export const RemixUIGridSection = (props: RemixUIGridSectionProps) => {
@@ -30,6 +31,10 @@ export const RemixUIGridSection = (props: RemixUIGridSectionProps) => {
         <div className={(props.hScrollable) ? `d-flex flex-row pb-2  overflow-auto` : `d-flex flex-wrap`}>
           { props.children }
         </div>
+        { props.expandedCell && <div>
+          { props.expandedCell }
+        </div>
+        }
       </div>
     </div>
   )

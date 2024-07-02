@@ -146,6 +146,23 @@ export class TabProxy extends Plugin {
       }
     })
 
+    this.on('fileManager', 'openDiff', (commit) => {
+      const hash = commit.hashModified? commit.hashModified.substring(0,6): 'Working Tree'
+      const name =  `${commit.path} (${hash})`
+      this.addTab(name, name, async () => {
+        await this.fileManager.diff(commit)
+        this.event.emit('openDiff', commit)
+        this.emit('openDiff', commit)
+      },
+      async () => {
+        this.removeTab(name)
+        await this.fileManager.closeDiff(commit)
+        this.event.emit('closeDiff', commit)
+        this.emit('closeDiff', commit)
+      })
+      this.tabsApi.activateTab(name)
+    })
+
     this.on('manager', 'pluginActivated', ({ name, location, displayName, icon, description }) => {
       if (location === 'mainPanel') {
         this.addTab(
@@ -174,7 +191,7 @@ export class TabProxy extends Plugin {
     this.on('fileDecorator', 'fileDecoratorsChanged', async (items) => {
       this.tabsApi.setFileDecorations(items)
     })
-    
+
     try {
       this.themeQuality = (await this.call('theme', 'currentTheme') ).quality
     } catch (e) {
@@ -240,6 +257,11 @@ export class TabProxy extends Plugin {
     if ((name.endsWith('.vy') && icon === undefined) || title.includes('Vyper')) {
       icon = 'assets/img/vyperLogo2.webp'
     }
+    if (title === 'Solidity Compile Details') {
+      icon = 'assets/img/solidity.webp'
+    }
+
+
 
     var slash = name.split('/')
     const tabPath = slash.reverse()
@@ -357,7 +379,9 @@ export class TabProxy extends Plugin {
     const onZoomIn = () => this.editor.editorFontSize(1)
     const onZoomOut = () => this.editor.editorFontSize(-1)
 
-    const onReady = (api) => { this.tabsApi = api }
+    const onReady = (api) => {
+      this.tabsApi = api
+    }
 
     this.dispatch({
       plugin: this,

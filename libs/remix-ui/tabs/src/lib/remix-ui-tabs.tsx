@@ -10,7 +10,7 @@ const _paq = (window._paq = window._paq || [])
 
 /* eslint-disable-next-line */
 export interface TabsUIProps {
-  tabs: Array<any>
+  tabs: Array<Tab>
   plugin: Plugin
   onSelect: (index: number) => void
   onClose: (index: number) => void
@@ -18,6 +18,15 @@ export interface TabsUIProps {
   onZoomIn: () => void
   onReady: (api: any) => void
   themeQuality: string
+}
+
+export interface Tab {
+  id: string
+  icon: string
+  iconClass: string
+  name: string
+  title: string
+  tooltip: string
 }
 export interface TabsUIApi {
   activateTab: (name: string) => void
@@ -96,7 +105,8 @@ export const TabsUI = (props: TabsUIProps) => {
     return <FileDecorationIcons file={{ path: tab.name }} fileDecorations={tabsState.fileDecorations} />
   }
 
-  const renderTab = (tab, index) => {
+  const renderTab = (tab: Tab, index) => {
+
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
