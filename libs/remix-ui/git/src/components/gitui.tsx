@@ -200,8 +200,9 @@ export const GitUI = (props: IGitUi) => {
                     <hr></hr>
                     <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="2">
-                      <>
-                        <Branches /></>
+                      <div className="px-3">
+                        <Branches />
+                      </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
