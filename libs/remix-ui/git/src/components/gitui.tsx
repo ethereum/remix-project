@@ -200,38 +200,38 @@ export const GitUI = (props: IGitUi) => {
                     <hr></hr>
                     <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="2">
-                      <div className="px-2">
+                      <div className="px-2 py-2">
                         <Branches />
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="5">
-                      <div className="px-2">
+                      <div className="px-2 py-2">
                         <Remotes plugin={plugin}></Remotes>
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="4">
-                      <>
-                        <Clone plugin={plugin} /></>
+                      <div className="px-2 py-2">
+                        <Clone plugin={plugin} /></div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="7">
-                      <>
+                      <div className="px-2 py-2">
                         <GetDeviceCode></GetDeviceCode>
                         <hr></hr>
                         <GitHubCredentials></GitHubCredentials>
-                      </>
+                      </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <LogNavigation eventKey="6" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="6">
-                      <>
+                      <div className="px-2 py-2">
                         <LogViewer />
-                      </>
+                      </div>
                     </Accordion.Collapse>
 
                   </Accordion>

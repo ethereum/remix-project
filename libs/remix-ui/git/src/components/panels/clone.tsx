@@ -67,7 +67,7 @@ export const Clone = ({ plugin }: CloneProps) => {
 
   return (
     <>
-      <div data-id="clone-panel-content" className="px-3 py-2">
+      <div data-id="clone-panel-content">
         <SelectAndCloneRepositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} plugin={plugin} />
         <hr />
         <InputGroup className="mb-2 pb-1">
