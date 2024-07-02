@@ -37,7 +37,7 @@ export const SourceControl = () => {
     <>
       {show ?
         <>
-          <div>
+          <div className="mb-3">
             <RenderGroups></RenderGroups>
           </div></>
         : <>
