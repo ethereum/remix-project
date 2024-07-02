@@ -68,9 +68,8 @@ export const RemotesImport = (props: RemotesImportProps) => {
 
   return (
     <>
-      <TokenWarning plugin={props.plugin} />
       <RepositorySelect select={selectRepo} />
-
+      <TokenWarning plugin={props.plugin} />
       {repo ?
         <input data-id='remote-panel-remotename' placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
         : null}
