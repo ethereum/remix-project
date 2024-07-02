@@ -209,7 +209,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                 await plugin.call('filePanel', 'clone')
               }}>
                 <i className="fa-brands fa-github-alt pl-1 pr-2"></i>
-                Git Clone
+                Clone
               </button>
             </CustomTooltip>
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
