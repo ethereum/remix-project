@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { Alert, Button } from "react-bootstrap";
-import { gitActionsContext } from "../../state/context";
-import { repository } from "../../types";
-import { gitPluginContext } from "../gitui";
+import React, { useEffect, useState } from "react"
+import { Alert, Button } from "react-bootstrap"
+import { gitActionsContext } from "../../state/context"
+import { repository } from "../../types"
+import { gitPluginContext } from "../gitui"
 import Select from 'react-select'
-import { selectStyles, selectTheme } from "../../types/styles";
-import { TokenWarning } from "./tokenWarning";
-import RepositorySelect from "../github/repositoryselect";
+import { selectStyles, selectTheme } from "../../types/styles"
+import { TokenWarning } from "./tokenWarning"
+import RepositorySelect from "../github/repositoryselect"
 
-export const RemotesImport = () => {
+export interface RemotesImportProps {
+  plugin: any
+}
+
+export const RemotesImport = (props: RemotesImportProps) => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const [repo, setRepo] = useState<repository>(null);
@@ -64,7 +68,7 @@ export const RemotesImport = () => {
 
   return (
     <>
-      <TokenWarning />
+      <TokenWarning plugin={props.plugin} />
       <RepositorySelect select={selectRepo} />
 
       {repo ?

@@ -9,6 +9,7 @@ import { TokenWarning } from "../panels/tokenWarning";
 interface RepositoriesProps {
   cloneDepth?: number
   cloneAllBranches?: boolean
+  plugin: any
 }
 
 export const SelectAndCloneRepositories = (props: RepositoriesProps) => {
@@ -43,7 +44,7 @@ export const SelectAndCloneRepositories = (props: RepositoriesProps) => {
 
   return (
     <>
-      <TokenWarning />
+      <TokenWarning plugin={props.plugin} />
       <RepositorySelect select={selectRepo} />
 
       {repo &&<BranchSelect select={selectRemoteBranch} />}
