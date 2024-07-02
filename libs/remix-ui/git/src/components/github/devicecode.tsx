@@ -54,10 +54,6 @@ export const GetDeviceCode = () => {
     // convert response to json
     const response = await accestokenresponse.data;
 
-    if (response.error) {
-
-    }
-
     if (response.access_token) {
       setAuthorized(true)
       await pluginActions.saveToken(response.access_token)

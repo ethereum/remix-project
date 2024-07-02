@@ -5,7 +5,7 @@ import { selectStyles, selectTheme } from '../../types/styles';
 import { gitPluginContext } from '../gitui';
 
 interface BranchySelectProps {
-  select: (branch:{ name: string }) => void;
+  select: (branch: { name: string }) => void;
 }
 
 export const BranchSelect = (props: BranchySelectProps) => {
@@ -15,10 +15,11 @@ export const BranchSelect = (props: BranchySelectProps) => {
 
   useEffect(() => {
     if (context.remoteBranches && context.remoteBranches.length > 0) {
-      const options = context.remoteBranches && context.remoteBranches.length > 0 && context.remoteBranches.map(branch => {
-        return { value: branch.name, label: branch.name }
-      }
-      )
+      const options = context.remoteBranches
+        && context.remoteBranches.length > 0
+        && context.remoteBranches.map(branch => {
+          return { value: branch.name, label: branch.name }
+        })
       setBranchOptions(options)
     } else {
       setBranchOptions(null)
@@ -39,7 +40,7 @@ export const BranchSelect = (props: BranchySelectProps) => {
       options={branchOptions}
       className="mt-1"
       id="branch-select"
-      onChange={(e: any) =>selectRemoteBranch(e)}
+      onChange={(e: any) => selectRemoteBranch(e)}
       theme={selectTheme}
       styles={selectStyles}
       isClearable={true}

@@ -52,7 +52,7 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
       singleBranch: true,
       relative: true
     })
-    //actions.fetch(null, branch.name, null, null, false, true)
+
   }
 
   return (
