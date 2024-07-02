@@ -42,9 +42,11 @@ export default {
   title: 'Presets/Sortable/Multiple Containers',
 };
 
+// This function is used to animate layout changes.
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
 
+// This is a container component that can be dragged and dropped.
 function DroppableContainer({
   children,
   columns = 1,
@@ -81,6 +83,7 @@ function DroppableContainer({
       items.includes(over.id)
     : false;
 
+  // Return the container.
   return (
     <Container
       ref={disabled ? undefined : setNodeRef}
@@ -103,6 +106,7 @@ function DroppableContainer({
   );
 }
 
+// This setting is used for drop animation.
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
     styles: {
@@ -113,8 +117,10 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
+// This type is used to define the items.
 type Items = Record<UniqueIdentifier, UniqueIdentifier[]>;
 
+// This interface is used to define the props for the MultipleContainers component.
 interface Props {
   adjustScale?: boolean;
   cancelDrop?: CancelDrop;
@@ -146,6 +152,9 @@ interface Props {
 const PLACEHOLDER_ID = 'placeholder';
 const empty: UniqueIdentifier[] = [];
 
+// This is a complex component. It allows items in multiple containers to be sorted using drag and drop.
+// The containers themselves can also be sorted. The DndContext component from the @dnd-kit/core package provides the drag and drop context.
+// The MultipleContainers component is the main component, it handles the sorting logic when an item is dragged over another item or when an item is dropped.
 export function MultipleContainers({
   adjustScale = false,
   cancelDrop,
@@ -584,6 +593,7 @@ interface SortableItemProps {
   onRemove?: () => void;
 }
 
+// The SortableItem component represents an individual item that can be dragged and dropped.
 function SortableItem({
   disabled,
   id,
@@ -640,6 +650,7 @@ function SortableItem({
   );
 }
 
+// The useMountStatus function is used to track the mount status of a component.
 function useMountStatus() {
   const [isMounted, setIsMounted] = useState(false);
 
