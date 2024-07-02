@@ -202,8 +202,20 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await moveFile(src, dest)
   }
 
+  const dispatchMoveFiles = async (src: string[], dest: string) => {
+    for (const path of src) {
+      await moveFile(path, dest)
+    }
+  }
+
   const dispatchMoveFolder = async (src: string, dest: string) => {
     await moveFolder(src, dest)
+  }
+
+  const dispatchMoveFolders = async (src: string[], dest: string) => {
+    for (const path of src) {
+      await moveFolder(path, dest)
+    }
   }
 
   const dispatchShowAllBranches = async () => {
@@ -368,7 +380,9 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchHandleRestoreBackup,
     dispatchCloneRepository,
     dispatchMoveFile,
+    dispatchMoveFiles,
     dispatchMoveFolder,
+    dispatchMoveFolders,
     dispatchShowAllBranches,
     dispatchSwitchToBranch,
     dispatchCreateNewBranch,
