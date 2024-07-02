@@ -18,7 +18,7 @@ export const Branches = () => {
 
   return (
     <>
-      <div data-id='branches-panel-content' className="pt-1">
+      <div data-id='branches-panel-content' className="pt-2">
         {context.branches && context.branches.length ?
           <div>
             {context.branches && context.branches.filter((branch, index) => !branch.remote).map((branch, index) => {
@@ -32,9 +32,9 @@ export const Branches = () => {
         {context.currentBranch
           && context.currentBranch.name !== ''
           && (!context.branches || context.branches.length === 0) ?
-          <div className="text-muted">Current branch is `{context.currentBranch.name}` but you have no commits.<hr /></div>
+          <div className="text-muted">Current branch is <strong className="text-dark">{`${context.currentBranch.name}`}</strong> but you have no commits.</div>
           : null}
-        <label>create branch</label>
+        <label className="text-uppercase pt-2 pb-1">Create branch</label>
         <div className="form-group">
 
           <input
@@ -49,7 +49,7 @@ export const Branches = () => {
         <GitUIButton
           data-id="sourcecontrol-create-branch"
           onClick={async () => actions.createBranch(newBranch.value)}
-          className="btn w-md-25 w-100 btn-primary"
+          className="btn w-md-25 w-100 btn-primary mb-3"
           id="createbranch-btn"
         >
           create new branch

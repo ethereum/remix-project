@@ -31,8 +31,8 @@ import { SourceControl } from './panels/sourcontrol'
 import { GitHubCredentials } from './panels/githubcredentials'
 import { Setup } from './panels/setup'
 import { Init } from './panels/init'
-import { CustomRemixApi } from "@remix-api";
-import { Plugin } from "@remixproject/engine";
+import { CustomRemixApi } from "@remix-api"
+import { Plugin } from "@remixproject/engine"
 import { Disabled } from './disabled'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
@@ -174,18 +174,18 @@ export const GitUI = (props: IGitUi) => {
                 {setup && !needsInit ? <Setup></Setup> : null}
                 {needsInit ? <Init></Init> : null}
                 {!setup && !needsInit ?
-                  <Accordion activeKey={activePanel} defaultActiveKey="0">
+                  <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
                     <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
 
                     <Accordion.Collapse className='bg-light' eventKey="0">
-                      <>
+                      <div className="px-3">
                         <SourceControlBase><CommitMessage /></SourceControlBase>
                         <SourceControl />
-                      </>
+                      </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="1">
+                    <Accordion.Collapse className="bg-light" eventKey="1">
                       <>
                         <Commands></Commands>
                       </>
@@ -200,21 +200,22 @@ export const GitUI = (props: IGitUi) => {
                     <hr></hr>
                     <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="2">
-                      <>
-                        <Branches /></>
+                      <div className="px-3">
+                        <Branches />
+                      </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="5">
                       <>
-                        <Remotes></Remotes>
+                        <Remotes plugin={plugin}></Remotes>
                       </>
                     </Accordion.Collapse>
                     <hr></hr>
                     <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="4">
                       <>
-                        <Clone /></>
+                        <Clone plugin={plugin} /></>
                     </Accordion.Collapse>
                     <hr></hr>
                     <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />

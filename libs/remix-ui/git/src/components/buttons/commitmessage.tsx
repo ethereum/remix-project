@@ -126,7 +126,7 @@ export const CommitMessage = () => {
 
   return (
     <>
-      <div className="form-group">
+      <div className="form-group pt-3">
         <input placeholder={commitMessagePlaceholder()} data-id='commitMessage' disabled={!messageEnabled()} className="form-control" type="text" onChange={handleChange} value={message.value} />
       </div>
       <button data-id='commitButton' className={`btn btn-primary w-100 ${buttonState === buttonStateValues.Commit ? '' : 'd-none'}`} disabled={commitNotAllowed()} onClick={async () => await commit()} >

@@ -17,10 +17,8 @@ export const CloneNavigation = ({ eventKey, activePanel, callback }) => {
     <>
       <div className={'d-flex justify-content-between pb-1  pt-1 ' + (activePanel === eventKey? 'bg-light': '')}>
         <span data-id='clone-panel' onClick={()=>handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'>
-          {
-            activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
-          }
-          <label className="pl-1 nav form-check-label">CLONE</label>
+          <i className={ activePanel !== eventKey ? "fa fa-caret-right" : "fa fa-caret-down" }></i>
+          <label className="pl-2 nav form-check-label ">CLONE</label>
           <LoaderIndicator></LoaderIndicator>
         </span>
       </div>
