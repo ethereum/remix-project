@@ -109,7 +109,7 @@ export class Blockchain extends Plugin {
     this.networkcallid = 0
     this.networkStatus = { network: { name: ' - ', id: ' - ' } }
     this.registeredPluginEvents = []
-    this.pinnedProviders = ['vm-cancun', 'vm-shanghai', 'vm-mainnet-fork', 'vm-london', 'vm-paris', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'ganache-provider', 'hardhat-provider', 'foundry-provider']
+    this.pinnedProviders = ['vm-cancun', 'vm-shanghai', 'vm-mainnet-fork', 'vm-london', 'vm-berlin', 'vm-paris', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'ganache-provider', 'hardhat-provider', 'foundry-provider']
     this.setupEvents()
     this.setupProviders()
   }
