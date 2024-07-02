@@ -38,7 +38,6 @@ export const Clone = () => {
       depth: cloneDepth,
       singleBranch: !cloneAllBranches
     })
-    //await actions.clone(cloneUrl, cloneBranch, cloneDepth, !cloneAllBranches)
   }
 
   const onCloneBranchChange = (value: string) => {
