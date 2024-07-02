@@ -79,7 +79,7 @@ export const Clone = ({ plugin }: CloneProps) => {
           clone()
         }}>clone</GitUIButton>
         <hr />
-        <label>Options</label>
+        <label className="text-uppercase">Options</label>
         <InputGroup className="mt-1 mb-1">
           <InputGroup.Prepend className="bg-secondary">
             <InputGroup.Text id="clonedepthprepend" className="text-dark">
