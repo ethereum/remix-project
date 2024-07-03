@@ -4,11 +4,7 @@ import { gitPluginContext } from "../gitui"
 import { Remoteselect } from "./remoteselect"
 import { RemotesImport } from "./remotesimport"
 
-export interface RemotesProps {
-  plugin: any
-}
-
-export const Remotes = (props: RemotesProps) => {
+export const Remotes = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const [remoteName, setRemoteName] = React.useState<string>('')
@@ -31,7 +27,7 @@ export const Remotes = (props: RemotesProps) => {
   return (
     <>
       <div data-id="remotes-panel-content" className="d-flex flex-column">
-        <RemotesImport plugin={props.plugin} />
+        <RemotesImport />
         <hr className="mt-0 border border-2" />
         {context.remotes && context.remotes.length ?
           <div>

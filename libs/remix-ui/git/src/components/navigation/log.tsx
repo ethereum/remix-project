@@ -47,7 +47,9 @@ export const LogNavigation = ({ eventKey, activePanel, callback }) => {
     <>
       <div className={'d-flex justify-content-between pt-1 pb-1 ' + (activePanel === eventKey ? 'bg-light' : '')}>
         <span onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'>
-          <i className={ activePanel !== eventKey ? "fa fa-caret-right" : "fa fa-caret-down" }></i>
+          {
+            activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
+          }
           <label className="pl-2 nav form-check-label mr-2">LOG</label>
           {logState.errorCount > 0 && (
             <div className="text-danger mr-1">
