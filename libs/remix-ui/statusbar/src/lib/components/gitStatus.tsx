@@ -32,7 +32,7 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
         setGitBranchName('Not a git repo')
       }
     })
-    plugin.on('dGitProvider', 'init', async () => {
+    plugin.on('dgitApi', 'init', async () => {
       const isGit = await plugin.call('fileManager', 'isGitRepo')
       if (isGit) {
         const workspace = localStorage.getItem('currentWorkspace')
@@ -52,7 +52,7 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
   }
 
   const initializeNewGitRepo = async () => {
-    await plugin.call('dGitProvider', 'init')
+    await plugin.call('dgitApi', 'init')
     const isActive = await plugin.call('manager', 'isActive', 'dgit')
     if (isLocalHost === false) {
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
