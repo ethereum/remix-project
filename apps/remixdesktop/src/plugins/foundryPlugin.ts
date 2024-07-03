@@ -158,6 +158,7 @@ class FoundryPluginClient extends ElectronBasePluginRemixdClient {
             this.watcher = chokidar.watch(this.cachePath, { depth: 0, ignorePermissionErrors: true, ignoreInitial: true })
             this.watcher.on('change', async () => await this.triggerProcessArtifact())
             this.watcher.on('add', async () => await this.triggerProcessArtifact())
+            this.watcher.on('unlink', async () => await this.triggerProcessArtifact())
             // process the artifact on activation
             this.triggerProcessArtifact()
         } catch (e) {
