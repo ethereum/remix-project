@@ -18,7 +18,7 @@
  * approximately same height with vscode statusbar
  **/
 .remixui_statusbar_height {
-  height: 21px;
+  height: 1.6rem;
 }
 
 .remixui_statusbar_activelink {
