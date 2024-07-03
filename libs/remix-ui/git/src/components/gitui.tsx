@@ -215,7 +215,7 @@ export const GitUI = (props: IGitUi) => {
                     <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="4">
                       <div className="px-2 py-2">
-                        <Clone plugin={plugin} /></div>
+                        <Clone /></div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />

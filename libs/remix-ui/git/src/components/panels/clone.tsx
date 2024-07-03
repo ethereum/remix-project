@@ -8,11 +8,7 @@ import { SelectAndCloneRepositories } from "../github/selectandclonerepositories
 import { RemixUiCheckbox } from "@remix-ui/checkbox"
 import GitUIButton from "../buttons/gituibutton"
 
-export interface CloneProps {
-  plugin: any
-}
-
-export const Clone = ({ plugin }: CloneProps) => {
+export const Clone = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const [cloneUrl, setCloneUrl] = useLocalStorage(
@@ -68,7 +64,7 @@ export const Clone = ({ plugin }: CloneProps) => {
   return (
     <>
       <div data-id="clone-panel-content">
-        <SelectAndCloneRepositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} plugin={plugin} />
+        <SelectAndCloneRepositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} />
         <hr />
         <InputGroup className="mb-2 pb-1">
           <FormControl data-id="clone-url" id="cloneulr" placeholder="url" name='cloneurl' value={cloneUrl} onChange={e => onGitHubCloneUrlChange(e.target.value)} aria-describedby="urlprepend" />
