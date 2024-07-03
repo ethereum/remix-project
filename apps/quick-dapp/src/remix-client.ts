@@ -9,15 +9,6 @@ class RemixClient extends PluginClient {
   }
 
   edit({ address, abi, network, name, devdoc, methodIdentifiers }: any): void {
-    // console.log(
-    //   'edit dapp',
-    //   address,
-    //   abi,
-    //   network,
-    //   name,
-    //   devdoc,
-    //   methodIdentifiers
-    // );
     initInstance({
       address,
       abi,
