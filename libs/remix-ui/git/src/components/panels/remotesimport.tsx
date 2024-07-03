@@ -8,11 +8,7 @@ import { selectStyles, selectTheme } from "../../types/styles"
 import { TokenWarning } from "./tokenWarning"
 import RepositorySelect from "../github/repositoryselect"
 
-export interface RemotesImportProps {
-  plugin: any
-}
-
-export const RemotesImport = (props: RemotesImportProps) => {
+export const RemotesImport = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const [repo, setRepo] = useState<repository>(null);
@@ -69,7 +65,7 @@ export const RemotesImport = (props: RemotesImportProps) => {
   return (
     <>
       <RepositorySelect select={selectRepo} />
-      <TokenWarning plugin={props.plugin} />
+      <TokenWarning />
       {repo ?
         <input data-id='remote-panel-remotename' placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
         : null}

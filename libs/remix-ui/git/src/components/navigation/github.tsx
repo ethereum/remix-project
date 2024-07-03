@@ -18,7 +18,9 @@ export const GitHubNavigation = ({ eventKey, activePanel, callback }) => {
     <>
       <div className={'d-flex justify-content-between pt-1 pb-1 ' + (activePanel === eventKey? 'bg-light': '')}>
         <span data-id='github-panel' onClick={()=>handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'>
-          <i className={ activePanel !== eventKey ? "fa fa-caret-right" : "fa fa-caret-down" }></i>
+          {
+            activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
+          }
           <label className="pl-2 nav form-check-label">GITHUB SETUP</label>
         </span>
       </div>
