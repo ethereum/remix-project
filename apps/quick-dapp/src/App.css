@@ -19,14 +19,10 @@
   right: 5px;
   width: 20px;
   height: 20px;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: var(--gray-dark);
 
-  &:active {
-    background-color: rgba(255, 70, 70, 0.9);
-  }
-
-  svg {
-    fill: #fff;
+  .fas {
+    color: var(--text-bg-mark);
   }
 }
 
@@ -39,31 +35,22 @@
 
   @media (hover: hover) {
     &:hover {
-      background-color: var(--action-background, rgba(0, 0, 0, 0.05));
+      background-color: var(--light);
+    }
+  }
 
-      svg {
-        fill: #6f7b88;
+  .fas {
+    color: var(--text-bg-mark);
+  }
+}
+
+.bg-light {
+  .item-action {
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--dark);
       }
     }
-  }
-
-  svg {
-    overflow: visible;
-    fill: #919eab;
-  }
-
-  &:active {
-    background-color: var(--background, rgba(0, 0, 0, 0.05));
-
-    svg {
-      fill: var(--fill, #788491);
-    }
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0),
-      0 0px 0px 2px #4c9ffe;
   }
 }
 
@@ -74,11 +61,6 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-  }
-
-  &:focus-visible {
-    border-color: transparent;
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0), 0 0px 0px 2px #4c9ffe;
   }
 }
 
@@ -103,7 +85,6 @@
 
 .instance-input {
   background-color: var(--custom-select) !important;
-  color: #dfe1ea !important;
   font-size: 10px;
 }
 .has-args {
