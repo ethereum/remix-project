@@ -132,6 +132,10 @@ jobs:
             command: |
               cd apps/remixdesktop/
               ./run_ci_test.sh
+        - store_test_results:
+            path: ./apps/remixdesktop/reports/tests
+        - store_artifacts:
+            path: ./apps/remixdesktop/reports/screenshots
 
   build-remixdesktop-linux:
       machine:
@@ -272,6 +276,11 @@ jobs:
             yarn -v
             sleep 15
             ./run_ci_test.sh  
+      - store_test_results:
+          path: ./apps/remixdesktop/reports/tests
+      - store_artifacts:
+          path: ./apps/remixdesktop/reports/screenshots
+
   # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
   sign-remixdesktop-windows:
     executor: win/default # executor type
@@ -513,6 +522,10 @@ jobs:
             nvm use 20
             cd apps/remixdesktop
             ./run_ci_test.sh  
+      - store_test_results:
+          path: ./apps/remixdesktop/reports/tests
+      - store_artifacts:
+          path: ./apps/remixdesktop/reports/screenshots
   
   uploadartifacts:
     docker:
@@ -598,6 +611,7 @@ jobs:
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules || yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
       - run: ls -la ./dist/apps/remix-ide/assets/js
+      - run: sudo apt update && sudo apt install python3-pip -y
       - when:
           condition:
               equal: [ "chrome", << parameters.browser >> ]

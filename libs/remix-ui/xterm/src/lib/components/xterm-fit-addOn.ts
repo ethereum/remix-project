@@ -5,7 +5,6 @@
 
 import { Terminal, ITerminalAddon } from 'xterm';
 
-
 interface ITerminalDimensions {
   /**
    * The number of rows in the terminal.
@@ -67,7 +66,6 @@ export class FitAddon implements ITerminalAddon {
 
     const scrollbarWidth = this._terminal.options.scrollback === 0 ?
       0 : core.viewport.scrollBarWidth;
-
 
     const parentElementStyle = window.getComputedStyle(this._terminal.element.parentElement.parentElement);
     const parentElementHeight = parseInt(parentElementStyle.getPropertyValue('height'));

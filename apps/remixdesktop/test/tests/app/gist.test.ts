@@ -1,11 +1,11 @@
 import { NightwatchBrowser } from 'nightwatch'
 
 const gist_id  = '02a847917a6a7ecaf4a7e0d4e68715bf'
-module.exports = {
+const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         done()
     },
-    'start gist': function (browser: NightwatchBrowser) {
+    'start gist': !function (browser: NightwatchBrowser) {
         browser
         .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
         .waitForElementVisible('*[data-id="landingPageImportFromGist"]')
@@ -26,4 +26,8 @@ module.exports = {
         .openFile('contracts/3_Ballot.sol')
         .end()
     }
+}
+
+module.exports = {
+  ...tests
 }

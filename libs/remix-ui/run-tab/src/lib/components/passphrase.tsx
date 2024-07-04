@@ -22,7 +22,7 @@ export function PassphrasePrompt(props: PromptProps) {
           type="password"
           name="prompt_text"
           className="form-control"
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
           onInput={handleSignPassphrase}
           data-id="modalDialogCustomPromptText"
           defaultValue={props.defaultValue}

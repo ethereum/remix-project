@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react' // eslint-disable-line
-import {FormattedMessage, useIntl} from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import {ModalDialog} from '@remix-ui/modal-dialog' // eslint-disable-line
 import {RemixUiPublishToStorageProps} from './types' // eslint-disable-line
-import {publishToIPFS} from './publishToIPFS'
-import {publishToSwarm} from './publishOnSwarm'
+import { publishToIPFS } from './publishToIPFS'
+import { publishToSwarm } from './publishOnSwarm'
 
 export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   const intl = useIntl()
-  const {api, storage, contract, resetStorage} = props
+  const { api, storage, contract, resetStorage } = props
   const [modalShown, setModalShown] = useState(false)
   const [state, setState] = useState({
     modal: {
@@ -25,22 +25,22 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
     const storageService = async () => {
       if (contract.metadata === undefined || contract.metadata.length === 0) {
         modal(
-          intl.formatMessage({id: 'publishToStorage.title1'}),
-          intl.formatMessage({id: 'publishToStorage.message1'})
+          intl.formatMessage({ id: 'publishToStorage.title1' }),
+          intl.formatMessage({ id: 'publishToStorage.message1' })
         )
       } else {
         if (storage === 'swarm') {
           try {
             const result = await publishToSwarm(contract, api)
 
-            modal(intl.formatMessage({id: 'publishToStorage.title2'}, {name: contract.name}), publishMessage(result.uploaded))
+            modal(intl.formatMessage({ id: 'publishToStorage.title2' }, { name: contract.name }), publishMessage(result.uploaded))
           } catch (err) {
-            modal(intl.formatMessage({id: 'publishToStorage.title3'}), publishMessageFailed(storage, err.message))
+            modal(intl.formatMessage({ id: 'publishToStorage.title3' }), publishMessageFailed(storage, err.message))
           }
         } else {
           if (!api.config.get('settings/ipfs-url') && !modalShown) {
             modal(
-              intl.formatMessage({id: 'publishToStorage.title4'}),
+              intl.formatMessage({ id: 'publishToStorage.title4' }),
               <div>
                 <FormattedMessage id="publishToStorage.title4.message1" /><br></br>
                 <br></br>
@@ -49,7 +49,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
                 <ul className="pl-3">
                   <li key="ipfs-default"><FormattedMessage id="publishToStorage.title4.message4" /></li>
                   <li key="infura-options">
-                    <FormattedMessage 
+                    <FormattedMessage
                       id="publishToStorage.title4.message5"
                       values={{
                         a: (chunks) => (
@@ -84,9 +84,9 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   const ipfs = async (contract, api) => {
     try {
       const result = await publishToIPFS(contract, api)
-      modal(intl.formatMessage({id: 'publishToStorage.title2'}, {name: contract.name}), publishMessage(result.uploaded))
+      modal(intl.formatMessage({ id: 'publishToStorage.title2' }, { name: contract.name }), publishMessage(result.uploaded))
     } catch (err) {
-      modal(intl.formatMessage({id: 'publishToStorage.title5'}), publishMessageFailed(storage, err.message))
+      modal(intl.formatMessage({ id: 'publishToStorage.title5' }), publishMessageFailed(storage, err.message))
     }
     setModalShown(true)
   }
@@ -94,7 +94,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
   const publishMessage = (uploaded) => (
     <span>
       {' '}
-      <FormattedMessage id="publishToStorage.title2.message" values={{name: contract.name.toLowerCase()}} /> <br />
+      <FormattedMessage id="publishToStorage.title2.message" values={{ name: contract.name.toLowerCase() }} /> <br />
       <pre>
         <div>
           {uploaded.map((value, index) => (
@@ -109,7 +109,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
 
   const publishMessageFailed = (storage, err) => (
     <span>
-      <FormattedMessage id="publishToStorage.title5.message" values={{storage}} /> <br />
+      <FormattedMessage id="publishToStorage.title5.message" values={{ storage }} /> <br />
       {err}
     </span>
   )
@@ -118,7 +118,7 @@ export const PublishToStorage = (props: RemixUiPublishToStorageProps) => {
     setState((prevState) => {
       return {
         ...prevState,
-        modal: {...prevState.modal, hide: true, message: null}
+        modal: { ...prevState.modal, hide: true, message: null }
       }
     })
     resetStorage()

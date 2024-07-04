@@ -1,0 +1,13 @@
+{
+  "permissionHandler.allPermissionsReset": "모든 권한이 리셋 되었습니다.",
+  "permissionHandler.rememberText": "는 변경되었으며",
+  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} \"{method}\" 의 \"{to}\" 에 접근하길 원합니다",
+  "permissionHandler.description": "상세정보",
+  "permissionHandler.noDescriptionProvided": "제공된 설명이 없습니다",
+  "permissionHandler.makeSureYouTrustThisPlugin": "이 플러그인을 신뢰하는지 확인한 후 이 호출을 진행하세요. 이 특정 호출에 대한 선택을 저장하기로 선택한 경우, 값은 현재 세션에만 유지됩니다.",
+  "permissionHandler.rememberThisChoice": "이 선택사항 저장",
+  "permissionHandler.resetAllPermissions": "모든 권한 초기화",
+  "permissionHandler.permissionNeededFor": "{to} 에 필요한 권한",
+  "permissionHandler.accept": "승인",
+  "permissionHandler.decline": "거절"
+}

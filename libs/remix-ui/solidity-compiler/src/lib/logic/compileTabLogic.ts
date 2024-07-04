@@ -1,5 +1,5 @@
 import { ICompilerApi } from '@remix-project/remix-lib'
-import { getValidLanguage, Compiler} from '@remix-project/remix-solidity'
+import { getValidLanguage, Compiler } from '@remix-project/remix-solidity'
 import { EventEmitter } from 'events'
 
 declare global {
@@ -11,7 +11,7 @@ const _paq = window._paq = window._paq || []  //eslint-disable-line
 
 export class CompileTabLogic {
   public compiler
-  public api:  ICompilerApi
+  public api: ICompilerApi
   public contentImport
   public optimize
   public runs
@@ -43,9 +43,9 @@ export class CompileTabLogic {
 
     this.evmVersion = this.api.getCompilerQueryParameters().evmVersion
     if (
-      this.evmVersion === 'undefined' || 
-      this.evmVersion === 'null' || 
-      !this.evmVersion || 
+      this.evmVersion === 'undefined' ||
+      this.evmVersion === 'null' ||
+      !this.evmVersion ||
       !this.evmVersions.includes(this.evmVersion)) {
       this.evmVersion = null
     }
@@ -104,13 +104,13 @@ export class CompileTabLogic {
    * @param {string} target the path to the file to compile
    */
   compileFile (target) {
-    if (!target) throw new Error('No target provided for compiliation')
+    if (!target) throw new Error('No target provided for compilation')
     return new Promise((resolve, reject) => {
       this.api.readFile(target).then(async(content) => {
         const sources = { [target]: { content } }
         this.event.emit('removeAnnotations')
         this.event.emit('startingCompilation')
-        if(await this.api.fileExists('remappings.txt')) {
+        if (await this.api.fileExists('remappings.txt')) {
           this.api.readFile('remappings.txt').then(remappings => {
             this.compiler.set('remappings', remappings.split('\n').filter(Boolean))
           })

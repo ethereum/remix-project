@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useContext} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {ThemeContext} from '../themeContext'
-import {CustomTooltip} from '@remix-ui/helper'
+import React, { useContext } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { ThemeContext } from '../themeContext'
+import { CustomTooltip } from '@remix-ui/helper'
 interface PluginButtonProps {
   imgPath: string
   envID: string
@@ -13,7 +13,7 @@ interface PluginButtonProps {
   remixMaintained?: boolean
 }
 
-function PluginButton({imgPath, envID, envText, callback, l2, description, remixMaintained}: PluginButtonProps) {
+function PluginButton({ imgPath, envID, envText, callback, l2, description, remixMaintained }: PluginButtonProps) {
   const themeFilter = useContext(ThemeContext)
 
   return (
@@ -23,7 +23,7 @@ function PluginButton({imgPath, envID, envText, callback, l2, description, remix
         data-id={'landingPageStart' + envText}
         onClick={() => callback()}
       >
-        <img className="px-2 mb-2 align-self-center remixui_home_envLogo" id={envID} src={imgPath} alt="" style={{filter: themeFilter.filter}} />
+        <img className="px-2 mb-2 align-self-center remixui_home_envLogo" id={envID} src={imgPath} alt="" style={{ filter: themeFilter.filter }} />
         <div className="mb-2 h-100 d-flex flex-column">
           <label className="text-uppercase text-dark remixui_home_cursorStyle">{envText}</label>
           <div className="remixui_home_envLogoDescription">{description}</div>

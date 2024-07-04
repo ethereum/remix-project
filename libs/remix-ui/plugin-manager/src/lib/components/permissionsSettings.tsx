@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {Fragment, useState} from 'react' // eslint-disable-line no-use-before-define
-import {FormattedMessage, useIntl} from 'react-intl'
+import React, { Fragment, useState } from 'react' // eslint-disable-line no-use-before-define
+import { FormattedMessage, useIntl } from 'react-intl'
 /* eslint-disable-line */
-import {ModalDialog} from '@remix-ui/modal-dialog'
+import { ModalDialog } from '@remix-ui/modal-dialog'
 import useLocalStorage from '../custom-hooks/useLocalStorage'
-import {PluginPermissions} from '../../types'
-import {CustomTooltip} from '@remix-ui/helper'
+import { PluginPermissions } from '../../types'
+import { CustomTooltip } from '@remix-ui/helper'
 
 function PermisssionsSettings() {
   const [modalVisibility, setModalVisibility] = useState<boolean>(true)
@@ -51,7 +51,7 @@ function PermisssionsSettings() {
     })
   }
 
-  function RenderPluginHeader({headingName}) {
+  function RenderPluginHeader({ headingName }) {
     return (
       <div className="pb-2 remixui_permissionKey">
         <h3>
@@ -68,7 +68,7 @@ function PermisssionsSettings() {
     )
   }
 
-  function RenderPermissions({targetPlugin}) {
+  function RenderPermissions({ targetPlugin }) {
     return (
       <>
         {Object.keys(permissions[targetPlugin]).map((funcName) => {
@@ -120,8 +120,8 @@ function PermisssionsSettings() {
         title={intl.formatMessage({
           id: 'pluginManager.pluginManagerPermissions'
         })}
-        okLabel={intl.formatMessage({id: 'pluginManager.ok'})}
-        cancelLabel={intl.formatMessage({id: 'pluginManager.cancel'})}
+        okLabel={intl.formatMessage({ id: 'pluginManager.ok' })}
+        cancelLabel={intl.formatMessage({ id: 'pluginManager.cancel' })}
       >
         {permissions && Object.keys(permissions).length > 0 ? (
           <h4 className="text-center">

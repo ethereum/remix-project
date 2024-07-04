@@ -1,4 +1,4 @@
-export const hardhatEthersExtension = 
+export const hardhatEthersExtension =
 `
 interface Libraries {
     [libraryName: string]: string;

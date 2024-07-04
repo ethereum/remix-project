@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react' // eslint-disable-line
 
 import './remix-ui-home-tab.css'
-import {ThemeContext, themes} from './themeContext'
+import { ThemeContext, themes } from './themeContext'
 import HomeTabTitle from './components/homeTabTitle'
 import HomeTabFile from './components/homeTabFile'
 import HomeTabLearn from './components/homeTabLearn'
@@ -25,13 +25,14 @@ export interface RemixUiHomeTabProps {
 
 export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
   const platform = useContext(platformContext)
-  const {plugin} = props
+  const { plugin } = props
 
   const [state, setState] = useState<{
     themeQuality: {filter: string; name: string}
   }>({
     themeQuality: themes.light
   })
+  const [carouselWidth, setCarouselWidth] = useState(65)
 
   useEffect(() => {
     plugin.call('theme', 'currentTheme').then((theme) => {
@@ -54,23 +55,39 @@ export const RemixUiHomeTab = (props: RemixUiHomeTabProps) => {
     })
   }, [])
 
+  useEffect(() => {
+    const checkResolution = () => {
+      const width = window.innerWidth
+      const height = window.innerHeight
+
+      if (height < 781 && width < 1150) {
+        setCarouselWidth(75)
+      }
+    }
+    checkResolution()
+
+    return () => {
+      checkResolution()
+    }
+  }, [])
+
+  //  border-right
   return (
     <div className="d-flex flex-column w-100" data-id="remixUIHTAll">
       <ThemeContext.Provider value={state.themeQuality}>
         <div className="d-flex flex-row w-100 custom_home_bg">
-          <div className="px-2 pl-3 justify-content-start d-flex border-right flex-column" id="remixUIHTLeft" style={{width: 'inherit'}}>
+          <div className="px-2 pl-3 justify-content-start border-right d-flex flex-column" id="remixUIHTLeft" style={{ width: 'inherit' }}>
             <HomeTabTitle />
+            <HomeTabGetStarted plugin={plugin}></HomeTabGetStarted>
             {!(platform === appPlatformTypes.desktop) ?
               <HomeTabFile plugin={plugin} />:
               <HomeTabFileElectron plugin={plugin}></HomeTabFileElectron>}
-            <HomeTabLearn plugin={plugin} />
+            {/* <HomeTabLearn plugin={plugin} /> */}
           </div>
-          <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{width: '65%'}} id="remixUIHTRight">
+          <div className="pl-2 pr-3 justify-content-start d-flex flex-column" style={{ width: `${carouselWidth}%` }} id="remixUIHTRight">
             <LanguageOptions plugin={plugin}/>
             <HomeTabFeatured></HomeTabFeatured>
-            <HomeTabGetStarted plugin={plugin}></HomeTabGetStarted>
             <HomeTabFeaturedPlugins plugin={plugin}></HomeTabFeaturedPlugins>
-            <HomeTabScamAlert></HomeTabScamAlert>
           </div>
         </div>
       </ThemeContext.Provider>

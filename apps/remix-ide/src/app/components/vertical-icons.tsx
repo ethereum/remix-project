@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import packageJson from '../../../../../package.json'
-import {Plugin} from '@remixproject/engine'
-import {EventEmitter} from 'events'
-import {IconRecord, RemixUiVerticalIconsPanel} from '@remix-ui/vertical-icons-panel'
-import {Profile} from '@remixproject/plugin-utils'
-import {PluginViewWrapper} from '@remix-ui/helper'
+import { Plugin } from '@remixproject/engine'
+import { EventEmitter } from 'events'
+import { IconRecord, RemixUiVerticalIconsPanel } from '@remix-ui/vertical-icons-panel'
+import { Profile } from '@remixproject/plugin-utils'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 const profile = {
   name: 'menuicons',
@@ -73,7 +73,26 @@ export class VerticalIcons extends Plugin {
       Object.keys(this.icons).map((o) => {
         this.icons[o].active = false
       })
-      this.icons[name].active = true
+
+      if (this.icons[name]) {
+        this.icons[name].active = true
+      }
+      this.renderComponent()
+    })
+
+    this.on('pinnedPanel', 'pinnedPlugin', (profile) => {
+      Object.keys(this.icons).map((icon) => {
+        if (this.icons[icon].profile.name === profile.name) {
+          this.icons[icon].pinned = true
+        } else {
+          this.icons[icon].pinned = false
+        }
+      })
+      this.renderComponent()
+    })
+
+    this.on('pinnedPanel', 'unPinnedPlugin', (profile) => {
+      if (this.icons[profile.name]) this.icons[profile.name].pinned = false
       this.renderComponent()
     })
   }
@@ -84,6 +103,7 @@ export class VerticalIcons extends Plugin {
     this.icons[profile.name] = {
       profile: profile,
       active: false,
+      pinned: false,
       canbeDeactivated: await this.call('manager', 'canDeactivate', this.profile, profile),
       timestamp: Date.now()
     }

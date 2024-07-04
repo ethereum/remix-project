@@ -153,6 +153,8 @@ export interface FileExplorerProps {
     createNewFolder:(parentFolder?: string) => Promise<void>
     renamePath:(path: string, type: string, isNew?: boolean) => void
     dragStatus: (status: boolean) => void
+    importFromIpfs: any
+    importFromHttps: any
 }
 
 export interface FileExplorerMenuProps {
@@ -163,6 +165,8 @@ export interface FileExplorerMenuProps {
   publishToGist: (path?: string) => void
   uploadFile: (target: EventTarget & HTMLInputElement) => void
   uploadFolder: (target: EventTarget & HTMLInputElement) => void
+  importFromIpfs: any
+  importFromHttps: any
   tooltipPlacement?: Placement
 }
 export interface FileExplorerContextMenuProps {

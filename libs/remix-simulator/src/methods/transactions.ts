@@ -1,5 +1,5 @@
 import { toHex, toNumber, toBigInt } from 'web3-utils'
-import { toChecksumAddress, Address, bigIntToHex, bytesToHex} from '@ethereumjs/util'
+import { toChecksumAddress, Address, bigIntToHex, bytesToHex } from '@ethereumjs/util'
 import { processTx } from './txProcess'
 import { execution } from '@remix-project/remix-lib'
 import { ethers } from 'ethers'
@@ -59,7 +59,7 @@ export class Transactions {
     this.txRunnerInstance = new TxRunner(this.txRunnerVMInstance, {})
     this.txRunnerInstance.vmaccounts = accounts
   }
- 
+
   methods () {
     return {
       eth_sendTransaction: this.eth_sendTransaction.bind(this),
@@ -163,7 +163,7 @@ export class Transactions {
       this.txRunnerInstance.internalRunner.standaloneTx = false
       this.vmContext.web3().recordVMSteps(true)
       if (error) return cb(error)
-      const result: any = value.result      
+      const result: any = value.result
       if ((result as any).receipt?.status === '0x0' || (result as any).receipt?.status === 0) {
         try {
           const msg = `${bytesToHex(result.execResult.returnValue) || '0x00'}`

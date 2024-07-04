@@ -1,5 +1,5 @@
 import { compiler_list } from 'circom_wasm'
-import {Dispatch} from 'react'
+import { Dispatch } from 'react'
 import type { CircomPluginClient } from '../services/circomPluginClient'
 
 export type CompilerStatus = "compiling" | "generating" | "computing" | "idle" | "errored" | "warning"

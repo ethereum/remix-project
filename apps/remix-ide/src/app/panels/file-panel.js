@@ -9,7 +9,6 @@ import {PluginViewWrapper} from '@remix-ui/helper'
 const { HardhatHandle } = require('../files/hardhat-handle.js')
 const { FoundryHandle } = require('../files/foundry-handle.js')
 const { TruffleHandle } = require('../files/truffle-handle.js')
-const { SlitherHandle } = require('../files/slither-handle.js')
 
 /*
   Overview of APIs:
@@ -34,6 +33,7 @@ const profile = {
   methods: [
     'createNewFile',
     'uploadFile',
+    'echoCall',
     'getCurrentWorkspace',
     'getAvailableWorkspaceName',
     'getWorkspaces',
@@ -43,7 +43,7 @@ const profile = {
     'registerContextMenuItem',
     'renameWorkspace',
     'deleteWorkspace',
-    'loadTemplate', 
+    'loadTemplate',
     'clone',
     'isExpanded',
     'isGist'
@@ -58,7 +58,7 @@ const profile = {
   maintainedBy: 'Remix'
 }
 module.exports = class Filepanel extends ViewPlugin {
-  constructor(appManager) {
+  constructor(appManager, contentImport) {
     super(profile)
     this.registry = Registry.getInstance()
     this.fileProviders = this.registry.get('fileproviders').api
@@ -71,7 +71,7 @@ module.exports = class Filepanel extends ViewPlugin {
     this.hardhatHandle = new HardhatHandle()
     this.foundryHandle = new FoundryHandle()
     this.truffleHandle = new TruffleHandle()
-    this.slitherHandle = new SlitherHandle()
+    this.contentImport = contentImport
     this.workspaces = []
     this.appManager = appManager
     this.currentWorkspaceMetadata = null
@@ -154,10 +154,10 @@ module.exports = class Filepanel extends ViewPlugin {
     return this.workspaces
   }
 
-  getAvailableWorkspaceName(name) {    
+  getAvailableWorkspaceName(name) {
     if (!this.workspaces) return name
     let index = 1
-    let workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)    
+    let workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)
     while (workspace) {
       index++
       workspace = this.workspaces.find((workspace) => workspace.name === name + ' - ' + index)

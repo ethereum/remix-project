@@ -1,11 +1,11 @@
-import {  util } from '@remix-project/remix-lib'
+import { util } from '@remix-project/remix-lib'
 const { toHexPaddedString, formatMemory } = util
 import { helpers } from '@remix-project/remix-lib'
-const  { normalizeHexAddress } = helpers.ui
+const { normalizeHexAddress } = helpers.ui
 import { ConsoleLogs, hash } from '@remix-project/remix-lib'
-import { toChecksumAddress, bytesToHex, Address, toBytes, bigIntToHex} from '@ethereumjs/util'
-import utils, {toBigInt} from 'web3-utils'
-import {isBigInt} from 'web3-validator'
+import { toChecksumAddress, bytesToHex, Address, toBytes, bigIntToHex } from '@ethereumjs/util'
+import utils, { toBigInt } from 'web3-utils'
+import { isBigInt } from 'web3-validator'
 import { ethers } from 'ethers'
 import { VMContext } from './vm-context'
 import type { EVMStateManagerInterface } from '@ethereumjs/common'
@@ -99,7 +99,7 @@ export class VmProxy {
   setVM (vm) {
     if (this.vm === vm) return
     this.vm = vm
-    this.vm.evm.events.on('step', async (data: InterpreterStep, resolve: (result?: any) => void) => {      
+    this.vm.evm.events.on('step', async (data: InterpreterStep, resolve: (result?: any) => void) => {
       await this.pushTrace(data)
       resolve()
     })
@@ -110,7 +110,7 @@ export class VmProxy {
     })
     this.vm.events.on('beforeTx', async (data: TypedTransaction, resolve: (result?: any) => void) => {
       this.txRunning = true
-      await this.txWillProcess(data)      
+      await this.txWillProcess(data)
       resolve()
     })
   }
@@ -124,7 +124,7 @@ export class VmProxy {
   recordVMSteps (record) {
     this.flagrecordVMSteps = record
   }
-  
+
   async txWillProcess (data: TypedTransaction) {
     if (!this.flagrecordVMSteps) return
     this.lastMemoryUpdate = []
@@ -234,7 +234,7 @@ export class VmProxy {
 
   async pushTrace (data: InterpreterStep) {
     if (!this.flagrecordVMSteps) return
-    
+
     try {
       const depth = data.depth + 1 // geth starts the depth from 1
       if (!this.processingHash) {

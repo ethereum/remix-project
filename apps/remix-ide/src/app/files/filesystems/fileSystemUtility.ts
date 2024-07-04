@@ -72,7 +72,6 @@ export class fileSystemUtility {
     }
   }
 
-
   /**
        * copy the folder recursively
        * @param {string} path is the folder to be copied over
@@ -149,7 +148,6 @@ export class fileSystemUtility {
     }, 0) // 40s
   }
 }
-
 
 /* eslint-disable no-template-curly-in-string */
 export const migrationTestData = {

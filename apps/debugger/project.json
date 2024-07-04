@@ -40,6 +40,14 @@
         }
       }
     },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/debugger/**/*.ts"],
+        "eslintConfig": "apps/debugger/.eslintrc"
+      }
+    },
     "serve": {
       "executor": "@nrwl/webpack:dev-server",
       "defaultConfiguration": "development",

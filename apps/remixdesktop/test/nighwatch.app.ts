@@ -74,6 +74,10 @@ module.exports = {
             if(useIsoGit) args = [...args, '--useIsoGit'];
             if(useOffline) args = [...args, '--useOffline'];
 
+            // Set display size
+            const windowSize = "--window-size=1920,1080";
+            args = [...args, windowSize];
+
             switch (type) {
               case 'Windows_NT':
                 binaryPath = `./release/win-unpacked/Remix-Desktop-${channel}.exe`;

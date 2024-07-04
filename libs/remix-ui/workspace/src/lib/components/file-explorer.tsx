@@ -42,8 +42,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [contextMenuItems])
 
-
-
   useEffect(() => {
     if (removedContextMenuItems) {
       removeMenuItems(removedContextMenuItems)
@@ -358,8 +356,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   }
 
-
-
   return (
     <div className="h-100 remixui_treeview" data-id="filePanelFileExplorerTree">
       <div ref={treeRef} tabIndex={0} style={{
@@ -387,6 +383,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   publishToGist={publishToGist}
                   uploadFile={uploadFile}
                   uploadFolder={uploadFolder}
+                  importFromIpfs={props.importFromIpfs}
+                  importFromHttps={props.importFromHttps}
                 />
               </div>
             </span>
@@ -413,6 +411,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
         />
       </div>
     </div>
+  )
+}
+
+export const MessageWrapper = () => {
+  return (
+    <p>e.g ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH</p>
   )
 }
 

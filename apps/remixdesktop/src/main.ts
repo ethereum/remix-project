@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess, screen } from 'electron';
+import { app, BrowserWindow, dialog, Menu, MenuItem, shell, utilityProcess, screen, ipcMain } from 'electron';
 import path from 'path';
 
 
@@ -36,11 +36,12 @@ const windowSet = new Set<BrowserWindow>([]);
 export const createWindow = async (dir?: string): Promise<void> => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: screen.getPrimaryDisplay().size.height * 0.8,
-    width: screen.getPrimaryDisplay().size.width * 0.8,
+    height: (isE2E ? 1440 : screen.getPrimaryDisplay().size.height * 0.8),
+    width: (isE2E ? 2560 : screen.getPrimaryDisplay().size.width * 0.8),
     frame: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
+
     },
   });
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -54,7 +55,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
     (process.env.NODE_ENV === 'production' || isPackaged) && !isE2ELocal ? `file://${__dirname}/remix-ide/index.html` + params :
       'http://localhost:8080' + params)
 
-  trackEvent('Instance', 'create_window', '', 1);  
+  trackEvent('Instance', 'create_window', '', 1);
 
   if (dir) {
     mainWindow.setTitle(dir)
@@ -65,7 +66,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
     windowSet.delete(mainWindow)
   })
 
-  if(isE2E)
+  if (isE2E)
     mainWindow.maximize()
 
   windowSet.add(mainWindow)
@@ -76,7 +77,7 @@ export const createWindow = async (dir?: string): Promise<void> => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-  trackEvent('App', 'Launch', app.getVersion(), 1);
+  trackEvent('App', 'Launch', app.getVersion(), 1, 1);
   trackEvent('App', 'OS', process.platform, 1);
   require('./engine')
 });
@@ -133,16 +134,36 @@ const commandKeys: Record<string, string> = {
 };
 
 const menu = [...(process.platform === 'darwin' ? [darwinMenu(commandKeys, execCommand, showAbout)] : []),
-  FileMenu(commandKeys, execCommand),
-  GitMenu(commandKeys, execCommand),
-  EditMenu(commandKeys, execCommand),
-  ViewMenu(commandKeys, execCommand),
-  TerminalMenu(commandKeys, execCommand),
-  WindowMenu(commandKeys, execCommand, []),
-  HelpMenu(commandKeys, execCommand),
+FileMenu(commandKeys, execCommand),
+GitMenu(commandKeys, execCommand),
+EditMenu(commandKeys, execCommand),
+ViewMenu(commandKeys, execCommand),
+TerminalMenu(commandKeys, execCommand),
+WindowMenu(commandKeys, execCommand, []),
+HelpMenu(commandKeys, execCommand),
 ]
-if(!isE2E || isE2ELocal)
+if (!isE2E || isE2ELocal)
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
+
+
+ipcMain.handle('config:isPackaged', async () => {
+  return isPackaged
+})
+
+ipcMain.handle('config:isE2E', async () => {
+  return isE2E
+})
+
+ipcMain.handle('config:canTrackMatomo', async (event, name: string) => {
+  console.log('config:canTrackMatomo', ((process.env.NODE_ENV === 'production' || isPackaged) && !isE2E))
+  return ((process.env.NODE_ENV === 'production' || isPackaged) && !isE2E)
+})
+
+ipcMain.handle('matomo:trackEvent', async (event, data) => {
+  if (data && data[0] && data[0] === 'trackEvent') {
+    trackEvent(data[1], data[2], data[3], data[4])
+  }
+})
 
 
 

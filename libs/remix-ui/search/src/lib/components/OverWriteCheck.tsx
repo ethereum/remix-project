@@ -1,9 +1,9 @@
-import React, {useContext} from 'react'
-import {FormattedMessage} from 'react-intl'
-import {SearchContext} from '../context/context'
+import React, { useContext } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { SearchContext } from '../context/context'
 
 export const OverWriteCheck = (props) => {
-  const {setReplaceWithoutConfirmation, state} = useContext(SearchContext)
+  const { setReplaceWithoutConfirmation, state } = useContext(SearchContext)
 
   const change = (e) => {
     setReplaceWithoutConfirmation(e.target.checked)

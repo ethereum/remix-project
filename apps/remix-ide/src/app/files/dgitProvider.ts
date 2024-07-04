@@ -14,7 +14,7 @@ import JSZip from 'jszip'
 import path from 'path'
 import FormData from 'form-data'
 import axios from 'axios'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 
 const profile = {
   name: 'dGitProvider',
@@ -121,7 +121,6 @@ class DGitProvider extends Plugin {
       return status
     }
 
-
     const status = await git.statusMatrix({
       ...await this.getGitConfig(),
       ...cmd
@@ -189,7 +188,7 @@ class DGitProvider extends Plugin {
           return newmodule.name === module.name
         })
       })
-  
+
       for (const module of toRemove) {
         const path = (await this.getGitConfig(module.path)).dir
         if (await window.remixFileSystem.exists(path)) {
@@ -223,7 +222,6 @@ class DGitProvider extends Plugin {
 
       return status
     }
-
 
     const status = await git.log({
       ...await this.getGitConfig(),
@@ -268,8 +266,6 @@ class DGitProvider extends Plugin {
   }
 
   async currentbranch(config) {
-
-
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       return await this.call('isogit', 'currentbranch')
@@ -426,11 +422,11 @@ class DGitProvider extends Plugin {
         input
       }
       this.call('terminal', 'logHtml', `Cloning ${input.url}... please wait...`)
-      try{
+      try {
         const result = await this.call('isogit', 'clone', cmd)
         this.call('fs', 'openWindow', folder)
         return result
-      }catch(e){
+      } catch (e){
         this.call('notification', 'alert', {
           id: 'dgitAlert',
           message: 'Unexpected error while cloning the repository: \n' + e.toString(),
@@ -440,7 +436,7 @@ class DGitProvider extends Plugin {
       const permission = await this.askUserPermission('clone', 'Import multiple files into your workspaces.')
       if (!permission) return false
       if (parseFloat(this.calculateLocalStorage()) > 10000) throw new Error('The local storage of the browser is full.')
-      if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, true)
+      if (!workspaceExists) await this.call('filePanel', 'createWorkspace', workspaceName || `workspace_${Date.now()}`, '', true)
       const cmd = {
         url: input.url,
         singleBranch: input.singleBranch,
@@ -449,7 +445,7 @@ class DGitProvider extends Plugin {
         ...await this.parseInput(input),
         ...await this.getGitConfig()
       }
-      this.call('terminal', 'logHtml', `Cloning ${input.url}...`)
+      this.call('terminal', 'logHtml', `Cloning ${input.url}... please wait...`)
       const result = await git.clone(cmd)
       if (!workspaceExists) {
         setTimeout(async () => {
@@ -457,6 +453,12 @@ class DGitProvider extends Plugin {
         }, 1000)
       }
       this.emit('clone')
+      this.call('fileManager', 'hasGitSubmodules').then((submodules) => {
+        if (submodules) {
+          this.call('terminal', 'log', { type: 'warn', value: 'This repository has submodules. Please update submodules to pull all the dependencies.' })
+          this.emit('repositoryWithSubmodulesCloned')
+        }
+      })
       return result
     }
   }
@@ -516,7 +518,7 @@ class DGitProvider extends Plugin {
         for (const module of gitmodules) {
           const dir = path.join(currentDir, module.path)
           // if url contains git@github.com: convert it
-          if(module.url && module.url.startsWith('git@github.com:')) {
+          if (module.url && module.url.startsWith('git@github.com:')) {
             module.url = module.url.replace('git@github.com:', 'https://github.com/')
           }
           try {
@@ -530,7 +532,7 @@ class DGitProvider extends Plugin {
             this.call('terminal', 'logHtml', `Cloning submodule ${dir}...`)
             await git.clone(cmd)
             this.call('terminal', 'logHtml', `Cloned successfully submodule ${dir}...`)
-            
+
             const commitHash = await git.resolveRef({
               ...await this.getGitConfig(currentDir),
               ref: 'HEAD'
@@ -540,12 +542,12 @@ class DGitProvider extends Plugin {
               ...await this.getGitConfig(currentDir),
               trees: [git.TREE({ ref: commitHash })],
               map: async function (filepath, [A]) {
-                if(filepath === module.path) {
+                if (filepath === module.path) {
                   return await A.oid()
                 }
               }
             })
-            if(result && result.length) {
+            if (result && result.length) {
               this.call('terminal', 'logHtml', `Checking out submodule ${dir} to ${result[0]} in directory ${dir}`)
               await git.fetch({
                 ...await this.parseInput(input),
@@ -558,16 +560,16 @@ class DGitProvider extends Plugin {
                 ...await this.getGitConfig(dir),
                 ref: result[0]
               })
-              
+
               const log = await git.log({
                 ...await this.getGitConfig(dir),
               })
 
-              if(log[0].oid !== result[0]) {
+              if (log[0].oid !== result[0]) {
                 this.call('terminal', 'log', {
                   type: 'error',
                   value: `Could not checkout submodule to ${result[0]}`
-                })} else {              
+                })} else {
                 this.call('terminal', 'logHtml',`Checked out submodule ${dir} to ${result[0]}`)
               }
             }

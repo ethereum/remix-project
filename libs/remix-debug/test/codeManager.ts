@@ -5,7 +5,7 @@ import { CodeManager } from '../src/code/codeManager'
 const web3Test = require('./resources/testWeb3.ts')
 
 tape('CodeManager', function (t) {
-  const traceManager = new TraceManager({web3: web3Test})
+  const traceManager = new TraceManager({ web3: web3Test })
   const codeManager = new CodeManager(traceManager)
   const contractCode = web3Test.eth.getCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5')
   codeManager.codeResolver.cacheExecutingCode('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', contractCode) // so a call to web3 is not necessary

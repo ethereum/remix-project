@@ -25,7 +25,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
       ...state,
       replaceEnabled: action.payload,
     }
-            
+
   case 'SET_INCLUDE':
     return {
       ...state,
@@ -46,7 +46,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
       run: true
     }
   case 'SET_UNDO_ENABLED':
-    if(action.payload.workspace && state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`]){
+    if (action.payload.workspace && state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`]){
       state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].enabled = (action.payload.content === state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].newContent)
       state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].visible = (action.payload.content !== state.undoBuffer[`${action.payload.workspace}/${action.payload.path}`].oldContent)
     }
@@ -66,7 +66,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
     state.undoBuffer[`${undoState.workspace}/${undoState.path}`] = undoState
     return {
       ...state,
-    }    
+    }
   }
   case 'CLEAR_STATS':
     return {
@@ -82,7 +82,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
       ...state,
       searching: action.payload,
     }
-            
+
   case 'CLEAR_UNDO': {
     state.undoBuffer = []
     return {
@@ -99,8 +99,8 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
         findFile.count = action.payload.count
       }
       state.searchResults.forEach(file => {
-        if (file.count) {          
-          count += file.count    
+        if (file.count) {
+          count += file.count
           fileCount++
         }
       })
@@ -164,7 +164,7 @@ export const SearchReducer = (state: SearchState = SearchingInitialState, action
     return {
       ...state,
       workspace: action.payload,
-    }            
+    }
   case 'RELOAD_FILE':
     if (state.searchResults) {
       const findFile = state.searchResults.find(file => file.filename === action.payload)

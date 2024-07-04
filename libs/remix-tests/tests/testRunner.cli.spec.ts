@@ -9,10 +9,10 @@ describe('testRunner: remix-tests CLI', function(){
   const executablePath = resolve(__dirname + '/../../../dist/libs/remix-tests/bin/remix-tests')
 
   const result = spawnSync('ls', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
-  if(result) {
+  if (result) {
     const dirContent = result.stdout.toString()
     // Install dependencies if 'node_modules' is not already present
-    if(!dirContent.includes('node_modules')) {
+    if (!dirContent.includes('node_modules')) {
       execSync('yarn add @remix-project/remix-lib ../../libs/remix-lib', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
       execSync('yarn add @remix-project/remix-url-resolver ../../libs/remix-url-resolver', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
       execSync('yarn add @remix-project/remix-solidity ../../libs/remix-solidity', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
@@ -20,7 +20,6 @@ describe('testRunner: remix-tests CLI', function(){
       execSync('yarn install', { cwd: resolve(__dirname + '/../../../dist/libs/remix-tests') })
     }
   }
-
 
   describe('test various CLI options', function() {
     it('remix-tests version', () => {
@@ -78,8 +77,6 @@ Commands:
       expect(res.stdout.toString().trim()).to.match(/Message: okFailTest fails/)
 
     })
-
-
 
     it('remix-tests running a test file with custom compiler version', () => {
       const res = spawnSync(executablePath, ['--compiler', '0.7.4', resolve(__dirname + '/examples_0/assert_ok_test.sol')])

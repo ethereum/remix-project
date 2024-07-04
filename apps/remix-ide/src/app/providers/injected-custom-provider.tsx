@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import {InjectedProviderDefault} from './injected-provider-default'
+import { InjectedProviderDefault } from './injected-provider-default'
 
 export class InjectedCustomProvider extends InjectedProviderDefault {
   chainName: string
@@ -32,7 +32,7 @@ export const setCustomNetwork = async (chainName: string, chainId: string, rpcUr
   try {
     await (window as any).ethereum.request({
       method: 'wallet_switchEthereumChain',
-      params: [{chainId: chainId}]
+      params: [{ chainId: chainId }]
     })
   } catch (switchError) {
     // This error code indicates that the chain has not been added to MetaMask.
@@ -48,14 +48,14 @@ export const setCustomNetwork = async (chainName: string, chainId: string, rpcUr
           if (blockExplorerUrls) paramsObj.blockExplorerUrls = blockExplorerUrls
           await (window as any).ethereum.request({
             method: 'wallet_addEthereumChain',
-            params: [ paramsObj ]
+            params: [paramsObj]
           })
- 
+
           await (window as any).ethereum.request({
             method: 'wallet_switchEthereumChain',
-            params: [{chainId: chainId}]
+            params: [{ chainId: chainId }]
           })
-        }        
+        }
       } catch (addError) {
         // handle "add" error
       }

@@ -13,9 +13,9 @@ const profile = {
 export class InjectedSKALEChaosTestnetProvider extends InjectedCustomProvider {
 
   constructor () {
-    super(profile, 
-      'SKALE Chaos Testnet', 
-      '0x50877ed6', 
+    super(profile,
+      'SKALE Chaos Testnet',
+      '0x50877ed6',
       ['https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix'],
       {
         "name": "sFUEL",

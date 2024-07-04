@@ -100,7 +100,6 @@ export class TruffleClient extends PluginClient {
     return true
   }
 
-
   private async processArtifact() {
     if (!this.checkPath()) return
     const folderFiles = await fs.readdir(this.buildPath)

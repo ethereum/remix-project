@@ -108,7 +108,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
     let web3
     let network
     try {
-      network = await this.call('network', 'detectNetwork')    
+      network = await this.call('network', 'detectNetwork')
     } catch (e) {
       web3 = this.web3()
     }
@@ -170,7 +170,7 @@ export const DebuggerApiMixin = (Base) => class extends Base {
   onActivation () {
     this.on('editor', 'breakpointCleared', (fileName, row) => { if (this.onBreakpointClearedListener) this.onBreakpointClearedListener(fileName, row) })
     this.on('editor', 'breakpointAdded', (fileName, row) => { if (this.onBreakpointAddedListener) this.onBreakpointAddedListener(fileName, row) })
-    this.on('editor', 'contentChanged', () => { if (this.onEditorContentChangedListener) this.onEditorContentChangedListener() })  
+    this.on('editor', 'contentChanged', () => { if (this.onEditorContentChangedListener) this.onEditorContentChangedListener() })
     this.on('network', 'providerChanged', (provider) => { if (this.onEnvChangedListener) this.onEnvChangedListener(provider) })
   }
 
@@ -183,14 +183,26 @@ export const DebuggerApiMixin = (Base) => class extends Base {
 
   showMessage (title: string, message: string) {}
 
-  onStartDebugging (debuggerBackend: any) {
-    this.call('layout', 'maximiseSidePanel')
+  async onStartDebugging (debuggerBackend: any) {
+    const pinnedPlugin = await this.call('pinnedPanel', 'currentFocus')
+
+    if (pinnedPlugin === 'debugger') {
+      this.call('layout', 'maximisePinnedPanel')
+    } else {
+      this.call('layout', 'maximiseSidePanel')
+    }
     this.emit('startDebugging')
     this.debuggerBackend = debuggerBackend
   }
 
-  onStopDebugging () {
-    this.call('layout', 'resetSidePanel')
+  async onStopDebugging () {
+    const pinnedPlugin = await this.call('pinnedPanel', 'currentFocus')
+
+    if (pinnedPlugin === 'debugger') {
+      this.call('layout', 'resetPinnedPanel')
+    } else {
+      this.call('layout', 'resetSidePanel')
+    }
     this.emit('stopDebugging')
     this.debuggerBackend = null
   }

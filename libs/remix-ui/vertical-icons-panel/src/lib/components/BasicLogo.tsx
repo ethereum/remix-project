@@ -4,7 +4,7 @@ interface BasicLogoProps {
   solid?: boolean
 }
 
-function BasicLogo({classList = '', solid = true}: BasicLogoProps) {
+function BasicLogo({ classList = '', solid = true }: BasicLogoProps) {
   if (solid) {
     return (
       <svg id="Ebene_2" className={classList} data-name="Ebene 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105 100">
@@ -14,7 +14,7 @@ function BasicLogo({classList = '', solid = true}: BasicLogoProps) {
       </svg>
     )
   } else {
-    return <img className="" src="assets/img/remix_logo_light.webp" style={{height: '3rem'}} alt=""></img>
+    return <img className="" src="assets/img/remix_logo_light.webp" style={{ height: '3rem' }} alt=""></img>
   }
 }
 

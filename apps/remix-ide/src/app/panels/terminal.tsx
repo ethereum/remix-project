@@ -3,14 +3,13 @@ import React from 'react' // eslint-disable-line
 import { RemixUiTerminal, RemixUITerminalWrapper } from '@remix-ui/terminal' // eslint-disable-line
 import { Plugin } from '@remixproject/engine'
 import * as packageJson from '../../../../../package.json'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import vm from 'vm'
 import EventManager from '../../lib/events'
 
 import { CompilerImports } from '@remix-project/core-plugin' // eslint-disable-line
 import { RemixUiXterminals } from '@remix-ui/xterm'
-
 
 const KONSOLES = []
 
@@ -113,7 +112,6 @@ class Terminal extends Plugin {
 
   }
 
-
   onActivation() {
     this.renderComponent()
   }
@@ -142,7 +140,7 @@ class Terminal extends Plugin {
   }
 
   updateComponent(state) {
-    return(
+    return (
       <RemixUITerminalWrapper
         plugin={state.plugin}
         onReady={state.onReady}

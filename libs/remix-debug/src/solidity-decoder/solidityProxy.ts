@@ -64,7 +64,7 @@ export class SolidityProxy {
     */
   async extractStatesDefinitions (address: string) {
     const compilationResult = await this.compilationResult(address)
-    if (!this.cache.contractDeclarations[address]) {      
+    if (!this.cache.contractDeclarations[address]) {
       this.cache.contractDeclarations[address] = extractContractDefinitions(compilationResult.data.sources)
     }
     if (!this.cache.statesDefinitions[address]) {

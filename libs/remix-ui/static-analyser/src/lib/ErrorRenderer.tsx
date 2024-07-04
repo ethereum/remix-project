@@ -1,6 +1,6 @@
-import {CustomTooltip} from '@remix-ui/helper'
+import { CustomTooltip } from '@remix-ui/helper'
 import React from 'react' //eslint-disable-line
-import {RemixUiStaticAnalyserState} from '../staticanalyser'
+import { RemixUiStaticAnalyserState } from '../staticanalyser'
 
 interface ErrorRendererProps {
   message: any
@@ -11,12 +11,12 @@ interface ErrorRendererProps {
   ssaState: RemixUiStaticAnalyserState
 }
 
-const ErrorRenderer = ({message, opt, editor, name, ssaState}: ErrorRendererProps) => {
+const ErrorRenderer = ({ message, opt, editor, name, ssaState }: ErrorRendererProps) => {
   const getPositionDetails = (msg: any) => {
     const result = {} as Record<string, number | string>
 
     // To handle some compiler warning without location like SPDX license warning etc
-    if (!msg.includes(':')) return {errLine: -1, errCol: -1, errFile: msg}
+    if (!msg.includes(':')) return { errLine: -1, errCol: -1, errFile: msg }
 
     // extract line / column
     let position = msg.match(/^(.*?):([0-9]*?):([0-9]*?)?/)

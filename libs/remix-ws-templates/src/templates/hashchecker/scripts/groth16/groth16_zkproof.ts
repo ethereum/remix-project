@@ -20,21 +20,21 @@ const logger = {
     // @ts-ignore
     const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/calculate_hash.wasm', { encoding: null });
     // @ts-ignore
-    const wasm = new Uint8Array(wasmBuffer);   
-     
+    const wasm = new Uint8Array(wasmBuffer);
+
     const zkey_final = {
       type: "mem",
       data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/groth16/zkey_final.txt')))
     }
-    const wtns = { type: "mem" };   
+    const wtns = { type: "mem" };
 
     const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/groth16/verification_key.json'))
-  
+
     const value1 = '1234'
     const value2 = '2'
     const value3 = '3'
     const value4 = '4'
-    
+
     const wrongValue = '5' // put this in the poseidon hash calculation to simulate a non matching hash.
 
     const signals = {
@@ -44,25 +44,24 @@ const logger = {
       value4,
       hash: poseidon([value1, value2, value3, value4])
     }
-    
+
     console.log('calculate')
     await snarkjs.wtns.calculate(signals, wasm, wtns);
-    
+
     console.log('check')
     await snarkjs.wtns.check(r1cs, wtns, logger);
-    
 
     console.log('prove')
     const { proof, publicSignals } = await snarkjs.groth16.prove(zkey_final, wtns);
-    
+
     const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof, logger);
     console.log('zk proof validity', verified);
-    
+
     const templates = {
       groth16: await remix.call('fileManager', 'readFile', 'templates/groth16_verifier.sol.ejs')
     }
     const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
-    
+
     await remix.call('fileManager', 'writeFile', './zk/build/groth16/zk_verifier.sol', solidityContract)
     await remix.call('fileManager', 'writeFile', 'zk/build/groth16/input.json', JSON.stringify({
       _pA: [proof.pi_a[0], proof.pi_a[1]],

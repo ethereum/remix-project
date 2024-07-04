@@ -158,7 +158,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
     }
     const binVersions = [...data.binList]
     const selectorList = binVersions
-    
+
     const wasmVersions = data.wasmList
     selectorList.forEach((compiler, index) => {
       const wasmIndex = wasmVersions.findIndex((wasmCompiler) => {
@@ -180,7 +180,6 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
       return { ...prevState, solJsonBinData: data }
     })
   }
-
 
   const setConfigFilePath = (path: string) => {
     setState((prevState) => {
@@ -250,7 +249,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   )
 
   useEffect(() => {
-    if(!state.solJsonBinData && api.solJsonBinData){
+    if (!state.solJsonBinData && api.solJsonBinData){
       setSolJsonBinData(api.solJsonBinData)
     }
   },[])

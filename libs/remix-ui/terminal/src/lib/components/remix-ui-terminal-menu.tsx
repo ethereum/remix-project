@@ -14,7 +14,7 @@ export const RemixUITerminalMenu = (props: RemixUiTerminalProps) => {
   }, [terminalState.isOpen])
 
   function handleClearConsole(event: any): void {
-    dispatch({ type: 'clearconsole', payload: [] })
+    dispatch({ type: 'clearconsole', payload: []})
   }
 
   function listenOnNetwork(event: any): void {
