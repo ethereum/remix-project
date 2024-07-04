@@ -1,10 +1,10 @@
 import React, {ChangeEventHandler, useContext, useEffect, useRef, useState} from 'react' // eslint-disable-line
-import {FormattedMessage, useIntl} from 'react-intl'
-import {PermissionHandlerProps} from '../interface'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { PermissionHandlerProps } from '../interface'
 import './permission-dialog.css'
 
 const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
-  const {from, to, remember, method, message, sensitiveCall} = props.value
+  const { from, to, remember, method, message, sensitiveCall } = props.value
   const [feedback, setFeedback] = useState<string>('')
   const theme = props.theme
   const intl = useIntl()
@@ -15,15 +15,15 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
 
   const reset = () => {
     props.plugin.clear()
-    setFeedback(intl.formatMessage({id: 'permissionHandler.allPermissionsReset'}))
+    setFeedback(intl.formatMessage({ id: 'permissionHandler.allPermissionsReset' }))
   }
 
   const imgFrom = () => {
-    if (!from.icon || from.icon === '') from.icon = "/assets/img/pluginManager.webp"
+    if (!from.icon || from.icon === '') from.icon = "assets/img/pluginManager.webp"
     return <img className={`opacity(0.5);`} alt="" id="permissionModalImagesFrom" src={from.icon} />
   }
   const imgTo = () => {
-    if (!to.icon || to.icon === '') to.icon = "/assets/img/pluginManager.webp"
+    if (!to.icon || to.icon === '') to.icon = "assets/img/pluginManager.webp"
     return <img className={`opacity(0.5);`} alt="" id="permissionModalImagesTo" src={to.icon} />
   }
   const pluginsImages = () => {
@@ -44,7 +44,7 @@ const PermissionHandlerDialog = (props: PermissionHandlerProps) => {
           from: from.displayName,
           to: to.displayName,
           method,
-          rememberText: remember ? intl.formatMessage({id: 'permissionHandler.rememberText'}) : ''
+          rememberText: remember ? intl.formatMessage({ id: 'permissionHandler.rememberText' }) : ''
         }}
       />
     )

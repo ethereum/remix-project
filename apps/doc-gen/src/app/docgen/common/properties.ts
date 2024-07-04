@@ -36,47 +36,47 @@ export function fullName ({ item, contract }: DocItemContext): string {
 
 export function signature ({ item }: DocItemContext): string | undefined {
   switch (item.nodeType) {
-    case 'ContractDefinition':
-      return undefined;
+  case 'ContractDefinition':
+    return undefined;
 
-    case 'FunctionDefinition': {
-      const { kind, name } = item;
-      const params = item.parameters.parameters;
-      const returns = item.returnParameters.parameters;
-      const head = (kind === 'function' || kind === 'freeFunction') ? [kind, name].join(' ') : kind;
-      const res = [
-        `${head}(${params.map(formatVariable).join(', ')})`,
-        item.visibility,
-      ];
-      if (item.stateMutability !== 'nonpayable') {
-        res.push(item.stateMutability);
-      }
-      if (item.virtual) {
-        res.push('virtual');
-      }
-      if (returns.length > 0) {
-        res.push(`returns (${returns.map(formatVariable).join(', ')})`);
-      }
-      return res.join(' ');
+  case 'FunctionDefinition': {
+    const { kind, name } = item;
+    const params = item.parameters.parameters;
+    const returns = item.returnParameters.parameters;
+    const head = (kind === 'function' || kind === 'freeFunction') ? [kind, name].join(' ') : kind;
+    const res = [
+      `${head}(${params.map(formatVariable).join(', ')})`,
+      item.visibility,
+    ];
+    if (item.stateMutability !== 'nonpayable') {
+      res.push(item.stateMutability);
     }
-
-    case 'EventDefinition': {
-      const params = item.parameters.parameters;
-      return `event ${item.name}(${params.map(formatVariable).join(', ')})`;
+    if (item.virtual) {
+      res.push('virtual');
     }
-
-    case 'ErrorDefinition': {
-      const params = item.parameters.parameters;
-      return `error ${item.name}(${params.map(formatVariable).join(', ')})`;
+    if (returns.length > 0) {
+      res.push(`returns (${returns.map(formatVariable).join(', ')})`);
     }
+    return res.join(' ');
+  }
 
-    case 'ModifierDefinition': {
-      const params = item.parameters.parameters;
-      return `modifier ${item.name}(${params.map(formatVariable).join(', ')})`;
-    }
+  case 'EventDefinition': {
+    const params = item.parameters.parameters;
+    return `event ${item.name}(${params.map(formatVariable).join(', ')})`;
+  }
 
-    case 'VariableDeclaration':
-      return formatVariable(item);
+  case 'ErrorDefinition': {
+    const params = item.parameters.parameters;
+    return `error ${item.name}(${params.map(formatVariable).join(', ')})`;
+  }
+
+  case 'ModifierDefinition': {
+    const params = item.parameters.parameters;
+    return `modifier ${item.name}(${params.map(formatVariable).join(', ')})`;
+  }
+
+  case 'VariableDeclaration':
+    return formatVariable(item);
   }
 }
 

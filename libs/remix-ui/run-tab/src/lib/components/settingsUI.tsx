@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
-import {SettingsProps} from '../types'
-import {EnvironmentUI} from './environment'
-import {NetworkUI} from './network'
-import {AccountUI} from './account'
-import {GasLimitUI} from './gasLimit'
-import {ValueUI} from './value'
+import { SettingsProps } from '../types'
+import { EnvironmentUI } from './environment'
+import { NetworkUI } from './network'
+import { AccountUI } from './account'
+import { GasLimitUI } from './gasLimit'
+import { ValueUI } from './value'
 
 export function SettingsUI(props: SettingsProps) {
   //   this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))

@@ -102,6 +102,7 @@
   "udapp.llIError6": "Le funzioni 'receive' e 'fallback' non sono definite",
   "udapp.llIError7": "Definisci una funzione 'Fallback' per inviare Calldata e una 'Receive' o 'Fallback' payable per inviare ETH",
   "udapp.copy": "Copia",
+  "udapp.copyAddress": "Copy Address",
   "udapp._comment_mainnet.tsx": "libs/remix-ui/run-tab/src/lib/components/mainnet.tsx",
   "udapp.mainnetText1": "Stai per creare una transazione su {name} Network. Conferma i dettagli per inviare le informazioni al tuo provider.",
   "udapp.mainnetText2": "Il provider per molti utenti è MetaMask. Il provider ti chiederà di firmare la transazione prima che venga inviata alla rete {name}.",

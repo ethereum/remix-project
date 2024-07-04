@@ -3,7 +3,7 @@ import { mapKeys } from './utils/map-keys';
 import { DocItemContext } from './site';
 
 import * as defaultProperties from './common/properties';
-import * as themeHelpers from  './themes/markdown/helpers'
+import * as themeHelpers from './themes/markdown/helpers'
 
 const common = require('./themes/markdown/common.hbs');
 const contract = require('./themes/markdown/contract.hbs');
@@ -45,7 +45,6 @@ export async function loadTemplates(defaultTheme: string, root: string, userTemp
     properties: { ...defaultProperties },
   };
 
-
   // Add partials and helpers from all themes, prefixed with the theme name.
   for (const [themeName, theme] of Object.entries(themes)) {
     const addPrefix = (k: string) => `${themeName}/${k}`;
@@ -86,7 +85,7 @@ async function readPartials() {
 }
 
 async function readHelpers(name: string) {
-  
+
   const helpers: Record<string, (...args: any[]) => any> = {};
 
   for (const name in themeHelpers) {
@@ -94,7 +93,7 @@ async function readHelpers(name: string) {
       helpers[name] = themeHelpers[name];
     }
   }
-  
+
   return helpers;
 }
 

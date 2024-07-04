@@ -126,7 +126,7 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
 
     if (config.get('currentFile') === path) {
       // if it's the current file and the content is different:
-      if(showAlert){
+      if (showAlert){
         dispatch(displayNotification(
           path + ' changed',
           'This file has been changed outside of Remix IDE.',
@@ -134,7 +134,7 @@ export const listenOnProviderEvents = (provider) => (reducerDispatch: React.Disp
           () => {
             editor.setText(path, content)
           }
-        ))}else{
+        ))} else {
         editor.setText(path, content)
       }
     } else {
@@ -181,7 +181,7 @@ const fileAdded = async (filePath: string) => {
 
     if (!isExpanded) return
   }
-  
+
   await dispatch(fileAddedSuccess(filePath))
   if (filePath.includes('_test.sol')) {
     plugin.emit('newTestFileCreated', filePath)
@@ -195,7 +195,7 @@ const folderAdded = async (folderPath: string) => {
     const isExpanded = await plugin.call('filePanel', 'isExpanded', path)
     if (!isExpanded) return
   }
-  
+
   const promise: Promise<FileTree> = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) console.error(error)
@@ -219,7 +219,7 @@ const fileRemoved = async (removePath: string) => {
 const fileRenamed = async (oldPath: string) => {
   const provider = plugin.fileManager.currentFileProvider()
   const path = extractParentFromKey(oldPath) || ROOT_PATH
-  
+
   const promise: Promise<FileTree> = new Promise((resolve) => {
     provider.resolveDirectory(path, (error, fileTree: FileTree) => {
       if (error) console.error(error)

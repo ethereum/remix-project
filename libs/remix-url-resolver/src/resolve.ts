@@ -64,7 +64,7 @@ export class RemixURLResolver {
     // eslint-disable-next-line no-useless-catch
     try {
       const req = `https://raw.githubusercontent.com/${root}/${reference}/${filePath}`
-      const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
+      const response: AxiosResponse = await axios.get(req, { transformResponse: []})
       return { content: response.data, cleanUrl: root + '/' + filePath }
     } catch (e) {
       throw e
@@ -79,7 +79,7 @@ export class RemixURLResolver {
   async handleHttp(url: string, cleanUrl: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
-      const response: AxiosResponse = await axios.get(url, { transformResponse: [] })
+      const response: AxiosResponse = await axios.get(url, { transformResponse: []})
       return { content: response.data, cleanUrl }
     } catch (e) {
       throw e
@@ -94,7 +94,7 @@ export class RemixURLResolver {
   async handleHttps(url: string, cleanUrl: string): Promise<HandlerResponse> {
     // eslint-disable-next-line no-useless-catch
     try {
-      const response: AxiosResponse = await axios.get(url, { transformResponse: [] })
+      const response: AxiosResponse = await axios.get(url, { transformResponse: []})
       return { content: response.data, cleanUrl }
     } catch (e) {
       throw e
@@ -106,7 +106,7 @@ export class RemixURLResolver {
     try {
       const bzz = new Bzz({ url: this.protocol + '//swarm-gateways.net' })
       const url = bzz.getDownloadURL(cleanUrl, { mode: 'raw' })
-      const response: AxiosResponse = await axios.get(url, { transformResponse: [] })
+      const response: AxiosResponse = await axios.get(url, { transformResponse: []})
       return { content: response.data, cleanUrl }
     } catch (e) {
       throw e
@@ -125,7 +125,7 @@ export class RemixURLResolver {
       const req = 'https://jqgt.remixproject.org/' + url
       // If you don't find greeter.sol on ipfs gateway use local
       // const req = 'http://localhost:8080/' + url
-      const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
+      const response: AxiosResponse = await axios.get(req, { transformResponse: []})
       return { content: response.data, cleanUrl: url.replace('ipfs/', '') }
     } catch (e) {
       throw e
@@ -190,7 +190,7 @@ export class RemixURLResolver {
     for (let i = 0; i < npm_urls.length; i++) {
       try {
         const req = npm_urls[i] + url
-        const response: AxiosResponse = await axios.get(req, { transformResponse: [] })
+        const response: AxiosResponse = await axios.get(req, { transformResponse: []})
         content = response.data
         break
       } catch (e) {
@@ -201,7 +201,6 @@ export class RemixURLResolver {
     if (!content) throw new Error('Unable to load ' + url)
     return { content, cleanUrl: url }
   }
-  
 
   getHandlers (): Handler[] {
     return [

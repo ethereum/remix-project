@@ -7,8 +7,11 @@ import {LocaleModule} from './app/tabs/locale-module'
 import {NetworkModule} from './app/tabs/network-module'
 import {Web3ProviderModule} from './app/tabs/web3-provider'
 import {CompileAndRun} from './app/tabs/compile-and-run'
+import {PluginStateLogger} from './app/tabs/state-logger'
 import {SidePanel} from './app/components/side-panel'
+import {StatusBar} from './app/components/status-bar'
 import {HiddenPanel} from './app/components/hidden-panel'
+import {PinnedPanel} from './app/components/pinned-panel'
 import {VerticalIcons} from './app/components/vertical-icons'
 import {LandingPage} from './app/ui/landing-page/landing-page'
 import {MainPanel} from './app/components/main-panel'
@@ -55,6 +58,8 @@ import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins
 import { appUpdaterPlugin } from './app/plugins/electron/appUpdaterPlugin'
 import { remixAIDesktopPlugin } from './app/plugins/electron/remixAIDesktopPlugin' 
 import { RemixAIPlugin } from './app/plugins/remixAIPlugin'
+import { SlitherHandleDesktop } from './app/plugins/electron/slitherPlugin'
+import { SlitherHandle } from './app/files/slither-handle'
 import {SolCoder} from './app/plugins/solcoderAI'
 
 const isElectron = require('is-electron')
@@ -164,7 +169,14 @@ class AppComponent {
 
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
-    this.showMatamo = matomoDomains[window.location.hostname] && !this.matomoConfAlreadySet
+
+    let electronTracking = false
+
+    if (window.electronAPI) {
+      electronTracking = await window.electronAPI.canTrackMatomo()
+    }
+
+    this.showMatamo = (matomoDomains[window.location.hostname] || electronTracking) && !this.matomoConfAlreadySet
 
     this.walkthroughService = new WalkthroughService(appManager)
 
@@ -300,8 +312,9 @@ class AppComponent {
     this.layout = new Layout()
 
     const permissionHandler = new PermissionHandlerPlugin()
+    // ----------------- run script after each compilation results -----------
+    const pluginStateLogger = new PluginStateLogger()
 
-    
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -339,17 +352,18 @@ class AppComponent {
       hardhatProvider,
       ganacheProvider,
       foundryProvider,
-      externalHttpProvider,      
+      externalHttpProvider,
       this.walkthroughService,
       search,
       solidityumlgen,
       compilationDetails,
       vyperCompilationDetails,
-      // remixGuide,
+      remixGuide,
       contractFlattener,
       solidityScript,
       templates,
       solcoder,
+      pluginStateLogger
     ])
 
     //---- fs plugin
@@ -378,7 +392,10 @@ class AppComponent {
     const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
     this.engine.register([compilerloader])
 
-    
+    // slither analyzer plugin (remixd / desktop)
+    const slitherPlugin = isElectron() ? new SlitherHandleDesktop() : new SlitherHandle()
+    this.engine.register([slitherPlugin])
+
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
     Registry.getInstance().put({api: this.mainview, name: 'mainview'})
@@ -389,13 +406,15 @@ class AppComponent {
     this.menuicons = new VerticalIcons()
     this.sidePanel = new SidePanel()
     this.hiddenPanel = new HiddenPanel()
+    this.pinnedPanel = new PinnedPanel()
 
     const pluginManagerComponent = new PluginManagerComponent(appManager, this.engine)
-    const filePanel = new FilePanel(appManager)
+    const filePanel = new FilePanel(appManager, contentImport)
+    this.statusBar = new StatusBar(filePanel, this.menuicons)
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor, appManager)
 
-    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, filePanel, pluginManagerComponent, this.settings])
+    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, this.statusBar, filePanel, pluginManagerComponent, this.settings, this.pinnedPanel])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
     const openZeppelinProxy = new OpenZeppelinProxy(blockchain)
@@ -434,7 +453,6 @@ class AppComponent {
       filePanel.hardhatHandle,
       filePanel.foundryHandle,
       filePanel.truffleHandle,
-      filePanel.slitherHandle,
       linkLibraries,
       deployLibraries,
       openZeppelinProxy,
@@ -473,10 +491,13 @@ class AppComponent {
       'compilerArtefacts',
       'network',
       'web3Provider',
-      'offsetToLineColumnConverter'
+      'offsetToLineColumnConverter',
+      'pluginStateLogger'
     ])
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
+    await this.appManager.activatePlugin(['statusBar'])
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
+    await this.appManager.activatePlugin(['pinnedPanel'])
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
     await this.appManager.activatePlugin([
@@ -498,7 +519,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()){
-      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'remixAID'])
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'remixAID', 'slither'])
     }
 
     this.appManager.on(
@@ -514,10 +535,7 @@ class AppComponent {
     )
     await this.appManager.activatePlugin(['solidity-script'])
     await this.appManager.activatePlugin(['solcoder'])
-
-    
-
-    await this.appManager.activatePlugin(['filePanel'])    
+    await this.appManager.activatePlugin(['filePanel'])
 
     // Set workspace after initial activation
     this.appManager.on('editor', 'editorMounted', () => {
@@ -571,12 +589,26 @@ class AppComponent {
                 }
               }
             }
+          }).then(async () => {
+            const lastPinned = localStorage.getItem('pinnedPlugin')
+
+            if (lastPinned) {
+              this.appManager.call('sidePanel', 'pinView', JSON.parse(lastPinned))
+            }
           })
           .catch(console.error)
       }
       const loadedElement = document.createElement('span')
       loadedElement.setAttribute('data-id', 'apploaded')
       document.body.appendChild(loadedElement)
+    })
+
+    this.appManager.on('pinnedPanel', 'pinnedPlugin', (pluginProfile) => {
+      localStorage.setItem('pinnedPlugin', JSON.stringify(pluginProfile))
+    })
+
+    this.appManager.on('pinnedPanel', 'unPinnedPlugin', () => {
+      localStorage.setItem('pinnedPlugin', '')
     })
 
     // activate solidity plugin

@@ -1,23 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect, useState, useReducer, useRef, Fragment} from 'react' // eslint-disable-line
+import React, {useEffect, useState, useReducer, useRef, Fragment, useContext} from 'react' // eslint-disable-line
 import Button from './Button/StaticAnalyserButton' // eslint-disable-line
-import {util} from '@remix-project/remix-lib'
+import { util } from '@remix-project/remix-lib'
 import _ from 'lodash'
 import * as semver from 'semver'
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
 import {RemixUiCheckbox} from '@remix-ui/checkbox' // eslint-disable-line
 import ErrorRenderer from './ErrorRenderer' // eslint-disable-line
-import {compilation} from './actions/staticAnalysisActions'
-import {initialState, analysisReducer} from './reducers/staticAnalysisReducer'
-import {CodeAnalysis} from '@remix-project/remix-analyzer'
+import { compilation } from './actions/staticAnalysisActions'
+import { initialState, analysisReducer } from './reducers/staticAnalysisReducer'
+import { CodeAnalysis } from '@remix-project/remix-analyzer'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
-import {AnalysisTab, SolHintReport} from '../staticanalyser'
-import {run} from './actions/staticAnalysisActions'
-import {BasicTitle, calculateWarningStateEntries} from './components/BasicTitle'
-import {Nav, TabContainer} from 'react-bootstrap'
-import {CustomTooltip} from '@remix-ui/helper'
+import { AnalysisTab, SolHintReport } from '../staticanalyser'
+import { run } from './actions/staticAnalysisActions'
+import { BasicTitle, calculateWarningStateEntries } from './components/BasicTitle'
+import { Nav, TabContainer } from 'react-bootstrap'
+import { CustomTooltip } from '@remix-ui/helper'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 
 declare global {
   interface Window {
@@ -37,6 +38,7 @@ type tabSelectionType = 'remix' | 'solhint' | 'slither' | 'none'
 
 export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
   const [runner] = useState(new CodeAnalysis())
+  const platform = useContext(platformContext)
 
   const preProcessModules = (arr: any) => {
     return arr.map((Item, i) => {
@@ -130,7 +132,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
 
   useEffect(() => {
     const checkRemixdActive = async () => {
-      const remixdActive = await props.analysisModule.call('manager', 'isActive', 'remixd')
+      const remixdActive = await props.analysisModule.call('manager', 'isActive', 'remixd') || platform === appPlatformTypes.desktop
       if (remixdActive) {
         setSlitherEnabled(true)
         setShowSlither(true)
@@ -147,12 +149,12 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
       // Reset badge
 
       // Reset state
-      dispatch({type: '', payload: initialState})
+      dispatch({ type: '', payload: initialState })
       setHints([])
       setSlitherWarnings([])
       setSsaWarnings([])
       // Show 'Enable Slither Analysis' checkbox
-      if (currentWorkspace && currentWorkspace.isLocalhost === true) {
+      if ((currentWorkspace && currentWorkspace.isLocalhost === true) || platform === appPlatformTypes.desktop) {
         setShowSlither(true)
         setSlitherEnabled(true)
       } else {
@@ -175,7 +177,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
         // Reset badge
         props.event.trigger('staticAnalysisWarning', [-1])
         // Reset state
-        dispatch({type: '', payload: initialState})
+        dispatch({ type: '', payload: initialState })
         setShowSlither(false)
       }
     })
@@ -319,7 +321,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
               label={
                 <label
                   htmlFor={`heading${categoryId}`}
-                  style={{cursor: 'pointer'}}
+                  style={{ cursor: 'pointer' }}
                   className="pl-3 card-header h6 d-flex justify-content-between font-weight-bold px-1 py-2 w-100"
                   data-bs-toggle="collapse"
                   data-bs-expanded="false"
@@ -523,7 +525,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                             },
                             state.file,
                             '',
-                            {focus: true}
+                            { focus: true }
                           )
                         }}
                       >
@@ -563,7 +565,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               },
                               state.file,
                               '',
-                              {focus: true}
+                              { focus: true }
                             )
                           }}
                         >
@@ -602,7 +604,7 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
                               },
                               state.file,
                               '',
-                              {focus: true}
+                              { focus: true }
                             )
                           }}
                         >
@@ -721,11 +723,11 @@ export const RemixUiStaticAnalyser = (props: RemixUiStaticAnalyserProps) => {
           Slither
           {slitherWarnings.length > 0 ? (
             hideWarnings ? (
-              <span className="badge badge-warning badge-pill mx-1 ml-1">{slitherErrors.length}</span>
+              <span data-id='slitherErrors' className="badge badge-warning badge-pill mx-1 ml-1">{slitherErrors.length}</span>
             ) : showLibsWarning && !hideWarnings ? (
-              <span className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>{slitherWarnings.length}</span>
+              <span data-id='slitherWarnings' className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>{slitherWarnings.length}</span>
             ) : (
-              <span className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>{noLibSlitherWarnings.length}</span>
+              <span data-id='nolibslitherwarnings' className={`badge ${slitherErrors.length > 0 ? `badge-danger` : 'badge-warning'} badge-pill mx-1 ml-1 text-center`}>{noLibSlitherWarnings.length}</span>
             )
           ) : null}
         </span>

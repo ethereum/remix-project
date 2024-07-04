@@ -24,7 +24,7 @@ class PdfUmlDownloadStrategy implements IUmlDownloadStrategy {
       canvas.style.height = `${canvasHeight}px`
       canvas.style.margin = '0'
       canvas.style.padding = '0'
-      const orientation =  canvasWidth > canvasHeight ? 'landscape' : 'portrait'
+      const orientation = canvasWidth > canvasHeight ? 'landscape' : 'portrait'
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
       ctx.drawImage(img, 0, 0, Math.round(img.naturalWidth/scale), Math.round(img.naturalHeight/scale))
       if (doc === null || doc === undefined) {

@@ -97,7 +97,7 @@ export class InternalCallTree {
           })
         } catch (e) {
           console.log(e)
-        }        
+        }
       }
     })
   }
@@ -214,7 +214,7 @@ export class InternalCallTree {
     }
     throw new Error('Could not find gas cost per line')
   }
-  
+
   getLocalVariableById (id: number) {
     return this.variables[id]
   }
@@ -226,7 +226,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
     const address = tree.traceManager.getCurrentCalledAddressAt(step)
     await registerFunctionParameters(tree, functionDefinition, step, scopeId, contractObj, validSourceLocation, address)
   }
-  
+
   function callDepthChange (step, trace) {
     if (step + 1 < trace.length) {
       return trace[step].depth !== trace[step + 1].depth
@@ -252,11 +252,11 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
     let sourceLocation
     let validSourceLocation
     let address
-    
+
     try {
       address = tree.traceManager.getCurrentCalledAddressAt(step)
       sourceLocation = await tree.extractSourceLocation(step, address)
-      
+
       if (!includedSource(sourceLocation, currentSourceLocation)) {
         tree.reducedTrace.push(step)
         currentSourceLocation = sourceLocation
@@ -270,7 +270,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
         validSourceLocation = previousValidSourceLocation
       } else
         validSourceLocation = currentSourceLocation
-    
+
     } catch (e) {
       return { outStep: step, error: 'InternalCallTree - Error resolving source location. ' + step + ' ' + e }
     }
@@ -285,7 +285,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
     } else {
       stepDetail.gasCost = parseInt(stepDetail.gasCost as unknown as string)
     }
-        
+
     // gas per line
     let lineColumnPos
     if (tree.offsetToLineColumnConverter) {
@@ -299,7 +299,7 @@ async function buildTree (tree, step, scopeId, isCreation, functionDefinition?, 
             sources[genSource.name] = { content: genSource.contents }
           }
         }
-        
+
         lineColumnPos = await tree.offsetToLineColumnConverter.offsetToLineColumn(validSourceLocation, validSourceLocation.file, sources, astSources)
         if (!tree.gasCostPerLine[validSourceLocation.file]) tree.gasCostPerLine[validSourceLocation.file] = {}
         if (!tree.gasCostPerLine[validSourceLocation.file][lineColumnPos.start.line]) {
@@ -391,7 +391,7 @@ function getGeneratedSources (tree, scopeId, contractObj) {
 
 async function registerFunctionParameters (tree, functionDefinition, step, scopeId, contractObj, sourceLocation, address) {
   tree.functionCallStack.push(step)
-  const functionDefinitionAndInputs = { functionDefinition, inputs: [] }
+  const functionDefinitionAndInputs = { functionDefinition, inputs: []}
   // means: the previous location was a function definition && JUMPDEST
   // => we are at the beginning of the function and input/output are setup
   try {

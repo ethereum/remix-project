@@ -8,7 +8,7 @@ import { Chevron } from './components/Chevron'
 import { IconRecord } from './types'
 import { onLineContext } from '@remix-ui/app'
 import { CustomTooltip } from '@remix-ui/helper'
-import {Registry} from '@remix-project/remix-lib'
+import { Registry } from '@remix-project/remix-lib'
 
 export interface RemixUiVerticalIconsPanelProps {
   verticalIconsPlugin: Plugin
@@ -69,7 +69,7 @@ const RemixUiVerticalIconsPanel = ({ verticalIconsPlugin, icons }: RemixUiVertic
 
   return (
     <div id="iconsP" className="h-100">
-      <div className="remixui_icons d-flex flex-column vh-100" ref={iconPanelRef}>
+      <div className="remixui_icons d-flex flex-column remixui_icons_height" ref={iconPanelRef}>
         <Home verticalIconPlugin={verticalIconsPlugin} />
         <div
           className={

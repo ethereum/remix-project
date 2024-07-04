@@ -577,7 +577,7 @@ module.exports = {
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Create2FactoryAssembly {`) !== -1,
           'current displayed content is not Create2FactoryAssembly')
-      })      
+      })
   },
 
   tearDown: sauce

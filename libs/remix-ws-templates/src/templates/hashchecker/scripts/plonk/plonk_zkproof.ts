@@ -28,7 +28,7 @@ const logger = {
     const value2 = '2'
     const value3 = '3'
     const value4 = '4'
-    
+
     const wrongValue = '5' // put this in the poseidon hash calculation to simulate a non matching hash.
 
     const signals = {
@@ -41,11 +41,11 @@ const logger = {
 
     console.log('calculate')
     await snarkjs.wtns.calculate(signals, wasm, wtns, logger);
-    
+
     const { proof, publicSignals } = await snarkjs.plonk.prove(zkey_final, wtns);
 
     const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/plonk/verification_key.json'))
-  
+
     const verified = await snarkjs.plonk.verify(vKey, publicSignals, proof);
 
     console.log('zk proof validity', verified);
@@ -53,7 +53,7 @@ const logger = {
       plonk: await remix.call('fileManager', 'readFile', 'templates/plonk_verifier.sol.ejs')
     }
     const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
-    
+
     await remix.call('fileManager', 'writeFile', 'zk/build/plonk/zk_verifier.sol', solidityContract)
     await remix.call('fileManager', 'writeFile', 'zk/build/plonk/input.json', JSON.stringify({
       _proof: [
@@ -84,9 +84,9 @@ const logger = {
       ],
       _pubSignals: publicSignals
     }, null, 2))
-    
+
     console.log('proof done.')
-    
+
   } catch (e) {
     console.error(e.message)
   }

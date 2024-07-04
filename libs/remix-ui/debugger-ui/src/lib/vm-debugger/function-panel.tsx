@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react' // eslint-disable-line
 import DropdownPanel from './dropdown-panel' // eslint-disable-line
 import {default as deepequal} from 'deep-equal' // eslint-disable-line
 
-export const FunctionPanel = ({data, className, stepManager}) => {
+export const FunctionPanel = ({ data, className, stepManager }) => {
   const [functionData, setFunctionData] = useState(null)
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const FunctionPanel = ({data, className, stepManager}) => {
   }
 
   return (
-    
+
     <div id="FunctionPanel" className={className} data-id="functionPanel">
       <DropdownPanel dropdownName="Function Stack" calldata={functionData || {}} formatSelfFunc={formatSelfFunc} formatClassNamesFunc={formatClassNamesFunc} handleExpandFunc={handleExpandFunc} />
     </div>

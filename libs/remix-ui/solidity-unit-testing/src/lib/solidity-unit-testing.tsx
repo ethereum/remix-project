@@ -11,8 +11,6 @@ import './css/style.css'
 import { CustomTooltip } from '@remix-ui/helper'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
 
-
-
 const _paq = ((window as any)._paq = (window as any)._paq || []) // eslint-disable-line @typescript-eslint/no-explicit-any
 
 interface TestObject {
@@ -865,7 +863,7 @@ export const SolidityUnitTesting = (props: Record<string, any>) => {
             checked={checkSelectAll}
             onChange={() => {}} // eslint-disable-line
           />
-          <label 
+          <label
             data-id="testTabCheckAllTests"
             htmlFor="checkAllTests"
             className="form-check-label mb-0 ml-4 custom-control-label text-nowrap"

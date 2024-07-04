@@ -36,7 +36,7 @@ type tabContentType = {
   evmVersion?: string
 }
 
-export default function VyperCompile({result, theme, themeStyle}: VyperCompileProps) {
+export default function VyperCompile({ result, theme, themeStyle }: VyperCompileProps) {
   const [active, setActive] = useState<keyof VyperCompilationResult>('abi')
   const tabContent: tabContentType[] = [
     {
@@ -83,7 +83,7 @@ export default function VyperCompile({result, theme, themeStyle}: VyperCompilePr
               {content.eventKey === 'abi' ? (
                 <div className="my-3">
                   {JSON.stringify(content?.tabPayload)?.length > 1 ? <JSONTree
-                    src={{...content.tabPayload as ABIDescription[], evmVersion: content.evmVersion, version: content.version  } }
+                    src={{ ...content.tabPayload as ABIDescription[], evmVersion: content.evmVersion, version: content.version } }
                     theme={theme}
                     style={themeStyle}
                   /> : null}

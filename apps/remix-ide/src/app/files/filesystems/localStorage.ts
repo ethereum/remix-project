@@ -48,7 +48,7 @@ export class localStorageFS extends fileSystem {
         localStorage.setItem(test, test);
         localStorage.removeItem(test);
         resolve(true)
-      } catch(e) {
+      } catch (e) {
         reject(e)
       }
     })

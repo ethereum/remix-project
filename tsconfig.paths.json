@@ -163,6 +163,9 @@
             "@remix-ui/solidity-uml-gen": [
               "libs/remix-ui/solidity-uml-gen/src/index.ts"
             ],
+            "@remix-ui/statusbar": [
+              "libs/remix-ui/statusbar/src/index.ts"
+            ],
             "@remix-project/ghaction-helper": [
               "libs/ghaction-helper/src/index.ts"
             ],

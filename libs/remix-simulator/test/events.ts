@@ -47,7 +47,7 @@ describe('Events', () => {
         toBlock: 'latest',
         topics: ['0x342827c97908e5e2f71151c08502a66d44b6f758e3ac2f1de95f02eb95f0a735', '0xdcd9c7fa0342f01013bd0bf2bec103a81936162dcebd1f0c38b1d4164c17e0fc']
       })
-      
+
       // this should include the event triggered by the "set" transaction call.
       assert.equal(testLogs.length, 1, '1) testLogs length should be equal to 1')
       assert.equal(ownerLogs.length, 1, '2) ownerLogs length should be equal to 1')
@@ -80,8 +80,8 @@ pragma solidity >=0.7.0 <0.9.0;
 
 import "hardhat/console.sol";
 
-contract test {   
-    event testEvent(uint indexed value); 
+contract test {
+    event testEvent(uint indexed value);
     function set(Owner p) public  {
         p.changeOwner(address(this));
         emit testEvent(123);
@@ -119,5 +119,5 @@ contract Owner {
     function getOwner() external view returns (address) {
         return owner;
     }
-} 
+}
 */

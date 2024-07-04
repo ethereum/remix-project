@@ -25,6 +25,9 @@
 .udapp_settingsCompiledBy {
   margin-bottom: 4px;
 }
+.udapp_syncFramework {
+  margin-bottom: 4px;
+}
 .udapp_environment {
   display: flex;
   align-items: center;
@@ -525,3 +528,8 @@
   width: 100%;
 }
 
+.remixui_runtabBalancelabel {
+  font-size: 0.688rem;
+  line-height: 0.75rem;
+  color: var(--runtab);
+}

@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import { CustomTooltip } from '@remix-ui/helper'
-import React, {useEffect, useRef} from 'react'
+import React, { useEffect, useRef } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { InstanceContainerProps } from '../types'
 import { UniversalDappUI } from './universalDappUI'
@@ -17,8 +17,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
       <div className="d-flex justify-content-between align-items-center pl-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
           <label className="udapp_deployedContracts" data-id="pinnedContracts">
-            <FormattedMessage id="udapp.pinnedContracts" /> 
-            <span style={{fontSize: '0.75rem'}} data-id="pinnedContractsSublabel"> (network: {props.plugin.REACT_API.chainId}) </span>
+            <FormattedMessage id="udapp.pinnedContracts" />
+            <span style={{ fontSize: '0.75rem' }} data-id="pinnedContractsSublabel"> (network: {props.plugin.REACT_API.chainId}) </span>
           </label>
         </CustomTooltip>
       </div>
@@ -44,6 +44,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 plugin={props.plugin}
                 exEnvironment={props.exEnvironment}
                 editInstance={props.editInstance}
+                solcVersion={props.solcVersion}
+                getVersion={props.getVersion}
               />
             )
           })}
@@ -62,7 +64,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         </CustomTooltip>
         {instanceList.length > 0 ? (
           <CustomTooltip
-            placement="right"
+            placement={'auto-end'}
             tooltipClasses="text-nowrap"
             tooltipId="deployAndRunClearInstancesTooltip"
             tooltipText={<FormattedMessage id="udapp.deployAndRunClearInstances" />}
@@ -92,6 +94,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 plugin={props.plugin}
                 exEnvironment={props.exEnvironment}
                 editInstance={props.editInstance}
+                solcVersion={props.solcVersion}
+                getVersion={props.getVersion}
               />
             )
           })}

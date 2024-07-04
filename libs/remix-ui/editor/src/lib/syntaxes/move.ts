@@ -13,7 +13,7 @@ export const moveLanguageConfig = {
     { open: "[", close: "]" },
     { open: "{", close: "}" },
     { open: "(", close: ")" },
-    { open: '"', close: '"', notIn: ["string"] },
+    { open: '"', close: '"', notIn: ["string"]},
   ],
   surroundingPairs: [
     { open: "{", close: "}" },

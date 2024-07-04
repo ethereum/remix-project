@@ -38,6 +38,12 @@
   top: 0.1rem;
 }
 
+.remixui_grid_cell_tags_no_pin {
+  position: relative;
+  right: 0rem;
+  top: 0.1rem;
+}
+
 .remixui_grid_cell_tag {
   font-size: x-small;
   font-weight: bolder;

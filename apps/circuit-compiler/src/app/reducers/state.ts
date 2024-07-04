@@ -1,4 +1,4 @@
-import {Actions, AppState} from '../types'
+import { Actions, AppState } from '../types'
 import { compiler_list } from 'circom_wasm'
 
 export const appInitialState: AppState = {

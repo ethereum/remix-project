@@ -39,4 +39,4 @@ contract intLocal {
       uint8 ui81 = asd;
     }
   }
-`}
+` }

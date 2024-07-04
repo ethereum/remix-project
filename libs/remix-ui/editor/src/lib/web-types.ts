@@ -28,7 +28,7 @@ export const loadTypes = async (monaco) => {
   const ethersBase64 = await import('raw-loader!@ethersproject/base64/lib/index.d.ts')
   const ethersBase64Default = ethersBase64.default.replace(/@ethersproject\//g, '@ethersproject_')
   monaco.languages.typescript.typescriptDefaults.addExtraLib(ethersBase64Default, `file:///node_modules/@types/@ethersproject_base64/index.d.ts`)
-    
+
   // @ts-ignore
   const ethersBasex = await import('raw-loader!@ethersproject/basex/lib/index.d.ts')
   const ethersBasexDefault = ethersBasex.default.replace(/@ethersproject\//g, '@ethersproject_')
