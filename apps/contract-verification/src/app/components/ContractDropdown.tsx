@@ -1,19 +1,22 @@
 import React, { useEffect, useState, useContext } from 'react'
 import './ContractDropdown.css'
 import { AppContext } from '../AppContext'
-interface ContractDropdownItem {
-  value: string
-  name: string
+
+export interface ContractDropdownSelection {
+  triggerFilePath: string
+  filePath: string
+  contractName: string
 }
 
 interface ContractDropdownProps {
   label: string
   id: string
+  setSelectedContract: (selection: ContractDropdownSelection) => void
 }
 
 // Chooses one contract from the compilation output.
-export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id }) => {
-  const { setSelectedContractFileAndName, compilationOutput } = useContext(AppContext)
+export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id, setSelectedContract }) => {
+  const { compilationOutput } = useContext(AppContext)
 
   useEffect(() => {
     console.log('CompiilationOutput chainged', compilationOutput)
@@ -26,14 +29,14 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id })
       const contractsInFile = contracts[firstFilePath]
       if (contractsInFile && Object.keys(contractsInFile).length) {
         const firstContractName = Object.keys(contractsInFile)[0]
-        setSelectedContractFileAndName(triggerFilePath + ':' + firstFilePath + ':' + firstContractName)
+        setSelectedContract({ triggerFilePath, filePath: firstFilePath, contractName: firstContractName })
       }
     }
   }, [compilationOutput])
 
   const handleSelectContract = (event: React.ChangeEvent<HTMLSelectElement>) => {
     console.log('selecting ', event.target.value)
-    setSelectedContractFileAndName(event.target.value)
+    setSelectedContract(JSON.parse(event.target.value))
   }
 
   const hasContracts = compilationOutput && Object.keys(compilationOutput).length > 0
@@ -51,7 +54,7 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id })
                     [File]: {fileName2}
                   </option>
                   {Object.keys(compilationOutput[compilationTriggerFileName].data.contracts[fileName2]).map((contractName) => (
-                    <option key={fileName2 + ':' + contractName} value={compilationTriggerFileName + ':' + fileName2 + ':' + contractName}>
+                    <option key={fileName2 + ':' + contractName} value={JSON.stringify({ triggerFilePath: compilationTriggerFileName, filePath: fileName2, contractName: contractName })}>
                       {'\u00A0\u00A0\u00A0' + contractName} {/* Indentation for contract names */}
                     </option>
                   ))}

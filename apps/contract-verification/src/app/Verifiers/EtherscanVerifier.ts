@@ -1,6 +1,6 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
-import { EtherscanRequest, EtherscanResponse } from '../types/VerificationTypes'
+import { EtherscanRequest, EtherscanResponse, SubmittedContract } from '../types/VerificationTypes'
 
 export class EtherscanVerifier extends AbstractVerifier {
   apiKey?: string
@@ -10,18 +10,17 @@ export class EtherscanVerifier extends AbstractVerifier {
     this.apiKey = apiKey
   }
 
-  async verify(chainId: string, address: string, compilerAbstract: CompilerAbstract, selectedContractFileAndName: string, abiEncodedConstructorArgs?: string) {
+  async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract, abiEncodedConstructorArgs?: string) {
     const CODE_FORMAT = 'solidity-standard-json-input'
 
-    const [_triggerFilePath, selectedFilePath, selectedContractName] = selectedContractFileAndName.split(':')
     // TODO: Handle version Vyper contracts. This relies on Solidity metadata.
-    const metadata = JSON.parse(compilerAbstract.data.contracts[selectedFilePath][selectedContractName].metadata)
+    const metadata = JSON.parse(compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata)
     const body: EtherscanRequest = {
-      chainId,
+      chainId: submittedContract.chainId,
       codeformat: CODE_FORMAT,
       sourceCode: JSON.stringify(compilerAbstract.input),
-      contractaddress: address,
-      contractname: selectedContractFileAndName,
+      contractaddress: submittedContract.address,
+      contractname: submittedContract.filePath + ':' + submittedContract.contractName,
       compilerversion: metadata.compiler.version,
     }
 

@@ -12,6 +12,7 @@ import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { SourcifyVerifier } from './Verifiers/SourcifyVerifier'
 import { EtherscanVerifier } from './Verifiers/EtherscanVerifier'
 import { AbstractVerifier } from './Verifiers/AbstractVerifier'
+import { ContractDropdownSelection } from './components/ContractDropdown'
 
 const plugin = new ContractVerificationPluginClient()
 
@@ -21,15 +22,8 @@ const App = () => {
   const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [targetFileName, setTargetFileName] = useState('')
   const [compilationOutput, setCompilationOutput] = useState<{ [key: string]: CompilerAbstract } | undefined>()
-  // Contract file and name in format contracts/Storage.sol:contracts/Owner.sol:Owner
-  // TODO: What happens if contract or filepath contains ":"" ?
-  const [selectedContractFileAndName, setSelectedContractFileAndName] = useState<string | undefined>()
   const [verifiers, setVerifiers] = useState<AbstractVerifier[]>([])
   const [submittedContracts, setSubmittedContracts] = useState<SubmittedContracts>({})
-
-  useEffect(() => {
-    console.log('Selected Contract File And Name Changed', selectedContractFileAndName)
-  }, [selectedContractFileAndName])
 
   useEffect(() => {
     // const sourcifyVerifier = new SourcifyVerifier('http://sourcify.dev/server/', 'Sourcify')
@@ -67,7 +61,7 @@ const App = () => {
   }, [])
 
   return (
-    <AppContext.Provider value={{ themeType, setThemeType, chains, compilationOutput, selectedContractFileAndName, setSelectedContractFileAndName, targetFileName, verifiers, setVerifiers, submittedContracts, setSubmittedContracts }}>
+    <AppContext.Provider value={{ themeType, setThemeType, chains, compilationOutput, targetFileName, verifiers, setVerifiers, submittedContracts, setSubmittedContracts }}>
       <DisplayRoutes />
     </AppContext.Provider>
   )
