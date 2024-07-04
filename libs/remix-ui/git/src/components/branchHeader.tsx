@@ -59,6 +59,7 @@ export const BranchHeader = () => {
 
   const getName = () => {
     const url = context.currentBranch?.remote?.url
+    if (!url) return
     const regex = /https:\/\/github\.com\/[^/]+\/([^/]+)\.git/
     const match = url.match(regex)
     return match ? match[1] : 'Couldn\'t get repo name!'
@@ -80,7 +81,7 @@ export const BranchHeader = () => {
               <span className="">Repository Name:</span>
               <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap" style={{ width: '15rem' }}>
                 <span className={`${ changed ? 'text-danger pl-2' : "pl-2" }`}>
-                  {getName()}
+                  {getName() ?? ''}
                 </span>
               </span>
             </div>
