@@ -2,24 +2,26 @@ import React, { useEffect } from 'react'
 import { ethers } from 'ethers'
 
 import { AppContext } from '../AppContext'
+import { ContractDropdownSelection } from './ContractDropdown'
 
 const abiCoder = new ethers.utils.AbiCoder()
 
 interface ConstructorArgumentsProps {
   abiEncodedConstructorArgs: string
   setAbiEncodedConstructorArgs: React.Dispatch<React.SetStateAction<string>>
+  selectedContract: ContractDropdownSelection
 }
 
-export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiEncodedConstructorArgs, setAbiEncodedConstructorArgs }) => {
-  const { selectedContractFileAndName, compilationOutput } = React.useContext(AppContext)
+export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, selectedContract }) => {
+  const { compilationOutput } = React.useContext(AppContext)
   const [constructorArgsValues, setConstructorArgsValues] = React.useState<string[]>([])
   const [abiEncodingError, setAbiEncodingError] = React.useState<string | null>('')
   const [toggleRawInput, setToggleRawInput] = React.useState<boolean>(false)
 
-  const [triggerFilePath, filePath, contractName] = selectedContractFileAndName ? selectedContractFileAndName.split(':') : []
+  const { triggerFilePath, filePath, contractName } = selectedContract
   const selectedCompilerAbstract = triggerFilePath && compilationOutput[triggerFilePath]
-  const selectedContract = selectedCompilerAbstract?.data?.contracts?.[filePath]?.[contractName]
-  const abi = selectedContract?.abi
+  const compiledContract = selectedCompilerAbstract?.data?.contracts?.[filePath]?.[contractName]
+  const abi = compiledContract?.abi
 
   // Wanted to use execution.txHelper.getConstructorInterface from @remix-project/remix-lib but getting errors: 'error getting eth provider options', 'global is not defined' etc.
   const constructorArgs = abi && abi.find((a) => a.type === 'constructor') && abi.find((a) => a.type === 'constructor').inputs
@@ -56,7 +58,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
     }
   }, [constructorArgsValues, constructorArgs])
 
-  if (!selectedContractFileAndName) return null
+  if (!selectedContract) return null
   if (!compilationOutput && Object.keys(compilationOutput).length === 0) return null
   // No render if no constructor args
   if (!constructorArgs || constructorArgs.length === 0) return null

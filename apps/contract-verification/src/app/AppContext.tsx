@@ -10,8 +10,6 @@ type AppContextType = {
   setThemeType: (themeType: ThemeType) => void
   chains: Chain[]
   compilationOutput: { [key: string]: CompilerAbstract } | undefined
-  selectedContractFileAndName: string | undefined
-  setSelectedContractFileAndName: React.Dispatch<React.SetStateAction<string>>
   targetFileName: string | undefined
   verifiers: AbstractVerifier[]
   setVerifiers: React.Dispatch<React.SetStateAction<AbstractVerifier[]>>
@@ -27,8 +25,6 @@ const defaultContextValue: AppContextType = {
   },
   chains: [],
   compilationOutput: undefined,
-  selectedContractFileAndName: undefined,
-  setSelectedContractFileAndName: (contract: string) => {},
   targetFileName: undefined,
   verifiers: [],
   setVerifiers: (verifiers: AbstractVerifier[]) => {},

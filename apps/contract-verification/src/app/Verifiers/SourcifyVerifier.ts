@@ -1,19 +1,18 @@
 import { CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
 import { SourcifyReceipt } from '../Receipts/SourcifyReceipt'
-import { SourcifyVerificationError, SourcifyVerificationResponse } from '../types/VerificationTypes'
+import { SourcifyVerificationError, SourcifyVerificationResponse, SubmittedContract } from '../types/VerificationTypes'
 
 export class SourcifyVerifier extends AbstractVerifier {
-  async verify(chainId: string, address: string, compilerAbstract: CompilerAbstract, selectedContractFileAndName: string) {
-    const [_triggerFileName, selectedFilePath, selectedContractName] = selectedContractFileAndName.split(':')
-    const metadataStr = compilerAbstract.data.contracts[selectedFilePath][selectedContractName].metadata
+  async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract) {
+    const metadataStr = compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata
     const sources = compilerAbstract.source.sources
-    console.log('selectedFilePath:', selectedFilePath)
-    console.log('selectedContractName:', selectedContractName)
+    console.log('selectedFilePath:', submittedContract.filePath)
+    console.log('selectedContractName:', submittedContract.contractName)
     console.log('compilerAbstract:', compilerAbstract)
     console.log('selectedContractMetadataStr:', metadataStr)
-    console.log('chainId:', chainId)
-    console.log('address:', address)
+    console.log('chainId:', submittedContract.chainId)
+    console.log('address:', submittedContract.address)
 
     // from { "filename.sol": {content: "contract MyContract { ... }"} }
     // to { "filename.sol": "contract MyContract { ... }" }
@@ -22,8 +21,8 @@ export class SourcifyVerifier extends AbstractVerifier {
       return acc
     }, {})
     const body = {
-      chainId,
-      address,
+      chainId: submittedContract.chainId,
+      address: submittedContract.address,
       files: {
         'metadata.json': metadataStr,
         ...formattedSources,
