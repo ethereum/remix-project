@@ -9,5 +9,5 @@
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts"],
-  "include": ["bin", "src", "bin/origins.json"]
+  "include": ["bin", "src", "bin/origins.json", "../../apps/remixdesktop/src/lib/completionTransformer.ts"]
 }
