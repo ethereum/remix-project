@@ -8,6 +8,7 @@ import path from 'path';
 import {ipcMain} from 'electron';
 
 import {InlineCompletionServiceTransformer} from '../lib/completionTransformer'
+import { LLamaInferencer } from '../lib/llamaInferencer';
 
 //import {LlamaModel, LlamaContext, LlamaChatSession, LlamaModelOptions} from "node-llama-cpp";
 
@@ -43,13 +44,13 @@ const clientProfile: Profile = {
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   kind: '',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
-  methods: ['downloadModel', 'getInferenceModel', 'loadTransformerModel', 'code_completion'],
+  methods: ['initializeModelBackend', 'code_completion'],
 }
 
 class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
-  SelectedModelPath: any
-  selectedModel: any
-  inlineCompleter: any
+  
+  multitaskModel: LLamaInferencer| InlineCompletionServiceTransformer = null
+  completionModel: LLamaInferencer| InlineCompletionServiceTransformer = null
 
   constructor (webContentsId: number, profile: Profile){
     console.log("loading the remix plugin client ........................")
@@ -63,85 +64,60 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
       console.log("loaded the remix plugin client application side")
     })
   }
-  async listAvailableModels(){
-
-  }
 
   async enable (){
     console.log('Remix AI desktop plugin enabled')
     this.emit('enabled')
   }
+
+  async initializeModelBackend(multitaskModel: any, completionModel?: any){
+    console.log("Initializing backend with model ", multitaskModel, completionModel)
+    switch (multitaskModel.modelReqs.backend) {
+      case 'llamacpp':
+        this.multitaskModel = new LLamaInferencer(this, multitaskModel)
+        break;
+      case 'transformerjs':
+        this.multitaskModel = new InlineCompletionServiceTransformer(multitaskModel)
+        break;
+      default:
+        console.log("Backend not supported")
+        break;
+    }
+
+    if (completionModel && completionModel.modelType === 'CODE_COMPLETION'){
+      switch (completionModel.modelReqs.backend) {
+        case 'llamacpp':
+          this.completionModel = new LLamaInferencer(this, completionModel)
+          break;
+        case 'transformerjs':
+          this.completionModel = new InlineCompletionServiceTransformer(completionModel)
+          break;
+        default:
+          console.log("Backend not supported")
+          break;
+      }
+    }
+
+    // init the mmodels 
+    if (this.multitaskModel){
+      await this.multitaskModel.init()
+    } 
+
+    if (this.completionModel){
+      await this.completionModel.init()
+    }
+
+  }
   
-  async downloadModel(model): Promise<void> {
-    console.log('Downloading the model model', model)
-    console.log('Downloading model', model.downloadUrl) 
-
-    const wdir = await this.call('fs' as any, 'getWorkingDir');
-    console.log('working dir is', wdir)
-    const outputLocationDir = await this.call('fs' as any, 'selectFolder', wdir);
-    console.log('output location dir is', outputLocationDir)
-
-    if (outputLocationDir === undefined) {
-      console.log('No output location selected');
-      return;
-    }
-
-    const outputLocationPath = path.join(outputLocationDir, model.modelName);
-    console.log('output location path is', outputLocationDir)
-    if (fs.existsSync(outputLocationPath)) { 
-      console.log('Model already exists in the output location', outputLocationPath);
-      this.SelectedModelPath = outputLocationPath;
-      this.selectedModel = model;
-      return;
-    }
-
-    // Make a HEAD request to get the file size
-    const { headers } = await axios.head(model.downloadUrl);
-    const totalSize = parseInt(headers['content-length'], 10);
-
-    // Create a write stream to save the file
-    const writer = fs.createWriteStream(outputLocationPath);
-
-    // Start the file download
-    const response = await axios({
-      method: 'get',
-      url: model.downloadUrl,
-      responseType: 'stream'
-    });
-
-    let downloadedSize = 0;
-
-    response.data.on('data', (chunk: Buffer) => {
-      downloadedSize += chunk.length;
-      const progress = (downloadedSize / totalSize) * 100;
-      console.log(`Downloaded ${progress}%`);
-      this.emit('download_progress', progress);
-    });
-
-    response.data.pipe(writer);
-    this.SelectedModelPath = outputLocationPath;
-    this.selectedModel = model;
-
-    console.log('Download complete');
-    return new Promise((resolve, reject) => {
-      writer.on('finish', resolve);
-      writer.on('error', reject);
-    });
-
-  }
-
-  async loadTransformerModel(defaultModels) {
-    this.inlineCompleter = await new InlineCompletionServiceTransformer(defaultModels);
-    if (this.inlineCompleter.ready) {
-      console.log("Completer  ready");
-    }
-    console.log("Loaded transformer")
-  }
 
   code_completion(context: any) {
     console.log("Code completion called")
-    console.log("Context is ", this.inlineCompleter)
-    return this.inlineCompleter.code_completion(context);
+    if (this.completionModel){
+      return this.completionModel.code_completion(context, {max_new_tokens: 100})
+    }
+
+    // use general purpose model 
+    return this.multitaskModel.code_completion(context, {max_new_tokens: 100})
   }
 
   // async _loadLocalModel(): Promise<LlamaChatSession> {
@@ -181,6 +157,11 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
   // async getInferenceModel(): Promise<LlamaChatSession> {
   //   return this._loadLocalModel();
   // } 
+
+  changemodel(newModel: any){
+    /// dereference the current static inference object
+    /// set new one
+  }
 
 }
 
