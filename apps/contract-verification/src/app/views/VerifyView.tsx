@@ -8,12 +8,14 @@ import { EtherscanVerifier } from '../Verifiers/EtherscanVerifier'
 import { useNavigate } from 'react-router-dom'
 import { ConstructorArguments } from '../components/ConstructorArguments'
 import { getVerifier } from '../Verifiers'
+import { ContractDropdownSelection } from '../components/ContractDropdown'
 
 export const VerifyView = () => {
-  const { compilationOutput, verifiers, setVerifiers, selectedContractFileAndName, setSubmittedContracts } = React.useContext(AppContext)
+  const { compilationOutput, verifiers, setVerifiers, setSubmittedContracts } = React.useContext(AppContext)
   const [contractAddress, setContractAddress] = useState('')
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
   const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = React.useState<string>('')
+  const [selectedContract, setSelectedContract] = useState<ContractDropdownSelection | undefined>()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -23,12 +25,12 @@ export const VerifyView = () => {
   const handleVerify = async (e) => {
     e.preventDefault() // Don't change the page
 
-    console.log('selectedContractFileAndName', selectedContractFileAndName)
-    const [triggerFilePath, filePath, contractName] = selectedContractFileAndName.split(':')
+    console.log('selectedContract', selectedContract)
+    const { triggerFilePath, filePath, contractName } = selectedContract
     const enabledVerifiers = verifiers.filter((verifier) => verifier.enabled)
     const compilerAbstract = compilationOutput[triggerFilePath]
     if (!compilerAbstract) {
-      throw new Error(`Error: Compilation output not found for ${selectedContractFileAndName}`)
+      throw new Error(`Error: Compilation output not found for ${triggerFilePath}`)
     }
 
     const date = new Date()
@@ -63,7 +65,7 @@ export const VerifyView = () => {
       const verifier = getVerifier(verifierInfo.name, { apiUrl: verifierInfo.apiUrl })
       if (verifier instanceof SourcifyVerifier) {
         try {
-          const response = await verifier.verify(selectedChain?.chainId.toString(), contractAddress, compilerAbstract, selectedContractFileAndName)
+          const response = await verifier.verify(newSubmittedContract, compilerAbstract)
           receipt.status = response.result[0].status
         } catch (e) {
           const err = e as Error
@@ -72,7 +74,7 @@ export const VerifyView = () => {
         }
       } else if (verifier instanceof EtherscanVerifier) {
         try {
-          const response = await verifier.verify(selectedChain?.chainId.toString(), contractAddress, compilerAbstract, selectedContractFileAndName, abiEncodedConstructorArgs)
+          const response = await verifier.verify(newSubmittedContract, compilerAbstract, abiEncodedConstructorArgs)
           receipt.status = 'perfect'
         } catch (e) {
           const err = e as Error
@@ -94,7 +96,7 @@ export const VerifyView = () => {
 
       <ContractAddressInput label="Contract Address" id="contract-address" setContractAddress={setContractAddress} contractAddress={contractAddress} />
 
-      <ContractDropdown label="Contract Name" id="contract-dropdown-1" />
+      <ContractDropdown label="Contract Name" id="contract-dropdown-1" setSelectedContract={setSelectedContract} />
 
       <button type="submit" className="btn btn-primary">
         Verify
@@ -126,7 +128,7 @@ export const VerifyView = () => {
           })}
       </div>
       <div>
-        <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} />
+        <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} />
       </div>
     </form>
   )
