@@ -4,10 +4,6 @@ import { SourcifyReceipt } from '../Receipts/SourcifyReceipt'
 import { SourcifyVerificationError, SourcifyVerificationResponse } from '../types/VerificationTypes'
 
 export class SourcifyVerifier extends AbstractVerifier {
-  constructor(apiUrl: string, name: string = 'Sourcify') {
-    super(apiUrl, name)
-  }
-
   async verify(chainId: string, address: string, compilerAbstract: CompilerAbstract, selectedContractFileAndName: string) {
     const [_triggerFileName, selectedFilePath, selectedContractName] = selectedContractFileAndName.split(':')
     const metadataStr = compilerAbstract.data.contracts[selectedFilePath][selectedContractName].metadata

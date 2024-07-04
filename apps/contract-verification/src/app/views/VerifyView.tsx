@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 
 import { AppContext } from '../AppContext'
 import { SearchableChainDropdown, ContractDropdown, ContractAddressInput } from '../components'
-import { Chain, SubmittedContract, VerificationReceipt } from '../types/VerificationTypes'
+import { Chain, SubmittedContract, VerificationReceipt, VerifierInfo } from '../types/VerificationTypes'
 import { SourcifyVerifier } from '../Verifiers/SourcifyVerifier'
 import { EtherscanVerifier } from '../Verifiers/EtherscanVerifier'
 import { useNavigate } from 'react-router-dom'
 import { ConstructorArguments } from '../components/ConstructorArguments'
+import { getVerifier } from '../Verifiers'
 
 export const VerifyView = () => {
   const { compilationOutput, verifiers, setVerifiers, selectedContractFileAndName, setSubmittedContracts } = React.useContext(AppContext)
@@ -32,16 +33,21 @@ export const VerifyView = () => {
 
     const date = new Date()
     // A receipt for each verifier
-    const receipts: VerificationReceipt[] = enabledVerifiers.map((verifier) => ({ verifier, status: null, receiptId: null, message: null }))
+    const receipts: VerificationReceipt[] = enabledVerifiers.map((verifier) => {
+      const verifierInfo: VerifierInfo = {
+        apiUrl: verifier.apiUrl,
+        name: verifier instanceof SourcifyVerifier ? 'Sourcify' : 'Etherscan',
+      }
+      return { verifierInfo, status: null, receiptId: null, message: null }
+    })
     const newSubmittedContract: SubmittedContract = {
       type: 'contract',
-      id: selectedChain?.chainId + '-' + contractAddress + '-' + date.toString(),
+      id: selectedChain?.chainId + '-' + contractAddress + '-' + date.toUTCString(),
       address: contractAddress,
       chainId: selectedChain?.chainId.toString(),
       filePath,
       contractName,
-      compilerAbstract,
-      date,
+      date: date.toUTCString(),
       receipts,
     }
     setSubmittedContracts((prev) => ({ ...prev, [newSubmittedContract.id]: newSubmittedContract }))
@@ -53,7 +59,8 @@ export const VerifyView = () => {
 
     // Verify for each verifier. forEach does not wait for await and each promise will execute in parallel
     receipts.forEach(async (receipt) => {
-      const { verifier } = receipt
+      const { verifierInfo } = receipt
+      const verifier = getVerifier(verifierInfo.name, { apiUrl: verifierInfo.apiUrl })
       if (verifier instanceof SourcifyVerifier) {
         try {
           const response = await verifier.verify(selectedChain?.chainId.toString(), contractAddress, compilerAbstract, selectedContractFileAndName)
@@ -95,24 +102,28 @@ export const VerifyView = () => {
 
       <div>
         {verifiers?.length > 0 &&
-          verifiers.map((verifier) => (
-            <div key={verifier.name} className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                id={`verifier-${verifier.name}`}
-                checked={verifier.enabled}
-                onChange={(e) => {
-                  verifier.enabled = e.target.checked
-                  // Trigger a re-render
-                  setVerifiers([...verifiers])
-                }}
-              />
-              <label className="form-check-label" htmlFor={`verifier-${verifier.name}`}>
-                {verifier.name} ({verifier.apiUrl})
-              </label>
-            </div>
-          ))}
+          verifiers.map((verifier) => {
+            // Temporary fix. The verifier options should be rendered from a constant later.
+            const name = verifier instanceof SourcifyVerifier ? 'Sourcify' : 'Etherscan'
+            return (
+              <div key={name} className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id={`verifier-${name}`}
+                  checked={verifier.enabled}
+                  onChange={(e) => {
+                    verifier.enabled = e.target.checked
+                    // Trigger a re-render
+                    setVerifiers([...verifiers])
+                  }}
+                />
+                <label className="form-check-label" htmlFor={`verifier-${name}`}>
+                  {name} ({verifier.apiUrl})
+                </label>
+              </div>
+            )
+          })}
       </div>
       <div>
         <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} />

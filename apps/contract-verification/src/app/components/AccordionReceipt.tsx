@@ -84,7 +84,7 @@ const ReceiptsBody = ({ contract }: { contract: SubmittedContract }) => {
       </div>
       <div>
         <span className="font-weight-bold">Submission: </span>
-        {contract.date.toLocaleString()}
+        {new Date(contract.date).toLocaleString()}
       </div>
       <div className="table-responsive">
         <table className="table">
@@ -100,8 +100,8 @@ const ReceiptsBody = ({ contract }: { contract: SubmittedContract }) => {
           <tbody>
             {contract.receipts.map((receipt) => (
               <tr key={receipt.receiptId}>
-                <td>{receipt.verifier.name}</td>
-                <td>{receipt.verifier.apiUrl}</td>
+                <td>{receipt.verifierInfo.name}</td>
+                <td>{receipt.verifierInfo.apiUrl}</td>
                 <td>{receipt.status}</td>
                 <td>{receipt.message}</td>
                 <td>{receipt.receiptId}</td>

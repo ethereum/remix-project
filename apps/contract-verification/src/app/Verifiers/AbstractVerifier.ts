@@ -1,15 +1,12 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { SourcifyReceipt } from '../Receipts/SourcifyReceipt'
-import { EtherscanReceipt } from '../Receipts/EtherscanReceipt'
+import { VerifierIdentifier } from '../types/VerificationTypes'
 
 export abstract class AbstractVerifier {
-  name: string
   apiUrl: string
   enabled: boolean
 
-  constructor(apiUrl: string, name: string) {
+  constructor(apiUrl: string) {
     this.apiUrl = apiUrl
-    this.name = name
     this.enabled = true
   }
 

@@ -33,8 +33,8 @@ const App = () => {
 
   useEffect(() => {
     // const sourcifyVerifier = new SourcifyVerifier('http://sourcify.dev/server/', 'Sourcify')
-    const sourcifyVerifier = new SourcifyVerifier('http://localhost:5555/', 'Sourcify Localhost')
-    const etherscanVerifier = new EtherscanVerifier('https://api.etherscan.io', 'Etherscan', 'API_KEY')
+    const sourcifyVerifier = new SourcifyVerifier('http://localhost:5555/')
+    const etherscanVerifier = new EtherscanVerifier('https://api.etherscan.io', 'API_KEY')
     setVerifiers([sourcifyVerifier, etherscanVerifier])
     // TODO: Fix 'compilationFinished' event types. The interface is outdated at https://github.com/ethereum/remix-plugin/blob/master/packages/api/src/lib/compiler/api.ts. It does not include data, input, or version. See the current parameters: https://github.com/ethereum/remix-project/blob/9f6c5be882453a555055f07171701459e4ae88a4/libs/remix-solidity/src/compiler/compiler.ts#L189
 
@@ -46,10 +46,10 @@ const App = () => {
     })
 
     // Subscribe to compilations
-    plugin.on('compilerArtefacts' as any, 'compilationSaved', (compilerAbstract: { [key: string]: CompilerAbstract }) => {
+    plugin.on('compilerArtefacts' as any, 'compilationSaved', (compilerAbstracts: { [key: string]: CompilerAbstract }) => {
       console.log('compilerArtefacts.compilationSaved')
-      console.log(compilerAbstract)
-      setCompilationOutput((prev) => ({ ...(prev || {}), ...compilerAbstract }))
+      console.log(compilerAbstracts)
+      setCompilationOutput((prev) => ({ ...(prev || {}), ...compilerAbstracts }))
     })
 
     // TODO: Is there a way to get all compilations from the `build-info` files without having to compile again?

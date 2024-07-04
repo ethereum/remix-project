@@ -1,10 +1,3 @@
-import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { AbstractVerifier } from '../Verifiers/AbstractVerifier'
-import { SourcifyVerifier } from '../Verifiers/SourcifyVerifier'
-import { EtherscanVerifier } from '../Verifiers/EtherscanVerifier'
-
-export type SourcifyVerificationStatus = 'perfect' | 'partial' | null
-
 interface Currency {
   name: string
   symbol: string
@@ -24,9 +17,21 @@ export interface Chain {
   infoURL?: string
 }
 
+export type VerifierIdentifier = "Sourcify" | "Etherscan" | "Blockscout"
+
+export interface VerifierSettings {
+  apiUrl: string
+  apiKey?: string
+}
+
+export interface VerifierInfo {
+  name: VerifierIdentifier
+  apiUrl: string
+}
+
 export interface VerificationReceipt {
   receiptId?: string
-  verifier: AbstractVerifier
+  verifierInfo: VerifierInfo
   status: SourcifyVerificationStatus | 'error' | null
   message?: string
 }
@@ -38,8 +43,7 @@ export interface SubmittedContract {
   contractName: string
   chainId: string
   address: string
-  compilerAbstract: CompilerAbstract
-  date: Date
+  date: string
   receipts: VerificationReceipt[]
 }
 
@@ -50,6 +54,7 @@ export interface SubmittedProxyContract {
   proxy: SubmittedContract
 }
 
+// This and all nested subtypes should be pure interfaces, so they can be converted to JSON easily
 export interface SubmittedContracts {
   [id: string]: SubmittedContract | SubmittedProxyContract
 }
@@ -61,6 +66,8 @@ export function isProxy(contract: SubmittedContract | SubmittedProxyContract): c
 export function isContract(contract: SubmittedContract | SubmittedProxyContract): contract is SubmittedContract {
   return contract.type === 'contract'
 }
+
+export type SourcifyVerificationStatus = 'perfect' | 'partial' | null
 
 export interface SourcifyVerificationResponse {
   result: [

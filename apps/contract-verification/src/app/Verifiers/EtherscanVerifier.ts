@@ -1,13 +1,12 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
-import { EtherscanReceipt } from '../Receipts/EtherscanReceipt'
 import { EtherscanRequest, EtherscanResponse } from '../types/VerificationTypes'
 
 export class EtherscanVerifier extends AbstractVerifier {
-  apiKey: string
+  apiKey?: string
 
-  constructor(apiUrl: string, name: string = 'Etherscan', apiKey: string) {
-    super(apiUrl, name)
+  constructor(apiUrl: string, apiKey?: string) {
+    super(apiUrl)
     this.apiKey = apiKey
   }
 
