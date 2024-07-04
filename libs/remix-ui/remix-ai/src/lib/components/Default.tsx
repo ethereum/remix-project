@@ -57,7 +57,7 @@ export const Default = (props) => {
               // if (!completer.ready) {
               //   await completer.init();
               // }
-              await props.plugin.call(pluginName, 'loadTransformerModel', DefaultModels());
+              await props.plugin.call(pluginName, 'initializeModelBackend', DefaultModels()[0]);
 
               // // const code = completer.code_completion("pragma solidity ^0.8.0;\n")
               console.log("Got transformer model completion ");

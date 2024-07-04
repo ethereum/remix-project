@@ -29,7 +29,11 @@ class InlineCompletionTransformer {
       const TransformersApi = Function('return import("@xenova/transformers")')();
       const { pipeline, env} = await TransformersApi;
 
-      InlineCompletionTransformer.model =  InlineCompletionTransformer.defaultModels.find(model => model.name === 'DeepSeekTransformer')
+      if (InlineCompletionTransformer.model.modelReqs.backend !== 'transformerjs') {
+        console.log('model not supported')
+        return
+      }
+
       console.log('loading model', InlineCompletionTransformer.model)
       InlineCompletionTransformer.instance = pipeline(InlineCompletionTransformer.task, InlineCompletionTransformer.model.modelName, { progress_callback, quantized: true});
     }
@@ -76,6 +80,7 @@ class DownloadManager {
       break;
 
     case 'complete':
+      this.events.emit(e.status, e)
       if (this.responses[e.id]) {
         if (this.current === e.id) {
           this.responses[e.id](null, e)
@@ -97,13 +102,10 @@ export class InlineCompletionServiceTransformer{
   dMng = new DownloadManager()
   isReady = false
   event = new EventEmitter()
+  selectedModel: any
 
-  constructor(defaultModels) { 
-
-    InlineCompletionTransformer.defaultModels = defaultModels
-    InlineCompletionTransformer.model = defaultModels.find(model => model.name === 'DeepSeekTransformer')
-    InlineCompletionTransformer.task = InlineCompletionTransformer.model.task
-    InlineCompletionTransformer.getInstance(this.dMng.onMessageReceived);
+  constructor(model: any) { 
+    this.selectedModel = model
 
     this.dMng.events.on('progress', (data) => {
       // log progress percentage 
@@ -116,28 +118,61 @@ export class InlineCompletionServiceTransformer{
       } 
     })
     this.dMng.events.on('done', (data) => {
-      console.log('download complete')
-      this.isReady = true
     })
     this.dMng.events.on('ready', (data) => {
       console.log('model ready')
       this.isReady = true
     })
+    this.dMng.events.on('complete', (data) => {
+      
+    })
 
   }
 
+  async init(envPath?: string) {
+    InlineCompletionTransformer.model = this.selectedModel
+    InlineCompletionTransformer.task = InlineCompletionTransformer.model.task
+
+    // create inference instance
+    await InlineCompletionTransformer.getInstance(this.dMng.onMessageReceived);
+
+    if (envPath) {
+      this.setTransformerEnvPath(envPath)
+    }
+  }
+
+  setTransformerEnvPath(path: string) {
+    if (InlineCompletionTransformer.instance === null) {
+      console.log('model not ready yet')
+      return
+    }
+    if (path === '') {
+      console.log('path is empty')
+      return
+    }
+
+    console.log('check this setting env path')
+    InlineCompletionTransformer.instance.env.set('TRANSFORMERS_CACHE', path)
+  }
+
   async code_completion(context: any, params=completionParams): Promise<any> {
+    if (!this.isReady) {
+      console.log('model not ready yet')
+      return
+    }
+
     // as of now no prompt required
     this.event.emit('onInference')
     const instance = await InlineCompletionTransformer.getInstance()
-    const result =  await instance(context, completionParams)
+    const result =  await instance(context, params)
     this.event.emit('onInferenceDone')
     return result
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string, params=insertionParams): Promise<any> {
+    console.log('in code_insertion', this)
     if (!this.isReady) {
-      console.log('model not ready')
+      console.log('model not ready yet')
       return
     }
     
