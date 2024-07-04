@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../remix-ai.css'
 import { DefaultModels } from '@remix/remix-ai-core';
-import { InlineCompletionServiceTransformer} from '@remix/remix-ai-core';
 
 export const Default = (props) => {
   const [searchText, setSearchText] = useState('');
@@ -54,14 +53,16 @@ export const Default = (props) => {
 
           onClick={async () => {
             if (props.plugin.isOnDesktop ) {
-              const completer = new InlineCompletionServiceTransformer();
-              if (!completer.ready) {
-                await completer.init();
-              }
+              // const completer = new InlineCompletionServiceTransformer();
+              // if (!completer.ready) {
+              //   await completer.init();
+              // }
+              await props.plugin.call(pluginName, 'loadTransformerModel', DefaultModels());
 
-              const code = completer.code_completion("pragma solidity ^0.8.0;\n")
-              console.log("Got code completion ",code);
-
+              // // const code = completer.code_completion("pragma solidity ^0.8.0;\n")
+              console.log("Got transformer model completion ");
+              const result = await props.plugin.call(pluginName, 'code_completion', "pragma solidity ^0.8.0;\n contract Storage");
+              console.log("Got code completion\n",result);
               // const inferenceModel = await props.plugin.call(pluginName, 'getInferenceModel');
               // console.log("Got inference model ",inferenceModel);
 

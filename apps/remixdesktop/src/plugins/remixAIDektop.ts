@@ -5,6 +5,10 @@ import { app } from 'electron';
 import axios from "axios";
 import fs from 'fs';
 import path from 'path';
+import {ipcMain} from 'electron';
+
+import {InlineCompletionServiceTransformer} from '../lib/completionTransformer'
+
 //import {LlamaModel, LlamaContext, LlamaChatSession, LlamaModelOptions} from "node-llama-cpp";
 
 // import { isE2E } from "../main";
@@ -39,12 +43,13 @@ const clientProfile: Profile = {
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   kind: '',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
-  methods: ['downloadModel', 'getInferenceModel']
+  methods: ['downloadModel', 'getInferenceModel', 'loadTransformerModel', 'code_completion'],
 }
 
 class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
   SelectedModelPath: any
   selectedModel: any
+  inlineCompleter: any
 
   constructor (webContentsId: number, profile: Profile){
     console.log("loading the remix plugin client ........................")
@@ -123,6 +128,20 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
       writer.on('error', reject);
     });
 
+  }
+
+  async loadTransformerModel(defaultModels) {
+    this.inlineCompleter = await new InlineCompletionServiceTransformer(defaultModels);
+    if (this.inlineCompleter.ready) {
+      console.log("Completer  ready");
+    }
+    console.log("Loaded transformer")
+  }
+
+  code_completion(context: any) {
+    console.log("Code completion called")
+    console.log("Context is ", this.inlineCompleter)
+    return this.inlineCompleter.code_completion(context);
   }
 
   // async _loadLocalModel(): Promise<LlamaChatSession> {

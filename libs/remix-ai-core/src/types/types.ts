@@ -12,6 +12,7 @@ export interface IModelRequirements{
 
 export interface IModel {
   name: string;
+  task: string;
   downloadUrl: string;
   modelName: string;
   modelType: ModelType;
@@ -37,6 +38,15 @@ export interface InferenceModel {
 }
 
 export interface ICompletions{
-  code_completion(context): Promise<any>;
-  code_insertion(msg_pfx, msg_sfx): Promise<any>;
+  code_completion(context, params:IParams): Promise<any>;
+  code_insertion(msg_pfx, msg_sfx, params:IParams): Promise<any>;
+}
+
+export interface IParams {
+  temperature?: number;
+  max_new_tokens?: number;
+  repetition_penalty?: number;
+  no_repeat_ngram_size?: number;
+  num_beams?: number;
+  num_return_sequences?: number;
 }

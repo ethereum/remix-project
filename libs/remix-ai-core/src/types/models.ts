@@ -8,6 +8,7 @@ import { ModelType} from './constants';
 const DefaultModels = (): IModel[] => {
   const model1:IModel = { 
     name: 'DeepSeek', 
+    task: 'text-generation',  
     modelName: 'deepseek-coder-1.3b-instruct.gguf',
     downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-1.3b-instruct-GGUF/resolve/main/deepseek-coder-1.3b-instruct.Q4_K_M.gguf?download=true',
     modelType: ModelType.CODE_COMPLETION,
@@ -15,6 +16,7 @@ const DefaultModels = (): IModel[] => {
   };  
   const model2: IModel = { 
     name: 'DeepSeek',
+    task: 'text-generation',  
     modelName: 'deepseek-coder-6.7b-instruct.gguf',
     downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-6.7B-instruct-GGUF/resolve/main/deepseek-coder-6.7b-instruct.Q4_K_M.gguf?download=true', 
     modelType: ModelType.GENERAL,
@@ -22,10 +24,11 @@ const DefaultModels = (): IModel[] => {
   };
   const model3: IModel = {
     name: 'DeepSeekTransformer',
+    task: 'text-generation',  
     modelName: 'Xenova/deepseek-coder-1.3b-base',
     downloadUrl: 'Xenova/deepseek-coder-1.3b-base',
     modelType: ModelType.CODE_COMPLETION_INSERTION,
-    modelReqs: { backend: 'transformer', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2}
+    modelReqs: { backend: 'transformerjs', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2}
   };
   
   return [model1, model2, model3];
