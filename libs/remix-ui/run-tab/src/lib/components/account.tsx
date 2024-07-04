@@ -27,6 +27,12 @@ export function AccountUI(props: AccountProps) {
   useEffect(() => {
     props.setAccount('')
     if (selectExEnv && selectExEnv.startsWith('injected')) {
+      if (props.networkName.includes('Sepolia (11155111)')) {
+        setPlusOpt({
+          classList: '',
+          title: intl.formatMessage({ id: 'udapp.createSmartAccount' })
+        })
+      } else
       setPlusOpt({
         classList: 'udapp_disableMouseEvents',
         title: intl.formatMessage({ id: 'udapp.injectedTitle' })
