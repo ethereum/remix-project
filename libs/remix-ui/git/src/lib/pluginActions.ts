@@ -23,6 +23,15 @@ export const statusChanged = (badges: number) => {
   })
 }
 
+export const storageStatus = async () => {
+  try {
+    const status = await plugin?.call('dgitApi' as any, 'localStorageUsed')
+    return status
+  } catch (error) {
+    console.log('An error occured while getting storage use summary', error)
+  }
+}
+
 export const openFile = async (path: string) => {
   if (!plugin) return
   await plugin.call('fileManager', 'open', path)
