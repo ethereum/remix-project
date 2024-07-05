@@ -64,9 +64,9 @@ export const BranchHeader = () => {
         <div className="d-flex flex-column pt-1 mb-1">
           <div className="d-flex flex-column justify-content-start align-items-start">
             <div className="pr-1 m-0">
-              <span className="">Repository Name:</span>
-              <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap" style={{ width: '15rem' }}>
-                <span className={`${changed ? 'text-danger pl-2' : "pl-2"}`}>
+              <span className="col-4 px-0">Repository Name:</span>
+              <span className="" style={{ width: '15rem' }}>
+                <span className={`${ changed ? 'text-danger pl-2 text-truncate overflow-hidden whitespace-nowrap' : "text-secondary pl-2 text-truncate overflow-hidden whitespace-nowrap" }`}>
                   {getName() ?? ''}
                 </span>
               </span>
@@ -81,23 +81,25 @@ export const BranchHeader = () => {
               </span>
             </div>
             {context.storage.enabled ?
-              <div className="d-flex flex-column">
-                <span className="d-flex justify-between align-items-center">
-                  <span className="">Storage : </span>
+              <div className="d-flex">
+                <span className="d-flex justify-between align-items-center" style={{ width: '15rem' }}>
+                  <span className="col-4 px-0">Storage : </span>
                   <span className="text-secondary text-sm text-truncate overflow-hidden whitespace-nowrap ml-4">
                     {context.storage.used} MB used
-                    ({context.storage.percentUsed} %)
+                  ({context.storage.percentUsed} %)
                   </span>
                 </span>
               </div> : null}
             <div className="d-flex flex-row">
               <span className="d-flex justify-between align-items-center">
-                <span className="">Messages :</span>
-                <span className="pl-2 text-secondary text-truncate overflow-hidden whitespace-nowrap">
-                  {latestCommit ?
-                    latestCommit.commit && latestCommit.commit.message ? latestCommit.commit.message : '' : null}
-                  {isDetached ?
-                    <>You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1 pl-2"></i></> : null}
+                <span className="col-3 px-0">Messages :</span>
+                <span className="" style={{ width: '15rem' }}>
+                  <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap">
+                    {latestCommit ?
+                      latestCommit.commit && latestCommit.commit.message ? latestCommit.commit.message : '' : null}
+                    {isDetached ?
+                      <>You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1 pl-2"></i></>: null}
+                  </span>
                 </span>
               </span>
             </div>
