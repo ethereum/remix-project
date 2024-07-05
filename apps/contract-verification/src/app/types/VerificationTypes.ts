@@ -43,6 +43,7 @@ export interface SubmittedContract {
   contractName: string
   chainId: string
   address: string
+  abiEncodedConstructorArgs?: string
   date: string
   receipts: VerificationReceipt[]
 }
@@ -70,19 +71,4 @@ export function isContract(contract: SubmittedContract | SubmittedProxyContract)
 export interface VerificationResponse {
   status: string | 'pending'
   receiptId: string | null
-}
-
-export interface EtherscanRequest {
-  chainId?: string
-  codeformat: 'solidity-standard-json-input'
-  sourceCode: string
-  contractaddress: string
-  contractname: string
-  compilerversion: string
-  constructorArguements?: string
-}
-export interface EtherscanResponse {
-  status: '0' | '1'
-  message: string
-  result: string
 }

@@ -27,6 +27,7 @@ export const VerifyView = () => {
 
     console.log('selectedContract', selectedContract)
     const { triggerFilePath, filePath, contractName } = selectedContract
+    // TODO create enabledVerifiers from simple VerifierIdentifier -> boolean mapping
     const enabledVerifiers = verifiers.filter((verifier) => verifier.enabled)
     const compilerAbstract = compilationOutput[triggerFilePath]
     if (!compilerAbstract) {
@@ -52,6 +53,9 @@ export const VerifyView = () => {
       date: date.toUTCString(),
       receipts,
     }
+    if (abiEncodedConstructorArgs) {
+      newSubmittedContract.abiEncodedConstructorArgs = abiEncodedConstructorArgs
+    }
     setSubmittedContracts((prev) => ({ ...prev, [newSubmittedContract.id]: newSubmittedContract }))
 
     console.log('newSubmittedContract:', newSubmittedContract)
@@ -63,28 +67,16 @@ export const VerifyView = () => {
     receipts.forEach(async (receipt) => {
       const { verifierInfo } = receipt
       const verifier = getVerifier(verifierInfo.name, { apiUrl: verifierInfo.apiUrl })
-      if (verifier instanceof SourcifyVerifier) {
-        try {
-          const response = await verifier.verify(newSubmittedContract, compilerAbstract)
-          receipt.status = response.status
-          if (response.receiptId) {
-            receipt.receiptId = response.receiptId
-          }
-        } catch (e) {
-          const err = e as Error
-          receipt.status = 'error'
-          receipt.message = err.message
+      try {
+        const response = await verifier.verify(newSubmittedContract, compilerAbstract)
+        receipt.status = response.status
+        if (response.receiptId) {
+          receipt.receiptId = response.receiptId
         }
-      } else if (verifier instanceof EtherscanVerifier) {
-        try {
-          // TODO generalize parameters to pass constructorargs optionally on the AbstractVerifier
-          const response = await verifier.verify(newSubmittedContract, compilerAbstract, abiEncodedConstructorArgs)
-          receipt.status = 'perfect'
-        } catch (e) {
-          const err = e as Error
-          receipt.status = 'error'
-          receipt.message = err.message
-        }
+      } catch (e) {
+        const err = e as Error
+        receipt.status = 'error'
+        receipt.message = err.message
       }
 
       // Update the UI

@@ -1,6 +1,22 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
-import { EtherscanRequest, EtherscanResponse, SubmittedContract } from '../types/VerificationTypes'
+import { SubmittedContract, VerificationResponse } from '../types/VerificationTypes'
+
+interface EtherscanVerificationRequest {
+  chainId?: string
+  codeformat: 'solidity-single-file' | 'solidity-standard-json-input'
+  sourceCode: string
+  contractaddress: string
+  contractname: string
+  compilerversion: string
+  constructorArguements?: string
+}
+
+interface EtherscanVerificationResponse {
+  status: '0' | '1'
+  message: string
+  result: string
+}
 
 export class EtherscanVerifier extends AbstractVerifier {
   apiKey?: string
@@ -10,28 +26,28 @@ export class EtherscanVerifier extends AbstractVerifier {
     this.apiKey = apiKey
   }
 
-  async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract, abiEncodedConstructorArgs?: string) {
-    const CODE_FORMAT = 'solidity-standard-json-input'
-
+  async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse> {
     // TODO: Handle version Vyper contracts. This relies on Solidity metadata.
     const metadata = JSON.parse(compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata)
-    const body: EtherscanRequest = {
+    const body: EtherscanVerificationRequest = {
       chainId: submittedContract.chainId,
-      codeformat: CODE_FORMAT,
+      codeformat: 'solidity-standard-json-input',
       sourceCode: JSON.stringify(compilerAbstract.input),
       contractaddress: submittedContract.address,
       contractname: submittedContract.filePath + ':' + submittedContract.contractName,
       compilerversion: metadata.compiler.version,
     }
 
-    if (abiEncodedConstructorArgs) {
-      body.constructorArguements = abiEncodedConstructorArgs
+    if (submittedContract.abiEncodedConstructorArgs) {
+      body.constructorArguements = submittedContract.abiEncodedConstructorArgs
     }
 
     const url = new URL('api', this.apiUrl)
     url.searchParams.append('module', 'contract')
     url.searchParams.append('action', 'verifysourcecode')
-    url.searchParams.append('apikey', this.apiKey)
+    if (this.apiKey) {
+      url.searchParams.append('apikey', this.apiKey)
+    }
 
     const response = await fetch(url.href, {
       method: 'POST',
@@ -42,17 +58,19 @@ export class EtherscanVerifier extends AbstractVerifier {
     })
 
     if (!response.ok) {
-      throw new Error(`Request error Status:${response.status} Response: ${await response.text()}`)
+      const responseText = await response.text()
+      console.error('Error on Etherscan API verification at ' + this.apiUrl + '\nStatus: ' + response.status + '\nResponse: ' + (responseText))
+      throw new Error(responseText)
     }
 
-    const data: EtherscanResponse = await response.json()
-    console.log(data)
-    if (data.status !== '1' || data.message !== 'OK') {
-      console.error(`Error on Etherscan verification at ${this.apiUrl}: ${data.result}`)
-      throw new Error(data.result)
+    const verificationResponse: EtherscanVerificationResponse = await response.json()
+
+    if (verificationResponse.status !== '1' || verificationResponse.message !== 'OK') {
+      console.error('Error on Etherscan API verification at ' + this.apiUrl + '\nStatus: ' + verificationResponse.status + '\nMessage: ' + verificationResponse.message + '\nResult: ' + verificationResponse.result)
+      throw new Error(verificationResponse.result)
     }
 
-    return data
+    return { status: 'pending', receiptId: verificationResponse.result }
   }
 
   async lookup(): Promise<any> {
