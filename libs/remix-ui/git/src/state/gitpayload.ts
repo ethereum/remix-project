@@ -1,5 +1,5 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { GitHubUser, branch, commitChange, fileStatusResult, remote, pagedCommits, branchDifference, gitLog, repository, userEmails } from "../types"
+import { GitHubUser, branch, commitChange, fileStatusResult, remote, pagedCommits, branchDifference, gitLog, repository, userEmails, storage } from "../types"
 import { Endpoints } from "@octokit/types"
 
 export const fileStatus = (files: fileStatusResult[]) => {
@@ -216,5 +216,12 @@ export const setLog = (message: gitLog) => {
 export const clearLog = () => {
   return {
     type: 'CLEAR_LOG'
+  }
+}
+
+export const setStoragePayload = (storage: storage) => {
+  return {
+    type: 'SET_STORAGE',
+    payload: storage
   }
 }
