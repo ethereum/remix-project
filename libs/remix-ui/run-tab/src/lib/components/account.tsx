@@ -8,7 +8,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 
 export function AccountUI(props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
-  const { selectExEnv, personalMode } = props
+  const { selectExEnv, personalMode, networkName } = props
   const accounts = Object.keys(loadedAccounts)
   const [plusOpt, setPlusOpt] = useState({
     classList: '',
@@ -27,7 +27,7 @@ export function AccountUI(props: AccountProps) {
   useEffect(() => {
     props.setAccount('')
     if (selectExEnv && selectExEnv.startsWith('injected')) {
-      if (props.networkName.includes('Sepolia (11155111)')) {
+      if (networkName.includes('Sepolia')) {
         setPlusOpt({
           classList: '',
           title: intl.formatMessage({ id: 'udapp.createSmartAccount' })
@@ -95,10 +95,11 @@ export function AccountUI(props: AccountProps) {
         })
       }
     }
-  }, [selectExEnv, personalMode])
+  }, [selectExEnv, personalMode, networkName])
 
   const newAccount = () => {
-    props.createNewBlockchainAccount(passphraseCreationPrompt())
+    if (selectExEnv && selectExEnv.startsWith('injected') && networkName.includes('Sepolia')) props.createNewSmartAccount()
+    else props.createNewBlockchainAccount(passphraseCreationPrompt())
   }
 
   const signMessage = () => {

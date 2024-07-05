@@ -20,6 +20,7 @@ import {
   setExecutionEnvironment,
   hideToaster,
   createNewAddress,
+  createNewSmartAccount,
   setPassphraseModal,
   setMatchPassphraseModal,
   signMessage,
@@ -292,6 +293,7 @@ export function RunTabUI(props: RunTabProps) {
             providers={runTab.providers}
             setExecutionContext={setExecutionEnvironment}
             createNewBlockchainAccount={createNewAddress}
+            createNewSmartAccount={createNewSmartAccount}
             setPassphrase={setPassphraseModal}
             setMatchPassphrase={setMatchPassphraseModal}
             modal={modal}
