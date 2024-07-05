@@ -19,7 +19,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   isE2E: () => ipcRenderer.invoke('config:isE2E'),
   canTrackMatomo: () => ipcRenderer.invoke('config:canTrackMatomo'),
   trackEvent: (args: any[]) => ipcRenderer.invoke('matomo:trackEvent', args), 
-
+  openFolder: (path: string) => ipcRenderer.invoke('fs:openFolder', webContentsId, path),
+  openFolderInSameWindow: (path: string) => ipcRenderer.invoke('fs:openFolderInSameWindow', webContentsId, path),
   activatePlugin: (name: string) => {
     return ipcRenderer.invoke('manager:activatePlugin', name)
   },
