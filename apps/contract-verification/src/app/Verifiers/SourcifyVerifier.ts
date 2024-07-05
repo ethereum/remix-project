@@ -2,7 +2,7 @@ import { CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
 import { SubmittedContract, VerificationResponse } from '../types/VerificationTypes'
 
-interface SourcifyVerifyRequest {
+interface SourcifyVerificationRequest {
   address: string
   chain: string
   files: Record<string, string>
@@ -47,7 +47,7 @@ export class SourcifyVerifier extends AbstractVerifier {
       acc[fileName] = content
       return acc
     }, {})
-    const body: SourcifyVerifyRequest = {
+    const body: SourcifyVerificationRequest = {
       chain: submittedContract.chainId,
       address: submittedContract.address,
       files: {
