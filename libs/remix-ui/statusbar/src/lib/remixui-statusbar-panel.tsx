@@ -7,6 +7,7 @@ import { FloatingFocusManager, autoUpdate, flip, offset, shift, size, useClick, 
 import axios from 'axios'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
+import { StatusBarContextProvider } from '../contexts/statusbarcontext'
 
 export interface RemixUIStatusBarProps {
   statusBarPlugin: StatusBar
@@ -66,21 +67,23 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
 
   return (
     <>
-      {showScamDetails && (
-        <FloatingFocusManager context={context} modal={false}>
-          <ScamDetails refs={refs} floatStyle={{ ...floatingStyles, minHeight: 'auto', alignContent: 'center', paddingRight: '0.5rem' }} getFloatingProps={getFloatingProps} scamAlerts={scamAlerts} />
-        </FloatingFocusManager>
-      )}
-      <div className="d-flex remixui_statusbar_height flex-row bg-info justify-content-between align-items-center">
-        <div className="remixui_statusbar remixui_statusbar_gitstatus">
-          <GitStatus plugin={statusBarPlugin} gitBranchName={gitBranchName} setGitBranchName={setGitBranchName} />
+      <StatusBarContextProvider>
+        {showScamDetails && (
+          <FloatingFocusManager context={context} modal={false}>
+            <ScamDetails refs={refs} floatStyle={{ ...floatingStyles, minHeight: 'auto', alignContent: 'center', paddingRight: '0.5rem' }} getFloatingProps={getFloatingProps} scamAlerts={scamAlerts} />
+          </FloatingFocusManager>
+        )}
+        <div className="d-flex remixui_statusbar_height flex-row bg-info justify-content-between align-items-center">
+          <div className="remixui_statusbar remixui_statusbar_gitstatus">
+            <GitStatus plugin={statusBarPlugin} gitBranchName={gitBranchName} setGitBranchName={setGitBranchName} />
+          </div>
+          <div className="remixui_statusbar"></div>
+          <div className="remixui_statusbar d-flex flex-row">
+            <ScamAlertStatus refs={refs} getReferenceProps={getReferenceProps} />
+            <AIStatus plugin={statusBarPlugin} aiActive={lightAiUp} isAiActive={isAiActive} setIsAiActive={setIsAiActive} />
+          </div>
         </div>
-        <div className="remixui_statusbar"></div>
-        <div className="remixui_statusbar d-flex flex-row">
-          <ScamAlertStatus refs={refs} getReferenceProps={getReferenceProps} />
-          <AIStatus plugin={statusBarPlugin} aiActive={lightAiUp} isAiActive={isAiActive} setIsAiActive={setIsAiActive} />
-        </div>
-      </div>
+      </StatusBarContextProvider>
     </>
   )
 }
