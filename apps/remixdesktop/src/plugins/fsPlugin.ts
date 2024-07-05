@@ -94,6 +94,13 @@ export class FSPlugin extends ElectronBasePlugin {
       client.openFolder(path)
     }
   }
+
+  openFolderInSameWindow(webContentsId: any, path?: string): void {
+    const client = this.clients.find((c) => c.webContentsId === webContentsId)
+    if (client) {
+      client.openFolderInSameWindow(path)
+    }
+  }
 }
 
 const clientProfile: Profile = {
