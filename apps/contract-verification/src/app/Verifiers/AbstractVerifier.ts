@@ -1,5 +1,9 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { SubmittedContract, VerificationResponse } from '../types/VerificationTypes'
+import { SubmittedContract, VerificationResponse, VerificationStatus } from '../types/VerificationTypes'
+
+export interface AbstractVerifier {
+  checkVerificationStatus?(receiptId: string): Promise<VerificationStatus>
+}
 
 export abstract class AbstractVerifier {
   apiUrl: string

@@ -32,7 +32,7 @@ export interface VerifierInfo {
 export interface VerificationReceipt {
   receiptId?: string
   verifierInfo: VerifierInfo
-  status: string | 'error' | 'pending' | null
+  status: VerificationStatus | null
   message?: string
 }
 
@@ -68,7 +68,9 @@ export function isContract(contract: SubmittedContract | SubmittedProxyContract)
   return contract.type === 'contract'
 }
 
+export type VerificationStatus = string | 'error' | 'pending'
+
 export interface VerificationResponse {
-  status: string | 'pending'
+  status: VerificationStatus
   receiptId: string | null
 }
