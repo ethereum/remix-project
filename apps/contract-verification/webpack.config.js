@@ -44,8 +44,8 @@ module.exports = composePlugins(withNx(), (config) => {
   config.output.publicPath = '/'
 
   // set filename
-  config.output.filename = `[name].plugin-etherscan.${versionData.timestamp}.js`
-  config.output.chunkFilename = `[name].plugin-etherscan.${versionData.timestamp}.js`
+  config.output.filename = `[name].plugin-contract-verification.${versionData.timestamp}.js`
+  config.output.chunkFilename = `[name].plugin-contract-verification.${versionData.timestamp}.js`
 
   // add copy & provide plugin
   config.plugins.push(
