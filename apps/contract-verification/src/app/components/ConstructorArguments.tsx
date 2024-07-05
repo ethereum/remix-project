@@ -12,6 +12,10 @@ interface ConstructorArgumentsProps {
   selectedContract: ContractDropdownSelection
 }
 
+// TODO
+// Add mapping VerifierIdentifier -> ConstructorArgsRequired
+// Check enabledVerifiers: when not required, don't show component and set to null
+
 export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, selectedContract }) => {
   const { compilationOutput } = React.useContext(AppContext)
   const [constructorArgsValues, setConstructorArgsValues] = React.useState<string[]>([])

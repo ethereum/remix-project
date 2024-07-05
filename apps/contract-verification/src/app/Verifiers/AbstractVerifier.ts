@@ -3,6 +3,7 @@ import { SubmittedContract, VerificationResponse } from '../types/VerificationTy
 
 export abstract class AbstractVerifier {
   apiUrl: string
+  // TODO remove prop
   enabled: boolean
 
   constructor(apiUrl: string) {
