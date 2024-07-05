@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
-import { storageStatus } from '../lib/pluginActions'
 import { ReadCommitResult } from "isomorphic-git"
 import { gitPluginContext } from './gitui'
 export const BranchHeader = () => {
@@ -11,7 +10,6 @@ export const BranchHeader = () => {
   const [changed, setChanged] = useState(false)
   const [isDetached, setIsDetached] = useState(false)
   const [latestCommit, setLatestCommit] = useState<ReadCommitResult>(null)
-  const [storageStats, setStorageStats] = useState<string>('')
 
   useEffect(() => {
     if (context.currentBranch) {
@@ -45,18 +43,6 @@ export const BranchHeader = () => {
     }
   }, [context.fileStatusResult, context.modified, context.allchangesnotstaged, context.untracked, context.deleted])
 
-  useEffect(() => {
-    const run = async () => {
-      const stats = await storageStatus()
-      setStorageStats(stats)
-    }
-    run()
-
-    return () => {
-      run()
-    }
-  }, [])
-
   const getName = () => {
     const url = context.currentBranch?.remote?.url
     if (!url) return
@@ -80,7 +66,7 @@ export const BranchHeader = () => {
             <div className="pr-1 m-0">
               <span className="">Repository Name:</span>
               <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap" style={{ width: '15rem' }}>
-                <span className={`${ changed ? 'text-danger pl-2' : "pl-2" }`}>
+                <span className={`${changed ? 'text-danger pl-2' : "pl-2"}`}>
                   {getName() ?? ''}
                 </span>
               </span>
@@ -88,20 +74,22 @@ export const BranchHeader = () => {
             <div className="pr-1 m-0">
               <span className="">Branch Name:</span>
               <span className="pl-2 text-secondary text-truncate overflow-hidden whitespace-nowrap">
-                <span className={`${ changed ? 'text-danger pl-2' : "pl-2" }`}>
+                <span className={`${changed ? 'text-danger pl-2' : "pl-2"}`}>
                   <i className="fa fa-code-branch mr-1 pl-2"></i>
                   {context.currentBranch && context.currentBranch.name}
                 </span>
               </span>
             </div>
-            <div className="d-flex flex-column">
-              <span className="d-flex justify-between align-items-center">
-                <span className="">Storage : </span>
-                <span className="text-secondary text-sm text-truncate overflow-hidden whitespace-nowrap ml-4">
-                  {storageStats} MB
+            {context.storage.enabled ?
+              <div className="d-flex flex-column">
+                <span className="d-flex justify-between align-items-center">
+                  <span className="">Storage : </span>
+                  <span className="text-secondary text-sm text-truncate overflow-hidden whitespace-nowrap ml-4">
+                    {context.storage.used} MB used
+                    ({context.storage.percentUsed} %)
+                  </span>
                 </span>
-              </span>
-            </div>
+              </div> : null}
             <div className="d-flex flex-row">
               <span className="d-flex justify-between align-items-center">
                 <span className="">Messages :</span>
@@ -109,7 +97,7 @@ export const BranchHeader = () => {
                   {latestCommit ?
                     latestCommit.commit && latestCommit.commit.message ? latestCommit.commit.message : '' : null}
                   {isDetached ?
-                    <>You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1 pl-2"></i></>: null}
+                    <>You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1 pl-2"></i></> : null}
                 </span>
               </span>
             </div>
