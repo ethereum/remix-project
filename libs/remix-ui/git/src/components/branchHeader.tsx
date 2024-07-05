@@ -63,17 +63,20 @@ export const BranchHeader = () => {
       <div className="container-fluid px-3">
         <div className="d-flex flex-column pt-1 mb-1">
           <div className="d-flex flex-column justify-content-start align-items-start">
-            <div className="pr-1 m-0">
-              <span className="col-4 px-0">Repository Name:</span>
-              <span className="" style={{ width: '15rem' }}>
-                <span className={`${ changed ? 'text-danger pl-2 text-truncate overflow-hidden whitespace-nowrap' : "text-secondary pl-2 text-truncate overflow-hidden whitespace-nowrap" }`}>
-                  {getName() ?? ''}
+            {getName() !== "Couldn't get repo name!" ? (
+              <div className="pr-1 m-0">
+                <span className="col-4 px-0">Repository Name:</span>
+                <span className="" style={{ width: '15rem' }}>
+                  <span className={`${ changed ? 'text-danger pl-2 text-truncate overflow-hidden whitespace-nowrap ml-4' : "text-secondary pl-2 text-truncate overflow-hidden whitespace-nowrap ml-4" }`}>
+                    {getName() ?? ''}
+                  </span>
                 </span>
-              </span>
-            </div>
+              </div>
+            ) : null
+            }
             <div className="pr-1 m-0">
-              <span className="">Branch Name:</span>
-              <span className="pl-2 text-secondary text-truncate overflow-hidden whitespace-nowrap">
+              <span className="col-4 px-0">Branch Name:</span>
+              <span className="pl-2 text-secondary text-truncate overflow-hidden whitespace-nowrap ml-4">
                 <span className={`${changed ? 'text-danger pl-2' : "pl-2"}`}>
                   <i className="fa fa-code-branch mr-1 pl-2"></i>
                   {context.currentBranch && context.currentBranch.name}
@@ -83,7 +86,7 @@ export const BranchHeader = () => {
             {context.storage.enabled ?
               <div className="d-flex">
                 <span className="d-flex justify-between align-items-center" style={{ width: '15rem' }}>
-                  <span className="col-4 px-0">Storage : </span>
+                  <span className="col-4 px-0">Storage :</span>
                   <span className="text-secondary text-sm text-truncate overflow-hidden whitespace-nowrap ml-4">
                     {context.storage.used} MB used
                   ({context.storage.percentUsed} %)
@@ -91,10 +94,10 @@ export const BranchHeader = () => {
                 </span>
               </div> : null}
             <div className="d-flex flex-row">
-              <span className="d-flex justify-between align-items-center">
-                <span className="col-3 px-0">Messages :</span>
-                <span className="" style={{ width: '15rem' }}>
-                  <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap">
+              <span className="d-flex justify-between align-items-center" style={{ width: '15rem' }}>
+                <span className="col-4 px-0">Messages :</span>
+                <span className="text-truncate overflow-hidden" >
+                  <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap ml-4">
                     {latestCommit ?
                       latestCommit.commit && latestCommit.commit.message ? latestCommit.commit.message : '' : null}
                     {isDetached ?
