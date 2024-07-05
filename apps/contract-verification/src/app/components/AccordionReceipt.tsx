@@ -95,6 +95,7 @@ const ReceiptsBody = ({ contract }: { contract: SubmittedContract }) => {
               <th>Status</th>
               <th>Message</th>
               <th>ReceiptID</th>
+              {/*TODO add link*/}
             </tr>
           </thead>
           <tbody>

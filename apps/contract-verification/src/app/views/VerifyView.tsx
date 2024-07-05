@@ -66,7 +66,10 @@ export const VerifyView = () => {
       if (verifier instanceof SourcifyVerifier) {
         try {
           const response = await verifier.verify(newSubmittedContract, compilerAbstract)
-          receipt.status = response.result[0].status
+          receipt.status = response.status
+          if (response.receiptId) {
+            receipt.receiptId = response.receiptId
+          }
         } catch (e) {
           const err = e as Error
           receipt.status = 'error'
@@ -74,6 +77,7 @@ export const VerifyView = () => {
         }
       } else if (verifier instanceof EtherscanVerifier) {
         try {
+          // TODO generalize parameters to pass constructorargs optionally on the AbstractVerifier
           const response = await verifier.verify(newSubmittedContract, compilerAbstract, abiEncodedConstructorArgs)
           receipt.status = 'perfect'
         } catch (e) {

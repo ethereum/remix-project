@@ -32,7 +32,7 @@ export interface VerifierInfo {
 export interface VerificationReceipt {
   receiptId?: string
   verifierInfo: VerifierInfo
-  status: SourcifyVerificationStatus | 'error' | null
+  status: string | 'error' | 'pending' | null
   message?: string
 }
 
@@ -67,23 +67,9 @@ export function isContract(contract: SubmittedContract | SubmittedProxyContract)
   return contract.type === 'contract'
 }
 
-export type SourcifyVerificationStatus = 'perfect' | 'partial' | null
-
-export interface SourcifyVerificationResponse {
-  result: [
-    {
-      address: string
-      chainId: string
-      status: SourcifyVerificationStatus
-      libraryMap: {
-        [key: string]: string
-      }
-    }
-  ]
-}
-
-export interface SourcifyVerificationError {
-  error: 'string'
+export interface VerificationResponse {
+  status: string | 'pending'
+  receiptId: string | null
 }
 
 export interface EtherscanRequest {

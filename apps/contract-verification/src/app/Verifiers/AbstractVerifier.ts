@@ -1,5 +1,5 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { SubmittedContract, VerifierIdentifier } from '../types/VerificationTypes'
+import { SubmittedContract, VerificationResponse } from '../types/VerificationTypes'
 
 export abstract class AbstractVerifier {
   apiUrl: string
@@ -10,6 +10,6 @@ export abstract class AbstractVerifier {
     this.enabled = true
   }
 
-  abstract verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<any>
+  abstract verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse>
   abstract lookup(): Promise<any>
 }
