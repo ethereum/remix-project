@@ -10,6 +10,12 @@
   max-height: 600px;
   white-space: pre-line;
 }
+.modal-ok {
+  min-width: 4rem;
+}
+.modal-cancel {
+  min-width: 4rem;
+}
 @-webkit-keyframes animatetop {
   from {top: -300px; opacity: 0}
   to {top: 0; opacity: 1}
