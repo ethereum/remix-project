@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 export type localPluginReducerActionType = {
   type: 'show' | 'close',

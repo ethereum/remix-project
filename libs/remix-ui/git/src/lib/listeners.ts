@@ -237,14 +237,12 @@ const calculateLocalStorage = async () => {
         enabled: true
       }
       setStorage(storage);
-      
+
     });
   } else {
     console.log('Storage API not supported in this browser.');
     setStorage(storage);
   }
-
-  
 
 }
 
