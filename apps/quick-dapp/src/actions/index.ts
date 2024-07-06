@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { omitBy } from 'lodash';
+import semver from 'semver';
 import { execution } from '@remix-project/remix-lib';
 import SurgeClient from '@drafish/surge-client';
 import remixClient from '../remix-client';
@@ -15,6 +16,21 @@ const surgeClient = new SurgeClient({
     console.log(err);
   },
 });
+
+const getVersion = (solcVersion) => {
+  let version = '0.8.25'
+  try {
+    const arr = solcVersion.split('+')
+    if (arr && arr[0]) version = arr[0]
+    if (semver.lt(version, '0.6.0')) {
+      return { version: version, canReceive: false };
+    } else {
+      return { version: version, canReceive: true };
+    }
+  } catch (e) {
+    return { version, canReceive: true };
+  }
+};
 
 let dispatch: any, state: any;
 
@@ -221,6 +237,7 @@ export const deploy = async (payload: any, callback: any) => {
 export const initInstance = async ({
   methodIdentifiers,
   devdoc,
+  solcVersion,
   ...payload
 }: any) => {
   const functionHashes: any = {};
@@ -257,10 +274,17 @@ export const initInstance = async ({
   }
 
   const abi: any = {};
+  const lowLevel: any = {}
   payload.abi.forEach((item: any) => {
     if (item.type === 'function') {
       item.id = encodeFunctionId(item);
       abi[item.id] = item;
+    }
+    if (item.type === 'fallback') {
+      lowLevel.fallback = item;
+    }
+    if (item.type === 'receive') {
+      lowLevel.receive = item;
     }
   });
   const ids = Object.keys(abi);
@@ -279,6 +303,8 @@ export const initInstance = async ({
       items,
       containers: Object.keys(items),
       natSpec,
+      solcVersion: getVersion(solcVersion),
+      ...lowLevel,
     },
   });
 };
