@@ -13,10 +13,10 @@ const tests = {
     },
     installFoundry: function (browser: NightwatchBrowser) {
         browser.perform(async (done) => {
-          await downloadFoundry()
-          await installFoundry()
-          await initFoundryProject()
-          done()
+            await downloadFoundry()
+            await installFoundry()
+            await initFoundryProject()
+            done()
         })
     },
     addScript: function (browser: NightwatchBrowser) {
@@ -26,7 +26,7 @@ const tests = {
         }, [dir], () => {
             console.log('done window opened')
         })
-            .waitForElementVisible('*[data-id="treeViewDivDraggableItemhardhat.config.js"]', 10000)
+            .waitForElementVisible('*[data-id="treeViewDivDraggableItemfoundry.toml"]', 10000)
     },
     compile: function (browser: NightwatchBrowser) {
         browser.perform(async (done) => {
@@ -34,7 +34,26 @@ const tests = {
             await buildFoundryProject()
             done()
         })
-        .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Foundry').before(60000)
+            .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Foundry').before(60000)
+        
+        let contractAaddress
+        browser.clickLaunchIcon('filePanel')
+            .openFile('src')
+            .openFile('src/Counter.sol')
+            .clickLaunchIcon('udapp')
+            .selectContract('Counter')
+            .createContract('')
+            .getAddressAtPosition(0, (address) => {
+                console.log(contractAaddress)
+                contractAaddress = address
+            })
+            .clickInstance(0)
+            .clickFunction('increment - transact (not payable)')
+            .perform((done) => {
+                browser.testConstantFunction(contractAaddress, 'number - call', null, '0:\nuint256: 1').perform(() => {
+                    done()
+                })
+            })
     }
 }
 async function downloadFoundry(): Promise<void> {
@@ -60,9 +79,9 @@ async function downloadFoundry(): Promise<void> {
     } catch (e) {
         console.log(e)
     }
-  }
-  
-  async function installFoundry(): Promise<void> {
+}
+
+async function installFoundry(): Promise<void> {
     console.log('installFoundry', process.cwd())
     try {
         const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && foundryup', [], { cwd: process.cwd(), shell: true, detached: true })
@@ -84,12 +103,12 @@ async function downloadFoundry(): Promise<void> {
     } catch (e) {
         console.log(e)
     }
-  }
-  
-  async function initFoundryProject(): Promise<void> {
+}
+
+async function initFoundryProject(): Promise<void> {
     console.log('initFoundryProject', homedir())
-    try {    
-        if(process.env.CIRCLECI) {
+    try {
+        if (process.env.CIRCLECI) {
             spawn('git config --global user.email \"you@example.com\"', [], { cwd: homedir(), shell: true, detached: true })
             spawn('git config --global user.name \"Your Name\"', [], { cwd: homedir(), shell: true, detached: true })
         }
@@ -98,35 +117,35 @@ async function downloadFoundry(): Promise<void> {
         server.stdout.pipe(process.stdout)
         return new Promise((resolve, reject) => {
             server.on('exit', function (exitCode) {
-              console.log("Child exited with code: " + exitCode);
-              console.log('end')
-              resolve()
+                console.log("Child exited with code: " + exitCode);
+                console.log('end')
+                resolve()
             })
         })
     } catch (e) {
         console.log(e)
     }
-  }
-  
-  async function buildFoundryProject(): Promise<void> {
+}
+
+async function buildFoundryProject(): Promise<void> {
     console.log('buildFoundryProject', homedir())
     try {
         const server = spawn('export PATH="' + homedir() + '/.foundry/bin:$PATH" && forge build', [], { cwd: dir + '/hello_foundry', shell: true, detached: true })
         server.stdout.pipe(process.stdout)
         return new Promise((resolve, reject) => {
             server.on('exit', function (exitCode) {
-              console.log("Child exited with code: " + exitCode);
-              console.log('end')
-              resolve()
+                console.log("Child exited with code: " + exitCode);
+                console.log('end')
+                resolve()
             })
         })
     } catch (e) {
         console.log(e)
     }
-  }
-   
+}
+
 
 
 module.exports = {
-    ...tests
+    ...process.platform.startsWith('linux') ? tests : {}
 }
