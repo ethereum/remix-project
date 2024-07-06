@@ -11,6 +11,9 @@ import { RipgrepPlugin } from './plugins/ripgrepPlugin';
 import { CompilerLoaderPlugin } from './plugins/compilerLoader';
 import { SlitherPlugin } from './plugins/slitherPlugin';
 import { AppUpdaterPlugin } from './plugins/appUpdater';
+import { FoundryPlugin } from './plugins/foundryPlugin';
+import { HardhatPlugin } from './plugins/hardhatPlugin';
+import { isE2E } from './main';
 
 const engine = new Engine()
 const appManager = new PluginManager()
@@ -23,6 +26,8 @@ const ripgrepPlugin = new RipgrepPlugin()
 const compilerLoaderPlugin = new CompilerLoaderPlugin()
 const slitherPlugin = new SlitherPlugin()
 const appUpdaterPlugin = new AppUpdaterPlugin()
+const foundryPlugin = new FoundryPlugin()
+const hardhatPlugin = new HardhatPlugin()
 
 engine.register(appManager)
 engine.register(fsPlugin)
@@ -33,7 +38,9 @@ engine.register(templatesPlugin)
 engine.register(ripgrepPlugin)
 engine.register(compilerLoaderPlugin)
 engine.register(slitherPlugin)
+engine.register(foundryPlugin)
 engine.register(appUpdaterPlugin)
+engine.register(hardhatPlugin)
 
 appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')
@@ -44,6 +51,18 @@ ipcMain.handle('manager:activatePlugin', async (event, plugin) => {
 
 ipcMain.on('fs:openFolder', async (event, path?) => {
   fsPlugin.openFolder(event, path)
+})
+
+ipcMain.handle('fs:openFolder', async (event, webContentsId, path?) => {
+  if(!isE2E) return
+  console.log('openFolder', webContentsId, path)
+  fsPlugin.openFolder(webContentsId, path)
+})
+
+ipcMain.handle('fs:openFolderInSameWindow', async (event, webContentsId, path?) => {
+  if(!isE2E) return
+  console.log('openFolderInSameWindow', webContentsId, path)
+  fsPlugin.openFolderInSameWindow(webContentsId, path)
 })
 
 
