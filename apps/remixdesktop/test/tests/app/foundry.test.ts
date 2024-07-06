@@ -22,7 +22,7 @@ const tests = {
     addScript: function (browser: NightwatchBrowser) {
         // run script in console
         browser.executeAsync(function (dir, done) {
-            (window as any).electronAPI.openFolderInSameWindow(dir).then(done)
+            (window as any).electronAPI.openFolderInSameWindow(dir + '/hello_foundry/').then(done)
         }, [dir], () => {
             console.log('done window opened')
         })
