@@ -31,7 +31,24 @@ const tests = {
             await compileHardhatProject()
             done()
         })
-        .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
+            .expect.element('*[data-id="terminalJournal"]').text.to.contain('receiving compilation result from Hardhat').before(60000)
+        let addressRef
+        browser.clickLaunchIcon('filePanel')
+            .openFile('contracts')
+            .openFile('contracts/Token.sol')
+            .clickLaunchIcon('udapp')
+            .selectAccount('0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c')
+            .selectContract('Token')
+            .createContract('')
+            .clickInstance(0)
+            .clickFunction('balanceOf - call', { types: 'address account', values: '0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c' })
+            .getAddressAtPosition(0, (address) => {
+                addressRef = address
+            })
+            .perform((done) => {
+                browser.verifyCallReturnValue(addressRef, ['0:uint256: 1000000'])
+                    .perform(() => done())
+            })
     }
 }
 
