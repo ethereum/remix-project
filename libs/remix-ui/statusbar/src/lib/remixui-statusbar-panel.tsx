@@ -73,7 +73,7 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
           <ScamDetails refs={refs} floatStyle={{ ...floatingStyles, minHeight: 'auto', alignContent: 'center', paddingRight: '0.5rem' }} getFloatingProps={getFloatingProps} scamAlerts={scamAlerts} />
         </FloatingFocusManager>
       )}
-      <div className="d-flex remixui_statusbar_height flex-row bg-primary justify-content-between align-items-center">
+      <div className="d-flex remixui_statusbar_height flex-row bg-info justify-content-between align-items-center">
         <div className="remixui_statusbar remixui_statusbar_gitstatus">
           {platform == appPlatformTypes.desktop ? <></> :
             <GitStatus plugin={statusBarPlugin} gitBranchName={gitBranchName} setGitBranchName={setGitBranchName} />}

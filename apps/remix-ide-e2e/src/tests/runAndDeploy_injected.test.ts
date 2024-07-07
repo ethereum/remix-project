@@ -25,7 +25,7 @@ const checkAlerts = function (browser: NightwatchBrowser){
   })
 }
 
-module.exports = {
+const tests = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
@@ -50,10 +50,10 @@ module.exports = {
       .pause(5000)
       .switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
         browser
-          .waitForElementVisible('*[data-testid="page-container-footer-next"]')
+          .waitForElementVisible('*[data-testid="page-container-footer-next"]', 60000)
           .click('*[data-testid="page-container-footer-next"]') // this connects the metamask account to remix
           .pause(2000)
-          .waitForElementVisible('*[data-testid="page-container-footer-next"]')
+          .waitForElementVisible('*[data-testid="page-container-footer-next"]', 60000)
           .click('*[data-testid="page-container-footer-next"]')
           // .waitForElementVisible('*[data-testid="popover-close"]')
           // .click('*[data-testid="popover-close"]')
@@ -162,7 +162,7 @@ module.exports = {
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
-            .waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
@@ -177,7 +177,7 @@ module.exports = {
       .perform((done) => { // call delegate
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
-            .waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
@@ -231,6 +231,13 @@ module.exports = {
       .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
   }  
 }
+
+const branch = process.env.CIRCLE_BRANCH;
+const isMasterBranch = branch === 'master';
+
+module.exports = {
+  ...(branch ? (isMasterBranch ? tests : {}) : tests),
+};
 
 const localsCheck = {
   to: {

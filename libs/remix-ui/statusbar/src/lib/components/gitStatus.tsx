@@ -1,4 +1,4 @@
-import React, { useEffect, Dispatch } from 'react'
+import React, { useEffect, Dispatch, useState } from 'react'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 import '../../css/statusbar.css'
@@ -11,10 +11,12 @@ export interface GitStatusProps {
 }
 
 export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: GitStatusProps) {
+  const [isLocalHost, setIsLocalHost] = useState(false)
 
   useEffect(() => {
     plugin.on('filePanel', 'setWorkspace', async (workspace) => {
       const isGit = await plugin.call('fileManager', 'isGitRepo')
+      setIsLocalHost(workspace.isLocalhost)
       if (isGit) {
         setGitBranchName(workspace.name)
       } else {
@@ -30,13 +32,14 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
         setGitBranchName('Not a git repo')
       }
     })
-    plugin.on('dGitProvider', 'init', async () => {
+    plugin.on('dgitApi', 'init', async () => {
       const isGit = await plugin.call('fileManager', 'isGitRepo')
       if (isGit) {
         const workspace = localStorage.getItem('currentWorkspace')
         setGitBranchName(workspace)
       }
     })
+
   }, [])
 
   const lightDgitUp = async () => {
@@ -49,12 +52,16 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
   }
 
   const initializeNewGitRepo = async () => {
-    await plugin.call('dGitProvider', 'init')
+    await plugin.call('dgitApi', 'init')
     const isActive = await plugin.call('manager', 'isActive', 'dgit')
-    if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-    // plugin.verticalIcons.select('dgit')
+    if (isLocalHost === false) {
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+    }
   }
 
+  const checkBranchName = ()=> {
+    return gitBranchName && gitBranchName !== 'Not a git repo' && gitBranchName.length > 0
+  }
   return (
     <CustomTooltip
       tooltipText={`${gitBranchName === 'Not a git repo' ? 'Initialize as a git repo' : gitBranchName} (Git)`}
@@ -63,10 +70,10 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
         className="d-flex flex-row pl-3 text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
         onClick={async () => await lightDgitUp()}
       >
-        {gitBranchName.length > 0 && gitBranchName !== 'Not a git repo' ? <span className="fa-regular fa-code-branch ml-1"></span>
+        {checkBranchName() && isLocalHost === false ? <span className="fa-regular fa-code-branch ml-1"></span>
           : <span className=" ml-1" onClick={initializeNewGitRepo}> Initialize as git repo</span>}
-        {gitBranchName.length > 0 && gitBranchName !== 'Not a git repo' && <span className="ml-1">{gitBranchName}</span>}
-        {gitBranchName.length > 0 && gitBranchName !== 'Not a git repo' && <span className="fa-solid fa-arrows-rotate fa-1 ml-1"></span>}
+        {checkBranchName() && isLocalHost === false && <span className="ml-1">{gitBranchName}</span>}
+        {checkBranchName() && isLocalHost === false && <span className="fa-solid fa-arrows-rotate fa-1 ml-1"></span>}
       </div>
     </CustomTooltip>
   )
