@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { omitBy } from 'lodash';
 import { MultipleContainers } from '../MultipleContainers';
 import { AppContext } from '../../contexts';
+import ImageUpload from '../ImageUpload'
 
 function EditInstance(): JSX.Element {
   const { appState, dispatch } = useContext(AppContext);
@@ -9,43 +10,48 @@ function EditInstance(): JSX.Element {
     appState.instance;
   return (
     <div className="col-9 d-inline-block row">
-      <div className="mx-4 my-2 p-3 w-75 bg-light">
-        <input
-          className="form-control"
-          placeholder="Dapp title"
-          value={title}
-          onChange={({ target: { value } }) => {
-            dispatch({
-              type: 'SET_INSTANCE',
-              payload: {
-                title: natSpec.checked && !value ? natSpec.title : value,
-                userInput: omitBy(
-                  { ...userInput, title: value },
-                  (item) => item === ''
-                ),
-              },
-            });
-          }}
-        />
-      </div>
-      <div className="mx-4 my-2 p-3 w-75 bg-light">
-        <textarea
-          className="form-control"
-          placeholder="Dapp instructions"
-          value={details}
-          onChange={({ target: { value } }) => {
-            dispatch({
-              type: 'SET_INSTANCE',
-              payload: {
-                details: natSpec.checked && !value ? natSpec.details : value,
-                userInput: omitBy(
-                  { ...userInput, details: value },
-                  (item) => item === ''
-                ),
-              },
-            });
-          }}
-        />
+      <div className="row">
+        <ImageUpload />
+        <div className="col-9 pl-0">
+          <div className="my-2 p-3 bg-light">
+            <input
+              className="form-control"
+              placeholder="Dapp title"
+              value={title}
+              onChange={({ target: { value } }) => {
+                dispatch({
+                  type: 'SET_INSTANCE',
+                  payload: {
+                    title: natSpec.checked && !value ? natSpec.title : value,
+                    userInput: omitBy(
+                      { ...userInput, title: value },
+                      (item) => item === ''
+                    ),
+                  },
+                });
+              }}
+            />
+          </div>
+          <div className="my-2 p-3 bg-light">
+            <textarea
+              className="form-control"
+              placeholder="Dapp instructions"
+              value={details}
+              onChange={({ target: { value } }) => {
+                dispatch({
+                  type: 'SET_INSTANCE',
+                  payload: {
+                    details: natSpec.checked && !value ? natSpec.details : value,
+                    userInput: omitBy(
+                      { ...userInput, details: value },
+                      (item) => item === ''
+                    ),
+                  },
+                });
+              }}
+            />
+          </div>
+        </div>
       </div>
       <MultipleContainers
         abi={abi}
