@@ -121,6 +121,12 @@ async function initFoundryProject(): Promise<void> {
                 console.log('end')
                 resolve()
             })
+            server.stderr.on('err', function (data) {
+                console.log('err', data.toString())
+            })
+            server.stdout.on('data', function (data) {
+                console.log('data', data.toString())
+            })
         })
     } catch (e) {
         console.log(e)
