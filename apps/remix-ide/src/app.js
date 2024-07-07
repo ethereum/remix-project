@@ -64,6 +64,10 @@ import { HardhatHandle } from './app/files/hardhat-handle'
 import { HardhatHandleDesktop } from './app/plugins/electron/hardhatPlugin'
 
 import { SolCoder } from './app/plugins/solcoderAI'
+import { GitPlugin } from './app/plugins/git'
+import { Matomo } from './app/plugins/matomo'
+
+
 
 const isElectron = require('is-electron')
 
@@ -234,6 +238,12 @@ class AppComponent {
     //---- templates
     const templates = new TemplatesPlugin()
 
+    //---- git
+    const git = new GitPlugin()
+
+    //---- matomo
+    const matomo = new Matomo()
+
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 
@@ -367,7 +377,9 @@ class AppComponent {
       solidityScript,
       templates,
       solcoder,
-      pluginStateLogger
+      git,
+      pluginStateLogger,
+      matomo
     ])
 
     //---- fs plugin
@@ -497,7 +509,8 @@ class AppComponent {
       'network',
       'web3Provider',
       'offsetToLineColumnConverter',
-      'pluginStateLogger'
+      'pluginStateLogger',
+      'matomo'
     ])
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await this.appManager.activatePlugin(['statusBar'])
@@ -520,7 +533,7 @@ class AppComponent {
     ])
     await this.appManager.activatePlugin(['settings'])
 
-    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
+    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'dgit'])
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()) {

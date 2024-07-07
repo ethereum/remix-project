@@ -7,6 +7,7 @@ import { PluginProfile, StatusBarInterface } from '../../types'
 import { RemixUIStatusBar } from '@remix-ui/statusbar'
 import { FilePanelType } from '@remix-ui/workspace'
 import { VerticalIcons } from './vertical-icons'
+import { CustomRemixApi } from '@remix-api'
 
 const statusBarProfile: PluginProfile = {
   name: 'statusBar',
@@ -16,7 +17,7 @@ const statusBarProfile: PluginProfile = {
   version: packageJson.version,
 }
 
-export class StatusBar extends Plugin implements StatusBarInterface {
+export class StatusBar extends Plugin<any, CustomRemixApi> implements StatusBarInterface {
   htmlElement: HTMLDivElement
   events: EventEmitter
   filePanelPlugin: FilePanelType
@@ -75,7 +76,7 @@ export class StatusBar extends Plugin implements StatusBarInterface {
       const workspaceName = localStorage.getItem('currentWorkspace')
       workspaceName && workspaceName.length > 0 ? this.currentWorkspaceName = workspaceName : this.currentWorkspaceName = 'error'
     })
-    this.on('settings', 'copilotChoiceChanged', (isAiActive) => {
+    this.on('settings', 'copilotChoiceChanged', (isAiActive: boolean) => {
       this.isAiActive = isAiActive
     })
     this.renderComponent()
