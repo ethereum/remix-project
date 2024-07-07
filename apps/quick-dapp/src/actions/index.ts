@@ -160,7 +160,7 @@ export const deploy = async (payload: any, callback: any) => {
   const { data } = await axios.get(
     // It's the json file contains all the static files paths of dapp-template.
     // It's generated through the build process automatically.
-    'https://remix-dapp.pages.dev/manifest.json'
+    'https://dev.remix-dapp.pages.dev/manifest.json'
   );
 
   let paths: any = [];
@@ -174,7 +174,7 @@ export const deploy = async (payload: any, callback: any) => {
     }
   });
 
-  const instance = state.instance;
+  const {logo, ...instance} = state.instance;
 
   const files: Record<string, string> = {
     'dir/instance.json': JSON.stringify({
@@ -195,9 +195,11 @@ export const deploy = async (payload: any, callback: any) => {
     const path = paths[index];
     // download all the static files from the dapp-template domain.
     // here is the codebase of dapp-template: https://github.com/drafish/remix-dapp
-    const resp = await axios.get(`https://remix-dapp.pages.dev/${path}`);
+    const resp = await axios.get(`https://dev.remix-dapp.pages.dev/${path}`);
     files[`dir/${path}`] = resp.data;
   }
+
+  files['dir/logo.png'] = logo
 
   files['dir/index.html'] = files['dir/index.html'].replace(
     'assets/css/themes/remix-dark_tvx1s2.css',
@@ -295,6 +297,9 @@ export const initInstance = async ({
         B: ids.slice(ids.length / 2 + 1),
       }
       : { A: ids };
+
+  const logo = await axios.get('https://dev.remix-dapp.pages.dev/logo.png', { responseType: 'arraybuffer' })
+  
   await dispatch({
     type: 'SET_INSTANCE',
     payload: {
@@ -305,6 +310,7 @@ export const initInstance = async ({
       natSpec,
       solcVersion: getVersion(solcVersion),
       ...lowLevel,
+      logo: logo.data,
     },
   });
 };
