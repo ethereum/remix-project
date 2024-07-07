@@ -40,13 +40,14 @@ class HardhatPluginClient extends ElectronBasePluginRemixdClient {
     async onActivation(): Promise<void> {
         console.log('Hardhat plugin activated')
         this.call('terminal', 'log', { type: 'log', value: 'Hardhat plugin activated' })
-        this.startListening()
+        
         this.on('fs' as any, 'workingDirChanged', async (path: string) => {
             console.log('workingDirChanged hardhat', path)
             this.currentSharedFolder = path
             this.startListening()
         })
         this.currentSharedFolder = await this.call('fs' as any, 'getWorkingDir')
+        if(this.currentSharedFolder) this.startListening()
     }
 
     startListening() {
