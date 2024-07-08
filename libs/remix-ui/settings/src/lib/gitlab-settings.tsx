@@ -1,9 +1,9 @@
-import {CopyToClipboard} from '@remix-ui/clipboard'
-import {CustomTooltip} from '@remix-ui/helper'
-import React, {useEffect, useState} from 'react'
-import {FormattedMessage, useIntl} from 'react-intl'
-import {GithubSettingsProps} from '../types'
-import {gitlabTokenLink} from './constants'
+import { CopyToClipboard } from '@remix-ui/clipboard'
+import { CustomTooltip } from '@remix-ui/helper'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { GithubSettingsProps } from '../types'
+import { gitlabTokenLink } from './constants'
 
 export function GitlabSettings(props: GithubSettingsProps) {
   const [gitlabToken, setGitlabToken] = useState<string>('')
@@ -72,7 +72,7 @@ export function GitlabSettings(props: GithubSettingsProps) {
           <div className="input-group text-secondary mb-0 h6">
             <input id="gitlabtoken" data-id="settingsTabGitlabToken" type="password" className="form-control" onChange={(e) => handleChangeTokenState(e)} value={gitlabToken} />
             <div className="input-group-append">
-              <CopyToClipboard tip={intl.formatMessage({id: 'settings.copy'})} content={gitlabToken} data-id="copyToClipboardCopyIcon" className="far fa-copy ml-1 p-2 mt-1" direction={'top'} />
+              <CopyToClipboard tip={intl.formatMessage({ id: 'settings.copy' })} content={gitlabToken} data-id="copyToClipboardCopyIcon" className="far fa-copy ml-1 p-2 mt-1" direction={'top'} />
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@ export function GitlabSettings(props: GithubSettingsProps) {
           <div className="text-secondary mb-0 h6">
             <input id="gitlabemail" data-id="settingsTabGitlabEmail" type="text" className="form-control" onChange={(e) => handleChangeEmailState(e)} value={gitlabEmail} />
             <div className="d-flex justify-content-end pt-2">
-              <input className="btn btn-sm btn-primary ml-2" id="savegitlabtoken" data-id="settingsTabSaveGitlabToken" onClick={saveGitlabToken} value={intl.formatMessage({id: 'settings.save'})} type="button"></input>
+              <input className="btn btn-sm btn-primary ml-2" id="savegitlabtoken" data-id="settingsTabSaveGitlabToken" onClick={saveGitlabToken} value={intl.formatMessage({ id: 'settings.save' })} type="button"></input>
               <CustomTooltip tooltipText={<FormattedMessage id="settings.deleteGitlabCredentials" />} tooltipClasses="text-nowrap" tooltipId="removegitlabtokenTooltip" placement="top-start">
                 <button className="btn btn-sm btn-secondary ml-2" id="removegitlabtoken" data-id="settingsTabRemoveGitlabToken" onClick={removeToken}>
                   <FormattedMessage id="settings.remove" />
