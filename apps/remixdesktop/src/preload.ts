@@ -28,10 +28,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
   plugins: exposedPLugins.map(name => {
     return {
       name,
-      on: (cb:any) => ipcRenderer.on(`${name}:send`, cb),
+      on: (cb:any) => {
+        if(name === 'isogit') console.log('isogit', cb)
+        ipcRenderer.on(`${name}:send`, cb)
+      },
       send: (message: Partial<Message>) => {
+        //if(name === 'isogit') console.log(name, message)
+        //if(name === 'isogit') ipcRenderer.invoke(`logger`, name, message)
         ipcRenderer.send(`${name}:on:${webContentsId}`, message)
       }
     }
   })
+
+
 })

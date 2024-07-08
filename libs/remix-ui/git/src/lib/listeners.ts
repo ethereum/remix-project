@@ -65,7 +65,20 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
       loadFiles()
     })
   });
-
+  plugin.on('fs', 'workingDirChanged', async (path: string) => {
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    })
+    loadFileQueue.enqueue(async () => {
+      gitlog()
+    })
+    loadFileQueue.enqueue(async () => {
+      getBranches()
+    })
+    loadFileQueue.enqueue(async () => {
+      getRemotes()
+    })
+  })
   plugin.on("filePanel", "setWorkspace", async (x: any) => {
     gitDispatch(setCanUseApp(x && !x.isLocalhost && x.name))
     loadFileQueue.enqueue(async () => {

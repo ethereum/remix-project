@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import { gitActionsContext } from "../../state/context";
-import { remote } from "../../types";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
 import { LocalBranchDetails } from "./branches/localbranchdetails";

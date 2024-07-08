@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { GitHubUser, branch, commitChange, fileStatusResult, remote, pagedCommits, branchDifference, gitLog, repository, userEmails } from "../types"
-import { Endpoints } from "@octokit/types"
+import { GitHubUser, fileStatusResult, gitLog, userEmails } from "../types"
+import { repository, pagedCommits, branch, remote, commitChange, branchDifference } from "@remix-api"
 
 export const fileStatus = (files: fileStatusResult[]) => {
   return {

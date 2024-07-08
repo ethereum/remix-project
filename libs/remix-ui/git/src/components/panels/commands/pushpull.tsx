@@ -4,7 +4,7 @@ import { gitPluginContext } from "../../gitui";
 import { selectStyles, selectTheme } from "../../../types/styles";
 import Select, { Options, OptionsOrGroups } from 'react-select'
 import GitUIButton from "../../buttons/gituibutton";
-import { remote } from "../../../types";
+import { remote } from "@remix-api";
 import { relative } from "path";
 
 export const PushPull = () => {

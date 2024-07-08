@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CustomTooltip } from "@remix-ui/helper";
 import React, { useContext, useEffect } from "react";
 import { gitActionsContext } from "../../state/context";
-import { branch, remote } from "../../types";
+import { remote } from "@remix-api";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
 

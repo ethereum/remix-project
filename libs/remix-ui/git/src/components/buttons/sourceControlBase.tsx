@@ -5,7 +5,7 @@ import { ReadCommitResult } from "isomorphic-git"
 import React, { createContext, useEffect, useState } from "react"
 import { FormattedMessage } from "react-intl"
 import { gitActionsContext } from "../../state/context"
-import { branch, remote } from "../../types"
+import { branch, remote } from "@remix-api"
 import { gitPluginContext } from "../gitui"
 import GitUIButton from "./gituibutton"
 

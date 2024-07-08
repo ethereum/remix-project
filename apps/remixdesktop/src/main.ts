@@ -145,6 +145,9 @@ HelpMenu(commandKeys, execCommand),
 if (!isE2E || isE2ELocal)
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 
+ipcMain.handle('logger', async (...args) => {
+  console.log('log:', ...args)
+})
 
 ipcMain.handle('config:isPackaged', async () => {
   return isPackaged
