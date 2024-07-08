@@ -1,27 +1,22 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import parse from 'html-react-parser'
+import { ScanReport } from './types'
 const _paq = (window._paq = window._paq || [])
 
 interface SolScanTableProps {
-  scanDetails: Record<string, any>[],
+  scanReport: ScanReport
   fileName: string
 }
 
 export function SolScanTable(props: SolScanTableProps) {
-  const { scanDetails, fileName } = props
+  const { scanReport, fileName } = props
+  const { multi_file_scan_details, multi_file_scan_summary } = scanReport
 
   return (
     <>
       <br/>
       <h6>SolidityScan result for <b>{fileName}</b>:</h6>
-      <p className='text-success'><b>{scanDetails.length} warnings </b> found. See the warning details below. For more details,&nbsp;
-        <a href="https://solidityscan.com/signup"
-          target='_blank'
-          onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'goToSolidityScan'])}>
-            go to SolidityScan.
-        </a>
-      </p>
       <table className="table table-bordered table-hover">
         <thead>
           <tr>
@@ -35,7 +30,7 @@ export function SolScanTable(props: SolScanTableProps) {
         </thead>
         <tbody>
           {
-            Array.from(scanDetails, (template, index) => {
+            Array.from(multi_file_scan_details, (template, index) => {
               return (
                 <tr key={template.template_details.issue_id}>
                   <td scope="col">{index + 1}.</td>
@@ -51,6 +46,13 @@ export function SolScanTable(props: SolScanTableProps) {
 
         </tbody>
       </table>
+      <p className='text-success'><b> warnings </b> found. See the warning details below. For more details,&nbsp;
+        <a href="https://solidityscan.com/signup"
+          target='_blank'
+          onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'goToSolidityScan'])}>
+            go to SolidityScan.
+        </a>
+      </p>
     </>
   )
 }
