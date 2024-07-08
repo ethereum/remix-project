@@ -16,7 +16,7 @@ const profile = {
   events: ['toggleContent', 'showContent']
 }
 
-const toMaximize = ['LearnEth']
+const toMaximize = ['LearnEth', 'udapp', 'debugger', 'solidityStaticAnalysis', 'solidityUnitTesting', 'cookbookdev']
 
 export class VerticalIcons extends Plugin {
   events: EventEmitter
