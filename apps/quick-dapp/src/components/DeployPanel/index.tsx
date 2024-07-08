@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Form, Button, Alert, InputGroup } from 'react-bootstrap';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
   deploy,
   emptyInstance,
@@ -11,6 +12,7 @@ import { CustomTooltip } from '@remix-ui/helper';
 import { AppContext } from '../../contexts';
 
 function DeployPanel(): JSX.Element {
+  const intl = useIntl()
   const { appState, dispatch } = useContext(AppContext);
   const { verified, natSpec, noTerminal } = appState.instance;
   const [formVal, setFormVal] = useState<any>({
@@ -36,13 +38,13 @@ function DeployPanel(): JSX.Element {
   });
   return (
     <div className="col-3 d-inline-block">
-      <h3 className="mb-3">QuickDapp Admin</h3>
+      <h3 className="mb-3">QuickDapp <FormattedMessage id="quickDapp.admin" /></h3>
       <Button
         onClick={() => {
           resetInstance();
         }}
       >
-        Reset Functions
+        <FormattedMessage id="quickDapp.resetFunctions" />
       </Button>
       <Button
         className="ml-3"
@@ -50,16 +52,19 @@ function DeployPanel(): JSX.Element {
           emptyInstance();
         }}
       >
-        Delete Dapp
+        <FormattedMessage id="quickDapp.deleteDapp" />
       </Button>
       <Alert variant="info" className="my-2">
-        QuickDapp deploys to Surge.sh. Surge accounts are free until you reach a
-        level of use. The email & password you input below will register you
-        with a Surge account. The subdomain is your choice but it must be
-        unique. More about{' '}
-        <a target="_blank" href="https://surge.sh/help/">
-          surge.sh
-        </a>
+        <FormattedMessage
+          id="quickDapp.text3"
+          values={{
+            a: (chunks) => (
+              <a target="_blank" href="https://surge.sh/help/">
+                {chunks}
+              </a>
+            ),
+          }}
+        />
       </Alert>
       <Form
         onSubmit={(e) => {
@@ -71,10 +76,10 @@ function DeployPanel(): JSX.Element {
         }}
       >
         <Form.Group className="mb-2" controlId="formEmail">
-          <Form.Label className="text-uppercase mb-0">Email</Form.Label>
+          <Form.Label className="text-uppercase mb-0"><FormattedMessage id="quickDapp.email" /></Form.Label>
           <Form.Control
             type="email"
-            placeholder="Surge email"
+            placeholder={intl.formatMessage({ id: 'quickDapp.surgeEmail' })}
             required
             value={formVal.email}
             onChange={(e) => {
@@ -83,10 +88,10 @@ function DeployPanel(): JSX.Element {
           />
         </Form.Group>
         <Form.Group className="mb-2" controlId="formPassword">
-          <Form.Label className="text-uppercase mb-0">Password</Form.Label>
+          <Form.Label className="text-uppercase mb-0"><FormattedMessage id="quickDapp.password" /></Form.Label>
           <Form.Control
             type="password"
-            placeholder="Surge password"
+            placeholder={intl.formatMessage({ id: 'quickDapp.surgePassword' })}
             required
             value={formVal.password}
             onChange={(e) => {
@@ -95,12 +100,12 @@ function DeployPanel(): JSX.Element {
           />
         </Form.Group>
         <Form.Group className="mb-2" controlId="formPassword">
-          <Form.Label className="text-uppercase mb-0">Subdomain</Form.Label>
+          <Form.Label className="text-uppercase mb-0"><FormattedMessage id="quickDapp.subdomain" /></Form.Label>
           <InputGroup>
             <InputGroup.Text>https://</InputGroup.Text>
             <Form.Control
               type="subdomain"
-              placeholder="Unique subdomain name"
+              placeholder={intl.formatMessage({ id: 'quickDapp.uniqueSubdomain' })}
               required
               value={formVal.subdomain}
               onChange={(e) => {
@@ -123,7 +128,7 @@ function DeployPanel(): JSX.Element {
         </Form.Group> */}
         <Form.Group className="mb-2" controlId="formShareTo">
           <Form.Label className="text-uppercase mb-0">
-            Share To (Optional)
+            <FormattedMessage id="quickDapp.shareTo" />
           </Form.Label>
           <br />
           <div className="d-inline-flex align-items-center custom-control custom-checkbox">
@@ -171,7 +176,7 @@ function DeployPanel(): JSX.Element {
         </Form.Group>
         <Form.Group className="mb-2" controlId="formShareTo">
           <Form.Label className="text-uppercase mb-0">
-            Use NatSpec (Optional)
+            <FormattedMessage id="quickDapp.useNatSpec" />
           </Form.Label>
           <br />
           <span
@@ -184,7 +189,7 @@ function DeployPanel(): JSX.Element {
           >
             <CustomTooltip
               placement="top"
-              tooltipText="Retrieve info from the contract's NatSpec"
+              tooltipText={intl.formatMessage({ id: 'quickDapp.useNatSpecTooltip' })}
             >
               <i
                 className={
@@ -198,7 +203,7 @@ function DeployPanel(): JSX.Element {
         </Form.Group>
         <Form.Group className="mb-2" controlId="formVerified">
           <Form.Label className="text-uppercase mb-0">
-            Verified by Etherscan (Optional)
+            <FormattedMessage id="quickDapp.verifiedByEtherscan" />
           </Form.Label>
           <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
             <input
@@ -219,13 +224,13 @@ function DeployPanel(): JSX.Element {
               className="m-0 form-check-label custom-control-label"
               style={{ paddingTop: 1 }}
             >
-              Verified
+              <FormattedMessage id="quickDapp.verified" />
             </label>
           </div>
         </Form.Group>
         <Form.Group className="mb-2" controlId="formNoTerminal">
           <Form.Label className="text-uppercase mb-0">
-            No Terminal (Optional)
+            <FormattedMessage id="quickDapp.noTerminal" />
           </Form.Label>
           <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
             <input
@@ -246,7 +251,7 @@ function DeployPanel(): JSX.Element {
               className="m-0 form-check-label custom-control-label"
               style={{ paddingTop: 1 }}
             >
-              No Terminal
+              <FormattedMessage id="quickDapp.no" />
             </label>
           </div>
         </Form.Group>
@@ -260,11 +265,11 @@ function DeployPanel(): JSX.Element {
           {deployState.loading && (
             <i className="fas fa-spinner fa-spin mr-1"></i>
           )}
-          Deploy
+          <FormattedMessage id="quickDapp.deploy" />
         </Button>
         {deployState.code === 'SUCCESS' && (
           <Alert variant="success" className="mt-4">
-            Deployed successfully! <br /> Click the link below to view your dapp
+            <FormattedMessage id="quickDapp.text4" /> <br /> <FormattedMessage id="quickDapp.text5" />
             <br />
             <a
               target="_blank"
