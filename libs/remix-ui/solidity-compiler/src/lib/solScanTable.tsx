@@ -46,13 +46,22 @@ export function SolScanTable(props: SolScanTableProps) {
 
         </tbody>
       </table>
-      <p className='text-success'><b> warnings </b> found. See the warning details below. For more details,&nbsp;
-        <a href="https://solidityscan.com/signup"
-          target='_blank'
-          onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'goToSolidityScan'])}>
-            go to SolidityScan.
-        </a>
-      </p>
+
+      { multi_file_scan_summary ? (
+        <>
+        <p className='text-success'><b>Scan Summary: </b></p>
+        <p>&emsp; Lines Analyzed: {multi_file_scan_summary.lines_analyzed_count}</p>
+        <p>&emsp; Scan Score: {multi_file_scan_summary.score_v2}</p>
+        <p>&emsp; Issue Distribution: { JSON.stringify(multi_file_scan_summary.issue_severity_distribution, null, 1)} </p>
+        <p>For more details,&nbsp;
+          <a href="https://solidityscan.com/signup"
+            target='_blank'
+            onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'goToSolidityScan'])}>
+              go to SolidityScan.
+          </a>
+        </p>
+        </>
+      ): null}
     </>
   )
 }
