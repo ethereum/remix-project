@@ -172,10 +172,13 @@ export class RemixURLResolver {
               // package.json
               version = deps[pkg]
             }
+            /*
+            // saving the version in the URL gives unpredictable situations..
             if (version) {
               const versionSemver = semver.minVersion(version)
               url = url.replace(pkg, `${pkg}@${versionSemver.version}`)
             }
+            */
           }
         }
       } catch (e) {
