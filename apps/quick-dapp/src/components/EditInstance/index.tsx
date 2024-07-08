@@ -1,10 +1,12 @@
 import { useContext } from 'react';
 import { omitBy } from 'lodash';
+import { useIntl } from 'react-intl';
 import { MultipleContainers } from '../MultipleContainers';
 import { AppContext } from '../../contexts';
 import ImageUpload from '../ImageUpload'
 
 function EditInstance(): JSX.Element {
+  const intl = useIntl()
   const { appState, dispatch } = useContext(AppContext);
   const { abi, items, containers, title, details, userInput, natSpec } =
     appState.instance;
@@ -16,7 +18,7 @@ function EditInstance(): JSX.Element {
           <div className="my-2 p-3 bg-light">
             <input
               className="form-control"
-              placeholder="Dapp title"
+              placeholder={intl.formatMessage({ id: 'quickDapp.dappTitle' })}
               value={title}
               onChange={({ target: { value } }) => {
                 dispatch({
@@ -35,7 +37,7 @@ function EditInstance(): JSX.Element {
           <div className="my-2 p-3 bg-light">
             <textarea
               className="form-control"
-              placeholder="Dapp instructions"
+              placeholder={intl.formatMessage({ id: 'quickDapp.dappInstructions' })}
               value={details}
               onChange={({ target: { value } }) => {
                 dispatch({
