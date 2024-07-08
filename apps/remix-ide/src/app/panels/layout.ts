@@ -9,6 +9,8 @@ const profile: Profile = {
   methods: ['minimize', 'maximiseSidePanel', 'resetSidePanel', 'maximizeTerminal', 'maximisePinnedPanel', 'resetPinnedPanel']
 }
 
+const toMaximize = ['LearnEth', 'udapp', 'debugger', 'solidityStaticAnalysis', 'solidityUnitTesting', 'cookbookdev']
+
 interface panelState {
   active: boolean
   plugin: Plugin
@@ -30,10 +32,12 @@ export type PanelConfiguration = {
 export class Layout extends Plugin {
   event: any
   panels: panels
-  maximised: { [key: string]: boolean }
+  pinnedPanelMaximized: boolean
+  sidePanelMaximized: boolean
   constructor () {
     super(profile)
-    this.maximised = {}
+    this.pinnedPanelMaximized = false
+    this.sidePanelMaximized = false
     this.event = new EventEmitter()
   }
 
@@ -78,21 +82,33 @@ export class Layout extends Plugin {
       }
     })
     this.on('sidePanel', 'focusChanged', async (name) => {
-      const current = await this.call('sidePanel', 'currentFocus')
-      if (this.maximised[current]) {
-        this.event.emit('maximisesidepanel')
+      if (toMaximize.includes(name) && !this.sidePanelMaximized) {
+        setTimeout(() => { 
+          this.maximiseSidePanel()
+          this.resetPinnedPanel()
+        }, 0)
+        this.sidePanelMaximized = true
       } else {
-        this.event.emit('resetsidepanel')
-      }
+        setTimeout(() => { 
+          this.resetSidePanel()
+        }, 0)
+        this.sidePanelMaximized = false
+      }   
     })
 
-    this.on('pinnedPanel', 'pinnedPlugin', async (name) => {
-      const current = await this.call('pinnedPanel', 'currentFocus')
-      if (this.maximised[current]) {
-        this.event.emit('maximisepinnedpanel')
+    this.on('pinnedPanel', 'pinnedPlugin', async (profile) => {
+      if (toMaximize.includes(profile.name) && !this.pinnedPanelMaximized) {
+        setTimeout(() => { 
+          this.maximisePinnedPanel()
+          this.resetSidePanel()
+        }, 0)
+        this.pinnedPanelMaximized = true
       } else {
-        this.event.emit('resetpinnedpanel')
-      }
+        setTimeout(() => { 
+          this.resetPinnedPanel()
+        }, 0)
+        this.pinnedPanelMaximized = false
+      }      
     })
 
     document.addEventListener('keypress', e => {
@@ -127,14 +143,10 @@ export class Layout extends Plugin {
 
   async maximiseSidePanel () {
     this.event.emit('maximisesidepanel')
-    const current = await this.call('sidePanel', 'currentFocus')
-    this.maximised[current] = true
   }
 
   async maximisePinnedPanel () {
     this.event.emit('maximisepinnedpanel')
-    const current = await this.call('pinnedPanel', 'currentFocus')
-    this.maximised[current] = true
   }
 
   async maximizeTerminal() {
@@ -145,13 +157,9 @@ export class Layout extends Plugin {
 
   async resetSidePanel () {
     this.event.emit('resetsidepanel')
-    const current = await this.call('sidePanel', 'currentFocus')
-    this.maximised[current] = false
   }
 
   async resetPinnedPanel () {
     this.event.emit('resetpinnedpanel')
-    const current = await this.call('pinnedPanel', 'currentFocus')
-    this.maximised[current] = false
   }
 }

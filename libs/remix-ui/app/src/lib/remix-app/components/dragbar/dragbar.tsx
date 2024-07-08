@@ -41,7 +41,6 @@ const DragBar = (props: IRemixDragBarUi) => {
   }, [props.hidden, offset])
 
   useEffect(() => {
-    initialWidth.current = props.refObject.current.clientWidth
     if (props.maximiseTrigger > 0) {
       if (props.layoutPosition === 'left') {
         const width = 0.4 * window.innerWidth
