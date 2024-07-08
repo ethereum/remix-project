@@ -1,4 +1,5 @@
 import { Ref, useContext, useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
 import { AppContext } from '../../contexts';
 import { selectTheme } from '../../actions';
 import { Dropdown } from 'react-bootstrap';
@@ -121,7 +122,7 @@ export function ThemeUI() {
 
   return (
     <div className="d-block">
-      <label className="text-uppercase mb-0">Themes</label>
+      <label className="text-uppercase mb-0"><FormattedMessage id="quickDapp.themes" /></label>
       <Dropdown className="w-100">
         <Dropdown.Toggle
           as={CustomToggle}

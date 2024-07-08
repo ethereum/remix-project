@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal, unstable_batchedUpdates } from 'react-dom';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
   CancelDrop,
   closestCenter,
@@ -173,6 +174,7 @@ export function MultipleContainers({
   vertical = false,
   scrollable,
 }: Props) {
+  const intl = useIntl()
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const lastOverId = useRef<UniqueIdentifier | null>(null);
   const recentlyMovedToNewContainer = useRef(false);
@@ -442,7 +444,7 @@ export function MultipleContainers({
             <DroppableContainer
               key={containerId}
               id={containerId}
-              label={`Column ${containerId}`}
+              label={`${intl.formatMessage({ id: 'quickDapp.column' })} ${containerId}`}
               columns={columns}
               items={items[containerId]}
               style={containerStyle}
@@ -485,7 +487,7 @@ export function MultipleContainers({
               onClick={handleAddColumn}
               placeholder
             >
-              + Add column
+              + <FormattedMessage id='quickDapp.addColumn' />
             </DroppableContainer>
           )}
         </SortableContext>

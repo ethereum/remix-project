@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { execution } from '@remix-project/remix-lib';
 import { saveDetails, saveTitle } from '../../actions';
 
@@ -12,6 +13,7 @@ const getFuncABIInputs = (funABI: any) => {
 };
 
 export function ContractGUI(props: { funcABI: any }) {
+  const intl = useIntl()
   const isConstant =
     props.funcABI.constant !== undefined ? props.funcABI.constant : false;
   const lookupOnly =
@@ -68,7 +70,7 @@ export function ContractGUI(props: { funcABI: any }) {
       <div className="p-2">
         <input
           className="form-control"
-          placeholder="Title of function"
+          placeholder={intl.formatMessage({ id: 'quickDapp.functionTitle' })}
           value={props.funcABI.title}
           onChange={({ target: { value } }) => {
             saveTitle({ id: props.funcABI.id, title: value });
@@ -116,7 +118,7 @@ export function ContractGUI(props: { funcABI: any }) {
       <div className="p-2">
         <textarea
           className="form-control"
-          placeholder="Instructions for function"
+          placeholder={intl.formatMessage({ id: 'quickDapp.functionInstructions' })}
           value={props.funcABI.details}
           onChange={({ target: { value } }) => {
             saveDetails({ id: props.funcABI.id, details: value });
