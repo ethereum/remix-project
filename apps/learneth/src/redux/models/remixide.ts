@@ -47,7 +47,7 @@ const Model: ModelType = {
         push: (args) => {
           remixClient.call('matomo' as any, 'track', args)
         }
-      } 
+      }
 
       yield router.navigate('/home')
     },
@@ -155,7 +155,6 @@ const Model: ModelType = {
           (<any>window)._paq.push(['trackEvent', 'learneth', 'test_step_error', 'Compiler failed to test this file'])
         } else {
           const success = result.totalFailing === 0;
-          
           if (success) {
             yield put({
               type: 'remixide/save',
@@ -229,7 +228,7 @@ const Model: ModelType = {
       try {
         yield remixClient.call('solidity', 'getCompilationResult');
         (<any>window)._paq.push(['trackEvent', 'learneth', 'test_solidity_compiler'])
-      } catch (err) {        
+      } catch (err) {
         const errors = yield select((state) => state.remixide.errors)
         yield put({
           type: 'remixide/save',
