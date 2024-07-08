@@ -78,14 +78,11 @@ const clientProfile: Profile = {
 
 class AppUpdaterPluginClient extends ElectronBasePluginClient {
   constructor(webContentsId: number, profile: Profile) {
-    console.log('AppUpdaterPluginClient')
     super(webContentsId, profile)
   }
 
   async onActivation(): Promise<void> {
-    console.log('onActivation', 'appUpdaterPluginClient')
     this.onload(async () => {
-      console.log('onload', 'appUpdaterPluginClient')
       this.emit('loaded')
       if(isE2E) return
       await this.checkForUpdates()

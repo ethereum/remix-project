@@ -1,9 +1,9 @@
 
-import { commitChange, fileStatusResult, gitActionDispatch, gitState } from "../types"
+import { fileStatusResult, gitActionDispatch, gitState } from "../types"
 import { fileDecoration, fileDecorationType } from "@remix-ui/file-decorators"
 import { removeSlash } from "../utils"
 import { getFilesByStatus } from "./fileHelpers"
-import { CustomRemixApi } from "@remix-api";
+import { commitChange, CustomRemixApi } from "@remix-api";
 import { Plugin } from "@remixproject/engine";
 
 let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>

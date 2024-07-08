@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { gitActionsContext } from "../../state/context";
-import { repository } from "../../types";
+import { repository } from "@remix-api";
 import { gitPluginContext } from "../gitui";
 import RepositorySelect from "./repositoryselect";
 import { BranchSelect } from "./branchselect";

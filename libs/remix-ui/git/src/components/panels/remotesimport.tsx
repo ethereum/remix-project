@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button } from "react-bootstrap";
 import { gitActionsContext } from "../../state/context";
-import { repository } from "../../types";
+import { repository } from "@remix-api";
 import { gitPluginContext } from "../gitui";
 import Select from 'react-select'
 import { selectStyles, selectTheme } from "../../types/styles";

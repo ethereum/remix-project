@@ -4,7 +4,7 @@ import { CustomTooltip } from "@remix-ui/helper";
 import React, { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { pluginActionsContext } from "../../state/context";
-import { branch, remote } from "../../types";
+import { branch, remote } from "@remix-api";
 import { SourceControlBase } from "../buttons/sourceControlBase";
 import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
 import { gitPluginContext } from "../gitui";
