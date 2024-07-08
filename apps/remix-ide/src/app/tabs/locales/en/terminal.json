@@ -40,5 +40,6 @@
   "terminal.input": "input",
   "terminal.decodedInput": "decoded input",
   "terminal.decodedOutput": "decoded output",
-  "terminal.logs": "logs"
+  "terminal.undeclaredlogs": "undeclared logs",
+  "terminal.declaredlogs": "declared logs"
 }

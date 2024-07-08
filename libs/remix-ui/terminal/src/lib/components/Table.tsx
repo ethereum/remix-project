@@ -183,11 +183,21 @@ const showTable = (opts, showTableHash) => {
         {opts.logs ? (
           <tr className="remix_ui_terminal_tr">
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
-              <FormattedMessage id="terminal.logs" />
+              <FormattedMessage id="terminal.declaredlogs" />
             </td>
             <td className="remix_ui_terminal_td" data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
-              {JSON.stringify(opts.logs.raw, null, 2)?( <pre>{JSON.stringify(opts.logs.raw || '0', null, 2)}</pre>):(JSON.stringify(stringified, null, '\t'))}
+              {JSON.stringify(stringified, null, '\t')}
               <CopyToClipboard content={JSON.stringify(stringified, null, '\t')} />
+            </td>
+          </tr>
+        ) : null}
+        {opts.logs ? (
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
+              <FormattedMessage id="terminal.undeclaredlogs" />
+            </td>
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
+              <pre>{JSON.stringify(opts.logs.raw || '0', null, 2)}</pre>
               <CopyToClipboard content={JSON.stringify(opts.logs.raw || '0', null, 2)} />
             </td>
           </tr>
