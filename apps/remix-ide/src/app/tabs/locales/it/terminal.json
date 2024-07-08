@@ -39,6 +39,6 @@
   "terminal.input": "input",
   "terminal.decodedInput": "input decodificato",
   "terminal.decodedOutput": "output decodificato",
-  "terminal.undeclaredlogs": "log non dichiarati",
-  "terminal.declaredlogs": "log dichiarati"
+  "terminal.rawlogs": "log grezzi",
+  "terminal.logs": "Log"
 }
