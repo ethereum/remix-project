@@ -8,6 +8,7 @@ import axios from 'axios'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 import { StatusBarContextProvider } from '../contexts/statusbarcontext'
+import DidYouKnow from './components/didYouKnow'
 
 export interface RemixUIStatusBarProps {
   statusBarPlugin: StatusBar
@@ -78,9 +79,17 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
             <GitStatus plugin={statusBarPlugin} gitBranchName={gitBranchName} setGitBranchName={setGitBranchName} />
           </div>
           <div className="remixui_statusbar"></div>
-          <div className="remixui_statusbar d-flex flex-row">
-            <ScamAlertStatus refs={refs} getReferenceProps={getReferenceProps} />
-            <AIStatus plugin={statusBarPlugin} aiActive={lightAiUp} isAiActive={isAiActive} setIsAiActive={setIsAiActive} />
+          <div className="remixui_statusbar">
+            <DidYouKnow />
+          </div>
+          <div className="remixui_statusbar"></div>
+          <div className="remixui_statusbar d-flex align-items-center p-0">
+            <div className="remixui_statusbar">
+              <AIStatus plugin={statusBarPlugin} aiActive={lightAiUp} isAiActive={isAiActive} setIsAiActive={setIsAiActive} />
+            </div>
+            <div className="remixui_statusbar bg-warning remixui_statusbar_custom_padding d-flex justify-center align-items-center">
+              <ScamAlertStatus refs={refs} getReferenceProps={getReferenceProps} />
+            </div>
           </div>
         </div>
       </StatusBarContextProvider>
