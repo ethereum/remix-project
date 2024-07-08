@@ -24,7 +24,7 @@ module.exports = {
       .assert.visible('.bg-secondary[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
       .assert.visible('.bg-secondary[data-id="treeViewLitreeViewItemtests"]')
   },
-  'Should drag and drop multiple files in file explorer to tests folder #group1': function (browser: NightwatchBrowser) {
+  'Should drag and drop multiple files in file explorer to tests folder #group1': ''+function (browser: NightwatchBrowser) {
     const selectedElements = []
     if (browser.options.desiredCapabilities?.browserName === 'firefox') {
       console.log('Skipping test for firefox')
