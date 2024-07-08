@@ -59,7 +59,7 @@ function HomePage(): JSX.Element {
                     >
                       {selectedRepo.entities[item.id].name}
                     </span>
-                    <Link to={`/list?id=${item.id}`} className="text-decoration-none float-right">
+                    <Link onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'start_workshop', selectedRepo.entities[item.id].name])} to={`/list?id=${item.id}`} className="text-decoration-none float-right">
                       <i className="fas fa-play-circle fa-lg" />
                     </Link>
                   </div>
