@@ -1,8 +1,19 @@
+/* global ethereum */
+
 import { shortenAddress } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
 import { toChecksumAddress } from '@ethereumjs/util'
+import { createPublicClient, createWalletClient, http, custom, PublicClient} from "viem"
+import { sepolia } from 'viem/chains'
+import { V06 } from "userop"
+
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
 export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
@@ -88,6 +99,28 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   console.log('createSmartAccount')
+  const bundlerEndpoint = "https://public.stackup.sh/api/v1/node/ethereum-sepolia"
+
+  const ethClient: any = createPublicClient({
+    chain: sepolia,
+    transport: http(bundlerEndpoint)
+  })
+
+  const walletClient: any = createWalletClient({
+    chain: sepolia,
+    transport: custom(window.ethereum)
+  })
+
+  const addresses = await walletClient.getAddresses() 
+  console.log('addresses--->', addresses)
+ 
+
+  const smartAccount = new V06.Account.Instance({
+    ...V06.Account.Common.SimpleAccount.base(ethClient, walletClient),
+  })
+  const sender = await smartAccount.getSender()
+  console.log('sender--->', sender)
+  // 0xA34de41f9b3B7eba93000195B1896a7f43074eDb
 }
 
 export const signMessageWithAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => {
