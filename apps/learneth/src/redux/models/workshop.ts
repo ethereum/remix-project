@@ -140,6 +140,7 @@ const Model: ModelType = {
           }
         }
       }
+      (<any>window)._paq.push(['trackEvent', 'learneth', 'load_repo', payload.name])
     },
     *resetAll(_, { put }) {
       yield put({
@@ -155,7 +156,8 @@ const Model: ModelType = {
 
       yield put({
         type: 'workshop/init',
-      })
+      });
+      (<any>window)._paq.push(['trackEvent', 'learneth', 'reset_all'])
     },
   },
 }
