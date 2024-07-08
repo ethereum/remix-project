@@ -2,7 +2,7 @@ import { ICompilerApi, ConfigurationSettings, iSolJsonBinData } from '@remix-pro
 import { CompileTabLogic } from '../logic/compileTabLogic'
 export type onCurrentFileChanged = (fileName: string) => void
 
-//// SolidityScan Types 
+//// SolidityScan Types
 
 export interface ScanTemplate {
   issue_id: string
@@ -34,7 +34,7 @@ export interface ScanReport {
   // others
 }
 
-//// SolidityScan Types 
+//// SolidityScan Types
 
 export interface SolidityCompilerProps {
   api: ICompilerApi
