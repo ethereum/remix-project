@@ -25,7 +25,8 @@ const profile = {
   methods: ['closeAllFiles', 'closeFile', 'file', 'exists', 'open', 'writeFile', 'writeMultipleFiles', 'writeFileNoRewrite',
     'readFile', 'copyFile', 'copyDir', 'rename', 'mkdir', 'readdir', 'dirList', 'fileList', 'remove', 'getCurrentFile', 'getFile',
     'getFolder', 'setFile', 'switchFile', 'refresh', 'getProviderOf', 'getProviderByName', 'getPathFromUrl', 'getUrlFromPath',
-    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson', 'diff'
+    'saveCurrentFile', 'setBatchFiles', 'isGitRepo', 'isFile', 'isDirectory', 'hasGitSubmodule', 'copyFolderToJson', 'diff',
+    'hasGitSubmodules'
   ],
   kind: 'file-system'
 }
