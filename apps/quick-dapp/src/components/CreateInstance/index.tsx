@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Alert, Button, Form } from 'react-bootstrap';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { initInstance } from '../../actions';
 
 const CreateInstance: React.FC = () => {
+  const intl = useIntl()
   const [formVal, setFormVal] = useState({
     address: '',
     abi: [],
@@ -18,10 +20,10 @@ const CreateInstance: React.FC = () => {
       }}
     >
       <Form.Group className="mb-2" controlId="formAddress">
-        <Form.Label className="text-uppercase mb-0">address</Form.Label>
+        <Form.Label className="text-uppercase mb-0"><FormattedMessage id="quickDapp.address" /></Form.Label>
         <Form.Control
           type="address"
-          placeholder="Enter address"
+          placeholder={intl.formatMessage({ id: 'quickDapp.enterAddress' })}
           value={formVal.address}
           onChange={(e) => {
             setFormVal({ ...formVal, address: e.target.value });
@@ -35,7 +37,7 @@ const CreateInstance: React.FC = () => {
           as="textarea"
           rows={3}
           type="abi"
-          placeholder="Enter abi"
+          placeholder={intl.formatMessage({ id: 'quickDapp.enterAbi' })}
           value={formVal.abi.length > 0 ? JSON.stringify(formVal.abi) : ''}
           onChange={(e) => {
             let abi = [];
@@ -50,10 +52,10 @@ const CreateInstance: React.FC = () => {
       </Form.Group>
 
       <Form.Group className="mb-2" controlId="formName">
-        <Form.Label className="text-uppercase mb-0">name</Form.Label>
+        <Form.Label className="text-uppercase mb-0"><FormattedMessage id="quickDapp.name" /></Form.Label>
         <Form.Control
           type="name"
-          placeholder="Enter name"
+          placeholder={intl.formatMessage({ id: 'quickDapp.enterName' })}
           value={formVal.name}
           onChange={(e) => {
             setFormVal({ ...formVal, name: e.target.value });
@@ -62,10 +64,10 @@ const CreateInstance: React.FC = () => {
       </Form.Group>
 
       <Form.Group className="mb-2" controlId="formNetwork">
-        <Form.Label className="text-uppercase mb-0">network</Form.Label>
+        <Form.Label className="text-uppercase mb-0"><FormattedMessage id="quickDapp.network" /></Form.Label>
         <Form.Control
           type="network"
-          placeholder="Enter network"
+          placeholder={intl.formatMessage({ id: 'quickDapp.enterNetwork' })}
           value={formVal.network}
           onChange={(e) => {
             setFormVal({ ...formVal, network: e.target.value });
@@ -83,14 +85,12 @@ const CreateInstance: React.FC = () => {
           !formVal.abi.length
         }
       >
-        Submit
+        <FormattedMessage id="quickDapp.submit" />
       </Button>
       <Alert className="mt-4" variant="info">
-        Dapp Draft only work for Injected Provider currently. More providers
-        will be adapted in further iterations.
+        <FormattedMessage id="quickDapp.text1" />
         <br />
-        Click the edit icon in a deployed contract will input the parameters
-        automatically.
+        <FormattedMessage id="quickDapp.text2" />
       </Alert>
       <img src='./assets/edit-dapp.png' />
     </Form>

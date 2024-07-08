@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl';
 import { CustomTooltip } from '@remix-ui/helper';
 import { AppContext } from '../../contexts'
 
 const ImageUpload = () => {
+  const intl = useIntl()
   const { appState, dispatch } = useContext(AppContext)
   const { logo } = appState.instance
   const [preview, setPreview] = useState(null)
@@ -31,9 +33,9 @@ const ImageUpload = () => {
       <input className="d-none" type="file" accept="image/*" onChange={handleImageChange} id="upload-button" />
       <CustomTooltip
         placement="right"
-        tooltipText="Click here to change logo"
+        tooltipText={intl.formatMessage({ id: 'quickDapp.uploadLogoTooltip' })}
       >
-        <label htmlFor="upload-button" className="cursor_pointer d-flex justify-content-center align-items-center position-relative" style={{height: 170}}>
+        <label htmlFor="upload-button" className="cursor_pointer d-flex justify-content-center align-items-center position-relative" style={{ height: 170 }}>
           {logo ? (
             <img src={preview} alt="preview" style={{ width: 120, height: 120 }} />
           ) : (
