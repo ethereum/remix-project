@@ -41,7 +41,13 @@ const Model: ModelType = {
         payload: {
           screen: false,
         },
-      })
+      });
+
+      (window as any)._paq = {
+        push: (args) => {
+          remixClient.call('matomo' as any, 'track', args)
+        }
+      } 
 
       yield router.navigate('/home')
     },
@@ -64,6 +70,8 @@ const Model: ModelType = {
       if (!content) {
         return
       }
+
+      (<any>window)._paq.push(['trackEvent', 'learneth', 'display_file', `${(step && step.name)}/${path}`])
 
       toast.info(`loading ${path} into IDE`)
       yield put({
@@ -91,6 +99,7 @@ const Model: ModelType = {
         })
         toast.dismiss()
       } catch (error) {
+        (<any>window)._paq.push(['trackEvent', 'learneth', 'display_file_error', error.message])
         toast.dismiss()
         toast.error('File could not be loaded. Please try again.')
         yield put({
@@ -136,16 +145,17 @@ const Model: ModelType = {
         yield remixClient.call('fileManager', 'setFile', path, step.test.content)
 
         const result = yield remixClient.call('solidityUnitTesting', 'testFromPath', path)
-        console.log('result ', result)
+        console.log('result ', result);
 
         if (!result) {
           yield put({
             type: 'remixide/save',
             payload: { errors: ['Compiler failed to test this file']},
-          })
+          });
+          (<any>window)._paq.push(['trackEvent', 'learneth', 'test_step_error', 'Compiler failed to test this file'])
         } else {
-          const success = result.totalFailing === 0
-
+          const success = result.totalFailing === 0;
+          
           if (success) {
             yield put({
               type: 'remixide/save',
@@ -159,13 +169,15 @@ const Model: ModelType = {
               },
             })
           }
+          (<any>window)._paq.push(['trackEvent', 'learneth', 'test_step', success])
         }
       } catch (err) {
         console.log('TESTING ERROR', err)
         yield put({
           type: 'remixide/save',
           payload: { errors: [String(err)]},
-        })
+        });
+        (<any>window)._paq.push(['trackEvent', 'learneth', 'test_step_error', err])
       }
       yield put({
         type: 'loading/save',
@@ -194,12 +206,15 @@ const Model: ModelType = {
         const workshop = detail[selectedId]
         path = `.learneth/${workshop.name}/${step.name}/${path}`
         yield remixClient.call('fileManager', 'setFile', path, content)
-        yield remixClient.call('fileManager', 'switchFile', `${path}`)
+        yield remixClient.call('fileManager', 'switchFile', `${path}`);
+
+        (<any>window)._paq.push(['trackEvent', 'learneth', 'show_answer', path])
       } catch (err) {
         yield put({
           type: 'remixide/save',
           payload: { errors: [String(err)]},
-        })
+        });
+        (<any>window)._paq.push(['trackEvent', 'learneth', 'show_answer_error', err.message])
       }
 
       toast.dismiss()
@@ -212,17 +227,19 @@ const Model: ModelType = {
     },
     *testSolidityCompiler(_, { put, select }) {
       try {
-        yield remixClient.call('solidity', 'getCompilationResult')
-      } catch (err) {
+        yield remixClient.call('solidity', 'getCompilationResult');
+        (<any>window)._paq.push(['trackEvent', 'learneth', 'test_solidity_compiler'])
+      } catch (err) {        
         const errors = yield select((state) => state.remixide.errors)
         yield put({
           type: 'remixide/save',
           payload: {
             errors: [...errors, "The `Solidity Compiler` is not yet activated.<br>Please activate it using the `SOLIDITY` button in the `Featured Plugins` section of the homepage.<img class='img-thumbnail mt-3' src='assets/activatesolidity.png'>"],
           },
-        })
+        });
+        (<any>window)._paq.push(['trackEvent', 'learneth', 'test_solidity_compiler_error', err.message])
       }
-    },
+    }
   },
 }
 
