@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES6",
     "allowJs": true,
-    "module": "ES6",
+    "module": "CommonJS",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
