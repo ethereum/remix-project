@@ -4,10 +4,10 @@ import { IModel } from "../types/types";
 
 export const getInsertionPrompt = (model:IModel, msg_pfx, msg_sfx) => {
   if ((model.modelType === 'code_completion_insertion') && (model.modelName.toLocaleLowerCase().includes('deepseek'))){
-    return `<｜fim▁begin｜> {msg_pfx} <｜fim▁hole｜> {msg_sfx} <｜fim▁end｜>`
+    return "<｜fim▁begin｜>" + msg_pfx + "<｜fim▁hole｜> " + msg_sfx + "<｜fim▁end｜>"
   }
   else {
-    // return error model not supported yet 
+    // return error model not supported yet
 
   }
 }

@@ -1,12 +1,9 @@
 {
-  "name": "@remix-project/remixd",
-  "version": "0.6.31",
-  "description": "remix server: allow accessing file system from remix.ethereum.org and start a dev environment (see help section)",
-  "main": "index.js",
-  "types": "./index.d.ts",
-  "bin": {
-    "remixd": "./src/bin/remixd.js"
-  },
+  "name": "remix-ai-core",
+  "version": "0.0.6",
+  "description": "Remix AI core: allows the integration of AI models in Remix IDE",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -18,9 +15,13 @@
     "remix",
     "ide",
     "ethereum",
-    "solidity"
+    "solidity",
+    "AI"
   ],
-  "author": "Remix Team",
+  "author": {
+    "name": "Stéphane Tetsing",
+    "email": "stephane.fosso@ethereum.org"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ethereum/remix-project/issues"
@@ -37,8 +38,10 @@
     "fs-extra": "^3.0.1",
     "isbinaryfile": "^3.0.2",
     "latest-version": "^5.1.0",
+    "remix-ai-core": "^0.0.2",
     "semver": "^6.3.0",
-    "ws": "^7.3.0"
+    "ws": "^7.3.0",
+    "node-llama-cpp": "^2.8.11"
   },
   "python": {
     "execPath": "python3",
@@ -47,21 +50,20 @@
     }
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
-    "@types/fs-extra": "^9.0.1",
-    "@types/node": "^18.16.1",
-    "@types/ws": "^7.2.4",
-    "@typescript-eslint/eslint-plugin": "^3.2.0",
-    "@typescript-eslint/parser": "^3.2.0",
-    "eslint": "6.8.0",
-    "eslint-config-standard": "14.1.1",
-    "eslint-plugin-import": "2.20.2",
-    "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-promise": "4.2.1",
-    "eslint-plugin-standard": "4.0.1",
-    "nodemon": "^2.0.4",
-    "ts-node": "^8.10.1",
-    "typescript": "^3.9.3"
+    "@remixproject/engine-electron": "0.3.43",
+    "@remixproject/plugin": "0.3.43",
+    "add": "^2.0.6",
+    "axios": "^1.6.8",
+    "byline": "^5.0.0",
+    "chokidar": "^3.5.3",
+    "create-require": "^1.1.1",
+    "esm": "^3.2.25",
+    "express": "^4.19.2",
+    "isomorphic-git": "^1.24.2",
+    "matomo-tracker": "^2.2.4",
+    "node-llama-cpp": "^2.8.11",
+    "node-pty": "^0.10.1",
+    "semver": "^7.5.4"
   },
   "typings": "index.d.ts",
   "gitHead": "ba6b2b226349d035146bd6deb120fef3d499ed16"

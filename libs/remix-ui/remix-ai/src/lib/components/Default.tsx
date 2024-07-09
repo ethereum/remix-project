@@ -57,7 +57,7 @@ export const Default = (props) => {
               // if (!completer.ready) {
               //   await completer.init();
               // }
-              await props.plugin.call(pluginName, 'initializeModelBackend', DefaultModels()[0]);
+              await props.plugin.call(pluginName, 'initializeModelBackend', DefaultModels()[3]);
 
               // // const code = completer.code_completion("pragma solidity ^0.8.0;\n")
               console.log("Got transformer model completion ");
@@ -71,7 +71,7 @@ export const Default = (props) => {
 
             }
           }}
-        > Test inference </button>
+        > Init Model </button>
       </div>
       <div className="remix_ai_plugin_find-part">
         <a href="#" className="remix_ai_plugin_search_result_item_title">/fix the problems in my code</a>

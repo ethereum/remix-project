@@ -14,23 +14,16 @@ const desktop_profile = {
 }
 
 export class remixAIDesktopPlugin extends ElectronPlugin {
-  selectedModel: IModel | null = DefaultModels()[0]
   constructor() {
     console.log('remixAIDesktopPlugin loaded')
     super(desktop_profile)
-
-    this
-    
   }
 
   onActivation(): void {
     this.on('remixAI', 'enabled', () => {console.log('someone enable the remixAI desktop plugin')} )
     console.log('remixAIDesktopPlugin ---------------------- activated')
-    console.log('remixAIDesktopPlugin Model: ', this.selectedModel)  
   }
 
-  
-  
 }
 
 // class RemixAIPlugin extends ElectronPlugin {

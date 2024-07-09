@@ -61,7 +61,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         // use the code generation model, only take max 1000 word as context
         this.props.plugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'Solcoder - generating code for following comment: ' + ask.replace('///', '') })
 
-        const data = await this.props.plugin.call('solcoder', 'code_generation', word)
+        const data = await this.props.plugin.call('remixAID', 'code_insertion', word, word_after)
 
         const parsedData = data[0].trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
@@ -99,8 +99,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     if (word.replace(/ +$/, '').endsWith('\n')){
       // Code insertion
       try {
-        const output = await this.props.plugin.call('solcoder', 'code_insertion', word, word_after)
-        const generatedText = output[0] // no need to clean it. should already be
+        const output = await this.props.plugin.call('remixAID', 'code_insertion', word, word_after)
+        const generatedText = output[0].generated_text // no need to clean it. should already be
 
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: generatedText
@@ -122,8 +122,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     try {
       // Code completion
-      const output = await this.props.plugin.call('solcoder', 'code_completion', word)
-      const generatedText = output[0]
+      const output = await this.props.plugin.call('remixAID', 'code_completion', word)
+      const generatedText = output[0].generated_text
       let clean = generatedText
 
       if (generatedText.indexOf('@custom:dev-run-script./') !== -1) {

@@ -1,7 +1,7 @@
 {
   "name": "remixdesktop",
   "version": "1.0.5-insiders",
-  "main": "build/main.js",
+  "main": "build/apps/remixdesktop/src/main.js",
   "license": "MIT",
   "type": "commonjs",
   "description": "Remix IDE Desktop",
@@ -68,10 +68,13 @@
     "electron-updater": "^6.1.8",
     "esm": "^3.2.25",
     "express": "^4.19.2",
+    "i": "^0.3.7",
     "isomorphic-git": "^1.24.2",
+    "llama-node": "^0.1.6",
     "matomo-tracker": "^2.2.4",
     "node-llama-cpp": "^2.8.11",
     "node-pty": "^0.10.1",
+    "npm": "^10.8.1",
     "semver": "^7.5.4"
   },
   "imports": {

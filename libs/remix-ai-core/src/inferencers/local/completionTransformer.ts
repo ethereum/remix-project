@@ -1,33 +1,37 @@
 
 import { EventEmitter } from 'events';
-// import { ICompletions, IParams } from '../../../../libs/remix-ai-core/src/index'
-// import { getInsertionPrompt } from '../../../../libs/remix-ai-core/src/index'
+import path from 'path';
+import { ICompletions, IModel, IParams } from '../../types/types';
+import { getInsertionPrompt } from '../../prompts/completionPrompts';
 
-const insertionParams = {
+const insertionParams:IParams = {
   temperature: 0.9,
-  max_new_tokens: 150,
-  repetition_penalty: 1.5,
-  num_beams: 1,
-  num_return_sequences: 1,
+  max_new_tokens: 1024,
+  return_full_text: false,
+  // repetition_penalty: 1.5,
+  // num_beams: 1,
+  // num_return_sequences: 1,
 }
 
-const completionParams = {
+const completionParams:IParams = {
   temperature: 0.3,
-  repetition_penalty: 1.1,
-  max_new_tokens: 150,
+  max_new_tokens: 15,
+  return_full_text: false,
+  top_p: 0.9,
+  top_k: 50
 }
 
 class InlineCompletionTransformer {
-  static task = null 
-  static model = null 
-  static instance = null;  
+  static task = null
+  static model = null
+  static instance = null;
   static defaultModels = null
 
   // getting the instance of the model for the first time will download the model to the cache
-  static async getInstance(progress_callback = null) {
+  static async getInstance(progress_callback = null, modelCacheDir:string) {
     if (InlineCompletionTransformer.instance === null) {
       const TransformersApi = Function('return import("@xenova/transformers")')();
-      const { pipeline, env} = await TransformersApi;
+      const { pipeline, env } = await TransformersApi;
 
       if (InlineCompletionTransformer.model.modelReqs.backend !== 'transformerjs') {
         console.log('model not supported')
@@ -35,7 +39,7 @@ class InlineCompletionTransformer {
       }
 
       console.log('loading model', InlineCompletionTransformer.model)
-      InlineCompletionTransformer.instance = pipeline(InlineCompletionTransformer.task, InlineCompletionTransformer.model.modelName, { progress_callback, quantized: true});
+      InlineCompletionTransformer.instance = pipeline(InlineCompletionTransformer.task, InlineCompletionTransformer.model.modelName, { progress_callback, quantized: true, cache_dir: modelCacheDir, return_full_text: false });
     }
     return this.instance;
   }
@@ -98,24 +102,27 @@ class DownloadManager {
 
 }
 
-export class InlineCompletionServiceTransformer{
+export class InlineCompletionServiceTransformer implements ICompletions{
   dMng = new DownloadManager()
   isReady = false
   event = new EventEmitter()
   selectedModel: any
+  inferencer = null
+  modelCacheDir: string = undefined
 
-  constructor(model: any) { 
+  constructor(model:IModel, modelDir:string) {
     this.selectedModel = model
+    this.modelCacheDir = path.join(modelDir, 'models')
 
     this.dMng.events.on('progress', (data) => {
-      // log progress percentage 
+      // log progress percentage
       const loaded = ((Number(data.loaded * 100 / data.total)).toFixed(2)).toString()
       console.log('download progress:', loaded + '%')
 
       if (loaded === '100.00') {
         this.dMng.events.emit('done', data)
         this.isReady = true
-      } 
+      }
     })
     this.dMng.events.on('done', (data) => {
     })
@@ -124,64 +131,48 @@ export class InlineCompletionServiceTransformer{
       this.isReady = true
     })
     this.dMng.events.on('complete', (data) => {
-      
     })
 
   }
 
-  async init(envPath?: string) {
+  async init() {
     InlineCompletionTransformer.model = this.selectedModel
     InlineCompletionTransformer.task = InlineCompletionTransformer.model.task
 
     // create inference instance
-    await InlineCompletionTransformer.getInstance(this.dMng.onMessageReceived);
-
-    if (envPath) {
-      this.setTransformerEnvPath(envPath)
-    }
+    this.inferencer = await InlineCompletionTransformer.getInstance(this.dMng.onMessageReceived, this.modelCacheDir);
+    console.log('inference instance created', this)
   }
 
-  setTransformerEnvPath(path: string) {
-    if (InlineCompletionTransformer.instance === null) {
-      console.log('model not ready yet')
-      return
-    }
-    if (path === '') {
-      console.log('path is empty')
-      return
-    }
-
-    console.log('check this setting env path')
-    InlineCompletionTransformer.instance.env.set('TRANSFORMERS_CACHE', path)
-  }
-
-  async code_completion(context: any, params=completionParams): Promise<any> {
+  async code_completion(context: any, params:IParams=completionParams): Promise<any> {
     if (!this.isReady) {
       console.log('model not ready yet')
       return
     }
+    console.log('in transformer code_completion')
 
     // as of now no prompt required
     this.event.emit('onInference')
-    const instance = await InlineCompletionTransformer.getInstance()
-    const result =  await instance(context, params)
+    const result = await this.inferencer(context, params)
     this.event.emit('onInferenceDone')
+    console.log('result', result)
     return result
   }
 
-  async code_insertion(msg_pfx: string, msg_sfx: string, params=insertionParams): Promise<any> {
-    console.log('in code_insertion', this)
+  async code_insertion(msg_pfx: string, msg_sfx: string, params:IParams=insertionParams): Promise<any> {
+    console.log('in transformer code_insertion')
     if (!this.isReady) {
       console.log('model not ready yet')
       return
     }
-    
+
     this.event.emit('onInference')
-    // const prompt = getInsertionPrompt(InlineCompletionTransformer.model, msg_pfx, msg_sfx)
-    // const instance = await InlineCompletionTransformer.getInstance()
-    // const result = instance(prompt, insertionParams)
-    // this.event.emit('onInferenceDone')
-    // return result
+    const prompt = getInsertionPrompt(InlineCompletionTransformer.model, msg_pfx, msg_sfx)
+    console.log('prompt', prompt)
+    const result = this.inferencer(prompt, insertionParams)
+    this.event.emit('onInferenceDone')
+    console.log('result', result)
+    return result
   }
 }
 
