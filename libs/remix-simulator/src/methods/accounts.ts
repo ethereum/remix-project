@@ -44,7 +44,7 @@ export class Web3Accounts {
 
   async _addAccount (privateKey, balance) {
     try {
-      privateKey = toBytes('0x' + privateKey)
+      if (typeof privateKey === 'string') privateKey = toBytes('0x' + privateKey)
       const address: Uint8Array = privateToAddress(privateKey)
       const addressStr = toChecksumAddress(bytesToHex(address))
       this.accounts[addressStr] = { privateKey, nonce: 0 }
