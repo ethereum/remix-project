@@ -56,6 +56,7 @@ import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 import { GitPlugin } from './app/plugins/git'
+import { Matomo } from './app/plugins/matomo'
 
 import {SolCoder} from './app/plugins/solcoderAI'
 
@@ -223,6 +224,9 @@ class AppComponent {
     //---- git
     const git = new GitPlugin()
 
+    //---- matomo
+    const matomo = new Matomo()
+
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 
@@ -357,7 +361,8 @@ class AppComponent {
       templates,
       solcoder,
       git,
-      pluginStateLogger
+      pluginStateLogger,
+      matomo
     ])
 
     //---- fs plugin
@@ -476,7 +481,8 @@ class AppComponent {
       'network',
       'web3Provider',
       'offsetToLineColumnConverter',
-      'pluginStateLogger'
+      'pluginStateLogger',
+      'matomo'
     ])
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await this.appManager.activatePlugin(['statusBar'])
