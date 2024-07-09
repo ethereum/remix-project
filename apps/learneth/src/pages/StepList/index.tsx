@@ -28,7 +28,7 @@ function StepListPage(): JSX.Element {
       <SlideIn>
         <article className="list-group m-3">
           {entity.steps.map((step: any, i: number) => (
-            <Link key={i} to={`/detail?id=${id}&stepId=${i}`} className="rounded-0 btn btn-light border-bottom text-left steplink">
+            <Link key={i} to={`/detail?id=${id}&stepId=${i}`} className="rounded-0 btn btn-light border-bottom text-left steplink" onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'step_slide_in', `${id}/${i}/${step.name}`])}>
               {step.name} »
             </Link>
           ))}
