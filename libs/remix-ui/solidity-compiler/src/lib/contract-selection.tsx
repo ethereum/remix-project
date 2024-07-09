@@ -312,7 +312,6 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           const url = data.payload.scan_details.link
 
           const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
-          console.log('scan data--->', scanData)
           const scanReport: ScanReport = scanData.scan_report
 
           if (scanReport?.multi_file_scan_details?.length) {
@@ -339,7 +338,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       title: <FormattedMessage id="solidity.solScan.modalTitle" />,
       message: <div className='d-flex flex-column'>
         <span><FormattedMessage id="solidity.solScan.modalMessage" />
-          <a href={'https://solidityscan.com'}
+          <a href={'https://solidityscan.com/?utm_campaign=remix&utm_source=remix'}
             target="_blank"
             onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'learnMore'])}>
               Learn more

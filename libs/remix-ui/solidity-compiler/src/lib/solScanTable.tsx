@@ -54,7 +54,7 @@ export function SolScanTable(props: SolScanTableProps) {
           <p>&emsp; Scan Score: {multi_file_scan_summary.score_v2}</p>
           <p>&emsp; Issue Distribution: { JSON.stringify(multi_file_scan_summary.issue_severity_distribution, null, 1)} </p>
           <p>For more details,&nbsp;
-            <a href="https://solidityscan.com/signup"
+            <a href="https://solidityscan.com/?utm_campaign=remix&utm_source=remix"
               target='_blank'
               onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'goToSolidityScan'])}>
               go to SolidityScan.
