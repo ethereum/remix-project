@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, SyntheticEvent } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, SyntheticEvent, useContext } from 'react' // eslint-disable-line
 import { useIntl } from 'react-intl'
 import { TreeView } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
@@ -11,6 +11,7 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, getPathIco
 import { ROOT_PATH } from '../utils/constants'
 import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
 import { FlatTree } from './flat-tree'
+import { FileSystemContext } from '../contexts'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -35,6 +36,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   // const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
+  const { plugin } = useContext(FileSystemContext)
+  const [feTarget, setFeTarget] = useState<{ key: string, type: 'file' | 'folder' }[]>({} as { key: string, type: 'file' | 'folder' }[])
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -97,17 +100,62 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [treeRef.current])
 
   useEffect(() => {
-    const deleteKeyPressHandler = (eve: KeyboardEvent) => {
-      if (eve.key === 'Delete' || eve.key === 'Backspace' ) {
-        console.log('delete key was pressed')
+    const performDeleteion = async () => {
+      const path: string[] = []
+      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
+        feTarget.forEach((one) => {
+          path.push(one.key)
+        })
+        await deletePath(path)
       }
     }
 
-    treeRef.current?.addEventListener('keydown', deleteKeyPressHandler)
-    return () => {
-      treeRef.current?.removeEventListener('keydown', deleteKeyPressHandler)
+    if (treeRef.current) {
+      const deleteKeyPressHandler = async (eve: KeyboardEvent) => {
+        eve.preventDefault()
+        if (eve.key === 'Delete' ) {
+          performDeleteion()
+          return
+        }
+        if (eve.metaKey) {
+          eve.preventDefault()
+          if (eve.key === 'Backspace') {
+            performDeleteion()
+            return
+          }
+        }
+      }
+
+      treeRef.current?.addEventListener('keydown', deleteKeyPressHandler)
+      return () => {
+        treeRef.current?.removeEventListener('keydown', deleteKeyPressHandler)
+      }
     }
-  }, [])
+  }, [treeRef.current, feTarget])
+
+  useEffect(() => {
+    const performRename = async () => {
+      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
+        await plugin.call('notification', 'alert', { id: 'renameAlert', message: 'You cannot rename multiple files at once!' })
+      }
+      await props.dispatchRenamePath(feTarget[0].key, feTarget[0].type)
+    }
+    if (treeRef.current) {
+      const F2KeyPressHandler = async (eve: KeyboardEvent) => {
+        eve.preventDefault()
+        if (eve.key === 'F2' ) {
+          console.log('F2 key was pressed so renaming happening')
+          await performRename()
+          return
+        }
+      }
+
+      treeRef.current?.addEventListener('keydown', F2KeyPressHandler)
+      return () => {
+        treeRef.current?.removeEventListener('keydown', F2KeyPressHandler)
+      }
+    }
+  }, [treeRef.current])
 
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
@@ -348,6 +396,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleTreeClick = (event: SyntheticEvent) => {
+    console.log({ props, state })
     let target = event.target as HTMLElement
     while (target && target.getAttribute && !target.getAttribute('data-path')) {
       target = target.parentElement
@@ -368,6 +417,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
 
   }
+
+  console.log(feTarget)
 
   return (
     <div className="h-100 remixui_treeview" data-id="filePanelFileExplorerTree">
@@ -421,6 +472,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           createNewFolder={props.createNewFolder}
           deletePath={deletePath}
           editPath={props.editModeOn}
+          fileTarget={feTarget}
+          setTargetFiles={setFeTarget}
         />
       </div>
     </div>

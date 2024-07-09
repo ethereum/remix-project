@@ -25,6 +25,8 @@ export default function useOnScreen(ref: RefObject<HTMLElement>) {
   return isIntersecting
 }
 interface FlatTreeProps {
+  fileTarget: any
+  setTargetFiles: React.Dispatch<any>
   files: { [x: string]: Record<string, FileType> },
   flatTree: FileType[],
   expandPath: string[],
@@ -78,6 +80,12 @@ export const FlatTree = (props: FlatTreeProps) => {
           : props.focusContext.element === file.path && props.focusEdit.element !== file.path
             ? 'bg-light border-no-shift'
             : ''
+
+  useEffect(() => {
+    if (props.focusElement && props.focusElement.length > 0) {
+      props.setTargetFiles(props.focusElement)
+    }
+  }, [props.focusElement, props.focusElement.length])
 
   const getIndentLevelDiv = (path: string) => {
     // remove double slash
