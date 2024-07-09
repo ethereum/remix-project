@@ -1,6 +1,23 @@
 // eslint-disable-next-line no-unused-vars
 import axios, { AxiosResponse } from 'axios'
 
+export type GithubItem = {
+  name: string
+  path: string
+  sha: string
+  size: number
+  url: string
+  html_url: string
+  git_url: string
+  download_url: string | null
+  type: 'dir' | 'file'
+  _links: {
+    self: string
+    git: string
+    html: string
+  }
+}
+
 export const githubFolderResolver = async (url, obj = {}, maxDepth, depth?, rootPath?) => {
   depth = depth ? depth : 0
   const child = await pullFolder(url)
@@ -10,9 +27,11 @@ export const githubFolderResolver = async (url, obj = {}, maxDepth, depth?, root
   const pathParts = pathname.split('/');
   const folderPath = pathParts.slice(5).join('/');
   rootPath = rootPath || folderPath
+
+  if (!Array.isArray(child)) return obj
   for (const item of child) {
     if (item.type === 'file') {
-      const response: AxiosResponse = await axios.get(item.download_url, { transformResponse: res => res })
+      const response: AxiosResponse = await axios.get(item.download_url)
       obj[item.path.replace(rootPath, '')] = response.data
     } else if (maxDepth > depth) {
       // dir
@@ -24,7 +43,7 @@ export const githubFolderResolver = async (url, obj = {}, maxDepth, depth?, root
 
 const pullFolder = async (url) => {
   const response = await axios.get('https://ghfolderpull.remixproject.org', { params: { ghfolder: url } });
-  const data = await response.data;
+  const data: Array<GithubItem> = await response.data;
   return data
 }
 
