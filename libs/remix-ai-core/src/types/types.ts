@@ -49,4 +49,8 @@ export interface IParams {
   no_repeat_ngram_size?: number;
   num_beams?: number;
   num_return_sequences?: number;
+  top_k?: number;
+  top_p?: number;
+  stream_result?: boolean;
+  return_full_text?: boolean;
 }

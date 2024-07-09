@@ -23,7 +23,8 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/remix-ai-core/**/*.ts"]
+        "lintFilePatterns": ["libs/remix-ai-core/**/*.ts"],
+        "eslintConfig": "libs/remix-ai-core/.eslintrc"
       }
     }
   },

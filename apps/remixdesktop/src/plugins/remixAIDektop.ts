@@ -1,17 +1,11 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-import { app } from 'electron';
-// import { Model, ModelType, DefaultModels } from '@remix/remix-ai-core';
-import axios from "axios";
-import fs from 'fs';
-import path from 'path';
-import {ipcMain} from 'electron';
+// import { IModel, ModelType, DefaultModels } from '@remix/remix-ai-core';
+//import { pipeline, env } from '@xenova/transformers';
 
-import {InlineCompletionServiceTransformer} from '../lib/completionTransformer'
-import { LLamaInferencer } from '../lib/llamaInferencer';
-
-//import {LlamaModel, LlamaContext, LlamaChatSession, LlamaModelOptions} from "node-llama-cpp";
-
+// use remix ai core
+import { InlineCompletionServiceTransformer, LLamaInferencer } from '../../../../libs/remix-ai-core/src/index'
+import { cacheDir } from "../utils/config"
 // import { isE2E } from "../main";
 
 const profile = {
@@ -44,13 +38,13 @@ const clientProfile: Profile = {
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   kind: '',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
-  methods: ['initializeModelBackend', 'code_completion'],
+  methods: ['initializeModelBackend', 'code_completion', 'code_insertion', 'code_generation', 'code_explaining', 'error_explaining', 'solidity_answer']
 }
 
 class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
-  
   multitaskModel: LLamaInferencer| InlineCompletionServiceTransformer = null
   completionModel: LLamaInferencer| InlineCompletionServiceTransformer = null
+  readonly modelCacheDir: string = cacheDir
 
   constructor (webContentsId: number, profile: Profile){
     console.log("loading the remix plugin client ........................")
@@ -71,53 +65,62 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
   }
 
   async initializeModelBackend(multitaskModel: any, completionModel?: any){
-    console.log("Initializing backend with model ", multitaskModel, completionModel)
+    // console.log("Initializing backend with model ", multitaskModel, completionModel)
+    // if (completionModel && completionModel.modelType === 'CODE_COMPLETION'){
+    //   switch (completionModel.modelReqs.backend) {
+    //   case 'llamacpp':
+    //     this.completionModel = new LLamaInferencer(completionModel, this.modelCacheDir)
+    //     break;
+    //   case 'transformerjs':
+    //     this.completionModel = new InlineCompletionServiceTransformer(completionModel, this.modelCacheDir)
+    //     break;
+    //   default:
+    //     console.log("Backend not supported")
+    //     break;
+    //   }
+    // }
+
+    console.log("Initializing backend with model ", multitaskModel)
     switch (multitaskModel.modelReqs.backend) {
-      case 'llamacpp':
-        this.multitaskModel = new LLamaInferencer(this, multitaskModel)
-        break;
-      case 'transformerjs':
-        this.multitaskModel = new InlineCompletionServiceTransformer(multitaskModel)
-        break;
-      default:
-        console.log("Backend not supported")
-        break;
+    case 'llamacpp':
+      this.multitaskModel = new LLamaInferencer(multitaskModel, this.modelCacheDir)
+      break;
+    case 'transformerjs':
+      this.multitaskModel = new InlineCompletionServiceTransformer(multitaskModel, this.modelCacheDir)
+      break;
+    default:
+      console.log("Backend not supported")
+      break;
     }
 
-    if (completionModel && completionModel.modelType === 'CODE_COMPLETION'){
-      switch (completionModel.modelReqs.backend) {
-        case 'llamacpp':
-          this.completionModel = new LLamaInferencer(this, completionModel)
-          break;
-        case 'transformerjs':
-          this.completionModel = new InlineCompletionServiceTransformer(completionModel)
-          break;
-        default:
-          console.log("Backend not supported")
-          break;
-      }
-    }
-
-    // init the mmodels 
+    // init the mmodels
     if (this.multitaskModel){
       await this.multitaskModel.init()
-    } 
+    }
 
     if (this.completionModel){
       await this.completionModel.init()
     }
-
   }
-  
 
-  code_completion(context: any) {
+  async code_completion(context: any) {
     console.log("Code completion called")
     if (this.completionModel){
-      return this.completionModel.code_completion(context, {max_new_tokens: 100})
+      return this.completionModel.code_completion(context)
     }
 
-    // use general purpose model 
-    return this.multitaskModel.code_completion(context, {max_new_tokens: 100})
+    // use general purpose model
+    return this.multitaskModel.code_completion(context)
+  }
+
+  async code_insertion(msg_pfx: string, msg_sfx: string) {
+    console.log("Code insertion called")
+    if (this.completionModel){
+      return this.completionModel.code_insertion(msg_pfx, msg_sfx)
+    }
+
+    // use general purpose model
+    return this.multitaskModel.code_insertion(msg_pfx, msg_sfx)
   }
 
   // async _loadLocalModel(): Promise<LlamaChatSession> {
@@ -133,7 +136,7 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
 
   //   return session;
   // }
-  
+
   // _getModelOptions(): LlamaModelOptions {
 
   //   const options: LlamaModelOptions = {
@@ -156,7 +159,7 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
 
   // async getInferenceModel(): Promise<LlamaChatSession> {
   //   return this._loadLocalModel();
-  // } 
+  // }
 
   changemodel(newModel: any){
     /// dereference the current static inference object
