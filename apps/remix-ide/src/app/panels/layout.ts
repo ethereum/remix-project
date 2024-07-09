@@ -83,32 +83,32 @@ export class Layout extends Plugin {
     })
     this.on('sidePanel', 'focusChanged', async (name) => {
       if (toMaximize.includes(name) && !this.sidePanelMaximized) {
-        setTimeout(() => { 
+        setTimeout(() => {
           this.maximiseSidePanel()
           this.resetPinnedPanel()
         }, 0)
         this.sidePanelMaximized = true
       } else {
-        setTimeout(() => { 
+        setTimeout(() => {
           this.resetSidePanel()
         }, 0)
         this.sidePanelMaximized = false
-      }   
+      }
     })
 
     this.on('pinnedPanel', 'pinnedPlugin', async (profile) => {
       if (toMaximize.includes(profile.name) && !this.pinnedPanelMaximized) {
-        setTimeout(() => { 
+        setTimeout(() => {
           this.maximisePinnedPanel()
           this.resetSidePanel()
         }, 0)
         this.pinnedPanelMaximized = true
       } else {
-        setTimeout(() => { 
+        setTimeout(() => {
           this.resetPinnedPanel()
         }, 0)
         this.pinnedPanelMaximized = false
-      }      
+      }
     })
 
     document.addEventListener('keypress', e => {
