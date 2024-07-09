@@ -307,10 +307,13 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         }
       }
       if (params.ghfolder) {
-        const files = await plugin.call('contentImport', 'resolveGithubFolder', params.ghfolder)
-        console.log(files)
-        for (const [path, content] of Object.entries(files)) {
-          await workspaceProvider.set(path, content)
+        try {
+          const files = await plugin.call('contentImport', 'resolveGithubFolder', params.ghfolder)
+          for (const [path, content] of Object.entries(files)) {
+            await workspaceProvider.set(path, content)
+          }
+        } catch (e) {
+          console.log(e)
         }
       }
 
