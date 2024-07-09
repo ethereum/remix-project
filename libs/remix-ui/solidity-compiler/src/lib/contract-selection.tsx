@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react' // eslint-disable-line
 import { FormattedMessage, useIntl } from 'react-intl'
-import { ContractPropertyName, ContractSelectionProps } from './types'
+import { ContractPropertyName, ContractSelectionProps, ScanReport } from './types'
 import {PublishToStorage} from '@remix-ui/publish-to-storage' // eslint-disable-line
 import {TreeView, TreeViewItem} from '@remix-ui/tree-view' // eslint-disable-line
 import {CopyToClipboard} from '@remix-ui/clipboard' // eslint-disable-line
@@ -312,10 +312,10 @@ export const ContractSelection = (props: ContractSelectionProps) => {
           const url = data.payload.scan_details.link
 
           const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
-          const scanDetails: Record<string, any>[] = scanData.scan_report.multi_file_scan_details
+          const scanReport: ScanReport = scanData.scan_report
 
-          if (scanDetails && scanDetails.length) {
-            await plugin.call('terminal', 'logHtml', <SolScanTable scanDetails={scanDetails} fileName={fileName}/>)
+          if (scanReport?.multi_file_scan_details?.length) {
+            await plugin.call('terminal', 'logHtml', <SolScanTable scanReport={scanReport} fileName={fileName}/>)
           } else {
             const modal: AppModal = {
               id: 'SolidityScanError',
@@ -338,7 +338,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
       title: <FormattedMessage id="solidity.solScan.modalTitle" />,
       message: <div className='d-flex flex-column'>
         <span><FormattedMessage id="solidity.solScan.modalMessage" />
-          <a href={'https://solidityscan.com'}
+          <a href={'https://solidityscan.com/?utm_campaign=remix&utm_source=remix'}
             target="_blank"
             onClick={() => _paq.push(['trackEvent', 'solidityCompiler', 'solidityScan', 'learnMore'])}>
               Learn more
