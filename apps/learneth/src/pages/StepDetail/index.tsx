@@ -203,7 +203,8 @@ function StepDetailPage() {
             <button
               className="w-100 btn btn-success"
               onClick={() => {
-                navigate(`/detail?id=${id}&stepId=${stepId + 1}`)
+                navigate(`/detail?id=${id}&stepId=${stepId + 1}`);
+                (window as any)._paq.push(['trackEvent', 'learneth', 'navigate_next', `${id}/${stepId + 1}`])
               }}
             >
               Next
@@ -213,7 +214,8 @@ function StepDetailPage() {
             <button
               className="w-100 btn btn-success"
               onClick={() => {
-                navigate(`/list?id=${id}`)
+                navigate(`/list?id=${id}`);
+                (window as any)._paq.push(['trackEvent', 'learneth', 'navigate_finish', id])
               }}
             >
               Finish tutorial
