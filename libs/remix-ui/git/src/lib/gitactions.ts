@@ -48,7 +48,7 @@ export const init = async () => {
 
 export const getBranches = async () => {
 
-  const branches = await plugin.call('dgitApi', "branches")
+  const branches = await plugin.call('dgitApi', 'branches')
 
   dispatch(setBranches(branches));
 }

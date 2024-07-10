@@ -1,1 +1,1 @@
-export * from './src/index'
+export { isoGit } from './src/isogit'

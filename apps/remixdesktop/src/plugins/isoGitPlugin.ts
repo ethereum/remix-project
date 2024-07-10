@@ -351,20 +351,13 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
 
 
-  async remotes  () {
+  async remotes() {
     console.log('REMOTES')
     if (!this.workingDir || this.workingDir === '') {
       return []
     }
-    let remotes: remote[] = []
-    try {
-      remotes = (await git.listRemotes({ ...await this.getGitConfig() })).map((remote) => { return { name: remote.remote, url: remote.url } }
-      )
-    } catch (e) {
-      // do nothing
-    }
-    console.log('REMOTES', remotes)
-    return remotes
+    const defaultConfig = await this.getGitConfig()
+    return await isoGit.remotes(defaultConfig)
   }
 
   async currentbranch(input: currentBranchInput) {
@@ -372,40 +365,8 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     if (!this.workingDir || this.workingDir === '') {
       return ''
     }
-
-    try {
-      const defaultConfig = await this.getGitConfig()
-      console.log(isoGit)
-      const cmd = input ? defaultConfig ? { ...defaultConfig, ...input } : input : defaultConfig
-      
-      const name = await git.currentBranch(cmd)
-      let remote: remote = undefined
-      try {
-        const remoteName = await git.getConfig({
-          ...defaultConfig,
-          path: `branch.${name}.remote`
-        })
-        if (remoteName) {
-          const remoteUrl = await git.getConfig({
-            ...defaultConfig,
-            path: `remote.${remoteName}.url`
-          })
-          remote = { name: remoteName, url: remoteUrl }
-        }
-
-      } catch (e) {
-        // do nothing
-      }
-      console.log('NAME', name)
-      console.log('REMOTE', remote)
-      
-      return {
-        remote: remote,
-        name: name || ''
-      }
-    } catch (e) {
-      return undefined
-    }
+    const defaultConfig = await this.getGitConfig()
+    return await isoGit.currentbranch(input, defaultConfig)
   }
 
 
@@ -414,22 +375,9 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     if (!this.workingDir || this.workingDir === '') {
       return []
     }
-    try {
-      const defaultConfig = await this.getGitConfig()
-      const cmd = config ? defaultConfig ? { ...defaultConfig, ...config } : config : defaultConfig
-      const remotes = await this.remotes()
-      let branches: branch[] = []
-      branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
-      for (const remote of remotes) {
-        cmd.remote = remote.name
-        const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote, name: branch } })
-        branches = [...branches, ...remotebranches]
-      }
-      return branches
-    } catch (e) {
-      console.log(e)
-      return []
-    }
+
+    const defaultConfig = await this.getGitConfig()
+    return await isoGit.branches(defaultConfig)
   }
 
 
@@ -438,53 +386,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async getCommitChanges(commitHash1: string, commitHash2: string): Promise<commitChange[]> {
-    const result: commitChange[] = await git.walk({
-      ...await this.getGitConfig(),
-      trees: [git.TREE({ ref: commitHash1 }), git.TREE({ ref: commitHash2 })],
-      map: async function (filepath, [A, B]) {
-
-        if (filepath === '.') {
-          return
-        }
-        try {
-          if ((A && await A.type()) === 'tree' || B && (await B.type()) === 'tree') {
-            return
-          }
-        } catch (e) {
-          // ignore
-        }
-
-        // generate ids
-        const Aoid = A && await A.oid() || undefined
-        const Boid = B && await B.oid() || undefined
-
-        const commitChange: Partial<commitChange> = {
-          hashModified: commitHash1,
-          hashOriginal: commitHash2,
-          path: filepath,
-        }
-
-        // determine modification type
-        if (Aoid !== Boid) {
-          commitChange.type = "modified"
-        }
-        if (Aoid === undefined) {
-          commitChange.type = "deleted"
-        }
-        if (Boid === undefined || !commitHash2) {
-          commitChange.type = "added"
-        }
-        if (Aoid === undefined && Boid === undefined) {
-          commitChange.type = "unknown"
-        }
-        if (commitChange.type)
-          return commitChange
-        else
-          return undefined
-      },
-    })
-
-    return result
+    return await isoGit.getCommitChanges(commitHash1, commitHash2, await this.getGitConfig())
   }
 
   async compareBranches({ branch, remote }: compareBranchesInput): Promise<branchDifference> {
