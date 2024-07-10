@@ -2,8 +2,15 @@ import { Endpoints } from "@octokit/types"
 import { IRemixApi } from "@remixproject/plugin-api"
 import { LibraryProfile, StatusEvents } from "@remixproject/plugin-utils"
 import { CommitObject, ReadBlobResult, ReadCommitResult, StatusRow } from "isomorphic-git"
+import { CustomRemixApi } from "@remix-api";
+import { Plugin } from "@remixproject/engine";
+
 export type GitHubUser = Partial<Endpoints["GET /user"]["response"]['data']>
 export type userEmails = Endpoints["GET /user/emails"]["response"]["data"]
+
+export interface IGitUi {
+    plugin: Plugin<any, CustomRemixApi>
+}
 
 export interface IGitApi {
     events: {

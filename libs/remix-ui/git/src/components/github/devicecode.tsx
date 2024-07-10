@@ -4,8 +4,9 @@ import { gitPluginContext } from "../gitui";
 import axios from "axios";
 import { CopyToClipboard } from "@remix-ui/clipboard";
 import { Card } from "react-bootstrap";
+import { IGitUi } from '../../types'
 
-export const GetDeviceCode = () => {
+export const GetDeviceCode = (props: IGitUi) => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const pluginActions = React.useContext(pluginActionsContext)
@@ -59,7 +60,6 @@ export const GetDeviceCode = () => {
       await pluginActions.saveToken(response.access_token)
       await actions.loadGitHubUserFromToken()
     }
-
   }
 
   const disconnect = async () => {
@@ -67,6 +67,7 @@ export const GetDeviceCode = () => {
     setGitHubResponse(null)
     await pluginActions.saveToken(null)
     await actions.loadGitHubUserFromToken()
+    props.plugin.emit('disconnectFromGithub')
   }
 
   return (
