@@ -31,16 +31,10 @@ import { SourceControl } from './panels/sourcontrol'
 import { GitHubCredentials } from './panels/githubcredentials'
 import { Setup } from './panels/setup'
 import { Init } from './panels/init'
-import { CustomRemixApi } from "@remix-api";
-import { Plugin } from "@remixproject/engine";
 import { Disabled } from './disabled'
-
+import { IGitUi } from '../types'
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
-
-interface IGitUi {
-  plugin: Plugin<any, CustomRemixApi>
-}
 
 export const GitUI = (props: IGitUi) => {
   const plugin = props.plugin
@@ -59,6 +53,7 @@ export const GitUI = (props: IGitUi) => {
     })
     setTimeout(() => {
       setAppLoaded(true)
+      plugin.on('filePanel', 'requestGitHubSignIn' as any, () => setActivePanel('0'))
     }, 2000)
   }, [])
 
@@ -171,21 +166,29 @@ export const GitUI = (props: IGitUi) => {
               <pluginActionsContext.Provider value={pluginActionsProviderValue}>
                 <BranchHeader />
 
-                {setup && !needsInit ? <Setup></Setup> : null}
+                {setup && !needsInit ? <Setup plugin={plugin} ></Setup> : null}
                 {needsInit ? <Init></Init> : null}
                 {!setup && !needsInit ?
-                  <Accordion activeKey={activePanel} defaultActiveKey="0">
-                    <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
-
+                  <Accordion activeKey={activePanel} defaultActiveKey="1">
+                    <GitHubNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="0">
+                      <>
+                        <GetDeviceCode plugin={plugin}></GetDeviceCode>
+                        <hr></hr>
+                        <GitHubCredentials plugin={plugin}></GitHubCredentials>
+                      </>
+                    </Accordion.Collapse>
+                    <hr></hr>
+                    <SourceControlNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey="1">
                       <>
                         <SourceControlBase><CommitMessage /></SourceControlBase>
                         <SourceControl />
                       </>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="1">
+                    <CommandsNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey="2">
                       <>
                         <Commands></Commands>
                       </>
@@ -198,8 +201,8 @@ export const GitUI = (props: IGitUi) => {
                       </>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="2">
+                    <BranchesNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey="4">
                       <>
                         <Branches /></>
                     </Accordion.Collapse>
@@ -211,23 +214,14 @@ export const GitUI = (props: IGitUi) => {
                       </>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="4">
+                    <CloneNavigation eventKey="6" activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey="6">
                       <>
                         <Clone /></>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />
+                    <LogNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="7">
-                      <>
-                        <GetDeviceCode></GetDeviceCode>
-                        <hr></hr>
-                        <GitHubCredentials></GitHubCredentials>
-                      </>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <LogNavigation eventKey="6" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="6">
                       <>
                         <LogViewer />
                       </>
