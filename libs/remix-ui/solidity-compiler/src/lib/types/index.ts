@@ -19,6 +19,8 @@ export interface ScanTemplate {
 export interface ScanDetails {
   issue_id: string
   no_of_findings: string
+  metric_wise_aggregated_findings?: Record<string, any>[]
+  positions?: string
   template_details: ScanTemplate
 }
 
