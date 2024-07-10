@@ -129,7 +129,8 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
           {
             url: metadata.url,
             branch: metadata.branch,
-            workspaceName: templateDisplayName
+            workspaceName: templateDisplayName,
+            depth: 10
           })
       } else if (metadata && metadata.type === 'plugin') {
         await plugin.appManager.activatePlugin('filePanel')
