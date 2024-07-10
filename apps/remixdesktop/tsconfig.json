@@ -20,7 +20,7 @@
         "../../libs/remix-api/src/lib/types/git.ts"
       ],
       "@remix-git": [
-        "../../libs/remix-git/src/index.ts",
+        "../../libs/remix-git/"
       ],
     },
     "typeRoots": [
@@ -32,6 +32,5 @@
   },
   "include": [
     "src/**/*",
-    "../../libs/remix-git/src/index.ts"
   ]
 }
