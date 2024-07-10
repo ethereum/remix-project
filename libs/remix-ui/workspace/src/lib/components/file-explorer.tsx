@@ -158,10 +158,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   useEffect(() => {
     const performRename = async () => {
-      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
+      if (feTarget?.length > 1 && feTarget[0]?.key.length > 1) {
         await plugin.call('notification', 'alert', { id: 'renameAlert', message: 'You cannot rename multiple files at once!' })
       }
-      await props.dispatchRenamePath(feTarget[0].key, feTarget[0].type)
+      await props.editModeOn(feTarget[0].key, feTarget[0].type, false)
     }
     if (treeRef.current) {
       const F2KeyPressHandler = async (eve: KeyboardEvent) => {
