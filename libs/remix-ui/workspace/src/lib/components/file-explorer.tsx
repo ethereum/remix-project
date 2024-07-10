@@ -115,6 +115,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (treeRef.current) {
       const deleteKeyPressHandler = async (eve: KeyboardEvent) => {
         if (eve.key === 'Delete' ) {
+          (window as any)._paq.push(['trackEvent', 'fileExplorer', 'deleteKey'])
           setState((prevState) => {
             return { ...prevState, deleteKey: true }
           })
@@ -123,6 +124,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
         if (eve.metaKey) {
           if (eve.key === 'Backspace') {
+            (window as any)._paq.push(['trackEvent', 'fileExplorer', 'osxDeleteKey'])
             setState((prevState) => {
               return { ...prevState, deleteKey: true }
             })
@@ -168,6 +170,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (treeRef.current) {
       const F2KeyPressHandler = async (eve: KeyboardEvent) => {
         if (eve.key === 'F2' ) {
+          (window as any)._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename'])
           await performRename()
           setState((prevState) => {
             return { ...prevState, F2Key: true }
