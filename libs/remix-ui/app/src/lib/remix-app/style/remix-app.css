@@ -43,6 +43,7 @@ pre {
 .pinnedpanel           {
   width              : 320px;
   transition         : width 0.25s;
+  padding-bottom     : 1.4rem;
 }
 .highlightcode       {
   position           : absolute;
