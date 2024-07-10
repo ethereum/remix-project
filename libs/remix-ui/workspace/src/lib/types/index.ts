@@ -202,7 +202,6 @@ export interface FileExplorerContextMenuProps {
 export interface WorkSpaceState {
     ctrlKey: boolean
     deleteKey?: boolean
-    backspaceKey?: boolean
     F2Key?: boolean
     newFileName: string
     actions: {

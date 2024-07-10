@@ -112,14 +112,35 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
     if (treeRef.current) {
       const deleteKeyPressHandler = async (eve: KeyboardEvent) => {
-        eve.preventDefault()
         if (eve.key === 'Delete' ) {
+          setState((prevState) => {
+            return { ...prevState, deleteKey: true }
+          })
           performDeleteion()
           return
         }
         if (eve.metaKey) {
-          eve.preventDefault()
           if (eve.key === 'Backspace') {
+            setState((prevState) => {
+              return { ...prevState, deleteKey: true }
+            })
+            performDeleteion()
+            return
+          }
+        }
+      }
+      const deleteKeyPressUpHandler = async (eve: KeyboardEvent) => {
+        if (eve.key === 'Delete' ) {
+          setState((prevState) => {
+            return { ...prevState, deleteKey: false }
+          })
+          return
+        }
+        if (eve.metaKey) {
+          if (eve.key === 'Backspace') {
+            setState((prevState) => {
+              return { ...prevState, deleteKey: false }
+            })
             performDeleteion()
             return
           }
@@ -127,8 +148,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
 
       treeRef.current?.addEventListener('keydown', deleteKeyPressHandler)
+      treeRef.current?.addEventListener('keyup', deleteKeyPressUpHandler)
       return () => {
         treeRef.current?.removeEventListener('keydown', deleteKeyPressHandler)
+        treeRef.current?.addEventListener('keyup', deleteKeyPressUpHandler)
       }
     }
   }, [treeRef.current, feTarget])
@@ -142,20 +165,31 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
     if (treeRef.current) {
       const F2KeyPressHandler = async (eve: KeyboardEvent) => {
-        eve.preventDefault()
         if (eve.key === 'F2' ) {
-          console.log('F2 key was pressed so renaming happening')
           await performRename()
+          setState((prevState) => {
+            return { ...prevState, F2Key: true }
+          })
+          return
+        }
+      }
+      const F2KeyPressUpHandler = async (eve: KeyboardEvent) => {
+        if (eve.key === 'F2' ) {
+          setState((prevState) => {
+            return { ...prevState, F2Key: false }
+          })
           return
         }
       }
 
       treeRef.current?.addEventListener('keydown', F2KeyPressHandler)
+      treeRef.current?.addEventListener('keyup', F2KeyPressUpHandler)
       return () => {
         treeRef.current?.removeEventListener('keydown', F2KeyPressHandler)
+        treeRef.current?.addEventListener('keyup', F2KeyPressUpHandler)
       }
     }
-  }, [treeRef.current])
+  }, [treeRef.current, feTarget])
 
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
