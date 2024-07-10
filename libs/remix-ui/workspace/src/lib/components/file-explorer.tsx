@@ -452,8 +452,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   }
 
-  console.log(feTarget)
-
   return (
     <div className="h-100 remixui_treeview" data-id="filePanelFileExplorerTree">
       <div ref={treeRef} tabIndex={0} style={{
