@@ -4,6 +4,7 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 import { RemixUIGridView } from '@remix-ui/remix-ui-grid-view'
 import { RemixUIGridSection } from '@remix-ui/remix-ui-grid-section'
 import { RemixUIGridCell } from '@remix-ui/remix-ui-grid-cell'
+import './style/environment-explorer.css'
 import type { Provider } from '../../blockchain/blockchain'
 
 import * as packageJson from '../../../../../package.json'
@@ -106,7 +107,7 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.name}
-
+              classList='EECellStyle'
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
@@ -135,6 +136,7 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.name}
+              classList='EECellStyle'
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
@@ -162,6 +164,7 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.name}
+              classList='EECellStyle'
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
