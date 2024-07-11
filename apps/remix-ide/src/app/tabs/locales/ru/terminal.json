@@ -39,5 +39,6 @@
   "terminal.input": "ввод",
   "terminal.decodedInput": "декодированный ввод",
   "terminal.decodedOutput": "декодированный вывод",
+  "terminal.rawlogs": "необработанные журналы",
   "terminal.logs": "журналы"
 }
