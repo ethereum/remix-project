@@ -541,6 +541,9 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   }
 
   async updateSubmodules(input) {
+    if ((Registry.getInstance().get('platform').api.isDesktop())) {
+      return await this.call('isogit', 'updateSubmodules', null)
+    }
     try {
       const currentDir = (input && input.dir) || ''
       const gitmodules = await this.parseGitmodules(currentDir)
