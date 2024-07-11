@@ -39,5 +39,6 @@
   "terminal.input": "input",
   "terminal.decodedInput": "input decodificato",
   "terminal.decodedOutput": "output decodificato",
+  "terminal.rawlogs": "log grezzi",
   "terminal.logs": "Log"
 }

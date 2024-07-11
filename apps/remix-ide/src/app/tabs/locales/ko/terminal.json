@@ -39,5 +39,6 @@
   "terminal.input": "입력",
   "terminal.decodedInput": "디코드된 입력",
   "terminal.decodedOutput": "디코드된 출력",
+  "terminal.rawlogs": "원시 로그",
   "terminal.logs": "로그"
 }
