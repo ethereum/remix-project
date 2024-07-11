@@ -97,6 +97,16 @@ export const gitProxy = {
         await execAsync(`git init`, { cwd: path });
     },
 
+    async updateSubmodules(path: string) {
+        const { stdout, stderr } = await execAsync(`git submodule update --init --recursive`, { cwd: path });
+        if (stdout) {
+            console.log('stdout:', stdout);
+        }
+        if (stderr) {
+            console.error('stderr:', stderr);
+        }
+    },
+
 
     status: async (path: string) => {
         const result = await execAsync('git status --porcelain -uall', { cwd: path })

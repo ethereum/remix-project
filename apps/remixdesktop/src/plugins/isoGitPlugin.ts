@@ -47,7 +47,7 @@ const clientProfile: Profile = {
   name: 'isogit',
   displayName: 'isogit',
   description: 'isogit plugin',
-  methods: ['init', 'localStorageUsed', 'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder', 'getCommitChanges', 'compareBranches', 'startClone']
+  methods: ['init', 'localStorageUsed', 'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder', 'getCommitChanges', 'compareBranches', 'startClone', 'updateSubmodules']
 }
 
 class IsoGitPluginClient extends ElectronBasePluginClient {
@@ -393,6 +393,17 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return await isoGit.compareBranches({ branch, remote }, await this.getGitConfig())
   }
 
+  async updateSubmodules(input) {
+    if (this.gitIsInstalled) {
+      try {
+        return await gitProxy.updateSubmodules(this.workingDir)
+      } catch (e) {
+        throw e
+      }
+    } else {
+      this.call('terminal', 'log', { type: 'error', value: 'Please install git into your OS to use this functionality...' })
+    }
+  }
 }
 
 
