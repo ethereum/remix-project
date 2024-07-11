@@ -8,6 +8,7 @@ module.exports = {
   },
 
   'Should select multiple items in file explorer #group1': function (browser: NightwatchBrowser) {
+    console.log(browser)
     const selectedElements = []
     browser
       .openFile('contracts')
@@ -26,11 +27,7 @@ module.exports = {
   },
   'Should drag and drop multiple files in file explorer to tests folder #group1': function (browser: NightwatchBrowser) {
     const selectedElements = []
-    if (browser.options.desiredCapabilities?.browserName === 'firefox') {
-      console.log('Skipping test for firefox')
-      browser.end()
-      return;
-    } else {
+    if (browser.options.desiredCapabilities?.browserName === 'chrome') {
       browser
         .click({ selector: '//*[@data-id="treeViewUltreeViewMenu"]', locateStrategy: 'xpath' })
         .click({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', locateStrategy: 'xpath' })
@@ -54,6 +51,8 @@ module.exports = {
                 .perform(() => done())
             })
         })
+    } else {
+      browser.end()
     }
   },
   'should drag and drop multiple files and folders in file explorer to contracts folder #group3': function (browser: NightwatchBrowser) {
