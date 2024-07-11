@@ -1,4 +1,4 @@
-import { branch, commitChange, currentBranchInput, isoGitConfig, remote } from "@remix-api"
+import { branch, commitChange, compareBranchesInput, currentBranchInput, isoGitConfig, remote } from "@remix-api"
 import git from 'isomorphic-git'
 
 const currentbranch = async (input: currentBranchInput, defaultConfig: isoGitConfig ) => {
@@ -120,9 +120,40 @@ const currentbranch = async (input: currentBranchInput, defaultConfig: isoGitCon
     return result
   }
 
+  const compareBranches = async ({ branch, remote }: compareBranchesInput, defaultConfig: isoGitConfig) => {
+
+    // Get current branch commits
+    const headCommits = await git.log({
+      ...defaultConfig,
+      ref: branch.name,
+    });
+
+    // Get remote branch commits
+    const remoteCommits = await git.log({
+      ...defaultConfig,
+      ref: `${remote.name}/${branch.name}`,
+    });
+
+    // Convert arrays of commit objects to sets of commit SHAs
+    const headCommitSHAs = new Set(headCommits.map(commit => commit.oid));
+    const remoteCommitSHAs = new Set(remoteCommits.map(commit => commit.oid));
+
+    // Filter out commits that are only in the remote branch
+    const uniqueRemoteCommits = remoteCommits.filter(commit => !headCommitSHAs.has(commit.oid));
+
+    // filter out commits that are only in the local branch
+    const uniqueHeadCommits = headCommits.filter(commit => !remoteCommitSHAs.has(commit.oid));
+
+    return {
+      uniqueHeadCommits,
+      uniqueRemoteCommits,
+    };
+  }
+
   export const isoGit = {
     currentbranch,
     remotes,
     branches,
-    getCommitChanges
+    getCommitChanges,
+    compareBranches
   }
