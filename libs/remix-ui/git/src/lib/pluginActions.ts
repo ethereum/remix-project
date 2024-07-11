@@ -98,3 +98,10 @@ export const clearFileDecorator = async(path: string) => {
   await plugin.call('fileDecorator', 'clearFileDecorators', path)
 }
 
+export const openFolderInSameWindow = async (path: string) => {
+  await plugin.call('fs', 'openFolderInSameWindow', path)
+}
+
+export const openCloneDialog = async () => {
+  plugin.call('filePanel', 'clone')
+}

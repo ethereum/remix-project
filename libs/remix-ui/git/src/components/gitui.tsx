@@ -1,7 +1,7 @@
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useEffect, useReducer, useState, useContext } from 'react'
 import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init, showAlert, gitlog } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
-import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
+import { openDiff, openFile, openFolderInSameWindow, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
 import { defaultGitState, defaultLoaderState, gitState, loaderState } from '../types'
@@ -34,6 +34,7 @@ import { Init } from './panels/init'
 import { CustomRemixApi } from "@remix-api";
 import { Plugin } from "@remixproject/engine";
 import { Disabled } from './disabled'
+import { platformContext } from '@remix-ui/app'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
@@ -51,6 +52,8 @@ export const GitUI = (props: IGitUi) => {
   const [needsInit, setNeedsInit] = useState<boolean>(true)
   const [appLoaded, setAppLoaded] = useState<boolean>(false)
 
+  const platform = useContext(platformContext)
+
   useEffect(() => {
     plugin.emit('statusChanged', {
       key: 'loading',
@@ -64,7 +67,7 @@ export const GitUI = (props: IGitUi) => {
 
   useEffect(() => {
     if (!appLoaded) return
-    setCallBacks(plugin, gitDispatch, loaderDispatch, setActivePanel)
+    setCallBacks(plugin, gitDispatch, loaderDispatch, setActivePanel, platform)
     setPlugin(plugin, gitDispatch, loaderDispatch)
     loaderDispatch({ type: 'plugin', payload: true })
 
@@ -159,11 +162,13 @@ export const GitUI = (props: IGitUi) => {
     saveToken,
     saveGitHubCredentials,
     getGitHubCredentialsFromLocalStorage,
-    showAlert
+    showAlert,
+    openFolderInSameWindow
   }
 
   return (
-    <>{(!gitState.canUseApp) ? <Disabled></Disabled> :
+    <>{(!gitState.canUseApp) ?
+      <Disabled></Disabled> :
       <div className="m-1">
         <gitPluginContext.Provider value={gitState}>
           <loaderContext.Provider value={loaderState}>
