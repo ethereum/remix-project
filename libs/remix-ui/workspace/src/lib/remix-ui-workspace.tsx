@@ -90,16 +90,16 @@ export function Workspace() {
         setState((prevState) => {
           return { ...prevState, loggedInGithub: true, githubUser: data.user }
         })
-      }      
+      }
     }
-    global.plugin.on('dgit',  'disconnectFromGithub', () => {
+    global.plugin.on('dgit', 'disconnectFromGithub', () => {
       setState((prevState) => {
         return { ...prevState, loggedInGithub: false, githubUser: null }
       })
     })
-    global.plugin.on('dgit',  'loggedInGithubChanged', () => {
+    global.plugin.on('dgit', 'loggedInGithubChanged', () => {
       run()
-    }) 
+    })
     run()
   }, [])
 
@@ -1164,8 +1164,8 @@ export function Workspace() {
                       }
                     </span>
                     <span className="d-flex">
-                        {
-                          !state.loggedInGithub && <CustomTooltip
+                      {
+                        !state.loggedInGithub && <CustomTooltip
                           placement="right"
                           tooltipId="githubNotLogged"
                           tooltipClasses="text-nowrap"
@@ -1176,9 +1176,9 @@ export function Workspace() {
                             <span onClick={() => logInGithub() } className="ml-1 text-success"> Sign in </span>
                           </div>
                         </CustomTooltip>
-                        }
-                        {
-                          state.loggedInGithub && <CustomTooltip
+                      }
+                      {
+                        state.loggedInGithub && <CustomTooltip
                           placement="right"
                           tooltipId="githubLoggedIn"
                           tooltipClasses="text-nowrap"
@@ -1186,8 +1186,8 @@ export function Workspace() {
                         >
                           <img width={20} height={20} data-id={`connected-img-${state.githubUser && state.githubUser.login}`} src={state.githubUser && state.githubUser.avatar_url} className="remixui_avatar_user ml-2" />
                         </CustomTooltip>
-                        }
-                      </span>
+                      }
+                    </span>
                   </div>
                 </div>
                 <div className='mx-2'>
