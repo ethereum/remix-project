@@ -23,12 +23,13 @@
 .remixui_grid_cell_pin:focus {
   outline: none;
 }
+
 .remixui_grid_cell_pin {
   width: 1rem;
   height: 1rem;
   position: relative;
-  right: 0.2rem;
-  top: -4.2rem;
+  right: 1rem;
+  top: -0.8rem;
   background: transparent;
 }
 
