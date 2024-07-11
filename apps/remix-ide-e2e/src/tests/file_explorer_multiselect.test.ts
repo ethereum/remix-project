@@ -56,35 +56,41 @@ module.exports = {
         })
     }
   },
-  'should drag and drop multiple files and folders in file explorer to contracts folder #group3': ''+function (browser: NightwatchBrowser) {
+  'should drag and drop multiple files and folders in file explorer to contracts folder #group3': function (browser: NightwatchBrowser) {
     const selectedElements = []
-    browser
-      .clickLaunchIcon('filePanel')
-      .click({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' })
-      .findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemscripts"]', locateStrategy: 'xpath' }, (el) => {
-        selectedElements.push(el)
-      })
-    browser.findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemREADME.txt"]', locateStrategy: 'xpath' },
-      (el: any) => {
-        selectedElements.push(el)
-      })
-    browser.selectFiles(selectedElements)
-      .perform((done) => {
-        browser.findElement({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts"]', locateStrategy: 'xpath' },
-          (el: any) => {
-            const id = (el as any).value.getId()
-            browser
-              .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts"]')
-              .dragAndDrop('li[data-id="treeViewLitreeViewItemtests"]', id)
-              .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-              .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-              .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/tests"]', 5000)
-              .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/README.txt"]', 5000)
-              .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/scripts"]', 5000)
-              .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemtests"]')
-              .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemREADME.txt"]')
-              .perform(() => done())
-          })
-      })
+    if (browser.options.desiredCapabilities?.browserName === 'firefox') {
+      console.log('Skipping test for firefox')
+      browser.end()
+      return;
+    } else {
+      browser
+        .clickLaunchIcon('filePanel')
+        .click({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' })
+        .findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemscripts"]', locateStrategy: 'xpath' }, (el) => {
+          selectedElements.push(el)
+        })
+      browser.findElement({ selector: '//*[@data-id="treeViewDivtreeViewItemREADME.txt"]', locateStrategy: 'xpath' },
+        (el: any) => {
+          selectedElements.push(el)
+        })
+      browser.selectFiles(selectedElements)
+        .perform((done) => {
+          browser.findElement({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts"]', locateStrategy: 'xpath' },
+            (el: any) => {
+              const id = (el as any).value.getId()
+              browser
+                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts"]')
+                .dragAndDrop('li[data-id="treeViewLitreeViewItemtests"]', id)
+                .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+                .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/tests"]', 5000)
+                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/README.txt"]', 5000)
+                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/scripts"]', 5000)
+                .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemtests"]')
+                .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemREADME.txt"]')
+                .perform(() => done())
+            })
+        })
+    }
   }
 }
