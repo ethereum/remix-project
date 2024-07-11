@@ -6,6 +6,7 @@ import * as packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'dgit',
+  displayName: 'Git',
   desciption: 'Git plugin for Remix',
   methods: ['pull', 'track', 'diff', 'clone', 'open'],
   events: [''],
