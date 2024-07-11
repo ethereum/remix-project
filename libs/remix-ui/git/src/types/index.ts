@@ -38,6 +38,7 @@ export type gitState = {
     gitHubScopes: string[]
     gitHubAccessToken: string
     log: gitLog[]
+    desktopWorkingDir?: string
 }
 export type gitLog = {
     type: 'error' | 'warning' | 'info' | 'success',
@@ -69,7 +70,7 @@ export const defaultGitState: gitState = {
   deleted: [],
   modified: [],
   allchangesnotstaged: [],
-  canUseApp: true,
+  canUseApp: false,
   loading: false,
   storageUsed: {},
   reponame: "",
@@ -87,7 +88,8 @@ export const defaultGitState: gitState = {
   userEmails: [] as userEmails,
   gitHubScopes: [],
   gitHubAccessToken: "",
-  log: []
+  log: [],
+  desktopWorkingDir: null
 }
 
 export const defaultLoaderState: loaderState = {
@@ -222,4 +224,9 @@ export interface clearLogAction {
     type: string
 }
 
-export type gitActionDispatch = setCurrentHeadAction | clearLogAction | setLogAction | setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export interface setDesktopWorkingDirAction {
+    type: string,
+    payload: string
+}
+
+export type gitActionDispatch = setDesktopWorkingDirAction | setCurrentHeadAction | clearLogAction | setLogAction | setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction

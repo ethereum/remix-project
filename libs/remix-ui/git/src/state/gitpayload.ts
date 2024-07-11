@@ -218,3 +218,10 @@ export const clearLog = () => {
     type: 'CLEAR_LOG'
   }
 }
+
+export const setDesktopWorkingDir = (dir: string) => {
+  return {
+    type: 'DESKTOP_SET_WORKING_DIR',
+    payload: dir
+  }
+}

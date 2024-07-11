@@ -42,6 +42,7 @@ export interface ActionPayloadTypes {
   SET_LOG: gitLog
   CLEAR_LOG: void
   SET_USER_EMAILS: userEmails
+  DESKTOP_SET_WORKING_DIR: string
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {
