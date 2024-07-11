@@ -390,33 +390,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async compareBranches({ branch, remote }: compareBranchesInput): Promise<branchDifference> {
-
-    // Get current branch commits
-    const headCommits = await git.log({
-      ...await this.getGitConfig(),
-      ref: branch.name,
-    });
-
-    // Get remote branch commits
-    const remoteCommits = await git.log({
-      ...await this.getGitConfig(),
-      ref: `${remote.name}/${branch.name}`,
-    });
-
-    // Convert arrays of commit objects to sets of commit SHAs
-    const headCommitSHAs = new Set(headCommits.map(commit => commit.oid));
-    const remoteCommitSHAs = new Set(remoteCommits.map(commit => commit.oid));
-
-    // Filter out commits that are only in the remote branch
-    const uniqueRemoteCommits = remoteCommits.filter(commit => !headCommitSHAs.has(commit.oid));
-
-    // filter out commits that are only in the local branch
-    const uniqueHeadCommits = headCommits.filter(commit => !remoteCommitSHAs.has(commit.oid));
-
-    return {
-      uniqueHeadCommits,
-      uniqueRemoteCommits,
-    };
+    return await isoGit.compareBranches({ branch, remote }, await this.getGitConfig())
   }
 
 }
