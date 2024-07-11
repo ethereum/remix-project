@@ -1142,53 +1142,53 @@ export function Workspace() {
                       </Dropdown>
                     </span>
                   ) : null}
-                  <span className="d-flex">
-                    <label className="pl-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
-                      {(platform == appPlatformTypes.desktop) ? (
-                        <ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />
-                      ) : <FormattedMessage id='filePanel.workspace' />}
-                    </label>
-                    {selectedWorkspace && selectedWorkspace.name === 'code-sample' && <CustomTooltip
-                      placement="right"
-                      tooltipId="saveCodeSample"
-                      tooltipClasses="text-nowrap"
-                      tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
-                    >
-                      <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
-                    </CustomTooltip>}
-
-                    {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
-                      <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{ fontSize: '1.1rem', cursor: 'pointer' }} ></i>
-                    </CopyToClipboard>
-                    }
-                  </span>
-                  <span className="d-flex">
-                      {
-                        !state.loggedInGithub && <CustomTooltip
+                  <div className='d-flex w-100 justify-content-between'>
+                    <span className="d-flex">
+                      <label className="pl-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
+                        {(platform == appPlatformTypes.desktop) ? (
+                          <ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />
+                        ) : <FormattedMessage id='filePanel.workspace' />}
+                      </label>
+                      {selectedWorkspace && selectedWorkspace.name === 'code-sample' && <CustomTooltip
                         placement="right"
-                        tooltipId="githubNotLogged"
+                        tooltipId="saveCodeSample"
                         tooltipClasses="text-nowrap"
-                        tooltipText={<FormattedMessage id="filePanel.logInGithub" />}
+                        tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
                       >
-                        <i onClick={() => logInGithub() } className="fa-brands fa-github-alt text-success ml-2 align-self-center" style={{ fontSize: '1.1rem' }} aria-hidden="true"></i>
-                      </CustomTooltip>
-                      }
+                        <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
+                      </CustomTooltip>}
 
-                      {   
-                        !state.loggedInGithub && <span onClick={() => logInGithub() } className="ml-1 text-success"> Sign in </span>
-                      }
-
-                      {
-                        state.loggedInGithub && <CustomTooltip
-                        placement="right"
-                        tooltipId="githubLoggedIn"
-                        tooltipClasses="text-nowrap"
-                        tooltipText={state.githubUser && intl.formatMessage({ id: 'filePanel.gitHubLoggedAs' }, { githubuser: state.githubUser.login }) || ''}
-                      >
-                        <img width={20} height={20} data-id={`connected-img-${state.githubUser && state.githubUser.login}`} src={state.githubUser && state.githubUser.avatar_url} className="remixui_avatar_user ml-2" />
-                      </CustomTooltip>
+                      {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
+                        <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{ fontSize: '1.1rem', cursor: 'pointer' }} ></i>
+                      </CopyToClipboard>
                       }
                     </span>
+                    <span className="d-flex">
+                        {
+                          !state.loggedInGithub && <CustomTooltip
+                          placement="right"
+                          tooltipId="githubNotLogged"
+                          tooltipClasses="text-nowrap"
+                          tooltipText={<FormattedMessage id="filePanel.logInGithub" />}
+                        >
+                          <div className='d-flex'>
+                            <i onClick={() => logInGithub() } className="fa-brands fa-github-alt text-success ml-2 align-self-center" style={{ fontSize: '1.1rem' }} aria-hidden="true"></i>
+                            <span onClick={() => logInGithub() } className="ml-1 text-success"> Sign in </span>
+                          </div>
+                        </CustomTooltip>
+                        }
+                        {
+                          state.loggedInGithub && <CustomTooltip
+                          placement="right"
+                          tooltipId="githubLoggedIn"
+                          tooltipClasses="text-nowrap"
+                          tooltipText={state.githubUser && intl.formatMessage({ id: 'filePanel.gitHubLoggedAs' }, { githubuser: state.githubUser.login }) || ''}
+                        >
+                          <img width={20} height={20} data-id={`connected-img-${state.githubUser && state.githubUser.login}`} src={state.githubUser && state.githubUser.avatar_url} className="remixui_avatar_user ml-2" />
+                        </CustomTooltip>
+                        }
+                      </span>
+                  </div>
                 </div>
                 <div className='mx-2'>
                   {(platform !== appPlatformTypes.desktop) ? (
