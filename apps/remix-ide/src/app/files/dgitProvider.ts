@@ -13,8 +13,7 @@ import { branch, commitChange, remote } from '@remix-ui/git'
 import { checkoutInputType, statusInput, logInputType, author, pagedCommits, remoteCommitsInputType, cloneInputType, fetchInputType, pullInputType, pushInputType, currentBranchInput, branchInputType, addInputType, rmInputType, resolveRefInput, readBlobInput, repositoriesInput, commitInputType, branchDifference, compareBranchesInput, initInputType, isoGitFSConfig, GitHubUser, userEmails } from '@remix-api'
 import { LibraryProfile } from '@remixproject/plugin-utils'
 import { CustomRemixApi } from '@remix-api'
-import { isoGit } from "libs/remix-git/src/isogit"
-
+import { isoGit } from "@remix-git"
 declare global {
   interface Window { remixFileSystemCallback: IndexedDBStorage; remixFileSystem: any; }
 }
@@ -48,7 +47,6 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   async getToken() {
     return await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
   }
-
 
   async getAuthor(input) {
     const author: author = {
@@ -323,7 +321,6 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
     return readBlobResult
   }
 
-
   async addremote(input: remote): Promise<void> {
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'addremote', input)
@@ -548,7 +545,6 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
 
   async pull(input: pullInputType) {
 
-
     let result
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       result = await this.call('isogit', 'pull', input)
@@ -564,7 +560,6 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
 
   async fetch(input: fetchInputType) {
 
-
     let result
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       result = await this.call('isogit', 'fetch', {
@@ -579,7 +574,6 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
     }, 1000)
     return result
   }
-
 
   // OCTOKIT FEATURES
 
