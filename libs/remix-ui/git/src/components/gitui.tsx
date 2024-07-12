@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useState } from 'react'
 import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init, showAlert, gitlog } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
-import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
+import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged, disconnectFromGithub, logInGitHub } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
 import { defaultGitState, defaultLoaderState, gitState, loaderState } from '../types'
@@ -154,7 +154,9 @@ export const GitUI = (props: IGitUi) => {
     saveToken,
     saveGitHubCredentials,
     getGitHubCredentialsFromLocalStorage,
-    showAlert
+    showAlert,
+    disconnectFromGithub,
+    logInGitHub
   }
 
   return (
@@ -166,16 +168,16 @@ export const GitUI = (props: IGitUi) => {
               <pluginActionsContext.Provider value={pluginActionsProviderValue}>
                 <BranchHeader />
 
-                {setup ? <Setup plugin={plugin} ></Setup> : null}
+                {setup ? <Setup></Setup> : null}
                 {!setup && needsInit ? <Init></Init> : null}
                 {!setup && !needsInit ?
                   <Accordion activeKey={activePanel} defaultActiveKey="1">
                     <GitHubNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey="0">
                       <>
-                        <GetDeviceCode plugin={plugin}></GetDeviceCode>
+                        <GetDeviceCode></GetDeviceCode>
                         <hr></hr>
-                        <GitHubCredentials plugin={plugin}></GitHubCredentials>
+                        <GitHubCredentials></GitHubCredentials>
                       </>
                     </Accordion.Collapse>
                     <hr></hr>

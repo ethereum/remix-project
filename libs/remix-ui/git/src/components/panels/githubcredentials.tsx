@@ -5,9 +5,8 @@ import { CustomTooltip } from "@remix-ui/helper";
 
 import { useIntl, FormattedMessage } from "react-intl";
 import { CopyToClipboard } from "@remix-ui/clipboard";
-import { IGitUi } from '../../types'
 
-export const GitHubCredentials = (props: IGitUi) => {
+export const GitHubCredentials = () => {
   const context = React.useContext(gitPluginContext)
   const pluginactions = React.useContext(pluginActionsContext)
   const loader = React.useContext(loaderContext)
@@ -53,7 +52,7 @@ export const GitHubCredentials = (props: IGitUi) => {
     setGithubToken(credentials.token || '')
     setGithubUsername(credentials.username || '')
     setGithubEmail(credentials.email || '')
-    props.plugin.emit('loggedInGithubChanged')
+    pluginactions.logInGitHub()
   }
 
   function removeToken(): void {
@@ -65,7 +64,7 @@ export const GitHubCredentials = (props: IGitUi) => {
       email: '',
       token: ''
     })
-    props.plugin.emit('disconnectFromGithub')
+    pluginactions.disconnectFromGithub()
   }
 
   return (
