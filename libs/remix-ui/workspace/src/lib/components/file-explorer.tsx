@@ -102,7 +102,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }, [treeRef.current])
 
   useEffect(() => {
-    const performDeleteion = async () => {
+    const performDeletion = async () => {
       const path: string[] = []
       if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
         feTarget.forEach((one) => {
@@ -119,7 +119,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           setState((prevState) => {
             return { ...prevState, deleteKey: true }
           })
-          performDeleteion()
+          performDeletion()
           return
         }
         if (eve.metaKey) {
@@ -128,7 +128,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             setState((prevState) => {
               return { ...prevState, deleteKey: true }
             })
-            performDeleteion()
+            performDeletion()
             return
           }
         }
@@ -145,7 +145,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
             setState((prevState) => {
               return { ...prevState, deleteKey: false }
             })
-            performDeleteion()
+            performDeletion()
             return
           }
         }
@@ -155,7 +155,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       treeRef.current?.addEventListener('keyup', deleteKeyPressUpHandler)
       return () => {
         treeRef.current?.removeEventListener('keydown', deleteKeyPressHandler)
-        treeRef.current?.addEventListener('keyup', deleteKeyPressUpHandler)
+        treeRef.current?.removeEventListener('keyup', deleteKeyPressUpHandler)
       }
     }
   }, [treeRef.current, feTarget])
@@ -191,7 +191,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       treeRef.current?.addEventListener('keyup', F2KeyPressUpHandler)
       return () => {
         treeRef.current?.removeEventListener('keydown', F2KeyPressHandler)
-        treeRef.current?.addEventListener('keyup', F2KeyPressUpHandler)
+        treeRef.current?.removeEventListener('keyup', F2KeyPressUpHandler)
       }
     }
   }, [treeRef.current, feTarget])
@@ -456,7 +456,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   }
 
   const handleTreeClick = (event: SyntheticEvent) => {
-    console.log({ props, state })
     let target = event.target as HTMLElement
     while (target && target.getAttribute && !target.getAttribute('data-path')) {
       target = target.parentElement
