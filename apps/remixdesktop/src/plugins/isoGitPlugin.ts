@@ -5,7 +5,7 @@ import git from 'isomorphic-git'
 import http from 'isomorphic-git/http/web'
 import { gitProxy } from "../tools/git";
 import { isoGit } from "@remix-git"
-import { branch, branchDifference, branchInputType, cloneInputType, commitChange, commitInputType, compareBranchesInput, currentBranchInput, fetchInputType, initInputType, logInputType, pullInputType, pushInputType, remote, resolveRefInput, statusInput } from "@remix-api";
+import { branchDifference, branchInputType, cloneInputType, commitChange, commitInputType, compareBranchesInput, currentBranchInput, fetchInputType, initInputType, logInputType, pullInputType, pushInputType, remote, resolveRefInput, statusInput } from "@remix-api";
 
 const profile: Profile = {
   name: 'isogit',
@@ -28,20 +28,6 @@ export class IsoGitPlugin extends ElectronBasePlugin {
   }
 }
 
-const parseInput = (input: any) => {
-  return {
-    corsProxy: 'https://corsproxy.remixproject.org/',
-    http,
-    onAuth: (url: any) => {
-      url
-      const auth = {
-        username: input.token,
-        password: ''
-      }
-      return auth
-    }
-  }
-}
 
 const clientProfile: Profile = {
   name: 'isogit',
@@ -58,10 +44,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     this.onload(async () => {
       this.on('fs' as any, 'workingDirChanged', async (path: string) => {
         this.workingDir = path
-        this.gitIsInstalled = await gitProxy.version() ? true : false
+        this.gitIsInstalled =  await gitProxy.version() ? true : false
       })
       this.workingDir = await this.call('fs' as any, 'getWorkingDir')
-      this.gitIsInstalled = await gitProxy.version() && !useIsoGit ? true : false
+      this.gitIsInstalled =  await gitProxy.version() && !useIsoGit ? true : false
     })
   }
 
@@ -102,6 +88,8 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
   async log(cmd: logInputType) {
     console.log('LOG', cmd)
+    const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
+    console.log('LOG', token)
     /* we will use isomorphic git for now
     if(this.gitIsInstalled){
       const log = await gitProxy.log(this.workingDir, cmd.ref)
@@ -237,66 +225,46 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return checkout
   }
 
-  async push(cmd: pushInputType) {
-
+  async push(input: pushInputType) {
+    console.log('PUSH', input, this.gitIsInstalled)
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     if (this.gitIsInstalled) {
-      await gitProxy.push(this.workingDir, cmd)
-
+      return await gitProxy.push(this.workingDir, input)
     } else {
-      /*
-      const push = await git.push({
-        ...await this.getGitConfig(),
-        ...cmd,
-        ...parseInput(cmd.input)
-      })
-      return push*/
+      const push = await isoGit.push(input, await this.getGitConfig(), this)
+      return push
     }
 
   }
 
-  async pull(cmd: pullInputType) {
-
+  async pull(input: pullInputType) {
+    console.log('PULL', input)
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     if (this.gitIsInstalled) {
-      await gitProxy.pull(this.workingDir, cmd)
-
+      return await gitProxy.pull(this.workingDir, input)
     } else {
-      /*
-      const pull = await git.pull({
-        ...await this.getGitConfig(),
-        ...cmd,
-        ...parseInput(cmd.input)
-      })
-
+      const pull = await isoGit.pull(input, await this.getGitConfig(), this)
       return pull
-      */
     }
   }
 
-  async fetch(cmd: fetchInputType) {
-    console.log('FETCH', cmd)
+  async fetch(input: fetchInputType) {
+    console.log('FETCH', input)
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     if (this.gitIsInstalled) {
-      await gitProxy.fetch(this.workingDir, cmd)
+      await gitProxy.fetch(this.workingDir, input)
 
     } else {
-      /*
-      const fetch = await git.fetch({
-        ...await this.getGitConfig(),
-        ...cmd,
-        ...parseInput(cmd.input)
-      })
-      */
+      const fetch = await isoGit.fetch(input, await this.getGitConfig(), this)
       return fetch
     }
   }
