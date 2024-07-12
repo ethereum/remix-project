@@ -73,6 +73,29 @@ export const FlatTree = (props: FlatTreeProps) => {
   const virtuoso = useRef<VirtuosoHandle>(null)
   const [selectedItems, setSelectedItems] = useState<DragStructure[]>([])
 
+  const buildMultiSelectedItemProfiles = (target: {
+    path: string
+    type: string
+    content: string
+    position: {
+        top: number
+        left: number
+    }
+    }) => {
+    const selectItems = []
+    selectItems.push(target)
+    document.querySelectorAll('li.remixui_selected').forEach(item => {
+      const dragTarget = {
+        position: { top: target?.position.top || 0, left: target?.position.left || 0 },
+        path: item.getAttribute('data-path') || item.getAttribute('data-label-path') || '',
+        type: item.getAttribute('data-type') || item.getAttribute('data-label-type') || '',
+        content: item.textContent || ''
+      }
+      if (dragTarget.path !== target.path) selectItems.push(dragTarget)
+    })
+    return selectItems
+  }
+
   const labelClass = (file: FileType) =>
     props.focusEdit.element === file.path
       ? 'bg-light'
