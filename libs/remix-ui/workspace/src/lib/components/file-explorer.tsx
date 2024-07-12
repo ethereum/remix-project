@@ -145,7 +145,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
             setState((prevState) => {
               return { ...prevState, deleteKey: false }
             })
-            performDeletion()
             return
           }
         }
