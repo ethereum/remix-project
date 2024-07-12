@@ -92,7 +92,7 @@ export function Workspace() {
         })
       }
     }
-    global.plugin.on('dgit', 'disconnectFromGithub', () => {
+    global.plugin.on('dgit', 'disconnectFromGithubRequest', () => {
       setState((prevState) => {
         return { ...prevState, loggedInGithub: false, githubUser: null }
       })

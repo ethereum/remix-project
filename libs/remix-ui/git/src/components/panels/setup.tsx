@@ -3,7 +3,7 @@ import { GetDeviceCode } from '../github/devicecode'
 import { GitHubCredentials } from './githubcredentials'
 import { IGitUi } from '../../types'
 
-export const Setup = (props: IGitUi) => {
+export const Setup = () => {
 
   const [screen, setScreen] = useState(0)
 
@@ -16,9 +16,9 @@ export const Setup = (props: IGitUi) => {
           To ensure that your commits are properly attributed in Git, you need to configure a username and email address.
           These will be used to identify the author of the commit.
           </div>
-          <GetDeviceCode plugin={props.plugin}></GetDeviceCode>
+          <GetDeviceCode></GetDeviceCode>
           <hr></hr>
-          <GitHubCredentials plugin={props.plugin}></GitHubCredentials>
+          <GitHubCredentials></GitHubCredentials>
         </div>
       </>
     )
@@ -29,7 +29,7 @@ export const Setup = (props: IGitUi) => {
         <h6>Step 2</h6>
         <div>
           To ensure that your commits are properly attributed in Git, you need to configure your username and email address.
-          <GitHubCredentials plugin={props.plugin}></GitHubCredentials>
+          <GitHubCredentials></GitHubCredentials>
         </div>
       </>
     )
