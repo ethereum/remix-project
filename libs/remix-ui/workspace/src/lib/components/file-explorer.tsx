@@ -9,7 +9,7 @@ import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, getPathIcon, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ROOT_PATH } from '../utils/constants'
-import { moveFileIsAllowed, moveFolderIsAllowed } from '../actions'
+import { moveFileIsAllowed, moveFilesIsAllowed, moveFolderIsAllowed, moveFoldersIsAllowed } from '../actions'
 import { FlatTree } from './flat-tree'
 import { FileSystemContext } from '../contexts'
 
@@ -36,8 +36,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   // const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
+
   const { plugin } = useContext(FileSystemContext)
   const [feTarget, setFeTarget] = useState<{ key: string, type: 'file' | 'folder' }[]>({} as { key: string, type: 'file' | 'folder' }[])
+  const [filesSelected, setFilesSelected] = useState<string[]>([])
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -387,17 +389,18 @@ export const FileExplorer = (props: FileExplorerProps) => {
     props.dispatchHandleExpandPath(expandPath)
   }
 
-  const handleFileMove = async (dest: string, src: string) => {
+  /**
+   * This offers the ability to move a file to a new location
+   * without showing a modal dialong to the user.
+   * @param dest path of the destination
+   * @param src path of the source
+   * @returns {Promise<void>}
+   */
+  const moveFileSilently = async (dest: string, src: string) => {
+    if (dest.length === 0 || src.length === 0) return
     if (await moveFileIsAllowed(src, dest) === false) return
     try {
-      props.modal(
-        intl.formatMessage({ id: 'filePanel.moveFile' }),
-        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
-        intl.formatMessage({ id: 'filePanel.yes' }),
-        () => props.dispatchMoveFile(src, dest),
-        intl.formatMessage({ id: 'filePanel.cancel' }),
-        () => { }
-      )
+      props.dispatchMoveFile(src, dest)
     } catch (error) {
       props.modal(
         intl.formatMessage({ id: 'filePanel.movingFileFailed' }),
@@ -408,17 +411,24 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }
 
-  const handleFolderMove = async (dest: string, src: string) => {
+  const resetMultiselect = () => {
+    setState((prevState) => {
+      return { ...prevState, ctrlKey: false }
+    })
+  }
+
+  /**
+   * This offers the ability to move a folder to a new location
+   * without showing a modal dialong to the user.
+   * @param dest path of the destination
+   * @param src path of the source
+   * @returns {Promise<void>}
+   */
+  const moveFolderSilently = async (dest: string, src: string) => {
+    if (dest.length === 0 || src.length === 0) return
     if (await moveFolderIsAllowed(src, dest) === false) return
     try {
-      props.modal(
-        intl.formatMessage({ id: 'filePanel.moveFile' }),
-        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src, dest }),
-        intl.formatMessage({ id: 'filePanel.yes' }),
-        () => props.dispatchMoveFolder(src, dest),
-        intl.formatMessage({ id: 'filePanel.cancel' }),
-        () => { }
-      )
+      props.dispatchMoveFolder(src, dest)
     } catch (error) {
       props.modal(
         intl.formatMessage({ id: 'filePanel.movingFolderFailed' }),
@@ -427,6 +437,19 @@ export const FileExplorer = (props: FileExplorerProps) => {
         async () => { }
       )
     }
+  }
+
+  const warnMovingItems = async (src: string[], dest: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      props.modal(
+        intl.formatMessage({ id: 'filePanel.moveFile' }),
+        intl.formatMessage({ id: 'filePanel.moveFileMsg1' }, { src: src.join(', '), dest }),
+        intl.formatMessage({ id: 'filePanel.yes' }),
+        () => resolve(null),
+        intl.formatMessage({ id: 'filePanel.cancel' }),
+        () => reject()
+      )
+    })
   }
 
   const handleTreeClick = (event: SyntheticEvent) => {
@@ -497,8 +520,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
           fileState={fileState}
           expandPath={props.expandPath}
           handleContextMenu={handleContextMenu}
-          moveFile={handleFileMove}
-          moveFolder={handleFolderMove}
+          warnMovingItems={warnMovingItems}
+          moveFolderSilently={moveFolderSilently}
+          moveFileSilently={moveFileSilently}
+          resetMultiselect={resetMultiselect}
+          setFilesSelected={setFilesSelected}
           handleClickFolder={handleClickFolder}
           createNewFile={props.createNewFile}
           createNewFolder={props.createNewFolder}
