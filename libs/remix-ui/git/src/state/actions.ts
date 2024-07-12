@@ -1,6 +1,6 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { fileStatusResult, GitHubUser, gitLog,  userEmails } from "../types"
-import { branch, branchDifference, commitChange, pagedCommits, remote, remoteBranch, repository } from '@remix-api'
+import { fileStatusResult, gitLog } from "../types"
+import { GitHubUser, branch, branchDifference, commitChange, pagedCommits, remote, remoteBranch, repository, userEmails } from '@remix-api'
 export interface ActionPayloadTypes {
   FILE_STATUS: fileStatusResult[],
   FILE_STATUS_MERGE: fileStatusResult[]

@@ -1,13 +1,13 @@
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails, setCurrenHead } from "../state/gitpayload";
-import { GitHubUser, gitActionDispatch, statusMatrixType, gitState, gitLog, fileStatusResult, userEmails } from '../types';
+import { gitActionDispatch, statusMatrixType, gitState, gitLog, fileStatusResult } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { ModalTypes } from "@remix-ui/app";
 import { setFileDecorators } from "./pluginActions";
 import { Plugin } from "@remixproject/engine";
-import { addInputType, branch, branchDifference, checkoutInputType, cloneInputType, commitChange, CustomRemixApi, fetchInputType, pullInputType, pushInputType, remote, rmInputType } from "@remix-api";
+import { addInputType, branch, branchDifference, checkoutInputType, cloneInputType, commitChange, CustomRemixApi, fetchInputType, GitHubUser, pullInputType, pushInputType, remote, rmInputType, userEmails } from "@remix-api";
 import { file } from "jszip";
 
 export const fileStatuses = [

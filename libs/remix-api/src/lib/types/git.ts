@@ -1,4 +1,5 @@
-import { ReadCommitResult } from "isomorphic-git"
+import { Endpoints } from "@octokit/types"
+import { AuthCallback, HttpClient, ReadCommitResult } from "isomorphic-git"
 
 export type branchDifference = {
   uniqueHeadCommits: ReadCommitResult[],
@@ -71,7 +72,7 @@ export type initInputType = {
 
 export type author = {
   name: string,
-  email: string
+  email: string,
 }
 
 export type updateSubmodulesInput = {
@@ -96,6 +97,7 @@ export type fetchInputType = {
   relative?: boolean,
   quiet?: boolean
   author?: author
+  token?: string
 }
 
 export type logInputType = {
@@ -108,6 +110,7 @@ export type pullInputType = {
   ref: branch, 
   remoteRef?: branch
   author?: author
+  token?: string
 }
 
 export type pushInputType = {
@@ -115,7 +118,8 @@ export type pushInputType = {
   ref: branch, 
   remoteRef?: branch, 
   force?: boolean,
-  author?: author
+  author?: author,
+  token?: string
 }
 
 export type branchInputType = {
@@ -183,7 +187,16 @@ export interface repositoriesInput { token: string, page?: number, per_page?: nu
 
 export interface statusInput { ref: string, filepaths?: string[] }
 
-export type isoGitConfig = {
+export type isoGitFSConfig = {
   fs: any,
   dir: string,
 }
+
+export type isoGitProxyConfig = {
+  corsProxy: string
+  http: HttpClient
+  onAuth: AuthCallback
+}
+
+export type GitHubUser = Partial<Endpoints["GET /user"]["response"]['data']>
+export type userEmails = Endpoints["GET /user/emails"]["response"]["data"]

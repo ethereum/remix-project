@@ -1,8 +1,6 @@
 import { Endpoints } from "@octokit/types"
-import { branch, branchDifference, commitChange, pagedCommits, remote, remoteBranch, repository, syncStatus } from "@remix-api"
+import { GitHubUser, branch, branchDifference, commitChange, pagedCommits, remote, remoteBranch, repository, syncStatus, userEmails } from "@remix-api"
 import { ReadCommitResult } from "isomorphic-git"
-export type GitHubUser = Partial<Endpoints["GET /user"]["response"]['data']>
-export type userEmails = Endpoints["GET /user/emails"]["response"]["data"]
 
 export type gitState = {
     currentBranch: branch
