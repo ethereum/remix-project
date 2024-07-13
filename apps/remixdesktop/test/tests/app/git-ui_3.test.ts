@@ -67,7 +67,12 @@ const tests = {
             .clickLaunchIcon('dgit')
             .pause(1000)
             .waitForElementVisible({
-                selector:module.exportsa-id="addToGitChangestest.txt"]')
+                selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible('*[data-id="addToGitChangestest.txt"]')
+            .pause(1000)
+            .click('*[data-id="addToGitChangestest.txt"]')
             .waitForElementVisible({
                 selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
