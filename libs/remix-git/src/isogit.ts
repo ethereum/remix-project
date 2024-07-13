@@ -1,4 +1,4 @@
-import { GitHubUser, author, branch, commitChange, compareBranchesInput, currentBranchInput, fetchInputType, isoGitFSConfig, isoGitProxyConfig, pullInputType, pushInputType, remote, userEmails } from "@remix-api"
+import { GitHubUser, author, branch, cloneInputType, commitChange, compareBranchesInput, currentBranchInput, fetchInputType, isoGitFSConfig, isoGitProxyConfig, pullInputType, pushInputType, remote, userEmails } from "@remix-api"
 import git from 'isomorphic-git'
 import {
   Plugin
@@ -118,6 +118,19 @@ const fetch = async (input: fetchInputType, fsConfig: isoGitFSConfig, plugin: Pl
   const proxy = await isoGit.addIsomorphicGitProxyConfig(input, plugin)
   console.log({ ...fsConfig, ...cmd, ...proxy })
   return await git.fetch({ ...fsConfig, ...cmd, ...proxy })
+}
+
+const clone = async (input: cloneInputType, fsConfig: isoGitFSConfig, plugin: Plugin | ElectronBasePluginClient) => {
+  const proxy = await isoGit.addIsomorphicGitProxyConfig(input, plugin)
+  const cmd = {
+    url: input.url,
+    singleBranch: input.singleBranch,
+    ref: input.branch,
+    depth: input.depth || 10,
+    dir: input.dir,
+    input
+  }
+  await git.clone({ ...fsConfig, ...cmd, ...proxy })
 }
 
 const getAuthor = async (input, plugin: any) => {
@@ -325,5 +338,6 @@ export const isoGit = {
   push,
   pull,
   fetch,
-  getGitHubUser
+  getGitHubUser,
+  clone
 }

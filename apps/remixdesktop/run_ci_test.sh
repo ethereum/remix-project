@@ -8,7 +8,7 @@ for TESTFILE in $TESTFILES; do
 done
 
 if [ "$CIRCLE_NODE_INDEX" -eq 0 ]; then
-  yarn test:isogit
+  sh ./run_git_ui_isogit_tests.sh
 elif [ "$CIRCLE_NODE_INDEX" -eq 1 ]; then
   yarn test:offline
 fi

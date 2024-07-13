@@ -1,6 +1,6 @@
 
 import React from "react";
-import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog, setGitHubUser, setUserEmails, setDesktopWorkingDir } from "../state/gitpayload";
+import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog, setGitHubUser, setUserEmails, setDesktopWorkingDir, setVersion } from "../state/gitpayload";
 import { gitActionDispatch } from "../types";
 import { Plugin } from "@remixproject/engine";
 import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, gitlog, setPlugin } from "./gitactions";
@@ -71,6 +71,9 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     console.log('workingDirChanged', path)
     gitDispatcher(setDesktopWorkingDir(path))
     gitDispatch(setCanUseApp(path ? true : false))
+    const version = await plugin.call('dgitApi', 'version')
+    console.log(version)
+    gitDispatch(setVersion(version))
     loadFileQueue.enqueue(async () => {
       loadFiles()
     })
@@ -91,6 +94,9 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     if (platform == appPlatformTypes.desktop) {
       const workingDir = await plugin.call('fs', 'getWorkingDir')
       gitDispatch(setCanUseApp(workingDir? true : false))
+      const version = await plugin.call('dgitApi', 'version')
+      console.log(version)
+      gitDispatch(setVersion(version))
     } else {
       gitDispatch(setCanUseApp(x && !x.isLocalhost && x.name))
     }

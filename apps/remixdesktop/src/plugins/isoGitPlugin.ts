@@ -44,7 +44,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     this.onload(async () => {
       this.on('fs' as any, 'workingDirChanged', async (path: string) => {
         this.workingDir = path
-        this.gitIsInstalled =  await gitProxy.version() ? true : false
+        this.gitIsInstalled = await gitProxy.version() && !useIsoGit ? true : false
       })
       this.workingDir = await this.call('fs' as any, 'getWorkingDir')
       this.gitIsInstalled =  await gitProxy.version() && !useIsoGit ? true : false
@@ -52,7 +52,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async version() {
-    return gitProxy.version()
+    return this.gitIsInstalled? gitProxy.version(): 'built-in'
   }
 
   async getGitConfig() {
@@ -266,23 +266,16 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
     if (this.gitIsInstalled) {
       try {
+        this.call('terminal' as any, 'log', 'Cloning using git... please wait.')
         await gitProxy.clone(cmd)
       } catch (e) {
         throw e
       }
     } else {
       try {
-        /*
         this.call('terminal' as any, 'log', 'Cloning using builtin git... please wait.')
-        const clone = await git.clone({
-          ...await this.getGitConfig(),
-          ...cmd,
-          ...parseInput(cmd.input),
-          dir: cmd.dir || this.workingDir
-        })
-
+        const clone = await isoGit.clone(cmd, await this.getGitConfig(), this)
         return clone
-        */
       } catch (e) {
         console.log('CLONE ERROR', e)
         throw e

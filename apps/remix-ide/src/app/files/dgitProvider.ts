@@ -339,21 +339,13 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   async clone(input: cloneInputType) {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
-      const folder = await this.call('fs', 'selectFolder', null, 'Select or create a folder to clone the repository in', 'Select as Repository Destination')
-      if (!folder) return false
-      const cmd = {
-        url: input.url,
-        singleBranch: input.singleBranch,
-        ref: input.branch,
-        depth: input.depth || 10,
-        dir: folder,
-        input
-      }
-      this.call('terminal', 'logHtml', `Cloning ${input.url}... please wait...`)
       try {
-        const result = await this.call('isogit', 'clone', cmd)
-        this.call('fs', 'openWindow', folder)
-        return result
+        const folder = await this.call('fs', 'selectFolder', null, 'Select or create a folder to clone the repository in', 'Select as Repository Destination')
+        if (!folder) return false
+        input.dir = folder
+        input.depth = input.depth || 10
+        const result = await this.call('isogit', 'clone', input)
+        this.call('fs' as any, 'openWindow', folder)
       } catch (e) {
         this.call('notification', 'alert', {
           id: 'dgitAlert',

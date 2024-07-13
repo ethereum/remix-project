@@ -35,6 +35,7 @@ import { CustomRemixApi } from "@remix-api";
 import { Plugin } from "@remixproject/engine";
 import { Disabled } from './disabled'
 import { platformContext } from '@remix-ui/app'
+import { Version } from './panels/version'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
@@ -179,6 +180,7 @@ export const GitUI = (props: IGitUi) => {
                 {setup && !needsInit ? <Setup></Setup> : null}
                 {needsInit ? <Init></Init> : null}
                 {!setup && !needsInit ?
+                  <>
                   <Accordion activeKey={activePanel} defaultActiveKey="0">
                     <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
 
@@ -239,6 +241,7 @@ export const GitUI = (props: IGitUi) => {
                     </Accordion.Collapse>
 
                   </Accordion>
+                  <Version/></>
                   : null}
               </pluginActionsContext.Provider>
             </gitActionsContext.Provider>

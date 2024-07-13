@@ -37,6 +37,7 @@ export type gitState = {
     gitHubAccessToken: string
     log: gitLog[]
     desktopWorkingDir?: string
+    version: string
 }
 export type gitLog = {
     type: 'error' | 'warning' | 'info' | 'success',
@@ -87,7 +88,8 @@ export const defaultGitState: gitState = {
   gitHubScopes: [],
   gitHubAccessToken: "",
   log: [],
-  desktopWorkingDir: null
+  desktopWorkingDir: null,
+  version: ""
 }
 
 export const defaultLoaderState: loaderState = {

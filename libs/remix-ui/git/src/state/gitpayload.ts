@@ -225,3 +225,10 @@ export const setDesktopWorkingDir = (dir: string) => {
     payload: dir
   }
 }
+
+export const setVersion = (version: string) => {
+  return {
+    type: 'SET_VERSION',
+    payload: version
+  }
+}
