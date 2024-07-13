@@ -104,7 +104,7 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'status', cmd)
-
+      console.log('STATUS', { ...status })
       return status
     }
 
@@ -112,7 +112,7 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
       ...await this.addIsomorphicGitConfigFS(),
       ...cmd
     })
-
+    console.log('STATUS', JSON.stringify(status))
     return status
   }
 
@@ -131,7 +131,7 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   }
 
   async rm(cmd: rmInputType) {
-
+    console.log('RM', cmd)
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'rm', cmd)
     } else {
@@ -139,13 +139,12 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
         ...await this.addIsomorphicGitConfigFS(),
         ...cmd
       })
-      this.emit('rm')
-
     }
+    this.emit('rm')
   }
 
   async checkout(cmd: checkoutInputType): Promise<void> {
-
+    console.log('checkout', cmd)
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'checkout', cmd)
     } else {
