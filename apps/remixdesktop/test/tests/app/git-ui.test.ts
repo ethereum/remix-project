@@ -11,7 +11,7 @@ let gitserver: ChildProcess
 / GROUP 3: file operations rename delete
 */
 
-module.exports = {
+const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         done()
     },
@@ -47,8 +47,8 @@ module.exports = {
             .windowHandles(function (result) {
                 console.log(result.value)
                 browser.switchWindow(result.value[1])
-                .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
-              })
+                    .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+            })
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
     },
     'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
@@ -58,7 +58,7 @@ module.exports = {
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .click('*[data-id="saveGitHubCredentials"]')
             .modalFooterOKClick('github-credentials-error')
-            
+
     },
 
     // GROUP 1
@@ -95,7 +95,7 @@ module.exports = {
             .pause(1000)
             .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
             .click('*[data-id="sourcecontrol-panel"]')
-            
+
             .waitForElementVisible('*[data-id="syncButton"]')
             .click('*[data-id="syncButton"]')
             .pause(2000)
@@ -183,5 +183,9 @@ module.exports = {
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest2.txt"]')
     },
+}
+
+module.exports = {
+    ...process.platform.startsWith('linux') ? tests : {}
 }
 

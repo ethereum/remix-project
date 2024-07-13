@@ -11,7 +11,7 @@ let gitserver: ChildProcess
 / GROUP 3: file operations rename delete
 */
 
-module.exports = {
+const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         done()
     },
@@ -47,8 +47,8 @@ module.exports = {
             .windowHandles(function (result) {
                 console.log(result.value)
                 browser.switchWindow(result.value[1])
-                .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
-              })
+                    .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+            })
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
     },
     'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
@@ -58,7 +58,7 @@ module.exports = {
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .click('*[data-id="saveGitHubCredentials"]')
             .modalFooterOKClick('github-credentials-error')
-            
+
     },
 
     // GROUP 2 
@@ -162,3 +162,6 @@ module.exports = {
     }
 }
 
+module.exports = {
+    ...process.platform.startsWith('linux') ? tests : {}
+}

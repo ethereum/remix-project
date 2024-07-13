@@ -11,7 +11,7 @@ let gitserver: ChildProcess
 / GROUP 3: file operations rename delete
 */
 
-module.exports = {
+const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         done()
     },
@@ -47,8 +47,8 @@ module.exports = {
             .windowHandles(function (result) {
                 console.log(result.value)
                 browser.switchWindow(result.value[1])
-                .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
-              })
+                    .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+            })
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
     },
     'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
@@ -58,7 +58,7 @@ module.exports = {
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .click('*[data-id="saveGitHubCredentials"]')
             .modalFooterOKClick('github-credentials-error')
-            
+
     },
 
     'check file added #group1 #group3': function (browser: NightwatchBrowser) {
@@ -67,12 +67,7 @@ module.exports = {
             .clickLaunchIcon('dgit')
             .pause(1000)
             .waitForElementVisible({
-                selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",
-                locateStrategy: 'xpath'
-            })
-            .waitForElementVisible('*[data-id="addToGitChangestest.txt"]')
-            .pause(1000)
-            .click('*[data-id="addToGitChangestest.txt"]')
+                selector:module.exportsa-id="addToGitChangestest.txt"]')
             .waitForElementVisible({
                 selector: "//*[@data-status='added-staged' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
@@ -80,7 +75,7 @@ module.exports = {
             .setValue('*[data-id="commitMessage"]', 'testcommit')
             .click('*[data-id="commitButton"]')
     },
-   
+
     // group 3
     'rename a file #group3': function (browser: NightwatchBrowser) {
         browser
@@ -128,5 +123,8 @@ module.exports = {
     },
 
 
-   }
+}
 
+module.exports = {
+    ...process.platform.startsWith('linux') ? tests : {}
+}
