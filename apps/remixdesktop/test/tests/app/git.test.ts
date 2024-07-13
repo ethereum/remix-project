@@ -23,7 +23,6 @@ module.exports = {
         browser.switchWindow(result.value[1])
         .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
       })
-      .pause()
       .end()
   }
 }
