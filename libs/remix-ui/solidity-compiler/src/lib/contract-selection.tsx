@@ -355,6 +355,21 @@ export const ContractSelection = (props: ContractSelectionProps) => {
     await (api as any).call('notification', 'modal', modal)
   }
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.altKey && event.key === 's') {
+        console.log('Running Static Analysis');
+        runSolidityScan();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
     // define swarm logo
     <>
