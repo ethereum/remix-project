@@ -6,7 +6,7 @@ import { openCloneDialog, openFolderInSameWindow } from '../lib/pluginActions'
 
 export const Disabled = () => {
   const platform = useContext(platformContext)
- 
+
   const openFolderElectron = async (path: string) => {
     await openFolderInSameWindow(path)
   }
@@ -18,9 +18,9 @@ export const Disabled = () => {
   return (
     (platform === appPlatformTypes.desktop) ?
       <div className='p-1'>
-      <div><FormattedMessage id="gitui.openFolderMessage"/></div>
-      <div data-id="openFolderButton" onClick={async () => { await openFolderElectron(null) }} className='btn btn-primary w-100 my-1'><FormattedMessage id="electron.openFolder" /></div> 
-      <div data-id="cloneButton" onClick={async () => { await clone() }} className='btn btn-primary w-100'><FormattedMessage id="electron.gitClone" /></div> 
+        <div><FormattedMessage id="gitui.openFolderMessage"/></div>
+        <div data-id="openFolderButton" onClick={async () => { await openFolderElectron(null) }} className='btn btn-primary w-100 my-1'><FormattedMessage id="electron.openFolder" /></div>
+        <div data-id="cloneButton" onClick={async () => { await clone() }} className='btn btn-primary w-100'><FormattedMessage id="electron.gitClone" /></div>
       </div>
       :
       <div data-id='disabled' className='text-sm w-100 alert alert-warning'>

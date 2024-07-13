@@ -21,7 +21,7 @@ export const fileStatuses = [
   ["deleted,unstaged", 1, 0, 1], // deleted, unstaged
   ["deleted,staged", 1, 0, 0],
   ["unmodified", 1, 1, 3],
-  ["deleted,not in git", 0, 0, 3],
+  ["added,deleted", 0, 0, 3],
   ["unstaged,modified", 1, 2, 0]
 ];
 
@@ -90,7 +90,7 @@ export const getCommits = async () => {
       "log",
       { ref: "HEAD" }
     );
-
+    console.log('commits', commits)
     return commits;
   } catch (e) {
     return [];

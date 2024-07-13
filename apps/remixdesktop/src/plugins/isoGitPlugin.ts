@@ -90,23 +90,16 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     console.log('LOG', cmd)
     const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
     console.log('LOG', token)
-    /* we will use isomorphic git for now
-    if(this.gitIsInstalled){
-      const log = await gitProxy.log(this.workingDir, cmd.ref)
-      console.log('LOG', log)
-      return log
-    }
-    */
-
+   
     if (this.workingDir === '') {
       return []
     }
 
     const log = await git.log({
       ...await this.getGitConfig(),
-      ...cmd
+      ...cmd,
     })
-
+    console.log('LOG', log)
     return log
   }
 

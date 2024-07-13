@@ -87,13 +87,13 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
 
   plugin.on("filePanel", "setWorkspace", async (x: any) => {
     console.log('setWorkspace', x)
-    
-    if(platform == appPlatformTypes.desktop) {
+
+    if (platform == appPlatformTypes.desktop) {
       const workingDir = await plugin.call('fs', 'getWorkingDir')
       gitDispatch(setCanUseApp(workingDir? true : false))
-    }else{
+    } else {
       gitDispatch(setCanUseApp(x && !x.isLocalhost && x.name))
-    } 
+    }
 
     loadFileQueue.enqueue(async () => {
       loadFiles()
@@ -108,7 +108,6 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
       getRemotes()
     })
   });
-
 
   plugin.on('dgitApi', 'checkout', async () => {
     loadFileQueue.enqueue(async () => {
@@ -138,6 +137,10 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     }, 10)
   })
   plugin.on('dgitApi', 'commit', async () => {
+    console.log('commit')
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    }, 10)
     loadFileQueue.enqueue(async () => {
       gitlog()
     }, 10)

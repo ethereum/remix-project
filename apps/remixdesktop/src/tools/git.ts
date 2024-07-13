@@ -10,12 +10,16 @@ const statusTransFormMatrix = (status: string) => {
             return [0, 2, 0]
         case 'A ':
             return [0, 2, 2]
+        case 'R ':
+            return [0, 2, 2]
         case 'M ':
             return [1, 2, 2]
         case 'MM':
             return [1, 2, 3]
         case ' M':
-            return [1, 2, 0]
+            return [1, 2, 1]
+        case 'AD':
+            return [0, 0, 3]
         case ' D':
             return [1, 0, 1]
         case 'D ':
@@ -57,14 +61,22 @@ export const gitProxy = {
         if(!input.remote || !input.remote.name) {
             input.remote = { name:  await gitProxy.defaultRemoteName(path), url: '' }
         }
-        const { stdout, stderr } = await execAsync(`git push  ${input.force ? ' -f' : ''}  ${input.remote.name} ${input.ref.name}:${input.remoteRef.name}`, { cwd: path });
+        let remoteRefString = ''
+        if(input.remoteRef && !input.remoteRef.name) {
+            remoteRefString = `:${input.remoteRef.name}`
+        }
+        const { stdout, stderr } = await execAsync(`git push  ${input.force ? ' -f' : ''}  ${input.remote.name}${remoteRefString} ${input.ref.name}`, { cwd: path });
     },
 
     async pull(path: string, input: pullInputType) {
         if(!input.remote || !input.remote.name) {
             input.remote = { name:  await gitProxy.defaultRemoteName(path), url: '' }
         }
-        const { stdout, stderr } = await execAsync(`git pull ${input.remote.name} ${input.ref.name}:${input.remoteRef.name}`, { cwd: path });
+        let remoteRefString = ''
+        if(input.remoteRef && !input.remoteRef.name) {
+            remoteRefString = `:${input.remoteRef.name}`
+        }
+        const { stdout, stderr } = await execAsync(`git pull ${input.remote.name} ${input.ref.name}${remoteRefString}`, { cwd: path });
     },
 
     async fetch(path: string, input: fetchInputType) {
@@ -89,6 +101,7 @@ export const gitProxy = {
 
         await execAsync(`git commit -m '${input.message}'`, { cwd: path });
         const { stdout, stderr } = await execAsync(`git rev-parse HEAD`, { cwd: path });
+        console.log('stdout commit:', stdout);
         return stdout;
 
     },
