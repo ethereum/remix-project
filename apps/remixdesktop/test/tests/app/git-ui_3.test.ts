@@ -13,6 +13,7 @@ let gitserver: ChildProcess
 
 const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
+        browser.hideToolTips()
         done()
     },
     after: function (browser: NightwatchBrowser) {
@@ -48,6 +49,7 @@ const tests = {
                 console.log(result.value)
                 browser.switchWindow(result.value[1])
                     .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+                    .hideToolTips()
             })
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
     },

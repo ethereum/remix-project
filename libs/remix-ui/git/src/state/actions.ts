@@ -43,6 +43,7 @@ export interface ActionPayloadTypes {
   CLEAR_LOG: void
   SET_USER_EMAILS: userEmails
   DESKTOP_SET_WORKING_DIR: string
+  SET_VERSION: string
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {
