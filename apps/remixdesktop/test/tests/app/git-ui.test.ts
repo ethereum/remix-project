@@ -186,8 +186,8 @@ const tests = {
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest2.txt"]')
     },
 }
-
+const useIsoGit = process.argv.includes('--useIsoGit');
 module.exports = {
-    ...process.platform.startsWith('linux') ? tests : {}
+    ...process.platform.startsWith('linux') || useIsoGit ? tests : {}
 }
 
