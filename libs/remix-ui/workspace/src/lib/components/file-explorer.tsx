@@ -99,10 +99,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
   }, [treeRef.current])
 
-  useEffect(() => {
-    plugin
-  }, [])
-
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
     else return false
