@@ -69,7 +69,6 @@ export const FlatTree = (props: FlatTreeProps) => {
   const [dragSource, setDragSource] = useState<FileType>()
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const ref = useRef(null)
-  const rowRef = useRef(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const virtuoso = useRef<VirtuosoHandle>(null)
   const [selectedItems, setSelectedItems] = useState<DragStructure[]>([])
@@ -140,9 +139,7 @@ export const FlatTree = (props: FlatTreeProps) => {
     const target = await getEventTarget(event)
     setDragSource(flatTree.find((item) => item.path === target.path))
     setIsDragging(true)
-    // const items =
     buildMultiSelectedItemProfiles(target)
-    // setSelectedItems(items)
     setFilesSelected(selectedItems.map((item) => item.path))
   }
 
