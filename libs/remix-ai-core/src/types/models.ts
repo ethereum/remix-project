@@ -38,7 +38,16 @@ const DefaultModels = (): IModel[] => {
     modelType: ModelType.CODE_COMPLETION_INSERTION,
     modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2 }
   };
-  return [model1, model2, model3, model4];
+
+  const model5: IModel = {
+    name: 'DeepSeek',
+    task: 'text-generation',
+    modelName: 'deepseek-coder-6.7B-base-GGUF',
+    downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-6.7B-base-GGUF/resolve/main/deepseek-coder-6.7b-base.Q4_K_M.gguf?download=true',
+    modelType: ModelType.CODE_COMPLETION_INSERTION,
+    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2 }
+  };
+  return [model1, model2, model3, model4, model5];
 }
 
 const getModel = async (name: string): Promise<IModel | undefined> => {
