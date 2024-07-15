@@ -155,7 +155,6 @@ export const createWorkspace = async (
     await plugin.workspaceCreated(workspaceName)
 
     if (isGitRepo && createCommit) {
-      console.log('CREATE COMMIT')
       const name = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
       const currentBranch: branch = await dgitPlugin.call('dgitApi', 'currentbranch')
