@@ -23,7 +23,7 @@ const Model: ModelType = {
   },
   effects: {
     *init(_, { put }) {
-      const cache = localStorage.getItem('workshop.state')
+      const cache = null // localStorage.getItem('workshop.state')
 
       if (cache) {
         const workshopState = JSON.parse(cache)
@@ -90,7 +90,7 @@ const Model: ModelType = {
             const key = stepKeysWithFile[k]
             if (step[key]) {
               try {
-                step[key].content = (yield remixClient.call('contentImport', 'resolve', step[key].file)).content
+                step[key].content = null// (yield remixClient.call('contentImport', 'resolve', step[key].file)).content
               } catch (error) {
                 console.error(error)
               }
