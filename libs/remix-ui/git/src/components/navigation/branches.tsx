@@ -23,7 +23,7 @@ export const BranchesNavigation = ({ eventKey, activePanel, callback }) => {
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-1 nav form-check-label">BRANCHES</label>
+          <label className="pl-2 nav form-check-label">BRANCHES</label>
           <LoaderIndicator></LoaderIndicator>
         </span>
       </div>

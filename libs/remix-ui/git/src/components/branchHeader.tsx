@@ -43,6 +43,14 @@ export const BranchHeader = () => {
     }
   }, [context.fileStatusResult, context.modified, context.allchangesnotstaged, context.untracked, context.deleted])
 
+  const getName = () => {
+    const url = context.currentBranch?.remote?.url
+    if (!url) return
+    const regex = /https:\/\/github\.com\/[^/]+\/([^/]+)\.git/
+    const match = url.match(regex)
+    return match ? match[1] : 'Couldn\'t get repo name!'
+  }
+
   const showDetachedWarningText = async () => {
     await pluginActions.showAlert({
       message: `You are in 'detached HEAD' state. This means you are not on a branch because you checkout a tag or a specific commit. If you want to commit changes, you will need to create a new branch.`,
@@ -50,20 +58,63 @@ export const BranchHeader = () => {
     })
   }
 
+  const Heading = () => {
+    return (
+      <div className="container-fluid px-3">
+        <div className="d-flex flex-column pt-1 mb-1">
+          <div className="d-flex flex-column justify-content-start align-items-start">
+            {getName() !== "Couldn't get repo name!" ? (
+              <div className="pr-1 m-0">
+                <span className="col-4 px-0">Repository Name:</span>
+                <span className="" style={{ width: '15rem' }}>
+                  <span className={`${ changed ? 'text-danger pl-2 text-truncate overflow-hidden whitespace-nowrap ml-4' : "text-secondary pl-2 text-truncate overflow-hidden whitespace-nowrap ml-4" }`}>
+                    {getName() ?? ''}
+                  </span>
+                </span>
+              </div>
+            ) : null
+            }
+            <div className="pr-1 m-0">
+              <span className="col-4 px-0">Branch Name:</span>
+              <span className="pl-2 text-secondary text-truncate overflow-hidden whitespace-nowrap ml-4">
+                <span className={`${changed ? 'text-danger pl-2' : "pl-2"}`}>
+                  <i className="fa fa-code-branch mr-1 pl-2"></i>
+                  {context.currentBranch && context.currentBranch.name}
+                </span>
+              </span>
+            </div>
+            {context.storage.enabled ?
+              <div className="d-flex">
+                <span className="d-flex justify-between align-items-center" style={{ width: '15rem' }}>
+                  <span className="col-4 px-0">Storage :</span>
+                  <span className="text-secondary text-sm text-truncate overflow-hidden whitespace-nowrap ml-4">
+                    {context.storage.used} MB used
+                  ({context.storage.percentUsed} %)
+                  </span>
+                </span>
+              </div> : null}
+            <div className="d-flex flex-row">
+              <span className="d-flex justify-between align-items-center" style={{ width: '15rem' }}>
+                <span className="col-4 px-0">Messages :</span>
+                <span className="text-truncate overflow-hidden" >
+                  <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap ml-4">
+                    {latestCommit ?
+                      latestCommit.commit && latestCommit.commit.message ? latestCommit.commit.message : '' : null}
+                    {isDetached ?
+                      <>You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1 pl-2"></i></>: null}
+                  </span>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (<>
     <div className='text-sm w-100'>
-      <div className='text-secondary long-and-truncated'>
-        <i className="fa fa-code-branch mr-1 pl-2"></i>
-        {changed ? '*' : ''}{context.currentBranch && context.currentBranch.name}
-      </div>
-      {latestCommit ?
-        <div className='text-secondary long-and-truncated'>
-          {latestCommit.commit && latestCommit.commit.message ? latestCommit.commit.message : ''}
-        </div> : null}
-      {isDetached ?
-        <div className='text-warning long-and-truncated'>
-          You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1 pl-2"></i>
-        </div> : null}
+      <Heading />
     </div>
     <hr></hr>
   </>)
