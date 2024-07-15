@@ -125,8 +125,9 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
           }
           await this.call('notification', 'modal', modal)
           console.error(e)
+        } else {
+          this.call('notification', 'toast', 'Files Added.')
         }
-
       })
     }
 
