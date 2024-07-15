@@ -25,7 +25,7 @@ type WorkspaceTemplate = {
   workspaceTitle: string
   description: string
   projectLogo: string
-  templateName: string
+  templateName?: string
 }
 
 const workspaceTemplates: WorkspaceTemplate[] = [
@@ -70,6 +70,12 @@ const workspaceTemplates: WorkspaceTemplate[] = [
     description: 'Create a new MultiSig wallet using this template.',
     projectLogo: 'assets/img/gnosissafeLogo.png',
     templateName: 'gnosisSafeMultisig',
+  },
+  {
+    gsID: 'browseTemplate',
+    workspaceTitle: 'Browse More Templates...',
+    description: 'Browse templates',
+    projectLogo: '',
   },
 ]
 
@@ -164,8 +170,13 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
                   <button
                     key={index}
                     className={index === 0 ? 'btn btn-primary border p-2 text-nowrap mr-3 mb-2' : index === workspaceTemplates.length - 1 ? 'btn border p-2 text-nowrap mr-2 mb-2' : 'btn border p-2 text-nowrap mr-3 mb-3'}
-                    onClick={(e) => {
-                      createWorkspace(template.templateName)
+                    onClick={async (e) => {
+                      if (template.gsID === 'browseTemplate') {
+                        await plugin.call('manager', 'activatePlugin', 'templateSelection')
+                        plugin.call('tabs' as any, 'focus', 'templateSelection')
+                      } else {
+                        createWorkspace(template.templateName)
+                      }
                     }}
                     data-id={`homeTabGetStarted${template.templateName}`}
                   >
