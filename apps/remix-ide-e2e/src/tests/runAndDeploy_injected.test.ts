@@ -50,6 +50,7 @@ const tests = {
       .pause(5000)
       .switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
         browser
+          .hideMetaMaskPopup()
           .waitForElementVisible('*[data-testid="page-container-footer-next"]', 60000)
           .click('*[data-testid="page-container-footer-next"]') // this connects the metamask account to remix
           .pause(2000)
@@ -83,6 +84,7 @@ const tests = {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           checkAlerts(browser)
           browser
+            .hideMetaMaskPopup()
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
@@ -102,6 +104,7 @@ const tests = {
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
+            .hideMetaMaskPopup()
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
@@ -162,6 +165,7 @@ const tests = {
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
+            .hideMetaMaskPopup()
             .saveScreenshot('./reports/screenshots/metamask_4.png')
             .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
             .click('[data-testid="page-container-footer-next"]') // approve the tx
@@ -178,6 +182,7 @@ const tests = {
       .perform((done) => { // call delegate
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
+            .hideMetaMaskPopup()
             .saveScreenshot('./reports/screenshots/metamask_5.png')
             .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
             .click('[data-testid="page-container-footer-next"]') // approve the tx
