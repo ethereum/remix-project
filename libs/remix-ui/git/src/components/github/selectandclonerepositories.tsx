@@ -43,15 +43,15 @@ export const SelectAndCloneRepositories = (props: RepositoriesProps) => {
 
   return (
     <>
-      <TokenWarning />
       <RepositorySelect select={selectRepo} />
+      <TokenWarning />
 
-      {repo &&<BranchSelect select={selectRemoteBranch} />}
+      { repo && <BranchSelect select={selectRemoteBranch} /> }
 
-      {repo && branch && branch.name && branch.name !== '0' ?
+      { repo && branch && branch.name && branch.name !== '0' ?
         <button data-id={`clonebtn-${repo.full_name}-${branch.name}`} className='btn btn-primary mt-1 w-100' onClick={async () => {
           await clone()
-        }}>clone {repo.full_name}:{branch.name}</button> : null}
+        }}>clone {repo.full_name}:{branch.name}</button> : null }
 
     </>
   )

@@ -6,9 +6,9 @@ import { Merge } from "./commands/merge";
 export const Commands = () => {
 
   return (
-    <>
+    <div>
       <PushPull></PushPull>
       <hr></hr>
       <Fetch></Fetch>
-    </>)
+    </div>)
 }

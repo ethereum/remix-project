@@ -72,8 +72,8 @@ export const GetDeviceCode = () => {
   return (
     <>
       {(context.gitHubUser && context.gitHubUser.login) ? null :
-        <button className='btn btn-primary mt-1 w-100' onClick={async () => {
-          getDeviceCodeFromGitHub();
+        <button className='btn btn-secondary mt-1 w-100' onClick={async () => {
+          await getDeviceCodeFromGitHub()
         }}><i className="fab fa-github mr-1"></i>Login in with github</button>
       }
       {gitHubResponse && !authorized &&

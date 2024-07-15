@@ -224,7 +224,7 @@ export const createWorkspaceTemplate = async (workspaceName: string, template: W
   if ((await workspaceExists(workspaceName)) && template === 'remixDefault') throw new Error('workspace already exists')
   else if (metadata && metadata.type === 'git') {
     dispatch(cloneRepositoryRequest())
-    await dgitPlugin.call('dgitApi', 'clone', { url: metadata.url, branch: metadata.branch, workspaceName: workspaceName })
+    await dgitPlugin.call('dgitApi', 'clone', { url: metadata.url, branch: metadata.branch, workspaceName: workspaceName, depth: 10 })
     dispatch(cloneRepositorySuccess())
   } else {
     const workspaceProvider = plugin.fileProviders.workspace
@@ -238,6 +238,7 @@ export type UrlParametersType = {
   shareCode: string
   url: string
   language: string
+  ghfolder: string
 }
 
 export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault', opts?) => {
@@ -285,10 +286,8 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       }
       if (params.url) {
         const data = await plugin.call('contentImport', 'resolve', params.url)
-
         path = data.cleanUrl
         content = data.content
-
         try {
           content = JSON.parse(content) as any
           if (content.language && content.language === 'Solidity' && content.sources) {
@@ -307,6 +306,17 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
           await workspaceProvider.set(path, content)
         }
       }
+      if (params.ghfolder) {
+        try {
+          const files = await plugin.call('contentImport', 'resolveGithubFolder', params.ghfolder)
+          for (const [path, content] of Object.entries(files)) {
+            await workspaceProvider.set(path, content)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      }
+
       return path
     } catch (e) {
       console.error(e)
@@ -645,7 +655,7 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
 export const cloneRepository = async (url: string) => {
   const config = plugin.registry.get('config').api
   const token = config.get('settings/gist-access-token')
-  const repoConfig: cloneInputType = { url, token }
+  const repoConfig: cloneInputType = { url, token, depth: 10 }
 
   if (plugin.registry.get('platform').api.isDesktop()) {
     try {
@@ -662,7 +672,7 @@ export const cloneRepository = async (url: string) => {
       const repoName = await getRepositoryTitle(url)
 
       await createWorkspace(repoName, 'blank', null, true, null, true, false)
-      const promise = dgitPlugin.call('dgitApi', 'clone', { ...repoConfig, workspaceExists: true, workspaceName: repoName })
+      const promise = dgitPlugin.call('dgitApi', 'clone', { ...repoConfig, workspaceExists: true, workspaceName: repoName, depth:10 })
 
       dispatch(cloneRepositoryRequest())
       promise

@@ -20,7 +20,7 @@ export const CloneNavigation = ({ eventKey, activePanel, callback }) => {
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-1 nav form-check-label">CLONE</label>
+          <label className="pl-2 nav form-check-label ">CLONE</label>
           <LoaderIndicator></LoaderIndicator>
         </span>
       </div>
