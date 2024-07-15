@@ -76,7 +76,7 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
       locateStrategy: 'css selector',
       timeout: 3000
     })
-    .saveScreenshot('./reports/screenshot/metamask.png')
+    .saveScreenshot('./reports/screenshots/metamask.png')
     .click('[data-testid="network-display"]')
     .click('.mm-modal-content label.toggle-button--off') // show test networks
     .click('div[data-testid="Sepolia"]') // switch to sepolia
