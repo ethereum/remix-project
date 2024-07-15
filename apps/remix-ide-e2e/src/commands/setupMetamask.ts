@@ -71,6 +71,7 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
         browser.click('button[data-testid="popover-close"]')
       }
     })
+    .saveScreenshot('./reports/screenshot/metamask.png')
     .click('[data-testid="network-display"]')
     .click('.mm-modal-content label.toggle-button--off') // show test networks
     .click('div[data-testid="Sepolia"]') // switch to sepolia
