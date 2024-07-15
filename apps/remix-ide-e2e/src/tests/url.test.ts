@@ -336,5 +336,18 @@ module.exports = {
       .waitForElementVisible('*[data-shared="tooltipPopup"]')
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating fileManager and calling "open" ...')
       .waitForElementContainsText('*[data-shared="tooltipPopup"]', 'initiating terminal and calling "log" ...')
+  },
+
+  'Import Github folder from URL params #group4': function (browser: NightwatchBrowser) {
+    browser
+      .url('http://127.0.0.1:8080/#ghfolder=https://github.com/ethereum/remix-project/tree/master/apps/remix-ide/contracts/hardhat')
+      .refreshPage()
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]', 40000)
+      .currentWorkspaceIs('code-sample')
+      .openFile('contracts')
+      .openFile('contracts/Lock.sol')
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf('contract Lock {') !== -1, 'content does contain "contract Lock {"')
+      })      
   }
 }
