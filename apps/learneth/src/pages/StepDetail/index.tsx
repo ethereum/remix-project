@@ -25,7 +25,7 @@ function StepDetailPage() {
   const step = steps[stepId]
 
   useEffect(() => {
-
+    setClonedStep(null)
     const clonedStep = JSON.parse(JSON.stringify(step))
     const loadFiles = async () => {
       async function loadFile(step, fileType) {

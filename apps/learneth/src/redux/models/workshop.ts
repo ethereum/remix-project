@@ -58,7 +58,7 @@ const Model: ModelType = {
       const { data } = yield axios.get(url)
       const repoId = `${payload.name}-${payload.branch}`
 
-      for (let i = 0; i < data.ids.length; i++) {(yield remixClient.call('contentImport', 'resolve', step[key].file)).content
+      for (let i = 0; i < data.ids.length; i++) {
         const {
           steps,
           metadata: {
