@@ -54,12 +54,12 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
   */
 
   return (
-    <div className='mr-2 mt-3' onClick={() => {
+    <div data-values='gridCell' className='' onClick={() => {
       if (props.expandViewEl)
         props.handleExpand(!expand)
       else return
     }}>
-      { anyEnabled && <div className='d-flex flex-column'>
+      { anyEnabled && <div className='mr-2 mt-3 d-flex flex-column'>
         <div className='d-flex flex-grid'>
           <div className={"d-flex mx-0 p-2 bg-light border border-secondary remixui_grid_cell_container " + props.classList || ''} data-id={"remixUIGS" + props.title}>
             <div className="d-flex remixui_grid_cell flex-column">
