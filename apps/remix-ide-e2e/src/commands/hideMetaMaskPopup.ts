@@ -30,6 +30,10 @@ class HideMetaMaskPopup extends EventEmitter {
         locateStrategy: 'css selector',
         timeout: 2000
       })
+      .perform((done) => {
+        done()
+        this.emit('complete')
+      })
   }
 }
 
