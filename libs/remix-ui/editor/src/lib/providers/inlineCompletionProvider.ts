@@ -117,7 +117,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         };
 
         this.completionEnabled = false
-        const handleCompletionTimer = new CompletionTimer(1000, () => { this.completionEnabled = true });
+        const handleCompletionTimer = new CompletionTimer(100, () => { this.completionEnabled = true });
         handleCompletionTimer.start()
 
         return {
@@ -150,7 +150,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
       // handle the completion timer by locking suggestions request for 2 seconds
       this.completionEnabled = false
-      const handleCompletionTimer = new CompletionTimer(2000, () => { this.completionEnabled = true });
+      const handleCompletionTimer = new CompletionTimer(100, () => { this.completionEnabled = true });
       handleCompletionTimer.start()
 
       return {
