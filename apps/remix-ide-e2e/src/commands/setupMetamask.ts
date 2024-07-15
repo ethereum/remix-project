@@ -74,9 +74,7 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
     .waitForElementNotPresent({
       selector: 'button[data-testid="popover-close"]',
       locateStrategy: 'css selector',
-      suppressNotFoundErrors: true,
-      abortOnFailure: false,
-      timeout: 10000
+      timeout: 3000
     })
     .saveScreenshot('./reports/screenshot/metamask.png')
     .click('[data-testid="network-display"]')
