@@ -64,6 +64,7 @@ export const setUpstreamRemote = async (remote: remote) => {
 }
 
 export const getFileStatusMatrix = async (filepaths: string[]) => {
+  console.log('getFileStatusMatrix', filepaths)
   dispatch(setLoading(true))
   const fileStatusResult = await statusMatrix(filepaths);
   fileStatusResult.map((m) => {
@@ -79,6 +80,7 @@ export const getFileStatusMatrix = async (filepaths: string[]) => {
     dispatch(fileStatusMerge(fileStatusResult))
     setFileDecorators(fileStatusResult)
   }
+  console.log('getFileStatusMatrix end')
   dispatch(setLoading(false))
 }
 
@@ -98,6 +100,7 @@ export const getCommits = async () => {
 }
 
 export const gitlog = async () => {
+  console.log('gitlog start')
   dispatch(setLoading(true))
   let commits = []
   try {
@@ -107,6 +110,7 @@ export const gitlog = async () => {
   dispatch(setCommits(commits))
   await showCurrentBranch()
   dispatch(setLoading(false))
+  console.log('gitlog end')
 }
 
 export const showCurrentBranch = async () => {
@@ -503,6 +507,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
 }
 
 export const remoteCommits = async (url: string, branch: string, length: number) => {
+  console.log('get remote commits')
   const urlParts = url.split("/");
 
   // check if it's github
@@ -642,7 +647,9 @@ export const loadGitHubUserFromToken = async () => {
 }
 
 export const statusMatrix = async (filepaths: string[]) => {
+  console.log('calling status')
   const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.']});
+  console.log('calling status end')
   const result = (matrix || []).map((x) => {
     return {
       filename: `/${x.shift()}`,
@@ -755,6 +762,7 @@ async function getRepoDetails(url: string) {
 }
 
 export const fetchBranch = async (branch: branch, page: number) => {
+  console.log('fetch branch')
   if (!branch.remote || !branch.remote.url) return
   const token = await tokenWarning();
   if (page == 1) {
@@ -774,6 +782,7 @@ export const fetchBranch = async (branch: branch, page: number) => {
 }
 
 export const getBranchDifferences = async (branch: branch, remote: remote, state: gitState) => {
+  console.log('get branch diff')
   if (!remote && state) {
     if (state.defaultRemote) {
       remote = state.defaultRemote
