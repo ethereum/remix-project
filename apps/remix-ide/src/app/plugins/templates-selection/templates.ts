@@ -279,7 +279,7 @@ export const templates = (intl) => {
       name: 'Github Actions',
       items: [
         { value: "runJsTestAction", displayName: intl.formatMessage({ id: 'filePanel.tssoltestghaction' }) },
-        { value: "runSolidityUnittestingAction", displayName: intl.formatMessage({ id: 'filePanel.tssoltestghaction' }) },
+        { value: "runSolidityUnittestingAction", displayName: intl.formatMessage({ id: 'filePanel.solghaction' }) },
         { value: "runSlitherAction", displayName: intl.formatMessage({ id: 'filePanel.slitherghaction' }) }
       ],
       IsArtefact: true
