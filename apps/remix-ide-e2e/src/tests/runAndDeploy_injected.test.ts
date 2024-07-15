@@ -245,7 +245,7 @@ const branch = process.env.CIRCLE_BRANCH;
 const isMasterBranch = branch === 'master';
 
 module.exports = {
-  ...tests//(branch ? (isMasterBranch ? tests : {}) : tests),
+  ...(branch ? (isMasterBranch ? tests : {}) : tests),
 };
 
 const localsCheck = {
