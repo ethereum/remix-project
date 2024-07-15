@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, SyntheticEvent } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, SyntheticEvent, useContext } from 'react' // eslint-disable-line
 import { useIntl } from 'react-intl'
 import { TreeView } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
@@ -11,6 +11,7 @@ import { checkSpecialChars, extractNameFromKey, extractParentFromKey, getPathIco
 import { ROOT_PATH } from '../utils/constants'
 import { moveFileIsAllowed, moveFilesIsAllowed, moveFolderIsAllowed, moveFoldersIsAllowed } from '../actions'
 import { FlatTree } from './flat-tree'
+import { FileSystemContext } from '../contexts'
 
 export const FileExplorer = (props: FileExplorerProps) => {
   const intl = useIntl()
@@ -35,6 +36,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   // const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
+  const { plugin } = useContext(FileSystemContext)
   const [filesSelected, setFilesSelected] = useState<string[]>([])
 
   useEffect(() => {
@@ -96,6 +98,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
     }
   }, [treeRef.current])
+
+  useEffect(() => {
+    plugin
+  }, [])
 
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
