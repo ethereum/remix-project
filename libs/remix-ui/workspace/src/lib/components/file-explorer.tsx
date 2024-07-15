@@ -36,7 +36,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   // const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
+
+  const { plugin } = useContext(FileSystemContext)
+  const [feTarget, setFeTarget] = useState<{ key: string, type: 'file' | 'folder' }[]>({} as { key: string, type: 'file' | 'folder' }[])
   const [filesSelected, setFilesSelected] = useState<string[]>([])
+  const feWindow = (window as any)
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -97,6 +101,100 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
     }
   }, [treeRef.current])
+
+  useEffect(() => {
+    const performDeletion = async () => {
+      const path: string[] = []
+      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
+        feTarget.forEach((one) => {
+          path.push(one.key)
+        })
+        await deletePath(path)
+      }
+    }
+
+    if (treeRef.current) {
+      const deleteKeyPressHandler = async (eve: KeyboardEvent) => {
+        if (eve.key === 'Delete' ) {
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'deleteKey', 'deletePath'])
+          setState((prevState) => {
+            return { ...prevState, deleteKey: true }
+          })
+          performDeletion()
+          return
+        }
+        if (eve.metaKey) {
+          if (eve.key === 'Backspace') {
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'osxDeleteKey', 'deletePath'])
+            setState((prevState) => {
+              return { ...prevState, deleteKey: true }
+            })
+            performDeletion()
+            return
+          }
+        }
+      }
+      const deleteKeyPressUpHandler = async (eve: KeyboardEvent) => {
+        if (eve.key === 'Delete' ) {
+          setState((prevState) => {
+            return { ...prevState, deleteKey: false }
+          })
+          return
+        }
+        if (eve.metaKey) {
+          if (eve.key === 'Backspace') {
+            setState((prevState) => {
+              return { ...prevState, deleteKey: false }
+            })
+            return
+          }
+        }
+      }
+
+      treeRef.current?.addEventListener('keydown', deleteKeyPressHandler)
+      treeRef.current?.addEventListener('keyup', deleteKeyPressUpHandler)
+      return () => {
+        treeRef.current?.removeEventListener('keydown', deleteKeyPressHandler)
+        treeRef.current?.removeEventListener('keyup', deleteKeyPressUpHandler)
+      }
+    }
+  }, [treeRef.current, feTarget])
+
+  useEffect(() => {
+    const performRename = async () => {
+      if (feTarget?.length > 1 && feTarget[0]?.key.length > 1) {
+        await plugin.call('notification', 'alert', { id: 'renameAlert', message: 'You cannot rename multiple files at once!' })
+      }
+      props.editModeOn(feTarget[0].key, feTarget[0].type, false)
+    }
+    if (treeRef.current) {
+      const F2KeyPressHandler = async (eve: KeyboardEvent) => {
+        if (eve.key === 'F2' ) {
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+          await performRename()
+          setState((prevState) => {
+            return { ...prevState, F2Key: true }
+          })
+          return
+        }
+      }
+      const F2KeyPressUpHandler = async (eve: KeyboardEvent) => {
+        if (eve.key === 'F2' ) {
+          setState((prevState) => {
+            return { ...prevState, F2Key: false }
+          })
+          return
+        }
+      }
+
+      treeRef.current?.addEventListener('keydown', F2KeyPressHandler)
+      treeRef.current?.addEventListener('keyup', F2KeyPressUpHandler)
+      return () => {
+        treeRef.current?.removeEventListener('keydown', F2KeyPressHandler)
+        treeRef.current?.removeEventListener('keyup', F2KeyPressUpHandler)
+      }
+    }
+  }, [treeRef.current, feTarget])
 
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
@@ -434,6 +532,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
           createNewFolder={props.createNewFolder}
           deletePath={deletePath}
           editPath={props.editModeOn}
+          fileTarget={feTarget}
+          setTargetFiles={setFeTarget}
         />
       </div>
     </div>

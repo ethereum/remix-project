@@ -50,7 +50,7 @@ export const LogNavigation = ({ eventKey, activePanel, callback }) => {
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-1 nav form-check-label mr-2">LOG</label>
+          <label className="pl-2 nav form-check-label mr-2">LOG</label>
           {logState.errorCount > 0 && (
             <div className="text-danger mr-1">
               {logState.errorCount}

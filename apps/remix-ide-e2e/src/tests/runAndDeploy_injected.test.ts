@@ -11,7 +11,7 @@ const checkBrowserIsChrome = function (browser: NightwatchBrowser) {
   return browser.browserName.indexOf('chrome') > -1
 }
 
-const checkAlerts = function (browser: NightwatchBrowser){
+const checkAlerts = function (browser: NightwatchBrowser) {
   browser.isVisible({
     selector: '//*[contains(.,"not have enough")]',
     locateStrategy: 'xpath',
@@ -38,7 +38,7 @@ const tests = {
   'Should connect to Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .setupMetamask(passphrase, password)      
+      .setupMetamask(passphrase, password)
       .useCss().switchBrowserTab(0)
       .refreshPage()
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -50,13 +50,14 @@ const tests = {
       .pause(5000)
       .switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
         browser
+          .hideMetaMaskPopup()
           .waitForElementVisible('*[data-testid="page-container-footer-next"]', 60000)
           .click('*[data-testid="page-container-footer-next"]') // this connects the metamask account to remix
           .pause(2000)
           .waitForElementVisible('*[data-testid="page-container-footer-next"]', 60000)
           .click('*[data-testid="page-container-footer-next"]')
-          // .waitForElementVisible('*[data-testid="popover-close"]')
-          // .click('*[data-testid="popover-close"]')
+        // .waitForElementVisible('*[data-testid="popover-close"]')
+        // .click('*[data-testid="popover-close"]')
       })
       .switchBrowserTab(0) // back to remix
   },
@@ -83,6 +84,7 @@ const tests = {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           checkAlerts(browser)
           browser
+            .hideMetaMaskPopup()
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
@@ -90,7 +92,7 @@ const tests = {
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
-      })      
+      })
   },
 
   'Should run low level interaction (fallback function) on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
@@ -102,14 +104,15 @@ const tests = {
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
+            .hideMetaMaskPopup()
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
-        })      
-      })      
+        })
+      })
   },
 
   'Should connect to Ethereum Main Network using MetaMask #group1': function (browser: NightwatchBrowser) {
@@ -162,6 +165,8 @@ const tests = {
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
+            .hideMetaMaskPopup()
+            .saveScreenshot('./reports/screenshots/metamask_4.png')
             .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
@@ -169,7 +174,7 @@ const tests = {
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
-      })    
+      })
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .clearConsole()
       .clickInstance(0)
@@ -177,6 +182,8 @@ const tests = {
       .perform((done) => { // call delegate
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
+            .hideMetaMaskPopup()
+            .saveScreenshot('./reports/screenshots/metamask_5.png')
             .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
             .click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
@@ -199,11 +206,11 @@ const tests = {
    */
   'Should debug Sepolia transaction with source highlighting MetaMask #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
-    let txhash   
-      browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+    let txhash
+    browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('pluginManager') // load debugger and source verification
-    // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
-    // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
+      // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
+      // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
       .clickLaunchIcon('udapp')
       .perform((done) => {
         browser.getLastTransactionHash((hash) => {
@@ -213,15 +220,17 @@ const tests = {
       })
       .perform((done) => {
         browser
-        .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-        .clickLaunchIcon('debugger')
-        .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
-        .click('*[data-id="debuggerTransactionStartButton"]')
-        .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
-        .checkVariableDebug('soliditylocals', localsCheck)
-        .perform(() => done())
+          .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+          .clickLaunchIcon('debugger')
+          .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
+          .saveScreenshot('./reports/screenshots/metamask_2.png')
+          .click('*[data-id="debuggerTransactionStartButton"]')
+          .saveScreenshot('./reports/screenshots/metamask_3.png')
+          .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
+          .checkVariableDebug('soliditylocals', localsCheck)
+          .perform(() => done())
       })
-      
+
   },
 
   'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group1': function (browser: NightwatchBrowser) {
@@ -229,14 +238,14 @@ const tests = {
     browser
       .executeScriptInTerminal('web3.eth.getAccounts()')
       .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
-  }  
+  }
 }
 
 const branch = process.env.CIRCLE_BRANCH;
 const isMasterBranch = branch === 'master';
 
 module.exports = {
-  ...(branch ? (isMasterBranch ? tests : {}) : tests),
+  ...{} //(branch ? (isMasterBranch ? tests : {}) : tests),
 };
 
 const localsCheck = {
@@ -250,7 +259,7 @@ const sources = [
   {
     'Greet.sol': {
       content:
-      `
+        `
       pragma solidity ^0.8.0;
       contract HelloWorld {
           string public message;

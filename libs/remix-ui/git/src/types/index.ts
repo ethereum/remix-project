@@ -163,7 +163,7 @@ export type gitState = {
     fileStatusResult: fileStatusResult[]
     canUseApp: boolean
     loading: boolean
-    storageUsed: any
+    storage: storage
     reponame: string
     staged: fileStatusResult[]
     untracked: fileStatusResult[]
@@ -282,7 +282,13 @@ export const defaultGitState: gitState = {
   allchangesnotstaged: [],
   canUseApp: true,
   loading: false,
-  storageUsed: {},
+  storage: {
+    used: 0,
+    total: 0,
+    available: 0,
+    percentUsed: 0,
+    enabled: false
+  },
   reponame: "",
   repositories: [],
   remoteBranches: [],
@@ -322,6 +328,14 @@ export type statusMatrixType = { matrix: string[] | undefined; status: string[] 
 export type sourceControlGroup = {
     group: fileStatusResult[],
     name: string
+}
+
+export type storage = {
+    used: number,
+    total: number
+    available: number
+    percentUsed: number
+    enabled: boolean
 }
 
 export interface fileStatusAction {

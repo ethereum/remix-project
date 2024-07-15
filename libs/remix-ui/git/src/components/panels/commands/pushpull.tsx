@@ -148,7 +148,7 @@ export const PushPull = () => {
         <GitUIButton data-id='sourcecontrol-push' disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => push()} className="btn btn-primary">Push</GitUIButton>
       </div>
 
-      <label>Local Branch</label>
+      <label className="pt-3 text-uppercase">Local Branch</label>
       <Select
         id='commands-local-branch-select'
         options={localBranchOptions}
@@ -161,7 +161,7 @@ export const PushPull = () => {
         placeholder="Type to search for a branch..."
       />
 
-      <label>Remote Branch</label>
+      <label className="pt-3 text-uppercase">Remote Branch</label>
       <Select
         id='commands-remote-branch-select'
         options={remoteBranchOptions}
@@ -174,7 +174,7 @@ export const PushPull = () => {
         placeholder="Type to search for a branch..."
       />
 
-      <label>Remote</label>
+      <label className="pt-3 text-uppercase">Remote</label>
       <Select
         id='commands-remote-origin-select'
         options={localRemotesOptions}
@@ -187,9 +187,9 @@ export const PushPull = () => {
         placeholder="Type to search for a branch..."
       />
 
-      <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-        <input checked={force} onChange={e => onForceChange(e)} className="remixui_autocompile custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
-        <label className="form-check-label custom-control-label" htmlFor="forcepush">Force push</label>
+      <div className="pt-3 d-flex align-items-center remixui_compilerConfig custom-control custom-checkbox">
+        <input checked={force} onChange={e => onForceChange(e)} className="remixui_autocompile form-check-input custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
+        <label className="form-check-label custom-control-label " htmlFor="forcepush">Force push</label>
       </div>
 
     </>)

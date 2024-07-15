@@ -16,6 +16,7 @@ class MetaMask extends EventEmitter {
 
 function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password: string, done: VoidFunction) {
   const words = passphrase.split(' ')
+  console.log('setup metamask')
   browser
     .switchBrowserTab(1)
     .waitForElementVisible('input[data-testid="onboarding-terms-checkbox"]')
@@ -49,6 +50,7 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
     .click('button[data-testid="pin-extension-next"]')
     .waitForElementVisible('button[data-testid="pin-extension-done"]')
     .click('button[data-testid="pin-extension-done"]')
+    .pause(5000)
     .isVisible({
       selector: 'button[data-testid="popover-close"]',
       locateStrategy: 'css selector',
@@ -58,14 +60,22 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
       console.log('okVisible', okVisible)
       if (!okVisible.value) {
         console.log('popover not found')
-      }else{
+      } else {
+        console.log('popover found... closing')
         browser.click('button[data-testid="popover-close"]')
       }
     })
+    .waitForElementNotPresent({
+      selector: 'button[data-testid="popover-close"]',
+      locateStrategy: 'css selector',
+      timeout: 3000
+    })
+    .saveScreenshot('./reports/screenshots/metamask.png')
     .click('[data-testid="network-display"]')
     .click('.mm-modal-content label.toggle-button--off') // show test networks
     .click('div[data-testid="Sepolia"]') // switch to sepolia
     .perform(() => {
+      console.log('MetaMask setup complete')
       done()
     })
 }

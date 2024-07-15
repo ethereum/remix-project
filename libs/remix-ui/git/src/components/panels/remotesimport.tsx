@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Alert, Button } from "react-bootstrap";
-import { gitActionsContext } from "../../state/context";
-import { repository } from "../../types";
-import { gitPluginContext } from "../gitui";
+import React, { useEffect, useState } from "react"
+import { Alert, Button } from "react-bootstrap"
+import { gitActionsContext } from "../../state/context"
+import { repository } from "../../types"
+import { gitPluginContext } from "../gitui"
 import Select from 'react-select'
-import { selectStyles, selectTheme } from "../../types/styles";
-import { TokenWarning } from "./tokenWarning";
-import RepositorySelect from "../github/repositoryselect";
+import { selectStyles, selectTheme } from "../../types/styles"
+import { TokenWarning } from "./tokenWarning"
+import RepositorySelect from "../github/repositoryselect"
 
 export const RemotesImport = () => {
   const context = React.useContext(gitPluginContext)
@@ -64,9 +64,8 @@ export const RemotesImport = () => {
 
   return (
     <>
-      <TokenWarning />
       <RepositorySelect select={selectRepo} />
-
+      <TokenWarning />
       {repo ?
         <input data-id='remote-panel-remotename' placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
         : null}

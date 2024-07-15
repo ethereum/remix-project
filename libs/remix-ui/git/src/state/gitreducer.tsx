@@ -204,5 +204,11 @@ export const gitReducer = (state: gitState = defaultGitState, action: Actions): 
       log: []
     }
 
+  case 'SET_STORAGE':
+    return {
+      ...state,
+      storage: action.payload
+    }
+
   }
 }

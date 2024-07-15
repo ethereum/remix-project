@@ -41,7 +41,7 @@ function StepDetailPage() {
   }, [errors, success])
 
   return (
-    <>
+    <div className='pb-4'>
       <div className="fixed-top">
         <div className="bg-light">
           <BackButton entity={entity} />
@@ -223,7 +223,7 @@ function StepDetailPage() {
           )}
         </>
       )}
-    </>
+    </div>
   )
 }
 
