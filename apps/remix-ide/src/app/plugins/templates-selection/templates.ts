@@ -4,7 +4,7 @@ export const templates = (intl) => {
       name: "Generic",
       items: [
         { value: "remixDefault", displayName: intl.formatMessage({ id: 'filePanel.basic' }) },
-        { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true  }
+        { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true }
       ]
     },
     {
