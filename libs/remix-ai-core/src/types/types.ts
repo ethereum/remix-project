@@ -46,6 +46,7 @@ export interface IParams {
   temperature?: number;
   max_new_tokens?: number;
   repetition_penalty?: number;
+  repeatPenalty?:any
   no_repeat_ngram_size?: number;
   num_beams?: number;
   num_return_sequences?: number;
@@ -53,4 +54,22 @@ export interface IParams {
   top_p?: number;
   stream_result?: boolean;
   return_full_text?: boolean;
+  nThreads?: number;
+  nTokPredict?: number;
+  topK?: number;
+  topP?: number;
+  temp?: number;
+}
+
+export enum AIRequestType {
+  COMPLETION,
+  GENERAL
+}
+
+export type ChatEntry = [string, string];
+
+export enum RemoteBackendOPModel{
+  DEEPSEEK,
+  CODELLAMA,
+  MISTRAL
 }

@@ -1,10 +1,9 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
 // import { IModel, ModelType, DefaultModels } from '@remix/remix-ai-core';
-//import { pipeline, env } from '@xenova/transformers';
 
 // use remix ai core
-import { InlineCompletionServiceTransformer, LLamaInferencer } from '../../../../libs/remix-ai-core/src/index'
+import { InferenceManager } from "../lib/InferenceServerManager"
 import { cacheDir } from "../utils/config"
 // import { isE2E } from "../main";
 
@@ -20,7 +19,7 @@ const profile = {
 export class RemixAIDesktopPlugin extends ElectronBasePlugin {
   clients: RemixAIDesktopPluginClient[] = []
   constructor() {
-    console.log("loading the remix plugin")
+    console.log("loading the remix plugin main plugin ")
     super(profile, clientProfile, RemixAIDesktopPluginClient)
     this.methods = [...super.methods]
 
@@ -42,9 +41,8 @@ const clientProfile: Profile = {
 }
 
 class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
-  multitaskModel: LLamaInferencer| InlineCompletionServiceTransformer = null
-  completionModel: LLamaInferencer| InlineCompletionServiceTransformer = null
   readonly modelCacheDir: string = cacheDir
+  InferenceModel:InferenceManager = null
 
   constructor (webContentsId: number, profile: Profile){
     console.log("loading the remix plugin client ........................")
@@ -64,102 +62,24 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     this.emit('enabled')
   }
 
-  async initializeModelBackend(multitaskModel: any, completionModel?: any){
-    // console.log("Initializing backend with model ", multitaskModel, completionModel)
-    // if (completionModel && completionModel.modelType === 'CODE_COMPLETION'){
-    //   switch (completionModel.modelReqs.backend) {
-    //   case 'llamacpp':
-    //     this.completionModel = new LLamaInferencer(completionModel, this.modelCacheDir)
-    //     break;
-    //   case 'transformerjs':
-    //     this.completionModel = new InlineCompletionServiceTransformer(completionModel, this.modelCacheDir)
-    //     break;
-    //   default:
-    //     console.log("Backend not supported")
-    //     break;
-    //   }
-    // }
-
-    console.log("Initializing backend with model ", multitaskModel)
-    switch (multitaskModel.modelReqs.backend) {
-    case 'llamacpp':
-      this.multitaskModel = new LLamaInferencer(multitaskModel, this.modelCacheDir)
-      break;
-    case 'transformerjs':
-      this.multitaskModel = new InlineCompletionServiceTransformer(multitaskModel, this.modelCacheDir)
-      break;
-    default:
-      console.log("Backend not supported")
-      break;
-    }
-
-    // init the mmodels
-    if (this.multitaskModel){
-      await this.multitaskModel.init()
-    }
-
-    if (this.completionModel){
-      await this.completionModel.init()
+  async initializeModelBackend(multitaskModel: any){
+    if (this.InferenceModel === null) {
+      console.log('Initializing Inference model')
+      this.InferenceModel = InferenceManager.getInstance(multitaskModel, this.modelCacheDir)
+      if (!this.InferenceModel.isReady) this.InferenceModel.init()
+    } else {
+      console.log('Inference model already initialized')
     }
   }
 
   async code_completion(context: any) {
-    console.log("Code completion called")
-    if (this.completionModel){
-      return this.completionModel.code_completion(context)
-    }
-
     // use general purpose model
-    return this.multitaskModel.code_completion(context)
+    return this.InferenceModel.code_completion(context)
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string) {
-    console.log("Code insertion called")
-    if (this.completionModel){
-      return this.completionModel.code_insertion(msg_pfx, msg_sfx)
-    }
-
-    // use general purpose model
-    return this.multitaskModel.code_insertion(msg_pfx, msg_sfx)
+    return this.InferenceModel.code_insertion(msg_pfx, msg_sfx)
   }
-
-  // async _loadLocalModel(): Promise<LlamaChatSession> {
-  //   if (!this.SelectedModelPath) {
-  //     console.log('No model selected yet');
-  //     return;
-  //   }
-  //   console.log('Loading model at ', this.SelectedModelPath);
-  //   const model = new LlamaModel(this._getModelOptions());
-
-  //   const context = new LlamaContext({model});
-  //   const session = new LlamaChatSession({context});
-
-  //   return session;
-  // }
-
-  // _getModelOptions(): LlamaModelOptions {
-
-  //   const options: LlamaModelOptions = {
-  //     modelPath: this.SelectedModelPath? this.SelectedModelPath: null,
-  //     contextSize: 1024,
-  //     batchSize: 1,
-  //     gpuLayers: this.selectedModel.modelReqs.GPURequired? -1: 0,
-  //     threads: 1,
-  //     temperature: 0.9,
-  //     topK: 0,
-  //     topP: 1,
-  //     logitsAll: false,
-  //     vocabOnly: false,
-  //     useMmap: false,
-  //     useMlock: false,
-  //     embedding: false,
-  //   };
-  //   return options;
-  // }
-
-  // async getInferenceModel(): Promise<LlamaChatSession> {
-  //   return this._loadLocalModel();
-  // }
 
   changemodel(newModel: any){
     /// dereference the current static inference object

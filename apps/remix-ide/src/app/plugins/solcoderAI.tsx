@@ -1,4 +1,5 @@
 import { Plugin } from '@remixproject/engine'
+import axios from 'axios'
 
 export type SuggestOptions = {
   max_new_tokens: number,
@@ -243,21 +244,20 @@ export class SolCoder extends Plugin {
 
     let result
     try {
-      result = await(
-        await fetch(this.api_url, {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ "data":[prompt, "error_explaining", false,2000,0.9,0.8,50]}),
-        })
-      ).json()
-      if (result) {
-        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data[0] })
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value:"explaining with axios" })
+      result = await axios(this.api_url, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({ "data":[prompt, "error_explaining", false,2000,0.9,0.8,50]}),
+      })
+      if (result.statusText === "OK") {
+        this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result.data.data[0] })
         this.pushChatHistory(prompt, result)
       }
-      return result.data[0]
+      return result.data.data[0]
     } catch (e) {
       this.call('terminal', 'log', { type: 'typewritererror', value: `Unable to get a response ${e.message}` })
       return

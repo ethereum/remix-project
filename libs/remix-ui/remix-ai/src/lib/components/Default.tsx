@@ -5,7 +5,7 @@ import { DefaultModels } from '@remix/remix-ai-core';
 export const Default = (props) => {
   const [searchText, setSearchText] = useState('');
   const [resultText, setResultText] = useState('');
-  const pluginName = props.plugin.isOnDesktop ? 'remixAID' : 'remixAI'
+  const pluginName = 'remixAI'
 
   return (
     <div>
@@ -33,7 +33,7 @@ export const Default = (props) => {
 
           onClick={async () => {
             if (props.plugin.isOnDesktop ) {
-              await props.plugin.call(pluginName, 'downloadModel', DefaultModels()[0]);
+              await props.plugin.call(pluginName, 'downloadModel', DefaultModels()[3]);
             }
           }}
         > Download Model </button>
@@ -52,24 +52,13 @@ export const Default = (props) => {
         <button className="remix_ai_plugin_download_button text-ai pl-2 pr-0 py-0 d-flex"
 
           onClick={async () => {
-            if (props.plugin.isOnDesktop ) {
-              // const completer = new InlineCompletionServiceTransformer();
-              // if (!completer.ready) {
-              //   await completer.init();
-              // }
-              await props.plugin.call(pluginName, 'initializeModelBackend', DefaultModels()[3]);
-
-              // // const code = completer.code_completion("pragma solidity ^0.8.0;\n")
-              console.log("Got transformer model completion ");
-              const result = await props.plugin.call(pluginName, 'code_completion', "pragma solidity ^0.8.0;\n contract Storage");
-              console.log("Got code completion\n",result);
-              // const inferenceModel = await props.plugin.call(pluginName, 'getInferenceModel');
-              // console.log("Got inference model ",inferenceModel);
-
-              // const result = await inferenceModel.prompt("What is the meaning of life?");
-              // console.log("Got result ",result);
-
-            }
+            props.plugin.call(pluginName, 'initializeRemixAI', DefaultModels()[3]);
+            // if (props.plugin.isOnDesktop ) {
+            //   console.log(Date.now(), "Init model backend");
+            //   props.plugin.call(pluginName, 'initializeModelBackend', DefaultModels()[3]);
+            //   console.log(Date.now(), "after Init model backend");
+            //   console.log("Got transformer model completion ");
+            // }
           }}
         > Init Model </button>
       </div>
