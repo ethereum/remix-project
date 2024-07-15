@@ -30,7 +30,6 @@ function StepDetailPage() {
     const loadFiles = async () => {
       async function loadFile(step, fileType) {
         if (step[fileType] && step[fileType].file && !step[fileType].content) {
-          remixClient.call('terminal', 'log', { type: 'log', value: `loading ${step[fileType].file}...` });
           clonedStep[fileType].content = (await remixClient.call('contentImport', 'resolve', step[fileType].file)).content;
         }
       }
