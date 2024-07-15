@@ -71,6 +71,13 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
         browser.click('button[data-testid="popover-close"]')
       }
     })
+    .waitForElementNotPresent({
+      selector: 'button[data-testid="popover-close"]',
+      locateStrategy: 'css selector',
+      suppressNotFoundErrors: true,
+      abortOnFailure: false,
+      timeout: 10000
+    })
     .saveScreenshot('./reports/screenshot/metamask.png')
     .click('[data-testid="network-display"]')
     .click('.mm-modal-content label.toggle-button--off') // show test networks
