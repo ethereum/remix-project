@@ -33,7 +33,7 @@ const hasChildCell = (children: ReactNode): boolean => {
     if (found) return
 
     if (isElement(child)) {
-      if (child.props.classList === 'EECellStyle' && child.props.isValidElement) {
+      if (child.props.classList === 'EECellStyle') {
         found = true
         console.log('found ', child.props.className)
         return
