@@ -16,6 +16,7 @@
 
 .remixui_statusbar_aistatusdisabled {
   text-decoration: line-through;
+  text-decoration-thickness: 3px;
 }
 
 /**
