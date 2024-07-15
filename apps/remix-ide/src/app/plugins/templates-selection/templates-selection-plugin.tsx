@@ -68,6 +68,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
 
   updateComponent() {
     /*
+    This represents the different options available from the openzeppelin library.
     const opts = {
       // @ts-ignore: Object is possibly 'null'.
       mintable: mintableCheckboxRef.current.checked,
