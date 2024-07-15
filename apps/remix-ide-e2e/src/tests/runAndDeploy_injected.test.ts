@@ -216,7 +216,9 @@ const tests = {
         .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
         .clickLaunchIcon('debugger')
         .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
+        .saveScreenshot('./reports/screenshot/metamask_2.png')
         .click('*[data-id="debuggerTransactionStartButton"]')
+        .saveScreenshot('./reports/screenshot/metamask_3.png')
         .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
         .checkVariableDebug('soliditylocals', localsCheck)
         .perform(() => done())
