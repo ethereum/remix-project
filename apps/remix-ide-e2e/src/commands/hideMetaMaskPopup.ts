@@ -9,13 +9,13 @@ class HideMetaMaskPopup extends EventEmitter {
         locateStrategy: 'css selector',
         suppressNotFoundErrors: true,
         abortOnFailure: false,
-        timeout: 10000
+        timeout: 2000
       })
       .isVisible({
         selector: 'button[data-testid="popover-close"]',
         locateStrategy: 'css selector',
         suppressNotFoundErrors: true,
-        timeout: 3000
+        timeout: 2000
       }, (okVisible) => {
         console.log('okVisible', okVisible)
         if (!okVisible.value) {
@@ -28,7 +28,7 @@ class HideMetaMaskPopup extends EventEmitter {
       .waitForElementNotPresent({
         selector: 'button[data-testid="popover-close"]',
         locateStrategy: 'css selector',
-        timeout: 3000
+        timeout: 2000
       })
   }
 }
