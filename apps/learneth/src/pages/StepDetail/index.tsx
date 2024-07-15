@@ -12,7 +12,7 @@ function StepDetailPage() {
   const location = useLocation()
   const dispatch = useAppDispatch()
   const [clonedStep, setClonedStep] = React.useState(null)
-  const [loading, setLoading] = React.useState(false)
+
   const queryParams = new URLSearchParams(location.search)
   const id = queryParams.get('id') as string
   const stepId = Number(queryParams.get('stepId'))
@@ -23,19 +23,18 @@ function StepDetailPage() {
   const entity = detail[selectedId].entities[id]
   const steps = entity.steps
   const step = steps[stepId]
-  console.log(step)
 
   useEffect(() => {
 
-    const clonedStep =  JSON.parse(JSON.stringify(step))
+    const clonedStep = JSON.parse(JSON.stringify(step))
     const loadFiles = async () => {
       async function loadFile(step, fileType) {
         if (step[fileType] && step[fileType].file && !step[fileType].content) {
-          console.log(`loading ${fileType} file`, step[fileType].file);
+          remixClient.call('terminal', 'log', { type: 'log', value: `loading ${step[fileType].file}...` });
           clonedStep[fileType].content = (await remixClient.call('contentImport', 'resolve', step[fileType].file)).content;
         }
       }
-      
+
       const fileTypes = ['markdown', 'solidity', 'test', 'answer', 'js', 'vy'];
       for (const fileType of fileTypes) {
         await loadFile(step, fileType);
@@ -62,7 +61,7 @@ function StepDetailPage() {
     }
   }, [errors, success])
 
-  if(!clonedStep) {
+  if (!clonedStep) {
     return null
   }
 
