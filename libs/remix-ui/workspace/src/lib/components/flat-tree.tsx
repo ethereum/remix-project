@@ -69,6 +69,7 @@ export const FlatTree = (props: FlatTreeProps) => {
   const [dragSource, setDragSource] = useState<FileType>()
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const ref = useRef(null)
+  const rowRef = useRef(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const virtuoso = useRef<VirtuosoHandle>(null)
   const [selectedItems, setSelectedItems] = useState<DragStructure[]>([])
@@ -95,6 +96,59 @@ export const FlatTree = (props: FlatTreeProps) => {
     })
     return selectItems
   }
+
+  const buildMultiSelectedItemRefactored = (target: {
+    path: string
+    type: string
+    content: string
+    position: {
+        top: number
+        left: number
+    }
+    }) => {
+    const selectItems = []
+    selectItems.push(target)
+    containerRef.current?.querySelectorAll('li.remixui_selected').forEach(item => {
+
+      const dragTarget = {
+        position: { top: target?.position.top || 0, left: target?.position.left || 0 },
+        path: item.getAttribute('data-path') || item.getAttribute('data-label-path') || '',
+        type: item.getAttribute('data-type') || item.getAttribute('data-label-type') || '',
+        content: item.textContent || ''
+      }
+      if (dragTarget.path !== target.path) selectItems.push(dragTarget)
+    })
+    console.log('selectedItems', selectItems)
+  }
+
+  // useEffect(() => {
+  //   if (rowRef.current) {
+  //     const buildMultiSelectedItemProfiles = (target: {
+  //       path: string
+  //       type: string
+  //       content: string
+  //       position: {
+  //           top: number
+  //           left: number
+  //       }
+  //       }) => {
+  //       const selectItems = []
+  //       selectItems.push(target)
+  //       rowRef.current.forEach(item => {
+  //         if (item && item.classList.contains('li.remixui_selected')) {
+  //           const dragTarget = {
+  //             position: { top: target?.position.top || 0, left: target?.position.left || 0 },
+  //             path: item.getAttribute('data-path') || item.getAttribute('data-label-path') || '',
+  //             type: item.getAttribute('data-type') || item.getAttribute('data-label-type') || '',
+  //             content: item.textContent || ''
+  //           }
+  //           if (dragTarget.path !== target.path) selectItems.push(dragTarget)
+  //         }
+  //       })
+  //       console.log('selectedItems', selectItems)
+  //     }
+  //   }
+  // }, [])
 
   const labelClass = (file: FileType) =>
     props.focusEdit.element === file.path
@@ -132,6 +186,7 @@ export const FlatTree = (props: FlatTreeProps) => {
     setDragSource(flatTree.find((item) => item.path === target.path))
     setIsDragging(true)
     const items = buildMultiSelectedItemProfiles(target)
+    buildMultiSelectedItemRefactored(target)
     setSelectedItems(items)
     setFilesSelected(items.map((item) => item.path))
   }
@@ -260,6 +315,7 @@ export const FlatTree = (props: FlatTreeProps) => {
               file={file} /> :
             <><div
               data-id={`treeViewDivDraggableItem${file.path}`}
+              ref={rowRef}
               draggable={true}
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
