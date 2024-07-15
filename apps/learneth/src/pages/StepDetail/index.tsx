@@ -62,7 +62,15 @@ function StepDetailPage() {
   }, [errors, success])
 
   if (!clonedStep) {
-    return null
+    return (<div className='pb-4'>
+      <div className="fixed-top">
+        <div className="bg-light">
+          <BackButton entity={entity} />
+        </div>
+      </div>
+      loading...
+    </div>
+    )
   }
 
   return (
