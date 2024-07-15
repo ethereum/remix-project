@@ -21,7 +21,8 @@ const profile = {
   description: 'templateSelection',
   location: 'mainPanel',
   methods: [],
-  events: []
+  events: [],
+  maintainedBy: 'Remix',
 }
 
 export class TemplatesSelectionPlugin extends ViewPlugin {
@@ -145,7 +146,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
           ['ERC1155', 'primary'],
         ]}
         title='Template explorer'
-        description="Select the template to create a workspace"
+        description="Select a template to create a workspace or to get it added to current workspace"
       >
         {
           templates(window._intl).map(template => {
