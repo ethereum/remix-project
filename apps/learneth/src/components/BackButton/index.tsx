@@ -31,9 +31,11 @@ function BackButton({entity}: any) {
         </li>
         {isDetailPage && (
           <li className="nav-item">
-            <Link className="btn" to={`/list?id=${entity.id}`} title="Tutorial menu" onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'back_to_menu_step', entity && entity.name])}>
-              <i className="fas fa-bars" />
-            </Link>
+            <OverlayTrigger placement="right" overlay={<Tooltip id="tooltip-rightTutorialMenu">Tutorial menu</Tooltip>}>
+              <Link className="btn" to={`/list?id=${entity.id}`} onClick={() => (window as any)._paq.push(['trackEvent', 'learneth', 'back_to_menu_step', entity && entity.name])}>
+                <i className="fas fa-bars" />
+              </Link>
+            </OverlayTrigger>
           </li>
         )}
       </ul>
