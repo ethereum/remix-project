@@ -50,13 +50,7 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
     .click('button[data-testid="pin-extension-next"]')
     .waitForElementVisible('button[data-testid="pin-extension-done"]')
     .click('button[data-testid="pin-extension-done"]')
-    .waitForElementVisible({
-      selector: 'button[data-testid="popover-close"]',
-      locateStrategy: 'css selector',
-      suppressNotFoundErrors: true,
-      abortOnFailure: false,
-      timeout: 10000
-    })
+    .pause(5000)
     .isVisible({
       selector: 'button[data-testid="popover-close"]',
       locateStrategy: 'css selector',
