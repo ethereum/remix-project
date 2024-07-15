@@ -1,7 +1,7 @@
-import { faCaretDown, faCaretRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { } from "react";
-import { pluginActionsContext } from "../../state/context";
+import { faCaretDown, faCaretRight } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import React, { } from "react"
+import { pluginActionsContext } from "../../state/context"
 
 export const GitHubNavigation = ({ eventKey, activePanel, callback }) => {
   const pluginactions = React.useContext(pluginActionsContext)
@@ -21,9 +21,9 @@ export const GitHubNavigation = ({ eventKey, activePanel, callback }) => {
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-1 nav form-check-label">GITHUB SETUP</label>
+          <label className="pl-2 nav form-check-label">GITHUB SETUP</label>
         </span>
       </div>
     </>
-  );
+  )
 }

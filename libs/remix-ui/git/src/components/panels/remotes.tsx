@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { gitActionsContext } from "../../state/context";
-import { gitPluginContext } from "../gitui";
-import { Remoteselect } from "./remoteselect";
-import { RemotesImport } from "./remotesimport";
+import React, { useEffect } from "react"
+import { gitActionsContext } from "../../state/context"
+import { gitPluginContext } from "../gitui"
+import { Remoteselect } from "./remoteselect"
+import { RemotesImport } from "./remotesimport"
 
 export const Remotes = () => {
   const context = React.useContext(gitPluginContext)
@@ -26,9 +26,11 @@ export const Remotes = () => {
 
   return (
     <>
-      <div data-id="remotes-panel-content">
+      <div data-id="remotes-panel-content" className="d-flex flex-column">
+        <RemotesImport />
+        <hr className="mt-0 border border-2" />
         {context.remotes && context.remotes.length ?
-          <>
+          <div>
 
             {context.remotes && context.remotes.map((remote, index) => {
 
@@ -36,18 +38,17 @@ export const Remotes = () => {
                 <Remoteselect key={index} remote={remote}></Remoteselect>
               );
             })}
-          </> : <>No remotes</>}
-        <hr></hr>
+          </div> : <div>
+            <label className="text-uppercase">No remotes</label>
+          </div>}
 
-        <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
-        <input placeholder="remote url" name='remoteurl' onChange={e => onUrlChange(e.target.value)} value={url} className="form-control" type="text" id="remoteurl" />
+        <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-3" type="text" id="remotename" />
+        <input placeholder="remote url" name='remoteurl' onChange={e => onUrlChange(e.target.value)} value={url} className="form-control mb-3" type="text" id="remoteurl" />
 
         <button disabled={(remoteName && url) ? false : true} className='btn btn-primary mt-1 w-100' onClick={async () => {
           addRemote();
         }}>add remote</button>
-        <hr />
-        <RemotesImport />
-        <hr />
+        <hr className="mt-0 border border-2" />
       </div>
     </>)
 }

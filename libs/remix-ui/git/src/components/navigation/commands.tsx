@@ -21,14 +21,13 @@ export const CommandsNavigation = ({ eventKey, activePanel, callback }) => {
   return (
     <>
       <div className={'d-flex justify-content-between ' + (activePanel === eventKey ? 'bg-light' : '')}>
-        <span data-id='commands-panel' onClick={() => handleClick()} role={'button'} className='nav d-flex justify-content-start align-items-center w-75'>
+        <span data-id='commands-panel' onClick={() => handleClick()} role={'button'} className="nav d-flex justify-content-start align-items-center w-75">
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-1 nav form-check-label">COMMANDS</label>
-          <LoaderIndicator></LoaderIndicator>
-
+          <label className="pl-2 nav form-check-label">COMMANDS</label>
         </span>
+        <LoaderIndicator></LoaderIndicator>
       </div>
     </>
   );
