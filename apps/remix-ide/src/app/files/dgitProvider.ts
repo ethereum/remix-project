@@ -87,17 +87,21 @@ class DGitProvider extends Plugin {
   }
 
   async addIsomorphicGitConfig(input) {
-
     const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
+    const gitlabToken = await this.call('config', 'getAppParameter', 'settings/gitlab-token')
+    const corsproxy = await this.call('config', 'getAppParameter', 'settings/corsproxy-url')
 
     let config = {
-      corsProxy: 'https://corsproxy.remixproject.org/',
+      corsProxy: corsproxy || 'https://corsproxy.remixproject.org/',
       http,
       onAuth: url => {
         url
-        const auth = {
+        const auth = url.startsWith('https://github.com') ? {
           username: input.token || token,
           password: ''
+        } : {
+          username: 'oauth2',
+          password: input.token || gitlabToken
         }
         return auth
       }
