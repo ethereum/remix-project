@@ -163,7 +163,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                   <div>
                     {item.displayName}
                     <div className='align-items-center justify-content-between w-100 d-flex pt-2 flex-row'>
-                      {!template.IsArtefact && <CustomTooltip
+                      {(!template.IsArtefact || !item.isArtefact) && <CustomTooltip
                         placement="auto"
                         tooltipId={`overlay-tooltip-new${item.name}`}
                         tooltipText="Create a new workspace"
