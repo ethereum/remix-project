@@ -40,6 +40,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const { plugin } = useContext(FileSystemContext)
   const [feTarget, setFeTarget] = useState<{ key: string, type: 'file' | 'folder' }[]>({} as { key: string, type: 'file' | 'folder' }[])
   const [filesSelected, setFilesSelected] = useState<string[]>([])
+  const feWindow = (window as any)
 
   useEffect(() => {
     if (contextMenuItems) {
@@ -115,7 +116,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     if (treeRef.current) {
       const deleteKeyPressHandler = async (eve: KeyboardEvent) => {
         if (eve.key === 'Delete' ) {
-          (window as any)._paq.push(['trackEvent', 'fileExplorer', 'deleteKey'])
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'deleteKey', 'deletePath'])
           setState((prevState) => {
             return { ...prevState, deleteKey: true }
           })
@@ -124,7 +125,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
         if (eve.metaKey) {
           if (eve.key === 'Backspace') {
-            (window as any)._paq.push(['trackEvent', 'fileExplorer', 'osxDeleteKey'])
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'osxDeleteKey', 'deletePath'])
             setState((prevState) => {
               return { ...prevState, deleteKey: true }
             })
@@ -164,12 +165,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
       if (feTarget?.length > 1 && feTarget[0]?.key.length > 1) {
         await plugin.call('notification', 'alert', { id: 'renameAlert', message: 'You cannot rename multiple files at once!' })
       }
-      await props.editModeOn(feTarget[0].key, feTarget[0].type, false)
+      props.editModeOn(feTarget[0].key, feTarget[0].type, false)
     }
     if (treeRef.current) {
       const F2KeyPressHandler = async (eve: KeyboardEvent) => {
         if (eve.key === 'F2' ) {
-          (window as any)._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename'])
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
           await performRename()
           setState((prevState) => {
             return { ...prevState, F2Key: true }
