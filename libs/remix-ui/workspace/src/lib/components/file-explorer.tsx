@@ -36,7 +36,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   // const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
-  const { plugin } = useContext(FileSystemContext)
   const [filesSelected, setFilesSelected] = useState<string[]>([])
 
   useEffect(() => {
