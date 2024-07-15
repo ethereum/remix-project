@@ -317,7 +317,7 @@ export const ContractSelection = (props: ContractSelectionProps) => {
             for (const template of scanReport.multi_file_scan_details) {
               if (template.metric_wise_aggregated_findings?.length) {
                 const { metric_wise_aggregated_findings } = template
-                let positions = []
+                const positions = []
                 for (const details of metric_wise_aggregated_findings) {
                   const { findings } = details
                   for (const f of findings)
