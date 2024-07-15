@@ -29,33 +29,20 @@ function StepDetailPage() {
 
     const clonedStep =  JSON.parse(JSON.stringify(step))
     const loadFiles = async () => {
-      if (step.markdown && step.markdown.file && !step.markdown.content) {
-        console.log('loading md file', step.markdown.file)
-        clonedStep.markdown.content = (await remixClient.call('contentImport', 'resolve', step.markdown.file)).content
+      async function loadFile(step, fileType) {
+        if (step[fileType] && step[fileType].file && !step[fileType].content) {
+          console.log(`loading ${fileType} file`, step[fileType].file);
+          clonedStep[fileType].content = (await remixClient.call('contentImport', 'resolve', step[fileType].file)).content;
+        }
       }
-      if (step.solidity && step.solidity.file && !step.solidity.content) {
-        console.log('loading sol file', step.solidity.file)
-        clonedStep.solidity.content = (await remixClient.call('contentImport', 'resolve', step.solidity.file)).content
-      }
-      if (step.test && step.test.file && !step.test.content) {
-        console.log('loading test file', step.test.file)
-        clonedStep.test.content = (await remixClient.call('contentImport', 'resolve', step.test.file)).content
-      }
-      if (step.answer && step.answer.file && !step.answer.content) {
-        console.log('loading answer file', step.answer.file)
-        clonedStep.answer.content = (await remixClient.call('contentImport', 'resolve', step.answer.file)).content
-      }
-      if(step.js && step.js.file && !step.js.content) {
-        console.log('loading js file', step.js.file)
-        clonedStep.js.content = (await remixClient.call('contentImport', 'resolve', step.js.file)).content
-      }
-      if(step.vy && step.vy.file && !step.vy.content) {
-        console.log('loading vy file', step.vy.file)
-        clonedStep.vy.content = (await remixClient.call('contentImport', 'resolve', step.vy.file)).content
+      
+      const fileTypes = ['markdown', 'solidity', 'test', 'answer', 'js', 'vy'];
+      for (const fileType of fileTypes) {
+        await loadFile(step, fileType);
       }
     }
     loadFiles().then(() => {
-      console.log('displayFile', clonedStep)
+
       setClonedStep(clonedStep)
       dispatch({
         type: 'remixide/displayFile',
