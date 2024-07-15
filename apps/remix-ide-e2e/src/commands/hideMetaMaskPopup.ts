@@ -4,13 +4,7 @@ import EventEmitter from 'events'
 class HideMetaMaskPopup extends EventEmitter {
   command(this: NightwatchBrowser) {
     browser
-      .waitForElementVisible({
-        selector: 'button[data-testid="popover-close"]',
-        locateStrategy: 'css selector',
-        suppressNotFoundErrors: true,
-        abortOnFailure: false,
-        timeout: 2000
-      })
+      .pause(5000)
       .isVisible({
         selector: 'button[data-testid="popover-close"]',
         locateStrategy: 'css selector',
