@@ -238,6 +238,7 @@ export type UrlParametersType = {
   shareCode: string
   url: string
   language: string
+  ghfolder: string
 }
 
 export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault', opts?) => {
@@ -285,10 +286,8 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       }
       if (params.url) {
         const data = await plugin.call('contentImport', 'resolve', params.url)
-
         path = data.cleanUrl
         content = data.content
-
         try {
           content = JSON.parse(content) as any
           if (content.language && content.language === 'Solidity' && content.sources) {
@@ -307,6 +306,17 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
           await workspaceProvider.set(path, content)
         }
       }
+      if (params.ghfolder) {
+        try {
+          const files = await plugin.call('contentImport', 'resolveGithubFolder', params.ghfolder)
+          for (const [path, content] of Object.entries(files)) {
+            await workspaceProvider.set(path, content)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      }
+
       return path
     } catch (e) {
       console.error(e)
