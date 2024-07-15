@@ -101,7 +101,7 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   }
 
   async status(cmd: statusInput): Promise<Array<StatusRow>> {
-
+    console.log('status', cmd)
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'status', cmd)
       console.log('STATUS', { ...status })
@@ -185,12 +185,12 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   }
 
   async log(cmd: logInputType): Promise<ReadCommitResult[]> {
-
+    console.log('LOG', cmd)
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'log', {
         ...cmd,
       })
-
+      console.log('LOG END', status)
       return status
     }
 
@@ -198,6 +198,7 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
       ...await this.addIsomorphicGitConfigFS(),
       ...cmd,
     })
+    console.log('LOG END', status)
     return status
   }
 

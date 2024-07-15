@@ -299,17 +299,18 @@ const getCommitChanges = async (commitHash1: string, commitHash2: string, fsConf
 }
 
 const compareBranches = async ({ branch, remote }: compareBranchesInput, fsConfig: isoGitFSConfig) => {
-
   // Get current branch commits
   const headCommits = await git.log({
     ...fsConfig,
     ref: branch.name,
+    depth: 10,
   });
 
   // Get remote branch commits
   const remoteCommits = await git.log({
     ...fsConfig,
     ref: `${remote.name}/${branch.name}`,
+    depth: 10,
   });
 
   // Convert arrays of commit objects to sets of commit SHAs
