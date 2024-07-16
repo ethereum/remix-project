@@ -60,6 +60,7 @@ module.exports = {
         browser.
             addFile('test.txt', { content: 'hello world' }, 'README.md')
             .clickLaunchIcon('dgit')
+            .pause(3000)
             .click('*[data-id="sourcecontrol-panel"]')
             .waitForElementVisible({
                 selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",
@@ -187,6 +188,7 @@ module.exports = {
     'stage renamed file #group3': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('dgit')
+            .pause(3000)
             .waitForElementVisible({
                 selector: "//*[@data-status='deleted-unstaged' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
@@ -228,6 +230,7 @@ module.exports = {
     'create a branch #group2': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('dgit')
+            .pause(3000)
             .click('*[data-id="branches-panel"]')
             .waitForElementVisible('*[data-id="newbranchname"]')
             .setValue('*[data-id="newbranchname"]', 'testbranch')
@@ -244,6 +247,7 @@ module.exports = {
     'publish the branch #group2': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('dgit')
+            .pause(3000)
             .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
             .click('*[data-id="sourcecontrol-panel"]')
             .pause(1000)
