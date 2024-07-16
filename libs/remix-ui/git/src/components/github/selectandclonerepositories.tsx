@@ -43,7 +43,7 @@ export const SelectAndCloneRepositories = (props: RepositoriesProps) => {
 
   return (
     <>
-      <RepositorySelect select={selectRepo} />
+      <RepositorySelect title="Clone from GitHub" select={selectRepo} />
       <TokenWarning />
 
       { repo && <BranchSelect select={selectRemoteBranch} /> }
