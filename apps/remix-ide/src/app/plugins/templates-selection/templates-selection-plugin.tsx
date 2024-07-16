@@ -168,22 +168,22 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                 >
                   <div className='d-flex justify-content-between h-100 flex-column'>
                     <div className='d-flex flex-column'>
-                      {false && <CustomTooltip
+                    <CustomTooltip
                         placement="auto"
                         tooltipId={`overlay-tooltip-new${item.displayName}`}
                         tooltipText={item.displayName}
                       >
                         <span className='text-truncate overflow-hidden whitespace-nowrap'>{item.displayName}</span>
-                      </CustomTooltip>}
-                      <div className=''>
+                      </CustomTooltip>
+                      <div>
                         {(item.displayName && !item.description) && <span className=''>{item.displayName}</span>}
                         {item.description && <span className=''>{item.description}</span>}
-                        <div>
-                          {(item.opts && item.opts.upgradeable && item.opts.upgradeable === 'uups') && <span className='badgeForCell text-dark'>Upgradeable-UUPS</span>}
-                          {(item.opts && item.opts.mintable) && <span className='badgeForCell text-dark'>mintable</span>}
-                          {(item.opts && item.opts.burnable) && <span className='badgeForCell text-dark'>burnable</span>}
-                          {(item.opts && item.opts.pausable) && <span className='badgeForCell text-dark'>pausable</span>}
-                        </div>                   
+                      </div>
+                      <div className='d-flex flex-wrap'>
+                        {(item.opts && item.opts.upgradeable && item.opts.upgradeable === 'uupds') && <span className='badgeForCell badge text-secondary'>Upgradeable-UUPS</span>}
+                        {(item.opts && item.opts.mintable) && <span className='badgeForCell text-secondary'>mintable</span>}
+                        {(item.opts && item.opts.burnable) && <span className='badgeForCell text-secondary'>burnable</span>}
+                        {(item.opts && item.opts.pausable) && <span className='badgeForCell text-secondary'>pausable</span>}
                       </div>
                     </div>
                     <div className='align-items-center justify-content-between w-100 d-flex pt-2 flex-row'>
