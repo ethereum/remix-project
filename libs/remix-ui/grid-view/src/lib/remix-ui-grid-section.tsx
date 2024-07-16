@@ -21,6 +21,7 @@ interface RemixUIGridSectionProps {
 }
 
 const hasChildCell = (children: ReactNode): boolean => {
+  return true
   let found = false
 
   const isElement = (child: ReactNode): child is React.ReactElement => {
