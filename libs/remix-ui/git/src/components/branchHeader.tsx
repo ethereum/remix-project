@@ -48,7 +48,7 @@ export const BranchHeader = () => {
     if (!url) return
     const regex = /https:\/\/github\.com\/[^/]+\/([^/]+)\.git/
     const match = url.match(regex)
-    return match ? match[1] : 'Couldn\'t get repo name!'
+    return match ? match[1] : null
   }
 
   const showDetachedWarningText = async () => {
@@ -63,7 +63,7 @@ export const BranchHeader = () => {
       <div className="container-fluid px-3">
         <div className="d-flex flex-column pt-1 mb-1">
           <div className="d-flex flex-column justify-content-start align-items-start">
-            {getName() !== "Couldn't get repo name!" ? (
+            {getName() ? (
               <div className="pr-1 m-0">
                 <span className="col-4 px-0">Repository Name:</span>
                 <span className="" style={{ width: '15rem' }}>
