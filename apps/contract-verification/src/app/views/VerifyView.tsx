@@ -75,7 +75,7 @@ export const VerifyView = () => {
         }
       } catch (e) {
         const err = e as Error
-        receipt.status = 'error'
+        receipt.status = 'failed'
         receipt.message = err.message
       }
 

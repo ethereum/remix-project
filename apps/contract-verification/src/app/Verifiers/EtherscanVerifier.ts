@@ -111,7 +111,7 @@ export class EtherscanVerifier extends AbstractVerifier {
       throw new Error(checkStatusResponse.result)
     }
 
-    let status = 'unknown'
+    let status: VerificationStatus = 'unknown'
     if (checkStatusResponse.result === 'Fail - Unable to verify') {
       status = 'failed'
     }

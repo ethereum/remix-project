@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { SourcifyVerifier } from '../Verifiers/SourcifyVerifier'
-import { SourcifyVerificationStatus } from '../types/VerificationTypes'
+// import { SourcifyVerificationStatus } from '../types/VerificationTypes'
 import { ReceiptProps } from './props'
 
 // A receipt is something to be rendered
 export const SourcifyReceipt: React.FC<ReceiptProps> = ({ verifyPromise, address, chainId, verifier }) => {
-  const [status, setStatus] = useState<SourcifyVerificationStatus | null>(null)
+  const [status, setStatus] = useState< null>(null)
   const [submissionDate] = useState(new Date()) // This will be set once and not change
 
   useEffect(() => {
