@@ -32,7 +32,7 @@ const hasChildCell = (children: ReactNode): boolean => {
     if (found) return
 
     if (isElement(child)) {
-      if (child.props.classList === 'EECellStyle') {
+      if (child.props.classList === 'remixui_grid_cell_container') {
         found = true
         return
       }
