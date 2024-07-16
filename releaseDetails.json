@@ -1,10 +1,10 @@
 {
-    "version": "v0.51.0",
+    "version": "v0.52.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Integration of SolidityScan to analyze code for vulnerabilities",
-    "highlight2": "'eth_signTypedData' supported in remix-simulator",
-    "highlight3": "Home tab updated & status bar introduced",
+    "highlight1": "Pin and select providers using the new environment explorer",
+    "highlight2": "Build workspace using the new template selection plugin",
+    "highlight3": "Dgit revamped and renamed to Git",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-51-0-ffe0260a9ad5?source=friends_link&sk=8c739ab9148dfae968108a90d9d0c6c3"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-52-0-b0761c5e0df6?source=friends_link&sk=e0c811eedabe742370f25c4673e8fe01"
   }
