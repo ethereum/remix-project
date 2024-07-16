@@ -16,12 +16,16 @@ export const BranchHeader = () => {
       actions.getBranchDifferences(context.currentBranch, null, context)
     }
     if (!context.currentBranch || (context.currentBranch && context.currentBranch.name === '')) {
+      console.log(context)
       if (context.currentHead === '') {
+        console.log('not detached')
         setIsDetached(false)
       } else {
+        console.log('detached')
         setIsDetached(true)
       }
     } else {
+      console.log('not detached')
       setIsDetached(false)
     }
     setLatestCommit(null)
@@ -46,7 +50,7 @@ export const BranchHeader = () => {
   const getName = () => {
     const url = context.currentBranch?.remote?.url
     if (!url) return
-    const regex = /https:\/\/github\.com\/[^/]+\/([^/]+)\.git/
+    const regex = /https:\/\/github\.com\/[^/]+\/([^/]+)(?:\.git)?/;
     const match = url.match(regex)
     return match ? match[1] : null
   }
@@ -60,52 +64,37 @@ export const BranchHeader = () => {
 
   const Heading = () => {
     return (
-      <div className="container-fluid px-3">
+      <div className="container-fluid px-0">
         <div className="d-flex flex-column pt-1 mb-1">
-          <div className="d-flex flex-column justify-content-start align-items-start">
+          <div className="d-flex flex-column justify-content-start align-items-start w-100">
             {getName() ? (
-              <div className="pr-1 m-0">
-                <span className="col-4 px-0">Repository Name:</span>
-                <span className="" style={{ width: '15rem' }}>
-                  <span className={`${ changed ? 'text-danger pl-2 text-truncate overflow-hidden whitespace-nowrap ml-4' : "text-secondary pl-2 text-truncate overflow-hidden whitespace-nowrap ml-4" }`}>
-                    {getName() ?? ''}
-                  </span>
-                </span>
-              </div>
+              <span className={`text-truncate overflow-hidden whitespace-nowrap w-100`}>
+                {getName() ?? ''}
+              </span>
             ) : null
             }
-            <div className="pr-1 m-0">
-              <span className="col-4 px-0">Branch Name:</span>
-              <span className="pl-2 text-secondary text-truncate overflow-hidden whitespace-nowrap ml-4">
-                <span className={`${changed ? 'text-danger pl-2' : "pl-2"}`}>
-                  <i className="fa fa-code-branch mr-1 pl-2"></i>
-                  {context.currentBranch && context.currentBranch.name}
-                </span>
+            {context.currentBranch && context.currentBranch.name ?
+              <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap w-100">
+                <i className="fa fa-code-branch mr-1"></i>{context.currentBranch && context.currentBranch.name}{changed?'*':''}
+              </span> : null}
+            {(latestCommit && latestCommit.commit && latestCommit.commit.message) ?
+              <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap w-100">
+                {latestCommit ?
+                  latestCommit.commit && latestCommit.commit.message ? `"${latestCommit.commit.message}"` : '' : null}
               </span>
-            </div>
+              : null}
+            {isDetached ?
+              <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap w-100">
+                {isDetached ?
+                  <>You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1"></i></> : null}
+              </span>
+              : null}
             {context.storage.enabled ?
-              <div className="d-flex">
-                <span className="d-flex justify-between align-items-center" style={{ width: '15rem' }}>
-                  <span className="col-4 px-0">Storage :</span>
-                  <span className="text-secondary text-sm text-truncate overflow-hidden whitespace-nowrap ml-4">
-                    {context.storage.used} MB used
-                  ({context.storage.percentUsed} %)
-                  </span>
-                </span>
-              </div> : null}
-            <div className="d-flex flex-row">
-              <span className="d-flex justify-between align-items-center" style={{ width: '15rem' }}>
-                <span className="col-4 px-0">Messages :</span>
-                <span className="text-truncate overflow-hidden" >
-                  <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap ml-4">
-                    {latestCommit ?
-                      latestCommit.commit && latestCommit.commit.message ? latestCommit.commit.message : '' : null}
-                    {isDetached ?
-                      <>You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1 pl-2"></i></>: null}
-                  </span>
-                </span>
+              <span className="text-secondary text-sm text-truncate overflow-hidden whitespace-nowrap w-100">
+                {context.storage.used} MB used
+                ({context.storage.percentUsed} %)
               </span>
-            </div>
+              : null}
           </div>
         </div>
       </div>
