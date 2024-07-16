@@ -29,14 +29,11 @@ const hasChildCell = (children: ReactNode): boolean => {
   }
 
   const traverse = (child: ReactNode) => {
-    console.log('found ', children)
-
     if (found) return
 
     if (isElement(child)) {
       if (child.props.classList === 'EECellStyle') {
         found = true
-        console.log('found ', child.props.className)
         return
       }
 
