@@ -8,7 +8,8 @@ import * as compilerV217 from 'circom_wasm/v2.1.7'
 import * as compilerV216 from 'circom_wasm/v2.1.6'
 import * as compilerV215 from 'circom_wasm/v2.1.5'
 import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
-import { CompilationConfig, CompilerReport, PrimeValue, ResolverOutput } from '../types'
+import { CompilationConfig, CompilerReport, PrimeValue } from '../types'
+import isElectron from 'is-electron'
 
 export class CircomPluginClient extends PluginClient {
   public internalEvents: EventManager
@@ -61,179 +62,194 @@ export class CircomPluginClient extends PluginClient {
   }
 
   async parse(path: string, fileContent?: string): Promise<[CompilerReport[], Record<string, string>]> {
-    if (!fileContent) {
+    if (isElectron()) {
       // @ts-ignore
-      fileContent = await this.call('fileManager', 'readFile', path)
-    }
-    this.lastParsedFiles = await this.resolveDependencies(path, fileContent)
-    const parsedOutput = this.compiler ? this.compiler.parse(path, this.lastParsedFiles) : parse(path, this.lastParsedFiles)
-
-    try {
-      const result: CompilerReport[] = JSON.parse(parsedOutput.report())
-      const mapReportFilePathToId: Record<string, string> = {}
-
-      if (result.length === 0) {
+      return await this.call('circom', 'parse', path)
+    } else {
+      if (!fileContent) {
         // @ts-ignore
-        await this.call('editor', 'clearErrorMarkers', [path])
-      } else {
-        const markers = []
+        fileContent = await this.call('fileManager', 'readFile', path)
+      }
+      this.lastParsedFiles = await this.resolveDependencies(path, fileContent)
+      const parsedOutput = this.compiler ? this.compiler.parse(path, this.lastParsedFiles) : parse(path, this.lastParsedFiles)
 
-        for (const report of result) {
-          for (const label in report.labels) {
-            const file_id = report.labels[label].file_id
+      try {
+        const result: CompilerReport[] = JSON.parse(parsedOutput.report())
+        const mapReportFilePathToId: Record<string, string> = {}
 
-            mapReportFilePathToId[file_id] = parsedOutput.get_report_name(parseInt(file_id))
-            if (file_id === '0') {
-              // @ts-ignore
-              const startPosition: { lineNumber: number; column: number } = await this.call(
-                'editor',
+        if (result.length === 0) {
+          // @ts-ignore
+          await this.call('editor', 'clearErrorMarkers', [path])
+        } else {
+          const markers = []
+
+          for (const report of result) {
+            for (const label in report.labels) {
+              const file_id = report.labels[label].file_id
+
+              mapReportFilePathToId[file_id] = parsedOutput.get_report_name(parseInt(file_id))
+              if (file_id === '0') {
                 // @ts-ignore
-                'getPositionAt',
-                report.labels[label].range.start
-              )
-              // @ts-ignore
-              const endPosition: { lineNumber: number; column: number } = await this.call(
-                'editor',
+                const startPosition: { lineNumber: number; column: number } = await this.call(
+                  'editor',
+                  // @ts-ignore
+                  'getPositionAt',
+                  report.labels[label].range.start
+                )
                 // @ts-ignore
-                'getPositionAt',
-                report.labels[label].range.end
-              )
+                const endPosition: { lineNumber: number; column: number } = await this.call(
+                  'editor',
+                  // @ts-ignore
+                  'getPositionAt',
+                  report.labels[label].range.end
+                )
 
-              markers.push({
-                message: report.message,
-                severity: report.type.toLowerCase(),
-                position: {
-                  start: {
-                    line: startPosition.lineNumber,
-                    column: startPosition.column,
+                markers.push({
+                  message: report.message,
+                  severity: report.type.toLowerCase(),
+                  position: {
+                    start: {
+                      line: startPosition.lineNumber,
+                      column: startPosition.column,
+                    },
+                    end: {
+                      line: endPosition.lineNumber,
+                      column: endPosition.column,
+                    },
                   },
-                  end: {
-                    line: endPosition.lineNumber,
-                    column: endPosition.column,
-                  },
-                },
-                file: path,
-              })
+                  file: path,
+                })
+              }
             }
+          }
+
+          if (markers.length > 0) {
+            // @ts-ignore
+            await this.call('editor', 'addErrorMarker', markers)
+          } else {
+            // @ts-ignore
+            await this.call('editor', 'clearErrorMarkers', [path])
+            this.emit('statusChanged', { key: 'none' })
           }
         }
 
-        if (markers.length > 0) {
-          // @ts-ignore
-          await this.call('editor', 'addErrorMarker', markers)
-        } else {
-          // @ts-ignore
-          await this.call('editor', 'clearErrorMarkers', [path])
-          this.emit('statusChanged', { key: 'none' })
-        }
+        return [result, mapReportFilePathToId]
+      } catch (e) {
+        throw new Error(e)
       }
-
-      return [result, mapReportFilePathToId]
-    } catch (e) {
-      throw new Error(e)
     }
   }
 
   async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
-    this.internalEvents.emit('circuit_compiling_start')
-    this.emit('statusChanged', { key: 'loading', title: 'Compiling...', type: 'info' })
-    // @ts-ignore
-    this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
-    const [parseErrors, filePathToId] = await this.parse(path)
-
-    if (parseErrors && (parseErrors.length > 0)) {
-      if (parseErrors[0].type === 'Error') {
-        this.internalEvents.emit('circuit_parsing_errored', parseErrors, filePathToId)
-        this.logCompilerReport(parseErrors)
-        return
-      } else if (parseErrors[0].type === 'Warning') {
-        this.internalEvents.emit('circuit_parsing_warning', parseErrors, filePathToId)
-        this.logCompilerReport(parseErrors)
-      }
-    } else {
-      this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
-      this.emit('statusChanged', { key: 'succeed', title: 'circuit compiled successfully', type: 'success' })
-    }
-    if (compilationConfig) {
-      const { prime, version } = compilationConfig
-
-      this.compilerVersion = version
-      this.compilerPrime = prime
-    }
-    const circuitApi = this.compiler ? this.compiler.compile(path, this.lastParsedFiles, { prime: this._compilationConfig.prime }) : compile(path, this.lastParsedFiles, { prime: this._compilationConfig.prime })
-    const circuitProgram = circuitApi.program()
-
-    if (circuitProgram.length < 1) {
-      const circuitErrors = circuitApi.report()
-
-      this.logCompilerReport(circuitErrors)
-      this._paq.push(['trackEvent', 'circuit-compiler', 'compile', 'Compilation failed'])
-      throw new Error(circuitErrors)
-    } else {
-      this.lastCompiledFile = path
-      const fileName = extractNameFromKey(path)
-
-      this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'wasm')
+    if (isElectron()) {
       // @ts-ignore
-      await this.call('fileManager', 'writeFile', this.lastCompiledCircuitPath, circuitProgram, { encoding: null })
-      const fileContent = this.lastParsedFiles[path]
-      const searchComponentName = fileContent.match(/component\s+main\s*(?:{[^{}]*})?\s*=\s*([A-Za-z_]\w*)\s*\(.*\)/)
+      return await this.call('circom', 'compile', path)
+    } else {
+      this.internalEvents.emit('circuit_compiling_start')
+      this.emit('statusChanged', { key: 'loading', title: 'Compiling...', type: 'info' })
+      // @ts-ignore
+      this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
+      const [parseErrors, filePathToId] = await this.parse(path)
 
-      if (searchComponentName) {
-        const componentName = searchComponentName[1]
-        const signals = circuitApi.input_signals(componentName)
-
-        this.internalEvents.emit('circuit_compiling_done', signals)
+      if (parseErrors && (parseErrors.length > 0)) {
+        if (parseErrors[0].type === 'Error') {
+          this.internalEvents.emit('circuit_parsing_errored', parseErrors, filePathToId)
+          this.logCompilerReport(parseErrors)
+          return
+        } else if (parseErrors[0].type === 'Warning') {
+          this.internalEvents.emit('circuit_parsing_warning', parseErrors, filePathToId)
+          this.logCompilerReport(parseErrors)
+        }
       } else {
-        this.internalEvents.emit('circuit_compiling_done', [])
+        this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
+        this.emit('statusChanged', { key: 'succeed', title: 'circuit compiled successfully', type: 'success' })
       }
-      this._paq.push(['trackEvent', 'circuit-compiler', 'compile', 'Compilation successful'])
-      circuitApi.log().map(log => {
-        log && this.call('terminal', 'log', { type: 'log', value: log })
-      })
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'typewritersuccess', value: 'Everything went okay' })
+      if (compilationConfig) {
+        const { prime, version } = compilationConfig
+
+        this.compilerVersion = version
+        this.compilerPrime = prime
+      }
+      const circuitApi = this.compiler ? this.compiler.compile(path, this.lastParsedFiles, { prime: this._compilationConfig.prime }) : compile(path, this.lastParsedFiles, { prime: this._compilationConfig.prime })
+      const circuitProgram = circuitApi.program()
+
+      if (circuitProgram.length < 1) {
+        const circuitErrors = circuitApi.report()
+
+        this.logCompilerReport(circuitErrors)
+        this._paq.push(['trackEvent', 'circuit-compiler', 'compile', 'Compilation failed'])
+        throw new Error(circuitErrors)
+      } else {
+        this.lastCompiledFile = path
+        const fileName = extractNameFromKey(path)
+
+        this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'wasm')
+        // @ts-ignore
+        await this.call('fileManager', 'writeFile', this.lastCompiledCircuitPath, circuitProgram, { encoding: null })
+        const fileContent = this.lastParsedFiles[path]
+        const searchComponentName = fileContent.match(/component\s+main\s*(?:{[^{}]*})?\s*=\s*([A-Za-z_]\w*)\s*\(.*\)/)
+
+        if (searchComponentName) {
+          const componentName = searchComponentName[1]
+          const signals = circuitApi.input_signals(componentName)
+
+          this.internalEvents.emit('circuit_compiling_done', signals)
+        } else {
+          this.internalEvents.emit('circuit_compiling_done', [])
+        }
+        this._paq.push(['trackEvent', 'circuit-compiler', 'compile', 'Compilation successful'])
+        circuitApi.log().map(log => {
+          log && this.call('terminal', 'log', { type: 'log', value: log })
+        })
+        // @ts-ignore
+        this.call('terminal', 'log', { type: 'typewritersuccess', value: 'Everything went okay' })
+      }
     }
   }
 
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
-    const [parseErrors, filePathToId] = await this.parse(path)
-
-    if (parseErrors && (parseErrors.length > 0)) {
-      if (parseErrors[0].type === 'Error') {
-        this.logCompilerReport(parseErrors)
-        return
-      } else if (parseErrors[0].type === 'Warning') {
-        this.logCompilerReport(parseErrors)
-      }
-    }
-    if (compilationConfig) {
-      const { prime, version } = compilationConfig
-
-      this.compilerVersion = version
-      this.compilerPrime = prime
-    }
-    const r1csApi = this.compiler ? this.compiler.generate_r1cs(path, this.lastParsedFiles, { prime: this._compilationConfig.prime }) : generate_r1cs(path, this.lastParsedFiles, { prime: this._compilationConfig.prime })
-    const r1csProgram = r1csApi.program()
-
-    if (r1csProgram.length < 1) {
-      const r1csErrors = r1csApi.report()
-
-      this.logCompilerReport(r1csErrors)
-      this._paq.push(['trackEvent', 'circuit-compiler', 'generateR1cs', 'R1CS Generation failed'])
-      throw new Error(r1csErrors)
+    if (isElectron()) {
+      // @ts-ignore
+      return await this.call('circom', 'generateR1cs', path)
     } else {
-      const fileName = extractNameFromKey(path)
-      const writePath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'r1cs')
+      const [parseErrors, filePathToId] = await this.parse(path)
 
-      // @ts-ignore
-      await this.call('fileManager', 'writeFile', writePath, r1csProgram, true)
-      this._paq.push(['trackEvent', 'circuit-compiler', 'generateR1cs', 'R1CS Generation successful'])
-      r1csApi.log().map(log => {
-        log && this.call('terminal', 'log', { type: 'log', value: log })
-      })
-      // @ts-ignore
-      this.call('terminal', 'log', { type: 'typewritersuccess', value: 'Everything went okay' })
+      if (parseErrors && (parseErrors.length > 0)) {
+        if (parseErrors[0].type === 'Error') {
+          this.logCompilerReport(parseErrors)
+          return
+        } else if (parseErrors[0].type === 'Warning') {
+          this.logCompilerReport(parseErrors)
+        }
+      }
+      if (compilationConfig) {
+        const { prime, version } = compilationConfig
+
+        this.compilerVersion = version
+        this.compilerPrime = prime
+      }
+      const r1csApi = this.compiler ? this.compiler.generate_r1cs(path, this.lastParsedFiles, { prime: this._compilationConfig.prime }) : generate_r1cs(path, this.lastParsedFiles, { prime: this._compilationConfig.prime })
+      const r1csProgram = r1csApi.program()
+
+      if (r1csProgram.length < 1) {
+        const r1csErrors = r1csApi.report()
+
+        this.logCompilerReport(r1csErrors)
+        this._paq.push(['trackEvent', 'circuit-compiler', 'generateR1cs', 'R1CS Generation failed'])
+        throw new Error(r1csErrors)
+      } else {
+        const fileName = extractNameFromKey(path)
+        const writePath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'r1cs')
+
+        // @ts-ignore
+        await this.call('fileManager', 'writeFile', writePath, r1csProgram, true)
+        this._paq.push(['trackEvent', 'circuit-compiler', 'generateR1cs', 'R1CS Generation successful'])
+        r1csApi.log().map(log => {
+          log && this.call('terminal', 'log', { type: 'log', value: log })
+        })
+        // @ts-ignore
+        this.call('terminal', 'log', { type: 'typewritersuccess', value: 'Everything went okay' })
+      }
     }
   }
 
