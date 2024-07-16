@@ -21,8 +21,25 @@
   },
   "homepage": "https://github.com/ethereum/remix-project#readme",
   "appId": "org.ethereum.remixdesktop",
-  "mac": {
-    "category": "public.app-category.productivity"
+  "build": {
+    "files": [
+      "build/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "assets/icon.png",
+      "darkModeSupport": true,
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist",
+      "extraResources": [
+        {
+          "from": "bin/circom-macos-amd64",
+          "to": "bin/circom-macos-amd64"
+        }
+      ]
+    }
   },
   "scripts": {
     "start:dev": "yarn webpack --config webpack.config.js && electron --inspect=5858 .",
@@ -75,6 +92,7 @@
     "axios": "^1.7.4",
     "byline": "^5.0.0",
     "chokidar": "^3.5.3",
+    "dockerode": "^4.0.2",
     "electron-updater": "^6.1.8",
     "express": "^4.20.0",
     "isomorphic-git": "^1.24.2",
