@@ -18,7 +18,7 @@ interface RemixUIGridCellProps {
   logo?: string
   logos?: string[]
   title: string
-  payload?: string
+  hideTitle?: boolean
   tagList?: string[] // max 8, others will be ignored
   classList?: string
   styleList?: any
@@ -70,8 +70,8 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
       { anyEnabled && <div className='mr-2 mt-3 d-flex flex-column'>
         <div className='d-flex flex-grid'>
           <div className={"d-flex mx-0 p-2 bg-light border border-secondary remixui_grid_cell_container " + props.classList || ''} data-id={"remixUIGS" + props.title}>
-            <div className="d-flex remixui_grid_cell flex-column">
-              <div className='d-flex flex-row pb-1 align-items-end' style={{ width: '8rem', height: '1rem' }}>
+            <div className="d-flex remixui_grid_cell w-100 flex-column">
+              { !props.hideTitle && <div className='d-flex flex-row pb-1 align-items-end' style={{ width: '8rem', height: '1rem' }}>
                 { props.logo && <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> }
                 { props.logos && props.logos.map((logo) => <img className='remixui_grid_view_logo mr-1' src={logo} style={{ width: '1rem', height: '1rem' }}/>)}
                 { props.title && <label
@@ -80,7 +80,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
                 >
                   { props.title }
                 </label> }
-              </div>
+              </div> }
               { props.children }
             </div>
           </div>
@@ -111,7 +111,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
             )) }
           </div> }
           { !props.tagList && <span
-            className={'remixui_grid_cell_tags'}>
+            className={'px-1 remixui_grid_cell_tags'}>
           </span> }
         </div>
         { expand && <div>
