@@ -16,16 +16,12 @@ export const BranchHeader = () => {
       actions.getBranchDifferences(context.currentBranch, null, context)
     }
     if (!context.currentBranch || (context.currentBranch && context.currentBranch.name === '')) {
-      console.log(context)
       if (context.currentHead === '') {
-        console.log('not detached')
         setIsDetached(false)
       } else {
-        console.log('detached')
         setIsDetached(true)
       }
     } else {
-      console.log('not detached')
       setIsDetached(false)
     }
     setLatestCommit(null)

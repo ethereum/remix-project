@@ -164,6 +164,23 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     setAtivePanel(panelNumber)
   })
 
+  plugin.on('sidePanel', 'focusChanged', async (name: string) => {
+    const pinnedPlugin = await plugin.call('pinnedPanel', 'currentFocus')
+    if (name == 'dgit') {
+      if (pinnedPlugin === 'dgit') {
+        plugin.call('layout', 'maximisePinnedPanel')
+      } else {
+        plugin.call('layout', 'maximiseSidePanel')
+      }
+    } else {
+      if (pinnedPlugin === 'dgit') {
+        plugin.call('layout', 'resetPinnedPanel')
+      } else {
+        plugin.call('layout', 'resetSidePanel')
+      }
+    }
+  })
+
   callBackEnabled = true;
 }
 
