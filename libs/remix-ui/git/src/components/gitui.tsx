@@ -164,7 +164,7 @@ export const GitUI = (props: IGitUi) => {
 
   return (
     <>{(!gitState.canUseApp) ? <Disabled></Disabled> :
-      <div className="m-1">
+      <div className="px-3">
         <gitPluginContext.Provider value={gitState}>
           <loaderContext.Provider value={loaderState}>
             <gitActionsContext.Provider value={gitActionsProviderValue}>
