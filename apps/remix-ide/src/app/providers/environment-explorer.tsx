@@ -107,6 +107,7 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.name}
+              hideTitle={true}
               classList='EECellStyle'
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
@@ -137,6 +138,7 @@ export class EnvironmentExplorer extends ViewPlugin {
               plugin={this}
               title={provider.name}
               classList='EECellStyle'
+              hideTitle={true}
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
@@ -165,6 +167,7 @@ export class EnvironmentExplorer extends ViewPlugin {
               plugin={this}
               title={provider.name}
               classList='EECellStyle'
+              hideTitle={true}
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {

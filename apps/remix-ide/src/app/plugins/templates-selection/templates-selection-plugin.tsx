@@ -10,6 +10,7 @@ import { RemixUIGridSection } from '@remix-ui/remix-ui-grid-section'
 import { RemixUIGridCell } from '@remix-ui/remix-ui-grid-cell'
 import isElectron from 'is-electron'
 import type { TemplateGroup } from '@remix-ui/workspace'
+import './templates-selection-plugin.css'
 import { templates } from './templates'
 
 //@ts-ignore
@@ -160,10 +161,26 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                 return <RemixUIGridCell
                   plugin={this}
                   title={item.displayName}
+                  hideTitle={true}
                   tagList={item.tagList}
+                  classList='TSCellStyle'
                 >
-                  <div>
-                    {item.displayName}
+                  <div className='d-flex justify-content-between h-100 flex-column'>
+                    <div className='d-flex flex-column'>
+                    <CustomTooltip
+                        placement="auto"
+                        tooltipId={`overlay-tooltip-new${item.displayName}`}
+                        tooltipText={item.displayName}
+                      >
+                        <span className='text-truncate overflow-hidden whitespace-nowrap'>{item.displayName}</span>
+                      </CustomTooltip>  
+                      <div className='d-flex flex-wrap'>
+                        {(item.opts && item.opts.upgradeable && item.opts.upgradeable === 'uupds') && <span className='badgeForCell badge text-secondary'>Upgradeable-UUPS</span>}
+                        {(item.opts && item.opts.mintable) && <span className='badgeForCell text-secondary'>mintable</span>}
+                        {(item.opts && item.opts.burnable) && <span className='badgeForCell text-secondary'>burnable</span>}
+                        {(item.opts && item.opts.pausable) && <span className='badgeForCell text-secondary'>pausable</span>}
+                      </div>
+                    </div>
                     <div className='align-items-center justify-content-between w-100 d-flex pt-2 flex-row'>
                       {(!template.IsArtefact || !item.isArtefact) && <CustomTooltip
                         placement="auto"
