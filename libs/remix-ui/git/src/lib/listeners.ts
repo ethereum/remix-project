@@ -223,12 +223,6 @@ const calculateLocalStorage = async () => {
       const quotaMB = bytesToMB(estimate.quota);
       const availableMB = bytesToMB(estimate.quota - estimate.usage);
       const percentageUsed = calculatePercentage(estimate.usage, estimate.quota);
-
-      console.log(`Used storage: ${usedMB} MB`);
-      console.log(`Total quota: ${quotaMB} MB`);
-      console.log(`Available storage: ${availableMB} MB`);
-      console.log(`Percentage used: ${percentageUsed}%`);
-
       storage = {
         used: usedMB,
         total: quotaMB,
