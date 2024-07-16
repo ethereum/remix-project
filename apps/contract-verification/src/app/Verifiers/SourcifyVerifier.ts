@@ -1,6 +1,6 @@
 import { CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
-import { SubmittedContract, VerificationResponse } from '../types/VerificationTypes'
+import { LookupResponse, SubmittedContract, VerificationResponse, VerificationStatus } from '../types/VerificationTypes'
 
 interface SourcifyVerificationRequest {
   address: string
@@ -26,8 +26,15 @@ interface SourcifyVerificationResponse {
   ]
 }
 
-interface SourcifyVerificationError {
+interface SourcifyErrorResponse {
   error: 'string'
+}
+
+interface SourcifyLookupResponse {
+  address: string
+  // Includes either chainIds or status key
+  chainIds?: Array<{ chainId: string; status: Exclude<SourcifyVerificationStatus, null> }>
+  status?: 'false'
 }
 
 export class SourcifyVerifier extends AbstractVerifier {
@@ -67,7 +74,7 @@ export class SourcifyVerifier extends AbstractVerifier {
     })
 
     if (!response.ok) {
-      const errorResponse: SourcifyVerificationError = await response.json()
+      const errorResponse: SourcifyErrorResponse = await response.json()
       console.error('Error on Sourcify verification at ' + this.apiUrl + '\nStatus: ' + response.status + '\nResponse: ' + JSON.stringify(errorResponse))
       throw new Error(errorResponse.error)
     }
@@ -80,7 +87,7 @@ export class SourcifyVerifier extends AbstractVerifier {
     }
 
     // Map to a user-facing status message
-    let status = 'unknown'
+    let status: VerificationStatus = 'unknown'
     if (verificationResponse.result[0].status === 'perfect') {
       status = 'fully verified'
     } else if (verificationResponse.result[0].status === 'partial') {
@@ -90,12 +97,30 @@ export class SourcifyVerifier extends AbstractVerifier {
     return { status, receiptId: null }
   }
 
-  async lookup(): Promise<any> {
-    // Implement the lookup logic here
-    console.log('Sourcify lookup started')
-    // Placeholder logic for lookup
-    const lookupResult = {} // Replace with actual lookup logic
-    console.log('Sourcify lookup completed')
-    return lookupResult
+  async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
+    const url = new URL('check-all-by-addresses', this.apiUrl)
+    url.searchParams.append('addresses', contractAddress)
+    url.searchParams.append('chainIds', chainId)
+
+    const response = await fetch(url.href, { method: 'GET' })
+
+    if (!response.ok) {
+      const errorResponse: SourcifyErrorResponse = await response.json()
+      console.error('Error on Sourcify lookup at ' + this.apiUrl + '\nStatus: ' + response.status + '\nResponse: ' + JSON.stringify(errorResponse))
+      throw new Error(errorResponse.error)
+    }
+
+    const lookupResponse: SourcifyLookupResponse = (await response.json())[0]
+
+    let status: VerificationStatus = 'unknown'
+    if (lookupResponse.status === 'false') {
+      status = 'not verified'
+    } else if (lookupResponse.chainIds?.[0].status === 'perfect') {
+      status = 'fully verified'
+    } else if (lookupResponse.chainIds?.[0].status === 'partial') {
+      status = 'partially verified'
+    }
+
+    return { status }
   }
 }

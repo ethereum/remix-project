@@ -17,7 +17,7 @@ export interface Chain {
   infoURL?: string
 }
 
-export type VerifierIdentifier = "Sourcify" | "Etherscan" | "Blockscout"
+export type VerifierIdentifier = 'Sourcify' | 'Etherscan' | 'Blockscout'
 
 export interface VerifierSettings {
   apiUrl: string
@@ -68,9 +68,16 @@ export function isContract(contract: SubmittedContract | SubmittedProxyContract)
   return contract.type === 'contract'
 }
 
-export type VerificationStatus = string | 'error' | 'pending'
+type SourcifyStatus = 'fully verified' | 'partially verified'
+type EtherscanStatus = 'verified'
+export type VerificationStatus = SourcifyStatus | EtherscanStatus | 'failed' | 'pending' | 'not verified' | 'unknown'
 
 export interface VerificationResponse {
   status: VerificationStatus
   receiptId: string | null
+}
+
+export interface LookupResponse {
+  status: VerificationStatus
+  lookupUrl?: string // TODO How to construct these? Do we need another config value?
 }
