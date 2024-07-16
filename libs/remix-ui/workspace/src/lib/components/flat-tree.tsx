@@ -5,7 +5,7 @@ import { getPathIcon } from '@remix-ui/helper';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 import { FlatTreeItemInput } from './flat-tree-item-input';
 import { FlatTreeDrop } from './flat-tree-drop';
-import { buildMultiSelectedItemProfiles, getEventTarget } from '../utils/getEventTarget';
+import { getEventTarget } from '../utils/getEventTarget';
 import { fileDecoration, FileDecorationIcons } from '@remix-ui/file-decorators';
 import { FileHoverIcons } from './file-explorer-hovericons';
 import { deletePath } from '../actions';
@@ -75,6 +75,37 @@ export const FlatTree = (props: FlatTreeProps) => {
   const virtuoso = useRef<VirtuosoHandle>(null)
   const [selectedItems, setSelectedItems] = useState<DragStructure[]>([])
 
+  /**
+   *  When multiple files are selected in FileExplorer,
+   *  and these files are dragged to a target folder,
+   *  this function will build the profile of each selected item
+   *  so they can be moved when dropped on target folder
+   * @param target - Initial target item in FileExplorer
+   * @returns - {DragStructure} Array of selected items
+   */
+  const buildMultiSelectedItemProfiles = (target: {
+    path: string
+    type: string
+    content: string
+    position: {
+        top: number
+        left: number
+    }
+    }) => {
+    const selectItems = []
+    selectItems.push(target)
+    containerRef.current?.querySelectorAll('li.remixui_selected').forEach(item => {
+      const dragTarget = {
+        position: { top: target?.position.top || 0, left: target?.position.left || 0 },
+        path: item.getAttribute('data-path') || item.getAttribute('data-label-path') || '',
+        type: item.getAttribute('data-type') || item.getAttribute('data-label-type') || '',
+        content: item.textContent || ''
+      }
+      if (dragTarget.path !== target.path) selectItems.push(dragTarget)
+    })
+    setSelectedItems(selectItems)
+  }
+
   const labelClass = (file: FileType) =>
     props.focusEdit.element === file.path
       ? 'bg-light'
@@ -116,9 +147,8 @@ export const FlatTree = (props: FlatTreeProps) => {
     const target = await getEventTarget(event)
     setDragSource(flatTree.find((item) => item.path === target.path))
     setIsDragging(true)
-    const items = buildMultiSelectedItemProfiles(target)
-    setSelectedItems(items)
-    setFilesSelected(items.map((item) => item.path))
+    buildMultiSelectedItemProfiles(target)
+    setFilesSelected(selectedItems.map((item) => item.path))
   }
 
   useEffect(() => {
