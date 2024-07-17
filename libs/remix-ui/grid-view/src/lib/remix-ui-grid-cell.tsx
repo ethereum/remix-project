@@ -74,8 +74,8 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
                 { props.logo && <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> }
                 { props.logos && props.logos.map((logo) => <img className='remixui_grid_view_logo mr-1' src={logo} style={{ width: '1rem', height: '1rem' }}/>)}
                 { props.title && <label
-                  className='m-0 p-0 align-items-left'
-                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 'xx-small' }}
+                  className='m-0 p-0 align-items-left font-weight-bold'
+                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                 >
                   { props.title }
                 </label> }

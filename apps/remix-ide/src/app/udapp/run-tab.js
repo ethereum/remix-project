@@ -144,6 +144,7 @@ export class RunTab extends ViewPlugin {
       'ganache-provider': 'Deploy to a ganache development nework.',
       'foundry-provider': 'Deploy to a foundry development nework.',
       'injected-MetaMask': 'Deploy through the Metamask browser extension.',
+      'injected-Brave Wallet': 'Deploy through the Brave Wallet extension.',
       'injected-Brave': 'Deploy through the Brave browser extension.',
       'injected-metamask-optimism': 'Deploy to the Optimism network through the Metamask browser extension.',
       'injected-metamask-arbitrum': 'Deploy to the Arbitrum network through the Metamask browser extension.',
@@ -157,6 +158,7 @@ export class RunTab extends ViewPlugin {
       'injected-metamask-sepolia': ['assets/img/metamask.png'],
       'injected-metamask-ephemery': ['assets/img/metamask.png'],
       'injected-MetaMask': ['assets/img/metamask.png'],
+      'injected-Brave Wallet': ['assets/img/brave.png'],
       'hardhat-provider': ['assets/img/hardhat.png'],
       'walletconnect': ['assets/img/Walletconnect-logo.png'],
       'vm-cancun': ['assets/img/guitarRemiCroped.webp'],
@@ -167,9 +169,12 @@ export class RunTab extends ViewPlugin {
       'vm-mainnet-fork': ['assets/img/guitarRemiCroped.webp'],
       'vm-sepolia-fork': ['assets/img/sleepingRemiCroped.webp'],
       'vm-custom-fork': ['assets/img/remixLogo.webp'],
+      'foundry-provider': ['assets/img/foundry.png'],
+      'basic-http-provider': ['assets/img/hexagon-remix-greengrey-texture.png']
     }
 
     const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
+      console.log(name)
       await this.call('blockchain', 'addProvider', {
         position,
         options: {},
