@@ -176,12 +176,14 @@ export const deploy = async (payload: any, callback: any) => {
 
   const {logo, ...instance} = state.instance;
 
+  const instanceJson = JSON.stringify({
+    ...instance,
+    shortname: payload.shortname,
+    shareTo: payload.shareTo,
+  })
+
   const files: Record<string, string> = {
-    'dir/instance.json': JSON.stringify({
-      ...instance,
-      shortname: payload.shortname,
-      shareTo: payload.shareTo,
-    }),
+    'dir/instance.json': instanceJson,
   };
 
   // console.log(
@@ -200,7 +202,7 @@ export const deploy = async (payload: any, callback: any) => {
   }
 
   files['dir/logo.png'] = logo
-
+  files['dir/CORS'] = '*'
   files['dir/index.html'] = files['dir/index.html'].replace(
     'assets/css/themes/remix-dark_tvx1s2.css',
     themeMap[instance.theme].url
@@ -232,7 +234,15 @@ export const deploy = async (payload: any, callback: any) => {
     return;
   }
 
-  callback({ code: 'SUCCESS', error: '' });
+  try {
+    // some times deployment might fail even if it says successfully, that's why we need to do the double check.
+    const instanceResp = await axios.get(`https://${payload.subdomain}.surge.sh/instance.json`);
+    if (instanceResp.status === 200 && JSON.stringify(instanceResp.data) === instanceJson) {
+      callback({ code: 'SUCCESS', error: '' });
+      return;
+    }
+  } catch (error) {}
+  callback({ code: 'ERROR', error: 'deploy failed, please try again' });
   return;
 };
 
@@ -299,7 +309,7 @@ export const initInstance = async ({
       : { A: ids };
 
   const logo = await axios.get('https://dev.remix-dapp.pages.dev/logo.png', { responseType: 'arraybuffer' })
-  
+
   await dispatch({
     type: 'SET_INSTANCE',
     payload: {
