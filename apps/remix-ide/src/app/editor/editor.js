@@ -348,7 +348,6 @@ class Editor extends Plugin {
   }
 
   async openDiff(change) {
-    console.log('openDiff', change)
     const hashedPathModified = change.readonly ? change.path + change.hashModified : change.path
     const hashedPathOriginal = change.path + change.hashOriginal
     const session = await this._createSession(hashedPathModified, change.modified, this._getMode(change.path), change.readonly)
@@ -458,7 +457,6 @@ class Editor extends Plugin {
   revealRange (startLineNumber, startColumn, endLineNumber, endColumn) {
     if (!this.activated) return
     this.emit('focus')
-    console.log(startLineNumber, startColumn, endLineNumber, endColumn)
     this.emit('revealRange', startLineNumber, startColumn, endLineNumber, endColumn)
   }
 
