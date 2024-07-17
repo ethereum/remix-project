@@ -114,7 +114,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
               data-id={`dropdown-item-another-chain`}
             >
               <span className="">
-                Pin another chain...
+                Customize this list...
               </span>
             </Dropdown.Item>
           </Dropdown.Menu>
