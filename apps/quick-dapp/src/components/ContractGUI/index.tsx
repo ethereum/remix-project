@@ -12,7 +12,7 @@ const getFuncABIInputs = (funABI: any) => {
   return txHelper.inputParametersDeclarationToString(funABI.inputs);
 };
 
-export function ContractGUI(props: { funcABI: any }) {
+export function ContractGUI(props: { funcABI: any, funcId: any }) {
   const intl = useIntl()
   const isConstant =
     props.funcABI.constant !== undefined ? props.funcABI.constant : false;
@@ -69,6 +69,7 @@ export function ContractGUI(props: { funcABI: any }) {
     <div className={`d-inline-block`} style={{ width: '90%' }}>
       <div className="p-2">
         <input
+          data-id={`functionTitle${props.funcId}`}
           className="form-control"
           placeholder={intl.formatMessage({ id: 'quickDapp.functionTitle' })}
           value={props.funcABI.title}
@@ -117,6 +118,7 @@ export function ContractGUI(props: { funcABI: any }) {
       </div>
       <div className="p-2">
         <textarea
+          data-id={`functionInstructions${props.funcId}`}
           className="form-control"
           placeholder={intl.formatMessage({ id: 'quickDapp.functionInstructions' })}
           value={props.funcABI.details}

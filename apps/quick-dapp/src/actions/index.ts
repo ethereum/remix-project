@@ -244,7 +244,49 @@ export const deploy = async (payload: any, callback: any) => {
   } catch (error) {}
   callback({ code: 'ERROR', error: 'deploy failed, please try again' });
   return;
+
 };
+
+export const teardown = async (payload: any, callback: any) => {
+  const surgeToken = localStorage.getItem('__SURGE_TOKEN');
+  const surgeEmail = localStorage.getItem('__SURGE_EMAIL');
+  let isLogin = false;
+  if (surgeToken && surgeEmail === payload.email) {
+    try {
+      await surgeClient.whoami();
+      isLogin = true;
+    } catch (error) {
+      /* empty */
+    }
+  }
+  if (!isLogin) {
+    try {
+      await surgeClient.login({
+        user: payload.email,
+        password: payload.password,
+      });
+      localStorage.setItem('__SURGE_EMAIL', payload.email);
+      localStorage.setItem('__SURGE_PASSWORD', payload.password);
+      localStorage.setItem('__DISQUS_SHORTNAME', payload.shortname);
+    } catch (error: any) {
+      callback({ code: 'ERROR', error: error.message });
+      return;
+    }
+  }
+
+  try {
+    await surgeClient.teardown(`${payload.subdomain}.surge.sh`);
+  } catch ({ message }: any) {
+    if (message === '403') {
+      callback({ code: 'ERROR', error: 'this domain belongs to someone else' });
+    } else {
+      callback({ code: 'ERROR', error: 'gateway timeout, please try again' });
+    }
+    return;
+  }
+  callback({ code: 'SUCCESS', error: '' });
+  return;
+}
 
 export const initInstance = async ({
   methodIdentifiers,
