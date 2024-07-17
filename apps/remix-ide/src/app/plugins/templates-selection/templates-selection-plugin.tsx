@@ -162,6 +162,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                   plugin={this}
                   title={item.displayName}
                   hideTitle={true}
+                  searchKeywords={[item.displayName, item.value, template.name, item.tagList]}
                   tagList={item.tagList}
                   classList='TSCellStyle'
                 >
