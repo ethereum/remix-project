@@ -16,6 +16,7 @@ interface RemixUIGridCellProps {
   pinned?: boolean
   pinStateCallback?: any
   logo?: string
+  logos?: string[]
   title: string
   payload?: string
   tagList?: string[] // max 8, others will be ignored
@@ -71,6 +72,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
             <div className="d-flex remixui_grid_cell flex-column">
               <div className='d-flex flex-row pb-1 align-items-end' style={{ width: '8rem', height: '1rem' }}>
                 { props.logo && <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> }
+                { props.logos && props.logos.map((logo) => <img className='remixui_grid_view_logo mr-1' src={logo} style={{ width: '1rem', height: '1rem' }}/>)}
                 { props.title && <label
                   className='m-0 p-0 align-items-left'
                   style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 'xx-small' }}
