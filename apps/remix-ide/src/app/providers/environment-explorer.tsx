@@ -106,7 +106,9 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.displayName}
+              logo={provider.logo}
               classList='EECellStyle'
+              payload={provider.description}
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
@@ -135,7 +137,9 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.displayName}
+              logo={provider.logo}
               classList='EECellStyle'
+              payload={provider.description}
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
@@ -163,6 +167,8 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.displayName}
+              logo={provider.logo}
+              payload={provider.description}
               classList='EECellStyle'
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {

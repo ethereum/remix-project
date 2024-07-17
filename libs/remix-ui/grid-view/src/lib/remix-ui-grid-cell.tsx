@@ -17,6 +17,7 @@ interface RemixUIGridCellProps {
   pinStateCallback?: any
   logo?: string
   title: string
+  payload?: string
   tagList?: string[] // max 8, others will be ignored
   classList?: string
   styleList?: any
@@ -35,8 +36,13 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
     if (props.tagList) setAnyEnabled(props.tagList.some((key) => filterCon.keyValueMap[key]?.enabled))
     else setAnyEnabled(filterCon?.keyValueMap['no tag']?.enabled)
     if (!props.tagList || props.tagList.length == 0) setAnyEnabled(true)
-    if (filterCon.filter != '') setAnyEnabled(anyEnabled && props.title.toLowerCase().includes(filterCon.filter))
-
+    setAnyEnabled(anyEnabled && 
+      (
+        props.title.toLowerCase().includes(filterCon.filter) ||
+        props.title.includes(filterCon.filter)) ||
+        props?.payload?.toLowerCase().includes(filterCon.filter) ||        
+        props?.payload?.includes(filterCon.filter)
+      )
   }, [filterCon, props.tagList])
 
   /*const listenOnExpand = (key) => {
