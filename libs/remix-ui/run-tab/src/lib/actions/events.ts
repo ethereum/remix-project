@@ -69,9 +69,9 @@ export const setupEvents = (plugin: RunTab) => {
     }
   })
 
-  plugin.blockchain.event.register('addProvider', provider => addExternalProvider(dispatch, provider))
+  plugin.on('blockchain', 'shouldAddProvidertoUdapp', (name, provider) => addExternalProvider(dispatch, provider))
 
-  plugin.blockchain.event.register('removeProvider', name => removeExternalProvider(dispatch, name))
+  plugin.on('blockchain', 'shouldRemoveProviderFromUdapp', (name, provider) => removeExternalProvider(dispatch, name))
 
   plugin.blockchain.events.on('newProxyDeployment', (address, date, contractName) => addNewProxyDeployment(dispatch, address, date, contractName))
 
