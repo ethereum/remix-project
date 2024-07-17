@@ -3,7 +3,7 @@ export const templates = (intl) => {
     {
       name: "Generic",
       items: [
-        { value: "remixDefault", tagList: ["solidity"], displayName: intl.formatMessage({ id: 'filePanel.basic' }) },
+        { value: "remixDefault", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.basic' }) },
         { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true }
       ]
     },
@@ -13,22 +13,22 @@ export const templates = (intl) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
-          tagList: ["ERC20", "solidity"]
+          tagList: ["ERC20", "Solidity"]
         },
         {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
-          tagList: ["ERC721", "solidity"]
+          tagList: ["ERC721", "Solidity"]
         },
         {
           value: "ozerc1155",
-          tagList: ["solidity"],
+          tagList: ["Solidity"],
           displayName: "ERC1155"
         },
         {
           value: "ozerc20",
           displayName: "ERC20",
-          tagList: ["solidity"],
+          tagList: ["Solidity"],
           opts: {
             mintable: true
           }
@@ -36,7 +36,7 @@ export const templates = (intl) => {
         {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
-          tagList: ["solidity", "ERC721"],
+          tagList: ["Solidity", "ERC721"],
           opts: {
             mintable: true
           }
@@ -44,7 +44,7 @@ export const templates = (intl) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
-          tagList: ["solidity"],
+          tagList: ["Solidity"],
           opts: {
             mintable: true
           }
@@ -52,7 +52,7 @@ export const templates = (intl) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
-          tagList: ["solidity", "ERC20"],
+          tagList: ["Solidity", "ERC20"],
           opts: {
             mintable: true,
             burnable: true
@@ -65,7 +65,7 @@ export const templates = (intl) => {
             mintable: true,
             burnable: true
           },
-          tagList: ["ERC721", "solidity"]
+          tagList: ["ERC721", "Solidity"]
         },
         {
           value: "ozerc1155",
@@ -74,7 +74,7 @@ export const templates = (intl) => {
             mintable: true,
             burnable: true
           },
-          tagList: ["ERC1155", "solidity"]
+          tagList: ["ERC1155", "Solidity"]
         },
         {
           value: "ozerc20",
@@ -83,7 +83,7 @@ export const templates = (intl) => {
             mintable: true,
             pausable: true
           },
-          tagList: ["ERC20", "solidity"]
+          tagList: ["ERC20", "Solidity"]
         },
         {
           value: "ozerc721",
@@ -92,7 +92,7 @@ export const templates = (intl) => {
             mintable: true,
             pausable: true
           },
-          tagList: ["ERC721", "solidity"]
+          tagList: ["ERC721", "Solidity"]
         },
         {
           value: "ozerc1155",
@@ -114,7 +114,7 @@ export const templates = (intl) => {
           opts: {
             upgradeable: 'uups'
           },
-          tagList: ["ERC20", "solidity"]
+          tagList: ["ERC20", "Solidity"]
         },
         {
           value: "ozerc721",
@@ -122,7 +122,7 @@ export const templates = (intl) => {
           opts: {
             upgradeable: 'uups'
           },
-          tagList: ["ERC721", "solidity"]
+          tagList: ["ERC721", "Solidity"]
         },
         {
           value: "ozerc1155",
@@ -130,7 +130,7 @@ export const templates = (intl) => {
           opts: {
             upgradeable: 'uups'
           },
-          tagList: ["ERC1155", "solidity"]
+          tagList: ["ERC1155", "Solidity"]
         },
         {
           value: "ozerc20",
@@ -139,7 +139,7 @@ export const templates = (intl) => {
             upgradeable: 'uups',
             mintable: true
           },
-          tagList: ["ERC20", "solidity"]
+          tagList: ["ERC20", "Solidity"]
         },
         {
           value: "ozerc721",
@@ -148,7 +148,7 @@ export const templates = (intl) => {
             upgradeable: 'uups',
             mintable: true
           },
-          tagList: ["ERC721", "solidity"]
+          tagList: ["ERC721", "Solidity"]
         },
         {
           value: "ozerc1155",
@@ -157,7 +157,7 @@ export const templates = (intl) => {
             upgradeable: 'uups',
             mintable: true
           },
-          tagList: ["ERC1155", "solidity"]
+          tagList: ["ERC1155", "Solidity"]
         },
         {
           value: "ozerc20",
@@ -167,7 +167,7 @@ export const templates = (intl) => {
             mintable: true,
             burnable: true
           },
-          tagList: ["ERC20", "solidity"]
+          tagList: ["ERC20", "Solidity"]
         },
         {
           value: "ozerc721",
@@ -177,7 +177,7 @@ export const templates = (intl) => {
             mintable: true,
             burnable: true
           },
-          tagList: ["ERC721", "solidity"]
+          tagList: ["ERC721", "Solidity"]
         },
         {
           value: "ozerc1155",
@@ -187,7 +187,7 @@ export const templates = (intl) => {
             mintable: true,
             burnable: true
           },
-          tagList: ["ERC1155", "solidity"]
+          tagList: ["ERC1155", "Solidity"]
         },
         {
           value: "ozerc20",
@@ -197,7 +197,7 @@ export const templates = (intl) => {
             mintable: true,
             pausable: true
           },
-          tagList: ["ERC20", "solidity"]
+          tagList: ["ERC20", "Solidity"]
         },
         {
           value: "ozerc721",
@@ -207,7 +207,7 @@ export const templates = (intl) => {
             mintable: true,
             pausable: true
           },
-          tagList: ["ERC721", "solidity"]
+          tagList: ["ERC721", "Solidity"]
         },
         {
           value: "ozerc1155",
@@ -217,7 +217,7 @@ export const templates = (intl) => {
             mintable: true,
             pausable: true
           },
-          tagList: ["ERC1155", "solidity"]
+          tagList: ["ERC1155", "Solidity"]
         },
         {
           value: "ozerc1155",
@@ -228,20 +228,20 @@ export const templates = (intl) => {
             burnable: true,
             pausable: true
           },
-          tagList: ["ERC1155", "solidity"]
+          tagList: ["ERC1155", "Solidity"]
         }
       ]
     },
     {
       name: "OxProject",
       items: [
-        { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "solidity"]}
+        { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"]}
       ]
     },
     {
       name: "Gnosis Safe",
       items: [
-        { value: "gnosisSafeMultisig", tagList: ["solidity"], displayName: intl.formatMessage({ id: 'filePanel.multiSigWallet' }) }
+        { value: "gnosisSafeMultisig", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.multiSigWallet' }) }
       ]
     },
     {
@@ -269,7 +269,7 @@ export const templates = (intl) => {
     {
       name: "Solidity CREATE2",
       items: [
-        { value: "contractCreate2Factory", tagList: ["solidity"], displayName: intl.formatMessage({ id: 'filePanel.addcreate2solidityfactory' }) },
+        { value: "contractCreate2Factory", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.addcreate2solidityfactory' }) },
         { value: "contractDeployerScripts", displayName: intl.formatMessage({ id: 'filePanel.addscriptdeployer' }) }
       ]
     },
