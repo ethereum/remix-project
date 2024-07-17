@@ -52,10 +52,11 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
   }
 
   const initializeNewGitRepo = async () => {
-    await plugin.call('dgitApi', 'init')
-    const isActive = await plugin.call('manager', 'isActive', 'dgit')
     if (isLocalHost === false) {
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      await plugin.call('dgitApi', 'init')
+      ;(window as any)._paq.push('trackEvent', 'statusbar', 'initNewRepo')
     }
   }
 

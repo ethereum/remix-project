@@ -1,6 +1,6 @@
 import React, { SyntheticEvent, useContext, useEffect, useRef, useState } from 'react'
 import { DragStructure, FileType, FlatTreeDropProps } from '../types'
-import { buildMultiSelectedItemProfiles, getEventTarget } from '../utils/getEventTarget'
+import { getEventTarget } from '../utils/getEventTarget'
 import { extractParentFromKey } from '@remix-ui/helper'
 import { FileSystemContext } from '../contexts'
 

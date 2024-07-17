@@ -9,6 +9,7 @@ import { TokenWarning } from '../panels/tokenWarning';
 
 interface RepositorySelectProps {
   select: (repo: repository) => void;
+  title: string;
 }
 
 const RepositorySelect = (props: RepositorySelectProps) => {
@@ -65,7 +66,7 @@ const RepositorySelect = (props: RepositorySelectProps) => {
 
   return (
     <><button data-id='fetch-repositories' onClick={fetchRepositories} className="w-100 mt-1 btn btn-secondary mb-2">
-      <i className="fab fa-github mr-1"></i>Fetch Repositories from GitHub
+      <i className="fab fa-github mr-1"></i>{props.title}
     </button>
     {
       show ?

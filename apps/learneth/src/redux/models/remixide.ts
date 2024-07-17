@@ -84,7 +84,6 @@ const Model: ModelType = {
       const { detail, selectedId } = yield select((state) => state.workshop)
 
       const workshop = detail[selectedId]
-      console.log('loading ', step, workshop)
 
       path = `.learneth/${workshop.name}/${step.name}/${path}`
       try {

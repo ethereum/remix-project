@@ -34,8 +34,8 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
   useEffect(() => {
     if (props.tagList) setAnyEnabled(props.tagList.some((key) => filterCon.keyValueMap[key]?.enabled))
     else setAnyEnabled(filterCon?.keyValueMap['no tag']?.enabled)
+    if (!props.tagList || props.tagList.length == 0) setAnyEnabled(true)
     if (filterCon.filter != '') setAnyEnabled(anyEnabled && props.title.toLowerCase().includes(filterCon.filter))
-    console.log("pin ", pinned)
 
   }, [filterCon, props.tagList])
 
@@ -54,12 +54,12 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
   */
 
   return (
-    <div className='mr-2 mt-3' onClick={() => {
+    <div data-values='gridCell' className='' onClick={() => {
       if (props.expandViewEl)
         props.handleExpand(!expand)
       else return
     }}>
-      { anyEnabled && <div className='d-flex flex-column'>
+      { anyEnabled && <div className='mr-2 mt-3 d-flex flex-column'>
         <div className='d-flex flex-grid'>
           <div className={"d-flex mx-0 p-2 bg-light border border-secondary remixui_grid_cell_container " + props.classList || ''} data-id={"remixUIGS" + props.title}>
             <div className="d-flex remixui_grid_cell flex-column">
@@ -77,9 +77,10 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
           </div>
           { filterCon.showPin && <button
             className={`${pinned ? 'fa-duotone' : 'fa-light'}` + ` fa-map-pin text-info border-0 mb-0 remixui_grid_cell_pin`}
-            onClick={() => {
-              setPinned(!pinned)
-              props.pinStateCallback()
+            style={{ fontSize: 'large' }}
+            onClick={async () => {
+              if (!props.pinStateCallback) setPinned(!pinned)
+              if (await props.pinStateCallback(!pinned)) setPinned(!pinned)
             }}
           ></button>}
           { props.tagList && <div className={`d-flex flex-column align-items-begin ` +`${filterCon.showPin ? 'remixui_grid_cell_tags' : 'remixui_grid_cell_tags_no_pin'}`}>

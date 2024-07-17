@@ -164,6 +164,23 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     setAtivePanel(panelNumber)
   })
 
+  plugin.on('sidePanel', 'focusChanged', async (name: string) => {
+    const pinnedPlugin = await plugin.call('pinnedPanel', 'currentFocus')
+    if (name == 'dgit') {
+      if (pinnedPlugin === 'dgit') {
+        plugin.call('layout', 'maximisePinnedPanel')
+      } else {
+        plugin.call('layout', 'maximiseSidePanel')
+      }
+    } else {
+      if (pinnedPlugin === 'dgit') {
+        plugin.call('layout', 'resetPinnedPanel')
+      } else {
+        plugin.call('layout', 'resetSidePanel')
+      }
+    }
+  })
+
   callBackEnabled = true;
 }
 
@@ -223,12 +240,6 @@ const calculateLocalStorage = async () => {
       const quotaMB = bytesToMB(estimate.quota);
       const availableMB = bytesToMB(estimate.quota - estimate.usage);
       const percentageUsed = calculatePercentage(estimate.usage, estimate.quota);
-
-      console.log(`Used storage: ${usedMB} MB`);
-      console.log(`Total quota: ${quotaMB} MB`);
-      console.log(`Available storage: ${availableMB} MB`);
-      console.log(`Percentage used: ${percentageUsed}%`);
-
       storage = {
         used: usedMB,
         total: quotaMB,
