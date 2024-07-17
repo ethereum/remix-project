@@ -4,7 +4,7 @@ import init from '../helpers/init'
 
 const branch = process.env.CIRCLE_BRANCH;
 const isMasterBranch = branch === 'master';
-const runMasterTests: boolean = (branch ? (isMasterBranch ? true : false) : true)
+const runMasterTests: boolean = true// (branch ? (isMasterBranch ? true : false) : true)
 
 module.exports = {
   '@disabled': true,
@@ -314,6 +314,7 @@ module.exports = {
     if (runMasterTests)
       browser
         .pinChain('vm-custom-fork')
+        .pause()
         .switchEnvironment('vm-custom-fork')
         .waitForElementVisible('[data-id="vm-custom-fork-modal-footer-ok-react"]')
         .execute(() => {
