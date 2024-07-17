@@ -166,7 +166,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
 
   plugin.on('sidePanel', 'focusChanged', async (name: string) => {
     if (name == 'dgit') {
-        plugin.call('layout', 'maximiseSidePanel')
+      plugin.call('layout', 'maximiseSidePanel')
     }
   })
 
