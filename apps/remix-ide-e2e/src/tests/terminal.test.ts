@@ -314,7 +314,6 @@ module.exports = {
     if (runMasterTests)
       browser
         .pinChain('vm-custom-fork')
-        .pause()
         .switchEnvironment('vm-custom-fork')
         .waitForElementVisible('[data-id="vm-custom-fork-modal-footer-ok-react"]')
         .execute(() => {
