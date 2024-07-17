@@ -109,6 +109,7 @@ export class EnvironmentExplorer extends ViewPlugin {
               title={provider.name}
               hideTitle={true}
               classList='EECellStyle'
+              searchKeywords={['Injected', provider.displayName, provider.title]}
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
@@ -139,6 +140,7 @@ export class EnvironmentExplorer extends ViewPlugin {
               title={provider.name}
               classList='EECellStyle'
               hideTitle={true}
+              searchKeywords={['Remix VMs', provider.displayName, provider.title]}
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
@@ -168,6 +170,7 @@ export class EnvironmentExplorer extends ViewPlugin {
               title={provider.name}
               classList='EECellStyle'
               hideTitle={true}
+              searchKeywords={['Externals', provider.displayName, provider.title]}
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
