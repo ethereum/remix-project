@@ -51,15 +51,15 @@ export const Container = forwardRef<HTMLDivElement, Props>(
           >
             {label}
             <div className={`d-flex container-actions`}>
-              <Remove onClick={onRemove} />
-              <Handle {...handleProps} />
+              <Remove onClick={onRemove} data-id={`remove${label.replace(/\s*/g,"")}`} />
+              <Handle {...handleProps} data-id={`handle${label.replace(/\s*/g,"")}`} />
             </div>
           </div>
         ) : null}
         {placeholder ? (
           children
         ) : (
-          <ul className="p-0 m-0 list-unstyled" style={{ overflowY: 'auto' }}>
+          <ul className="p-0 m-0 list-unstyled" style={{ overflowY: 'auto' }} data-id={`container${label.replace(/\s*/g,"")}`}>
             {children}
           </ul>
         )}
