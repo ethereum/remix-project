@@ -310,9 +310,10 @@ module.exports = {
         .click('*[data-id="terminalClearConsole"]')
   },
 
-  'Should connect to the sepolia fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
+  'Should connect to the sepolia fork and run web3.eth.getCode in the terminal #flaky #group9': function (browser: NightwatchBrowser) {
     if (runMasterTests)
       browser
+        .pinChain('vm-custom-fork')
         .switchEnvironment('vm-custom-fork')
         .waitForElementVisible('[data-id="vm-custom-fork-modal-footer-ok-react"]')
         .execute(() => {
