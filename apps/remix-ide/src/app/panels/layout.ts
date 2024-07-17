@@ -79,6 +79,7 @@ export class Layout extends Plugin {
     })
     this.on('sidePanel', 'focusChanged', async (name) => {
       const current = await this.call('sidePanel', 'currentFocus')
+      console.log('focusChanged', current, this.maximised)
       if (this.maximised[current]) {
         this.event.emit('maximisesidepanel')
       } else {
@@ -129,6 +130,7 @@ export class Layout extends Plugin {
     this.event.emit('maximisesidepanel')
     const current = await this.call('sidePanel', 'currentFocus')
     this.maximised[current] = true
+    console.log('maximised', this.maximised, current)
   }
 
   async maximisePinnedPanel () {
@@ -147,6 +149,7 @@ export class Layout extends Plugin {
     this.event.emit('resetsidepanel')
     const current = await this.call('sidePanel', 'currentFocus')
     this.maximised[current] = false
+    console.log('reset max', this.maximised, current)
   }
 
   async resetPinnedPanel () {

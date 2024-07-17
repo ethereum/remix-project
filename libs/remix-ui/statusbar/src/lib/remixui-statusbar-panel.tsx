@@ -31,7 +31,6 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
       mainAxis: true, padding: 10
     }), size({
       apply({ availableWidth, availableHeight, elements, ...state }) {
-        console.log(state)
         Object.assign(elements.floating.style, {
           maxWidth: `${availableWidth}`,
           maxHeight: `auto`
