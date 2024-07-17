@@ -25,11 +25,8 @@ interface EtherscanCheckStatusResponse {
 }
 
 export class EtherscanVerifier extends AbstractVerifier {
-  apiKey?: string
-
-  constructor(apiUrl: string, apiKey?: string) {
-    super(apiUrl)
-    this.apiKey = apiKey
+  constructor(apiUrl: string, explorerUrl: string, private apiKey?: string) {
+    super(apiUrl, explorerUrl)
   }
 
   async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse> {
@@ -142,13 +139,20 @@ export class EtherscanVerifier extends AbstractVerifier {
 
     const lookupResponse: EtherscanRpcResponse = await response.json()
 
+    const lookupUrl = this.getContractCodeUrl(contractAddress)
+
     if (lookupResponse.result === 'Contract source code not verified') {
-      return { status: 'not verified' }
+      return { status: 'not verified', lookupUrl }
     } else if (lookupResponse.status !== '1' || !lookupResponse.message.startsWith('OK')) {
       console.error('Error on Etherscan API lookup at ' + this.apiUrl + '\nStatus: ' + lookupResponse.status + '\nMessage: ' + lookupResponse.message + '\nResult: ' + lookupResponse.result)
       throw new Error(lookupResponse.result)
     }
 
-    return { status: 'verified' }
+    return { status: 'verified', lookupUrl }
+  }
+
+  getContractCodeUrl(address: string): string {
+    const url = new URL(`address/${address}#code`, this.explorerUrl)
+    return url.href
   }
 }
