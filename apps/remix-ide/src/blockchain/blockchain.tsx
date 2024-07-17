@@ -49,6 +49,7 @@ export type Provider = {
   dataId: string
   name: string
   displayName: string
+  logo?: string,
   fork: string
   description?: string
   isInjected: boolean
