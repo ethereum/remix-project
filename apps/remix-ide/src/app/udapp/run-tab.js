@@ -129,6 +129,28 @@ export class RunTab extends ViewPlugin {
   async onInitDone() {
     const udapp = this // eslint-disable-line
 
+    const descriptions = {
+      'vm-cancun': 'Deploy to an in-browser virtual machine which run the cancun fork.',
+      'vm-shanghai': 'Deploy to an in-browser virtual machine which run the cancun fork.',
+      'vm-paris': 'Deploy to an in-browser virtual machine which run the paris fork.',
+      'vm-london': 'Deploy to an in-browser virtual machine which run the london fork.',
+      'vm-berlin': 'Deploy to an in-browser virtual machine which run the berlin fork.',
+      'vm-mainnet-fork': 'Deploy to an in-browser virtual machine which fork locally the ethereum mainnet.',
+      'vm-sepolia-fork': 'Deploy to an in-browser virtual machine which fork locally the sepolia testnet.',
+      'vm-custom-fork': 'Deploy to an in-browser virtual machine which fork locally a custom network.',
+      'walletconnect': 'Deploy using wallet connect.',
+      'basic-http-provider': 'Deploy to a custom local network.',
+      'hardhat-provider': 'Deploy to a hardhat development nework.',
+      'ganache-provider': 'Deploy to a ganache development nework.',
+      'foundry-provider': 'Deploy to a foundry development nework.',
+      'injected-MetaMask': 'Deploy through the Metamask browser extension.',
+      'injected-Brave': 'Deploy through the Brave browser extension.',
+      'injected-metamask-optimism': 'Deploy to the Optimism network through the Metamask browser extension.',
+      'injected-metamask-arbitrum': 'Deploy to the Arbitrum network through the Metamask browser extension.',
+      'injected-metamask-sepolia': 'Deploy to the Sepolia Testnet network through the Metamask browser extension.',
+      'injected-metamask-ephemery': 'Deploy to the Ephemery Testnet network through the Metamask browser extension.'
+    }
+
     const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
       await this.call('blockchain', 'addProvider', {
         position,
@@ -136,6 +158,7 @@ export class RunTab extends ViewPlugin {
         dataId,
         name,
         displayName,
+        description: descriptions[name] || displayName,
         fork,
         isInjected,
         isVM,
@@ -167,15 +190,15 @@ export class RunTab extends ViewPlugin {
       await addProvider(0, name, displayName, true, false, false)
 
       if (event.detail.info.name === 'MetaMask') {
-        await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
-        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
-        await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Testnet - Sepolia', '0xaa36a7', [],
+        await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism - ' + event.detail.info.name, '0xa', ['https://mainnet.optimism.io'])
+        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum - ' + event.detail.info.name, '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
+        await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Sepolia Testnet - ' + event.detail.info.name, '0xaa36a7', [],
           {
             "name": "Sepolia ETH",
             "symbol": "ETH",
             "decimals": 18
           })    
-        await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
+        await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet - ' + event.detail.info.name, '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
           {
             "name": "Ephemery ETH",
             "symbol": "ETH",
@@ -192,16 +215,16 @@ export class RunTab extends ViewPlugin {
       }      
     }
 
-    // VM
+    // VM    
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
-    await addProvider(1, 'vm-cancun', 'Remix VM (Cancun)', false, true, 'cancun', 'settingsVMCancunMode', titleVM)
-    await addProvider(50, 'vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
-    await addProvider(51, 'vm-paris', 'Remix VM (Paris)', false, true, 'paris', 'settingsVMParisMode', titleVM)
-    await addProvider(52, 'vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
-    await addProvider(53, 'vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
-    await addProvider(2, 'vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'cancun', 'settingsVMMainnetMode', titleVM)
-    await addProvider(3, 'vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'cancun', 'settingsVMSepoliaMode', titleVM)
-    await addProvider(4, 'vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
+    await addProvider(1, 'vm-cancun', 'VM Cancun Fork', false, true, 'cancun', 'settingsVMCancunMode', titleVM)
+    await addProvider(50, 'vm-shanghai', 'VM Shanghai Fork', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
+    await addProvider(51, 'vm-paris', 'VM Paris Fork', false, true, 'paris', 'settingsVMParisMode', titleVM)
+    await addProvider(52, 'vm-london', 'VM London Fork', false, true, 'london', 'settingsVMLondonMode', titleVM)
+    await addProvider(53, 'vm-berlin', 'VM Berlin Fork', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
+    await addProvider(2, 'vm-mainnet-fork', 'VM Mainnet fork', false, true, 'cancun', 'settingsVMMainnetMode', titleVM)
+    await addProvider(3, 'vm-sepolia-fork', 'VM Sepolia Testnet fork', false, true, 'cancun', 'settingsVMSepoliaMode', titleVM)
+    await addProvider(4, 'vm-custom-fork', 'VM Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
 
     // wallet connect
     await addProvider(6, 'walletconnect', 'WalletConnect', false, false)
