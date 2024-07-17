@@ -12,7 +12,7 @@ function StepDetailPage() {
   const location = useLocation()
   const dispatch = useAppDispatch()
   const [clonedStep, setClonedStep] = React.useState(null)
-  
+ 
   const queryParams = new URLSearchParams(location.search)
   const id = queryParams.get('id') as string
   const stepId = Number(queryParams.get('stepId'))
