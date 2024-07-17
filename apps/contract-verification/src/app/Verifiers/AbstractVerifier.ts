@@ -6,14 +6,10 @@ export interface AbstractVerifier {
 }
 
 export abstract class AbstractVerifier {
-  apiUrl: string
   // TODO remove prop
-  enabled: boolean
+  enabled = true
 
-  constructor(apiUrl: string) {
-    this.apiUrl = apiUrl
-    this.enabled = true
-  }
+  constructor(public apiUrl: string, public explorerUrl: string) {}
 
   abstract verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse>
   abstract lookup(contractAddress: string, chainId: string): Promise<LookupResponse>
