@@ -163,7 +163,7 @@ export class RunTab extends ViewPlugin {
       'walletconnect': ['assets/img/Walletconnect-logo.png'],
       'vm-cancun': ['assets/img/guitarRemiCroped.webp'],
       'vm-shanghai': ['assets/img/bgRemi_small.webp'],
-      'vm-paris': ['assets/img/home.webp'],
+      'vm-paris': ['assets/img/guitarRemiCroped.webp'],
       'vm-london': ['assets/img/remixLogo.webp'],
       'vm-berlin': ['assets/img/sleepingRemiCroped.webp'],
       'vm-mainnet-fork': ['assets/img/guitarRemiCroped.webp'],
