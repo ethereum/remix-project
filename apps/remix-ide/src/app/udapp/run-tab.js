@@ -151,6 +151,14 @@ export class RunTab extends ViewPlugin {
       'injected-metamask-ephemery': 'Deploy to the Ephemery Testnet network through the Metamask browser extension.'
     }
 
+    const logos = {
+      'injected-metamask-optimism': 'assets/img/optimism-ethereum-op-logo.png',
+      'injected-metamask-arbitrum': 'assets/img/arbitrum-arb-logo.png',
+      'injected-MetaMask': 'assets/img/metamask.png',
+      'hardhat-provider': 'assets/img/hardhat.png',
+      'walletconnect': 'assets/img/Walletconnect-logo.png'
+    }
+
     const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
       await this.call('blockchain', 'addProvider', {
         position,
@@ -159,6 +167,7 @@ export class RunTab extends ViewPlugin {
         name,
         displayName,
         description: descriptions[name] || displayName,
+        logo: logos[name],
         fork,
         isInjected,
         isVM,
