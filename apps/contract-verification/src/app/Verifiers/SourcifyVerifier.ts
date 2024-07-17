@@ -113,14 +113,22 @@ export class SourcifyVerifier extends AbstractVerifier {
     const lookupResponse: SourcifyLookupResponse = (await response.json())[0]
 
     let status: VerificationStatus = 'unknown'
+    let lookupUrl: string | undefined = undefined
     if (lookupResponse.status === 'false') {
       status = 'not verified'
     } else if (lookupResponse.chainIds?.[0].status === 'perfect') {
       status = 'fully verified'
+      lookupUrl = this.getContractCodeUrl(contractAddress, chainId, true)
     } else if (lookupResponse.chainIds?.[0].status === 'partial') {
       status = 'partially verified'
+      lookupUrl = this.getContractCodeUrl(contractAddress, chainId, false)
     }
 
-    return { status }
+    return { status, lookupUrl }
+  }
+
+  getContractCodeUrl(address: string, chainId: string, fullMatch: boolean): string {
+    const url = new URL(`contracts/${fullMatch ? 'full_match' : 'partial_match'}/${chainId}/${address}`, this.explorerUrl)
+    return url.href
   }
 }
