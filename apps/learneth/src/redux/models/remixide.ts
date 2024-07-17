@@ -137,14 +137,11 @@ const Model: ModelType = {
           yield remixClient.call('fileManager', 'switchFile', `${path}`)
         }
 
-        console.log('testing ', step.test.content)
-
         path = getFilePath(step.test.file)
         path = `.learneth/${workshop.name}/${step.name}/${path}`
         yield remixClient.call('fileManager', 'setFile', path, step.test.content)
 
         const result = yield remixClient.call('solidityUnitTesting', 'testFromPath', path)
-        console.log('result ', result);
 
         if (!result) {
           yield put({
@@ -195,7 +192,6 @@ const Model: ModelType = {
       toast.info('loading answer into IDE')
 
       try {
-        console.log('loading ', step)
         const content = step.answer.content
         let path = getFilePath(step.answer.file)
 
