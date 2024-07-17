@@ -15,7 +15,7 @@ const profile = {
   name: 'environmentExplorer',
   displayName: 'Environment Explorer',
   icon: 'assets/img/EnvironmentExplorerLogo.webp',
-  description: 'Explore providers and customize web3 provider list',
+  description: 'Customize the Environments list in Deploy & Run',
   location: 'mainPanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/run.html',
   version: packageJson.version,
@@ -96,7 +96,7 @@ export class EnvironmentExplorer extends ViewPlugin {
         showUntagged={true}
         showPin={true}
         title={profile.description}
-        description="Choose how you would like to interact with a chain."
+        description="Pin the providers and chains to included them in the ENVIRONMENT select box of the Deploy & Run Transactions module."
       >
         <RemixUIGridSection
           plugin={this}
