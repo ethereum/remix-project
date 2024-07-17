@@ -160,7 +160,7 @@ export class EnvironmentExplorer extends ViewPlugin {
                 }
               }}
             >
-             <div>{provider.description}</div>
+              <div>{provider.description}</div>
             </RemixUIGridCell>
           })}</RemixUIGridSection>
         <RemixUIGridSection
@@ -192,7 +192,7 @@ export class EnvironmentExplorer extends ViewPlugin {
                 }
               }}
             >
-             <div>{provider.description}</div>
+              <div>{provider.description}</div>
             </RemixUIGridCell>
           })}</RemixUIGridSection>
       </RemixUIGridView>
