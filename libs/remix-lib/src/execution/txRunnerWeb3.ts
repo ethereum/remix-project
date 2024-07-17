@@ -49,8 +49,6 @@ export class TxRunnerWeb3 {
           const receipt = await tryTillReceiptAvailable(resp, this.getWeb3())
           tx = await tryTillTxAvailable(resp, this.getWeb3())
           currentDateTime = new Date();
-          const end = currentDateTime.getTime() / 1000
-          console.log('tx duration', end - start)
           resolve({
             receipt,
             tx,
