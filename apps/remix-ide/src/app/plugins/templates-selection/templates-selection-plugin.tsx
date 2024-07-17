@@ -173,7 +173,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                         tooltipText={item.displayName}
                       >
                         <span className='text-truncate overflow-hidden whitespace-nowrap'>{item.displayName}</span>
-                      </CustomTooltip>  
+                      </CustomTooltip>
                       <div className='d-flex flex-wrap'>
                         {(item.opts && item.opts.upgradeable && item.opts.upgradeable === 'uups') && <span className='badgeForCell badge text-secondary'>Upgradeable-UUPS</span>}
                         {(item.opts && item.opts.mintable) && <span className='badgeForCell text-secondary'>mintable</span>}
