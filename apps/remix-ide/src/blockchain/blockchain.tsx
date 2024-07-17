@@ -50,6 +50,7 @@ export type Provider = {
   name: string
   displayName: string
   fork: string
+  description?: string
   isInjected: boolean
   isVM: boolean
   title: string

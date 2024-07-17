@@ -99,13 +99,13 @@ export class EnvironmentExplorer extends ViewPlugin {
       >
         <RemixUIGridSection
           plugin={this}
-          title='Injected'
-          hScrollable={true}
+          title='Deploy using a Browser Extension.'
+          hScrollable={false}
         >
           {this.providers['Injected'].map(provider => {
             return <RemixUIGridCell
               plugin={this}
-              title={provider.name}
+              title={provider.displayName}
               classList='EECellStyle'
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
@@ -123,18 +123,18 @@ export class EnvironmentExplorer extends ViewPlugin {
                 }
               }}
             >
-              <div>{provider.name}</div>
+              <div>{provider.description}</div>
             </RemixUIGridCell>
           })}
         </RemixUIGridSection>
         <RemixUIGridSection
           plugin={this}
-          title='Remix VMs'
-          hScrollable= {true}
+          title='Deploy to an In-browser Virtual Machine.'
+          hScrollable={false}
         >{this.providers['Remix VMs'].map(provider => {
             return <RemixUIGridCell
               plugin={this}
-              title={provider.name}
+              title={provider.displayName}
               classList='EECellStyle'
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
@@ -152,17 +152,17 @@ export class EnvironmentExplorer extends ViewPlugin {
                 }
               }}
             >
-              <div>{provider.name}</div>
+             <div>{provider.description}</div>
             </RemixUIGridCell>
           })}</RemixUIGridSection>
         <RemixUIGridSection
           plugin={this}
-          title='Externals'
-          hScrollable= {true}
+          title='Deploy to an external Provider.'
+          hScrollable={false}
         >{this.providers['Externals'].map(provider => {
             return <RemixUIGridCell
               plugin={this}
-              title={provider.name}
+              title={provider.displayName}
               classList='EECellStyle'
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
@@ -180,7 +180,7 @@ export class EnvironmentExplorer extends ViewPlugin {
                 }
               }}
             >
-              <div>{provider.name}</div>
+             <div>{provider.description}</div>
             </RemixUIGridCell>
           })}</RemixUIGridSection>
       </RemixUIGridView>
