@@ -82,8 +82,8 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
             </div>
           </div>
           { filterCon.showPin && <button
-            className={`${pinned ? 'fa-duotone' : 'fa-light'}` + ` fa-map-pin text-info border-0 mb-0 remixui_grid_cell_pin`}
-            style={{ fontSize: 'large' }}
+            className={`${pinned ? 'fa-duotone' : 'fa-light'}` + ` fa-circle-o text-info border-0 mb-0 remixui_grid_cell_pin`}
+            style={{ fontSize: '30px' }}
             data-id={`${pinned ? `${props.title}-pinned` : `${props.title}-unpinned`}`}
             onClick={async () => {
               if (!props.pinStateCallback) setPinned(!pinned)
