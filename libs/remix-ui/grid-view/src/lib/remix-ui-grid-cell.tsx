@@ -34,14 +34,24 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
   const [anyEnabled, setAnyEnabled] = useState(false)
   const [expand, setExpand] = useState(false)
   const [pinned, setPinned] = useState<boolean>(props.pinned)
-
-  useEffect(() => {      
-    setAnyEnabled(
+     
+    /*setAnyEnabled(
     (
       props.title.toLowerCase().includes(filterCon.filter.toLowerCase()) ||
       props.searchKeywords?.map((keyword) => keyword.toLowerCase()).join(' ').includes(filterCon.filter.toLowerCase()) ||
       props.tagList?.join(' ').includes(filterCon.filter.toLowerCase())
     ))
+    */
+  useEffect(() => {
+    // if tags are not used
+    if (!props.tagList || props.tagList.length == 0) setAnyEnabled(true)
+      // if at least one tag is matching or "no tag" is checked
+      else if (props.tagList) setAnyEnabled(props.tagList.some((key) => filterCon.keyValueMap[key]?.enabled) || filterCon?.keyValueMap['no tag']?.enabled)
+    
+    if (filterCon.filter != '') setAnyEnabled(
+      anyEnabled && (
+        props.title.toLowerCase().includes(filterCon.filter.toLowerCase()) ||
+        props.searchKeywords?.some(searchKeyword => filterCon.filter.includes(searchKeyword))))
   }, [filterCon, props.tagList])
 
   /*const listenOnExpand = (key) => {
