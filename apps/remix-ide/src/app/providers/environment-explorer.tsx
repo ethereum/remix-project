@@ -96,7 +96,7 @@ export class EnvironmentExplorer extends ViewPlugin {
         showUntagged={true}
         showPin={true}
         title={profile.description}
-        description="Pin the providers and chains to included them in the ENVIRONMENT select box of the Deploy & Run Transactions module."
+        description="Pin the providers and chains to include them in the ENVIRONMENT select box of the Deploy & Run Transactions module."
       >
         <RemixUIGridSection
           plugin={this}
