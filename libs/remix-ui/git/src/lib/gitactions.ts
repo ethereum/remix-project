@@ -852,6 +852,5 @@ export const clearGitLog = async () => {
 }
 
 export const setStorage = async (storage: storage) => {
-  console.log(storage)
   dispatch(setStoragePayload(storage))
 }
