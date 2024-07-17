@@ -121,7 +121,7 @@ const DragBar = (props: IRemixDragBarUi) => {
         }, 300)
       }
     }
-    
+
   }
 
   function startDrag() {
