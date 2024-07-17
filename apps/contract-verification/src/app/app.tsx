@@ -27,8 +27,8 @@ const App = () => {
 
   useEffect(() => {
     // const sourcifyVerifier = new SourcifyVerifier('http://sourcify.dev/server/', 'Sourcify')
-    const sourcifyVerifier = new SourcifyVerifier('http://localhost:5555/')
-    const etherscanVerifier = new EtherscanVerifier('https://api.etherscan.io', 'API_KEY')
+    const sourcifyVerifier = new SourcifyVerifier('http://localhost:5555/', 'todo')
+    const etherscanVerifier = new EtherscanVerifier('https://api.etherscan.io', 'todo', 'API_KEY')
     setVerifiers([sourcifyVerifier, etherscanVerifier])
     // TODO: Fix 'compilationFinished' event types. The interface is outdated at https://github.com/ethereum/remix-plugin/blob/master/packages/api/src/lib/compiler/api.ts. It does not include data, input, or version. See the current parameters: https://github.com/ethereum/remix-project/blob/9f6c5be882453a555055f07171701459e4ae88a4/libs/remix-solidity/src/compiler/compiler.ts#L189
 

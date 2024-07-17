@@ -25,7 +25,7 @@ interface EtherscanCheckStatusResponse {
 }
 
 export class EtherscanVerifier extends AbstractVerifier {
-  constructor(apiUrl: string, explorerUrl: string, private apiKey?: string) {
+  constructor(apiUrl: string, explorerUrl: string, protected apiKey?: string) {
     super(apiUrl, explorerUrl)
   }
 
