@@ -66,7 +66,7 @@ export const VerifyView = () => {
     // Verify for each verifier. forEach does not wait for await and each promise will execute in parallel
     receipts.forEach(async (receipt) => {
       const { verifierInfo } = receipt
-      const verifier = getVerifier(verifierInfo.name, { apiUrl: verifierInfo.apiUrl })
+      const verifier = getVerifier(verifierInfo.name, { apiUrl: verifierInfo.apiUrl, explorerUrl: '' })
       try {
         const response = await verifier.verify(newSubmittedContract, compilerAbstract)
         receipt.status = response.status
