@@ -303,30 +303,22 @@ function DeployPanel(): JSX.Element {
           )}
           <FormattedMessage id="quickDapp.teardown" />
         </Button>
-        {deployState.code === 'SUCCESS' && (
-          <Alert variant="success" className="mt-4" data-id="deploySuccess">
-            <FormattedMessage id="quickDapp.text4" /> <br /> <FormattedMessage id="quickDapp.text5" />
-            <br />
-            <a
-              data-id="dappUrl"
-              target="_blank"
-              href={`https://${formVal.subdomain}.surge.sh`}
-            >{`https://${formVal.subdomain}.surge.sh`}</a>
+        {deployState.code !== '' && (
+          <Alert variant={deployState.code === 'SUCCESS' ? "success" : "danger"} className="mt-4" data-id="deployResult">
+            {deployState.code === 'SUCCESS' ? <>
+              <FormattedMessage id="quickDapp.text4" /> <br /> <FormattedMessage id="quickDapp.text5" />
+              <br />
+              <a
+                data-id="dappUrl"
+                target="_blank"
+                href={`https://${formVal.subdomain}.surge.sh`}
+              >{`https://${formVal.subdomain}.surge.sh`}</a>
+            </> : deployState.error}
           </Alert>
         )}
-        {deployState.error && (
-          <Alert variant="danger" className="mt-4" data-id="deployFail">
-            {deployState.error}
-          </Alert>
-        )}
-        {teardownState.code === 'SUCCESS' && (
-          <Alert variant="success" className="mt-4" data-id="teardownSuccess">
-            <FormattedMessage id="quickDapp.text6" />
-          </Alert>
-        )}
-        {teardownState.error && (
-          <Alert variant="danger" className="mt-4" data-id="teardownFail">
-            {teardownState.error}
+        {teardownState.code !== '' && (
+          <Alert variant={teardownState.code === 'SUCCESS' ? "success" : "danger"} className="mt-4" data-id="teardownResult">
+            {teardownState.code === 'SUCCESS' ? <FormattedMessage id="quickDapp.text6" /> : teardownState.error}
           </Alert>
         )}
       </Form>
