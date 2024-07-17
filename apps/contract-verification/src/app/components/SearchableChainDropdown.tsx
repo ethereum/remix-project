@@ -88,7 +88,7 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
   }
 
   return (
-    <div className="dropdown" ref={dropdownRef}>
+    <div className="dropdown mb-3" ref={dropdownRef}>
       {' '}
       {/* Add ref here */}
       <label htmlFor={id}>{label}</label>

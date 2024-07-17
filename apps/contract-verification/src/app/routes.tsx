@@ -1,10 +1,8 @@
 import React from 'react'
 import { HashRouter as Router, Route, Routes } from 'react-router-dom'
 
-import { VerifyView } from './views'
+import { VerifyView, ReceiptsView, LookupView, SettingsView } from './views'
 import { DefaultLayout } from './layouts'
-import { ReceiptsView } from './views/ReceiptsView'
-import { LookupView } from './views/LookupView'
 
 const DisplayRoutes = () => (
   <Router>
@@ -32,6 +30,15 @@ const DisplayRoutes = () => (
         element={
           <DefaultLayout from="/" title="Lookup" description="Search for verified contracts and download them to Remix">
             <LookupView />
+          </DefaultLayout>
+        }
+      />
+
+      <Route
+        path="/settings"
+        element={
+          <DefaultLayout from="/" title="Settings" description="Customize settings for each verification service and chain">
+            <SettingsView />
           </DefaultLayout>
         }
       />

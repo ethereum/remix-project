@@ -124,7 +124,7 @@ export const VerifyView = () => {
           })}
       </div>
       <div>
-        <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} />
+        {/* <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} /> */}
       </div>
     </form>
   )
