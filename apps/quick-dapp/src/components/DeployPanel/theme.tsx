@@ -56,6 +56,8 @@ const CustomToggle = React.forwardRef(
         e.preventDefault();
         onClick(e);
       }}
+      id="dropdown-custom-components"
+      data-id="selectThemesOptions"
       className={className.replace('dropdown-toggle', '')}
     >
       <div className="d-flex">
@@ -126,7 +128,6 @@ export function ThemeUI() {
       <Dropdown className="w-100">
         <Dropdown.Toggle
           as={CustomToggle}
-          id="dropdown-custom-components"
           className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control"
           icon={''}
         >

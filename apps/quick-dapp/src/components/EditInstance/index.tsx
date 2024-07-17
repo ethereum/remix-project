@@ -17,6 +17,7 @@ function EditInstance(): JSX.Element {
         <div className="col-9 pl-0">
           <div className="my-2 p-3 bg-light">
             <input
+              data-id="dappTitle"
               className="form-control"
               placeholder={intl.formatMessage({ id: 'quickDapp.dappTitle' })}
               value={title}
@@ -36,6 +37,7 @@ function EditInstance(): JSX.Element {
           </div>
           <div className="my-2 p-3 bg-light">
             <textarea
+              data-id="dappInstructions"
               className="form-control"
               placeholder={intl.formatMessage({ id: 'quickDapp.dappInstructions' })}
               value={details}

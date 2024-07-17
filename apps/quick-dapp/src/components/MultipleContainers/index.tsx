@@ -508,6 +508,7 @@ export function MultipleContainers({
   function renderSortableItemDragOverlay(id: UniqueIdentifier) {
     return (
       <Item
+        id={id}
         handle={handle}
         style={getItemStyles({
           containerId: findContainer(id) as UniqueIdentifier,
@@ -521,7 +522,7 @@ export function MultipleContainers({
         wrapperStyle={wrapperStyle({ index: 0 })}
         dragOverlay
       >
-        <ContractGUI funcABI={abi[id]} />
+        <ContractGUI funcABI={abi[id]} funcId={id} />
       </Item>
     );
   }
@@ -532,6 +533,7 @@ export function MultipleContainers({
         {items[containerId].map((item, index) => (
           <Item
             key={item}
+            id={item}
             handle={handle}
             style={getItemStyles({
               containerId,
@@ -544,7 +546,7 @@ export function MultipleContainers({
             })}
             wrapperStyle={wrapperStyle({ index })}
           >
-            <ContractGUI funcABI={abi[item]} />
+            <ContractGUI funcABI={abi[item]} funcId={item} />
           </Item>
         ))}
       </Container>
@@ -626,6 +628,7 @@ function SortableItem({
 
   return (
     <Item
+      id={id}
       ref={disabled ? undefined : setNodeRef}
       dragging={isDragging}
       sorting={isSorting}
@@ -647,7 +650,7 @@ function SortableItem({
       listeners={listeners}
       onRemove={onRemove}
     >
-      <ContractGUI funcABI={abi[id]} />
+      <ContractGUI funcABI={abi[id]} funcId={id} />
     </Item>
   );
 }

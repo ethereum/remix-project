@@ -30,7 +30,7 @@ const ImageUpload = () => {
 
   return (
     <div className="col-3 pr-0">
-      <input className="d-none" type="file" accept="image/*" onChange={handleImageChange} id="upload-button" />
+      <input data-id="uploadLogo" className="d-none" type="file" accept="image/*" onChange={handleImageChange} id="upload-button" />
       <CustomTooltip
         placement="right"
         tooltipText={intl.formatMessage({ id: 'quickDapp.uploadLogoTooltip' })}

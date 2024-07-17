@@ -1,8 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Form, Button, Alert, InputGroup } from 'react-bootstrap';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
   deploy,
+  teardown,
   emptyInstance,
   resetInstance,
   getInfoFromNatSpec,
@@ -36,10 +37,21 @@ function DeployPanel(): JSX.Element {
     error: '',
     loading: false,
   });
+  const [teardownState, setTeardownState] = useState({
+    code: '',
+    error: '',
+    loading: false,
+  });
+
+  useEffect(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, [deployState, teardownState])
+
   return (
     <div className="col-3 d-inline-block">
-      <h3 className="mb-3">QuickDapp <FormattedMessage id="quickDapp.admin" /></h3>
+      <h3 className="mb-3" data-id="quick-dapp-admin">QuickDapp <FormattedMessage id="quickDapp.admin" /></h3>
       <Button
+        data-id="resetFunctions"
         onClick={() => {
           resetInstance();
         }}
@@ -47,6 +59,7 @@ function DeployPanel(): JSX.Element {
         <FormattedMessage id="quickDapp.resetFunctions" />
       </Button>
       <Button
+        data-id="deleteDapp"
         className="ml-3"
         onClick={() => {
           emptyInstance();
@@ -78,6 +91,7 @@ function DeployPanel(): JSX.Element {
         <Form.Group className="mb-2" controlId="formEmail">
           <Form.Label className="text-uppercase mb-0"><FormattedMessage id="quickDapp.email" /></Form.Label>
           <Form.Control
+            data-id="surgeEmail"
             type="email"
             placeholder={intl.formatMessage({ id: 'quickDapp.surgeEmail' })}
             required
@@ -90,6 +104,7 @@ function DeployPanel(): JSX.Element {
         <Form.Group className="mb-2" controlId="formPassword">
           <Form.Label className="text-uppercase mb-0"><FormattedMessage id="quickDapp.password" /></Form.Label>
           <Form.Control
+            data-id="surgePassword"
             type="password"
             placeholder={intl.formatMessage({ id: 'quickDapp.surgePassword' })}
             required
@@ -104,6 +119,7 @@ function DeployPanel(): JSX.Element {
           <InputGroup>
             <InputGroup.Text>https://</InputGroup.Text>
             <Form.Control
+              data-id="surgeSubdomain"
               type="subdomain"
               placeholder={intl.formatMessage({ id: 'quickDapp.uniqueSubdomain' })}
               required
@@ -133,7 +149,7 @@ function DeployPanel(): JSX.Element {
           <br />
           <div className="d-inline-flex align-items-center custom-control custom-checkbox">
             <input
-              id="inline-checkbox-1"
+              id="shareToTwitter"
               className="form-check-input custom-control-input"
               type="checkbox"
               name="group1"
@@ -145,7 +161,7 @@ function DeployPanel(): JSX.Element {
             />
 
             <label
-              htmlFor="inline-checkbox-1"
+              htmlFor="shareToTwitter"
               className="m-0 form-check-label custom-control-label"
               style={{ paddingTop: 1 }}
             >
@@ -154,7 +170,7 @@ function DeployPanel(): JSX.Element {
           </div>
           <div className="d-inline-flex align-items-center custom-control custom-checkbox ml-3">
             <input
-              id="inline-checkbox-2"
+              id="shareToFacebook"
               className="form-check-input custom-control-input"
               type="checkbox"
               name="group1"
@@ -166,7 +182,7 @@ function DeployPanel(): JSX.Element {
             />
 
             <label
-              htmlFor="inline-checkbox-2"
+              htmlFor="shareToFacebook"
               className="m-0 form-check-label custom-control-label"
               style={{ paddingTop: 1 }}
             >
@@ -180,8 +196,8 @@ function DeployPanel(): JSX.Element {
           </Form.Label>
           <br />
           <span
-            data-id="remix_ai_switch"
-            id="remix_ai_switch"
+            data-id="useNatSpec"
+            id="useNatSpec"
             className="btn ai-switch pl-0 py-0"
             onClick={async () => {
               getInfoFromNatSpec(!natSpec.checked);
@@ -207,7 +223,7 @@ function DeployPanel(): JSX.Element {
           </Form.Label>
           <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
             <input
-              id="inline-checkbox-3"
+              id="verifiedByEtherscan"
               className="form-check-input custom-control-input"
               type="checkbox"
               onChange={(e) => {
@@ -220,7 +236,7 @@ function DeployPanel(): JSX.Element {
             />
 
             <label
-              htmlFor="inline-checkbox-3"
+              htmlFor="verifiedByEtherscan"
               className="m-0 form-check-label custom-control-label"
               style={{ paddingTop: 1 }}
             >
@@ -234,7 +250,7 @@ function DeployPanel(): JSX.Element {
           </Form.Label>
           <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
             <input
-              id="inline-checkbox-4"
+              id="noTerminal"
               className="form-check-input custom-control-input"
               type="checkbox"
               onChange={(e) => {
@@ -247,7 +263,7 @@ function DeployPanel(): JSX.Element {
             />
 
             <label
-              htmlFor="inline-checkbox-4"
+              htmlFor="noTerminal"
               className="m-0 form-check-label custom-control-label"
               style={{ paddingTop: 1 }}
             >
@@ -257,6 +273,7 @@ function DeployPanel(): JSX.Element {
         </Form.Group>
         <ThemeUI />
         <Button
+          data-id="deployDapp"
           variant="primary"
           type="submit"
           className="mt-3"
@@ -267,19 +284,49 @@ function DeployPanel(): JSX.Element {
           )}
           <FormattedMessage id="quickDapp.deploy" />
         </Button>
+        <Button
+          data-id="teardownDapp"
+          variant="primary"
+          className="mt-3 ml-3"
+          disabled={!formVal.email || !formVal.password || !formVal.subdomain}
+          // hide this button for now, just for e2e use
+          style={{ display: 'none' }}
+          onClick={() => {
+            setTeardownState({ code: '', error: '', loading: true });
+            teardown(formVal, (state) => {
+              setTeardownState({ ...state, loading: false });
+            })
+          }}
+        >
+          {teardownState.loading && (
+            <i className="fas fa-spinner fa-spin mr-1"></i>
+          )}
+          <FormattedMessage id="quickDapp.teardown" />
+        </Button>
         {deployState.code === 'SUCCESS' && (
-          <Alert variant="success" className="mt-4">
+          <Alert variant="success" className="mt-4" data-id="deploySuccess">
             <FormattedMessage id="quickDapp.text4" /> <br /> <FormattedMessage id="quickDapp.text5" />
             <br />
             <a
+              data-id="dappUrl"
               target="_blank"
               href={`https://${formVal.subdomain}.surge.sh`}
             >{`https://${formVal.subdomain}.surge.sh`}</a>
           </Alert>
         )}
         {deployState.error && (
-          <Alert variant="danger" className="mt-4">
+          <Alert variant="danger" className="mt-4" data-id="deployFail">
             {deployState.error}
+          </Alert>
+        )}
+        {teardownState.code === 'SUCCESS' && (
+          <Alert variant="success" className="mt-4" data-id="teardownSuccess">
+            <FormattedMessage id="quickDapp.text6" />
+          </Alert>
+        )}
+        {teardownState.error && (
+          <Alert variant="danger" className="mt-4" data-id="teardownFail">
+            {teardownState.error}
           </Alert>
         )}
       </Form>

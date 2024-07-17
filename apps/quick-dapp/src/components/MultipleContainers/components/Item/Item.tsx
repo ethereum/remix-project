@@ -20,6 +20,7 @@ export interface Props {
   wrapperStyle?: React.CSSProperties;
   children: React.ReactNode;
   onRemove?(): void;
+  id?: any;
 }
 
 export const Item = React.memo(
@@ -42,6 +43,7 @@ export const Item = React.memo(
         transform,
         children,
         wrapperStyle,
+        id,
         ...props
       },
       ref
@@ -93,9 +95,10 @@ export const Item = React.memo(
           >
             <div className="border-dark bg-light d-flex">
               {children}
-              <Handle {...handleProps} {...listeners} />
+              <Handle {...handleProps} {...listeners} data-id={`handle${id}`} />
             </div>
             <button
+              data-id={`remove${id}`}
               className={`d-flex justify-content-center align-items-center position-absolute border-0 rounded-circle item-remove`}
               onClick={onRemove}
             >
