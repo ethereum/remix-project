@@ -83,7 +83,6 @@ export class EnvironmentExplorer extends ViewPlugin {
       'Remix VMs': [],
       'Externals': []
     }
-    console.log(this.providersFlat)
     for (const [key, provider] of Object.entries(this.providersFlat)) {
       this.addProvider(provider)
     }

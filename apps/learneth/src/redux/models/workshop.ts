@@ -54,7 +54,6 @@ const Model: ModelType = {
       const { list, detail } = yield select((state) => state.workshop)
 
       const url = `${apiUrl}/clone/${encodeURIComponent(payload.name)}/${payload.branch}?${Math.random()}`
-      console.log('loading ', url)
       const { data } = yield axios.get(url)
       const repoId = `${payload.name}-${payload.branch}`
 
