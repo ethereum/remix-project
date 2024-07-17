@@ -152,11 +152,21 @@ export class RunTab extends ViewPlugin {
     }
 
     const logos = {
-      'injected-metamask-optimism': 'assets/img/optimism-ethereum-op-logo.png',
-      'injected-metamask-arbitrum': 'assets/img/arbitrum-arb-logo.png',
-      'injected-MetaMask': 'assets/img/metamask.png',
-      'hardhat-provider': 'assets/img/hardhat.png',
-      'walletconnect': 'assets/img/Walletconnect-logo.png'
+      'injected-metamask-optimism': ['assets/img/optimism-ethereum-op-logo.png', 'assets/img/metamask.png'],
+      'injected-metamask-arbitrum': ['assets/img/arbitrum-arb-logo.png', 'assets/img/metamask.png'],
+      'injected-metamask-sepolia': ['assets/img/metamask.png'],
+      'injected-metamask-ephemery': ['assets/img/metamask.png'],
+      'injected-MetaMask': ['assets/img/metamask.png'],
+      'hardhat-provider': ['assets/img/hardhat.png'],
+      'walletconnect': ['assets/img/Walletconnect-logo.png'],
+      'vm-cancun': ['assets/img/guitarRemiCroped.webp'],
+      'vm-shanghai': ['assets/img/bgRemi_small.webp'],
+      'vm-paris': ['assets/img/home.webp'],
+      'vm-london': ['assets/img/remixLogo.webp'],
+      'vm-berlin': ['assets/img/sleepingRemiCroped.webp'],
+      'vm-mainnet-fork': ['assets/img/guitarRemiCroped.webp'],
+      'vm-sepolia-fork': ['assets/img/sleepingRemiCroped.webp'],
+      'vm-custom-fork': ['assets/img/remixLogo.webp'],
     }
 
     const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
@@ -167,7 +177,7 @@ export class RunTab extends ViewPlugin {
         name,
         displayName,
         description: descriptions[name] || displayName,
-        logo: logos[name],
+        logos: logos[name],
         fork,
         isInjected,
         isVM,

@@ -106,7 +106,7 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.displayName}
-              logo={provider.logo}
+              logos={provider.logos}
               classList='EECellStyle'
               payload={provider.description}
               pinned={this.pinnedProviders.includes(provider.name)}
@@ -139,7 +139,7 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.displayName}
-              logo={provider.logo}
+              logos={provider.logos}
               classList='EECellStyle'
               payload={provider.description}
               pinned={this.pinnedProviders.includes(provider.name)}
@@ -171,7 +171,7 @@ export class EnvironmentExplorer extends ViewPlugin {
             return <RemixUIGridCell
               plugin={this}
               title={provider.displayName}
-              logo={provider.logo}
+              logos={provider.logos}
               payload={provider.description}
               classList='EECellStyle'
               pinned={this.pinnedProviders.includes(provider.name)}
