@@ -44,103 +44,106 @@ const Model: ModelType = {
     *loadRepo({ payload }, { put, select }) {
       toast.info(`loading ${payload.name}/${payload.branch}`)
 
-      yield put({
-        type: 'loading/save',
-        payload: {
-          screen: true,
-        },
-      })
-
+      const repoId = `${payload.name}-${payload.branch}`
       const { list, detail } = yield select((state) => state.workshop)
 
-      const url = `${apiUrl}/clone/${encodeURIComponent(payload.name)}/${payload.branch}?${Math.random()}`
-      console.log('loading ', url)
-      const { data } = yield axios.get(url)
-      const repoId = `${payload.name}-${payload.branch}`
-
-      for (let i = 0; i < data.ids.length; i++) {
-        const {
-          steps,
-          metadata: {
-            data: { steps: metadataSteps },
+      if (!detail[repoId]) {
+        yield put({
+          type: 'loading/save',
+          payload: {
+            screen: true,
           },
-        } = data.entities[data.ids[i]]
+        })
 
-        let newSteps = []
+        const url = `${apiUrl}/clone/${encodeURIComponent(payload.name)}/${payload.branch}?${Math.random()}`
+        console.log('loading ', url)
+        const { data } = yield axios.get(url)
 
-        if (metadataSteps) {
-          newSteps = metadataSteps.map((step: any) => {
-            return {
-              ...steps.find((item: any) => item.name === step.path),
-              name: step.name,
-            }
-          })
-        } else {
-          newSteps = steps.map((step: any) => ({
-            ...step,
-            name: step.name.replace('_', ' '),
-          }))
-        }
+        for (let i = 0; i < data.ids.length; i++) {
+          const {
+            steps,
+            metadata: {
+              data: { steps: metadataSteps },
+            },
+          } = data.entities[data.ids[i]]
 
-        const stepKeysWithFile = ['markdown', 'solidity', 'test', 'answer', 'js', 'vy']
+          let newSteps = []
 
-        for (let j = 0; j < newSteps.length; j++) {
-          const step = newSteps[j]
-          for (let k = 0; k < stepKeysWithFile.length; k++) {
-            const key = stepKeysWithFile[k]
-            if (step[key]) {
-              try {
-                step[key].content = null // we load this later
-              } catch (error) {
-                console.error(error)
+          if (metadataSteps) {
+            newSteps = metadataSteps.map((step: any) => {
+              return {
+                ...steps.find((item: any) => item.name === step.path),
+                name: step.name,
+              }
+            })
+          } else {
+            newSteps = steps.map((step: any) => ({
+              ...step,
+              name: step.name.replace('_', ' '),
+            }))
+          }
+
+          const stepKeysWithFile = ['markdown', 'solidity', 'test', 'answer', 'js', 'vy']
+
+          for (let j = 0; j < newSteps.length; j++) {
+            const step = newSteps[j]
+            for (let k = 0; k < stepKeysWithFile.length; k++) {
+              const key = stepKeysWithFile[k]
+              if (step[key]) {
+                try {
+                  step[key].content = null // we load this later
+                } catch (error) {
+                  console.error(error)
+                }
               }
             }
           }
+          data.entities[data.ids[i]].steps = newSteps
         }
-        data.entities[data.ids[i]].steps = newSteps
-      }
 
-      const workshopState = {
-        detail: {
-          ...detail,
-          [repoId]: {
-            ...data,
-            group: groupBy(
-              data.ids.map((id: string) => pick(data.entities[id], ['level', 'id'])),
-              (item: any) => item.level
-            ),
-            ...payload,
+        const workshopState = {
+          detail: {
+            ...detail,
+            [repoId]: {
+              ...data,
+              group: groupBy(
+                data.ids.map((id: string) => pick(data.entities[id], ['level', 'id'])),
+                (item: any) => item.level
+              ),
+              ...payload,
+            },
           },
-        },
-        list: detail[repoId] ? list : [...list, payload],
-        selectedId: repoId,
-      }
-      yield put({
-        type: 'workshop/save',
-        payload: workshopState,
-      })
-      localStorage.setItem('workshop.state', JSON.stringify(workshopState))
+          list: detail[repoId] ? list : [...list, payload],
+          selectedId: repoId,
+        }
+        yield put({
+          type: 'workshop/save',
+          payload: workshopState,
+        })
+        localStorage.setItem('workshop.state', JSON.stringify(workshopState))
 
-      toast.dismiss()
-      yield put({
-        type: 'loading/save',
-        payload: {
-          screen: false,
-        },
-      })
+        toast.dismiss()
+        yield put({
+          type: 'loading/save',
+          payload: {
+            screen: false,
+          },
+        });
+        (<any>window)._paq.push(['trackEvent', 'learneth', 'load_repo', payload.name])
+      }
 
       if (payload.id) {
-        const { detail, selectedId } = workshopState
-        const { ids, entities } = detail[selectedId]
+        const { detail } = yield select((state) => state.workshop)
+        const { ids, entities } = detail[repoId]
         for (let i = 0; i < ids.length; i++) {
           const entity = entities[ids[i]]
           if (entity.metadata.data.id === payload.id || i + 1 === payload.id) {
             yield router.navigate(`/list?id=${ids[i]}`)
             break
           }
-        }
+        };
+        (<any>window)._paq.push(['trackEvent', 'learneth', 'start_tutorial', payload.name])
       }
-      (<any>window)._paq.push(['trackEvent', 'learneth', 'load_repo', payload.name])
     },
     *resetAll(_, { put }) {
       yield put({
