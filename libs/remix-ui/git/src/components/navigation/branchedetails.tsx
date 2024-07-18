@@ -57,6 +57,10 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
 
   }
 
+  if(branch.name === 'HEAD'){
+    return null;
+  }
+
   return (
     <>
       <div className="d-flex flex-row w-100 mb-2 mt-2">
