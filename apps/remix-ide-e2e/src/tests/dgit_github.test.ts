@@ -153,7 +153,7 @@ module.exports = {
     'check the local branches #group1': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible({
-                selector: '//*[@data-id="branches-panel-content"]//*[@data-id="branches-toggle-current-branch-links"]',
+                selector: '//*[@data-id="branches-panel-content-local-branches"]//*[@data-id="branches-toggle-current-branch-links"]',
                 locateStrategy: 'xpath'
             })
     },
