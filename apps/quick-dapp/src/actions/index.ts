@@ -174,7 +174,7 @@ export const deploy = async (payload: any, callback: any) => {
     }
   });
 
-  const {logo, ...instance} = state.instance;
+  const { logo, ...instance } = state.instance;
 
   const instanceJson = JSON.stringify({
     ...instance,
