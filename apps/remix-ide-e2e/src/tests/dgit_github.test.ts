@@ -101,7 +101,7 @@ module.exports = {
 
             .click('*[data-id="remotes-panel"]')
             .waitForElementVisible('*[data-id="remotes-panel-content"]')
-            .click({
+            .waitForElementVisible({
                 selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin"]',
                 locateStrategy: 'xpath'
             })
