@@ -65,7 +65,7 @@ export const CommitSummary = (props: CommitSummaryProps) => {
       </div>
       {commit.commit.author.name || ""}
       <span className="ml-1">{getDate(commit)}</span>
-      {getRemote() && getRemote()?.url && !isAheadOfRepo && <GitUIButton className="btn btn-sm p-0 text-muted ml-1" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}
+      {getRemote() && getRemote()?.url && !isAheadOfRepo && <GitUIButton tooltip="open on remote" className="btn btn-sm p-0 text-muted ml-1" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}
     </>
   )
 }
