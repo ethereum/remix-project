@@ -129,7 +129,6 @@ export const GetDeviceCode = () => {
               </div>
             </div>
 
-
           </div> : null
       }
 
