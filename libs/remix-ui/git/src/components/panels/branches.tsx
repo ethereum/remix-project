@@ -32,18 +32,19 @@ export const Branches = () => {
             <hr />
             {context.upstream ?
               <>
-                <label className="text-uppercase">remote branches on {context.upstream ? context.upstream.name : null}</label>
-                {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.name === context.upstream.name).map((branch, index) => {
-                  return (
-                    <RemoteBranchDetails allowCheckout={true} key={index} branch={branch}></RemoteBranchDetails>
-                  );
-                })}
-                <GitUIButton data-id={`remote-sync-${context.upstream.name}`} className="btn btn-sm" onClick={async () => {
-                  await actions.fetch({
-                    remote: context.upstream
-                  })
-                }}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon><label className="pl-1">Fetch more from remote</label></GitUIButton>
-                <hr /></> : null}
+                <div data-id='branches-panel-content-remote-branches'>
+                  <label className="text-uppercase">remote branches on {context.upstream ? context.upstream.name : null}</label>
+                  {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.name === context.upstream.name).map((branch, index) => {
+                    return (
+                      <RemoteBranchDetails allowCheckout={true} key={index} branch={branch}></RemoteBranchDetails>
+                    );
+                  })}
+                  <GitUIButton data-id={`remote-sync-${context.upstream.name}`} className="btn btn-sm" onClick={async () => {
+                    await actions.fetch({
+                      remote: context.upstream
+                    })
+                  }}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon><label className="pl-1">Fetch more from remote</label></GitUIButton>
+                  <hr /></div></> : null}
 
           </div> : null}
         {context.currentBranch
