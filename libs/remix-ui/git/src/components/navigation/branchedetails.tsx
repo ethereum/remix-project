@@ -72,22 +72,22 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
             <FontAwesomeIcon className='pointer text-success' icon={faToggleOff} ></FontAwesomeIcon>
           </GitUIButton>
           :
-          <GitUIButton data-id={`branches-toggle-branch-${branch.name}`} className="btn btn-sm p-0 mr-1" onClick={() => checkout(branch)}>
+          <GitUIButton tooltip="checkout branch" data-id={`branches-toggle-branch-${branch.name}`} className="btn btn-sm p-0 mr-1" onClick={() => checkout(branch)}>
             <FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon>
           </GitUIButton>
         }
         {!branch.remote && canFetch() && <>
-          <GitUIButton className="btn btn-sm p-0 mr-1 text-muted" onClick={() => fetchBranch()}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon></GitUIButton>
-          <GitUIButton className="btn btn-sm p-0 mr-1 text-muted" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>
+          <GitUIButton tooltip="fetch branch" className="btn btn-sm p-0 mr-1 text-muted" onClick={() => fetchBranch()}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon></GitUIButton>
+          <GitUIButton tooltip="open on remote" className="btn btn-sm p-0 mr-1 text-muted" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>
         </>}
         {branch.remote?.url && <>
-          <GitUIButton className="btn btn-sm p-0 mr-1 text-muted" onClick={() => reloadBranch()}>
+          <GitUIButton tooltip="fetch branch" className="btn btn-sm p-0 mr-1 text-muted" onClick={() => reloadBranch()}>
             <FontAwesomeIcon icon={faSync} ></FontAwesomeIcon>
           </GitUIButton>
         </>}
 
         {branch.remote?.url && <>
-          <GitUIButton className="btn btn-sm p-0 mr-1 text-muted" onClick={() => openRemote()}>
+          <GitUIButton tooltip="open remote" className="btn btn-sm p-0 mr-1 text-muted" onClick={() => openRemote()}>
             <FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon>
           </GitUIButton>
         </>}
