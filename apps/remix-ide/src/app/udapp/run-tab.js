@@ -130,26 +130,26 @@ export class RunTab extends ViewPlugin {
     const udapp = this // eslint-disable-line
 
     const descriptions = {
-      'vm-cancun': 'Deploy to the in-browser virtual machine which runs the Cancun fork.',
-      'vm-shanghai': 'Deploy to the in-browser virtual machine which runs the Shanghai fork.',
-      'vm-paris': 'Deploy to the in-browser virtual machine which runs the Paris fork.',
-      'vm-london': 'Deploy to the in-browser virtual machine which runs the London fork.',
-      'vm-berlin': 'Deploy to the in-browser virtual machine which runs the Berlin fork.',
-      'vm-mainnet-fork': 'Deploy to the in-browser virtual machine which forks locally the ethereum mainnet.',
-      'vm-sepolia-fork': 'Deploy to the in-browser virtual machine which forks locally the sepolia testnet.',
-      'vm-custom-fork': 'Deploy to the in-browser virtual machine which forks locally a custom network.',
+      'vm-cancun': 'Deploy to the in-browser virtual machine running the Cancun fork.',
+      'vm-shanghai': 'Deploy to the in-browser virtual machine running the Shanghai fork.',
+      'vm-paris': 'Deploy to the in-browser virtual machine running the Paris fork.',
+      'vm-london': 'Deploy to the in-browser virtual machine running the London fork.',
+      'vm-berlin': 'Deploy to the in-browser virtual machine running the Berlin fork.',
+      'vm-mainnet-fork': 'Deploy to a fork of the Ethereum mainnet in the in-browser virtual machine.',
+      'vm-sepolia-fork': 'Deploy to a fork of the Sepolia testnet in the in-browser virtual machine.',
+      'vm-custom-fork': 'Deploy to a fork of a custom network in the in-browser virtual machine.',
       'walletconnect': 'Deploy using WalletConnect.',
       'basic-http-provider': 'Deploy to a Custom local network.',
-      'hardhat-provider': 'Deploy to the local Hardhat development chain.',
-      'ganache-provider': 'Deploy to the local Ganache development chain.',
-      'foundry-provider': 'Deploy to the local Foundry development chain.',
+      'hardhat-provider': 'Deploy to the local Hardhat dev chain.',
+      'ganache-provider': 'Deploy to the local Ganache dev chain.',
+      'foundry-provider': 'Deploy to the local Foundry dev chain.',
       'injected-MetaMask': 'Deploy through the Metamask browser extension.',
       'injected-Brave Wallet': 'Deploy through the Brave Wallet extension.',
       'injected-Brave': 'Deploy through the Brave browser extension.',
       'injected-metamask-optimism': 'Deploy to Optimism through the Metamask browser extension.',
       'injected-metamask-arbitrum': 'Deploy to Arbitrum through the Metamask browser extension.',
-      'injected-metamask-sepolia': 'Deploy to the Sepolia Testnet through the Metamask browser extension.',
-      'injected-metamask-ephemery': 'Deploy to the Ephemery Testnet through the Metamask browser extension.'
+      'injected-metamask-sepolia': 'Deploy to the Sepolia testnet through the Metamask browser extension.',
+      'injected-metamask-ephemery': 'Deploy to the Ephemery testnet through the Metamask browser extension.'
     }
 
     const logos = {
@@ -159,10 +159,10 @@ export class RunTab extends ViewPlugin {
       'injected-metamask-ephemery': ['assets/img/metamask.png'],
       'injected-MetaMask': ['assets/img/metamask.png'],
       'injected-Brave Wallet': ['assets/img/brave.png'],
+      'injected-Trust Wallet': ['assets/img/trust-wallet.png'],
       'hardhat-provider': ['assets/img/hardhat.png'],
       'walletconnect': ['assets/img/Walletconnect-logo.png'],     
-      'foundry-provider': ['assets/img/foundry.png'],
-      'basic-http-provider': ['assets/img/hexagon-remix-greengrey-texture.png']
+      'foundry-provider': ['assets/img/foundry.png']
     }
 
     const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
