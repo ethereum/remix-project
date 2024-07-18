@@ -491,11 +491,11 @@ module.exports = {
       .click('*[data-id="remotes-panel"]')
       .waitForElementVisible('*[data-id="remotes-panel-content"]')
       .click({
-        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin"]',
+        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin-default"]',
         locateStrategy: 'xpath'
       })
       .waitForElementVisible({
-        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin" and contains(.,"v4-template")]',
+        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin-default" and contains(.,"v4-template")]',
         locateStrategy: 'xpath'
       })
   },
