@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import Fuse from 'fuse.js'
-import { Chain } from '../types/VerificationTypes'
+import type { Chain } from '../types'
 import { AppContext } from '../AppContext'
 
 interface DropdownProps {

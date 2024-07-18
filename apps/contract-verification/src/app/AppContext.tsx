@@ -1,18 +1,15 @@
 import React from 'react'
-import { ThemeType } from './types'
-import { Chain, SubmittedContracts } from './types/VerificationTypes'
+import type { ThemeType, Chain, SubmittedContracts, ContractVerificationSettings } from './types'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-import { AbstractVerifier } from './Verifiers/AbstractVerifier'
 
 // Define the type for the context
 type AppContextType = {
   themeType: ThemeType
   setThemeType: (themeType: ThemeType) => void
+  settings: ContractVerificationSettings
+  setSettings: React.Dispatch<React.SetStateAction<ContractVerificationSettings>>
   chains: Chain[]
   compilationOutput: { [key: string]: CompilerAbstract } | undefined
-  targetFileName: string | undefined
-  verifiers: AbstractVerifier[]
-  setVerifiers: React.Dispatch<React.SetStateAction<AbstractVerifier[]>>
   submittedContracts: SubmittedContracts
   setSubmittedContracts: React.Dispatch<React.SetStateAction<SubmittedContracts>>
 }
@@ -23,11 +20,10 @@ const defaultContextValue: AppContextType = {
   setThemeType: (themeType: ThemeType) => {
     console.log('Calling Set Theme Type')
   },
+  settings: { chains: {} },
+  setSettings: () => {},
   chains: [],
   compilationOutput: undefined,
-  targetFileName: undefined,
-  verifiers: [],
-  setVerifiers: (verifiers: AbstractVerifier[]) => {},
   submittedContracts: {},
   setSubmittedContracts: (submittedContracts: SubmittedContracts) => {},
 }

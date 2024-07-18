@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { SearchableChainDropdown, ContractAddressInput } from '../components'
-import { Chain } from '../types/VerificationTypes'
+import type { Chain } from '../types'
 
 export const LookupView = () => {
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()

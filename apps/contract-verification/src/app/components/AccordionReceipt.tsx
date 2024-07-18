@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { SubmittedContract, SubmittedProxyContract, isContract, isProxy } from '../types/VerificationTypes'
+import { SubmittedContract, SubmittedProxyContract, isContract, isProxy } from '../types'
 import { shortenAddress, CustomTooltip } from '@remix-ui/helper'
 import { AppContext } from '../AppContext'
 

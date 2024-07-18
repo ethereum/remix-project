@@ -1,4 +1,4 @@
-import { VerifierIdentifier, VerifierSettings } from '../types/VerificationTypes'
+import type { VerifierIdentifier, VerifierSettings } from '../types'
 import { AbstractVerifier } from './AbstractVerifier'
 import { BlockscoutVerifier } from './BlockscoutVerifier'
 import { EtherscanVerifier } from './EtherscanVerifier'
