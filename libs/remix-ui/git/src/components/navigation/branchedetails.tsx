@@ -5,6 +5,7 @@ import { gitActionsContext } from "../../state/context";
 import { branch } from "../../types";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
+import { removeGitFromUrl } from "../../utils";
 
 interface BrancheDetailsNavigationProps {
   eventKey: string;
@@ -33,7 +34,7 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
 
   const openRemote = () => {
     const remote = branch.remote || getRemote()
-    window.open(`${remote.url}/tree/${branch.name}`, '_blank');
+    window.open(`${removeGitFromUrl(remote.url)}/tree/${branch.name}`, '_blank');
   }
 
   const reloadBranch = () => {

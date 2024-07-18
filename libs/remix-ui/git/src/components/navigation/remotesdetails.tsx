@@ -6,6 +6,7 @@ import { gitActionsContext } from "../../state/context";
 import { branch, remote } from "../../types";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
+import { removeGitFromUrl } from "../../utils";
 
 interface RemotesDetailsNavigationProps {
   eventKey: string;
@@ -29,7 +30,7 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
   }
 
   const openRemote = () => {
-    window.open(`${remote.url}`, '_blank');
+    window.open(`${removeGitFromUrl(remote.url)}`, '_blank');
   }
 
   const setAsDefault = () => {
