@@ -41,7 +41,6 @@ export const CommitDetails = (props: CommitDetailsProps) => {
   }
 
   const openFileOnRemote = (file: string, hash: string, branch: branch) => {
-    console.log(branch)
     if (!getRemote()) return
     window.open(`${getRemote() ? `${removeGitFromUrl(getRemote().url)}/blob/${hash}/${file}` : ""}`, "_blank")
   }
