@@ -126,6 +126,7 @@ export const PushPull = () => {
     }
     const remoteBranches = context.branches && context.branches.length > 0 && context.branches
       .filter(branch => branch.remote && branch.remote.name === context.upstream.name)
+      .filter(branch => branch.name !== 'HEAD')
       .map(repo => {
         return { value: repo.name, label: repo.name }
       }
