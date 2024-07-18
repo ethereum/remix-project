@@ -102,7 +102,7 @@ module.exports = {
             .click('*[data-id="remotes-panel"]')
             .waitForElementVisible('*[data-id="remotes-panel-content"]')
             .waitForElementVisible({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin"]',
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin-default"]',
                 locateStrategy: 'xpath'
             })
             .waitForElementVisible({
@@ -232,7 +232,7 @@ module.exports = {
                 locateStrategy: 'xpath'
             })
             .waitForElementVisible({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-newremote"]',
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-newremote-default"]',
                 locateStrategy: 'xpath'
             })
     },
@@ -263,7 +263,7 @@ module.exports = {
                 }
             })
     },
-    'remove the remove #group2': function (browser: NightwatchBrowser) {
+    'remove the remote #group2': function (browser: NightwatchBrowser) {
         browser
             .pause(1000)
             .click('*[data-id="remotes-panel"]')
@@ -278,7 +278,7 @@ module.exports = {
             })
             .pause(1000)
             .waitForElementNotPresent({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-newremote"]',
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-newremote-default"]',
                 locateStrategy: 'xpath'
             })
     },
