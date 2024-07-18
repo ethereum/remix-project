@@ -120,7 +120,7 @@ export const PushPull = () => {
       })
     setLocalBranchOptions(localBranches)
 
-    if(!context.upstream){
+    if (!context.upstream){
       setRemoteBranchOptions([])
       return
     }

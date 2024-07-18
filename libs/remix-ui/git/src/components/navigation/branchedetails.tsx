@@ -57,7 +57,7 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
 
   }
 
-  if(branch.name === 'HEAD'){
+  if (branch.name === 'HEAD'){
     return null;
   }
 
