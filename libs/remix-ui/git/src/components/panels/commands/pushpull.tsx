@@ -19,7 +19,6 @@ export const PushPull = () => {
   const [force, setForce] = useState(false)
 
   useEffect(() => {
-    console.log('context.currentBranch', context.currentBranch, context.remotes, context.branches)
     setRemoteBranch(context.currentBranch.name)
     setLocalBranch(context.currentBranch.name)
 
