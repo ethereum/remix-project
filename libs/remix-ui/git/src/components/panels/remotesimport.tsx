@@ -75,6 +75,9 @@ export const RemotesImport = () => {
           await addRemote()
         }}>add {remoteName}:{repo.full_name}</button> : null}
 
+      {repo && !remoteName ?
+        <label className="text-warning">Please enter a remote name</label> : null}
+
     </>
   )
 }

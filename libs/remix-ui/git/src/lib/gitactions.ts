@@ -322,6 +322,8 @@ export const clone = async (input: cloneInputType) => {
       message: `Cloned ${input.url} to ${repoNameWithTimestamp}`
     })
 
+    plugin.call('notification', 'toast', `Cloned ${input.url} to ${repoNameWithTimestamp}`)
+
   } catch (e: any) {
     await parseError(e)
   }
