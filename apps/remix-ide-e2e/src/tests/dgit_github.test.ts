@@ -136,22 +136,22 @@ module.exports = {
     },
     'switch to branch links #group1': function (browser: NightwatchBrowser) {
         browser
+            .click('*[data-id="branches-panel"]')
             .waitForElementVisible({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-branch-links"]',
+                selector: '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-id="branches-branch-links"]',
                 locateStrategy: 'xpath'
             })
             .click({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-toggle-branch-links"]',
+                selector: '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-id="branches-toggle-branch-links"]',
                 locateStrategy: 'xpath'
             })
             .waitForElementVisible({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-toggle-current-branch-links"]',
+                selector: '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-id="branches-toggle-current-branch-links"]',
                 locateStrategy: 'xpath'
             })
     },
     'check the local branches #group1': function (browser: NightwatchBrowser) {
         browser
-            .click('*[data-id="branches-panel"]')
             .waitForElementVisible({
                 selector: '//*[@data-id="branches-panel-content"]//*[@data-id="branches-toggle-current-branch-links"]',
                 locateStrategy: 'xpath'
