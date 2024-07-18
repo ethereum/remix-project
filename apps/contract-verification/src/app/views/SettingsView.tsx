@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { SearchableChainDropdown, ConfigInput } from '../components'
-import { Chain } from '../types/VerificationTypes'
+import type { Chain } from '../types'
 
 export const SettingsView = () => {
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()

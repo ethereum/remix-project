@@ -2,21 +2,28 @@ import React, { useEffect, useState } from 'react'
 
 import { AppContext } from '../AppContext'
 import { SearchableChainDropdown, ContractDropdown, ContractAddressInput } from '../components'
-import { Chain, SubmittedContract, VerificationReceipt, VerifierInfo } from '../types/VerificationTypes'
+import type { Chain, SubmittedContract, VerificationReceipt, VerifierInfo } from '../types'
 import { SourcifyVerifier } from '../Verifiers/SourcifyVerifier'
 import { EtherscanVerifier } from '../Verifiers/EtherscanVerifier'
 import { useNavigate } from 'react-router-dom'
 import { ConstructorArguments } from '../components/ConstructorArguments'
-import { getVerifier } from '../Verifiers'
+import { AbstractVerifier, getVerifier } from '../Verifiers'
 import { ContractDropdownSelection } from '../components/ContractDropdown'
 
 export const VerifyView = () => {
-  const { compilationOutput, verifiers, setVerifiers, setSubmittedContracts } = React.useContext(AppContext)
+  const { compilationOutput, setSubmittedContracts } = React.useContext(AppContext)
   const [contractAddress, setContractAddress] = useState('')
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
   const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = React.useState<string>('')
   const [selectedContract, setSelectedContract] = useState<ContractDropdownSelection | undefined>()
   const navigate = useNavigate()
+
+  // TODO
+  const [verifiers, setVerifiers] = useState<AbstractVerifier[]>([]) // Placeholder, to be derived from settings
+  // const sourcifyVerifier = new SourcifyVerifier('http://sourcify.dev/server/', 'Sourcify')
+  const sourcifyVerifier = new SourcifyVerifier('http://localhost:5555/', 'todo')
+  const etherscanVerifier = new EtherscanVerifier('https://api.etherscan.io', 'todo', 'API_KEY')
+  setVerifiers([sourcifyVerifier, etherscanVerifier])
 
   useEffect(() => {
     console.log('Selected chain changed', selectedChain)

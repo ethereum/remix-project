@@ -19,12 +19,6 @@ export interface Chain {
 
 export type VerifierIdentifier = 'Sourcify' | 'Etherscan' | 'Blockscout'
 
-export interface VerifierSettings {
-  apiUrl: string
-  explorerUrl?: string
-  apiKey?: string
-}
-
 export interface VerifierInfo {
   name: VerifierIdentifier
   apiUrl: string

@@ -1,6 +1,6 @@
 import example from './example.js'
 import { AccordionReceipt } from '../components/AccordionReceipt'
-import { SubmittedContracts } from '../types/VerificationTypes'
+import type { SubmittedContracts } from '../types'
 
 export const ReceiptsView = () => {
   const submittedContracts = example as unknown as SubmittedContracts

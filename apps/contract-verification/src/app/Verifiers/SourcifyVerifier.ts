@@ -1,6 +1,6 @@
 import { CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
-import { LookupResponse, SubmittedContract, VerificationResponse, VerificationStatus } from '../types/VerificationTypes'
+import type { LookupResponse, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
 
 interface SourcifyVerificationRequest {
   address: string
