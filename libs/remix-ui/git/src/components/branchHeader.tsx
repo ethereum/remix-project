@@ -66,6 +66,7 @@ export const BranchHeader = () => {
             {getName() ? (
               <span className={`text-truncate overflow-hidden whitespace-nowrap w-100`}>
                 {getName() ?? ''}
+                {context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.name ? ` on ${context.currentBranch.remote.name}` : ''}
               </span>
             ) : null
             }
