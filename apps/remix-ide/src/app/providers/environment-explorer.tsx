@@ -113,13 +113,13 @@ export class EnvironmentExplorer extends ViewPlugin {
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
                   this.emit('providerPinned', provider.name, provider)
-                  this.call('notification', 'toast', `"${provider.displayName}" has been added to the Network list of the Deploy & Run Transactions module.`)
+                  this.call('notification', 'toast', `"${provider.displayName}" has been added to the Environment list of the Deploy & Run Transactions plugin.`)
                   return true
                 }
                 const providerName = await this.call('blockchain', 'getProvider')
                 if (providerName !== provider.name) {
                   this.emit('providerUnpinned', provider.name, provider)
-                  this.call('notification', 'toast', `"${provider.displayName}" has been removed from the Network list of the Deploy & Run Transactions module.`)
+                  this.call('notification', 'toast', `"${provider.displayName}" has been removed from the Environment list of the Deploy & Run Transactions plugin.`)
                   return true
                 } else {
                   this.call('notification', 'toast', 'Cannot unpin the current selected provider')
@@ -146,13 +146,13 @@ export class EnvironmentExplorer extends ViewPlugin {
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
                   this.emit('providerPinned', provider.name, provider)
-                  this.call('notification', 'toast', `"${provider.displayName}" has been added to the Network list of the Deploy & Run Transactions module.`)
+                  this.call('notification', 'toast', `"${provider.displayName}" has been added to the Environment list of the Deploy & Run Transactions plugin.`)
                   return true
                 }
                 const providerName = await this.call('blockchain', 'getProvider')
                 if (providerName !== provider.name) {
                   this.emit('providerUnpinned', provider.name, provider)
-                  this.call('notification', 'toast', `"${provider.displayName}" has been removed from the Network list of the Deploy & Run Transactions module.`)
+                  this.call('notification', 'toast', `"${provider.displayName}" has been removed from the Environment list of the Deploy & Run Transactions plugin.`)
                   return true
                 } else {
                   this.call('notification', 'toast', 'Cannot unpin the current selected provider')
@@ -178,13 +178,13 @@ export class EnvironmentExplorer extends ViewPlugin {
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
                   this.emit('providerPinned', provider.name, provider)
-                  this.call('notification', 'toast', `"${provider.displayName}" has been added to the Network list of the Deploy & Run Transactions module.`)
+                  this.call('notification', 'toast', `"${provider.displayName}" has been added to the Environment list of the Deploy & Run Transactions plugin.`)
                   return true
                 }
                 const providerName = await this.call('blockchain', 'getProvider')
                 if (providerName !== provider.name) {
                   this.emit('providerUnpinned', provider.name, provider)
-                  this.call('notification', 'toast', `"${provider.displayName}" has been removed from the Network list of the Deploy & Run Transactions module.`)
+                  this.call('notification', 'toast', `"${provider.displayName}" has been removed from the Environment list of the Deploy & Run Transactions plugin.`)
                   return true
                 } else {
                   this.call('notification', 'toast', 'Cannot unpin the current selected provider')
