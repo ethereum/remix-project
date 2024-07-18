@@ -11,6 +11,7 @@ const CreateInstance: React.FC = () => {
     name: '',
     network: '',
   });
+  const [error, setError] = useState('')
   return (
     <Form
       className="w-50 m-auto"
@@ -38,17 +39,22 @@ const CreateInstance: React.FC = () => {
           rows={3}
           type="abi"
           placeholder={intl.formatMessage({ id: 'quickDapp.enterAbi' })}
-          value={formVal.abi.length > 0 ? JSON.stringify(formVal.abi) : ''}
           onChange={(e) => {
+            setError('')
             let abi = [];
-            try {
-              abi = JSON.parse(e.target.value);
-            } catch (error) {
-              /* empty */
+            if (e.target.value !== '') {
+              try {
+                abi = JSON.parse(e.target.value);
+              } catch (error) {
+                setError(error.toString())
+              }
             }
             setFormVal({ ...formVal, abi });
           }}
         />
+        {error && <Form.Text className='text-danger'>
+          {error}
+        </Form.Text>}
       </Form.Group>
 
       <Form.Group className="mb-2" controlId="formName">
@@ -78,6 +84,7 @@ const CreateInstance: React.FC = () => {
         variant="primary"
         type="submit"
         className="mt-2"
+        data-id="createDapp"
         disabled={
           !formVal.address ||
           !formVal.name ||
@@ -87,7 +94,7 @@ const CreateInstance: React.FC = () => {
       >
         <FormattedMessage id="quickDapp.submit" />
       </Button>
-      <Alert className="mt-4" variant="info">
+      <Alert className="mt-4" variant="info" data-id="quickDappTooltips">
         <FormattedMessage id="quickDapp.text1" />
         <br />
         <FormattedMessage id="quickDapp.text2" />
