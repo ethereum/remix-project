@@ -130,26 +130,26 @@ export class RunTab extends ViewPlugin {
     const udapp = this // eslint-disable-line
 
     const descriptions = {
-      'vm-cancun': 'Deploy to an in-browser virtual machine which run the cancun fork.',
-      'vm-shanghai': 'Deploy to an in-browser virtual machine which run the cancun fork.',
-      'vm-paris': 'Deploy to an in-browser virtual machine which run the paris fork.',
-      'vm-london': 'Deploy to an in-browser virtual machine which run the london fork.',
-      'vm-berlin': 'Deploy to an in-browser virtual machine which run the berlin fork.',
-      'vm-mainnet-fork': 'Deploy to an in-browser virtual machine which fork locally the ethereum mainnet.',
-      'vm-sepolia-fork': 'Deploy to an in-browser virtual machine which fork locally the sepolia testnet.',
-      'vm-custom-fork': 'Deploy to an in-browser virtual machine which fork locally a custom network.',
-      'walletconnect': 'Deploy using wallet connect.',
-      'basic-http-provider': 'Deploy to a custom local network.',
-      'hardhat-provider': 'Deploy to a hardhat development nework.',
-      'ganache-provider': 'Deploy to a ganache development nework.',
-      'foundry-provider': 'Deploy to a foundry development nework.',
+      'vm-cancun': 'Deploy to the in-browser virtual machine which runs the cancun fork.',
+      'vm-shanghai': 'Deploy to the in-browser virtual machine which runs the cancun fork.',
+      'vm-paris': 'Deploy to the in-browser virtual machine which runs the paris fork.',
+      'vm-london': 'Deploy to the in-browser virtual machine which runs the london fork.',
+      'vm-berlin': 'Deploy to the in-browser virtual machine which runs the berlin fork.',
+      'vm-mainnet-fork': 'Deploy to the in-browser virtual machine which forks locally the ethereum mainnet.',
+      'vm-sepolia-fork': 'Deploy to the in-browser virtual machine which forks locally the sepolia testnet.',
+      'vm-custom-fork': 'Deploy to the in-browser virtual machine which forks locally a custom network.',
+      'walletconnect': 'Deploy using WalletConnect.',
+      'basic-http-provider': 'Deploy to a Custom local network.',
+      'hardhat-provider': 'Deploy to the local Hardhat development chain.',
+      'ganache-provider': 'Deploy to the local Ganache development chain.',
+      'foundry-provider': 'Deploy to the local Foundry development chain.',
       'injected-MetaMask': 'Deploy through the Metamask browser extension.',
       'injected-Brave Wallet': 'Deploy through the Brave Wallet extension.',
       'injected-Brave': 'Deploy through the Brave browser extension.',
-      'injected-metamask-optimism': 'Deploy to the Optimism network through the Metamask browser extension.',
-      'injected-metamask-arbitrum': 'Deploy to the Arbitrum network through the Metamask browser extension.',
-      'injected-metamask-sepolia': 'Deploy to the Sepolia Testnet network through the Metamask browser extension.',
-      'injected-metamask-ephemery': 'Deploy to the Ephemery Testnet network through the Metamask browser extension.'
+      'injected-metamask-optimism': 'Deploy to Optimism through the Metamask browser extension.',
+      'injected-metamask-arbitrum': 'Deploy to Arbitrum through the Metamask browser extension.',
+      'injected-metamask-sepolia': 'Deploy to the Sepolia Testnet through the Metamask browser extension.',
+      'injected-metamask-ephemery': 'Deploy to the Ephemery Testnet through the Metamask browser extension.'
     }
 
     const logos = {
@@ -160,15 +160,7 @@ export class RunTab extends ViewPlugin {
       'injected-MetaMask': ['assets/img/metamask.png'],
       'injected-Brave Wallet': ['assets/img/brave.png'],
       'hardhat-provider': ['assets/img/hardhat.png'],
-      'walletconnect': ['assets/img/Walletconnect-logo.png'],
-      'vm-cancun': ['assets/img/guitarRemiCroped.webp'],
-      'vm-shanghai': ['assets/img/bgRemi_small.webp'],
-      'vm-paris': ['assets/img/guitarRemiCroped.webp'],
-      'vm-london': ['assets/img/remixLogo.webp'],
-      'vm-berlin': ['assets/img/sleepingRemiCroped.webp'],
-      'vm-mainnet-fork': ['assets/img/guitarRemiCroped.webp'],
-      'vm-sepolia-fork': ['assets/img/sleepingRemiCroped.webp'],
-      'vm-custom-fork': ['assets/img/remixLogo.webp'],
+      'walletconnect': ['assets/img/Walletconnect-logo.png'],     
       'foundry-provider': ['assets/img/foundry.png'],
       'basic-http-provider': ['assets/img/hexagon-remix-greengrey-texture.png']
     }
