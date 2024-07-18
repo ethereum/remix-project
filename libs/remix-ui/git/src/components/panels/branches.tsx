@@ -21,12 +21,22 @@ export const Branches = () => {
       <div data-id='branches-panel-content' className="pt-2">
         {context.branches && context.branches.length ?
           <div>
+            <label className="text-uppercase">local branches</label>
             {context.branches && context.branches.filter((branch, index) => !branch.remote).map((branch, index) => {
               return (
                 <LocalBranchDetails key={index} branch={branch}></LocalBranchDetails>
               );
             })}
             <hr />
+            {context.upstream ?
+              <>
+                <label className="text-uppercase">remote branches on {context.upstream ? context.upstream.name : null}</label>
+                {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.name === context.upstream.name ).map((branch, index) => {
+                  return (
+                    <RemoteBranchDetails key={index} branch={branch}></RemoteBranchDetails>
+                  );
+                })}
+                <hr /></> : null}
 
           </div> : null}
         {context.currentBranch
