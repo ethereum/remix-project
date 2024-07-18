@@ -4,6 +4,7 @@ import path from "path";
 import { gitActionsContext, pluginActionsContext } from "../../../state/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
+import GitUIButton from "../../buttons/gituibutton";
 
 export interface CCommitDetailsItemsProps {
   commitChange: commitChange;
@@ -43,7 +44,8 @@ export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
       </div>
       <div className="d-flex align-items-end">
         {!isAheadOfRepo ?
-          <FontAwesomeIcon role={'button'} icon={faGlobe} onClick={() => openRemote()} className="pointer mr-1 align-self-center" /> : <></>}
+          <GitUIButton tooltip="open on remote" className="btn btn-sm p-0 text-muted mr-1" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>
+          : <></>}
         <FunctionStatusIcons></FunctionStatusIcons>
       </div>
     </div>
