@@ -109,7 +109,7 @@ export class EnvironmentExplorer extends ViewPlugin {
               title={provider.name}
               hideTitle={true}
               classList='EECellStyle'
-              searchKeywords={['Injected', provider.displayName, provider.title]}
+              searchKeywords={['Injected', provider.name, provider.title]}
               pinned={this.pinnedProviders.includes(provider.name)}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
