@@ -17,14 +17,18 @@ export interface RemoteSelectProps {
 }
 
 export const Remoteselect = (props: RemoteSelectProps) => {
-  const { remote } = props;
+  const { remote, openDefault } = props;
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const [activePanel, setActivePanel] = useState<string>("");
 
+  useEffect(() => {
+    setActivePanel(openDefault ? "0" : "")
+  }, [openDefault])
+
   return (
     <>
-      <Accordion activeKey={activePanel ? activePanel : props.openDefault ? '0' : ''} defaultActiveKey=''>
+      <Accordion activeKey={activePanel} defaultActiveKey=''>
         <RemotesDetailsNavigation callback={setActivePanel} eventKey="0" activePanel={activePanel} remote={remote} />
         <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
           <>
