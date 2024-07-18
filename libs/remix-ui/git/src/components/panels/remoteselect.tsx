@@ -34,7 +34,7 @@ export const Remoteselect = (props: RemoteSelectProps) => {
           <>
             {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.name === remote.name).map((branch, index) => {
               return (
-                <RemoteBranchDetails key={index} branch={branch}></RemoteBranchDetails>
+                <RemoteBranchDetails allowCheckout={false} key={index} branch={branch}></RemoteBranchDetails>
               );
             })}
             <GitUIButton data-id={`remote-sync-${remote.name}`} className="btn btn-sm" onClick={async () => {
