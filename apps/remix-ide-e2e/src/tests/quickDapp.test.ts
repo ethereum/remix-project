@@ -9,7 +9,7 @@ const passphrase = process.env.account_passphrase
 const password = process.env.account_password
 const extension_id = 'nkbihfbeogaeaoehlefnkodbefgpgknn'
 const extension_url = `chrome-extension://${extension_id}/home.html`
-const address = '0xc55Ad2a09718634faC91Cca4b9cCAcea7d11ac80'
+const address = '0x3b3f6501A7fE68d22eFbc07d4424D4b9115C3038'
 const surgeEmail = 'e2e@remix.org'
 const surgePassword = 'remixe2e'
 const surgeSubdomain = 'remixe2e'
@@ -60,8 +60,7 @@ const tests = {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .useCss()
-      .openFile('contracts')
-      .openFile('contracts/1_Storage.sol')
+      .addFile('Storage.sol', sources[0]['Storage.sol'])
       .clickLaunchIcon('udapp')
       .clickLaunchIcon('udapp')
       .addAtAddressInstance(address, true, true, false)
@@ -76,15 +75,16 @@ const tests = {
   'Should edit and deploy a dapp to surge.sh #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
 
-    browser.perform((done) => {
-      browser.findElement('.container.placeholder', (el: any) => {
-        browser.dragAndDrop('*[data-id="handle0x2e64cec1"]', el.value.getId())
-          .dragAndDrop('*[data-id="handleColumnA"]', el.value.getId())
-          .click('.container.placeholder')
-          .click('*[data-id="removeColumnC"]')
-          .perform(() => done())
+    browser.click('.container.placeholder')
+      .perform((done) => {
+        browser.findElement('*[data-id="containerColumnC"]', (el: any) => {
+          browser.dragAndDrop('*[data-id="handle0x6057361d"]', el.value.getId())
+            .dragAndDrop('*[data-id="handleColumnA"]', el.value.getId())
+            .click('*[data-id="remove0x1003e2d2"]')
+            .click('*[data-id="removeColumnA"]')
+            .perform(() => done())
+        })
       })
-    })
       .setValue('input[data-id="surgeEmail"]', surgeEmail)
       .setValue('input[data-id="surgePassword"]', surgePassword)
       .setValue('input[data-id="surgeSubdomain"]', surgeSubdomain)
@@ -182,16 +182,42 @@ const tests = {
       .assert.elementPresent('.fa-facebook.btn', 'Facebook icon should be present')
       .checkElementStyle(':root', '--secondary', '#b3bcc483')
       .element('css selector', '#terminal-view', function (result) {
-        browser.assert.strictEqual(result.status, -1)
+        browser.assert.strictEqual(result.status, -1, 'terminal should not shown')
+      })
+      .element('css selector', '*[data-id="function0x1003e2d2"]', function (result) {
+        browser.assert.strictEqual(result.status, -1, 'function add should not shown')
+      })
+      .getLocation('*[data-id="function0x6057361d"]', function (result: any) {
+        const funcStoreLocation = result.value
+        browser.getLocation('*[data-id="function0x2e64cec1"]', function (result: any) {
+          const funcRetriveLocation = result.value
+          browser.assert.strictEqual(funcStoreLocation.y, funcRetriveLocation.y, 'Both functions should be on the same horizontal line')
+          browser.assert.ok(funcStoreLocation.x > funcRetriveLocation.x, 'Function Store should be on the right of Function Retrive')
+        })
       })
       .getAttribute('a[data-id="viewSourceCode"]', 'href', function (result) {
-        browser.assert.strictEqual(result.value, `https://remix.ethereum.org/address/${address}`)
+        browser.assert.strictEqual(result.value, `https://remix.ethereum.org/address/${address}`, 'view source code url should match')
       })
+  },
+
+  'Should reset and delete and submit dapp params #group1': function (browser: NightwatchBrowser) {
+    if (!checkBrowserIsChrome(browser)) return
+    browser.switchBrowserTab(0).frame(0)
+      .click('*[data-id="resetFunctions"]')
+      .assert.elementPresent('*[data-id="remove0x1003e2d2"]', 'Function add should be present again')
+      .click('*[data-id="deleteDapp"]')
+      .assert.containsText('*[data-id="quickDappTooltips"]', 'QuickDapp only work for Injected Provider currently')
+      .setValue('input[id="formAddress"]', address)
+      .setValue('textarea[id="formAbi"]', abi)
+      .setValue('input[id="formName"]', 'Storage')
+      .setValue('input[id="formNetwork"]', 'Sepolia (11155111) network')
+      .click('*[data-id="createDapp"]')
+      .assert.containsText('*[data-id="quick-dapp-admin"]', 'QuickDapp Admin')
   },
 
   'Should teardown dapp successfully #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
-    browser.switchBrowserTab(0).frame(0)
+    browser.setValue('input[data-id="surgeSubdomain"]', surgeSubdomain)
       .execute((function() {
         // @ts-expect-error
         document.querySelector('*[data-id="teardownDapp"]').style.display = 'inline-block';
@@ -210,4 +236,87 @@ module.exports = {
   ...(branch ? (isMasterBranch ? tests : {}) : tests),
 };
 
-const sources = []
+const sources = [
+  {
+    'Storage.sol': {
+      content:
+      `
+      // SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.8.2 <0.9.0;
+
+      /**
+       * @title Storage
+       * @dev Store & retrieve value in a variable
+       * @custom:dev-run-script ./scripts/deploy_with_ethers.ts
+       */
+      contract Storage {
+
+          uint256 number;
+
+          /**
+           * @dev Store value in variable
+           * @param num value to store
+           */
+          function store(uint256 num) public {
+              number = num;
+          }
+
+          /**
+           * @dev Return value
+           * @return value of 'number'
+           */
+          function retrieve() public view returns (uint256){
+              return number;
+          }
+
+          function add(uint256 num) public {
+              number = number + num;
+          }
+
+      }`
+    }
+  }
+]
+
+const abi = JSON.stringify([
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "num",
+        "type": "uint256"
+      }
+    ],
+    "name": "add",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "retrieve",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "num",
+        "type": "uint256"
+      }
+    ],
+    "name": "store",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+])
