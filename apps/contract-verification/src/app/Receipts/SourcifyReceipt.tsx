@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { SourcifyVerifier } from '../Verifiers/SourcifyVerifier'
-// import { SourcifyVerificationStatus } from '../types/VerificationTypes'
+// import { SourcifyVerificationStatus } from '../types'
 import { ReceiptProps } from './props'
 
 // A receipt is something to be rendered
