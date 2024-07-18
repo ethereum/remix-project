@@ -6,6 +6,8 @@ import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
 import { LocalBranchDetails } from "./branches/localbranchdetails";
 import { RemoteBranchDetails } from "./branches/remotebranchedetails";
+import { faSync } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const Branches = () => {
   const context = React.useContext(gitPluginContext)
@@ -31,11 +33,16 @@ export const Branches = () => {
             {context.upstream ?
               <>
                 <label className="text-uppercase">remote branches on {context.upstream ? context.upstream.name : null}</label>
-                {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.name === context.upstream.name ).map((branch, index) => {
+                {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.name === context.upstream.name).map((branch, index) => {
                   return (
                     <RemoteBranchDetails key={index} branch={branch}></RemoteBranchDetails>
                   );
                 })}
+                <GitUIButton data-id={`remote-sync-${context.upstream.name}`} className="btn btn-sm" onClick={async () => {
+                  await actions.fetch({
+                    remote: context.upstream
+                  })
+                }}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon><label className="pl-1">Fetch more from remote</label></GitUIButton>
                 <hr /></> : null}
 
           </div> : null}

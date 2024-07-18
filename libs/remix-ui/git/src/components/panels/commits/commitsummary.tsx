@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { remote } from "@remix-ui/git";
 import GitUIButton from "../../buttons/gituibutton";
 import { gitPluginContext } from "../../gitui";
+import { removeGitFromUrl } from "../../../utils";
 
 export interface CommitSummaryProps {
   commit: ReadCommitResult;
@@ -51,7 +52,7 @@ export const CommitSummary = (props: CommitSummaryProps) => {
 
   const openRemote = () => {
     if (getRemote())
-      window.open(`${getRemote().url}/commit/${commit.oid}`, '_blank');
+      window.open(`${removeGitFromUrl(getRemote().url)}/commit/${commit.oid}`, '_blank');
   }
   function removeLineBreaks(str: string): string {
     return str.replace(/(\r\n|\n|\r)/gm, '');

@@ -6,6 +6,7 @@ import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
 import { CommitDetailsItems } from "./commitdetailsitem";
 import { branch, remote } from "@remix-ui/git";
+import { removeGitFromUrl } from "../../../utils";
 
 export interface CommitDetailsProps {
   commit: ReadCommitResult;
@@ -41,7 +42,7 @@ export const CommitDetails = (props: CommitDetailsProps) => {
 
   const openFileOnRemote = (file: string, hash: string) => {
     if (!getRemote()) return
-    window.open(`${getRemote() ? `${getRemote().url}/blob/${hash}/${file}` : ""}`, "_blank")
+    window.open(`${getRemote() ? `${removeGitFromUrl(getRemote().url)}/blob/${hash}/${file}` : ""}`, "_blank")
   }
 
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
