@@ -130,11 +130,11 @@ export class RunTab extends ViewPlugin {
     const udapp = this // eslint-disable-line
 
     const descriptions = {
-      'vm-cancun': 'Deploy to the in-browser virtual machine which runs the cancun fork.',
-      'vm-shanghai': 'Deploy to the in-browser virtual machine which runs the cancun fork.',
-      'vm-paris': 'Deploy to the in-browser virtual machine which runs the paris fork.',
-      'vm-london': 'Deploy to the in-browser virtual machine which runs the london fork.',
-      'vm-berlin': 'Deploy to the in-browser virtual machine which runs the berlin fork.',
+      'vm-cancun': 'Deploy to the in-browser virtual machine which runs the Cancun fork.',
+      'vm-shanghai': 'Deploy to the in-browser virtual machine which runs the Shanghai fork.',
+      'vm-paris': 'Deploy to the in-browser virtual machine which runs the Paris fork.',
+      'vm-london': 'Deploy to the in-browser virtual machine which runs the London fork.',
+      'vm-berlin': 'Deploy to the in-browser virtual machine which runs the Berlin fork.',
       'vm-mainnet-fork': 'Deploy to the in-browser virtual machine which forks locally the ethereum mainnet.',
       'vm-sepolia-fork': 'Deploy to the in-browser virtual machine which forks locally the sepolia testnet.',
       'vm-custom-fork': 'Deploy to the in-browser virtual machine which forks locally a custom network.',
@@ -166,7 +166,6 @@ export class RunTab extends ViewPlugin {
     }
 
     const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
-      console.log(name)
       await this.call('blockchain', 'addProvider', {
         position,
         options: {},
