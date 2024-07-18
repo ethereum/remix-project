@@ -37,13 +37,13 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
     if (props.tagList) setAnyEnabled(props.tagList.some((key) => filterCon.keyValueMap[key]?.enabled))
     else setAnyEnabled(filterCon?.keyValueMap['no tag']?.enabled)
     if (!props.tagList || props.tagList.length == 0) setAnyEnabled(true)
-    setAnyEnabled(anyEnabled && 
-      (
-        props.title.toLowerCase().includes(filterCon.filter) ||
-        props.title.includes(filterCon.filter)) ||
-        props?.payload?.toLowerCase().includes(filterCon.filter) ||        
-        props?.payload?.includes(filterCon.filter)
-      )
+    setAnyEnabled(anyEnabled &&
+    (
+      props.title.toLowerCase().includes(filterCon.filter) ||
+      props.title.includes(filterCon.filter)) ||
+      props?.payload?.toLowerCase().includes(filterCon.filter) ||
+      props?.payload?.includes(filterCon.filter)
+    )
   }, [filterCon, props.tagList])
 
   /*const listenOnExpand = (key) => {
