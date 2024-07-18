@@ -1,12 +1,12 @@
 import { VerifierIdentifier } from './VerificationTypes'
 
 export interface VerifierSettings {
-  apiUrl: string
+  apiUrl?: string
   explorerUrl?: string
   apiKey?: string
 }
 
-export type SettingsForVerifier = Record<VerifierIdentifier, VerifierSettings>
+export type SettingsForVerifier = Partial<Record<VerifierIdentifier, VerifierSettings>>
 
 export interface ChainSettings {
   verifiers: SettingsForVerifier

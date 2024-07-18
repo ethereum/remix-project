@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { AppContext } from '../AppContext'
 import { SearchableChainDropdown, ContractDropdown, ContractAddressInput } from '../components'
@@ -11,19 +11,18 @@ import { AbstractVerifier, getVerifier } from '../Verifiers'
 import { ContractDropdownSelection } from '../components/ContractDropdown'
 
 export const VerifyView = () => {
-  const { compilationOutput, setSubmittedContracts } = React.useContext(AppContext)
+  const { compilationOutput, setSubmittedContracts } = useContext(AppContext)
   const [contractAddress, setContractAddress] = useState('')
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
-  const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = React.useState<string>('')
+  const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = useState<string>('')
   const [selectedContract, setSelectedContract] = useState<ContractDropdownSelection | undefined>()
   const navigate = useNavigate()
 
   // TODO
-  const [verifiers, setVerifiers] = useState<AbstractVerifier[]>([]) // Placeholder, to be derived from settings
   // const sourcifyVerifier = new SourcifyVerifier('http://sourcify.dev/server/', 'Sourcify')
   const sourcifyVerifier = new SourcifyVerifier('http://localhost:5555/', 'todo')
   const etherscanVerifier = new EtherscanVerifier('https://api.etherscan.io', 'todo', 'API_KEY')
-  setVerifiers([sourcifyVerifier, etherscanVerifier])
+  const verifiers = [sourcifyVerifier, etherscanVerifier] // Placeholder, to be derived from settings
 
   useEffect(() => {
     console.log('Selected chain changed', selectedChain)
@@ -120,7 +119,7 @@ export const VerifyView = () => {
                   onChange={(e) => {
                     verifier.enabled = e.target.checked
                     // Trigger a re-render
-                    setVerifiers([...verifiers])
+                    // setVerifiers([...verifiers])
                   }}
                 />
                 <label className="form-check-label" htmlFor={`verifier-${name}`}>
