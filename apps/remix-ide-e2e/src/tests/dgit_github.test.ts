@@ -115,7 +115,8 @@ module.exports = {
             })
             .waitForElementVisible({
                 selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-branch-links"]',
-                locateStrategy: 'xpath'
+                locateStrategy: 'xpath',
+                timeout: 10000
             })
 
     },
