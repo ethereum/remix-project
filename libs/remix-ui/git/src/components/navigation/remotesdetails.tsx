@@ -37,21 +37,25 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
     actions.setDefaultRemote(remote)
   }
 
+  const isDefault = () => {
+    return (context.defaultRemote && context.defaultRemote?.url === remote.url) || (context.upstream && context.upstream?.url === remote.url)
+  }
+
   return (
     <>
       <div className="d-flex flex-row w-100 mb-2 mt-2">
-        <div data-id={`remote-detail-${remote.name}${context.defaultRemote && context.defaultRemote?.url === remote.url ? '-default' : ''}`} onClick={() => handleClick()} role={'button'} className='pointer long-and-truncated d-flex flex-row commit-navigation'>
+        <div data-id={`remote-detail-${remote.name}${isDefault() ? '-default' : ''}`} onClick={() => handleClick()} role={'button'} className='pointer long-and-truncated d-flex flex-row commit-navigation'>
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
           <CustomTooltip tooltipText={remote.url} placement="top">
-            <div className={`long-and-truncated ml-1 ${context.defaultRemote && context.defaultRemote?.url === remote.url ? 'text-success' : ''}`}>
+            <div className={`long-and-truncated ml-1 ${isDefault() ? 'text-success' : ''}`}>
               {remote.name}  <FontAwesomeIcon className='' icon={faArrowRightArrowLeft}></FontAwesomeIcon> {remote.url}
             </div>
           </CustomTooltip>
 
         </div>
-        {context.defaultRemote && context.defaultRemote?.url === remote.url ?
+        {isDefault() ?
           <GitUIButton className="btn btn-sm" onClick={() => { }} disabledCondition={true}><FontAwesomeIcon className='text-success' icon={faCheck} ></FontAwesomeIcon></GitUIButton>
           :
           <GitUIButton tooltip="set as default" className="btn btn-sm" onClick={setAsDefault}><FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon></GitUIButton>
