@@ -107,7 +107,6 @@ export class EnvironmentExplorer extends ViewPlugin {
               plugin={this}
               title={provider.displayName}
               logos={provider.logos}
-              hideTitle={true}
               classList='EECellStyle'
               searchKeywords={['Injected', provider.name, provider.displayName, provider.title, provider.description]}
               pinned={this.pinnedProviders.includes(provider.name)}
@@ -143,7 +142,6 @@ export class EnvironmentExplorer extends ViewPlugin {
               title={provider.displayName}
               logos={provider.logos}
               classList='EECellStyle'
-              hideTitle={true}
               searchKeywords={['Remix VMs', provider.name, provider.displayName, provider.title, provider.description]}
               pinned={this.pinnedProviders.includes(provider.name)}
               id={provider.name}
@@ -177,7 +175,6 @@ export class EnvironmentExplorer extends ViewPlugin {
               title={provider.displayName}
               logos={provider.logos}
               classList='EECellStyle'
-              hideTitle={true}
               searchKeywords={['Externals', provider.name, provider.displayName, provider.title, provider.description]}
               pinned={this.pinnedProviders.includes(provider.name)}
               id={provider.name}
