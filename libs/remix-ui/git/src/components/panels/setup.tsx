@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { GetDeviceCode } from '../github/devicecode'
 import { GitHubCredentials } from './githubcredentials'
+import { Clone } from './clone'
 
 export const Setup = () => {
 
@@ -19,6 +20,8 @@ export const Setup = () => {
           <hr></hr>
           <GitHubCredentials></GitHubCredentials>
         </div>
+        <h5>CLONE</h5>
+        <Clone hideLoadFromGitHub={true}></Clone>
       </>
     )
   } else if (screen === 1) {
