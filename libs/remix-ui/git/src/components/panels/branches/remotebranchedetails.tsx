@@ -12,10 +12,11 @@ import GitUIButton from "../../buttons/gituibutton";
 
 export interface BrancheDetailsProps {
   branch: branch;
+  allowCheckout: boolean
 }
 
 export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
-  const { branch } = props;
+  const { branch, allowCheckout } = props;
   const actions = React.useContext(gitActionsContext)
   const context = React.useContext(gitPluginContext)
   const [activePanel, setActivePanel] = useState<string>("");
@@ -89,7 +90,7 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
   }
 
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
-    <BrancheDetailsNavigation checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+    <BrancheDetailsNavigation allowCheckout={allowCheckout} checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
     <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
       <>
         <div data-id={`remote-branch-commits-${branch && branch.name}`} className="ml-1">

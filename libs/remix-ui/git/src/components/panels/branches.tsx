@@ -35,7 +35,7 @@ export const Branches = () => {
                 <label className="text-uppercase">remote branches on {context.upstream ? context.upstream.name : null}</label>
                 {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.name === context.upstream.name).map((branch, index) => {
                   return (
-                    <RemoteBranchDetails key={index} branch={branch}></RemoteBranchDetails>
+                    <RemoteBranchDetails allowCheckout={true} key={index} branch={branch}></RemoteBranchDetails>
                   );
                 })}
                 <GitUIButton data-id={`remote-sync-${context.upstream.name}`} className="btn btn-sm" onClick={async () => {

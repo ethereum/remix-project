@@ -63,7 +63,7 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
   }
 
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
-    <BrancheDetailsNavigation checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+    <BrancheDetailsNavigation allowCheckout={true} checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
     <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
       <>
         <div className="ml-1">

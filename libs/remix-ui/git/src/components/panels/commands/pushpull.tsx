@@ -58,6 +58,7 @@ export const PushPull = () => {
     const remote: remote = context.remotes.find(r => r.name === value)
     if (remote) {
       actions.setUpstreamRemote(remote)
+      actions.setDefaultRemote(remote)
     }
   }
 
@@ -119,15 +120,19 @@ export const PushPull = () => {
       })
     setLocalBranchOptions(localBranches)
 
+    if(!context.upstream){
+      setRemoteBranchOptions([])
+      return
+    }
     const remoteBranches = context.branches && context.branches.length > 0 && context.branches
-      .filter(branch => branch.remote)
+      .filter(branch => branch.remote && branch.remote.name === context.upstream.name)
       .map(repo => {
         return { value: repo.name, label: repo.name }
       }
       )
     setRemoteBranchOptions(remoteBranches)
 
-  }, [context.branches])
+  }, [context.branches, context.upstream])
 
   useEffect(() => {
 
