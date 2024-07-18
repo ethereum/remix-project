@@ -108,14 +108,16 @@ export const GetDeviceCode = () => {
         (context.gitHubUser && context.gitHubUser.login) ?
           <div className="pt-2">
             <Card>
-              <Card.Body>
-                <Card.Title data-id={`connected-as-${context.gitHubUser.login}`}>Connected as {context.gitHubUser.login}</Card.Title>
+              <Card.Body className="p-2">
+              <div className="mb-1" data-id={`connected-as-${context.gitHubUser.login}`}>Connected as {context.gitHubUser.login}</div>
                 <Card.Text>
-                  <img data-id={`connected-img-${context.gitHubUser.login}`} src={context.gitHubUser.avatar_url} className="w-100" />
-                  <a data-id={`connected-link-${context.gitHubUser.login}`} href={context.gitHubUser.html_url}>{context.gitHubUser.html_url}</a>
-                  {context.userEmails && context.userEmails.filter((email: any) => email.primary).map((email: any) => {
-                    return <span key={email.email}><br></br>{email.email}</span>
-                  })}
+                  <img data-id={`connected-img-${context.gitHubUser.login}`} src={context.gitHubUser.avatar_url} className="w-25" />
+                  <br></br>
+                  
+                    <a data-id={`connected-link-${context.gitHubUser.login}`} href={context.gitHubUser.html_url}>{context.gitHubUser.html_url}</a>
+                    {context.userEmails && context.userEmails.filter((email: any) => email.primary).map((email: any) => {
+                      return <span key={email.email}><br></br>{email.email}</span>
+                    })}
                 </Card.Text>
               </Card.Body>
             </Card>

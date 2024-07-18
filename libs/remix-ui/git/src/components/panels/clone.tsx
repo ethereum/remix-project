@@ -64,9 +64,11 @@ export const Clone = () => {
   return (
     <>
       <div data-id="clone-panel-content">
+        <label className="text-uppercase">Clone from GitHub</label>
         <SelectAndCloneRepositories cloneAllBranches={cloneAllBranches} cloneDepth={cloneDepth} />
         <hr />
-        <InputGroup className="mb-2 pb-1">
+        <label className="text-uppercase">Clone from URL</label>
+        <InputGroup className="mb-2">
           <FormControl data-id="clone-url" id="cloneulr" placeholder="url" name='cloneurl' value={cloneUrl} onChange={e => onGitHubCloneUrlChange(e.target.value)} aria-describedby="urlprepend" />
         </InputGroup>
 
