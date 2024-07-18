@@ -3,7 +3,7 @@ import { default as dateFormat } from "dateformat";
 import React from "react";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { remote } from "@remix-ui/git";
+import { branch, remote } from "@remix-ui/git";
 import GitUIButton from "../../buttons/gituibutton";
 import { gitPluginContext } from "../../gitui";
 import { removeGitFromUrl } from "../../../utils";
@@ -12,10 +12,11 @@ export interface CommitSummaryProps {
   commit: ReadCommitResult;
   checkout: (oid: string) => void;
   isAheadOfRepo: boolean
+  branch: branch
 }
 
 export const CommitSummary = (props: CommitSummaryProps) => {
-  const { commit, checkout, isAheadOfRepo } = props;
+  const { commit, checkout, isAheadOfRepo, branch } = props;
   const context = React.useContext(gitPluginContext)
 
   const getDate = (commit: ReadCommitResult) => {
@@ -47,7 +48,7 @@ export const CommitSummary = (props: CommitSummaryProps) => {
   };
 
   const getRemote = (): remote | null => {
-    return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
+    return branch.remote? branch.remote: context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
   }
 
   const openRemote = () => {

@@ -141,6 +141,12 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     loadFileQueue.enqueue(async () => {
       loadFiles()
     })
+    loadFileQueue.enqueue(async () => {
+      getBranches()
+    })
+    loadFileQueue.enqueue(async () => {
+      gitlog()
+    })
   })
   plugin.on('manager', 'pluginActivated', async (p: Profile<any>) => {
     if (p.name === 'dgitApi') {

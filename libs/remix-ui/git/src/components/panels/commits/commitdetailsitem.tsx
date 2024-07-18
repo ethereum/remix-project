@@ -9,11 +9,12 @@ import GitUIButton from "../../buttons/gituibutton";
 export interface CCommitDetailsItemsProps {
   commitChange: commitChange;
   isAheadOfRepo: boolean;
-  openFileOnRemote: (file: string, hash: string) => void;
+  openFileOnRemote: (file: string, hash: string, branch: branch) => void;
+  branch: branch
 }
 
 export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
-  const { commitChange, isAheadOfRepo, openFileOnRemote } = props;
+  const { commitChange, isAheadOfRepo, openFileOnRemote, branch } = props;
   const actions = React.useContext(gitActionsContext)
   const pluginActions = React.useContext(pluginActionsContext)
 
@@ -23,7 +24,7 @@ export const CommitDetailsItems = (props: CCommitDetailsItemsProps) => {
   }
 
   const openRemote = () => {
-    openFileOnRemote(commitChange.path, commitChange.hashModified)
+    openFileOnRemote(commitChange.path, commitChange.hashModified, branch)
   }
 
   function FunctionStatusIcons() {
