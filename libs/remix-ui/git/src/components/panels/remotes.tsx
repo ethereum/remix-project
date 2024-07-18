@@ -33,7 +33,7 @@ export const Remotes = () => {
             {context.remotes && context.remotes.map((remote, index) => {
 
               return (
-                <Remoteselect key={index} openDefault={index===0} remote={remote}></Remoteselect>
+                <Remoteselect key={index} openDefault={(context.upstream && context.upstream.name === remote.url) || index===0} remote={remote}></Remoteselect>
               );
             })}
           </div> : <div>
