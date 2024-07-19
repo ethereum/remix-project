@@ -5,7 +5,7 @@ import { RunTab } from "../types/run-tab"
 import { clearInstances, setAccount, setExecEnv } from "./actions"
 import { displayNotification, fetchAccountsListFailed, fetchAccountsListRequest, fetchAccountsListSuccess, setMatchPassphrase, setPassphrase } from "./payload"
 import { toChecksumAddress } from '@ethereumjs/util'
-import { createPublicClient, createWalletClient, http, custom, PublicClient} from "viem"
+import { createPublicClient, createWalletClient, http, custom, PublicClient } from "viem"
 import { sepolia } from 'viem/chains'
 import { V06 } from "userop"
 
@@ -111,7 +111,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     transport: custom(window.ethereum)
   })
 
-  const addresses = await walletClient.getAddresses() 
+  const addresses = await walletClient.getAddresses()
   console.log('addresses--->', addresses)
 
   const smartAccount = new V06.Account.Instance({

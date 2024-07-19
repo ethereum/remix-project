@@ -33,10 +33,10 @@ export function AccountUI(props: AccountProps) {
           title: intl.formatMessage({ id: 'udapp.createSmartAccount' })
         })
       } else
-      setPlusOpt({
-        classList: 'udapp_disableMouseEvents',
-        title: intl.formatMessage({ id: 'udapp.injectedTitle' })
-      })
+        setPlusOpt({
+          classList: 'udapp_disableMouseEvents',
+          title: intl.formatMessage({ id: 'udapp.injectedTitle' })
+        })
     } else {
       switch (selectExEnv) {
       case 'vm-cancun':
