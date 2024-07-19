@@ -66,7 +66,7 @@ export function isContract(contract: SubmittedContract | SubmittedProxyContract)
 
 type SourcifyStatus = 'fully verified' | 'partially verified'
 type EtherscanStatus = 'verified'
-export type VerificationStatus = SourcifyStatus | EtherscanStatus | 'failed' | 'pending' | 'not verified' | 'unknown'
+export type VerificationStatus = SourcifyStatus | EtherscanStatus | 'failed' | 'pending' | 'not verified' | 'unknown' | 'lookup failed'
 
 export interface VerificationResponse {
   status: VerificationStatus
@@ -75,5 +75,5 @@ export interface VerificationResponse {
 
 export interface LookupResponse {
   status: VerificationStatus
-  lookupUrl?: string // TODO How to construct these? Do we need another config value?
+  lookupUrl?: string
 }

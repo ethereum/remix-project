@@ -16,6 +16,7 @@ export const VerifyView = () => {
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
   const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = useState<string>('')
   const [selectedContract, setSelectedContract] = useState<ContractDropdownSelection | undefined>()
+  const [contractAddressError, setContractAddressError] = useState('')
   const navigate = useNavigate()
 
   // TODO
@@ -96,7 +97,7 @@ export const VerifyView = () => {
     <form onSubmit={handleVerify}>
       <SearchableChainDropdown label="Chain" id="network-dropdown" setSelectedChain={setSelectedChain} selectedChain={selectedChain} />
 
-      <ContractAddressInput label="Contract Address" id="contract-address" setContractAddress={setContractAddress} contractAddress={contractAddress} />
+      <ContractAddressInput label="Contract Address" id="contract-address" contractAddress={contractAddress} setContractAddress={setContractAddress} contractAddressError={contractAddressError} setContractAddressError={setContractAddressError} />
 
       <ContractDropdown label="Contract Name" id="contract-dropdown-1" setSelectedContract={setSelectedContract} />
 

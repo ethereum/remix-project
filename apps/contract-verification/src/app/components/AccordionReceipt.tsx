@@ -32,8 +32,8 @@ export const AccordionReceipt: React.FC<AccordionReceiptProps> = ({ contract, in
           <span className="pl-4" style={{ fontSize: '1rem' }}>
             <CustomTooltip tooltipText={address}>
               <span>{shortenAddress(address)}</span>
-            </CustomTooltip>
-            &nbsp;on {chainName} {isProxy(contract) ? 'with proxy' : ''}
+            </CustomTooltip>{' '}
+            on {chainName} {isProxy(contract) ? 'with proxy' : ''}
           </span>
         </button>
       </h3>
@@ -52,8 +52,7 @@ export const AccordionReceipt: React.FC<AccordionReceiptProps> = ({ contract, in
               <div className="mt-3">
                 <span className="font-weight-bold" style={{ fontSize: '1.2rem' }}>
                   Proxy
-                </span>
-                &nbsp;
+                </span>{' '}
                 <CustomTooltip tooltipText={contract.proxy.address}>
                   <span>{shortenAddress(contract.proxy.address)}</span>
                 </CustomTooltip>
