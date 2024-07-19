@@ -3,16 +3,16 @@ import { VERIFIERS } from './VerificationTypes'
 
 const DEFAULTS: SettingsForVerifier = {
   Sourcify: {
-    apiUrl: 'https://sourcify.dev/server/',
-    explorerUrl: 'https://repo.sourcify.dev/',
+    apiUrl: 'https://sourcify.dev/server',
+    explorerUrl: 'https://repo.sourcify.dev',
   },
   Etherscan: {
-    apiUrl: 'https://api.etherscan.io/',
-    explorerUrl: 'https://etherscan.io/',
+    apiUrl: 'https://api.etherscan.io',
+    explorerUrl: 'https://etherscan.io',
     apiKey: undefined,
   },
   Blockscout: {
-    apiUrl: 'https://eth.blockscout.com/',
+    apiUrl: 'https://eth.blockscout.com',
   },
 }
 

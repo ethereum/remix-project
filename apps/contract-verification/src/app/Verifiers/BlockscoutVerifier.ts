@@ -8,7 +8,7 @@ export class BlockscoutVerifier extends EtherscanVerifier {
 
   getContractCodeUrl(address: string): string {
     const url = new URL(this.explorerUrl + `/address/${address}`)
-    url.searchParams.append('tab', 'contract')
+    // url.searchParams.append('tab', 'contract')
     return url.href
   }
 }
