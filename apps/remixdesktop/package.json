@@ -92,7 +92,6 @@
     "axios": "^1.7.4",
     "byline": "^5.0.0",
     "chokidar": "^3.5.3",
-    "dockerode": "^4.0.2",
     "electron-updater": "^6.1.8",
     "express": "^4.20.0",
     "isomorphic-git": "^1.24.2",
