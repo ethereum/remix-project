@@ -180,7 +180,7 @@ const RemixApp = (props: IRemixAppUi) => {
             {showEnterDialog && <EnterDialog handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>}
             <div className='d-flex flex-column'>
               <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-                <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
+                <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light d-none">
                   {props.app.menuicons.render()}
                 </div>
                 <div

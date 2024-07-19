@@ -122,8 +122,12 @@ export class RunTab extends ViewPlugin {
     )
   }
 
-  onReady(api) {
+  async onReady(api) {
     this.REACT_API = api
+    await this.call('sidePanel', 'pinView', profile)
+    setTimeout(() => {
+      this.call('layout', 'maximisePinnedPanel')
+    }, 1000)
   }
 
   async onInitDone() {

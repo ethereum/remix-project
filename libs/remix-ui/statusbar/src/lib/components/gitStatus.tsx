@@ -72,7 +72,7 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
         onClick={async () => await lightDgitUp()}
       >
         {checkBranchName() && isLocalHost === false ? <span className="fa-regular fa-code-branch ml-1"></span>
-          : <span className=" ml-1" onClick={initializeNewGitRepo}> Initialize as git repo</span>}
+          : <span className=" ml-1" >  Remix Light </span>}
         {checkBranchName() && isLocalHost === false && <span className="ml-1">{gitBranchName}</span>}
         {checkBranchName() && isLocalHost === false && <span className="fa-solid fa-arrows-rotate fa-1 ml-1"></span>}
       </div>
