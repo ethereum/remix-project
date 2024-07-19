@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 import { SearchableChainDropdown, ConfigInput } from '../components'
 import type { VerifierIdentifier, Chain, VerifierSettings, ContractVerificationSettings } from '../types'
-import { getSettingsForChain as mergeChainSettingsWithDefaults } from '../types'
+import { mergeChainSettingsWithDefaults } from '../types'
 import { AppContext } from '../AppContext'
 
 export const SettingsView = () => {
@@ -23,7 +23,6 @@ export const SettingsView = () => {
 
     changedSettings.chains[chainId].verifiers[verifier][key] = value
     setSettings(changedSettings)
-    console.log(changedSettings)
   }
 
   return (
