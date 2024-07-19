@@ -30,7 +30,7 @@ export const SettingsView = () => {
       <SearchableChainDropdown label="Chain" id="network-dropdown" setSelectedChain={setSelectedChain} selectedChain={selectedChain} />
 
       {selectedChain && (
-        <>
+        <div>
           <div className="pt-2">
             <span className="font-weight-bold">Sourcify</span>
             <ConfigInput label="API URL" id="sourcify-api-url" secret={false} initialValue={chainSettings.verifiers['Sourcify']?.apiUrl ?? ''} saveResult={(result) => handleChange('Sourcify', 'apiUrl', result)} />
@@ -46,7 +46,7 @@ export const SettingsView = () => {
             <span className="font-weight-bold">Blockscout</span>
             <ConfigInput label="Instance URL" id="blockscout-api-url" secret={false} initialValue={chainSettings.verifiers['Blockscout']?.apiUrl ?? ''} saveResult={(result) => handleChange('Blockscout', 'apiUrl', result)} />
           </div>
-        </>
+        </div>
       )}
     </>
   )
