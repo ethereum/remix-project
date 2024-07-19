@@ -38,11 +38,11 @@ function hash(message: any): bigint {
     const zkey_final = {
       type: "mem",
       // @ts-ignore
-      data: new Uint8Array(await remix.call('fileManager', 'readFile', './zk/keys/groth16/zkey_final.txt', { encoding: null }))
+      data: new Uint8Array(await remix.call('fileManager', 'readFile', 'scripts/groth16/zk/keys/zkey_final.txt', { encoding: null }))
     }
     const wtns = { type: "mem" };
 
-    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/groth16/verification_key.json'))
+    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', 'scripts/groth16/zk/keys/verification_key.json'))
 
     // build list of identity commitments
     const secrets = []
@@ -101,8 +101,8 @@ function hash(message: any): bigint {
     }
     const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
 
-    await remix.call('fileManager', 'writeFile', './zk/build/groth16/zk_verifier.sol', solidityContract)
-    await remix.call('fileManager', 'writeFile', 'zk/build/groth16/input.json', JSON.stringify({
+    await remix.call('fileManager', 'writeFile', 'scripts/groth16/zk/build/zk_verifier.sol', solidityContract)
+    await remix.call('fileManager', 'writeFile', 'scripts/groth16/zk/build/input.json', JSON.stringify({
       _pA: [proof.pi_a[0], proof.pi_a[1]],
       _pB: [[proof.pi_b[0][1], proof.pi_b[0][0]], [proof.pi_b[1][1], proof.pi_b[1][0]]],
       _pC: [proof.pi_c[0], proof.pi_c[1]],
