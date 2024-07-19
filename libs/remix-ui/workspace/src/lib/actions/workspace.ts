@@ -208,6 +208,7 @@ export const createWorkspace = async (
     if (workspaceTemplateName === 'semaphore' || workspaceTemplateName === 'hashchecker' || workspaceTemplateName === 'rln') {
       const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
       if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
+      _paq.push(['trackEvent', 'circuit-compiler', 'template', 'create', workspaceTemplateName])
     }
     // this call needs to be here after the callback because it calls dGitProvider which also calls this function and that would cause an infinite loop
     await plugin.setWorkspaces(await getWorkspaces())
