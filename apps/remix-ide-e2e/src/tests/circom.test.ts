@@ -191,7 +191,7 @@ module.exports = {
       .pause(25000)
       .journalLastChildIncludes('setup done.')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/keys/verification_key.json"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrcipts/groth16/zk/keys/zkey_final.txt"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/keys/zkey_final.txt"]')
   },
   'Should run groth16 zkproof script for hash checker #group5': function (browser: NightwatchBrowser) {
     browser
