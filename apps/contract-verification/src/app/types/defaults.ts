@@ -16,16 +16,17 @@ const DEFAULTS: SettingsForVerifier = {
   },
 }
 
-export function getSettingsForChain(chainId: string, userSettings: ContractVerificationSettings): ChainSettings {
+export function mergeChainSettingsWithDefaults(chainId: string, userSettings: ContractVerificationSettings): ChainSettings {
   const verifiers: SettingsForVerifier = {}
 
-  for (const verifierId in VERIFIERS) {
+  for (const verifierId of VERIFIERS) {
     const userSetting: VerifierSettings = userSettings.chains[chainId]?.verifiers[verifierId]
 
     if (userSetting) {
       verifiers[verifierId] = { ...userSetting }
       // Only apply default settings for Etherscan and Blockscout on mainnet
       if (verifierId === 'Sourcify' || chainId === '1') {
+        // Add keys not defined by user
         for (const key of Object.keys(DEFAULTS[verifierId])) {
           if (!verifiers[verifierId][key]) {
             verifiers[verifierId][key] = DEFAULTS[verifierId][key]
