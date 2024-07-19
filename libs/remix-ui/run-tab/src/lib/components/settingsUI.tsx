@@ -18,6 +18,7 @@ export function SettingsUI(props: SettingsProps) {
         personalMode={props.personalMode}
         selectExEnv={props.selectExEnv}
         accounts={props.accounts}
+        smartAccounts={props.smartAccounts}
         setAccount={props.setAccount}
         createNewBlockchainAccount={props.createNewBlockchainAccount}
         createNewSmartAccount={props.createNewSmartAccount}

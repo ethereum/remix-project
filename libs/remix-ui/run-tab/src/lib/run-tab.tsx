@@ -283,6 +283,7 @@ export function RunTabUI(props: RunTabProps) {
             personalMode={runTab.personalMode}
             selectExEnv={runTab.selectExEnv}
             accounts={runTab.accounts}
+            smartAccounts={runTab.smartAccounts}
             setAccount={setAccountAddress}
             setUnit={setUnitValue}
             sendValue={runTab.sendValue}

@@ -31,6 +31,7 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
     dispatch(fetchAccountsListRequest())
     try {
       let accounts = await plugin.blockchain.getAccounts()
+      if (plugin.REACT_API.smartAccounts.addresses.length) accounts.push(...plugin.REACT_API.smartAccounts.addresses)
       if (!accounts) accounts = []
 
       const loadedAccounts = {}
@@ -98,7 +99,6 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 }
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  console.log('createSmartAccount')
   const bundlerEndpoint = "https://public.stackup.sh/api/v1/node/ethereum-sepolia"
 
   const ethClient: any = createPublicClient({
@@ -113,14 +113,14 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
 
   const addresses = await walletClient.getAddresses() 
   console.log('addresses--->', addresses)
- 
 
   const smartAccount = new V06.Account.Instance({
     ...V06.Account.Common.SimpleAccount.base(ethClient, walletClient),
   })
   const sender = await smartAccount.getSender()
   console.log('sender--->', sender)
-  // 0xA34de41f9b3B7eba93000195B1896a7f43074eDb
+  plugin.REACT_API.smartAccounts.addresses.push(sender)
+  await fillAccountsList(plugin, dispatch)
 }
 
 export const signMessageWithAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => {
