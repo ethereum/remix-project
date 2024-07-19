@@ -117,6 +117,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
   const smartAccount = new V06.Account.Instance({
     ...V06.Account.Common.SimpleAccount.base(ethClient, walletClient),
   })
+  await smartAccount.setSalt(BigInt(plugin.REACT_API.smartAccounts.addresses.length))
   const sender = await smartAccount.getSender()
   console.log('sender--->', sender)
   plugin.REACT_API.smartAccounts.addresses.push(sender)
