@@ -1,3 +1,5 @@
 body {
   margin: 0;
 }
+
+.fa-arrow-up-right-from-square::before { content: "\f08e"; }
