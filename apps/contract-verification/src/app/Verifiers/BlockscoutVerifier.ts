@@ -1,4 +1,4 @@
-import { EtherscanVerifier } from "./EtherscanVerifier";
+import { EtherscanVerifier } from './EtherscanVerifier'
 
 export class BlockscoutVerifier extends EtherscanVerifier {
   constructor(apiUrl: string) {
@@ -7,7 +7,7 @@ export class BlockscoutVerifier extends EtherscanVerifier {
   }
 
   getContractCodeUrl(address: string): string {
-    const url = new URL(`address/${address}`, this.explorerUrl)
+    const url = new URL(this.explorerUrl + `/address/${address}`)
     url.searchParams.append('tab', 'contract')
     return url.href
   }

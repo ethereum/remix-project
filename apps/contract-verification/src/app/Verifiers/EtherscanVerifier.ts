@@ -45,7 +45,7 @@ export class EtherscanVerifier extends AbstractVerifier {
       body.constructorArguements = submittedContract.abiEncodedConstructorArgs
     }
 
-    const url = new URL('api', this.apiUrl)
+    const url = new URL(this.apiUrl + '/api')
     url.searchParams.append('module', 'contract')
     url.searchParams.append('action', 'verifysourcecode')
     if (this.apiKey) {
@@ -78,7 +78,7 @@ export class EtherscanVerifier extends AbstractVerifier {
 
   // TODO retry with backoff in case this throws error
   async checkVerificationStatus(receiptId: string): Promise<VerificationStatus> {
-    const url = new URL('api', this.apiUrl)
+    const url = new URL(this.apiUrl + '/api')
     url.searchParams.append('module', 'contract')
     url.searchParams.append('action', 'checkverifystatus')
     url.searchParams.append('guid', receiptId)
@@ -121,7 +121,7 @@ export class EtherscanVerifier extends AbstractVerifier {
   }
 
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
-    const url = new URL('api', this.apiUrl)
+    const url = new URL(this.apiUrl + '/api')
     url.searchParams.append('module', 'contract')
     url.searchParams.append('action', 'getabi')
     url.searchParams.append('address', contractAddress)
@@ -152,7 +152,7 @@ export class EtherscanVerifier extends AbstractVerifier {
   }
 
   getContractCodeUrl(address: string): string {
-    const url = new URL(`address/${address}#code`, this.explorerUrl)
+    const url = new URL(this.explorerUrl + `/address/${address}#code`)
     return url.href
   }
 }

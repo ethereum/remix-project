@@ -65,7 +65,7 @@ export class SourcifyVerifier extends AbstractVerifier {
 
     console.log(body)
 
-    const response = await fetch(new URL('verify', this.apiUrl).href, {
+    const response = await fetch(new URL(this.apiUrl + '/verify').href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export class SourcifyVerifier extends AbstractVerifier {
   }
 
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
-    const url = new URL('check-all-by-addresses', this.apiUrl)
+    const url = new URL(this.apiUrl + '/check-all-by-addresses')
     url.searchParams.append('addresses', contractAddress)
     url.searchParams.append('chainIds', chainId)
 
@@ -128,7 +128,7 @@ export class SourcifyVerifier extends AbstractVerifier {
   }
 
   getContractCodeUrl(address: string, chainId: string, fullMatch: boolean): string {
-    const url = new URL(`contracts/${fullMatch ? 'full_match' : 'partial_match'}/${chainId}/${address}`, this.explorerUrl)
+    const url = new URL(this.explorerUrl + `/contracts/${fullMatch ? 'full_match' : 'partial_match'}/${chainId}/${address}`)
     return url.href
   }
 }
