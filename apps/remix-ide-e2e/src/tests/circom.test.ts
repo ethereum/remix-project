@@ -190,8 +190,8 @@ module.exports = {
       .journalLastChildIncludes('newZkey')
       .pause(25000)
       .journalLastChildIncludes('setup done.')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/keys/groth16/verification_key.json"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/keys/groth16/zkey_final.txt"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/keys/verification_key.json"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrcipts/groth16/zk/keys/zkey_final.txt"]')
   },
   'Should run groth16 zkproof script for hash checker #group5': function (browser: NightwatchBrowser) {
     browser
@@ -210,8 +210,8 @@ module.exports = {
       .journalLastChildIncludes('WITNESS CHECKING FINISHED SUCCESSFULLY')
       .pause(2000)
       .journalLastChildIncludes('zk proof validity')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/build/groth16/zk_verifier.sol"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/build/groth16/input.json"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/build/zk_verifier.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/build/input.json"]')
   },
   'Should run plonk trusted setup script for hash checker #group6': function (browser: NightwatchBrowser) {
     browser
@@ -228,8 +228,8 @@ module.exports = {
       .journalLastChildIncludes('plonk setup')
       .pause(10000)
       .journalLastChildIncludes('setup done')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/keys/plonk/verification_key.json"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/keys/plonk/zkey_final.txt"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/keys/verification_key.json"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/keys/zkey_final.txt"]')
   },
   'Should run plonk zkproof script for hash checker #group6': function (browser: NightwatchBrowser) {
     browser
@@ -246,8 +246,8 @@ module.exports = {
       .pause(5000)
       .journalLastChildIncludes('zk proof validity')
       .journalLastChildIncludes('proof done.')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/build/plonk/zk_verifier.sol"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/build/plonk/input.json"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/build/zk_verifier.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/build/input.json"]')
   }
 }
 
