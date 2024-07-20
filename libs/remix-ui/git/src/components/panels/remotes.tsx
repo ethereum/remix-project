@@ -44,10 +44,10 @@ export const Remotes = () => {
         <RemotesImport />
         <hr></hr>
         <label className="text-uppercase">Add remote manually</label>
-        <input placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
-        <input placeholder="remote url" name='remoteurl' onChange={e => onUrlChange(e.target.value)} value={url} className="form-control mb-2" type="text" id="remoteurl" />
+        <input data-id="add-manual-remotename" placeholder="remote name" name='remotename' onChange={e => onRemoteNameChange(e.target.value)} value={remoteName} className="form-control mb-2" type="text" id="remotename" />
+        <input data-id="add-manual-remoteurl" placeholder="remote url" name='remoteurl' onChange={e => onUrlChange(e.target.value)} value={url} className="form-control mb-2" type="text" id="remoteurl" />
 
-        <button disabled={(remoteName && url) ? false : true} className='btn btn-primary mt-1 w-100' onClick={async () => {
+        <button data-id="add-manual-remotebtn" disabled={(remoteName && url) ? false : true} className='btn btn-primary mt-1 w-100' onClick={async () => {
           addRemote();
         }}>add remote</button>
         <hr className="mt-0 border border-2" />
