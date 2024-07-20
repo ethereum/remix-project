@@ -192,6 +192,12 @@ export const setBranchDifferences = ({
   }
 }
 
+export const resetBranchDifferences = () => {
+  return {
+    type: 'RESET_BRANCH_DIFFERENCES'
+  }
+}
+
 export const setGItHubToken = (token: string) => {
   return {
     type: 'SET_GITHUB_ACCESS_TOKEN',

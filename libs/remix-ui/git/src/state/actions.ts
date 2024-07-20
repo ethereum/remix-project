@@ -34,6 +34,7 @@ export interface ActionPayloadTypes {
     remote: remote
     branchDifference: branchDifference
   }
+  RESET_BRANCH_DIFFERENCES: null
   SET_GITHUB_USER: GitHubUser
   SET_RATE_LIMIT: any
   SET_GITHUB_ACCESS_TOKEN: string
