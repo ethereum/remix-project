@@ -56,9 +56,9 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
 
         </div>
         {isDefault() ?
-          <GitUIButton className="btn btn-sm" onClick={() => { }} disabledCondition={true}><FontAwesomeIcon className='text-success' icon={faCheck} ></FontAwesomeIcon></GitUIButton>
+          <GitUIButton data-id={`default-remote-check-${remote.name}`}className="btn btn-sm" onClick={() => { }} disabledCondition={true}><FontAwesomeIcon className='text-success' icon={faCheck} ></FontAwesomeIcon></GitUIButton>
           :
-          <GitUIButton tooltip="set as default" className="btn btn-sm" onClick={setAsDefault}><FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon></GitUIButton>
+          <GitUIButton data-id={`set-as-default-${remote.name}`} tooltip="set as default" className="btn btn-sm" onClick={setAsDefault}><FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon></GitUIButton>
         }
         <GitUIButton tooltip="Fetch remote" data-id={`remote-sync-${remote.name}`} className="btn btn-sm" onClick={async () => {
           await actions.fetch({
