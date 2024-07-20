@@ -24,14 +24,14 @@ module.exports = {
         })
     },
 
-    'run server #group1 #group2 #group3': function (browser: NightwatchBrowser) {
+    'run server #group1 #group2 #group3 #group4': function (browser: NightwatchBrowser) {
         browser.perform(async (done) => {
             gitserver = await spawnGitServer('/tmp/')
             console.log('working directory', process.cwd())
             done()
         })
     },
-    'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
+    'Update settings for git #group1 #group2 #group3 #group4': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="initgit-btn"]')
@@ -325,8 +325,61 @@ module.exports = {
     },
     'check if test file is gone #group2': function (browser: NightwatchBrowser) {
         browser
+            .pause()
             .clickLaunchIcon('filePanel')
             .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.txt"]')
+    },
+    'clone locally #group4': async function (browser: NightwatchBrowser) {
+        await cloneOnServer('http://localhost:6868/bare.git', '/tmp/', 'bare')
+        await cloneOnServer('http://localhost:6868/bare2.git', '/tmp/', 'bare2')
+    },
+    'add remote #group4': function (browser: NightwatchBrowser) {
+        browser
+            .pause(1000)
+            .click('*[data-id="remotes-panel"]')
+            .waitForElementVisible('*[data-id="add-manual-remoteurl"]')
+            .setValue('*[data-id="add-manual-remoteurl"]', 'http://localhost:6868/bare.git')
+            .waitForElementVisible('*[data-id="add-manual-remotename"]')
+            .setValue('*[data-id="add-manual-remotename"]', 'origin')
+            .waitForElementVisible('*[data-id="add-manual-remotebtn"]')
+            .click('*[data-id="add-manual-remotebtn"]')
+    },
+    'add second remote #group4': function (browser: NightwatchBrowser) {
+        browser
+            .pause(1000)
+            .waitForElementVisible('*[data-id="add-manual-remoteurl"]')
+            .setValue('*[data-id="add-manual-remoteurl"]', 'http://localhost:6868/bare2.git')
+            .waitForElementVisible('*[data-id="add-manual-remotename"]')
+            .setValue('*[data-id="add-manual-remotename"]', 'origin2')
+            .waitForElementVisible('*[data-id="add-manual-remotebtn"]')
+            .click('*[data-id="add-manual-remotebtn"]')
+    },
+    'check the buttons #group4': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="default-remote-check-origin"]')
+            .waitForElementVisible('*[data-id="set-as-default-origin2"]')
+    },
+    'check the commands #group4': function (browser: NightwatchBrowser) {
+        browser
+            .click('*[data-id="commands-panel"]')
+            .waitForElementVisible({
+                selector: "//div[@id='commands-remote-origin-select']//div[contains(@class, 'singleValue') and contains(text(), 'origin')]",
+                locateStrategy: 'xpath'
+            })
+    },
+    'switch to origin2 #group4': function (browser: NightwatchBrowser) {
+        browser
+            .click('*[data-id="remotes-panel"]')
+            .waitForElementVisible('*[data-id="set-as-default-origin2"]')
+            .click('*[data-id="set-as-default-origin2"]')
+    },
+    'check the commands for origin2 #group4': function (browser: NightwatchBrowser) {
+        browser
+            .click('*[data-id="commands-panel"]')
+            .waitForElementVisible({
+                selector: "//div[@id='commands-remote-origin-select']//div[contains(@class, 'singleValue') and contains(text(), 'origin2')]",
+                locateStrategy: 'xpath'
+            })
     }
 }
 
@@ -364,10 +417,10 @@ async function getGitLog(path: string): Promise<string> {
     })
 }
 
-async function cloneOnServer(repo: string, path: string) {
+async function cloneOnServer(repo: string, path: string, name: string = 'bare') {
     console.log('cloning', repo, path)
     return new Promise((resolve, reject) => {
-        const git = spawn('rm -rf bare && git', ['clone', repo], { cwd: path, shell: true, detached: true });
+        const git = spawn(`rm -rf ${name} && git`, ['clone', repo], { cwd: path, shell: true, detached: true });
 
         git.stdout.on('data', function (data) {
             console.log('stdout data cloning', data.toString());
