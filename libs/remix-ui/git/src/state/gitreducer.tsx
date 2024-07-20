@@ -156,6 +156,12 @@ export const gitReducer = (state: gitState = defaultGitState, action: Actions): 
       branchDifferences: { ...state.branchDifferences }
     }
 
+  case 'RESET_BRANCH_DIFFERENCES':
+    return {
+      ...state,
+      branchDifferences: {}
+    }
+
   case 'SET_GITHUB_USER':
     return {
       ...state,
