@@ -40,7 +40,6 @@ export const PushPull = () => {
   }, [context.currentBranch, context.remotes, context.branches])
 
   useEffect(() => {
-    console.log('defaultRemote', context.defaultRemote)
     if (context.defaultRemote && context.remotes.find(r => r.name === context.defaultRemote.name && r.url === context.defaultRemote.url)) {
       actions.setUpstreamRemote(context.defaultRemote)
     }

@@ -28,7 +28,7 @@ export const CommitDetails = (props: CommitDetailsProps) => {
   }, [activePanel])
 
   const getRemote = (): remote | null => {
-    return branch.remote? branch.remote: context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
+    return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : branch.remote ? branch.remote : null
   }
 
   const commitsAhead = (remote: remote) => {

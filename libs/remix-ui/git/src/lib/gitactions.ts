@@ -341,7 +341,7 @@ export const fetch = async (input: fetchInputType) => {
     }
   } catch (e: any) {
     console.log(e)
-    await parseError(e)
+    if (!input.quiet) { await parseError(e) }
   }
   dispatch(setLoading(false))
   await enableCallBacks()
@@ -644,7 +644,7 @@ export const loadGitHubUserFromToken = async () => {
 }
 
 export const statusMatrix = async (filepaths: string[]) => {
-  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.']});
+  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.'] });
   const result = (matrix || []).map((x) => {
     return {
       filename: `/${x.shift()}`,
@@ -784,11 +784,20 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
       remote = state.remotes[0]
     }
   }
-  if (!remote) {
-    dispatch(resetBranchDifferences())
-    return
-  }
+
   try {
+
+    await fetch({
+      remote: remote,
+      singleBranch: true,
+      ref: branch,
+      quiet: true,
+    })
+
+    if (!remote) {
+      dispatch(resetBranchDifferences())
+      return
+    }
 
     const branchDifference: branchDifference = await plugin.call('dgitApi', 'compareBranches', {
       branch,
@@ -803,6 +812,7 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
       }))
   } catch (e) {
     // do nothing
+    dispatch(resetBranchDifferences())
   }
 }
 

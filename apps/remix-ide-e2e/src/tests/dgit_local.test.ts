@@ -42,7 +42,7 @@ module.exports = {
             .modalFooterOKClick('github-credentials-error')
             .pause(2000)
     },
-    'clone a repo #group1 #group2 #group3': function (browser: NightwatchBrowser) {
+    'clone a repo #group1 #group2 #group3 #group4': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="clone-panel"]')
             .click('*[data-id="clone-panel"]')
@@ -56,7 +56,7 @@ module.exports = {
 
     // GROUP 1
 
-    'check file added #group1 #group3': function (browser: NightwatchBrowser) {
+    'check file added #group1 #group3 #group4': function (browser: NightwatchBrowser) {
         browser.
             addFile('test.txt', { content: 'hello world' }, 'README.md')
             .clickLaunchIcon('dgit')
@@ -76,7 +76,7 @@ module.exports = {
             .setValue('*[data-id="commitMessage"]', 'testcommit')
             .click('*[data-id="commitButton"]')
     },
-    'look at the commit #group1': function (browser: NightwatchBrowser) {
+    'look at the commit #group1 #group4': function (browser: NightwatchBrowser) {
         browser
             .click('*[data-id="commits-panel"]')
             .waitForElementPresent({
@@ -329,24 +329,10 @@ module.exports = {
             .clickLaunchIcon('filePanel')
             .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.txt"]')
     },
-    'clone locally #group4': async function (browser: NightwatchBrowser) {
-        await cloneOnServer('http://localhost:6868/bare.git', '/tmp/', 'bare')
-        await cloneOnServer('http://localhost:6868/bare2.git', '/tmp/', 'bare2')
-    },
-    'add remote #group4': function (browser: NightwatchBrowser) {
-        browser
-            .pause(1000)
-            .click('*[data-id="remotes-panel"]')
-            .waitForElementVisible('*[data-id="add-manual-remoteurl"]')
-            .setValue('*[data-id="add-manual-remoteurl"]', 'http://localhost:6868/bare.git')
-            .waitForElementVisible('*[data-id="add-manual-remotename"]')
-            .setValue('*[data-id="add-manual-remotename"]', 'origin')
-            .waitForElementVisible('*[data-id="add-manual-remotebtn"]')
-            .click('*[data-id="add-manual-remotebtn"]')
-    },
     'add second remote #group4': function (browser: NightwatchBrowser) {
         browser
             .pause(1000)
+            .click('*[data-id="remotes-panel"]')
             .waitForElementVisible('*[data-id="add-manual-remoteurl"]')
             .setValue('*[data-id="add-manual-remoteurl"]', 'http://localhost:6868/bare2.git')
             .waitForElementVisible('*[data-id="add-manual-remotename"]')
@@ -380,7 +366,56 @@ module.exports = {
                 selector: "//div[@id='commands-remote-origin-select']//div[contains(@class, 'singleValue') and contains(text(), 'origin2')]",
                 locateStrategy: 'xpath'
             })
-    }
+    },
+    'sync the commit #group4': function (browser: NightwatchBrowser) {
+        browser
+            .pause(1000)
+            .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
+            .click('*[data-id="sourcecontrol-panel"]')
+            .waitForElementVisible('*[data-id="syncButton"]')
+            .click('*[data-id="syncButton"]')
+            .waitForElementVisible('*[data-id="commitButton"]')
+            .click('*[data-id="commits-panel"]')
+            .waitForElementPresent({
+                selector: '//*[@data-id="commit-summary-testcommit-"]',
+                locateStrategy: 'xpath'
+            })
+    },
+    'check the log #group4': async function (browser: NightwatchBrowser) {
+        const logs = await getGitLog('/tmp/git/bare2.git')
+        console.log(logs)
+        browser.assert.ok(logs.includes('testcommit'))
+        const logs2 = await getGitLog('/tmp/git/bare.git')
+        console.log(logs2)
+        browser.assert.fail(logs2.includes('testcommit'))
+    },
+    'switch to origin #group4': function (browser: NightwatchBrowser) {
+        browser
+            .click('*[data-id="remotes-panel"]')
+            .waitForElementVisible('*[data-id="set-as-default-origin"]')
+            .click('*[data-id="set-as-default-origin"]')
+    },
+    'check the commands for origin #group4': function (browser: NightwatchBrowser) {
+        browser
+            .click('*[data-id="commands-panel"]')
+            .waitForElementVisible({
+                selector: "//div[@id='commands-remote-origin-select']//div[contains(@class, 'singleValue') and contains(text(), 'origin')]",
+                locateStrategy: 'xpath'
+            })
+    },
+    'check the commit ahead #group4': function (browser: NightwatchBrowser) {
+        browser
+            .pause(1000)
+            .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
+            .click('*[data-id="sourcecontrol-panel"]')
+            .waitForElementVisible('*[data-id="syncButton"]')
+            // do not sync
+            .click('*[data-id="commits-panel"]')
+            .waitForElementPresent({
+                selector: '//*[@data-id="commit-summary-testcommit-ahead"]',
+                locateStrategy: 'xpath'
+            })
+    },
 }
 
 async function getBranches(path: string): Promise<string> {
