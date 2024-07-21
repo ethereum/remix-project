@@ -33,7 +33,7 @@ export const BranchHeader = () => {
         }
       }
     }
-  }, [context.currentBranch, context.commits, context.branches, context.remotes, context.currentHead])
+  }, [context.currentBranch, context.commits, context.branches, context.remotes, context.currentHead, context.defaultRemote])
 
   useEffect(() => {
     if (context.fileStatusResult) {
