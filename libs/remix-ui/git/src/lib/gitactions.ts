@@ -787,13 +787,6 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
 
   try {
 
-    await fetch({
-      remote: remote,
-      singleBranch: true,
-      ref: branch,
-      quiet: true,
-    })
-
     if (!remote) {
       dispatch(resetBranchDifferences())
       return
@@ -844,6 +837,11 @@ export const addRemote = async (remote: remote) => {
   try {
     await plugin.call('dgitApi', 'addremote', remote)
     await getRemotes()
+    await fetch({
+      remote: remote,
+      singleBranch: true,
+      quiet: true,
+    })
   } catch (e) {
     console.log(e)
   }
