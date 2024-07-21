@@ -44,7 +44,7 @@ export const SourceControlBase = (props: SourceControlButtonsProps) => {
   }, [context.branchDifferences, context.currentBranch, branch, remote])
 
   const setDefaultRemote = () => {
-    if(context.defaultRemote) {
+    if (context.defaultRemote) {
       setRemote(context.defaultRemote)
       return
     }
