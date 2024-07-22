@@ -103,6 +103,7 @@ export const createNewBlockchainAccount = async (plugin: RunTab, dispatch: React
 
 export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const bundlerEndpoint = "https://public.stackup.sh/api/v1/node/ethereum-sepolia"
+  const localStorageKey = 'smartAccounts'
 
   const ethClient: any = createPublicClient({
     chain: sepolia,
@@ -125,13 +126,16 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
   console.log('sender--->', sender)
   plugin.REACT_API.smartAccounts.addresses.push(sender)
   // Save smart accounts w.r.t. primary address of WalletClient
-  // localStorage.setItem(addresses[0], JSON.stringify(plugin.REACT_API.smartAccounts))
+  let smartAccountsStr = localStorage.getItem(localStorageKey)
+  let smartAccountsObj = JSON.parse(smartAccountsStr)
+  smartAccountsObj[plugin.REACT_API.chainId][addresses[0]].push(sender)
+  localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
   await fillAccountsList(plugin, dispatch)
 }
 
 export const loadSmartAccounts = async (plugin, primaryAddress) => {
   console.log('loadSmartAccounts')
-  const { chainId, accounts } = plugin.REACT_API
+  const { chainId } = plugin.REACT_API
   const localStorageKey = 'smartAccounts'
 
   let smartAccountsStr = localStorage.getItem(localStorageKey)
