@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import { ContractVerificationPluginClient } from './ContractVerificationPluginClient'
 
 import { AppContext } from './AppContext'
 import DisplayRoutes from './routes'
-import { ContractVerificationSettings, ThemeType, Chain, SubmittedContracts } from './types'
+import { ContractVerificationSettings, ThemeType, Chain, SubmittedContracts, VerificationReceipt, mergeChainSettingsWithDefaults } from './types'
 
 import './App.css'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { useLocalStorage } from './hooks/useLocalStorage'
+import { getVerifier } from './Verifiers'
 
 const plugin = new ContractVerificationPluginClient()
 
@@ -19,6 +20,7 @@ const App = () => {
   // TODO: Types for chains
   const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [compilationOutput, setCompilationOutput] = useState<{ [key: string]: CompilerAbstract } | undefined>()
+  const timer = useRef(null)
 
   useEffect(() => {
     // TODO: Fix 'compilationFinished' event types. The interface is outdated at https://github.com/ethereum/remix-plugin/blob/master/packages/api/src/lib/compiler/api.ts. It does not include data, input, or version. See the current parameters: https://github.com/ethereum/remix-project/blob/9f6c5be882453a555055f07171701459e4ae88a4/libs/remix-solidity/src/compiler/compiler.ts#L189
@@ -50,6 +52,56 @@ const App = () => {
       plugin.off('compilerArtefacts' as any, 'compilationSaved')
     }
   }, [])
+
+  // Poll status of pending receipts frequently
+  useEffect(() => {
+    const getPendingReceipts = (submissions: SubmittedContracts) => {
+      const pendingReceipts: VerificationReceipt[] = []
+      // Check statuses of receipts
+      for (const submission of Object.values(submissions)) {
+        for (const receipt of submission.receipts) {
+          if (receipt.status === 'pending' && receipt.verifierInfo.name !== 'Sourcify') {
+            pendingReceipts.push(receipt)
+          }
+        }
+      }
+      return pendingReceipts
+    }
+
+    let pendingReceipts = getPendingReceipts(submittedContracts)
+
+    if (pendingReceipts.length > 0) {
+      if (timer.current) {
+        clearInterval(timer.current)
+        timer.current = null
+      }
+      timer.current = setInterval(async () => {
+        const changedSubmittedContracts = { ...submittedContracts }
+
+        for (const receipt of pendingReceipts) {
+          await new Promise((resolve) => setTimeout(resolve, 500)) // avoid api rate limit exceed.
+
+          const { verifierInfo, receiptId } = receipt
+          if (receiptId) {
+            const contract = changedSubmittedContracts[receipt.contractId]
+            const chainSettings = mergeChainSettingsWithDefaults(contract.chainId, settings)
+            const verifierSettings = chainSettings.verifiers[verifierInfo.name]
+
+            // In case the user overwrites the API later, prefer the one stored in localStorage
+            const verifier = getVerifier(verifierInfo.name, { ...verifierSettings, apiUrl: verifierInfo.apiUrl })
+            receipt.status = await verifier.checkVerificationStatus(receiptId)
+          }
+        }
+
+        pendingReceipts = getPendingReceipts(changedSubmittedContracts)
+        if (timer.current && pendingReceipts.length === 0) {
+          clearInterval(timer.current)
+          timer.current = null
+        }
+        setSubmittedContracts((prev) => Object.assign({}, prev, changedSubmittedContracts))
+      }, 10000)
+    }
+  })
 
   return (
     <AppContext.Provider value={{ themeType, setThemeType, settings, setSettings, chains, compilationOutput, submittedContracts, setSubmittedContracts }}>

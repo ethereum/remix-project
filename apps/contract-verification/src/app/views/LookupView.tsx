@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { SearchableChainDropdown, ContractAddressInput } from '../components'
-import { LookupResponse, mergeChainSettingsWithDefaults, VerifierIdentifier, VERIFIERS, type Chain } from '../types'
+import { LookupResponse, mergeChainSettingsWithDefaults, validConfiguration, VerifierIdentifier, VERIFIERS, type Chain } from '../types'
 import { AppContext } from '../AppContext'
 import { CustomTooltip } from '@remix-ui/helper'
 import { getVerifier } from '../Verifiers'
@@ -15,14 +15,17 @@ export const LookupView = () => {
 
   const chainSettings = selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined
 
-  const handleLookup = () => {
+  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain
+
+  const handleLookup = (e) => {
+    e.preventDefault()
+
     for (const verifierId of VERIFIERS) {
-      if (!chainSettings.verifiers[verifierId]?.apiUrl || (verifierId === 'Etherscan' && !chainSettings.verifiers[verifierId]?.apiKey)) {
+      if (!validConfiguration(chainSettings, verifierId)) {
         continue
       }
 
       setLoadingVerifiers((prev) => ({ ...prev, [verifierId]: true }))
-      console.log(chainSettings.verifiers[verifierId])
       const verifier = getVerifier(verifierId, chainSettings.verifiers[verifierId])
       verifier
         .lookup(contractAddress, selectedChain.chainId.toString())
@@ -44,14 +47,14 @@ export const LookupView = () => {
 
         <ContractAddressInput label="Contract Address" id="contract-address" contractAddress={contractAddress} setContractAddress={setContractAddress} contractAddressError={contractAddressError} setContractAddressError={setContractAddressError} />
 
-        <button type="submit" className="btn btn-primary" disabled={!!contractAddressError || !contractAddress || !selectedChain}>
+        <button type="submit" className="btn btn-primary" disabled={submitDisabled}>
           Lookup
         </button>
       </form>
       <div className="pt-3">
         {chainSettings &&
           VERIFIERS.map((verifierId) => {
-            if (!chainSettings.verifiers[verifierId]?.apiUrl || (verifierId === 'Etherscan' && !chainSettings.verifiers[verifierId]?.apiKey)) {
+            if (!validConfiguration(chainSettings, verifierId)) {
               const tooltipText = 'Configure API in the settings'
               return (
                 <div key={verifierId} className="pt-2">
