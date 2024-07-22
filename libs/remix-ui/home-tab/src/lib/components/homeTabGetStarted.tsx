@@ -70,13 +70,7 @@ const workspaceTemplates: WorkspaceTemplate[] = [
     description: 'Create a new MultiSig wallet using this template.',
     projectLogo: 'assets/img/gnosissafeLogo.png',
     templateName: 'gnosisSafeMultisig',
-  },
-  {
-    gsID: 'browseTemplate',
-    workspaceTitle: 'Browse More Templates...',
-    description: 'Browse templates',
-    projectLogo: '',
-  },
+  }
 ]
 
 function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {

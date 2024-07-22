@@ -32,6 +32,7 @@ export const templates = (intl) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
+          description: "A standard interface for fungible tokens",
           tagList: ["Solidity"],
           opts: {
             mintable: true
@@ -40,6 +41,7 @@ export const templates = (intl) => {
         {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
+          description: "Non-fungible Token Standard",
           tagList: ["Solidity", "ERC721"],
           opts: {
             mintable: true
@@ -49,6 +51,7 @@ export const templates = (intl) => {
           value: "ozerc1155",
           displayName: "ERC1155",
           tagList: ["Solidity"],
+          description: "A standard interface for contracts that manage multiple token types",
           opts: {
             mintable: true
           }
@@ -56,6 +59,7 @@ export const templates = (intl) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
+          description: "A standard interface for fungible tokens",
           tagList: ["Solidity", "ERC20"],
           opts: {
             mintable: true,
@@ -65,6 +69,7 @@ export const templates = (intl) => {
         {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
+          description: "Non-fungible Token Standard",
           opts: {
             mintable: true,
             burnable: true
@@ -74,6 +79,7 @@ export const templates = (intl) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
+          description: "A standard interface for contracts that manage multiple token types",
           opts: {
             mintable: true,
             burnable: true
@@ -83,6 +89,7 @@ export const templates = (intl) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
+          description: "A standard interface for fungible tokens",
           opts: {
             mintable: true,
             pausable: true
@@ -92,6 +99,7 @@ export const templates = (intl) => {
         {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
+          description: "Non-fungible Token Standard",
           opts: {
             mintable: true,
             pausable: true
@@ -101,6 +109,7 @@ export const templates = (intl) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
+          description: "A standard interface for contracts that manage multiple token types",
           tagList: ["ERC20"],
           opts: {
             mintable: true,
@@ -115,6 +124,7 @@ export const templates = (intl) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
+          description: "A standard interface for fungible tokens",
           opts: {
             upgradeable: 'uups'
           },
@@ -123,6 +133,7 @@ export const templates = (intl) => {
         {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
+          description: "Non-fungible Token Standard",
           opts: {
             upgradeable: 'uups'
           },
@@ -131,6 +142,7 @@ export const templates = (intl) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
+          description: "A standard interface for contracts that manage multiple token types",
           opts: {
             upgradeable: 'uups'
           },
@@ -139,6 +151,7 @@ export const templates = (intl) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
+          description: "A standard interface for fungible tokens",
           opts: {
             upgradeable: 'uups',
             mintable: true
@@ -148,6 +161,7 @@ export const templates = (intl) => {
         {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
+          description: "Non-fungible Token Standard",
           opts: {
             upgradeable: 'uups',
             mintable: true
@@ -157,6 +171,7 @@ export const templates = (intl) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
+          description: "A standard interface for contracts that manage multiple token types",
           opts: {
             upgradeable: 'uups',
             mintable: true
@@ -166,6 +181,7 @@ export const templates = (intl) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
+          description: "A standard interface for fungible tokens",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -176,6 +192,7 @@ export const templates = (intl) => {
         {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
+          description: "Non-fungible Token Standard",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -186,6 +203,7 @@ export const templates = (intl) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
+          description: "A standard interface for contracts that manage multiple token types",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -196,6 +214,7 @@ export const templates = (intl) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
+          description: "A standard interface for fungible tokens",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -206,6 +225,7 @@ export const templates = (intl) => {
         {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
+          description: "Non-fungible Token Standard",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -216,6 +236,7 @@ export const templates = (intl) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
+          description: "A standard interface for contracts that manage multiple token types",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -226,6 +247,7 @@ export const templates = (intl) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
+          description: "A standard interface for contracts that manage multiple token types",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -239,7 +261,7 @@ export const templates = (intl) => {
     {
       name: "OxProject",
       items: [
-        { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: 'ERC20 by 0xProject'}
+        { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: "A standard interface for fungible tokens by 0xProject"}
       ]
     },
     {
@@ -272,17 +294,17 @@ export const templates = (intl) => {
       items: [
         { value: "uniswapV4Template",
           displayName: intl.formatMessage({ id: 'filePanel.uniswapV4Template' }),
-          description: 'Compile and Deploy an Uniswap hook'
+          description: 'Use an Uniswap hook'
         },
         { 
           value: "breakthroughLabsUniswapv4Hooks",
           displayName: intl.formatMessage({ id: 'filePanel.breakthroughLabsUniswapv4Hooks' }), 
-          description: 'Compile and Deploy an Uniswap hook developed by Breakthrough Labs'
+          description: 'Use an Uniswap hook developed by Breakthrough Labs'
         },
         { 
           value: "uniswapV4HookBookMultiSigSwapHook", 
           displayName: intl.formatMessage({ id: 'filePanel.uniswapV4HookBookMultiSigSwapHook' }),
-          description: 'Compile and Deploy a MultiSigSwapHook developed by Breakthrough Labs'
+          description: 'Use a MultiSigSwapHook developed by Breakthrough Labs'
         }
       ]
     },
@@ -293,7 +315,7 @@ export const templates = (intl) => {
           value: "contractCreate2Factory",
           tagList: ["Solidity"], 
           displayName: intl.formatMessage({ id: 'filePanel.addcreate2solidityfactory' }),
-          description: 'Factory for deploying a Contract in Solidity using the CREATE2 opcode.'
+          description: 'Factory for deploying a Contract using the CREATE2 opcode.'
         },
         { 
           value: "contractDeployerScripts",
@@ -317,7 +339,7 @@ export const templates = (intl) => {
       items: [
         { value: "runJsTestAction",
           displayName: intl.formatMessage({ id: 'filePanel.tssoltestghaction' }),
-          description: 'a Mocha Chai Test Workflow in a GitHub CI.'
+          description: 'A Mocha Chai Test Workflow in a GitHub CI.'
         },
         { value: "runSolidityUnittestingAction",
           displayName: intl.formatMessage({ id: 'filePanel.solghaction' }),
