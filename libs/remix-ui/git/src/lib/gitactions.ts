@@ -805,7 +805,8 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
       }))
   } catch (e) {
     // do nothing
-    dispatch(resetBranchDifferences())
+    if(dispatch)
+      dispatch(resetBranchDifferences())
   }
 }
 
