@@ -78,26 +78,32 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
         props.handleExpand(!expand)
       else return
     }}>
-      { anyEnabled && <div className='mr-2 mt-3 d-flex flex-column'>
+      { anyEnabled && <div className='mr-2 mt-3 pb-1 d-flex flex-column'>
         <div className='d-flex flex-grid'>
-          <div className={"d-flex mx-0 p-2 bg-light border border-secondary remixui_grid_cell_container " + props.classList || ''} data-id={"remixUIGS" + props.title}>
+          <div className={ `${pinned ? "" : "border-dark "}` + "d-flex mx-0 p-2 bg-light border border-secondary remixui_grid_cell_container " + props.classList || ''} data-id={"remixUIGS" + props.title}>
             <div className="d-flex remixui_grid_cell w-100 flex-column">
-              { !props.hideTitle && <div className='d-flex flex-row pb-1 align-items-end' style={{ width: '8rem', height: '1rem' }}>
+              { !props.hideTitle && <div className='d-flex flex-row pb-1 align-items-end' style={{ minWidth: '8rem', height: '1rem' }}>
                 { props.logo && <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> }
                 { props.logos && props.logos.map((logo) => <img className='remixui_grid_view_logo mr-1' src={logo} style={{ width: '1rem', height: '1rem' }}/>)}
-                { props.title && <label
-                  className='m-0 p-0 align-items-left font-weight-bold'
-                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                >
-                  { props.title }
-                </label> }
+                { props.title &&
+                  <CustomTooltip
+                    placement="top"
+                    tooltipId={`overlay-tooltip-new${props.title}`}
+                    tooltipText={ props.title }
+                  >
+                    <label
+                      className='m-0 p-0 text-uppercase align-items-left font-weight-bold text-truncate overflow-hidden whitespace-nowra'
+                    >{ props.title }
+                    </label>
+                  </CustomTooltip>
+                }
               </div> }
               { props.children }
             </div>
           </div>
           { filterCon.showPin && <button
-            className={`${pinned ? 'fa-duotone' : 'fa-light'}` + ` fa-map-pin text-info border-0 mb-0 remixui_grid_cell_pin`}
-            style={{ fontSize: 'x-large' }}
+            className={`${pinned ? 'fa-circle-check text-dark' : 'fa-circle text-secondary'}` + ` fa-regular border-0 mb-0 remixui_grid_cell_pin`}
+            style={{ fontSize: 'large' }}
             data-id={`${pinned ? `${props.id}-pinned` : `${props.id}-unpinned`}`}
             onClick={async () => {
               if (!props.pinStateCallback) setPinned(!pinned)
