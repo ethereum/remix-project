@@ -99,7 +99,7 @@ const ReceiptsBody = ({ contract }: { contract: SubmittedContract }) => {
           </thead>
           <tbody>
             {contract.receipts.map((receipt) => (
-              <tr key={receipt.receiptId}>
+              <tr key={`${contract.id}-${receipt.verifierInfo.name}`}>
                 <td>{receipt.verifierInfo.name}</td>
                 <td>{receipt.verifierInfo.apiUrl}</td>
                 <td>{receipt.status}</td>
