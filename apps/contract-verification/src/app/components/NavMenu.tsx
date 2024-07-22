@@ -15,7 +15,7 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
       className={({ isActive }) => 'p-2 text-decoration-none ' + (isActive ? 'bg-primary text-white' : 'bg-secondary')}
       // state={from}
     >
-      <span className="d-flex flex-column align-items-center justify-content-center" style={{ width: '64px' }}>
+      <span className="d-flex flex-column align-items-center justify-content-center" style={{ width: '60px' }}>
         <span>{icon}</span>
         <span>{title}</span>
       </span>

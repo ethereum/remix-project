@@ -1,5 +1,5 @@
 import type { ChainSettings, ContractVerificationSettings, SettingsForVerifier, VerifierSettings } from './SettingsTypes'
-import { VERIFIERS } from './VerificationTypes'
+import { VerifierIdentifier, VERIFIERS } from './VerificationTypes'
 
 const DEFAULTS: SettingsForVerifier = {
   Sourcify: {
@@ -39,4 +39,8 @@ export function mergeChainSettingsWithDefaults(chainId: string, userSettings: Co
     }
   }
   return { verifiers }
+}
+
+export function validConfiguration(chainSettings: ChainSettings | undefined, verifierId: VerifierIdentifier) {
+  return !!chainSettings && !!chainSettings.verifiers[verifierId]?.apiUrl && (verifierId !== 'Etherscan' || !!chainSettings.verifiers[verifierId]?.apiKey)
 }

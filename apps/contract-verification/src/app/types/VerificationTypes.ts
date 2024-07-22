@@ -28,8 +28,9 @@ export interface VerifierInfo {
 export interface VerificationReceipt {
   receiptId?: string
   verifierInfo: VerifierInfo
-  status: VerificationStatus | null
+  status: VerificationStatus
   message?: string
+  contractId: string
 }
 
 export interface SubmittedContract {
@@ -53,7 +54,9 @@ export interface SubmittedProxyContract {
 
 // This and all nested subtypes should be pure interfaces, so they can be converted to JSON easily
 export interface SubmittedContracts {
-  [id: string]: SubmittedContract | SubmittedProxyContract
+  // TODO implement Proxy verification
+  // [id: string]: SubmittedContract | SubmittedProxyContract
+  [id: string]: SubmittedContract
 }
 
 export function isProxy(contract: SubmittedContract | SubmittedProxyContract): contract is SubmittedProxyContract {

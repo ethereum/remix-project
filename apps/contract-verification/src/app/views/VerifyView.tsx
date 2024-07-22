@@ -2,57 +2,69 @@ import { useContext, useEffect, useState } from 'react'
 
 import { AppContext } from '../AppContext'
 import { SearchableChainDropdown, ContractDropdown, ContractAddressInput } from '../components'
-import type { Chain, SubmittedContract, VerificationReceipt, VerifierInfo } from '../types'
-import { SourcifyVerifier } from '../Verifiers/SourcifyVerifier'
-import { EtherscanVerifier } from '../Verifiers/EtherscanVerifier'
+import { mergeChainSettingsWithDefaults, type VerifierIdentifier, VERIFIERS, type Chain, type SubmittedContract, type VerificationReceipt, type VerifierInfo, validConfiguration } from '../types'
 import { useNavigate } from 'react-router-dom'
 import { ConstructorArguments } from '../components/ConstructorArguments'
-import { AbstractVerifier, getVerifier } from '../Verifiers'
 import { ContractDropdownSelection } from '../components/ContractDropdown'
+import { CustomTooltip } from '@remix-ui/helper'
+import { getVerifier } from '../Verifiers'
 
 export const VerifyView = () => {
-  const { compilationOutput, setSubmittedContracts } = useContext(AppContext)
-  const [contractAddress, setContractAddress] = useState('')
+  const { compilationOutput, setSubmittedContracts, settings } = useContext(AppContext)
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
+  const [contractAddress, setContractAddress] = useState('')
+  const [contractAddressError, setContractAddressError] = useState('')
   const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = useState<string>('')
   const [selectedContract, setSelectedContract] = useState<ContractDropdownSelection | undefined>()
-  const [contractAddressError, setContractAddressError] = useState('')
+  const [enabledVerifiers, setEnabledVerifiers] = useState<Partial<Record<VerifierIdentifier, boolean>>>({})
   const navigate = useNavigate()
 
-  // TODO
-  // const sourcifyVerifier = new SourcifyVerifier('http://sourcify.dev/server/', 'Sourcify')
-  const sourcifyVerifier = new SourcifyVerifier('http://localhost:5555/', 'todo')
-  const etherscanVerifier = new EtherscanVerifier('https://api.etherscan.io', 'todo', 'API_KEY')
-  const verifiers = [sourcifyVerifier, etherscanVerifier] // Placeholder, to be derived from settings
+  const chainSettings = selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined
 
+  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || !selectedContract
+
+  // Enable all verifiers with valid configuration
   useEffect(() => {
-    console.log('Selected chain changed', selectedChain)
+    const changedEnabledVerifiers = {}
+    for (const verifierId of VERIFIERS) {
+      if (validConfiguration(chainSettings, verifierId)) {
+        changedEnabledVerifiers[verifierId] = true
+      }
+    }
+    setEnabledVerifiers(changedEnabledVerifiers)
   }, [selectedChain])
 
-  const handleVerify = async (e) => {
-    e.preventDefault() // Don't change the page
+  const handleVerifierCheckboxClick = (verifierId: VerifierIdentifier, checked: boolean) => {
+    setEnabledVerifiers({ ...enabledVerifiers, [verifierId]: checked })
+  }
 
-    console.log('selectedContract', selectedContract)
+  const handleVerify = async (e) => {
+    e.preventDefault()
+
     const { triggerFilePath, filePath, contractName } = selectedContract
-    // TODO create enabledVerifiers from simple VerifierIdentifier -> boolean mapping
-    const enabledVerifiers = verifiers.filter((verifier) => verifier.enabled)
     const compilerAbstract = compilationOutput[triggerFilePath]
     if (!compilerAbstract) {
       throw new Error(`Error: Compilation output not found for ${triggerFilePath}`)
     }
 
     const date = new Date()
-    // A receipt for each verifier
-    const receipts: VerificationReceipt[] = enabledVerifiers.map((verifier) => {
-      const verifierInfo: VerifierInfo = {
-        apiUrl: verifier.apiUrl,
-        name: verifier instanceof SourcifyVerifier ? 'Sourcify' : 'Etherscan',
+    const contractId = selectedChain?.chainId + '-' + contractAddress + '-' + date.toUTCString()
+    const receipts: VerificationReceipt[] = []
+    for (const [verifierId, enabled] of Object.entries(enabledVerifiers)) {
+      if (!enabled) {
+        continue
       }
-      return { verifierInfo, status: null, receiptId: null, message: null }
-    })
+
+      const verifierInfo: VerifierInfo = {
+        apiUrl: chainSettings.verifiers[verifierId].apiUrl,
+        name: verifierId as VerifierIdentifier,
+      }
+      receipts.push({ verifierInfo, status: 'pending', contractId })
+    }
+
     const newSubmittedContract: SubmittedContract = {
       type: 'contract',
-      id: selectedChain?.chainId + '-' + contractAddress + '-' + date.toUTCString(),
+      id: contractId,
       address: contractAddress,
       chainId: selectedChain?.chainId.toString(),
       filePath,
@@ -65,15 +77,14 @@ export const VerifyView = () => {
     }
     setSubmittedContracts((prev) => ({ ...prev, [newSubmittedContract.id]: newSubmittedContract }))
 
-    console.log('newSubmittedContract:', newSubmittedContract)
-
     // Take user to receipt view
     navigate('/receipts')
 
     // Verify for each verifier. forEach does not wait for await and each promise will execute in parallel
     receipts.forEach(async (receipt) => {
       const { verifierInfo } = receipt
-      const verifier = getVerifier(verifierInfo.name, { apiUrl: verifierInfo.apiUrl, explorerUrl: '' })
+      const verifierSettings = chainSettings.verifiers[verifierInfo.name]
+      const verifier = getVerifier(verifierInfo.name, { ...verifierSettings })
       try {
         const response = await verifier.verify(newSubmittedContract, compilerAbstract)
         receipt.status = response.status
@@ -91,48 +102,47 @@ export const VerifyView = () => {
     })
   }
 
-  console.log('sourcifyVerifiers:', verifiers)
-
   return (
     <form onSubmit={handleVerify}>
-      <SearchableChainDropdown label="Chain" id="network-dropdown" setSelectedChain={setSelectedChain} selectedChain={selectedChain} />
+      <SearchableChainDropdown label="Chain" id="network-dropdown" selectedChain={selectedChain} setSelectedChain={setSelectedChain} />
 
       <ContractAddressInput label="Contract Address" id="contract-address" contractAddress={contractAddress} setContractAddress={setContractAddress} contractAddressError={contractAddressError} setContractAddressError={setContractAddressError} />
 
       <ContractDropdown label="Contract Name" id="contract-dropdown-1" setSelectedContract={setSelectedContract} />
 
-      <button type="submit" className="btn btn-primary">
-        Verify
-      </button>
+      {selectedContract && <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} />}
 
       <div>
-        {verifiers?.length > 0 &&
-          verifiers.map((verifier) => {
-            // Temporary fix. The verifier options should be rendered from a constant later.
-            const name = verifier instanceof SourcifyVerifier ? 'Sourcify' : 'Etherscan'
-            return (
-              <div key={name} className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id={`verifier-${name}`}
-                  checked={verifier.enabled}
-                  onChange={(e) => {
-                    verifier.enabled = e.target.checked
-                    // Trigger a re-render
-                    // setVerifiers([...verifiers])
-                  }}
-                />
-                <label className="form-check-label" htmlFor={`verifier-${name}`}>
-                  {name} ({verifier.apiUrl})
+        Verify on:
+        {VERIFIERS.map((verifierId) => {
+          return (
+            <div key={verifierId} className="pt-2 form-check">
+              <input className="form-check-input" type="checkbox" id={`verifier-${verifierId}`} checked={!!enabledVerifiers[verifierId]} onChange={(e) => handleVerifierCheckboxClick(verifierId, e.target.checked)} disabled={!chainSettings || !validConfiguration(chainSettings, verifierId)} />
+
+              <div className="d-flex flex-column align-items-start">
+                <label htmlFor={`verifier-${verifierId}`} style={{ fontSize: '1rem', lineHeight: '1.5', color: 'var(--text)' }} className={`mb-0 font-weight-bold${!chainSettings || validConfiguration(chainSettings, verifierId) ? '' : ' text-secondary'}`}>
+                  {verifierId}
                 </label>
+                {!chainSettings ? (
+                  ''
+                ) : validConfiguration(chainSettings, verifierId) ? (
+                  <span className="text-secondary">{chainSettings.verifiers[verifierId].apiUrl}</span>
+                ) : (
+                  <CustomTooltip tooltipText="Configure the API in the settings">
+                    <span className="text-secondary w-auto" style={{ textDecoration: 'underline dotted' }}>
+                      Enable?
+                    </span>
+                  </CustomTooltip>
+                )}
               </div>
-            )
-          })}
+            </div>
+          )
+        })}
       </div>
-      <div>
-        {/* <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} /> */}
-      </div>
+
+      <button type="submit" className="btn btn-primary mt-3" disabled={submitDisabled}>
+        Verify
+      </button>
     </form>
   )
 }

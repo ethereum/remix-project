@@ -1,14 +1,13 @@
-import example from './example.js'
+import { useContext } from 'react'
 import { AccordionReceipt } from '../components/AccordionReceipt'
-import type { SubmittedContracts } from '../types'
+import { AppContext } from '../AppContext'
 
 export const ReceiptsView = () => {
-  const submittedContracts = example as unknown as SubmittedContracts
-  // const {submittedContracts} = React.useContext(AppContext);
+  const { submittedContracts } = useContext(AppContext)
 
   return (
     <div className="accordion" id="receiptsAccordion">
-      {Object.values(submittedContracts).map((contract, index) => (
+      {Object.values(submittedContracts).reverse().map((contract, index) => (
         <AccordionReceipt contract={contract} index={index} />
       ))}
     </div>
