@@ -161,22 +161,13 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                 return <RemixUIGridCell
                   plugin={this}
                   title={item.displayName}
-                  hideTitle={true}
                   searchKeywords={[JSON.stringify(item), template.name]}
                   tagList={item.tagList}
                   classList='TSCellStyle'
                 >
                   <div className='d-flex justify-content-between h-100 flex-column'>
                     <div className='d-flex flex-column'>
-                    <CustomTooltip
-                        placement="auto"
-                        tooltipId={`overlay-tooltip-new${item.displayName}`}
-                        tooltipText={item.displayName}
-                      >
-                        <span className='text-truncate overflow-hidden whitespace-nowrap'>{item.displayName}</span>
-                      </CustomTooltip>
                       <div>
-                        {(item.displayName && !item.description) && <span className=''>{item.displayName}</span>}
                         {item.description && <span className='text-dark'>{item.description}</span>}
                       </div>
                       <div className='d-flex flex-wrap'>
@@ -186,7 +177,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                         {(item.opts && item.opts.pausable) && <span className='badgeForCell text-secondary'>pausable</span>}
                       </div>
                     </div>
-                    <div className='align-items-center justify-content-between w-100 d-flex pt-2 flex-row'>
+                    <div className='align-items-center justify-content-between w-100 d-flex pt- flex-row'>
                       {(!template.IsArtefact || !item.isArtefact) && <CustomTooltip
                         placement="auto"
                         tooltipId={`overlay-tooltip-new${item.name}`}

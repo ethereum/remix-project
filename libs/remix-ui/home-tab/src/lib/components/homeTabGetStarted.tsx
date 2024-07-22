@@ -163,7 +163,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
                 <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="top-start" key={`${template.gsID}-${template.workspaceTitle}-${index}`}>
                   <button
                     key={index}
-                    className={index === 0 ? 'btn btn-primary border p-2 text-nowrap mr-3 mb-2' : index === workspaceTemplates.length - 1 ? 'btn border p-2 text-nowrap mr-2 mb-2' : 'btn border p-2 text-nowrap mr-3 mb-3'}
+                    className={index === 0 ? 'btn btn-primary border p-2 text-nowrap mr-3 mb-2' : index === workspaceTemplates.length - 1 ? 'btn border p-2 text-nowrap mr-2 mb-3' : 'btn border p-2 text-nowrap mr-3 mb-3'}
                     onClick={async (e) => {
                       if (template.gsID === 'browseTemplate') {
                         await plugin.call('manager', 'activatePlugin', 'templateSelection')
