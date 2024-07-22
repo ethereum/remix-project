@@ -148,7 +148,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
           ['ERC1155', 'primary'],
         ]}
         title='Template explorer'
-        description="Select a template to create a workspace or to get it added to current workspace"
+        description="Select a template to create a workspace or to add it to current workspace"
       >
         {
           templates(window._intl).map(template => {
@@ -177,7 +177,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                       </CustomTooltip>
                       <div>
                         {(item.displayName && !item.description) && <span className=''>{item.displayName}</span>}
-                        {item.description && <span className=''>{item.description}</span>}
+                        {item.description && <span className='text-dark'>{item.description}</span>}
                       </div>
                       <div className='d-flex flex-wrap'>
                         {(item.opts && item.opts.upgradeable && item.opts.upgradeable === 'uupds') && <span className='badgeForCell badge text-secondary'>Upgradeable-UUPS</span>}
@@ -197,7 +197,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                           onClick={async () => createWorkspace(item)}
                           className="btn btn-sm mr-2 border border-primary"
                         >
-                          New
+                          Create
                         </span>
                       </CustomTooltip>}
                       <CustomTooltip
