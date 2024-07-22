@@ -11,7 +11,7 @@ import { V06 } from "userop"
 
 declare global {
   interface Window {
-    ethereum?: any;
+    ethereum?: any
   }
 }
 
@@ -116,25 +116,26 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
   })
 
   const addresses = await walletClient.getAddresses()
-  console.log('addresses--->', addresses)
 
   const smartAccount = new V06.Account.Instance({
     ...V06.Account.Common.SimpleAccount.base(ethClient, walletClient),
   })
   await smartAccount.setSalt(BigInt(plugin.REACT_API.smartAccounts.addresses.length))
   const sender = await smartAccount.getSender()
-  console.log('sender--->', sender)
   plugin.REACT_API.smartAccounts.addresses.push(sender)
+
   // Save smart accounts w.r.t. primary address of WalletClient
   let smartAccountsStr = localStorage.getItem(localStorageKey)
   let smartAccountsObj = JSON.parse(smartAccountsStr)
   smartAccountsObj[plugin.REACT_API.chainId][addresses[0]].push(sender)
   localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
+
+  plugin.call('notification', 'toast', `smart account created with address ${sender}`)
+
   await fillAccountsList(plugin, dispatch)
 }
 
 export const loadSmartAccounts = async (plugin, primaryAddress) => {
-  console.log('loadSmartAccounts')
   const { chainId } = plugin.REACT_API
   const localStorageKey = 'smartAccounts'
 
