@@ -30,8 +30,12 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
   try {
     dispatch(fetchAccountsListRequest())
     try {
+      const provider = plugin.blockchain.getProvider()
       let accounts = await plugin.blockchain.getAccounts()
-      if (plugin.REACT_API.smartAccounts.addresses.length) accounts.push(...plugin.REACT_API.smartAccounts.addresses)
+      if (provider && provider.startsWith('injected') && accounts?.length) {
+        await loadSmartAccounts(plugin, accounts[0])
+        if (plugin.REACT_API.smartAccounts.addresses.length) accounts.push(...plugin.REACT_API.smartAccounts.addresses)
+      }
       if (!accounts) accounts = []
 
       const loadedAccounts = {}
@@ -40,7 +44,6 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
         const balance = await plugin.blockchain.getBalanceInEther(account)
         loadedAccounts[account] = shortenAddress(account, balance)
       }
-      const provider = plugin.blockchain.getProvider()
 
       if (provider && provider.startsWith('injected')) {
         const selectedAddress = plugin.blockchain.getInjectedWeb3Address()
@@ -121,7 +124,39 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
   const sender = await smartAccount.getSender()
   console.log('sender--->', sender)
   plugin.REACT_API.smartAccounts.addresses.push(sender)
+  // Save smart accounts w.r.t. primary address of WalletClient
+  // localStorage.setItem(addresses[0], JSON.stringify(plugin.REACT_API.smartAccounts))
   await fillAccountsList(plugin, dispatch)
+}
+
+export const loadSmartAccounts = async (plugin, primaryAddress) => {
+  console.log('loadSmartAccounts')
+  const { chainId, accounts } = plugin.REACT_API
+  const localStorageKey = 'smartAccounts'
+
+  let smartAccountsStr = localStorage.getItem(localStorageKey)
+  if (smartAccountsStr) {
+    let smartAccountsObj = JSON.parse(smartAccountsStr)
+    if (smartAccountsObj[chainId]) {
+      if (smartAccountsObj[chainId][primaryAddress]) {
+        for (const obj of smartAccountsObj[chainId][primaryAddress]) {
+          plugin.REACT_API.smartAccounts.addresses.push(obj)
+        }
+      } else {
+        smartAccountsObj[chainId][primaryAddress] = []
+        localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
+      }
+    } else {
+      smartAccountsObj[chainId] = {}
+      smartAccountsObj[chainId][primaryAddress] = []
+      localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
+    }
+  } else {
+    let objToStore = {}
+    objToStore[chainId] = {}
+    objToStore[chainId][primaryAddress] = []
+    localStorage.setItem(localStorageKey, JSON.stringify(objToStore))
+  }
 }
 
 export const signMessageWithAddress = (plugin: RunTab, dispatch: React.Dispatch<any>, account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => {
