@@ -18,6 +18,8 @@ export interface IModel {
   modelType: ModelType;
   modelReqs: IModelRequirements;
   downloadPath?: string;
+  modelOP?: RemoteBackendOPModel;
+
 }
 export interface IRemoteModel {
   completionUrl: string;

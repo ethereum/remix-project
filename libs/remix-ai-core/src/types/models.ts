@@ -2,12 +2,14 @@
 // create a function getModels returning a list of all supported models
 // create a function getModel returning a model by its name
 
-import { IModel, IParams } from './types';
+import { IModel, IParams, RemoteBackendOPModel } from './types';
 import { ModelType } from './constants';
+
 
 const DefaultModels = (): IModel[] => {
   const model1:IModel = {
     name: 'DeepSeek',
+    modelOP: RemoteBackendOPModel.DEEPSEEK,
     task: 'text-generation',
     modelName: 'deepseek-coder-1.3b-instruct.gguf',
     downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-1.3b-instruct-GGUF/resolve/main/deepseek-coder-1.3b-instruct.Q4_K_M.gguf?download=true',
@@ -16,6 +18,7 @@ const DefaultModels = (): IModel[] => {
   };
   const model2: IModel = {
     name: 'DeepSeek',
+    modelOP: RemoteBackendOPModel.DEEPSEEK,
     task: 'text-generation',
     modelName: 'deepseek-coder-6.7b-instruct.gguf',
     downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-6.7B-instruct-GGUF/resolve/main/deepseek-coder-6.7b-instruct.Q4_K_M.gguf?download=true',
@@ -24,6 +27,7 @@ const DefaultModels = (): IModel[] => {
   };
   const model3: IModel = {
     name: 'DeepSeekTransformer',
+    modelOP: RemoteBackendOPModel.DEEPSEEK,
     task: 'text-generation',
     modelName: 'Xenova/deepseek-coder-1.3b-base',
     downloadUrl: 'Xenova/deepseek-coder-1.3b-base',
@@ -32,6 +36,7 @@ const DefaultModels = (): IModel[] => {
   };
   const model4: IModel = {
     name: 'DeepSeek',
+    modelOP: RemoteBackendOPModel.DEEPSEEK,
     task: 'text-generation',
     modelName: 'deepseek-coder-1.3b-base.gguf',
     downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-1.3b-base-GGUF/resolve/main/deepseek-coder-1.3b-base.Q4_K_M.gguf?download=true',
@@ -41,6 +46,7 @@ const DefaultModels = (): IModel[] => {
 
   const model5: IModel = {
     name: 'DeepSeek',
+    modelOP: RemoteBackendOPModel.DEEPSEEK,
     task: 'text-generation',
     modelName: 'deepseek-coder-6.7B-base-GGUF',
     downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-6.7B-base-GGUF/resolve/main/deepseek-coder-6.7b-base.Q4_K_M.gguf?download=true',
@@ -50,6 +56,7 @@ const DefaultModels = (): IModel[] => {
 
   const model6: IModel = {
     name: 'DeepSeek',
+    modelOP: RemoteBackendOPModel.DEEPSEEK,
     task: 'text-generation',
     modelName: 'DeepSeek-Coder-V2-Lite-Base.Q2_K.gguf',
     downloadUrl: 'https://huggingface.co/QuantFactory/DeepSeek-Coder-V2-Lite-Base-GGUF/resolve/main/DeepSeek-Coder-V2-Lite-Base.Q2_K.gguf?download=true',
@@ -87,7 +94,7 @@ const GenerationParams:IParams = {
   topK: 40,
   topP: 0.92,
   max_new_tokens: 2000,
-  stream_result: true,
+  stream_result: false,
 }
 
 export { DefaultModels, CompletionParams, InsertionParams, GenerationParams }
