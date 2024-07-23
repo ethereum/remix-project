@@ -2,7 +2,7 @@ import { useState } from "react"
 import { FormattedMessage } from "react-intl"
 import { RenderIf, RenderIfNot } from "@remix-ui/helper"
 
-export function ConfigToggler ({ children }: { children: JSX.Element }) {
+export function Toggler ({ children, title, dataId }: { children: JSX.Element, title: string, dataId: string }) {
   const [toggleExpander, setToggleExpander] = useState<boolean>(false)
 
   const toggleConfigurations = () => {
@@ -11,10 +11,10 @@ export function ConfigToggler ({ children }: { children: JSX.Element }) {
 
   return (
     <div>
-      <div className="d-flex circuit_config_section justify-content-between" onClick={toggleConfigurations}>
+      <div className="d-flex circuit_config_section justify-content-between" onClick={toggleConfigurations} data-id={dataId}>
         <div className="d-flex">
           <label className="mt-1 circuit_config_section">
-            <FormattedMessage id="circuit.advancedConfigurations" />
+            <FormattedMessage id={title} />
           </label>
         </div>
         <div>
