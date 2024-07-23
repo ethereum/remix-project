@@ -3,7 +3,8 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
 import { RemixAITab } from '@remix-ui/remix-ai'
 import React from 'react';
-import { ICompletions, IModel, RemoteInferencer } from '@remix/remix-ai-core';
+import { ICompletions, IModel, RemoteInferencer, IRemoteModel } from '@remix/remix-ai-core';
+import { resourceUsage } from 'process';
 
 const profile = {
   name: 'remixAI',
@@ -11,7 +12,7 @@ const profile = {
   methods: ['code_generation', 'code_completion',
     "solidity_answer", "code_explaining",
     "code_insertion", "error_explaining",
-    "initializeRemixAI"],
+    "initialize"],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
@@ -25,7 +26,6 @@ const profile = {
 export class RemixAIPlugin extends ViewPlugin {
   isOnDesktop:boolean = false
   aiIsActivated:boolean = false
-  selectedModel:IModel = null
   readonly remixDesktopPluginName = 'remixAID'
   remoteInferencer:RemoteInferencer = null
 
@@ -34,7 +34,7 @@ export class RemixAIPlugin extends ViewPlugin {
     super(profile)
     this.isOnDesktop = inDesktop
 
-    // not user machine ressource for remote inferencing
+    // user machine dont use ressource for remote inferencing
   }
 
   onActivation(): void {
@@ -45,15 +45,18 @@ export class RemixAIPlugin extends ViewPlugin {
     }
   }
 
-  async initializeRemixAI(model: IModel) {
-    this.selectedModel = model
+  async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel){
 
     if (this.isOnDesktop) {
-      this.call(this.remixDesktopPluginName, 'initializeModelBackend', this.selectedModel)
+      this.call(this.remixDesktopPluginName, 'initializeModelBackend', false, model1, model2)
+      this.on(this.remixDesktopPluginName, 'onStreamResult', (value) => {
+        console.log('onStreamResult remixai plugin', value)
+        this.call('terminal', 'log', { type: 'log', value: value })
+      })
     } else {
       // on browser
       console.log('Initializing RemixAIPlugin on browser')
-      this.remoteInferencer = new RemoteInferencer(this)
+      this.remoteInferencer = new RemoteInferencer(remoteModel?.apiUrl, remoteModel?.completionUrl)
     }
 
     this.aiIsActivated = true
@@ -61,6 +64,7 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async code_generation(prompt: string): Promise<any> {
+    console.log('code_generation')
     if (this.isOnDesktop) {
       return this.call(this.remixDesktopPluginName, 'code_generation', prompt)
     } else {
@@ -77,27 +81,41 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async solidity_answer(prompt: string): Promise<any> {
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
+
+    let result
     if (this.isOnDesktop) {
-      return this.call(this.remixDesktopPluginName, 'solidity_answer', prompt)
+      result = this.call(this.remixDesktopPluginName, 'solidity_answer', prompt)
     } else {
-      return this.remoteInferencer.solidity_answer(prompt)
+      result = this.remoteInferencer.solidity_answer(prompt)
     }
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
+
   }
 
   async code_explaining(prompt: string): Promise<any> {
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
+
+    let result
     if (this.isOnDesktop) {
-      return this.call(this.remixDesktopPluginName, 'code_explaining', prompt)
+      result = await this.call(this.remixDesktopPluginName, 'code_explaining', prompt)
+
     } else {
-      return this.remoteInferencer.code_explaining(prompt)
+      result = this.remoteInferencer.code_explaining(prompt)
     }
+    if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
   }
 
   async error_explaining(prompt: string): Promise<any> {
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
+
+    let result
     if (this.isOnDesktop) {
-      return this.call(this.remixDesktopPluginName, 'error_explaining', prompt)
+      result = await this.call(this.remixDesktopPluginName, 'error_explaining', prompt)
     } else {
-      return this.remoteInferencer.error_explaining(prompt)
+      result = await this.remoteInferencer.error_explaining(prompt)
     }
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {

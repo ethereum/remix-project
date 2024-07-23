@@ -2,7 +2,7 @@
 // create a function getModels returning a list of all supported models
 // create a function getModel returning a model by its name
 
-import { IModel } from './types';
+import { IModel, IParams } from './types';
 import { ModelType } from './constants';
 
 const DefaultModels = (): IModel[] => {
@@ -47,7 +47,17 @@ const DefaultModels = (): IModel[] => {
     modelType: ModelType.CODE_COMPLETION_INSERTION,
     modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2 }
   };
-  return [model1, model2, model3, model4, model5];
+
+  const model6: IModel = {
+    name: 'DeepSeek',
+    task: 'text-generation',
+    modelName: 'DeepSeek-Coder-V2-Lite-Base.Q2_K.gguf',
+    downloadUrl: 'https://huggingface.co/QuantFactory/DeepSeek-Coder-V2-Lite-Base-GGUF/resolve/main/DeepSeek-Coder-V2-Lite-Base.Q2_K.gguf?download=true',
+    modelType: ModelType.GENERAL,
+    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 8 }
+  };
+
+  return [model1, model2, model3, model4, model5, model6];
 }
 
 const getModel = async (name: string): Promise<IModel | undefined> => {
@@ -58,4 +68,26 @@ const loadModel = async (modelname: string): Promise<void> => {
   console.log(`Loading model ${modelname}`);
 }
 
-export { DefaultModels }
+const CompletionParams:IParams = {
+  temperature: 0.8,
+  topK: 40,
+  topP: 0.92,
+  max_new_tokens: 15,
+}
+
+const InsertionParams:IParams = {
+  temperature: 0.8,
+  topK: 40,
+  topP: 0.92,
+  max_new_tokens: 150,
+}
+
+const GenerationParams:IParams = {
+  temperature: 0.5,
+  topK: 40,
+  topP: 0.92,
+  max_new_tokens: 2000,
+  stream_result: true,
+}
+
+export { DefaultModels, CompletionParams, InsertionParams, GenerationParams }

@@ -1,6 +1,7 @@
 import { ICompletions, IParams, ChatEntry, AIRequestType, RemoteBackendOPModel } from "../../types/types";
 import { PromptBuilder } from "../../prompts/promptBuilder";
 import axios from "axios";
+import EventEmitter from "events";
 
 const defaultErrorMessage = `Unable to get a response from AI server`
 
@@ -10,13 +11,13 @@ export class RemoteInferencer implements ICompletions {
   solgpt_chat_history:ChatEntry[]
   max_history = 7
   model_op = RemoteBackendOPModel.DEEPSEEK
-  mainPlugin = null
+  event: EventEmitter
 
-  constructor(plugin, apiUrl?:string, completionUrl?:string) {
+  constructor(apiUrl?:string, completionUrl?:string) {
     this.api_url = apiUrl!==undefined ? apiUrl: "https://solcoder.remixproject.org"
     this.completion_url = completionUrl!==undefined ? completionUrl : "https://completion.remixproject.org"
     this.solgpt_chat_history = []
-    this.mainPlugin = plugin
+    this.event = new EventEmitter()
   }
 
   private pushChatHistory(prompt, result){
@@ -26,7 +27,7 @@ export class RemoteInferencer implements ICompletions {
   }
 
   private async _makeRequest(data, rType:AIRequestType){
-    this.mainPlugin.emit("aiInfering")
+    this.event.emit("onInference")
     const requesURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
     console.log("requesting on ", requesURL, rType, data.data[1])
 
@@ -45,27 +46,61 @@ export class RemoteInferencer implements ICompletions {
         if (result.statusText === "OK")
           return result.data.data[0]
         else {
-          this.mainPlugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: defaultErrorMessage })
-          return ""
+          return defaultErrorMessage
         }
       case AIRequestType.GENERAL:
         if (result.statusText === "OK") {
           const resultText = result.data.data[0]
-          this.mainPlugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: resultText })
           this.pushChatHistory(prompt, resultText)
+          return resultText
         } else {
-          this.mainPlugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: defaultErrorMessage })
+          return defaultErrorMessage
         }
-        break
       }
 
     } catch (e) {
-      this.mainPlugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: defaultErrorMessage })
       this.solgpt_chat_history = []
-      return ""
+      return e
     }
     finally {
-      this.mainPlugin.emit("aiInferingDone")
+      this.event.emit("onInferenceDone")
+    }
+  }
+
+  private async _streamInferenceRequest(data, rType:AIRequestType){
+    try {
+      this.event.emit('onInference')
+      const requesURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
+      const options = { headers: { 'Content-Type': 'application/json', "Accept": "text/event-stream" } }
+      const response = await axios({
+        method: 'post',
+        url:  rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url,
+        data: data,
+        headers: { 'Content-Type': 'application/json', "Accept": "text/event-stream" },
+        responseType: 'stream'
+      });
+
+      response.data.on('data', (chunk: Buffer) => {
+        try {
+          const parsedData = JSON.parse(chunk.toString());
+          if (parsedData.isGenerating) {
+            this.event.emit('onStreamResult', parsedData.generatedText);
+          } else {
+            return parsedData.generatedText
+          }
+
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+        }
+
+      });
+
+      return "" // return empty string for now as handled in event
+    } catch (error) {
+      console.error('Error making stream request to Inference server:', error.message);
+    }
+    finally {
+      this.event.emit('onInferenceDone')
     }
   }
 
@@ -90,20 +125,17 @@ export class RemoteInferencer implements ICompletions {
   }
 
   async solidity_answer(prompt): Promise<any> {
-    this.mainPlugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
     const main_prompt = this._build_solgpt_promt(prompt)
     const payload = { "data":[main_prompt, "solidity_answer", false,2000,0.9,0.8,50]}
     return this._makeRequest(payload, AIRequestType.GENERAL)
   }
 
   async code_explaining(prompt, context:string=""): Promise<any> {
-    this.mainPlugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
     const payload = { "data":[prompt, "code_explaining", false,2000,0.9,0.8,50, context]}
     return this._makeRequest(payload, AIRequestType.GENERAL)
   }
 
   async error_explaining(prompt): Promise<any> {
-    this.mainPlugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
     const payload = { "data":[prompt, "error_explaining", false,2000,0.9,0.8,50]}
     return this._makeRequest(payload, AIRequestType.GENERAL)
   }
