@@ -1,14 +1,14 @@
 import { NightwatchBrowser } from 'nightwatch'
 import EventEmitter from 'events'
 
-class pinChain extends EventEmitter {
-  command (this: NightwatchBrowser, provider: string): NightwatchBrowser {
+class pinGrid extends EventEmitter {
+  command (this: NightwatchBrowser, provider: string, status: boolean): NightwatchBrowser {
     this.api.useCss().waitForElementVisible('[data-id="settingsSelectEnvOptions"]')
     .click('[data-id="settingsSelectEnvOptions"] button')
     .waitForElementVisible(`[data-id="dropdown-item-another-chain"]`)
     .click(`[data-id="dropdown-item-another-chain"]`)
-    .waitForElementVisible(`[data-id="${provider}-unpinned"]`)
-    .click(`[data-id="${provider}-unpinned"]`)
+    .waitForElementVisible(`[data-id="${provider}-${status ? 'unpinned' : 'pinned'}"]`)
+    .click(`[data-id="${provider}-${status ? 'unpinned' : 'pinned'}"]`)
     .perform((done) => {
       done()
       this.emit('complete')
@@ -17,4 +17,4 @@ class pinChain extends EventEmitter {
   }
 }
 
-module.exports = pinChain
+module.exports = pinGrid
