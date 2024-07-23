@@ -238,12 +238,12 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         // TODO: rm gpt or redirect gpt to sol-pgt
       } else if (script.trim().startsWith('gpt')) {
         call('terminal', 'log',{ type: 'warn', value: `> ${script}` })
-        await call('solcoder', 'solidity_answer', script)
-        _paq.push(['trackEvent', 'ai', 'solcoder', 'askFromTerminal'])
+        await call('remixAI', 'solidity_answer', script)
+        _paq.push(['trackEvent', 'ai', 'remixAI', 'askFromTerminal'])
       } else if (script.trim().startsWith('sol-gpt')) {
         call('terminal', 'log',{ type: 'warn', value: `> ${script}` })
-        await call('solcoder', 'solidity_answer', script)
-        _paq.push(['trackEvent', 'ai', 'solcoder', 'askFromTerminal'])
+        await call('remixAI', 'solidity_answer', script)
+        _paq.push(['trackEvent', 'ai', 'remixAI', 'askFromTerminal'])
       } else {
         await call('scriptRunner', 'execute', script)
       }

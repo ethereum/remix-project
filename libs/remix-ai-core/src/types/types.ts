@@ -17,6 +17,11 @@ export interface IModel {
   modelName: string;
   modelType: ModelType;
   modelReqs: IModelRequirements;
+  downloadPath?: string;
+}
+export interface IRemoteModel {
+  completionUrl: string;
+  apiUrl: string;
 }
 
 export interface IModelResponse {
@@ -24,6 +29,11 @@ export interface IModelResponse {
   error: string;
   success: boolean;
   model: IModel;
+}
+
+export interface IStreamResponse {
+  generatedText: string;
+  isGenerating: boolean;
 }
 
 export interface IModelRequest {

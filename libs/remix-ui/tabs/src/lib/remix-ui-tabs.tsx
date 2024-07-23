@@ -251,9 +251,9 @@ export const TabsUI = (props: TabsUIProps) => {
                   const content = await props.plugin.call('fileManager', 'readFile', path)
                   if (tabsState.currentExt === 'sol') {
                     setExplaining(true)
-                    await props.plugin.call('solcoder', 'code_explaining', content)
+                    await props.plugin.call('remixAI', 'code_explaining', content)
                     setExplaining(false)
-                    _paq.push(['trackEvent', 'ai', 'solcoder', 'explain_file'])
+                    _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file'])
                   }
                 }}
               >
@@ -283,7 +283,7 @@ export const TabsUI = (props: TabsUIProps) => {
                 onClick={async () => {
                   await props.plugin.call('settings', 'updateCopilotChoice', !ai_switch)
                   setAI_switch(!ai_switch)
-                  ai_switch ? _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'solcoder', 'copilot_disabled'])
+                  ai_switch ? _paq.push(['trackEvent', 'ai', 'remixAI', 'copilot_enabled']) : _paq.push(['trackEvent', 'ai', 'remixAI', 'copilot_disabled'])
                 }}
               >
                 <i className={ai_switch ? "fas fa-toggle-on fa-lg" : "fas fa-toggle-off fa-lg"}></i>

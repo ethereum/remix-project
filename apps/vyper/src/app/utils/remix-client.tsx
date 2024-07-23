@@ -70,7 +70,7 @@ export class RemixClient extends PluginClient {
         ${message}
         can you explain why this error occurred and how to fix it?
       `
-      await this.client.call('solcoder' as any, 'error_explaining', message)
+      await this.client.call('remixAI' as any, 'error_explaining', message)
     } catch (err) {
       console.error('unable to askGpt')
       console.error(err)

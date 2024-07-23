@@ -462,7 +462,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             role='link'
             onClick={()=>{
               window.open("https://remix-ide.readthedocs.io/en/latest/ai.html")
-              _paq.push(['trackEvent', 'ai', 'solcoder', 'documentation'])
+              _paq.push(['trackEvent', 'ai', 'remixAI', 'documentation'])
             }}
           >
             <i aria-hidden="true" className="fas fa-book"></i>

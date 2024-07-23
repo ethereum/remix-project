@@ -1,77 +1,150 @@
-import path from 'path';
+import path, { resolve } from 'path';
 const { spawn } = require('child_process'); // eslint-disable-line
 import fs from 'fs';
 import axios from "axios";
 import { EventEmitter } from 'events';
-import { ICompletions, IModel, IParams } from "@remix/remix-ai-core";
-import { getInsertionPrompt } from "@remix/remix-ai-core";
+import { ICompletions, IModel, IParams, InsertionParams,
+  CompletionParams, GenerationParams, ModelType,
+  IStreamResponse } from "../../../../libs/remix-ai-core/src/index"
 
-const completionParams:IParams = {
-  temperature: 0.8,
-  topK: 40,
-  topP: 0.92,
-  max_new_tokens: 15,
-}
+class ServerStatusTimer {
+  private intervalId: NodeJS.Timeout | null = null;
+  public interval: number;
+  private task: () => void;
 
-const insertionParams:IParams = {
-  temperature: 0.8,
-  topK: 40,
-  topP: 0.92,
-  max_new_tokens: 150,
+  constructor(task: () => void, interval: number) {
+    this.task = task;
+    this.interval = interval;
+  }
+
+  start(): void {
+    if (this.intervalId === null) {
+      this.intervalId = setInterval(() => {
+        this.task();
+      }, this.interval);
+    }
+  }
+
+  stop(): void {
+    if (this.intervalId !== null) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+  }
+
+  isRunning(): boolean {
+    return this.intervalId !== null;
+  }
 }
 
 export class InferenceManager implements ICompletions {
   isReady: boolean = false
-  selectedModel: any
-  modelPath: string
+  selectedModels: IModel[] = []
   event: EventEmitter
   modelCacheDir: string = undefined
   isInferencing: boolean = false
-  inferenceProcess: any=null
-  inferenceURL = 'http://127.0.0.1:5501'
-  static instance=null
+  private inferenceProcess: any=null
+  port = 5501
+  inferenceURL = 'http://127.0.0.1:' + this.port
+  private static instance=null
+  stateTimer: ServerStatusTimer
 
-  private constructor(model:IModel, modelDir:string) {
-    this.selectedModel = model
+  private constructor(modelDir:string) {
     this.event = new EventEmitter()
     this.modelCacheDir = path.join(modelDir, 'models')
+    this.stateTimer= new ServerStatusTimer(() => { this._processStatus()}, 20000)
   }
 
-  static getInstance(model:IModel, modelDir:string){
+  static getInstance(modelDir:string){
     if (!InferenceManager.instance) {
       // check if ther is a process already running
-      if (!model || !modelDir) {
-        console.error('Model and model directory is required to create InferenceManager instance')
+      if (!modelDir) {
+        console.error('model directory is required to create InferenceManager instance')
         return null
       }
       console.log('Creating new InferenceManager instance')
-      InferenceManager.instance = new InferenceManager(model, modelDir)
+      InferenceManager.instance = new InferenceManager(modelDir)
     }
     return InferenceManager.instance
   }
 
-  async init() {
+  // init the backend with a new model
+  async init(model:IModel) {
     try {
-      await this._downloadModel(this.selectedModel)
+      await this._downloadModel(model)
 
-      if (this.modelPath === undefined) {
+      if (model.downloadPath === undefined) {
         console.log('Model not downloaded or not found')
         return
       }
 
-      console.log('Model downloaded at', this.modelPath)
+      console.log('Model downloaded at', model.downloadPath)
 
-      this._startServer()
+      if (this.inferenceProcess === null) await this._startServer()
 
-      this.isReady = true
+      switch (model.modelType) {
+      case ModelType.CODE_COMPLETION_INSERTION || ModelType.CODE_COMPLETION:{
+        const res = await this._makeRequest('init_completion', { model_path: model.downloadPath })
+
+        if (res?.data?.status === "success") {
+          this.isReady = true
+          console.log('Completion Model initialized successfully')
+        } else {
+          this.isReady = false
+          console.error('Error initializing the model', res.data?.error)
+        }
+        break;
+      }
+
+      case ModelType.GENERAL:{
+        const res = await this._makeRequest('init', { model_path: model.downloadPath })
+
+        if (res.data?.status === "success") {
+          this.isReady = true
+          console.log('General Model initialized successfully')
+        } else {
+          this.isReady = false
+          console.error('Error initializing the model', res.data?.error)
+        }
+        break;
+      }
+      }
+
+      this.stateTimer.start()
+      this.selectedModels.push(model)
     } catch (error) {
       console.error('Error initializing the model', error)
       this.isReady = false
+      InferenceManager.instance = null
     }
   }
 
-  async _downloadModel(model): Promise<void> {
+  async _processStatus() {
+    const options = { headers: { 'Content-Type': 'application/json', } }
+    const state = await axios.get(this.inferenceURL+"/state", options)
 
+    if (!state.data?.status) {
+      console.log('Inference server not running')
+      InferenceManager.instance = null
+      this.stateTimer.interval += this.stateTimer.interval
+      
+      if (this.stateTimer.interval >= 60000) {
+        // attempt to restart the server
+        console.log('Attempting to restart the server')
+        this.stopInferenceServer()
+        this._startServer()
+        this.stateTimer.interval = 20000
+      }
+    } else {
+      // Server is running with successful request
+      // console.log('Inference server is running')
+      // console.log('completion is runnig', state.data?.completion)
+      // console.log('general is runnig', state.data?.general)
+    }
+
+  }
+
+  async _downloadModel(model:IModel): Promise<string> {
     if (this.modelCacheDir === undefined) {
       console.log('Model cache directory not provided')
       return
@@ -79,10 +152,12 @@ export class InferenceManager implements ICompletions {
       const outputLocationPath = path.join(this.modelCacheDir, model.modelName);
       console.log('output location path is', outputLocationPath)
       if (fs.existsSync(outputLocationPath)) {
-        this.modelPath = outputLocationPath
+        model.downloadPath = outputLocationPath
         console.log('Model already exists in the output location', outputLocationPath);
         return;
       }
+
+      console.log('Downloading model from', model.downloadUrl);
       // Make a HEAD request to get the file size
       const { headers } = await axios.head(model.downloadUrl);
       const totalSize = parseInt(headers['content-length'], 10);
@@ -109,7 +184,7 @@ export class InferenceManager implements ICompletions {
       response.data.pipe(writer);
 
       this.event.emit('ready')
-      this.modelPath = outputLocationPath
+      model.downloadPath = outputLocationPath
       console.log('LLama Download complete');
 
       return new Promise((resolve, reject) => {
@@ -129,7 +204,7 @@ export class InferenceManager implements ICompletions {
 
       // Check if the file exists
       if (!fs.existsSync(serverPath)) {
-        return reject(new Error(`Python script not found at ${serverPath}`));
+        return reject(new Error(`Inference server not found at ${serverPath}`));
       }
 
       // Check file permissions
@@ -139,8 +214,7 @@ export class InferenceManager implements ICompletions {
         return reject(new Error(`No execute permission on ${serverPath}`));
       }
 
-      console.log('Running in non-pkg environment');
-      const spawnArgs = ['5501', this.modelPath];
+      const spawnArgs = [this.port];
 
       console.log(`Spawning process: ${serverPath} ${spawnArgs.join(' ')}`);
       this.inferenceProcess = spawn(serverPath, spawnArgs);
@@ -154,7 +228,11 @@ export class InferenceManager implements ICompletions {
       });
 
       this.inferenceProcess.stderr.on('data', (data) => {
-        console.error(`Inference server: ${data}`);
+        console.error(`Inference log: ${data}`);
+        if (data.includes('Address already in use')) {
+          console.error(`Port ${this.port} is already in use. Please stop the existing server and try again`);
+          reject(new Error(`Port ${this.port}  is already in use`));
+        }
         resolve();
       });
 
@@ -179,14 +257,14 @@ export class InferenceManager implements ICompletions {
     }
   }
 
-  private async _makeRequest(endpoint, payload){
+  private async _makeInferenceRequest(endpoint, payload){
     try {
       this.event.emit('onInference')
       const options = { headers: { 'Content-Type': 'application/json', } }
       const response = await axios.post(`${this.inferenceURL}/${endpoint}`, payload, options)
       this.event.emit('onInferenceDone')
 
-      if (response?.data?.generatedText) {
+      if (response.data?.generatedText) {
         return response.data.generatedText
       } else { return "" }
     } catch (error) {
@@ -194,7 +272,56 @@ export class InferenceManager implements ICompletions {
     }
   }
 
-  async code_completion(context: any, params:IParams=completionParams): Promise<any> {
+  private async _streamInferenceRequest(endpoint, payload){
+    try {
+      this.event.emit('onInference')
+      const options = { headers: { 'Content-Type': 'application/json', } }
+      const response = await axios({
+        method: 'post',
+        url: `${this.inferenceURL}/${endpoint}`,
+        data: payload,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "text/event-stream",
+        }
+        , responseType: 'stream' });
+
+      response.data.on('data', (chunk: Buffer) => {
+        try {
+          const parsedData = JSON.parse(chunk.toString());
+          if (parsedData.isGenerating) {
+            this.event.emit('onStreamResult', parsedData.generatedText);
+          } else {
+            return parsedData.generatedText
+          }
+
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+        }
+      });
+
+      return "" // return empty string for now as payload already handled in event
+    } catch (error) {
+      console.error('Error making stream request to Inference server:', error.message);
+    }
+    finally {
+      this.event.emit('onInferenceDone')
+    }
+  }
+
+  private async _makeRequest(endpoint, payload){
+    try {
+      const options = { headers: { 'Content-Type': 'application/json', } }
+      const response = await axios.post(`${this.inferenceURL}/${endpoint}`, payload, options)
+      this.event.emit('onInferenceDone')
+
+      return response
+    } catch (error) {
+      console.error('Error making request to Inference server:', error.message);
+    }
+  }
+
+  async code_completion(context: any, params:IParams=CompletionParams): Promise<any> {
     if (!this.isReady) {
       console.log('model not ready yet')
       return
@@ -202,17 +329,63 @@ export class InferenceManager implements ICompletions {
 
     // as of now no prompt required
     const payload = { context_code: context, ...params }
-    return this._makeRequest('code_completion', payload)
+    return this._makeInferenceRequest('code_completion', payload)
   }
 
-  async code_insertion(msg_pfx: string, msg_sfx: string, params:IParams=insertionParams): Promise<any> {
+  async code_insertion(msg_pfx: string, msg_sfx: string, params:IParams=InsertionParams): Promise<any> {
     if (!this.isReady) {
       console.log('model not ready yet')
       return
     }
     const payload = { code_pfx:msg_pfx, code_sfx:msg_sfx, ...params }
-    return this._makeRequest('code_insertion', payload)
+    return this._makeInferenceRequest('code_insertion', payload)
 
   }
+
+  async code_generation(prompt: string, params:IParams=GenerationParams): Promise<any> {
+    if (!this.isReady) {
+      console.log('model not ready yet')
+      return
+    }
+    return this._makeInferenceRequest('code_generation', { prompt, ...params })
+  }
+
+  async code_explaining(code:string, context:string, params:IParams=GenerationParams): Promise<any> {
+    if (!this.isReady) {
+      console.log('model not ready yet')
+      return
+    }
+    if (GenerationParams.stream_result) {
+      return this._streamInferenceRequest('code_explaining', { code, context, ...params })
+    } else {
+      return this._makeInferenceRequest('code_explaining', { code, context, ...params })
+    }
+  }
+
+  async error_explaining(prompt: string, params:IParams=GenerationParams): Promise<any>{
+    if (!this.isReady) {
+      console.log('model not ready yet')
+      return ""
+    }
+    if (GenerationParams.stream_result) {
+      return this._streamInferenceRequest('error_explaining', { prompt, ...params })
+    } else {
+      return this._makeInferenceRequest('error_explaining', { prompt, ...params })
+    }
+  }
+
+  async solidity_answer(prompt: string, params:IParams=GenerationParams): Promise<any> {
+    if (!this.isReady) {
+      console.log('model not ready yet')
+      return
+    }
+    if (GenerationParams.stream_result) {
+      return this._streamInferenceRequest('solidity_answer', { prompt, ...params })
+    } else {
+      return this._makeInferenceRequest('solidity_answer', { prompt, ...params })
+    }
+  }
+
+  // kill dangling process making use of the port
 
 }

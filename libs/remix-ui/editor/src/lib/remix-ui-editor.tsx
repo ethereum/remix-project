@@ -737,7 +737,7 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
-        const cm = await props.plugin.call('solcoder', 'code_explaining', message)
+        const cm = await props.plugin.call('remixAI', 'code_explaining', message)
 
         const natSpecCom = "\n" + extractNatspecComments(cm)
         const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
@@ -773,7 +773,7 @@ export const EditorUI = (props: EditorUIProps) => {
           },
         ]);
 
-        _paq.push(['trackEvent', 'ai', 'solcoder', 'generateDocumentation'])
+        _paq.push(['trackEvent', 'ai', 'remixAI', 'generateDocumentation'])
       },
     }
 
@@ -791,8 +791,8 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.explainFunctionByAI' }, { content, currentFunction: currentFunction.current })
-        await props.plugin.call('solcoder', 'code_explaining', message, content)
-        _paq.push(['trackEvent', 'ai', 'solcoder', 'explainFunction'])
+        await props.plugin.call('remixAI', 'code_explaining', message, content)
+        _paq.push(['trackEvent', 'ai', 'remixAI', 'explainFunction'])
       },
     }
 
@@ -811,8 +811,8 @@ export const EditorUI = (props: EditorUIProps) => {
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const selectedCode = editor.getModel().getValueInRange(editor.getSelection())
 
-        await props.plugin.call('solcoder', 'code_explaining', selectedCode, content)
-        _paq.push(['trackEvent', 'ai', 'solcoder', 'explainFunction'])
+        await props.plugin.call('remixAI', 'code_explaining', selectedCode, content)
+        _paq.push(['trackEvent', 'ai', 'remixAI', 'explainFunction'])
       },
     }
 

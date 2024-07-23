@@ -6,6 +6,20 @@ export const Default = (props) => {
   const [searchText, setSearchText] = useState('');
   const [resultText, setResultText] = useState('');
   const pluginName = 'remixAI'
+  const appendText = (newText) => { 
+    setResultText(resultText => resultText + newText);
+  }
+
+  useEffect(() => {
+    const handleResultReady = async (e) => {
+      appendText(e);
+    };
+    if (props.plugin.isOnDesktop ) {
+      props.plugin.on(props.plugin.remixDesktopPluginName, 'onStreamResult', (value) => {
+        handleResultReady(value);
+      })
+    }
+  }, [])
 
   return (
     <div>
@@ -46,19 +60,17 @@ export const Default = (props) => {
           rows={10}
           cols={50}
           placeholder="Results..."
+          onChange={(e) => {
+            console.log('resultText changed', e.target.value)
+            setResultText(e.target.value)}
+          }
           value={resultText}
           readOnly
         />
         <button className="remix_ai_plugin_download_button text-ai pl-2 pr-0 py-0 d-flex"
 
           onClick={async () => {
-            props.plugin.call(pluginName, 'initializeRemixAI', DefaultModels()[3]);
-            // if (props.plugin.isOnDesktop ) {
-            //   console.log(Date.now(), "Init model backend");
-            //   props.plugin.call(pluginName, 'initializeModelBackend', DefaultModels()[3]);
-            //   console.log(Date.now(), "after Init model backend");
-            //   console.log("Got transformer model completion ");
-            // }
+            props.plugin.call("remixAI", 'initialize', DefaultModels()[1]);
           }}
         > Init Model </button>
       </div>

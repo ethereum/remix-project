@@ -73,7 +73,7 @@ export function Container () {
           explain why the error occurred and how to fix it.
           `
         // @ts-ignore
-        await circuitApp.plugin.call('solcoder', 'error_explaining', message)
+        await circuitApp.plugin.call('remixAI', 'error_explaining', message)
       } else {
         const message = `
           error message: ${error}
@@ -81,7 +81,7 @@ export function Container () {
           explain why the error occurred and how to fix it.
           `
         // @ts-ignore
-        await circuitApp.plugin.call('solcoder', 'error_explaining', message)
+        await circuitApp.plugin.call('remixAI', 'error_explaining', message)
       }
     } else {
       const error = report.message
@@ -91,7 +91,7 @@ export function Container () {
       explain why the error occurred and how to fix it.
       `
       // @ts-ignore
-      await circuitApp.plugin.call('solcoder', 'error_explaining', message)
+      await circuitApp.plugin.call('remixAI', 'error_explaining', message)
     }
   }
 
