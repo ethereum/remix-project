@@ -161,7 +161,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                 return <RemixUIGridCell
                   plugin={this}
                   title={item.displayName}
-                  searchKeywords={[JSON.stringify(item), template.name]}
+                  searchKeywords={[item.displayName, item.description, template.name]}
                   tagList={item.tagList}
                   classList='TSCellStyle'
                 >

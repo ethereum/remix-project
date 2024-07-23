@@ -34,30 +34,25 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
   const [anyEnabled, setAnyEnabled] = useState(false)
   const [expand, setExpand] = useState(false)
   const [pinned, setPinned] = useState<boolean>(props.pinned)
-     
-    /*setAnyEnabled(
-    (
-      props.title.toLowerCase().includes(filterCon.filter.toLowerCase()) ||
-      props.searchKeywords?.map((keyword) => keyword.toLowerCase()).join(' ').includes(filterCon.filter.toLowerCase()) ||
-      props.tagList?.join(' ').includes(filterCon.filter.toLowerCase())
-    ))
-    */
+
   useEffect(() => {
-    // if tags are not used
-    if (!props.tagList || props.tagList.length == 0) setAnyEnabled(true)
-      // if at least one tag is matching or "no tag" is checked
-      else if (props.tagList) setAnyEnabled(props.tagList.some((key) => filterCon.keyValueMap[key]?.enabled) || filterCon?.keyValueMap['no tag']?.enabled)
+    console.log("oopsik")
+    let enabled = false
+    // check for tags
+    if (props.tagList && props.tagList.length != 0) {
+      enabled = props.tagList.some((key) => filterCon.keyValueMap[key]?.enabled)
+    } else if (filterCon?.keyValueMap['no tag']?.enabled) {
+      enabled = true
+    }
+
+    // check for filter
+    if (filterCon.filter != '')
+      enabled = (props.title?.toLowerCase().includes(filterCon.filter?.toLowerCase()) ||
+        props.searchKeywords?.map(keyword => keyword.toLowerCase()).some(searchKeyword => searchKeyword.toLowerCase().includes(filterCon.filter.toLocaleLowerCase())))
     
-    if (filterCon.filter != '') setAnyEnabled(
-      anyEnabled && (
-        props.title?.toLowerCase().includes(filterCon.filter?.toLowerCase()) ||
-        props.searchKeywords?.map(keyword => keyword.toLowerCase()).some(searchKeyword => searchKeyword.toLowerCase().includes(filterCon.filter.toLocaleLowerCase()))))
+    setAnyEnabled(enabled)
   }, [filterCon, props.tagList])
-  /*
-    anyEnabled && (props.title?.toLowerCase().includes(filterCon.filter?.toLowerCase()) ||
-        props.searchKeywords?.map(keyword => keyword.toLowerCase()).some(searchKeyword => searchKeyword.toLowerCase().includes(filterCon.filter))))
-    }, [filterCon, props.tagList])
-*/
+ 
   /*const listenOnExpand = (key) => {
     if (key === props.key) setExpand(props.toggleExpandView)
     console.log('expand ----> ', key)
