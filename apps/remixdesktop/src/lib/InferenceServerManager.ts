@@ -4,8 +4,9 @@ import fs from 'fs';
 import axios from "axios";
 import { EventEmitter } from 'events';
 import { ICompletions, IModel, IParams, InsertionParams,
-  CompletionParams, GenerationParams, ModelType,
-  IStreamResponse } from "../../../../libs/remix-ai-core/src/index"
+  CompletionParams, GenerationParams, ModelType, AIRequestType,
+  IStreamResponse, ChatHistory,
+  buildSolgptPromt } from "../../../../libs/remix-ai-core/src/index"
 
 class ServerStatusTimer {
   private intervalId: NodeJS.Timeout | null = null;
@@ -127,7 +128,7 @@ export class InferenceManager implements ICompletions {
       console.log('Inference server not running')
       InferenceManager.instance = null
       this.stateTimer.interval += this.stateTimer.interval
-      
+
       if (this.stateTimer.interval >= 60000) {
         // attempt to restart the server
         console.log('Attempting to restart the server')
@@ -257,17 +258,27 @@ export class InferenceManager implements ICompletions {
     }
   }
 
-  private async _makeInferenceRequest(endpoint, payload){
+  private async _makeInferenceRequest(endpoint, payload, rType:AIRequestType){
     try {
       this.event.emit('onInference')
       const options = { headers: { 'Content-Type': 'application/json', } }
       const response = await axios.post(`${this.inferenceURL}/${endpoint}`, payload, options)
+
+      const userPrompt = payload[Object.keys(payload)[0]]
       this.event.emit('onInferenceDone')
 
+      console.log('response', response)
+      console.log('userprompt', userPrompt)
+      console.log('chat history:', ChatHistory.getHistory())
+
       if (response.data?.generatedText) {
+        if (rType === AIRequestType.GENERAL) {
+          ChatHistory.pushHistory(userPrompt, response.data.generatedText)
+        }
         return response.data.generatedText
       } else { return "" }
     } catch (error) {
+      ChatHistory.clearHistory()
       console.error('Error making request to Inference server:', error.message);
     }
   }
@@ -286,22 +297,31 @@ export class InferenceManager implements ICompletions {
         }
         , responseType: 'stream' });
 
+      const userPrompt = payload[Object.keys(payload)[0]]
+      let resultText = ""
       response.data.on('data', (chunk: Buffer) => {
         try {
           const parsedData = JSON.parse(chunk.toString());
           if (parsedData.isGenerating) {
             this.event.emit('onStreamResult', parsedData.generatedText);
+            resultText = resultText + parsedData.generatedText
           } else {
+            resultText = resultText + parsedData.generatedText
+
+            // no additional check for streamed results
+            ChatHistory.pushHistory(userPrompt, resultText)
             return parsedData.generatedText
           }
 
         } catch (error) {
+          ChatHistory.clearHistory()
           console.error('Error parsing JSON:', error);
         }
       });
 
-      return "" // return empty string for now as payload already handled in event
+      return "" // return empty string for now as payload is/will be handled in event
     } catch (error) {
+      ChatHistory.clearHistory()
       console.error('Error making stream request to Inference server:', error.message);
     }
     finally {
@@ -310,6 +330,7 @@ export class InferenceManager implements ICompletions {
   }
 
   private async _makeRequest(endpoint, payload){
+    // make a simple request to the inference server
     try {
       const options = { headers: { 'Content-Type': 'application/json', } }
       const response = await axios.post(`${this.inferenceURL}/${endpoint}`, payload, options)
@@ -329,7 +350,7 @@ export class InferenceManager implements ICompletions {
 
     // as of now no prompt required
     const payload = { context_code: context, ...params }
-    return this._makeInferenceRequest('code_completion', payload)
+    return this._makeInferenceRequest('code_completion', payload, AIRequestType.COMPLETION)
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string, params:IParams=InsertionParams): Promise<any> {
@@ -338,7 +359,7 @@ export class InferenceManager implements ICompletions {
       return
     }
     const payload = { code_pfx:msg_pfx, code_sfx:msg_sfx, ...params }
-    return this._makeInferenceRequest('code_insertion', payload)
+    return this._makeInferenceRequest('code_insertion', payload, AIRequestType.COMPLETION)
 
   }
 
@@ -347,7 +368,7 @@ export class InferenceManager implements ICompletions {
       console.log('model not ready yet')
       return
     }
-    return this._makeInferenceRequest('code_generation', { prompt, ...params })
+    return this._makeInferenceRequest('code_generation', { prompt, ...params }, AIRequestType.GENERAL)
   }
 
   async code_explaining(code:string, context:string, params:IParams=GenerationParams): Promise<any> {
@@ -358,7 +379,7 @@ export class InferenceManager implements ICompletions {
     if (GenerationParams.stream_result) {
       return this._streamInferenceRequest('code_explaining', { code, context, ...params })
     } else {
-      return this._makeInferenceRequest('code_explaining', { code, context, ...params })
+      return this._makeInferenceRequest('code_explaining', { code, context, ...params }, AIRequestType.GENERAL)
     }
   }
 
@@ -370,19 +391,27 @@ export class InferenceManager implements ICompletions {
     if (GenerationParams.stream_result) {
       return this._streamInferenceRequest('error_explaining', { prompt, ...params })
     } else {
-      return this._makeInferenceRequest('error_explaining', { prompt, ...params })
+      return this._makeInferenceRequest('error_explaining', { prompt, ...params }, AIRequestType.GENERAL)
     }
   }
 
-  async solidity_answer(prompt: string, params:IParams=GenerationParams): Promise<any> {
+  async solidity_answer(userPrompt: string, params:IParams=GenerationParams): Promise<any> {
     if (!this.isReady) {
       console.log('model not ready yet')
       return
     }
+    let modelOP = undefined
+    for (const model of this.selectedModels) {
+      if (model?.modelOP) {
+        modelOP = model.modelOP
+      }
+    }
+    const prompt = buildSolgptPromt(userPrompt, this.selectedModels[0]?.modelOP)
+
     if (GenerationParams.stream_result) {
       return this._streamInferenceRequest('solidity_answer', { prompt, ...params })
     } else {
-      return this._makeInferenceRequest('solidity_answer', { prompt, ...params })
+      return this._makeInferenceRequest('solidity_answer', { prompt, ...params }, AIRequestType.GENERAL)
     }
   }
 

@@ -43,6 +43,7 @@ export class RemixAIPlugin extends ViewPlugin {
     } else {
       console.log('Activating RemixAIPlugin on browser')
     }
+    this.initialize()
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel){
@@ -66,17 +67,17 @@ export class RemixAIPlugin extends ViewPlugin {
   async code_generation(prompt: string): Promise<any> {
     console.log('code_generation')
     if (this.isOnDesktop) {
-      return this.call(this.remixDesktopPluginName, 'code_generation', prompt)
+      return await this.call(this.remixDesktopPluginName, 'code_generation', prompt)
     } else {
-      return this.remoteInferencer.code_generation(prompt)
+      return await this.remoteInferencer.code_generation(prompt)
     }
   }
 
   async code_completion(prompt: string): Promise<any> {
     if (this.isOnDesktop) {
-      return this.call(this.remixDesktopPluginName, 'code_completion', prompt)
+      return await this.call(this.remixDesktopPluginName, 'code_completion', prompt)
     } else {
-      return this.remoteInferencer.code_completion(prompt)
+      return await this.remoteInferencer.code_completion(prompt)
     }
   }
 
@@ -85,9 +86,9 @@ export class RemixAIPlugin extends ViewPlugin {
 
     let result
     if (this.isOnDesktop) {
-      result = this.call(this.remixDesktopPluginName, 'solidity_answer', prompt)
+      result = await this.call(this.remixDesktopPluginName, 'solidity_answer', prompt)
     } else {
-      result = this.remoteInferencer.solidity_answer(prompt)
+      result = await this.remoteInferencer.solidity_answer(prompt)
     }
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
 
@@ -101,7 +102,7 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.call(this.remixDesktopPluginName, 'code_explaining', prompt)
 
     } else {
-      result = this.remoteInferencer.code_explaining(prompt)
+      result = await this.remoteInferencer.code_explaining(prompt)
     }
     if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
   }
@@ -120,9 +121,9 @@ export class RemixAIPlugin extends ViewPlugin {
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
     if (this.isOnDesktop) {
-      return this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx)
+      return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx)
     } else {
-      return this.remoteInferencer.code_insertion(msg_pfx, msg_sfx)
+      return await this.remoteInferencer.code_insertion(msg_pfx, msg_sfx)
     }
   }
 

@@ -1,14 +1,14 @@
-import { ICompletions, IParams, ChatEntry, AIRequestType, RemoteBackendOPModel } from "../../types/types";
-import { PromptBuilder } from "../../prompts/promptBuilder";
+import { ICompletions, IParams, AIRequestType, RemoteBackendOPModel } from "../../types/types";
+import { buildSolgptPromt } from "../../prompts/promptBuilder";
 import axios from "axios";
 import EventEmitter from "events";
+import { ChatHistory } from "../../prompts/chat";
 
 const defaultErrorMessage = `Unable to get a response from AI server`
 
 export class RemoteInferencer implements ICompletions {
   api_url: string
   completion_url: string
-  solgpt_chat_history:ChatEntry[]
   max_history = 7
   model_op = RemoteBackendOPModel.DEEPSEEK
   event: EventEmitter
@@ -16,20 +16,14 @@ export class RemoteInferencer implements ICompletions {
   constructor(apiUrl?:string, completionUrl?:string) {
     this.api_url = apiUrl!==undefined ? apiUrl: "https://solcoder.remixproject.org"
     this.completion_url = completionUrl!==undefined ? completionUrl : "https://completion.remixproject.org"
-    this.solgpt_chat_history = []
     this.event = new EventEmitter()
-  }
-
-  private pushChatHistory(prompt, result){
-    const chat:ChatEntry = [prompt, result.data[0]]
-    this.solgpt_chat_history.push(chat)
-    if (this.solgpt_chat_history.length > this.max_history){this.solgpt_chat_history.shift()}
   }
 
   private async _makeRequest(data, rType:AIRequestType){
     this.event.emit("onInference")
     const requesURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
-    console.log("requesting on ", requesURL, rType, data.data[1])
+    const userPrompt = data.data[0]
+    console.log('userPrompt reuesting...')
 
     try {
       const result = await axios(requesURL, {
@@ -51,7 +45,7 @@ export class RemoteInferencer implements ICompletions {
       case AIRequestType.GENERAL:
         if (result.statusText === "OK") {
           const resultText = result.data.data[0]
-          this.pushChatHistory(prompt, resultText)
+          ChatHistory.pushHistory(userPrompt, resultText)
           return resultText
         } else {
           return defaultErrorMessage
@@ -59,7 +53,8 @@ export class RemoteInferencer implements ICompletions {
       }
 
     } catch (e) {
-      this.solgpt_chat_history = []
+      ChatHistory.clearHistory()
+      console.error('Error making request to Inference server:', e.message)
       return e
     }
     finally {
@@ -71,32 +66,37 @@ export class RemoteInferencer implements ICompletions {
     try {
       this.event.emit('onInference')
       const requesURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
-      const options = { headers: { 'Content-Type': 'application/json', "Accept": "text/event-stream" } }
+      const userPrompt = data.data[0]
       const response = await axios({
         method: 'post',
-        url:  rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url,
+        url:  requesURL,
         data: data,
         headers: { 'Content-Type': 'application/json', "Accept": "text/event-stream" },
         responseType: 'stream'
       });
 
+      let resultText = ""
       response.data.on('data', (chunk: Buffer) => {
         try {
           const parsedData = JSON.parse(chunk.toString());
           if (parsedData.isGenerating) {
             this.event.emit('onStreamResult', parsedData.generatedText);
+            resultText = resultText + parsedData.generatedText
           } else {
+            // stream generation is complete
+            resultText = resultText + parsedData.generatedText
+            ChatHistory.pushHistory(userPrompt, resultText)
             return parsedData.generatedText
           }
-
         } catch (error) {
           console.error('Error parsing JSON:', error);
+          ChatHistory.clearHistory()
         }
-
       });
 
       return "" // return empty string for now as handled in event
     } catch (error) {
+      ChatHistory.clearHistory()
       console.error('Error making stream request to Inference server:', error.message);
     }
     finally {
@@ -125,7 +125,7 @@ export class RemoteInferencer implements ICompletions {
   }
 
   async solidity_answer(prompt): Promise<any> {
-    const main_prompt = this._build_solgpt_promt(prompt)
+    const main_prompt = buildSolgptPromt(prompt, this.model_op)
     const payload = { "data":[main_prompt, "solidity_answer", false,2000,0.9,0.8,50]}
     return this._makeRequest(payload, AIRequestType.GENERAL)
   }
@@ -139,19 +139,4 @@ export class RemoteInferencer implements ICompletions {
     const payload = { "data":[prompt, "error_explaining", false,2000,0.9,0.8,50]}
     return this._makeRequest(payload, AIRequestType.GENERAL)
   }
-
-  private _build_solgpt_promt(user_promt:string){
-    if (this.solgpt_chat_history.length === 0){
-      return user_promt
-    } else {
-      let new_promt = ""
-      for (const [question, answer] of this.solgpt_chat_history) {
-        new_promt += PromptBuilder(question.split('sol-gpt')[1], answer, this.model_op)
-      }
-      // finaly
-      new_promt = "sol-gpt " + new_promt + PromptBuilder(user_promt.split('sol-gpt')[1], "", this.model_op)
-      return new_promt
-    }
-  }
-
 }

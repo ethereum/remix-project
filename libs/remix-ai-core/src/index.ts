@@ -6,13 +6,14 @@ import { IModel, IModelResponse, IModelRequest, InferenceModel, ICompletions,
 import { ModelType } from './types/constants'
 import { DefaultModels, InsertionParams, CompletionParams, GenerationParams } from './types/models'
 import { getCompletionPrompt, getInsertionPrompt } from './prompts/completionPrompts'
-import { PromptBuilder } from './prompts/promptBuilder'
+import { buildSolgptPromt, PromptBuilder } from './prompts/promptBuilder'
 import { RemoteInferencer } from './inferencers/remote/remoteInference'
+import { ChatHistory } from './prompts/chat'
 
 export {
   IModel, IModelResponse, IModelRequest, InferenceModel,
   ModelType, DefaultModels, ICompletions, IParams, IRemoteModel,
-  getCompletionPrompt, getInsertionPrompt, IStreamResponse,
+  getCompletionPrompt, getInsertionPrompt, IStreamResponse, buildSolgptPromt,
   RemoteInferencer, InsertionParams, CompletionParams, GenerationParams,
-  ChatEntry, AIRequestType, RemoteBackendOPModel, PromptBuilder
+  ChatEntry, AIRequestType, RemoteBackendOPModel, ChatHistory
 }
