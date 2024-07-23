@@ -512,6 +512,26 @@ export function Workspace() {
     }
   }
 
+  const handleMultipleItemCopies = (copied: {path: string, type: 'folder' | 'file' | 'workspace'}[]) => {
+    let paths = ''
+    const payload = copied.map((copy) => {
+      paths += `${copy.path} \n`
+      return { key: copy.path, type: copy.type }
+    })
+    setState((prevState) => {
+      return { ...prevState, copyElement: payload }
+    })
+    setCanPaste(true)
+    global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { paths }))
+  }
+
+  const handleMultiplePastes = (dest: string, destType: string) => {
+    dest = destType === 'file' ? extractParentFromKey(dest) || ROOT_PATH : dest
+    state.copyElement.map(({ key, type }) => {
+      type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
+    })
+  }
+
   const handleCopyClick = (path: string, type: 'folder' | 'file' | 'workspace') => {
     setState((prevState) => {
       return { ...prevState, copyElement: [{ key: path, type }]}
@@ -1040,6 +1060,7 @@ export function Workspace() {
                   dispatchMoveFolder={global.dispatchMoveFolder}
                   dispatchMoveFolders={global.dispatchMoveFolders}
                   handleCopyClick={handleCopyClick}
+                  handleMultiCopies={handleMultipleItemCopies}
                   handlePasteClick={handlePasteClick}
                   addMenuItems={addMenuItems}
                   removeMenuItems={removeMenuItems}
@@ -1108,6 +1129,7 @@ export function Workspace() {
                   dispatchMoveFolder={global.dispatchMoveFolder}
                   dispatchMoveFolders={global.dispatchMoveFolders}
                   handleCopyClick={handleCopyClick}
+                  handleMultiCopies={handleMultipleItemCopies}
                   handlePasteClick={handlePasteClick}
                   addMenuItems={addMenuItems}
                   removeMenuItems={removeMenuItems}

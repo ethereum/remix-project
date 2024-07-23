@@ -158,6 +158,7 @@ export interface FileExplorerProps {
     dragStatus: (status: boolean) => void
     importFromIpfs: any
     importFromHttps: any
+    handleMultiCopies: any
 }
 
 export interface FileExplorerMenuProps {
