@@ -110,6 +110,7 @@ export class EnvironmentExplorer extends ViewPlugin {
               classList='EECellStyle'
               payload={provider.description}
               pinned={this.pinnedProviders.includes(provider.name)}
+              id={provider.name}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
                   this.emit('providerPinned', provider.name, provider)
@@ -143,6 +144,7 @@ export class EnvironmentExplorer extends ViewPlugin {
               classList='EECellStyle'
               payload={provider.description}
               pinned={this.pinnedProviders.includes(provider.name)}
+              id={provider.name}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
                   this.emit('providerPinned', provider.name, provider)
@@ -175,6 +177,7 @@ export class EnvironmentExplorer extends ViewPlugin {
               payload={provider.description}
               classList='EECellStyle'
               pinned={this.pinnedProviders.includes(provider.name)}
+              id={provider.name}
               pinStateCallback={async (pinned: boolean) => {
                 if (pinned) {
                   this.emit('providerPinned', provider.name, provider)
