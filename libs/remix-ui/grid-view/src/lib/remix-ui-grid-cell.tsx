@@ -45,7 +45,6 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
       props?.payload?.toLowerCase().includes(filterCon.filter) ||
       props?.payload?.includes(filterCon.filter)
     )
-    console.log(props);
   }, [filterCon, props.tagList])
 
   /*const listenOnExpand = (key) => {
