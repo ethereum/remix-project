@@ -39,7 +39,27 @@
           "to": "bin/circom-macos-amd64"
         }
       ]
-    }
+    },
+    "win": {
+      "target": [
+        "nsis"
+    ],
+    "artifactName": "Remix-Desktop-Setup-${version}.${ext}",
+    "icon": "assets/icon.png",
+      "extraResources": [
+        {
+          "from": "bin/rustup-init.exe",
+          "to": "bin/rustup-init.exe"
+        }
+      ]
+    },
+    "nsis": {
+      "createDesktopShortcut": "always",
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "shortcutName": "Remix Desktop Windows",
+      "differentialPackage": false
+  }
   },
   "scripts": {
     "start:dev": "yarn webpack --config webpack.config.js && electron --inspect=5858 .",

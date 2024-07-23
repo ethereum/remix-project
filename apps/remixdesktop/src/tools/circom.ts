@@ -10,10 +10,14 @@ const execAsync = promisify(exec)
 export const circomCli = {
   async installRustup () {
     try {
-      console.log('installing rustup')
-      const { stdout } = await execAsync(`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`)
+      if (process.platform !== 'win32') {
+        console.log('installing rustup for unix')
+        const { stdout } = await execAsync(`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`)
 
-      console.log('stdout: ', stdout)
+        console.log('stdout: ', stdout)
+      } else {
+        console.log('installing rustup for windows')
+      }
     } catch (e) {
       console.error(e)
     }
