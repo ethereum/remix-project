@@ -1,16 +1,16 @@
 import { useContext } from 'react'
 import { CustomTooltip, RenderIf } from '@remix-ui/helper'
-import {FormattedMessage} from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import { CircuitAppContext } from '../contexts'
 import { CompileOptions } from './options'
 import { VersionList } from './versions'
-import { ConfigToggler } from './configToggler'
+import { Toggler } from './toggler'
 import { Configurations } from './configurations'
 import { CircuitActions } from './actions'
-import { WitnessToggler } from './witnessToggler'
 import { WitnessSection } from './witness'
 import { CompilerFeedback } from './feedback'
 import { CompilerReport, PrimeValue } from '../types'
+import { SetupExports } from './setupExports'
 
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
@@ -113,14 +113,17 @@ export function Container () {
             </CustomTooltip>
             <VersionList setVersion={handleVersionSelect} versionList={circuitApp.appState.versionList} currentVersion={circuitApp.appState.version} />
             <CompileOptions setCircuitAutoCompile={handleCircuitAutoCompile} setCircuitHideWarnings={handleCircuitHideWarnings} autoCompile={circuitApp.appState.autoCompile} hideWarnings={circuitApp.appState.hideWarnings} />
-            <ConfigToggler>
+            <Toggler title='circuit.advancedConfigurations' dataId=''>
               <Configurations setPrimeValue={handlePrimeChange} primeValue={circuitApp.appState.primeValue} versionValue={circuitApp.appState.version} />
-            </ConfigToggler>
+            </Toggler>
             <CircuitActions />
+            <Toggler title='circuit.setupExports' dataId='setup_exports_toggler'>
+              <SetupExports />
+            </Toggler>
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
-              <WitnessToggler>
+              <Toggler title='circuit.computeWitness' dataId='witness_toggler'>
                 <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
-              </WitnessToggler>
+              </Toggler>
             </RenderIf>
             <RenderIf condition={(circuitApp.appState.status !== 'compiling') && (circuitApp.appState.status !== 'computing') && (circuitApp.appState.status !== 'generating')}>
               <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />

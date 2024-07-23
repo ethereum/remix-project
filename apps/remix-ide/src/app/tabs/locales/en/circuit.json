@@ -11,5 +11,10 @@
   "circuit.generateR1cs": "Generate R1CS",
   "circuit.computeWitness": "Compute Witness",
   "circuit.signalInput": "Signal Input",
-  "circuit.compute": "Compute"
+  "circuit.compute": "Compute",
+  "circuit.setupExports": "Setup and Exports",
+  "circuit.provingScheme": "Proving Scheme",
+  "circuit.ptau": "POWER OF TAU (PTAU)",
+  "circuit.randomText": "Ceremony: Random Text",
+  "circuit.randomBeacon": "Ceremony: Random Beacon"
 }
