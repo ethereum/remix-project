@@ -123,6 +123,7 @@ export class RemixGuidePlugin extends ViewPlugin {
                   expandViewEl={
                     cell.expandViewElement
                   }
+                  id={cell.title}
                   handleExpand={() => {
                     this.showVideo = true
                     this.videoID = cell.expandViewElement.videoID
