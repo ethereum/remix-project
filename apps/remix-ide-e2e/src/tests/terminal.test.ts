@@ -313,7 +313,7 @@ module.exports = {
   'Should connect to the sepolia fork and run web3.eth.getCode in the terminal #group9': function (browser: NightwatchBrowser) {
     if (runMasterTests)
       browser
-        .pinChain('VM Custom fork')
+        .pinChain('vm-custom-fork')
         .switchEnvironment('vm-custom-fork')
         .waitForElementVisible('[data-id="vm-custom-fork-modal-footer-ok-react"]')
         .execute(() => {
