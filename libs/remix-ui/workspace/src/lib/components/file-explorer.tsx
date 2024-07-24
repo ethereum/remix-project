@@ -214,16 +214,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
     }
 
-    const performCut = async () => {
-      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
-        if (feTarget?.length > 1) {
-          handleMultiCopies(feTarget)
-        } else {
-          handleCopyClick(feTarget[0].key, feTarget[0].type)
-        }
-      }
-    }
-
     if (treeRef.current) {
       const CopyComboHandler = async (eve: KeyboardEvent) => {
         if (eve.metaKey ) {
@@ -253,11 +243,33 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
       }
 
+      treeRef.current?.addEventListener('keydown', CopyComboHandler)
+      treeRef.current?.addEventListener('keydown', pcCopyHandler)
+      return () => {
+        treeRef.current?.removeEventListener('keydown', CopyComboHandler)
+        treeRef.current?.removeEventListener('keydown', pcCopyHandler)
+      }
+    }
+  }, [treeRef.current, feTarget])
+
+  useEffect(() => {
+    const performCut = async () => {
+      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
+        if (feTarget?.length > 1) {
+          handleMultiCopies(feTarget)
+        } else {
+          handleCopyClick(feTarget[0].key, feTarget[0].type)
+        }
+      }
+    }
+
+    if (treeRef.current) {
+
       const pcCutHandler = async (eve: KeyboardEvent) => {
         if (eve.key === 'Control' ) {
           if (eve.code === 'KeyX') {
             feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-            await performCopy()
+            await performCut()
             console.log('cut performed on a pc')
           }
           return
@@ -268,25 +280,21 @@ export const FileExplorer = (props: FileExplorerProps) => {
         if (eve.metaKey ) {
           if (eve.code === 'KeyX') {
             feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-            await performCopy()
+            await performCut()
             console.log('Cut performed on mac')
           }
           return
         }
       }
 
-      treeRef.current?.addEventListener('keydown', CopyComboHandler)
-      treeRef.current?.addEventListener('keydown', pcCopyHandler)
       treeRef.current?.addEventListener('keydown', CutHandler)
       treeRef.current?.addEventListener('keydown', pcCutHandler)
       return () => {
-        treeRef.current?.removeEventListener('keydown', CopyComboHandler)
-        treeRef.current?.removeEventListener('keydown', pcCopyHandler)
         treeRef.current?.removeEventListener('keydown', CutHandler)
         treeRef.current?.removeEventListener('keydown', pcCutHandler)
       }
     }
-  }, [treeRef.current, feTarget])
+  }, [])
 
   useEffect(() => {
     const performPaste = async () => {
