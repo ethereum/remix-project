@@ -50,14 +50,31 @@ export class RemixAIPlugin extends ViewPlugin {
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel){
 
     if (this.isOnDesktop) {
-      this.call(this.remixDesktopPluginName, 'initializeModelBackend', false, model1, model2)
-      this.on(this.remixDesktopPluginName, 'onStreamResult', (value) => {
-        this.call('terminal', 'log', { type: 'log', value: value })
-      })
+      const res = await this.call(this.remixDesktopPluginName, 'initializeModelBackend', false, model1, model2)
+      if (res) {
+        this.on(this.remixDesktopPluginName, 'onStreamResult', (value) => {
+          this.call('terminal', 'log', { type: 'log', value: value })
+        })
+
+        this.on(this.remixDesktopPluginName, 'onInference', () => {
+          this.isInferencing = true
+        })
+
+        this.on(this.remixDesktopPluginName, 'onInferenceDone', () => {
+          this.isInferencing = false
+        })
+      }
+
     } else {
       // on browser
       console.log('Initializing RemixAIPlugin on browser')
       this.remoteInferencer = new RemoteInferencer(remoteModel?.apiUrl, remoteModel?.completionUrl)
+      this.remoteInferencer.event.on('onInference', () => {
+        this.isInferencing = true
+      })
+      this.remoteInferencer.event.on('onInferenceDone', () => {
+        this.isInferencing = false
+      })
     }
 
     this.aiIsActivated = true
@@ -65,7 +82,11 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async code_generation(prompt: string): Promise<any> {
-    console.log('code_generation')
+    if (this.isInferencing) {
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
+      return
+    }
+
     if (this.isOnDesktop) {
       return await this.call(this.remixDesktopPluginName, 'code_generation', prompt)
     } else {
@@ -82,6 +103,11 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async solidity_answer(prompt: string): Promise<any> {
+    if (this.isInferencing) {
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
+      return
+    }
+
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
 
     let result
@@ -95,6 +121,11 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async code_explaining(prompt: string): Promise<any> {
+    if (this.isInferencing) {
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
+      return
+    }
+
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
 
     let result
@@ -109,6 +140,11 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async error_explaining(prompt: string): Promise<any> {
+    if (this.isInferencing) {
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
+      return
+    }
+
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
 
     let result
