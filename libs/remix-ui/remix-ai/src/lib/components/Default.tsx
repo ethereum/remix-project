@@ -6,7 +6,7 @@ export const Default = (props) => {
   const [searchText, setSearchText] = useState('');
   const [resultText, setResultText] = useState('');
   const pluginName = 'remixAI'
-  const appendText = (newText) => { 
+  const appendText = (newText) => {
     setResultText(resultText => resultText + newText);
   }
 

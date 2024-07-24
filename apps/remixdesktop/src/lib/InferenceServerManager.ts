@@ -43,7 +43,6 @@ export class InferenceManager implements ICompletions {
   selectedModels: IModel[] = []
   event: EventEmitter
   modelCacheDir: string = undefined
-  isInferencing: boolean = false
   private inferenceProcess: any=null
   port = 5501
   inferenceURL = 'http://127.0.0.1:' + this.port
@@ -330,7 +329,7 @@ export class InferenceManager implements ICompletions {
   }
 
   private async _makeRequest(endpoint, payload){
-    // make a simple request to the inference server
+    // makes a simple request to the inference server
     try {
       const options = { headers: { 'Content-Type': 'application/json', } }
       const response = await axios.post(`${this.inferenceURL}/${endpoint}`, payload, options)

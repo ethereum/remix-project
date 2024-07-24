@@ -28,6 +28,7 @@ export class RemixAIPlugin extends ViewPlugin {
   aiIsActivated:boolean = false
   readonly remixDesktopPluginName = 'remixAID'
   remoteInferencer:RemoteInferencer = null
+  isInferencing: boolean = false
 
   constructor(inDesktop:boolean) {
     console.log('remixAIPlugin loaded')
@@ -42,8 +43,8 @@ export class RemixAIPlugin extends ViewPlugin {
       console.log('Activating RemixAIPlugin on desktop')
     } else {
       console.log('Activating RemixAIPlugin on browser')
+      this.initialize()
     }
-    this.initialize()
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel){
@@ -51,7 +52,6 @@ export class RemixAIPlugin extends ViewPlugin {
     if (this.isOnDesktop) {
       this.call(this.remixDesktopPluginName, 'initializeModelBackend', false, model1, model2)
       this.on(this.remixDesktopPluginName, 'onStreamResult', (value) => {
-        console.log('onStreamResult remixai plugin', value)
         this.call('terminal', 'log', { type: 'log', value: value })
       })
     } else {
@@ -91,7 +91,7 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.solidity_answer(prompt)
     }
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
-
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
   }
 
   async code_explaining(prompt: string): Promise<any> {
@@ -105,6 +105,7 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.code_explaining(prompt)
     }
     if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
   }
 
   async error_explaining(prompt: string): Promise<any> {
@@ -117,6 +118,7 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.error_explaining(prompt)
     }
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
