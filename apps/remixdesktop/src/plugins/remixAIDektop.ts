@@ -80,7 +80,6 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     }
 
     // set event listeners
-    console.log('Setting event listeners')
     this.desktopInferencer.event.on('onStreamResult', (data) => {
       this.emit('onStreamResult', data)
     })
