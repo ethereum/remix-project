@@ -74,6 +74,7 @@ export type VerificationStatus = SourcifyStatus | EtherscanStatus | 'failed' | '
 export interface VerificationResponse {
   status: VerificationStatus
   receiptId: string | null
+  message?: string
 }
 
 export interface LookupResponse {

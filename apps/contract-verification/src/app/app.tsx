@@ -60,7 +60,7 @@ const App = () => {
       // Check statuses of receipts
       for (const submission of Object.values(submissions)) {
         for (const receipt of submission.receipts) {
-          if (receipt.status === 'pending' && receipt.verifierInfo.name !== 'Sourcify') {
+          if (receipt.status === 'pending') {
             pendingReceipts.push(receipt)
           }
         }
@@ -75,7 +75,8 @@ const App = () => {
         clearInterval(timer.current)
         timer.current = null
       }
-      timer.current = setInterval(async () => {
+
+      const pollStatus = async () => {
         const changedSubmittedContracts = { ...submittedContracts }
 
         for (const receipt of pendingReceipts) {
@@ -89,7 +90,15 @@ const App = () => {
 
             // In case the user overwrites the API later, prefer the one stored in localStorage
             const verifier = getVerifier(verifierInfo.name, { ...verifierSettings, apiUrl: verifierInfo.apiUrl })
-            receipt.status = await verifier.checkVerificationStatus(receiptId)
+            if (!verifier.checkVerificationStatus) {
+              continue
+            }
+
+            try {
+              const { status, message } = await verifier.checkVerificationStatus(receiptId)
+              receipt.status = status
+              receipt.message = message
+            } catch (e) {} // try again in next call
           }
         }
 
@@ -99,7 +108,10 @@ const App = () => {
           timer.current = null
         }
         setSubmittedContracts((prev) => Object.assign({}, prev, changedSubmittedContracts))
-      }, 10000)
+      }
+
+      pollStatus()
+      timer.current = setInterval(pollStatus, 10000)
     }
   })
 
