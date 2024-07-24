@@ -3,6 +3,10 @@ import Fuse from 'fuse.js'
 import type { Chain } from '../types'
 import { AppContext } from '../AppContext'
 
+function getChainDescriptor(chain: Chain): string {
+  return `${chain.title || chain.name} (${chain.chainId})`
+}
+
 interface DropdownProps {
   label: string
   id: string
@@ -36,7 +40,7 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const fuse = new Fuse(dropdownChains, {
-    keys: ['name'],
+    keys: ['name', 'chainId', 'title'],
     threshold: 0.3,
   })
 
@@ -69,7 +73,7 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
 
   const handleOptionClick = (option: Chain) => {
     setSelectedChain(option)
-    setSearchTerm(option.name)
+    setSearchTerm(getChainDescriptor(option))
     setIsOpen(false)
   }
 
@@ -97,7 +101,7 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
         <ul className="dropdown-menu show w-100" style={{ maxHeight: '400px', overflowY: 'auto' }}>
           {filteredOptions.map((chain) => (
             <li key={chain.chainId} onClick={() => handleOptionClick(chain)} className={`dropdown-item ${selectedChain?.chainId === chain.chainId ? 'active' : ''}`} style={{ cursor: 'pointer', whiteSpace: 'normal' }}>
-              {chain.title || chain.name} ({chain.chainId})
+              {getChainDescriptor(chain)}
             </li>
           ))}
         </ul>
