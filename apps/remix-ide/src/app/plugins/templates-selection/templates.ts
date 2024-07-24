@@ -261,7 +261,7 @@ export const templates = (intl) => {
     {
       name: "OxProject",
       items: [
-        { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: "A standard interface for fungible tokens by 0xProject"}
+        { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: "A standard interface for fungible tokens by 0xProject" }
       ]
     },
     {
@@ -281,7 +281,7 @@ export const templates = (intl) => {
     {
       name: "Generic ZKP",
       items: [
-        { 
+        {
           value: "sindriScripts",
           tagList: ["ZKP"],
           displayName: intl.formatMessage({ id: 'filePanel.addscriptsindri' }),
@@ -296,13 +296,13 @@ export const templates = (intl) => {
           displayName: intl.formatMessage({ id: 'filePanel.uniswapV4Template' }),
           description: 'Use an Uniswap hook'
         },
-        { 
+        {
           value: "breakthroughLabsUniswapv4Hooks",
-          displayName: intl.formatMessage({ id: 'filePanel.breakthroughLabsUniswapv4Hooks' }), 
+          displayName: intl.formatMessage({ id: 'filePanel.breakthroughLabsUniswapv4Hooks' }),
           description: 'Use an Uniswap hook developed by Breakthrough Labs'
         },
-        { 
-          value: "uniswapV4HookBookMultiSigSwapHook", 
+        {
+          value: "uniswapV4HookBookMultiSigSwapHook",
           displayName: intl.formatMessage({ id: 'filePanel.uniswapV4HookBookMultiSigSwapHook' }),
           description: 'Use a MultiSigSwapHook developed by Breakthrough Labs'
         }
@@ -311,26 +311,26 @@ export const templates = (intl) => {
     {
       name: "Solidity CREATE2",
       items: [
-        { 
+        {
           value: "contractCreate2Factory",
-          tagList: ["Solidity"], 
+          tagList: ["Solidity"],
           displayName: intl.formatMessage({ id: 'filePanel.addcreate2solidityfactory' }),
           description: 'Factory for deploying a Contract using the CREATE2 opcode.'
         },
-        { 
+        {
           value: "contractDeployerScripts",
           displayName: intl.formatMessage({ id: 'filePanel.addscriptdeployer' }),
-          description: 'Script for deploying a Contract using the CREATE2 opcode.'  
+          description: 'Script for deploying a Contract using the CREATE2 opcode.'
         }
       ]
     },
     {
       name: "Contract Verification",
       items: [
-        { 
-          value: "etherscanScripts", 
+        {
+          value: "etherscanScripts",
           displayName: intl.formatMessage({ id: 'filePanel.addscriptetherscan' }),
-          description: 'Script for verifying a Contract in Etherscan.' 
+          description: 'Script for verifying a Contract in Etherscan.'
         },
       ],
     },
@@ -343,9 +343,9 @@ export const templates = (intl) => {
         },
         { value: "runSolidityUnittestingAction",
           displayName: intl.formatMessage({ id: 'filePanel.solghaction' }),
-          description: 'Run a Solidity Unittest Workflow in a GitHub CI.' 
+          description: 'Run a Solidity Unittest Workflow in a GitHub CI.'
         },
-        { 
+        {
           value: "runSlitherAction",
           displayName: intl.formatMessage({ id: 'filePanel.slitherghaction' }),
           description: 'Run a Slither Security Analysis in a GitHub CI.'
