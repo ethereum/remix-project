@@ -23,7 +23,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'isSmartAccount', 'web3VM', 'web3', 'getProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders'],
   version: packageJson.version
 }
 
@@ -31,6 +31,7 @@ export type TransactionContextAPI = {
   getAddress: (cb: (error: Error, result: string) => void) => void
   getValue: (cb: (error: Error, result: string) => void) => void
   getGasLimit: (cb: (error: Error, result: string) => void) => void
+  isSmartAccount: (address: string) => boolean
 }
 
 // see TxRunner.ts in remix-lib
@@ -215,6 +216,10 @@ export class Blockchain extends Plugin {
       })
     })
   }
+
+  isSmartAccount(address) {
+    return this.transactionContextAPI.isSmartAccount(address)
+  } 
 
   deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
@@ -768,7 +773,6 @@ export class Blockchain extends Plugin {
         if (network.name === 'Main' && network.id === '1') {
           return reject(new Error('It is not allowed to make this action against mainnet'))
         }
-
         this.txRunner.rawRun(
           tx,
           (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
@@ -861,6 +865,7 @@ export class Blockchain extends Plugin {
         let gasLimit
         try {
           fromAddress = await getAccount()
+          console.log('isSmartAccount--->', this.isSmartAccount(fromAddress))
           value = await queryValue()
           gasLimit = await getGasLimit()
         } catch (e) {
