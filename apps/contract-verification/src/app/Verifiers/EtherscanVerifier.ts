@@ -76,7 +76,6 @@ export class EtherscanVerifier extends AbstractVerifier {
     return { status: 'pending', receiptId: verificationResponse.result }
   }
 
-  // TODO retry with backoff in case this throws error
   async checkVerificationStatus(receiptId: string): Promise<VerificationStatus> {
     const url = new URL(this.apiUrl + '/api')
     url.searchParams.append('module', 'contract')
