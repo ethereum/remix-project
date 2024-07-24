@@ -4,7 +4,8 @@ import { ContractVerificationPluginClient } from './ContractVerificationPluginCl
 
 import { AppContext } from './AppContext'
 import DisplayRoutes from './routes'
-import { ContractVerificationSettings, ThemeType, Chain, SubmittedContracts, VerificationReceipt, mergeChainSettingsWithDefaults } from './types'
+import type { ContractVerificationSettings, ThemeType, Chain, SubmittedContracts, VerificationReceipt } from './types'
+import { mergeChainSettingsWithDefaults } from './utils'
 
 import './App.css'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
