@@ -1,0 +1,17 @@
+{
+  "Sourcify": {
+    "apiUrl": "https://sourcify.dev/server",
+    "explorerUrl": "https://repo.sourcify.dev"
+  },
+  "Etherscan": {
+    "1": {
+      "apiUrl": "https://api.etherscan.io",
+      "explorerUrl": "https://etherscan.io"
+    }
+  },
+  "Blockscout": {
+    "1": {
+      "apiUrl": "https://eth.blockscout.com"
+    }
+  }
+}
