@@ -86,10 +86,11 @@ export const VerifyView = () => {
       const verifierSettings = chainSettings.verifiers[verifierInfo.name]
       const verifier = getVerifier(verifierInfo.name, { ...verifierSettings })
       try {
-        const response = await verifier.verify(newSubmittedContract, compilerAbstract)
-        receipt.status = response.status
-        if (response.receiptId) {
-          receipt.receiptId = response.receiptId
+        const { status, message, receiptId } = await verifier.verify(newSubmittedContract, compilerAbstract)
+        receipt.status = status
+        receipt.message = message
+        if (receiptId) {
+          receipt.receiptId = receiptId
         }
       } catch (e) {
         const err = e as Error

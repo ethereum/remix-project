@@ -21,7 +21,7 @@ interface EtherscanRpcResponse {
 interface EtherscanCheckStatusResponse {
   status: '0' | '1'
   message: string
-  result: 'Pending in queue' | 'Pass - Verified' | 'Fail - Unable to verify' | 'Unknown UID'
+  result: 'Pending in queue' | 'Pass - Verified' | 'Fail - Unable to verify' | 'Already Verified' | 'Unknown UID'
 }
 
 export class EtherscanVerifier extends AbstractVerifier {
@@ -32,18 +32,14 @@ export class EtherscanVerifier extends AbstractVerifier {
   async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse> {
     // TODO: Handle version Vyper contracts. This relies on Solidity metadata.
     const metadata = JSON.parse(compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata)
-    const body: EtherscanVerificationRequest = {
-      chainId: submittedContract.chainId,
-      codeformat: 'solidity-standard-json-input',
-      sourceCode: JSON.stringify(compilerAbstract.input),
-      contractaddress: submittedContract.address,
-      contractname: submittedContract.filePath + ':' + submittedContract.contractName,
-      compilerversion: metadata.compiler.version,
-    }
-
-    if (submittedContract.abiEncodedConstructorArgs) {
-      body.constructorArguements = submittedContract.abiEncodedConstructorArgs
-    }
+    const formData = new FormData()
+    formData.append('chainId', submittedContract.chainId)
+    formData.append('codeformat', 'solidity-standard-json-input')
+    formData.append('sourceCode', compilerAbstract.input.toString())
+    formData.append('contractaddress', submittedContract.address)
+    formData.append('contractname', submittedContract.filePath + ':' + submittedContract.contractName)
+    formData.append('compilerversion', `v${metadata.compiler.version}`)
+    formData.append('constructorArguements', submittedContract.abiEncodedConstructorArgs ?? '')
 
     const url = new URL(this.apiUrl + '/api')
     url.searchParams.append('module', 'contract')
@@ -54,10 +50,7 @@ export class EtherscanVerifier extends AbstractVerifier {
 
     const response = await fetch(url.href, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
+      body: formData,
     })
 
     if (!response.ok) {
@@ -76,7 +69,7 @@ export class EtherscanVerifier extends AbstractVerifier {
     return { status: 'pending', receiptId: verificationResponse.result }
   }
 
-  async checkVerificationStatus(receiptId: string): Promise<VerificationStatus> {
+  async checkVerificationStatus(receiptId: string): Promise<VerificationResponse> {
     const url = new URL(this.apiUrl + '/api')
     url.searchParams.append('module', 'contract')
     url.searchParams.append('action', 'checkverifystatus')
@@ -95,28 +88,26 @@ export class EtherscanVerifier extends AbstractVerifier {
 
     const checkStatusResponse: EtherscanCheckStatusResponse = await response.json()
 
+    if (checkStatusResponse.result === 'Fail - Unable to verify') {
+      return { status: 'failed', receiptId, message: checkStatusResponse.result }
+    }
+    if (checkStatusResponse.result === 'Pending in queue') {
+      return { status: 'pending', receiptId }
+    }
+    if (checkStatusResponse.result === 'Pass - Verified' || checkStatusResponse.result === 'Already Verified') {
+      return { status: 'verified', receiptId }
+    }
+    if (checkStatusResponse.result === 'Unknown UID') {
+      console.error('Error on Etherscan API check verification status at ' + this.apiUrl + '\nStatus: ' + checkStatusResponse.status + '\nMessage: ' + checkStatusResponse.message + '\nResult: ' + checkStatusResponse.result)
+      return { status: 'failed', receiptId, message: checkStatusResponse.result }
+    }
+
     if (checkStatusResponse.status !== '1' || !checkStatusResponse.message.startsWith('OK')) {
       console.error('Error on Etherscan API check verification status at ' + this.apiUrl + '\nStatus: ' + checkStatusResponse.status + '\nMessage: ' + checkStatusResponse.message + '\nResult: ' + checkStatusResponse.result)
       throw new Error(checkStatusResponse.result)
     }
 
-    if (checkStatusResponse.result === 'Unknown UID') {
-      console.error('Error on Etherscan API check verification status at ' + this.apiUrl + '\nStatus: ' + checkStatusResponse.status + '\nMessage: ' + checkStatusResponse.message + '\nResult: ' + checkStatusResponse.result)
-      throw new Error(checkStatusResponse.result)
-    }
-
-    let status: VerificationStatus = 'unknown'
-    if (checkStatusResponse.result === 'Fail - Unable to verify') {
-      status = 'failed'
-    }
-    if (checkStatusResponse.result === 'Pending in queue') {
-      status = 'pending'
-    }
-    if (checkStatusResponse.result === 'Pass - Verified') {
-      status = 'verified'
-    }
-
-    return status
+    return { status: 'unknown', receiptId }
   }
 
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
