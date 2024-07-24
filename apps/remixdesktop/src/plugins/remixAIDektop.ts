@@ -68,15 +68,18 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     if (local){
       console.log('Initializing Inference model locally')
       this.desktopInferencer = new RemoteInferencer()
-    } else {
+    } else if (generalModel || completionModel){
       if (!this.desktopInferencer){
         console.log('Initializing Inference model')
         this.desktopInferencer = InferenceManager.getInstance(this.modelCacheDir)
+        if (this.desktopInferencer instanceof InferenceManager && generalModel) await this.desktopInferencer.init(generalModel)
+        if (this.desktopInferencer instanceof InferenceManager && completionModel) await this.desktopInferencer.init(completionModel)
       } else {
         console.log('Inference model already initialized')
+        return false // do not set event listener twice
       }
-      if (this.desktopInferencer instanceof InferenceManager && generalModel) await this.desktopInferencer.init(generalModel)
-      if (this.desktopInferencer instanceof InferenceManager && completionModel) await this.desktopInferencer.init(completionModel)
+    } else {
+      throw new Error('No model provided')
     }
 
     // set event listeners
@@ -86,9 +89,10 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
     this.desktopInferencer.event.on('onInference', () => {
       this.emit('onInference')
     })
-    this.desktopInferencer.event.on('onInfrenceDone', () => {
-      this.emit('onInfrenceDone')
+    this.desktopInferencer.event.on('onInferenceDone', () => {
+      this.emit('onInferenceDone')
     })
+    return true
   }
 
   async code_completion(context: any) {
