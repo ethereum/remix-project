@@ -7,6 +7,142 @@
     "1": {
       "apiUrl": "https://api.etherscan.io",
       "explorerUrl": "https://etherscan.io"
+    },
+    "56": {
+      "apiUrl": "https://api.bscscan.com",
+      "explorerUrl": "https://bscscan.com"
+    },
+    "137": {
+      "apiUrl": "https://api.polygonscan.com",
+      "explorerUrl": "https://polygonscan.com"
+    },
+    "250": {
+      "apiUrl": "https://api.ftmscan.com",
+      "explorerUrl": "https://ftmscan.com"
+    },
+    "42161": {
+      "apiUrl": "https://api.arbiscan.io",
+      "explorerUrl": "https://arbiscan.io"
+    },
+    "43114": {
+      "apiUrl": "https://api.snowtrace.io",
+      "explorerUrl": "https://snowtrace.io"
+    },
+    "1285": {
+      "apiUrl": "https://api-moonriver.moonscan.io",
+      "explorerUrl": "https://moonscan.io"
+    },
+    "1284": {
+      "apiUrl": "https://api-moonbeam.moonscan.io",
+      "explorerUrl": "https://moonscan.io"
+    },
+    "25": {
+      "apiUrl": "https://api.cronoscan.com",
+      "explorerUrl": "https://cronoscan.com"
+    },
+    "199": {
+      "apiUrl": "https://api.bttcscan.com",
+      "explorerUrl": "https://bttcscan.com"
+    },
+    "10": {
+      "apiUrl": "https://api-optimistic.etherscan.io",
+      "explorerUrl": "https://optimistic.etherscan.io"
+    },
+    "42220": {
+      "apiUrl": "https://api.celoscan.io",
+      "explorerUrl": "https://celoscan.io"
+    },
+    "288": {
+      "apiUrl": "https://api.bobascan.com",
+      "explorerUrl": "https://bobascan.com"
+    },
+    "100": {
+      "apiUrl": "https://api.gnosisscan.io",
+      "explorerUrl": "https://gnosisscan.io"
+    },
+    "1101": {
+      "apiUrl": "https://api-zkevm.polygonscan.com",
+      "explorerUrl": "https://zkevm.polygonscan.com"
+    },
+    "59144": {
+      "apiUrl": "https://api.lineascan.build",
+      "explorerUrl": "https://lineascan.build"
+    },
+    "8453": {
+      "apiUrl": "https://api.basescan.org",
+      "explorerUrl": "https://basescan.org"
+    },
+    "534352": {
+      "apiUrl": "https://api.scrollscan.com",
+      "explorerUrl": "https://scrollscan.com"
+    },
+    "17000": {
+      "apiUrl": "https://api-holesky.etherscan.io",
+      "explorerUrl": "https://holesky.etherscan.io"
+    },
+    "11155111": {
+      "apiUrl": "https://api-sepolia.etherscan.io",
+      "explorerUrl": "https://sepolia.etherscan.io"
+    },
+    "97": {
+      "apiUrl": "https://api-testnet.bscscan.com",
+      "explorerUrl": "https://bscscan.com"
+    },
+    "80001": {
+      "apiUrl": "https://api-testnet.polygonscan.com",
+      "explorerUrl": "https://polygonscan.com"
+    },
+    "4002": {
+      "apiUrl": "https://api-testnet.ftmscan.com",
+      "explorerUrl": "https://ftmscan.com"
+    },
+    "421611": {
+      "apiUrl": "https://api-testnet.arbiscan.io",
+      "explorerUrl": "https://arbiscan.io"
+    },
+    "42170": {
+      "apiUrl": "https://api-nova.arbiscan.io",
+      "explorerUrl": "https://nova.arbiscan.io"
+    },
+    "43113": {
+      "apiUrl": "https://api-testnet.snowtrace.io",
+      "explorerUrl": "https://snowtrace.io"
+    },
+    "1287": {
+      "apiUrl": "https://api-moonbase.moonscan.io",
+      "explorerUrl": "https://moonscan.io"
+    },
+    "338": {
+      "apiUrl": "https://api-testnet.cronoscan.com",
+      "explorerUrl": "https://cronoscan.com"
+    },
+    "1028": {
+      "apiUrl": "https://api-testnet.bttcscan.com",
+      "explorerUrl": "https://bttcscan.com"
+    },
+    "44787": {
+      "apiUrl": "https://api-alfajores.celoscan.io",
+      "explorerUrl": "https://alfajores.celoscan.io"
+    },
+    "2888": {
+      "apiUrl": "https://api-testnet.bobascan.com",
+      "explorerUrl": "https://bobascan.com"
+    },
+    "84532": {
+      "apiUrl": "https://api-sepolia.basescan.org",
+      "explorerUrl": "https://sepolia.basescan.org"
+    },
+    "1442": {
+      "apiUrl": "https://api-testnet-zkevm.polygonscan.com",
+      "explorerUrl": "https://zkevm.polygonscan.com"
+    },
+    "59140": {
+      "apiUrl": "https://api-testnet.lineascan.build",
+      "explorerUrl": "https://lineascan.build"
+    },
+    "534351": {
+      "apiUrl": "https://api-sepolia.scrollscan.com",
+      "explorerUrl": "https://sepolia.scrollscan.com"
     }
   },
   "Blockscout": {
