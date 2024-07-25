@@ -35,7 +35,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
 
   async onActivation() {
     this.handleThemeChange()
-    await this.call('tabs', 'focus', 'remixGuide')
+    await this.call('tabs', 'focus', 'templateSelection')
     this.renderComponent()
     _paq.push(['trackEvent', 'plugin', 'activated', 'remixGuide'])
   }
