@@ -219,7 +219,7 @@ export class Blockchain extends Plugin {
 
   isSmartAccount(address) {
     return this.transactionContextAPI.isSmartAccount(address)
-  } 
+  }
 
   deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) {
     const { continueCb, promptCb, statusCb, finalCb } = callbacks
