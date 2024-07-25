@@ -51,6 +51,9 @@ export function Workspace() {
 
   const [state, setState] = useState<WorkSpaceState>({
     ctrlKey: false,
+    cutShortcut: false,
+    deleteKey: false,
+    F2Key: false,
     newFileName: '',
     actions: contextMenuActions,
     focusContext: {
@@ -512,24 +515,13 @@ export function Workspace() {
     }
   }
 
-  const handleMultipleItemCopies = (copied: {path: string, type: 'folder' | 'file' | 'workspace'}[]) => {
-    let paths = ''
-    const payload = copied.map((copy) => {
-      paths += `${copy.path} \n`
-      return { key: copy.path, type: copy.type }
-    })
+  const handleMultipleItemCopies = (copied: {key: string, type: 'folder' | 'file' | 'workspace'}[]) => {
     setState((prevState) => {
-      return { ...prevState, copyElement: payload }
+      return { ...prevState, copyElement: copied }
     })
     setCanPaste(true)
-    global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { paths }))
-  }
-
-  const handleMultiplePastes = (dest: string, destType: string) => {
-    dest = destType === 'file' ? extractParentFromKey(dest) || ROOT_PATH : dest
-    state.copyElement.map(({ key, type }) => {
-      type === 'file' ? copyFile(key, dest) : copyFolder(key, dest)
-    })
+    const path = copied[0].key
+    global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { path }))
   }
 
   const handleCopyClick = (path: string, type: 'folder' | 'file' | 'workspace') => {
