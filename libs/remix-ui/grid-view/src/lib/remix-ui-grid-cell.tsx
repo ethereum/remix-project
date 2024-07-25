@@ -25,6 +25,7 @@ interface RemixUIGridCellProps {
   children?: ReactNode
   expandViewEl?: any
   handleExpand?: any
+  id: string
   searchKeywords?: string[]
 }
 
@@ -97,7 +98,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
           { filterCon.showPin && <button
             className={`${pinned ? 'fa-circle-check text-dark' : 'fa-circle text-secondary'}` + ` fa-regular border-0 mb-0 remixui_grid_cell_pin`}
             style={{ fontSize: 'large' }}
-            data-id={`${pinned ? `${props.title}-pinned` : `${props.title}-unpinned`}`}
+            data-id={`${pinned ? `${props.id}-pinned` : `${props.id}-unpinned`}`}
             onClick={async () => {
               if (!props.pinStateCallback) setPinned(!pinned)
               if (await props.pinStateCallback(!pinned)) setPinned(!pinned)
