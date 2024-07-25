@@ -125,8 +125,8 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
   plugin.REACT_API.smartAccounts.addresses.push(sender)
 
   // Save smart accounts w.r.t. primary address of WalletClient
-  let smartAccountsStr = localStorage.getItem(localStorageKey)
-  let smartAccountsObj = JSON.parse(smartAccountsStr)
+  const smartAccountsStr = localStorage.getItem(localStorageKey)
+  const smartAccountsObj = JSON.parse(smartAccountsStr)
   smartAccountsObj[plugin.REACT_API.chainId][addresses[0]].push(sender)
   localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
 
@@ -139,9 +139,9 @@ export const loadSmartAccounts = async (plugin, primaryAddress) => {
   const { chainId } = plugin.REACT_API
   const localStorageKey = 'smartAccounts'
 
-  let smartAccountsStr = localStorage.getItem(localStorageKey)
+  const smartAccountsStr = localStorage.getItem(localStorageKey)
   if (smartAccountsStr) {
-    let smartAccountsObj = JSON.parse(smartAccountsStr)
+    const smartAccountsObj = JSON.parse(smartAccountsStr)
     if (smartAccountsObj[chainId]) {
       if (smartAccountsObj[chainId][primaryAddress]) {
         for (const obj of smartAccountsObj[chainId][primaryAddress]) {
@@ -157,7 +157,7 @@ export const loadSmartAccounts = async (plugin, primaryAddress) => {
       localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
     }
   } else {
-    let objToStore = {}
+    const objToStore = {}
     objToStore[chainId] = {}
     objToStore[chainId][primaryAddress] = []
     localStorage.setItem(localStorageKey, JSON.stringify(objToStore))
