@@ -16,5 +16,8 @@
   "circuit.provingScheme": "Proving Scheme",
   "circuit.ptau": "POWER OF TAU (PTAU)",
   "circuit.randomText": "Ceremony: Random Text",
-  "circuit.randomBeacon": "Ceremony: Random Beacon"
+  "circuit.randomBeacon": "Ceremony: Random Beacon",
+  "circuit.exportVerifierContract": "Export verifier contract",
+  "circuit.exportVerificationKey": "Export verification key",
+  "circuit.runSetup": "Run setup"
 }

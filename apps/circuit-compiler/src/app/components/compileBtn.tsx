@@ -20,7 +20,7 @@ export function CompileBtn () {
       }
     >
       <button
-        className="btn btn-primary btn-block d-block w-100 text-break mb-1 mt-3"
+        className="btn btn-primary btn-block d-block w-100 text-break mb-1 mt-1"
         onClick={() => { compileCircuit(plugin, appState) }}
         disabled={(appState.filePath === "") || (appState.status === "compiling") || (appState.status === "generating")}
         data-id="compile_circuit_btn"
