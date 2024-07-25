@@ -25,7 +25,6 @@ interface RemixUIGridCellProps {
   children?: ReactNode
   expandViewEl?: any
   handleExpand?: any
-  id: string
   searchKeywords?: string[]
 }
 
@@ -76,7 +75,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
         <div className='d-flex flex-grid'>
           <div className={ `${pinned ? "" : "border-dark "}` + "d-flex mx-0 p-2 bg-light border border-secondary remixui_grid_cell_container " + props.classList || ''} data-id={"remixUIGS" + props.title}>
             <div className="d-flex remixui_grid_cell w-100 flex-column">
-              { !props.hideTitle && <div className='d-flex flex-row pb-1 align-items-end' style={{ minWidth: '8rem', height: '1rem' }}>
+              { !props.hideTitle && <div className='d-flex flex-row pb-1 mb-1 align-items-end' style={{ minWidth: '8rem', height: '1rem' }}>
                 { props.logo && <img className='remixui_grid_view_logo mr-1' src={props.logo} style={{ width: '1rem', height: '1rem' }}/> }
                 { props.logos && props.logos.map((logo) => <img className='remixui_grid_view_logo mr-1' src={logo} style={{ width: '1rem', height: '1rem' }}/>)}
                 { props.title &&
@@ -98,7 +97,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
           { filterCon.showPin && <button
             className={`${pinned ? 'fa-circle-check text-dark' : 'fa-circle text-secondary'}` + ` fa-regular border-0 mb-0 remixui_grid_cell_pin`}
             style={{ fontSize: 'large' }}
-            data-id={`${pinned ? `${props.id}-pinned` : `${props.id}-unpinned`}`}
+            data-id={`${pinned ? `${props.title}-pinned` : `${props.title}-unpinned`}`}
             onClick={async () => {
               if (!props.pinStateCallback) setPinned(!pinned)
               if (await props.pinStateCallback(!pinned)) setPinned(!pinned)

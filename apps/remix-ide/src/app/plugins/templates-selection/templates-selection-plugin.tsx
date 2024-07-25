@@ -154,6 +154,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
           templates(window._intl).map(template => {
             return <RemixUIGridSection
               plugin={this}
+              key={template.name}
               title={template.name}
               hScrollable={false}
             >
@@ -161,7 +162,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                 return <RemixUIGridCell
                   plugin={this}
                   title={item.displayName}
-                  id={item.name}
+                  key={item.name}
                   searchKeywords={[item.displayName, item.description, template.name]}
                   tagList={item.tagList}
                   classList='TSCellStyle'
