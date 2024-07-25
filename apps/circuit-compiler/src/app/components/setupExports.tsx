@@ -1,9 +1,10 @@
 import { CustomTooltip } from "@remix-ui/helper"
 import { FormattedMessage } from "react-intl"
+import { SetupExportsBtn } from "./setupExportsBtn"
 
 export function SetupExports () {
   return (
-    <div className="pb-2 border-bottom flex-column">
+    <div className="flex-column">
       <div className="flex-column d-flex">
         <div className="mb-1 ml-0">
           <label className="circuit_inner_label form-check-label">
@@ -60,7 +61,30 @@ export function SetupExports () {
           <label className="circuit_inner_label form-check-label" htmlFor="circuitRandomBeacon">
             <FormattedMessage id="circuit.randomBeacon" />
           </label>
-          <input className="form-control m-0 txinput" placeholder="0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f" />
+          <input className="form-control m-0 txinput mb-1" placeholder="0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f" />
+          <div className="mt-2 custom-control custom-checkbox">
+            <input
+              className="custom-control-input"
+              type="checkbox"
+              title="Export Verifier Contract"
+              id="circuitExportVerifierContract"
+            />
+            <label className="form-check-label custom-control-label" htmlFor="circuitExportVerifierContract">
+              <FormattedMessage id="circuit.exportVerifierContract" />
+            </label>
+          </div>
+          <div className="mt-2 custom-control custom-checkbox">
+            <input
+              className="custom-control-input"
+              type="checkbox"
+              title="Export Verification Key"
+              id="circuitExportVerificationKey"
+            />
+            <label className="form-check-label custom-control-label" htmlFor="circuitExportVerificationKey">
+              <FormattedMessage id="circuit.exportVerificationKey" />
+            </label>
+          </div>
+          <SetupExportsBtn />
         </div>
       </div>
     </div>

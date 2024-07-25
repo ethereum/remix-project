@@ -2,15 +2,15 @@ import { useState } from "react"
 import { FormattedMessage } from "react-intl"
 import { RenderIf, RenderIfNot } from "@remix-ui/helper"
 
-export function Toggler ({ children, title, dataId }: { children: JSX.Element, title: string, dataId: string }) {
-  const [toggleExpander, setToggleExpander] = useState<boolean>(false)
+export function Toggler ({ children, title, dataId, show = false }: { children: JSX.Element, title: string, dataId: string, show?: boolean }) {
+  const [toggleExpander, setToggleExpander] = useState<boolean>(show)
 
   const toggleConfigurations = () => {
     setToggleExpander(!toggleExpander)
   }
 
   return (
-    <div>
+    <div className="pt-2 border-top pb-2">
       <div className="d-flex circuit_config_section justify-content-between" onClick={toggleConfigurations} data-id={dataId}>
         <div className="d-flex">
           <label className="mt-1 circuit_config_section">

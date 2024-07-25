@@ -117,9 +117,11 @@ export function Container () {
               <Configurations setPrimeValue={handlePrimeChange} primeValue={circuitApp.appState.primeValue} versionValue={circuitApp.appState.version} />
             </Toggler>
             <CircuitActions />
-            <Toggler title='circuit.setupExports' dataId='setup_exports_toggler'>
-              <SetupExports />
-            </Toggler>
+            <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
+              <Toggler title='circuit.setupExports' dataId='setup_exports_toggler' show={true}>
+                <SetupExports />
+              </Toggler>
+            </RenderIf>
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
               <Toggler title='circuit.computeWitness' dataId='witness_toggler'>
                 <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
