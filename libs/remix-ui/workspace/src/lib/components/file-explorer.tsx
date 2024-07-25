@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, SyntheticEvent, useContext } from 'react' // eslint-disable-line
+import React, { useEffect, useState, useRef, SyntheticEvent, useContext, useCallback } from 'react' // eslint-disable-line
 import { useIntl } from 'react-intl'
 import { TreeView } from '@remix-ui/tree-view' // eslint-disable-line
 import { FileExplorerMenu } from './file-explorer-menu' // eslint-disable-line
@@ -39,6 +39,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   // const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
+  const [cutActivated, setCutActivated] = useState(false)
 
   const { plugin } = useContext(FileSystemContext)
   const [feTarget, setFeTarget] = useState<{ key: string, type: 'file' | 'folder' }[]>({} as { key: string, type: 'file' | 'folder' }[])
@@ -77,12 +78,105 @@ export const FileExplorer = (props: FileExplorerProps) => {
     setState(workspaceState)
   }, [workspaceState])
 
-  useEffect(() => {
-    console.log('what is selected now', feTarget)
-  }, [feTarget])
+  // useEffect(() => {
+  //   if (treeRef.current) {
+  //     const keyPressHandler = (e: KeyboardEvent) => {
+  //       if (e.shiftKey) {
+  //         setState((prevState) => {
+  //           return { ...prevState, ctrlKey: true }
+  //         })
+  //       }
+  //     }
+
+  //     const keyUpHandler = (e: KeyboardEvent) => {
+  //       if (!e.shiftKey) {
+  //         setState((prevState) => {
+  //           return { ...prevState, ctrlKey: false }
+  //         })
+  //       }
+  //     }
+  //     const targetDocument = treeRef.current
+
+  //     targetDocument.addEventListener('keydown', keyPressHandler)
+  //     targetDocument.addEventListener('keyup', keyUpHandler)
+  //     return () => {
+  //       targetDocument.removeEventListener('keydown', keyPressHandler)
+  //       targetDocument.removeEventListener('keyup', keyUpHandler)
+  //     }
+  //   }
+  // }, [treeRef.current])
 
   useEffect(() => {
+    const performDeletion = async () => {
+      const path: string[] = []
+      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
+        feTarget.forEach((one) => {
+          path.push(one.key)
+        })
+        await deletePath(path)
+      }
+    }
+
+    const performRename = async () => {
+      if (feTarget?.length > 1 && feTarget[0]?.key.length > 1) {
+        await plugin.call('notification', 'alert', { id: 'renameAlert', message: 'You cannot rename multiple files at once!' })
+      }
+      props.editModeOn(feTarget[0].key, feTarget[0].type, false)
+    }
+
+    const performCopy = async () => {
+      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
+        if (feTarget?.length > 1) {
+          handleMultiCopies(feTarget)
+        } else {
+          handleCopyClick(feTarget[0].key, feTarget[0].type)
+        }
+      }
+    }
+
+    const performCut = async () => {
+      console.log('check feTarget', feTarget)
+      if (feTarget) {
+        if (feTarget.length > 0 && feTarget[0].key.length > 0) {
+          handleMultiCopies(feTarget)
+          setCutActivated(true)
+        } else {
+          handleCopyClick(feTarget[0].key, feTarget[0].type)
+        }
+      }
+    }
+
+    const performPaste = async () => {
+      if (feTarget.length > 0 && feTarget[0]?.key.length >= 0) {
+        console.log('cut-mode has been activated', cutActivated)
+        if (cutActivated) {
+          if (state.copyElement.length > 1) {
+            console.log('more than one item is ready to be cut')
+            const promisesToKeep = state.copyElement.filter(x => x).map(async (item) => {
+              console.log('cutting files now')
+              if (item.type === 'file') {
+                props.dispatchMoveFile(item.key, feTarget[0].key)
+              } else {
+                props.dispatchMoveFolder(item.key, feTarget[0].key)
+              }
+            })
+            await Promise.all(promisesToKeep)
+          } else {
+            if (state.copyElement[0].type === 'file') {
+              props.dispatchMoveFile(state.copyElement[0].key, feTarget[0].key)
+            } else {
+              props.dispatchMoveFolder(state.copyElement[0].key, feTarget[0].key)
+            }
+          }
+        } else {
+          handlePasteClick(feTarget[0].key, feTarget[0].type)
+        }
+      }
+    }
+
     if (treeRef.current) {
+      const targetDocument = treeRef.current
+      // Event handlers
       const keyPressHandler = (e: KeyboardEvent) => {
         if (e.shiftKey) {
           setState((prevState) => {
@@ -98,29 +192,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           })
         }
       }
-      const targetDocument = treeRef.current
 
-      targetDocument.addEventListener('keydown', keyPressHandler)
-      targetDocument.addEventListener('keyup', keyUpHandler)
-      return () => {
-        targetDocument.removeEventListener('keydown', keyPressHandler)
-        targetDocument.removeEventListener('keyup', keyUpHandler)
-      }
-    }
-  }, [treeRef.current])
-
-  useEffect(() => {
-    const performDeletion = async () => {
-      const path: string[] = []
-      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
-        feTarget.forEach((one) => {
-          path.push(one.key)
-        })
-        await deletePath(path)
-      }
-    }
-
-    if (treeRef.current) {
       const deleteKeyPressHandler = async (eve: KeyboardEvent) => {
         if (eve.key === 'Delete' ) {
           feWindow._paq.push(['trackEvent', 'fileExplorer', 'deleteKey', 'deletePath'])
@@ -158,23 +230,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
       }
 
-      treeRef.current?.addEventListener('keydown', deleteKeyPressHandler)
-      treeRef.current?.addEventListener('keyup', deleteKeyPressUpHandler)
-      return () => {
-        treeRef.current?.removeEventListener('keydown', deleteKeyPressHandler)
-        treeRef.current?.removeEventListener('keyup', deleteKeyPressUpHandler)
-      }
-    }
-  }, [treeRef.current, feTarget])
-
-  useEffect(() => {
-    const performRename = async () => {
-      if (feTarget?.length > 1 && feTarget[0]?.key.length > 1) {
-        await plugin.call('notification', 'alert', { id: 'renameAlert', message: 'You cannot rename multiple files at once!' })
-      }
-      props.editModeOn(feTarget[0].key, feTarget[0].type, false)
-    }
-    if (treeRef.current) {
       const F2KeyPressHandler = async (eve: KeyboardEvent) => {
         if (eve.key === 'F2' ) {
           feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
@@ -194,147 +249,92 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
       }
 
-      treeRef.current?.addEventListener('keydown', F2KeyPressHandler)
-      treeRef.current?.addEventListener('keyup', F2KeyPressUpHandler)
-      return () => {
-        treeRef.current?.removeEventListener('keydown', F2KeyPressHandler)
-        treeRef.current?.removeEventListener('keyup', F2KeyPressUpHandler)
-      }
-    }
-  }, [treeRef.current, feTarget])
-
-  useEffect(() => {
-    const performCopy = async () => {
-      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
-        if (feTarget?.length > 1) {
-          handleMultiCopies(feTarget)
-        } else {
-          handleCopyClick(feTarget[0].key, feTarget[0].type)
-        }
-      }
-    }
-
-    if (treeRef.current) {
       const CopyComboHandler = async (eve: KeyboardEvent) => {
-        if (eve.metaKey ) {
-          if (eve.code === 'KeyC') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-            await performCopy()
-            // setState((prevState) => {
-            //   return { ...prevState, F2Key: true }
-            // })
-            console.log('copy performed on a mac')
-          }
+        if (eve.metaKey && eve.code === 'KeyC' && (window as any).navigator.userAgentData.platform === 'macOS') {
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+          await performCopy()
+          console.log('copy performed on a mac')
           return
         }
       }
 
       const pcCopyHandler = async (eve: KeyboardEvent) => {
-        if (eve.key === 'Control' ) {
-          if (eve.code === 'KeyC') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-            await performCopy()
-            // setState((prevState) => {
-            //   return { ...prevState, F2Key: true }
-            // })
-            console.log('copy perfomed on a pc')
-          }
+        if (eve.ctrlKey && (eve.key === 'c' || eve.key === 'C') && (window as any).navigator.userAgentData.platform !== 'macOS') {
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+          await performCopy()
+          console.log('copy perfomed on a pc')
           return
         }
       }
 
-      treeRef.current?.addEventListener('keydown', CopyComboHandler)
-      treeRef.current?.addEventListener('keydown', pcCopyHandler)
-      return () => {
-        treeRef.current?.removeEventListener('keydown', CopyComboHandler)
-        treeRef.current?.removeEventListener('keydown', pcCopyHandler)
-      }
-    }
-  }, [treeRef.current, feTarget])
-
-  useEffect(() => {
-    const performCut = async () => {
-      if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
-        if (feTarget?.length > 1) {
-          handleMultiCopies(feTarget)
-        } else {
-          handleCopyClick(feTarget[0].key, feTarget[0].type)
-        }
-      }
-    }
-
-    if (treeRef.current) {
-
       const pcCutHandler = async (eve: KeyboardEvent) => {
-        if (eve.key === 'Control' ) {
-          if (eve.code === 'KeyX') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-            await performCut()
-            console.log('cut performed on a pc')
-          }
+        if (eve.ctrlKey && eve.code === 'KeyX' && (window as any).navigator.userAgentData.platform !== 'macOS') {
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+          await performCut()
+          console.log('cut performed on a pc')
           return
         }
       }
 
       const CutHandler = async (eve: KeyboardEvent) => {
-        if (eve.metaKey ) {
-          if (eve.code === 'KeyX') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-            await performCut()
-            console.log('Cut performed on mac')
-          }
+        if (eve.metaKey && eve.code === 'KeyX' && (window as any).navigator.userAgentData.platform === 'macOS') {
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+          await performCut()
+          console.log('Cut performed on mac')
           return
         }
       }
 
-      treeRef.current?.addEventListener('keydown', CutHandler)
-      treeRef.current?.addEventListener('keydown', pcCutHandler)
-      return () => {
-        treeRef.current?.removeEventListener('keydown', CutHandler)
-        treeRef.current?.removeEventListener('keydown', pcCutHandler)
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    const performPaste = async () => {
-      if (feTarget.length > 0 && feTarget[0]?.key.length >= 0) {
-        handlePasteClick(feTarget[0].key, feTarget[0].type)
-      }
-    }
-
-    if (treeRef.current) {
       const pasteHandler = async (eve: KeyboardEvent) => {
-        if (eve.metaKey ) {
-          if (eve.code === 'KeyV') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'metaVToPaste', 'PasteCopiedContent'])
-            performPaste()
-            console.log('paste performed on mac')
-          }
+        if (eve.metaKey && eve.code === 'KeyV' && (window as any).navigator.userAgentData.platform === 'macOS') {
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'metaVToPaste', 'PasteCopiedContent'])
+          performPaste()
+          console.log('paste performed on mac')
           return
         }
       }
 
       const pcPasteHandler = async (eve: KeyboardEvent) => {
-        if (eve.key === 'Control' ) {
-          if (eve.code === 'KeyV') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'ctrlVToPaste', 'PasteCopiedContent'])
-            performPaste()
-            console.log('paste performed on pc')
-          }
+        if (eve.key === 'Control' && eve.code === 'KeyV' && (window as any).navigator.userAgentData.platform !== 'macOS') {
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'ctrlVToPaste', 'PasteCopiedContent'])
+          performPaste()
+          console.log('paste performed on pc')
           return
         }
       }
 
-      treeRef.current?.addEventListener('keydown', pasteHandler)
-      treeRef.current?.addEventListener('keydown', pcPasteHandler)
+      // Event Listeners
 
+      targetDocument?.addEventListener('keydown', CopyComboHandler)
+      targetDocument?.addEventListener('keydown', CutHandler)
+      targetDocument?.addEventListener('keydown', deleteKeyPressHandler)
+      targetDocument?.addEventListener('keyup', deleteKeyPressUpHandler)
+      targetDocument?.addEventListener('keydown', F2KeyPressHandler)
+      targetDocument?.addEventListener('keyup', F2KeyPressUpHandler)
+      targetDocument.addEventListener('keydown', keyPressHandler)
+      targetDocument.addEventListener('keyup', keyUpHandler)
+      targetDocument?.addEventListener('keydown', pasteHandler)
+      targetDocument?.addEventListener('keydown', pcPasteHandler)
+      targetDocument?.addEventListener('keydown', pcCopyHandler)
+      targetDocument?.addEventListener('keydown', pcCutHandler)
+
+      // Cleanup
       return () => {
-        treeRef.current?.removeEventListener('keydown', pasteHandler)
-        treeRef.current?.removeEventListener('keydown', pcPasteHandler)
+        targetDocument?.removeEventListener('keydown', pasteHandler)
+        targetDocument?.removeEventListener('keydown', pcPasteHandler)
+        targetDocument?.removeEventListener('keydown', CutHandler)
+        targetDocument?.removeEventListener('keydown', pcCutHandler)
+        targetDocument?.removeEventListener('keydown', CopyComboHandler)
+        targetDocument?.removeEventListener('keydown', pcCopyHandler)
+        targetDocument?.removeEventListener('keydown', F2KeyPressHandler)
+        targetDocument?.removeEventListener('keyup', F2KeyPressUpHandler)
+        targetDocument?.removeEventListener('keydown', deleteKeyPressHandler)
+        targetDocument?.removeEventListener('keyup', deleteKeyPressUpHandler)
+        targetDocument.removeEventListener('keydown', keyPressHandler)
+        targetDocument.removeEventListener('keyup', keyUpHandler)
       }
     }
-  }, [feTarget])
+  }, [treeRef.current, feTarget])
 
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
