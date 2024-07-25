@@ -82,6 +82,8 @@ let requiredModules = [ // services + layout views + system views
   'pinnedPanel',
   'pluginStateLogger',
   'remixGuide',
+  'environmentExplorer',
+  'templateSelection',
   'matomo',
   'walletconnect'
 ]
@@ -133,6 +135,8 @@ export function isNative(name) {
     'compilationDetails',
     'vyperCompilationDetails',
     //'remixGuide',
+    'environmentExplorer',
+    'templateSelection',
     'walletconnect'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
