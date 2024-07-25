@@ -78,34 +78,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     setState(workspaceState)
   }, [workspaceState])
 
-  // useEffect(() => {
-  //   if (treeRef.current) {
-  //     const keyPressHandler = (e: KeyboardEvent) => {
-  //       if (e.shiftKey) {
-  //         setState((prevState) => {
-  //           return { ...prevState, ctrlKey: true }
-  //         })
-  //       }
-  //     }
-
-  //     const keyUpHandler = (e: KeyboardEvent) => {
-  //       if (!e.shiftKey) {
-  //         setState((prevState) => {
-  //           return { ...prevState, ctrlKey: false }
-  //         })
-  //       }
-  //     }
-  //     const targetDocument = treeRef.current
-
-  //     targetDocument.addEventListener('keydown', keyPressHandler)
-  //     targetDocument.addEventListener('keyup', keyUpHandler)
-  //     return () => {
-  //       targetDocument.removeEventListener('keydown', keyPressHandler)
-  //       targetDocument.removeEventListener('keyup', keyUpHandler)
-  //     }
-  //   }
-  // }, [treeRef.current])
-
   useEffect(() => {
     const performDeletion = async () => {
       const path: string[] = []
@@ -135,7 +107,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
     }
 
     const performCut = async () => {
-      console.log('check feTarget', feTarget)
       if (feTarget) {
         if (feTarget.length > 0 && feTarget[0].key.length > 0) {
           handleMultiCopies(feTarget)
@@ -148,12 +119,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
     const performPaste = async () => {
       if (feTarget.length > 0 && feTarget[0]?.key.length >= 0) {
-        console.log('cut-mode has been activated', cutActivated)
         if (cutActivated) {
           if (state.copyElement.length > 1) {
-            console.log('more than one item is ready to be cut')
             const promisesToKeep = state.copyElement.filter(x => x).map(async (item) => {
-              console.log('cutting files now')
               if (item.type === 'file') {
                 props.dispatchMoveFile(item.key, feTarget[0].key)
               } else {
@@ -249,57 +217,60 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
       }
 
-      const CopyComboHandler = async (eve: KeyboardEvent) => {
-        if (eve.metaKey && eve.code === 'KeyC' && (window as any).navigator.userAgentData.platform === 'macOS') {
-          feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-          await performCopy()
-          console.log('copy performed on a mac')
-          return
-        }
-      }
+      let CopyComboHandler: (eve: KeyboardEvent) => Promise<void>
+      let CutHandler: (eve: KeyboardEvent) => Promise<void>
+      let pasteHandler: (eve: KeyboardEvent) => Promise<void>
+      let pcCopyHandler: (eve: KeyboardEvent) => Promise<void>
+      let pcCutHandler: (eve: KeyboardEvent) => Promise<void>
+      let pcPasteHandler: (eve: KeyboardEvent) => Promise<void>
 
-      const pcCopyHandler = async (eve: KeyboardEvent) => {
-        if (eve.ctrlKey && (eve.key === 'c' || eve.key === 'C') && (window as any).navigator.userAgentData.platform !== 'macOS') {
-          feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-          await performCopy()
-          console.log('copy perfomed on a pc')
-          return
+      if ((window as any).navigator.userAgentData.platform === 'macOS') {
+        CopyComboHandler = async (eve: KeyboardEvent) => {
+          if (eve.metaKey && eve.code === 'KeyC') {
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+            await performCopy()
+            return
+          }
         }
-      }
 
-      const pcCutHandler = async (eve: KeyboardEvent) => {
-        if (eve.ctrlKey && eve.code === 'KeyX' && (window as any).navigator.userAgentData.platform !== 'macOS') {
-          feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-          await performCut()
-          console.log('cut performed on a pc')
-          return
+        CutHandler = async (eve: KeyboardEvent) => {
+          if (eve.metaKey && eve.code === 'KeyX') {
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+            await performCut()
+            return
+          }
         }
-      }
 
-      const CutHandler = async (eve: KeyboardEvent) => {
-        if (eve.metaKey && eve.code === 'KeyX' && (window as any).navigator.userAgentData.platform === 'macOS') {
-          feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-          await performCut()
-          console.log('Cut performed on mac')
-          return
+        pasteHandler = async (eve: KeyboardEvent) => {
+          if (eve.metaKey && eve.code === 'KeyV') {
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'metaVToPaste', 'PasteCopiedContent'])
+            performPaste()
+            return
+          }
         }
-      }
-
-      const pasteHandler = async (eve: KeyboardEvent) => {
-        if (eve.metaKey && eve.code === 'KeyV' && (window as any).navigator.userAgentData.platform === 'macOS') {
-          feWindow._paq.push(['trackEvent', 'fileExplorer', 'metaVToPaste', 'PasteCopiedContent'])
-          performPaste()
-          console.log('paste performed on mac')
-          return
+      } else {
+        pcCopyHandler = async (eve: KeyboardEvent) => {
+          if (eve.ctrlKey && (eve.key === 'c' || eve.key === 'C')) {
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+            await performCopy()
+            return
+          }
         }
-      }
 
-      const pcPasteHandler = async (eve: KeyboardEvent) => {
-        if (eve.key === 'Control' && eve.code === 'KeyV' && (window as any).navigator.userAgentData.platform !== 'macOS') {
-          feWindow._paq.push(['trackEvent', 'fileExplorer', 'ctrlVToPaste', 'PasteCopiedContent'])
-          performPaste()
-          console.log('paste performed on pc')
-          return
+        pcCutHandler = async (eve: KeyboardEvent) => {
+          if (eve.ctrlKey && eve.code === 'KeyX') {
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+            await performCut()
+            return
+          }
+        }
+
+        pcPasteHandler = async (eve: KeyboardEvent) => {
+          if (eve.key === 'Control' && eve.code === 'KeyV') {
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'ctrlVToPaste', 'PasteCopiedContent'])
+            performPaste()
+            return
+          }
         }
       }
 
