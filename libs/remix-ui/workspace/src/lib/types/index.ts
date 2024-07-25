@@ -206,6 +206,7 @@ export interface WorkSpaceState {
     ctrlKey: boolean
     deleteKey?: boolean
     F2Key?: boolean
+    cutShortcut: boolean
     newFileName: string
     actions: {
       id: string
