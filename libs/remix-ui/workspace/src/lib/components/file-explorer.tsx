@@ -256,7 +256,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       let pcCutHandler: (eve: KeyboardEvent) => Promise<void>
       let pcPasteHandler: (eve: KeyboardEvent) => Promise<void>
 
-      if ((window as any).navigator.userAgentData.platform === 'macOS') {
+      if ((window as any).navigator.platform === 'MacIntel') {
         CopyComboHandler = async (eve: KeyboardEvent) => {
           if (eve.metaKey && eve.code === 'KeyC') {
             feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
