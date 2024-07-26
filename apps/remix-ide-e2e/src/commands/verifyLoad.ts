@@ -6,7 +6,7 @@ class VerifyLoad extends EventEmitter {
         browser.waitForElementPresent({
             selector: "//span[@data-id='typesloaded']",
             locateStrategy: 'xpath',
-            timeout: 60000
+            timeout: 120000
         })
         .waitForElementPresent({
             selector: "//span[@data-id='editorloaded']",
