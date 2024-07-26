@@ -3,6 +3,16 @@ import { Dispatch } from 'react'
 import type { CircomPluginClient } from '../services/circomPluginClient'
 
 export type CompilerStatus = "compiling" | "generating" | "computing" | "idle" | "errored" | "warning"
+
+export type ProvingScheme = 'groth16' | 'plonk'
+
+export type PtauFile = {
+  name: string,
+  power: number,
+  maxConstraint: string,
+  ipfsHash: string,
+  blake2bHash: string
+}
 export interface ICircuitAppContext {
   appState: AppState
   dispatch: Dispatch<Actions>,
@@ -18,7 +28,13 @@ export interface ActionPayloadTypes {
   SET_HIDE_WARNINGS: boolean,
   SET_SIGNAL_INPUTS: string[],
   SET_COMPILER_FEEDBACK: string | CompilerReport[]
-  SET_FILE_PATH_TO_ID: Record<number, string>
+  SET_FILE_PATH_TO_ID: Record<number, string>,
+  SET_PROVING_SCHEME: ProvingScheme,
+  SET_PTAU_VALUE: string,
+  // SET_RANDOM_TEXT: string,
+  // SET_RANDOM_BEACON: string
+  SET_EXPORT_VERIFICATION_CONTRACT: boolean,
+  SET_EXPORT_VERIFICATION_KEY: boolean
 }
 export interface Action<T extends keyof ActionPayloadTypes> {
   type: T
@@ -37,7 +53,14 @@ export interface AppState {
   autoCompile: boolean,
   hideWarnings: boolean,
   signalInputs: string[],
-  feedback: string | CompilerReport[]
+  feedback: string | CompilerReport[],
+  provingScheme: ProvingScheme,
+  ptauList: Array<PtauFile>,
+  ptauValue: string,
+  // randomText: string,
+  // randomBeacon: string,
+  exportVerificationContract: boolean,
+  exportVerificationKey: boolean
 }
 
 export type CompilationConfig = {
