@@ -117,18 +117,28 @@ export function Container () {
               <Configurations setPrimeValue={handlePrimeChange} primeValue={circuitApp.appState.primeValue} versionValue={circuitApp.appState.version} />
             </Toggler>
             <CircuitActions />
+            <RenderIf condition={circuitApp.appState.status !== 'compiling'}>
+              <CompilerFeedback feedback={circuitApp.appState.compilerFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
+            </RenderIf>
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
               <Toggler title='circuit.setupExports' dataId='setup_exports_toggler' show={true}>
-                <SetupExports />
+                <>
+                  <SetupExports />
+                  <RenderIf condition={circuitApp.appState.status !== 'exporting'}>
+                    <CompilerFeedback feedback={circuitApp.appState.setupExportFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
+                  </RenderIf>
+                </>
               </Toggler>
             </RenderIf>
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
               <Toggler title='circuit.computeWitness' dataId='witness_toggler'>
-                <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
+                <>
+                  <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
+                  <RenderIf condition={circuitApp.appState.status !== 'computing'}>
+                    <CompilerFeedback feedback={circuitApp.appState.computeFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
+                  </RenderIf>
+                </>
               </Toggler>
-            </RenderIf>
-            <RenderIf condition={(circuitApp.appState.status !== 'compiling') && (circuitApp.appState.status !== 'computing') && (circuitApp.appState.status !== 'generating')}>
-              <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
             </RenderIf>
           </div>
         </div>

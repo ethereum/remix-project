@@ -12,21 +12,9 @@ export const compileCircuit = async (plugin: CircomPluginClient, appState: AppSt
       console.log('Existing circuit compilation in progress')
     }
   } catch (e) {
+    plugin.emit('statusChanged', { key: 'error', title: e.message, type: 'error' })
     plugin.internalEvents.emit('circuit_compiling_errored', e)
     console.error(e)
-  }
-}
-
-export const generateR1cs = async (plugin: CircomPluginClient, appState: AppState) => {
-  try {
-    if (appState.status !== "generating") {
-      await plugin.generateR1cs(appState.filePath, { version: appState.version, prime: appState.primeValue })
-    } else {
-      console.log('Existing r1cs generation in progress')
-    }
-  } catch (e) {
-    plugin.internalEvents.emit('circuit_generating_r1cs_errored', e)
-    console.error('Generating R1CS failed: ', e)
   }
 }
 
@@ -40,6 +28,7 @@ export const computeWitness = async (plugin: CircomPluginClient, status: string,
       console.log('Existing witness computation in progress')
     }
   } catch (e) {
+    plugin.emit('statusChanged', { key: 'error', title: e.message, type: 'error' })
     plugin.internalEvents.emit('circuit_computing_witness_errored', e)
     console.error('Computing witness failed: ', e)
   }
@@ -47,7 +36,7 @@ export const computeWitness = async (plugin: CircomPluginClient, status: string,
 
 export const runSetupAndExport = async (plugin: CircomPluginClient, appState: AppState) => {
   const ptau_final = `https://ipfs-cluster.ethdevops.io/ipfs/${appState.ptauList.find(ptau => ptau.name === appState.ptauValue)?.ipfsHash}`
-  if (appState.status !== "generating") await plugin.generateR1cs(appState.filePath, { version: appState.version, prime: appState.primeValue })
+  await plugin.generateR1cs(appState.filePath, { version: appState.version, prime: appState.primeValue })
 
   const fileName = extractNameFromKey(appState.filePath)
   const readPath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.r1cs')}`
