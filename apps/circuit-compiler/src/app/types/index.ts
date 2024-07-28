@@ -2,7 +2,7 @@ import { compiler_list } from 'circom_wasm'
 import { Dispatch } from 'react'
 import type { CircomPluginClient } from '../services/circomPluginClient'
 
-export type CompilerStatus = "compiling" | "generating" | "computing" | "idle" | "errored" | "warning"
+export type CompilerStatus = "compiling" | "computing" | "idle" | "errored" | "warning" | "exporting"
 
 export type ProvingScheme = 'groth16' | 'plonk'
 
@@ -27,7 +27,9 @@ export interface ActionPayloadTypes {
   SET_AUTO_COMPILE: boolean,
   SET_HIDE_WARNINGS: boolean,
   SET_SIGNAL_INPUTS: string[],
-  SET_COMPILER_FEEDBACK: string | CompilerReport[]
+  SET_COMPILER_FEEDBACK: string | CompilerReport[],
+  SET_COMPUTE_FEEDBACK: string | CompilerReport[],
+  SET_SETUP_EXPORT_FEEDBACK: string | CompilerReport[],
   SET_FILE_PATH_TO_ID: Record<number, string>,
   SET_PROVING_SCHEME: ProvingScheme,
   SET_PTAU_VALUE: string,
@@ -53,7 +55,9 @@ export interface AppState {
   autoCompile: boolean,
   hideWarnings: boolean,
   signalInputs: string[],
-  feedback: string | CompilerReport[],
+  compilerFeedback: string | CompilerReport[],
+  computeFeedback: string | CompilerReport[],
+  setupExportFeedback: string | CompilerReport[],
   provingScheme: ProvingScheme,
   ptauList: Array<PtauFile>,
   ptauValue: string,

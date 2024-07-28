@@ -11,7 +11,9 @@ export const appInitialState: AppState = {
   autoCompile: false,
   hideWarnings: false,
   signalInputs: [],
-  feedback: null,
+  compilerFeedback: null,
+  computeFeedback: null,
+  setupExportFeedback: null,
   provingScheme: 'groth16',
   ptauList: [
     {
@@ -83,7 +85,19 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
   case 'SET_COMPILER_FEEDBACK':
     return {
       ...state,
-      feedback: action.payload
+      compilerFeedback: action.payload
+    }
+
+  case 'SET_COMPUTE_FEEDBACK':
+    return {
+      ...state,
+      computeFeedback: action.payload
+    }
+
+  case 'SET_SETUP_EXPORT_FEEDBACK':
+    return {
+      ...state,
+      setupExportFeedback: action.payload
     }
 
   case 'SET_FILE_PATH_TO_ID':

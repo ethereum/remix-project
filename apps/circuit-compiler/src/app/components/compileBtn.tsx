@@ -22,16 +22,13 @@ export function CompileBtn () {
       <button
         className="btn btn-primary btn-block d-block w-100 text-break mb-1 mt-1"
         onClick={() => { compileCircuit(plugin, appState) }}
-        disabled={(appState.filePath === "") || (appState.status === "compiling") || (appState.status === "generating")}
+        disabled={(appState.filePath === "") || (appState.status === "compiling")}
         data-id="compile_circuit_btn"
       >
         <div className="d-flex align-items-center justify-content-center">
           <RenderIf condition={appState.status === 'compiling'}>
             <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
           </RenderIf>
-          <RenderIfNot condition={appState.status === 'compiling'}>
-            <i className="fas fa-sync mr-2" aria-hidden="true"></i>
-          </RenderIfNot>
           <div className="text-truncate overflow-hidden text-nowrap">
             <span>
               <FormattedMessage id="circuit.compile" />

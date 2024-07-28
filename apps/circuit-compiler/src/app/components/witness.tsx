@@ -34,7 +34,7 @@ export function WitnessSection ({ plugin, signalInputs, status }: {plugin: Circo
   }
 
   return (
-    <div className="pb-2 border-bottom flex-column">
+    <div className="border-bottom flex-column">
       <div className="flex-column d-flex">
         <RenderIf condition={signalInputs.length > 0}>
           <>
@@ -49,17 +49,14 @@ export function WitnessSection ({ plugin, signalInputs, status }: {plugin: Circo
               ))
             }
             <button
-              className="btn btn-sm btn-secondary"
+              className="btn btn-secondary btn-block d-block w-100 text-break mb-1 mt-1"
               onClick={() => { computeWitness(plugin, status, witnessValues) }}
-              disabled={(status === "compiling") || (status === "generating") || (status === "computing")}
+              disabled={(status === "compiling") || (status === "computing")}
               data-id="compute_witness_btn"
             >
               <RenderIf condition={status === 'computing'}>
                 <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
               </RenderIf>
-              <RenderIfNot condition={status === 'computing'}>
-                <i className="fas fa-sync mr-2" aria-hidden="true"></i>
-              </RenderIfNot>
               <FormattedMessage id="circuit.compute" />
             </button>
           </>

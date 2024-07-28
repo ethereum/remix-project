@@ -16,6 +16,18 @@ export function SetupExports () {
   //   circuitApp.dispatch({ type: 'SET_RANDOM_BEACON', payload: value })
   // }
 
+  const handleRunSetup = async () => {
+    try {
+      circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'exporting' })
+      await runSetupAndExport(circuitApp.plugin, circuitApp.appState)
+      circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+    } catch (e) {
+      circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
+      circuitApp.dispatch({ type: 'SET_SETUP_EXPORT_FEEDBACK', payload: e.message })
+      console.error(e)
+    }
+  }
+
   return (
     <div className="flex-column">
       <div className="flex-column d-flex">
@@ -115,7 +127,7 @@ export function SetupExports () {
               <FormattedMessage id="circuit.exportVerificationKey" />
             </label>
           </div>
-          <SetupExportsBtn handleRunSetup={() => runSetupAndExport(circuitApp.plugin, circuitApp.appState)} />
+          <SetupExportsBtn handleRunSetup={handleRunSetup} status={circuitApp.appState.status} />
         </div>
       </div>
     </div>
