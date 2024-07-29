@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { FormattedMessage } from "react-intl"
-import { RenderIf, RenderIfNot } from "@remix-ui/helper"
+import { CustomTooltip, RenderIf, RenderIfNot } from "@remix-ui/helper"
 
-export function Toggler ({ children, title, dataId, show = false, icon }: { children: JSX.Element, title: string, dataId: string, show?: boolean, icon?: string }) {
+export function Toggler ({ children, title, dataId, show = false, icon, iconTooltip }: { children: JSX.Element, title: string, dataId: string, show?: boolean, icon?: string, iconTooltip?: string }) {
   const [toggleExpander, setToggleExpander] = useState<boolean>(show)
 
   useEffect(() => {
@@ -19,7 +19,16 @@ export function Toggler ({ children, title, dataId, show = false, icon }: { chil
         <div className="d-flex">
           <label className="mt-1 circuit_config_section">
             <FormattedMessage id={title} />
-            { icon && <span className={`${icon} border-0 p-0 ml-2`} aria-hidden="true"></span> }
+            { icon ? iconTooltip ? (
+              <CustomTooltip
+                placement="auto"
+                tooltipId="rerunSetupWarningTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={iconTooltip}
+              >
+                <span className={`${icon} border-0 p-0 ml-2`} aria-hidden="true"></span>
+              </CustomTooltip>) :
+              <span className={`${icon} border-0 p-0 ml-2`} aria-hidden="true"></span> : null }
           </label>
         </div>
         <div>
