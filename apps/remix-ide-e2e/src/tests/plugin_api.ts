@@ -184,7 +184,7 @@ module.exports = {
       .frameParent()
       .useCss()
       .clickLaunchIcon('udapp')
-      .waitForElementContainsText('#selectExEnvOptions button', 'VM Berlin Fork')
+      .waitForElementContainsText('#selectExEnvOptions button', 'Remix VM (Berlin)')
       .clickLaunchIcon('localPlugin')
       .useXpath()
       // @ts-ignore
