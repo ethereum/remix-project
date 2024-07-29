@@ -35,39 +35,39 @@ const RenderKnownTransactions = ({
       </div>
       {showTableHash.includes(tx.hash)
         ? showTable(
-            {
-              hash: tx.hash,
-              status: receipt !== null ? receipt.status : null,
-              isCall: tx.isCall,
-              contractAddress: receipt.contractAddress,
-              blockHash: tx.blockHash,
-              blockNumber: tx.blockNumber,
-              data: tx,
-              from,
-              to,
-              gas: tx.gas,
-              input: tx.input,
-              'decoded input': resolvedData?.params
-                ? JSON.stringify(
-                    typeConversion.stringify(resolvedData.params),
-                    null,
-                    '\t'
-                  )
-                : ' - ',
-              'decoded output': resolvedData?.decodedReturnValue
-                ? JSON.stringify(
-                    typeConversion.stringify(resolvedData.decodedReturnValue),
-                    null,
-                    '\t'
-                  )
-                : ' - ',
-              logs,
-              val: tx.value,
-              transactionCost: tx.transactionCost,
-              executionCost: tx.executionCost,
-            },
-            showTableHash
-          )
+          {
+            hash: tx.hash,
+            status: receipt !== null ? receipt.status : null,
+            isCall: tx.isCall,
+            contractAddress: receipt.contractAddress,
+            blockHash: tx.blockHash,
+            blockNumber: tx.blockNumber,
+            data: tx,
+            from,
+            to,
+            gas: tx.gas,
+            input: tx.input,
+            'decoded input': resolvedData?.params
+              ? JSON.stringify(
+                typeConversion.stringify(resolvedData.params),
+                null,
+                '\t'
+              )
+              : ' - ',
+            'decoded output': resolvedData?.decodedReturnValue
+              ? JSON.stringify(
+                typeConversion.stringify(resolvedData.decodedReturnValue),
+                null,
+                '\t'
+              )
+              : ' - ',
+            logs,
+            val: tx.value,
+            transactionCost: tx.transactionCost,
+            executionCost: tx.executionCost,
+          },
+          showTableHash
+        )
         : null}
     </span>
   );

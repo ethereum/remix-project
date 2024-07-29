@@ -20,35 +20,7 @@ const Context = ({ opts, provider }: { opts: any; provider: string }) => {
     : data.transactionIndex;
   const value = val ? typeConversion.toInt(val) : 0;
 
-  if (provider?.startsWith('vm')) {
-    return (
-      <div>
-        <span>
-          <span className="remix_ui_terminal_tx font-weight-bold mr-3">
-            [vm]
-          </span>
-          <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">from:</span> {from}
-          </div>
-          <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">to:</span> {to}
-          </div>
-          <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">value:</span> {value} wei
-          </div>
-          <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">data:</span> {input}
-          </div>
-          <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">logs:</span> {logs}
-          </div>
-          <div className="remix_ui_terminal_txItem">
-            <span className="font-weight-bold">hash:</span> {hash}
-          </div>
-        </span>
-      </div>
-    );
-  } else if (data.resolvedData) {
+  if (data.resolvedData) {
     return (
       <div>
         <span>
