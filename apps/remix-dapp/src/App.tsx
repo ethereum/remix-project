@@ -1,18 +1,19 @@
 import React, { useEffect, useReducer } from 'react';
-import { RouterProvider } from 'react-router-dom';
-import router from './router';
 import { IntlProvider } from 'react-intl';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AppContext } from './contexts';
 import { appInitialState, appReducer } from './reducers/state';
-import { initDispatch, updateState } from './actions';
+import { initDispatch, initInstance, updateState } from './actions';
 import enJson from './locales/en';
 import zhJson from './locales/zh';
 import esJson from './locales/es';
 import frJson from './locales/fr';
 import itJson from './locales/it';
 import './App.css';
+import { isMobile } from './utils/tools';
+import MobilePage from './components/Home/mobile';
+import PCPage from './components/Home/pc';
 
 const localeMap: Record<string, any> = {
   zh: zhJson,
@@ -31,7 +32,9 @@ function App(): JSX.Element {
   useEffect(() => {
     initDispatch(dispatch);
     updateState(appState);
+    initInstance();
   }, []);
+
   return (
     <AppContext.Provider
       value={{
@@ -43,7 +46,7 @@ function App(): JSX.Element {
         locale={selectedLocaleCode}
         messages={localeMap[selectedLocaleCode]}
       >
-        <RouterProvider router={router} />
+        {isMobile() ? <MobilePage /> : <PCPage />}
         <ToastContainer
           position="bottom-right"
           newestOnTop
