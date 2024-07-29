@@ -39,7 +39,7 @@ export class EtherscanVerifier extends AbstractVerifier {
     formData.append('contractaddress', submittedContract.address)
     formData.append('contractname', submittedContract.filePath + ':' + submittedContract.contractName)
     formData.append('compilerversion', `v${metadata.compiler.version}`)
-    formData.append('constructorArguements', submittedContract.abiEncodedConstructorArgs ?? '')
+    formData.append('constructorArguements', submittedContract.abiEncodedConstructorArgs.replace('0x', '') ?? '')
 
     const url = new URL(this.apiUrl + '/api')
     url.searchParams.append('module', 'contract')

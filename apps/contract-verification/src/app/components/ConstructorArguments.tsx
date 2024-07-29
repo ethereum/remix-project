@@ -1,84 +1,90 @@
-import React, { useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 
 import { AppContext } from '../AppContext'
 import { ContractDropdownSelection } from './ContractDropdown'
 
-const abiCoder = new ethers.utils.AbiCoder()
-
 interface ConstructorArgumentsProps {
   abiEncodedConstructorArgs: string
   setAbiEncodedConstructorArgs: React.Dispatch<React.SetStateAction<string>>
+  abiEncodingError: string
+  setAbiEncodingError: React.Dispatch<React.SetStateAction<string>>
   selectedContract: ContractDropdownSelection
 }
 
-// TODO
-// Add mapping VerifierIdentifier -> ConstructorArgsRequired
-// Check enabledVerifiers: when not required, don't show component and set to null
-
-export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, selectedContract }) => {
-  const { compilationOutput } = React.useContext(AppContext)
-  const [constructorArgsValues, setConstructorArgsValues] = React.useState<string[]>([])
-  const [abiEncodingError, setAbiEncodingError] = React.useState<string | null>('')
-  const [toggleRawInput, setToggleRawInput] = React.useState<boolean>(false)
+export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, abiEncodingError, setAbiEncodingError, selectedContract }) => {
+  const { compilationOutput } = useContext(AppContext)
+  const [toggleRawInput, setToggleRawInput] = useState<boolean>(false)
 
   const { triggerFilePath, filePath, contractName } = selectedContract
   const selectedCompilerAbstract = triggerFilePath && compilationOutput[triggerFilePath]
   const compiledContract = selectedCompilerAbstract?.data?.contracts?.[filePath]?.[contractName]
   const abi = compiledContract?.abi
 
-  // Wanted to use execution.txHelper.getConstructorInterface from @remix-project/remix-lib but getting errors: 'error getting eth provider options', 'global is not defined' etc.
-  const constructorArgs = abi && abi.find((a) => a.type === 'constructor') && abi.find((a) => a.type === 'constructor').inputs
+  const constructorArgs = abi && abi.find((a) => a.type === 'constructor')?.inputs
+  const [constructorArgsValues, setConstructorArgsValues] = useState<string[]>(Array(constructorArgs?.length ?? 0).fill(''))
 
   useEffect(() => {
-    if (!constructorArgs) {
-      setConstructorArgsValues([])
-      return
+    setConstructorArgsValues([])
+    setAbiEncodedConstructorArgs('')
+    setAbiEncodingError('')
+    if (constructorArgs) {
+      setConstructorArgsValues(Array(constructorArgs.length).fill(''))
     }
-    setConstructorArgsValues(Array(constructorArgs.length).fill(''))
   }, [constructorArgs])
 
-  // Do the abi encoding when user values are input
-  useEffect(() => {
-    if (!constructorArgs) {
+  const handleConstructorArgs = (value: string, index: number) => {
+    const changedConstructorArgsValues = [...constructorArgsValues.slice(0, index), value, ...constructorArgsValues.slice(index + 1)]
+    setConstructorArgsValues(changedConstructorArgsValues)
+
+    // if any constructorArgsValue is falsey (empty etc.), don't encode yet
+    if (changedConstructorArgsValues.some((value) => !value)) {
       setAbiEncodedConstructorArgs('')
       setAbiEncodingError('')
       return
     }
-    if (constructorArgsValues.length !== constructorArgs.length) return
-    // if any constructorArgsValue is falsey (empty etc.), don't encode yet
-    if (constructorArgsValues.some((value) => !value)) return setAbiEncodingError('')
 
     const types = constructorArgs.map((inp) => inp.type)
+    const parsedArgsValues = []
+    for (const arg of changedConstructorArgsValues) {
+      try {
+        parsedArgsValues.push(JSON.parse(arg))
+      } catch (e) {
+        parsedArgsValues.push(arg)
+      }
+    }
+
     try {
-      console.log('constructorArgsValues', constructorArgsValues)
-      console.log('types', types)
-      const newAbiEncoding = abiCoder.encode(types, constructorArgsValues)
+      const newAbiEncoding = ethers.utils.defaultAbiCoder.encode(types, parsedArgsValues)
       setAbiEncodedConstructorArgs(newAbiEncoding)
       setAbiEncodingError('')
     } catch (e) {
       console.error(e)
+      setAbiEncodedConstructorArgs('')
       setAbiEncodingError('Encoding error: ' + e.message)
     }
-  }, [constructorArgsValues, constructorArgs])
+  }
+
+  const handleRawConstructorArgs = (value: string) => {
+    setAbiEncodedConstructorArgs(value)
+    try {
+      const decoded = ethers.utils.defaultAbiCoder.decode(
+        constructorArgs.map((inp) => inp.type),
+        value
+      )
+      setConstructorArgsValues(decoded.map((val) => JSON.stringify(val)))
+      setAbiEncodingError('')
+    } catch (e) {
+      console.error(e)
+      setAbiEncodingError('Decoding error: ' + e.message)
+    }
+  }
 
   if (!selectedContract) return null
   if (!compilationOutput && Object.keys(compilationOutput).length === 0) return null
   // No render if no constructor args
   if (!constructorArgs || constructorArgs.length === 0) return null
 
-  const handleRawConstructorArgs = (value: string) => {
-    try {
-      const decoded = abiCoder.decode(
-        constructorArgs.map((inp) => inp.type),
-        value
-      )
-      setConstructorArgsValues(decoded.map((val) => val.toString()))
-    } catch (e) {
-      console.error(e)
-      setAbiEncodingError('Decoding error: ' + e.message)
-    }
-  }
   return (
     <div className="mt-4">
       <label>Constructor Arguments</label>
@@ -99,7 +105,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
           {constructorArgs.map((inp, i) => (
             <div key={`constructor-arg-${inp.name}`} className="d-flex flex-row align-items-center mb-2">
               <div className="mr-2 small">{inp.name}</div>
-              <input className="form-control" placeholder={inp.type} value={constructorArgsValues[i] || ''} onChange={(e) => setConstructorArgsValues([...constructorArgsValues.slice(0, i), e.target.value, ...constructorArgsValues.slice(i + 1)])} />
+              <input className="form-control" placeholder={inp.type} value={constructorArgsValues[i]} onChange={(e) => handleConstructorArgs(e.target.value, i)} />
             </div>
           ))}
           {abiEncodedConstructorArgs && (
