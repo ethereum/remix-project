@@ -17,6 +17,7 @@ export const VerifyView = () => {
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
   const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = useState<string>('')
+  const [abiEncodingError, setAbiEncodingError] = useState<string>('')
   const [selectedContract, setSelectedContract] = useState<ContractDropdownSelection | undefined>()
   const [enabledVerifiers, setEnabledVerifiers] = useState<Partial<Record<VerifierIdentifier, boolean>>>({})
   const navigate = useNavigate()
@@ -113,7 +114,7 @@ export const VerifyView = () => {
 
       <ContractDropdown label="Contract Name" id="contract-dropdown-1" setSelectedContract={setSelectedContract} />
 
-      {selectedContract && <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} />}
+      {selectedContract && <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} abiEncodingError={abiEncodingError} setAbiEncodingError={setAbiEncodingError} />}
 
       <div>
         Verify on:
