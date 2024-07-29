@@ -121,7 +121,7 @@ export function Container () {
               <CompilerFeedback feedback={circuitApp.appState.compilerFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
             </RenderIf>
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
-              <Toggler title='circuit.setupExports' dataId='setup_exports_toggler' show={true}>
+              <Toggler title='circuit.setupExports' dataId='setup_exports_toggler' show={!circuitApp.appState.setupExportStatus} icon={ circuitApp.appState.setupExportStatus === 'done' ? 'fas fa-check-circle text-success' : circuitApp.appState.setupExportStatus === 'update' ? 'fas fa-exclamation-triangle text-warning' : null }>
                 <>
                   <SetupExports />
                   <RenderIf condition={circuitApp.appState.status !== 'exporting'}>
@@ -131,7 +131,7 @@ export function Container () {
               </Toggler>
             </RenderIf>
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
-              <Toggler title='circuit.computeWitness' dataId='witness_toggler'>
+              <Toggler title='circuit.computeWitness' dataId='witness_toggler' show={!!circuitApp.appState.setupExportStatus}>
                 <>
                   <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
                   <RenderIf condition={circuitApp.appState.status !== 'computing'}>

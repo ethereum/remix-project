@@ -21,6 +21,7 @@ export function SetupExports () {
       circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'exporting' })
       await runSetupAndExport(circuitApp.plugin, circuitApp.appState)
       circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+      circuitApp.dispatch({ type: 'SET_SETUP_EXPORT_STATUS', payload: 'done' })
     } catch (e) {
       circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
       circuitApp.dispatch({ type: 'SET_SETUP_EXPORT_FEEDBACK', payload: e.message })
@@ -44,6 +45,7 @@ export function SetupExports () {
               onClick={() => circuitApp.dispatch({ type: 'SET_PROVING_SCHEME', payload: 'groth16' })}
               value='groth16'
               checked={circuitApp.appState.provingScheme === 'groth16'}
+              readOnly
             />
             <label className="form-check-label custom-control-label" htmlFor="groth16ProvingScheme" style={{ paddingTop: '0.125rem' }}>
               Groth16
@@ -58,6 +60,7 @@ export function SetupExports () {
               onClick={() => circuitApp.dispatch({ type: 'SET_PROVING_SCHEME', payload: 'plonk' })}
               value='plonk'
               checked={circuitApp.appState.provingScheme === 'plonk'}
+              readOnly
             />
             <label className="form-check-label custom-control-label" htmlFor="plonkProvingScheme" style={{ paddingTop: '0.125rem' }}>
               Plonk

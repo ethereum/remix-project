@@ -81,6 +81,7 @@ function App() {
         if (appState.autoCompile) await compileCircuit(plugin, appState)
       })()
       setIsContentChanged(false)
+      if (appState.setupExportStatus === 'done') dispatch({ type: 'SET_SETUP_EXPORT_STATUS', payload: 'update' })
     }
   }, [appState.autoCompile, isContentChanged])
 

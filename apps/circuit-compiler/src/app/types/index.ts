@@ -6,6 +6,8 @@ export type CompilerStatus = "compiling" | "computing" | "idle" | "errored" | "w
 
 export type ProvingScheme = 'groth16' | 'plonk'
 
+export type SetupExportStatus = 'done' | 'update'
+
 export type PtauFile = {
   name: string,
   power: number,
@@ -36,7 +38,8 @@ export interface ActionPayloadTypes {
   // SET_RANDOM_TEXT: string,
   // SET_RANDOM_BEACON: string
   SET_EXPORT_VERIFICATION_CONTRACT: boolean,
-  SET_EXPORT_VERIFICATION_KEY: boolean
+  SET_EXPORT_VERIFICATION_KEY: boolean,
+  SET_SETUP_EXPORT_STATUS: SetupExportStatus
 }
 export interface Action<T extends keyof ActionPayloadTypes> {
   type: T
@@ -58,6 +61,7 @@ export interface AppState {
   compilerFeedback: string | CompilerReport[],
   computeFeedback: string | CompilerReport[],
   setupExportFeedback: string | CompilerReport[],
+  setupExportStatus: SetupExportStatus,
   provingScheme: ProvingScheme,
   ptauList: Array<PtauFile>,
   ptauValue: string,
