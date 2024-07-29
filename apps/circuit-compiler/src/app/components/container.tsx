@@ -121,7 +121,13 @@ export function Container () {
               <CompilerFeedback feedback={circuitApp.appState.compilerFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
             </RenderIf>
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
-              <Toggler title='circuit.setupExports' dataId='setup_exports_toggler' show={!circuitApp.appState.setupExportStatus} icon={ circuitApp.appState.setupExportStatus === 'done' ? 'fas fa-check-circle text-success' : circuitApp.appState.setupExportStatus === 'update' ? 'fas fa-exclamation-triangle text-warning' : null }>
+              <Toggler
+                title='circuit.setupExports'
+                dataId='setup_exports_toggler'
+                show={!circuitApp.appState.setupExportStatus}
+                icon={ circuitApp.appState.setupExportStatus === 'done' ? 'fas fa-check-circle text-success' : circuitApp.appState.setupExportStatus === 'update' ? 'fas fa-exclamation-triangle text-warning' : null }
+                iconTooltip={ circuitApp.appState.setupExportStatus === 'update' ? 'Circom file content changed. Please compile and re-run setup to update exported keys.' : null }
+              >
                 <>
                   <SetupExports />
                   <RenderIf condition={circuitApp.appState.status !== 'exporting'}>
