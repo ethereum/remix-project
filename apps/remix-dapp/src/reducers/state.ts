@@ -27,25 +27,25 @@ export const appInitialState: any = {
 
 export const appReducer = (state = appInitialState, action: any): any => {
   switch (action.type) {
-    case 'SET_INSTANCE':
-      return {
-        ...state,
-        instance: { ...state.instance, ...action.payload },
-      };
+  case 'SET_INSTANCE':
+    return {
+      ...state,
+      instance: { ...state.instance, ...action.payload },
+    };
 
-    case 'SET_SETTINGS':
-      return {
-        ...state,
-        settings: { ...state.settings, ...action.payload },
-      };
+  case 'SET_SETTINGS':
+    return {
+      ...state,
+      settings: { ...state.settings, ...action.payload },
+    };
 
-    case 'SET_TERMINAL':
-      return {
-        ...state,
-        terminal: { ...state.terminal, ...action.payload },
-      };
+  case 'SET_TERMINAL':
+    return {
+      ...state,
+      terminal: { ...state.terminal, ...action.payload },
+    };
 
-    default:
-      throw new Error();
+  default:
+    throw new Error();
   }
 };
