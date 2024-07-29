@@ -91,7 +91,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
       <div className="form-check form-switch">
         <input className="form-check-input" type="checkbox" id="toggleRawInputSwitch" checked={toggleRawInput} onChange={() => setToggleRawInput(!toggleRawInput)} />
         <label className="form-check-label" htmlFor="toggleRawInputSwitch">
-          Enter Raw Abi Encoded Constructor Arguments
+          Enter raw ABI-encoded constructor arguments
         </label>
       </div>
       {toggleRawInput ? (
@@ -103,15 +103,15 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
       ) : (
         <div>
           {constructorArgs.map((inp, i) => (
-            <div key={`constructor-arg-${inp.name}`} className="d-flex flex-row align-items-center mb-2">
+            <div key={`constructor-arg-${inp.name}`} className="d-flex flex-row align-items-center justify-content-between mb-2">
               <div className="mr-2 small">{inp.name}</div>
-              <input className="form-control" placeholder={inp.type} value={constructorArgsValues[i]} onChange={(e) => handleConstructorArgs(e.target.value, i)} />
+              <input className="form-control w-50" placeholder={inp.type} value={constructorArgsValues[i]} onChange={(e) => handleConstructorArgs(e.target.value, i)} />
             </div>
           ))}
           {abiEncodedConstructorArgs && (
             <div>
               <label className="form-check-label" htmlFor="rawAbiEncodingResult">
-                ABI Encoded contructor arguments:
+                ABI-encoded constructor arguments:
               </label>
               <textarea className="form-control" rows={5} disabled value={abiEncodedConstructorArgs} id="rawAbiEncodingResult" style={{ opacity: 0.5 }} />
             </div>
