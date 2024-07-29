@@ -1,9 +1,13 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FormattedMessage } from "react-intl"
 import { RenderIf, RenderIfNot } from "@remix-ui/helper"
 
-export function Toggler ({ children, title, dataId, show = false }: { children: JSX.Element, title: string, dataId: string, show?: boolean }) {
+export function Toggler ({ children, title, dataId, show = false, icon }: { children: JSX.Element, title: string, dataId: string, show?: boolean, icon?: string }) {
   const [toggleExpander, setToggleExpander] = useState<boolean>(show)
+
+  useEffect(() => {
+    setToggleExpander(show)
+  }, [show])
 
   const toggleConfigurations = () => {
     setToggleExpander(!toggleExpander)
@@ -15,6 +19,7 @@ export function Toggler ({ children, title, dataId, show = false }: { children: 
         <div className="d-flex">
           <label className="mt-1 circuit_config_section">
             <FormattedMessage id={title} />
+            { icon && <span className={`${icon} border-0 p-0 ml-2`} aria-hidden="true"></span> }
           </label>
         </div>
         <div>

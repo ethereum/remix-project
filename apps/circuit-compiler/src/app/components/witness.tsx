@@ -34,34 +34,32 @@ export function WitnessSection ({ plugin, signalInputs, status }: {plugin: Circo
   }
 
   return (
-    <div className="border-bottom flex-column">
-      <div className="flex-column d-flex">
-        <RenderIf condition={signalInputs.length > 0}>
-          <>
-            {
-              signalInputs.map((input, index) => (
-                <div className="mb-2 ml-0" key={index}>
-                  <label className="circuit_inner_label form-check-label" htmlFor="circuitPrimeSelector">
-                    <FormattedMessage id="circuit.signalInput" /> { input }
-                  </label>
-                  <input className="form-control m-0 txinput" placeholder={input} name={input} onChange={handleSignalInput} data-id={`circuit_input_${input}`} />
-                </div>
-              ))
-            }
-            <button
-              className="btn btn-secondary btn-block d-block w-100 text-break mb-1 mt-1"
-              onClick={() => { computeWitness(plugin, status, witnessValues) }}
-              disabled={(status === "compiling") || (status === "computing")}
-              data-id="compute_witness_btn"
-            >
-              <RenderIf condition={status === 'computing'}>
-                <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
-              </RenderIf>
-              <FormattedMessage id="circuit.compute" />
-            </button>
-          </>
-        </RenderIf>
-      </div>
+    <div className="flex-column d-flex">
+      <RenderIf condition={signalInputs.length > 0}>
+        <>
+          {
+            signalInputs.map((input, index) => (
+              <div className="mb-2 ml-0" key={index}>
+                <label className="circuit_inner_label form-check-label" htmlFor="circuitPrimeSelector">
+                  <FormattedMessage id="circuit.signalInput" /> { input }
+                </label>
+                <input className="form-control m-0 txinput" placeholder={input} name={input} onChange={handleSignalInput} data-id={`circuit_input_${input}`} />
+              </div>
+            ))
+          }
+          <button
+            className="btn btn-secondary btn-block d-block w-100 text-break mb-1 mt-1"
+            onClick={() => { computeWitness(plugin, status, witnessValues) }}
+            disabled={(status === "compiling") || (status === "computing")}
+            data-id="compute_witness_btn"
+          >
+            <RenderIf condition={status === 'computing'}>
+              <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
+            </RenderIf>
+            <FormattedMessage id="circuit.compute" />
+          </button>
+        </>
+      </RenderIf>
     </div>
   )
 }

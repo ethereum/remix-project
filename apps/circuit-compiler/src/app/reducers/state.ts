@@ -14,6 +14,7 @@ export const appInitialState: AppState = {
   compilerFeedback: null,
   computeFeedback: null,
   setupExportFeedback: null,
+  setupExportStatus: null,
   provingScheme: 'groth16',
   ptauList: [
     {
@@ -140,6 +141,12 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
     return {
       ...state,
       exportVerificationKey: action.payload
+    }
+
+  case 'SET_SETUP_EXPORT_STATUS':
+    return {
+      ...state,
+      setupExportStatus: action.payload
     }
 
   default:
