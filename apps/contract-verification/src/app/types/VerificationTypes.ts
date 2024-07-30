@@ -31,10 +31,10 @@ export interface VerificationReceipt {
   status: VerificationStatus
   message?: string
   contractId: string
+  isProxyReceipt: boolean
 }
 
 export interface SubmittedContract {
-  type: 'contract'
   id: string
   filePath: string
   contractName: string
@@ -43,28 +43,14 @@ export interface SubmittedContract {
   abiEncodedConstructorArgs?: string
   date: string
   receipts: VerificationReceipt[]
-}
-
-export interface SubmittedProxyContract {
-  type: 'proxy'
-  id: string
-  implementation: SubmittedContract
-  proxy: SubmittedContract
+  // Only present if the contract is behind a proxy
+  proxyAddress?: string
+  proxyReceipts?: VerificationReceipt[]
 }
 
 // This and all nested subtypes should be pure interfaces, so they can be converted to JSON easily
 export interface SubmittedContracts {
-  // TODO implement Proxy verification
-  // [id: string]: SubmittedContract | SubmittedProxyContract
   [id: string]: SubmittedContract
-}
-
-export function isProxy(contract: SubmittedContract | SubmittedProxyContract): contract is SubmittedProxyContract {
-  return contract.type === 'proxy'
-}
-
-export function isContract(contract: SubmittedContract | SubmittedProxyContract): contract is SubmittedContract {
-  return contract.type === 'contract'
 }
 
 type SourcifyStatus = 'fully verified' | 'partially verified'

@@ -20,11 +20,14 @@ export const VerifyView = () => {
   const [abiEncodingError, setAbiEncodingError] = useState<string>('')
   const [selectedContract, setSelectedContract] = useState<ContractDropdownSelection | undefined>()
   const [enabledVerifiers, setEnabledVerifiers] = useState<Partial<Record<VerifierIdentifier, boolean>>>({})
+  const [hasProxy, setHasProxy] = useState(false)
+  const [proxyAddress, setProxyAddress] = useState('')
+  const [proxyAddressError, setProxyAddressError] = useState('')
   const navigate = useNavigate()
 
   const chainSettings = selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined
 
-  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || !selectedContract
+  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || !selectedContract || (hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress)
 
   // Enable all verifiers with valid configuration
   useEffect(() => {
@@ -62,11 +65,10 @@ export const VerifyView = () => {
         apiUrl: chainSettings.verifiers[verifierId].apiUrl,
         name: verifierId as VerifierIdentifier,
       }
-      receipts.push({ verifierInfo, status: 'pending', contractId })
+      receipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: false })
     }
 
     const newSubmittedContract: SubmittedContract = {
-      type: 'contract',
       id: contractId,
       address: contractAddress,
       chainId: selectedChain?.chainId.toString(),
@@ -116,7 +118,15 @@ export const VerifyView = () => {
 
       {selectedContract && <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} abiEncodingError={abiEncodingError} setAbiEncodingError={setAbiEncodingError} />}
 
-      <div>
+      <div className="pt-3 form-check form-switch">
+        <input className="form-check-input" type="checkbox" id="has-proxy" checked={!!hasProxy} onChange={(e) => setHasProxy(e.target.checked)} />
+        <label className="form-check-label" htmlFor="has-proxy">
+          The deployed contract is behind a proxy
+        </label>
+        {hasProxy && <ContractAddressInput label="Proxy Address" id="proxy-address" contractAddress={proxyAddress} setContractAddress={setProxyAddress} contractAddressError={proxyAddressError} setContractAddressError={setProxyAddressError} />}
+      </div>
+
+      <div className="pt-3">
         Verify on:
         {VERIFIERS.map((verifierId) => {
           return (
