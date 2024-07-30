@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 
 import { AppContext } from '../AppContext'
 import { SearchableChainDropdown, ContractDropdown, ContractAddressInput } from '../components'
-import type { VerifierIdentifier, Chain, SubmittedContract, VerificationReceipt, VerifierInfo } from '../types'
+import type { VerifierIdentifier, Chain, SubmittedContract, VerificationReceipt, VerifierInfo, VerificationResponse } from '../types'
 import { VERIFIERS } from '../types'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
 import { useNavigate } from 'react-router-dom'
@@ -80,18 +80,48 @@ export const VerifyView = () => {
     if (abiEncodedConstructorArgs) {
       newSubmittedContract.abiEncodedConstructorArgs = abiEncodedConstructorArgs
     }
+
+    const proxyReceipts: VerificationReceipt[] = []
+    if (hasProxy) {
+      for (const [verifierId, enabled] of Object.entries(enabledVerifiers)) {
+        if (!enabled) {
+          continue
+        }
+
+        const verifierSettings = chainSettings.verifiers[verifierId]
+        const verifier = getVerifier(verifierId as VerifierIdentifier, { ...verifierSettings })
+        if (!verifier.verifyProxy) {
+          continue
+        }
+
+        const verifierInfo: VerifierInfo = {
+          apiUrl: verifierSettings.apiUrl,
+          name: verifierId as VerifierIdentifier,
+        }
+        proxyReceipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: true })
+      }
+
+      newSubmittedContract.proxyAddress = proxyAddress
+      newSubmittedContract.proxyReceipts = proxyReceipts
+    }
+
     setSubmittedContracts((prev) => ({ ...prev, [newSubmittedContract.id]: newSubmittedContract }))
 
     // Take user to receipt view
     navigate('/receipts')
 
-    // Verify for each verifier. forEach does not wait for await and each promise will execute in parallel
-    receipts.forEach(async (receipt) => {
+    const verify = async (receipt: VerificationReceipt) => {
       const { verifierInfo } = receipt
       const verifierSettings = chainSettings.verifiers[verifierInfo.name]
       const verifier = getVerifier(verifierInfo.name, { ...verifierSettings })
       try {
-        const { status, message, receiptId } = await verifier.verify(newSubmittedContract, compilerAbstract)
+        let response: VerificationResponse
+        if (receipt.isProxyReceipt) {
+          response = await verifier.verifyProxy(newSubmittedContract)
+        } else {
+          response = await verifier.verify(newSubmittedContract, compilerAbstract)
+        }
+        const { status, message, receiptId } = response
         receipt.status = status
         receipt.message = message
         if (receiptId) {
@@ -105,7 +135,11 @@ export const VerifyView = () => {
 
       // Update the UI
       setSubmittedContracts((prev) => ({ ...prev, [newSubmittedContract.id]: newSubmittedContract }))
-    })
+    }
+
+    // Verify for each verifier. forEach does not wait for await and each promise will execute in parallel
+    receipts.forEach(verify)
+    proxyReceipts.forEach(verify)
   }
 
   return (
