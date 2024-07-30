@@ -4,7 +4,7 @@ import { ContractVerificationPluginClient } from './ContractVerificationPluginCl
 
 import { AppContext } from './AppContext'
 import DisplayRoutes from './routes'
-import type { ContractVerificationSettings, ThemeType, Chain, SubmittedContracts, VerificationReceipt } from './types'
+import type { ContractVerificationSettings, ThemeType, Chain, SubmittedContracts, VerificationReceipt, VerificationResponse } from './types'
 import { mergeChainSettingsWithDefaults } from './utils'
 
 import './App.css'
@@ -65,6 +65,11 @@ const App = () => {
             pendingReceipts.push(receipt)
           }
         }
+        for (const proxyReceipt of submission.proxyReceipts ?? []) {
+          if (proxyReceipt.status === 'pending') {
+            pendingReceipts.push(proxyReceipt)
+          }
+        }
       }
       return pendingReceipts
     }
@@ -96,7 +101,13 @@ const App = () => {
             }
 
             try {
-              const { status, message } = await verifier.checkVerificationStatus(receiptId)
+              let response: VerificationResponse
+              if (receipt.isProxyReceipt) {
+                response = await verifier.checkProxyVerificationStatus(receiptId)
+              } else {
+                response = await verifier.checkVerificationStatus(receiptId)
+              }
+              const { status, message } = response
               receipt.status = status
               receipt.message = message
             } catch (e) {} // try again in next call
