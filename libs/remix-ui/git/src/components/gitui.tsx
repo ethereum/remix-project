@@ -121,7 +121,7 @@ export const GitUI = (props: IGitUi) => {
   useEffect(() => {
     const panelName = Object.keys(gitUIPanels)
       .filter(k => gitUIPanels[k] === activePanel);
-    if(!(panelName && panelName[0])) return
+    if (!(panelName && panelName[0])) return
     sendToMatomo(gitMatomoEventTypes.OPENPANEL, [panelName && panelName[0]])
   }, [activePanel])
 
