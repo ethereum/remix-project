@@ -11,7 +11,7 @@ import { Plugin } from "@remixproject/engine"
 import { ISidePanelApi } from "./plugins/sidePanel-api"
 import { IPinnedPanelApi } from "./plugins/pinned-panel-api"
 import { ILayoutApi } from "./plugins/layout-api"
-import { IMatonmoApi } from "./plugins/matomo-api"
+import { IMatomoApi } from "./plugins/matomo-api"
 
 export interface ICustomRemixApi extends IRemixApi {
   dgitApi: IGitApi
@@ -24,7 +24,7 @@ export interface ICustomRemixApi extends IRemixApi {
   sidePanel: ISidePanelApi
   pinnedPanel: IPinnedPanelApi
   layout: ILayoutApi
-  matomo: IMatonmoApi
+  matomo: IMatomoApi
 }
 
 export declare type CustomRemixApi = Readonly<ICustomRemixApi>
