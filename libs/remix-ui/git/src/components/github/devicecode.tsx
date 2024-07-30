@@ -4,6 +4,8 @@ import { gitPluginContext } from "../gitui";
 import axios from "axios";
 import { CopyToClipboard } from "@remix-ui/clipboard";
 import { Card } from "react-bootstrap";
+import { sendToMatomo } from "../../lib/pluginActions";
+import { gitMatomoEventTypes } from "../../types";
 
 export const GetDeviceCode = () => {
   const context = React.useContext(gitPluginContext)
@@ -13,7 +15,7 @@ export const GetDeviceCode = () => {
   const [authorized, setAuthorized] = React.useState<boolean>(false)
 
   const getDeviceCodeFromGitHub = async () => {
-
+    await sendToMatomo(gitMatomoEventTypes.GETGITHUBDEVICECODE)
     setAuthorized(false)
     // Send a POST request
     const response = await axios({
@@ -36,6 +38,7 @@ export const GetDeviceCode = () => {
   }
 
   const connectApp = async () => {
+    await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUB)
     // poll https://github.com/login/oauth/access_token
     const accestokenresponse = await axios({
       method: 'post',
@@ -56,13 +59,17 @@ export const GetDeviceCode = () => {
 
     if (response.access_token) {
       setAuthorized(true)
+      await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS)
       await pluginActions.saveToken(response.access_token)
       await actions.loadGitHubUserFromToken()
+    } else {
+      await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL)
     }
 
   }
 
   const disconnect = async () => {
+    await sendToMatomo(gitMatomoEventTypes.DISCONNECTFROMGITHUB)
     setAuthorized(false)
     setGitHubResponse(null)
     await pluginActions.saveToken(null)
@@ -84,7 +91,7 @@ export const GetDeviceCode = () => {
           <div className="input-group text-secondary mb-0 h6">
             <input disabled type="text" className="form-control" value={gitHubResponse.user_code} />
             <div className="input-group-append">
-              <CopyToClipboard content={gitHubResponse.user_code} data-id='copyToClipboardCopyIcon' className='far fa-copy ml-1 p-2 mt-1' direction={"top"} />
+              <CopyToClipboard callback={() => sendToMatomo(gitMatomoEventTypes.COPYGITHUBDEVICECODE)} content={gitHubResponse.user_code} data-id='copyToClipboardCopyIcon' className='far fa-copy ml-1 p-2 mt-1' direction={"top"} />
             </div>
           </div>
           <br></br>

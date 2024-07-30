@@ -3,6 +3,8 @@ import { gitActionsContext } from "../../state/context"
 import { gitPluginContext } from "../gitui"
 import { Remoteselect } from "./remoteselect"
 import { RemotesImport } from "./remotesimport"
+import { sendToMatomo } from "../../lib/pluginActions"
+import { gitMatomoEventTypes } from "../../types"
 
 export const Remotes = () => {
   const context = React.useContext(gitPluginContext)
@@ -18,6 +20,7 @@ export const Remotes = () => {
   }
 
   const addRemote = async () => {
+    await sendToMatomo(gitMatomoEventTypes.ADDMANUALREMOTE)
     actions.addRemote({
       name: remoteName,
       url: url
