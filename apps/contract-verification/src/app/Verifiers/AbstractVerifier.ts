@@ -1,8 +1,11 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
-import type { LookupResponse, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
+import type { LookupResponse, SubmittedContract, VerificationResponse } from '../types'
 
+// Optional function definitions
 export interface AbstractVerifier {
+  verifyProxy(submittedContract: SubmittedContract): Promise<VerificationResponse>
   checkVerificationStatus?(receiptId: string): Promise<VerificationResponse>
+  checkProxyVerificationStatus?(receiptId: string): Promise<VerificationResponse>
 }
 
 export abstract class AbstractVerifier {
