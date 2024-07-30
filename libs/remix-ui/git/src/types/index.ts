@@ -143,8 +143,8 @@ export interface repositoriesInput { token: string, page?: number, per_page?: nu
 export interface statusInput { ref: string, filepaths?: string[] }
 
 export const dGitProfile: LibraryProfile<IGitApi> = {
-    name: 'dgitApi',
-    methods: ['clone', 'branches', 'remotes', 'getCommitChanges', 'log', 'remotecommits'],
+  name: 'dgitApi',
+  methods: ['clone', 'branches', 'remotes', 'getCommitChanges', 'log', 'remotecommits'],
 }
 
 export interface customGitApi extends IRemixApi {
@@ -266,53 +266,53 @@ export type remoteBranch = {
 }
 
 export const defaultGitState: gitState = {
-    currentBranch: { name: "", remote: { name: "", url: "" } },
-    currentHead: "",
-    commits: [],
-    branch: "",
-    canCommit: true,
-    branches: [],
-    remotes: [],
-    defaultRemote: null,
-    fileStatusResult: [],
-    staged: [],
-    untracked: [],
-    deleted: [],
-    modified: [],
-    allchangesnotstaged: [],
-    canUseApp: true,
-    loading: false,
-    storage: {
-        used: 0,
-        total: 0,
-        available: 0,
-        percentUsed: 0,
-        enabled: false
-    },
-    reponame: "",
-    repositories: [],
-    remoteBranches: [],
-    commitChanges: [],
-    remoteBranchCommits: {},
-    localBranchCommits: {},
-    branchDifferences: {},
-    syncStatus: syncStatus.none,
-    localCommitCount: 0,
-    remoteCommitCount: 0,
-    upstream: null,
-    gitHubUser: {} as GitHubUser,
-    userEmails: [] as userEmails,
-    gitHubScopes: [],
-    gitHubAccessToken: "",
-    log: []
+  currentBranch: { name: "", remote: { name: "", url: "" } },
+  currentHead: "",
+  commits: [],
+  branch: "",
+  canCommit: true,
+  branches: [],
+  remotes: [],
+  defaultRemote: null,
+  fileStatusResult: [],
+  staged: [],
+  untracked: [],
+  deleted: [],
+  modified: [],
+  allchangesnotstaged: [],
+  canUseApp: true,
+  loading: false,
+  storage: {
+    used: 0,
+    total: 0,
+    available: 0,
+    percentUsed: 0,
+    enabled: false
+  },
+  reponame: "",
+  repositories: [],
+  remoteBranches: [],
+  commitChanges: [],
+  remoteBranchCommits: {},
+  localBranchCommits: {},
+  branchDifferences: {},
+  syncStatus: syncStatus.none,
+  localCommitCount: 0,
+  remoteCommitCount: 0,
+  upstream: null,
+  gitHubUser: {} as GitHubUser,
+  userEmails: [] as userEmails,
+  gitHubScopes: [],
+  gitHubAccessToken: "",
+  log: []
 }
 
 export const defaultLoaderState: loaderState = {
-    branches: false,
-    commits: false,
-    sourcecontrol: false,
-    remotes: false,
-    plugin: false
+  branches: false,
+  commits: false,
+  sourcecontrol: false,
+  remotes: false,
+  plugin: false
 }
 
 export type fileStatusResult = {
