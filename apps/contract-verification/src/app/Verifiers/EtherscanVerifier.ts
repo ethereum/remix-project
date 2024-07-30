@@ -121,8 +121,11 @@ export class EtherscanVerifier extends AbstractVerifier {
     if (checkStatusResponse.result === 'Pending in queue') {
       return { status: 'pending', receiptId }
     }
-    if (checkStatusResponse.result === 'Pass - Verified' || checkStatusResponse.result === 'Already Verified') {
+    if (checkStatusResponse.result === 'Pass - Verified') {
       return { status: 'verified', receiptId }
+    }
+    if (checkStatusResponse.result === 'Already Verified') {
+      return { status: 'already verified', receiptId }
     }
     if (checkStatusResponse.result === 'Unknown UID') {
       console.error('Error on Etherscan API check verification status at ' + this.apiUrl + '\nStatus: ' + checkStatusResponse.status + '\nMessage: ' + checkStatusResponse.message + '\nResult: ' + checkStatusResponse.result)
@@ -156,13 +159,13 @@ export class EtherscanVerifier extends AbstractVerifier {
 
     const checkStatusResponse: EtherscanRpcResponse = await response.json()
 
-    if (checkStatusResponse.result === 'A corresponding implementation contract was unfortunately not detected for the proxy address.') {
+    if (checkStatusResponse.result === 'A corresponding implementation contract was unfortunately not detected for the proxy address.' || checkStatusResponse.result === 'The provided expected results are different than the retrieved implementation address!') {
       return { status: 'failed', receiptId, message: checkStatusResponse.result }
     }
     if (checkStatusResponse.result === 'Verification in progress') {
       return { status: 'pending', receiptId }
     }
-    if (checkStatusResponse.result.startsWith('The proxy\'s') && checkStatusResponse.result.endsWith('and is successfully updated.')) {
+    if (checkStatusResponse.result.startsWith("The proxy's") && checkStatusResponse.result.endsWith('and is successfully updated.')) {
       return { status: 'verified', receiptId }
     }
     if (checkStatusResponse.result === 'Unknown UID') {

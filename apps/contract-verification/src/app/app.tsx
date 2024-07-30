@@ -110,7 +110,14 @@ const App = () => {
               const { status, message } = response
               receipt.status = status
               receipt.message = message
-            } catch (e) {} // try again in next call
+            } catch (e) {
+              receipt.failedChecks++
+              // Only retry 5 times
+              if (receipt.failedChecks >= 5) {
+                receipt.status = 'failed'
+                receipt.message = e.message
+              }
+            }
           }
         }
 
@@ -122,10 +129,9 @@ const App = () => {
         setSubmittedContracts((prev) => Object.assign({}, prev, changedSubmittedContracts))
       }
 
-      pollStatus()
-      timer.current = setInterval(pollStatus, 10000)
+      timer.current = setInterval(pollStatus, 1000)
     }
-  })
+  }, [submittedContracts])
 
   return (
     <AppContext.Provider value={{ themeType, setThemeType, settings, setSettings, chains, compilationOutput, submittedContracts, setSubmittedContracts }}>
