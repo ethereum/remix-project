@@ -8,7 +8,6 @@ import { ModalTypes } from "@remix-ui/app";
 import { setFileDecorators } from "./pluginActions";
 import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi } from "@remix-api";
-import { file } from "jszip";
 
 export const fileStatuses = [
   ["new,untracked", 0, 2, 0], // new, untracked
@@ -25,6 +24,27 @@ export const fileStatuses = [
   ["unstaged,modified", 1, 2, 0]
 ];
 
+enum gitEventTypes {
+  INIT = 'INIT',
+  COMMIT = 'COMMIT',
+  PUSH = 'PUSH',
+  PULL = 'PULL',
+  ADDREMOTE = 'ADDREMOTE',
+  RMREMOTE = 'RMREMOTE',
+  CLONE = 'CLONE',
+  FETCH = 'FETCH',
+  ADD = 'ADD',
+  ADD_ALL = 'ADD_ALL',
+  RM = 'RM',
+  CHECKOUT = 'CHECKOUT',
+  DIFF = 'DIFF',
+  BRANCH = 'BRANCH',
+  CREATEBRANCH = 'CREATEBRANCH',
+}
+
+
+
+
 const statusmatrix: statusMatrixType[] = fileStatuses.map((x: any) => {
   return {
     matrix: x.shift().split(","),
@@ -39,8 +59,12 @@ export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatc
   dispatch = dispatcher
 }
 
-export const init = async () => {
+const sendToMatomo = async (event: gitEventTypes) => {
+  plugin.call('matomo', 'track', ['trackEvent', 'git', event])
+}
 
+export const init = async () => {
+  sendToMatomo(gitEventTypes.INIT)
   await plugin.call('dgitApi', "init");
   await gitlog();
   await getBranches();
@@ -145,6 +169,7 @@ export const currentBranch = async () => {
 }
 
 export const createBranch = async (name: string = "") => {
+  sendToMatomo(gitEventTypes.CREATEBRANCH)
   dispatch(setLoading(true))
   if (name) {
     await plugin.call('dgitApi', 'branch', { ref: name, force: true, checkout: true });
@@ -175,6 +200,7 @@ const settingsWarning = async () => {
 
 export const commit = async (message: string = "") => {
 
+  sendToMatomo(gitEventTypes.COMMIT)
   try {
     const credentials = await settingsWarning()
     if (!credentials) {
@@ -202,6 +228,7 @@ export const commit = async (message: string = "") => {
 }
 
 export const addall = async (files: fileStatusResult[]) => {
+  sendToMatomo(gitEventTypes.ADD_ALL)
   try {
     const filesToAdd = files
       .filter(f => !f.statusNames.includes('deleted'))
@@ -227,6 +254,7 @@ export const addall = async (files: fileStatusResult[]) => {
 }
 
 export const add = async (filepath: addInput) => {
+  sendToMatomo(gitEventTypes.ADD)
   try {
     if (typeof filepath.filepath === "string") {
       filepath.filepath = removeSlash(filepath.filepath)
@@ -253,6 +281,7 @@ const getLastCommmit = async () => {
 }
 
 export const rm = async (args: rmInput) => {
+  sendToMatomo(gitEventTypes.RM)
   await plugin.call('dgitApi', 'rm', {
     filepath: removeSlash(args.filepath),
   });
@@ -303,6 +332,7 @@ export const checkout = async (cmd: checkoutInput) => {
 
 export const clone = async (input: cloneInputType) => {
 
+  sendToMatomo(gitEventTypes.CLONE)
   dispatch(setLoading(true))
   const urlParts = input.url.split("/");
   const lastPart = urlParts[urlParts.length - 1];
@@ -331,6 +361,7 @@ export const clone = async (input: cloneInputType) => {
 }
 
 export const fetch = async (input: fetchInputType) => {
+  sendToMatomo(gitEventTypes.FETCH)
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
@@ -348,6 +379,7 @@ export const fetch = async (input: fetchInputType) => {
 }
 
 export const pull = async (input: pullInputType) => {
+  sendToMatomo(gitEventTypes.PULL)
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
@@ -362,6 +394,7 @@ export const pull = async (input: pullInputType) => {
 }
 
 export const push = async (input: pushInputType) => {
+  sendToMatomo(gitEventTypes.PUSH)
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
@@ -664,7 +697,7 @@ export const resolveRef = async (ref: string) => {
 }
 
 export const diff = async (commitChange: commitChange) => {
-
+  sendToMatomo(gitEventTypes.DIFF)
   if (!commitChange.hashModified) {
     const newcontent = await plugin.call(
       "fileManager",
@@ -835,6 +868,7 @@ export const setDefaultRemote = async (remote: remote) => {
 }
 
 export const addRemote = async (remote: remote) => {
+  sendToMatomo(gitEventTypes.ADDREMOTE)
   try {
     await plugin.call('dgitApi', 'addremote', remote)
     await getRemotes()
@@ -849,6 +883,7 @@ export const addRemote = async (remote: remote) => {
 }
 
 export const removeRemote = async (remote: remote) => {
+  sendToMatomo(gitEventTypes.RMREMOTE)
   try {
     await plugin.call('dgitApi', 'delremote', remote)
     await getRemotes()

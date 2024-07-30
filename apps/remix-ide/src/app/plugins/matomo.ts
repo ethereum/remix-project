@@ -11,7 +11,7 @@ const profile = {
   version: '1.0.0'
 }
 
-const allowedPlugins = ['LearnEth', 'etherscan', 'vyper', 'circuit-compiler', 'doc-gen', 'doc-viewer', 'solhint', 'walletconnect', 'scriptRunner']
+const allowedPlugins = ['LearnEth', 'etherscan', 'vyper', 'circuit-compiler', 'doc-gen', 'doc-viewer', 'solhint', 'walletconnect', 'scriptRunner', 'dgit']
 
 export class Matomo extends Plugin {
 
