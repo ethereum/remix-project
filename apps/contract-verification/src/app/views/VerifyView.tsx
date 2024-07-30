@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { ConstructorArguments } from '../components/ConstructorArguments'
 import { ContractDropdownSelection } from '../components/ContractDropdown'
 import { CustomTooltip } from '@remix-ui/helper'
-import { getVerifier } from '../Verifiers'
+import { AbstractVerifier, getVerifier } from '../Verifiers'
 
 export const VerifyView = () => {
   const { compilationOutput, setSubmittedContracts, settings } = useContext(AppContext)
@@ -65,7 +65,7 @@ export const VerifyView = () => {
         apiUrl: chainSettings.verifiers[verifierId].apiUrl,
         name: verifierId as VerifierIdentifier,
       }
-      receipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: false })
+      receipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: false, failedChecks: 0 })
     }
 
     const newSubmittedContract: SubmittedContract = {
@@ -89,16 +89,25 @@ export const VerifyView = () => {
         }
 
         const verifierSettings = chainSettings.verifiers[verifierId]
-        const verifier = getVerifier(verifierId as VerifierIdentifier, { ...verifierSettings })
-        if (!verifier.verifyProxy) {
-          continue
-        }
-
         const verifierInfo: VerifierInfo = {
           apiUrl: verifierSettings.apiUrl,
           name: verifierId as VerifierIdentifier,
         }
-        proxyReceipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: true })
+
+        let verifier: AbstractVerifier
+        try {
+          verifier = getVerifier(verifierId as VerifierIdentifier, verifierSettings)
+        } catch (e) {
+          // User settings might be invalid
+          proxyReceipts.push({ verifierInfo, status: 'failed', contractId, isProxyReceipt: true, message: e.message, failedChecks: 0 })
+          continue
+        }
+
+        if (!verifier.verifyProxy) {
+          continue
+        }
+
+        proxyReceipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: true, failedChecks: 0 })
       }
 
       newSubmittedContract.proxyAddress = proxyAddress
@@ -111,10 +120,14 @@ export const VerifyView = () => {
     navigate('/receipts')
 
     const verify = async (receipt: VerificationReceipt) => {
+      if (receipt.status === 'failed') {
+        return // failed already when creating
+      }
+
       const { verifierInfo } = receipt
       const verifierSettings = chainSettings.verifiers[verifierInfo.name]
-      const verifier = getVerifier(verifierInfo.name, { ...verifierSettings })
       try {
+        const verifier = getVerifier(verifierInfo.name, verifierSettings)
         let response: VerificationResponse
         if (receipt.isProxyReceipt) {
           response = await verifier.verifyProxy(newSubmittedContract)
