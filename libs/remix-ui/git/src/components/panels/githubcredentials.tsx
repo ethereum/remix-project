@@ -5,6 +5,8 @@ import { CustomTooltip } from "@remix-ui/helper";
 
 import { useIntl, FormattedMessage } from "react-intl";
 import { CopyToClipboard } from "@remix-ui/clipboard";
+import { gitMatomoEventTypes } from "../../types";
+import { sendToMatomo } from "../../lib/pluginActions";
 
 export const GitHubCredentials = () => {
   const context = React.useContext(gitPluginContext)
@@ -39,6 +41,7 @@ export const GitHubCredentials = () => {
   }
 
   async function saveGithubToken() {
+    await sendToMatomo(gitMatomoEventTypes.SAVEMANUALGITHUBCREDENTIALS)
     await pluginactions.saveGitHubCredentials({
       username: githubUsername,
       email: githubEmail,
