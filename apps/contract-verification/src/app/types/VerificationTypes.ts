@@ -32,6 +32,7 @@ export interface VerificationReceipt {
   message?: string
   contractId: string
   isProxyReceipt: boolean
+  failedChecks: number
 }
 
 export interface SubmittedContract {
@@ -54,7 +55,7 @@ export interface SubmittedContracts {
 }
 
 type SourcifyStatus = 'fully verified' | 'partially verified'
-type EtherscanStatus = 'verified'
+type EtherscanStatus = 'verified' | 'already verified'
 export type VerificationStatus = SourcifyStatus | EtherscanStatus | 'failed' | 'pending' | 'not verified' | 'unknown' | 'lookup failed'
 
 export interface VerificationResponse {
