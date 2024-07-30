@@ -34,6 +34,60 @@ export const TEMPLATE_METADATA: Record<string, TemplateType> = {
     name: 'cookbookdev',
     endpoint: 'openPattern',
     params: ['Uniswap-V4-HookBook-MultiSigSwapHook', true]
+  },
+  'token-sale': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['token-sale']
+  },
+  'simple-nft-sale': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['simple-nft-sale']
+  },
+  'Azuki-ERC721A-NFT-Sale-basic': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['Azuki-ERC721A-NFT-Sale-basic']
+  },
+  'Azuki-ERC721A-ERC721A': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['Azuki-ERC721A-ERC721A']
+  },
+  'token-staking-with-infinite-rewards': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['token-staking-with-infinite-rewards']
+  },
+  'nft-staking-with-infinite-rewards': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['nft-staking-with-infinite-rewards']
+  },
+  'basic-dao': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['basic-dao']
+  },
+  'soulbound-nft': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['soulbound-nft']
+  },
+  'multi-collection-nft-with-burnable-nfts-and-pausable-transfers': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['multi-collection-nft-with-burnable-nfts-and-pausable-transfers']
   }
 }
 
