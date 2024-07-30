@@ -861,11 +861,12 @@ export class Blockchain extends Plugin {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
         let fromAddress
+        let fromSmartAccount
         let value
         let gasLimit
         try {
           fromAddress = await getAccount()
-          console.log('isSmartAccount--->', this.isSmartAccount(fromAddress))
+          fromSmartAccount = this.isSmartAccount(fromAddress)
           value = await queryValue()
           gasLimit = await getGasLimit()
         } catch (e) {
@@ -878,6 +879,7 @@ export class Blockchain extends Plugin {
           data: args.data.dataHex,
           useCall: args.useCall,
           from: fromAddress,
+          fromSmartAccount,
           value: value,
           gasLimit: gasLimit,
           timestamp: args.data.timestamp
