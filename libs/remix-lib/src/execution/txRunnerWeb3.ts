@@ -79,6 +79,7 @@ export class TxRunnerWeb3 {
       )
     } else {
       try {
+        if (tx.fromSmartAccount) await sendUserOp(tx)
         const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
         cb(null, res.transactionHash)
       } catch (e) {
@@ -102,9 +103,8 @@ export class TxRunnerWeb3 {
   }
 
   runInNode (from, fromSmartAccount, to, data, value, gasLimit, useCall, timestamp, confirmCb, gasEstimationForceSend, promptCb, callback) {
-    const tx = { from: from, to: to, data: data, value: value }
+    const tx = { from: from, fromSmartAccount, to: to, data: data, value: value }
     if (!from) return callback('the value of "from" is not defined. Please make sure an account is selected.')
-    if (fromSmartAccount) return callback('from address is from a smart account')
     if (useCall) {
       if (this._api && this._api.isVM()) {
         (this.getWeb3() as any).remix.registerCallId(timestamp)
@@ -184,6 +184,10 @@ export class TxRunnerWeb3 {
         })
     })
   }
+}
+
+const sendUserOp = async (tx) => {
+  console.log('sendUserOp--tx-->', tx)
 }
 
 async function tryTillReceiptAvailable (txhash: string, web3: Web3) {
