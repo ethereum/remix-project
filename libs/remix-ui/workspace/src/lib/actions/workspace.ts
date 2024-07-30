@@ -43,7 +43,7 @@ import { ROOT_PATH } from '../utils/constants'
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
-import { branch, cloneInputType, IGitApi } from '@remix-ui/git'
+import { branch, cloneInputType, IGitApi, gitUIPanels } from '@remix-ui/git'
 import * as templates from '@remix-project/remix-ws-templates'
 import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi } from '@remix-api'
@@ -788,7 +788,7 @@ export const showAllBranches = async () => {
   const isActive = await plugin.call('manager', 'isActive', 'dgit')
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
-  plugin.call('dgit', 'open', 'branches')
+  plugin.call('dgit', 'open', gitUIPanels.BRANCHES)
 }
 
 export const getGitConfig = async () => {
