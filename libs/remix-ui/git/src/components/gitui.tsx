@@ -1,10 +1,10 @@
 import React, { useEffect, useReducer, useState } from 'react'
 import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init, showAlert, gitlog } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
-import { openDiff, openFile, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
+import { openDiff, openFile, saveToken, sendToMatomo, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
-import { defaultGitState, defaultLoaderState, gitState, loaderState } from '../types'
+import { defaultGitState, defaultLoaderState, gitMatomoEventTypes, gitState, gitUIPanels, loaderState } from '../types'
 import { Accordion } from "react-bootstrap";
 import { CommitMessage } from './buttons/commitmessage'
 import { Commits } from './panels/commits'
@@ -118,6 +118,13 @@ export const GitUI = (props: IGitUi) => {
 
   }, [gitState.gitHubUser, gitState.currentBranch, gitState.remotes, gitState.gitHubAccessToken, gitState.currentHead])
 
+  useEffect(() => {
+    const panelName = Object.keys(gitUIPanels)
+      .filter(k => gitUIPanels[k] === activePanel);
+    if (!(panelName && panelName[0])) return
+    sendToMatomo(gitMatomoEventTypes.OPENPANEL, [panelName && panelName[0]])
+  }, [activePanel])
+
   const gitActionsProviderValue = {
     commit,
     addall,
@@ -175,51 +182,51 @@ export const GitUI = (props: IGitUi) => {
                 {needsInit ? <Init></Init> : null}
                 {!setup && !needsInit ?
                   <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
-                    <SourceControlNavigation eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+                    <SourceControlNavigation eventKey={gitUIPanels.SOURCECONTROL} activePanel={activePanel} callback={setActivePanel} />
 
-                    <Accordion.Collapse className='bg-light' eventKey="0">
+                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.SOURCECONTROL}>
                       <div className="px-2 py-2">
                         <SourceControlBase><CommitMessage /></SourceControlBase>
                         <SourceControl />
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <CommandsNavigation eventKey="1" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className="bg-light" eventKey="1">
+                    <CommandsNavigation eventKey={gitUIPanels.COMMANDS} activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className="bg-light" eventKey={gitUIPanels.COMMANDS}>
                       <div className="px-2 py-2">
                         <Commands></Commands>
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <CommitsNavigation title={`COMMITS`} eventKey="3" activePanel={activePanel} callback={setActivePanel} showButtons={true} />
-                    <Accordion.Collapse className='bg-light' eventKey="3">
+                    <CommitsNavigation title={`COMMITS`} eventKey={gitUIPanels.COMMITS} activePanel={activePanel} callback={setActivePanel} showButtons={true} />
+                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.COMMITS}>
                       <div className="px-2 py-2">
                         <Commits />
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <BranchesNavigation eventKey="2" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="2">
+                    <BranchesNavigation eventKey={gitUIPanels.BRANCHES} activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.BRANCHES}>
                       <div className="px-2 py-2">
                         <Branches />
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <RemotesNavigation eventKey="5" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="5">
+                    <RemotesNavigation eventKey={gitUIPanels.REMOTES} activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.REMOTES}>
                       <div className="px-2 py-2">
                         <Remotes></Remotes>
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <CloneNavigation eventKey="4" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="4">
+                    <CloneNavigation eventKey={gitUIPanels.CLONE} activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.CLONE}>
                       <div className="px-2 py-2">
                         <Clone /></div>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <GitHubNavigation eventKey="7" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="7">
+                    <GitHubNavigation eventKey={gitUIPanels.GITHUB} activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.GITHUB}>
                       <div className="px-2 py-2">
                         <GetDeviceCode></GetDeviceCode>
                         <hr></hr>
@@ -227,8 +234,8 @@ export const GitUI = (props: IGitUi) => {
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <LogNavigation eventKey="6" activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey="6">
+                    <LogNavigation eventKey={gitUIPanels.LOG} activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.LOG}>
                       <div className="px-2 py-2">
                         <LogViewer />
                       </div>

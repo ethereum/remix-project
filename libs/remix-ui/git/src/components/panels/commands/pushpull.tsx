@@ -4,8 +4,9 @@ import { gitPluginContext } from "../../gitui";
 import { selectStyles, selectTheme } from "../../../types/styles";
 import Select, { Options, OptionsOrGroups } from 'react-select'
 import GitUIButton from "../../buttons/gituibutton";
-import { remote } from "../../../types";
+import { gitMatomoEventTypes, remote } from "../../../types";
 import { relative } from "path";
+import { sendToMatomo } from "../../../lib/pluginActions";
 
 export const PushPull = () => {
   const context = React.useContext(gitPluginContext)
@@ -45,11 +46,13 @@ export const PushPull = () => {
     }
   },[context.defaultRemote])
 
-  const onRemoteBranchChange = (value: string) => {
+  const onRemoteBranchChange = async (value: string) => {
+    await sendToMatomo(gitMatomoEventTypes.SETREMOTEBRANCHINCOMMANDS)
     setRemoteBranch(value)
   }
 
-  const onLocalBranchChange = (value: any) => {
+  const onLocalBranchChange = async (value: any) => {
+    await sendToMatomo(gitMatomoEventTypes.SETLOCALBRANCHINCOMMANDS)
     setLocalBranch(value)
   }
 

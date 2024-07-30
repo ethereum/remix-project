@@ -1,7 +1,7 @@
 
 import React from "react";
 import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog, setGitHubUser, setUserEmails } from "../state/gitpayload";
-import { gitActionDispatch, storage } from "../types";
+import { gitActionDispatch, gitUIPanels, storage } from "../types";
 import { Plugin } from "@remixproject/engine";
 import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, gitlog, setPlugin, setStorage } from "./gitactions";
 import { Profile } from "@remixproject/plugin-utils";
@@ -163,11 +163,8 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
 
   plugin.on('dgit' as any, 'openPanel', async (panel: string) => {
-    const panels = {
-      'branches': '2'
-    }
-    const panelNumber = panels[panel]
-    setAtivePanel(panelNumber)
+
+    setAtivePanel(panel)
   })
 
   callBackEnabled = true;
