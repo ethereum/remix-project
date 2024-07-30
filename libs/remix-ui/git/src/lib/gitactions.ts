@@ -637,8 +637,10 @@ export const loadGitHubUserFromToken = async () => {
           type: 'success',
           message: `Github user loaded...`
         })
+        await sendToMatomo(gitMatomoEventTypes.LOADGITHUBUSERSUCCESS)
         return true
       } else {
+        await sendToMatomo(gitMatomoEventTypes.ERROR, ['GITHUB USER LOAD ERROR'])
         sendToGitLog({
           type: 'error',
           message: `Please check your GitHub token in the GitHub settings.`

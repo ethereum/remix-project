@@ -371,6 +371,7 @@ export enum gitMatomoEventTypes {
     SETREMOTEBRANCHINCOMMANDS = 'SET_REMOTE_IN_COMMANDS',
     REFRESH = 'REFRESH',
     ERROR = 'ERROR',
+    LOADGITHUBUSERSUCCESS = 'LOAD_GITHUB_USER_SUCCESS',
 }
 
 export enum gitUIPanels {
