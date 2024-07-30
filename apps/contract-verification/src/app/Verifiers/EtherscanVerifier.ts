@@ -39,7 +39,7 @@ export class EtherscanVerifier extends AbstractVerifier {
     formData.append('contractaddress', submittedContract.address)
     formData.append('contractname', submittedContract.filePath + ':' + submittedContract.contractName)
     formData.append('compilerversion', `v${metadata.compiler.version}`)
-    formData.append('constructorArguements', submittedContract.abiEncodedConstructorArgs.replace('0x', '') ?? '')
+    formData.append('constructorArguements', submittedContract.abiEncodedConstructorArgs?.replace('0x', '') ?? '')
 
     const url = new URL(this.apiUrl + '/api')
     url.searchParams.append('module', 'contract')
@@ -88,7 +88,7 @@ export class EtherscanVerifier extends AbstractVerifier {
 
     const checkStatusResponse: EtherscanCheckStatusResponse = await response.json()
 
-    if (checkStatusResponse.result === 'Fail - Unable to verify') {
+    if (checkStatusResponse.result.startsWith('Fail - Unable to verify')) {
       return { status: 'failed', receiptId, message: checkStatusResponse.result }
     }
     if (checkStatusResponse.result === 'Pending in queue') {
