@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { gitActionsContext } from '../../state/context';
-import { repository } from '../../types';
+import { gitMatomoEventTypes, repository } from '../../types';
 import { selectStyles, selectTheme } from '../../types/styles';
 import { gitPluginContext } from '../gitui';
-import { TokenWarning } from '../panels/tokenWarning';
+import { sendToMatomo } from '../../lib/pluginActions';
 
 interface RepositorySelectProps {
   select: (repo: repository) => void;
@@ -57,6 +56,7 @@ const RepositorySelect = (props: RepositorySelectProps) => {
   }
 
   const fetchRepositories = async () => {
+    await sendToMatomo(gitMatomoEventTypes.LOADREPOSITORIESFROMGITHUB)
     try {
       setShow(true)
       setLoading(true)

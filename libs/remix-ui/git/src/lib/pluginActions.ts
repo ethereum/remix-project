@@ -1,5 +1,5 @@
 
-import { commitChange, fileStatusResult, gitActionDispatch, gitState } from "../types"
+import { commitChange, fileStatusResult, gitActionDispatch, gitMatomoEventTypes, gitState } from "../types"
 import { fileDecoration, fileDecorationType } from "@remix-ui/file-decorators"
 import { removeSlash } from "../utils"
 import { getFilesByStatus } from "./fileHelpers"
@@ -96,5 +96,10 @@ export const setUntrackedDecorator = async (files: fileStatusResult[]) => {
 
 export const clearFileDecorator = async(path: string) => {
   await plugin.call('fileDecorator', 'clearFileDecorators', path)
+}
+
+export const sendToMatomo = async (event: gitMatomoEventTypes, args?: string[]) => {
+  const trackArgs = args ? ['trackEvent', 'git', event, ...args] : ['trackEvent', 'git', event];
+  plugin && await plugin.call('matomo', 'track', trackArgs);
 }
 

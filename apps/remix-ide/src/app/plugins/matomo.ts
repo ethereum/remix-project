@@ -21,6 +21,7 @@ export class Matomo extends Plugin {
 
   async track(data: string[]) {
     if (!allowedPlugins.includes(this.currentRequest.from)) return
+    console.log('Matomo', data)
     _paq.push(data)
   }
 }
