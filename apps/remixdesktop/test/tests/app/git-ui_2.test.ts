@@ -76,7 +76,9 @@ const tests = {
     'check if the branch is in the filePanel #group2': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('filePanel')
+            .waitForElementVisible('*[data-id="workspaceGitBranchesDropdown"]')
             .click('[data-id="workspaceGitBranchesDropdown"]')
+            .waitForElementVisible('*[data-id="workspaceGit-testbranch"]')
             .expect.element('[data-id="workspaceGit-testbranch"]').text.to.contain('✓ ')
     },
     'publish the branch #group2': function (browser: NightwatchBrowser) {
