@@ -48,6 +48,8 @@ export interface ActionPayloadTypes {
   DESKTOP_SET_WORKING_DIR: string
   SET_VERSION: string
   SET_STORAGE: storage
+  SET_TIMESTAMP: number
+  SET_GIT_LOG_COUNT: number
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {
