@@ -1,9 +1,9 @@
 
 import React from "react";
 import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog, setGitHubUser, setUserEmails, setDesktopWorkingDir, setVersion } from "../state/gitpayload";
-import { gitActionDispatch } from "../types";
+import { gitActionDispatch, gitUIPanels, storage } from "../types";
 import { Plugin } from "@remixproject/engine";
-import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, gitlog, setPlugin } from "./gitactions";
+import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, gitlog, setPlugin, setStorage } from "./gitactions";
 import { Profile } from "@remixproject/plugin-utils";
 import { CustomRemixApi } from "@remix-api";
 import { statusChanged } from "./pluginActions";
@@ -178,6 +178,12 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     loadFileQueue.enqueue(async () => {
       loadFiles()
     })
+    loadFileQueue.enqueue(async () => {
+      getBranches()
+    })
+    loadFileQueue.enqueue(async () => {
+      gitlog()
+    })
   })
   plugin.on('manager', 'pluginActivated', async (p: Profile<any>) => {
     if (p.name === 'dgitApi') {
@@ -194,11 +200,8 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
 
   plugin.on('dgit' as any, 'openPanel', async (panel: string) => {
-    const panels = {
-      'branches': '2'
-    }
-    const panelNumber = panels[panel]
-    setAtivePanel(panelNumber)
+
+    setAtivePanel(panel)
   })
 
   callBackEnabled = true;
@@ -217,6 +220,7 @@ export const getGitConfig = async () => {
 
 export const loadFiles = async (filepaths: string[] = null) => {
   try {
+    await calculateLocalStorage()
     const branch = await plugin.call('dgitApi', "currentbranch")
     if (branch) {
       await getFileStatusMatrix(filepaths);
@@ -234,5 +238,45 @@ export const disableCallBacks = async () => {
 }
 export const enableCallBacks = async () => {
   callBackEnabled = true;
+}
+
+const calculateLocalStorage = async () => {
+  function bytesToMB(bytes) {
+    return parseFloat((bytes / (1024 * 1024)).toFixed(2));
+  }
+
+  function calculatePercentage(used, quota) {
+    return parseFloat(((used / quota) * 100).toFixed(2));
+  }
+
+  let storage: storage = {
+    used: 0,
+    total: 0,
+    available: 0,
+    percentUsed: 0,
+    enabled: false
+  }
+
+  if ('storage' in navigator && 'estimate' in navigator.storage) {
+    navigator.storage.estimate().then(estimate => {
+      const usedMB = bytesToMB(estimate.usage);
+      const quotaMB = bytesToMB(estimate.quota);
+      const availableMB = bytesToMB(estimate.quota - estimate.usage);
+      const percentageUsed = calculatePercentage(estimate.usage, estimate.quota);
+      storage = {
+        used: usedMB,
+        total: quotaMB,
+        available: availableMB,
+        percentUsed: percentageUsed,
+        enabled: true
+      }
+      setStorage(storage);
+
+    });
+  } else {
+    console.log('Storage API not supported in this browser.');
+    setStorage(storage);
+  }
+
 }
 

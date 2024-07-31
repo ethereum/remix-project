@@ -3,6 +3,7 @@ import { Plugin } from '@remixproject/engine'
 import { FilePanelType } from '@remix-ui/workspace'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { VerticalIcons } from 'apps/remix-ide/src/app/components/vertical-icons'
+import { CustomRemixApi } from '@remix-api'
 export interface PluginProfile {
   name: string
   displayName: string
@@ -15,7 +16,7 @@ export interface PluginProfile {
   version?: string
 }
 
-export interface StatusBarInterface extends Plugin {
+export interface StatusBarInterface extends Plugin<any, CustomRemixApi> {
   htmlElement: HTMLDivElement
   events: EventEmitter
   dispatch: React.Dispatch<any>
@@ -25,3 +26,12 @@ export interface StatusBarInterface extends Plugin {
   getGitBranchName: () => Promise<any>
   currentWorkspaceName: string
 }
+
+export const defaultStatusBarContext: StatusBarContextType = {
+  test: false
+}
+
+export type StatusBarContextType = {
+  test: boolean
+}
+

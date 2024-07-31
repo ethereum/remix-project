@@ -1,6 +1,8 @@
 import { ReadCommitResult } from "isomorphic-git"
 import { fileStatusResult, gitLog } from "../types"
 import { GitHubUser, branch, branchDifference, commitChange, pagedCommits, remote, remoteBranch, repository, userEmails } from '@remix-api'
+import { storage } from "../types"
+
 export interface ActionPayloadTypes {
   FILE_STATUS: fileStatusResult[],
   FILE_STATUS_MERGE: fileStatusResult[]
@@ -34,6 +36,7 @@ export interface ActionPayloadTypes {
     remote: remote
     branchDifference: branchDifference
   }
+  RESET_BRANCH_DIFFERENCES: null
   SET_GITHUB_USER: GitHubUser
   SET_RATE_LIMIT: any
   SET_GITHUB_ACCESS_TOKEN: string
@@ -44,6 +47,7 @@ export interface ActionPayloadTypes {
   SET_USER_EMAILS: userEmails
   DESKTOP_SET_WORKING_DIR: string
   SET_VERSION: string
+  SET_STORAGE: storage
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {

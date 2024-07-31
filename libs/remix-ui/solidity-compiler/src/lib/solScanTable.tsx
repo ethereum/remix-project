@@ -37,7 +37,7 @@ export function SolScanTable(props: SolScanTableProps) {
                   <td scope="col">{template.template_details.issue_name}</td>
                   <td scope="col">{template.template_details.issue_severity}</td>
                   <td scope="col">{template.template_details.issue_confidence}</td>
-                  <td scope="col">{parse(template.template_details.static_issue_description)}</td>
+                  <td scope="col">{parse(template.template_details.static_issue_description)} {template.positions ? `Lines: ${template.positions}`: ''}</td>
                   <td scope="col">{template.template_details.issue_remediation ? parse(template.template_details.issue_remediation) : 'Not Available' }</td>
                 </tr>
               )

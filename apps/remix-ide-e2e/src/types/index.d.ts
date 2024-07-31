@@ -48,6 +48,7 @@ declare module 'nightwatch' {
     removeFile(path: string, workspace: string): NightwatchBrowser
     switchBrowserWindow(url: string, windowName: string, cb: (browser: NightwatchBrowser, window?: NightwatchCallbackResult<Window>) => void): NightwatchBrowser
     setupMetamask(passphrase: string, password: string): NightwatchBrowser
+    hideMetaMaskPopup(): NightwatchBrowser
     signMessage(msg: string, callback: (hash: {value: string}, signature: {value: string}) => void): NightwatchBrowser
     setSolidityCompilerVersion(version: string): NightwatchBrowser
     clickElementAtPosition(cssSelector: string, index: number, opt?: {forceSelectIfUnselected: boolean}): NightwatchBrowser
@@ -69,6 +70,7 @@ declare module 'nightwatch' {
     currentSelectedFileIs(name: string): NightwatchBrowser
     switchWorkspace: (workspaceName: string) => NightwatchBrowser
     switchEnvironment: (provider: string) => NightwatchBrowser
+    pinGrid: (provider: string, status: boolean) => NightwatchBrowser
     connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
     waitForElementNotContainsText: (id: string, value: string, timeout: number = 10000) => NightwatchBrowser
     hideToolTips: (this: NightwatchBrowser) => NightwatchBrowser

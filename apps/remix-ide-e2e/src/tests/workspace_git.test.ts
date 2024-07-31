@@ -13,8 +13,9 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-remixDefault"]')
+      .scrollAndClick('*[data-id="create-remixDefault"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .waitForElementVisible({
         selector: "//*[@class='text-warning' and contains(.,'add username and email')]",
         locateStrategy: 'xpath'
@@ -23,10 +24,10 @@ module.exports = {
         selector: '//*[@data-id="initGitRepository"][@disabled]',
         locateStrategy: 'xpath'
       })
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
+      .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_blank')
       .click('[data-id="initGitRepositoryLabel"]')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .modalFooterOKClick('TemplatesSelection')
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItem.git"]')
@@ -47,15 +48,13 @@ module.exports = {
       .waitForElementNotVisible('[data-id="workspaceGitPanel"]')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-blank"]')
+      .scrollAndClick('*[data-id="create-blank"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
-      .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=blank]')
+      .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_blank')
       .click('[data-id="initGitRepositoryLabel"]')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .modalFooterOKClick('TemplatesSelection')
       .pause(100)
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
       .waitForElementContainsText('[data-id="workspaceGitBranchesDropdown"]', 'main')
@@ -391,12 +390,10 @@ module.exports = {
     browser
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-uniswapV4Template"]')
+      .scrollAndClick('*[data-id="create-uniswapV4Template"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=uniswapV4Template]')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .modalFooterOKClick('TemplatesSelection')
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
       .openFile('src')
@@ -413,14 +410,12 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-ozerc20"]')
+      .scrollAndClick('*[data-id="create-ozerc20"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      // eslint-disable-next-line dot-notation
-      .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=ozerc20]')
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'new_workspace' })
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'new_workspace')
+      .modalFooterOKClick('TemplatesSelection')
       .waitForElementVisible('*[data-id="treeViewDivDraggableItemtests/MyToken_test.sol"]')
   },
   'Update settings for git #group5': function (browser: NightwatchBrowser) {
@@ -468,13 +463,11 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-uniswapV4Template"]')
+      .scrollAndClick('*[data-id="create-uniswapV4Template"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=uniswapV4Template]')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-      .pause(100)
+      .modalFooterOKClick('TemplatesSelection')
+      .pause(100)      
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
       .openFile('src')
       .openFile('src/Counter.sol')
@@ -491,11 +484,11 @@ module.exports = {
       .click('*[data-id="remotes-panel"]')
       .waitForElementVisible('*[data-id="remotes-panel-content"]')
       .click({
-        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin"]',
+        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin-default"]',
         locateStrategy: 'xpath'
       })
       .waitForElementVisible({
-        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin" and contains(.,"v4-template")]',
+        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin-default" and contains(.,"v4-template")]',
         locateStrategy: 'xpath'
       })
   },

@@ -1,5 +1,6 @@
 
 import { fileStatusResult, gitActionDispatch, gitState } from "../types"
+import { gitMatomoEventTypes } from "../types"
 import { fileDecoration, fileDecorationType } from "@remix-ui/file-decorators"
 import { removeSlash } from "../utils"
 import { getFilesByStatus } from "./fileHelpers"
@@ -105,3 +106,8 @@ export const openFolderInSameWindow = async (path: string) => {
 export const openCloneDialog = async () => {
   plugin.call('filePanel', 'clone')
 }
+export const sendToMatomo = async (event: gitMatomoEventTypes, args?: string[]) => {
+  const trackArgs = args ? ['trackEvent', 'git', event, ...args] : ['trackEvent', 'git', event];
+  plugin && await plugin.call('matomo', 'track', trackArgs);
+}
+

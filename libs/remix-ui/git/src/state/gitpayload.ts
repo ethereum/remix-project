@@ -1,6 +1,8 @@
 import { ReadCommitResult } from "isomorphic-git"
 import { fileStatusResult, gitLog } from "../types"
 import { repository, pagedCommits, branch, remote, commitChange, branchDifference, GitHubUser, userEmails } from "@remix-api"
+import { storage } from "../types"
+import { Endpoints } from "@octokit/types"
 
 export const fileStatus = (files: fileStatusResult[]) => {
   return {
@@ -192,6 +194,12 @@ export const setBranchDifferences = ({
   }
 }
 
+export const resetBranchDifferences = () => {
+  return {
+    type: 'RESET_BRANCH_DIFFERENCES'
+  }
+}
+
 export const setGItHubToken = (token: string) => {
   return {
     type: 'SET_GITHUB_ACCESS_TOKEN',
@@ -230,5 +238,11 @@ export const setVersion = (version: string) => {
   return {
     type: 'SET_VERSION',
     payload: version
+  }
+}
+export const setStoragePayload = (storage: storage) => {
+  return {
+    type: 'SET_STORAGE',
+    payload: storage
   }
 }

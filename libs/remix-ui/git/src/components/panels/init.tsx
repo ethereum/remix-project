@@ -4,6 +4,7 @@ import React, { useContext } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { gitActionsContext } from '../../state/context';
 import GitUIButton from '../buttons/gituibutton';
+import { Clone } from './clone';
 
 export const Init = () => {
 
@@ -15,15 +16,20 @@ export const Init = () => {
 
   return (
     <>
+
       <div>
         <div className='mt-1 mb-2'>
+          <h5>INITIALIZE</h5>
           <GitUIButton
             onClick={init}
             className="btn w-md-25 w-100 btn-primary"
             data-id="initgit-btn"
-          ><FormattedMessage id='git.init'/></GitUIButton>
+          ><FormattedMessage id='git.init' /></GitUIButton>
         </div>
       </div>
+      <hr></hr>
+      <h5>CLONE</h5>
+      <Clone></Clone>
     </>
   )
 }

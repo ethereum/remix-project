@@ -23,7 +23,7 @@ export const RemotesNavigation = ({ eventKey, activePanel, callback }) => {
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="pl-1 nav form-check-label">REMOTES</label>
+          <label className="pl-2 nav form-check-label">REMOTES</label>
           <LoaderIndicator></LoaderIndicator>
         </span>
       </div>

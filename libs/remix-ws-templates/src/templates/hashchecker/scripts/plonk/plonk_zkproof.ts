@@ -20,7 +20,7 @@ const logger = {
     const wasm = new Uint8Array(wasmBuffer);
     const zkey_final = {
       type: "mem",
-      data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/plonk/zkey_final.txt')))
+      data: new Uint8Array(JSON.parse(await remix.call('fileManager', 'readFile', 'scripts/plonk/zk/keys/zkey_final.txt')))
     }
 
     const wtns = { type: "mem" };
@@ -44,7 +44,7 @@ const logger = {
 
     const { proof, publicSignals } = await snarkjs.plonk.prove(zkey_final, wtns);
 
-    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/plonk/verification_key.json'))
+    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', 'scripts/plonk/zk/keys/verification_key.json'))
 
     const verified = await snarkjs.plonk.verify(vKey, publicSignals, proof);
 
@@ -54,8 +54,8 @@ const logger = {
     }
     const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
 
-    await remix.call('fileManager', 'writeFile', 'zk/build/plonk/zk_verifier.sol', solidityContract)
-    await remix.call('fileManager', 'writeFile', 'zk/build/plonk/input.json', JSON.stringify({
+    await remix.call('fileManager', 'writeFile', 'scripts/plonk/zk/build/zk_verifier.sol', solidityContract)
+    await remix.call('fileManager', 'writeFile', 'scripts/plonk/zk/build/input.json', JSON.stringify({
       _proof: [
         ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[0]).toHexString(), 32),
         ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[1]).toHexString(), 32),

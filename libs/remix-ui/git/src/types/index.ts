@@ -14,7 +14,7 @@ export type gitState = {
     fileStatusResult: fileStatusResult[]
     canUseApp: boolean
     loading: boolean
-    storageUsed: any
+    storage: storage
     reponame: string
     staged: fileStatusResult[]
     untracked: fileStatusResult[]
@@ -71,7 +71,13 @@ export const defaultGitState: gitState = {
   allchangesnotstaged: [],
   canUseApp: false,
   loading: false,
-  storageUsed: {},
+  storage: {
+    used: 0,
+    total: 0,
+    available: 0,
+    percentUsed: 0,
+    enabled: false
+  },
   reponame: "",
   repositories: [],
   remoteBranches: [],
@@ -113,6 +119,61 @@ export type statusMatrixType = { matrix: string[] | undefined; status: string[] 
 export type sourceControlGroup = {
     group: fileStatusResult[],
     name: string
+}
+
+export type storage = {
+    used: number,
+    total: number
+    available: number
+    percentUsed: number
+    enabled: boolean
+}
+
+export enum gitMatomoEventTypes {
+    INIT = 'INIT',
+    COMMIT = 'COMMIT',
+    PUSH = 'PUSH',
+    PULL = 'PULL',
+    ADDREMOTE = 'ADDREMOTE',
+    RMREMOTE = 'RMREMOTE',
+    CLONE = 'CLONE',
+    FETCH = 'FETCH',
+    ADD = 'ADD',
+    ADD_ALL = 'ADD_ALL',
+    RM = 'RM',
+    CHECKOUT = 'CHECKOUT',
+    CHECKOUT_LOCAL_BRANCH = 'CHECKOUT_LOCAL_BRANCH',
+    CHECKOUT_REMOTE_BRANCH = 'CHECKOUT_REMOTE_BRANCH',
+    DIFF = 'DIFF',
+    BRANCH = 'BRANCH',
+    CREATEBRANCH = 'CREATEBRANCH',
+    GETGITHUBDEVICECODE = 'GET_GITHUB_DEVICECODE',
+    CONNECTTOGITHUB = 'CONNECT_TO_GITHUB',
+    DISCONNECTFROMGITHUB = 'DISCONNECT_FROM_GITHUB',
+    SAVEMANUALGITHUBCREDENTIALS = 'SAVE_MANUAL_GITHUB_CREDENTIALS',
+    LOADREPOSITORIESFROMGITHUB = 'LOAD_REPOSITORIES_FROM_GITHUB',
+    COPYGITHUBDEVICECODE = 'COPY_GITHUB_DEVICE_CODE',
+    CONNECTTOGITHUBSUCCESS = 'CONNECT_TO_GITHUB_SUCCESS',
+    CONNECTTOGITHUBFAIL = 'CONNECT_TO_GITHUB_FAIL',
+    OPENPANEL = 'OPEN_PANEL',
+    ADDMANUALREMOTE = 'ADD_MANUAL_REMOTE',
+    SETDEFAULTREMOTE = 'SET_DEFAULT_REMOTE',
+    SETLOCALBRANCHINCOMMANDS = 'SET_LOCAL_BRANCH_IN_COMMANDS',
+    SETREMOTEBRANCHINCOMMANDS = 'SET_REMOTE_IN_COMMANDS',
+    REFRESH = 'REFRESH',
+    ERROR = 'ERROR',
+    LOADGITHUBUSERSUCCESS = 'LOAD_GITHUB_USER_SUCCESS',
+}
+
+export enum gitUIPanels {
+    SOURCECONTROL = '0',
+    COMMANDS = '1',
+    BRANCHES = '2',
+    COMMITS = '3',
+    CLONE = '4',
+    REMOTES = '5',
+    GITHUB = '7',
+    LOG = '6'
 }
 
 export interface fileStatusAction {

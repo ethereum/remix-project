@@ -5,9 +5,11 @@ import React, { useEffect, useState } from "react"
 import { FormattedMessage } from "react-intl"
 import { gitActionsContext } from "../../state/context"
 import { branch, remote } from "@remix-api"
+import { gitMatomoEventTypes } from "../../types"
 import { gitPluginContext } from "../gitui"
 import GitUIButton from "./gituibutton"
 import { syncStateContext } from "./sourceControlBase"
+import { sendToMatomo } from "../../lib/pluginActions"
 
 export const SourceControlButtons = () => {
   const context = React.useContext(gitPluginContext)
@@ -51,6 +53,7 @@ export const SourceControlButtons = () => {
   }
 
   const refresh = async() => {
+    await sendToMatomo(gitMatomoEventTypes.REFRESH)
     await actions.getFileStatusMatrix(null)
     await actions.gitlog()
   }
