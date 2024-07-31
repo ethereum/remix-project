@@ -21,7 +21,7 @@ export interface IGitApi {
         clone(input: cloneInputType): Promise<any>
         branches(input?: branchesInput): Promise<branch[]>,
         remotes(): Promise<remote[]>,
-        log(cmd: { ref: string }): Promise<ReadCommitResult[]>,
+        log(cmd: { ref: string, depth?: number }): Promise<ReadCommitResult[]>,
         remotecommits(input: remoteCommitsInputType): Promise<pagedCommits[]>
         fetch(input: fetchInputType): Promise<any>
         pull(input: pullInputType): Promise<any>
