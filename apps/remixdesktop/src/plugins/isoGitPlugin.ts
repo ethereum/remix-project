@@ -95,18 +95,10 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       return []
     }
 
-    const logCount = await git.log({
-      ...await this.getGitConfig(),
-      ...cmd,
-      depth: 100
-    })
-
-    console.log('LOG-COUNT', logCount.length)
-
     const log = await git.log({
       ...await this.getGitConfig(),
       ...cmd,
-      depth: 10
+      depth: cmd.depth || 10
     })
     console.log('LOG')
     return log
