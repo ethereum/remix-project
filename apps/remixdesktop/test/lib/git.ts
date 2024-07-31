@@ -34,10 +34,10 @@ export async function getGitLog(path: string): Promise<string> {
     })
 }
 
-export async function cloneOnServer(repo: string, path: string) {
+export async function cloneOnServer(repo: string, path: string, name: string = 'bare') {
     console.log('cloning', repo, path)
     return new Promise((resolve, reject) => {
-        const git = spawn('rm -rf bare && git', ['clone', repo], { cwd: path, shell: true, detached: true });
+        const git = spawn(`rm -rf ${name} && git`, ['clone', repo], { cwd: path, shell: true, detached: true });
 
         git.stdout.on('data', function (data) {
             console.log('stdout data cloning', data.toString());
