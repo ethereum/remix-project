@@ -1,6 +1,6 @@
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails, setCurrenHead, setStoragePayload, resetBranchDifferences } from "../state/gitpayload";
+import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails, setCurrenHead, setStoragePayload, resetBranchDifferences, setGitLogCount, setTimestamp } from "../state/gitpayload";
 import { GitHubUser, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository, userEmails, storage, gitMatomoEventTypes } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
@@ -41,7 +41,7 @@ export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatc
 export const init = async () => {
   await sendToMatomo(gitMatomoEventTypes.INIT)
   await plugin.call('dgitApi', "init");
-  await gitlog();
+  dispatch(setTimestamp(Date.now()))
   await getBranches();
 }
 
@@ -81,13 +81,13 @@ export const getFileStatusMatrix = async (filepaths: string[]) => {
   dispatch(setLoading(false))
 }
 
-export const getCommits = async () => {
+export const getCommits = async (depth: number) => {
 
   try {
     const commits: ReadCommitResult[] = await plugin.call(
       'dgitApi',
       "log",
-      { ref: "HEAD" }
+      { ref: "HEAD", depth: depth }
     );
 
     return commits;
@@ -96,16 +96,21 @@ export const getCommits = async () => {
   }
 }
 
-export const gitlog = async () => {
+export const gitlog = async (depth: number) => {
+  console.log('gitlog start')
   dispatch(setLoading(true))
   let commits = []
   try {
-    commits = await getCommits()
+    commits = await getCommits(depth)
   } catch (e) {
   }
   dispatch(setCommits(commits))
   await showCurrentBranch()
   dispatch(setLoading(false))
+}
+
+export const setStateGitLogCount = async (count: number) => {
+  dispatch(setGitLogCount(count))
 }
 
 export const showCurrentBranch = async () => {
@@ -342,7 +347,7 @@ export const fetch = async (input: fetchInputType) => {
   try {
     await plugin.call('dgitApi', 'fetch', input);
     if (!input.quiet) {
-      await gitlog()
+      dispatch(setTimestamp(Date.now()))
       await getBranches()
     }
   } catch (e: any) {
@@ -359,7 +364,7 @@ export const pull = async (input: pullInputType) => {
   await disableCallBacks()
   try {
     await plugin.call('dgitApi', 'pull', input)
-    await gitlog()
+    dispatch(setTimestamp(Date.now()))
   } catch (e: any) {
     console.log(e)
     await parseError(e)
@@ -393,6 +398,8 @@ const tokenWarning = async () => {
 
 const parseError = async (e: any) => {
   console.trace(e)
+  if(!e.message) return
+
   // if message conttains 401 Unauthorized, show token warning
   if (e.message.includes('401')) {
     await sendToMatomo(gitMatomoEventTypes.ERROR, ['401'])
