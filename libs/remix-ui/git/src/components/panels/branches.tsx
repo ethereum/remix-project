@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { gitActionsContext } from "../../state/context";
-import { remote } from "../../types";
+import { branch, remote } from "../../types";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
 import { LocalBranchDetails } from "./branches/localbranchdetails";
 import { RemoteBranchDetails } from "./branches/remotebranchedetails";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { branch } from "@remix-api";
 
 const pageLength = 5;
 
