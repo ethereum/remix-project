@@ -4,6 +4,8 @@ import { gitPluginContext } from "../gitui";
 import axios from "axios";
 import { CopyToClipboard } from "@remix-ui/clipboard";
 import { Card } from "react-bootstrap";
+import { sendToMatomo } from "../../lib/pluginActions";
+import { gitMatomoEventTypes } from "../../types";
 
 export const GetDeviceCode = () => {
   const context = React.useContext(gitPluginContext)
@@ -13,7 +15,7 @@ export const GetDeviceCode = () => {
   const [authorized, setAuthorized] = React.useState<boolean>(false)
 
   const getDeviceCodeFromGitHub = async () => {
-
+    await sendToMatomo(gitMatomoEventTypes.GETGITHUBDEVICECODE)
     setAuthorized(false)
     // Send a POST request
     const response = await axios({
@@ -36,6 +38,7 @@ export const GetDeviceCode = () => {
   }
 
   const connectApp = async () => {
+    await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUB)
     // poll https://github.com/login/oauth/access_token
     const accestokenresponse = await axios({
       method: 'post',
@@ -56,13 +59,17 @@ export const GetDeviceCode = () => {
 
     if (response.access_token) {
       setAuthorized(true)
+      await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBSUCCESS)
       await pluginActions.saveToken(response.access_token)
       await actions.loadGitHubUserFromToken()
+    } else {
+      await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL)
     }
 
   }
 
   const disconnect = async () => {
+    await sendToMatomo(gitMatomoEventTypes.DISCONNECTFROMGITHUB)
     setAuthorized(false)
     setGitHubResponse(null)
     await pluginActions.saveToken(null)
@@ -71,10 +78,11 @@ export const GetDeviceCode = () => {
 
   return (
     <>
-      {(context.gitHubUser && context.gitHubUser.login) ? null :
-        <button className='btn btn-primary mt-1 w-100' onClick={async () => {
-          getDeviceCodeFromGitHub();
-        }}><i className="fab fa-github mr-1"></i>Login in with github</button>
+      {(context.gitHubUser && context.gitHubUser.login) ? null : <>
+        <label className="text-uppercase">Connect to GitHub</label>
+        <button className='btn btn-secondary mt-1 w-100' onClick={async () => {
+          await getDeviceCodeFromGitHub()
+        }}><i className="fab fa-github mr-1"></i>Login in with github</button></>
       }
       {gitHubResponse && !authorized &&
         <div className="pt-2">
@@ -83,7 +91,7 @@ export const GetDeviceCode = () => {
           <div className="input-group text-secondary mb-0 h6">
             <input disabled type="text" className="form-control" value={gitHubResponse.user_code} />
             <div className="input-group-append">
-              <CopyToClipboard content={gitHubResponse.user_code} data-id='copyToClipboardCopyIcon' className='far fa-copy ml-1 p-2 mt-1' direction={"top"} />
+              <CopyToClipboard callback={() => sendToMatomo(gitMatomoEventTypes.COPYGITHUBDEVICECODE)} content={gitHubResponse.user_code} data-id='copyToClipboardCopyIcon' className='far fa-copy ml-1 p-2 mt-1' direction={"top"} />
             </div>
           </div>
           <br></br>
@@ -107,18 +115,26 @@ export const GetDeviceCode = () => {
       {
         (context.gitHubUser && context.gitHubUser.login) ?
           <div className="pt-2">
-            <Card>
-              <Card.Body>
-                <Card.Title data-id={`connected-as-${context.gitHubUser.login}`}>Connected as {context.gitHubUser.login}</Card.Title>
-                <Card.Text>
+
+            <div className="mb-1" data-id={`connected-as-${context.gitHubUser.login}`}>Connected as {context.gitHubUser.login}</div>
+            <div className="row">
+              {context.gitHubUser.avatar_url ?
+                <div className="col-6">
                   <img data-id={`connected-img-${context.gitHubUser.login}`} src={context.gitHubUser.avatar_url} className="w-100" />
-                  <a data-id={`connected-link-${context.gitHubUser.login}`} href={context.gitHubUser.html_url}>{context.gitHubUser.html_url}</a>
+                </div> : null}
+            </div>
+            <div className="row mt-2">
+              <div className="col-6">
+                {context.gitHubUser.html_url ? <>
+                  <label className="text-uppercase">user on github:</label>
+                  <a data-id={`connected-link-${context.gitHubUser.login}`} href={context.gitHubUser.html_url}>{context.gitHubUser.html_url}</a> </> : null}
+                {context.userEmails && context.userEmails.length > 0 ? <>
+                  <label className="text-uppercase mt-2">email:</label>
                   {context.userEmails && context.userEmails.filter((email: any) => email.primary).map((email: any) => {
                     return <span key={email.email}><br></br>{email.email}</span>
-                  })}
-                </Card.Text>
-              </Card.Body>
-            </Card>
+                  })}</> : null}
+              </div>
+            </div>
 
           </div> : null
       }

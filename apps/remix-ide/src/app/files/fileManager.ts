@@ -40,6 +40,7 @@ const errorMsg = {
 const createError = (err) => {
   return new Error(`${errorMsg[err.code]} ${err.message || ''}`)
 }
+const _paq = (window._paq = window._paq || [])
 class FileManager extends Plugin {
   mode: string
   openedFiles: any
@@ -215,6 +216,11 @@ class FileManager extends Plugin {
       } else {
         const ret = await this.setFileContent(path, data, options)
         this.emit('fileAdded', path)
+        // Temporary solution to tracking scripts execution for zk in matomo
+        if (path === 'scripts/groth16/zk/keys/zkey_final.txt' && data) _paq.push(['trackEvent', 'circuit-compiler', 'script', 'groth16', 'zk trusted setup done'])
+        if (path === 'scripts/groth16/zk/build/zk_verifier.sol' && data) _paq.push(['trackEvent', 'circuit-compiler', 'script', 'groth16', 'zk proof done'])
+        if (path === 'scripts/plonk/zk/keys/zkey_final.txt' && data) _paq.push(['trackEvent', 'circuit-compiler', 'script', 'plonk', 'zk trusted setup done'])
+        if (path === 'scripts/plonk/zk/build/zk_verifier.sol' && data) _paq.push(['trackEvent', 'circuit-compiler', 'script', 'plonk', 'zk proof done'])
         return ret
       }
     } catch (e) {
@@ -962,6 +968,12 @@ class FileManager extends Plugin {
     return exists
   }
 
+  /**
+   * Check if a file can be moved
+   * @param src source file
+   * @param dest destination file
+   * @returns {boolean} true if the file is allowed to be moved
+   */
   async moveFileIsAllowed (src: string, dest: string) {
     try {
       src = this.normalize(src)
@@ -984,6 +996,12 @@ class FileManager extends Plugin {
     }
   }
 
+  /**
+   * Check if a folder can be moved
+   * @param src source folder
+   * @param dest destination folder
+   * @returns {boolean} true if the folder is allowed to be moved
+   */
   async moveDirIsAllowed (src: string, dest: string) {
     try {
       src = this.normalize(src)

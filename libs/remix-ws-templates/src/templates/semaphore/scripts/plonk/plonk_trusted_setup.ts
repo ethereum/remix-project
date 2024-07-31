@@ -23,11 +23,11 @@ const logger = {
 
     console.log('exportVerificationKey')
     const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final)
-    await remix.call('fileManager', 'writeFile', './zk/keys/plonk/verification_key.json', JSON.stringify(vKey, null, 2))
+    await remix.call('fileManager', 'writeFile', 'scripts/plonk/zk/keys/verification_key.json', JSON.stringify(vKey, null, 2))
 
     console.log('save zkey_final')
     // @ts-ignore
-    await remix.call('fileManager', 'writeFile', './zk/keys/plonk/zkey_final.txt', (zkey_final as any).data, { encoding: null })
+    await remix.call('fileManager', 'writeFile', 'scripts/plonk/zk/keys/zkey_final.txt', (zkey_final as any).data, { encoding: null })
 
     console.log('setup done.')
 

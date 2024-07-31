@@ -25,21 +25,22 @@ import { WalkthroughService } from './walkthroughService'
 
 import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
 
-import { Registry } from '@remix-project/remix-lib'
-import { ConfigPlugin } from './app/plugins/config'
-import { StoragePlugin } from './app/plugins/storage'
-import { Layout } from './app/panels/layout'
-import { NotificationPlugin } from './app/plugins/notification'
-import { Blockchain } from './blockchain/blockchain'
-import { MergeVMProvider, LondonVMProvider, BerlinVMProvider, ShanghaiVMProvider, CancunVMProvider } from './app/providers/vm-provider'
-import { MainnetForkVMProvider } from './app/providers/mainnet-vm-fork-provider'
-import { SepoliaForkVMProvider } from './app/providers/sepolia-vm-fork-provider'
-import { GoerliForkVMProvider } from './app/providers/goerli-vm-fork-provider'
-import { CustomForkVMProvider } from './app/providers/custom-vm-fork-provider'
-import { HardhatProvider } from './app/providers/hardhat-provider'
-import { GanacheProvider } from './app/providers/ganache-provider'
-import { FoundryProvider } from './app/providers/foundry-provider'
-import { ExternalHttpProvider } from './app/providers/external-http-provider'
+import {Registry} from '@remix-project/remix-lib'
+import {ConfigPlugin} from './app/plugins/config'
+import {StoragePlugin} from './app/plugins/storage'
+import {Layout} from './app/panels/layout'
+import {NotificationPlugin} from './app/plugins/notification'
+import {Blockchain} from './blockchain/blockchain'
+import {MergeVMProvider, LondonVMProvider, BerlinVMProvider, ShanghaiVMProvider, CancunVMProvider} from './app/providers/vm-provider'
+import {MainnetForkVMProvider} from './app/providers/mainnet-vm-fork-provider'
+import {SepoliaForkVMProvider} from './app/providers/sepolia-vm-fork-provider'
+import {GoerliForkVMProvider} from './app/providers/goerli-vm-fork-provider'
+import {CustomForkVMProvider} from './app/providers/custom-vm-fork-provider'
+import {HardhatProvider} from './app/providers/hardhat-provider'
+import {GanacheProvider} from './app/providers/ganache-provider'
+import {FoundryProvider} from './app/providers/foundry-provider'
+import {ExternalHttpProvider} from './app/providers/external-http-provider'
+import { EnvironmentExplorer } from './app/providers/environment-explorer'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
@@ -68,6 +69,8 @@ import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
 
 
+
+import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
 const isElectron = require('is-electron')
 
@@ -293,6 +296,8 @@ class AppComponent {
     const ganacheProvider = new GanacheProvider(blockchain)
     const foundryProvider = new FoundryProvider(blockchain)
     const externalHttpProvider = new ExternalHttpProvider(blockchain)
+
+    const environmentExplorer = new EnvironmentExplorer()
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
@@ -328,6 +333,8 @@ class AppComponent {
     const permissionHandler = new PermissionHandlerPlugin()
     // ----------------- run script after each compilation results -----------
     const pluginStateLogger = new PluginStateLogger()
+
+    const templateSelection = new TemplatesSelectionPlugin()
 
     this.engine.register([
       permissionHandler,
@@ -367,6 +374,7 @@ class AppComponent {
       ganacheProvider,
       foundryProvider,
       externalHttpProvider,
+      environmentExplorer,  
       this.walkthroughService,
       search,
       solidityumlgen,
@@ -379,7 +387,8 @@ class AppComponent {
       solcoder,
       git,
       pluginStateLogger,
-      matomo
+      matomo,
+      templateSelection
     ])
 
     //---- fs plugin
@@ -533,7 +542,7 @@ class AppComponent {
     ])
     await this.appManager.activatePlugin(['settings'])
 
-    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'dgit'])
+    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'dgitApi', 'dgit'])
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()) {

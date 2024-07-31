@@ -55,7 +55,7 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
   const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof, logger);
   console.log('zk proof validity', verified);
 
-  await remix.call('fileManager', 'writeFile', `zk/build/groth16/input-${Date.now()}.json`, JSON.stringify({
+  await remix.call('fileManager', 'writeFile', `scripts/groth16/zk/build/input-${Date.now()}.json`, JSON.stringify({
     _pA: [proof.pi_a[0], proof.pi_a[1]],
     _pB: [[proof.pi_b[0][1], proof.pi_b[0][0]], [proof.pi_b[1][1], proof.pi_b[1][0]]],
     _pC: [proof.pi_c[0], proof.pi_c[1]],
@@ -85,11 +85,11 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
 
     const zkey_final = {
       type: "mem",
-      data: new Uint8Array(await remix.call('fileManager', 'readFile', './zk/keys/groth16/zkey_final.txt', { encoding: null }))
+      data: new Uint8Array(await remix.call('fileManager', 'readFile', 'scripts/groth16/zk/keys/zkey_final.txt', { encoding: null }))
     }
     const wtns = { type: "mem" };
 
-    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/groth16/verification_key.json'))
+    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', 'scripts/groth16/zk/keys/verification_key.json'))
 
     // build list of identity commitments
     const secrets = []
@@ -152,7 +152,7 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
     }
     const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
 
-    await remix.call('fileManager', 'writeFile', './zk/build/groth16/zk_verifier.sol', solidityContract)
+    await remix.call('fileManager', 'writeFile', 'scripts/groth16/zk/build/zk_verifier.sol', solidityContract)
   } catch (e) {
     console.error(e.message)
   }

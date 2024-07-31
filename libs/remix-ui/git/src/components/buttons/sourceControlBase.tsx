@@ -44,7 +44,10 @@ export const SourceControlBase = (props: SourceControlButtonsProps) => {
   }, [context.branchDifferences, context.currentBranch, branch, remote])
 
   const setDefaultRemote = () => {
-
+    if (context.defaultRemote) {
+      setRemote(context.defaultRemote)
+      return
+    }
     if (context.remotes.length > 0) {
       // find remote called origin
       const origin = context.remotes.find(remote => remote.name === 'origin')

@@ -139,6 +139,7 @@ export class RemixURLResolver {
 
   async handleNpmImport(url: string): Promise<HandlerResponse> {
     if (!url) throw new Error('url is empty')
+    let fetchUrl = url
     const isVersionned = semverRegex().exec(url.replace(/@/g, '@ ').replace(/\//g, ' /'))
     if (this.getDependencies && !isVersionned) {
       try {
@@ -174,7 +175,7 @@ export class RemixURLResolver {
             }
             if (version) {
               const versionSemver = semver.minVersion(version)
-              url = url.replace(pkg, `${pkg}@${versionSemver.version}`)
+              fetchUrl = url.replace(pkg, `${pkg}@${versionSemver.version}`)
             }
           }
         }
@@ -189,7 +190,7 @@ export class RemixURLResolver {
     // get response from all urls
     for (let i = 0; i < npm_urls.length; i++) {
       try {
-        const req = npm_urls[i] + url
+        const req = npm_urls[i] + fetchUrl
         const response: AxiosResponse = await axios.get(req, { transformResponse: []})
         content = response.data
         break

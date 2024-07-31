@@ -18,7 +18,7 @@ export const SelectAndCloneRepositories = (props: RepositoriesProps) => {
   const [branch, setBranch] = useState({ name: "" });
   const [repo, setRepo] = useState<repository>(null);
 
-  const selectRemoteBranch = async (branch:{ name: string }) => {
+  const selectRemoteBranch = async (branch: { name: string }) => {
     setBranch(branch)
   }
 
@@ -43,15 +43,18 @@ export const SelectAndCloneRepositories = (props: RepositoriesProps) => {
 
   return (
     <>
+      <RepositorySelect title="Load from GitHub" select={selectRepo} />
       <TokenWarning />
-      <RepositorySelect select={selectRepo} />
 
-      {repo &&<BranchSelect select={selectRemoteBranch} />}
+      {repo && <BranchSelect select={selectRemoteBranch} />}
 
       {repo && branch && branch.name && branch.name !== '0' ?
         <button data-id={`clonebtn-${repo.full_name}-${branch.name}`} className='btn btn-primary mt-1 w-100' onClick={async () => {
           await clone()
         }}>clone {repo.full_name}:{branch.name}</button> : null}
+
+      {repo && (!branch || branch.name === '0') ?
+        <label className="text-warning">Please select a branch to clone</label> : null}
 
     </>
   )

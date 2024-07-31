@@ -5,11 +5,13 @@ import { CommitDetailsNavigation } from "../../navigation/commitdetails";
 import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
 import { branch } from "@remix-api";
+import { gitMatomoEventTypes } from "../../../types";
 import { BrancheDetailsNavigation } from "../../navigation/branchedetails";
 import { CommitDetailsItems } from "../commits/commitdetailsitem";
 import { CommitDetails } from "../commits/commitdetails";
 import { BranchDifferences } from "./branchdifferences";
 import GitUIButton from "../../buttons/gituibutton";
+import { sendToMatomo } from "../../../lib/pluginActions";
 
 export interface BrancheDetailsProps {
   branch: branch;
@@ -32,8 +34,9 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
     }
   }, [activePanel])
 
-  const checkout = (branch: branch) => {
-    actions.checkout({
+  const checkout = async (branch: branch) => {
+    await sendToMatomo(gitMatomoEventTypes.CHECKOUT_LOCAL_BRANCH)
+    await actions.checkout({
       ref: branch.name,
       remote: branch.remote && branch.remote.name || null,
       refresh: true
@@ -63,7 +66,7 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
   }
 
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
-    <BrancheDetailsNavigation checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+    <BrancheDetailsNavigation allowCheckout={true} checkout={checkout} branch={branch} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
     <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
       <>
         <div className="ml-1">

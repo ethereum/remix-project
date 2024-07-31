@@ -52,10 +52,11 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
   }
 
   const initializeNewGitRepo = async () => {
-    await plugin.call('dgitApi', 'init')
-    const isActive = await plugin.call('manager', 'isActive', 'dgit')
     if (isLocalHost === false) {
+      const isActive = await plugin.call('manager', 'isActive', 'dgit')
       if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+      await plugin.call('dgitApi', 'init')
+      ;(window as any)._paq.push('trackEvent', 'statusbar', 'initNewRepo')
     }
   }
 
@@ -67,7 +68,7 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
       tooltipText={`${gitBranchName === 'Not a git repo' ? 'Initialize as a git repo' : gitBranchName} (Git)`}
     >
       <div
-        className="d-flex flex-row pl-3 text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
+        className="d-flex flex-row pl-3 small text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
         onClick={async () => await lightDgitUp()}
       >
         {checkBranchName() && isLocalHost === false ? <span className="fa-regular fa-code-branch ml-1"></span>

@@ -24,7 +24,7 @@ export const SettingsNavigation = ({ eventKey, activePanel, callback }) => {
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
-          <label className="nav pl-1 form-check-label">SETTINGS</label>
+          <label className="nav pl-2 form-check-label">SETTINGS</label>
 
         </span>
 
