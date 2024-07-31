@@ -64,7 +64,15 @@ export interface VerificationResponse {
   message?: string
 }
 
+export interface SourceFile {
+  // Should be in the correct format for creating the files in Remix
+  path: string
+  content: string
+}
+
 export interface LookupResponse {
   status: VerificationStatus
   lookupUrl?: string
+  sourceFiles?: SourceFile[]
+  targetFilePath?: string
 }
