@@ -49,7 +49,7 @@ export const Commits = () => {
       {context.commits && context.commits.length ?
         <><BranchDifferences branch={context.currentBranch}></BranchDifferences><div>
           <div data-id={`commits-current-branch-${context.currentBranch && context.currentBranch.name}`} className="pt-1">
-            {context.commits && context.commits.map((commit, index) => {
+            {context.commits && context.commits.slice(0,5).map((commit, index) => {
               return (
                 <CommitDetails branch={context.currentBranch} getCommitChanges={getCommitChanges} key={index} checkout={checkout} commit={commit}></CommitDetails>
               );
