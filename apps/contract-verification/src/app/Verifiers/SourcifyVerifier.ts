@@ -1,6 +1,9 @@
 import { CompilerAbstract, SourcesCode } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
-import type { LookupResponse, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
+import type { LookupResponse, SourceFile, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
+import { ethers } from 'ethers'
+
+const SOURCIFY_DIR = 'sourcify-verified'
 
 interface SourcifyVerificationRequest {
   address: string
@@ -10,7 +13,7 @@ interface SourcifyVerificationRequest {
   chosenContract?: string
 }
 
-type SourcifyVerificationStatus = 'perfect' | 'partial' | null
+type SourcifyVerificationStatus = 'perfect' | 'full' | 'partial' | null
 
 interface SourcifyVerificationResponse {
   result: [
@@ -27,14 +30,18 @@ interface SourcifyVerificationResponse {
 }
 
 interface SourcifyErrorResponse {
-  error: 'string'
+  error: string
+}
+
+interface SourcifyFile {
+  name: string
+  path: string
+  content: string
 }
 
 interface SourcifyLookupResponse {
-  address: string
-  // Includes either chainIds or status key
-  chainIds?: Array<{ chainId: string; status: Exclude<SourcifyVerificationStatus, null> }>
-  status?: 'false'
+  status: Exclude<SourcifyVerificationStatus, null>
+  files: SourcifyFile[]
 }
 
 export class SourcifyVerifier extends AbstractVerifier {
@@ -88,7 +95,7 @@ export class SourcifyVerifier extends AbstractVerifier {
 
     // Map to a user-facing status message
     let status: VerificationStatus = 'unknown'
-    if (verificationResponse.result[0].status === 'perfect') {
+    if (verificationResponse.result[0].status === 'perfect' || verificationResponse.result[0].status === 'full') {
       status = 'fully verified'
     } else if (verificationResponse.result[0].status === 'partial') {
       status = 'partially verified'
@@ -98,37 +105,70 @@ export class SourcifyVerifier extends AbstractVerifier {
   }
 
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
-    const url = new URL(this.apiUrl + '/check-all-by-addresses')
-    url.searchParams.append('addresses', contractAddress)
-    url.searchParams.append('chainIds', chainId)
+    const url = new URL(this.apiUrl + `/files/any/${chainId}/${contractAddress}`)
 
     const response = await fetch(url.href, { method: 'GET' })
 
     if (!response.ok) {
       const errorResponse: SourcifyErrorResponse = await response.json()
+
+      if (errorResponse.error === 'Files have not been found!') {
+        return { status: 'not verified' }
+      }
+
       console.error('Error on Sourcify lookup at ' + this.apiUrl + '\nStatus: ' + response.status + '\nResponse: ' + JSON.stringify(errorResponse))
       throw new Error(errorResponse.error)
     }
 
-    const lookupResponse: SourcifyLookupResponse = (await response.json())[0]
+    const lookupResponse: SourcifyLookupResponse = await response.json()
 
     let status: VerificationStatus = 'unknown'
     let lookupUrl: string | undefined = undefined
-    if (lookupResponse.status === 'false') {
-      status = 'not verified'
-    } else if (lookupResponse.chainIds?.[0].status === 'perfect') {
+    if (lookupResponse.status === 'perfect' || lookupResponse.status === 'full') {
       status = 'fully verified'
       lookupUrl = this.getContractCodeUrl(contractAddress, chainId, true)
-    } else if (lookupResponse.chainIds?.[0].status === 'partial') {
+    } else if (lookupResponse.status === 'partial') {
       status = 'partially verified'
       lookupUrl = this.getContractCodeUrl(contractAddress, chainId, false)
     }
 
-    return { status, lookupUrl }
+    const { sourceFiles, targetFilePath } = this.processReceivedFiles(lookupResponse.files, contractAddress)
+
+    return { status, lookupUrl, sourceFiles, targetFilePath }
   }
 
   getContractCodeUrl(address: string, chainId: string, fullMatch: boolean): string {
     const url = new URL(this.explorerUrl + `/contracts/${fullMatch ? 'full_match' : 'partial_match'}/${chainId}/${address}`)
     return url.href
+  }
+
+  processReceivedFiles(files: SourcifyFile[], contractAddress: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
+    const result: SourceFile[] = []
+    let targetFilePath: string
+    const filePrefix = `/${SOURCIFY_DIR}/${contractAddress}`
+
+    for (const file of files) {
+      let filePath: string
+      for (const a of [contractAddress, ethers.utils.getAddress(contractAddress)]) {
+        const matching = file.path.match(`/${a}/(.*)$`)
+        if (matching) {
+          filePath = matching[1]
+          break
+        }
+      }
+
+      if (filePath) {
+        result.push({ path: `${filePrefix}/${filePath}`, content: file.content })
+      }
+
+      if (file.name === 'metadata.json') {
+        const metadata = JSON.parse(file.content)
+        const compilationTarget = metadata.settings.compilationTarget
+        const contractPath = Object.keys(compilationTarget)[0]
+        targetFilePath = `${filePrefix}/sources/${contractPath}`
+      }
+    }
+
+    return { sourceFiles: result, targetFilePath }
   }
 }
