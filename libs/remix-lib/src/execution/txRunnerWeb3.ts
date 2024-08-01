@@ -5,6 +5,7 @@ import Web3 from 'web3'
 import { toBigInt, toHex } from 'web3-utils'
 import { createPublicClient, createWalletClient, http, custom } from "viem"
 import { sepolia } from 'viem/chains'
+import "viem/window"
 import { V06 } from "userop"
 
 export class TxRunnerWeb3 {
