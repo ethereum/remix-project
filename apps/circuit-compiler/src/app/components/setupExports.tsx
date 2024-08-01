@@ -8,14 +8,6 @@ import { runSetupAndExport } from "../actions"
 export function SetupExports () {
   const circuitApp = useContext(CircuitAppContext)
 
-  // const handleRandomTextChange = (value: string) => {
-  //   circuitApp.dispatch({ type: 'SET_RANDOM_TEXT', payload: value })
-  // }
-
-  // const handleRandomBeaconChange = (value: string) => {
-  //   circuitApp.dispatch({ type: 'SET_RANDOM_BEACON', payload: value })
-  // }
-
   const handleRunSetup = async () => {
     try {
       circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'exporting' })
@@ -96,14 +88,6 @@ export function SetupExports () {
               </select>
             </div>
           </CustomTooltip>
-          {/* <label className="circuit_inner_label form-check-label" htmlFor="circuitRandomText">
-            <FormattedMessage id="circuit.randomText" />
-          </label>
-          <input className="form-control m-0 txinput mb-1" placeholder="My First Contribution" />
-          <label className="circuit_inner_label form-check-label" htmlFor="circuitRandomBeacon">
-            <FormattedMessage id="circuit.randomBeacon" />
-          </label>
-          <input className="form-control m-0 txinput mb-1" placeholder="0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f" /> */}
           <div className="mt-2 custom-control custom-checkbox">
             <input
               className="custom-control-input"

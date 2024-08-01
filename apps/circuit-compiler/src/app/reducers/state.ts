@@ -32,8 +32,6 @@ export const appInitialState: AppState = {
       blake2bHash: null
     }],
   ptauValue: "final_14.ptau",
-  // randomText: "",
-  // randomBeacon: "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20",
   exportVerificationContract: true,
   exportVerificationKey: true
 }
@@ -118,18 +116,6 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
       ...state,
       ptauValue: action.payload
     }
-
-    // case 'SET_RANDOM_TEXT':
-    //   return {
-    //     ...state,
-    //     randomText: action.payload
-    //   }
-
-    // case 'SET_RANDOM_BEACON':
-    //   return {
-    //     ...state,
-    //     randomBeacon: action.payload
-    //   }
 
   case 'SET_EXPORT_VERIFICATION_CONTRACT':
     return {

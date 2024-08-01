@@ -35,8 +35,6 @@ export interface ActionPayloadTypes {
   SET_FILE_PATH_TO_ID: Record<number, string>,
   SET_PROVING_SCHEME: ProvingScheme,
   SET_PTAU_VALUE: string,
-  // SET_RANDOM_TEXT: string,
-  // SET_RANDOM_BEACON: string
   SET_EXPORT_VERIFICATION_CONTRACT: boolean,
   SET_EXPORT_VERIFICATION_KEY: boolean,
   SET_SETUP_EXPORT_STATUS: SetupExportStatus
@@ -65,8 +63,6 @@ export interface AppState {
   provingScheme: ProvingScheme,
   ptauList: Array<PtauFile>,
   ptauValue: string,
-  // randomText: string,
-  // randomBeacon: string,
   exportVerificationContract: boolean,
   exportVerificationKey: boolean
 }
