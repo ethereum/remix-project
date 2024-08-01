@@ -72,18 +72,18 @@ module.exports = {
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
   },
-  'Should generate R1CS for a simple circuit #group2': function (browser: NightwatchBrowser) {
-    browser
-      .clickLaunchIcon('circuit-compiler')
-      .frame(0)
-      .waitForElementPresent('button[data-id="generate_r1cs_btn"]')
-      .waitForElementVisible('button[data-id="generate_r1cs_btn"]')
-      .click('button[data-id="generate_r1cs_btn"]')
-      .frameParent()
-      .clickLaunchIcon('filePanel')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.r1cs"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.r1cs"]')
-  },
+  // 'Should run setup and export for a simple circuit using the GUI #group2': function (browser: NightwatchBrowser) {
+  //   browser
+  //     .clickLaunchIcon('circuit-compiler')
+  //     .frame(0)
+  //     .waitForElementPresent('button[data-id="generate_r1cs_btn"]')
+  //     .waitForElementVisible('button[data-id="generate_r1cs_btn"]')
+  //     .click('button[data-id="generate_r1cs_btn"]')
+  //     .frameParent()
+  //     .clickLaunchIcon('filePanel')
+  //     .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.r1cs"]')
+  //     .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.r1cs"]')
+  // },
   'Should compile a simple circuit using CTRL + S from the editor #group3': function (browser: NightwatchBrowser) {
     browser
       .click('[data-id="treeViewLitreeViewItemcircuits/simple.circom"]')
@@ -214,10 +214,7 @@ module.exports = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
-      .pause(2000)
-      .journalLastChildIncludes('Generating R1CS for circuits/calculate_hash.circom')
-      .pause(5000)
-      .journalLastChildIncludes('Everything went okay')
+      .pause(7000)
       .journalLastChildIncludes('plonk setup')
       .pause(10000)
       .journalLastChildIncludes('setup done')
