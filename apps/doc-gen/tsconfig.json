@@ -2,6 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
+    "target": "ES2022",
+    "lib": ["ES2015", "ES2016", "ES2018"],
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
