@@ -1,11 +1,13 @@
 import React from 'react'
 import type { ThemeType, Chain, SubmittedContracts, ContractVerificationSettings } from './types'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
+import { ContractVerificationPluginClient } from './ContractVerificationPluginClient'
 
 // Define the type for the context
 type AppContextType = {
   themeType: ThemeType
   setThemeType: (themeType: ThemeType) => void
+  clientInstance: ContractVerificationPluginClient
   settings: ContractVerificationSettings
   setSettings: React.Dispatch<React.SetStateAction<ContractVerificationSettings>>
   chains: Chain[]
@@ -20,6 +22,7 @@ const defaultContextValue: AppContextType = {
   setThemeType: (themeType: ThemeType) => {
     console.log('Calling Set Theme Type')
   },
+  clientInstance: {} as ContractVerificationPluginClient,
   settings: { chains: {} },
   setSettings: () => {},
   chains: [],

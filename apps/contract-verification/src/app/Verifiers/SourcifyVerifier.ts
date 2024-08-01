@@ -3,8 +3,6 @@ import { AbstractVerifier } from './AbstractVerifier'
 import type { LookupResponse, SourceFile, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
 import { ethers } from 'ethers'
 
-const SOURCIFY_DIR = 'sourcify-verified'
-
 interface SourcifyVerificationRequest {
   address: string
   chain: string
@@ -45,6 +43,8 @@ interface SourcifyLookupResponse {
 }
 
 export class SourcifyVerifier extends AbstractVerifier {
+  SOURCIFY_DIR = 'sourcify-verified'
+
   async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse> {
     const metadataStr = compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata
     const sources = compilerAbstract.source.sources
@@ -145,7 +145,7 @@ export class SourcifyVerifier extends AbstractVerifier {
   processReceivedFiles(files: SourcifyFile[], contractAddress: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
     const result: SourceFile[] = []
     let targetFilePath: string
-    const filePrefix = `/${SOURCIFY_DIR}/${contractAddress}`
+    const filePrefix = `/${this.SOURCIFY_DIR}/${contractAddress}`
 
     for (const file of files) {
       let filePath: string
