@@ -32,11 +32,11 @@ export class BlockscoutVerifier extends EtherscanVerifier {
     return url.href
   }
 
-  processReceivedFiles(source: unknown, contractAddress: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
+  processReceivedFiles(source: unknown, contractAddress: string, chainId: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
     const blockscoutSource = source as BlockscoutSource
 
     const result: SourceFile[] = []
-    const filePrefix = `/${this.LOOKUP_STORE_DIR}/${contractAddress}`
+    const filePrefix = `/${this.LOOKUP_STORE_DIR}/${chainId}/${contractAddress}`
 
     const targetFilePath = `${filePrefix}/${blockscoutSource.FileName}`
     result.push({ content: blockscoutSource.SourceCode, path: targetFilePath })
