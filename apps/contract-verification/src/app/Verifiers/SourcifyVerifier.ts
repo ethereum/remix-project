@@ -43,7 +43,7 @@ interface SourcifyLookupResponse {
 }
 
 export class SourcifyVerifier extends AbstractVerifier {
-  SOURCIFY_DIR = 'sourcify-verified'
+  LOOKUP_STORE_DIR = 'sourcify-verified'
 
   async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse> {
     const metadataStr = compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata
@@ -138,14 +138,14 @@ export class SourcifyVerifier extends AbstractVerifier {
   }
 
   getContractCodeUrl(address: string, chainId: string, fullMatch: boolean): string {
-    const url = new URL(this.explorerUrl + `/contracts/${fullMatch ? 'full_match' : 'partial_match'}/${chainId}/${address}`)
+    const url = new URL(this.explorerUrl + `/contracts/${fullMatch ? 'full_match' : 'partial_match'}/${chainId}/${address}/`)
     return url.href
   }
 
   processReceivedFiles(files: SourcifyFile[], contractAddress: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
     const result: SourceFile[] = []
     let targetFilePath: string
-    const filePrefix = `/${this.SOURCIFY_DIR}/${contractAddress}`
+    const filePrefix = `/${this.LOOKUP_STORE_DIR}/${contractAddress}`
 
     for (const file of files) {
       let filePath: string
