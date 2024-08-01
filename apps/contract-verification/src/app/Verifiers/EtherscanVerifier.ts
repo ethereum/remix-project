@@ -1,6 +1,6 @@
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { AbstractVerifier } from './AbstractVerifier'
-import type { LookupResponse, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
+import type { LookupResponse, SourceFile, SubmittedContract, VerificationResponse, VerificationStatus } from '../types'
 
 interface EtherscanRpcResponse {
   status: '0' | '1'
@@ -14,7 +14,31 @@ interface EtherscanCheckStatusResponse {
   result: 'Pending in queue' | 'Pass - Verified' | 'Fail - Unable to verify' | 'Already Verified' | 'Unknown UID'
 }
 
+interface EtherscanSource {
+  SourceCode: string
+  ABI: string
+  ContractName: string
+  CompilerVersion: string
+  OptimizationUsed: string
+  Runs: string
+  ConstructorArguments: string
+  EVMVersion: string
+  Library: string
+  LicenseType: string
+  Proxy: string
+  Implementation: string
+  SwarmSource: string
+}
+
+interface EtherscanGetSourceCodeResponse {
+  status: '0' | '1'
+  message: string
+  result: EtherscanSource[]
+}
+
 export class EtherscanVerifier extends AbstractVerifier {
+  LOOKUP_STORE_DIR = 'etherscan-verified'
+
   constructor(apiUrl: string, explorerUrl: string, protected apiKey?: string) {
     super(apiUrl, explorerUrl)
   }
@@ -184,7 +208,7 @@ export class EtherscanVerifier extends AbstractVerifier {
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {
     const url = new URL(this.apiUrl + '/api')
     url.searchParams.append('module', 'contract')
-    url.searchParams.append('action', 'getabi')
+    url.searchParams.append('action', 'getsourcecode')
     url.searchParams.append('address', contractAddress)
     if (this.apiKey) {
       url.searchParams.append('apikey', this.apiKey)
@@ -198,22 +222,36 @@ export class EtherscanVerifier extends AbstractVerifier {
       throw new Error(responseText)
     }
 
-    const lookupResponse: EtherscanRpcResponse = await response.json()
+    const lookupResponse: EtherscanGetSourceCodeResponse = await response.json()
 
-    const lookupUrl = this.getContractCodeUrl(contractAddress)
-
-    if (lookupResponse.result === 'Contract source code not verified') {
-      return { status: 'not verified', lookupUrl }
-    } else if (lookupResponse.status !== '1' || !lookupResponse.message.startsWith('OK')) {
-      console.error('Error on Etherscan API lookup at ' + this.apiUrl + '\nStatus: ' + lookupResponse.status + '\nMessage: ' + lookupResponse.message + '\nResult: ' + lookupResponse.result)
-      throw new Error(lookupResponse.result)
+    if (lookupResponse.status !== '1' || !lookupResponse.message.startsWith('OK')) {
+      const errorResponse = lookupResponse as unknown as EtherscanRpcResponse
+      console.error('Error on Etherscan API lookup at ' + this.apiUrl + '\nStatus: ' + errorResponse.status + '\nMessage: ' + errorResponse.message + '\nResult: ' + errorResponse.result)
+      throw new Error(errorResponse.result)
     }
 
-    return { status: 'verified', lookupUrl }
+    if (lookupResponse.result[0].ABI === 'Contract source code not verified' || !lookupResponse.result[0].SourceCode) {
+      return { status: 'not verified' }
+    }
+
+    const lookupUrl = this.getContractCodeUrl(contractAddress)
+    console.log(lookupResponse)
+    const { sourceFiles, targetFilePath } = this.processReceivedFiles(lookupResponse.result[0], contractAddress)
+
+    return { status: 'verified', lookupUrl, sourceFiles, targetFilePath }
   }
 
   getContractCodeUrl(address: string): string {
     const url = new URL(this.explorerUrl + `/address/${address}#code`)
     return url.href
+  }
+
+  processReceivedFiles(source: EtherscanSource, contractAddress: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
+    const result: SourceFile[] = []
+    const filePrefix = `/${this.LOOKUP_STORE_DIR}/${contractAddress}`
+    // TODO
+    const targetFilePath = ''
+
+    return { sourceFiles: result, targetFilePath }
   }
 }
