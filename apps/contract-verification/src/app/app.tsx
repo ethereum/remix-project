@@ -134,7 +134,7 @@ const App = () => {
   }, [submittedContracts])
 
   return (
-    <AppContext.Provider value={{ themeType, setThemeType, settings, setSettings, chains, compilationOutput, submittedContracts, setSubmittedContracts }}>
+    <AppContext.Provider value={{ themeType, setThemeType, clientInstance: plugin, settings, setSettings, chains, compilationOutput, submittedContracts, setSubmittedContracts }}>
       <DisplayRoutes />
     </AppContext.Provider>
   )
