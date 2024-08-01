@@ -132,7 +132,7 @@ export class SourcifyVerifier extends AbstractVerifier {
       lookupUrl = this.getContractCodeUrl(contractAddress, chainId, false)
     }
 
-    const { sourceFiles, targetFilePath } = this.processReceivedFiles(lookupResponse.files, contractAddress)
+    const { sourceFiles, targetFilePath } = this.processReceivedFiles(lookupResponse.files, contractAddress, chainId)
 
     return { status, lookupUrl, sourceFiles, targetFilePath }
   }
@@ -142,10 +142,10 @@ export class SourcifyVerifier extends AbstractVerifier {
     return url.href
   }
 
-  processReceivedFiles(files: SourcifyFile[], contractAddress: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
+  processReceivedFiles(files: SourcifyFile[], contractAddress: string, chainId: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
     const result: SourceFile[] = []
     let targetFilePath: string
-    const filePrefix = `/${this.LOOKUP_STORE_DIR}/${contractAddress}`
+    const filePrefix = `/${this.LOOKUP_STORE_DIR}/${chainId}/${contractAddress}`
 
     for (const file of files) {
       let filePath: string
