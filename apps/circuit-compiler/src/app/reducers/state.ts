@@ -1,3 +1,4 @@
+import { PTAU_LIST } from '../actions/constant'
 import { Actions, AppState } from '../types'
 import { compiler_list } from 'circom_wasm'
 
@@ -16,21 +17,7 @@ export const appInitialState: AppState = {
   setupExportFeedback: null,
   setupExportStatus: null,
   provingScheme: 'groth16',
-  ptauList: [
-    {
-      name: "final_14.ptau",
-      power: 14,
-      maxConstraint: "16k",
-      ipfsHash: "QmTiT4eiYz5KF7gQrDsgfCSTRv3wBPYJ4bRN1MmTRshpnW",
-      blake2bHash: null
-    },
-    {
-      name: "final_16.ptau",
-      power: 16,
-      maxConstraint: "64k",
-      ipfsHash: "QmciCq5JcZQyTLvC9GRanrLBi82ZmSriq1Fr5zANkGHebf",
-      blake2bHash: null
-    }],
+  ptauList: PTAU_LIST,
   ptauValue: "final_14.ptau",
   exportVerificationContract: true,
   exportVerificationKey: true
