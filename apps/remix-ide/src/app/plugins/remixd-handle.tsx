@@ -43,7 +43,7 @@ export class RemixdHandle extends WebsocketPlugin {
         await this.appManager.deactivatePlugin(plugin)
       }
     }
-    if (super.socket) super.deactivate()
+    if (this.socket) super.deactivate()
     // this.appManager.deactivatePlugin('git') // plugin call doesn't work.. see issue https://github.com/ethereum/remix-plugin/issues/342
     this.localhostProvider.close((error) => {
       if (error) console.log(error)
