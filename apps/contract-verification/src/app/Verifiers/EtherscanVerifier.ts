@@ -235,8 +235,7 @@ export class EtherscanVerifier extends AbstractVerifier {
     }
 
     const lookupUrl = this.getContractCodeUrl(contractAddress)
-    console.log(lookupResponse)
-    const { sourceFiles, targetFilePath } = this.processReceivedFiles(lookupResponse.result[0], contractAddress)
+    const { sourceFiles, targetFilePath } = this.processReceivedFiles(lookupResponse.result[0], contractAddress, chainId)
 
     return { status: 'verified', lookupUrl, sourceFiles, targetFilePath }
   }
@@ -246,12 +245,40 @@ export class EtherscanVerifier extends AbstractVerifier {
     return url.href
   }
 
-  processReceivedFiles(source: EtherscanSource, contractAddress: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
-    const result: SourceFile[] = []
-    const filePrefix = `/${this.LOOKUP_STORE_DIR}/${contractAddress}`
-    // TODO
-    const targetFilePath = ''
+  processReceivedFiles(source: EtherscanSource, contractAddress: string, chainId: string): { sourceFiles: SourceFile[]; targetFilePath?: string } {
+    const filePrefix = `/${this.LOOKUP_STORE_DIR}/${chainId}/${contractAddress}`
 
-    return { sourceFiles: result, targetFilePath }
+    // Covers the cases:
+    // SourceFile: {[FileName]: [content]}
+    // SourceFile: {{sources: {[FileName]: [content]}}}
+    let parsedFiles: any
+    try {
+      parsedFiles = JSON.parse(source.SourceCode)
+    } catch (e) {
+      try {
+        // Etherscan wraps the Object in one additional bracket
+        parsedFiles = JSON.parse(source.SourceCode.substring(1, source.SourceCode.length - 1)).sources
+      } catch (e) {}
+    }
+
+    if (parsedFiles) {
+      const result: SourceFile[] = []
+      let targetFilePath = ''
+      for (const [fileName, fileObj] of Object.entries<any>(parsedFiles)) {
+        const path = `${filePrefix}/${fileName}`
+
+        result.push({ path, content: fileObj.content })
+
+        if (path.endsWith(`/${source.ContractName}.sol`)) {
+          targetFilePath = path
+        }
+      }
+      return { sourceFiles: result, targetFilePath }
+    }
+
+    // Parsing to JSON failed, SourceCode is the code itself
+    const targetFilePath = `${filePrefix}/${source.ContractName}.sol`
+    const sourceFiles: SourceFile[] = [{ content: source.SourceCode, path: targetFilePath }]
+    return { sourceFiles, targetFilePath }
   }
 }
