@@ -8,7 +8,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { getVerifier } from '../Verifiers'
 
 export const LookupView = () => {
-  const { settings } = useContext(AppContext)
+  const { settings, clientInstance } = useContext(AppContext)
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
@@ -42,6 +42,21 @@ export const LookupView = () => {
     }
   }
 
+  const handleOpenInRemix = async (lookupResponse: LookupResponse) => {
+    for (const source of lookupResponse.sourceFiles ?? []) {
+      try {
+        await clientInstance.call('fileManager', 'setFile', source.path, source.content)
+      } catch (err) {
+        console.error(`Error while creating file ${source.path}: ${err.message}`)
+      }
+    }
+    try {
+      await clientInstance.call('fileManager', 'open', lookupResponse.targetFilePath)
+    } catch (err) {
+      console.error(`Error focusing file ${lookupResponse.targetFilePath}: ${err.message}`)
+    }
+  }
+
   return (
     <>
       <form onSubmit={handleLookup}>
@@ -57,9 +72,8 @@ export const LookupView = () => {
         {chainSettings &&
           VERIFIERS.map((verifierId) => {
             if (!validConfiguration(chainSettings, verifierId)) {
-              const tooltipText = 'Configure API in the settings'
               return (
-                <div key={verifierId} className="pt-2">
+                <div key={verifierId} className="pt-4">
                   <div>
                     <span className="font-weight-bold text-secondary">{verifierId}</span>{' '}
                     <CustomTooltip tooltipText="Configure the API in the settings">
@@ -73,7 +87,7 @@ export const LookupView = () => {
             }
 
             return (
-              <div key={verifierId} className="pt-2">
+              <div key={verifierId} className="pt-4">
                 <div>
                   <span className="font-weight-bold">{verifierId}</span> <span className="text-secondary">{chainSettings.verifiers[verifierId].apiUrl}</span>
                 </div>
@@ -84,11 +98,20 @@ export const LookupView = () => {
                 )}
                 {!loadingVerifiers[verifierId] && !!lookupResults[verifierId] && (
                   <div>
-                    Status:{' '}
-                    <span className="font-weight-bold" style={{ textTransform: 'capitalize' }}>
-                      {lookupResults[verifierId].status}
-                    </span>{' '}
-                    {!!lookupResults[verifierId].lookupUrl && <a href={lookupResults[verifierId].lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}
+                    <div className="pt-2">
+                      Status:{' '}
+                      <span className="font-weight-bold" style={{ textTransform: 'capitalize' }}>
+                        {lookupResults[verifierId].status}
+                      </span>{' '}
+                      {!!lookupResults[verifierId].lookupUrl && <a href={lookupResults[verifierId].lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}
+                    </div>
+                    {!!lookupResults[verifierId].sourceFiles && lookupResults[verifierId].sourceFiles.length > 0 && (
+                      <div className="pt-2 d-flex flex-row justify-content-center">
+                        <button className="btn btn-secondary bg-transparent text-body" onClick={() => handleOpenInRemix(lookupResults[verifierId])}>
+                          <i className="fas fa-download"></i> Open in Remix
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
