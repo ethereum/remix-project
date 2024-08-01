@@ -191,6 +191,27 @@ export class TxRunnerWeb3 {
 
 const sendUserOp = async (tx) => {
   console.log('sendUserOp--tx-->', tx)
+  const bundlerEndpoint = "https://public.stackup.sh/api/v1/node/ethereum-sepolia"
+  const localStorageKey = 'smartAccounts'
+
+  const ethClient: any = createPublicClient({
+    chain: sepolia,
+    transport: http(bundlerEndpoint)
+  })
+
+  const walletClient: any = createWalletClient({
+    chain: sepolia,
+    transport: custom(window.ethereum)
+  })
+
+  const addresses = await walletClient.getAddresses()
+  console.log('addresses--->', addresses)
+  // @ts-ignore
+  const smartAccount = new V06.Account.Instance({
+    ...V06.Account.Common.SimpleAccount.base(ethClient, walletClient),
+  })
+  const sender = await smartAccount.getSender()
+  console.log('sender--->', sender)
 }
 
 async function tryTillReceiptAvailable (txhash: string, web3: Web3) {
