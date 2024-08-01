@@ -126,7 +126,7 @@ export function Container () {
                 dataId='setup_exports_toggler'
                 show={!circuitApp.appState.setupExportStatus}
                 icon={ circuitApp.appState.setupExportStatus === 'done' ? 'fas fa-check-circle text-success' : circuitApp.appState.setupExportStatus === 'update' ? 'fas fa-exclamation-triangle text-warning' : null }
-                iconTooltip={ circuitApp.appState.setupExportStatus === 'update' ? 'Circom file content changed. Please compile and re-run setup to update exported keys.' : null }
+                iconTooltip={ circuitApp.appState.setupExportStatus === 'update' ? 'circom file content changed, please compile and re-run setup to update exported keys.' : null }
               >
                 <>
                   <SetupExports />
