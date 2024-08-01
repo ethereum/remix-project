@@ -3,6 +3,9 @@ import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import Web3 from 'web3'
 import { toBigInt, toHex } from 'web3-utils'
+import { createPublicClient, createWalletClient, http, custom } from "viem"
+import { sepolia } from 'viem/chains'
+import { V06 } from "userop"
 
 export class TxRunnerWeb3 {
   event
