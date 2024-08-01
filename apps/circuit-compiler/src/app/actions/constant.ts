@@ -874,3 +874,89 @@ contract PlonkVerifier {
         
     }
 }`
+
+export const PTAU_LIST = [
+  {
+    name: "final_8.ptau",
+    power: 8,
+    maxConstraint: "246",
+    ipfsHash: "QmNwT4UN6gT7vdDPNjmpShEVVbhi6C7tR6Y98X4aCT7sbq",
+    blake2bHash: null
+  },
+  {
+    name: "final_9.ptau",
+    power: 9,
+    maxConstraint: "512",
+    ipfsHash: "QmSBtobA8c27Yf2ypTpNtLxxxuadFzyQGksg7un2kN56yN",
+    blake2bHash: null
+  },
+  {
+    name: "final_10.ptau",
+    power: 10,
+    maxConstraint: "1k",
+    ipfsHash: "QmQ4dLmm3rRJKAm8CiVUedKu6xFNYsFD4UMVoSrD59jgHa",
+    blake2bHash: null
+  },
+  {
+    name: "final_11.ptau",
+    power: 11,
+    maxConstraint: "2k",
+    ipfsHash: "QmdRRJBznWaRnnpSnVcsdJ2RFQLxpVYbeMec3Fwf246MqU",
+    blake2bHash: null
+  },
+  {
+    name: "final_12.ptau",
+    power: 12,
+    maxConstraint: "4k",
+    ipfsHash: "Qmdge3jmta3qhGa61Da5UwVBcib6rgkqqHugQCgoT9hutS",
+    blake2bHash: null
+  },
+  {
+    name: "final_13.ptau",
+    power: 13,
+    maxConstraint: "8k",
+    ipfsHash: "QmUyXX6qYoExJ5pxyYiukmBSDkwqavUBBHaH2JDYVJX454",
+    blake2bHash: null
+  },
+  {
+    name: "final_14.ptau",
+    power: 14,
+    maxConstraint: "16k",
+    ipfsHash: "QmTiT4eiYz5KF7gQrDsgfCSTRv3wBPYJ4bRN1MmTRshpnW",
+    blake2bHash: null
+  },
+  {
+    name: "final_15.ptau",
+    power: 15,
+    maxConstraint: "32k",
+    ipfsHash: "QmeWPz6XMLX8HZwkRiiUffC5ziuiaHwNex6KUshpyLFpDg",
+    blake2bHash: null
+  },
+  {
+    name: "final_16.ptau",
+    power: 16,
+    maxConstraint: "64k",
+    ipfsHash: "QmVEbbVbBAgciBwGrNCx5HUJhQtatLVSEt54DZcrodYM3G",
+    blake2bHash: null
+  },
+  {
+    name: "final_17.ptau",
+    power: 17,
+    maxConstraint: "128k",
+    ipfsHash: "QmciCq5JcZQyTLvC9GRanrLBi82ZmSriq1Fr5zANkGHebf",
+    blake2bHash: null
+  },
+  {
+    name: "final_18.ptau",
+    power: 18,
+    maxConstraint: "256k",
+    ipfsHash: "QmRXbrYrrX2oA1FFRFivNi1TjhKoWv2x15g8PRFyV64UZP",
+    blake2bHash: null
+  },
+  {
+    name: "final_20.ptau",
+    power: 20,
+    maxConstraint: "1M",
+    ipfsHash: "QmQbrzmoZn5Ku6ENJmwZ1DMN1taAPgwLnp5TMfuSAz6tfh",
+    blake2bHash: null
+  }]
