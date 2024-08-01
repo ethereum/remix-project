@@ -164,7 +164,7 @@ contract Groth16Verifier {
      }
  }`
 
- export const PLONK_VERIFIER = `// SPDX-License-Identifier: GPL-3.0
+export const PLONK_VERIFIER = `// SPDX-License-Identifier: GPL-3.0
 /*
     Copyright 2021 0KIMS association.
 
