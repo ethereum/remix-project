@@ -160,6 +160,12 @@ export interface FileExplorerProps {
     importFromIpfs: any
     importFromHttps: any
     handleMultiCopies: any
+    feTarget: { key: string, type: 'file' | 'folder' }[]
+    setFeTarget: Dispatch<React.SetStateAction<{
+      key: string;
+      type: "file" | "folder";
+  }[]>>
+    publishManyFilesToGist: () => Promise<void>
 }
 
 export interface FileExplorerMenuProps {
@@ -201,6 +207,7 @@ export interface FileExplorerContextMenuProps {
   copyPath?: (path: string, type: string) => void
   generateUml?: (path: string) => Promise<void>
   uploadFile?: (target: EventTarget & HTMLInputElement) => void
+  publishManyFilesToGist: () => Promise<void>
 }
 
 export interface WorkSpaceState {

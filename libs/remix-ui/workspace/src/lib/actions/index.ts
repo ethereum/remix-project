@@ -328,6 +328,8 @@ export const publishToGist = async (path?: string) => {
           handleGistResponse(error, result)
         })
       }
+      // fire event for cleanup of temp folder
+      plugin.emit('FinishedGistPublish', folder)
     }
   } catch (error) {
     console.log(error)
