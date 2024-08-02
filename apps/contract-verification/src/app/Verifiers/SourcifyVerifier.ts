@@ -48,12 +48,6 @@ export class SourcifyVerifier extends AbstractVerifier {
   async verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse> {
     const metadataStr = compilerAbstract.data.contracts[submittedContract.filePath][submittedContract.contractName].metadata
     const sources = compilerAbstract.source.sources
-    console.log('selectedFilePath:', submittedContract.filePath)
-    console.log('selectedContractName:', submittedContract.contractName)
-    console.log('compilerAbstract:', compilerAbstract)
-    console.log('selectedContractMetadataStr:', metadataStr)
-    console.log('chainId:', submittedContract.chainId)
-    console.log('address:', submittedContract.address)
 
     // from { "filename.sol": {content: "contract MyContract { ... }"} }
     // to { "filename.sol": "contract MyContract { ... }" }
@@ -69,8 +63,6 @@ export class SourcifyVerifier extends AbstractVerifier {
         ...formattedSources,
       },
     }
-
-    console.log(body)
 
     const response = await fetch(new URL(this.apiUrl + '/verify').href, {
       method: 'POST',
