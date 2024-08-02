@@ -9,9 +9,6 @@ export interface AbstractVerifier {
 }
 
 export abstract class AbstractVerifier {
-  // TODO remove prop
-  enabled = true
-
   constructor(public apiUrl: string, public explorerUrl: string) {}
 
   abstract verify(submittedContract: SubmittedContract, compilerAbstract: CompilerAbstract): Promise<VerificationResponse>

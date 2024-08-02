@@ -18,14 +18,11 @@ const App = () => {
   const [themeType, setThemeType] = useState<ThemeType>('dark')
   const [settings, setSettings] = useLocalStorage<ContractVerificationSettings>('contract-verification:settings', { chains: {} })
   const [submittedContracts, setSubmittedContracts] = useLocalStorage<SubmittedContracts>('contract-verification:submitted-contracts', {})
-  // TODO: Types for chains
   const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [compilationOutput, setCompilationOutput] = useState<{ [key: string]: CompilerAbstract } | undefined>()
   const timer = useRef(null)
 
   useEffect(() => {
-    // TODO: Fix 'compilationFinished' event types. The interface is outdated at https://github.com/ethereum/remix-plugin/blob/master/packages/api/src/lib/compiler/api.ts. It does not include data, input, or version. See the current parameters: https://github.com/ethereum/remix-project/blob/9f6c5be882453a555055f07171701459e4ae88a4/libs/remix-solidity/src/compiler/compiler.ts#L189
-
     // Fetch compiler artefacts initially
     plugin.call('compilerArtefacts' as any, 'getAllCompilerAbstracts').then((obj: any) => {
       setCompilationOutput(obj)
