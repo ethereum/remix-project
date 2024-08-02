@@ -19,9 +19,7 @@ type AppContextType = {
 // Provide a default value with the appropriate types
 const defaultContextValue: AppContextType = {
   themeType: 'dark',
-  setThemeType: (themeType: ThemeType) => {
-    console.log('Calling Set Theme Type')
-  },
+  setThemeType: (themeType: ThemeType) => {},
   clientInstance: {} as ContractVerificationPluginClient,
   settings: { chains: {} },
   setSettings: () => {},
