@@ -708,20 +708,30 @@ export class Blockchain extends Plugin {
       (_) => this.executionContext.currentblockGasLimit()
     )
 
-    web3Runner.event.register('transactionBroadcasted', (txhash) => {
+    web3Runner.event.register('transactionBroadcasted', (txhash, isUserOp) => {
       this.executionContext.detectNetwork((error, network) => {
         if (error || !network) return
         if (network.name === 'VM') return
-        const viewEtherScanLink = etherScanLink(network.name, txhash)
-
-        if (viewEtherScanLink) {
+        if (isUserOp) {
+          const userOpLink = `https://jiffyscan.xyz/userOpHash/${txhash}?network=${network.name}`
           this.call(
             'terminal',
             'logHtml',
-            <a href={etherScanLink(network.name, txhash)} target="_blank">
-              view on etherscan
+            <a href={userOpLink} target="_blank">
+              view on Jiffyscan
             </a>
           )
+        } else {
+          const viewEtherScanLink = etherScanLink(network.name, txhash)
+          if (viewEtherScanLink) {
+            this.call(
+              'terminal',
+              'logHtml',
+              <a href={etherScanLink(network.name, txhash)} target="_blank">
+                view on Etherscan
+              </a>
+            )
+          }
         }
       })
     })
