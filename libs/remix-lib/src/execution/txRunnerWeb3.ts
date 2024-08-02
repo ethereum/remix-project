@@ -42,11 +42,11 @@ export class TxRunnerWeb3 {
 
     let currentDateTime = new Date();
     const start = currentDateTime.getTime() / 1000
-    const cb = (err, resp) => {
+    const cb = (err, resp, isUserOp) => {
       if (err) {
         return callback(err, resp)
       }
-      this.event.trigger('transactionBroadcasted', [resp])
+      this.event.trigger('transactionBroadcasted', [resp, isUserOp])
       const listenOnResponse = () => {
         // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
@@ -68,13 +68,13 @@ export class TxRunnerWeb3 {
         async (value) => {
           try {
             const res = await (this.getWeb3() as any).eth.personal.sendTransaction({ ...tx, value }, { checkRevertBeforeSending: false, ignoreGasPricing: true })
-            cb(null, res.transactionHash)
+            cb(null, res.transactionHash, false)
           } catch (e) {
             console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
             // in case the receipt is available, we consider that only the execution failed but the transaction went through.
             // So we don't consider this to be an error.
-            if (e.receipt) cb(null, e.receipt.transactionHash)
-            else cb(e, null)
+            if (e.receipt) cb(null, e.receipt.transactionHash, false)
+            else cb(e, null, false)
           }
         },
         () => {
@@ -83,15 +83,19 @@ export class TxRunnerWeb3 {
       )
     } else {
       try {
-        if (tx.fromSmartAccount) await sendUserOp(tx)
-        const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
-        cb(null, res.transactionHash)
+        if (tx.fromSmartAccount) {
+          const userOp = await sendUserOp(tx)
+          cb(null, userOp.userOpHash, true)
+        } else {
+          const res = await this.getWeb3().eth.sendTransaction(tx, null, { checkRevertBeforeSending: false, ignoreGasPricing: true })
+          cb(null, res.transactionHash, false)
+        }
       } catch (e) {
         console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
         // in case the receipt is available, we consider that only the execution failed but the transaction went through.
         // So we don't consider this to be an error.
-        if (e.receipt) cb(null, e.receipt.transactionHash)
-        else cb(e, null)
+        if (e.receipt) cb(null, e.receipt.transactionHash, false)
+        else cb(e, null, false)
       }
     }
   }
@@ -206,7 +210,7 @@ const sendUserOp = async (tx) => {
     chain: sepolia,
     transport: custom(window.ethereum)
   })
-  
+
   // @ts-ignore
   const smartAccount = new V06.Account.Instance({
     ...V06.Account.Common.SimpleAccount.base(ethClient, walletClient),
@@ -216,9 +220,10 @@ const sendUserOp = async (tx) => {
 
   const userOp = await smartAccount.encodeCallData("execute", [tx.to, tx.value, tx.data]).sendUserOperation()
   console.log('userOp---->', userOp)
+  return userOp
 
-  const receipt = await userOp.wait()
-  console.log('receipt---->', receipt)
+  // const receipt = await userOp.wait()
+  // console.log('receipt---->', receipt)
 
 }
 
