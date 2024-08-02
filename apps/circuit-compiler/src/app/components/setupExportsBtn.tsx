@@ -6,6 +6,7 @@ export function SetupExportsBtn ({ handleRunSetup, status }: { handleRunSetup: (
   return <button
     className="btn btn-secondary btn-block d-block w-100 text-break mt-2"
     onClick={handleRunSetup}
+    data-id="runSetupBtn"
   >
     <CustomTooltip
       placement="auto"

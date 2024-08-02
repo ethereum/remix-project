@@ -51,6 +51,8 @@ export const runSetupAndExport = async (plugin: CircomPluginClient, appState: Ap
     if (appState.exportVerificationKey) {
       const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final)
       await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/groth16/zk/keys/verification_key.json`, JSON.stringify(vKey, null, 2))
+      // @ts-ignore
+      await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/groth16/zk/keys/zkey_final.txt`, (zkey_final as any).data, { encoding: null })
     }
     if (appState.exportVerificationContract) {
       const templates = { groth16: GROTH16_VERIFIER }
@@ -63,6 +65,8 @@ export const runSetupAndExport = async (plugin: CircomPluginClient, appState: Ap
     if (appState.exportVerificationKey) {
       const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final)
       await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/plonk/zk/keys/verification_key.json`, JSON.stringify(vKey, null, 2))
+      // @ts-ignore
+      await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/plonk/zk/keys/zkey_final.txt`, (zkey_final as any).data, { encoding: null })
     }
     if (appState.exportVerificationContract) {
       const templates = { plonk: PLONK_VERIFIER }
