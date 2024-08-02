@@ -39,7 +39,7 @@ export function SetupExports () {
               checked={circuitApp.appState.provingScheme === 'groth16'}
               readOnly
             />
-            <label className="form-check-label custom-control-label" htmlFor="groth16ProvingScheme" style={{ paddingTop: '0.125rem' }}>
+            <label className="form-check-label custom-control-label" data-id="groth16ProvingScheme" htmlFor="groth16ProvingScheme" style={{ paddingTop: '0.125rem' }}>
               Groth16
             </label>
           </div>
@@ -54,7 +54,7 @@ export function SetupExports () {
               checked={circuitApp.appState.provingScheme === 'plonk'}
               readOnly
             />
-            <label className="form-check-label custom-control-label" htmlFor="plonkProvingScheme" style={{ paddingTop: '0.125rem' }}>
+            <label className="form-check-label custom-control-label" data-id="plonkProvingScheme" htmlFor="plonkProvingScheme" style={{ paddingTop: '0.125rem' }}>
               Plonk
             </label>
           </div>
@@ -77,11 +77,12 @@ export function SetupExports () {
                   pointerEvents: 'auto'
                 }}
                 onChange={(e) => circuitApp.dispatch({ type: 'SET_PTAU_VALUE', payload: e.target.value })}
+                data-id="circuitPtauSelect"
               >
                 {
                   circuitApp.appState.ptauList.map((ptau, index) => {
                     return (
-                      <option key={index} value={ptau.name}>{`${ptau.name} (${ptau.maxConstraint} max constr.)`}</option>
+                      <option key={index} value={ptau.name} data-id={`dropdown-item-${ptau.name}`}>{`${ptau.name} (${ptau.maxConstraint} max constr.)`}</option>
                     )
                   })
                 }
