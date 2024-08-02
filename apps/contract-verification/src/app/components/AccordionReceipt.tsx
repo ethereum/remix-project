@@ -42,11 +42,11 @@ export const AccordionReceipt: React.FC<AccordionReceiptProps> = ({ contract, in
           </div>
           <div>
             <span className="font-weight-bold">File: </span>
-            {contract.filePath}
+            <span style={{ wordBreak: 'break-word' }}>{contract.filePath}</span>
           </div>
           <div>
             <span className="font-weight-bold">Contract: </span>
-            {contract.contractName}
+            <span style={{ wordBreak: 'break-word' }}>{contract.contractName}</span>
           </div>
           <div>
             <span className="font-weight-bold">Submission: </span>
@@ -89,8 +89,8 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
             <th>API URL</th>
             <th>Status</th>
             <th>Message</th>
+            <th>Link</th>
             <th>ReceiptID</th>
-            {/*TODO add link*/}
           </tr>
         </thead>
         <tbody>
@@ -98,8 +98,13 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
             <tr key={`${receipt.isProxyReceipt ? 'proxy' : ''}-${receipt.receiptId}-${receipt.verifierInfo.name}`}>
               <td>{receipt.verifierInfo.name}</td>
               <td>{receipt.verifierInfo.apiUrl}</td>
-              <td>{receipt.status}</td>
+              <td>
+                <span className="font-weight-bold" style={{ textTransform: 'capitalize' }}>
+                  {receipt.status}
+                </span>
+              </td>
               <td>{receipt.message}</td>
+              <td>{!!receipt.lookupUrl && <a href={receipt.lookupUrl} target="_blank" className="fa fas fa-arrow-up-right-from-square"></a>}</td>
               <td>{receipt.receiptId}</td>
             </tr>
           ))}

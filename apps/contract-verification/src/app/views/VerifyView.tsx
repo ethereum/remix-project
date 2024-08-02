@@ -134,9 +134,12 @@ export const VerifyView = () => {
         } else {
           response = await verifier.verify(newSubmittedContract, compilerAbstract)
         }
-        const { status, message, receiptId } = response
+        const { status, message, receiptId, lookupUrl } = response
         receipt.status = status
         receipt.message = message
+        if (lookupUrl) {
+          receipt.lookupUrl = lookupUrl
+        }
         if (receiptId) {
           receipt.receiptId = receiptId
         }
