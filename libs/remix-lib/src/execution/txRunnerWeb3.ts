@@ -3,7 +3,7 @@ import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
 import Web3 from 'web3'
 import { toBigInt, toHex } from 'web3-utils'
-import { createPublicClient, createWalletClient, http, custom } from "viem"
+import { createPublicClient, createWalletClient, http, custom, WalletClient } from "viem"
 import { sepolia } from 'viem/chains'
 import "viem/window"
 import { V06 } from "userop"
@@ -193,26 +193,33 @@ export class TxRunnerWeb3 {
 const sendUserOp = async (tx) => {
   console.log('sendUserOp--tx-->', tx)
   const bundlerEndpoint = "https://public.stackup.sh/api/v1/node/ethereum-sepolia"
-  const localStorageKey = 'smartAccounts'
 
   const ethClient: any = createPublicClient({
     chain: sepolia,
     transport: http(bundlerEndpoint)
   })
+  // @ts-ignore
+  const [account] = await window.ethereum!.request({ method: 'eth_requestAccounts' })
 
-  const walletClient: any = createWalletClient({
+  const walletClient: WalletClient = createWalletClient({
+    account,
     chain: sepolia,
     transport: custom(window.ethereum)
   })
-
-  const addresses = await walletClient.getAddresses()
-  console.log('addresses--->', addresses)
+  
   // @ts-ignore
   const smartAccount = new V06.Account.Instance({
     ...V06.Account.Common.SimpleAccount.base(ethClient, walletClient),
   })
   const sender = await smartAccount.getSender()
   console.log('sender--->', sender)
+
+  const userOp = await smartAccount.encodeCallData("execute", [tx.to, tx.value, tx.data]).sendUserOperation()
+  console.log('userOp---->', userOp)
+
+  const receipt = await userOp.wait()
+  console.log('receipt---->', receipt)
+
 }
 
 async function tryTillReceiptAvailable (txhash: string, web3: Web3) {
