@@ -103,9 +103,12 @@ const App = () => {
               } else {
                 response = await verifier.checkVerificationStatus(receiptId)
               }
-              const { status, message } = response
+              const { status, message, lookupUrl } = response
               receipt.status = status
               receipt.message = message
+              if (lookupUrl) {
+                receipt.lookupUrl = lookupUrl
+              }
             } catch (e) {
               receipt.failedChecks++
               // Only retry 5 times
