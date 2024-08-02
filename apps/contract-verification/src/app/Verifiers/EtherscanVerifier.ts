@@ -80,7 +80,8 @@ export class EtherscanVerifier extends AbstractVerifier {
       throw new Error(verificationResponse.result)
     }
 
-    return { status: 'pending', receiptId: verificationResponse.result }
+    const lookupUrl = this.getContractCodeUrl(submittedContract.address)
+    return { status: 'pending', receiptId: verificationResponse.result, lookupUrl }
   }
 
   async verifyProxy(submittedContract: SubmittedContract): Promise<VerificationResponse> {

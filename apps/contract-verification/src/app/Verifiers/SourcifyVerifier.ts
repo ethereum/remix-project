@@ -87,13 +87,16 @@ export class SourcifyVerifier extends AbstractVerifier {
 
     // Map to a user-facing status message
     let status: VerificationStatus = 'unknown'
+    let lookupUrl: string | undefined = undefined
     if (verificationResponse.result[0].status === 'perfect' || verificationResponse.result[0].status === 'full') {
       status = 'fully verified'
+      lookupUrl = this.getContractCodeUrl(submittedContract.address, submittedContract.chainId, true)
     } else if (verificationResponse.result[0].status === 'partial') {
       status = 'partially verified'
+      lookupUrl = this.getContractCodeUrl(submittedContract.address, submittedContract.chainId, false)
     }
 
-    return { status, receiptId: null }
+    return { status, receiptId: null, lookupUrl }
   }
 
   async lookup(contractAddress: string, chainId: string): Promise<LookupResponse> {

@@ -30,6 +30,7 @@ export interface VerificationReceipt {
   verifierInfo: VerifierInfo
   status: VerificationStatus
   message?: string
+  lookupUrl?: string
   contractId: string
   isProxyReceipt: boolean
   failedChecks: number
@@ -62,6 +63,7 @@ export interface VerificationResponse {
   status: VerificationStatus
   receiptId: string | null
   message?: string
+  lookupUrl?: string
 }
 
 export interface SourceFile {
