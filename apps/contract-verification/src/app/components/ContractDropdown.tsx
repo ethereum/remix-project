@@ -19,7 +19,6 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id, s
   const { compilationOutput } = useContext(AppContext)
 
   useEffect(() => {
-    console.log('CompiilationOutput chainged', compilationOutput)
     if (!compilationOutput) return
     // Otherwise select the first by default
     const triggerFilePath = Object.keys(compilationOutput)[0]
@@ -35,7 +34,6 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id, s
   }, [compilationOutput])
 
   const handleSelectContract = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log('selecting ', event.target.value)
     setSelectedContract(JSON.parse(event.target.value))
   }
 

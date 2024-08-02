@@ -28,15 +28,11 @@ const App = () => {
 
     // Fetch compiler artefacts initially
     plugin.call('compilerArtefacts' as any, 'getAllCompilerAbstracts').then((obj: any) => {
-      console.log('compilerArtefacts.getAllCompilerAbstracts')
-      console.log(obj)
       setCompilationOutput(obj)
     })
 
     // Subscribe to compilations
     plugin.on('compilerArtefacts' as any, 'compilationSaved', (compilerAbstracts: { [key: string]: CompilerAbstract }) => {
-      console.log('compilerArtefacts.compilationSaved')
-      console.log(compilerAbstracts)
       setCompilationOutput((prev) => ({ ...(prev || {}), ...compilerAbstracts }))
     })
 
