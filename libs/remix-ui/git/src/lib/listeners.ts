@@ -1,6 +1,6 @@
 
 import React from "react";
-import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog, setGitHubUser, setUserEmails } from "../state/gitpayload";
+import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog, setGitHubUser, setUserEmails, setTimestamp } from "../state/gitpayload";
 import { gitActionDispatch, gitUIPanels, storage } from "../types";
 import { Plugin } from "@remixproject/engine";
 import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, gitlog, setPlugin, setStorage } from "./gitactions";
@@ -72,7 +72,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
       loadFiles()
     })
     loadFileQueue.enqueue(async () => {
-      gitlog()
+      gitDispatch(setTimestamp(Date.now()))
     })
     loadFileQueue.enqueue(async () => {
       getBranches()
@@ -84,7 +84,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
 
   plugin.on('dgitApi', 'checkout', async () => {
     loadFileQueue.enqueue(async () => {
-      gitlog()
+      gitDispatch(setTimestamp(Date.now()))
     })
     loadFileQueue.enqueue(async () => {
       getBranches()
@@ -111,7 +111,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
   plugin.on('dgitApi', 'commit', async () => {
     loadFileQueue.enqueue(async () => {
-      gitlog()
+      gitDispatch(setTimestamp(Date.now()))
     }, 10)
     loadFileQueue.enqueue(async () => {
       getBranches()
@@ -123,7 +123,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
   })
   plugin.on('dgitApi', 'branch', async () => {
     loadFileQueue.enqueue(async () => {
-      gitlog()
+      gitDispatch(setTimestamp(Date.now()))
     })
     loadFileQueue.enqueue(async () => {
       getBranches()
@@ -145,7 +145,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
       getBranches()
     })
     loadFileQueue.enqueue(async () => {
-      gitlog()
+      gitDispatch(setTimestamp(Date.now()))
     })
   })
   plugin.on('manager', 'pluginActivated', async (p: Profile<any>) => {

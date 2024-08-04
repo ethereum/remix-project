@@ -231,3 +231,17 @@ export const setStoragePayload = (storage: storage) => {
     payload: storage
   }
 }
+
+export const setTimestamp = (timestamp: number) => {
+  return {
+    type: 'SET_TIMESTAMP',
+    payload: timestamp
+  }
+}
+
+export const setGitLogCount = (count: number) => {
+  return {
+    type: 'SET_GIT_LOG_COUNT',
+    payload: count
+  }
+}

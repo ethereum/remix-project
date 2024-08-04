@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-bootstrap";
 import { gitActionsContext } from "../../state/context";
-import { remote } from "../../types";
+import { branch, remote } from "../../types";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
 import { LocalBranchDetails } from "./branches/localbranchdetails";
@@ -9,14 +8,41 @@ import { RemoteBranchDetails } from "./branches/remotebranchedetails";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+const pageLength = 5;
+
 export const Branches = () => {
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
+  const [localBranchPage, setLocalBranchPage] = useState(1);
+  const [remoteBranchPage, setRemoteBranchPage] = useState(1);
   const [newBranch, setNewBranch] = useState({ value: "" });
+  const [localBranches, setLocalBranches] = useState<branch[]>([]);
+  const [remoteBranches, setRemoteBranches] = useState<branch[]>([]);
+  const [currentBranch, setCurrentBranch] = useState<branch | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewBranch({ value: e.currentTarget.value });
   };
+
+  useEffect(() => {
+    if (context.branches) {
+
+      if (context.currentBranch && context.currentBranch.name !== '') {
+        setCurrentBranch(context.branches.filter((branch, index) => !branch.remote && branch.name === context.currentBranch.name)[0]);
+        setLocalBranches(context.branches.filter((branch, index) => !branch.remote && branch.name !== context.currentBranch.name));
+      } else {
+        setLocalBranches(context.branches.filter((branch, index) => !branch.remote));
+      }
+      if (context.upstream) {
+        setRemoteBranches(context.branches.filter((branch, index) => branch.remote && branch.remote.name === context.upstream.name));
+      } else {
+        setRemoteBranches([]);
+      }
+    } else {
+      setLocalBranches([]);
+      setRemoteBranches([]);
+    }
+  }, [context.branches, context.defaultRemote, context.upstream, context.currentBranch]);
 
   return (
     <>
@@ -24,23 +50,32 @@ export const Branches = () => {
         {context.branches && context.branches.length ?
           <div>
             <div data-id='branches-panel-content-local-branches'>
-              <label className="text-uppercase">local branches</label>
-              {context.branches && context.branches.filter((branch, index) => !branch.remote).map((branch, index) => {
+              <label className="text-uppercase">local branches </label><div className="badge badge-info badge-pill ml-2">{localBranches.length}</div>
+              {currentBranch && <LocalBranchDetails branch={currentBranch}></LocalBranchDetails>}
+              {context.branches && localBranches.slice(0, localBranchPage * pageLength).map((branch, index) => {
                 return (
                   <LocalBranchDetails key={index} branch={branch}></LocalBranchDetails>
                 );
               })}
+              {context.branches && localBranches.length > localBranchPage * pageLength && <GitUIButton className="btn btn-sm" onClick={() => {
+                setLocalBranchPage(localBranchPage + 1)
+              }}>Show more</GitUIButton>}
             </div>
             <hr />
             {context.upstream ?
               <>
                 <div data-id='branches-panel-content-remote-branches'>
-                  <label className="text-uppercase">remote branches on {context.upstream ? context.upstream.name : null}</label>
-                  {context.branches && context.branches.filter((branch, index) => branch.remote && branch.remote.name === context.upstream.name).map((branch, index) => {
-                    return (
-                      <RemoteBranchDetails allowCheckout={true} key={index} branch={branch}></RemoteBranchDetails>
-                    );
-                  })}
+                  <label className="text-uppercase">remote branches on {context.upstream ? context.upstream.name : null}</label><div className="badge badge-info badge-pill ml-2">{remoteBranches.length}</div>
+                  {context.branches && remoteBranches
+                    .slice(0, remoteBranchPage * pageLength)
+                    .map((branch, index) => {
+                      return (
+                        <RemoteBranchDetails allowCheckout={true} key={index} branch={branch}></RemoteBranchDetails>
+                      );
+                    })}
+                  {context.branches && remoteBranches.length > remoteBranchPage * pageLength && <><GitUIButton className="btn btn-sm" onClick={() => {
+                    setRemoteBranchPage(remoteBranchPage + 1);
+                  }}>Show more</GitUIButton><br></br></>}
                   <GitUIButton data-id={`remote-sync-${context.upstream.name}`} className="btn btn-sm" onClick={async () => {
                     await actions.fetch({
                       remote: context.upstream

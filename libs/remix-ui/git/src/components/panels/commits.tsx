@@ -1,12 +1,10 @@
-import { checkout, ReadCommitResult } from "isomorphic-git";
+import { ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { gitActionsContext } from "../../state/context";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
-import LoaderIndicator from "../navigation/loaderindicator";
 import { BranchDifferences } from "./branches/branchdifferences";
 import { CommitDetails } from "./commits/commitdetails";
-import { CommitSummary } from "./commits/commitsummary";
 
 export const Commits = () => {
   const [hasNextPage, setHasNextPage] = React.useState(true)
@@ -22,14 +20,15 @@ export const Commits = () => {
   };
 
   const loadNextPage = () => {
+    actions.setStateGitLogCount(context.gitLogCount + 5)
     actions.fetch({
       remote: null,
       ref: context.currentBranch,
       relative: true,
       depth: 5,
-      singleBranch: true
+      singleBranch: true,
+      quiet: true
     })
-
   }
 
   const getRemote = () => {
