@@ -400,7 +400,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
   return (
     <div>
       <Toaster message={state.toastMessage} />
-      <div className="px-2" ref={debuggerTopRef}>
+      <div className="px-2 pb-3" ref={debuggerTopRef}>
         <div>
           <div className="mt-2 mb-2 debuggerConfig custom-control custom-checkbox">
             <CustomTooltip tooltipId="debuggerGenSourceCheckbox" tooltipText={<FormattedMessage id="debugger.debugWithGeneratedSources" />} placement="bottom-start">
@@ -471,6 +471,7 @@ export const DebuggerUI = (props: DebuggerUIProps) => {
             currentTransaction={state.currentTransaction}
           />
         )}
+        <div id="bottomSpacer" className="p-1 mt-3"></div>
       </div>
     </div>
   )
