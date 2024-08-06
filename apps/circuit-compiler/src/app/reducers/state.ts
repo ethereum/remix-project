@@ -14,6 +14,7 @@ export const appInitialState: AppState = {
   signalInputs: [],
   compilerFeedback: null,
   computeFeedback: null,
+  proofFeedback: null,
   setupExportFeedback: null,
   setupExportStatus: null,
   provingScheme: 'groth16',
@@ -84,6 +85,12 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
     return {
       ...state,
       setupExportFeedback: action.payload
+    }
+
+  case 'SET_PROOF_FEEDBACK':
+    return {
+      ...state,
+      proofFeedback: action.payload
     }
 
   case 'SET_FILE_PATH_TO_ID':
