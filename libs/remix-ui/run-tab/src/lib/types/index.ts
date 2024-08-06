@@ -37,6 +37,13 @@ export type Provider = {
   position: number
 }
 
+export type SmartAccountDetails = {
+  address: string
+  salt: number
+  owner: string
+  timestamp: string
+}
+
 export interface RunTabState {
   accounts: {
     loadedAccounts: Record<string, string>,
@@ -45,9 +52,7 @@ export interface RunTabState {
     error: string,
     selectedAccount: string
   },
-  smartAccounts: {
-    addresses: Record<string, any>[]
-  },
+  smartAccounts: Record<string, SmartAccountDetails>,
   sendValue: string,
   sendUnit: 'ether' | 'finney' | 'gwei' | 'wei',
   gasLimit: number,
@@ -143,9 +148,7 @@ export interface SettingsProps {
     isSuccessful: boolean,
     error: string
   },
-  smartAccounts: {
-    addresses: Record<string, any>[]
-  },
+  smartAccounts: Record<string, SmartAccountDetails>,
   setAccount: (account: string) => void,
   setUnit: (unit: 'ether' | 'finney' | 'gwei' | 'wei') => void,
   sendValue: string,
@@ -196,9 +199,7 @@ export interface AccountProps {
     isSuccessful: boolean,
     error: string
   },
-  smartAccounts: {
-    addresses: Record<string, any>[]
-  },
+  smartAccounts: Record<string, SmartAccountDetails>,
   setAccount: (account: string) => void,
   personalMode: boolean,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
