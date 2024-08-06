@@ -18,6 +18,7 @@ import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
 import { branch } from '@remix-ui/git'
+import { publishFilesToGist } from './actions'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -155,30 +156,66 @@ export function Workspace() {
     })
   }
 
+  const nameGistFolder = (filePath: string) => {
+    const prepend = `Gist_${filePath}`
+    const append = `${prepend}-folder`
+    return append
+  }
+
   /**
    * Void action to ensure multiselected files are published
    * folders are not handled
    */
   const handlePublishingMultiSelectedFilesToGist = async () => {
-    const tempFolderName = '.gistTemp'
     // first create a temporary folder to populate selected files
     try {
-      await global.dispatchCreateNewFolder(tempFolderName, ROOT_PATH)
-      feTarget.filter(feObject => feObject.type !== 'folder')
-        .forEach(async feFile => {
-          await copyFile(feFile.key, tempFolderName)
-        })
-      await global.dispatchPublishToGist(tempFolderName)
-      global.plugin.on('finishedGistPublish', async (folderName) => {
-        console.log('name of folder', folderName)
-        if (folderName === tempFolderName)
-          await global.dispatchDeletePath(folderName)
-      })
+      // await global.dispatchCreateNewFolder(tempFolderName, ROOT_PATH)
+      // const selectedFiles = []
+      // for (const one of feTarget) {
+      //   if (one.type === 'folder') return
+      //   const content = await global.plugin.call('fileManager', 'readFile', one.key)
+      //   selectedFiles.push({ key: one.key, type: one.type, content: content })
+      // }
+      // console.log('Files selected', selectedFiles)
+      // publishFilesToGist(selectedFiles)
+      // console.log('completed')
+      // await global.dispatchPublishToGist(ROOT_PATH)
+      // global.plugin.on('finishedGistPublish', async (folderName) => {
+      //   console.log('name of folder', folderName)
+      //   if (folderName === tempFolderName)
+      //     await global.dispatchDeletePath(folderName)
+      // })
+      const selectedFiles = []
+      let gistFolder = ''
+      let tempFolderName = ''
+      for (const one of feTarget) {
+        if (one.type === 'folder') return
+        // const content = await global.plugin.call('fileManager', 'readFile', one.key)
+        // selectedFiles.push({ key: one.key, type: one.type, content: content })
+        tempFolderName += one.key
+      }
+      gistFolder = nameGistFolder(tempFolderName)
+      await global.dispatchCreateNewFolder(gistFolder, ROOT_PATH)
+      for (const one of feTarget) {
+        await copyFile(one.key, gistFolder)
+      }
+      publishFolderToGist(gistFolder)
+      console.log('check this out', { selectedFiles, gistFolder })
+      setTimeout(async () => {
+        // await global.dispatchDeletePath([gistFolder])
+        await deletePath([gistFolder])
+      }, 500)
     } catch (error) {
       await global.plugin.call('notification', 'toast', 'Could not publish files to gist. There was an error')
       await global.plugin.call('notification', 'toast', typeof(error) === 'string' ? error : `${console.log(error)} check the console for more details`)
     }
   }
+
+  useEffect(() => {
+    global.plugin.on('finishedGistPublish', (folderName) => {
+      console.log('finished publishing to gist', folderName)
+    })
+  }, [])
 
   const showFullMessage = async (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
     setModalState((prevState) => {

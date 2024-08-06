@@ -260,10 +260,56 @@ export type SolidityConfiguration = {
   runs: string
 }
 
+const buildGistPayload = (selectedFiles: { key: string, type: 'file' | 'folder', content: string }[]) => {
+  if (!selectedFiles || selectedFiles.length === 0) return
+
+  const files: { [key: string]: { content: string }} = {}
+  for (const file of selectedFiles) {
+    files[file.key] = { content: file.content }
+  }
+  return files
+}
+
+export const publishFilesToGist = (arrayOfSelectedFiles: any) => {
+  const gistPayload = buildGistPayload(arrayOfSelectedFiles)
+  if (!gistPayload) {
+    console.error('No files to publish');
+    return;
+  }
+  console.log('primed and ready', gistPayload)
+  const config = plugin.registry.get('config').api
+  const accessToken = config.get('settings/gist-access-token')
+  if (!accessToken) {
+    dispatch(displayNotification('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Close', null, () => { }))
+    return
+  }
+
+  try {
+    const params = queryParams.get() as SolidityConfiguration
+    const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' + params.version + '&optimize=' + params.optimize + '&runs=' + params.runs + '&gist='
+    const gists = new Gists({ token: accessToken })
+    dispatch(displayPopUp('Creating a new gist ...'))
+
+    // console.log('checking this', { gistPayload, gists, params })
+    // return
+    gists.create({
+      description: description,
+      public: true,
+      files: gistPayload
+    }, (error, result) => {
+      console.log('what comes back from gist creation', { error, result })
+      handleGistResponse(error, result)
+      // throw new Error('Thing didn\'t work as expected!')
+    })
+    console.log('publishFilesToGistIsDone')
+  } catch (error) {
+    console.log('There was an error', error)
+  }
+}
+
 export const publishToGist = async (path?: string) => {
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = path || '/'
-
   try {
     let id
     if (path) {
@@ -274,6 +320,7 @@ export const publishToGist = async (path?: string) => {
       id = await plugin.call('filePanel', 'isGist')
     }
     const packaged = await packageGistFiles(folder)
+    console.log('packed files', packaged)
     // check for token
     const config = plugin.registry.get('config').api
     const accessToken = config.get('settings/gist-access-token')
@@ -325,6 +372,7 @@ export const publishToGist = async (path?: string) => {
           public: true,
           files: packaged
         }, (error, result) => {
+          console.log('what comes back from gist creation', { error, result })
           handleGistResponse(error, result)
         })
       }
@@ -539,6 +587,7 @@ export const restoreBackupZip = async () => {
 const packageGistFiles = async (directory) => {
   const workspaceProvider = plugin.fileProviders.workspace
   const isFile = await workspaceProvider.isFile(directory)
+  console.log('here is the state of things in packageGistFiles', { directory, isFile })
   return new Promise((resolve, reject) => {
     const ret = {}
 
