@@ -2,7 +2,7 @@ import { compiler_list } from 'circom_wasm'
 import { Dispatch } from 'react'
 import type { CircomPluginClient } from '../services/circomPluginClient'
 
-export type CompilerStatus = "compiling" | "computing" | "idle" | "errored" | "warning" | "exporting"
+export type CompilerStatus = "compiling" | "computing" | "idle" | "errored" | "warning" | "exporting" | "proving"
 
 export type ProvingScheme = 'groth16' | 'plonk'
 
@@ -31,6 +31,7 @@ export interface ActionPayloadTypes {
   SET_SIGNAL_INPUTS: string[],
   SET_COMPILER_FEEDBACK: string | CompilerReport[],
   SET_COMPUTE_FEEDBACK: string | CompilerReport[],
+  SET_PROOF_FEEDBACK: string | CompilerReport[],
   SET_SETUP_EXPORT_FEEDBACK: string | CompilerReport[],
   SET_FILE_PATH_TO_ID: Record<number, string>,
   SET_PROVING_SCHEME: ProvingScheme,
@@ -58,6 +59,7 @@ export interface AppState {
   signalInputs: string[],
   compilerFeedback: string | CompilerReport[],
   computeFeedback: string | CompilerReport[],
+  proofFeedback: string | CompilerReport[],
   setupExportFeedback: string | CompilerReport[],
   setupExportStatus: SetupExportStatus,
   provingScheme: ProvingScheme,
