@@ -1,11 +1,9 @@
-import { CompileBtn } from "./compileBtn";
-import { R1CSBtn } from "./r1csBtn";
+import { CompileBtn } from "./compileBtn"
 
 export function CircuitActions () {
   return (
-    <div className="pb-3">
+    <div className="pb-2">
       <CompileBtn />
-      <R1CSBtn />
     </div>
   )
 }

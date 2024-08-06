@@ -197,24 +197,15 @@ export class CircomPluginClient extends PluginClient {
   }
 
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
-    this.internalEvents.emit('circuit_generating_r1cs_start')
-    this.emit('statusChanged', { key: 'loading', title: 'Generating...', type: 'info' })
-    // @ts-ignore
-    this.call('terminal', 'log', { type: 'log', value: 'Generating R1CS for ' + path })
     const [parseErrors, filePathToId] = await this.parse(path)
 
     if (parseErrors && (parseErrors.length > 0)) {
       if (parseErrors[0].type === 'Error') {
-        this.internalEvents.emit('circuit_parsing_errored', parseErrors)
         this.logCompilerReport(parseErrors)
         return
       } else if (parseErrors[0].type === 'Warning') {
-        this.internalEvents.emit('circuit_parsing_warning', parseErrors)
         this.logCompilerReport(parseErrors)
       }
-    } else {
-      this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
-      this.emit('statusChanged', { key: 'succeed', title: 'r1cs generated successfully', type: 'success' })
     }
     if (compilationConfig) {
       const { prime, version } = compilationConfig
@@ -232,7 +223,6 @@ export class CircomPluginClient extends PluginClient {
       this._paq.push(['trackEvent', 'circuit-compiler', 'generateR1cs', 'R1CS Generation failed'])
       throw new Error(r1csErrors)
     } else {
-      this.internalEvents.emit('circuit_generating_r1cs_done')
       const fileName = extractNameFromKey(path)
       const writePath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'r1cs')
 

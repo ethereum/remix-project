@@ -4,7 +4,7 @@
   "displayName": "Circom ZKP compiler",
   "events": [],
   "version": "2.0.0",
-  "methods": ["init", "parse", "compile", "generateR1cs"],
+  "methods": ["init", "parse", "compile"],
   "canActivate": [],
   "url": "",
   "description": "Enables circuit compilation and computing a witness for ZK proofs",

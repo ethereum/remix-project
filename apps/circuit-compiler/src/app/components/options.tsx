@@ -4,7 +4,7 @@ import { CompileOptionsProps } from '../types'
 export function CompileOptions ({autoCompile, hideWarnings, setCircuitAutoCompile, setCircuitHideWarnings}: CompileOptionsProps) {
 
   return (
-    <div className='pb-2'>
+    <div>
       <div className="mt-2 custom-control custom-checkbox">
         <input
           className="custom-control-input"

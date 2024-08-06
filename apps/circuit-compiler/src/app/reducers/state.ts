@@ -1,3 +1,4 @@
+import { PTAU_LIST } from '../actions/constant'
 import { Actions, AppState } from '../types'
 import { compiler_list } from 'circom_wasm'
 
@@ -11,7 +12,15 @@ export const appInitialState: AppState = {
   autoCompile: false,
   hideWarnings: false,
   signalInputs: [],
-  feedback: null
+  compilerFeedback: null,
+  computeFeedback: null,
+  setupExportFeedback: null,
+  setupExportStatus: null,
+  provingScheme: 'groth16',
+  ptauList: PTAU_LIST,
+  ptauValue: "final_14.ptau",
+  exportVerificationContract: true,
+  exportVerificationKey: true
 }
 
 export const appReducer = (state = appInitialState, action: Actions): AppState => {
@@ -62,13 +71,55 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
   case 'SET_COMPILER_FEEDBACK':
     return {
       ...state,
-      feedback: action.payload
+      compilerFeedback: action.payload
+    }
+
+  case 'SET_COMPUTE_FEEDBACK':
+    return {
+      ...state,
+      computeFeedback: action.payload
+    }
+
+  case 'SET_SETUP_EXPORT_FEEDBACK':
+    return {
+      ...state,
+      setupExportFeedback: action.payload
     }
 
   case 'SET_FILE_PATH_TO_ID':
     return {
       ...state,
       filePathToId: action.payload
+    }
+
+  case 'SET_PROVING_SCHEME':
+    return {
+      ...state,
+      provingScheme: action.payload
+    }
+
+  case 'SET_PTAU_VALUE':
+    return {
+      ...state,
+      ptauValue: action.payload
+    }
+
+  case 'SET_EXPORT_VERIFICATION_CONTRACT':
+    return {
+      ...state,
+      exportVerificationContract: action.payload
+    }
+
+  case 'SET_EXPORT_VERIFICATION_KEY':
+    return {
+      ...state,
+      exportVerificationKey: action.payload
+    }
+
+  case 'SET_SETUP_EXPORT_STATUS':
+    return {
+      ...state,
+      setupExportStatus: action.payload
     }
 
   default:
