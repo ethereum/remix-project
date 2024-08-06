@@ -14,6 +14,7 @@ import {
   deleteAllWorkspaces,
   clearPopUp,
   publishToGist,
+  publishFilesToGist,
   createNewFile,
   setFocusElement,
   createNewFolder,
@@ -116,6 +117,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchPublishToGist = async (path?: string) => {
     await publishToGist(path)
+  }
+
+  const dispatchPublishFilesToGist = (selectedFiles: { key: string, type: 'file' | 'folder', content: string }[]) => {
+    publishFilesToGist(selectedFiles)
   }
 
   const dispatchUploadFile = async (target?: SyntheticEvent, targetFolder?: string) => {
@@ -340,6 +345,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchDeleteWorkspace,
     dispatchDeleteAllWorkspaces,
     dispatchPublishToGist,
+    dispatchPublishFilesToGist,
     dispatchUploadFile,
     dispatchUploadFolder,
     dispatchCreateNewFile,
