@@ -170,14 +170,15 @@ export function Workspace() {
     // first create a temporary folder to populate selected files
     try {
       // await global.dispatchCreateNewFolder(tempFolderName, ROOT_PATH)
-      // const selectedFiles = []
-      // for (const one of feTarget) {
-      //   if (one.type === 'folder') return
-      //   const content = await global.plugin.call('fileManager', 'readFile', one.key)
-      //   selectedFiles.push({ key: one.key, type: one.type, content: content })
-      // }
-      // console.log('Files selected', selectedFiles)
+      const selectedFiles = []
+      for (const one of feTarget) {
+        if (one.type === 'folder') return
+        const content = await global.plugin.call('fileManager', 'readFile', one.key)
+        selectedFiles.push({ key: one.key, type: one.type, content: content })
+      }
+      console.log('Files selected', selectedFiles)
       // publishFilesToGist(selectedFiles)
+      global.dispatchPublishFilesToGist(selectedFiles)
       // console.log('completed')
       // await global.dispatchPublishToGist(ROOT_PATH)
       // global.plugin.on('finishedGistPublish', async (folderName) => {
@@ -185,26 +186,26 @@ export function Workspace() {
       //   if (folderName === tempFolderName)
       //     await global.dispatchDeletePath(folderName)
       // })
-      const selectedFiles = []
-      let gistFolder = ''
-      let tempFolderName = ''
-      for (const one of feTarget) {
-        if (one.type === 'folder') return
-        // const content = await global.plugin.call('fileManager', 'readFile', one.key)
-        // selectedFiles.push({ key: one.key, type: one.type, content: content })
-        tempFolderName += one.key
-      }
-      gistFolder = nameGistFolder(tempFolderName)
-      await global.dispatchCreateNewFolder(gistFolder, ROOT_PATH)
-      for (const one of feTarget) {
-        await copyFile(one.key, gistFolder)
-      }
-      publishFolderToGist(gistFolder)
-      console.log('check this out', { selectedFiles, gistFolder })
-      setTimeout(async () => {
-        // await global.dispatchDeletePath([gistFolder])
-        await deletePath([gistFolder])
-      }, 500)
+      // const selectedFiles = []
+      // let gistFolder = ''
+      // let tempFolderName = ''
+      // for (const one of feTarget) {
+      //   if (one.type === 'folder') return
+      //   // const content = await global.plugin.call('fileManager', 'readFile', one.key)
+      //   // selectedFiles.push({ key: one.key, type: one.type, content: content })
+      //   tempFolderName += one.key
+      // }
+      // gistFolder = nameGistFolder(tempFolderName)
+      // await global.dispatchCreateNewFolder(gistFolder, ROOT_PATH)
+      // for (const one of feTarget) {
+      //   await copyFile(one.key, gistFolder)
+      // }
+      // publishFolderToGist(gistFolder)
+      // console.log('check this out', { selectedFiles, gistFolder })
+      // setTimeout(async () => {
+      //   // await global.dispatchDeletePath([gistFolder])
+      //   await deletePath([gistFolder])
+      // }, 500)
     } catch (error) {
       await global.plugin.call('notification', 'toast', 'Could not publish files to gist. There was an error')
       await global.plugin.call('notification', 'toast', typeof(error) === 'string' ? error : `${console.log(error)} check the console for more details`)
