@@ -11,6 +11,7 @@ import { WitnessSection } from './witness'
 import { CompilerFeedback } from './feedback'
 import { CompilerReport, PrimeValue } from '../types'
 import { SetupExports } from './setupExports'
+import { GenerateProof } from './generateProof'
 
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
@@ -142,6 +143,16 @@ export function Container () {
                   <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
                   <RenderIf condition={circuitApp.appState.status !== 'computing'}>
                     <CompilerFeedback feedback={circuitApp.appState.computeFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
+                  </RenderIf>
+                </>
+              </Toggler>
+            </RenderIf>
+            <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
+              <Toggler title='circuit.generateProof' dataId='generate_proof_toggler' show={!!circuitApp.appState.setupExportStatus}>
+                <>
+                  <GenerateProof />
+                  <RenderIf condition={circuitApp.appState.status !== 'proving'}>
+                    <CompilerFeedback feedback={circuitApp.appState.proofFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
                   </RenderIf>
                 </>
               </Toggler>
