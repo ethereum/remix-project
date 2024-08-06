@@ -72,17 +72,38 @@ module.exports = {
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
   },
-  'Should generate R1CS for a simple circuit #group2': function (browser: NightwatchBrowser) {
+  'Should run Groth16 setup and export for a simple circuit using the GUI #group2': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('circuit-compiler')
       .frame(0)
-      .waitForElementPresent('button[data-id="generate_r1cs_btn"]')
-      .waitForElementVisible('button[data-id="generate_r1cs_btn"]')
-      .click('button[data-id="generate_r1cs_btn"]')
+      .waitForElementVisible('[data-id="setup_exports_toggler"]')
+      .waitForElementPresent('[data-id="groth16ProvingScheme"]')
+      .click('[data-id="groth16ProvingScheme"]')
+      .waitForElementVisible('[data-id="circuitPtauSelect"]')
+      .click('[data-id="circuitPtauSelect"]')
+      .waitForElementVisible('[data-id="dropdown-item-final_8.ptau"]')
+      .click('[data-id="dropdown-item-final_8.ptau"]')
+      .click('[data-id="runSetupBtn"]')
+      .waitForElementVisible('[data-id="setup_exports_toggler"] .fa-check-circle')
       .frameParent()
       .clickLaunchIcon('filePanel')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.r1cs"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.r1cs"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/groth16/zk/keys/verification_key.json"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/groth16/zk/keys/zkey_final.txt"]')
+  },
+  'Should run Plonk setup and export for a simple circuit using the GUI #group2': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('circuit-compiler')
+      .frame(0)
+      .waitForElementVisible('[data-id="setup_exports_toggler"]')
+      .click('[data-id="setup_exports_toggler"]')
+      .waitForElementPresent('[data-id="plonkProvingScheme"]')
+      .click('[data-id="plonkProvingScheme"]')
+      .click('[data-id="runSetupBtn"]')
+      .waitForElementVisible('[data-id="setup_exports_toggler"] .fa-check-circle')
+      .frameParent()
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/plonk/zk/keys/verification_key.json"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/plonk/zk/keys/zkey_final.txt"]')
   },
   'Should compile a simple circuit using CTRL + S from the editor #group3': function (browser: NightwatchBrowser) {
     browser
@@ -176,10 +197,7 @@ module.exports = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
-      .pause(2000)
-      .journalLastChildIncludes('Generating R1CS for circuits/calculate_hash.circom')
-      .pause(5000)
-      .journalLastChildIncludes('Everything went okay')
+      .pause(7000)
       .journalLastChildIncludes('newZkey')
       .pause(25000)
       .journalLastChildIncludes('setup done.')
@@ -214,10 +232,7 @@ module.exports = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
-      .pause(2000)
-      .journalLastChildIncludes('Generating R1CS for circuits/calculate_hash.circom')
-      .pause(5000)
-      .journalLastChildIncludes('Everything went okay')
+      .pause(7000)
       .journalLastChildIncludes('plonk setup')
       .pause(10000)
       .journalLastChildIncludes('setup done')
