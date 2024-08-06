@@ -9,6 +9,7 @@ import { createPublicClient, createWalletClient, http, custom } from "viem"
 import { sepolia } from 'viem/chains'
 import "viem/window"
 import { V06 } from "userop"
+import { SmartAccountDetails } from "../types"
 
 export const updateAccountBalances = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
   const accounts = plugin.REACT_API.accounts.loadedAccounts
@@ -104,8 +105,14 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     chain: sepolia,
     transport: http(bundlerEndpoint)
   })
+  const smartAddresses = Object.keys(plugin.REACT_API.smartAccounts)
+  // @ts-ignore
+  const accounts = await window.ethereum!.request({ method: 'eth_requestAccounts' })
+  console.log('accounts---->', accounts) // Non checksummed
+  const account = plugin.REACT_API.accounts.selectedAccount
 
   const walletClient: any = createWalletClient({
+    account,
     chain: sepolia,
     transport: custom(window.ethereum)
   })
@@ -115,19 +122,27 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
   const smartAccount = new V06.Account.Instance({
     ...V06.Account.Common.SimpleAccount.base(ethClient, walletClient),
   })
-  await smartAccount.setSalt(BigInt(plugin.REACT_API.smartAccounts.addresses.length))
+  const lastSalt = plugin.REACT_API.smartAccounts[smartAddresses[smartAddresses.length - 1]].salt
+  const salt = lastSalt + 1
+  await smartAccount.setSalt(BigInt(salt))
   const sender = await smartAccount.getSender()
-  plugin.REACT_API.smartAccounts.addresses.push(sender)
+  if (!smartAddresses.includes(sender)) {
+    const saDetails: SmartAccountDetails = {
+      address : sender,
+      salt,
+      owner: account,
+      timestamp: Date.now()
+    }
+    plugin.REACT_API.smartAccounts[sender] = saDetails
+    // Save smart accounts in local storage
+    const smartAccountsStr = localStorage.getItem(localStorageKey)
+    const smartAccountsObj = JSON.parse(smartAccountsStr)
+    smartAccountsObj[plugin.REACT_API.chainId] = plugin.REACT_API.smartAccounts
+    localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
 
-  // Save smart accounts w.r.t. primary address of WalletClient
-  const smartAccountsStr = localStorage.getItem(localStorageKey)
-  const smartAccountsObj = JSON.parse(smartAccountsStr)
-  smartAccountsObj[plugin.REACT_API.chainId][addresses[0]].push(sender)
-  localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
-
-  plugin.call('notification', 'toast', `smart account created with address ${sender}`)
-
-  await fillAccountsList(plugin, dispatch)
+    plugin.call('notification', 'toast', `smart account created with address ${sender}`)
+    await fillAccountsList(plugin, dispatch)
+  }
 }
 
 export const loadSmartAccounts = async (plugin, primaryAddress) => {
@@ -138,23 +153,14 @@ export const loadSmartAccounts = async (plugin, primaryAddress) => {
   if (smartAccountsStr) {
     const smartAccountsObj = JSON.parse(smartAccountsStr)
     if (smartAccountsObj[chainId]) {
-      if (smartAccountsObj[chainId][primaryAddress]) {
-        for (const obj of smartAccountsObj[chainId][primaryAddress]) {
-          plugin.REACT_API.smartAccounts.addresses.push(obj)
-        }
-      } else {
-        smartAccountsObj[chainId][primaryAddress] = []
-        localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
-      }
+      plugin.REACT_API.smartAccounts = smartAccountsObj[chainId]
     } else {
       smartAccountsObj[chainId] = {}
-      smartAccountsObj[chainId][primaryAddress] = []
       localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
     }
   } else {
     const objToStore = {}
     objToStore[chainId] = {}
-    objToStore[chainId][primaryAddress] = []
     localStorage.setItem(localStorageKey, JSON.stringify(objToStore))
   }
 }

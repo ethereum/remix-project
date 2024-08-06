@@ -41,7 +41,7 @@ export type SmartAccountDetails = {
   address: string
   salt: number
   owner: string
-  timestamp: string
+  timestamp: number
 }
 
 export interface RunTabState {
