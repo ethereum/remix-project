@@ -8,22 +8,11 @@ export function GenerateProof () {
   const circuitApp = useContext(CircuitAppContext)
   const status = circuitApp.appState.status
 
-  const handleGenerateProof = async () => {
-    try {
-      circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'proving' })
-      await generateProof(circuitApp.plugin, circuitApp.appState)
-      circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
-    } catch (e) {
-      circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
-      console.error(e)
-    }
-  }
-
   return (
     <div className="flex-column d-flex">
       <button
         className="btn btn-secondary btn-block d-block w-100 text-break mb-1 mt-1"
-        onClick={handleGenerateProof}
+        onClick={() => generateProof(circuitApp.plugin, circuitApp.appState, circuitApp.dispatch)}
         disabled={(status === "compiling") || (status === "computing") || (status === "proving") || (status === "exporting")}
         data-id="compute_witness_btn"
       >
