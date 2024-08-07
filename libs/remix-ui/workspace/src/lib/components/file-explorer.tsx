@@ -266,49 +266,48 @@ export const FileExplorer = (props: FileExplorerProps) => {
       if ((window as any).navigator.platform === 'MacIntel') {
         CopyComboHandler = async (eve: KeyboardEvent) => {
           if (eve.metaKey && eve.code === 'KeyC') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
             await performCopy()
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
             return
           }
         }
 
         CutHandler = async (eve: KeyboardEvent) => {
           if (eve.metaKey && eve.code === 'KeyX') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
             await performCut()
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
             return
           }
         }
 
         pasteHandler = async (eve: KeyboardEvent) => {
           if (eve.metaKey && eve.code === 'KeyV') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'metaVToPaste', 'PasteCopiedContent'])
             performPaste()
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'metaVToPaste', 'PasteCopiedContent'])
             return
           }
         }
-      }
-      if ((window as any).navigator.platform === 'Linux x86_64' || (window as any).navigator.platform === 'Win32') {
+      } else {
         pcCopyHandler = async (eve: KeyboardEvent) => {
-          if (eve.ctrlKey && (eve.key === 'c' || eve.key === 'C')) {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'CtrlCToCopy', 'CopyPath'])
+          if (eve.ctrlKey && eve.key === 'c') {
             await performCopy()
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'CtrlCToCopy', 'CopyPath'])
             return
           }
         }
 
         pcCutHandler = async (eve: KeyboardEvent) => {
           if (eve.ctrlKey && eve.code === 'KeyX') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'CtrlXToCut', 'CutPath'])
             await performCut()
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'CtrlXToCut', 'CutPath'])
             return
           }
         }
 
         pcPasteHandler = async (eve: KeyboardEvent) => {
           if (eve.key === 'Control' && eve.code === 'KeyV') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'ctrlVToPaste', 'PasteCopiedContent'])
             performPaste()
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'ctrlVToPaste', 'PasteCopiedContent'])
             return
           }
         }
