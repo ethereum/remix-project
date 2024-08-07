@@ -1071,6 +1071,7 @@ export function Workspace() {
                   renamePath={editModeOn}
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
+                  canPaste={canPaste}
                 />
 
               )}
@@ -1088,6 +1089,7 @@ export function Workspace() {
                   files={global.fs.localhost.files}
                   flatTree={global.fs.localhost.flatTree}
                   fileState={[]}
+                  canPaste={canPaste}
                   workspaceState={state}
                   expandPath={global.fs.localhost.expandPath}
                   focusEdit={global.fs.focusEdit}
