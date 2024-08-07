@@ -20,6 +20,7 @@
 .debuggerPanels {
   overflow-y: auto;
   height: fit-content;
+
 }
 .jumpToFunctionClick span {
   cursor: pointer;
