@@ -21,7 +21,9 @@ export const appInitialState: AppState = {
   ptauList: PTAU_LIST,
   ptauValue: "final_14.ptau",
   exportVerificationContract: true,
-  exportVerificationKey: true
+  exportVerificationKey: true,
+  verificationKey: null,
+  zKey: null
 }
 
 export const appReducer = (state = appInitialState, action: Actions): AppState => {
@@ -127,6 +129,18 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
     return {
       ...state,
       setupExportStatus: action.payload
+    }
+
+  case 'SET_VERIFICATION_KEY':
+    return {
+      ...state,
+      verificationKey: action.payload
+    }
+
+  case 'SET_ZKEY':
+    return {
+      ...state,
+      zKey: action.payload
     }
 
   default:

@@ -99,6 +99,12 @@ function App() {
       dispatch({ type: 'SET_SIGNAL_INPUTS', payload: [] })
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
+      dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: null })
+      dispatch({ type: 'SET_SETUP_EXPORT_FEEDBACK', payload: null })
+      dispatch({ type: 'SET_PROOF_FEEDBACK', payload: null })
+      dispatch({ type: 'SET_SETUP_EXPORT_STATUS', payload: null })
+      dispatch({ type: 'SET_VERIFICATION_KEY', payload: null })
+      dispatch({ type: 'SET_ZKEY', payload: null })
     }
   }, [appState.filePath])
 
