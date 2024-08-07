@@ -38,7 +38,9 @@ export interface ActionPayloadTypes {
   SET_PTAU_VALUE: string,
   SET_EXPORT_VERIFICATION_CONTRACT: boolean,
   SET_EXPORT_VERIFICATION_KEY: boolean,
-  SET_SETUP_EXPORT_STATUS: SetupExportStatus
+  SET_SETUP_EXPORT_STATUS: SetupExportStatus,
+  SET_VERIFICATION_KEY: Record<string, any>,
+  SET_ZKEY: any
 }
 export interface Action<T extends keyof ActionPayloadTypes> {
   type: T
@@ -66,7 +68,9 @@ export interface AppState {
   ptauList: Array<PtauFile>,
   ptauValue: string,
   exportVerificationContract: boolean,
-  exportVerificationKey: boolean
+  exportVerificationKey: boolean,
+  verificationKey: Record<string, any>,
+  zKey: Uint8Array
 }
 
 export type CompilationConfig = {
