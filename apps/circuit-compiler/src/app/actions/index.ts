@@ -90,66 +90,75 @@ export const runSetupAndExport = async (plugin: CircomPluginClient, appState: Ap
   }
 }
 
-export const generateProof = async (plugin: CircomPluginClient, appState: AppState) => {
-  const fileName = extractNameFromKey(appState.filePath)
-  const r1csPath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.r1cs')}`
-  // @ts-ignore
-  const r1csBuffer = await plugin.call('fileManager', 'readFile', r1csPath, { encoding: null })
-  // @ts-ignore
-  const r1cs = new Uint8Array(r1csBuffer)
-  const wtnsPath = r1csPath.replace('.r1cs', '.wtn')
-  // @ts-ignore
-  const wtnsBuffer = await plugin.call('fileManager', 'readFile', wtnsPath, { encoding: null })
-  // @ts-ignore
-  const wtns = new Uint8Array(wtnsBuffer)
-  const zkey_final = appState.zKey
-  const vKey = appState.verificationKey
+export const generateProof = async (plugin: CircomPluginClient, appState: AppState, dispatch: ICircuitAppContext['dispatch']) => {
+  try {
+    dispatch({ type: 'SET_COMPILER_STATUS', payload: 'proving' })
+    const fileName = extractNameFromKey(appState.filePath)
+    const r1csPath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.r1cs')}`
+    // @ts-ignore
+    const r1csBuffer = await plugin.call('fileManager', 'readFile', r1csPath, { encoding: null })
+    // @ts-ignore
+    const r1cs = new Uint8Array(r1csBuffer)
+    const wtnsPath = r1csPath.replace('.r1cs', '.wtn')
+    // @ts-ignore
+    const wtnsBuffer = await plugin.call('fileManager', 'readFile', wtnsPath, { encoding: null })
+    // @ts-ignore
+    const wtns = new Uint8Array(wtnsBuffer)
+    const zkey_final = appState.zKey
+    const vKey = appState.verificationKey
 
-  await snarkjs.wtns.check(r1cs, wtns)
-  if (appState.provingScheme === 'groth16') {
-    const { proof, publicSignals } = await snarkjs.groth16.prove(zkey_final, wtns)
-    const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof)
+    await snarkjs.wtns.check(r1cs, wtns)
+    if (appState.provingScheme === 'groth16') {
+      const { proof, publicSignals } = await snarkjs.groth16.prove(zkey_final, wtns)
+      const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof)
 
-    console.log('zk proof validity', verified)
-    await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/groth16/zk/build/input.json`, JSON.stringify({
-      _pA: [proof.pi_a[0], proof.pi_a[1]],
-      _pB: [[proof.pi_b[0][1], proof.pi_b[0][0]], [proof.pi_b[1][1], proof.pi_b[1][0]]],
-      _pC: [proof.pi_c[0], proof.pi_c[1]],
-      _pubSignals: publicSignals,
-    }, null, 2))
-  } else if (appState.provingScheme === 'plonk') {
-    const { proof, publicSignals } = await snarkjs.plonk.prove(zkey_final, wtns)
-    const verified = await snarkjs.plonk.verify(vKey, publicSignals, proof)
+      console.log('zk proof validity', verified)
+      await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/groth16/zk/build/input.json`, JSON.stringify({
+        _pA: [proof.pi_a[0], proof.pi_a[1]],
+        _pB: [[proof.pi_b[0][1], proof.pi_b[0][0]], [proof.pi_b[1][1], proof.pi_b[1][0]]],
+        _pC: [proof.pi_c[0], proof.pi_c[1]],
+        _pubSignals: publicSignals,
+      }, null, 2))
+    } else if (appState.provingScheme === 'plonk') {
+      const { proof, publicSignals } = await snarkjs.plonk.prove(zkey_final, wtns)
+      const verified = await snarkjs.plonk.verify(vKey, publicSignals, proof)
 
-    console.log('zk proof validity', verified)
-    await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/plonk/zk/build/input.json`, JSON.stringify({
-      _proof: [
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[0]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[1]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.B[0]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.B[1]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.C[0]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.C[1]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Z[0]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Z[1]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T1[0]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T1[1]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T2[0]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T2[1]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T3[0]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T3[1]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxi[0]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxi[1]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxiw[0]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxiw[1]).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_a).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_b).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_c).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_s1).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_s2).toHexString(), 32),
-        ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_zw).toHexString(), 32),
-      ],
-      _pubSignals: publicSignals
-    }, null, 2))
+      console.log('zk proof validity', verified)
+      await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/plonk/zk/build/input.json`, JSON.stringify({
+        _proof: [
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[0]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[1]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.B[0]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.B[1]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.C[0]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.C[1]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Z[0]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Z[1]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T1[0]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T1[1]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T2[0]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T2[1]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T3[0]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.T3[1]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxi[0]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxi[1]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxiw[0]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.Wxiw[1]).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_a).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_b).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_c).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_s1).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_s2).toHexString(), 32),
+          ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.eval_zw).toHexString(), 32),
+        ],
+        _pubSignals: publicSignals
+      }, null, 2))
+      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+      dispatch({ type: 'SET_PROOF_FEEDBACK', payload: null })
+    }
+  } catch (e) {
+    dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
+    dispatch({ type: 'SET_PROOF_FEEDBACK', payload: e.message })
+    console.error(e)
   }
 }
