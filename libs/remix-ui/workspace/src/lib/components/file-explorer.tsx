@@ -34,7 +34,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     deletePath,
     uploadFile,
     uploadFolder,
-    fileState
+    fileState,
+    canPaste
   } = props
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   // const [isPending, startTransition] = useTransition();
@@ -96,6 +97,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
         }
       }
       const targetDocument = treeRef.current
+
+      console.log('what does the ref contain?', { treeRef })
 
       targetDocument.addEventListener('keydown', keyPressHandler)
       targetDocument.addEventListener('keyup', keyUpHandler)
@@ -171,6 +174,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
       props.editModeOn(feTarget[0].key, feTarget[0].type, false)
     }
+
     if (treeRef.current) {
       const F2KeyPressHandler = async (eve: KeyboardEvent) => {
         if (eve.key === 'F2' ) {
@@ -247,6 +251,9 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
     }
 
+    const focus = state.copyElement
+    console.log('copied', focus)
+
     if (treeRef.current) {
       const targetDocument = treeRef.current
       let CopyComboHandler: (eve: KeyboardEvent) => Promise<void>
@@ -280,10 +287,11 @@ export const FileExplorer = (props: FileExplorerProps) => {
             return
           }
         }
-      } else {
+      }
+      if ((window as any).navigator.platform === 'Linux x86_64' || (window as any).navigator.platform === 'Win32') {
         pcCopyHandler = async (eve: KeyboardEvent) => {
           if (eve.ctrlKey && (eve.key === 'c' || eve.key === 'C')) {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'CtrlCToCopy', 'CopyPath'])
             await performCopy()
             return
           }
@@ -291,7 +299,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
         pcCutHandler = async (eve: KeyboardEvent) => {
           if (eve.ctrlKey && eve.code === 'KeyX') {
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
+            feWindow._paq.push(['trackEvent', 'fileExplorer', 'CtrlXToCut', 'CutPath'])
             await performCut()
             return
           }
@@ -322,7 +330,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         targetDocument?.removeEventListener('keydown', pcCopyHandler)
       }
     }
-  }, [treeRef.current, feTarget])
+  }, [treeRef.current, feTarget, canPaste, state.copyElement.length])
 
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
