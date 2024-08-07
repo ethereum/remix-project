@@ -27,7 +27,7 @@ export function GenerateProof () {
         disabled={(status === "compiling") || (status === "computing") || (status === "proving") || (status === "exporting")}
         data-id="compute_witness_btn"
       >
-        <RenderIf condition={status === 'computing'}>
+        <RenderIf condition={status === 'proving'}>
           <i className="fas fa-sync fa-spin mr-2" aria-hidden="true"></i>
         </RenderIf>
         <FormattedMessage id="circuit.generateProof" />
