@@ -158,6 +158,17 @@ const showTable = (opts, showTableHash) => {
             </td>
           </tr>
         ) : null}
+        {opts.output ? (
+          <tr className="remix_ui_terminal_tr">
+            <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
+              <FormattedMessage id="terminal.output" />
+            </td>
+            <td className="remix_ui_terminal_td" data-id={`txLoggerTableHash${opts.hash}`} data-shared={`pair_${opts.hash}`}>
+              {opts.output}
+              <CopyToClipboard content={opts.output} />
+            </td>
+          </tr>
+        ) : null}
         {opts['decoded input'] ? (
           <tr className="remix_ui_terminal_tr">
             <td className="remix_ui_terminal_td" data-shared={`key_${opts.hash}`}>
