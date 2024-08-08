@@ -61,6 +61,7 @@ const RenderKnownTransactions = ({ tx, receipt, resolvedData, logs, index, plugi
             'gas': tx.gas,
             'input': tx.input,
             'decoded input': resolvedData && resolvedData.params ? JSON.stringify(typeConversion.stringify(resolvedData.params), null, '\t') : ' - ',
+            'output': tx.returnValue,
             'decoded output': resolvedData && resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(resolvedData.decodedReturnValue), null, '\t') : ' - ',
             'logs': logs,
             'val': tx.value,

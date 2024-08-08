@@ -66,6 +66,7 @@ const RenderCall = ({ tx, resolvedData, logs, index, plugin, showTableHash, txDe
             'gas': tx.gas,
             'input': tx.input,
             'decoded input': resolvedData && resolvedData.params ? JSON.stringify(typeConversion.stringify(resolvedData.params), null, '\t') : ' - ',
+            'output': tx.returnValue,
             'decoded output': resolvedData && resolvedData.decodedReturnValue ? JSON.stringify(typeConversion.stringify(resolvedData.decodedReturnValue), null, '\t') : ' - ',
             'val': tx.value,
             'logs': logs,
