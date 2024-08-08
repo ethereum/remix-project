@@ -6,6 +6,7 @@ import { VERIFIERS } from '../types'
 import { AppContext } from '../AppContext'
 import { CustomTooltip } from '@remix-ui/helper'
 import { getVerifier } from '../Verifiers'
+import { useNavigate } from 'react-router-dom'
 
 export const LookupView = () => {
   const { settings, clientInstance } = useContext(AppContext)
@@ -14,6 +15,7 @@ export const LookupView = () => {
   const [contractAddressError, setContractAddressError] = useState('')
   const [loadingVerifiers, setLoadingVerifiers] = useState<Partial<Record<VerifierIdentifier, boolean>>>({})
   const [lookupResults, setLookupResult] = useState<Partial<Record<VerifierIdentifier, LookupResponse>>>({})
+  const navigate = useNavigate()
 
   const chainSettings = selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined
 
@@ -77,7 +79,7 @@ export const LookupView = () => {
                   <div>
                     <span className="font-weight-bold text-secondary">{verifierId}</span>{' '}
                     <CustomTooltip tooltipText="Configure the API in the settings">
-                      <span className="text-secondary" style={{ textDecoration: 'underline dotted' }}>
+                      <span className="text-secondary" style={{ textDecoration: 'underline dotted', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
                         Enable?
                       </span>
                     </CustomTooltip>
