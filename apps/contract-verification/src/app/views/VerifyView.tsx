@@ -193,7 +193,7 @@ export const VerifyView = () => {
                   <span className="text-secondary">{chainSettings.verifiers[verifierId].apiUrl}</span>
                 ) : (
                   <CustomTooltip tooltipText="Configure the API in the settings">
-                    <span className="text-secondary w-auto" style={{ textDecoration: 'underline dotted' }}>
+                    <span className="text-secondary w-auto" style={{ textDecoration: 'underline dotted', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
                       Enable?
                     </span>
                   </CustomTooltip>
