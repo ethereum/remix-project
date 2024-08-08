@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { SearchableChainDropdown, ContractAddressInput } from '../components'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
 import type { LookupResponse, VerifierIdentifier, Chain } from '../types'
@@ -21,7 +21,18 @@ export const LookupView = () => {
 
   const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain
 
+  // Reset results when chain or contract changes
+  useEffect(() => {
+    setLookupResult({})
+    setLoadingVerifiers({})
+  }, [selectedChain, contractAddress])
+
   const handleLookup = (e) => {
+    if (Object.values(loadingVerifiers).some((loading) => loading)) {
+      console.error('Lookup request already running')
+      return
+    }
+
     e.preventDefault()
 
     for (const verifierId of VERIFIERS) {
