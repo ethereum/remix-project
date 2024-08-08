@@ -34,7 +34,7 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
     [chains]
   )
 
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState(selectedChain ? getChainDescriptor(selectedChain) : '')
   const [isOpen, setIsOpen] = useState(false)
   const [filteredOptions, setFilteredOptions] = useState<Chain[]>(dropdownChains)
   const dropdownRef = useRef<HTMLDivElement>(null)

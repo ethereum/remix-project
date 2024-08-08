@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { ContractVerificationPluginClient } from './ContractVerificationPluginClient'
 
 import { AppContext } from './AppContext'
+import { VerifyFormContext } from './VerifyFormContext'
 import DisplayRoutes from './routes'
 import type { ContractVerificationSettings, ThemeType, Chain, SubmittedContracts, VerificationReceipt, VerificationResponse } from './types'
 import { mergeChainSettingsWithDefaults } from './utils'
@@ -11,6 +12,7 @@ import './App.css'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { getVerifier } from './Verifiers'
+import { ContractDropdownSelection } from './components/ContractDropdown'
 
 const plugin = new ContractVerificationPluginClient()
 
@@ -20,6 +22,16 @@ const App = () => {
   const [submittedContracts, setSubmittedContracts] = useLocalStorage<SubmittedContracts>('contract-verification:submitted-contracts', {})
   const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [compilationOutput, setCompilationOutput] = useState<{ [key: string]: CompilerAbstract } | undefined>()
+  // Form values:
+  const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
+  const [contractAddress, setContractAddress] = useState('')
+  const [contractAddressError, setContractAddressError] = useState('')
+  const [selectedContract, setSelectedContract] = useState<ContractDropdownSelection | undefined>()
+  const [proxyAddress, setProxyAddress] = useState('')
+  const [proxyAddressError, setProxyAddressError] = useState('')
+  const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = useState<string>('')
+  const [abiEncodingError, setAbiEncodingError] = useState<string>('')
+
   const timer = useRef(null)
 
   useEffect(() => {
@@ -131,7 +143,9 @@ const App = () => {
 
   return (
     <AppContext.Provider value={{ themeType, setThemeType, clientInstance: plugin, settings, setSettings, chains, compilationOutput, submittedContracts, setSubmittedContracts }}>
-      <DisplayRoutes />
+      <VerifyFormContext.Provider value={{ selectedChain, setSelectedChain, contractAddress, setContractAddress, contractAddressError, setContractAddressError, selectedContract, setSelectedContract, proxyAddress, setProxyAddress, proxyAddressError, setProxyAddressError, abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, abiEncodingError, setAbiEncodingError }}>
+        <DisplayRoutes />
+      </VerifyFormContext.Provider>
     </AppContext.Provider>
   )
 }

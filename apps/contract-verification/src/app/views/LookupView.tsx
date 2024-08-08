@@ -7,10 +7,11 @@ import { AppContext } from '../AppContext'
 import { CustomTooltip } from '@remix-ui/helper'
 import { getVerifier } from '../Verifiers'
 import { useNavigate } from 'react-router-dom'
+import { VerifyFormContext } from '../VerifyFormContext'
 
 export const LookupView = () => {
   const { settings, clientInstance } = useContext(AppContext)
-  const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
+  const { selectedChain, setSelectedChain } = useContext(VerifyFormContext)
   const [contractAddress, setContractAddress] = useState('')
   const [contractAddressError, setContractAddressError] = useState('')
   const [loadingVerifiers, setLoadingVerifiers] = useState<Partial<Record<VerifierIdentifier, boolean>>>({})
