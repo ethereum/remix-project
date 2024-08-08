@@ -98,8 +98,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
       const targetDocument = treeRef.current
 
-      console.log('what does the ref contain?', { treeRef })
-
       targetDocument.addEventListener('keydown', keyPressHandler)
       targetDocument.addEventListener('keyup', keyUpHandler)
       return () => {
@@ -251,82 +249,41 @@ export const FileExplorer = (props: FileExplorerProps) => {
       }
     }
 
-    const focus = state.copyElement
-    console.log('copied', focus)
-
     if (treeRef.current) {
       const targetDocument = treeRef.current
-      let CopyComboHandler: (eve: KeyboardEvent) => Promise<void>
-      let CutHandler: (eve: KeyboardEvent) => Promise<void>
-      let pasteHandler: (eve: KeyboardEvent) => Promise<void>
-      let pcCopyHandler: (eve: KeyboardEvent) => Promise<void>
-      let pcCutHandler: (eve: KeyboardEvent) => Promise<void>
-      let pcPasteHandler: (eve: KeyboardEvent) => Promise<void>
 
-      if ((window as any).navigator.platform === 'MacIntel') {
-        CopyComboHandler = async (eve: KeyboardEvent) => {
-          if (eve.metaKey && eve.code === 'KeyC') {
-            await performCopy()
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-            return
-          }
+      const CopyComboHandler = async (eve: KeyboardEvent) => {
+        if ((eve.metaKey || eve.ctrlKey) && (eve.key === 'c' || eve.code === 'KeyC')) {
+          await performCopy()
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'copyCombo', 'copyFilesOrFile'])
+          return
         }
+      }
 
-        CutHandler = async (eve: KeyboardEvent) => {
-          if (eve.metaKey && eve.code === 'KeyX') {
-            await performCut()
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'f2ToRename', 'RenamePath'])
-            return
-          }
+      const CutHandler = async (eve: KeyboardEvent) => {
+        if ((eve.metaKey || eve.ctrlKey) && (eve.key === 'x' || eve.code === 'KeyX')) {
+          await performCut()
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'cutCombo', 'cutFilesOrFile'])
+          return
         }
+      }
 
-        pasteHandler = async (eve: KeyboardEvent) => {
-          if (eve.metaKey && eve.code === 'KeyV') {
-            performPaste()
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'metaVToPaste', 'PasteCopiedContent'])
-            return
-          }
-        }
-      } else {
-        pcCopyHandler = async (eve: KeyboardEvent) => {
-          if (eve.ctrlKey && eve.key === 'c') {
-            await performCopy()
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'CtrlCToCopy', 'CopyPath'])
-            return
-          }
-        }
-
-        pcCutHandler = async (eve: KeyboardEvent) => {
-          if (eve.ctrlKey && eve.code === 'KeyX') {
-            await performCut()
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'CtrlXToCut', 'CutPath'])
-            return
-          }
-        }
-
-        pcPasteHandler = async (eve: KeyboardEvent) => {
-          if (eve.key === 'Control' && eve.code === 'KeyV') {
-            performPaste()
-            feWindow._paq.push(['trackEvent', 'fileExplorer', 'ctrlVToPaste', 'PasteCopiedContent'])
-            return
-          }
+      const pasteHandler = async (eve: KeyboardEvent) => {
+        if ((eve.metaKey || eve.ctrlKey) && (eve.key === 'v' || eve.code === 'KeyV')) {
+          performPaste()
+          feWindow._paq.push(['trackEvent', 'fileExplorer', 'pasteCombo', 'PasteCopiedContent'])
+          return
         }
       }
 
       targetDocument?.addEventListener('keydown', CopyComboHandler)
       targetDocument?.addEventListener('keydown', CutHandler)
       targetDocument?.addEventListener('keydown', pasteHandler)
-      targetDocument?.addEventListener('keydown', pcPasteHandler)
-      targetDocument?.addEventListener('keydown', pcCopyHandler)
-      targetDocument?.addEventListener('keydown', pcCutHandler)
 
       return () => {
         targetDocument?.removeEventListener('keydown', pasteHandler)
-        targetDocument?.removeEventListener('keydown', pcPasteHandler)
         targetDocument?.removeEventListener('keydown', CutHandler)
-        targetDocument?.removeEventListener('keydown', pcCutHandler)
         targetDocument?.removeEventListener('keydown', CopyComboHandler)
-        targetDocument?.removeEventListener('keydown', pcCopyHandler)
       }
     }
   }, [treeRef.current, feTarget, canPaste, state.copyElement.length])
