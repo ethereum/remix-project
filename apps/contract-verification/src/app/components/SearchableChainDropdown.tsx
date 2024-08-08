@@ -16,7 +16,7 @@ interface DropdownProps {
 
 export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, setSelectedChain, selectedChain }) => {
   const { chains } = React.useContext(AppContext)
-  const ethereumChainIds = [1, 3, 4, 5, 11155111, 17000]
+  const ethereumChainIds = [1, 11155111, 17000]
 
   // Add Ethereum chains to the head of the chains list. Sort the rest alphabetically
   const dropdownChains = useMemo(
