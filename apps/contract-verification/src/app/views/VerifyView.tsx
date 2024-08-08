@@ -2,27 +2,20 @@ import { useContext, useEffect, useState } from 'react'
 
 import { AppContext } from '../AppContext'
 import { SearchableChainDropdown, ContractDropdown, ContractAddressInput } from '../components'
-import type { VerifierIdentifier, Chain, SubmittedContract, VerificationReceipt, VerifierInfo, VerificationResponse } from '../types'
+import type { VerifierIdentifier, SubmittedContract, VerificationReceipt, VerifierInfo, VerificationResponse } from '../types'
 import { VERIFIERS } from '../types'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
 import { useNavigate } from 'react-router-dom'
 import { ConstructorArguments } from '../components/ConstructorArguments'
-import { ContractDropdownSelection } from '../components/ContractDropdown'
 import { CustomTooltip } from '@remix-ui/helper'
 import { AbstractVerifier, getVerifier } from '../Verifiers'
+import { VerifyFormContext } from '../VerifyFormContext'
 
 export const VerifyView = () => {
   const { compilationOutput, setSubmittedContracts, settings } = useContext(AppContext)
-  const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
-  const [contractAddress, setContractAddress] = useState('')
-  const [contractAddressError, setContractAddressError] = useState('')
-  const [abiEncodedConstructorArgs, setAbiEncodedConstructorArgs] = useState<string>('')
-  const [abiEncodingError, setAbiEncodingError] = useState<string>('')
-  const [selectedContract, setSelectedContract] = useState<ContractDropdownSelection | undefined>()
+  const { selectedChain, setSelectedChain, contractAddress, setContractAddress, contractAddressError, setContractAddressError, selectedContract, setSelectedContract, proxyAddress, setProxyAddress, proxyAddressError, setProxyAddressError, abiEncodedConstructorArgs, setAbiEncodedConstructorArgs, abiEncodingError, setAbiEncodingError } = useContext(VerifyFormContext)
   const [enabledVerifiers, setEnabledVerifiers] = useState<Partial<Record<VerifierIdentifier, boolean>>>({})
-  const [hasProxy, setHasProxy] = useState(false)
-  const [proxyAddress, setProxyAddress] = useState('')
-  const [proxyAddressError, setProxyAddressError] = useState('')
+  const [hasProxy, setHasProxy] = useState(!!proxyAddress)
   const navigate = useNavigate()
 
   const chainSettings = selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined
@@ -116,6 +109,8 @@ export const VerifyView = () => {
 
     setSubmittedContracts((prev) => ({ ...prev, [newSubmittedContract.id]: newSubmittedContract }))
 
+    setContractAddress('')
+
     // Take user to receipt view
     navigate('/receipts')
 
@@ -164,7 +159,7 @@ export const VerifyView = () => {
 
       <ContractAddressInput label="Contract Address" id="contract-address" contractAddress={contractAddress} setContractAddress={setContractAddress} contractAddressError={contractAddressError} setContractAddressError={setContractAddressError} />
 
-      <ContractDropdown label="Contract Name" id="contract-dropdown-1" setSelectedContract={setSelectedContract} />
+      <ContractDropdown label="Contract Name" id="contract-dropdown-1" selectedContract={selectedContract} setSelectedContract={setSelectedContract} />
 
       {selectedContract && <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} abiEncodingError={abiEncodingError} setAbiEncodingError={setAbiEncodingError} />}
 

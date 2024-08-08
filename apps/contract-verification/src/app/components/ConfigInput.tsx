@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { ethers } from 'ethers/'
 
 interface ConfigInputProps {
   label: string
