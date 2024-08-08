@@ -2,6 +2,7 @@ import React from 'react'
 import type { ThemeType, Chain, SubmittedContracts, ContractVerificationSettings } from './types'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractVerificationPluginClient } from './ContractVerificationPluginClient'
+import { ContractDropdownSelection } from './components/ContractDropdown'
 
 // Define the type for the context
 type AppContextType = {

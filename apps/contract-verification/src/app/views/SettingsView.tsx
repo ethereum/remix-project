@@ -3,10 +3,11 @@ import { SearchableChainDropdown, ConfigInput } from '../components'
 import type { VerifierIdentifier, Chain, VerifierSettings, ContractVerificationSettings } from '../types'
 import { mergeChainSettingsWithDefaults } from '../utils'
 import { AppContext } from '../AppContext'
+import { VerifyFormContext } from '../VerifyFormContext'
 
 export const SettingsView = () => {
   const { settings, setSettings } = useContext(AppContext)
-  const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
+  const { selectedChain, setSelectedChain } = useContext(VerifyFormContext)
 
   const chainSettings = selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined
 
