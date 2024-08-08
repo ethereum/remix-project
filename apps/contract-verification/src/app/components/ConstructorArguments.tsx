@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { ethers } from 'ethers'
 
 import { AppContext } from '../AppContext'
@@ -22,15 +22,34 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
   const abi = compiledContract?.abi
 
   const constructorArgs = abi && abi.find((a) => a.type === 'constructor')?.inputs
-  const [constructorArgsValues, setConstructorArgsValues] = useState<string[]>(Array(constructorArgs?.length ?? 0).fill(''))
 
+  const decodeConstructorArgs = (value: string) => {
+    try {
+      const decodedObj = ethers.utils.defaultAbiCoder.decode(
+        constructorArgs.map((inp) => inp.type),
+        value
+      )
+      const decoded = decodedObj.map((val) => JSON.stringify(val))
+      return { decoded, errorMessage: '' }
+    } catch (e) {
+      console.error(e)
+      const errorMessage = 'Decoding error: ' + e.message
+      const decoded = Array(constructorArgs?.length ?? 0).fill('')
+      return { decoded, errorMessage }
+    }
+  }
+
+  const [constructorArgsValues, setConstructorArgsValues] = useState<string[]>(abiEncodedConstructorArgs ? decodeConstructorArgs(abiEncodedConstructorArgs).decoded : Array(constructorArgs?.length ?? 0).fill(''))
+
+  const constructorArgsInInitialState = useRef(true)
   useEffect(() => {
-    setConstructorArgsValues([])
+    if (constructorArgsInInitialState.current) {
+      constructorArgsInInitialState.current = false
+      return
+    }
     setAbiEncodedConstructorArgs('')
     setAbiEncodingError('')
-    if (constructorArgs) {
-      setConstructorArgsValues(Array(constructorArgs.length).fill(''))
-    }
+    setConstructorArgsValues(Array(constructorArgs?.length ?? 0).fill(''))
   }, [constructorArgs])
 
   const handleConstructorArgs = (value: string, index: number) => {
@@ -67,17 +86,9 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
 
   const handleRawConstructorArgs = (value: string) => {
     setAbiEncodedConstructorArgs(value)
-    try {
-      const decoded = ethers.utils.defaultAbiCoder.decode(
-        constructorArgs.map((inp) => inp.type),
-        value
-      )
-      setConstructorArgsValues(decoded.map((val) => JSON.stringify(val)))
-      setAbiEncodingError('')
-    } catch (e) {
-      console.error(e)
-      setAbiEncodingError('Decoding error: ' + e.message)
-    }
+    const { decoded, errorMessage } = decodeConstructorArgs(value)
+    setConstructorArgsValues(decoded)
+    setAbiEncodingError(errorMessage)
   }
 
   if (!selectedContract) return null
@@ -105,7 +116,7 @@ export const ConstructorArguments: React.FC<ConstructorArgumentsProps> = ({ abiE
           {constructorArgs.map((inp, i) => (
             <div key={`constructor-arg-${inp.name}`} className="d-flex flex-row align-items-center justify-content-between mb-2">
               <div className="mr-2 small">{inp.name}</div>
-              <input className="form-control w-50" placeholder={inp.type} value={constructorArgsValues[i]} onChange={(e) => handleConstructorArgs(e.target.value, i)} />
+              <input className="form-control w-50" placeholder={inp.type} value={constructorArgsValues[i] ?? ''} onChange={(e) => handleConstructorArgs(e.target.value, i)} />
             </div>
           ))}
           {abiEncodedConstructorArgs && (
