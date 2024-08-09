@@ -8,19 +8,6 @@ import { runSetupAndExport } from "../actions"
 export function SetupExports () {
   const circuitApp = useContext(CircuitAppContext)
 
-  const handleRunSetup = async () => {
-    try {
-      circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'exporting' })
-      await runSetupAndExport(circuitApp.plugin, circuitApp.appState)
-      circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
-      circuitApp.dispatch({ type: 'SET_SETUP_EXPORT_STATUS', payload: 'done' })
-    } catch (e) {
-      circuitApp.dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
-      circuitApp.dispatch({ type: 'SET_SETUP_EXPORT_FEEDBACK', payload: e.message })
-      console.error(e)
-    }
-  }
-
   return (
     <div className="flex-column">
       <div className="flex-column d-flex">
@@ -115,7 +102,7 @@ export function SetupExports () {
               <FormattedMessage id="circuit.exportVerificationKey" />
             </label>
           </div>
-          <SetupExportsBtn handleRunSetup={handleRunSetup} status={circuitApp.appState.status} />
+          <SetupExportsBtn handleRunSetup={() => runSetupAndExport(circuitApp.plugin, circuitApp.appState, circuitApp.dispatch)} status={circuitApp.appState.status} />
         </div>
       </div>
     </div>

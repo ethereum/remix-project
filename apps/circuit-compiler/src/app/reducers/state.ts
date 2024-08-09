@@ -14,13 +14,16 @@ export const appInitialState: AppState = {
   signalInputs: [],
   compilerFeedback: null,
   computeFeedback: null,
+  proofFeedback: null,
   setupExportFeedback: null,
   setupExportStatus: null,
   provingScheme: 'groth16',
   ptauList: PTAU_LIST,
   ptauValue: "final_14.ptau",
   exportVerificationContract: true,
-  exportVerificationKey: true
+  exportVerificationKey: true,
+  verificationKey: null,
+  zKey: null
 }
 
 export const appReducer = (state = appInitialState, action: Actions): AppState => {
@@ -86,6 +89,12 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
       setupExportFeedback: action.payload
     }
 
+  case 'SET_PROOF_FEEDBACK':
+    return {
+      ...state,
+      proofFeedback: action.payload
+    }
+
   case 'SET_FILE_PATH_TO_ID':
     return {
       ...state,
@@ -120,6 +129,18 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
     return {
       ...state,
       setupExportStatus: action.payload
+    }
+
+  case 'SET_VERIFICATION_KEY':
+    return {
+      ...state,
+      verificationKey: action.payload
+    }
+
+  case 'SET_ZKEY':
+    return {
+      ...state,
+      zKey: action.payload
     }
 
   default:

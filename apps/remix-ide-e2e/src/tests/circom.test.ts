@@ -88,7 +88,6 @@ module.exports = {
       .frameParent()
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/groth16/zk/keys/verification_key.json"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/groth16/zk/keys/zkey_final.txt"]')
   },
   'Should run Plonk setup and export for a simple circuit using the GUI #group2': function (browser: NightwatchBrowser) {
     browser
@@ -103,7 +102,6 @@ module.exports = {
       .frameParent()
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/plonk/zk/keys/verification_key.json"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/plonk/zk/keys/zkey_final.txt"]')
   },
   'Should compile a simple circuit using CTRL + S from the editor #group3': function (browser: NightwatchBrowser) {
     browser
@@ -202,7 +200,6 @@ module.exports = {
       .pause(25000)
       .journalLastChildIncludes('setup done.')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/keys/verification_key.json"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/keys/zkey_final.txt"]')
   },
   'Should run groth16 zkproof script for hash checker #group5': function (browser: NightwatchBrowser) {
     browser
@@ -237,7 +234,6 @@ module.exports = {
       .pause(10000)
       .journalLastChildIncludes('setup done')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/keys/verification_key.json"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/keys/zkey_final.txt"]')
   },
   'Should run plonk zkproof script for hash checker #group6': function (browser: NightwatchBrowser) {
     browser

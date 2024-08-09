@@ -2,7 +2,7 @@ import { compiler_list } from 'circom_wasm'
 import { Dispatch } from 'react'
 import type { CircomPluginClient } from '../services/circomPluginClient'
 
-export type CompilerStatus = "compiling" | "computing" | "idle" | "errored" | "warning" | "exporting"
+export type CompilerStatus = "compiling" | "computing" | "idle" | "errored" | "warning" | "exporting" | "proving"
 
 export type ProvingScheme = 'groth16' | 'plonk'
 
@@ -31,13 +31,16 @@ export interface ActionPayloadTypes {
   SET_SIGNAL_INPUTS: string[],
   SET_COMPILER_FEEDBACK: string | CompilerReport[],
   SET_COMPUTE_FEEDBACK: string | CompilerReport[],
+  SET_PROOF_FEEDBACK: string | CompilerReport[],
   SET_SETUP_EXPORT_FEEDBACK: string | CompilerReport[],
   SET_FILE_PATH_TO_ID: Record<number, string>,
   SET_PROVING_SCHEME: ProvingScheme,
   SET_PTAU_VALUE: string,
   SET_EXPORT_VERIFICATION_CONTRACT: boolean,
   SET_EXPORT_VERIFICATION_KEY: boolean,
-  SET_SETUP_EXPORT_STATUS: SetupExportStatus
+  SET_SETUP_EXPORT_STATUS: SetupExportStatus,
+  SET_VERIFICATION_KEY: Record<string, any>,
+  SET_ZKEY: any
 }
 export interface Action<T extends keyof ActionPayloadTypes> {
   type: T
@@ -58,13 +61,16 @@ export interface AppState {
   signalInputs: string[],
   compilerFeedback: string | CompilerReport[],
   computeFeedback: string | CompilerReport[],
+  proofFeedback: string | CompilerReport[],
   setupExportFeedback: string | CompilerReport[],
   setupExportStatus: SetupExportStatus,
   provingScheme: ProvingScheme,
   ptauList: Array<PtauFile>,
   ptauValue: string,
   exportVerificationContract: boolean,
-  exportVerificationKey: boolean
+  exportVerificationKey: boolean,
+  verificationKey: Record<string, any>,
+  zKey: Uint8Array
 }
 
 export type CompilationConfig = {
