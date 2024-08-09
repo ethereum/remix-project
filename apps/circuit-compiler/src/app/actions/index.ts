@@ -153,9 +153,9 @@ export const generateProof = async (plugin: CircomPluginClient, appState: AppSta
         ],
         _pubSignals: publicSignals
       }, null, 2))
-      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
-      dispatch({ type: 'SET_PROOF_FEEDBACK', payload: null })
     }
+    dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+    dispatch({ type: 'SET_PROOF_FEEDBACK', payload: null })
   } catch (e) {
     dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
     dispatch({ type: 'SET_PROOF_FEEDBACK', payload: e.message })
