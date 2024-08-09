@@ -1,6 +1,7 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
 import { circomCli } from "../tools/circom"
+import path from "path"
 
 const profile: Profile = {
   displayName: 'circom',
@@ -15,12 +16,6 @@ export class CircomElectronPlugin extends ElectronBasePlugin {
     super(profile, clientProfile, CircomElectronPluginClient)
     this.methods = [...super.methods]
   }
-
-  async onActivation(): Promise<void> {
-    console.log('activating to exec')
-    if (!(await circomCli.isCargoInstalled())) await circomCli.installRustup()
-    if (!(await circomCli.isCircomInstalled())) await circomCli.installCircom()
-  }
 }
 
 const clientProfile: Profile = {
@@ -31,15 +26,28 @@ const clientProfile: Profile = {
 }
 
 class CircomElectronPluginClient extends ElectronBasePluginClient {
-  circomIsInstalled: boolean = false
+  isCircomInstalled: boolean = false
 
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
     this.onload()
   }
 
-  async compile() {
-    console.log('compiling circom circuit...')
+  async install() {
+    this.isCircomInstalled = await circomCli.isCircomInstalled()
+    if (!this.isCircomInstalled) {
+      await circomCli.installCircom()
+      this.isCircomInstalled = true
+    }
+  }
+
+  async compile(filePath: string) {
+    if (!this.isCircomInstalled) await this.install()
+    // @ts-ignore
+    const wd = await this.call('fs', 'getWorkingDir')
+    filePath = path.join(wd, filePath)
+    console.log('Running circom compilation for ', filePath)
+    await circomCli.run(filePath)
   }
 
   parse(): void {

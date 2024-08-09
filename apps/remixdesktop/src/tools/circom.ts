@@ -1,37 +1,74 @@
 import { app } from 'electron'
 import { promisify } from 'util'
 import { exec } from 'child_process'
-import { gitProxy } from './git'
 import path from 'path'
-import { existsSync } from 'fs'
+import fs, { existsSync } from 'fs'
+import axios from 'axios'
 
 const execAsync = promisify(exec)
+const CIRCOM_INSTALLATION_PATH = getInstallationPath()
+const CIRCOM_INSTALLATION_URL = getInstallationUrl()
+
+async function downloadFile(url: string, dest: string) {
+  const writer = fs.createWriteStream(dest)
+  const response = await axios({
+    url,
+    method: 'GET',
+    responseType: 'stream'
+  })
+
+  response.data.pipe(writer)
+
+  return new Promise((resolve, reject) => {
+    writer.on('finish', () => {
+      if (process.platform !== 'win32') {
+        // Make the file executable
+        fs.chmod(dest, 0o755, (err) => {
+          if (err) {
+            reject(`Error making file executable: ${err}`)
+          } else {
+            resolve(dest)
+          }
+        })
+      }
+      resolve(true)
+    })
+    writer.on('error', reject)
+  })
+}
+
+function getInstallationPath() {
+  switch (process.platform) {
+  case 'win32':
+    return path.join(app.getPath('temp'), 'circom-windows-amd64.exe')
+
+  case 'darwin':
+    return path.join(app.getAppPath(), 'circom-macos-amd64')
+
+  case 'linux':
+    return path.join(app.getAppPath(), 'circom-linux-amd64')
+  }
+}
+
+function getInstallationUrl() {
+  switch (process.platform) {
+  case 'win32':
+    return "https://github.com/iden3/circom/releases/latest/download/circom-windows-amd64.exe"
+
+  case 'darwin':
+    return "https://github.com/iden3/circom/releases/latest/download/circom-macos-amd64"
+
+  case 'linux':
+    return "https://github.com/iden3/circom/releases/latest/download/circom-linux-amd64"
+  }
+}
 
 export const circomCli = {
-  async installRustup () {
-    try {
-      if (process.platform !== 'win32') {
-        console.log('installing rustup for unix')
-        const { stdout } = await execAsync(`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`)
-
-        console.log('stdout: ', stdout)
-      } else {
-        console.log('installing rustup for windows')
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  },
-
   async installCircom () {
     try {
-      const appPath = app.getAppPath()
-      const targetPath = path.join(appPath, 'bin')
-
-      console.log('cloning circom repo to ' + targetPath)
-      if (!existsSync(`${targetPath}/circom`)) await gitProxy.clone('https://github.com/iden3/circom.git', targetPath)
-      console.log('builing circom with cargo')
-      await execAsync(`cd ${targetPath}/circom && cargo build --release && cargo install --path circom`)
+      console.log('downloading circom to ', CIRCOM_INSTALLATION_PATH)
+      await downloadFile(CIRCOM_INSTALLATION_URL, CIRCOM_INSTALLATION_PATH)
+      console.log('downloading done')
     } catch (e) {
       console.error(e)
     }
@@ -39,21 +76,17 @@ export const circomCli = {
 
   async isCircomInstalled () {
     try {
-      await execAsync(`circom --version`)
-
-      return true
+      return existsSync(CIRCOM_INSTALLATION_PATH)
     } catch (e) {
       return false
     }
   },
 
-  async isCargoInstalled () {
-    try {
-      await execAsync(`cargo version`)
+  async run (filePath: string, options?: Record<string, string>) {
+    const cmd = `${CIRCOM_INSTALLATION_PATH} ${filePath} ${Object.keys(options || {}).map((key) => `--${key} ${options[key]}`).join(' ')}`
+    const { stdout, stderr } = await execAsync(cmd)
 
-      return true
-    } catch (e) {
-      return false
-    }
+    if (stderr) return console.error(stderr)
+    console.log(stdout)
   }
 }
