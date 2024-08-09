@@ -101,6 +101,7 @@ export interface FilePanelType extends ViewPlugin {
 export interface FileExplorerProps {
     name: string,
     menuItems?: string[],
+    canPaste: boolean
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
@@ -158,6 +159,7 @@ export interface FileExplorerProps {
     dragStatus: (status: boolean) => void
     importFromIpfs: any
     importFromHttps: any
+    handleMultiCopies: any
 }
 
 export interface FileExplorerMenuProps {
@@ -205,6 +207,7 @@ export interface WorkSpaceState {
     ctrlKey: boolean
     deleteKey?: boolean
     F2Key?: boolean
+    cutShortcut: boolean
     newFileName: string
     actions: {
       id: string

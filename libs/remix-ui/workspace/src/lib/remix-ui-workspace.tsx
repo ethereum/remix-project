@@ -51,6 +51,9 @@ export function Workspace() {
 
   const [state, setState] = useState<WorkSpaceState>({
     ctrlKey: false,
+    cutShortcut: false,
+    deleteKey: false,
+    F2Key: false,
     newFileName: '',
     actions: contextMenuActions,
     focusContext: {
@@ -510,6 +513,15 @@ export function Workspace() {
         intl.formatMessage({ id: 'filePanel.cancel' })
       )
     }
+  }
+
+  const handleMultipleItemCopies = (copied: {key: string, type: 'folder' | 'file' | 'workspace'}[]) => {
+    setState((prevState) => {
+      return { ...prevState, copyElement: copied }
+    })
+    setCanPaste(true)
+    const path = copied[0].key
+    global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { path }))
   }
 
   const handleCopyClick = (path: string, type: 'folder' | 'file' | 'workspace') => {
@@ -1040,6 +1052,7 @@ export function Workspace() {
                   dispatchMoveFolder={global.dispatchMoveFolder}
                   dispatchMoveFolders={global.dispatchMoveFolders}
                   handleCopyClick={handleCopyClick}
+                  handleMultiCopies={handleMultipleItemCopies}
                   handlePasteClick={handlePasteClick}
                   addMenuItems={addMenuItems}
                   removeMenuItems={removeMenuItems}
@@ -1058,6 +1071,7 @@ export function Workspace() {
                   renamePath={editModeOn}
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
+                  canPaste={canPaste}
                 />
 
               )}
@@ -1075,6 +1089,7 @@ export function Workspace() {
                   files={global.fs.localhost.files}
                   flatTree={global.fs.localhost.flatTree}
                   fileState={[]}
+                  canPaste={canPaste}
                   workspaceState={state}
                   expandPath={global.fs.localhost.expandPath}
                   focusEdit={global.fs.focusEdit}
@@ -1108,6 +1123,7 @@ export function Workspace() {
                   dispatchMoveFolder={global.dispatchMoveFolder}
                   dispatchMoveFolders={global.dispatchMoveFolders}
                   handleCopyClick={handleCopyClick}
+                  handleMultiCopies={handleMultipleItemCopies}
                   handlePasteClick={handlePasteClick}
                   addMenuItems={addMenuItems}
                   removeMenuItems={removeMenuItems}
