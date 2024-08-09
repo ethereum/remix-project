@@ -9,7 +9,7 @@ import '../css/file-explorer.css'
 import { checkSpecialChars, extractNameFromKey, extractParentFromKey, getPathIcon, joinPath } from '@remix-ui/helper'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ROOT_PATH } from '../utils/constants'
-import { moveFileIsAllowed, moveFilesIsAllowed, moveFolderIsAllowed, moveFoldersIsAllowed } from '../actions'
+import { copyFile, moveFileIsAllowed, moveFilesIsAllowed, moveFolderIsAllowed, moveFoldersIsAllowed } from '../actions'
 import { FlatTree } from './flat-tree'
 import { FileSystemContext } from '../contexts'
 
@@ -31,14 +31,15 @@ export const FileExplorer = (props: FileExplorerProps) => {
     deletePath,
     uploadFile,
     uploadFolder,
-    fileState
+    fileState,
+    feTarget,
+    setFeTarget
   } = props
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   // const [isPending, startTransition] = useTransition();
   const treeRef = useRef<HTMLDivElement>(null)
 
   const { plugin } = useContext(FileSystemContext)
-  const [feTarget, setFeTarget] = useState<{ key: string, type: 'file' | 'folder' }[]>({} as { key: string, type: 'file' | 'folder' }[])
   const [filesSelected, setFilesSelected] = useState<string[]>([])
   const feWindow = (window as any)
 
@@ -497,7 +498,6 @@ export const FileExplorer = (props: FileExplorerProps) => {
               <div onClick={handleFileExplorerMenuClick}>
                 <FileExplorerMenu
                   title={''}
-
                   menuItems={props.menuItems}
                   createNewFile={handleNewFileInput}
                   createNewFolder={handleNewFolderInput}

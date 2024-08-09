@@ -40,6 +40,7 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
     focus,
     downloadPath,
     uploadFile,
+    publishManyFilesToGist,
     ...otherProps
   } = props
   const contextMenuRef = useRef(null)
@@ -196,6 +197,10 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               case 'Publish file to gist':
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFileToGist'])
                 publishFileToGist(path)
+                break
+              case 'Publish files to gist':
+                _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishFilesToGist'])
+                publishManyFilesToGist()
                 break
               case 'Run':
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'runScript'])

@@ -18,6 +18,7 @@ import { appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
 import { branch } from '@remix-ui/git'
+import { publishFilesToGist } from './actions'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -126,6 +127,7 @@ export function Workspace() {
   })
 
   const [validationResult, setValidationResult] = useState<ValidationResult>({ valid: true, message: '' })
+  const [feTarget, setFeTarget] = useState<{ key: string, type: 'file' | 'folder' }[]>({} as { key: string, type: 'file' | 'folder' }[])
 
   const loadingInitialState = {
     tooltip: '',
@@ -149,6 +151,68 @@ export function Workspace() {
       return { ...prevState, toasterMsg: message }
     })
   }
+
+  const nameGistFolder = (filePath: string) => {
+    const prepend = `Gist_${filePath}`
+    const append = `${prepend}-folder`
+    return append
+  }
+
+  /**
+   * Void action to ensure multiselected files are published
+   * folders are not handled
+   */
+  const handlePublishingMultiSelectedFilesToGist = async () => {
+    // first create a temporary folder to populate selected files
+    try {
+      // await global.dispatchCreateNewFolder(tempFolderName, ROOT_PATH)
+      const selectedFiles = []
+      for (const one of feTarget) {
+        if (one.type === 'folder') return
+        const content = await global.plugin.call('fileManager', 'readFile', one.key)
+        selectedFiles.push({ key: one.key, type: one.type, content: content })
+      }
+      console.log('Files selected', selectedFiles)
+      // publishFilesToGist(selectedFiles)
+      global.dispatchPublishFilesToGist(selectedFiles)
+      // console.log('completed')
+      // await global.dispatchPublishToGist(ROOT_PATH)
+      // global.plugin.on('finishedGistPublish', async (folderName) => {
+      //   console.log('name of folder', folderName)
+      //   if (folderName === tempFolderName)
+      //     await global.dispatchDeletePath(folderName)
+      // })
+      // const selectedFiles = []
+      // let gistFolder = ''
+      // let tempFolderName = ''
+      // for (const one of feTarget) {
+      //   if (one.type === 'folder') return
+      //   // const content = await global.plugin.call('fileManager', 'readFile', one.key)
+      //   // selectedFiles.push({ key: one.key, type: one.type, content: content })
+      //   tempFolderName += one.key
+      // }
+      // gistFolder = nameGistFolder(tempFolderName)
+      // await global.dispatchCreateNewFolder(gistFolder, ROOT_PATH)
+      // for (const one of feTarget) {
+      //   await copyFile(one.key, gistFolder)
+      // }
+      // publishFolderToGist(gistFolder)
+      // console.log('check this out', { selectedFiles, gistFolder })
+      // setTimeout(async () => {
+      //   // await global.dispatchDeletePath([gistFolder])
+      //   await deletePath([gistFolder])
+      // }, 500)
+    } catch (error) {
+      await global.plugin.call('notification', 'toast', 'Could not publish files to gist. There was an error')
+      await global.plugin.call('notification', 'toast', typeof(error) === 'string' ? error : `${console.log(error)} check the console for more details`)
+    }
+  }
+
+  useEffect(() => {
+    global.plugin.on('finishedGistPublish', (folderName) => {
+      console.log('finished publishing to gist', folderName)
+    })
+  }, [])
 
   const showFullMessage = async (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
     setModalState((prevState) => {
@@ -1008,6 +1072,9 @@ export function Workspace() {
                   files={global.fs.browser.files}
                   flatTree={global.fs.browser.flatTree}
                   workspaceState={state}
+                  feTarget={feTarget}
+                  setFeTarget={setFeTarget}
+                  publishManyFilesToGist={handlePublishingMultiSelectedFilesToGist}
                   expandPath={global.fs.browser.expandPath}
                   focusEdit={global.fs.focusEdit}
                   focusElement={global.fs.focusElement}
@@ -1076,6 +1143,9 @@ export function Workspace() {
                   flatTree={global.fs.localhost.flatTree}
                   fileState={[]}
                   workspaceState={state}
+                  feTarget={feTarget}
+                  setFeTarget={setFeTarget}
+                  publishManyFilesToGist={handlePublishingMultiSelectedFilesToGist}
                   expandPath={global.fs.localhost.expandPath}
                   focusEdit={global.fs.focusEdit}
                   focusElement={global.fs.focusElement}
@@ -1250,7 +1320,7 @@ export function Workspace() {
       )}
       {state.showContextMenu && (
         <FileExplorerContextMenu
-          actions={global.fs.focusElement.length > 1 ? state.actions.filter((item) => item.multiselect) : state.actions.filter((item) => !item.multiselect)}
+          actions={(global.fs.focusElement.length > 1 || feTarget.length > 1) ? state.actions.filter((item) => item.multiselect) : state.actions.filter((item) => !item.multiselect)}
           hideContextMenu={hideContextMenu}
           createNewFile={handleNewFileInput}
           createNewFolder={handleNewFolderInput}
@@ -1273,6 +1343,7 @@ export function Workspace() {
           publishFileToGist={publishFileToGist}
           uploadFile={uploadFile}
           downloadPath={downloadPath}
+          publishManyFilesToGist={handlePublishingMultiSelectedFilesToGist}
         />
       )}
 
