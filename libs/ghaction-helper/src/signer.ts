@@ -11,7 +11,7 @@ export class SignerWithAddress extends ethers.Signer {
         connect: (provider: any) => any,
         _signTypedData: (...params: any) => any
     }
-  provider: any
+  provider: any = null
   static async create(signer: any) {
     return new SignerWithAddress(await signer.getAddress(), signer)
   }

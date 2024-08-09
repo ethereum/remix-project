@@ -5,7 +5,7 @@ import { RefType } from './RefType'
 const sha3256 = util.sha3_256
 
 export class ArrayType extends RefType {
-  underlyingType
+  // declare underlyingType
   arraySize
 
   constructor (underlyingType, arraySize, location) {
