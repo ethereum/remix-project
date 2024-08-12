@@ -194,13 +194,43 @@ export class InferenceManager implements ICompletions {
     }
   }
 
-  getPythonScriptPath() {
-    return path.join(process.cwd(), 'dist', 'InferenceServer');
+  private _getServerPath() {
+    // get cpu arch
+    const arch = process.arch
+    let exec_suffix = ''
+
+    if (arch === 'x64') {
+      exec_suffix = 'x64'
+    } else if (arch === 'arm' || arch === 'arm64') {
+      exec_suffix = 'arm'
+    } else {
+      throw new Error('Unsupported CPU architecture')
+    }
+
+    // get platform name and return the path to the python script
+    let exec_name = ''
+    if (process.platform === 'win32') {
+      exec_name = 'InferenceServer_' + process.platform + exec_suffix + '.exe'
+    } else if (process.platform === 'linux') {
+      exec_name = 'InferenceServer_' + process.platform + exec_suffix
+    } else if (process.platform === 'darwin') {
+      exec_name = 'InferenceServer_' + process.platform + exec_suffix
+    } else {
+      throw new Error('Unsupported platform')
+    }
+    return path.join(process.cwd(), 'dist', exec_name);
+
   }
 
   private _startServer() {
     return new Promise<void>((resolve, reject) => {
-      const serverPath = this.getPythonScriptPath();
+      let serverPath = ""
+      try {
+        serverPath = this._getServerPath();
+      } catch (error) {
+        console.error('Error script path:', error);
+        return reject(error)
+      }
 
       // Check if the file exists
       if (!fs.existsSync(serverPath)) {
@@ -231,7 +261,7 @@ export class InferenceManager implements ICompletions {
         console.error(`Inference log: ${data}`);
         if (data.includes('Address already in use')) {
           console.error(`Port ${this.port} is already in use. Please stop the existing server and try again`);
-          reject(new Error(`Port ${this.port}  is already in use`));
+          return reject(new Error(`Port ${this.port}  is already in use`));
         }
         resolve();
       });

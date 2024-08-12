@@ -116,7 +116,7 @@ export class RemixAIPlugin extends ViewPlugin {
     } else {
       result = await this.remoteInferencer.solidity_answer(prompt)
     }
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
+    if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
   }
 
@@ -153,7 +153,7 @@ export class RemixAIPlugin extends ViewPlugin {
     } else {
       result = await this.remoteInferencer.error_explaining(prompt)
     }
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
+    if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
   }
 
