@@ -146,6 +146,7 @@ export function Workspace() {
   }
   const inputValue = useRef(null)
   const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
+  const [hasCopied, setHasCopied] = useState(false)
 
   const toast = (message: string) => {
     setModalState((prevState) => {
@@ -522,6 +523,7 @@ export function Workspace() {
     setCanPaste(true)
     const path = copied[0].key
     global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { path }))
+    setHasCopied(true)
   }
 
   const handleCopyClick = (path: string, type: 'folder' | 'file' | 'workspace') => {
@@ -530,6 +532,7 @@ export function Workspace() {
     })
     setCanPaste(true)
     global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { path }))
+    setHasCopied(true)
   }
 
   const handlePasteClick = (dest: string, destType: string) => {
@@ -1072,6 +1075,7 @@ export function Workspace() {
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
                   canPaste={canPaste}
+                  hasCopied={hasCopied}
                 />
 
               )}
@@ -1090,6 +1094,7 @@ export function Workspace() {
                   flatTree={global.fs.localhost.flatTree}
                   fileState={[]}
                   canPaste={canPaste}
+                  hasCopied={hasCopied}
                   workspaceState={state}
                   expandPath={global.fs.localhost.expandPath}
                   focusEdit={global.fs.focusEdit}

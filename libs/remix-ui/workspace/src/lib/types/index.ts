@@ -102,6 +102,7 @@ export interface FileExplorerProps {
     name: string,
     menuItems?: string[],
     canPaste: boolean
+    hasCopied: boolean
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
