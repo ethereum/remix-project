@@ -1075,7 +1075,6 @@ export function Workspace() {
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
                   canPaste={canPaste}
-                  hasCopied={hasCopied}
                 />
 
               )}
@@ -1094,7 +1093,6 @@ export function Workspace() {
                   flatTree={global.fs.localhost.flatTree}
                   fileState={[]}
                   canPaste={canPaste}
-                  hasCopied={hasCopied}
                   workspaceState={state}
                   expandPath={global.fs.localhost.expandPath}
                   focusEdit={global.fs.focusEdit}
