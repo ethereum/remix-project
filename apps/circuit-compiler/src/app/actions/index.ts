@@ -50,31 +50,31 @@ export const runSetupAndExport = async (plugin: CircomPluginClient, appState: Ap
     const zkey_final = { type: "mem" }
 
     if (appState.provingScheme === 'groth16') {
-      await snarkjs.zKey.newZKey(r1cs, ptau_final, zkey_final)
-      await snarkjs.zKey.verifyFromR1cs(r1cs, ptau_final, zkey_final)
-      const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final)
+      await snarkjs.zKey.newZKey(r1cs, ptau_final, zkey_final, zkLogger(plugin))
+      await snarkjs.zKey.verifyFromR1cs(r1cs, ptau_final, zkey_final, zkLogger(plugin))
+      const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final, zkLogger(plugin))
 
       if (appState.exportVerificationKey) {
         await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/groth16/zk/keys/verification_key.json`, JSON.stringify(vKey, null, 2))
       }
       if (appState.exportVerificationContract) {
         const templates = { groth16: GROTH16_VERIFIER }
-        const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
+        const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates, zkLogger(plugin))
 
         await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/groth16/zk/build/zk_verifier.sol`, solidityContract)
       }
       dispatch({ type: 'SET_ZKEY', payload: zkey_final })
       dispatch({ type: 'SET_VERIFICATION_KEY', payload: vKey })
     } else if (appState.provingScheme === 'plonk') {
-      await snarkjs.plonk.setup(r1cs, ptau_final, zkey_final)
-      const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final)
+      await snarkjs.plonk.setup(r1cs, ptau_final, zkey_final, zkLogger(plugin))
+      const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final, zkLogger(plugin))
 
       if (appState.exportVerificationKey) {
         await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/plonk/zk/keys/verification_key.json`, JSON.stringify(vKey, null, 2))
       }
       if (appState.exportVerificationContract) {
         const templates = { plonk: PLONK_VERIFIER }
-        const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
+        const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates, zkLogger(plugin))
 
         await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/plonk/zk/build/zk_verifier.sol`, solidityContract)
       }
@@ -107,10 +107,10 @@ export const generateProof = async (plugin: CircomPluginClient, appState: AppSta
     const zkey_final = appState.zKey
     const vKey = appState.verificationKey
 
-    await snarkjs.wtns.check(r1cs, wtns)
+    await snarkjs.wtns.check(r1cs, wtns, zkLogger(plugin))
     if (appState.provingScheme === 'groth16') {
-      const { proof, publicSignals } = await snarkjs.groth16.prove(zkey_final, wtns)
-      const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof)
+      const { proof, publicSignals } = await snarkjs.groth16.prove(zkey_final, wtns, zkLogger(plugin))
+      const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof, zkLogger(plugin))
 
       console.log('zk proof validity', verified)
       await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/groth16/zk/build/input.json`, JSON.stringify({
@@ -120,8 +120,8 @@ export const generateProof = async (plugin: CircomPluginClient, appState: AppSta
         _pubSignals: publicSignals,
       }, null, 2))
     } else if (appState.provingScheme === 'plonk') {
-      const { proof, publicSignals } = await snarkjs.plonk.prove(zkey_final, wtns)
-      const verified = await snarkjs.plonk.verify(vKey, publicSignals, proof)
+      const { proof, publicSignals } = await snarkjs.plonk.prove(zkey_final, wtns, zkLogger(plugin))
+      const verified = await snarkjs.plonk.verify(vKey, publicSignals, proof, zkLogger(plugin))
 
       console.log('zk proof validity', verified)
       await plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/plonk/zk/build/input.json`, JSON.stringify({
@@ -160,5 +160,16 @@ export const generateProof = async (plugin: CircomPluginClient, appState: AppSta
     dispatch({ type: 'SET_COMPILER_STATUS', payload: 'errored' })
     dispatch({ type: 'SET_PROOF_FEEDBACK', payload: e.message })
     console.error(e)
+  }
+}
+
+function zkLogger(plugin: CircomPluginClient) {
+  return {
+    info: (...args) => plugin.call('terminal', 'log', { type: 'log', value: args.join(' ') }),
+    debug: (...args) => plugin.call('terminal', 'log', { type: 'log', value: args.join(' ') }),
+    error: (...args) => {
+      plugin.call('terminal', 'log', { type: 'error', value: args.join(' ') })
+      plugin.emit('statusChanged', { key: args.length, title: `You have ${args.length} problem${args.length === 1 ? '' : 's'}`, type: 'error' })
+    }
   }
 }
