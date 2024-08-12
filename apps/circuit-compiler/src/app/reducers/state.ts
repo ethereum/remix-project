@@ -22,6 +22,7 @@ export const appInitialState: AppState = {
   ptauValue: "final_14.ptau",
   exportVerificationContract: true,
   exportVerificationKey: true,
+  exportVerifierCalldata: true,
   verificationKey: null,
   zKey: null
 }
@@ -123,6 +124,12 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
     return {
       ...state,
       exportVerificationKey: action.payload
+    }
+
+  case 'SET_EXPORT_VERIFIER_CALLDATA':
+    return {
+      ...state,
+      exportVerifierCalldata: action.payload
     }
 
   case 'SET_SETUP_EXPORT_STATUS':

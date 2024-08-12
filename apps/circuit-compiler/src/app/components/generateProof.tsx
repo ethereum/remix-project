@@ -10,6 +10,19 @@ export function GenerateProof () {
 
   return (
     <div className="flex-column d-flex">
+      <div className="mt-2 custom-control custom-checkbox">
+        <input
+          className="custom-control-input"
+          type="checkbox"
+          title="Export Verifier Calldata"
+          id="circuitExportVerifierCalldata"
+          onChange={() => circuitApp.dispatch({ type: 'SET_EXPORT_VERIFIER_CALLDATA', payload: !circuitApp.appState.exportVerifierCalldata })}
+          checked={circuitApp.appState.exportVerifierCalldata}
+        />
+        <label className="form-check-label custom-control-label pt-1" htmlFor="circuitExportVerifierCalldata">
+          <FormattedMessage id="circuit.exportVerifierCalldata" />
+        </label>
+      </div>
       <button
         className="btn btn-secondary btn-block d-block w-100 text-break mb-1 mt-1"
         onClick={() => generateProof(circuitApp.plugin, circuitApp.appState, circuitApp.dispatch)}

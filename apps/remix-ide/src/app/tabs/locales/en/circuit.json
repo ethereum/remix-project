@@ -20,5 +20,6 @@
   "circuit.randomBeacon": "Ceremony: Random Beacon",
   "circuit.exportVerifierContract": "Export verifier contract",
   "circuit.exportVerificationKey": "Export verification key",
+  "circuit.exportVerifierCalldata": "Export verifier calldata",
   "circuit.runSetup": "Run setup"
 }
