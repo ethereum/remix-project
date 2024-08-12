@@ -70,7 +70,7 @@ export const Default = (props) => {
         <button className="remix_ai_plugin_download_button text-ai pl-2 pr-0 py-0 d-flex"
 
           onClick={async () => {
-            props.plugin.call("remixAI", 'initialize', DefaultModels()[1]);
+            props.plugin.call("remixAI", 'initialize', DefaultModels()[3], DefaultModels()[1]);
           }}
         > Init Model </button>
       </div>
