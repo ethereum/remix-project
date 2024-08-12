@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 
 import { AppContext } from '../AppContext'
 import { SearchableChainDropdown, ContractDropdown, ContractAddressInput } from '../components'
@@ -10,6 +10,7 @@ import { ConstructorArguments } from '../components/ConstructorArguments'
 import { CustomTooltip } from '@remix-ui/helper'
 import { AbstractVerifier, getVerifier } from '../Verifiers'
 import { VerifyFormContext } from '../VerifyFormContext'
+import { useSourcifySupported } from '../hooks/useSourcifySupported'
 
 export const VerifyView = () => {
   const { compilationOutput, setSubmittedContracts, settings } = useContext(AppContext)
@@ -18,7 +19,9 @@ export const VerifyView = () => {
   const [hasProxy, setHasProxy] = useState(!!proxyAddress)
   const navigate = useNavigate()
 
-  const chainSettings = selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined
+  const chainSettings = useMemo(() => (selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined), [selectedChain, settings])
+
+  const sourcifySupported = useSourcifySupported(selectedChain, chainSettings)
 
   const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || !selectedContract || (hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress)
 
@@ -26,12 +29,12 @@ export const VerifyView = () => {
   useEffect(() => {
     const changedEnabledVerifiers = {}
     for (const verifierId of VERIFIERS) {
-      if (validConfiguration(chainSettings, verifierId)) {
+      if (validConfiguration(chainSettings, verifierId) && (verifierId !== 'Sourcify' || sourcifySupported)) {
         changedEnabledVerifiers[verifierId] = true
       }
     }
     setEnabledVerifiers(changedEnabledVerifiers)
-  }, [selectedChain])
+  }, [selectedChain, sourcifySupported])
 
   const handleVerifierCheckboxClick = (verifierId: VerifierIdentifier, checked: boolean) => {
     setEnabledVerifiers({ ...enabledVerifiers, [verifierId]: checked })
@@ -174,24 +177,32 @@ export const VerifyView = () => {
       <div className="pt-3">
         Verify on:
         {VERIFIERS.map((verifierId) => {
+          const disabledVerifier = !chainSettings || !validConfiguration(chainSettings, verifierId) || (verifierId === 'Sourcify' && !sourcifySupported)
+
           return (
             <div key={verifierId} className="pt-2 form-check">
-              <input className="form-check-input" type="checkbox" id={`verifier-${verifierId}`} checked={!!enabledVerifiers[verifierId]} onChange={(e) => handleVerifierCheckboxClick(verifierId, e.target.checked)} disabled={!chainSettings || !validConfiguration(chainSettings, verifierId)} />
+              <input className="form-check-input" type="checkbox" id={`verifier-${verifierId}`} checked={!!enabledVerifiers[verifierId]} onChange={(e) => handleVerifierCheckboxClick(verifierId, e.target.checked)} disabled={disabledVerifier} />
 
               <div className="d-flex flex-column align-items-start">
-                <label htmlFor={`verifier-${verifierId}`} style={{ fontSize: '1rem', lineHeight: '1.5', color: 'var(--text)' }} className={`mb-0 font-weight-bold${!chainSettings || validConfiguration(chainSettings, verifierId) ? '' : ' text-secondary'}`}>
+                <label htmlFor={`verifier-${verifierId}`} style={{ fontSize: '1rem', lineHeight: '1.5', color: 'var(--text)' }} className={`mb-0 font-weight-bold${!disabledVerifier ? '' : ' text-secondary'}`}>
                   {verifierId}
                 </label>
                 {!chainSettings ? (
                   ''
-                ) : validConfiguration(chainSettings, verifierId) ? (
-                  <span className="text-secondary">{chainSettings.verifiers[verifierId].apiUrl}</span>
-                ) : (
+                ) : !validConfiguration(chainSettings, verifierId) ? (
                   <CustomTooltip tooltipText="Configure the API in the settings">
                     <span className="text-secondary w-auto" style={{ textDecoration: 'underline dotted', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
                       Enable?
                     </span>
                   </CustomTooltip>
+                ) : verifierId === 'Sourcify' && !sourcifySupported ? (
+                  <CustomTooltip tooltipText={`The configured Sourcify server (${chainSettings.verifiers['Sourcify'].apiUrl}) does not support chain ${selectedChain?.chainId}`}>
+                    <span className="text-secondary w-auto" style={{ textDecoration: 'underline dotted', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
+                      Unsupported
+                    </span>
+                  </CustomTooltip>
+                ) : (
+                  <span className="text-secondary">{chainSettings.verifiers[verifierId].apiUrl}</span>
                 )}
               </div>
             </div>

@@ -22,6 +22,7 @@ const App = () => {
   const [submittedContracts, setSubmittedContracts] = useLocalStorage<SubmittedContracts>('contract-verification:submitted-contracts', {})
   const [chains, setChains] = useState<Chain[]>([]) // State to hold the chains data
   const [compilationOutput, setCompilationOutput] = useState<{ [key: string]: CompilerAbstract } | undefined>()
+
   // Form values:
   const [selectedChain, setSelectedChain] = useState<Chain | undefined>()
   const [contractAddress, setContractAddress] = useState('')

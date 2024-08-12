@@ -1,13 +1,14 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { SearchableChainDropdown, ContractAddressInput } from '../components'
 import { mergeChainSettingsWithDefaults, validConfiguration } from '../utils'
-import type { LookupResponse, VerifierIdentifier, Chain } from '../types'
+import type { LookupResponse, VerifierIdentifier } from '../types'
 import { VERIFIERS } from '../types'
 import { AppContext } from '../AppContext'
 import { CustomTooltip } from '@remix-ui/helper'
 import { getVerifier } from '../Verifiers'
 import { useNavigate } from 'react-router-dom'
 import { VerifyFormContext } from '../VerifyFormContext'
+import { useSourcifySupported } from '../hooks/useSourcifySupported'
 
 export const LookupView = () => {
   const { settings, clientInstance } = useContext(AppContext)
@@ -18,7 +19,9 @@ export const LookupView = () => {
   const [lookupResults, setLookupResult] = useState<Partial<Record<VerifierIdentifier, LookupResponse>>>({})
   const navigate = useNavigate()
 
-  const chainSettings = selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined
+  const chainSettings = useMemo(() => (selectedChain ? mergeChainSettingsWithDefaults(selectedChain.chainId.toString(), settings) : undefined), [selectedChain, settings])
+
+  const sourcifySupported = useSourcifySupported(selectedChain, chainSettings)
 
   const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain
 
@@ -37,7 +40,7 @@ export const LookupView = () => {
     e.preventDefault()
 
     for (const verifierId of VERIFIERS) {
-      if (!validConfiguration(chainSettings, verifierId)) {
+      if (!validConfiguration(chainSettings, verifierId) || (verifierId === 'Sourcify' && !sourcifySupported)) {
         continue
       }
 
@@ -93,6 +96,21 @@ export const LookupView = () => {
                     <CustomTooltip tooltipText="Configure the API in the settings">
                       <span className="text-secondary" style={{ textDecoration: 'underline dotted', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
                         Enable?
+                      </span>
+                    </CustomTooltip>
+                  </div>
+                </div>
+              )
+            }
+
+            if (verifierId === 'Sourcify' && !sourcifySupported) {
+              return (
+                <div key={verifierId} className="pt-4">
+                  <div>
+                    <span className="font-weight-bold text-secondary">{verifierId}</span>{' '}
+                    <CustomTooltip tooltipText={`The configured Sourcify server (${chainSettings.verifiers['Sourcify'].apiUrl}) does not support chain ${selectedChain?.chainId}`}>
+                      <span className="text-secondary w-auto" style={{ textDecoration: 'underline dotted', cursor: 'pointer' }} onClick={() => navigate('/settings')}>
+                        Unsupported
                       </span>
                     </CustomTooltip>
                   </div>
