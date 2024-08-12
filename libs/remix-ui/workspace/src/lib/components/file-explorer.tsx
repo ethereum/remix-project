@@ -35,8 +35,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
     uploadFile,
     uploadFolder,
     fileState,
-    canPaste,
-    hasCopied
+    canPaste
   } = props
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   // const [isPending, startTransition] = useTransition();
@@ -287,7 +286,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
         targetDocument?.removeEventListener('keydown', CopyComboHandler)
       }
     }
-  }, [treeRef.current, feTarget, canPaste, state.copyElement.length, hasCopied])
+  }, [treeRef.current, feTarget, feTarget.length, canPaste, state.copyElement, state.copyElement.length])
 
   const hasReservedKeyword = (content: string): boolean => {
     if (state.reservedKeywords.findIndex((value) => content.startsWith(value)) !== -1) return true
