@@ -398,7 +398,7 @@ const tokenWarning = async () => {
 
 const parseError = async (e: any) => {
   console.trace(e)
-  if(!e.message) return
+  if (!e.message) return
 
   // if message conttains 401 Unauthorized, show token warning
   if (e.message.includes('401')) {

@@ -20,7 +20,7 @@ export const Commits = () => {
   };
 
   const loadNextPage = async () => {
-    
+
     await actions.fetch({
       remote: null,
       ref: context.currentBranch,
