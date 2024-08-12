@@ -265,7 +265,8 @@ const buildGistPayload = (selectedFiles: { key: string, type: 'file' | 'folder',
 
   const files: { [key: string]: { content: string }} = {}
   for (const file of selectedFiles) {
-    files[file.key] = { content: file.content }
+    const resultingSplits = file.key.split('/')
+    files[resultingSplits[resultingSplits.length - 1]] = { content: file.content }
   }
   return files
 }
@@ -290,8 +291,6 @@ export const publishFilesToGist = (arrayOfSelectedFiles: any) => {
     const gists = new Gists({ token: accessToken })
     dispatch(displayPopUp('Creating a new gist ...'))
 
-    // console.log('checking this', { gistPayload, gists, params })
-    // return
     gists.create({
       description: description,
       public: true,
@@ -299,7 +298,6 @@ export const publishFilesToGist = (arrayOfSelectedFiles: any) => {
     }, (error, result) => {
       console.log('what comes back from gist creation', { error, result })
       handleGistResponse(error, result)
-      // throw new Error('Thing didn\'t work as expected!')
     })
     console.log('publishFilesToGistIsDone')
   } catch (error) {
