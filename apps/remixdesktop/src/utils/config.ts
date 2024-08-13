@@ -17,6 +17,9 @@ export const createDefaultConfigLocations = async() => {
     if (!fs.existsSync(cacheDir + '/models')) {
       fs.mkdirSync(cacheDir + '/models')
     }
+    if (!fs.existsSync(cacheDir + '/inferenceServer')) {
+      fs.mkdirSync(cacheDir + '/inferenceServer')
+    }
     if (!fs.existsSync(cacheDir + '/remixdesktop.json')) {
       console.log('create config file')
       fs.writeFileSync(cacheDir + '/remixdesktop.json', JSON.stringify({}))
