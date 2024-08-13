@@ -174,7 +174,6 @@ export function Workspace() {
         const content = await global.plugin.call('fileManager', 'readFile', one.key)
         selectedFiles.push({ key: one.key, type: one.type, content: content })
       }
-      console.log('Files selected', selectedFiles)
       global.dispatchPublishFilesToGist(selectedFiles)
     } catch (error) {
       await global.plugin.call('notification', 'toast', 'Could not publish files to gist. There was an error')
@@ -184,7 +183,6 @@ export function Workspace() {
 
   useEffect(() => {
     global.plugin.on('finishedGistPublish', (folderName) => {
-      console.log('finished publishing to gist', folderName)
     })
   }, [])
 
