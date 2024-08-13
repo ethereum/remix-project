@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 import type { Transform } from '@dnd-kit/utilities';
-import { Handle } from './components/Handle';
+import { Handle } from './Handle';
 
 export interface Props {
   dragOverlay?: boolean;
