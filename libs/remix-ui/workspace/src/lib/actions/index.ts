@@ -274,7 +274,6 @@ const buildGistPayload = (selectedFiles: { key: string, type: 'file' | 'folder',
 export const publishFilesToGist = (arrayOfSelectedFiles: any) => {
   const gistPayload = buildGistPayload(arrayOfSelectedFiles)
   if (!gistPayload) {
-    console.error('No files to publish');
     return;
   }
   console.log('primed and ready', gistPayload)
@@ -296,7 +295,6 @@ export const publishFilesToGist = (arrayOfSelectedFiles: any) => {
       public: true,
       files: gistPayload
     }, (error, result) => {
-      console.log('what comes back from gist creation', { error, result })
       handleGistResponse(error, result)
     })
     console.log('publishFilesToGistIsDone')
@@ -318,7 +316,6 @@ export const publishToGist = async (path?: string) => {
       id = await plugin.call('filePanel', 'isGist')
     }
     const packaged = await packageGistFiles(folder)
-    console.log('packed files', packaged)
     // check for token
     const config = plugin.registry.get('config').api
     const accessToken = config.get('settings/gist-access-token')
@@ -370,7 +367,6 @@ export const publishToGist = async (path?: string) => {
           public: true,
           files: packaged
         }, (error, result) => {
-          console.log('what comes back from gist creation', { error, result })
           handleGistResponse(error, result)
         })
       }
@@ -585,7 +581,6 @@ export const restoreBackupZip = async () => {
 const packageGistFiles = async (directory) => {
   const workspaceProvider = plugin.fileProviders.workspace
   const isFile = await workspaceProvider.isFile(directory)
-  console.log('here is the state of things in packageGistFiles', { directory, isFile })
   return new Promise((resolve, reject) => {
     const ret = {}
 
