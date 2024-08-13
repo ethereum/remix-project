@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react';
-import { Handle, Remove } from '../Item';
+import { Handle } from '../Item';
+import { Remove } from './Remove'
 
 export interface Props {
   children: React.ReactNode;

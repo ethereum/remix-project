@@ -20,8 +20,6 @@ export const Action = forwardRef<HTMLButtonElement, Props>(
           {
             ...style,
             cursor,
-            '--fill': active?.fill,
-            '--background': active?.background,
             width: 12,
           } as CSSProperties
         }
