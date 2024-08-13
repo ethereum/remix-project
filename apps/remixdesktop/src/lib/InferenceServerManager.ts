@@ -5,7 +5,7 @@ import axios from "axios";
 import { EventEmitter } from 'events';
 import { ICompletions, IModel, IParams, InsertionParams,
   CompletionParams, GenerationParams, ModelType, AIRequestType,
-  IStreamResponse, ChatHistory,
+  IStreamResponse, ChatHistory, downloadLatestReleaseExecutable,
   buildSolgptPromt } from "../../../../libs/remix-ai-core/src/index"
 
 class ServerStatusTimer {
@@ -43,6 +43,7 @@ export class InferenceManager implements ICompletions {
   selectedModels: IModel[] = []
   event: EventEmitter
   modelCacheDir: string = undefined
+  serverCacheDir: string = undefined
   private inferenceProcess: any=null
   port = 5501
   inferenceURL = 'http://127.0.0.1:' + this.port
@@ -52,6 +53,7 @@ export class InferenceManager implements ICompletions {
   private constructor(modelDir:string) {
     this.event = new EventEmitter()
     this.modelCacheDir = path.join(modelDir, 'models')
+    this.serverCacheDir = path.join(modelDir, 'inferenceServer')
     this.stateTimer= new ServerStatusTimer(() => { this._processStatus()}, 20000)
   }
 
@@ -194,6 +196,22 @@ export class InferenceManager implements ICompletions {
     }
   }
 
+  private async _downloadInferenceServer() {
+    const execPath = this._getServerPath()
+    try {
+      if (fs.existsSync(execPath)) {
+        console.log('Inference server already downloaded')
+        return true
+      } else {
+        downloadLatestReleaseExecutable(process.platform, this.serverCacheDir)
+        if (fs.existsSync(execPath)) {return true } else {return false}
+      }
+    } catch (error) {
+      console.error('Error downloading Inference server:', error)
+      return false
+    }
+  }
+
   private _getServerPath() {
     // get cpu arch
     const arch = process.arch
@@ -210,23 +228,30 @@ export class InferenceManager implements ICompletions {
     // get platform name and return the path to the python script
     let exec_name = ''
     if (process.platform === 'win32') {
-      exec_name = 'InferenceServer_' + process.platform + exec_suffix + '.exe'
+      exec_name = 'InferenceServer_' + process.platform + '.exe'
     } else if (process.platform === 'linux') {
-      exec_name = 'InferenceServer_' + process.platform + exec_suffix
+      exec_name = 'InferenceServer_' + process.platform
     } else if (process.platform === 'darwin') {
-      exec_name = 'InferenceServer_' + process.platform + exec_suffix
+      exec_name = 'InferenceServer_' + process.platform
     } else {
       throw new Error('Unsupported platform')
     }
-    return path.join(process.cwd(), 'dist', exec_name);
+    return path.join(this.serverCacheDir, exec_name);
 
   }
 
-  private _startServer() {
+  private async _startServer() {
+    const serverAvailable = await this._downloadInferenceServer()
+    if (!serverAvailable) {
+      console.error('Inference server not available for this platform')
+      return
+    }
+
     return new Promise<void>((resolve, reject) => {
       let serverPath = ""
       try {
         serverPath = this._getServerPath();
+        fs.chmodSync(serverPath, '755')
       } catch (error) {
         console.error('Error script path:', error);
         return reject(error)
@@ -241,7 +266,7 @@ export class InferenceManager implements ICompletions {
       try {
         fs.accessSync(serverPath, fs.constants.X_OK);
       } catch (err) {
-        return reject(new Error(`No execute permission on ${serverPath}`));
+        reject(new Error(`No execute permission on ${serverPath}`));
       }
 
       const spawnArgs = [this.port];
@@ -261,7 +286,7 @@ export class InferenceManager implements ICompletions {
         console.error(`Inference log: ${data}`);
         if (data.includes('Address already in use')) {
           console.error(`Port ${this.port} is already in use. Please stop the existing server and try again`);
-          return reject(new Error(`Port ${this.port}  is already in use`));
+          reject(new Error(`Port ${this.port}  is already in use`));
         }
         resolve();
       });
@@ -295,10 +320,6 @@ export class InferenceManager implements ICompletions {
 
       const userPrompt = payload[Object.keys(payload)[0]]
       this.event.emit('onInferenceDone')
-
-      console.log('response', response)
-      console.log('userprompt', userPrompt)
-      console.log('chat history:', ChatHistory.getHistory())
 
       if (response.data?.generatedText) {
         if (rType === AIRequestType.GENERAL) {
