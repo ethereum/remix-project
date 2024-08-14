@@ -672,6 +672,7 @@ const saveAs = (blob, name) => {
 export const moveFile = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 
+  if (src === dest) return // if you cut and paste to the same location then no need to move anything
   try {
     await fileManager.moveFile(src, dest)
   } catch (error) {
@@ -681,6 +682,8 @@ export const moveFile = async (src: string, dest: string) => {
 
 export const moveFolder = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
+
+  if (src === dest) return // if you cut and paste to the same location then no need to move anything
 
   try {
     await fileManager.moveDir(src, dest)
