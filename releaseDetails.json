@@ -1,10 +1,11 @@
 {
-    "version": "v0.52.0",
+    "version": "v0.53.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Pin and select providers using the new environment explorer",
-    "highlight2": "Build workspace using the new template selection plugin",
-    "highlight3": "Dgit revamped and renamed to Git",
+    "highlight1": "Keyboard shortcut for Cut-Copy-Paste files and folder",
+    "highlight2": "Interface to generate proof in Circom compiler plugin",
+    "highlight3": "Publish multi-selected files to Gist",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-52-0-b0761c5e0df6?source=friends_link&sk=e0c811eedabe742370f25c4673e8fe01"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-53-0-615d9e7c6c58?source=friends_link&sk=35e918e8487aaab02e79ea4dc557a7e7"
   }
+  
