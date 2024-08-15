@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-tests",
-  "version": "0.2.53",
+  "version": "0.2.54",
   "description": "Tool to test Solidity smart contracts",
   "main": "src/index.js",
   "types": "./src/index.d.ts",
@@ -89,5 +89,5 @@
     "@ethereumjs/trie": "6.2.1"
   },
   "typings": "src/index.d.ts",
-  "gitHead": "cc2850c7fb3f1e50b0d65437a74ccae19c74b87c"
+  "gitHead": "e7ced5a5661f66ca95ba0c4fcd7c6cb60bc32b43"
 }
