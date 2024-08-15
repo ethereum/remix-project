@@ -1,6 +1,6 @@
 {
   "name": "@remix-project/remix-debug",
-  "version": "0.5.53",
+  "version": "0.5.54",
   "description": "Tool to debug Ethereum transactions",
   "contributors": [
     {
@@ -69,6 +69,6 @@
   },
   "homepage": "https://github.com/ethereum/remix-project/tree/master/libs/remix-debug#readme",
   "typings": "src/index.d.ts",
-  "gitHead": "cc2850c7fb3f1e50b0d65437a74ccae19c74b87c",
+  "gitHead": "e7ced5a5661f66ca95ba0c4fcd7c6cb60bc32b43",
   "types": "./src/index.d.ts"
 }
