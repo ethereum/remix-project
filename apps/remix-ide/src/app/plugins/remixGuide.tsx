@@ -7,6 +7,7 @@ import { RemixUIGridView } from '@remix-ui/remix-ui-grid-view'
 import { RemixUIGridSection } from '@remix-ui/remix-ui-grid-section'
 import { RemixUIGridCell } from '@remix-ui/remix-ui-grid-cell'
 import * as Data from './remixGuideData.json'
+import './remixGuide.css'
 //@ts-ignore
 const _paq = (window._paq = window._paq || [])
 
@@ -123,6 +124,7 @@ export class RemixGuidePlugin extends ViewPlugin {
                   plugin={this}
                   title={cell.title}
                   tagList={cell.tagList}
+                  classList='RGCellStyle'
                   expandViewEl={
                     cell.expandViewElement
                   }
@@ -134,10 +136,9 @@ export class RemixGuidePlugin extends ViewPlugin {
                     this.renderComponent()
                   }}
                   logo={cell.expandViewElement.logo}
+                  logoURL={"https://www.youtube.com/@" + cell.authorURL}
                 >
-                  <a href={"https://www.youtube.com/@" + cell.authorURL} target="__blank">
-                    <img src={"//img.youtube.com/vi/" + this.videoID + "/0.jpg"} style={{ height: '70px', width: '70px' }}></img>
-                  </a>
+                  <img src={"//img.youtube.com/vi/" + cell.expandViewElement.videoID + "/0.jpg"} style={{ height: '100px', width: 'fit-content' }}></img>
                 </RemixUIGridCell>
               })}
             </RemixUIGridSection>
