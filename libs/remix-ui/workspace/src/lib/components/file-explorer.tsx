@@ -238,10 +238,13 @@ export const FileExplorer = (props: FileExplorerProps) => {
             })
             await Promise.all(promisesToKeep)
           } else {
-            if (state.copyElement[0].type === 'file') {
-              props.dispatchMoveFile(state.copyElement[0].key, feTarget[0].key)
+            if (state.copyElement[0]?.type === 'file') {
+              props.dispatchMoveFile(state.copyElement[0]?.key, feTarget[0].key)
+              setState((prev) => {
+                return { ...prev, copyElement: []}
+              })
             } else {
-              props.dispatchMoveFolder(state.copyElement[0].key, feTarget[0].key)
+              props.dispatchMoveFolder(state.copyElement[0]?.key, feTarget[0].key)
             }
           }
         } else {
