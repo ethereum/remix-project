@@ -674,7 +674,8 @@ export const moveFile = async (src: string, dest: string) => {
 
   if (src === dest) return // if you cut and paste to the same location then no need to move anything
   try {
-    await fileManager.moveFile(src, dest)
+    const updatedDestPath = await fileManager.currentPath()
+    await fileManager.moveFile(src, updatedDestPath)
   } catch (error) {
     dispatch(displayPopUp('Oops! An error occurred while performing moveFile operation.' + error))
   }
@@ -686,7 +687,8 @@ export const moveFolder = async (src: string, dest: string) => {
   if (src === dest) return // if you cut and paste to the same location then no need to move anything
 
   try {
-    await fileManager.moveDir(src, dest)
+    const updatedDestPath = await fileManager.currentPath()
+    await fileManager.moveDir(src, updatedDestPath)
   } catch (error) {
     dispatch(displayPopUp('Oops! An error occurred while performing moveDir operation.' + error))
   }
