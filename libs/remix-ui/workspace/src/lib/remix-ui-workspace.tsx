@@ -1110,6 +1110,8 @@ export function Workspace() {
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
                   canPaste={canPaste}
+                  hasCopied={hasCopied}
+                  setHasCopied={setHasCopied}
                 />
 
               )}
@@ -1183,6 +1185,8 @@ export function Workspace() {
                   dragStatus={dragStatus}
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
+                  hasCopied={hasCopied}
+                  setHasCopied={setHasCopied}
                 />
               )}
             </div>

@@ -166,6 +166,8 @@ export interface FileExplorerProps {
       type: "file" | "folder";
   }[]>>
     publishManyFilesToGist: () => Promise<void>
+    hasCopied: boolean
+    setHasCopied: Dispatch<React.SetStateAction<boolean>>
 }
 
 export interface FileExplorerMenuProps {
