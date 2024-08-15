@@ -37,7 +37,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
     fileState,
     canPaste,
     feTarget,
-    setFeTarget
+    setFeTarget,
+    setHasCopied
   } = props
   const [state, setState] = useState<WorkSpaceState>(workspaceState)
   // const [isPending, startTransition] = useTransition();
@@ -208,8 +209,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
       if (feTarget?.length > 0 && feTarget[0]?.key.length > 0) {
         if (feTarget?.length > 1) {
           handleMultiCopies(feTarget)
+          setHasCopied(false)
         } else {
           handleCopyClick(feTarget[0].key, feTarget[0].type)
+          setHasCopied(false)
         }
       }
     }
@@ -221,6 +224,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
           setCutActivated(true)
         } else {
           handleCopyClick(feTarget[0].key, feTarget[0].type)
+          setCutActivated(true)
         }
       }
     }
@@ -232,8 +236,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
             const promisesToKeep = state.copyElement.filter(x => x).map(async (item) => {
               if (item.type === 'file') {
                 props.dispatchMoveFile(item.key, feTarget[0].key)
+                setCutActivated(false)
               } else {
                 props.dispatchMoveFolder(item.key, feTarget[0].key)
+                setCutActivated(false)
               }
             })
             await Promise.all(promisesToKeep)
@@ -243,8 +249,10 @@ export const FileExplorer = (props: FileExplorerProps) => {
               setState((prev) => {
                 return { ...prev, copyElement: []}
               })
+              setCutActivated(false)
             } else {
               props.dispatchMoveFolder(state.copyElement[0]?.key, feTarget[0].key)
+              setCutActivated(false)
             }
           }
         } else {
