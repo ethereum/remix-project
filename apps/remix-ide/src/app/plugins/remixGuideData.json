@@ -5,7 +5,7 @@
   "sections": [
     {
       "title": "Remix Basics",
-      "hScrollable": "true",
+      "hScrollable": "false",
       "cells": [
         {
           "title": "Intro to Remix",
@@ -73,7 +73,7 @@
     },
     {
       "title": "Solidity Basics",
-      "hScrollable": "true",
+      "hScrollable": "false",
       "cells": [
         {
           "title": "Hello World",
@@ -140,7 +140,7 @@
     },
     {
       "title": "Remix Techniques",
-      "hScrollable": "true",
+      "hScrollable": "false",
       "cells": [
         {
           "title": "Proxy Contracts",
@@ -209,7 +209,7 @@
     },
     {
       "title": "Low Level Solidity Videos",
-      "hScrollable": "true",
+      "hScrollable": "false",
       "cells": [
         {
           "title": "EVM Storage",
