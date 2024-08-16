@@ -244,6 +244,7 @@ module.exports = {
       .setSolidityCompilerVersion('soljson-v0.8.17+commit.8df45f5f.js')
       .clickLaunchIcon('udapp')
       .switchEnvironment('vm-mainnet-fork')
+      .click('#my-select-outer-container .custom-select')
       .waitForElementPresent({
         locateStrategy: 'css selector',
         selector: '.custom-select-option[data-value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
