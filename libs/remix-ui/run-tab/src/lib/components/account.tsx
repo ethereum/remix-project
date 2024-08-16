@@ -289,6 +289,9 @@ export function AccountUI(props: AccountProps) {
       </label>
       <div id='my-select-outer-container' className='udapp_account'>
         <Select
+          id="txorigin"
+          data-id="runTabSelectAccount"
+          name="txorigin"
           options={options}
           onChange={handleChange}
           className='custom-select form-control'
