@@ -5,7 +5,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
 import { CustomTooltip } from '@remix-ui/helper'
-import Select, { components } from 'react-select';
+import Select, { components } from 'react-select'
 
 export function AccountUI(props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
@@ -292,14 +292,10 @@ export function AccountUI(props: AccountProps) {
           className='custom-select form-control'
           styles={customStyles}
           isSearchable={false}
-          components={{ Option: CustomOption }}  // in react-select most styles are changed using this
+          components={{ Option: CustomOption }}// in react-select most styles are changed using this
           value={{ value: selectedAccount, label: loadedAccounts[selectedAccount] }}
         />
       </div>
-      {/* 
-      id="txorigin"
-          data-id="runTabSelectAccount"
-          name="txorigin" */}
     </div>
   )
 }
