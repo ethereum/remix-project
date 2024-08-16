@@ -250,6 +250,7 @@ module.exports = {
         selector: '.custom-select-option[data-value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]',
         timeout: 250000
       }) // wait for the udapp to load the list of accounts
+      .click('.custom-select-option[data-value="0xdD870fA1b7C4700F2BD7f44238821C26f7392148"]')
       .selectContract('MyResolver')
       .createContract('')
       .clickInstance(0)
