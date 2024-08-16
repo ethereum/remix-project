@@ -7,7 +7,6 @@ import { PassphrasePrompt } from './passphrase'
 import { CustomTooltip } from '@remix-ui/helper'
 import Select, { components } from 'react-select';
 
-
 export function AccountUI(props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
   const { selectExEnv, personalMode } = props
@@ -35,60 +34,60 @@ export function AccountUI(props: AccountProps) {
       })
     } else {
       switch (selectExEnv) {
-      case 'vm-cancun':
-        setPlusOpt({
-          classList: '',
-          title: intl.formatMessage({ id: 'udapp.createNewAccount' })
-        })
-        break
-
-      case 'vm-paris':
-        setPlusOpt({
-          classList: '',
-          title: intl.formatMessage({ id: 'udapp.createNewAccount' })
-        })
-        break
-
-      case 'vm-london':
-        setPlusOpt({
-          classList: '',
-          title: intl.formatMessage({ id: 'udapp.createNewAccount' })
-        })
-        break
-
-      case 'vm-berlin':
-        setPlusOpt({
-          classList: '',
-          title: intl.formatMessage({ id: 'udapp.createNewAccount' })
-        })
-        break
-
-      case 'vm-shanghai':
-        setPlusOpt({
-          classList: '',
-          title: intl.formatMessage({ id: 'udapp.createNewAccount' })
-        })
-        break
-
-      case 'web3':
-        if (!personalMode) {
-          setPlusOpt({
-            classList: 'disableMouseEvents',
-            title: intl.formatMessage({ id: 'udapp.web3Title' })
-          })
-        } else {
+        case 'vm-cancun':
           setPlusOpt({
             classList: '',
             title: intl.formatMessage({ id: 'udapp.createNewAccount' })
           })
-        }
-        break
+          break
 
-      default:
-        setPlusOpt({
-          classList: 'disableMouseEvents',
-          title: intl.formatMessage({ id: 'udapp.defaultTitle' }, { selectExEnv })
-        })
+        case 'vm-paris':
+          setPlusOpt({
+            classList: '',
+            title: intl.formatMessage({ id: 'udapp.createNewAccount' })
+          })
+          break
+
+        case 'vm-london':
+          setPlusOpt({
+            classList: '',
+            title: intl.formatMessage({ id: 'udapp.createNewAccount' })
+          })
+          break
+
+        case 'vm-berlin':
+          setPlusOpt({
+            classList: '',
+            title: intl.formatMessage({ id: 'udapp.createNewAccount' })
+          })
+          break
+
+        case 'vm-shanghai':
+          setPlusOpt({
+            classList: '',
+            title: intl.formatMessage({ id: 'udapp.createNewAccount' })
+          })
+          break
+
+        case 'web3':
+          if (!personalMode) {
+            setPlusOpt({
+              classList: 'disableMouseEvents',
+              title: intl.formatMessage({ id: 'udapp.web3Title' })
+            })
+          } else {
+            setPlusOpt({
+              classList: '',
+              title: intl.formatMessage({ id: 'udapp.createNewAccount' })
+            })
+          }
+          break
+
+        default:
+          setPlusOpt({
+            classList: 'disableMouseEvents',
+            title: intl.formatMessage({ id: 'udapp.defaultTitle' }, { selectExEnv })
+          })
       }
     }
   }, [selectExEnv, personalMode])
@@ -198,8 +197,6 @@ export function AccountUI(props: AccountProps) {
     )
   }
 
-
-  
   const customStyles = {
     container: provided => ({
       ...provided,
@@ -216,20 +213,20 @@ export function AccountUI(props: AccountProps) {
     }),
     menu: provided => ({
       ...provided,
-      backgroundColor: 'var(--custom-select)', 
+      backgroundColor: 'var(--custom-select)',
       zIndex: 1000,
-      border: '1.5px solid var(--custom-select) !important', 
+      border: '1.5px solid var(--custom-select) !important',
       borderRadius: 4,
     }),
     option: (provided, state) => ({
       ...provided,
-      borderRadius: 4, 
+      borderRadius: 4,
       color: state.isFocused ? 'white' : 'inherit',
-      fontSize: 'inherit', 
-      height: '20px', 
-      display: 'flex', 
+      fontSize: 'inherit',
+      height: '20px',
+      display: 'flex',
       alignItems: 'center',
-      backgroundColor: state.isFocused ? '#787474' : state.isSelected && '#787474' ,
+      backgroundColor: state.isFocused ? '#787474' : state.isSelected && '#787474',
     }),
     singleValue: (provided) => ({
       ...provided,
@@ -253,12 +250,13 @@ export function AccountUI(props: AccountProps) {
     props.setAccount(selectedOption.value)
   };
 
-    // custom option which will show address (shorted) and copy to clipboard button
-  const CustomOption = (props) => (  
+  // custom option which will show address (shorted) and copy to clipboard button
+  const CustomOption = (props) => (
     <components.Option {...props}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: "100%" }}>
+      <div className='custom-select-option' data-value={props.data.value}
+        style={{ display: 'flex', justifyContent: 'space-between', width: "100%" }}>
         <span>{props.data.label}</span>
-        <span >
+        <span>
           <CopyToClipboard className="fas fa-copy ml-2 p-0" tip={intl.formatMessage({ id: 'udapp.copyAccount' })} content={props.data.value} direction="top" />
         </span>
       </div>
@@ -289,9 +287,6 @@ export function AccountUI(props: AccountProps) {
       </label>
       <div id='my-select-outer-container' className='udapp_account'>
         <Select
-          id="txorigin"
-          data-id="runTabSelectAccount"
-          name="txorigin"
           options={options}
           onChange={handleChange}
           className='custom-select form-control'
@@ -299,8 +294,12 @@ export function AccountUI(props: AccountProps) {
           isSearchable={false}
           components={{ Option: CustomOption }}  // in react-select most styles are changed using this
           value={{ value: selectedAccount, label: loadedAccounts[selectedAccount] }}
-          />
+        />
       </div>
+      {/* 
+      id="txorigin"
+          data-id="runTabSelectAccount"
+          name="txorigin" */}
     </div>
   )
 }
