@@ -371,7 +371,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
   let evmVersion = null
   try {
     if (loadedContractData && loadedContractData.metadata) {
-      evmVersion = JSON.parse(loadedContractData.metadata).settings.evmVersion
+      evmVersion = props.exEnvironment
     }
   } catch (err) {}
   return (
