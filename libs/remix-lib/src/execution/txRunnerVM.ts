@@ -5,7 +5,7 @@ import { LegacyTransaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
 import { Block } from '@ethereumjs/block'
 import { bytesToHex, Address, hexToBytes } from '@ethereumjs/util'
 import { EVM } from '@ethereumjs/evm'
-import type { Account } from '@ethereumjs/util'
+import type { Account, AddressLike, BigIntLike } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { LogsManager } from './logsManager'
 import type { Transaction as InternalTransaction } from './txRunner'
@@ -95,8 +95,8 @@ export class TxRunnerVM {
           nonce: useCall ? this.nextNonceForCall : res.nonce,
           gasPrice: '0x1',
           gasLimit: gasLimit,
-          to: to,
-          value: value,
+          to: (to as AddressLike),
+          value: (value as BigIntLike),
           data: hexToBytes(data)
         }, { common: this.commonContext }).sign(account.privateKey)
       } else {
@@ -105,8 +105,8 @@ export class TxRunnerVM {
           maxPriorityFeePerGas: '0x01',
           maxFeePerGas: '0x7',
           gasLimit: gasLimit,
-          to: to,
-          value: value,
+          to: (to as AddressLike),
+          value: (value as BigIntLike),
           data: hexToBytes(data)
         }).sign(account.privateKey)
       }
