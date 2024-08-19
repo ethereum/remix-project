@@ -65,6 +65,9 @@ const RemixApp = (props: IRemixAppUi) => {
         setShowEnterDialog(true)
       }
     }
+    if (hadUsageTypeAsked) {
+      _paq.push(['trackEvent', 'user-reentry', 'usageType', hadUsageTypeAsked])
+    }
   }, [])
 
   function setListeners() {
