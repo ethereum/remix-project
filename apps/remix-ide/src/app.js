@@ -78,7 +78,7 @@ const Config = require('./config')
 const FileManager = require('./app/files/fileManager')
 import FileProvider from "./app/files/fileProvider"
 import { appPlatformTypes } from '@remix-ui/app'
-const DGitProvider = require('./app/files/dgitProvider')
+const GitProvider = require('./app/files/gitProvider')
 const WorkspaceFileProvider = require('./app/files/workspaceFileProvider')
 
 const PluginManagerComponent = require('./app/components/plugin-manager-component')
@@ -206,8 +206,8 @@ class AppComponent {
     // ----------------- fileManager service ----------------------------
     const fileManager = new FileManager(editor, appManager)
     Registry.getInstance().put({api: fileManager, name: 'filemanager'})
-    // ----------------- dGit provider ---------------------------------
-    const dGitProvider = new DGitProvider()
+    // ----------------- git provider ---------------------------------
+    const gitProvider = new GitProvider()
 
     // ----------------- Storage plugin ---------------------------------
     const storagePlugin = new StoragePlugin()
@@ -342,7 +342,7 @@ class AppComponent {
       web3Provider,
       compileAndRun,
       fetchAndCompile,
-      dGitProvider,
+      gitProvider,
       storagePlugin,
       vmProviderShanghai,
       vmProviderCancun,
@@ -514,7 +514,7 @@ class AppComponent {
     ])
     await this.appManager.activatePlugin(['settings'])
 
-    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'dgitApi', 'dgit'])
+    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'gitApi', 'git'])
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()){

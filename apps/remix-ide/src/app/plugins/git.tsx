@@ -5,7 +5,7 @@ import { gitState, GitUI } from '@remix-ui/git'
 import * as packageJson from '../../../../../package.json'
 
 const profile = {
-  name: 'dgit',
+  name: 'git',
   displayName: 'Git',
   desciption: 'Git plugin for Remix',
   methods: ['pull', 'track', 'diff', 'clone', 'open'],
@@ -27,7 +27,7 @@ export class GitPlugin extends ViewPlugin {
 
   onDeactivation(): void {
     this.call('fileDecorator', 'clearFileDecorators')
-    this.call('manager', 'activatePlugin', 'dgitApi')
+    this.call('manager', 'activatePlugin', 'gitApi')
   }
 
   async open(panel:string) {

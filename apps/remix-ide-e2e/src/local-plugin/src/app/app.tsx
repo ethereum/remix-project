@@ -14,8 +14,8 @@ import {pluginManagerProfile} from '@remixproject/plugin-api'
 import {LibraryProfile, Profile} from '@remixproject/plugin-utils'
 
 
-export const dGitProfile: LibraryProfile<any> = {
-  name: 'dgitApi',
+export const gitProfile: LibraryProfile<any> = {
+  name: 'gitApi',
   methods: ['status', 'log', 'commit', 'add', 'branches'],
 }
 import './app.css'
@@ -31,7 +31,7 @@ function App() {
     pluginManagerProfile,
     filePanelProfile,
     filSystemProfile,
-    dGitProfile,
+    gitProfile,
     networkProfile,
     settingsProfile,
     editorProfile,

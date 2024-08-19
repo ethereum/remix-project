@@ -15,10 +15,10 @@ module.exports = {
     },
     'Update settings for git #group1 #group2': function (browser: NightwatchBrowser) {
         browser.
-            clickLaunchIcon('dgit')
+            clickLaunchIcon('git')
             .waitForElementVisible('*[data-id="initgit-btn"]')
             .click('*[data-id="initgit-btn"]')
-            .setValue('*[data-id="githubToken"]', process.env.dgit_token)
+            .setValue('*[data-id="githubToken"]', process.env.git_token)
             .setValue('*[data-id="gitubUsername"]', 'git')
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .click('*[data-id="saveGitHubCredentials"]')
@@ -81,7 +81,7 @@ module.exports = {
     },
     'check the commands panel #group1': function (browser: NightwatchBrowser) {
         browser
-            .clickLaunchIcon('dgit')
+            .clickLaunchIcon('git')
             .click('*[data-id="commands-panel"]')
             .waitForElementVisible({
                 selector: "//div[@id='commands-remote-branch-select']//div[contains(@class, 'singleValue') and contains(text(), 'master')]",

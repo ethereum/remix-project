@@ -82,7 +82,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     })
   });
 
-  plugin.on('dgitApi', 'checkout', async () => {
+  plugin.on('gitApi', 'checkout', async () => {
     loadFileQueue.enqueue(async () => {
       gitlog()
     })
@@ -94,22 +94,22 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
       type: "success"
     }))
   })
-  plugin.on('dgitApi', 'init', async () => {
+  plugin.on('gitApi', 'init', async () => {
     loadFileQueue.enqueue(async () => {
       loadFiles()
     }, 10)
   })
-  plugin.on('dgitApi', 'add', async () => {
+  plugin.on('gitApi', 'add', async () => {
     loadFileQueue.enqueue(async () => {
       loadFiles()
     }, 10)
   })
-  plugin.on('dgitApi', 'rm', async () => {
+  plugin.on('gitApi', 'rm', async () => {
     loadFileQueue.enqueue(async () => {
       loadFiles()
     }, 10)
   })
-  plugin.on('dgitApi', 'commit', async () => {
+  plugin.on('gitApi', 'commit', async () => {
     loadFileQueue.enqueue(async () => {
       gitlog()
     }, 10)
@@ -121,7 +121,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
       type: 'success'
     }))
   })
-  plugin.on('dgitApi', 'branch', async () => {
+  plugin.on('gitApi', 'branch', async () => {
     loadFileQueue.enqueue(async () => {
       gitlog()
     })
@@ -133,7 +133,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
       type: "success"
     }))
   })
-  plugin.on('dgitApi', 'clone', async () => {
+  plugin.on('gitApi', 'clone', async () => {
     gitDispatch(setLog({
       message: "Cloned Repository",
       type: "success"
@@ -149,7 +149,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     })
   })
   plugin.on('manager', 'pluginActivated', async (p: Profile<any>) => {
-    if (p.name === 'dgitApi') {
+    if (p.name === 'gitApi') {
       loadGitHubUserFromToken();
       plugin.off('manager', 'pluginActivated');
     }
@@ -162,7 +162,7 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     await getGitConfig()
   })
 
-  plugin.on('dgit' as any, 'openPanel', async (panel: string) => {
+  plugin.on('git' as any, 'openPanel', async (panel: string) => {
 
     setAtivePanel(panel)
   })
@@ -184,7 +184,7 @@ export const getGitConfig = async () => {
 export const loadFiles = async (filepaths: string[] = null) => {
   try {
     await calculateLocalStorage()
-    const branch = await plugin.call('dgitApi', "currentbranch")
+    const branch = await plugin.call('gitApi', "currentbranch")
     if (branch) {
       await getFileStatusMatrix(filepaths);
     } else {

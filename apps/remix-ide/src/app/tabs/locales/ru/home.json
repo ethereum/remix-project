@@ -25,7 +25,7 @@
   "home.solhintPluginDesc": "Solhint — проект с открытым исходным кодом для линейки кода Solidity.",
   "home.sourcifyPluginDesc": "Контракт Solidity и сервис проверки метаданных.",
   "home.unitTestPluginDesc": "Напишите и запустите модульные тесты для ваших контрактов в Solidity.",
-  "home.dgitPluginDesc": "Добавить контроль за исходным кодом в ваши проекты.",
+  "home.gitPluginDesc": "Добавить контроль за исходным кодом в ваши проекты.",
   "home.oneClickDappDesc": "Быстрое создание смарт-контрактных интерфейсов",
   "home.getStarted": "Приступить к работе",
   "home.projectTemplates": "Шаблоны проектов",

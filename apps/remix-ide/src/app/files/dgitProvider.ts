@@ -29,7 +29,7 @@ declare global {
 }
 
 const profile: LibraryProfile = {
-  name: 'dgitApi',
+  name: 'gitApi',
   displayName: 'Decentralized git',
   description: 'Decentralized git provider',
   icon: 'assets/img/fileManager.webp',
@@ -38,7 +38,7 @@ const profile: LibraryProfile = {
     , 'getGitHubUser', 'remotebranches', 'remotecommits', 'repositories', 'getCommitChanges', 'compareBranches'],
   kind: 'file-system'
 }
-class DGitProvider extends Plugin {
+class GitProvider extends Plugin {
   ipfsconfig: { host: string; port: number; protocol: string; ipfsurl: string }
   globalIPFSConfig: { host: string; port: number; protocol: string; ipfsurl: string }
   remixIPFS: { host: string; port: number; protocol: string; ipfsurl: string }
@@ -607,7 +607,7 @@ class DGitProvider extends Plugin {
         return result
       } catch (e) {
         this.call('notification', 'alert', {
-          id: 'dgitAlert',
+          id: 'gitAlert',
           message: 'Unexpected error while cloning the repository: \n' + e.toString(),
         })
       }
@@ -1181,4 +1181,4 @@ const normalize = (filesList) => {
   return [...folders, ...files]
 }
 
-module.exports = DGitProvider
+module.exports = GitProvider

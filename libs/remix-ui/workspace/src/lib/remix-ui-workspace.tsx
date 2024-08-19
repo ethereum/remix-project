@@ -290,7 +290,7 @@ export function Workspace() {
       }
     }
 
-    global.plugin.on('dgitApi', 'repositoryWithSubmodulesCloned', () => {
+    global.plugin.on('gitApi', 'repositoryWithSubmodulesCloned', () => {
       setHighlightUpdateSubmodules(true)
     })
   }, [])

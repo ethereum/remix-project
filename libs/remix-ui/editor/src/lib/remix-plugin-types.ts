@@ -371,7 +371,7 @@ declare interface IContentImport {
     }
 }
 
-declare interface IDgitSystem {
+declare interface IGitSystem {
     events: StatusEvents
     methods: {
         init(): void;
@@ -526,7 +526,7 @@ declare interface IRemixApi {
     solidity: ICompiler
     fileManager: IFileSystem
     filePanel: IFilePanel
-    dGitProvider: IDgitSystem
+    gitProvider: IGitSystem
     solidityUnitTesting: IUnitTesting
     editor: IEditor
     network: INetwork

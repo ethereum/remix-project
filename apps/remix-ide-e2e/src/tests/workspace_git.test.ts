@@ -61,7 +61,7 @@ module.exports = {
   },
   'check git for the commit #group1': function (browser: NightwatchBrowser) {
     browser.
-      clickLaunchIcon('dgit')
+      clickLaunchIcon('git')
       .click('*[data-id="commits-panel"]')
       .waitForElementPresent({
         selector: '//*[@data-id="commits-current-branch-main"]//*[@data-id="commit-summary-Initial commit: remix template blank-"]',
@@ -95,7 +95,7 @@ module.exports = {
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'awesome-remix')
   },
 
-  'Should display dgit icon for cloned workspace #group2': function (browser: NightwatchBrowser) {
+  'Should display git icon for cloned workspace #group2': function (browser: NightwatchBrowser) {
     browser
       .switchWorkspace('default_workspace')
       .waitForElementNotVisible('[data-id="workspacesSelect"] .fa-code-branch')
@@ -420,7 +420,7 @@ module.exports = {
   },
   'Update settings for git #group5': function (browser: NightwatchBrowser) {
     browser.
-      clickLaunchIcon('dgit')
+      clickLaunchIcon('git')
       .waitForElementVisible('*[data-id="initgit-btn"]')
       .click('*[data-id="initgit-btn"]')
       .setValue('*[data-id="gitubUsername"]', 'git')
@@ -443,7 +443,7 @@ module.exports = {
   'check source controle panel again #group5': function (browser: NightwatchBrowser) {
     browser
       .pause(1000)
-      .clickLaunchIcon('dgit')
+      .clickLaunchIcon('git')
       .waitForElementVisible({
         selector: '*[data-id="initgit-btn"]',
         suppressNotFoundErrors: true
@@ -480,7 +480,7 @@ module.exports = {
   'check source controle panel for uniswap #group5': function (browser: NightwatchBrowser) {
     browser
       .pause(5000)
-      .clickLaunchIcon('dgit')
+      .clickLaunchIcon('git')
       .click('*[data-id="remotes-panel"]')
       .waitForElementVisible('*[data-id="remotes-panel-content"]')
       .click({

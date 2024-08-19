@@ -25,7 +25,7 @@
   "home.solhintPluginDesc": "Solhint는 솔리디티 코드를 린팅하기 위한 오픈 소스 프로젝트입니다.",
   "home.sourcifyPluginDesc": "솔리디티 컨트랙트 및 메타데이터 검증 서비스.",
   "home.unitTestPluginDesc": "솔리디티로 컨트랙트에 대한 단위 테스트를 작성하고 실행하세요.",
-  "home.dgitPluginDesc": "프로젝트에 소스 컨트롤을 추가하세요.",
+  "home.gitPluginDesc": "프로젝트에 소스 컨트롤을 추가하세요.",
   "home.oneClickDappDesc": "스마트 컨트랙트 인터페이스를 빠르게 생성하세요.",
   "home.getStarted": "시작하기",
   "home.projectTemplates": "프로젝트 템플릿",

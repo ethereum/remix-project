@@ -34,7 +34,7 @@ export class Layout extends Plugin {
   constructor () {
     super(profile)
     this.maximised = {
-      'dgit': true
+      'git': true
     }
     this.event = new EventEmitter()
   }

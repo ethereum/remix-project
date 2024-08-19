@@ -142,13 +142,13 @@ export interface repositoriesInput { token: string, page?: number, per_page?: nu
 
 export interface statusInput { ref: string, filepaths?: string[] }
 
-export const dGitProfile: LibraryProfile<IGitApi> = {
-  name: 'dgitApi',
+export const gitProfile: LibraryProfile<IGitApi> = {
+  name: 'gitApi',
   methods: ['clone', 'branches', 'remotes', 'getCommitChanges', 'log', 'remotecommits'],
 }
 
 export interface customGitApi extends IRemixApi {
-    dgit: IGitApi
+    git: IGitApi
 }
 
 export type gitState = {

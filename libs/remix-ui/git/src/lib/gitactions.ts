@@ -40,20 +40,20 @@ export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatc
 
 export const init = async () => {
   await sendToMatomo(gitMatomoEventTypes.INIT)
-  await plugin.call('dgitApi', "init");
+  await plugin.call('gitApi', "init");
   await gitlog();
   await getBranches();
 }
 
 export const getBranches = async () => {
 
-  const branches = await plugin.call('dgitApi', "branches")
+  const branches = await plugin.call('gitApi', "branches")
 
   dispatch(setBranches(branches));
 }
 export const getRemotes = async () => {
 
-  const remotes: remote[] = await plugin.call('dgitApi', "remotes");
+  const remotes: remote[] = await plugin.call('Api', "remotes");
 
   dispatch(setRemotes(remotes));
 }
@@ -85,7 +85,7 @@ export const getCommits = async () => {
 
   try {
     const commits: ReadCommitResult[] = await plugin.call(
-      'dgitApi',
+      'gitApi',
       "log",
       { ref: "HEAD" }
     );
@@ -132,7 +132,7 @@ export const showCurrentBranch = async () => {
 export const currentBranch = async () => {
 
   const branch: branch =
-    (await plugin.call('dgitApi', "currentbranch")) || {
+    (await plugin.call('gitApi', "currentbranch")) || {
       name: "",
       remote: {
         name: "",
@@ -147,13 +147,13 @@ export const createBranch = async (name: string = "") => {
   await sendToMatomo(gitMatomoEventTypes.CREATEBRANCH)
   dispatch(setLoading(true))
   if (name) {
-    await plugin.call('dgitApi', 'branch', { ref: name, force: true, checkout: true });
+    await plugin.call('gitApi', 'branch', { ref: name, force: true, checkout: true });
   }
   dispatch(setLoading(false))
 }
 
 export const getCommitFromRef = async (ref: string) => {
-  const commitOid = await plugin.call('dgitApi', "resolveref", {
+  const commitOid = await plugin.call('gitApi', "resolveref", {
     ref: ref,
   });
   return commitOid;
@@ -183,7 +183,7 @@ export const commit = async (message: string = "") => {
       return
     }
 
-    const sha = await plugin.call('dgitApi', 'commit', {
+    const sha = await plugin.call('gitApi', 'commit', {
       author: {
         name: credentials.username,
         email: credentials.email,
@@ -234,7 +234,7 @@ export const add = async (filepath: addInput) => {
     if (typeof filepath.filepath === "string") {
       filepath.filepath = removeSlash(filepath.filepath)
     }
-    await plugin.call('dgitApi', 'add', filepath);
+    await plugin.call('gitApi', 'add', filepath);
     sendToGitLog({
       type: 'success',
       message: `Added to git`
@@ -257,7 +257,7 @@ const getLastCommmit = async () => {
 
 export const rm = async (args: rmInput) => {
   await sendToMatomo(gitMatomoEventTypes.RM)
-  await plugin.call('dgitApi', 'rm', {
+  await plugin.call('gitApi', 'rm', {
     filepath: removeSlash(args.filepath),
   });
   sendToGitLog({
@@ -270,10 +270,10 @@ export const checkoutfile = async (filename: string) => {
   const oid = await getLastCommmit();
   if (oid)
     try {
-      const commitOid = await plugin.call('dgitApi', 'resolveref', {
+      const commitOid = await plugin.call('gitApi', 'resolveref', {
         ref: oid,
       });
-      const { blob } = await plugin.call('dgitApi', 'readblob', {
+      const { blob } = await plugin.call('gitApi', 'readblob', {
         oid: commitOid,
         filepath: removeSlash(filename),
       });
@@ -297,7 +297,7 @@ export const checkout = async (cmd: checkoutInput) => {
   await disableCallBacks();
   await plugin.call('fileManager', 'closeAllFiles')
   try {
-    await plugin.call('dgitApi', 'checkout', cmd)
+    await plugin.call('gitApi', 'checkout', cmd)
   } catch (e) {
     console.log(e)
     plugin.call('notification', 'toast', `${e}`)
@@ -319,7 +319,7 @@ export const clone = async (input: cloneInputType) => {
     await disableCallBacks()
     const token = await plugin.call('config' as any, 'getAppParameter' as any, 'settings/gist-access-token')
 
-    await plugin.call('dgitApi', 'clone', { ...input, workspaceName: repoNameWithTimestamp });
+    await plugin.call('gitApi', 'clone', { ...input, workspaceName: repoNameWithTimestamp });
     await enableCallBacks()
 
     sendToGitLog({
@@ -340,7 +340,7 @@ export const fetch = async (input: fetchInputType) => {
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
-    await plugin.call('dgitApi', 'fetch', input);
+    await plugin.call('gitApi', 'fetch', input);
     if (!input.quiet) {
       await gitlog()
       await getBranches()
@@ -358,7 +358,7 @@ export const pull = async (input: pullInputType) => {
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
-    await plugin.call('dgitApi', 'pull', input)
+    await plugin.call('gitApi', 'pull', input)
     await gitlog()
   } catch (e: any) {
     console.log(e)
@@ -373,7 +373,7 @@ export const push = async (input: pushInputType) => {
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
-    await plugin.call('dgitApi', 'push', input)
+    await plugin.call('gitApi', 'push', input)
   } catch (e: any) {
     console.log(e)
     await parseError(e)
@@ -446,13 +446,13 @@ export const repositories = async () => {
   try {
     const token = await tokenWarning();
     if (token) {
-      let repos = await plugin.call('dgitApi', 'repositories', { token, per_page: 100 })
+      let repos = await plugin.call('gitApi', 'repositories', { token, per_page: 100 })
       dispatch(setRepos(repos))
       let page = 2
       let hasMoreData = true
       const per_page = 100
       while (hasMoreData) {
-        const pagedResponse = await plugin.call('dgitApi', 'repositories', { token, page: page, per_page: per_page })
+        const pagedResponse = await plugin.call('gitApi', 'repositories', { token, page: page, per_page: per_page })
         if (pagedResponse.length < per_page) {
           hasMoreData = false
         }
@@ -486,13 +486,13 @@ export const remoteBranches = async (owner: string, repo: string) => {
   try {
     const token = await tokenWarning();
     if (token) {
-      let branches = await plugin.call('dgitApi' as any, 'remotebranches', { token, owner, repo, per_page: 100 });
+      let branches = await plugin.call('gitApi' as any, 'remotebranches', { token, owner, repo, per_page: 100 });
       dispatch(setRemoteBranches(branches))
       let page = 2
       let hasMoreData = true
       const per_page = 100
       while (hasMoreData) {
-        const pagedResponse = await plugin.call('dgitApi' as any, 'remotebranches', { token, owner, repo, page: page, per_page: per_page })
+        const pagedResponse = await plugin.call('gitApi' as any, 'remotebranches', { token, owner, repo, page: page, per_page: per_page })
         if (pagedResponse.length < per_page) {
           hasMoreData = false
         }
@@ -536,7 +536,7 @@ export const remoteCommits = async (url: string, branch: string, length: number)
     const token = await tokenWarning();
     if (token) {
 
-      const commits = await plugin.call('dgitApi' as any, 'remotecommits', { token, owner, repo, branch, length });
+      const commits = await plugin.call('gitApi' as any, 'remotecommits', { token, owner, repo, branch, length });
 
     } else {
       sendToGitLog({
@@ -619,7 +619,7 @@ export const loadGitHubUserFromToken = async () => {
         user: GitHubUser,
         scopes: string[]
         emails: userEmails
-      } = await plugin.call('dgitApi' as any, 'getGitHubUser', { token });
+      } = await plugin.call('gitApi' as any, 'getGitHubUser', { token });
 
       if (data && data.emails && data.user && data.user.login) {
 
@@ -663,7 +663,7 @@ export const loadGitHubUserFromToken = async () => {
 }
 
 export const statusMatrix = async (filepaths: string[]) => {
-  const matrix = await plugin.call('dgitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.']});
+  const matrix = await plugin.call('gitApi', 'status', { ref: "HEAD", filepaths: filepaths || ['.']});
   const result = (matrix || []).map((x) => {
     return {
       filename: `/${x.shift()}`,
@@ -676,7 +676,7 @@ export const statusMatrix = async (filepaths: string[]) => {
 }
 
 export const resolveRef = async (ref: string) => {
-  const oid = await plugin.call('dgitApi', "resolveref", {
+  const oid = await plugin.call('gitApi', "resolveref", {
     ref,
   });
   return oid;
@@ -696,7 +696,7 @@ export const diff = async (commitChange: commitChange) => {
   } else {
 
     try {
-      const modifiedContentReadBlobResult: ReadBlobResult = await plugin.call('dgitApi', "readblob", {
+      const modifiedContentReadBlobResult: ReadBlobResult = await plugin.call('gitApi', "readblob", {
         oid: commitChange.hashModified,
         filepath: removeSlash(commitChange.path),
       });
@@ -711,7 +711,7 @@ export const diff = async (commitChange: commitChange) => {
   }
 
   try {
-    const originalContentReadBlobResult: ReadBlobResult = await plugin.call('dgitApi', "readblob", {
+    const originalContentReadBlobResult: ReadBlobResult = await plugin.call('gitApi', "readblob", {
       oid: commitChange.hashOriginal,
       filepath: removeSlash(commitChange.path),
     });
@@ -730,7 +730,7 @@ export const getCommitChanges = async (oid1: string, oid2: string, branch?: bran
     let log
     try {
       // check if oid2 exists
-      log = await plugin.call('dgitApi', 'log', {
+      log = await plugin.call('gitApi', 'log', {
         ref: branch ? branch.name : 'HEAD',
       })
 
@@ -753,7 +753,7 @@ export const getCommitChanges = async (oid1: string, oid2: string, branch?: bran
         })
       }
     }
-    const result: commitChange[] = await plugin.call('dgitApi', 'getCommitChanges', oid1, oid2)
+    const result: commitChange[] = await plugin.call('gitApi', 'getCommitChanges', oid1, oid2)
     dispatch(setCommitChanges(result))
     return result
   } catch (e) {
@@ -781,7 +781,7 @@ export const fetchBranch = async (branch: branch, page: number) => {
   }
   try {
     const { owner, repo } = await getRepoDetails(branch.remote.url);
-    const rc = await plugin.call('dgitApi', 'remotecommits', { token, owner: owner, repo: repo, branch: branch.name, length, page });
+    const rc = await plugin.call('gitApi', 'remotecommits', { token, owner: owner, repo: repo, branch: branch.name, length, page });
     dispatch(setRemoteBranchCommits({ branch, commits: rc }))
   } catch (e) {
     sendToGitLog({
@@ -811,7 +811,7 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
       return
     }
 
-    const branchDifference: branchDifference = await plugin.call('dgitApi', 'compareBranches', {
+    const branchDifference: branchDifference = await plugin.call('gitApi', 'compareBranches', {
       branch,
       remote
     })
@@ -834,7 +834,7 @@ export const getBranchCommits = async (branch: branch, page: number) => {
   await disableCallBacks()
   try {
     if (!branch.remote) {
-      const commits: ReadCommitResult[] = await plugin.call('dgitApi', 'log', {
+      const commits: ReadCommitResult[] = await plugin.call('Api', 'log', {
         ref: branch.name,
       })
       dispatch(setLocalBranchCommits({ branch, commits }))
@@ -857,7 +857,7 @@ export const setDefaultRemote = async (remote: remote) => {
 export const addRemote = async (remote: remote) => {
   await sendToMatomo(gitMatomoEventTypes.ADDREMOTE)
   try {
-    await plugin.call('dgitApi', 'addremote', remote)
+    await plugin.call('gitApi', 'addremote', remote)
     await getRemotes()
     await fetch({
       remote: remote,
@@ -872,7 +872,7 @@ export const addRemote = async (remote: remote) => {
 export const removeRemote = async (remote: remote) => {
   await sendToMatomo(gitMatomoEventTypes.RMREMOTE)
   try {
-    await plugin.call('dgitApi', 'delremote', remote)
+    await plugin.call('gitApi', 'delremote', remote)
     await getRemotes()
   } catch (e) {
     console.log(e)

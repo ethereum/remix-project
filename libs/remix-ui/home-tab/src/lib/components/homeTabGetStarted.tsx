@@ -125,7 +125,7 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
 
     if (metadata) {
       if (metadata.type === 'git') {
-        await (plugin as Plugin<any, CustomRemixApi>).call('dgitApi', 'clone',
+        await (plugin as Plugin<any, CustomRemixApi>).call('gitApi', 'clone',
           {
             url: metadata.url,
             branch: metadata.branch,

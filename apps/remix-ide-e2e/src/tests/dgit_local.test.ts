@@ -33,7 +33,7 @@ module.exports = {
     },
     'Update settings for git #group1 #group2 #group3 #group4': function (browser: NightwatchBrowser) {
         browser.
-            clickLaunchIcon('dgit')
+            clickLaunchIcon('git')
             .waitForElementVisible('*[data-id="initgit-btn"]')
             .click('*[data-id="initgit-btn"]')
             .setValue('*[data-id="gitubUsername"]', 'git')
@@ -59,7 +59,7 @@ module.exports = {
     'check file added #group1 #group3 #group4': function (browser: NightwatchBrowser) {
         browser.
             addFile('test.txt', { content: 'hello world' }, 'README.md')
-            .clickLaunchIcon('dgit')
+            .clickLaunchIcon('git')
             .pause(3000)
             .click('*[data-id="sourcecontrol-panel"]')
             .waitForElementVisible({
@@ -112,7 +112,7 @@ module.exports = {
     },
     'stage changed file #group1': function (browser: NightwatchBrowser) {
         browser
-            .clickLaunchIcon('dgit')
+            .clickLaunchIcon('git')
             .click('*[data-id="sourcecontrol-panel"]')
             .waitForElementVisible({
                 selector: "//*[@data-status='modified-unstaged' and @data-file='/test.txt']",
@@ -187,7 +187,7 @@ module.exports = {
     },
     'stage renamed file #group3': function (browser: NightwatchBrowser) {
         browser
-            .clickLaunchIcon('dgit')
+            .clickLaunchIcon('git')
             .pause(3000)
             .waitForElementVisible({
                 selector: "//*[@data-status='deleted-unstaged' and @data-file='/test.txt']",
@@ -229,7 +229,7 @@ module.exports = {
     // GROUP 2 
     'create a branch #group2': function (browser: NightwatchBrowser) {
         browser
-            .clickLaunchIcon('dgit')
+            .clickLaunchIcon('git')
             .pause(3000)
             .click('*[data-id="branches-panel"]')
             .waitForElementVisible('*[data-id="newbranchname"]')
@@ -246,7 +246,7 @@ module.exports = {
     },
     'publish the branch #group2': function (browser: NightwatchBrowser) {
         browser
-            .clickLaunchIcon('dgit')
+            .clickLaunchIcon('git')
             .pause(3000)
             .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
             .click('*[data-id="sourcecontrol-panel"]')
@@ -263,7 +263,7 @@ module.exports = {
         browser
             .pause(1000)
             .addFile('test.txt', { content: 'hello world' }, 'README.md')
-            .clickLaunchIcon('dgit')
+            .clickLaunchIcon('git')
             .pause(2000)
             .waitForElementVisible({
                 selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",

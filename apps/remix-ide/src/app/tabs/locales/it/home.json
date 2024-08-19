@@ -25,7 +25,7 @@
   "home.solhintPluginDesc": "Solhint è un progetto open source per il linting del codice Solidity.",
   "home.sourcifyPluginDesc": "Servizio di verifica dei metadati e dei contratti di Solidity.",
   "home.unitTestPluginDesc": "Scrivi ed esegui test unitari per i tuoi contratti in Solidity.",
-  "home.dgitPluginDesc": "Aggiungi il controllo delle sorgenti ai tuoi progetti.",
+  "home.gitPluginDesc": "Aggiungi il controllo delle sorgenti ai tuoi progetti.",
   "home.oneClickDappDesc": "Genera rapidamente interfacce per contratti intelligenti",
   "home.getStarted": "Inizia",
   "home.projectTemplates": "Modelli di Progetto",

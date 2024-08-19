@@ -14,7 +14,7 @@ import { ILayoutApi } from "./plugins/layout-api"
 import { IMatomoApi } from "./plugins/matomo-api"
 
 export interface ICustomRemixApi extends IRemixApi {
-  dgitApi: IGitApi
+  gitApi: IGitApi
   config: IConfigApi
   notification: INotificationApi
   settings: ISettings

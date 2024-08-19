@@ -4712,7 +4712,7 @@
               ]
             },
             {
-              "file": "apps/remix-ide/src/app/files/dgitProvider.ts",
+              "file": "apps/remix-ide/src/app/files/gitProvider.ts",
               "hash": "aa14683a77ddae07922b3b167456885d3f3651be",
               "deps": [
                 "npm:@remixproject/engine",
@@ -5787,7 +5787,7 @@
               "hash": "c652f89ee215922980341fb64a8977e5e9996a8c"
             },
             {
-              "file": "apps/remix-ide/src/assets/img/dgit.webp",
+              "file": "apps/remix-ide/src/assets/img/git.webp",
               "hash": "75038b84d35cf54b0fe268077ef0e40c093b6f4f"
             },
             {

@@ -32,7 +32,7 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
         setGitBranchName('Not a git repo')
       }
     })
-    plugin.on('dgitApi', 'init', async () => {
+    plugin.on('gitApi', 'init', async () => {
       const isGit = await plugin.call('fileManager', 'isGitRepo')
       if (isGit) {
         const workspace = localStorage.getItem('currentWorkspace')
@@ -42,20 +42,20 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
 
   }, [])
 
-  const lightDgitUp = async () => {
-    const isActive = await plugin.call('manager', 'isActive', 'dgit')
+  const lightGitUp = async () => {
+    const isActive = await plugin.call('manager', 'isActive', 'git')
     const isGit = await plugin.call('fileManager', 'isGitRepo')
-    if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+    if (!isActive) await plugin.call('manager', 'activatePlugin', 'git')
     if (gitBranchName.length > 0 && isGit) {
-      plugin.verticalIcons.select('dgit')
+      plugin.verticalIcons.select('git')
     }
   }
 
   const initializeNewGitRepo = async () => {
     if (isLocalHost === false) {
-      const isActive = await plugin.call('manager', 'isActive', 'dgit')
-      if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
-      await plugin.call('dgitApi', 'init')
+      const isActive = await plugin.call('manager', 'isActive', 'git')
+      if (!isActive) await plugin.call('manager', 'activatePlugin', 'git')
+      await plugin.call('gitApi', 'init')
       ;(window as any)._paq.push('trackEvent', 'statusbar', 'initNewRepo')
     }
   }
@@ -69,7 +69,7 @@ export default function GitStatus({ plugin, gitBranchName, setGitBranchName }: G
     >
       <div
         className="d-flex flex-row pl-3 small text-white justify-content-center align-items-center remixui_statusbar_gitstatus"
-        onClick={async () => await lightDgitUp()}
+        onClick={async () => await lightGitUp()}
       >
         {checkBranchName() && isLocalHost === false ? <span className="fa-regular fa-code-branch ml-1"></span>
           : <span className=" ml-1" onClick={initializeNewGitRepo}> Initialize as git repo</span>}

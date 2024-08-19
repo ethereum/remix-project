@@ -36,7 +36,7 @@ let requiredModules = [ // services + layout views + system views
   'pluginManager',
   'tabs',
   'udapp',
-  'dgitApi',
+  'gitApi',
   'solidity',
   'solidity-logic',
   'gistHandler',
@@ -78,7 +78,7 @@ let requiredModules = [ // services + layout views + system views
   'doc-gen',
   'remix-templates',
   'solhint',
-  'dgit',
+  'git',
   'pinnedPanel',
   'pluginStateLogger',
   'remixGuide',
@@ -254,7 +254,7 @@ export class RemixAppManager extends PluginManager {
       const res = await fetch(this.pluginsDirectory)
       plugins = await res.json()
       plugins = plugins.filter((plugin) => {
-        if (plugin.name === 'dgit') return false
+        if (plugin.name === 'git') return false
         if (plugin.targets && Array.isArray(plugin.targets) && plugin.targets.length > 0) {
           return plugin.targets.includes('remix')
         }
@@ -292,7 +292,7 @@ export class RemixAppManager extends PluginManager {
     }
 
     return plugins.map(plugin => {
-      if (plugin.name === 'dgit' && Registry.getInstance().get('platform').api.isDesktop()) { plugin.url = 'https://dgit4-76cc9.web.app/' } // temporary fix
+      if (plugin.name === 'git' && Registry.getInstance().get('platform').api.isDesktop()) { plugin.url = 'https://git4-76cc9.web.app/' } // temporary fix
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
       return new IframePlugin(plugin)
     })

@@ -254,7 +254,7 @@ module.exports = {
       connectRemixd(browser, done)
     })
     browser
-      .clickLaunchIcon('dgit')
+      .clickLaunchIcon('git')
       .waitForElementVisible('*[data-id="disabled"]')
       .pause(2000)
       .clickLaunchIcon('filePanel')
@@ -265,7 +265,7 @@ module.exports = {
         timeout: 2000
       })
       .pause(2000)
-      .clickLaunchIcon('dgit')
+      .clickLaunchIcon('git')
       .waitForElementNotPresent('*[data-id="disabled"]')
   },
   'Should install slither #group6': function (browser: NightwatchBrowser) {
