@@ -66,7 +66,7 @@ const RemixApp = (props: IRemixAppUi) => {
       }
     }
     if (hadUsageTypeAsked) {
-      _paq.push(['trackEvent', 'user-reentry', 'usageType', hadUsageTypeAsked])
+      _paq.push(['trackEvent', 'enterDialog', 'usageType', hadUsageTypeAsked])
     }
   }, [])
 
