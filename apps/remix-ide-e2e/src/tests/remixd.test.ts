@@ -66,7 +66,7 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'run Remixd tests #group1': function (browser) {
+  'run Remixd tests #group1 #flaky': function (browser) {
     browser.perform(async (done) => {
       try {
         remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))

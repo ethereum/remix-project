@@ -20,7 +20,7 @@ module.exports = {
     browser
       .addFile('Untitled.sol', sources[0]['Untitled.sol'])
   },
-  'Deploy Ballot #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Deploy Ballot #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('solidity2')
