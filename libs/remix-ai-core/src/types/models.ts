@@ -64,7 +64,27 @@ const DefaultModels = (): IModel[] => {
     modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 8 }
   };
 
-  return [model1, model2, model3, model4, model5, model6];
+  const model7: IModel = {
+    name: 'llaama3.1_8B',
+    modelOP: RemoteBackendOPModel.CODELLAMA,
+    task: 'text-generation',
+    modelName: 'llama3_1_8B-q4_0.gguf',
+    downloadUrl: 'https://drive.google.com/file/d/1I376pl8uORDnUIjfNuqhExK4NCiH3F12/view?usp=share_link',
+    modelType: ModelType.GENERAL,
+    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 8 }
+  };
+
+  const model8: IModel = {
+    name: 'llaama3.1_8B_instruct',
+    modelOP: RemoteBackendOPModel.CODELLAMA,
+    task: 'text-generation',
+    modelName: 'llama3_1_8B-q4_0_instruct.gguf',
+    downloadUrl: 'https://drive.google.com/file/d/1P-MEH7cPxaR20v7W1qbOEPBzgiY2RDLx/view?usp=share_link',
+    modelType: ModelType.GENERAL,
+    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 8 }
+  };
+
+  return [model1, model2, model3, model4, model5, model6, model7, model8];
 }
 
 const getModel = async (name: string): Promise<IModel | undefined> => {
