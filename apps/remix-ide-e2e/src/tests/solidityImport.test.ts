@@ -115,7 +115,7 @@ module.exports = {
       .verifyContracts(['test13', 'ERC20'], { wait: 30000 })
   },
 
-  'Test NPM Import (the version is specified in package.json) #group4': function (browser: NightwatchBrowser) {
+  'Test NPM Import (the version is specified in package.json) #group4 #flaky': function (browser: NightwatchBrowser) {
     browser
       // clone https://github.com/yann300/remix-reward
       .clickLaunchIcon('filePanel')
@@ -129,8 +129,7 @@ module.exports = {
       .setValue('[data-id="modalDialogCustomPromptTextClone"]', 'https://github.com/yann300/remix-reward')
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .waitForElementPresent('.fa-spinner')
-      .pause(5000)
-      .waitForElementNotPresent('.fa-spinner')
+      .waitForElementNotPresent('.fa-spinner', 120000)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
       .waitForElementContainsText('[data-id="workspacesSelect"]', 'remix-reward')
       .clickLaunchIcon('solidity')
