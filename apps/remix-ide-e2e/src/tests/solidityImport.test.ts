@@ -115,7 +115,7 @@ module.exports = {
       .verifyContracts(['test13', 'ERC20'], { wait: 30000 })
   },
 
-  'Test NPM Import (the version is specified in package.json) #group4 #flaky': function (browser: NightwatchBrowser) {
+  'Test NPM Import (the version is specified in package.json) #group4': function (browser: NightwatchBrowser) {
     browser
       // clone https://github.com/yann300/remix-reward
       .clickLaunchIcon('filePanel')
