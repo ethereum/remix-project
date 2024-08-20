@@ -5,7 +5,6 @@
 import { IModel, IParams, RemoteBackendOPModel } from './types';
 import { ModelType } from './constants';
 
-
 const DefaultModels = (): IModel[] => {
   const model1:IModel = {
     name: 'DeepSeek',
@@ -61,7 +60,7 @@ const DefaultModels = (): IModel[] => {
     modelName: 'DeepSeek-Coder-V2-Lite-Base.Q2_K.gguf',
     downloadUrl: 'https://huggingface.co/QuantFactory/DeepSeek-Coder-V2-Lite-Base-GGUF/resolve/main/DeepSeek-Coder-V2-Lite-Base.Q2_K.gguf?download=true',
     modelType: ModelType.GENERAL,
-    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 8 }
+    modelReqs: { backend: 'llamacpp', minSysMemory: 8, GPURequired: false, MinGPUVRAM: 8 }
   };
 
   const model7: IModel = {
@@ -69,9 +68,9 @@ const DefaultModels = (): IModel[] => {
     modelOP: RemoteBackendOPModel.CODELLAMA,
     task: 'text-generation',
     modelName: 'llama3_1_8B-q4_0.gguf',
-    downloadUrl: 'https://drive.google.com/file/d/1I376pl8uORDnUIjfNuqhExK4NCiH3F12/view?usp=share_link',
+    downloadUrl: 'https://drive.usercontent.google.com/download?id=1I376pl8uORDnUIjfNuqhExK4NCiH3F12&confirm=xxx',
     modelType: ModelType.GENERAL,
-    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 8 }
+    modelReqs: { backend: 'llamacpp', minSysMemory: 8, GPURequired: false, MinGPUVRAM: 8 }
   };
 
   const model8: IModel = {
@@ -79,9 +78,9 @@ const DefaultModels = (): IModel[] => {
     modelOP: RemoteBackendOPModel.CODELLAMA,
     task: 'text-generation',
     modelName: 'llama3_1_8B-q4_0_instruct.gguf',
-    downloadUrl: 'https://drive.google.com/file/d/1P-MEH7cPxaR20v7W1qbOEPBzgiY2RDLx/view?usp=share_link',
+    downloadUrl: 'https://drive.usercontent.google.com/download?id=1P-MEH7cPxaR20v7W1qbOEPBzgiY2RDLx&confirm=xxx',
     modelType: ModelType.GENERAL,
-    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 8 }
+    modelReqs: { backend: 'llamacpp', minSysMemory: 8, GPURequired: false, MinGPUVRAM: 8 }
   };
 
   return [model1, model2, model3, model4, model5, model6, model7, model8];
