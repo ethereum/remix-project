@@ -1,307 +1,382 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useEffect, useRef, useState } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import * as remixLib from '@remix-project/remix-lib'
-import { ContractGUIProps } from '../types'
-import { CopyToClipboard } from '@remix-ui/clipboard'
-import { CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenDate, shortenProxyAddress, unavailableProxyLayoutMsg, upgradeReportMsg } from '@remix-ui/helper'
-import { Dropdown } from 'react-bootstrap'
+import React, { useEffect, useRef, useState } from "react";
+import { FormattedMessage, useIntl } from "react-intl";
+import * as remixLib from "@remix-project/remix-lib";
+import { ContractGUIProps } from "../types";
+import { CopyToClipboard } from "@remix-ui/clipboard";
+import {
+  CustomTooltip,
+  ProxyAddressToggle,
+  ProxyDropdownMenu,
+  shortenDate,
+  shortenProxyAddress,
+  unavailableProxyLayoutMsg,
+  upgradeReportMsg,
+} from "@remix-ui/helper";
+import { Dropdown } from "react-bootstrap";
 
-const txFormat = remixLib.execution.txFormat
-const txHelper = remixLib.execution.txHelper
+const txFormat = remixLib.execution.txFormat;
+const txHelper = remixLib.execution.txHelper;
 export function ContractGUI(props: ContractGUIProps) {
-  const [title, setTitle] = useState<string>('')
-  const [basicInput, setBasicInput] = useState<string>('')
-  const [toggleContainer, setToggleContainer] = useState<boolean>(false)
+  const [title, setTitle] = useState<string>("");
+  const [basicInput, setBasicInput] = useState<string>("");
+  const [toggleContainer, setToggleContainer] = useState<boolean>(false);
   const [buttonOptions, setButtonOptions] = useState<{
-    title: string
-    content: string
-    classList: string
-    dataId: string
-  }>({ title: '', content: '', classList: '', dataId: '' })
-  const [toggleDeployProxy, setToggleDeployProxy] = useState<boolean>(false)
-  const [toggleUpgradeImp, setToggleUpgradeImp] = useState<boolean>(false)
+    title: string;
+    content: string;
+    classList: string;
+    dataId: string;
+  }>({ title: "", content: "", classList: "", dataId: "" });
+  const [toggleDeployProxy, setToggleDeployProxy] = useState<boolean>(false);
+  const [toggleUpgradeImp, setToggleUpgradeImp] = useState<boolean>(false);
   const [deployState, setDeployState] = useState<{
-    deploy: boolean
-    upgrade: boolean
-  }>({ deploy: false, upgrade: false })
-  const [proxyAddress, setProxyAddress] = useState<string>('')
-  const [proxyAddressError, setProxyAddressError] = useState<string>('')
-  const [showDropdown, setShowDropdown] = useState<boolean>(false)
-  const multiFields = useRef<Array<HTMLInputElement | null>>([])
-  const initializeFields = useRef<Array<HTMLInputElement | null>>([])
-  const basicInputRef = useRef<HTMLInputElement>()
-  const intl = useIntl()
+    deploy: boolean;
+    upgrade: boolean;
+  }>({ deploy: false, upgrade: false });
+  const [proxyAddress, setProxyAddress] = useState<string>("");
+  const [proxyAddressError, setProxyAddressError] = useState<string>("");
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const multiFields = useRef<Array<HTMLInputElement | null>>([]);
+  const initializeFields = useRef<Array<HTMLInputElement | null>>([]);
+  const basicInputRef = useRef<HTMLInputElement>();
+  const intl = useIntl();
   useEffect(() => {
     if (props.deployOption && Array.isArray(props.deployOption)) {
-      if (props.deployOption[0] && props.deployOption[0].title === 'Deploy with Proxy' && props.deployOption[0].active) handleDeployProxySelect(true)
-      else if (props.deployOption[1] && props.deployOption[1].title === 'Upgrade with Proxy' && props.deployOption[1].active) handleUpgradeImpSelect(true)
+      if (
+        props.deployOption[0] &&
+        props.deployOption[0].title === "Deploy with Proxy" &&
+        props.deployOption[0].active
+      )
+        handleDeployProxySelect(true);
+      else if (
+        props.deployOption[1] &&
+        props.deployOption[1].title === "Upgrade with Proxy" &&
+        props.deployOption[1].active
+      )
+        handleUpgradeImpSelect(true);
     }
-  }, [props.deployOption])
+  }, [props.deployOption]);
 
   useEffect(() => {
     if (props.title) {
-      setTitle(props.title)
+      setTitle(props.title);
     } else if (props.funcABI.name) {
-      setTitle(props.funcABI.name)
+      setTitle(props.funcABI.name);
     } else {
-      setTitle(props.funcABI.type === 'receive' ? '(receive)' : '(fallback)')
+      setTitle(props.funcABI.type === "receive" ? "(receive)" : "(fallback)");
     }
-    setBasicInput('')
+    setBasicInput("");
     // we have the reset the fields before resetting the previous references.
-    basicInputRef.current.value = ''
-    multiFields.current.filter((el) => el !== null && el !== undefined).forEach((el) => (el.value = ''))
-    multiFields.current = []
-  }, [props.title, props.funcABI])
+    basicInputRef.current.value = "";
+    multiFields.current
+      .filter((el) => el !== null && el !== undefined)
+      .forEach((el) => (el.value = ""));
+    multiFields.current = [];
+  }, [props.title, props.funcABI]);
 
   useEffect(() => {
     if (props.lookupOnly) {
       //   // call. stateMutability is either pure or view
       setButtonOptions({
-        title: title + ' - call',
-        content: 'call',
-        classList: 'btn-info',
-        dataId: title + ' - call'
-      })
-    } else if (props.funcABI.stateMutability === 'payable' || props.funcABI.payable) {
+        title: title + " - call",
+        content: "call",
+        classList: "btn-info",
+        dataId: title + " - call",
+      });
+    } else if (
+      props.funcABI.stateMutability === "payable" ||
+      props.funcABI.payable
+    ) {
       //   // transact. stateMutability = payable
       setButtonOptions({
-        title: title + ' - transact (payable)',
-        content: 'transact',
-        classList: 'btn-danger',
-        dataId: title + ' - transact (payable)'
-      })
+        title: title + " - transact (payable)",
+        content: "transact",
+        classList: "btn-danger",
+        dataId: title + " - transact (payable)",
+      });
     } else {
       //   // transact. stateMutability = nonpayable
       setButtonOptions({
-        title: title + ' - transact (not payable)',
-        content: 'transact',
-        classList: 'btn-warning',
-        dataId: title + ' - transact (not payable)'
-      })
+        title: title + " - transact (not payable)",
+        content: "transact",
+        classList: "btn-warning",
+        dataId: title + " - transact (not payable)",
+      });
     }
-  }, [props.lookupOnly, props.funcABI, title])
+  }, [props.lookupOnly, props.funcABI, title]);
 
   const getEncodedCall = () => {
-    const multiString = getMultiValsString(multiFields.current)
+    const multiString = getMultiValsString(multiFields.current);
     // copy-to-clipboard icon is only visible for method requiring input params
     if (!multiString) {
-      return intl.formatMessage({ id: 'udapp.getEncodedCallError' })
+      return intl.formatMessage({ id: "udapp.getEncodedCallError" });
     }
-    const multiJSON = JSON.parse('[' + multiString + ']')
+    const multiJSON = JSON.parse("[" + multiString + "]");
 
-    const encodeObj = txFormat.encodeData(props.funcABI, multiJSON, props.funcABI.type === 'constructor' ? props.evmBC : null)
+    const encodeObj = txFormat.encodeData(
+      props.funcABI,
+      multiJSON,
+      props.funcABI.type === "constructor" ? props.evmBC : null
+    );
 
     if (encodeObj.error) {
-      console.error(encodeObj.error)
-      return encodeObj.error
+      console.error(encodeObj.error);
+      return encodeObj.error;
     } else {
-      return encodeObj.data
+      return encodeObj.data;
     }
-  }
+  };
 
   const getEncodedParams = () => {
     try {
-      const multiString = getMultiValsString(multiFields.current)
+      const multiString = getMultiValsString(multiFields.current);
       // copy-to-clipboard icon is only visible for method requiring input params
       if (!multiString) {
-        return intl.formatMessage({ id: 'udapp.getEncodedCallError' })
+        return intl.formatMessage({ id: "udapp.getEncodedCallError" });
       }
-      const multiJSON = JSON.parse('[' + multiString + ']')
-      return txHelper.encodeParams(props.funcABI, multiJSON)
+      const multiJSON = JSON.parse("[" + multiString + "]");
+      return txHelper.encodeParams(props.funcABI, multiJSON);
     } catch (e) {
-      console.error(e)
+      console.error(e);
     }
-  }
+  };
 
   const switchMethodViewOn = () => {
-    setToggleContainer(true)
-    makeMultiVal()
-  }
+    setToggleContainer(true);
+    makeMultiVal();
+  };
 
   const switchMethodViewOff = () => {
-    setToggleContainer(false)
-    const multiValString = getMultiValsString(multiFields.current)
+    setToggleContainer(false);
+    const multiValString = getMultiValsString(multiFields.current);
 
-    if (multiValString) setBasicInput(multiValString)
-  }
+    if (multiValString) setBasicInput(multiValString);
+  };
 
   const getMultiValsString = (fields: HTMLInputElement[]) => {
-    const valArray = fields
-    let ret = ''
-    const valArrayTest = []
+    const valArray = fields;
+    let ret = "";
+    const valArrayTest = [];
 
     for (let j = 0; j < valArray.length; j++) {
-      if (ret !== '') ret += ','
-      let elVal = valArray[j] ? valArray[j].value : ''
+      if (ret !== "") ret += ",";
+      let elVal = valArray[j] ? valArray[j].value : "";
 
-      valArrayTest.push(elVal)
-      elVal = elVal.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
-      elVal = elVal.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
+      valArrayTest.push(elVal);
+      elVal = elVal.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3'); // replace non quoted number by quoted number
+      elVal = elVal.replace(
+        /(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g,
+        '$1"$2"$3'
+      ); // replace non quoted hex string by quoted hex string
       if (elVal) {
         try {
-          JSON.parse(elVal)
+          JSON.parse(elVal);
         } catch (e) {
-          elVal = '"' + elVal + '"'
+          elVal = '"' + elVal + '"';
         }
       }
-      ret += elVal
+      ret += elVal;
     }
-    const valStringTest = valArrayTest.join('')
+    const valStringTest = valArrayTest.join("");
 
     if (valStringTest) {
-      return ret
+      return ret;
     } else {
-      return ''
+      return "";
     }
-  }
+  };
 
   const makeMultiVal = () => {
-    const inputString = basicInput
+    const inputString = basicInput;
 
     if (inputString) {
-      const inputJSON = remixLib.execution.txFormat.parseFunctionParams(inputString)
-      const multiInputs = multiFields.current
+      const inputJSON = remixLib.execution.txFormat.parseFunctionParams(
+        inputString
+      );
+      const multiInputs = multiFields.current;
 
       for (let k = 0; k < multiInputs.length; k++) {
         if (inputJSON[k]) {
-          multiInputs[k].value = JSON.stringify(inputJSON[k])
+          multiInputs[k].value = JSON.stringify(inputJSON[k]);
         }
       }
     }
-  }
+  };
 
   const handleActionClick = async () => {
-    props.getVersion()
+    props.getVersion();
     if (deployState.deploy) {
-      const proxyInitializeString = getMultiValsString(initializeFields.current)
-      props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
+      const proxyInitializeString = getMultiValsString(
+        initializeFields.current
+      );
+      props.clickCallBack(
+        props.initializerOptions.inputs.inputs,
+        proxyInitializeString,
+        ["Deploy with Proxy"]
+      );
     } else if (deployState.upgrade) {
-      if (proxyAddress === '') {
-        setProxyAddressError(intl.formatMessage({ id: 'udapp.proxyAddressError1' }))
+      if (proxyAddress === "") {
+        setProxyAddressError(
+          intl.formatMessage({ id: "udapp.proxyAddressError1" })
+        );
       } else {
-        const isValidProxyAddress = await props.isValidProxyAddress(proxyAddress)
+        const isValidProxyAddress = await props.isValidProxyAddress(
+          proxyAddress
+        );
         if (isValidProxyAddress) {
-          setProxyAddressError('')
-          const upgradeReport: any = await props.isValidProxyUpgrade(proxyAddress)
+          setProxyAddressError("");
+          const upgradeReport: any = await props.isValidProxyUpgrade(
+            proxyAddress
+          );
           if (upgradeReport.ok) {
-            !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+            !proxyAddressError &&
+              props.clickCallBack(props.funcABI.inputs, proxyAddress, [
+                "Upgrade with Proxy",
+              ]);
           } else {
             if (upgradeReport.warning) {
               props.modal(
-                'Proxy Upgrade Warning',
+                "Proxy Upgrade Warning",
                 unavailableProxyLayoutMsg(),
-                'Proceed',
+                "Proceed",
                 () => {
-                  !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+                  !proxyAddressError &&
+                    props.clickCallBack(props.funcABI.inputs, proxyAddress, [
+                      "Upgrade with Proxy",
+                    ]);
                 },
-                'Cancel',
+                "Cancel",
                 () => {},
-                'btn-warning',
-                'btn-secondary'
-              )
+                "btn-warning",
+                "btn-secondary"
+              );
             } else {
               props.modal(
-                'Proxy Upgrade Error',
+                "Proxy Upgrade Error",
                 upgradeReportMsg(upgradeReport),
-                'Continue anyway ',
+                "Continue anyway ",
                 () => {
-                  !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+                  !proxyAddressError &&
+                    props.clickCallBack(props.funcABI.inputs, proxyAddress, [
+                      "Upgrade with Proxy",
+                    ]);
                 },
-                'Cancel',
+                "Cancel",
                 () => {},
-                'btn-warning',
-                'btn-secondary'
-              )
+                "btn-warning",
+                "btn-secondary"
+              );
             }
           }
         } else {
-          setProxyAddressError(intl.formatMessage({ id: 'udapp.proxyAddressError2' }))
+          setProxyAddressError(
+            intl.formatMessage({ id: "udapp.proxyAddressError2" })
+          );
         }
       }
     } else {
-      props.clickCallBack(props.funcABI.inputs, basicInput)
+      props.clickCallBack(props.funcABI.inputs, basicInput);
     }
-  }
+  };
 
   const handleBasicInput = (e) => {
-    const value = e.target.value
+    let value = e.target.value;
 
-    setBasicInput(value)
-  }
+    if (value.startsWith("XDC") || value.startsWith("xdc")) {
+      value = "0x" + value.substring(3);
+    }
+
+    setBasicInput(value);
+  };
 
   const handleExpandMultiClick = () => {
-    const valsString = getMultiValsString(multiFields.current)
+    const valsString = getMultiValsString(multiFields.current);
 
     if (valsString) {
-      props.clickCallBack(props.funcABI.inputs, valsString)
+      props.clickCallBack(props.funcABI.inputs, valsString);
     } else {
-      props.clickCallBack(props.funcABI.inputs, '')
+      props.clickCallBack(props.funcABI.inputs, "");
     }
-  }
+  };
 
   const handleToggleDeployProxy = () => {
-    setToggleDeployProxy(!toggleDeployProxy)
-  }
+    setToggleDeployProxy(!toggleDeployProxy);
+  };
 
   const handleDeployProxySelect = (value: boolean) => {
-    if (value) setToggleUpgradeImp(false)
-    setToggleDeployProxy(value)
-    setDeployState({ upgrade: false, deploy: value })
-  }
+    if (value) setToggleUpgradeImp(false);
+    setToggleDeployProxy(value);
+    setDeployState({ upgrade: false, deploy: value });
+  };
 
   const handleToggleUpgradeImp = () => {
-    setToggleUpgradeImp(!toggleUpgradeImp)
-  }
+    setToggleUpgradeImp(!toggleUpgradeImp);
+  };
 
   const handleUpgradeImpSelect = (value: boolean) => {
-    setToggleUpgradeImp(value)
+    setToggleUpgradeImp(value);
     if (value) {
-      setToggleDeployProxy(false)
+      setToggleDeployProxy(false);
     }
-    setDeployState({ deploy: false, upgrade: value })
-  }
+    setDeployState({ deploy: false, upgrade: value });
+  };
 
   const switchProxyAddress = (address: string) => {
-    setProxyAddress(address)
-  }
+    setProxyAddress(address);
+  };
 
   const toggleDropdown = (isOpen: boolean) => {
-    setShowDropdown(isOpen)
-  }
+    setShowDropdown(isOpen);
+  };
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const address = e.target.value
+    const address = e.target.value;
 
-    setProxyAddress(address)
-  }
+    setProxyAddress(address);
+  };
 
   return (
     <div
       className={`udapp_contractProperty ${
-        (props.funcABI.inputs && props.funcABI.inputs.length > 0) || props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? 'udapp_hasArgs' : ''
+        (props.funcABI.inputs && props.funcABI.inputs.length > 0) ||
+        props.funcABI.type === "fallback" ||
+        props.funcABI.type === "receive"
+          ? "udapp_hasArgs"
+          : ""
       }`}
     >
-      <div className="udapp_contractActionsContainerSingle pt-2" style={{ display: toggleContainer ? 'none' : 'flex' }}>
+      <div
+        className="udapp_contractActionsContainerSingle pt-2"
+        style={{ display: toggleContainer ? "none" : "flex" }}
+      >
         <CustomTooltip
           delay={0}
-          placement={'auto-end'}
+          placement={"auto-end"}
           tooltipClasses="text-wrap"
           tooltipId="remixUdappInstanceButtonTooltip"
           tooltipText={
             toggleUpgradeImp && !proxyAddress
-              ? intl.formatMessage({ id: 'udapp.tooltipText11' })
-              : props.inputs !== '' && basicInput === ''
-                ? intl.formatMessage({ id: 'udapp.tooltipText12' })
-                : buttonOptions.title
+              ? intl.formatMessage({ id: "udapp.tooltipText11" })
+              : props.inputs !== "" && basicInput === ""
+              ? intl.formatMessage({ id: "udapp.tooltipText12" })
+              : buttonOptions.title
           }
         >
-          <div className="d-flex p-0 wrapperElement" onClick={handleActionClick} data-id={buttonOptions.dataId} data-title={buttonOptions.title}>
+          <div
+            className="d-flex p-0 wrapperElement"
+            onClick={handleActionClick}
+            data-id={buttonOptions.dataId}
+            data-title={buttonOptions.title}
+          >
             <button
               className={`udapp_instanceButton text-nowrap overflow-hidden text-truncate ${props.widthClass} btn btn-sm ${buttonOptions.classList}`}
               data-id={`${buttonOptions.dataId}`}
               data-title={`${buttonOptions.title}`}
-              disabled={(toggleUpgradeImp && !proxyAddress) || props.disabled || (props.inputs !== '' && basicInput === '')}
+              disabled={
+                (toggleUpgradeImp && !proxyAddress) ||
+                props.disabled ||
+                (props.inputs !== "" && basicInput === "")
+              }
             >
               {title}
             </button>
@@ -309,28 +384,53 @@ export function ContractGUI(props: ContractGUIProps) {
         </CustomTooltip>
         <input
           className="form-control"
-          data-id={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : 'multiParamManagerBasicInputField'}
+          data-id={
+            props.funcABI.type === "fallback" ||
+            props.funcABI.type === "receive"
+              ? `'(${props.funcABI.type}')`
+              : "multiParamManagerBasicInputField"
+          }
           placeholder={props.inputs}
           onChange={handleBasicInput}
-          data-title={props.funcABI.type === 'fallback' || props.funcABI.type === 'receive' ? `'(${props.funcABI.type}')` : props.inputs}
+          data-title={
+            props.funcABI.type === "fallback" ||
+            props.funcABI.type === "receive"
+              ? `'(${props.funcABI.type}')`
+              : props.inputs
+          }
           ref={basicInputRef}
           style={{
-            height: '2rem',
-            visibility: !((props.funcABI.inputs && props.funcABI.inputs.length > 0) || props.funcABI.type === 'fallback' || props.funcABI.type === 'receive') ? 'hidden' : 'visible'
+            height: "2rem",
+            visibility: !(
+              (props.funcABI.inputs && props.funcABI.inputs.length > 0) ||
+              props.funcABI.type === "fallback" ||
+              props.funcABI.type === "receive"
+            )
+              ? "hidden"
+              : "visible",
           }}
         />
         <i
           className="fas fa-angle-down udapp_methCaret"
           onClick={switchMethodViewOn}
           style={{
-            visibility: !(props.funcABI.inputs && props.funcABI.inputs.length > 0) ? 'hidden' : 'visible'
+            visibility: !(
+              props.funcABI.inputs && props.funcABI.inputs.length > 0
+            )
+              ? "hidden"
+              : "visible",
           }}
         ></i>
       </div>
-      <div className="udapp_contractActionsContainerMulti" style={{ display: toggleContainer ? 'flex' : 'none' }}>
+      <div
+        className="udapp_contractActionsContainerMulti"
+        style={{ display: toggleContainer ? "flex" : "none" }}
+      >
         <div className="udapp_contractActionsContainerMultiInner text-dark">
           <div onClick={switchMethodViewOff} className="udapp_multiHeader">
-            <div className="udapp_multiTitle run-instance-multi-title pt-3">{title}</div>
+            <div className="udapp_multiTitle run-instance-multi-title pt-3">
+              {title}
+            </div>
             <i className="fas fa-angle-up udapp_methCaret"></i>
           </div>
           <div>
@@ -338,10 +438,15 @@ export function ContractGUI(props: ContractGUIProps) {
               return (
                 <div className="udapp_multiArg" key={index}>
                   <label htmlFor={inp.name}> {inp.name}: </label>
-                  <CustomTooltip placement="left-end" tooltipId="udappContractActionsTooltip" tooltipClasses="text-nowrap" tooltipText={inp.name}>
+                  <CustomTooltip
+                    placement="left-end"
+                    tooltipId="udappContractActionsTooltip"
+                    tooltipClasses="text-nowrap"
+                    tooltipText={inp.name}
+                  >
                     <input
                       ref={(el) => {
-                        multiFields.current[index] = el
+                        multiFields.current[index] = el;
                       }}
                       className="form-control"
                       placeholder={inp.type}
@@ -350,31 +455,56 @@ export function ContractGUI(props: ContractGUIProps) {
                     />
                   </CustomTooltip>
                 </div>
-              )
+              );
             })}
           </div>
           <div className="d-flex udapp_group udapp_multiArg">
-            <CopyToClipboard tip={intl.formatMessage({ id: 'udapp.copyCalldata' })} icon="fa-clipboard" direction={'bottom'} getContent={getEncodedCall}>
+            <CopyToClipboard
+              tip={intl.formatMessage({ id: "udapp.copyCalldata" })}
+              icon="fa-clipboard"
+              direction={"bottom"}
+              getContent={getEncodedCall}
+            >
               <button className="btn remixui_copyButton">
-                <i id="copyCalldata" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                <i
+                  id="copyCalldata"
+                  className="m-0 remixui_copyIcon far fa-copy"
+                  aria-hidden="true"
+                ></i>
                 <label htmlFor="copyCalldata">Calldata</label>
               </button>
             </CopyToClipboard>
-            <CopyToClipboard tip={intl.formatMessage({ id: 'udapp.copyParameters' })} icon="fa-clipboard" direction={'bottom'} getContent={getEncodedParams}>
+            <CopyToClipboard
+              tip={intl.formatMessage({ id: "udapp.copyParameters" })}
+              icon="fa-clipboard"
+              direction={"bottom"}
+              getContent={getEncodedParams}
+            >
               <button className="btn remixui_copyButton">
-                <i id="copyParameters" className="m-0 remixui_copyIcon far fa-copy" aria-hidden="true"></i>
+                <i
+                  id="copyParameters"
+                  className="m-0 remixui_copyIcon far fa-copy"
+                  aria-hidden="true"
+                ></i>
                 <label htmlFor="copyParameters">
                   <FormattedMessage id="udapp.parameters" />
                 </label>
               </button>
             </CopyToClipboard>
-            <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="remixUdappInstanceButtonTooltip" tooltipText={buttonOptions.title}>
+            <CustomTooltip
+              placement={"auto-end"}
+              tooltipClasses="text-nowrap"
+              tooltipId="remixUdappInstanceButtonTooltip"
+              tooltipText={buttonOptions.title}
+            >
               <div onClick={handleExpandMultiClick}>
                 <button
                   type="button"
                   data-id={buttonOptions.dataId}
                   className={`udapp_instanceButton btn ${buttonOptions.classList} text-center d-flex justify-content-center align-items-center`}
-                  disabled={props.disabled || (props.inputs !== '' && basicInput === '')}
+                  disabled={
+                    props.disabled || (props.inputs !== "" && basicInput === "")
+                  }
                 >
                   <div className="text-center d-flex justify-content-center align-items-center">
                     {buttonOptions.content}
@@ -397,39 +527,59 @@ export function ContractGUI(props: ContractGUIProps) {
                 onChange={(e) => handleDeployProxySelect(e.target.checked)}
                 checked={deployState.deploy}
               />
-              <label htmlFor="deployWithProxy" data-id="contractGUIDeployWithProxyLabel" className="m-0 form-check-label w-100 custom-control-label udapp_checkboxAlign">
+              <label
+                htmlFor="deployWithProxy"
+                data-id="contractGUIDeployWithProxyLabel"
+                className="m-0 form-check-label w-100 custom-control-label udapp_checkboxAlign"
+              >
                 <FormattedMessage id="udapp.deployWithProxy" />
               </label>
             </div>
             <div>
-              {props.initializerOptions && props.initializerOptions.initializeInputs ? (
+              {props.initializerOptions &&
+              props.initializerOptions.initializeInputs ? (
                 <span onClick={handleToggleDeployProxy}>
-                  <i className={!toggleDeployProxy ? 'fas fa-angle-right pt-2' : 'fas fa-angle-down'} aria-hidden="true"></i>
+                  <i
+                    className={
+                      !toggleDeployProxy
+                        ? "fas fa-angle-right pt-2"
+                        : "fas fa-angle-down"
+                    }
+                    aria-hidden="true"
+                  ></i>
                 </span>
               ) : null}
             </div>
           </div>
-          {props.initializerOptions && props.initializerOptions.initializeInputs ? (
-            <div className={`pl-4 flex-column ${toggleDeployProxy ? 'd-flex' : 'd-none'}`}>
+          {props.initializerOptions &&
+          props.initializerOptions.initializeInputs ? (
+            <div
+              className={`pl-4 flex-column ${
+                toggleDeployProxy ? "d-flex" : "d-none"
+              }`}
+            >
               <div className={`flex-column 'd-flex'}`}>
                 {props.initializerOptions.inputs.inputs.map((inp, index) => {
                   return (
                     <div className="mb-2" key={index}>
-                      <label className="mt-2 text-left d-block" htmlFor={inp.name}>
-                        {' '}
-                        {inp.name}:{' '}
+                      <label
+                        className="mt-2 text-left d-block"
+                        htmlFor={inp.name}
+                      >
+                        {" "}
+                        {inp.name}:{" "}
                       </label>
                       <input
                         data-id={`initializeInputs-${inp.name}`}
                         ref={(el) => {
-                          initializeFields.current[index] = el
+                          initializeFields.current[index] = el;
                         }}
                         style={{ height: 32 }}
                         className="form-control udapp_input"
                         placeholder={inp.type}
                       />
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -444,15 +594,30 @@ export function ContractGUI(props: ContractGUIProps) {
                 onChange={(e) => handleUpgradeImpSelect(e.target.checked)}
                 checked={deployState.upgrade}
               />
-              <label htmlFor="upgradeImplementation" data-id="contractGUIUpgradeImplementationLabel" className="m-0 form-check-label custom-control-label udapp_checkboxAlign">
+              <label
+                htmlFor="upgradeImplementation"
+                data-id="contractGUIUpgradeImplementationLabel"
+                className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
+              >
                 <FormattedMessage id="udapp.upgradeWithProxy" />
               </label>
             </div>
             <span onClick={handleToggleUpgradeImp}>
-              <i className={!toggleUpgradeImp ? 'fas fa-angle-right pt-2' : 'fas fa-angle-down'} aria-hidden="true"></i>
+              <i
+                className={
+                  !toggleUpgradeImp
+                    ? "fas fa-angle-right pt-2"
+                    : "fas fa-angle-down"
+                }
+                aria-hidden="true"
+              ></i>
             </span>
           </div>
-          <div className={`pl-4 flex-column ${toggleUpgradeImp ? 'd-flex' : 'd-none'}`}>
+          <div
+            className={`pl-4 flex-column ${
+              toggleUpgradeImp ? "d-flex" : "d-none"
+            }`}
+          >
             <div data-id="proxy-dropdown-items">
               <Dropdown onToggle={toggleDropdown} show={showDropdown}>
                 <Dropdown.Toggle
@@ -464,27 +629,45 @@ export function ContractGUI(props: ContractGUIProps) {
                 />
 
                 {props.proxy.deployments.length > 0 && (
-                  <Dropdown.Menu as={ProxyDropdownMenu} className="w-100 custom-dropdown-items" style={{ overflow: 'hidden' }}>
+                  <Dropdown.Menu
+                    as={ProxyDropdownMenu}
+                    className="w-100 custom-dropdown-items"
+                    style={{ overflow: "hidden" }}
+                  >
                     {props.proxy.deployments.map((deployment, index) => (
                       <CustomTooltip
-                        placement={'right'}
+                        placement={"right"}
                         tooltipClasses="text-nowrap"
                         tooltipId={`proxyAddressTooltip${index}`}
-                        tooltipText={<FormattedMessage id="udapp.tooltipText13" values={{ date: shortenDate(deployment.date) }} />}
+                        tooltipText={
+                          <FormattedMessage
+                            id="udapp.tooltipText13"
+                            values={{ date: shortenDate(deployment.date) }}
+                          />
+                        }
                         key={index}
                       >
                         <Dropdown.Item
                           key={index}
                           onClick={() => {
-                            switchProxyAddress(deployment.address)
+                            switchProxyAddress(deployment.address);
                           }}
                           data-id={`proxyAddress${index}`}
                         >
                           <span>
                             {proxyAddress === deployment.address ? (
-                              <span>&#10003; {deployment.contractName + ' ' + shortenProxyAddress(deployment.address)} </span>
+                              <span>
+                                &#10003;{" "}
+                                {deployment.contractName +
+                                  " " +
+                                  shortenProxyAddress(deployment.address)}{" "}
+                              </span>
                             ) : (
-                              <span className="pl-3">{deployment.contractName + ' ' + shortenProxyAddress(deployment.address)}</span>
+                              <span className="pl-3">
+                                {deployment.contractName +
+                                  " " +
+                                  shortenProxyAddress(deployment.address)}
+                              </span>
                             )}
                           </span>
                         </Dropdown.Item>
@@ -497,7 +680,11 @@ export function ContractGUI(props: ContractGUIProps) {
             <div className="d-flex">
               <div className="mb-2">
                 {proxyAddressError && (
-                  <span className="text-lowercase text-danger" data-id="errorMsgProxyAddress" style={{ fontSize: '.8em' }}>
+                  <span
+                    className="text-lowercase text-danger"
+                    data-id="errorMsgProxyAddress"
+                    style={{ fontSize: ".8em" }}
+                  >
                     {proxyAddressError}
                   </span>
                 )}
@@ -507,5 +694,5 @@ export function ContractGUI(props: ContractGUIProps) {
         </>
       ) : null}
     </div>
-  )
+  );
 }

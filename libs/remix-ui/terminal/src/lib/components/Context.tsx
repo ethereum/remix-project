@@ -1,22 +1,28 @@
-import React from 'react' // eslint-disable-line
-import { shortenHexData } from '@remix-ui/helper'
-import { execution } from '@remix-project/remix-lib'
-const typeConversion = execution.typeConversion
+import React from "react"; // eslint-disable-line
+import { shortenHexData } from "@remix-ui/helper";
+import { execution } from "@remix-project/remix-lib";
+const typeConversion = execution.typeConversion;
 
-const Context = ({ opts, provider }: {opts; provider: string}) => {
-  const data = opts.tx || ''
-  const from = opts.from ? shortenHexData(opts.from) : ''
-  let to = opts.to
-  if (data.to) to = to + ' ' + shortenHexData(data.to)
-  const val = data.value
-  let hash = data.hash ? shortenHexData(data.hash) : ''
-  const input = data.input ? shortenHexData(data.input) : ''
-  const logs = opts.logs && opts.logs.decoded && opts.logs.decoded.length ? opts.logs.decoded.length : 0
-  const block = data.receipt ? data.receipt.blockNumber : data.blockNumber || ''
-  const i = data.receipt ? data.transactionIndex : data.transactionIndex
-  const value = val ? typeConversion.toInt(val) : 0
+const Context = ({ opts, provider }: { opts; provider: string }) => {
+  const prefix = localStorage.getItem("prefix");
+  const data = opts.tx || "";
+  const from = opts.from ? shortenHexData(prefix + opts.from.slice(2)) : "";
+  let to = opts.to;
+  if (data.to) to = to + " " + shortenHexData(data.to);
+  const val = data.value;
+  let hash = data.hash ? shortenHexData(data.hash) : "";
+  const input = data.input ? shortenHexData(data.input) : "";
+  const logs =
+    opts.logs && opts.logs.decoded && opts.logs.decoded.length
+      ? opts.logs.decoded.length
+      : 0;
+  const block = data.receipt
+    ? data.receipt.blockNumber
+    : data.blockNumber || "";
+  const i = data.receipt ? data.transactionIndex : data.transactionIndex;
+  const value = val ? typeConversion.toInt(val) : 0;
 
-  if (provider && provider.startsWith('vm')) {
+  if (provider && provider.startsWith("vm")) {
     return (
       <div>
         <span>
@@ -28,7 +34,8 @@ const Context = ({ opts, provider }: {opts; provider: string}) => {
             <span className="remix_ui_terminal_txItemTitle">to:</span> {to}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="remix_ui_terminal_txItemTitle">value:</span> {value} wei
+            <span className="remix_ui_terminal_txItemTitle">value:</span>{" "}
+            {value} wei
           </div>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">data:</span> {input}
@@ -41,13 +48,13 @@ const Context = ({ opts, provider }: {opts; provider: string}) => {
           </div>
         </span>
       </div>
-    )
+    );
   } else if (data.resolvedData) {
     return (
       <div>
         <span>
           <span className="remix_ui_terminal_tx">
-            [block:{block.toString()} txIndex:{i ? i.toString() : '-'}]
+            [block:{block.toString()} txIndex:{i ? i.toString() : "-"}]
           </span>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">from:</span> {from}
@@ -56,7 +63,8 @@ const Context = ({ opts, provider }: {opts; provider: string}) => {
             <span className="remix_ui_terminal_txItemTitle">to:</span> {to}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="remix_ui_terminal_txItemTitle">value:</span> {value} wei
+            <span className="remix_ui_terminal_txItemTitle">value:</span>{" "}
+            {value} wei
           </div>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">data:</span> {input}
@@ -69,14 +77,14 @@ const Context = ({ opts, provider }: {opts; provider: string}) => {
           </div>
         </span>
       </div>
-    )
+    );
   } else {
-    hash = shortenHexData(data.blockHash)
+    hash = shortenHexData(data.blockHash);
     return (
       <div>
         <span>
           <span className="remix_ui_terminal_tx">
-            [block:{block.toString()} txIndex:{i ? i.toString() : '-'}]
+            [block:{block.toString()} txIndex:{i ? i.toString() : "-"}]
           </span>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">from:</span> {from}
@@ -85,7 +93,8 @@ const Context = ({ opts, provider }: {opts; provider: string}) => {
             <span className="remix_ui_terminal_txItemTitle">to:</span> {to}
           </div>
           <div className="remix_ui_terminal_txItem">
-            <span className="remix_ui_terminal_txItemTitle">value:</span> {value} wei
+            <span className="remix_ui_terminal_txItemTitle">value:</span>{" "}
+            {value} wei
           </div>
           <div className="remix_ui_terminal_txItem">
             <span className="remix_ui_terminal_txItemTitle">data:</span> {input}
@@ -98,8 +107,8 @@ const Context = ({ opts, provider }: {opts; provider: string}) => {
           </div>
         </span>
       </div>
-    )
+    );
   }
-}
+};
 
-export default Context
+export default Context;

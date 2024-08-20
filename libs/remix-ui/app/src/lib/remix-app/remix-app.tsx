@@ -1,58 +1,62 @@
-import React, { useEffect, useRef, useState } from 'react'
-import './style/remix-app.css'
-import { RemixUIMainPanel } from '@remix-ui/panel'
-import MatomoDialog from './components/modals/matomo'
-import EnterDialog from './components/modals/enter'
-import OriginWarning from './components/modals/origin-warning'
-import DragBar from './components/dragbar/dragbar'
-import { AppProvider } from './context/provider'
-import AppDialogs from './components/modals/dialogs'
-import DialogViewPlugin from './components/modals/dialogViewPlugin'
-import { appProviderContextType, onLineContext, platformContext } from './context/context'
-import { FormattedMessage, IntlProvider } from 'react-intl'
-import { CustomTooltip } from '@remix-ui/helper'
-import { UsageTypes } from './types'
+import React, { useEffect, useRef, useState } from "react";
+import "./style/remix-app.css";
+import { RemixUIMainPanel } from "@remix-ui/panel";
+import MatomoDialog from "./components/modals/matomo";
+import EnterDialog from "./components/modals/enter";
+import OriginWarning from "./components/modals/origin-warning";
+import DragBar from "./components/dragbar/dragbar";
+import { AppProvider } from "./context/provider";
+import AppDialogs from "./components/modals/dialogs";
+import DialogViewPlugin from "./components/modals/dialogViewPlugin";
+import {
+  appProviderContextType,
+  onLineContext,
+  platformContext,
+} from "./context/context";
+import { FormattedMessage, IntlProvider } from "react-intl";
+import { CustomTooltip } from "@remix-ui/helper";
+import { UsageTypes } from "./types";
 
 declare global {
   interface Window {
-    _paq: any
+    _paq: any;
   }
 }
-const _paq = (window._paq = window._paq || [])
+const _paq = (window._paq = window._paq || []);
 
 interface IRemixAppUi {
-  app: any
+  app: any;
 }
 const RemixApp = (props: IRemixAppUi) => {
-  const [appReady, setAppReady] = useState<boolean>(false)
-  const [showEnterDialog, setShowEnterDialog] = useState<boolean>(false)
-  const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
-  const [hidePinnedPanel, setHidePinnedPanel] = useState<boolean>(true)
-  const [maximiseLeftTrigger, setMaximiseLeftTrigger] = useState<number>(0)
-  const [resetLeftTrigger, setResetLeftTrigger] = useState<number>(0)
-  const [maximiseRightTrigger, setMaximiseRightTrigger] = useState<number>(0)
-  const [resetRightTrigger, setResetRightTrigger] = useState<number>(0)
-  const [online, setOnline] = useState<boolean>(true)
+  const [appReady, setAppReady] = useState<boolean>(false);
+  const [showEnterDialog, setShowEnterDialog] = useState<boolean>(false);
+  const [hideSidePanel, setHideSidePanel] = useState<boolean>(false);
+  const [hidePinnedPanel, setHidePinnedPanel] = useState<boolean>(true);
+  const [maximiseLeftTrigger, setMaximiseLeftTrigger] = useState<number>(0);
+  const [resetLeftTrigger, setResetLeftTrigger] = useState<number>(0);
+  const [maximiseRightTrigger, setMaximiseRightTrigger] = useState<number>(0);
+  const [resetRightTrigger, setResetRightTrigger] = useState<number>(0);
+  const [online, setOnline] = useState<boolean>(true);
   const [locale, setLocale] = useState<{ code: string; messages: any }>({
-    code: 'en',
-    messages: {}
-  })
-  const sidePanelRef = useRef(null)
-  const pinnedPanelRef = useRef(null)
+    code: "en",
+    messages: {},
+  });
+  const sidePanelRef = useRef(null);
+  const pinnedPanelRef = useRef(null);
 
   useEffect(() => {
     async function activateApp() {
       props.app.themeModule.initTheme(() => {
-        setAppReady(true)
-        props.app.activate()
-        setListeners()
-      })
-      setLocale(props.app.localeModule.currentLocale())
+        setAppReady(true);
+        props.app.activate();
+        setListeners();
+      });
+      setLocale(props.app.localeModule.currentLocale());
     }
     if (props.app) {
-      activateApp()
+      activateApp();
     }
-    const hadUsageTypeAsked = localStorage.getItem('hadUsageTypeAsked')
+    const hadUsageTypeAsked = localStorage.getItem("hadUsageTypeAsked");
     if (props.app.showMatamo) {
       // if matomo dialog is displayed, it will take care of calling "setShowEnterDialog",
       // if the user approves matomo tracking.
@@ -62,67 +66,67 @@ const RemixApp = (props: IRemixAppUi) => {
       //  - it wasn't already set
       //  - (and) if user has given consent
       if (!hadUsageTypeAsked && props.app.matomoCurrentSetting) {
-        setShowEnterDialog(true)
+        setShowEnterDialog(true);
       }
     }
-  }, [])
+  }, []);
 
   function setListeners() {
-    props.app.sidePanel.events.on('toggle', () => {
+    props.app.sidePanel.events.on("toggle", () => {
       setHideSidePanel((prev) => {
-        return !prev
-      })
-    })
-    props.app.sidePanel.events.on('showing', () => {
-      setHideSidePanel(false)
-    })
+        return !prev;
+      });
+    });
+    props.app.sidePanel.events.on("showing", () => {
+      setHideSidePanel(false);
+    });
 
-    props.app.layout.event.on('minimizesidepanel', () => {
+    props.app.layout.event.on("minimizesidepanel", () => {
       // the 'showing' event always fires from sidepanel, so delay this a bit
       setTimeout(() => {
-        setHideSidePanel(true)
-      }, 1000)
-    })
+        setHideSidePanel(true);
+      }, 1000);
+    });
 
-    props.app.layout.event.on('maximisesidepanel', () => {
+    props.app.layout.event.on("maximisesidepanel", () => {
       setMaximiseLeftTrigger((prev) => {
-        return prev + 1
-      })
-    })
+        return prev + 1;
+      });
+    });
 
-    props.app.layout.event.on('resetsidepanel', () => {
+    props.app.layout.event.on("resetsidepanel", () => {
       setResetLeftTrigger((prev) => {
-        return prev + 1
-      })
-    })
+        return prev + 1;
+      });
+    });
 
-    props.app.layout.event.on('maximisepinnedpanel', () => {
+    props.app.layout.event.on("maximisepinnedpanel", () => {
       setMaximiseRightTrigger((prev) => {
-        return prev + 1
-      })
-    })
+        return prev + 1;
+      });
+    });
 
-    props.app.layout.event.on('resetpinnedpanel', () => {
+    props.app.layout.event.on("resetpinnedpanel", () => {
       setResetRightTrigger((prev) => {
-        return prev + 1
-      })
-    })
+        return prev + 1;
+      });
+    });
 
-    props.app.localeModule.events.on('localeChanged', (nextLocale) => {
-      setLocale(nextLocale)
-    })
+    props.app.localeModule.events.on("localeChanged", (nextLocale) => {
+      setLocale(nextLocale);
+    });
 
-    props.app.pinnedPanel.events.on('pinnedPlugin', () => {
-      setHidePinnedPanel(false)
-    })
+    props.app.pinnedPanel.events.on("pinnedPlugin", () => {
+      setHidePinnedPanel(false);
+    });
 
-    props.app.pinnedPanel.events.on('unPinnedPlugin', () => {
-      setHidePinnedPanel(true)
-    })
+    props.app.pinnedPanel.events.on("unPinnedPlugin", () => {
+      setHidePinnedPanel(true);
+    });
 
     setInterval(() => {
-      setOnline(window.navigator.onLine)
-    }, 1000)
+      setOnline(window.navigator.onLine);
+    }, 1000);
   }
 
   const value: appProviderContextType = {
@@ -130,44 +134,48 @@ const RemixApp = (props: IRemixAppUi) => {
     showMatamo: props.app.showMatamo,
     appManager: props.app.appManager,
     showEnter: props.app.showEnter,
-    modal: props.app.notification
-  }
+    modal: props.app.notification,
+  };
 
   const handleUserChosenType = async (type) => {
-    setShowEnterDialog(false)
-    localStorage.setItem('hadUsageTypeAsked', type)
+    setShowEnterDialog(false);
+    localStorage.setItem("hadUsageTypeAsked", type);
 
     // Use the type to setup the UI accordingly
     switch (type) {
-    case UsageTypes.Beginner: {
-      await props.app.appManager.call('manager', 'activatePlugin', 'LearnEth')
-      await props.app.appManager.call('walkthrough', 'start')
-      // const wName = 'Playground'
-      // const workspaces = await props.app.appManager.call('filePanel', 'getWorkspaces')
-      // if (!workspaces.find((workspace) => workspace.name === wName)) {
-      //   await props.app.appManager.call('filePanel', 'createWorkspace', wName, 'playground')
-      // }
-      // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
+      case UsageTypes.Beginner: {
+        await props.app.appManager.call(
+          "manager",
+          "activatePlugin",
+          "LearnEth"
+        );
+        await props.app.appManager.call("walkthrough", "start");
+        // const wName = 'Playground'
+        // const workspaces = await props.app.appManager.call('filePanel', 'getWorkspaces')
+        // if (!workspaces.find((workspace) => workspace.name === wName)) {
+        //   await props.app.appManager.call('filePanel', 'createWorkspace', wName, 'playground')
+        // }
+        // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
 
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
-      break
+        _paq.push(["trackEvent", "enterDialog", "usageType", "beginner"]);
+        break;
+      }
+      case UsageTypes.Advance: {
+        _paq.push(["trackEvent", "enterDialog", "usageType", "advanced"]);
+        break;
+      }
+      case UsageTypes.Prototyper: {
+        _paq.push(["trackEvent", "enterDialog", "usageType", "prototyper"]);
+        break;
+      }
+      case UsageTypes.Production: {
+        _paq.push(["trackEvent", "enterDialog", "usageType", "production"]);
+        break;
+      }
+      default:
+        throw new Error();
     }
-    case UsageTypes.Advance: {
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'advanced'])
-      break
-    }
-    case UsageTypes.Prototyper: {
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'prototyper'])
-      break
-    }
-    case UsageTypes.Production: {
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'production'])
-      break
-    }
-    default: throw new Error()
-    }
-
-  }
+  };
 
   return (
     //@ts-ignore
@@ -176,18 +184,34 @@ const RemixApp = (props: IRemixAppUi) => {
         <onLineContext.Provider value={online}>
           <AppProvider value={value}>
             <OriginWarning></OriginWarning>
-            <MatomoDialog hide={!appReady} okFn={() => setShowEnterDialog(true)}></MatomoDialog>
-            {showEnterDialog && <EnterDialog handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>}
-            <div className='d-flex flex-column'>
-              <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-                <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
+            <MatomoDialog
+              hide={!appReady}
+              okFn={() => setShowEnterDialog(true)}
+            ></MatomoDialog>
+            {showEnterDialog && (
+              <EnterDialog
+                handleUserChoice={(type) => handleUserChosenType(type)}
+              ></EnterDialog>
+            )}
+            <div className="d-flex flex-column">
+              <div
+                className={`remixIDE ${appReady ? "" : "d-none"}`}
+                data-id="remixIDE"
+              >
+                <div
+                  id="icon-panel"
+                  data-id="remixIdeIconPanel"
+                  className="custom_icon_panel iconpanel bg-light"
+                >
                   {props.app.menuicons.render()}
                 </div>
                 <div
                   ref={sidePanelRef}
                   id="side-panel"
                   data-id="remixIdeSidePanel"
-                  className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}
+                  className={`sidepanel border-right border-left ${
+                    hideSidePanel ? "d-none" : ""
+                  }`}
                 >
                   {props.app.sidePanel.render()}
                 </div>
@@ -198,16 +222,28 @@ const RemixApp = (props: IRemixAppUi) => {
                   refObject={sidePanelRef}
                   hidden={hideSidePanel}
                   setHideStatus={setHideSidePanel}
-                  layoutPosition='left'
+                  layoutPosition="left"
                 ></DragBar>
-                <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
-                  <RemixUIMainPanel layout={props.app.layout}></RemixUIMainPanel>
+                <div
+                  id="main-panel"
+                  data-id="remixIdeMainPanel"
+                  className="mainpanel d-flex"
+                >
+                  <RemixUIMainPanel
+                    layout={props.app.layout}
+                  ></RemixUIMainPanel>
                 </div>
-                <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`flex-row-reverse pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
+                <div
+                  id="pinned-panel"
+                  ref={pinnedPanelRef}
+                  data-id="remixIdePinnedPanel"
+                  className={`flex-row-reverse pinnedpanel border-right border-left ${
+                    hidePinnedPanel ? "d-none" : "d-flex"
+                  }`}
+                >
                   {props.app.pinnedPanel.render()}
                 </div>
-                {
-                  !hidePinnedPanel &&
+                {!hidePinnedPanel && (
                   <DragBar
                     resetTrigger={resetRightTrigger}
                     maximiseTrigger={maximiseRightTrigger}
@@ -215,9 +251,9 @@ const RemixApp = (props: IRemixAppUi) => {
                     refObject={pinnedPanelRef}
                     hidden={hidePinnedPanel}
                     setHideStatus={setHidePinnedPanel}
-                    layoutPosition='right'
+                    layoutPosition="right"
                   ></DragBar>
-                }
+                )}
                 <div>{props.app.hiddenPanel.render()}</div>
               </div>
               <div className="statusBar fixed-bottom">
@@ -230,7 +266,7 @@ const RemixApp = (props: IRemixAppUi) => {
         </onLineContext.Provider>
       </platformContext.Provider>
     </IntlProvider>
-  )
-}
+  );
+};
 
-export default RemixApp
+export default RemixApp;
