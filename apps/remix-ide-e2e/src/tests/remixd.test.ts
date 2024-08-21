@@ -51,35 +51,7 @@ const sources = [
   }
 ]
 
-function isPortInUse(port) {
-  return new Promise((resolve, reject) => {
-    const lsof = spawn('lsof', ['-i', `:${port}`]);
 
-    let output = '';
-    let error = '';
-
-    lsof.stdout.on('data', (data) => {
-      output += data.toString();
-    });
-
-    lsof.stderr.on('data', (data) => {
-      error += data.toString();
-    });
-
-    lsof.on('close', (code) => {
-      if (code === 0 && output) {
-        // Port is in use if lsof has output
-        resolve(true);
-      } else if (error) {
-        // Handle potential errors (e.g., lsof command not found)
-        reject(new Error(`lsof error: ${error}`));
-      } else {
-        // Port is not in use
-        resolve(false);
-      }
-    });
-  });
-}
 
 module.exports = {
   '@disabled': true,
@@ -89,17 +61,15 @@ module.exports = {
 
   after: function (browser) {
     browser.perform((done) => {
-      isPortInUse(65520).then((inUse) => {
-        try {
-          console.log('remixd pid', remixd.pid);
-          treeKill(remixd.pid, 'SIGKILL', (err) => {
-            console.log('remixd killed', err)
-          })
-          console.log('Service disconnected successfully.');
-        } catch (error) {
-          console.error('Failed to disconnect service:', error);
-        }
-      })
+      try {
+        console.log('remixd pid', remixd.pid);
+        treeKill(remixd.pid, 'SIGKILL', (err) => {
+          console.log('remixd killed', err)
+        })
+        console.log('Service disconnected successfully.');
+      } catch (error) {
+        console.error('Failed to disconnect service:', error);
+      }
       done()
     })
   },
@@ -367,7 +337,7 @@ function runTests(browser: NightwatchBrowser, done: any) {
     .waitForElementVisible('[data-path="folder1/contract_' + browserName + '.sol"]')
     .click('[data-path="folder1/contract_' + browserName + '.sol"]') // rename a file and check
     .pause(1000)
-    .saveScreenshot('./reports/screenshots/remixd1.png')
+
     .renamePath('folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName, 'folder1/renamed_contract_' + browserName + '.sol')
     .pause(1000)
     .removeFile('folder1/contract_' + browserName + '_toremove.sol', 'localhost')
