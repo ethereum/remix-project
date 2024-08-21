@@ -2,10 +2,9 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import { join } from 'path'
-import { ChildProcess, spawn } from 'child_process'
+import { ChildProcess, exec, spawn } from 'child_process'
 import { homedir } from 'os'
-
-import kill from 'tree-kill'
+import fs from 'fs'
 import treeKill from 'tree-kill'
 
 let remixd: ChildProcess
@@ -69,6 +68,11 @@ module.exports = {
         console.log('Service disconnected successfully.');
       } catch (error) {
         console.error('Failed to disconnect service:', error);
+      }
+      try {
+        resetGitToHead()
+      } catch (error) {
+        console.error('Failed to restore git changes:', error);
       }
       done()
     })
@@ -592,4 +596,27 @@ async function installSlither(): Promise<void> {
   } catch (e) {
     console.log(e)
   }
+}
+
+
+function resetGitToHead() {
+  if (process.env.CIRCLECI) {
+    console.log("Running on CircleCI, resetting Git to HEAD...");
+  } else {
+    console.log("Not running on CircleCI, skipping Git reset.");
+    return
+  }
+  const command = 'git reset --hard HEAD && git clean -fd';
+
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing command: ${command}\n${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Error output from command: ${command}\n${stderr}`);
+      return;
+    }
+    console.log(`Git reset to HEAD successfully.\n${stdout}`);
+  });
 }
