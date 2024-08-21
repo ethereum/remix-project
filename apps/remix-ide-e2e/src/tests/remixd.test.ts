@@ -55,15 +55,25 @@ module.exports = {
   before: function (browser, done) {
     init(browser, done)
   },
-  afterEach: function (browser, done) {
-    console.log('afterEach')
-    done()
+  afterEach: async function (browser, done) {
+    if (browser.currentTest.results.failed > 0) {
+      // Perform actions if the test case failed
+      console.log('Test failed, disconnecting services...');
+      console.log('remixd', remixd.pid)
+    }
+    done();
   },
   after: function (browser) {
-    browser.perform((done) => {
+    console.log('after')
+    browser.perform(async (done) => {
       console.log('remixd', remixd.pid)
-      kill(remixd.pid)
+      try {
+        await killProcess(remixd.pid)
+      }catch(e){
+        
+      }
       done()
+      browser.end()
     })
   },
 
@@ -400,6 +410,27 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
       reject(data.toString())
     })
   })
+}
+
+function killProcess(pid, signal = 'SIGKILL') {
+  return new Promise<void>((resolve, reject) => {
+    const kill = spawn('kill', ['-s', signal, pid]);
+
+    kill.on('close', (code) => {
+      if (code === 0) {
+        console.log(`Successfully killed process with PID: ${pid}`);
+        resolve();
+      } else {
+        console.error(`Failed to kill process with PID: ${pid}. Exit code: ${code}`);
+        reject(new Error(`kill process failed with code ${code}`));
+      }
+    });
+
+    kill.on('error', (err) => {
+      console.error(`Error spawning kill process: ${err.message}`);
+      reject(err);
+    });
+  });
 }
 
 function connectRemixd(browser: NightwatchBrowser, done: any) {
