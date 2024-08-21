@@ -366,7 +366,7 @@ function runTests(browser: NightwatchBrowser, done: any) {
     .waitForElementVisible('[data-path="folder1"]')
     .waitForElementVisible('[data-path="folder1/contract_' + browserName + '.sol"]')
     .click('[data-path="folder1/contract_' + browserName + '.sol"]') // rename a file and check
-    .pause()
+    .pause(1000)
     .saveScreenshot('./reports/screenshots/remixd1.png')
     .renamePath('folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName, 'folder1/renamed_contract_' + browserName + '.sol')
     .pause(1000)

@@ -41,7 +41,6 @@ function renamePath(browser: NightwatchBrowser, path: string, newFileName: strin
         .waitForElementPresent('[data-path="' + renamedPath + '"]');
     } catch (error) {
       console.error('An error occurred:', error.message);
-      // Handle error (e.g., take a screenshot, log the error, etc.)
     } finally {
       done(); // Ensure done is called even if there's an error
     }
