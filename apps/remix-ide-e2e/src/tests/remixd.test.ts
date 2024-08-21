@@ -6,6 +6,7 @@ import { ChildProcess, spawn } from 'child_process'
 import { homedir } from 'os'
 
 import kill from 'tree-kill'
+import treeKill from 'tree-kill'
 
 let remixd: ChildProcess
 const assetsTestContract = `import "./contract.sol";
@@ -59,19 +60,15 @@ module.exports = {
     if (browser.currentTest.results.failed > 0) {
       console.log('Test failed, disconnecting services...');
       console.log('remixd', remixd.pid);
-  
-      try {
-        await killProcess(remixd.pid);
-        console.log('Service disconnected successfully.');
-      } catch (error) {
-        console.error('Failed to disconnect service:', error);
-      }
     }
   },
   
   after: async function (browser) {
     try {
-      await killProcess(remixd.pid);
+      console.log('remixd pid', remixd.pid);
+      treeKill(remixd.pid, 'SIGKILL', (err) => {
+        console.log('remixd killed', err)
+      })
       console.log('Service disconnected successfully.');
     } catch (error) {
       console.error('Failed to disconnect service:', error);
