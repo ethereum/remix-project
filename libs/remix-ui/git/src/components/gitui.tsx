@@ -186,7 +186,7 @@ export const GitUI = (props: IGitUi) => {
                         <GitHubCredentials></GitHubCredentials>
                       </div>
                     </Accordion.Collapse>
-                    <hr></hr>                    
+                    <hr></hr>
                     <SourceControlNavigation eventKey={gitUIPanels.SOURCECONTROL} activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.SOURCECONTROL}>
                       <div className="px-2 py-2">
