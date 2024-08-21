@@ -87,6 +87,8 @@ module.exports = {
         remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       } catch (err) {
         console.error(err)
+        // end the session 
+        browser.end()
       }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
