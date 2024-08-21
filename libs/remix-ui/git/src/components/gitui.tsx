@@ -52,7 +52,7 @@ export const GitUI = (props: IGitUi) => {
     })
     setTimeout(() => {
       setAppLoaded(true)
-      plugin.on('filePanel', 'requestGitHubSignIn' as any, () => setActivePanel('0'))
+      plugin.on('filePanel', 'requestGitHubSignIn' as any, () => setActivePanel('7'))
     }, 2000)
   }, [])
 
@@ -178,15 +178,6 @@ export const GitUI = (props: IGitUi) => {
                 {needsInit ? <Init></Init> : null}
                 {!setup && !needsInit ?
                   <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
-                    <GitHubNavigation eventKey={gitUIPanels.GITHUB} activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.GITHUB}>
-                      <div className="px-2 py-2">
-                        <GetDeviceCode></GetDeviceCode>
-                        <hr></hr>
-                        <GitHubCredentials></GitHubCredentials>
-                      </div>
-                    </Accordion.Collapse>
-                    <hr></hr>
                     <SourceControlNavigation eventKey={gitUIPanels.SOURCECONTROL} activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.SOURCECONTROL}>
                       <div className="px-2 py-2">
@@ -227,6 +218,15 @@ export const GitUI = (props: IGitUi) => {
                     <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.CLONE}>
                       <div className="px-2 py-2">
                         <Clone /></div>
+                    </Accordion.Collapse>
+                    <hr></hr>
+                    <GitHubNavigation eventKey={gitUIPanels.GITHUB} activePanel={activePanel} callback={setActivePanel} />
+                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.GITHUB}>
+                      <div className="px-2 py-2">
+                        <GetDeviceCode></GetDeviceCode>
+                        <hr></hr>
+                        <GitHubCredentials></GitHubCredentials>
+                      </div>
                     </Accordion.Collapse>
                     <hr></hr>
                     <LogNavigation eventKey={gitUIPanels.LOG} activePanel={activePanel} callback={setActivePanel} />

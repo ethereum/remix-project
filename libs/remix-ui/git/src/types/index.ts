@@ -382,14 +382,14 @@ export enum gitMatomoEventTypes {
 }
 
 export enum gitUIPanels {
-    GITHUB = '0',
-    SOURCECONTROL = '1',
-    COMMANDS = '2',
-    BRANCHES = '3',
-    COMMITS = '4',
-    CLONE = '5',
-    REMOTES = '6',
-    LOG = '7'
+    SOURCECONTROL = '0',
+    COMMANDS = '1',
+    BRANCHES = '2',
+    COMMITS = '3',
+    CLONE = '4',
+    REMOTES = '5',
+    GITHUB = '7',
+    LOG = '6'
 }
 
 export interface fileStatusAction {
