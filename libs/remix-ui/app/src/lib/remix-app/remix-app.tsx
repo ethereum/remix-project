@@ -65,6 +65,9 @@ const RemixApp = (props: IRemixAppUi) => {
         setShowEnterDialog(true)
       }
     }
+    if (hadUsageTypeAsked) {
+      _paq.push(['trackEvent', 'userEntry', 'usageType', hadUsageTypeAsked])
+    }
   }, [])
 
   function setListeners() {
@@ -150,23 +153,26 @@ const RemixApp = (props: IRemixAppUi) => {
       // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
 
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'beginner'])
       break
     }
     case UsageTypes.Advance: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'advanced'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'advanced'])
       break
     }
     case UsageTypes.Prototyper: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'prototyper'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'prototyper'])
       break
     }
     case UsageTypes.Production: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'production'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'production'])
       break
     }
     default: throw new Error()
     }
-
   }
 
   return (

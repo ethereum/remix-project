@@ -312,7 +312,7 @@ class FileManager extends Plugin {
       await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
       await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
       const content = await this.readFile(src)
-      let copiedFilePath = dest + (customName ? '/' + customName : '/' + `Copy_${helper.extractNameFromKey(src)}`)
+      let copiedFilePath = dest + (customName ? '/' + customName : '/' + `${helper.extractNameFromKey(src)}`)
       copiedFilePath = await helper.createNonClashingNameAsync(copiedFilePath, this)
 
       await this.writeFile(copiedFilePath, content)
@@ -962,6 +962,12 @@ class FileManager extends Plugin {
     return exists
   }
 
+  /**
+   * Check if a file can be moved
+   * @param src source file
+   * @param dest destination file
+   * @returns {boolean} true if the file is allowed to be moved
+   */
   async moveFileIsAllowed (src: string, dest: string) {
     try {
       src = this.normalize(src)
@@ -984,6 +990,12 @@ class FileManager extends Plugin {
     }
   }
 
+  /**
+   * Check if a folder can be moved
+   * @param src source folder
+   * @param dest destination folder
+   * @returns {boolean} true if the folder is allowed to be moved
+   */
   async moveDirIsAllowed (src: string, dest: string) {
     try {
       src = this.normalize(src)

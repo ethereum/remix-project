@@ -3,9 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CustomTooltip } from "@remix-ui/helper";
 import React, { useContext, useEffect } from "react";
 import { gitActionsContext } from "../../state/context";
-import { branch, remote } from "../../types";
+import { branch, gitMatomoEventTypes, remote } from "../../types";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
+import { removeGitFromUrl } from "../../utils";
 
 interface RemotesDetailsNavigationProps {
   eventKey: string;
@@ -29,39 +30,43 @@ export const RemotesDetailsNavigation = (props: RemotesDetailsNavigationProps) =
   }
 
   const openRemote = () => {
-    window.open(`${remote.url}`, '_blank');
+    window.open(`${removeGitFromUrl(remote.url)}`, '_blank');
   }
 
-  const setAsDefault = () => {
+  const setAsDefault = async () => {
     actions.setDefaultRemote(remote)
+  }
+
+  const isDefault = () => {
+    return (context.defaultRemote && context.defaultRemote?.url === remote.url) || (context.upstream && context.upstream?.url === remote.url)
   }
 
   return (
     <>
       <div className="d-flex flex-row w-100 mb-2 mt-2">
-        <div data-id={`remote-detail-${remote.name}${context.defaultRemote && context.defaultRemote?.url === remote.url ? '-default' : ''}`} onClick={() => handleClick()} role={'button'} className='pointer long-and-truncated d-flex flex-row commit-navigation'>
+        <div data-id={`remote-detail-${remote.name}${isDefault() ? '-default' : ''}`} onClick={() => handleClick()} role={'button'} className='pointer long-and-truncated d-flex flex-row commit-navigation'>
           {
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
           <CustomTooltip tooltipText={remote.url} placement="top">
-            <div className={`long-and-truncated ml-1 ${context.defaultRemote && context.defaultRemote?.url === remote.url ? 'text-success' : ''}`}>
+            <div className={`long-and-truncated ml-1 ${isDefault() ? 'text-success' : ''}`}>
               {remote.name}  <FontAwesomeIcon className='' icon={faArrowRightArrowLeft}></FontAwesomeIcon> {remote.url}
             </div>
           </CustomTooltip>
 
         </div>
-        {context.defaultRemote && context.defaultRemote?.url === remote.url ?
-          <GitUIButton className="btn btn-sm" onClick={() => { }} disabledCondition={true}><FontAwesomeIcon className='text-success' icon={faCheck} ></FontAwesomeIcon></GitUIButton>
+        {isDefault() ?
+          <GitUIButton data-id={`default-remote-check-${remote.name}`}className="btn btn-sm" onClick={() => { }} disabledCondition={true}><FontAwesomeIcon className='text-success' icon={faCheck} ></FontAwesomeIcon></GitUIButton>
           :
-          <GitUIButton className="btn btn-sm" onClick={setAsDefault}><FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon></GitUIButton>
+          <GitUIButton data-id={`set-as-default-${remote.name}`} tooltip="set as default" className="btn btn-sm" onClick={setAsDefault}><FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon></GitUIButton>
         }
-        <GitUIButton data-id={`remote-sync-${remote.name}`} className="btn btn-sm" onClick={async () => {
+        <GitUIButton tooltip="Fetch remote" data-id={`remote-sync-${remote.name}`} className="btn btn-sm" onClick={async () => {
           await actions.fetch({
             remote
           })
         }}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon></GitUIButton>
         <GitUIButton data-id={`remote-rm-${remote.name}`} className="btn btn-sm" onClick={() => actions.removeRemote(remote)}><FontAwesomeIcon className='text-danger' icon={faTrash} ></FontAwesomeIcon></GitUIButton>
-        {remote?.url && <GitUIButton className="btn btn-sm pr-0" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}
+        {remote?.url && <GitUIButton tooltip="open on remote" className="btn btn-sm pr-0" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>}
       </div>
     </>
   );

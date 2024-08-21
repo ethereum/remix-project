@@ -14,9 +14,10 @@ interface ICopyToClipboard {
   title?: string
   children?: JSX.Element
   getContent?: () => any
+  callback?: () => void
 }
 export const CopyToClipboard = (props: ICopyToClipboard) => {
-  const { tip = 'Copy', icon = 'fa-copy', direction = 'right', getContent, children, ...otherProps } = props
+  const { tip = 'Copy', icon = 'fa-copy', direction = 'right', getContent, children, callback, ...otherProps } = props
   let { content } = props
   const [message, setMessage] = useState(tip)
 
@@ -29,6 +30,7 @@ export const CopyToClipboard = (props: ICopyToClipboard) => {
       if (typeof content !== 'string') {
         content = JSON.stringify(content, null, '\t')
       }
+      callback && callback()
       copy(content)
       setMessage('Copied')
     } catch (e) {

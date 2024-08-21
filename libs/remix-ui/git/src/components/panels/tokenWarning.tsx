@@ -1,11 +1,14 @@
 import { gitPluginContext } from "../gitui"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"
+
 export const TokenWarning = () => {
   const context = React.useContext(gitPluginContext)
   return (<>
     {(context.gitHubUser && context.gitHubUser.login) ? null :
-      <li className="text-warning list-group-item d-flex justify-content-between align-items-center">
-        To use add a GitHub token to the settings.</li>
+      <span className="text-warning text-left">
+        <span>Generate and add a Git token or login with GitHub. Tokens are added in </span><span className=" text-decoration-line-through messageTip" onClick={async () => {
+        }}>settings.</span>
+      </span>
     }
   </>
   )

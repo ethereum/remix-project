@@ -82,10 +82,11 @@ let requiredModules = [ // services + layout views + system views
   'pinnedPanel',
   'pluginStateLogger',
   'remixGuide',
-  'matomo'
+  'environmentExplorer',
+  'templateSelection',
+  'matomo',
+  'walletconnect'
 ]
-
-
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
@@ -133,7 +134,9 @@ export function isNative(name) {
     'circuit-compiler',
     'compilationDetails',
     'vyperCompilationDetails',
-    'remixGuide',
+    //'remixGuide',
+    'environmentExplorer',
+    'templateSelection',
     'walletconnect'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
@@ -389,7 +392,16 @@ class PluginLoader {
 
   constructor() {
     const queryParams = new QueryParams()
-    this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
+    // some plugins should not be activated at page load.
+    this.donotAutoReload = [
+      'remixd',
+      'environmentExplorer',
+      'templateSelection',
+      'compilationDetails',
+      'walletconnect',
+      'dapp-draft',
+      'solidityumlgen'
+    ]
     this.loaders = {}
     this.loaders.localStorage = {
       set: (plugin, actives) => {

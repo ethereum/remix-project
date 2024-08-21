@@ -4,8 +4,9 @@ import { gitPluginContext } from "../../gitui";
 import { selectStyles, selectTheme } from "../../../types/styles";
 import Select, { Options, OptionsOrGroups } from 'react-select'
 import GitUIButton from "../../buttons/gituibutton";
-import { remote } from "../../../types";
+import { gitMatomoEventTypes, remote } from "../../../types";
 import { relative } from "path";
+import { sendToMatomo } from "../../../lib/pluginActions";
 
 export const PushPull = () => {
   const context = React.useContext(gitPluginContext)
@@ -22,7 +23,7 @@ export const PushPull = () => {
     setRemoteBranch(context.currentBranch.name)
     setLocalBranch(context.currentBranch.name)
 
-    const currentUpstreamIsInRemotes = context.upstream && context.remotes.find(r => r.name === context.upstream.name)
+    const currentUpstreamIsInRemotes = context.upstream && context.remotes.find(r => r.name === context.upstream.name && r.url === context.upstream.url)
     if (!context.upstream || !currentUpstreamIsInRemotes) {
       if (context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.name) {
         actions.setUpstreamRemote(context.currentBranch.remote)
@@ -39,11 +40,19 @@ export const PushPull = () => {
     }
   }, [context.currentBranch, context.remotes, context.branches])
 
-  const onRemoteBranchChange = (value: string) => {
+  useEffect(() => {
+    if (context.defaultRemote && context.remotes.find(r => r.name === context.defaultRemote.name && r.url === context.defaultRemote.url)) {
+      actions.setUpstreamRemote(context.defaultRemote)
+    }
+  },[context.defaultRemote])
+
+  const onRemoteBranchChange = async (value: string) => {
+    await sendToMatomo(gitMatomoEventTypes.SETREMOTEBRANCHINCOMMANDS)
     setRemoteBranch(value)
   }
 
-  const onLocalBranchChange = (value: any) => {
+  const onLocalBranchChange = async (value: any) => {
+    await sendToMatomo(gitMatomoEventTypes.SETLOCALBRANCHINCOMMANDS)
     setLocalBranch(value)
   }
 
@@ -51,6 +60,7 @@ export const PushPull = () => {
     const remote: remote = context.remotes.find(r => r.name === value)
     if (remote) {
       actions.setUpstreamRemote(remote)
+      actions.setDefaultRemote(remote)
     }
   }
 
@@ -112,15 +122,20 @@ export const PushPull = () => {
       })
     setLocalBranchOptions(localBranches)
 
+    if (!context.upstream){
+      setRemoteBranchOptions([])
+      return
+    }
     const remoteBranches = context.branches && context.branches.length > 0 && context.branches
-      .filter(branch => branch.remote)
+      .filter(branch => branch.remote && branch.remote.name === context.upstream.name)
+      .filter(branch => branch.name !== 'HEAD')
       .map(repo => {
         return { value: repo.name, label: repo.name }
       }
       )
     setRemoteBranchOptions(remoteBranches)
 
-  }, [context.branches])
+  }, [context.branches, context.upstream])
 
   useEffect(() => {
 
@@ -148,7 +163,7 @@ export const PushPull = () => {
         <GitUIButton data-id='sourcecontrol-push' disabledCondition={pushPullIsDisabled()} type="button" onClick={async () => push()} className="btn btn-primary">Push</GitUIButton>
       </div>
 
-      <label>Local Branch</label>
+      <label className="pt-3 text-uppercase">Local Branch</label>
       <Select
         id='commands-local-branch-select'
         options={localBranchOptions}
@@ -161,7 +176,7 @@ export const PushPull = () => {
         placeholder="Type to search for a branch..."
       />
 
-      <label>Remote Branch</label>
+      <label className="pt-3 text-uppercase">Remote Branch</label>
       <Select
         id='commands-remote-branch-select'
         options={remoteBranchOptions}
@@ -174,7 +189,7 @@ export const PushPull = () => {
         placeholder="Type to search for a branch..."
       />
 
-      <label>Remote</label>
+      <label className="pt-3 text-uppercase">Remote</label>
       <Select
         id='commands-remote-origin-select'
         options={localRemotesOptions}
@@ -187,9 +202,9 @@ export const PushPull = () => {
         placeholder="Type to search for a branch..."
       />
 
-      <div className="mt-2 remixui_compilerConfig custom-control custom-checkbox">
-        <input checked={force} onChange={e => onForceChange(e)} className="remixui_autocompile custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
-        <label className="form-check-label custom-control-label" htmlFor="forcepush">Force push</label>
+      <div className="pt-3 d-flex align-items-center remixui_compilerConfig custom-control custom-checkbox">
+        <input checked={force} onChange={e => onForceChange(e)} className="remixui_autocompile form-check-input custom-control-input" type="checkbox" data-id="compilerContainerAutoCompile" id="forcepush" title="Force Push" />
+        <label className="form-check-label custom-control-label " htmlFor="forcepush">Force push</label>
       </div>
 
     </>)

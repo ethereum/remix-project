@@ -33,7 +33,9 @@ export class Layout extends Plugin {
   maximised: { [key: string]: boolean }
   constructor () {
     super(profile)
-    this.maximised = {}
+    this.maximised = {
+      'dgit': true
+    }
     this.event = new EventEmitter()
   }
 
@@ -65,7 +67,6 @@ export class Layout extends Plugin {
       this.event.emit('change', null)
     })
     this.on('tabs', 'openDiff', () => {
-      console.log('openDiff')
       this.panels.editor.active = true
       this.panels.main.active = false
       this.event.emit('change', null)
@@ -126,15 +127,15 @@ export class Layout extends Plugin {
   }
 
   async maximiseSidePanel () {
-    this.event.emit('maximisesidepanel')
     const current = await this.call('sidePanel', 'currentFocus')
     this.maximised[current] = true
+    this.event.emit('maximisesidepanel')
   }
 
   async maximisePinnedPanel () {
-    this.event.emit('maximisepinnedpanel')
     const current = await this.call('pinnedPanel', 'currentFocus')
     this.maximised[current] = true
+    this.event.emit('maximisepinnedpanel')
   }
 
   async maximizeTerminal() {
@@ -144,14 +145,14 @@ export class Layout extends Plugin {
   }
 
   async resetSidePanel () {
-    this.event.emit('resetsidepanel')
     const current = await this.call('sidePanel', 'currentFocus')
     this.maximised[current] = false
+    this.event.emit('resetsidepanel')
   }
 
   async resetPinnedPanel () {
-    this.event.emit('resetpinnedpanel')
     const current = await this.call('pinnedPanel', 'currentFocus')
     this.maximised[current] = false
+    this.event.emit('resetpinnedpanel')
   }
 }

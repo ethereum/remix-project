@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { gitActionsContext } from '../../state/context';
-import { repository } from '../../types';
+import { gitMatomoEventTypes, repository } from '../../types';
 import { selectStyles, selectTheme } from '../../types/styles';
 import { gitPluginContext } from '../gitui';
-import { TokenWarning } from '../panels/tokenWarning';
+import { sendToMatomo } from '../../lib/pluginActions';
 
 interface RepositorySelectProps {
   select: (repo: repository) => void;
+  title: string;
 }
 
 const RepositorySelect = (props: RepositorySelectProps) => {
@@ -17,6 +17,7 @@ const RepositorySelect = (props: RepositorySelectProps) => {
   const actions = React.useContext(gitActionsContext)
   const [loading, setLoading] = useState(false)
   const [show, setShow] = useState(false)
+  const [selected, setSelected] = useState<any>(null)
 
   useEffect(() => {
     if (context.repositories && context.repositories.length > 0) {
@@ -38,6 +39,7 @@ const RepositorySelect = (props: RepositorySelectProps) => {
   const selectRepo = async (e: any) => {
     if (!e || !e.value) {
       props.select(null)
+      setSelected(null)
       return
     }
     const value = e && e.value
@@ -48,11 +50,13 @@ const RepositorySelect = (props: RepositorySelectProps) => {
 
     if (repo) {
       props.select(repo)
+      setSelected(repo)
       await actions.remoteBranches(repo.owner.login, repo.name)
     }
   }
 
   const fetchRepositories = async () => {
+    await sendToMatomo(gitMatomoEventTypes.LOADREPOSITORIESFROMGITHUB)
     try {
       setShow(true)
       setLoading(true)
@@ -64,22 +68,25 @@ const RepositorySelect = (props: RepositorySelectProps) => {
   };
 
   return (
-    <><Button data-id='fetch-repositories' onClick={fetchRepositories} className="w-100 mt-1">
-      <i className="fab fa-github mr-1"></i>Fetch Repositories from GitHub
-    </Button>
+    <><button data-id='fetch-repositories' onClick={fetchRepositories} className="w-100 mt-1 btn btn-secondary mb-2">
+      <i className="fab fa-github mr-1"></i>{props.title}
+    </button>
     {
       show ?
-        <Select
-          options={repoOtions}
-          className="mt-1"
-          id="repository-select"
-          onChange={(e: any) => selectRepo(e)}
-          theme={selectTheme}
-          styles={selectStyles}
-          isClearable={true}
-          placeholder="Type to search for a repository..."
-          isLoading={loading}
-        /> : null
+        <>
+          <Select
+            options={repoOtions}
+            className="mt-1"
+            id="repository-select"
+            onChange={(e: any) => selectRepo(e)}
+            theme={selectTheme}
+            styles={selectStyles}
+            isClearable={true}
+            placeholder="Type to search for a repository..."
+            isLoading={loading}
+          />
+          { selected ? null : <label className="text-warning mt-2">Please select a repository</label> }
+        </>: null
     }</>
   );
 };

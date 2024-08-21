@@ -39,10 +39,10 @@ const logger = {
 
     console.log('exportVerificationKey')
     const vKey = await snarkjs.zKey.exportVerificationKey(zkey_final)
-    await remix.call('fileManager', 'writeFile', './zk/keys/groth16/verification_key.json', JSON.stringify(vKey, null, 2))
+    await remix.call('fileManager', 'writeFile', 'scripts/groth16/zk/keys/verification_key.json', JSON.stringify(vKey, null, 2))
 
     console.log('save zkey_final')
-    await remix.call('fileManager', 'writeFile', './zk/keys/groth16/zkey_final.txt', JSON.stringify(Array.from(((zkey_final as any).data))))
+    await remix.call('fileManager', 'writeFile', 'scripts/groth16/zk/keys/zkey_final.txt', JSON.stringify(Array.from(((zkey_final as any).data))))
 
     console.log('setup done.')
 

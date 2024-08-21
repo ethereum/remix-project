@@ -313,8 +313,19 @@ export const ContractSelection = (props: ContractSelectionProps) => {
 
           const { data: scanData } = await axios.post('https://solidityscan.remixproject.org/downloadResult', { url })
           const scanReport: ScanReport = scanData.scan_report
-
           if (scanReport?.multi_file_scan_details?.length) {
+            for (const template of scanReport.multi_file_scan_details) {
+              if (template.metric_wise_aggregated_findings?.length) {
+                const { metric_wise_aggregated_findings } = template
+                const positions = []
+                for (const details of metric_wise_aggregated_findings) {
+                  const { findings } = details
+                  for (const f of findings)
+                    positions.push(`${f.line_nos_start[0]}:${f.line_nos_end[0]}`)
+                }
+                template.positions = JSON.stringify(positions)
+              }
+            }
             await plugin.call('terminal', 'logHtml', <SolScanTable scanReport={scanReport} fileName={fileName}/>)
           } else {
             const modal: AppModal = {

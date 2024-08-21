@@ -1,5 +1,5 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import React from 'react'
+import React, { Dispatch } from 'react'
 import { customAction } from '@remixproject/plugin-api'
 import { fileDecoration } from '@remix-ui/file-decorators'
 import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
@@ -101,6 +101,7 @@ export interface FilePanelType extends ViewPlugin {
 export interface FileExplorerProps {
     name: string,
     menuItems?: string[],
+    canPaste: boolean
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
@@ -136,6 +137,8 @@ export interface FileExplorerProps {
     dispatchAddInputField:(path: string, type: 'file' | 'folder') => Promise<void>,
     dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
     dispatchMoveFile: (src: string, dest: string) => Promise<void>,
+    dispatchMoveFiles: (src: string[], dest: string) => Promise<void>,
+    dispatchMoveFolders: (src: string[], dest: string) => Promise<void>,
     dispatchMoveFolder: (src: string, dest: string) => Promise<void>,
     handlePasteClick: (dest: string, destType: string) => void
     handleCopyClick: (path: string, type: WorkspaceElement) => void
@@ -156,6 +159,15 @@ export interface FileExplorerProps {
     dragStatus: (status: boolean) => void
     importFromIpfs: any
     importFromHttps: any
+    handleMultiCopies: any
+    feTarget: { key: string, type: 'file' | 'folder' }[]
+    setFeTarget: Dispatch<React.SetStateAction<{
+      key: string;
+      type: "file" | "folder";
+  }[]>>
+    publishManyFilesToGist: () => Promise<void>
+    hasCopied: boolean
+    setHasCopied: Dispatch<React.SetStateAction<boolean>>
 }
 
 export interface FileExplorerMenuProps {
@@ -197,10 +209,14 @@ export interface FileExplorerContextMenuProps {
   copyPath?: (path: string, type: string) => void
   generateUml?: (path: string) => Promise<void>
   uploadFile?: (target: EventTarget & HTMLInputElement) => void
+  publishManyFilesToGist: () => Promise<void>
 }
 
 export interface WorkSpaceState {
     ctrlKey: boolean
+    deleteKey?: boolean
+    F2Key?: boolean
+    cutShortcut: boolean
     newFileName: string
     actions: {
       id: string
@@ -345,3 +361,28 @@ export interface Action<T extends keyof ActionPayloadTypes> {
 export type Actions = {[A in keyof ActionPayloadTypes]: Action<A>}[keyof ActionPayloadTypes]
 
 export type WorkspaceElement = 'folder' | 'file' | 'workspace'
+
+export interface FlatTreeDropProps {
+  resetMultiselect: () => void
+  moveFolderSilently: (dest: string, src: string) => Promise<void>
+  moveFileSilently: (dest: string, src: string) => Promise<void>
+  setFilesSelected: Dispatch<React.SetStateAction<string[]>>
+  getFlatTreeItem: (path: string) => FileType
+  handleClickFolder: (path: string, type: string) => void
+  dragSource: FileType
+  children: React.ReactNode
+  expandPath: string[]
+  selectedItems: DragStructure[]
+  setSelectedItems: Dispatch<React.SetStateAction<DragStructure[]>>
+  warnMovingItems: (srcs: string[], dest: string) => Promise<void>
+}
+
+export type DragStructure = {
+  position: {
+    top: number
+    left: number
+  }
+  path: string
+  type: string
+  content: string
+}
