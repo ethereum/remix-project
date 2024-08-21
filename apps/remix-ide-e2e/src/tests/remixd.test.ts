@@ -322,8 +322,10 @@ function runTests(browser: NightwatchBrowser, done: any) {
     .setEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .setEditorValue('contract test1 { function get () returns (uint) { return 10; }}')
+    .waitForElementVisible('[data-path="folder1/contract_' + browserName + '.sol"]')
     .click('[data-path="folder1/contract_' + browserName + '.sol"]') // rename a file and check
     .pause(1000)
+    .saveScreenshot('./reports/screenshots/remixd1.png')
     .renamePath('folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName, 'folder1/renamed_contract_' + browserName + '.sol')
     .pause(1000)
     .removeFile('folder1/contract_' + browserName + '_toremove.sol', 'localhost')
