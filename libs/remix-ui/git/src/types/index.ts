@@ -388,7 +388,7 @@ export enum gitUIPanels {
     BRANCHES = '3',
     COMMITS = '4',
     CLONE = '5',
-    REMOTES = '6',    
+    REMOTES = '6',
     LOG = '7'
 }
 
