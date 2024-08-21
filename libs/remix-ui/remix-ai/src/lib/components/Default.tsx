@@ -53,7 +53,7 @@ export const Default = (props) => {
         > Download Model </button>
 
       </div>
-      
+
       <div className="remix_ai_plugin_find_container_internal">
         <textarea
           className="remix_ai_plugin_search_result_textbox"
@@ -70,7 +70,7 @@ export const Default = (props) => {
         <button className="remix_ai_plugin_download_button text-ai pl-2 pr-0 py-0 d-flex"
 
           onClick={async () => {
-            props.plugin.call("remixAI", 'initialize');
+            props.plugin.call("remixAI", 'initialize', DefaultModels()[1], DefaultModels()[3]);
           }}
         > Init Model </button>
       </div>
