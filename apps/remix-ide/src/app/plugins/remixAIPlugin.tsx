@@ -117,7 +117,7 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.solidity_answer(prompt)
     }
     if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
+    // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
   }
 
   async code_explaining(prompt: string): Promise<any> {
@@ -136,7 +136,7 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.code_explaining(prompt)
     }
     if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
+    // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
   }
 
   async error_explaining(prompt: string): Promise<any> {
@@ -154,7 +154,7 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.remoteInferencer.error_explaining(prompt)
     }
     if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
+    // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
