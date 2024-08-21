@@ -174,8 +174,8 @@ export const GitUI = (props: IGitUi) => {
               <pluginActionsContext.Provider value={pluginActionsProviderValue}>
                 <BranchHeader />
 
-                {setup ? <Setup></Setup> : null}
-                {!setup && needsInit ? <Init></Init> : null}
+                {setup && !needsInit ? <Setup></Setup> : null}
+                {needsInit ? <Init></Init> : null}
                 {!setup && !needsInit ?
                   <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
                     <GitHubNavigation eventKey={gitUIPanels.GITHUB} activePanel={activePanel} callback={setActivePanel} />
