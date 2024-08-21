@@ -88,8 +88,6 @@ module.exports = {
         console.error(err)
         // fail
         browser.assert.fail('Failed to start remixd')
-        // end the session 
-        browser.end()
       }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
@@ -109,7 +107,6 @@ module.exports = {
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
-        browser.end()
       }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
@@ -126,7 +123,6 @@ module.exports = {
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
-        browser.end()
       }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
@@ -152,7 +148,6 @@ module.exports = {
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
-        browser.end()
       }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
@@ -229,7 +224,6 @@ module.exports = {
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
-        browser.end()
       }
       connectRemixd(browser, done)
     })
@@ -296,7 +290,6 @@ module.exports = {
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
-        browser.end()
       }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
@@ -330,7 +323,6 @@ module.exports = {
       } catch (err) {
         console.error(err)
         browser.assert.fail('Failed to start remixd')
-        browser.end()
       }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
