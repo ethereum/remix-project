@@ -29,8 +29,8 @@ export const fillAccountsList = async (plugin: RunTab, dispatch: React.Dispatch<
       const provider = plugin.blockchain.getProvider()
       let accounts = await plugin.blockchain.getAccounts()
       if (provider && provider.startsWith('injected') && accounts?.length) {
-        await loadSmartAccounts(plugin, accounts[0])
-        if (plugin.REACT_API.smartAccounts.addresses.length) accounts.push(...plugin.REACT_API.smartAccounts.addresses)
+        // await loadSmartAccounts(plugin, accounts[0])
+        // if (plugin.REACT_API.smartAccounts.addresses.length) accounts.push(...plugin.REACT_API.smartAccounts.addresses)
       }
       if (!accounts) accounts = []
 
@@ -106,11 +106,12 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     transport: http(bundlerEndpoint)
   })
   const smartAddresses = Object.keys(plugin.REACT_API.smartAccounts)
+  console.log('smartAddresses--->', smartAddresses)
   // @ts-ignore
   const accounts = await window.ethereum!.request({ method: 'eth_requestAccounts' })
   console.log('accounts---->', accounts) // Non checksummed
   const account = plugin.REACT_API.accounts.selectedAccount
-
+  console.log('account---account->', account) 
   const walletClient: any = createWalletClient({
     account,
     chain: sepolia,
@@ -122,10 +123,12 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
   const smartAccount = new V06.Account.Instance({
     ...V06.Account.Common.SimpleAccount.base(ethClient, walletClient),
   })
-  const lastSalt = plugin.REACT_API.smartAccounts[smartAddresses[smartAddresses.length - 1]].salt
+  const lastSalt = smartAddresses.length ? plugin.REACT_API.smartAccounts[smartAddresses[smartAddresses.length - 1]].salt : -1
   const salt = lastSalt + 1
+  console.log('salt---->', salt)
   await smartAccount.setSalt(BigInt(salt))
   const sender = await smartAccount.getSender()
+  console.log('sender---->', sender)
   if (!smartAddresses.includes(sender)) {
     const saDetails: SmartAccountDetails = {
       address : sender,
@@ -133,6 +136,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
       owner: account,
       timestamp: Date.now()
     }
+    console.log('saDetails---->', saDetails)
     plugin.REACT_API.smartAccounts[sender] = saDetails
     // Save smart accounts in local storage
     const smartAccountsStr = localStorage.getItem(localStorageKey)
@@ -141,7 +145,7 @@ export const createSmartAccount = async (plugin: RunTab, dispatch: React.Dispatc
     localStorage.setItem(localStorageKey, JSON.stringify(smartAccountsObj))
 
     plugin.call('notification', 'toast', `smart account created with address ${sender}`)
-    await fillAccountsList(plugin, dispatch)
+    // await fillAccountsList(plugin, dispatch)
   }
 }
 
