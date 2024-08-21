@@ -10,60 +10,22 @@ const DefaultModels = (): IModel[] => {
     name: 'DeepSeek',
     modelOP: RemoteBackendOPModel.DEEPSEEK,
     task: 'text-generation',
-    modelName: 'deepseek-coder-1.3b-instruct.gguf',
-    downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-1.3b-instruct-GGUF/resolve/main/deepseek-coder-1.3b-instruct.Q4_K_M.gguf?download=true',
-    modelType: ModelType.CODE_COMPLETION,
-    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2 }
+    modelName: 'deepseek-coder-6.7b-instruct-q4.gguf',
+    downloadUrl: 'https://drive.usercontent.google.com/download?id=13sz7lnEhpQ6EslABpAKl2HWZdtX3d9Nh&confirm=xxx',
+    modelType: ModelType.GENERAL,
+    modelReqs: { backend: 'llamacpp', minSysMemory: 8, GPURequired: false, MinGPUVRAM: 8 }
   };
   const model2: IModel = {
     name: 'DeepSeek',
     modelOP: RemoteBackendOPModel.DEEPSEEK,
     task: 'text-generation',
-    modelName: 'deepseek-coder-6.7b-instruct.gguf',
-    downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-6.7B-instruct-GGUF/resolve/main/deepseek-coder-6.7b-instruct.Q4_K_M.gguf?download=true',
-    modelType: ModelType.GENERAL,
-    modelReqs: { backend: 'llamacpp', minSysMemory: 8, GPURequired: true, MinGPUVRAM: 8 }
+    modelName: 'deepseek-coder-1.3b-base-q4.gguf',
+    downloadUrl: 'https://drive.usercontent.google.com/download?id=13UNJuB908kP0pWexrT5n8i2LrhFaWo92&confirm=xxx',
+    modelType: ModelType.CODE_COMPLETION_INSERTION,
+    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2 }
   };
+
   const model3: IModel = {
-    name: 'DeepSeekTransformer',
-    modelOP: RemoteBackendOPModel.DEEPSEEK,
-    task: 'text-generation',
-    modelName: 'Xenova/deepseek-coder-1.3b-base',
-    downloadUrl: 'Xenova/deepseek-coder-1.3b-base',
-    modelType: ModelType.CODE_COMPLETION_INSERTION,
-    modelReqs: { backend: 'transformerjs', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2 }
-  };
-  const model4: IModel = {
-    name: 'DeepSeek',
-    modelOP: RemoteBackendOPModel.DEEPSEEK,
-    task: 'text-generation',
-    modelName: 'deepseek-coder-1.3b-base.gguf',
-    downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-1.3b-base-GGUF/resolve/main/deepseek-coder-1.3b-base.Q4_K_M.gguf?download=true',
-    modelType: ModelType.CODE_COMPLETION_INSERTION,
-    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2 }
-  };
-
-  const model5: IModel = {
-    name: 'DeepSeek',
-    modelOP: RemoteBackendOPModel.DEEPSEEK,
-    task: 'text-generation',
-    modelName: 'deepseek-coder-6.7B-base-GGUF',
-    downloadUrl: 'https://huggingface.co/TheBloke/deepseek-coder-6.7B-base-GGUF/resolve/main/deepseek-coder-6.7b-base.Q4_K_M.gguf?download=true',
-    modelType: ModelType.CODE_COMPLETION_INSERTION,
-    modelReqs: { backend: 'llamacpp', minSysMemory: 2, GPURequired: false, MinGPUVRAM: 2 }
-  };
-
-  const model6: IModel = {
-    name: 'DeepSeek',
-    modelOP: RemoteBackendOPModel.DEEPSEEK,
-    task: 'text-generation',
-    modelName: 'DeepSeek-Coder-V2-Lite-Base.Q2_K.gguf',
-    downloadUrl: 'https://huggingface.co/QuantFactory/DeepSeek-Coder-V2-Lite-Base-GGUF/resolve/main/DeepSeek-Coder-V2-Lite-Base.Q2_K.gguf?download=true',
-    modelType: ModelType.GENERAL,
-    modelReqs: { backend: 'llamacpp', minSysMemory: 8, GPURequired: false, MinGPUVRAM: 8 }
-  };
-
-  const model7: IModel = {
     name: 'llaama3.1_8B',
     modelOP: RemoteBackendOPModel.CODELLAMA,
     task: 'text-generation',
@@ -73,7 +35,7 @@ const DefaultModels = (): IModel[] => {
     modelReqs: { backend: 'llamacpp', minSysMemory: 8, GPURequired: false, MinGPUVRAM: 8 }
   };
 
-  const model8: IModel = {
+  const model4: IModel = {
     name: 'llaama3.1_8B_instruct',
     modelOP: RemoteBackendOPModel.CODELLAMA,
     task: 'text-generation',
@@ -83,7 +45,7 @@ const DefaultModels = (): IModel[] => {
     modelReqs: { backend: 'llamacpp', minSysMemory: 8, GPURequired: false, MinGPUVRAM: 8 }
   };
 
-  return [model1, model2, model3, model4, model5, model6, model7, model8];
+  return [model1, model2, model3, model4];
 }
 
 const getModel = async (name: string): Promise<IModel | undefined> => {
