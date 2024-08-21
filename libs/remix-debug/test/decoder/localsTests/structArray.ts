@@ -42,7 +42,7 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult,c
             st.fail(error)
           })
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
-            helper.decodeLocals(st, 1600, traceManager, callTree, function (locals) {
+            helper.decodeLocals(st, 1615, traceManager, callTree, function (locals) {
               try {
                 console.log('at 1600', locals)
                 st.equals(locals['bytesSimple'].length, '0x14')
@@ -103,7 +103,7 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult,c
                 st.equals(locals['arrayStruct'].value.b.value[0].value, '34')
                 st.equals(locals['arrayStruct'].value.b.value[1].value, '-23')
                 st.equals(locals['arrayStruct'].value.b.value[2].value, '-3')
-                st.equals(locals['arrayStruct'].value.c.value, 'one')
+                st.equals(locals['arrayStruct'].value.c.value, 'three')
 
                 st.equals(Object.keys(locals).length, 8)
               } catch (e) {
