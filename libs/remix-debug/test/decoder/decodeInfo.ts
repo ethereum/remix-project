@@ -47,7 +47,7 @@ tape('solidity', function (t) {
     state = astHelper.extractStateDefinitions('test.sol:contractEnum', output.sources, null)
     stateDef = state.stateDefinitions
     parsedType = decodeInfo.parseType(stateDef[1].typeDescriptions.typeString, states, 'contractEnum', null)
-    checkDecodeInfo(st, parsedType, 1, 2, 'enum')
+    checkDecodeInfo(st, parsedType, 1, 1, 'enum')
 
     state = astHelper.extractStateDefinitions('test.sol:contractSmallVariable', output.sources, null)
     stateDef = state.stateDefinitions
