@@ -84,10 +84,13 @@ export class InferenceManager implements ICompletions {
 
       if (this.inferenceProcess === null) await this._startServer()
 
+      console.log('Initializing model request', model.modelType)
       switch (model.modelType) {
       case ModelType.CODE_COMPLETION_INSERTION || ModelType.CODE_COMPLETION:{
+        console.log('Initializing Completion Model')
         const res = await this._makeRequest('init_completion', { model_path: model.downloadPath })
 
+        console.log('code completion res is', res?.data?.status)
         if (res?.data?.status === "success") {
           this.isReady = true
           console.log('Completion Model initialized successfully')
@@ -112,7 +115,7 @@ export class InferenceManager implements ICompletions {
       }
       }
 
-      this.stateTimer.start()
+      this.stateTimer.start() // double call on init completion and general
       this.selectedModels.push(model)
     } catch (error) {
       console.error('Error initializing the model', error)
