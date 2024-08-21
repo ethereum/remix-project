@@ -4,7 +4,6 @@ import init from '../helpers/init'
 import { join } from 'path'
 import { ChildProcess, exec, spawn } from 'child_process'
 import { homedir } from 'os'
-import fs from 'fs'
 import treeKill from 'tree-kill'
 
 let remixd: ChildProcess
@@ -81,12 +80,14 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'run Remixd tests #group1 #flaky': function (browser) {
+  'run Remixd tests #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.perform(async (done) => {
       try {
         remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       } catch (err) {
         console.error(err)
+        // fail
+        browser.assert.fail('Failed to start remixd')
         // end the session 
         browser.end()
       }
@@ -103,7 +104,13 @@ module.exports = {
       remix try to resolve it against the node_modules and installed_contracts folder.
     */
     browser.perform(async (done) => {
+      try{
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      } catch (err) {
+        console.error(err)
+        browser.assert.fail('Failed to start remixd')
+        browser.end()
+      }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -114,7 +121,13 @@ module.exports = {
   },
   'Import from node_modules and reference a github import #group3': function (browser) {
     browser.perform(async (done) => {
+      try{
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      } catch (err) {
+        console.error(err)
+        browser.assert.fail('Failed to start remixd')
+        browser.end()
+      }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -134,7 +147,13 @@ module.exports = {
   'Should listen on compilation result from hardhat #group4': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
+      try{
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hardhat-boilerplate'))
+      } catch (err) {
+        console.error(err)
+        browser.assert.fail('Failed to start remixd')
+        browser.end()
+      }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -205,7 +224,13 @@ module.exports = {
 
     browser.perform(async (done) => {
       console.log('working directory', homedir() + '/foundry_tmp/hello_foundry')
+      try{
       remixd = await spawnRemixd(join(homedir(), '/foundry_tmp/hello_foundry'))
+      } catch (err) {
+        console.error(err)
+        browser.assert.fail('Failed to start remixd')
+        browser.end()
+      }
       connectRemixd(browser, done)
     })
       .perform(async (done) => {
@@ -266,7 +291,13 @@ module.exports = {
   'Should disable git when running remixd #group9': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
+      try{
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+      } catch (err) {
+        console.error(err)
+        browser.assert.fail('Failed to start remixd')
+        browser.end()
+      }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -298,6 +329,8 @@ module.exports = {
         remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       } catch (err) {
         console.error(err)
+        browser.assert.fail('Failed to start remixd')
+        browser.end()
       }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
