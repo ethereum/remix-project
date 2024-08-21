@@ -23,7 +23,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentNetworkStatus'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders'],
   version: packageJson.version
 }
 
@@ -44,6 +44,24 @@ export type Transaction = {
   timestamp?: number
 }
 
+export type Provider = {
+  options: { [key: string]: string }
+  dataId: string
+  name: string
+  displayName: string
+  logo?: string,
+  logos?: string[],
+  fork: string
+  description?: string
+  isInjected: boolean
+  isVM: boolean
+  title: string
+  init: () => Promise<void>
+  provider:{
+    sendAsync: (payload: any) => Promise<void>
+  }
+}
+
 export class Blockchain extends Plugin {
   active: boolean
   event: EventManager
@@ -62,6 +80,7 @@ export class Blockchain extends Plugin {
   providers: {[key: string]: VMProvider | InjectedProvider | NodeProvider}
   transactionContextAPI: TransactionContextAPI
   registeredPluginEvents: string[]
+  pinnedProviders: string[]
 
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor(config: Config) {
@@ -93,6 +112,7 @@ export class Blockchain extends Plugin {
     this.networkcallid = 0
     this.networkStatus = { network: { name: ' - ', id: ' - ' } }
     this.registeredPluginEvents = []
+    this.pinnedProviders = ['vm-cancun', 'vm-shanghai', 'vm-mainnet-fork', 'vm-london', 'vm-berlin', 'vm-paris', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'ganache-provider', 'hardhat-provider', 'foundry-provider']
     this.setupEvents()
     this.setupProviders()
   }
@@ -116,6 +136,14 @@ export class Blockchain extends Plugin {
         })
       }
     })
+
+    this.on('environmentExplorer', 'providerPinned', (name, provider) => {
+      this.emit('shouldAddProvidertoUdapp', name, provider)
+    })
+
+    this.on('environmentExplorer', 'providerUnpinned', (name, provider) => {
+      this.emit('shouldRemoveProviderFromUdapp', name, provider)
+    })
   }
 
   onDeactivation() {
@@ -136,12 +164,12 @@ export class Blockchain extends Plugin {
       })
     })
 
-    this.executionContext.event.register('addProvider', (network) => {
-      this._triggerEvent('addProvider', [network])
+    this.executionContext.event.register('providerAdded', (network) => {
+      this._triggerEvent('providerAdded', [network])
     })
 
-    this.executionContext.event.register('removeProvider', (name) => {
-      this._triggerEvent('removeProvider', [name])
+    this.executionContext.event.register('providerRemoved', (name) => {
+      this._triggerEvent('providerRemoved', [name])
     })
 
     setInterval(() => {
@@ -504,7 +532,11 @@ export class Blockchain extends Plugin {
   }
 
   changeExecutionContext(context, confirmCb, infoCb, cb) {
-    return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
+    if (context.context === 'item-another-chain') {
+      this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs', 'focus', 'environmentExplorer'))
+    } else {
+      return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
+    }
   }
 
   detectNetwork(cb) {
@@ -611,12 +643,21 @@ export class Blockchain extends Plugin {
     this.executionContext.listenOnLastBlock()
   }
 
-  addProvider(provider) {
+  addProvider(provider: Provider) {
+    if (this.pinnedProviders.includes(provider.name)) this.emit('shouldAddProvidertoUdapp', provider.name, provider)
     this.executionContext.addProvider(provider)
   }
 
   removeProvider(name) {
     this.executionContext.removeProvider(name)
+  }
+
+  getAllProviders() {
+    return this.executionContext.getAllProviders()
+  }
+
+  getPinnedProviders() {
+    return this.pinnedProviders
   }
 
   // TODO : event should be triggered by Udapp instead of TxListener

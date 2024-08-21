@@ -102,7 +102,7 @@ export default class Carousel extends React.Component<CarouselProps> {
   previous: (slidesHavePassed: number) => void;
   next: (slidesHavePassed: number) => void;
   goToSlide: (slide: number, skipCallbacks?: SkipCallbackOptions) => void;
-  state: CarouselInternalState;
+
   setClones: (
     slidesToShow: number,
     itemWidth?: number,

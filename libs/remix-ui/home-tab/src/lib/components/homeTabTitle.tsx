@@ -25,7 +25,7 @@ const iconButtons: HometabIconSection[] = [
   {
     textToolip: <FormattedMessage id="home.remixTwitterProfile" />,
     matomoTrackingEntry: ['trackEvent', 'hometab', 'socialMedia', 'twitter'],
-    urlLink: 'https://twitter.com/EthereumRemix',
+    urlLink: 'https://x.com/EthereumRemix',
     iconClass: 'fa-x-twitter',
     placement: 'top'
   },

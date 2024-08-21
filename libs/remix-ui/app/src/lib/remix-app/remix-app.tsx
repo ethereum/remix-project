@@ -65,6 +65,9 @@ const RemixApp = (props: IRemixAppUi) => {
         setShowEnterDialog(true)
       }
     }
+    if (hadUsageTypeAsked) {
+      _paq.push(['trackEvent', 'userEntry', 'usageType', hadUsageTypeAsked])
+    }
   }, [])
 
   function setListeners() {
@@ -150,23 +153,26 @@ const RemixApp = (props: IRemixAppUi) => {
       // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
 
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'beginner'])
       break
     }
     case UsageTypes.Advance: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'advanced'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'advanced'])
       break
     }
     case UsageTypes.Prototyper: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'prototyper'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'prototyper'])
       break
     }
     case UsageTypes.Production: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'production'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'production'])
       break
     }
     default: throw new Error()
     }
-
   }
 
   return (
@@ -178,46 +184,48 @@ const RemixApp = (props: IRemixAppUi) => {
             <OriginWarning></OriginWarning>
             <MatomoDialog hide={!appReady} okFn={() => setShowEnterDialog(true)}></MatomoDialog>
             {showEnterDialog && <EnterDialog handleUserChoice={(type) => handleUserChosenType(type)}></EnterDialog>}
-            <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
-              <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
-                {props.app.menuicons.render()}
-              </div>
-              <div
-                ref={sidePanelRef}
-                id="side-panel"
-                data-id="remixIdeSidePanel"
-                className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}
-              >
-                {props.app.sidePanel.render()}
-              </div>
-              <DragBar
-                resetTrigger={resetLeftTrigger}
-                maximiseTrigger={maximiseLeftTrigger}
-                minWidth={285}
-                refObject={sidePanelRef}
-                hidden={hideSidePanel}
-                setHideStatus={setHideSidePanel}
-                layoutPosition='left'
-              ></DragBar>
-              <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
-                <RemixUIMainPanel layout={props.app.layout}></RemixUIMainPanel>
-              </div>
-              <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`flex-row-reverse pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
-                {props.app.pinnedPanel.render()}
-              </div>
-              {
-                !hidePinnedPanel &&
+            <div className='d-flex flex-column'>
+              <div className={`remixIDE ${appReady ? '' : 'd-none'}`} data-id="remixIDE">
+                <div id="icon-panel" data-id="remixIdeIconPanel" className="custom_icon_panel iconpanel bg-light">
+                  {props.app.menuicons.render()}
+                </div>
+                <div
+                  ref={sidePanelRef}
+                  id="side-panel"
+                  data-id="remixIdeSidePanel"
+                  className={`sidepanel border-right border-left ${hideSidePanel ? 'd-none' : ''}`}
+                >
+                  {props.app.sidePanel.render()}
+                </div>
                 <DragBar
-                  resetTrigger={resetRightTrigger}
-                  maximiseTrigger={maximiseRightTrigger}
-                  minWidth={331}
-                  refObject={pinnedPanelRef}
-                  hidden={hidePinnedPanel}
-                  setHideStatus={setHidePinnedPanel}
-                  layoutPosition='right'
+                  resetTrigger={resetLeftTrigger}
+                  maximiseTrigger={maximiseLeftTrigger}
+                  minWidth={305}
+                  refObject={sidePanelRef}
+                  hidden={hideSidePanel}
+                  setHideStatus={setHideSidePanel}
+                  layoutPosition='left'
                 ></DragBar>
-              }
-              <div>{props.app.hiddenPanel.render()}</div>
+                <div id="main-panel" data-id="remixIdeMainPanel" className="mainpanel d-flex">
+                  <RemixUIMainPanel layout={props.app.layout}></RemixUIMainPanel>
+                </div>
+                <div id="pinned-panel" ref={pinnedPanelRef} data-id="remixIdePinnedPanel" className={`flex-row-reverse pinnedpanel border-right border-left ${hidePinnedPanel ? 'd-none' : 'd-flex'}`}>
+                  {props.app.pinnedPanel.render()}
+                </div>
+                {
+                  !hidePinnedPanel &&
+                  <DragBar
+                    resetTrigger={resetRightTrigger}
+                    maximiseTrigger={maximiseRightTrigger}
+                    minWidth={331}
+                    refObject={pinnedPanelRef}
+                    hidden={hidePinnedPanel}
+                    setHideStatus={setHidePinnedPanel}
+                    layoutPosition='right'
+                  ></DragBar>
+                }
+                <div>{props.app.hiddenPanel.render()}</div>
+              </div>
               <div className="statusBar fixed-bottom">
                 {props.app.statusBar.render()}
               </div>

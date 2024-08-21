@@ -4,12 +4,16 @@ import { CompletionTimer } from './completionTimer';
 
 import axios, { AxiosResponse } from 'axios'
 import { slice } from 'lodash';
+import { activateService } from '@remixproject/plugin-utils';
 const _paq = (window._paq = window._paq || [])
 
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
   props: EditorUIProps
   monaco: any
   completionEnabled: boolean
+  task: string
+  currentCompletion
+
   constructor(props: any, monaco: any) {
     this.props = props
     this.monaco = monaco
@@ -24,6 +28,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       const lineRange = model.getFullModelRange().setStartPosition(lineNumber, 1).setEndPosition(lineNumber + 1, 1);
       return model.getValueInRange(lineRange);
     }
+
     // get text before the position of the completion
     const word = model.getValueInRange({
       startLineNumber: 1,
@@ -62,6 +67,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         this.props.plugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'Solcoder - generating code for following comment: ' + ask.replace('///', '') })
 
         const data = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
+        this.task = 'code_generation'
 
         const parsedData = data.trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
@@ -102,12 +108,13 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         const output = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
         const generatedText = output // no need to clean it. should already be
 
+        this.task = 'code_insertion'
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: generatedText
         };
 
         this.completionEnabled = false
-        const handleCompletionTimer = new CompletionTimer(50, () => { this.completionEnabled = true });
+        const handleCompletionTimer = new CompletionTimer(100, () => { this.completionEnabled = true });
         handleCompletionTimer.start()
 
         return {
@@ -122,8 +129,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     try {
       // Code completion
+      this.task = 'code_completion'
       const output = await this.props.plugin.call('remixAI', 'code_completion', word)
-      console.log('code output', output)
       const generatedText = output
       let clean = generatedText
 
@@ -139,7 +146,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
       // handle the completion timer by locking suggestions request for 2 seconds
       this.completionEnabled = false
-      const handleCompletionTimer = new CompletionTimer(20, () => { this.completionEnabled = true });
+      const handleCompletionTimer = new CompletionTimer(100, () => { this.completionEnabled = true });
       handleCompletionTimer.start()
 
       return {
@@ -164,14 +171,15 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
   }
 
   handleItemDidShow?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, updatedInsertText: string): void {
-
+    this.currentCompletion = { 'item':item, 'task':this.task }
+    _paq.push(['trackEvent', 'ai', 'solcoder', this.task + '_did_show'])
   }
   handlePartialAccept?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, acceptedCharacters: number): void {
-
+    _paq.push(['trackEvent', 'ai', 'solcoder', this.task + '_partial_accept'])
   }
   freeInlineCompletions(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>): void {
-
   }
+
   groupId?: string;
   yieldsToGroupIds?: string[];
   toString?(): string {

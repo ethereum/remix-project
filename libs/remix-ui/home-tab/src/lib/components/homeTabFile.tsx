@@ -129,6 +129,8 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
 
   const handleSwichToRecentWorkspace = async (e, workspaceName) => {
     e.preventDefault()
+    plugin.call('sidePanel', 'showContent', 'filePanel')
+    plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'loadRecentWorkspace'])
     await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
   }
@@ -209,7 +211,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
                 await plugin.call('filePanel', 'clone')
               }}>
                 <i className="fa-brands fa-github-alt pl-1 pr-2"></i>
-                Git Clone
+                Clone
               </button>
             </CustomTooltip>
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.connectToLocalhost" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">

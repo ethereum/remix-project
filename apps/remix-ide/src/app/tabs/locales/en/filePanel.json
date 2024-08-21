@@ -78,7 +78,7 @@
   "filePanel.checkoutGitBranch": "Checkout Git Branch",
   "filePanel.findOrCreateABranch": "Find or create a branch.",
   "filePanel.initGitRepositoryLabel": "Initialize workspace as a new git repository",
-  "filePanel.initGitRepositoryWarning": "To use Git features, add username and email to the Github section of the Settings panel.",
+  "filePanel.initGitRepositoryWarning": "To use Git features, add username and email to the Github section of the Git plugin.",
   "filePanel.workspaceName": "Workspace name",
   "filePanel.customizeTemplate": "Customize template",
   "filePanel.features": "Features",
@@ -141,5 +141,6 @@
   "filePanel.movingFolderFailed": "Moving Folder Failed",
   "filePanel.movingFolderFailedMsg": "Unexpected error while moving folder: {src}",
   "filePanel.workspaceActions": "Workspace actions",
-  "filePanel.saveCodeSample": "This code-sample workspace will not be persisted. Click here to save it."
+  "filePanel.saveCodeSample": "This code-sample workspace will not be persisted. Click here to save it.",
+  "filePanel.updateSubmodules": "Update all submodules of repository. Click to pull dependencies."
 }

@@ -19,12 +19,14 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
   }
 
   const selectRepo = (repo: {name: string; branch: string}) => {
-    dispatch({type: 'workshop/loadRepo', payload: repo})
+    dispatch({type: 'workshop/loadRepo', payload: repo});
+    (window as any)._paq.push(['trackEvent', 'learneth', 'select_repo', `${name}/${branch}`])
   }
 
   const importRepo = (event: {preventDefault: () => void}) => {
     event.preventDefault()
-    dispatch({type: 'workshop/loadRepo', payload: {name, branch}})
+    dispatch({type: 'workshop/loadRepo', payload: {name, branch}});
+    (window as any)._paq.push(['trackEvent', 'learneth', 'import_repo', `${name}/${branch}`])
   }
 
   const resetAll = () => {

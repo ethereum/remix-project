@@ -2,7 +2,6 @@
 import { DynamicByteArray } from './DynamicByteArray'
 
 export class StringType extends DynamicByteArray {
-  typeName
 
   constructor (location) {
     super(location)

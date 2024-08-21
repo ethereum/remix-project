@@ -55,7 +55,7 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
   const verified = await snarkjs.plonk.verify(vKey, publicSignals, proof, logger);
   console.log('zk proof validity', verified);
 
-  await remix.call('fileManager', 'writeFile', `zk/build/plonk/input-${Date.now()}.json`, JSON.stringify({
+  await remix.call('fileManager', 'writeFile', `scripts/plonk/zk/build/input-${Date.now()}.json`, JSON.stringify({
     _pubSignals: publicSignals,
     _proof: [
       ethers.utils.hexZeroPad(ethers.BigNumber.from(proof.A[0]).toHexString(), 32),
@@ -109,11 +109,11 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
     const zkey_final = {
       type: "mem",
       // @ts-ignore
-      data: new Uint8Array(await remix.call('fileManager', 'readFile', './zk/keys/plonk/zkey_final.txt', { encoding: null }))
+      data: new Uint8Array(await remix.call('fileManager', 'readFile', 'scripts/plonk/zk/keys/zkey_final.txt', { encoding: null }))
     }
     const wtns = { type: "mem" };
 
-    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', './zk/keys/plonk/verification_key.json'))
+    const vKey = JSON.parse(await remix.call('fileManager', 'readFile', 'scripts/plonk/zk/keys/verification_key.json'))
 
     // build list of identity commitments
     const secrets = []
@@ -176,7 +176,7 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
     }
     const solidityContract = await snarkjs.zKey.exportSolidityVerifier(zkey_final, templates)
 
-    await remix.call('fileManager', 'writeFile', './zk/build/plonk/zk_verifier.sol', solidityContract)
+    await remix.call('fileManager', 'writeFile', 'scripts/plonk/zk/build/zk_verifier.sol', solidityContract)
   } catch (e) {
     console.error(e.message)
   }

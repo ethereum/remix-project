@@ -6,6 +6,8 @@ import { ThemeContext } from '../themeContext'
 import WorkspaceTemplate from './workspaceTemplate'
 import 'react-multi-carousel/lib/styles.css'
 import { appPlatformTypes, platformContext } from '@remix-ui/app'
+import { Plugin } from "@remixproject/engine";
+import { CustomRemixApi } from '@remix-api'
 import { CustomTooltip } from '@remix-ui/helper'
 
 declare global {
@@ -23,7 +25,7 @@ type WorkspaceTemplate = {
   workspaceTitle: string
   description: string
   projectLogo: string
-  templateName: string
+  templateName?: string
 }
 
 const workspaceTemplates: WorkspaceTemplate[] = [
@@ -68,7 +70,7 @@ const workspaceTemplates: WorkspaceTemplate[] = [
     description: 'Create a new MultiSig wallet using this template.',
     projectLogo: 'assets/img/gnosissafeLogo.png',
     templateName: 'gnosisSafeMultisig',
-  },
+  }
 ]
 
 function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
@@ -120,9 +122,16 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
 
     let templateDisplayName = TEMPLATE_NAMES[templateName]
     const metadata = TEMPLATE_METADATA[templateName]
+
     if (metadata) {
       if (metadata.type === 'git') {
-        await plugin.call('dGitProvider', 'clone', { url: metadata.url, branch: metadata.branch }, templateDisplayName)
+        await (plugin as Plugin<any, CustomRemixApi>).call('dgitApi', 'clone',
+          {
+            url: metadata.url,
+            branch: metadata.branch,
+            workspaceName: templateDisplayName,
+            depth: 10
+          })
       } else if (metadata && metadata.type === 'plugin') {
         await plugin.appManager.activatePlugin('filePanel')
         templateDisplayName = await plugin.call('filePanel', 'getAvailableWorkspaceName', templateDisplayName)
@@ -149,14 +158,19 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
       <div ref={carouselRefDiv} className="w-100 d-flex flex-column pt-1">
         <ThemeContext.Provider value={themeFilter}>
           <div className="pt-3">
-            <div className="d-flex flex-row align-items-center mb-3 flex-wrap">
+            <div className="d-flex flex-row align-items-center flex-wrap">
               {workspaceTemplates.map((template, index) => (
                 <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="top-start" key={`${template.gsID}-${template.workspaceTitle}-${index}`}>
                   <button
                     key={index}
-                    className={index === 0 ? 'btn btn-primary border p-2 text-nowrap mr-3 mb-3' : index === workspaceTemplates.length - 1 ? 'btn border p-2 text-nowrap mr-2 mb-3' : 'btn border p-2 text-nowrap mr-3 mb-3'}
-                    onClick={(e) => {
-                      createWorkspace(template.templateName)
+                    className={index === 0 ? 'btn btn-primary border p-2 text-nowrap mr-3 mb-2' : index === workspaceTemplates.length - 1 ? 'btn border p-2 text-nowrap mr-2 mb-3' : 'btn border p-2 text-nowrap mr-3 mb-3'}
+                    onClick={async (e) => {
+                      if (template.gsID === 'browseTemplate') {
+                        await plugin.call('manager', 'activatePlugin', 'templateSelection')
+                        plugin.call('tabs' as any, 'focus', 'templateSelection')
+                      } else {
+                        createWorkspace(template.templateName)
+                      }
                     }}
                     data-id={`homeTabGetStarted${template.templateName}`}
                   >

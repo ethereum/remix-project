@@ -29,6 +29,7 @@ export type UrlParametersType = {
   address: string
   opendir: string,
   blockscout: string,
+  ghfolder: string
 }
 
 const basicWorkspaceInit = async (workspaces: { name: string; isGitRepo: boolean; }[], workspaceProvider) => {
@@ -80,7 +81,7 @@ export const initWorkspace = (filePanelPlugin) => async (reducerDispatch: React.
       plugin.setWorkspace({ name, isLocalhost: false })
       dispatch(setCurrentWorkspace({ name, isGitRepo: false }))
       await loadWorkspacePreset('gist-template')
-    } else if (params.code || params.url || params.shareCode) {
+    } else if (params.code || params.url || params.shareCode || params.ghfolder) {
       await createWorkspaceTemplate('code-sample', 'code-template')
       plugin.setWorkspace({ name: 'code-sample', isLocalhost: false })
       dispatch(setCurrentWorkspace({ name: 'code-sample', isGitRepo: false }))
@@ -259,10 +260,52 @@ export type SolidityConfiguration = {
   runs: string
 }
 
+const buildGistPayload = (selectedFiles: { key: string, type: 'file' | 'folder', content: string }[]) => {
+  if (!selectedFiles || selectedFiles.length === 0) return
+
+  const files: { [key: string]: { content: string }} = {}
+  for (const file of selectedFiles) {
+    const resultingSplits = file.key.split('/')
+    files[resultingSplits[resultingSplits.length - 1]] = { content: file.content }
+  }
+  return files
+}
+
+export const publishFilesToGist = (arrayOfSelectedFiles: any) => {
+  const gistPayload = buildGistPayload(arrayOfSelectedFiles)
+  if (!gistPayload) {
+    return;
+  }
+  console.log('primed and ready', gistPayload)
+  const config = plugin.registry.get('config').api
+  const accessToken = config.get('settings/gist-access-token')
+  if (!accessToken) {
+    dispatch(displayNotification('Authorize Token', 'Remix requires an access token (which includes gists creation permission). Please go to the settings tab to create one.', 'Close', null, () => { }))
+    return
+  }
+
+  try {
+    const params = queryParams.get() as SolidityConfiguration
+    const description = 'Created using remix-ide: Realtime Ethereum Contract Compiler and Runtime. \n Load this file by pasting this gists URL or ID at https://remix.ethereum.org/#version=' + params.version + '&optimize=' + params.optimize + '&runs=' + params.runs + '&gist='
+    const gists = new Gists({ token: accessToken })
+    dispatch(displayPopUp('Creating a new gist ...'))
+
+    gists.create({
+      description: description,
+      public: true,
+      files: gistPayload
+    }, (error, result) => {
+      handleGistResponse(error, result)
+    })
+    console.log('publishFilesToGistIsDone')
+  } catch (error) {
+    console.log('There was an error', error)
+  }
+}
+
 export const publishToGist = async (path?: string) => {
   // If 'id' is not defined, it is not a gist update but a creation so we have to take the files from the browser explorer.
   const folder = path || '/'
-
   try {
     let id
     if (path) {
@@ -327,6 +370,8 @@ export const publishToGist = async (path?: string) => {
           handleGistResponse(error, result)
         })
       }
+      // fire event for cleanup of temp folder
+      plugin.emit('FinishedGistPublish', folder)
     }
   } catch (error) {
     console.log(error)
@@ -627,8 +672,15 @@ const saveAs = (blob, name) => {
 export const moveFile = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 
+  if (src === dest) return // if you cut and paste to the same location then no need to move anything
   try {
-    await fileManager.moveFile(src, dest)
+    const isFile = await fileManager.isFile(dest)
+    if (isFile) {
+      const updatedDestPath = await fileManager.currentPath()
+      await fileManager.moveFile(src, updatedDestPath)
+    } else {
+      await fileManager.moveFile(src, dest)
+    }
   } catch (error) {
     dispatch(displayPopUp('Oops! An error occurred while performing moveFile operation.' + error))
   }
@@ -637,8 +689,16 @@ export const moveFile = async (src: string, dest: string) => {
 export const moveFolder = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
 
+  if (src === dest) return // if you cut and paste to the same location then no need to move anything
+
   try {
-    await fileManager.moveDir(src, dest)
+    const isFile = await fileManager.isFile(dest)
+    if (!isFile) {
+      await fileManager.moveDir(src, dest)
+    } else {
+      const updatedDestPath = await fileManager.currentPath()
+      await fileManager.moveDir(src, updatedDestPath)
+    }
   } catch (error) {
     dispatch(displayPopUp('Oops! An error occurred while performing moveDir operation.' + error))
   }
@@ -654,5 +714,23 @@ export const moveFolderIsAllowed = async (src: string, dest: string) => {
   const fileManager = plugin.fileManager
   const isAllowed = await fileManager.moveDirIsAllowed(src, dest)
   return isAllowed
+}
+
+export const moveFilesIsAllowed = async (src: string[], dest: string) => {
+  const fileManager = plugin.fileManager
+  const boolArray: boolean[] = []
+  for (const srcFile of src) {
+    boolArray.push(await fileManager.moveFileIsAllowed(srcFile, dest))
+  }
+  return boolArray.every(p => p === true) || false
+}
+
+export const moveFoldersIsAllowed = async (src: string[], dest: string) => {
+  const fileManager = plugin.fileManager
+  const boolArray: boolean[] = []
+  for (const srcFile of src) {
+    boolArray.push(await fileManager.moveDirIsAllowed(srcFile, dest))
+  }
+  return boolArray.every(p => p === true) || false
 }
 

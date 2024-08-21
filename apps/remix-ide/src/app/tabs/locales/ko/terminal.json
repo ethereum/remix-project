@@ -38,6 +38,8 @@
   "terminal.executionCost": "실행 비용",
   "terminal.input": "입력",
   "terminal.decodedInput": "디코드된 입력",
+  "terminal.output": "출력",
   "terminal.decodedOutput": "디코드된 출력",
+  "terminal.rawlogs": "원시 로그",
   "terminal.logs": "로그"
 }
