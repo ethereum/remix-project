@@ -55,26 +55,27 @@ module.exports = {
   before: function (browser, done) {
     init(browser, done)
   },
-  afterEach: async function (browser, done) {
+  afterEach: async function (browser) {
     if (browser.currentTest.results.failed > 0) {
-      // Perform actions if the test case failed
       console.log('Test failed, disconnecting services...');
-      console.log('remixd', remixd.pid)
-    }
-    done();
-  },
-  after: function (browser) {
-    console.log('after')
-    browser.perform(async (done) => {
-      console.log('remixd', remixd.pid)
+      console.log('remixd', remixd.pid);
+  
       try {
-        await killProcess(remixd.pid)
-      }catch(e){
-        
+        await killProcess(remixd.pid);
+        console.log('Service disconnected successfully.');
+      } catch (error) {
+        console.error('Failed to disconnect service:', error);
       }
-      done()
-      browser.end()
-    })
+    }
+  },
+  
+  after: async function (browser) {
+    try {
+      await killProcess(remixd.pid);
+      console.log('Service disconnected successfully.');
+    } catch (error) {
+      console.error('Failed to disconnect service:', error);
+    }
   },
 
   '@sources': function () {
