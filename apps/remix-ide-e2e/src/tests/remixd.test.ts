@@ -440,27 +440,6 @@ async function spawnRemixd(path: string): Promise<ChildProcess> {
   })
 }
 
-function killProcess(pid, signal = 'SIGKILL') {
-  return new Promise<void>((resolve, reject) => {
-    const kill = spawn('kill', ['-s', signal, pid]);
-
-    kill.on('close', (code) => {
-      if (code === 0) {
-        console.log(`Successfully killed process with PID: ${pid}`);
-        resolve();
-      } else {
-        console.error(`Failed to kill process with PID: ${pid}. Exit code: ${code}`);
-        reject(new Error(`kill process failed with code ${code}`));
-      }
-    });
-
-    kill.on('error', (err) => {
-      console.error(`Error spawning kill process: ${err.message}`);
-      reject(err);
-    });
-  });
-}
-
 function connectRemixd(browser: NightwatchBrowser, done: any) {
   const browserName = browser.options.desiredCapabilities.browserName
   if (browserName === 'safari' || browserName === 'internet explorer') {
