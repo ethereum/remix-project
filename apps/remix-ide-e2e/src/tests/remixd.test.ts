@@ -56,23 +56,20 @@ module.exports = {
   before: function (browser, done) {
     init(browser, done)
   },
-  afterEach: async function (browser) {
-    if (browser.currentTest.results.failed > 0) {
-      console.log('Test failed, disconnecting services...');
-      console.log('remixd', remixd.pid);
-    }
-  },
-  
-  after: async function (browser) {
-    try {
-      console.log('remixd pid', remixd.pid);
-      treeKill(remixd.pid, 'SIGKILL', (err) => {
-        console.log('remixd killed', err)
-      })
-      console.log('Service disconnected successfully.');
-    } catch (error) {
-      console.error('Failed to disconnect service:', error);
-    }
+
+  after: function (browser) {
+    browser.perform((done) => {
+      try {
+        console.log('remixd pid', remixd.pid);
+        treeKill(remixd.pid, 'SIGKILL', (err) => {
+          console.log('remixd killed', err)
+        })
+        console.log('Service disconnected successfully.');
+      } catch (error) {
+        console.error('Failed to disconnect service:', error);
+      }
+      done()
+    })
   },
 
   '@sources': function () {
