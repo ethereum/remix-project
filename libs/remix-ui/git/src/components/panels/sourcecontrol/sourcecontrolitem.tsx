@@ -41,10 +41,10 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
 
     return (<>
 
-      {status && status.indexOf("modified") === -1 ? <></> : <div>M</div>}
-      {status && status.indexOf("deleted") === -1 ? <></> : <span>D</span>}
-      {status && status.indexOf("added") === -1 ? <></> : <span>A</span>}
-      {status && status.indexOf("untracked") === -1 ? <></> : <span>U</span>}
+      {status && status.indexOf("modified") === -1 ? <></> : <span className="pl-2">M</span>}
+      {status && status.indexOf("deleted") === -1 ? <></> : <span className="pl-2">D</span>}
+      {status && status.indexOf("added") === -1 ? <></> : <span className="pl-2">A</span>}
+      {status && status.indexOf("untracked") === -1 ? <></> : <span className="pl-2">U</span>}
     </>)
   }
 
@@ -56,7 +56,7 @@ export const SourceControlItem = (props: SourceControlItemProps) => {
         <span className='font-weight-bold long-and-truncated'>{path.basename(file.filename)}</span>
         <div className='text-secondary long-and-truncated'> {file.filename}</div>
       </div>
-      <div className="d-flex align-items-center ml-1">
+      <div className="d-flex align-items-center ml-1 px-2">
         <SourceControlItemButtons group={group} file={file}></SourceControlItemButtons>
         <FunctionStatusIcons></FunctionStatusIcons>
       </div>

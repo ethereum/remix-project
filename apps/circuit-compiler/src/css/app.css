@@ -37,8 +37,6 @@ body {
     text-transform: uppercase;
 }
 .circuit_errors_box {
-    padding-left: 5px;
-    padding-right: 5px;
     word-break: break-word;
 }
 .circuit_feedback.success,

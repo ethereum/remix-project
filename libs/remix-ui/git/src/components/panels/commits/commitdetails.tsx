@@ -6,6 +6,7 @@ import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
 import { CommitDetailsItems } from "./commitdetailsitem";
 import { branch, remote } from "@remix-ui/git";
+import { removeGitFromUrl } from "../../../utils";
 
 export interface CommitDetailsProps {
   commit: ReadCommitResult;
@@ -27,7 +28,7 @@ export const CommitDetails = (props: CommitDetailsProps) => {
   }, [activePanel])
 
   const getRemote = (): remote | null => {
-    return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : null
+    return context.upstream ? context.upstream : context.defaultRemote ? context.defaultRemote : branch.remote ? branch.remote : null
   }
 
   const commitsAhead = (remote: remote) => {
@@ -39,19 +40,19 @@ export const CommitDetails = (props: CommitDetailsProps) => {
     return commitsAhead(getRemote()).findIndex((c) => c.oid === commit.oid) > -1
   }
 
-  const openFileOnRemote = (file: string, hash: string) => {
+  const openFileOnRemote = (file: string, hash: string, branch: branch) => {
     if (!getRemote()) return
-    window.open(`${getRemote() ? `${getRemote().url}/blob/${hash}/${file}` : ""}`, "_blank")
+    window.open(`${getRemote() ? `${removeGitFromUrl(getRemote().url)}/blob/${hash}/${file}` : ""}`, "_blank")
   }
 
   return (<Accordion activeKey={activePanel} defaultActiveKey="">
-    <CommitDetailsNavigation isAheadOfRepo={isAheadOfRepo()} commit={commit} checkout={checkout} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
+    <CommitDetailsNavigation isAheadOfRepo={isAheadOfRepo()} branch={branch} commit={commit} checkout={checkout} eventKey="0" activePanel={activePanel} callback={setActivePanel} />
     <Accordion.Collapse className="pl-2 border-left ml-1" eventKey="0">
       <>
         {context.commitChanges && context.commitChanges.filter(
           (change) => change.hashModified === commit.oid && change.hashOriginal === commit.commit.parent[0]
         ).map((change, index) => {
-          return (<CommitDetailsItems openFileOnRemote={openFileOnRemote} isAheadOfRepo={isAheadOfRepo()} key={index} commitChange={change}></CommitDetailsItems>)
+          return (<CommitDetailsItems branch={branch} openFileOnRemote={openFileOnRemote} isAheadOfRepo={isAheadOfRepo()} key={index} commitChange={change}></CommitDetailsItems>)
         })}
 
       </>

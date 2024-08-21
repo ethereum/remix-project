@@ -8,6 +8,10 @@ import { INotificationApi } from "./plugins/notification-api"
 import { ISettings } from "./plugins/settings-api"
 import { IFilePanelApi } from "./plugins/filePanel-api"
 import { Plugin } from "@remixproject/engine"
+import { ISidePanelApi } from "./plugins/sidePanel-api"
+import { IPinnedPanelApi } from "./plugins/pinned-panel-api"
+import { ILayoutApi } from "./plugins/layout-api"
+import { IMatomoApi } from "./plugins/matomo-api"
 
 export interface ICustomRemixApi extends IRemixApi {
   dgitApi: IGitApi
@@ -17,6 +21,10 @@ export interface ICustomRemixApi extends IRemixApi {
   fileDecorator: IFileDecoratorApi
   fileManager: IExtendedFileSystem
   filePanel: IFilePanelApi
+  sidePanel: ISidePanelApi
+  pinnedPanel: IPinnedPanelApi
+  layout: ILayoutApi
+  matomo: IMatomoApi
 }
 
 export declare type CustomRemixApi = Readonly<ICustomRemixApi>

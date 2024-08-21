@@ -14,4 +14,7 @@ export { contractDeployerScripts } from './script-templates/contract-deployer'
 export { etherscanScripts } from './script-templates/etherscan'
 export { sindriScripts } from './script-templates/sindri'
 export { contractCreate2Factory } from './script-templates/create2-solidity-factory'
+export { runSolidityUnittestingAction } from './script-templates/solidity-test-action'
+export { runSlitherAction } from './script-templates/slither-action'
+export { runJsTestAction } from './script-templates/run-js-test-action'
 

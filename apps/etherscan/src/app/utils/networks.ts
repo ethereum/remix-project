@@ -18,12 +18,14 @@ export const scanAPIurls = {
   59144: 'https://api.lineascan.build/api',
   8453: 'https://api.basescan.org/api',
   534352: 'https://api.scrollscan.com/api',
+  1116: 'https://openapi.coredao.org/api',
 
   // all testnet
   17000: 'https://api-holesky.etherscan.io/api',
   11155111: 'https://api-sepolia.etherscan.io/api',
   97: 'https://api-testnet.bscscan.com/api',
   80001: 'https://api-testnet.polygonscan.com/api',
+  80002: 'https://api-amoy.polygonscan.com/api',
   4002: 'https://api-testnet.ftmscan.com/api',
   421611: 'https://api-testnet.arbiscan.io/api',
   42170: 'https://api-nova.arbiscan.io/api',
@@ -37,6 +39,8 @@ export const scanAPIurls = {
   84531: 'https://api-goerli.basescan.org/api',
   84532: "https://api-sepolia.basescan.org/api",
   1442: 'https://api-testnet-zkevm.polygonscan.com/api',
+  2442: 'https://api-cardona-zkevm.polygonscan.com/api',
   59140: 'https://api-testnet.lineascan.build/api',
   534351: 'https://api-sepolia.scrollscan.com/api',
+  1115: 'https://api.test.btcs.network/api',
 }

@@ -33,7 +33,7 @@ export const BranchHeader = () => {
         }
       }
     }
-  }, [context.currentBranch, context.commits, context.branches, context.remotes, context.currentHead])
+  }, [context.currentBranch, context.commits, context.branches, context.remotes, context.currentHead, context.defaultRemote])
 
   useEffect(() => {
     if (context.fileStatusResult) {
@@ -43,6 +43,14 @@ export const BranchHeader = () => {
     }
   }, [context.fileStatusResult, context.modified, context.allchangesnotstaged, context.untracked, context.deleted])
 
+  const getName = () => {
+    const url = context.currentBranch?.remote?.url
+    if (!url) return
+    const regex = /https:\/\/github\.com\/[^/]+\/([^/]+)(?:\.git)?/;
+    const match = url.match(regex)
+    return match ? match[1] : null
+  }
+
   const showDetachedWarningText = async () => {
     await pluginActions.showAlert({
       message: `You are in 'detached HEAD' state. This means you are not on a branch because you checkout a tag or a specific commit. If you want to commit changes, you will need to create a new branch.`,
@@ -50,20 +58,49 @@ export const BranchHeader = () => {
     })
   }
 
+  const Heading = () => {
+    return (
+      <div className="container-fluid px-0">
+        <div className="d-flex flex-column pt-1 mb-1">
+          <div className="d-flex flex-column justify-content-start align-items-start w-100">
+            {getName() ? (
+              <span className={`text-truncate overflow-hidden whitespace-nowrap w-100`}>
+                {getName() ?? ''}
+                {context.currentBranch && context.currentBranch.remote && context.currentBranch.remote.name ? ` on ${context.currentBranch.remote.name}` : ''}
+              </span>
+            ) : null
+            }
+            {context.currentBranch && context.currentBranch.name ?
+              <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap w-100">
+                <i className="fa fa-code-branch mr-1"></i>{context.currentBranch && context.currentBranch.name}{changed?'*':''}
+              </span> : null}
+            {(latestCommit && latestCommit.commit && latestCommit.commit.message) ?
+              <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap w-100">
+                {latestCommit ?
+                  latestCommit.commit && latestCommit.commit.message ? `"${latestCommit.commit.message}"` : '' : null}
+              </span>
+              : null}
+            {isDetached ?
+              <span className="text-secondary text-truncate overflow-hidden whitespace-nowrap w-100">
+                {isDetached ?
+                  <>You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1"></i></> : null}
+              </span>
+              : null}
+            {context.storage.enabled ?
+              <span className="text-secondary text-sm text-truncate overflow-hidden whitespace-nowrap w-100">
+                {context.storage.used} MB used
+                ({context.storage.percentUsed} %)
+              </span>
+              : null}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (<>
     <div className='text-sm w-100'>
-      <div className='text-secondary long-and-truncated'>
-        <i className="fa fa-code-branch mr-1 pl-2"></i>
-        {changed ? '*' : ''}{context.currentBranch && context.currentBranch.name}
-      </div>
-      {latestCommit ?
-        <div className='text-secondary long-and-truncated'>
-          {latestCommit.commit && latestCommit.commit.message ? latestCommit.commit.message : ''}
-        </div> : null}
-      {isDetached ?
-        <div className='text-warning long-and-truncated'>
-          You are in a detached state<i onClick={showDetachedWarningText} className="btn fa fa-info-circle mr-1 pl-2"></i>
-        </div> : null}
+      <Heading />
     </div>
     <hr></hr>
   </>)

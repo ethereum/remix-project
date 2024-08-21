@@ -14,6 +14,7 @@ import {
   deleteAllWorkspaces,
   clearPopUp,
   publishToGist,
+  publishFilesToGist,
   createNewFile,
   setFocusElement,
   createNewFolder,
@@ -44,10 +45,6 @@ import {
   switchBranch,
   createNewBranch,
   checkoutRemoteBranch,
-  createSolidityGithubAction,
-  createTsSolGithubAction,
-  createSlitherGithubAction,
-  createHelperScripts,
   openElectronFolder,
   getElectronRecentFolders,
   removeRecentElectronFolder,
@@ -120,6 +117,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchPublishToGist = async (path?: string) => {
     await publishToGist(path)
+  }
+
+  const dispatchPublishFilesToGist = (selectedFiles: { key: string, type: 'file' | 'folder', content: string }[]) => {
+    publishFilesToGist(selectedFiles)
   }
 
   const dispatchUploadFile = async (target?: SyntheticEvent, targetFolder?: string) => {
@@ -202,8 +203,20 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     await moveFile(src, dest)
   }
 
+  const dispatchMoveFiles = async (src: string[], dest: string) => {
+    for (const path of src) {
+      await moveFile(path, dest)
+    }
+  }
+
   const dispatchMoveFolder = async (src: string, dest: string) => {
     await moveFolder(src, dest)
+  }
+
+  const dispatchMoveFolders = async (src: string[], dest: string) => {
+    for (const path of src) {
+      await moveFolder(path, dest)
+    }
   }
 
   const dispatchShowAllBranches = async () => {
@@ -220,22 +233,6 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchCheckoutRemoteBranch = async (branch: branch) => {
     await checkoutRemoteBranch(branch)
-  }
-
-  const dispatchCreateSolidityGithubAction = async () => {
-    await createSolidityGithubAction()
-  }
-
-  const dispatchCreateTsSolGithubAction = async () => {
-    await createTsSolGithubAction()
-  }
-
-  const dispatchCreateSlitherGithubAction = async () => {
-    await createSlitherGithubAction()
-  }
-
-  const dispatchCreateHelperScripts = async (script: string) => {
-    await createHelperScripts(script)
   }
 
   const dispatchOpenElectronFolder = async (path: string) => {
@@ -348,6 +345,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchDeleteWorkspace,
     dispatchDeleteAllWorkspaces,
     dispatchPublishToGist,
+    dispatchPublishFilesToGist,
     dispatchUploadFile,
     dispatchUploadFolder,
     dispatchCreateNewFile,
@@ -368,15 +366,13 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchHandleRestoreBackup,
     dispatchCloneRepository,
     dispatchMoveFile,
+    dispatchMoveFiles,
     dispatchMoveFolder,
+    dispatchMoveFolders,
     dispatchShowAllBranches,
     dispatchSwitchToBranch,
     dispatchCreateNewBranch,
     dispatchCheckoutRemoteBranch,
-    dispatchCreateSolidityGithubAction,
-    dispatchCreateTsSolGithubAction,
-    dispatchCreateSlitherGithubAction,
-    dispatchCreateHelperScripts,
     dispatchOpenElectronFolder,
     dispatchGetElectronRecentFolders,
     dispatchRemoveRecentFolder,

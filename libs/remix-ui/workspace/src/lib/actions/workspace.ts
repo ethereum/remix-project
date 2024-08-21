@@ -1,6 +1,7 @@
 import React from 'react'
 import { bytesToHex } from '@ethereumjs/util'
 import { hash } from '@remix-project/remix-lib'
+import { createNonClashingNameAsync } from '@remix-ui/helper'
 import { TEMPLATE_METADATA, TEMPLATE_NAMES } from '../utils/constants'
 import { TemplateType } from '../types'
 import IpfsHttpClient from 'ipfs-http-client'
@@ -37,12 +38,12 @@ import { addSlash, checkSlash, checkSpecialChars } from '@remix-ui/helper'
 import { FileTree, JSONStandardInput, WorkspaceTemplate } from '../types'
 import { QueryParams } from '@remix-project/remix-lib'
 import * as templateWithContent from '@remix-project/remix-ws-templates'
-import { ROOT_PATH, slitherYml, solTestYml, tsSolTestYml } from '../utils/constants'
+import { ROOT_PATH } from '../utils/constants'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
-import { branch, cloneInputType, IGitApi } from '@remix-ui/git'
+import { branch, cloneInputType, IGitApi, gitUIPanels } from '@remix-ui/git'
 import * as templates from '@remix-project/remix-ws-templates'
 import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi } from '@remix-api'
@@ -191,24 +192,7 @@ export const createWorkspace = async (
         }
       }
     }
-    if (metadata && metadata.type === 'plugin') {
-      plugin.call('notification', 'toast', 'Please wait while the workspace is being populated with the template.')
-      dispatch(cloneRepositoryRequest())
-      setTimeout(() => {
-        plugin.call(metadata.name, metadata.endpoint, ...metadata.params).then(() => {
-          dispatch(cloneRepositorySuccess())
-        }).catch((e) => {
-          dispatch(cloneRepositorySuccess())
-          plugin.call('notification', 'toast', 'error adding template ' + e.message || e)
-        })
-      }, 5000)
-    } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
-    cb && cb(null, workspaceName)
-
-    if (workspaceTemplateName === 'semaphore' || workspaceTemplateName === 'hashchecker' || workspaceTemplateName === 'rln') {
-      const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
-      if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
-    }
+    await populateWorkspace(workspaceTemplateName, opts, isEmpty, (err: Error) => { cb && cb(err, workspaceName) }, isGitRepo, createCommit)
     // this call needs to be here after the callback because it calls dGitProvider which also calls this function and that would cause an infinite loop
     await plugin.setWorkspaces(await getWorkspaces())
   }).catch((error) => {
@@ -218,13 +202,47 @@ export const createWorkspace = async (
   return promise
 }
 
+export const populateWorkspace = async (
+  workspaceTemplateName: WorkspaceTemplate,
+  opts = null,
+  isEmpty = false,
+  cb?: (err: Error, result?: string | number | boolean | Record<string, any>) => void,
+  isGitRepo: boolean = false,
+  createCommit: boolean = false
+) => {
+  const metadata = TEMPLATE_METADATA[workspaceTemplateName]
+  if (metadata && metadata.type === 'plugin') {
+    plugin.call('notification', 'toast', 'Please wait while the workspace is being populated with the template.')
+    dispatch(cloneRepositoryRequest())
+    setTimeout(() => {
+      plugin.call(metadata.name, metadata.endpoint, ...metadata.params).then(() => {
+        dispatch(cloneRepositorySuccess())
+      }).catch((e) => {
+        dispatch(cloneRepositorySuccess())
+        plugin.call('notification', 'toast', 'error adding template ' + e.message || e)
+      })
+    }, 5000)
+  } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
+  cb && cb(null)
+  if (isGitRepo) {
+    await checkGit()
+    const isActive = await plugin.call('manager', 'isActive', 'dgit')
+    if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+  }
+  if (workspaceTemplateName === 'semaphore' || workspaceTemplateName === 'hashchecker' || workspaceTemplateName === 'rln') {
+    const isCircomActive = await plugin.call('manager', 'isActive', 'circuit-compiler')
+    if (!isCircomActive) await plugin.call('manager', 'activatePlugin', 'circuit-compiler')
+    _paq.push(['trackEvent', 'circuit-compiler', 'template', 'create', workspaceTemplateName])
+  }
+}
+
 export const createWorkspaceTemplate = async (workspaceName: string, template: WorkspaceTemplate = 'remixDefault', metadata?: TemplateType) => {
   if (!workspaceName) throw new Error('workspace name cannot be empty')
   if (checkSpecialChars(workspaceName) || checkSlash(workspaceName)) throw new Error('special characters are not allowed')
   if ((await workspaceExists(workspaceName)) && template === 'remixDefault') throw new Error('workspace already exists')
   else if (metadata && metadata.type === 'git') {
     dispatch(cloneRepositoryRequest())
-    await dgitPlugin.call('dgitApi', 'clone', { url: metadata.url, branch: metadata.branch, workspaceName: workspaceName })
+    await dgitPlugin.call('dgitApi', 'clone', { url: metadata.url, branch: metadata.branch, workspaceName: workspaceName, depth: 10 })
     dispatch(cloneRepositorySuccess())
   } else {
     const workspaceProvider = plugin.fileProviders.workspace
@@ -238,6 +256,7 @@ export type UrlParametersType = {
   shareCode: string
   url: string
   language: string
+  ghfolder: string
 }
 
 export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDefault', opts?) => {
@@ -285,10 +304,8 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       }
       if (params.url) {
         const data = await plugin.call('contentImport', 'resolve', params.url)
-
         path = data.cleanUrl
         content = data.content
-
         try {
           content = JSON.parse(content) as any
           if (content.language && content.language === 'Solidity' && content.sources) {
@@ -307,6 +324,17 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
           await workspaceProvider.set(path, content)
         }
       }
+      if (params.ghfolder) {
+        try {
+          const files = await plugin.call('contentImport', 'resolveGithubFolder', params.ghfolder)
+          for (const [path, content] of Object.entries(files)) {
+            await workspaceProvider.set(path, content)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      }
+
       return path
     } catch (e) {
       console.error(e)
@@ -377,12 +405,14 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
     try {
       const templateList = Object.keys(templateWithContent)
       if (!templateList.includes(template)) break
+
       _paq.push(['trackEvent', 'workspace', 'template', template])
       // @ts-ignore
-      const files = await templateWithContent[template](opts)
+      const files = await templateWithContent[template](opts, plugin)
       for (const file in files) {
         try {
-          await workspaceProvider.set(file, files[file])
+          const uniqueFileName = await createNonClashingNameAsync(file, plugin.fileManager)
+          await workspaceProvider.set(uniqueFileName, files[file])
         } catch (error) {
           console.error(error)
         }
@@ -645,7 +675,7 @@ export const getWorkspaces = async (): Promise<{ name: string; isGitRepo: boolea
 export const cloneRepository = async (url: string) => {
   const config = plugin.registry.get('config').api
   const token = config.get('settings/gist-access-token')
-  const repoConfig: cloneInputType = { url, token }
+  const repoConfig: cloneInputType = { url, token, depth: 10 }
 
   if (plugin.registry.get('platform').api.isDesktop()) {
     try {
@@ -662,7 +692,7 @@ export const cloneRepository = async (url: string) => {
       const repoName = await getRepositoryTitle(url)
 
       await createWorkspace(repoName, 'blank', null, true, null, true, false)
-      const promise = dgitPlugin.call('dgitApi', 'clone', { ...repoConfig, workspaceExists: true, workspaceName: repoName })
+      const promise = dgitPlugin.call('dgitApi', 'clone', { ...repoConfig, workspaceExists: true, workspaceName: repoName, depth:10 })
 
       dispatch(cloneRepositoryRequest())
       promise
@@ -758,7 +788,7 @@ export const showAllBranches = async () => {
   const isActive = await plugin.call('manager', 'isActive', 'dgit')
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')
-  plugin.call('dgit', 'open', 'branches')
+  plugin.call('dgit', 'open', gitUIPanels.BRANCHES)
 }
 
 export const getGitConfig = async () => {
@@ -847,33 +877,6 @@ export const createNewBranch = async (branch: string) => {
       dispatch(cloneRepositoryFailed())
     })
   return promise
-}
-
-export const createSolidityGithubAction = async () => {
-  const path = '.github/workflows/run-solidity-unittesting.yml'
-
-  await plugin.call('fileManager', 'writeFile', path, solTestYml)
-  plugin.call('fileManager', 'open', path)
-}
-
-export const createTsSolGithubAction = async () => {
-  const path = '.github/workflows/run-js-test.yml'
-
-  await plugin.call('fileManager', 'writeFile', path, tsSolTestYml)
-  plugin.call('fileManager', 'open', path)
-}
-
-export const createSlitherGithubAction = async () => {
-  const path = '.github/workflows/run-slither-action.yml'
-
-  await plugin.call('fileManager', 'writeFile', path, slitherYml)
-  plugin.call('fileManager', 'open', path)
-}
-
-export const createHelperScripts = async (script: string) => {
-  if (!templates[script]) return
-  await templates[script](plugin)
-  plugin.call('notification', 'toast', `'${script}' added to the workspace.`)
 }
 
 export const updateGitSubmodules = async () => {

@@ -38,7 +38,7 @@ export const BranchSelect = (props: BranchySelectProps) => {
   return (<>{branchOptions && branchOptions.length ?
     <Select
       options={branchOptions}
-      className="mt-1"
+      className="mt-2"
       id="branch-select"
       onChange={(e: any) => selectRemoteBranch(e)}
       theme={selectTheme}

@@ -1,11 +1,12 @@
 'use strict'
-import { ViewPlugin } from '@remixproject/engine-web';
+import { ViewPlugin } from '@remixproject/engine-web'
 import React from 'react' // eslint-disable-line
-import { gitState, GitUI } from '@remix-ui/git';
+import { gitState, GitUI } from '@remix-ui/git'
 import * as packageJson from '../../../../../package.json'
 
 const profile = {
   name: 'dgit',
+  displayName: 'Git',
   desciption: 'Git plugin for Remix',
   methods: ['pull', 'track', 'diff', 'clone', 'open'],
   events: [''],

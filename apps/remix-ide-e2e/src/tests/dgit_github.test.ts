@@ -101,8 +101,8 @@ module.exports = {
 
             .click('*[data-id="remotes-panel"]')
             .waitForElementVisible('*[data-id="remotes-panel-content"]')
-            .click({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin"]',
+            .waitForElementVisible({
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin-default"]',
                 locateStrategy: 'xpath'
             })
             .waitForElementVisible({
@@ -115,7 +115,8 @@ module.exports = {
             })
             .waitForElementVisible({
                 selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-branch-links"]',
-                locateStrategy: 'xpath'
+                locateStrategy: 'xpath',
+                timeout: 10000
             })
 
     },
@@ -136,24 +137,24 @@ module.exports = {
     },
     'switch to branch links #group1': function (browser: NightwatchBrowser) {
         browser
+            .click('*[data-id="branches-panel"]')
             .waitForElementVisible({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-branch-links"]',
+                selector: '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-id="branches-branch-links"]',
                 locateStrategy: 'xpath'
             })
             .click({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-toggle-branch-links"]',
+                selector: '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-id="branches-toggle-branch-links"]',
                 locateStrategy: 'xpath'
             })
             .waitForElementVisible({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="branches-toggle-current-branch-links"]',
+                selector: '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-id="branches-toggle-current-branch-links"]',
                 locateStrategy: 'xpath'
             })
     },
     'check the local branches #group1': function (browser: NightwatchBrowser) {
         browser
-            .click('*[data-id="branches-panel"]')
             .waitForElementVisible({
-                selector: '//*[@data-id="branches-panel-content"]//*[@data-id="branches-toggle-current-branch-links"]',
+                selector: '//*[@data-id="branches-panel-content-local-branches"]//*[@data-id="branches-toggle-current-branch-links"]',
                 locateStrategy: 'xpath'
             })
     },
@@ -232,7 +233,7 @@ module.exports = {
                 locateStrategy: 'xpath'
             })
             .waitForElementVisible({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-newremote"]',
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-newremote-default"]',
                 locateStrategy: 'xpath'
             })
     },
@@ -263,7 +264,7 @@ module.exports = {
                 }
             })
     },
-    'remove the remove #group2': function (browser: NightwatchBrowser) {
+    'remove the remote #group2': function (browser: NightwatchBrowser) {
         browser
             .pause(1000)
             .click('*[data-id="remotes-panel"]')
@@ -278,7 +279,7 @@ module.exports = {
             })
             .pause(1000)
             .waitForElementNotPresent({
-                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-newremote"]',
+                selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-newremote-default"]',
                 locateStrategy: 'xpath'
             })
     },

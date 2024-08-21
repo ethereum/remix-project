@@ -5,6 +5,7 @@ import { gitActionsContext } from "../../state/context";
 import { branch } from "../../types";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
+import { removeGitFromUrl } from "../../utils";
 
 interface BrancheDetailsNavigationProps {
   eventKey: string;
@@ -12,10 +13,11 @@ interface BrancheDetailsNavigationProps {
   callback: (eventKey: string) => void;
   branch: branch;
   checkout: (branch: branch) => void;
+  allowCheckout: boolean;
 }
 
 export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) => {
-  const { eventKey, activePanel, callback, branch, checkout } = props;
+  const { eventKey, activePanel, callback, branch, checkout, allowCheckout } = props;
   const context = React.useContext(gitPluginContext)
   const actions = React.useContext(gitActionsContext)
   const handleClick = () => {
@@ -33,7 +35,7 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
 
   const openRemote = () => {
     const remote = branch.remote || getRemote()
-    window.open(`${remote.url}/tree/${branch.name}`, '_blank');
+    window.open(`${removeGitFromUrl(remote.url)}/tree/${branch.name}`, '_blank');
   }
 
   const reloadBranch = () => {
@@ -55,6 +57,10 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
 
   }
 
+  if (branch.name === 'HEAD'){
+    return null;
+  }
+
   return (
     <>
       <div className="d-flex flex-row w-100 mb-2 mt-2">
@@ -63,30 +69,31 @@ export const BrancheDetailsNavigation = (props: BrancheDetailsNavigationProps) =
             activePanel === eventKey ? <FontAwesomeIcon className='' icon={faCaretDown}></FontAwesomeIcon> : <FontAwesomeIcon className='' icon={faCaretRight}></FontAwesomeIcon>
           }
           <i className="fa fa-code-branch ml-1"></i>
-          <div className={`ml-1 ${context.currentBranch.name === branch.name ? 'text-success' : ''}`}>{branch.name} {branch.remote ? `on ${branch.remote.name}` : ''}</div>
+          <div className={`ml-1 ${context.currentBranch.name === branch.name && allowCheckout ? 'text-success' : ''}`}>{branch.name} {branch.remote ? `on ${branch.remote.name}` : ''}</div>
 
         </div>
-        {context.currentBranch && context.currentBranch.name === branch.name ?
-          <GitUIButton data-id={`branches-toggle-current-branch-${branch.name}`} className="btn btn-sm p-0 mr-1" onClick={() => { }}>
-            <FontAwesomeIcon className='pointer text-success' icon={faToggleOff} ></FontAwesomeIcon>
-          </GitUIButton>
-          :
-          <GitUIButton data-id={`branches-toggle-branch-${branch.name}`} className="btn btn-sm p-0 mr-1" onClick={() => checkout(branch)}>
-            <FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon>
-          </GitUIButton>
-        }
+        {allowCheckout ?
+          context.currentBranch && context.currentBranch.name === branch.name ?
+            <GitUIButton data-id={`branches-toggle-current-branch-${branch.name}`} className="btn btn-sm p-0 mr-1" onClick={() => { }}>
+              <FontAwesomeIcon className='pointer text-success' icon={faToggleOff} ></FontAwesomeIcon>
+            </GitUIButton>
+            :
+            <GitUIButton tooltip="checkout branch" data-id={`branches-toggle-branch-${branch.name}`} className="btn btn-sm p-0 mr-1" onClick={() => checkout(branch)}>
+              <FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon>
+            </GitUIButton>
+          : null}
         {!branch.remote && canFetch() && <>
-          <GitUIButton className="btn btn-sm p-0 mr-1 text-muted" onClick={() => fetchBranch()}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon></GitUIButton>
-          <GitUIButton className="btn btn-sm p-0 mr-1 text-muted" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>
+          <GitUIButton tooltip="fetch branch" className="btn btn-sm p-0 mr-1 text-muted" onClick={() => fetchBranch()}><FontAwesomeIcon icon={faSync} ></FontAwesomeIcon></GitUIButton>
+          <GitUIButton tooltip="open on remote" className="btn btn-sm p-0 mr-1 text-muted" onClick={() => openRemote()}><FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon></GitUIButton>
         </>}
         {branch.remote?.url && <>
-          <GitUIButton className="btn btn-sm p-0 mr-1 text-muted" onClick={() => reloadBranch()}>
+          <GitUIButton tooltip="fetch branch" className="btn btn-sm p-0 mr-1 text-muted" onClick={() => reloadBranch()}>
             <FontAwesomeIcon icon={faSync} ></FontAwesomeIcon>
           </GitUIButton>
         </>}
 
         {branch.remote?.url && <>
-          <GitUIButton className="btn btn-sm p-0 mr-1 text-muted" onClick={() => openRemote()}>
+          <GitUIButton tooltip="open remote" className="btn btn-sm p-0 mr-1 text-muted" onClick={() => openRemote()}>
             <FontAwesomeIcon icon={faGlobe} ></FontAwesomeIcon>
           </GitUIButton>
         </>}

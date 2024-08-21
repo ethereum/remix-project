@@ -10,8 +10,6 @@ import * as compilerV215 from 'circom_wasm/v2.1.5'
 import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import { CompilationConfig, CompilerReport, PrimeValue, ResolverOutput } from '../types'
 
-// @ts-ignore
-const _paq = (window._paq = window._paq || [])
 export class CircomPluginClient extends PluginClient {
   public internalEvents: EventManager
   private _compilationConfig: CompilationConfig = {
@@ -22,6 +20,11 @@ export class CircomPluginClient extends PluginClient {
   private lastParsedFiles: Record<string, string> = {}
   private lastCompiledFile: string = ''
   private compiler: typeof compilerV215 & typeof compilerV216 & typeof compilerV217 & typeof compilerV218
+  private _paq = {
+    push: (args) => {
+      this.call('matomo' as any, 'track', args)
+    }
+  }
 
   constructor() {
     super()
@@ -164,7 +167,7 @@ export class CircomPluginClient extends PluginClient {
       const circuitErrors = circuitApi.report()
 
       this.logCompilerReport(circuitErrors)
-      _paq.push(['trackEvent', 'circuit-compiler', 'compile', 'Compilation failed'])
+      this._paq.push(['trackEvent', 'circuit-compiler', 'compile', 'Compilation failed'])
       throw new Error(circuitErrors)
     } else {
       this.lastCompiledFile = path
@@ -184,7 +187,7 @@ export class CircomPluginClient extends PluginClient {
       } else {
         this.internalEvents.emit('circuit_compiling_done', [])
       }
-      _paq.push(['trackEvent', 'circuit-compiler', 'compile', 'Compilation successful'])
+      this._paq.push(['trackEvent', 'circuit-compiler', 'compile', 'Compilation successful'])
       circuitApi.log().map(log => {
         log && this.call('terminal', 'log', { type: 'log', value: log })
       })
@@ -194,24 +197,15 @@ export class CircomPluginClient extends PluginClient {
   }
 
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
-    this.internalEvents.emit('circuit_generating_r1cs_start')
-    this.emit('statusChanged', { key: 'loading', title: 'Generating...', type: 'info' })
-    // @ts-ignore
-    this.call('terminal', 'log', { type: 'log', value: 'Generating R1CS for ' + path })
     const [parseErrors, filePathToId] = await this.parse(path)
 
     if (parseErrors && (parseErrors.length > 0)) {
       if (parseErrors[0].type === 'Error') {
-        this.internalEvents.emit('circuit_parsing_errored', parseErrors)
         this.logCompilerReport(parseErrors)
         return
       } else if (parseErrors[0].type === 'Warning') {
-        this.internalEvents.emit('circuit_parsing_warning', parseErrors)
         this.logCompilerReport(parseErrors)
       }
-    } else {
-      this.internalEvents.emit('circuit_parsing_done', parseErrors, filePathToId)
-      this.emit('statusChanged', { key: 'succeed', title: 'r1cs generated successfully', type: 'success' })
     }
     if (compilationConfig) {
       const { prime, version } = compilationConfig
@@ -226,16 +220,15 @@ export class CircomPluginClient extends PluginClient {
       const r1csErrors = r1csApi.report()
 
       this.logCompilerReport(r1csErrors)
-      _paq.push(['trackEvent', 'circuit-compiler', 'generateR1cs', 'R1CS Generation failed'])
+      this._paq.push(['trackEvent', 'circuit-compiler', 'generateR1cs', 'R1CS Generation failed'])
       throw new Error(r1csErrors)
     } else {
-      this.internalEvents.emit('circuit_generating_r1cs_done')
       const fileName = extractNameFromKey(path)
       const writePath = extractParentFromKey(path) + "/.bin/" + fileName.replace('circom', 'r1cs')
 
       // @ts-ignore
       await this.call('fileManager', 'writeFile', writePath, r1csProgram, true)
-      _paq.push(['trackEvent', 'circuit-compiler', 'generateR1cs', 'R1CS Generation successful'])
+      this._paq.push(['trackEvent', 'circuit-compiler', 'generateR1cs', 'R1CS Generation successful'])
       r1csApi.log().map(log => {
         log && this.call('terminal', 'log', { type: 'log', value: log })
       })
@@ -256,7 +249,7 @@ export class CircomPluginClient extends PluginClient {
     const witness = this.compiler ? await this.compiler.generate_witness(dataRead, input) : await generate_witness(dataRead, input)
     // @ts-ignore
     await this.call('fileManager', 'writeFile', wasmPath.replace('.wasm', '.wtn'), witness, true)
-    _paq.push(['trackEvent', 'circuit-compiler', 'computeWitness', 'Witness computing successful'])
+    this._paq.push(['trackEvent', 'circuit-compiler', 'computeWitness', 'Witness computing successful'])
     this.internalEvents.emit('circuit_computing_witness_done')
     this.emit('statusChanged', { key: 'succeed', title: 'witness computed successfully', type: 'success' })
   }

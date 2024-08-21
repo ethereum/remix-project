@@ -1,14 +1,13 @@
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails, setCurrenHead } from "../state/gitpayload";
-import { GitHubUser, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository, userEmails } from '../types';
+import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails, setCurrenHead, setStoragePayload, resetBranchDifferences } from "../state/gitpayload";
+import { GitHubUser, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository, userEmails, storage, gitMatomoEventTypes } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
 import { ModalTypes } from "@remix-ui/app";
-import { setFileDecorators } from "./pluginActions";
+import { sendToMatomo, setFileDecorators } from "./pluginActions";
 import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi } from "@remix-api";
-import { file } from "jszip";
 
 export const fileStatuses = [
   ["new,untracked", 0, 2, 0], // new, untracked
@@ -40,7 +39,7 @@ export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatc
 }
 
 export const init = async () => {
-
+  await sendToMatomo(gitMatomoEventTypes.INIT)
   await plugin.call('dgitApi', "init");
   await gitlog();
   await getBranches();
@@ -145,6 +144,7 @@ export const currentBranch = async () => {
 }
 
 export const createBranch = async (name: string = "") => {
+  await sendToMatomo(gitMatomoEventTypes.CREATEBRANCH)
   dispatch(setLoading(true))
   if (name) {
     await plugin.call('dgitApi', 'branch', { ref: name, force: true, checkout: true });
@@ -175,6 +175,7 @@ const settingsWarning = async () => {
 
 export const commit = async (message: string = "") => {
 
+  await sendToMatomo(gitMatomoEventTypes.COMMIT)
   try {
     const credentials = await settingsWarning()
     if (!credentials) {
@@ -202,6 +203,7 @@ export const commit = async (message: string = "") => {
 }
 
 export const addall = async (files: fileStatusResult[]) => {
+  await sendToMatomo(gitMatomoEventTypes.ADD_ALL)
   try {
     const filesToAdd = files
       .filter(f => !f.statusNames.includes('deleted'))
@@ -227,6 +229,7 @@ export const addall = async (files: fileStatusResult[]) => {
 }
 
 export const add = async (filepath: addInput) => {
+  await sendToMatomo(gitMatomoEventTypes.ADD)
   try {
     if (typeof filepath.filepath === "string") {
       filepath.filepath = removeSlash(filepath.filepath)
@@ -253,6 +256,7 @@ const getLastCommmit = async () => {
 }
 
 export const rm = async (args: rmInput) => {
+  await sendToMatomo(gitMatomoEventTypes.RM)
   await plugin.call('dgitApi', 'rm', {
     filepath: removeSlash(args.filepath),
   });
@@ -289,7 +293,7 @@ export const checkoutfile = async (filename: string) => {
 }
 
 export const checkout = async (cmd: checkoutInput) => {
-
+  sendToMatomo(gitMatomoEventTypes.CHECKOUT)
   await disableCallBacks();
   await plugin.call('fileManager', 'closeAllFiles')
   try {
@@ -303,6 +307,7 @@ export const checkout = async (cmd: checkoutInput) => {
 
 export const clone = async (input: cloneInputType) => {
 
+  await sendToMatomo(gitMatomoEventTypes.CLONE)
   dispatch(setLoading(true))
   const urlParts = input.url.split("/");
   const lastPart = urlParts[urlParts.length - 1];
@@ -322,6 +327,8 @@ export const clone = async (input: cloneInputType) => {
       message: `Cloned ${input.url} to ${repoNameWithTimestamp}`
     })
 
+    plugin.call('notification', 'toast', `Cloned ${input.url} to ${repoNameWithTimestamp}`)
+
   } catch (e: any) {
     await parseError(e)
   }
@@ -329,6 +336,7 @@ export const clone = async (input: cloneInputType) => {
 }
 
 export const fetch = async (input: fetchInputType) => {
+  await sendToMatomo(gitMatomoEventTypes.FETCH)
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
@@ -339,13 +347,14 @@ export const fetch = async (input: fetchInputType) => {
     }
   } catch (e: any) {
     console.log(e)
-    await parseError(e)
+    if (!input.quiet) { await parseError(e) }
   }
   dispatch(setLoading(false))
   await enableCallBacks()
 }
 
 export const pull = async (input: pullInputType) => {
+  await sendToMatomo(gitMatomoEventTypes.PULL)
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
@@ -360,6 +369,7 @@ export const pull = async (input: pullInputType) => {
 }
 
 export const push = async (input: pushInputType) => {
+  await sendToMatomo(gitMatomoEventTypes.PUSH)
   dispatch(setLoading(true))
   await disableCallBacks()
   try {
@@ -385,6 +395,7 @@ const parseError = async (e: any) => {
   console.trace(e)
   // if message conttains 401 Unauthorized, show token warning
   if (e.message.includes('401')) {
+    await sendToMatomo(gitMatomoEventTypes.ERROR, ['401'])
     const result = await plugin.call('notification', 'modal' as any, {
       title: 'The GitHub token may be missing or invalid',
       message: 'Please check the GitHub token and try again. Error: 401 Unauthorized',
@@ -395,6 +406,7 @@ const parseError = async (e: any) => {
   }
   // if message contains 404 Not Found, show repo not found
   else if (e.message.includes('404')) {
+    await sendToMatomo(gitMatomoEventTypes.ERROR, ['404'])
     await plugin.call('notification', 'modal' as any, {
       title: 'Repository not found',
       message: 'Please check the URL and try again.',
@@ -405,6 +417,7 @@ const parseError = async (e: any) => {
   }
   // if message contains 403 Forbidden
   else if (e.message.includes('403')) {
+    await sendToMatomo(gitMatomoEventTypes.ERROR, ['403'])
     await plugin.call('notification', 'modal' as any, {
       title: 'The GitHub token may be missing or invalid',
       message: 'Please check the GitHub token and try again. Error: 403 Forbidden',
@@ -413,6 +426,7 @@ const parseError = async (e: any) => {
       type: ModalTypes.confirm
     })
   } else if (e.toString().includes('NotFoundError') && !e.toString().includes('fetch')) {
+    await sendToMatomo(gitMatomoEventTypes.ERROR, ['BRANCH NOT FOUND ON REMOTE'])
     await plugin.call('notification', 'modal', {
       title: 'Remote branch not found',
       message: 'The branch you are trying to fetch does not exist on the remote. If you have forked this branch from another branch, you may need to fetch the original branch first or publish this branch on the remote.',
@@ -420,6 +434,7 @@ const parseError = async (e: any) => {
       type: ModalTypes.alert
     })
   } else {
+    await sendToMatomo(gitMatomoEventTypes.ERROR, ['UKNOWN'])
     await plugin.call('notification', 'alert' as any, {
       title: 'Error',
       message: e.message
@@ -447,6 +462,7 @@ export const repositories = async () => {
       }
 
     } else {
+      await sendToMatomo(gitMatomoEventTypes.ERROR, ['TOKEN ERROR'])
       plugin.call('notification', 'alert', {
         id: 'github-token-error',
         title: 'Error getting repositories',
@@ -456,6 +472,7 @@ export const repositories = async () => {
     }
   } catch (e) {
     console.log(e)
+    await sendToMatomo(gitMatomoEventTypes.ERROR, ['TOKEN ERROR'])
     plugin.call('notification', 'alert', {
       id: 'github-token-error',
       title: 'Error getting repositories',
@@ -484,6 +501,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
         page++
       }
     } else {
+      await sendToMatomo(gitMatomoEventTypes.ERROR, ['TOKEN ERROR'])
       plugin.call('notification', 'alert', {
         title: 'Error getting branches',
         id: 'github-token-error',
@@ -493,6 +511,7 @@ export const remoteBranches = async (owner: string, repo: string) => {
     }
   } catch (e) {
     console.log(e)
+    await sendToMatomo(gitMatomoEventTypes.ERROR, ['TOKEN ERROR'])
     plugin.call('notification', 'alert', {
       title: 'Error',
       id: 'github-error',
@@ -618,8 +637,10 @@ export const loadGitHubUserFromToken = async () => {
           type: 'success',
           message: `Github user loaded...`
         })
+        await sendToMatomo(gitMatomoEventTypes.LOADGITHUBUSERSUCCESS)
         return true
       } else {
+        await sendToMatomo(gitMatomoEventTypes.ERROR, ['GITHUB USER LOAD ERROR'])
         sendToGitLog({
           type: 'error',
           message: `Please check your GitHub token in the GitHub settings.`
@@ -662,7 +683,7 @@ export const resolveRef = async (ref: string) => {
 }
 
 export const diff = async (commitChange: commitChange) => {
-
+  await sendToMatomo(gitMatomoEventTypes.DIFF)
   if (!commitChange.hashModified) {
     const newcontent = await plugin.call(
       "fileManager",
@@ -782,8 +803,13 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
       remote = state.remotes[0]
     }
   }
-  if (!remote) return
+
   try {
+
+    if (!remote) {
+      dispatch(resetBranchDifferences())
+      return
+    }
 
     const branchDifference: branchDifference = await plugin.call('dgitApi', 'compareBranches', {
       branch,
@@ -798,6 +824,8 @@ export const getBranchDifferences = async (branch: branch, remote: remote, state
       }))
   } catch (e) {
     // do nothing
+    if (dispatch)
+      dispatch(resetBranchDifferences())
   }
 }
 
@@ -822,19 +850,27 @@ export const getBranchCommits = async (branch: branch, page: number) => {
 }
 
 export const setDefaultRemote = async (remote: remote) => {
+  await sendToMatomo(gitMatomoEventTypes.SETDEFAULTREMOTE)
   dispatch(setRemoteAsDefault(remote))
 }
 
 export const addRemote = async (remote: remote) => {
+  await sendToMatomo(gitMatomoEventTypes.ADDREMOTE)
   try {
     await plugin.call('dgitApi', 'addremote', remote)
     await getRemotes()
+    await fetch({
+      remote: remote,
+      singleBranch: true,
+      quiet: true,
+    })
   } catch (e) {
     console.log(e)
   }
 }
 
 export const removeRemote = async (remote: remote) => {
+  await sendToMatomo(gitMatomoEventTypes.RMREMOTE)
   try {
     await plugin.call('dgitApi', 'delremote', remote)
     await getRemotes()
@@ -849,4 +885,8 @@ export const sendToGitLog = async (message: gitLog) => {
 
 export const clearGitLog = async () => {
   dispatch(clearLog())
+}
+
+export const setStorage = async (storage: storage) => {
+  dispatch(setStoragePayload(storage))
 }

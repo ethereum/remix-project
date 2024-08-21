@@ -1,10 +1,11 @@
 {
-    "version": "v0.51.0",
+    "version": "v0.53.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Integration of SolidityScan to analyze code for vulnerabilities",
-    "highlight2": "'eth_signTypedData' supported in remix-simulator",
-    "highlight3": "Home tab updated & status bar introduced",
+    "highlight1": "Keyboard shortcut for Cut-Copy-Paste files and folder",
+    "highlight2": "Interface to generate proof in Circom compiler plugin",
+    "highlight3": "Publish multi-selected files to Gist",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-51-0-ffe0260a9ad5?source=friends_link&sk=8c739ab9148dfae968108a90d9d0c6c3"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-53-0-615d9e7c6c58?source=friends_link&sk=35e918e8487aaab02e79ea4dc557a7e7"
   }
+  

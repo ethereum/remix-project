@@ -1,5 +1,5 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { branch, branchDifference, commitChange, fileStatusResult, GitHubUser, gitLog, pagedCommits, remote, remoteBranch, repository, userEmails } from "../types"
+import { branch, branchDifference, commitChange, fileStatusResult, GitHubUser, gitLog, pagedCommits, remote, remoteBranch, repository, storage, userEmails } from "../types"
 
 export interface ActionPayloadTypes {
   FILE_STATUS: fileStatusResult[],
@@ -34,6 +34,7 @@ export interface ActionPayloadTypes {
     remote: remote
     branchDifference: branchDifference
   }
+  RESET_BRANCH_DIFFERENCES: null
   SET_GITHUB_USER: GitHubUser
   SET_RATE_LIMIT: any
   SET_GITHUB_ACCESS_TOKEN: string
@@ -42,6 +43,7 @@ export interface ActionPayloadTypes {
   SET_LOG: gitLog
   CLEAR_LOG: void
   SET_USER_EMAILS: userEmails
+  SET_STORAGE: storage
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {

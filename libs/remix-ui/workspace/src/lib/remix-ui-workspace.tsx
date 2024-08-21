@@ -42,11 +42,8 @@ export function Workspace() {
   const uupsRadioRef = useRef()
   const global = useContext(FileSystemContext)
   const workspaceRenameInput = useRef()
-  const workspaceCreateInput = useRef()
-  const workspaceCreateTemplateInput = useRef()
   const intl = useIntl()
   const cloneUrlRef = useRef<HTMLInputElement>()
-  const initGitRepoRef = useRef<HTMLInputElement>()
   const filteredBranches = selectedWorkspace ? (selectedWorkspace.branches || []).filter((branch) => branch.name.includes(branchFilter) && branch.name !== 'HEAD').slice(0, 20) : []
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
 
@@ -54,6 +51,9 @@ export function Workspace() {
 
   const [state, setState] = useState<WorkSpaceState>({
     ctrlKey: false,
+    cutShortcut: false,
+    deleteKey: false,
+    F2Key: false,
     newFileName: '',
     actions: contextMenuActions,
     focusContext: {
@@ -157,6 +157,7 @@ export function Workspace() {
   })
 
   const [validationResult, setValidationResult] = useState<ValidationResult>({ valid: true, message: '' })
+  const [feTarget, setFeTarget] = useState<{ key: string, type: 'file' | 'folder' }[]>({} as { key: string, type: 'file' | 'folder' }[])
 
   const loadingInitialState = {
     tooltip: '',
@@ -174,12 +175,43 @@ export function Workspace() {
   }
   const inputValue = useRef(null)
   const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
+  const [hasCopied, setHasCopied] = useState(false)
 
   const toast = (message: string) => {
     setModalState((prevState) => {
       return { ...prevState, toasterMsg: message }
     })
   }
+
+  const nameGistFolder = (filePath: string) => {
+    const prepend = `Gist_${filePath}`
+    const append = `${prepend}-folder`
+    return append
+  }
+
+  /**
+   * Void action to ensure multiselected files are published
+   * folders are not handled
+   */
+  const handlePublishingMultiSelectedFilesToGist = async () => {
+    try {
+      const selectedFiles = []
+      for (const one of feTarget) {
+        if (one.type === 'folder') return
+        const content = await global.plugin.call('fileManager', 'readFile', one.key)
+        selectedFiles.push({ key: one.key, type: one.type, content: content })
+      }
+      global.dispatchPublishFilesToGist(selectedFiles)
+    } catch (error) {
+      await global.plugin.call('notification', 'toast', 'Could not publish files to gist. There was an error')
+      await global.plugin.call('notification', 'toast', typeof(error) === 'string' ? error : `${console.log(error)} check the console for more details`)
+    }
+  }
+
+  useEffect(() => {
+    global.plugin.on('finishedGistPublish', (folderName) => {
+    })
+  }, [])
 
   const showFullMessage = async (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
     setModalState((prevState) => {
@@ -349,14 +381,9 @@ export function Workspace() {
       intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
-  const createWorkspace = () => {
-    global.modal(
-      intl.formatMessage({ id: (platform !== appPlatformTypes.desktop)? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
-      createModalMessage(),
-      intl.formatMessage({ id: (platform !== appPlatformTypes.desktop)? 'filePanel.ok':'filePanel.selectFolder' }),
-      onFinishCreateWorkspace,
-      intl.formatMessage({ id: 'filePanel.cancel' })
-    )
+  const createWorkspace = async () => {
+    await global.plugin.call('manager', 'activatePlugin', 'templateSelection')
+    await global.plugin.call('tabs', 'focus', 'templateSelection')
   }
 
   const deleteCurrentWorkspace = () => {
@@ -410,22 +437,6 @@ export function Workspace() {
     )
   }
 
-  const addGithubAction = () => {
-    global.dispatchCreateSolidityGithubAction()
-  }
-
-  const addTsSolTestGithubAction = () => {
-    global.dispatchCreateTsSolGithubAction()
-  }
-
-  const addSlitherGithubAction = () => {
-    global.dispatchCreateSlitherGithubAction()
-  }
-
-  const addHelperScripts = (script: string) => {
-    global.dispatchCreateHelperScripts(script)
-  }
-
   const downloadWorkspaces = async () => {
     try {
       await global.dispatchHandleDownloadFiles()
@@ -467,38 +478,6 @@ export function Workspace() {
     } catch (e) {
       global.modal(
         intl.formatMessage({ id: 'filePanel.workspace.download' }),
-        e.message,
-        intl.formatMessage({ id: 'filePanel.ok' }),
-        () => {},
-        intl.formatMessage({ id: 'filePanel.cancel' })
-      )
-      console.error(e)
-    }
-  }
-
-  const onFinishCreateWorkspace = async () => {
-    if (workspaceCreateInput.current === undefined) return
-    // @ts-ignore: Object is possibly 'null'.
-    const workspaceName = workspaceCreateInput.current.value
-    // @ts-ignore: Object is possibly 'null'.
-    const workspaceTemplateName = workspaceCreateTemplateInput.current.value || 'remixDefault'
-    const initGitRepo = initGitRepoRef.current.checked
-    const opts = {
-      // @ts-ignore: Object is possibly 'null'.
-      mintable: mintableCheckboxRef.current.checked,
-      // @ts-ignore: Object is possibly 'null'.
-      burnable: burnableCheckboxRef.current.checked,
-      // @ts-ignore: Object is possibly 'null'.
-      pausable: pausableCheckboxRef.current.checked,
-      // @ts-ignore: Object is possibly 'null'.
-      upgradeable: transparentRadioRef.current.checked ? transparentRadioRef.current.value : uupsRadioRef.current.checked ? uupsRadioRef.current.value : false
-    }
-
-    try {
-      await global.dispatchCreateWorkspace(workspaceName, workspaceTemplateName, opts, initGitRepo)
-    } catch (e) {
-      global.modal(
-        intl.formatMessage({ id:  (platform !== appPlatformTypes.desktop)? 'filePanel.workspace.create': 'filePanel.workspace.create.desktop' }),
         e.message,
         intl.formatMessage({ id: 'filePanel.ok' }),
         () => {},
@@ -596,12 +575,23 @@ export function Workspace() {
     }
   }
 
+  const handleMultipleItemCopies = (copied: {key: string, type: 'folder' | 'file' | 'workspace'}[]) => {
+    setState((prevState) => {
+      return { ...prevState, copyElement: copied }
+    })
+    setCanPaste(true)
+    const path = copied[0].key
+    global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { path }))
+    setHasCopied(true)
+  }
+
   const handleCopyClick = (path: string, type: 'folder' | 'file' | 'workspace') => {
     setState((prevState) => {
       return { ...prevState, copyElement: [{ key: path, type }]}
     })
     setCanPaste(true)
     global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { path }))
+    setHasCopied(true)
   }
 
   const handlePasteClick = (dest: string, destType: string) => {
@@ -896,163 +886,6 @@ export function Workspace() {
     }
   }
 
-  const createModalMessage = () => {
-    return (
-      <>
-        <label id="selectWsTemplate" className="form-check-label" style={{ fontWeight: 'bolder' }}>
-          <FormattedMessage id="filePanel.workspace.chooseTemplate" />
-        </label>
-        <select
-          name="wstemplate"
-          className="mb-3 form-control custom-select"
-          id="wstemplate"
-          defaultValue="remixDefault"
-          ref={workspaceCreateTemplateInput}
-          onChange={updateWsName}
-        >
-          <optgroup style={{ fontSize: 'medium' }} label="General">
-            <option style={{ fontSize: 'small' }} value="remixDefault">
-              {intl.formatMessage({ id: 'filePanel.basic' })}
-            </option>
-            <option style={{ fontSize: 'small' }} value="blank">
-              {intl.formatMessage({ id: 'filePanel.blank' })}
-            </option>
-          </optgroup>
-          <optgroup style={{ fontSize: 'medium' }} label="OpenZeppelin">
-            <option style={{ fontSize: 'small' }} value="ozerc20">
-              ERC20
-            </option>
-            <option style={{ fontSize: 'small' }} value="ozerc721">
-              ERC721
-            </option>
-            <option style={{ fontSize: 'small' }} value="ozerc1155">
-              ERC1155
-            </option>
-          </optgroup>
-          <optgroup style={{ fontSize: 'medium' }} label="0xProject">
-            <option style={{ fontSize: 'small' }} value="zeroxErc20">
-              ERC20
-            </option>
-          </optgroup>
-          <optgroup style={{ fontSize: 'medium' }} label="GnosisSafe">
-            <option style={{ fontSize: 'small' }} value="gnosisSafeMultisig">
-              {intl.formatMessage({ id: 'filePanel.multiSigWallet' })}
-            </option>
-          </optgroup>
-          <optgroup style={{ fontSize: 'medium' }} label="Circom ZKP">
-            <option style={{ fontSize: 'small' }} value="semaphore">
-              {intl.formatMessage({ id: 'filePanel.semaphore' })}
-            </option>
-            <option style={{ fontSize: 'small' }} value="hashchecker">
-              {intl.formatMessage({ id: 'filePanel.hashchecker' })}
-            </option>
-            <option style={{ fontSize: 'small' }} value="rln">
-              {intl.formatMessage({ id: 'filePanel.rln' })}
-            </option>
-          </optgroup>
-          <optgroup style={{ fontSize: 'medium' }} label="Uniswap V4">
-            <option style={{ fontSize: 'small' }} value="uniswapV4Template">
-              {intl.formatMessage({ id: 'filePanel.uniswapV4Template' })}
-            </option>
-            <option style={{ fontSize: 'small' }} value="breakthroughLabsUniswapv4Hooks">
-              {intl.formatMessage({ id: 'filePanel.breakthroughLabsUniswapv4Hooks' })}
-            </option>
-
-            <option style={{ fontSize: 'small' }} value="uniswapV4HookBookMultiSigSwapHook">
-              {intl.formatMessage({ id: 'filePanel.uniswapV4HookBookMultiSigSwapHook' })}
-            </option>
-
-          </optgroup>
-        </select>
-        <div id="ozcustomization" data-id="ozCustomization" ref={displayOzCustomRef} style={{ display: 'none' }} className="mb-2">
-          <label className="form-check-label d-block mb-2" style={{ fontWeight: 'bolder' }}>
-            <FormattedMessage id="filePanel.customizeTemplate" />
-          </label>
-
-          <label id="wsName" className="form-check-label d-block mb-1">
-            <FormattedMessage id="filePanel.features" />
-          </label>
-          <div className="mb-2">
-            <div className="d-flex ml-2 custom-control custom-checkbox">
-              <input className="custom-control-input" type="checkbox" name="feature" value="mintable" id="mintable" ref={mintableCheckboxRef} />
-              <label className="form-check-label custom-control-label" htmlFor="mintable" data-id="featureTypeMintable">
-                <FormattedMessage id="filePanel.mintable" />
-              </label>
-            </div>
-            <div className="d-flex ml-2 custom-control custom-checkbox">
-              <input className="custom-control-input" type="checkbox" name="feature" value="burnable" id="burnable" ref={burnableCheckboxRef} />
-              <label className="form-check-label custom-control-label" htmlFor="burnable" data-id="featureTypeBurnable">
-                <FormattedMessage id="filePanel.burnable" />
-              </label>
-            </div>
-            <div className="d-flex ml-2 custom-control custom-checkbox">
-              <input className="custom-control-input" type="checkbox" name="feature" value="pausable" id="pausable" ref={pausableCheckboxRef} />
-              <label className="form-check-label custom-control-label" htmlFor="pausable" data-id="featureTypePausable">
-                <FormattedMessage id="filePanel.pausable" />
-              </label>
-            </div>
-          </div>
-
-          <label id="wsName" className="form-check-label d-block mb-1">
-            <FormattedMessage id="filePanel.upgradeability" />
-          </label>
-          <div>
-            <div className="d-flex ml-2 custom-control custom-radio">
-              <input className="custom-control-input" type="radio" name="upgradeability" value="transparent" id="transparent" ref={transparentRadioRef} />
-              <label className="form-check-label custom-control-label" htmlFor="transparent" data-id="upgradeTypeTransparent">
-                <FormattedMessage id="filePanel.transparent" />
-              </label>
-            </div>
-            <div className="d-flex ml-2 custom-control custom-radio">
-              <input className="custom-control-input" type="radio" name="upgradeability" value="uups" id="uups" ref={uupsRadioRef} />
-              <label className="form-check-label custom-control-label" htmlFor="uups" data-id="upgradeTypeUups">
-                UUPS
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <label id="wsName" className="form-check-label" style={{ fontWeight: 'bolder' }}>
-          <FormattedMessage id="filePanel.workspaceName" />
-        </label>
-        <input
-          type="text"
-          data-id="modalDialogCustomPromptTextCreate"
-          defaultValue={global.plugin.getAvailableWorkspaceName(TEMPLATE_NAMES['remixDefault'])}
-          ref={workspaceCreateInput}
-          className="form-control"
-        />
-
-        <div className="d-flex py-2 align-items-center custom-control custom-checkbox">
-          <input
-            ref={initGitRepoRef}
-            id="initGitRepository"
-            data-id="initGitRepository"
-            className="form-check-input custom-control-input"
-            type="checkbox"
-            disabled={!global.fs.gitConfig.username || !global.fs.gitConfig.email}
-            onChange={() => { }}
-          />
-          <label
-            htmlFor="initGitRepository"
-            data-id="initGitRepositoryLabel"
-            className="m-0 form-check-label custom-control-label udapp_checkboxAlign"
-            title={intl.formatMessage({ id: 'filePanel.initGitRepoTitle' })}
-          >
-            <FormattedMessage id="filePanel.initGitRepositoryLabel" />
-          </label>
-        </div>
-        {!global.fs.gitConfig.username || !global.fs.gitConfig.email ? (
-          <div className="text-warning">
-            <FormattedMessage id="filePanel.initGitRepositoryWarning" />
-          </div>
-        ) : (
-          <></>
-        )}
-      </>
-    )
-  }
-
   const renameModalMessage = (workspaceName?: string) => {
     return (
       <div className='d-flex flex-column'>
@@ -1129,10 +962,6 @@ export function Workspace() {
                             downloadWorkspaces={downloadWorkspaces}
                             restoreBackup={restoreBackup}
                             hideIconsMenu={hideIconsMenu}
-                            addGithubAction={addGithubAction}
-                            addSlitherGithubAction={addSlitherGithubAction}
-                            addHelperScripts={addHelperScripts}
-                            addTsSolTestGithubAction={addTsSolTestGithubAction}
                             showIconsMenu={showIconsMenu}
                             hideWorkspaceOptions={currentWorkspace === LOCALHOST}
                             hideLocalhostOptions={currentWorkspace === NO_WORKSPACE}
@@ -1287,6 +1116,9 @@ export function Workspace() {
                   files={global.fs.browser.files}
                   flatTree={global.fs.browser.flatTree}
                   workspaceState={state}
+                  feTarget={feTarget}
+                  setFeTarget={setFeTarget}
+                  publishManyFilesToGist={handlePublishingMultiSelectedFilesToGist}
                   expandPath={global.fs.browser.expandPath}
                   focusEdit={global.fs.focusEdit}
                   focusElement={global.fs.focusElement}
@@ -1315,8 +1147,11 @@ export function Workspace() {
                   dispatchAddInputField={global.dispatchAddInputField}
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
+                  dispatchMoveFiles={global.dispatchMoveFiles}
                   dispatchMoveFolder={global.dispatchMoveFolder}
+                  dispatchMoveFolders={global.dispatchMoveFolders}
                   handleCopyClick={handleCopyClick}
+                  handleMultiCopies={handleMultipleItemCopies}
                   handlePasteClick={handlePasteClick}
                   addMenuItems={addMenuItems}
                   removeMenuItems={removeMenuItems}
@@ -1335,6 +1170,9 @@ export function Workspace() {
                   renamePath={editModeOn}
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
+                  canPaste={canPaste}
+                  hasCopied={hasCopied}
+                  setHasCopied={setHasCopied}
                 />
 
               )}
@@ -1352,7 +1190,11 @@ export function Workspace() {
                   files={global.fs.localhost.files}
                   flatTree={global.fs.localhost.flatTree}
                   fileState={[]}
+                  canPaste={canPaste}
                   workspaceState={state}
+                  feTarget={feTarget}
+                  setFeTarget={setFeTarget}
+                  publishManyFilesToGist={handlePublishingMultiSelectedFilesToGist}
                   expandPath={global.fs.localhost.expandPath}
                   focusEdit={global.fs.focusEdit}
                   focusElement={global.fs.focusElement}
@@ -1381,8 +1223,11 @@ export function Workspace() {
                   dispatchAddInputField={global.dispatchAddInputField}
                   dispatchHandleExpandPath={global.dispatchHandleExpandPath}
                   dispatchMoveFile={global.dispatchMoveFile}
+                  dispatchMoveFiles={global.dispatchMoveFiles}
                   dispatchMoveFolder={global.dispatchMoveFolder}
+                  dispatchMoveFolders={global.dispatchMoveFolders}
                   handleCopyClick={handleCopyClick}
+                  handleMultiCopies={handleMultipleItemCopies}
                   handlePasteClick={handlePasteClick}
                   addMenuItems={addMenuItems}
                   removeMenuItems={removeMenuItems}
@@ -1401,6 +1246,8 @@ export function Workspace() {
                   dragStatus={dragStatus}
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
+                  hasCopied={hasCopied}
+                  setHasCopied={setHasCopied}
                 />
               )}
             </div>
@@ -1525,7 +1372,7 @@ export function Workspace() {
       )}
       {state.showContextMenu && (
         <FileExplorerContextMenu
-          actions={global.fs.focusElement.length > 1 ? state.actions.filter((item) => item.multiselect) : state.actions.filter((item) => !item.multiselect)}
+          actions={(global.fs.focusElement.length > 1 || feTarget.length > 1) ? state.actions.filter((item) => item.multiselect) : state.actions.filter((item) => !item.multiselect)}
           hideContextMenu={hideContextMenu}
           createNewFile={handleNewFileInput}
           createNewFolder={handleNewFolderInput}
@@ -1548,6 +1395,7 @@ export function Workspace() {
           publishFileToGist={publishFileToGist}
           uploadFile={uploadFile}
           downloadPath={downloadPath}
+          publishManyFilesToGist={handlePublishingMultiSelectedFilesToGist}
         />
       )}
 
