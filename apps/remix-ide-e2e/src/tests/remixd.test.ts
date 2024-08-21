@@ -55,6 +55,10 @@ module.exports = {
   before: function (browser, done) {
     init(browser, done)
   },
+  afterEach: function (browser, done) {
+    console.log('afterEach')
+    done()
+  },
   after: function (browser) {
     browser.perform((done) => {
       console.log('remixd', remixd.pid)
@@ -322,6 +326,7 @@ function runTests(browser: NightwatchBrowser, done: any) {
     .setEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .setEditorValue('contract test1 { function get () returns (uint) { return 10; }}')
+    .waitForElementVisible('[data-path="folder1"]')
     .waitForElementVisible('[data-path="folder1/contract_' + browserName + '.sol"]')
     .click('[data-path="folder1/contract_' + browserName + '.sol"]') // rename a file and check
     .pause(1000)
