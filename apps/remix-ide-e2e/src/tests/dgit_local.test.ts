@@ -34,8 +34,9 @@ module.exports = {
     'Update settings for git #group1 #group2 #group3 #group4': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
-            .waitForElementVisible('*[data-id="initgit-btn"]')
-            .click('*[data-id="initgit-btn"]')
+            // .waitForElementVisible('*[data-id="initgit-btn"]')
+            // .click('*[data-id="initgit-btn"]')
+            .waitForElementVisible('*[data-id="gitubUsername"]')
             .setValue('*[data-id="gitubUsername"]', 'git')
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .click('*[data-id="saveGitHubCredentials"]')
