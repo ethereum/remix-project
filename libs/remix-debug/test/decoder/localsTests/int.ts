@@ -49,7 +49,7 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
             try {
 
               // test gas cost per line
-              st.equals((await callTree.getGasCostPerLine(0, 16)).gasCost, 11)
+              st.equals((await callTree.getGasCostPerLine(0, 16)).gasCost, 10)
               st.equals((await callTree.getGasCostPerLine(0, 32)).gasCost, 84)
 
               const functions1 = callTree.retrieveFunctionsStack(103)
@@ -60,12 +60,12 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult, 
               st.equals(functions2.length, 3)
               st.equals(functions3.length, 1)
 
-              st.equal(functions1[0].gasCost, 54)
-              st.equal(functions1[1].gasCost, 436)
+              st.equal(functions1[0].gasCost, 53)
+              st.equal(functions1[1].gasCost, 423)
 
-              st.equal(functions2[0].gasCost, 23)
-              st.equal(functions2[1].gasCost, 54)
-              st.equal(functions2[2].gasCost, 436)
+              st.equal(functions2[0].gasCost, 22)
+              st.equal(functions2[1].gasCost, 53)
+              st.equal(functions2[2].gasCost, 423)
 
               st.equals(Object.keys(functions1[0])[0], 'functionDefinition')
               st.equals(Object.keys(functions1[0])[1], 'inputs')
