@@ -1,0 +1,44 @@
+.nav {
+    cursor: pointer;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.long-and-truncated {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+.commit-navigation{
+    align-items: center;
+}
+
+.commit-navigation:hover {
+    background-color: var(--custom-select);
+}
+
+.commitdetailsitem {
+    align-items: baseline;
+}
+
+.gitfile:hover              {
+    background-color             : var(--custom-select);
+}
+
+hr {
+    background-color: var(--custom-select);
+}
+
+.messageTip {
+
+}
+
+.messageTip:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+

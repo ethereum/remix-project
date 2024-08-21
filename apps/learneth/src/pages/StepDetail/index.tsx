@@ -1,37 +1,57 @@
-import React, {useEffect} from 'react'
-import {useLocation, useNavigate} from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import BackButton from '../../components/BackButton'
-import {useAppSelector, useAppDispatch} from '../../redux/hooks'
+import { useAppSelector, useAppDispatch } from '../../redux/hooks'
 import './index.scss'
+import remixClient from '../../remix-client'
 
 function StepDetailPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useAppDispatch()
+  const [clonedStep, setClonedStep] = React.useState(null)
+
   const queryParams = new URLSearchParams(location.search)
   const id = queryParams.get('id') as string
   const stepId = Number(queryParams.get('stepId'))
   const {
-    workshop: {detail, selectedId},
-    remixide: {errorLoadingFile, errors, success},
+    workshop: { detail, selectedId },
+    remixide: { errorLoadingFile, errors, success },
   } = useAppSelector((state: any) => state)
   const entity = detail[selectedId].entities[id]
   const steps = entity.steps
   const step = steps[stepId]
-  console.log(step)
 
   useEffect(() => {
-    dispatch({
-      type: 'remixide/displayFile',
-      payload: step,
+    setClonedStep(null)
+    const clonedStep = JSON.parse(JSON.stringify(step))
+    const loadFiles = async () => {
+      async function loadFile(step, fileType) {
+        if (step[fileType] && step[fileType].file && !step[fileType].content) {
+          clonedStep[fileType].content = (await remixClient.call('contentImport', 'resolve', step[fileType].file)).content;
+        }
+      }
+
+      const fileTypes = ['markdown', 'solidity', 'test', 'answer', 'js', 'vy'];
+      for (const fileType of fileTypes) {
+        await loadFile(step, fileType);
+      }
+    }
+    loadFiles().then(() => {
+
+      setClonedStep(clonedStep)
+      dispatch({
+        type: 'remixide/displayFile',
+        payload: clonedStep,
+      })
+      dispatch({
+        type: 'remixide/save',
+        payload: { errors: [], success: false },
+      })
+      window.scrollTo(0, 0)
     })
-    dispatch({
-      type: 'remixide/save',
-      payload: {errors: [], success: false},
-    })
-    window.scrollTo(0, 0)
   }, [step])
 
   useEffect(() => {
@@ -40,8 +60,20 @@ function StepDetailPage() {
     }
   }, [errors, success])
 
+  if (!clonedStep) {
+    return (<div className='pb-4'>
+      <div className="fixed-top">
+        <div className="bg-light">
+          <BackButton entity={entity} />
+        </div>
+      </div>
+      loading...
+    </div>
+    )
+  }
+
   return (
-    <>
+    <div className='pb-4'>
       <div className="fixed-top">
         <div className="bg-light">
           <BackButton entity={entity} />
@@ -51,13 +83,13 @@ function StepDetailPage() {
       {errorLoadingFile ? (
         <>
           <div className="errorloadingspacer"></div>
-          <h1 className="pl-3 pr-3 pt-3 pb-1">{step.name}</h1>
+          <h1 className="pl-3 pr-3 pt-3 pb-1">{clonedStep.name}</h1>
           <button
             className="w-100nav-item rounded-0 nav-link btn btn-success test"
             onClick={() => {
               dispatch({
                 type: 'remixide/displayFile',
-                payload: step,
+                payload: clonedStep,
               })
             }}
           >
@@ -68,13 +100,13 @@ function StepDetailPage() {
       ) : (
         <>
           <div className="menuspacer"></div>
-          <h1 className="pr-3 pl-3 pt-3 pb-1">{step.name}</h1>
+          <h1 className="pr-3 pl-3 pt-3 pb-1">{clonedStep.name}</h1>
         </>
       )}
       <div className="container-fluid">
-        <Markdown rehypePlugins={[rehypeRaw]}>{step.markdown?.content}</Markdown>
+        <Markdown rehypePlugins={[rehypeRaw]}>{clonedStep.markdown?.content}</Markdown>
       </div>
-      {step.test?.content ? (
+      {clonedStep.test?.content ? (
         <>
           <nav className="nav nav-pills nav-fill">
             {errorLoadingFile ? (
@@ -83,7 +115,7 @@ function StepDetailPage() {
                 onClick={() => {
                   dispatch({
                     type: 'remixide/displayFile',
-                    payload: step,
+                    payload: clonedStep,
                   })
                 }}
               >
@@ -98,19 +130,19 @@ function StepDetailPage() {
                       onClick={() => {
                         dispatch({
                           type: 'remixide/testStep',
-                          payload: step,
+                          payload: clonedStep,
                         })
                       }}
                     >
                       Check Answer
                     </button>
-                    {step.answer?.content && (
+                    {clonedStep.answer?.content && (
                       <button
                         className="nav-item rounded-0 nav-link btn btn-warning test"
                         onClick={() => {
                           dispatch({
                             type: 'remixide/showAnswer',
-                            payload: step,
+                            payload: clonedStep,
                           })
                         }}
                       >
@@ -130,13 +162,13 @@ function StepDetailPage() {
                         >
                           Next
                         </button>
-                        {step.answer?.content && (
+                        {clonedStep.answer?.content && (
                           <button
                             className="nav-item rounded-0 nav-link btn btn-warning test"
                             onClick={() => {
                               dispatch({
                                 type: 'remixide/showAnswer',
-                                payload: step,
+                                payload: clonedStep,
                               })
                             }}
                           >
@@ -185,13 +217,13 @@ function StepDetailPage() {
       ) : (
         <>
           <nav className="nav nav-pills nav-fill">
-            {!errorLoadingFile && step.answer?.content && (
+            {!errorLoadingFile && clonedStep.answer?.content && (
               <button
                 className="nav-item rounded-0 nav-link btn btn-warning test"
                 onClick={() => {
                   dispatch({
                     type: 'remixide/showAnswer',
-                    payload: step,
+                    payload: clonedStep,
                   })
                 }}
               >
@@ -203,7 +235,8 @@ function StepDetailPage() {
             <button
               className="w-100 btn btn-success"
               onClick={() => {
-                navigate(`/detail?id=${id}&stepId=${stepId + 1}`)
+                navigate(`/detail?id=${id}&stepId=${stepId + 1}`);
+                (window as any)._paq.push(['trackEvent', 'learneth', 'navigate_next', `${id}/${stepId + 1}`])
               }}
             >
               Next
@@ -213,7 +246,8 @@ function StepDetailPage() {
             <button
               className="w-100 btn btn-success"
               onClick={() => {
-                navigate(`/list?id=${id}`)
+                navigate(`/list?id=${id}`);
+                (window as any)._paq.push(['trackEvent', 'learneth', 'navigate_finish', id])
               }}
             >
               Finish tutorial
@@ -221,7 +255,7 @@ function StepDetailPage() {
           )}
         </>
       )}
-    </>
+    </div>
   )
 }
 

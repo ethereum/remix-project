@@ -13,13 +13,9 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=semaphore]')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-      .pause(100)
+      .waitForElementPresent('*[data-id="create-semaphore"]')
+      .scrollAndClick('*[data-id="create-semaphore"]')
+      .modalFooterOKClick('TemplatesSelection')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/semaphore.circom"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts"]')
@@ -76,17 +72,36 @@ module.exports = {
       .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
       .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.wasm"]')
   },
-  'Should generate R1CS for a simple circuit #group2': function (browser: NightwatchBrowser) {
+  'Should run Groth16 setup and export for a simple circuit using the GUI #group2': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('circuit-compiler')
       .frame(0)
-      .waitForElementPresent('button[data-id="generate_r1cs_btn"]')
-      .waitForElementVisible('button[data-id="generate_r1cs_btn"]')
-      .click('button[data-id="generate_r1cs_btn"]')
+      .waitForElementVisible('[data-id="setup_exports_toggler"]')
+      .waitForElementPresent('[data-id="groth16ProvingScheme"]')
+      .click('[data-id="groth16ProvingScheme"]')
+      .waitForElementVisible('[data-id="circuitPtauSelect"]')
+      .click('[data-id="circuitPtauSelect"]')
+      .waitForElementVisible('[data-id="dropdown-item-final_8.ptau"]')
+      .click('[data-id="dropdown-item-final_8.ptau"]')
+      .click('[data-id="runSetupBtn"]')
+      .waitForElementVisible('[data-id="setup_exports_toggler"] .fa-check-circle')
       .frameParent()
       .clickLaunchIcon('filePanel')
-      .waitForElementPresent('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.r1cs"]')
-      .waitForElementVisible('[data-id="treeViewLitreeViewItemcircuits/.bin/simple.r1cs"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/groth16/zk/keys/verification_key.json"]')
+  },
+  'Should run Plonk setup and export for a simple circuit using the GUI #group2': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('circuit-compiler')
+      .frame(0)
+      .waitForElementVisible('[data-id="setup_exports_toggler"]')
+      .click('[data-id="setup_exports_toggler"]')
+      .waitForElementPresent('[data-id="plonkProvingScheme"]')
+      .click('[data-id="plonkProvingScheme"]')
+      .click('[data-id="runSetupBtn"]')
+      .waitForElementVisible('[data-id="setup_exports_toggler"] .fa-check-circle')
+      .frameParent()
+      .clickLaunchIcon('filePanel')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/plonk/zk/keys/verification_key.json"]')
   },
   'Should compile a simple circuit using CTRL + S from the editor #group3': function (browser: NightwatchBrowser) {
     browser
@@ -155,12 +170,9 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
-      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=hashchecker]')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .waitForElementPresent('*[data-id="create-hashchecker"]')
+      .scrollAndClick('*[data-id="create-hashchecker"]')
+      .modalFooterOKClick('TemplatesSelection')
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcircuits/calculate_hash.circom"]')
@@ -183,15 +195,11 @@ module.exports = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
-      .pause(2000)
-      .journalLastChildIncludes('Generating R1CS for circuits/calculate_hash.circom')
-      .pause(5000)
-      .journalLastChildIncludes('Everything went okay')
+      .pause(7000)
       .journalLastChildIncludes('newZkey')
       .pause(25000)
       .journalLastChildIncludes('setup done.')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/keys/groth16/verification_key.json"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/keys/groth16/zkey_final.txt"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/keys/verification_key.json"]')
   },
   'Should run groth16 zkproof script for hash checker #group5': function (browser: NightwatchBrowser) {
     browser
@@ -210,8 +218,8 @@ module.exports = {
       .journalLastChildIncludes('WITNESS CHECKING FINISHED SUCCESSFULLY')
       .pause(2000)
       .journalLastChildIncludes('zk proof validity')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/build/groth16/zk_verifier.sol"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/build/groth16/input.json"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/build/zk_verifier.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/groth16/zk/build/input.json"]')
   },
   'Should run plonk trusted setup script for hash checker #group6': function (browser: NightwatchBrowser) {
     browser
@@ -221,15 +229,11 @@ module.exports = {
       .waitForElementPresent('[data-id="verticalIconsKindcircuit-compiler"]')
       .waitForElementVisible('[data-id="verticalIconsKindcircuit-compiler"]')
       .click('[data-id="play-editor"]')
-      .pause(2000)
-      .journalLastChildIncludes('Generating R1CS for circuits/calculate_hash.circom')
-      .pause(5000)
-      .journalLastChildIncludes('Everything went okay')
+      .pause(7000)
       .journalLastChildIncludes('plonk setup')
       .pause(10000)
       .journalLastChildIncludes('setup done')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/keys/plonk/verification_key.json"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/keys/plonk/zkey_final.txt"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/keys/verification_key.json"]')
   },
   'Should run plonk zkproof script for hash checker #group6': function (browser: NightwatchBrowser) {
     browser
@@ -246,8 +250,8 @@ module.exports = {
       .pause(5000)
       .journalLastChildIncludes('zk proof validity')
       .journalLastChildIncludes('proof done.')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/build/plonk/zk_verifier.sol"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemzk/build/plonk/input.json"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/build/zk_verifier.sol"]')
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemscripts/plonk/zk/build/input.json"]')
   }
 }
 

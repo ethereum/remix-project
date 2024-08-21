@@ -1,16 +1,17 @@
 import { useContext } from 'react'
 import { CustomTooltip, RenderIf } from '@remix-ui/helper'
-import {FormattedMessage} from 'react-intl'
+import { FormattedMessage } from 'react-intl'
 import { CircuitAppContext } from '../contexts'
 import { CompileOptions } from './options'
 import { VersionList } from './versions'
-import { ConfigToggler } from './configToggler'
+import { Toggler } from './toggler'
 import { Configurations } from './configurations'
 import { CircuitActions } from './actions'
-import { WitnessToggler } from './witnessToggler'
 import { WitnessSection } from './witness'
 import { CompilerFeedback } from './feedback'
 import { CompilerReport, PrimeValue } from '../types'
+import { SetupExports } from './setupExports'
+import { GenerateProof } from './generateProof'
 
 export function Container () {
   const circuitApp = useContext(CircuitAppContext)
@@ -113,17 +114,48 @@ export function Container () {
             </CustomTooltip>
             <VersionList setVersion={handleVersionSelect} versionList={circuitApp.appState.versionList} currentVersion={circuitApp.appState.version} />
             <CompileOptions setCircuitAutoCompile={handleCircuitAutoCompile} setCircuitHideWarnings={handleCircuitHideWarnings} autoCompile={circuitApp.appState.autoCompile} hideWarnings={circuitApp.appState.hideWarnings} />
-            <ConfigToggler>
+            <Toggler title='circuit.advancedConfigurations' dataId=''>
               <Configurations setPrimeValue={handlePrimeChange} primeValue={circuitApp.appState.primeValue} versionValue={circuitApp.appState.version} />
-            </ConfigToggler>
+            </Toggler>
             <CircuitActions />
-            <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
-              <WitnessToggler>
-                <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
-              </WitnessToggler>
+            <RenderIf condition={circuitApp.appState.status !== 'compiling'}>
+              <CompilerFeedback feedback={circuitApp.appState.compilerFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
             </RenderIf>
-            <RenderIf condition={(circuitApp.appState.status !== 'compiling') && (circuitApp.appState.status !== 'computing') && (circuitApp.appState.status !== 'generating')}>
-              <CompilerFeedback feedback={circuitApp.appState.feedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
+            <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
+              <Toggler
+                title='circuit.setupExports'
+                dataId='setup_exports_toggler'
+                show={!circuitApp.appState.setupExportStatus}
+                icon={ circuitApp.appState.setupExportStatus === 'done' ? 'fas fa-check-circle text-success' : circuitApp.appState.setupExportStatus === 'update' ? 'fas fa-exclamation-triangle text-warning' : null }
+                iconTooltip={ circuitApp.appState.setupExportStatus === 'update' ? 'circom file content changed, please compile and re-run setup to update exported keys.' : null }
+              >
+                <>
+                  <SetupExports />
+                  <RenderIf condition={circuitApp.appState.status !== 'exporting'}>
+                    <CompilerFeedback feedback={circuitApp.appState.setupExportFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
+                  </RenderIf>
+                </>
+              </Toggler>
+            </RenderIf>
+            <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
+              <Toggler title='circuit.computeWitness' dataId='witness_toggler' show={!!circuitApp.appState.setupExportStatus}>
+                <>
+                  <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
+                  <RenderIf condition={circuitApp.appState.status !== 'computing'}>
+                    <CompilerFeedback feedback={circuitApp.appState.computeFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
+                  </RenderIf>
+                </>
+              </Toggler>
+            </RenderIf>
+            <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
+              <Toggler title='circuit.generateProof' dataId='generate_proof_toggler' show={!!circuitApp.appState.setupExportStatus}>
+                <>
+                  <GenerateProof />
+                  <RenderIf condition={circuitApp.appState.status !== 'proving'}>
+                    <CompilerFeedback feedback={circuitApp.appState.proofFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
+                  </RenderIf>
+                </>
+              </Toggler>
             </RenderIf>
           </div>
         </div>

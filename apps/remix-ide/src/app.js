@@ -40,6 +40,7 @@ import {HardhatProvider} from './app/providers/hardhat-provider'
 import {GanacheProvider} from './app/providers/ganache-provider'
 import {FoundryProvider} from './app/providers/foundry-provider'
 import {ExternalHttpProvider} from './app/providers/external-http-provider'
+import { EnvironmentExplorer } from './app/providers/environment-explorer'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
@@ -60,7 +61,12 @@ import { remixAIDesktopPlugin } from './app/plugins/electron/remixAIDesktopPlugi
 import { RemixAIPlugin } from './app/plugins/remixAIPlugin'
 import { SlitherHandleDesktop } from './app/plugins/electron/slitherPlugin'
 import { SlitherHandle } from './app/files/slither-handle'
+import { GitPlugin } from './app/plugins/git'
+import { Matomo } from './app/plugins/matomo'
+
 import {SolCoder} from './app/plugins/solcoderAI'
+
+import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
 const isElectron = require('is-electron')
 
@@ -230,6 +236,12 @@ class AppComponent {
     //---- templates
     const templates = new TemplatesPlugin()
 
+    //---- git
+    const git = new GitPlugin()
+
+    //---- matomo
+    const matomo = new Matomo()
+
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 
@@ -279,6 +291,8 @@ class AppComponent {
     const ganacheProvider = new GanacheProvider(blockchain)
     const foundryProvider = new FoundryProvider(blockchain)
     const externalHttpProvider = new ExternalHttpProvider(blockchain)
+
+    const environmentExplorer = new EnvironmentExplorer()
     // ----------------- convert offset to line/column service -----------
     const offsetToLineColumnConverter = new OffsetToLineColumnConverter()
     Registry.getInstance().put({
@@ -314,6 +328,8 @@ class AppComponent {
     const permissionHandler = new PermissionHandlerPlugin()
     // ----------------- run script after each compilation results -----------
     const pluginStateLogger = new PluginStateLogger()
+
+    const templateSelection = new TemplatesSelectionPlugin()
 
     this.engine.register([
       permissionHandler,
@@ -353,6 +369,7 @@ class AppComponent {
       ganacheProvider,
       foundryProvider,
       externalHttpProvider,
+      environmentExplorer,  
       this.walkthroughService,
       search,
       solidityumlgen,
@@ -363,7 +380,10 @@ class AppComponent {
       solidityScript,
       templates,
       solcoder,
-      pluginStateLogger
+      git,
+      pluginStateLogger,
+      matomo,
+      templateSelection
     ])
 
     //---- fs plugin
@@ -492,7 +512,8 @@ class AppComponent {
       'network',
       'web3Provider',
       'offsetToLineColumnConverter',
-      'pluginStateLogger'
+      'pluginStateLogger',
+      'matomo'
     ])
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])
     await this.appManager.activatePlugin(['statusBar'])
@@ -515,7 +536,7 @@ class AppComponent {
     ])
     await this.appManager.activatePlugin(['settings'])
 
-    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder'])
+    await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'dgitApi', 'dgit'])
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()){

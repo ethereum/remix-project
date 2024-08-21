@@ -129,6 +129,42 @@ export class RunTab extends ViewPlugin {
   async onInitDone() {
     const udapp = this // eslint-disable-line
 
+    const descriptions = {
+      'vm-cancun': 'Deploy to the in-browser virtual machine running the Cancun fork.',
+      'vm-shanghai': 'Deploy to the in-browser virtual machine running the Shanghai fork.',
+      'vm-paris': 'Deploy to the in-browser virtual machine running the Paris fork.',
+      'vm-london': 'Deploy to the in-browser virtual machine running the London fork.',
+      'vm-berlin': 'Deploy to the in-browser virtual machine running the Berlin fork.',
+      'vm-mainnet-fork': 'Deploy to a fork of the Ethereum mainnet in the in-browser virtual machine.',
+      'vm-sepolia-fork': 'Deploy to a fork of the Sepolia testnet in the in-browser virtual machine.',
+      'vm-custom-fork': 'Deploy to a fork of a custom network in the in-browser virtual machine.',
+      'walletconnect': 'Deploy using WalletConnect.',
+      'basic-http-provider': 'Deploy to a Custom local network.',
+      'hardhat-provider': 'Deploy to the local Hardhat dev chain.',
+      'ganache-provider': 'Deploy to the local Ganache dev chain.',
+      'foundry-provider': 'Deploy to the local Foundry dev chain.',
+      'injected-MetaMask': 'Deploy through the Metamask browser extension.',
+      'injected-Brave Wallet': 'Deploy through the Brave Wallet extension.',
+      'injected-Brave': 'Deploy through the Brave browser extension.',
+      'injected-metamask-optimism': 'Deploy to Optimism through the Metamask browser extension.',
+      'injected-metamask-arbitrum': 'Deploy to Arbitrum through the Metamask browser extension.',
+      'injected-metamask-sepolia': 'Deploy to the Sepolia testnet through the Metamask browser extension.',
+      'injected-metamask-ephemery': 'Deploy to the Ephemery testnet through the Metamask browser extension.'
+    }
+
+    const logos = {
+      'injected-metamask-optimism': ['assets/img/optimism-ethereum-op-logo.png', 'assets/img/metamask.png'],
+      'injected-metamask-arbitrum': ['assets/img/arbitrum-arb-logo.png', 'assets/img/metamask.png'],
+      'injected-metamask-sepolia': ['assets/img/metamask.png'],
+      'injected-metamask-ephemery': ['assets/img/metamask.png'],
+      'injected-MetaMask': ['assets/img/metamask.png'],
+      'injected-Brave Wallet': ['assets/img/brave.png'],
+      'injected-Trust Wallet': ['assets/img/trust-wallet.png'],
+      'hardhat-provider': ['assets/img/hardhat.png'],
+      'walletconnect': ['assets/img/Walletconnect-logo.png'],     
+      'foundry-provider': ['assets/img/foundry.png']
+    }
+
     const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
       await this.call('blockchain', 'addProvider', {
         position,
@@ -136,6 +172,8 @@ export class RunTab extends ViewPlugin {
         dataId,
         name,
         displayName,
+        description: descriptions[name] || displayName,
+        logos: logos[name],
         fork,
         isInjected,
         isVM,
@@ -167,15 +205,15 @@ export class RunTab extends ViewPlugin {
       await addProvider(0, name, displayName, true, false, false)
 
       if (event.detail.info.name === 'MetaMask') {
-        await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
-        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
-        await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Testnet - Sepolia', '0xaa36a7', [],
+        await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism - ' + event.detail.info.name, '0xa', ['https://mainnet.optimism.io'])
+        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum - ' + event.detail.info.name, '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
+        await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Sepolia Testnet - ' + event.detail.info.name, '0xaa36a7', [],
           {
             "name": "Sepolia ETH",
             "symbol": "ETH",
             "decimals": 18
           })    
-        await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
+        await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet - ' + event.detail.info.name, '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
           {
             "name": "Ephemery ETH",
             "symbol": "ETH",
@@ -192,7 +230,7 @@ export class RunTab extends ViewPlugin {
       }      
     }
 
-    // VM
+    // VM    
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
     await addProvider(1, 'vm-cancun', 'Remix VM (Cancun)', false, true, 'cancun', 'settingsVMCancunMode', titleVM)
     await addProvider(50, 'vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)

@@ -41,7 +41,6 @@ const DragBar = (props: IRemixDragBarUi) => {
   }, [props.hidden, offset])
 
   useEffect(() => {
-    initialWidth.current = props.refObject.current.clientWidth
     if (props.maximiseTrigger > 0) {
       if (props.layoutPosition === 'left') {
         const width = 0.4 * window.innerWidth
@@ -106,6 +105,7 @@ const DragBar = (props: IRemixDragBarUi) => {
         setTimeout(() => {
           props.setHideStatus(false)
           setDragBarPosX(offset + props.refObject.current.offsetWidth)
+          initialWidth.current = props.refObject.current.clientWidth
         }, 300)
       }
     } else if (props.layoutPosition === 'right') {
@@ -117,9 +117,11 @@ const DragBar = (props: IRemixDragBarUi) => {
         setTimeout(() => {
           props.setHideStatus(false)
           setDragBarPosX(props.refObject.current.offsetLeft)
+          initialWidth.current = props.refObject.current.clientWidth
         }, 300)
       }
     }
+
   }
 
   function startDrag() {

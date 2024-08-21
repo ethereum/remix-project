@@ -13,8 +13,9 @@ module.exports = {
       .clickLaunchIcon('filePanel')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-remixDefault"]')
+      .scrollAndClick('*[data-id="create-remixDefault"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
       .waitForElementVisible({
         selector: "//*[@class='text-warning' and contains(.,'add username and email')]",
         locateStrategy: 'xpath'
@@ -23,10 +24,10 @@ module.exports = {
         selector: '//*[@data-id="initGitRepository"][@disabled]',
         locateStrategy: 'xpath'
       })
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
+      .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_blank')
       .click('[data-id="initGitRepositoryLabel"]')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .modalFooterOKClick('TemplatesSelection')
       .pause(100)
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItem.git"]')
@@ -40,24 +41,37 @@ module.exports = {
       .click('[data-id="settingsTabSaveGistToken"]')
   },
 
+
   'Should create and initialize a GIT repository #group1': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .waitForElementNotVisible('[data-id="workspaceGitPanel"]')
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-blank"]')
+      .scrollAndClick('*[data-id="create-blank"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      // eslint-disable-next-line dot-notation
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
-      .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=blank]')
+      .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_blank')
       .click('[data-id="initGitRepositoryLabel"]')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .modalFooterOKClick('TemplatesSelection')
       .pause(100)
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
       .waitForElementContainsText('[data-id="workspaceGitBranchesDropdown"]', 'main')
+  },
+  'check git for the commit #group1': function (browser: NightwatchBrowser) {
+    browser.
+      clickLaunchIcon('dgit')
+      .click('*[data-id="commits-panel"]')
+      .waitForElementPresent({
+        selector: '//*[@data-id="commits-current-branch-main"]//*[@data-id="commit-summary-Initial commit: remix template blank-"]',
+        locateStrategy: 'xpath'
+      })
+      .click('*[data-id="branches-panel"]')
+      .waitForElementPresent({
+        selector: '//*[@data-id="branches-panel-content"]//*[@data-id="branches-current-branch-main"]',
+        locateStrategy: 'xpath'
+      })
   },
 
   // CLONE REPOSITORY E2E START
@@ -139,7 +153,7 @@ module.exports = {
       .click('[data-id="fileSystem-modal-footer-ok-react"]')
       .pause(5000)
       .waitForElementVisible('[data-id="cloneGitRepositoryModalDialogModalBody-react"]')
-      .waitForElementContainsText('[data-id="cloneGitRepositoryModalDialogModalBody-react"]', 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in Settings plugin')
+      .waitForElementContainsText('[data-id="cloneGitRepositoryModalDialogModalBody-react"]', 'An error occurred: Please check that you have the correct URL for the repo. If the repo is private, you need to add your github credentials (with the valid token permissions) in the Git plugin')
       .click('[data-id="cloneGitRepository-modal-footer-ok-react"]')
   },
 
@@ -314,7 +328,6 @@ module.exports = {
   'When switching branches the submodules should disappear #group4': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
-      .pause()
       .click('[data-id="workspaceGitBranchesDropdown"]')
       .waitForElementVisible('[data-id="custom-dropdown-menu"]')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/empty')
@@ -340,26 +353,26 @@ module.exports = {
         timeout: 240000
       })
       .pause(2000)
-    // check recursive submodule
+      // check recursive submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2"]')
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive/test-branch-submodule-2/submodule2.ts"]')
-    // check test-branch-submodule-2 submodule
+      // check test-branch-submodule-2 submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
       .click('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2/submodule2.ts"]')
-    // check libdeep submodule
+      // check libdeep submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep"]')
       .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
       .click('[data-id="treeViewDivtreeViewItemlibdeep"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2"]')
       .click('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep/test-branch-submodule-2/submodule2.ts"]')
-    // check libdeep2 submodule
+      // check libdeep2 submodule
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2"]')
       .click('[data-id="treeViewDivtreeViewItemlibdeep2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive"]')
@@ -377,13 +390,84 @@ module.exports = {
     browser
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-uniswapV4Template"]')
+      .scrollAndClick('*[data-id="create-uniswapV4Template"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementVisible('[data-id="fileSystemModalDialogModalFooter-react"] > button')
-      .click('select[id="wstemplate"]')
-      .click('select[id="wstemplate"] option[value=uniswapV4Template]')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
+      .modalFooterOKClick('TemplatesSelection')
       .pause(100)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
+      .openFile('src')
+      .openFile('src/Counter.sol')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf(`contract Counter is BaseHook {`) !== -1,
+          'Incorrect content')
+      }).pause()
+  },
+
+  'Should create Remix default workspace with files #group5': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-ozerc20"]')
+      .scrollAndClick('*[data-id="create-ozerc20"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'new_workspace')
+      .modalFooterOKClick('TemplatesSelection')
+      .waitForElementVisible('*[data-id="treeViewDivDraggableItemtests/MyToken_test.sol"]')
+  },
+  'Update settings for git #group5': function (browser: NightwatchBrowser) {
+    browser.
+      clickLaunchIcon('dgit')
+      .waitForElementVisible('*[data-id="initgit-btn"]')
+      .click('*[data-id="initgit-btn"]')
+      .setValue('*[data-id="gitubUsername"]', 'git')
+      .setValue('*[data-id="githubEmail"]', 'git@example.com')
+      .click('*[data-id="saveGitHubCredentials"]')
+      .modalFooterOKClick('github-credentials-error')
+  },
+  'check source controle panel #group5': function (browser: NightwatchBrowser) {
+    browser
+      .waitForElementVisible({
+        selector: "//*[@data-status='new-untracked' and @data-file='/tests/MyToken_test.sol']",
+        locateStrategy: 'xpath'
+      })
+  },
+  'switch workspace and check git #group5': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .switchWorkspace('default_workspace')
+  },
+  'check source controle panel again #group5': function (browser: NightwatchBrowser) {
+    browser
+      .pause(1000)
+      .clickLaunchIcon('dgit')
+      .waitForElementVisible({
+        selector: '*[data-id="initgit-btn"]',
+        suppressNotFoundErrors: true
+      })
+      .click({
+        selector:'*[data-id="initgit-btn"]',
+        suppressNotFoundErrors: true
+      })
+      .pause(2000)
+      .waitForElementVisible({
+        selector: "//*[@data-status='new-untracked' and @data-file='/tests/storage.test.js']",
+        locateStrategy: 'xpath'
+      })
+  },
+  'Should create a git workspace (uniswapV4Template) #group5': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-uniswapV4Template"]')
+      .scrollAndClick('*[data-id="create-uniswapV4Template"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .modalFooterOKClick('TemplatesSelection')
+      .pause(100)      
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemsrc"]')
       .openFile('src')
       .openFile('src/Counter.sol')
@@ -393,6 +477,23 @@ module.exports = {
           'Incorrect content')
       })
   },
+  'check source controle panel for uniswap #group5': function (browser: NightwatchBrowser) {
+    browser
+      .pause(5000)
+      .clickLaunchIcon('dgit')
+      .click('*[data-id="remotes-panel"]')
+      .waitForElementVisible('*[data-id="remotes-panel-content"]')
+      .click({
+        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin-default"]',
+        locateStrategy: 'xpath'
+      })
+      .waitForElementVisible({
+        selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin-default" and contains(.,"v4-template")]',
+        locateStrategy: 'xpath'
+      })
+  },
+
+
 
   // GIT WORKSPACE E2E ENDS
 

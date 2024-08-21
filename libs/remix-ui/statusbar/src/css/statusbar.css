@@ -14,11 +14,16 @@
   cursor: pointer;
 }
 
+.remixui_statusbar_aistatusdisabled {
+  text-decoration: line-through;
+  text-decoration-thickness: 3px;
+}
+
 /**
  * approximately same height with vscode statusbar
  **/
 .remixui_statusbar_height {
-  height: 21px;
+  height: 1.6rem;
 }
 
 .remixui_statusbar_activelink {
@@ -26,4 +31,12 @@
 }
 .remixui_statusbar_activelink:active {
   color: var(--danger);
+}
+
+.remixui_statusbar_didyouknow {
+
+}
+
+.remixui_statusbar_custom_padding {
+  padding: 0.421em;
 }

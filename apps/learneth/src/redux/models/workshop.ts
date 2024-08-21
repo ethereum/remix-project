@@ -23,7 +23,7 @@ const Model: ModelType = {
   },
   effects: {
     *init(_, { put }) {
-      const cache = localStorage.getItem('workshop.state')
+      const cache = null // don't use cache because remote might change
 
       if (cache) {
         const workshopState = JSON.parse(cache)
@@ -54,7 +54,6 @@ const Model: ModelType = {
       const { list, detail } = yield select((state) => state.workshop)
 
       const url = `${apiUrl}/clone/${encodeURIComponent(payload.name)}/${payload.branch}?${Math.random()}`
-      console.log('loading ', url)
       const { data } = yield axios.get(url)
       const repoId = `${payload.name}-${payload.branch}`
 
@@ -90,7 +89,7 @@ const Model: ModelType = {
             const key = stepKeysWithFile[k]
             if (step[key]) {
               try {
-                step[key].content = (yield remixClient.call('contentImport', 'resolve', step[key].file)).content
+                step[key].content = null // we load this later
               } catch (error) {
                 console.error(error)
               }
@@ -140,6 +139,7 @@ const Model: ModelType = {
           }
         }
       }
+      (<any>window)._paq.push(['trackEvent', 'learneth', 'load_repo', payload.name])
     },
     *resetAll(_, { put }) {
       yield put({
@@ -155,7 +155,8 @@ const Model: ModelType = {
 
       yield put({
         type: 'workshop/init',
-      })
+      });
+      (<any>window)._paq.push(['trackEvent', 'learneth', 'reset_all'])
     },
   },
 }

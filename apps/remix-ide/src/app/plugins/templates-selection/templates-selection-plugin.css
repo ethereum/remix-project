@@ -1,0 +1,12 @@
+.TSCellStyle {
+  min-height: 8.5rem;
+  max-width: 13rem;
+  min-width: 13rem;
+  max-height: 8.5rem;
+}
+
+.badgeForCell {
+  max-width: fit-content;
+  padding-right: 0.5rem;
+  font-size: smaller;
+}

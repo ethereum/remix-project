@@ -746,7 +746,7 @@ workflows:
       - build-desktop:
           filters:
             branches:
-              only: ['master', /.*desktop.*/]
+              only: [/.*desktop.*/]
       - build-remixdesktop-mac:
           requires:
             - build-desktop
