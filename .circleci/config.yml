@@ -16,7 +16,7 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
-      - run: sudo apt update && sudo apt install zstd
+      - run: sudo apt update && sudo apt install zstd lz4
       - checkout
       - restore_cache:
           keys:
@@ -46,7 +46,7 @@ jobs:
           paths:
             - dist/apps/remix-ide/assets/js/soljson
 
-      - run: mkdir persist && tar -cf - dist | zstd -3 -o persist/dist.tar.zst
+      - run: mkdir persist && tar -cf - dist | lz4 -3 - persist/dist.tar.lz4
       - persist_to_workspace:
           root: .
           paths:
