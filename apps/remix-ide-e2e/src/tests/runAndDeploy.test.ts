@@ -153,7 +153,7 @@ module.exports = {
       .waitForElementContainsText('[data-id="treeViewLi0"]', 'uint256: 10')
   },
 
-  'Should save state after running web3 script #flaky #group4': function (browser: NightwatchBrowser) {
+  'Should save state after running web3 script #group4': function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('settings')
       .waitForElementPresent('[data-id="settingsTabGenerateContractMetadataLabel"]')
