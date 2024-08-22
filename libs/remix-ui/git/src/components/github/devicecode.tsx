@@ -64,6 +64,7 @@ export const GetDeviceCode = () => {
       await actions.loadGitHubUserFromToken()
     } else {
       await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL)
+      pluginActions.disconnectFromGithub()
     }
   }
 
