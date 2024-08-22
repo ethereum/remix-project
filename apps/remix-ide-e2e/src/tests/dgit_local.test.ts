@@ -242,6 +242,7 @@ module.exports = {
         browser
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="workspaceGitBranchesDropdown"]')
+            .pause(1000)
             .click('[data-id="workspaceGitBranchesDropdown"]')
             .expect.element('[data-id="workspaceGit-testbranch"]').text.to.contain('✓ ')
     },
