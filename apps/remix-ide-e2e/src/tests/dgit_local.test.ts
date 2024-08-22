@@ -324,6 +324,13 @@ module.exports = {
                 selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-branch-master']",
                 locateStrategy: 'xpath',
             })
+            .pause(1000)
+            .click({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-branch-master']",
+                locateStrategy: 'xpath',
+                abortOnFailure: false,
+                suppressNotFoundErrors: true
+            })
             .waitForElementVisible({
                 selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-current-branch-master']",
                 locateStrategy: 'xpath',
@@ -332,7 +339,7 @@ module.exports = {
     },
     'check if test file is gone #group2': function (browser: NightwatchBrowser) {
         browser
-            .pause()
+            .pause(2000)
             .clickLaunchIcon('filePanel')
             .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.txt"]')
     },
