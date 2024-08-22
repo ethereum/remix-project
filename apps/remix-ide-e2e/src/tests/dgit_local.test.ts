@@ -241,10 +241,8 @@ module.exports = {
     'check if the branch is in the filePanel #flaky #group2': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('filePanel')
-            .saveScreenshot('./reports/screenshots/dgit_local.test.png')
             .waitForElementVisible('*[data-id="workspaceGitBranchesDropdown"]')
             .click('[data-id="workspaceGitBranchesDropdown"]')
-            .saveScreenshot('./reports/screenshots/dgit_local_2.test.png')
             .expect.element('[data-id="workspaceGit-testbranch"]').text.to.contain('✓ ')
     },
     'publish the branch #group2': function (browser: NightwatchBrowser) {
