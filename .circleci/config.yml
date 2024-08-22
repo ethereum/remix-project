@@ -46,7 +46,7 @@ jobs:
           paths:
             - dist/apps/remix-ide/assets/js/soljson
 
-      - run: mkdir persist && tar -cf - dist | zstd -3 -o persist/dist.tar.zst
+      - run: mkdir persist && tar -cf - dist | zstd -1 -o persist/dist.tar.zst
       - persist_to_workspace:
           root: .
           paths:
