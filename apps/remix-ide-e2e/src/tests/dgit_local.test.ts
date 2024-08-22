@@ -317,6 +317,10 @@ module.exports = {
     },
     'switch back to master #group2': function (browser: NightwatchBrowser) {
         browser
+            .waitForElementVisible({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-branch-master']",
+                locateStrategy: 'xpath',
+            })
             .click({
                 selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-branch-master']",
                 locateStrategy: 'xpath',
