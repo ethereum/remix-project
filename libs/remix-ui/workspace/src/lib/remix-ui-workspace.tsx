@@ -917,6 +917,22 @@ export function Workspace() {
     _paq.push(['trackEvent', 'Workspace', 'GIT', 'login'])
   }
 
+  const CreateDropDownMenuItem = () => {
+    return (
+      <>
+        <Dropdown.Item
+          onClick={() => {
+            createWorkspace()
+          }}
+        >
+          <span className="pl-3">
+            {' '}
+            - <FormattedMessage id="filePanel.createNewWorkspace" /> -{' '}
+          </span>
+        </Dropdown.Item>
+      </>
+    )
+  }
   return (
     <div className="d-flex flex-column justify-content-between h-100">
       <div
@@ -1026,20 +1042,11 @@ export function Workspace() {
                       >
                         {selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
                       </Dropdown.Toggle>
-
                       <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
-                        <Dropdown.Item
-                          onClick={() => {
-                            createWorkspace()
-                          }}
-                        >
-                          {
-                            <span className="pl-3">
-                              {' '}
-                            - <FormattedMessage id="filePanel.createNewWorkspace" /> -{' '}
-                            </span>
-                          }
-                        </Dropdown.Item>
+                        {
+                          currentWorkspace !== LOCALHOST && <CreateDropDownMenuItem />
+
+                        }
                         <Dropdown.Item
                           onClick={() => {
                             switchWorkspace(LOCALHOST)
