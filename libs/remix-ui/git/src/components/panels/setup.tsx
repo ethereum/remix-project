@@ -20,8 +20,6 @@ export const Setup = () => {
           <hr></hr>
           <GitHubCredentials></GitHubCredentials>
         </div>
-        <h5>CLONE</h5>
-        <Clone hideLoadFromGitHub={true}></Clone>
       </>
     )
   } else if (screen === 1) {
