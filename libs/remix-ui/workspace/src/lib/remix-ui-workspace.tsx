@@ -933,6 +933,57 @@ export function Workspace() {
       </>
     )
   }
+  const IsGitRepoDropDownMenuItem = (props: { isGitRepo: boolean, mName: string}) => {
+    return (
+      <>
+        {props.isGitRepo ? (
+          <div className="d-flex justify-content-between">
+            <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="pl-3">{props.mName}</span>}</span>
+            <i className="fas fa-code-branch pt-1"></i>
+          </div>
+        ) : (
+          <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="pl-3">{props.mName}</span>}</span>
+        )}
+      </>
+    )
+  }
+
+  const ShowNonLocalHostMenuItems = () => {
+    const cachedFilter = global.fs.browser.workspaces.filter(x => !x.name.includes('localhost'))
+    return (
+      <>
+        {
+          currentWorkspace === LOCALHOST && cachedFilter.length > 0 ? cachedFilter.map(({ name, isGitRepo }, index) => (
+            <Dropdown.Item
+              key={index}
+              onClick={() => {
+                switchWorkspace(name)
+              }}
+              data-id={`dropdown-item-${name}`}
+            >
+              <IsGitRepoDropDownMenuItem isGitRepo={isGitRepo} mName={name} />
+            </Dropdown.Item>
+          )) : <ShowAllMenuItems />
+        }
+      </>
+    )
+  }
+
+  const ShowAllMenuItems = () => {
+    return (
+      <>
+        { global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
+          <Dropdown.Item
+            key={index}
+            onClick={() => { switchWorkspace(name) }}
+            data-id={`dropdown-item-${name}`}
+          >
+            <IsGitRepoDropDownMenuItem isGitRepo={isGitRepo} mName={name} />
+          </Dropdown.Item>
+        ))}
+      </>
+    )
+  }
   return (
     <div className="d-flex flex-column justify-content-between h-100">
       <div
@@ -1052,7 +1103,7 @@ export function Workspace() {
                           }}
                         >
                           {currentWorkspace === LOCALHOST ? (
-                            <span>&#10003; localhost </span>
+                            <span>&#10003; Connected to Local Filesystem </span>
                           ) : (
                             <span className="pl-3">
                               {' '}
@@ -1060,24 +1111,7 @@ export function Workspace() {
                             </span>
                           )}
                         </Dropdown.Item>
-                        {global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
-                          <Dropdown.Item
-                            key={index}
-                            onClick={() => {
-                              switchWorkspace(name)
-                            }}
-                            data-id={`dropdown-item-${name}`}
-                          >
-                            {isGitRepo ? (
-                              <div className="d-flex justify-content-between">
-                                <span>{currentWorkspace === name ? <span>&#10003; {name} </span> : <span className="pl-3">{name}</span>}</span>
-                                <i className="fas fa-code-branch pt-1"></i>
-                              </div>
-                            ) : (
-                              <span>{currentWorkspace === name ? <span>&#10003; {name} </span> : <span className="pl-3">{name}</span>}</span>
-                            )}
-                          </Dropdown.Item>
-                        ))}
+                        <ShowNonLocalHostMenuItems />
                         {(global.fs.browser.workspaces.length <= 0 || currentWorkspace === NO_WORKSPACE) && (
                           <Dropdown.Item
                             onClick={() => {
