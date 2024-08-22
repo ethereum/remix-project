@@ -175,6 +175,8 @@ export const GitUI = (props: IGitUi) => {
                 <BranchHeader />
                 {setup ? <Setup></Setup> : null}
                 {needsInit ? <Init></Init> : null}
+                {setup || needsInit ? <><hr></hr><h5>CLONE</h5>
+                  <Clone hideLoadFromGitHub={setup}></Clone></> : null}
                 {!setup && !needsInit ?
                   <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
                     <SourceControlNavigation eventKey={gitUIPanels.SOURCECONTROL} activePanel={activePanel} callback={setActivePanel} />
