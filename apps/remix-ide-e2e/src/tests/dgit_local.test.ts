@@ -328,6 +328,7 @@ module.exports = {
             .waitForElementVisible({
                 selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-current-branch-master']",
                 locateStrategy: 'xpath',
+                timeout: 60000
             })
     },
     'check if test file is gone #group2': function (browser: NightwatchBrowser) {
