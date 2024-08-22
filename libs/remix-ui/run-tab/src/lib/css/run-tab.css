@@ -67,6 +67,9 @@
 .udapp_deployedContracts {
   font-size: 1rem;
 }
+label.udapp_deployedContracts[data-id="unpinnedContracts"] {
+  line-height: 20px;
+}
 .udapp_pendingTxsContainer  {
   display: flex;
   flex-direction: column;
