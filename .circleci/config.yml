@@ -16,7 +16,7 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
-      - run: sudo apt update&& sudo apt install zstd
+      - run: sudo apt update && sudo apt install zstd
       - checkout
       - restore_cache:
           keys:
@@ -361,12 +361,13 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run: sudo apt update && sudo apt install python3-pip -y zstd
       - run: zstd -d persist/dist.tar.zst -o persist/dist.tar
       - run: tar -xf persist/dist.tar
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules || yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
       - run: ls -la ./dist/apps/remix-ide/assets/js
-      - run: sudo apt update && sudo apt install python3-pip -y
+
       - when:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
