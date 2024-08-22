@@ -92,7 +92,7 @@
   "filePanel.cancel": "Cancel",
   "filePanel.selectFolder": "Select or create folder",
   "filePanel.createNewWorkspace": "create a new workspace",
-  "filePanel.connectToLocalhost": "connect to Local Filesystem",
+  "filePanel.connectToLocalhost": "Connect to Local Filesystem",
   "filePanel.copiedToClipboard": "Copied to clipboard {path}",
   "filePanel.downloadFailed": "Download Failed",
   "filePanel.downloadFailedMsg": "Unexpected error while downloading: {error}",
