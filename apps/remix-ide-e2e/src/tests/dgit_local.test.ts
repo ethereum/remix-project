@@ -238,7 +238,7 @@ module.exports = {
             .waitForElementVisible('*[data-id="branches-current-branch-testbranch"]')
             .pause(1000)
     },
-    'check if the branch is in the filePanel #group2': function (browser: NightwatchBrowser) {
+    'check if the branch is in the filePanel #flaky #group2': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('filePanel')
             .click('[data-id="workspaceGitBranchesDropdown"]')
