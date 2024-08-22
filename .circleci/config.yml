@@ -45,7 +45,7 @@ jobs:
           paths:
             - dist/apps/remix-ide/assets/js/soljson
       
-      - run: mkdir persist && zip -0 -r persist/dist.zip dist
+      - run: mkdir persist && zip -4 -r persist/dist.zip dist
       - persist_to_workspace:
           root: .
           paths:
