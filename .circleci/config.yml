@@ -16,6 +16,7 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
+      - run: sudo apt update&& sudo apt install zstd
       - checkout
       - restore_cache:
           keys:
@@ -34,7 +35,7 @@ jobs:
               NX_BIN_URL=http://127.0.0.1:8080/assets/js/soljson NX_WASM_URL=http://127.0.0.1:8080/assets/js/soljson NX_NPM_URL=http://127.0.0.1:9090/ yarn build
             fi
       - run: yarn run build:e2e
-      - run: sudo apt install zstd
+      
       - run: grep -ir "[0-9]+commit" apps/* libs/* --include \*.ts --include \*.tsx --include \*.json > soljson-versions.txt
       - restore_cache:
           keys:
