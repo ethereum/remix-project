@@ -419,6 +419,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run: sudo apt update && sudo apt install zstd
       - run: zstd -d persist/dist.tar.zst -o persist/dist.tar
       - run: tar -xf persist/dist.tar
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
