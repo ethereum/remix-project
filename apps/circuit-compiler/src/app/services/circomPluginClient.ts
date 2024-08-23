@@ -20,7 +20,7 @@ export class CircomPluginClient extends PluginClient {
   private lastParsedFiles: Record<string, string> = {}
   private lastCompiledFile: string = ''
   private compiler: typeof compilerV215 & typeof compilerV216 & typeof compilerV217 & typeof compilerV218
-  private _paq = {
+  public _paq = {
     push: (args) => {
       this.call('matomo' as any, 'track', args)
     }
