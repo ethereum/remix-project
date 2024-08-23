@@ -39,7 +39,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
           </a>
         </CustomTooltip>
       </label>
-      <div className="udapp_environment">
+      <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
             {isL2(currentProvider && currentProvider.displayName)}

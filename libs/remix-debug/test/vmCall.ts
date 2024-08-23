@@ -5,7 +5,7 @@ import { Web3 } from 'web3';
 const { Provider } = require('@remix-project/remix-simulator')
 
 async function getWeb3 () {
-  const remixSimulatorProvider = new Provider({ fork: 'berlin' })
+  const remixSimulatorProvider = new Provider({ fork: 'cancun' })
   await remixSimulatorProvider.init()
   await remixSimulatorProvider.Accounts.resetAccounts()
   const web3 = new Web3(remixSimulatorProvider)

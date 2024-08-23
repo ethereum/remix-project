@@ -1,4 +1,4 @@
-pragma solidity >= 0.5.0 < 0.8.0;
+pragma solidity >= 0.5.0 < 0.9.0;
 
 import "../../examples_4/SafeMath.sol";
 import "../lib/EvenOdd.sol";

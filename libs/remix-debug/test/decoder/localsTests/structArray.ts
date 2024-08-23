@@ -42,9 +42,9 @@ module.exports = function (st, privateKey, contractBytecode, compilationResult,c
             st.fail(error)
           })
           callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
-            helper.decodeLocals(st, 1622, traceManager, callTree, function (locals) {
+            helper.decodeLocals(st, 1615, traceManager, callTree, function (locals) {
               try {
-                console.log('at 1622', locals)
+                console.log('at 1600', locals)
                 st.equals(locals['bytesSimple'].length, '0x14')
                 st.equals(locals['bytesSimple'].value, '0x746573745f7375706572')
                 st.equals(locals['e'].value['a'].value, 'test')
