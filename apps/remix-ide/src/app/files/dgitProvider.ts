@@ -1065,8 +1065,8 @@ class DGitProvider extends Plugin {
       const scopesArr = scopes.split(',').map(scope => scope.trim())
 
       return {
-        user: {...user.data, isConnected: 
-          scopes 
+        user: { ...user.data, isConnected:
+          scopes
           && scopesArr.includes('repo')
           && scopesArr.includes('read:user')
           && scopesArr.includes('user:email')
