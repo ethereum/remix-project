@@ -211,6 +211,8 @@ module.exports = {
     'add a remote #group2': function (browser: NightwatchBrowser) {
         browser
             .pause(1000)
+            .clickLaunchIcon('dgit')
+            .waitForElementVisible('*[data-id="remotes-panel"]')
             .click('*[data-id="remotes-panel"]')
             .click({
                 selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="fetch-repositories"]',
