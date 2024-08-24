@@ -5,7 +5,7 @@ import { openDiff, openFile, saveToken, sendToMatomo, setModifiedDecorator, setP
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
 import { defaultGitState, defaultLoaderState, gitMatomoEventTypes, gitState, gitUIPanels, loaderState } from '../types'
-import { Accordion } from "react-bootstrap";
+import { Accordion, Button } from "react-bootstrap";
 import { CommitMessage } from './buttons/commitmessage'
 import { Commits } from './panels/commits'
 import { Branches } from './panels/branches'
@@ -52,8 +52,8 @@ export const GitUI = (props: IGitUi) => {
       type: 'info',
       title: 'Loading Git Plugin'
     })
-    setTimeout(() => {	
-      setAppLoaded(true)	
+    setTimeout(() => {
+      setAppLoaded(true)
     }, 2000)
   }, [])
 
@@ -72,6 +72,7 @@ export const GitUI = (props: IGitUi) => {
       const username = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
       const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
+      console.log('token', token, username, email)
 
       setSetup(!(username && email))
     }
@@ -174,12 +175,8 @@ export const GitUI = (props: IGitUi) => {
             <gitActionsContext.Provider value={gitActionsProviderValue}>
               <pluginActionsContext.Provider value={pluginActionsProviderValue}>
                 <BranchHeader />
-                {setup ? <Setup></Setup> : null}
-                {needsInit ? <Init></Init> : null}
-                {setup || needsInit ? <><hr></hr><h5>CLONE</h5>
-                  <Clone hideLoadFromGitHub={setup}></Clone></> : null}
-                {!setup && !needsInit ?
-                  <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
+                <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
+                  {!setup && !needsInit ? <>
                     <SourceControlNavigation eventKey={gitUIPanels.SOURCECONTROL} activePanel={activePanel} callback={setActivePanel} />
                     <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.SOURCECONTROL}>
                       <div className="px-2 py-2">
@@ -216,30 +213,32 @@ export const GitUI = (props: IGitUi) => {
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <CloneNavigation eventKey={gitUIPanels.CLONE} activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.CLONE}>
-                      <div className="px-2 py-2">
-                        <Clone /></div>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <GitHubNavigation eventKey={gitUIPanels.GITHUB} activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.GITHUB}>
-                      <div className="px-2 py-2">
-                        <GetDeviceCode></GetDeviceCode>
-                        <hr></hr>
-                        <GitHubCredentials></GitHubCredentials>
-                      </div>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <LogNavigation eventKey={gitUIPanels.LOG} activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.LOG}>
-                      <div className="px-2 py-2">
-                        <LogViewer />
-                      </div>
-                    </Accordion.Collapse>
+                  </> : null}
+                  {needsInit ? <>
+                    <Init /></> : null}
+                  <CloneNavigation eventKey={gitUIPanels.CLONE} activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.CLONE}>
+                    <div className="px-2 py-2">
+                      <Clone /></div>
+                  </Accordion.Collapse>
+                  <hr></hr>
 
-                  </Accordion>
-                  : null}
+                  <GitHubNavigation eventKey={gitUIPanels.GITHUB} activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.GITHUB}>
+                    <div className="px-2 py-2">
+                      <GetDeviceCode></GetDeviceCode>
+                      <hr></hr>
+                      <GitHubCredentials></GitHubCredentials>
+                    </div>
+                  </Accordion.Collapse>
+                  <hr></hr>
+                  <LogNavigation eventKey={gitUIPanels.LOG} activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.LOG}>
+                    <div className="px-2 py-2">
+                      <LogViewer />
+                    </div>
+                  </Accordion.Collapse>
+                </Accordion>
               </pluginActionsContext.Provider>
             </gitActionsContext.Provider>
           </loaderContext.Provider>
