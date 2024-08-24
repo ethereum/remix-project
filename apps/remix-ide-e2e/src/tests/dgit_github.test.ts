@@ -207,7 +207,20 @@ module.exports = {
                 locateStrategy: 'xpath'
             })
     },
-
+    'disconnect github #group1': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="github-panel"]')
+            .click('*[data-id="github-panel"]')
+            .waitForElementVisible('*[data-id="disconnect-github"]')
+            .click('*[data-id="disconnect-github"]')
+            .waitForElementNotPresent('*[data-id="connected-as-bunsenstraat"]')
+    },
+    'check the FE for the disconnected auth user #group1': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('filePanel')
+            .waitForElementNotPresent('*[data-id="filepanel-connected-img-bunsenstraat"]')
+            .waitForElementVisible('*[data-id="filepanel-login-github"]')
+    },
     'add a remote #group2': function (browser: NightwatchBrowser) {
         browser
             .pause(1000)
