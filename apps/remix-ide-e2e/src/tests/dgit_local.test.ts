@@ -244,6 +244,8 @@ module.exports = {
     'check if the branch is in the filePanel #group2': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('filePanel')
+            .waitForElementVisible('*[data-id="workspaceGitBranchesDropdown"]')
+            .pause(1000)
             .click('[data-id="workspaceGitBranchesDropdown"]')
             .expect.element('[data-id="workspaceGit-testbranch"]').text.to.contain('✓ ')
     },
@@ -317,18 +319,30 @@ module.exports = {
     },
     'switch back to master #group2': function (browser: NightwatchBrowser) {
         browser
+            .waitForElementVisible({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-branch-master']",
+                locateStrategy: 'xpath',
+            })
             .click({
                 selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-branch-master']",
                 locateStrategy: 'xpath',
             })
+            .pause(1000)
+            .click({
+                selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-branch-master']",
+                locateStrategy: 'xpath',
+                abortOnFailure: false,
+                suppressNotFoundErrors: true
+            })
             .waitForElementVisible({
                 selector: "//*[@data-id='branches-panel-content']//*[@data-id='branches-toggle-current-branch-master']",
                 locateStrategy: 'xpath',
+                timeout: 60000
             })
     },
     'check if test file is gone #group2': function (browser: NightwatchBrowser) {
         browser
-            .pause()
+            .pause(2000)
             .clickLaunchIcon('filePanel')
             .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.txt"]')
     },

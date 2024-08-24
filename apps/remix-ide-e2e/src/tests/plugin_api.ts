@@ -179,6 +179,14 @@ module.exports = {
   },
 
   'Should select another provider #group1': async function (browser: NightwatchBrowser) {
+    await browser
+      .frameParent()
+      .useCss()
+      .clickLaunchIcon('udapp')
+      .pinGrid('vm-berlin', true)
+      .clickLaunchIcon('localPlugin')
+      .useXpath()
+      .frame(0)
     await clickAndCheckLog(browser, 'udapp:setEnvironmentMode', null, null, { context: 'vm-berlin' })
     await browser
       .frameParent()
