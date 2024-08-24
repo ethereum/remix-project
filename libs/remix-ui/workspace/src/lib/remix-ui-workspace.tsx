@@ -971,7 +971,7 @@ export function Workspace() {
                     </span>
                     <span className="d-flex">
                       {
-                        !appContext.appState.gitHubUser && <CustomTooltip
+                        (!appContext.appState.gitHubUser || !appContext.appState.gitHubUser.isConnected) && <CustomTooltip
                           placement="right"
                           tooltipId="githubNotLogged"
                           tooltipClasses="text-nowrap"
@@ -984,7 +984,7 @@ export function Workspace() {
                         </CustomTooltip>
                       }
                       {
-                        appContext.appState.gitHubUser && <CustomTooltip
+                        appContext.appState.gitHubUser && appContext.appState.gitHubUser.isConnected && <CustomTooltip
                           placement="right"
                           tooltipId="githubLoggedIn"
                           tooltipClasses="text-nowrap"

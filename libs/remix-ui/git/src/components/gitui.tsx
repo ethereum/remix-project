@@ -175,6 +175,7 @@ export const GitUI = (props: IGitUi) => {
             <gitActionsContext.Provider value={gitActionsProviderValue}>
               <pluginActionsContext.Provider value={pluginActionsProviderValue}>
                 <BranchHeader />
+                {setup ? <Setup callback={setActivePanel}></Setup> : null}
                 <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
                   {!setup && !needsInit ? <>
                     <SourceControlNavigation eventKey={gitUIPanels.SOURCECONTROL} activePanel={activePanel} callback={setActivePanel} />
