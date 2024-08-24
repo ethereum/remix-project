@@ -77,7 +77,7 @@ export const GetDeviceCode = () => {
 
   return (
     <>
-      {(context.gitHubUser && context.gitHubUser.login) ? null : <>
+      {(context.gitHubUser && context.gitHubUser.isConnected) ? null : <>
         <label className="text-uppercase">Connect to GitHub</label>
         <button className='btn btn-secondary mt-1 w-100' onClick={async () => {
           await getDeviceCodeFromGitHub()
@@ -104,7 +104,7 @@ export const GetDeviceCode = () => {
         </div>
       }
       {
-        (context.gitHubUser && context.gitHubUser.login) ?
+        (context.gitHubUser && context.gitHubUser.isConnected) ?
           <div className="pt-2">
             <button className='btn btn-primary mt-1 w-100' onClick={async () => {
               disconnect()
@@ -112,7 +112,7 @@ export const GetDeviceCode = () => {
           </div> : null
       }
       {
-        (context.gitHubUser && context.gitHubUser.login) ?
+        (context.gitHubUser && context.gitHubUser.isConnected) ?
           <div className="pt-2">
 
             <div className="mb-1" data-id={`connected-as-${context.gitHubUser.login}`}>Connected as {context.gitHubUser.login}</div>
