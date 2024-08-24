@@ -74,12 +74,8 @@ export function Workspace() {
     showContextMenu: false,
     reservedKeywords: [ROOT_PATH],
     copyElement: [],
-    dragStatus: false,
+    dragStatus: false
   })
-
-  useEffect(() => {
-
-  }, [])
 
   useEffect(() => {
     if (canPaste) {
