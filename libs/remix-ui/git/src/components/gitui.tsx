@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useContext, useEffect, useReducer, useState } from 'react'
 import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init, showAlert, gitlog } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, saveToken, sendToMatomo, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged, disconnectFromGithub, logInGitHub } from '../lib/pluginActions'
@@ -32,6 +32,7 @@ import { Setup } from './panels/setup'
 import { Init } from './panels/init'
 import { Disabled } from './disabled'
 import { IGitUi } from '../types'
+import { AppContext } from '@remix-ui/app'
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
 
@@ -43,6 +44,7 @@ export const GitUI = (props: IGitUi) => {
   const [setup, setSetup] = useState<boolean>(false)
   const [needsInit, setNeedsInit] = useState<boolean>(true)
   const [appLoaded, setAppLoaded] = useState<boolean>(false)
+  const appContext = useContext(AppContext)
 
   useEffect(() => {
     plugin.emit('statusChanged', {
@@ -50,15 +52,11 @@ export const GitUI = (props: IGitUi) => {
       type: 'info',
       title: 'Loading Git Plugin'
     })
-    setTimeout(() => {
-      setAppLoaded(true)
-      plugin.on('filePanel', 'requestGitHubSignIn' as any, () => setActivePanel('7'))
-    }, 2000)
   }, [])
 
   useEffect(() => {
     if (!appLoaded) return
-    setCallBacks(plugin, gitDispatch, loaderDispatch, setActivePanel)
+    setCallBacks(plugin, gitDispatch, appContext.appStateDispatch, loaderDispatch, setActivePanel)
     setPlugin(plugin, gitDispatch, loaderDispatch)
     loaderDispatch({ type: 'plugin', payload: true })
 

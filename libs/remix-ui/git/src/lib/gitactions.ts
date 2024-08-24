@@ -8,6 +8,8 @@ import { ModalTypes } from "@remix-ui/app";
 import { sendToMatomo, setFileDecorators } from "./pluginActions";
 import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi } from "@remix-api";
+import { AppAction, appActionTypes } from "libs/remix-ui/app/src/lib/remix-app/actions/app";
+import { app } from "electron";
 
 export const fileStatuses = [
   ["new,untracked", 0, 2, 0], // new, untracked
@@ -31,11 +33,12 @@ const statusmatrix: statusMatrixType[] = fileStatuses.map((x: any) => {
   };
 });
 
-let plugin: Plugin<any, CustomRemixApi>, dispatch: React.Dispatch<gitActionDispatch>
+let plugin: Plugin<any, CustomRemixApi>, dispatch: React.Dispatch<gitActionDispatch>, appDispatcher: React.Dispatch<AppAction>
 
-export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatch>) => {
+export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatch>, appDispatch: React.Dispatch<AppAction>) => {
   plugin = p
   dispatch = dispatcher
+  appDispatcher = appDispatch
 }
 
 export const init = async () => {
@@ -572,6 +575,7 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
       dispatch(setGitHubUser({
         login: credentials.username,
       }))
+      appDispatcher({ type: appActionTypes.setGitHubUser, payload: { login: credentials.username } })
       dispatch(setUserEmails([{
         email: credentials.email,
         primary: true,
@@ -631,6 +635,7 @@ export const loadGitHubUserFromToken = async () => {
         if (data.user && data.user.login && (storedUsername !== data.user.login)) await plugin.call('config', 'setAppParameter', 'settings/github-user-name', data.user.login)
 
         dispatch(setGitHubUser(data.user))
+        appDispatcher({ type: appActionTypes.setGitHubUser, payload: data.user })
         dispatch(setScopes(data.scopes))
         dispatch(setUserEmails(data.emails))
         sendToGitLog({
@@ -646,6 +651,7 @@ export const loadGitHubUserFromToken = async () => {
           message: `Please check your GitHub token in the GitHub settings.`
         })
         dispatch(setGitHubUser(null))
+        appDispatcher({ type: appActionTypes.setGitHubUser, payload: null })
         return false
       }
     } else {
@@ -654,6 +660,7 @@ export const loadGitHubUserFromToken = async () => {
         message: `Please check your GitHub token in the GitHub settings.`
       })
       dispatch(setGitHubUser(null))
+      appDispatcher({ type: appActionTypes.setGitHubUser, payload: null })
       return false
     }
   } catch (e) {

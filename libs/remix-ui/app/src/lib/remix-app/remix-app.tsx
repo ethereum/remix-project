@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
@@ -12,6 +12,9 @@ import { appProviderContextType, onLineContext, platformContext } from './contex
 import { FormattedMessage, IntlProvider } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper'
 import { UsageTypes } from './types'
+import { AppState } from './interface'
+import { appReducer } from './reducer/app'
+import { appInitialState } from './state/app'
 
 declare global {
   interface Window {
@@ -39,6 +42,8 @@ const RemixApp = (props: IRemixAppUi) => {
   })
   const sidePanelRef = useRef(null)
   const pinnedPanelRef = useRef(null)
+
+  const [appState, appStateDispatch] = useReducer(appReducer, appInitialState)
 
   useEffect(() => {
     async function activateApp() {
@@ -133,7 +138,9 @@ const RemixApp = (props: IRemixAppUi) => {
     showMatamo: props.app.showMatamo,
     appManager: props.app.appManager,
     showEnter: props.app.showEnter,
-    modal: props.app.notification
+    modal: props.app.notification,
+    appState: appState,
+    appStateDispatch: appStateDispatch
   }
 
   const handleUserChosenType = async (type) => {
