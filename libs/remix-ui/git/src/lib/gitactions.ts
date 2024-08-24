@@ -574,8 +574,9 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
       }
       dispatch(setGitHubUser({
         login: credentials.username,
+        isConnected: false
       }))
-      appDispatcher({ type: appActionTypes.setGitHubUser, payload: { login: credentials.username } })
+      appDispatcher({ type: appActionTypes.setGitHubUser, payload: { login: credentials.username, isConnected: false } })
       dispatch(setUserEmails([{
         email: credentials.email,
         primary: true,

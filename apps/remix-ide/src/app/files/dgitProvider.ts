@@ -1060,9 +1060,18 @@ class DGitProvider extends Plugin {
       const emails = await octokit.request('GET /user/emails')
 
       const scopes = user.headers['x-oauth-scopes'] || ''
+      console.log(scopes)
+
+      const scopesArr = scopes.split(',').map(scope => scope.trim())
 
       return {
-        user: user.data,
+        user: {...user.data, isConnected: 
+          scopes 
+          && scopesArr.includes('repo')
+          && scopesArr.includes('read:user')
+          && scopesArr.includes('user:email')
+          && scopesArr.includes('gist')
+        },
         emails: emails.data,
         scopes: scopes && scopes.split(',')
       }

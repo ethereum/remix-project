@@ -5,7 +5,10 @@ import { CommitObject, ReadBlobResult, ReadCommitResult, StatusRow } from "isomo
 import { CustomRemixApi } from "@remix-api";
 import { Plugin } from "@remixproject/engine";
 
-export type GitHubUser = Partial<Endpoints["GET /user"]["response"]['data']>
+export type GitHubUser = Partial<Endpoints["GET /user"]["response"]['data']> & {
+    isConnected: boolean
+}
+
 export type userEmails = Endpoints["GET /user/emails"]["response"]["data"]
 
 export interface IGitUi {

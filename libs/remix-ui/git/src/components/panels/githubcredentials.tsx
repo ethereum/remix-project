@@ -22,7 +22,7 @@ export const GitHubCredentials = () => {
   useEffect(() => {
     refresh()
     if (context.gitHubUser) {
-      setScopeWarning(!(context.gitHubScopes && context.gitHubScopes.length > 0))
+      setScopeWarning(!context.gitHubUser.isConnected)
     } else {
       setScopeWarning(false)
     }
