@@ -14,14 +14,6 @@ export const setPlugin = (p: Plugin<any, CustomRemixApi>, gitDispatcher: React.D
   loaderDispatch = loaderDispatcher
 }
 
-export const disconnectFromGithub = () => {
-  plugin.emit('disconnectFromGithub')
-}
-
-export const logInGitHub = () => {
-  plugin.emit('loggedInGithubChanged')
-}
-
 export const statusChanged = (badges: number) => {
   if (!plugin) return
   plugin.emit('statusChanged', {
