@@ -72,7 +72,6 @@ export const GitUI = (props: IGitUi) => {
       const username = await plugin.call('settings', 'get', 'settings/github-user-name')
       const email = await plugin.call('settings', 'get', 'settings/github-email')
       const token = await plugin.call('settings', 'get', 'settings/gist-access-token')
-      console.log('token', token, username, email)
 
       setSetup(!(username && email))
     }
