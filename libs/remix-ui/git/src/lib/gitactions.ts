@@ -4,11 +4,10 @@ import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchC
 import { GitHubUser, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository, userEmails, storage, gitMatomoEventTypes } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
-import { ModalTypes } from "@remix-ui/app";
+import { ModalTypes, appActionTypes, AppAction } from "@remix-ui/app";
 import { sendToMatomo, setFileDecorators } from "./pluginActions";
 import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi } from "@remix-api";
-import { AppAction, appActionTypes } from "libs/remix-ui/app/src/lib/remix-app/actions/app";
 import { app } from "electron";
 
 export const fileStatuses = [
