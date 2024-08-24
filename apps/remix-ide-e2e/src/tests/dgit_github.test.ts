@@ -18,6 +18,15 @@ module.exports = {
             clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="initgit-btn"]')
             .click('*[data-id="initgit-btn"]')
+    },
+    'launch github login via FE #group1 #group2': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('filePanel')
+            .waitForElementVisible('*[data-id="filepanel-login-github"]')
+            .click('*[data-id="filepanel-login-github"]')
+    },
+    'login to github #group1 #group2': function (browser: NightwatchBrowser) {
+        browser
             .waitForElementVisible('*[data-id="github-panel"]')
             .click('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="gitubUsername"]')
@@ -32,8 +41,14 @@ module.exports = {
             .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
             .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
     },
+    'check the FE for the auth user #group1 #group2': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('filePanel')
+            .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
+    },
     'clone a repository #group1': function (browser: NightwatchBrowser) {
         browser
+            .clickLaunchIcon('dgit')
             .click('*[data-id="clone-panel"]')
             .click({
                 selector: '//*[@data-id="clone-panel-content"]//*[@data-id="fetch-repositories"]',
