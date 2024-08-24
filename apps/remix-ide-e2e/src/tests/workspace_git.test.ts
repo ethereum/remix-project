@@ -433,6 +433,8 @@ module.exports = {
   },
   'check source controle panel #group5': function (browser: NightwatchBrowser) {
     browser
+      .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
+      .click('*[data-id="sourcecontrol-panel"]')
       .waitForElementVisible({
         selector: "//*[@data-status='new-untracked' and @data-file='/tests/MyToken_test.sol']",
         locateStrategy: 'xpath'
