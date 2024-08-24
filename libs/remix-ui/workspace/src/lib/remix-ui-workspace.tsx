@@ -14,10 +14,10 @@ import { MenuItems, WorkSpaceState, WorkspaceMetadata } from './types'
 import { contextMenuActions } from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
-import { appPlatformTypes, platformContext } from '@remix-ui/app'
+import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
-import { branch, GitHubUser, userEmails } from '@remix-ui/git'
+import { branch, GitHubUser, gitUIPanels, userEmails } from '@remix-ui/git'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -49,6 +49,8 @@ export function Workspace() {
 
   const [canPaste, setCanPaste] = useState(false)
 
+  const appContext = useContext(AppContext)
+
   const [state, setState] = useState<WorkSpaceState>({
     ctrlKey: false,
     cutShortcut: false,
@@ -73,34 +75,10 @@ export function Workspace() {
     reservedKeywords: [ROOT_PATH],
     copyElement: [],
     dragStatus: false,
-    loggedInGithub: false,
-    githubUser: null
   })
 
   useEffect(() => {
-    const run = async () => {
-      const token = await global.plugin.call('config' as any, 'getAppParameter' as any, 'settings/gist-access-token')
-      const data: {
-        user: GitHubUser,
-        scopes: string[]
-        emails: userEmails
-      } = await global.plugin.call('dgitApi' as any, 'getGitHubUser', { token });
 
-      if (data.user) {
-        setState((prevState) => {
-          return { ...prevState, loggedInGithub: true, githubUser: data.user }
-        })
-      }
-    }
-    global.plugin.on('dgit', 'disconnectFromGithubRequest', () => {
-      setState((prevState) => {
-        return { ...prevState, loggedInGithub: false, githubUser: null }
-      })
-    })
-    global.plugin.on('dgit', 'loggedInGithubChanged', () => {
-      run()
-    })
-    run()
   }, [])
 
   useEffect(() => {
@@ -916,9 +894,8 @@ export function Workspace() {
   }
 
   const logInGithub = async () => {
-    await global.plugin.call('manager', 'activatePlugin', 'dgit')
     await global.plugin.call('menuicons', 'select', 'dgit');
-    await global.plugin.emit('requestGitHubSignIn');
+    await global.plugin.call('dgit', 'open', gitUIPanels.GITHUB)
     _paq.push(['trackEvent', 'Workspace', 'GIT', 'login'])
   }
 
@@ -994,7 +971,7 @@ export function Workspace() {
                     </span>
                     <span className="d-flex">
                       {
-                        !state.loggedInGithub && <CustomTooltip
+                        !appContext.appState.gitHubUser && <CustomTooltip
                           placement="right"
                           tooltipId="githubNotLogged"
                           tooltipClasses="text-nowrap"
@@ -1007,13 +984,13 @@ export function Workspace() {
                         </CustomTooltip>
                       }
                       {
-                        state.loggedInGithub && <CustomTooltip
+                        appContext.appState.gitHubUser && <CustomTooltip
                           placement="right"
                           tooltipId="githubLoggedIn"
                           tooltipClasses="text-nowrap"
-                          tooltipText={state.githubUser && intl.formatMessage({ id: 'filePanel.gitHubLoggedAs' }, { githubuser: state.githubUser.login }) || ''}
+                          tooltipText={appContext.appState.gitHubUser && intl.formatMessage({ id: 'filePanel.gitHubLoggedAs' }, { githubuser: appContext.appState.gitHubUser.login }) || ''}
                         >
-                          <img width={20} height={20} data-id={`connected-img-${state.githubUser && state.githubUser.login}`} src={state.githubUser && state.githubUser.avatar_url} className="remixui_avatar_user ml-2" />
+                          <img width={20} height={20} data-id={`connected-img-${appContext.appState.gitHubUser && appContext.appState.gitHubUser.login}`} src={appContext.appState.gitHubUser && appContext.appState.gitHubUser.avatar_url} className="remixui_avatar_user ml-2" />
                         </CustomTooltip>
                       }
                     </span>

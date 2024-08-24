@@ -241,8 +241,6 @@ export interface WorkSpaceState {
     reservedKeywords: string[]
     copyElement: CopyElementType[]
     dragStatus: boolean
-    loggedInGithub: boolean
-    githubUser: GitHubUser
 }
 
 export type FileFocusContextType = {
