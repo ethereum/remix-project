@@ -43,7 +43,7 @@ module.exports = {
     'check the FE for the auth user #group1 #group2': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('filePanel')
-            .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
+            .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
     },
     'clone a repository #group1': function (browser: NightwatchBrowser) {
         browser
