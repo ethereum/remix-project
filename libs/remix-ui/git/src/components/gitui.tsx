@@ -52,6 +52,9 @@ export const GitUI = (props: IGitUi) => {
       type: 'info',
       title: 'Loading Git Plugin'
     })
+    setTimeout(() => {	
+      setAppLoaded(true)	
+    }, 2000)
   }, [])
 
   useEffect(() => {
