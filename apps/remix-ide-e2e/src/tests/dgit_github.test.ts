@@ -27,8 +27,7 @@ module.exports = {
             .click('*[data-id="saveGitHubCredentials"]')
     },
     'check if the settings are loaded #group1 #group2': function (browser: NightwatchBrowser) {
-        browser.
-            click('*[data-id="github-panel"]')
+        browser
             .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
             .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
             .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
