@@ -54,8 +54,6 @@ export interface pluginActions {
         token: string
     }>
     showAlert({ title, message }:{title: string, message: string}): Promise<void>
-    logInGitHub(): void
-    disconnectFromGithub(): void
 }
 
 export const pluginActionsContext = React.createContext<pluginActions>(null)

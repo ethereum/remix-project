@@ -55,7 +55,6 @@ export const GitHubCredentials = () => {
     setGithubToken(credentials.token || '')
     setGithubUsername(credentials.username || '')
     setGithubEmail(credentials.email || '')
-    pluginactions.logInGitHub()
   }
 
   function removeToken(): void {
@@ -67,7 +66,6 @@ export const GitHubCredentials = () => {
       email: '',
       token: ''
     })
-    pluginactions.disconnectFromGithub()
   }
 
   return (

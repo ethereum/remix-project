@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useReducer, useState } from 'react'
 import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init, showAlert, gitlog } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
-import { openDiff, openFile, saveToken, sendToMatomo, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged, disconnectFromGithub, logInGitHub } from '../lib/pluginActions'
+import { openDiff, openFile, saveToken, sendToMatomo, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
 import { defaultGitState, defaultLoaderState, gitMatomoEventTypes, gitState, gitUIPanels, loaderState } from '../types'
@@ -162,9 +162,7 @@ export const GitUI = (props: IGitUi) => {
     saveToken,
     saveGitHubCredentials,
     getGitHubCredentialsFromLocalStorage,
-    showAlert,
-    disconnectFromGithub,
-    logInGitHub
+    showAlert
   }
 
   return (
