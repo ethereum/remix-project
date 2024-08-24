@@ -5,7 +5,6 @@ import { FormattedMessage } from 'react-intl'
 
 export const Setup = ({ callback }) => {
 
-
   const startSetingUp = () => {
     callback(gitUIPanels.GITHUB)
   }
