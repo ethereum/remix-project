@@ -106,7 +106,7 @@ export const GetDeviceCode = () => {
       {
         (context.gitHubUser && context.gitHubUser.isConnected) ?
           <div className="pt-2">
-            <button className='btn btn-primary mt-1 w-100' onClick={async () => {
+            <button data-id='disconnect-github' className='btn btn-primary mt-1 w-100' onClick={async () => {
               disconnect()
             }}>Disconnect</button>
           </div> : null
