@@ -7,7 +7,7 @@ import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, 
 import { Profile } from "@remixproject/plugin-utils";
 import { CustomRemixApi } from "@remix-api";
 import { statusChanged } from "./pluginActions";
-import { AppAction } from "libs/remix-ui/app/src/lib/remix-app/actions/app";
+import { AppAction } from "@remix-ui/app";
 
 let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
 let callBackEnabled: boolean = false
