@@ -28,7 +28,6 @@ module.exports = {
     'login to github #group1 #group2': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="github-panel"]')
-            .click('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="gitubUsername"]')
             .setValue('*[data-id="githubToken"]', process.env.dgit_token)
             .setValue('*[data-id="gitubUsername"]', 'git')
