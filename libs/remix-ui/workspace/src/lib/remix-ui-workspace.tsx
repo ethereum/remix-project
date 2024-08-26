@@ -1091,7 +1091,7 @@ export function Workspace() {
                         className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1"
                         icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
                       >
-                        {selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
+                        {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? 'Connected to Local FileSystem' : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
                       </Dropdown.Toggle>
                       <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
                         {
