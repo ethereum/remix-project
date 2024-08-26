@@ -2,10 +2,9 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 import { join } from 'path'
-import { ChildProcess, spawn } from 'child_process'
+import { ChildProcess, exec, spawn } from 'child_process'
 import { homedir } from 'os'
-
-import kill from 'tree-kill'
+import treeKill from 'tree-kill'
 
 let remixd: ChildProcess
 const assetsTestContract = `import "./contract.sol";
@@ -50,15 +49,30 @@ const sources = [
   }
 ]
 
+
+
 module.exports = {
   '@disabled': true,
   before: function (browser, done) {
     init(browser, done)
   },
+
   after: function (browser) {
     browser.perform((done) => {
-      console.log('remixd', remixd.pid)
-      kill(remixd.pid)
+      try {
+        console.log('remixd pid', remixd.pid);
+        treeKill(remixd.pid, 'SIGKILL', (err) => {
+          console.log('remixd killed', err)
+        })
+        console.log('Service disconnected successfully.');
+      } catch (error) {
+        console.error('Failed to disconnect service:', error);
+      }
+      try {
+        resetGitToHead()
+      } catch (error) {
+        console.error('Failed to restore git changes:', error);
+      }
       done()
     })
   },
@@ -66,12 +80,14 @@ module.exports = {
   '@sources': function () {
     return sources
   },
-  'run Remixd tests #group1': function (browser) {
+  'run Remixd tests #group1': function (browser: NightwatchBrowser) {
     browser.perform(async (done) => {
       try {
         remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       } catch (err) {
         console.error(err)
+        // fail
+        browser.assert.fail('Failed to start remixd')
       }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
@@ -86,7 +102,12 @@ module.exports = {
       remix try to resolve it against the node_modules and installed_contracts folder.
     */
     browser.perform(async (done) => {
+      try{
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      } catch (err) {
+        console.error(err)
+        browser.assert.fail('Failed to start remixd')
+      }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -97,7 +118,12 @@ module.exports = {
   },
   'Import from node_modules and reference a github import #group3': function (browser) {
     browser.perform(async (done) => {
+      try{
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
+      } catch (err) {
+        console.error(err)
+        browser.assert.fail('Failed to start remixd')
+      }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -117,7 +143,12 @@ module.exports = {
   'Should listen on compilation result from hardhat #group4': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
+      try{
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide/hardhat-boilerplate'))
+      } catch (err) {
+        console.error(err)
+        browser.assert.fail('Failed to start remixd')
+      }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -188,7 +219,12 @@ module.exports = {
 
     browser.perform(async (done) => {
       console.log('working directory', homedir() + '/foundry_tmp/hello_foundry')
+      try{
       remixd = await spawnRemixd(join(homedir(), '/foundry_tmp/hello_foundry'))
+      } catch (err) {
+        console.error(err)
+        browser.assert.fail('Failed to start remixd')
+      }
       connectRemixd(browser, done)
     })
       .perform(async (done) => {
@@ -249,7 +285,12 @@ module.exports = {
   'Should disable git when running remixd #group9': function (browser: NightwatchBrowser) {
 
     browser.perform(async (done) => {
+      try{
       remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts/hardhat'))
+      } catch (err) {
+        console.error(err)
+        browser.assert.fail('Failed to start remixd')
+      }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
     })
@@ -281,6 +322,7 @@ module.exports = {
         remixd = await spawnRemixd(join(process.cwd(), '/apps/remix-ide', '/contracts'))
       } catch (err) {
         console.error(err)
+        browser.assert.fail('Failed to start remixd')
       }
       console.log('working directory', process.cwd())
       connectRemixd(browser, done)
@@ -322,8 +364,11 @@ function runTests(browser: NightwatchBrowser, done: any) {
     .setEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .testEditorValue('contract test1Changed { function get () returns (uint) { return 10; }}')
     .setEditorValue('contract test1 { function get () returns (uint) { return 10; }}')
+    .waitForElementVisible('[data-path="folder1"]')
+    .waitForElementVisible('[data-path="folder1/contract_' + browserName + '.sol"]')
     .click('[data-path="folder1/contract_' + browserName + '.sol"]') // rename a file and check
     .pause(1000)
+
     .renamePath('folder1/contract_' + browserName + '.sol', 'renamed_contract_' + browserName, 'folder1/renamed_contract_' + browserName + '.sol')
     .pause(1000)
     .removeFile('folder1/contract_' + browserName + '_toremove.sol', 'localhost')
@@ -557,4 +602,27 @@ async function installSlither(): Promise<void> {
   } catch (e) {
     console.log(e)
   }
+}
+
+
+function resetGitToHead() {
+  if (process.env.CIRCLECI) {
+    console.log("Running on CircleCI, resetting Git to HEAD...");
+  } else {
+    console.log("Not running on CircleCI, skipping Git reset.");
+    return
+  }
+  const command = 'git reset --hard HEAD && git clean -fd';
+
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing command: ${command}\n${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Error output from command: ${command}\n${stderr}`);
+      return;
+    }
+    console.log(`Git reset to HEAD successfully.\n${stdout}`);
+  });
 }
