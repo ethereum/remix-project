@@ -80,6 +80,7 @@ export class Blockchain extends Plugin {
   providers: {[key: string]: VMProvider | InjectedProvider | NodeProvider}
   transactionContextAPI: TransactionContextAPI
   registeredPluginEvents: string[]
+  defaultPinnedProviders: string[]
   pinnedProviders: string[]
 
   // NOTE: the config object will need to be refactored out in remix-lib
@@ -112,7 +113,8 @@ export class Blockchain extends Plugin {
     this.networkcallid = 0
     this.networkStatus = { network: { name: ' - ', id: ' - ' } }
     this.registeredPluginEvents = []
-    this.pinnedProviders = ['vm-cancun', 'vm-shanghai', 'vm-mainnet-fork', 'vm-london', 'vm-berlin', 'vm-paris', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'ganache-provider', 'hardhat-provider', 'foundry-provider']
+    this.defaultPinnedProviders = ['vm-cancun', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'hardhat-provider', 'foundry-provider']
+    this.pinnedProviders = []
     this.setupEvents()
     this.setupProviders()
   }
@@ -139,11 +141,25 @@ export class Blockchain extends Plugin {
 
     this.on('environmentExplorer', 'providerPinned', (name, provider) => {
       this.emit('shouldAddProvidertoUdapp', name, provider)
+      this.pinnedProviders.push(name)
+      this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.pinnedProviders))
     })
 
     this.on('environmentExplorer', 'providerUnpinned', (name, provider) => {
       this.emit('shouldRemoveProviderFromUdapp', name, provider)
+      const index = this.pinnedProviders.indexOf(name)
+      this.pinnedProviders.splice(index, 1)
+      this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.pinnedProviders))
     })
+
+    this.call('config', 'getAppParameter', 'settings/pinned-providers').then((providers) => {
+      if (!providers) {
+        this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.defaultPinnedProviders))
+        this.pinnedProviders = this.defaultPinnedProviders
+      } else {
+        this.pinnedProviders = JSON.parse(providers)
+      }
+    }).catch((error) => { console.log(error) })
   }
 
   onDeactivation() {
