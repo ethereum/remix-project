@@ -1,6 +1,7 @@
 'use strict'
 import { ethers } from 'ethers'
 import { getFunctionFragment } from './txHelper'
+import { Transaction } from './txRunner'
 
 /**
   * deploy the given contract
@@ -16,11 +17,11 @@ import { getFunctionFragment } from './txHelper'
   *     [personal mode enabled, need password to continue] promptCb (okCb, cancelCb)
   * @param {Function} finalCallback    - last callback.
   */
-export function createContract (from, data, value, gasLimit, txRunner, callbacks, finalCallback) {
+export function createContract ({ from, data, value, gasLimit, signed }: Transaction, txRunner, callbacks, finalCallback) {
   if (!callbacks.confirmationCb || !callbacks.gasEstimationForceSend || !callbacks.promptCb) {
     return finalCallback('all the callbacks must have been defined')
   }
-  const tx = { from: from, to: null, data: data, useCall: false, value: value, gasLimit: gasLimit }
+  const tx = { from: from, to: null, data: data, useCall: false, value: value, gasLimit: gasLimit, signed }
   txRunner.rawRun(tx, callbacks.confirmationCb, callbacks.gasEstimationForceSend, callbacks.promptCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     finalCallback(error, txResult)
@@ -42,9 +43,9 @@ export function createContract (from, data, value, gasLimit, txRunner, callbacks
   *     [personal mode enabled, need password to continue] promptCb (okCb, cancelCb)
   * @param {Function} finalCallback    - last callback.
   */
-export function callFunction (from, to, data, value, gasLimit, funAbi, txRunner, callbacks, finalCallback) {
+export function callFunction ({ from, to, data, value, gasLimit, signed }: Transaction, funAbi , txRunner, callbacks, finalCallback) {
   const useCall = funAbi.stateMutability === 'view' || funAbi.stateMutability === 'pure' || funAbi.constant
-  const tx = { from, to, data, useCall, value, gasLimit }
+  const tx = { from, to, data, useCall, value, gasLimit, signed }
   txRunner.rawRun(tx, callbacks.confirmationCb, callbacks.gasEstimationForceSend, callbacks.promptCb, (error, txResult) => {
     // see universaldapp.js line 660 => 700 to check possible values of txResult (error case)
     finalCallback(error, txResult)
