@@ -974,7 +974,7 @@ export function Workspace() {
                           tooltipText={<FormattedMessage id="filePanel.logInGithub" />}
                         >
                           <div data-id='filepanel-login-github' className='d-flex'>
-                            <i onClick={() => logInGithub() } className="fa-brands fa-github-alt ml-2 align-self-center" style={{ fontSize: '1.1rem' }} style={{ cursor: 'pointer' }} aria-hidden="true"></i>
+                            <i onClick={() => logInGithub() } className="fa-brands fa-github-alt ml-2 align-self-center" style={{ fontSize: '1.1rem', cursor: 'pointer' }} aria-hidden="true"></i>
                             <span onClick={() => logInGithub() } className="ml-1 style={{ cursor: 'pointer' }} "> Sign in </span>
                           </div>
                         </CustomTooltip>
