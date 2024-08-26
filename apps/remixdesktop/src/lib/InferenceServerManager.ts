@@ -243,12 +243,32 @@ export class InferenceManager implements ICompletions {
 
   }
 
+  private async _handleExistingServer() {
+    // check if the server is already running, kill it
+    try {
+      const options = { headers: { 'Content-Type': 'application/json', } }
+      const state = await axios.get(this.inferenceURL+"/state", options)
+
+      if (state.data?.status) {
+        console.log('Found existing Inference server running')
+        this.stopInferenceServer()
+        await axios.post(this.inferenceURL+"/kill", options)
+      }
+    } catch (error) {
+      // catch connection refused
+      console.log('No existing Inference server running')
+    }
+  }
+
   private async _startServer() {
     const serverAvailable = await this._downloadInferenceServer()
     if (!serverAvailable) {
       console.error('Inference server not available for this platform')
       return
     }
+
+    // kill existing server if running
+    this._handleExistingServer()
 
     return new Promise<void>((resolve, reject) => {
       let serverPath = ""
@@ -274,7 +294,7 @@ export class InferenceManager implements ICompletions {
 
       const spawnArgs = [this.port];
 
-      console.log(`Spawning process: ${serverPath} ${spawnArgs.join(' ')}`);
+      // console.log(`Spawning process: ${serverPath} ${spawnArgs.join(' ')}`);
       this.inferenceProcess = spawn(serverPath, spawnArgs);
 
       this.inferenceProcess.stdout.on('data', (data) => {
@@ -455,11 +475,11 @@ export class InferenceManager implements ICompletions {
     }
     let modelOP = undefined
     for (const model of this.selectedModels) {
-      if (model?.modelOP) {
+      if (model.modelType === ModelType.GENERAL) {
         modelOP = model.modelOP
       }
     }
-    const prompt = buildSolgptPromt(userPrompt, this.selectedModels[0]?.modelOP)
+    const prompt = buildSolgptPromt(userPrompt, modelOP)
 
     if (GenerationParams.stream_result) {
       return this._streamInferenceRequest('solidity_answer', { prompt, ...params })
@@ -467,7 +487,5 @@ export class InferenceManager implements ICompletions {
       return this._makeInferenceRequest('solidity_answer', { prompt, ...params }, AIRequestType.GENERAL)
     }
   }
-
-  // kill dangling process making use of the port
 
 }
