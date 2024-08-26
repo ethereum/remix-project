@@ -10,7 +10,7 @@ export class RemoteInferencer implements ICompletions {
   api_url: string
   completion_url: string
   max_history = 7
-  model_op = RemoteBackendOPModel.DEEPSEEK
+  model_op = RemoteBackendOPModel.DEEPSEEK // default model operation change this to llama if necessary
   event: EventEmitter
 
   constructor(apiUrl?:string, completionUrl?:string) {

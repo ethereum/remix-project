@@ -75,7 +75,7 @@ const GenerationParams:IParams = {
   topK: 40,
   topP: 0.92,
   max_new_tokens: 2000,
-  stream_result: true,
+  stream_result: false,
 }
 
 export { DefaultModels, CompletionParams, InsertionParams, GenerationParams }
