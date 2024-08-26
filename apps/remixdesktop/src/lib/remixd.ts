@@ -28,6 +28,7 @@ export class ElectronBasePluginRemixdClient extends ElectronBasePluginClient {
   
       this.onload(async () => {
         this.on('fs' as any, 'workingDirChanged', async (path: string) => {
+          console.log('workingDirChanged base remixd', path)
           this.currentSharedFolder = path
         })
         this.currentSharedFolder = await this.call('fs' as any, 'getWorkingDir')

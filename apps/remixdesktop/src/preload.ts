@@ -6,7 +6,7 @@ console.log('preload.ts', new Date().toLocaleTimeString())
 
 /* preload script needs statically defined API for each plugin */
 
-const exposedPLugins = ['fs', 'git', 'xterm', 'isogit', 'electronconfig', 'electronTemplates', 'ripgrep', 'compilerloader', 'appUpdater', 'remixAID', 'slither']
+const exposedPLugins = ['fs', 'git', 'xterm', 'isogit', 'electronconfig', 'electronTemplates', 'ripgrep', 'compilerloader', 'appUpdater', 'remixAID', 'slither', 'foundry', 'hardhat']
 
 let webContentsId: number | undefined
 
@@ -20,6 +20,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   canTrackMatomo: () => ipcRenderer.invoke('config:canTrackMatomo'),
   trackEvent: (args: any[]) => ipcRenderer.invoke('matomo:trackEvent', args),
 
+  trackEvent: (args: any[]) => ipcRenderer.invoke('matomo:trackEvent', args), 
+  openFolder: (path: string) => ipcRenderer.invoke('fs:openFolder', webContentsId, path),
+  openFolderInSameWindow: (path: string) => ipcRenderer.invoke('fs:openFolderInSameWindow', webContentsId, path),
   activatePlugin: (name: string) => {
     return ipcRenderer.invoke('manager:activatePlugin', name)
   },
