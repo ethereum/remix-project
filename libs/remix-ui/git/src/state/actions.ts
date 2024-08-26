@@ -44,6 +44,8 @@ export interface ActionPayloadTypes {
   CLEAR_LOG: void
   SET_USER_EMAILS: userEmails
   SET_STORAGE: storage
+  SET_TIMESTAMP: number
+  SET_GIT_LOG_COUNT: number
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {

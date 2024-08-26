@@ -31,7 +31,7 @@ export interface IGitApi {
         clone(input: cloneInputType): Promise<any>
         branches(input?: branchesInput): Promise<branch[]>,
         remotes(): Promise<remote[]>,
-        log(cmd: { ref: string }): Promise<ReadCommitResult[]>,
+        log(cmd: { ref: string, depth?: number }): Promise<ReadCommitResult[]>,
         remotecommits(input: remoteCommitsInputType): Promise<pagedCommits[]>
         fetch(input: fetchInputType): Promise<any>
         pull(input: pullInputType): Promise<any>
@@ -195,6 +195,8 @@ export type gitState = {
     gitHubScopes: string[]
     gitHubAccessToken: string
     log: gitLog[]
+    timestamp: number
+    gitLogCount: number
 }
 export type gitLog = {
     type: 'error' | 'warning' | 'info' | 'success',
@@ -314,7 +316,9 @@ export const defaultGitState: gitState = {
   userEmails: [] as userEmails,
   gitHubScopes: [],
   gitHubAccessToken: "",
-  log: []
+  log: [],
+  timestamp: 0,
+  gitLogCount: 22
 }
 
 export const defaultLoaderState: loaderState = {
@@ -504,4 +508,9 @@ export interface clearLogAction {
     type: string
 }
 
-export type gitActionDispatch = setCurrentHeadAction | clearLogAction | setLogAction | setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export interface setTimeStampAction {
+    type: string,
+    payload: number
+}
+
+export type gitActionDispatch = setTimeStampAction | setCurrentHeadAction | clearLogAction | setLogAction | setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
