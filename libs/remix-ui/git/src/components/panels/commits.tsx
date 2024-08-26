@@ -1,12 +1,10 @@
-import { checkout, ReadCommitResult } from "isomorphic-git";
+import { ReadCommitResult } from "isomorphic-git";
 import React from "react";
 import { gitActionsContext } from "../../state/context";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
-import LoaderIndicator from "../navigation/loaderindicator";
 import { BranchDifferences } from "./branches/branchdifferences";
 import { CommitDetails } from "./commits/commitdetails";
-import { CommitSummary } from "./commits/commitsummary";
 
 export const Commits = () => {
   const [hasNextPage, setHasNextPage] = React.useState(true)
@@ -21,15 +19,18 @@ export const Commits = () => {
     }
   };
 
-  const loadNextPage = () => {
-    actions.fetch({
+  const loadNextPage = async () => {
+
+    await actions.fetch({
       remote: null,
       ref: context.currentBranch,
       relative: true,
       depth: 5,
-      singleBranch: true
+      singleBranch: true,
+      quiet: true
     })
 
+    await actions.setStateGitLogCount(context.gitLogCount + 5)
   }
 
   const getRemote = () => {
@@ -56,7 +57,7 @@ export const Commits = () => {
             })}
           </div>
         </div>
-        {hasNextPage && <GitUIButton disabledCondition={fetchIsDisabled()} className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
+        {hasNextPage && <GitUIButton data-id='load-more-commits' disabledCondition={fetchIsDisabled()} className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
         </>
         : <div className="text-muted">No commits</div>}
     </>

@@ -31,8 +31,9 @@ export interface gitActions {
     sendToGitLog: (message: gitLog) => Promise<void>
     clearGitLog: () => Promise<void>
     getFileStatusMatrix(filespaths:[]): Promise<void>
-    gitlog(): Promise<void>
+    gitlog(depth: number): Promise<void>
     init(): Promise<void>
+    setStateGitLogCount(count: number): Promise<void>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)
