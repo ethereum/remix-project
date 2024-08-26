@@ -341,7 +341,7 @@ module.exports = {
                 }
             })
     },
-    'clone a large repo #group3': function (browser: NightwatchBrowser) {
+    'clone a large repo #group3 #flaky': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('dgit')
             .click('*[data-id="clone-panel"]')
