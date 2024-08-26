@@ -358,11 +358,11 @@ module.exports = {
                 locateStrategy: 'xpath'
             })
             .waitForElementVisible({
-                selector: '//*[@data-id="clone-panel-content"]//*[contains(text(), "remix-project")]',
+                selector: '//*[@data-id="clone-panel-content"]//*[contains(text(), "ethereum/remix-project")]',
                 locateStrategy: 'xpath'
             })
             .click({
-                selector: '//*[@data-id="clone-panel-content"]//*[contains(text(), "remix-project")]',
+                selector: '//*[@data-id="clone-panel-content"]//*[contains(text(), "ethereum/remix-project")]',
                 locateStrategy: 'xpath'
             })
             .waitForElementVisible({
