@@ -374,7 +374,7 @@ module.exports = {
                 locateStrategy: 'xpath'
             })
             .click({
-                selector: '//*[@data-id="clone-panel-content"]//*[contains(text(), "master")]',
+                selector: '//*[@data-id="clone-panel-content"]//*[text() = "master"]',
                 locateStrategy: 'xpath'
             })
             .waitForElementVisible({
