@@ -13,19 +13,19 @@ module.exports = {
             done()
         })
     },
-    'Update settings for git #group1 #group2': function (browser: NightwatchBrowser) {
+    'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="initgit-btn"]')
             .click('*[data-id="initgit-btn"]')
     },
-    'launch github login via FE #group1 #group2': function (browser: NightwatchBrowser) {
+    'launch github login via FE #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="filepanel-login-github"]')
             .click('*[data-id="filepanel-login-github"]')
     },
-    'login to github #group1 #group2': function (browser: NightwatchBrowser) {
+    'login to github #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="gitubUsername"]')
@@ -34,13 +34,13 @@ module.exports = {
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .click('*[data-id="saveGitHubCredentials"]')
     },
-    'check if the settings are loaded #group1 #group2': function (browser: NightwatchBrowser) {
+    'check if the settings are loaded #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
             .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
             .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
     },
-    'check the FE for the auth user #group1 #group2': function (browser: NightwatchBrowser) {
+    'check the FE for the auth user #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
@@ -341,4 +341,59 @@ module.exports = {
                 }
             })
     },
+    'clone a large repo #group3': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('dgit')
+            .click('*[data-id="clone-panel"]')
+            .click({
+                selector: '//*[@data-id="clone-panel-content"]//*[@data-id="fetch-repositories"]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="clone-panel-content"]//*[@id="repository-select"]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="clone-panel-content"]//*[@id="repository-select"]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="clone-panel-content"]//*[contains(text(), "remix-project")]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="clone-panel-content"]//*[contains(text(), "remix-project")]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="clone-panel-content"]//*[@id="branch-select"]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="clone-panel-content"]//*[@id="branch-select"]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="clone-panel-content"]//*[contains(text(), "master")]',
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible({
+                selector: '//*[@data-id="clone-panel-content"]//*[@data-id="clonebtn-ethereum/remix-project-master"]',
+                locateStrategy: 'xpath'
+            })
+            .click({
+                selector: '//*[@data-id="clone-panel-content"]//*[@data-id="clonebtn-ethereum/remix-project-master"]',
+                locateStrategy: 'xpath'
+            })
+    },
+    'verify files in the large repo #group3': function (browser: NightwatchBrowser) {
+
+        browser
+            .clickLaunchIcon('filePanel')
+            .waitForElementVisible({
+               selector: '*[data-id="treeViewLitreeViewItemnx.json"]',
+               timeout: 120000
+            })
+
+    }
 }
