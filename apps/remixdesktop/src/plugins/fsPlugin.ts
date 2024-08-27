@@ -32,15 +32,6 @@ const getBaseName = (pathName: string): string => {
   return path.basename(pathName)
 }
 
-function onlyUnique(value: recentFolder, index: number, self: recentFolder[]) {
-  console.log(index, value)
-  return self.findIndex((rc, index) => rc.path === value.path) === index
-}
-
-const deplucateFolderList = (list: recentFolder[]): recentFolder[] => {
-  return list.filter(onlyUnique)
-}
-
 export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
   constructor() {
@@ -49,28 +40,28 @@ export class FSPlugin extends ElectronBasePlugin {
   }
 
   async onActivation(): Promise<void> {
-    const config = await this.call('electronconfig', 'readConfig')
+    const config = await this.call('electronconfig' as any, 'readConfig')
     const openedFolders = (config && config.openedFolders) || []
-    const recentFolders: recentFolder[] = (config && config.recentFolders) || []
+    const recentFolders = (config && config.recentFolders) || []
     this.call('electronconfig', 'writeConfig', {...config, 
-      recentFolders: deplucateFolderList(recentFolders),
+      recentFolders: recentFolders,
       openedFolders: openedFolders})
     const foldersToDelete: string[] = []
-    if (recentFolders && recentFolders.length) {
-      for (const folder of recentFolders) {
+    if (openedFolders && openedFolders.length) {
+      for (const folder of openedFolders) {
         try {
-          const stat = await fs.stat(folder.path);
+          const stat = await fs.stat(folder)
           if (stat.isDirectory()) {
             // do nothing
           }
         } catch (e) {
           console.log('error opening folder', folder, e)
-          foldersToDelete.push(folder.path)
+          foldersToDelete.push(folder)
         }
       }
       if (foldersToDelete.length) {
-        const newFolders = recentFolders.filter((f: recentFolder) => !foldersToDelete.includes(f.path))
-        this.call('electronconfig', 'writeConfig', {recentFolders: deplucateFolderList(newFolders)})
+        const newFolders = openedFolders.filter((f: string) => !foldersToDelete.includes(f))
+        this.call('electronconfig', 'writeConfig', {recentFolders: newFolders})
       }
     }
     createWindow()
@@ -92,13 +83,6 @@ export class FSPlugin extends ElectronBasePlugin {
     const client = this.clients.find((c) => c.webContentsId === webContentsId)
     if (client) {
       client.openFolder(path)
-    }
-  }
-
-  openFolderInSameWindow(webContentsId: any, path?: string): void {
-    const client = this.clients.find((c) => c.webContentsId === webContentsId)
-    if (client) {
-      client.openFolderInSameWindow(path)
     }
   }
 }
@@ -362,7 +346,6 @@ class FSPluginClient extends ElectronBasePluginClient {
       path,
       timestamp,
     })
-    config.recentFolders = deplucateFolderList(config.recentFolders)
     writeConfig(config)
   }
 

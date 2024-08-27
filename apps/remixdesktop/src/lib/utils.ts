@@ -19,6 +19,6 @@ function normalizePath (path) {
   return path
 }
 
-export { absolutePath, normalizePath }
+export { absolutePath }
 
 
