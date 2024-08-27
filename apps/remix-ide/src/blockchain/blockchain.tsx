@@ -814,7 +814,7 @@ export class Blockchain extends Plugin {
             }
           }
         )
-      })   
+      })
     })
   }
 
