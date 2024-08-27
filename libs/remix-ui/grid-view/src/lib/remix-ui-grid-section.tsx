@@ -66,7 +66,7 @@ export const RemixUIGridSection = (props: RemixUIGridSectionProps) => {
     >
       <div className="d-flex flex-column w-100 remixui_grid_section">
         { props.title && <h6 className='mt-1 mb-0 align-items-left '>{ props.title }</h6> }
-        
+
         <div className={(props.hScrollable) ? `d-flex flex-row pb-2  overflow-auto` : `d-flex flex-wrap`}>
           { !hasChildCell(children) && <span> No items found </span>}
           { props.children }
