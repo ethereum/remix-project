@@ -31,6 +31,7 @@ export const computeWitness = async (plugin: CircomPluginClient, appState: AppSt
         const writePath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.wtn.json')}`
 
         await plugin.call('fileManager', 'writeFile', writePath, JSON.stringify(wtnsJson, null, 2))
+        plugin._paq.push(['trackEvent', 'circuit-compiler', 'computeWitness', 'wtns.exportJson', writePath])
       }
     } else {
       console.log('Existing witness computation in progress')
