@@ -157,7 +157,8 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
               key={template.name}
               title={template.name}
               tooltipTitle={template.tooltip}
-              onClickTitle={template.onClick}
+              onClick={template.onClick}
+              onClickLabel={template.onClickLabel}
               hScrollable={false}
             >
               {template.items.map(item => {

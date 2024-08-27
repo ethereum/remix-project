@@ -260,9 +260,11 @@ export const templates = (intl, plugin) => {
     {
       name: "Cookbook",
       tooltip: "Cookbook is a smart contract search tool. Click here to open cookbook and browse contracts.",
-      onClick: () => {
-        plugin.call('manager', 'activatePlugin', 'cookbookdev')
+      onClick: async () => {
+        await plugin.call('manager', 'activatePlugin', 'cookbookdev')
+        plugin.call('menuicons', 'showContent', 'cookbookdev')
       },
+      onClickLabel: 'Open cookbook plugin',
       items: [
         { value: "token-sale", displayName: 'Token Sale' },
         { value: "simple-nft-sale", displayName: 'Simple Nft Sale' },
