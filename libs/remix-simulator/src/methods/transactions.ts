@@ -82,7 +82,6 @@ export class Transactions {
   }
 
   eth_sendRawTransaction (payload, cb) {
-    console.log('eth_sendRawTransaction', payload)
     payload.params[0] = { data: payload.params[0], signed: true }
     processTx(this.txRunnerInstance, payload, false, (error, result: VMexecutionResult) => {
       if (!error && result) {
