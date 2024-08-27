@@ -1,12 +1,14 @@
 import { RenderIf, RenderIfNot } from "@remix-ui/helper";
 import { FormattedMessage } from "react-intl";
-import { CompilerStatus } from "../types";
 import { computeWitness } from "../actions";
-import { useState } from "react";
-import type { CircomPluginClient } from "../services/circomPluginClient";
+import { useContext, useState } from "react";
 import * as remixLib from '@remix-project/remix-lib'
+import { CircuitAppContext } from "../contexts";
 
-export function WitnessSection ({ plugin, signalInputs, status }: {plugin: CircomPluginClient, signalInputs: string[], status: CompilerStatus}) {
+export function WitnessSection () {
+  const circuitApp = useContext(CircuitAppContext)
+  const { signalInputs, status, exportWtnsJson } = circuitApp.appState
+  const { plugin, dispatch, appState } = circuitApp
   const [witnessValues, setWitnessValues] = useState<Record<string, string>>({})
 
   const handleSignalInput = (e: any) => {
@@ -47,9 +49,22 @@ export function WitnessSection ({ plugin, signalInputs, status }: {plugin: Circo
               </div>
             ))
           }
+          <div className="custom-control custom-checkbox">
+            <input
+              className="custom-control-input"
+              type="checkbox"
+              title="Export Witness As JSON"
+              id="circuitExportWtnsJson"
+              onChange={() => { dispatch({ type: 'SET_EXPORT_WTNS_JSON', payload: !exportWtnsJson }) }}
+              checked={exportWtnsJson}
+            />
+            <label className="form-check-label custom-control-label pt-1" htmlFor="circuitExportWtnsJson">
+              <FormattedMessage id="circuit.exportWtnsJson" />
+            </label>
+          </div>
           <button
             className="btn btn-secondary btn-block d-block w-100 text-break mb-1 mt-1"
-            onClick={() => { computeWitness(plugin, status, witnessValues) }}
+            onClick={() => { computeWitness(plugin, appState, dispatch, status, witnessValues) }}
             disabled={(status === "compiling") || (status === "computing")}
             data-id="compute_witness_btn"
           >

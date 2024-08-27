@@ -19,12 +19,20 @@ export const compileCircuit = async (plugin: CircomPluginClient, appState: AppSt
   }
 }
 
-export const computeWitness = async (plugin: CircomPluginClient, status: string, witnessValues: Record<string, string>) => {
+export const computeWitness = async (plugin: CircomPluginClient, appState: AppState, dispatch: ICircuitAppContext['dispatch'], status: string, witnessValues: Record<string, string>) => {
   try {
     if (status !== "computing") {
       const input = JSON.stringify(witnessValues)
+      const witness = await plugin.computeWitness(input)
 
-      await plugin.computeWitness(input)
+      if (appState.exportWtnsJson) {
+        const wtns = await snarkjs.wtns.exportJson(witness)
+        const wtnsJson = wtns.map(wtn => wtn.toString())
+        const fileName = extractNameFromKey(appState.filePath)
+        const writePath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.wtn.json')}`
+
+        await plugin.call('fileManager', 'writeFile', writePath, JSON.stringify(wtnsJson, null, 2))
+      }
     } else {
       console.log('Existing witness computation in progress')
     }
@@ -38,6 +46,8 @@ export const computeWitness = async (plugin: CircomPluginClient, status: string,
 export const runSetupAndExport = async (plugin: CircomPluginClient, appState: AppState, dispatch: ICircuitAppContext['dispatch']) => {
   try {
     dispatch({ type: 'SET_COMPILER_STATUS', payload: 'exporting' })
+    dispatch({ type: 'SET_SETUP_EXPORT_FEEDBACK', payload: null })
+    plugin.emit('statusChanged', { key: 'none' })
     const ptau_final = `https://ipfs-cluster.ethdevops.io/ipfs/${appState.ptauList.find(ptau => ptau.name === appState.ptauValue)?.ipfsHash}`
     await plugin.generateR1cs(appState.filePath, { version: appState.version, prime: appState.primeValue })
 
@@ -91,6 +101,8 @@ export const runSetupAndExport = async (plugin: CircomPluginClient, appState: Ap
 export const generateProof = async (plugin: CircomPluginClient, appState: AppState, dispatch: ICircuitAppContext['dispatch']) => {
   try {
     dispatch({ type: 'SET_COMPILER_STATUS', payload: 'proving' })
+    dispatch({ type: 'SET_PROOF_FEEDBACK', payload: null })
+    plugin.emit('statusChanged', { key: 'none' })
     const fileName = extractNameFromKey(appState.filePath)
     const r1csPath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.r1cs')}`
     // @ts-ignore
@@ -110,6 +122,7 @@ export const generateProof = async (plugin: CircomPluginClient, appState: AppSta
       const { proof, publicSignals } = await snarkjs.groth16.prove(zkey_final, wtns, zkLogger(plugin, dispatch, 'SET_PROOF_FEEDBACK'))
       const verified = await snarkjs.groth16.verify(vKey, publicSignals, proof, zkLogger(plugin, dispatch, 'SET_PROOF_FEEDBACK'))
 
+      plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/groth16/zk/build/proof.json`, JSON.stringify(proof, null, 2))
       plugin.call('terminal', 'log', { type: 'log', value: 'zk proof validity ' + verified })
       if (appState.exportVerifierCalldata) {
         const calldata = await snarkjs.groth16.exportSolidityCallData(proof, publicSignals)
@@ -120,6 +133,7 @@ export const generateProof = async (plugin: CircomPluginClient, appState: AppSta
       const { proof, publicSignals } = await snarkjs.plonk.prove(zkey_final, wtns, zkLogger(plugin, dispatch, 'SET_PROOF_FEEDBACK'))
       const verified = await snarkjs.plonk.verify(vKey, publicSignals, proof, zkLogger(plugin, dispatch, 'SET_PROOF_FEEDBACK'))
 
+      plugin.call('fileManager', 'writeFile', `${extractParentFromKey(appState.filePath)}/plonk/zk/build/proof.json`, JSON.stringify(proof, null, 2))
       plugin.call('terminal', 'log', { type: 'log', value: 'zk proof validity ' + verified })
       if (appState.exportVerifierCalldata) {
         const calldata = await snarkjs.plonk.exportSolidityCallData(proof, publicSignals)

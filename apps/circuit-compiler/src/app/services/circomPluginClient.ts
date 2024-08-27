@@ -237,7 +237,7 @@ export class CircomPluginClient extends PluginClient {
     }
   }
 
-  async computeWitness (input: string): Promise<void> {
+  async computeWitness (input: string): Promise<Uint8Array> {
     this.internalEvents.emit('circuit_computing_witness_start')
     this.emit('statusChanged', { key: 'loading', title: 'Computing...', type: 'info' })
     const wasmPath = this.lastCompiledCircuitPath
@@ -252,6 +252,7 @@ export class CircomPluginClient extends PluginClient {
     this._paq.push(['trackEvent', 'circuit-compiler', 'computeWitness', 'Witness computing successful'])
     this.internalEvents.emit('circuit_computing_witness_done')
     this.emit('statusChanged', { key: 'succeed', title: 'witness computed successfully', type: 'success' })
+    return witness
   }
 
   async resolveDependencies(filePath: string, fileContent: string, output?: Record<string, string>, depPath: string = '', blackPath: string[] = []): Promise<Record<string, string>> {
