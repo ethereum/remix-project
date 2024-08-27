@@ -14,7 +14,8 @@ const _paq = window._paq = window._paq || []
 interface RemixUIGridSectionProps {
   plugin: any
   title?: string
-  onClickTitle?: () => void
+  onClick?: () => void
+  onClickLabel?: string
   tooltipTitle?: string
   hScrollable: boolean
   classList?: string
@@ -64,9 +65,9 @@ export const RemixUIGridSection = (props: RemixUIGridSectionProps) => {
       data-id={"remixUIGS" + props.title}
       style={{ overflowX: 'auto' }}
     >
-      <div className="d-flex flex-column w-100 remixui_grid_section">
+      <div className="w-100 remixui_grid_section">
         { props.title && <h6 className='mt-1 mb-0 align-items-left '>{ props.title }</h6> }
-
+        { props.onClick && <span style={{ cursor: 'pointer' }} className='mt-2 btn btn-sm border align-items-left' onClick={() => props.onClick() }>{ props.onClickLabel }</span> }
         <div className={(props.hScrollable) ? `d-flex flex-row pb-2  overflow-auto` : `d-flex flex-wrap`}>
           { !hasChildCell(children) && <span> No items found </span>}
           { props.children }
