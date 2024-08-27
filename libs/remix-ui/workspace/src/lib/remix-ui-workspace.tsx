@@ -984,6 +984,35 @@ export function Workspace() {
       </>
     )
   }
+  const [togglerText, setTogglerText] = useState<'Connecting' | 'Connected to Local FileSystem'>('Connecting')
+
+  useEffect(() => {
+    setTimeout(() => {
+      setTogglerText('Connected to Local FileSystem')
+    }, 1000)
+  }, [selectedWorkspace])
+
+  const WorkspaceDropdownToggle = () => {
+    const [togglerText, setTogglerText] = useState<'Connecting' | 'Connected to Local FileSystem'>('Connecting')
+
+    useEffect(() => {
+      setTimeout(() => {
+        setTogglerText('Connected to Local FileSystem')
+      }, 1000)
+    }, [selectedWorkspace])
+
+    return (
+      <Dropdown.Toggle
+        as={CustomToggle}
+        id="dropdown-custom-components"
+        className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1"
+        icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
+      >
+        {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
+      </Dropdown.Toggle>
+    )
+  }
+
   return (
     <div className="d-flex flex-column justify-content-between h-100">
       <div
@@ -1091,7 +1120,7 @@ export function Workspace() {
                         className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1"
                         icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
                       >
-                        {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? 'Connected to Local FileSystem' : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
+                        {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
                       </Dropdown.Toggle>
                       <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
                         {
