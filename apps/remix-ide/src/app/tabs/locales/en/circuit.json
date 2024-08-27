@@ -21,5 +21,6 @@
   "circuit.exportVerifierContract": "Export verifier contract",
   "circuit.exportVerificationKey": "Export verification key",
   "circuit.exportVerifierCalldata": "Export verifier calldata",
+  "circuit.exportWtnsJson": "Export witness as JSON",
   "circuit.runSetup": "Run setup"
 }
