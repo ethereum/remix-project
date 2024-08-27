@@ -55,8 +55,4 @@ export class CompilerClientApi extends CompilerApiMixin(PluginClient) implements
   getFileManagerMode () {
     return 'browser'
   }
-
-  isDesktop() {
-    return false
-  }
 }

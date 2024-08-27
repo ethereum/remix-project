@@ -18,7 +18,6 @@ export interface ICompilerApi {
     setAppParameter: (name: string, value: string | boolean) => void
 
     getFileManagerMode: () => string
-    isDesktop: () => boolean
     setCompilerConfig: (settings: any) => void
 
     getCompilationResult: () => any
