@@ -343,8 +343,9 @@ module.exports = {
     },
     // pagination test
     'clone repo #group3': function (browser: NightwatchBrowser) {
-        browser.
-            clickLaunchIcon('dgit')
+        browser
+            .waitForElementVisible('*[data-id="clone-panel"]')
+            .click('*[data-id="clone-panel"]')
             .waitForElementVisible('*[data-id="clone-url"]')
             .setValue('*[data-id="clone-url"]', 'https://github.com/ethereum/awesome-remix')
             .waitForElementVisible('*[data-id="clone-branch"]')
@@ -357,6 +358,8 @@ module.exports = {
     'Update settings for git #group3': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
+            .waitForElementVisible('*[data-id="github-panel"]')
+            .click('*[data-id="github-panel"]')
             .setValue('*[data-id="githubToken"]', 'invalidtoken')
             .setValue('*[data-id="gitubUsername"]', 'git')
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
