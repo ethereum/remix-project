@@ -344,6 +344,7 @@ module.exports = {
     // pagination test
     'clone repo #group3': function (browser: NightwatchBrowser) {
         browser
+            .clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="clone-panel"]')
             .click('*[data-id="clone-panel"]')
             .waitForElementVisible('*[data-id="clone-url"]')
