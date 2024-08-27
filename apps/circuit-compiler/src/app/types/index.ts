@@ -39,6 +39,7 @@ export interface ActionPayloadTypes {
   SET_EXPORT_VERIFICATION_CONTRACT: boolean,
   SET_EXPORT_VERIFICATION_KEY: boolean,
   SET_EXPORT_VERIFIER_CALLDATA: boolean,
+  SET_EXPORT_WTNS_JSON: boolean,
   SET_SETUP_EXPORT_STATUS: SetupExportStatus,
   SET_VERIFICATION_KEY: Record<string, any>,
   SET_ZKEY: any
@@ -71,6 +72,7 @@ export interface AppState {
   exportVerificationContract: boolean,
   exportVerificationKey: boolean,
   exportVerifierCalldata: boolean,
+  exportWtnsJson: boolean,
   verificationKey: Record<string, any>,
   zKey: Uint8Array
 }
