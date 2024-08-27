@@ -46,6 +46,8 @@ export const computeWitness = async (plugin: CircomPluginClient, appState: AppSt
 export const runSetupAndExport = async (plugin: CircomPluginClient, appState: AppState, dispatch: ICircuitAppContext['dispatch']) => {
   try {
     dispatch({ type: 'SET_COMPILER_STATUS', payload: 'exporting' })
+    dispatch({ type: 'SET_SETUP_EXPORT_FEEDBACK', payload: null })
+    plugin.emit('statusChanged', { key: 'none' })
     const ptau_final = `https://ipfs-cluster.ethdevops.io/ipfs/${appState.ptauList.find(ptau => ptau.name === appState.ptauValue)?.ipfsHash}`
     await plugin.generateR1cs(appState.filePath, { version: appState.version, prime: appState.primeValue })
 
@@ -99,6 +101,8 @@ export const runSetupAndExport = async (plugin: CircomPluginClient, appState: Ap
 export const generateProof = async (plugin: CircomPluginClient, appState: AppState, dispatch: ICircuitAppContext['dispatch']) => {
   try {
     dispatch({ type: 'SET_COMPILER_STATUS', payload: 'proving' })
+    dispatch({ type: 'SET_PROOF_FEEDBACK', payload: null })
+    plugin.emit('statusChanged', { key: 'none' })
     const fileName = extractNameFromKey(appState.filePath)
     const r1csPath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.r1cs')}`
     // @ts-ignore

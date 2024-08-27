@@ -21,7 +21,7 @@ export const appInitialState: AppState = {
   ptauList: PTAU_LIST,
   ptauValue: "final_14.ptau",
   exportVerificationContract: true,
-  exportVerificationKey: false,
+  exportVerificationKey: true,
   exportVerifierCalldata: true,
   exportWtnsJson: false,
   verificationKey: null,
