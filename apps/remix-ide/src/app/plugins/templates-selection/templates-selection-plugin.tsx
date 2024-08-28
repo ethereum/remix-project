@@ -147,7 +147,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
           ['ERC721', 'secondary'],
           ['ERC1155', 'primary'],
         ]}
-        title='Template explorer'
+        title='Workspace Explorer'
         description="Select a template to create a workspace or to add it to current workspace"
       >
         {
@@ -175,16 +175,16 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                       </div>
                       <div className='d-flex flex-wrap'>
                         {(item.opts && item.opts.upgradeable && item.opts.upgradeable === 'uupds') && <span className='badgeForCell badge text-secondary'>Upgradeable-UUPS</span>}
-                        {(item.opts && item.opts.mintable) && <span className='badgeForCell text-secondary'>mintable</span>}
-                        {(item.opts && item.opts.burnable) && <span className='badgeForCell text-secondary'>burnable</span>}
-                        {(item.opts && item.opts.pausable) && <span className='badgeForCell text-secondary'>pausable</span>}
+                        {(item.opts && item.opts.mintable) && <span className='badgeForCell text-secondary'>Mintable</span>}
+                        {(item.opts && item.opts.burnable) && <span className='badgeForCell text-secondary'>Burnable</span>}
+                        {(item.opts && item.opts.pausable) && <span className='badgeForCell text-secondary'>Pausable</span>}
                       </div>
                     </div>
                     <div className='align-items-center justify-content-between w-100 d-flex pt- flex-row'>
                       {(!template.IsArtefact || !item.isArtefact) && <CustomTooltip
                         placement="auto"
                         tooltipId={`overlay-tooltip-new${item.name}`}
-                        tooltipText="Create a new workspace"
+                        tooltipText="Create a new Workspace"
                       >
                         <span
                           data-id={`create-${item.value}${item.opts ? JSON.stringify(item.opts) : ''}`}
@@ -197,14 +197,14 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                       <CustomTooltip
                         placement="auto"
                         tooltipId={`overlay-tooltip-add${item.name}`}
-                        tooltipText="Add template files to current workspace"
+                        tooltipText="Add Template Files to Current Workspace"
                       >
                         <span
                           data-id={`add-${item.value}`}
                           onClick={async () => addToCurrentWorkspace(item)}
                           className="btn btn-sm border"
                         >
-                          Add to current
+                          Add to Current
                         </span>
                       </CustomTooltip>
                     </div>
