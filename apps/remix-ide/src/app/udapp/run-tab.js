@@ -165,7 +165,7 @@ export class RunTab extends ViewPlugin {
       'foundry-provider': ['assets/img/foundry.png']
     }
 
-    const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '') => {
+    const addProvider = async (position, name, displayName, isInjected, isVM, fork = '', dataId = '', title = '', forkedVM = false) => {
       await this.call('blockchain', 'addProvider', {
         position,
         options: {},
@@ -176,6 +176,7 @@ export class RunTab extends ViewPlugin {
         logos: logos[name],
         fork,
         isInjected,
+        isForkedVM: forkedVM,
         isVM,
         title,
         init: async function () {
@@ -237,9 +238,9 @@ export class RunTab extends ViewPlugin {
     await addProvider(51, 'vm-paris', 'Remix VM (Paris)', false, true, 'paris', 'settingsVMParisMode', titleVM)
     await addProvider(52, 'vm-london', 'Remix VM (London)', false, true, 'london', 'settingsVMLondonMode', titleVM)
     await addProvider(53, 'vm-berlin', 'Remix VM (Berlin)', false, true, 'berlin', 'settingsVMBerlinMode', titleVM)
-    await addProvider(2, 'vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'cancun', 'settingsVMMainnetMode', titleVM)
-    await addProvider(3, 'vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'cancun', 'settingsVMSepoliaMode', titleVM)
-    await addProvider(4, 'vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM)
+    await addProvider(2, 'vm-mainnet-fork', 'Remix VM - Mainnet fork', false, true, 'cancun', 'settingsVMMainnetMode', titleVM, true)
+    await addProvider(3, 'vm-sepolia-fork', 'Remix VM - Sepolia fork', false, true, 'cancun', 'settingsVMSepoliaMode', titleVM, true)
+    await addProvider(4, 'vm-custom-fork', 'Remix VM - Custom fork', false, true, '', 'settingsVMCustomMode', titleVM, true)
 
     // wallet connect
     await addProvider(6, 'walletconnect', 'WalletConnect', false, false)
