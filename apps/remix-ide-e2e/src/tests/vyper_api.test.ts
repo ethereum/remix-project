@@ -122,6 +122,7 @@ module.exports = {
       .clickLaunchIcon('vyper')
       // @ts-ignore
       .frame(0)
+      .waitForElementVisible('[data-id="compile"]')
       .click('[data-id="compile"]')
       .waitForElementVisible({
         selector:'[data-id="compilation-details"]',
