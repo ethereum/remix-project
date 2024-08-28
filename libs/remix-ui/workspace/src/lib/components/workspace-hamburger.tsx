@@ -27,6 +27,16 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
   return (
     <>
       <HamburgerMenuItem
+        kind="createTemplate"
+        fa="far fa-plus"
+        hideOption={hideWorkspaceOptions}
+        actionOnClick={() => {
+          props.createWorkspace()
+          props.hideIconsMenu(!showIconsMenu)
+        }}
+        platforms={[appPlatformTypes.web]}
+      ></HamburgerMenuItem>
+      <HamburgerMenuItem
         kind="create"
         fa="far fa-plus"
         hideOption={hideWorkspaceOptions}
