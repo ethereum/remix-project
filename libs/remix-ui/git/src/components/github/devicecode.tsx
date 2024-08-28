@@ -81,7 +81,7 @@ export const GetDeviceCode = () => {
         <label className="text-uppercase">Connect to GitHub</label>
         <button className='btn btn-secondary mt-1 w-100' onClick={async () => {
           await getDeviceCodeFromGitHub()
-        }}><i className="fab fa-github mr-1"></i>Login in with github</button></>
+        }}><i className="fab fa-github mr-1"></i>Login with GitHub</button></>
       }
       {gitHubResponse && !authorized &&
         <div className="pt-2">
