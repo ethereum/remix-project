@@ -18,20 +18,36 @@ module.exports = {
             clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="initgit-btn"]')
             .click('*[data-id="initgit-btn"]')
+    },
+    'launch github login via FE #group1 #group2': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('filePanel')
+            .waitForElementVisible('*[data-id="filepanel-login-github"]')
+            .click('*[data-id="filepanel-login-github"]')
+    },
+    'login to github #group1 #group2': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="github-panel"]')
+            .waitForElementVisible('*[data-id="gitubUsername"]')
             .setValue('*[data-id="githubToken"]', process.env.dgit_token)
             .setValue('*[data-id="gitubUsername"]', 'git')
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .click('*[data-id="saveGitHubCredentials"]')
     },
     'check if the settings are loaded #group1 #group2': function (browser: NightwatchBrowser) {
-        browser.
-            click('*[data-id="github-panel"]')
+        browser
             .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
             .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
             .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
     },
+    'check the FE for the auth user #group1 #group2': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('filePanel')
+            .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
+    },
     'clone a repository #group1': function (browser: NightwatchBrowser) {
         browser
+            .clickLaunchIcon('dgit')
             .click('*[data-id="clone-panel"]')
             .click({
                 selector: '//*[@data-id="clone-panel-content"]//*[@data-id="fetch-repositories"]',
@@ -191,10 +207,25 @@ module.exports = {
                 locateStrategy: 'xpath'
             })
     },
-
+    'disconnect github #group1': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="github-panel"]')
+            .click('*[data-id="github-panel"]')
+            .waitForElementVisible('*[data-id="disconnect-github"]')
+            .click('*[data-id="disconnect-github"]')
+            .waitForElementNotPresent('*[data-id="connected-as-bunsenstraat"]')
+    },
+    'check the FE for the disconnected auth user #group1': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('filePanel')
+            .waitForElementNotPresent('*[data-id="filepanel-connected-img-bunsenstraat"]')
+            .waitForElementVisible('*[data-id="filepanel-login-github"]')
+    },
     'add a remote #group2': function (browser: NightwatchBrowser) {
         browser
             .pause(1000)
+            .clickLaunchIcon('dgit')
+            .waitForElementVisible('*[data-id="remotes-panel"]')
             .click('*[data-id="remotes-panel"]')
             .click({
                 selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="fetch-repositories"]',
@@ -312,8 +343,10 @@ module.exports = {
     },
     // pagination test
     'clone repo #group3': function (browser: NightwatchBrowser) {
-        browser.
-            clickLaunchIcon('dgit')
+        browser
+            .clickLaunchIcon('dgit')
+            .waitForElementVisible('*[data-id="clone-panel"]')
+            .click('*[data-id="clone-panel"]')
             .waitForElementVisible('*[data-id="clone-url"]')
             .setValue('*[data-id="clone-url"]', 'https://github.com/ethereum/awesome-remix')
             .waitForElementVisible('*[data-id="clone-branch"]')
@@ -326,6 +359,8 @@ module.exports = {
     'Update settings for git #group3': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
+            .waitForElementVisible('*[data-id="github-panel"]')
+            .click('*[data-id="github-panel"]')
             .setValue('*[data-id="githubToken"]', 'invalidtoken')
             .setValue('*[data-id="gitubUsername"]', 'git')
             .setValue('*[data-id="githubEmail"]', 'git@example.com')

@@ -1,6 +1,7 @@
 import React from 'react'
-import { AlertModal, AppModal } from '../interface'
+import { AlertModal, AppModal, AppState } from '../interface'
 import { ModalInitialState } from '../state/modals'
+import { AppAction } from '../actions/app'
 
 export type appProviderContextType = {
   settings: any,
@@ -8,6 +9,8 @@ export type appProviderContextType = {
   showEnter: boolean,
   appManager: any
   modal: any
+  appState: AppState
+  appStateDispatch: React.Dispatch<AppAction>
 }
 
 export enum appPlatformTypes {
