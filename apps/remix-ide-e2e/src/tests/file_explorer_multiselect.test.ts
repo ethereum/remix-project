@@ -56,7 +56,7 @@ module.exports = {
         })
     }
   },
-  'should drag and drop multiple files and folders in file explorer to contracts folder #group3': function (browser: NightwatchBrowser) {
+  'should drag and drop multiple files and folders in file explorer to contracts folder #flaky #group3': function (browser: NightwatchBrowser) {
     const selectedElements = []
     if (browser.options.desiredCapabilities?.browserName === 'firefox') {
       console.log('Skipping test for firefox')
