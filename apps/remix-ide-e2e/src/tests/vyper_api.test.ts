@@ -20,7 +20,7 @@ module.exports = {
       .frame(0)
   },
 
-  'Should clone the Vyper repo #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should clone the Vyper repo #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('button[data-id="add-repository"]')
       .click('button[data-id="add-repository"]')
