@@ -398,7 +398,7 @@ jobs:
 
   tests-passed:
     machine:
-      image: ubuntu-2004:202010-01
+      image: default
     steps:
       - run: echo done
 
