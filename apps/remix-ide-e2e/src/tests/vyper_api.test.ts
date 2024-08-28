@@ -32,7 +32,7 @@ module.exports = {
         timeout: 120000
       })
       .waitForElementVisible({
-        selector: "//*[@data-id='treeViewLitreeViewItemsrc' and contains(.,'src')]",
+        selector: "//*[contains(., 'Vyper repository cloned')]",
         locateStrategy: 'xpath',
         timeout: 120000
       })
