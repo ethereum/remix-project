@@ -7,6 +7,7 @@ import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, 
 import { Profile } from "@remixproject/plugin-utils";
 import { CustomRemixApi } from "@remix-api";
 import { statusChanged } from "./pluginActions";
+import { AppAction } from "@remix-ui/app";
 
 let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
 let callBackEnabled: boolean = false
@@ -34,13 +35,13 @@ class AsyncDebouncedQueue {
   }
 }
 
-export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<gitActionDispatch>, loaderDispatcher: React.Dispatch<any>, setAtivePanel: React.Dispatch<React.SetStateAction<string>>) => {
+export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<gitActionDispatch>, appDispatcher: React.Dispatch<AppAction>, loaderDispatcher: React.Dispatch<any>, setAtivePanel: React.Dispatch<React.SetStateAction<string>>) => {
   plugin = viewPlugin
   gitDispatch = gitDispatcher
   loaderDispatch = loaderDispatcher
   loadFileQueue = new AsyncDebouncedQueue()
 
-  setPlugin(viewPlugin, gitDispatcher)
+  setPlugin(viewPlugin, gitDispatcher, appDispatcher)
 
   plugin.on("fileManager", "fileSaved", async (file: string) => {
     loadFileQueue.enqueue(async () => {

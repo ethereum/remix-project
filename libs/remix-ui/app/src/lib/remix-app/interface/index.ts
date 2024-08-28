@@ -1,3 +1,4 @@
+import { GitHubUser } from '@remix-ui/git'
 import { ModalTypes } from '../types'
 
 export type ValidationResult = {
@@ -43,5 +44,9 @@ export interface forceChoiceModal {
   id: string
   title?: string,
   message: string | JSX.Element,
+}
+
+export interface AppState {
+    gitHubUser: GitHubUser
 }
 

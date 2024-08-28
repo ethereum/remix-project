@@ -423,6 +423,9 @@ module.exports = {
       clickLaunchIcon('dgit')
       .waitForElementVisible('*[data-id="initgit-btn"]')
       .click('*[data-id="initgit-btn"]')
+      .waitForElementVisible('*[data-id="github-panel"]')
+      .click('*[data-id="github-panel"]')
+      .waitForElementVisible('*[data-id="gitubUsername"]')
       .setValue('*[data-id="gitubUsername"]', 'git')
       .setValue('*[data-id="githubEmail"]', 'git@example.com')
       .click('*[data-id="saveGitHubCredentials"]')
@@ -430,6 +433,8 @@ module.exports = {
   },
   'check source controle panel #group5': function (browser: NightwatchBrowser) {
     browser
+      .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
+      .click('*[data-id="sourcecontrol-panel"]')
       .waitForElementVisible({
         selector: "//*[@data-status='new-untracked' and @data-file='/tests/MyToken_test.sol']",
         locateStrategy: 'xpath'
