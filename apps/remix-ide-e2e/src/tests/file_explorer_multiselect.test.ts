@@ -41,17 +41,24 @@ module.exports = {
         .perform((done) => {
           browser.findElement({ selector: '//*[@data-id="treeViewLitreeViewItemtests"]', locateStrategy: 'xpath' },
             (el: any) => {
-              const id = (el as any).value.getId()
-              browser
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests"]')
-                .dragAndDrop('li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', id)
-                .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-                .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests/1_Storage.sol"]')
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests/2_Owner.sol"]')
-                .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
-                .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
-                .perform(() => done())
+              try {
+                const id = (el as any).value.getId();
+                browser
+                  .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests"]')
+                  .dragAndDrop('li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', id)
+                  .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+                  .execute(function () {
+                    (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click();
+                  })
+                  .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests/1_Storage.sol"]')
+                  .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests/2_Owner.sol"]')
+                  .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
+                  .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
+                  .perform(() => done())
+              } catch (error) {
+                console.error('An error occurred:', error)
+                done(error);
+              }
             })
         })
     }
@@ -77,18 +84,25 @@ module.exports = {
         .perform((done) => {
           browser.findElement({ selector: '//*[@data-id="treeViewLitreeViewItemcontracts"]', locateStrategy: 'xpath' },
             (el: any) => {
-              const id = (el as any).value.getId()
-              browser
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts"]')
-                .dragAndDrop('li[data-id="treeViewLitreeViewItemtests"]', id)
-                .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-                .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/tests"]', 5000)
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/README.txt"]', 5000)
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/scripts"]', 5000)
-                .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemtests"]')
-                .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemREADME.txt"]')
-                .perform(() => done())
+              try {
+                const id = (el as any).value.getId();
+                browser
+                  .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts"]')
+                  .dragAndDrop('li[data-id="treeViewLitreeViewItemtests"]', id)
+                  .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+                  .execute(function () {
+                    (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click();
+                  })
+                  .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/tests"]', 5000)
+                  .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/README.txt"]', 5000)
+                  .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/scripts"]', 5000)
+                  .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemtests"]')
+                  .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemREADME.txt"]')
+                  .perform(() => done())
+              } catch (error) {
+                console.error('An error occurred:', error)
+                done(error)
+              }
             })
         })
     }
