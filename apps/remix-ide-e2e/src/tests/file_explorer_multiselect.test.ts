@@ -57,7 +57,7 @@ module.exports = {
                   .perform(() => done())
               } catch (error) {
                 console.error('An error occurred:', error)
-                done(error);
+                browser.perform(() =>done(error))
               }
             })
         })
@@ -101,7 +101,7 @@ module.exports = {
                   .perform(() => done())
               } catch (error) {
                 console.error('An error occurred:', error)
-                done(error)
+                browser.perform(() =>done(error))
               }
             })
         })
