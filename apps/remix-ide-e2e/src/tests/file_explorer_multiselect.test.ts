@@ -20,9 +20,9 @@ module.exports = {
         selectedElements.push(el)
       })
     browser.selectFiles(selectedElements)
-      .assert.visible({ selector: '.bg-secondary[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', abortOnFailure: false })
-      .assert.visible({ selector: '.bg-secondary[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]', abortOnFailure: false })
-      .assert.visible({ selector: '.bg-secondary[data-id="treeViewLitreeViewItemtests"]', abortOnFailure: false })
+      .assert.visible('.bg-secondary[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
+      .assert.visible('.bg-secondary[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
+      .assert.visible('.bg-secondary[data-id="treeViewLitreeViewItemtests"]')
   },
 
   'Should drag and drop multiple files in file explorer to tests folder #group1': function (browser: NightwatchBrowser) {
