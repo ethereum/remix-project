@@ -7,7 +7,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Should select multiple items in file explorer #flaky #group1': function (browser: NightwatchBrowser) {
+  'Should select multiple items in file explorer  #group1': function (browser: NightwatchBrowser) {
     const selectedElements = []
     browser
       .openFile('contracts')
@@ -58,7 +58,7 @@ module.exports = {
     }
   },
 
-  'should drag and drop multiple files and folders in file explorer to contracts folder #flaky #group3': function (browser: NightwatchBrowser) {
+  'should drag and drop multiple files and folders in file explorer to contracts folder  #group3': function (browser: NightwatchBrowser) {
     const selectedElements = []
     if (browser.options.desiredCapabilities?.browserName === 'firefox') {
       console.log('Skipping test for firefox')
