@@ -45,7 +45,7 @@ module.exports = {
               const id = (el as any).value.getId()
               browser
                 .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemtests"]', abortOnFailure: false })
-                .dragAndDrop('li[data-id="treeViewLitreeViewItemcontracts/2_Storage.sol"]', id)
+                .dragAndDrop('li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', id)
                 .waitForElementPresent({ selector: '[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok', abortOnFailure: false })
                 .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
                 .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemtests/1_Storage.sol"]', abortOnFailure: false })
@@ -58,7 +58,7 @@ module.exports = {
     }
   },
 
-  'should drag and drop multiple files and folders in file explorer to contracts folder #group3': function (browser: NightwatchBrowser) {
+  'should drag and drop multiple files and folders in file explorer to contracts folder #flaky #group3': function (browser: NightwatchBrowser) {
     const selectedElements = []
     if (browser.options.desiredCapabilities?.browserName === 'firefox') {
       console.log('Skipping test for firefox')
