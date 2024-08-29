@@ -7,7 +7,7 @@ module.exports = {
     init(browser, done)
   },
 
-  'Should select multiple items in file explorer  #group1': function (browser: NightwatchBrowser) {
+  'Should select multiple items in file explorer #group1': function (browser: NightwatchBrowser) {
     const selectedElements = []
     browser
       .openFile('contracts')
@@ -24,7 +24,6 @@ module.exports = {
       .assert.visible('.bg-secondary[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
       .assert.visible('.bg-secondary[data-id="treeViewLitreeViewItemtests"]')
   },
-
   'Should drag and drop multiple files in file explorer to tests folder #group1': function (browser: NightwatchBrowser) {
     const selectedElements = []
     if (browser.options.desiredCapabilities?.browserName === 'firefox') {
