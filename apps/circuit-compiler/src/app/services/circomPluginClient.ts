@@ -62,81 +62,76 @@ export class CircomPluginClient extends PluginClient {
   }
 
   async parse(path: string, fileContent?: string): Promise<[CompilerReport[], Record<string, string>]> {
-    if (isElectron()) {
+    if (!fileContent) {
       // @ts-ignore
-      return await this.call('circom', 'parse', path)
-    } else {
-      if (!fileContent) {
+      fileContent = await this.call('fileManager', 'readFile', path)
+    }
+    this.lastParsedFiles = await this.resolveDependencies(path, fileContent)
+    const parsedOutput = this.compiler ? this.compiler.parse(path, this.lastParsedFiles) : parse(path, this.lastParsedFiles)
+
+    try {
+      const result: CompilerReport[] = JSON.parse(parsedOutput.report())
+      const mapReportFilePathToId: Record<string, string> = {}
+
+      if (result.length === 0) {
         // @ts-ignore
-        fileContent = await this.call('fileManager', 'readFile', path)
-      }
-      this.lastParsedFiles = await this.resolveDependencies(path, fileContent)
-      const parsedOutput = this.compiler ? this.compiler.parse(path, this.lastParsedFiles) : parse(path, this.lastParsedFiles)
+        await this.call('editor', 'clearErrorMarkers', [path])
+      } else {
+        const markers = []
 
-      try {
-        const result: CompilerReport[] = JSON.parse(parsedOutput.report())
-        const mapReportFilePathToId: Record<string, string> = {}
+        for (const report of result) {
+          for (const label in report.labels) {
+            const file_id = report.labels[label].file_id
 
-        if (result.length === 0) {
-          // @ts-ignore
-          await this.call('editor', 'clearErrorMarkers', [path])
-        } else {
-          const markers = []
-
-          for (const report of result) {
-            for (const label in report.labels) {
-              const file_id = report.labels[label].file_id
-
-              mapReportFilePathToId[file_id] = parsedOutput.get_report_name(parseInt(file_id))
-              if (file_id === '0') {
+            mapReportFilePathToId[file_id] = parsedOutput.get_report_name(parseInt(file_id))
+            if (file_id === '0') {
+              // @ts-ignore
+              const startPosition: { lineNumber: number; column: number } = await this.call(
+                'editor',
                 // @ts-ignore
-                const startPosition: { lineNumber: number; column: number } = await this.call(
-                  'editor',
-                  // @ts-ignore
-                  'getPositionAt',
-                  report.labels[label].range.start
-                )
+                'getPositionAt',
+                report.labels[label].range.start
+              )
+              // @ts-ignore
+              const endPosition: { lineNumber: number; column: number } = await this.call(
+                'editor',
                 // @ts-ignore
-                const endPosition: { lineNumber: number; column: number } = await this.call(
-                  'editor',
-                  // @ts-ignore
-                  'getPositionAt',
-                  report.labels[label].range.end
-                )
+                'getPositionAt',
+                report.labels[label].range.end
+              )
 
-                markers.push({
-                  message: report.message,
-                  severity: report.type.toLowerCase(),
-                  position: {
-                    start: {
-                      line: startPosition.lineNumber,
-                      column: startPosition.column,
-                    },
-                    end: {
-                      line: endPosition.lineNumber,
-                      column: endPosition.column,
-                    },
+              markers.push({
+                message: report.message,
+                severity: report.type.toLowerCase(),
+                position: {
+                  start: {
+                    line: startPosition.lineNumber,
+                    column: startPosition.column,
                   },
-                  file: path,
-                })
-              }
+                  end: {
+                    line: endPosition.lineNumber,
+                    column: endPosition.column,
+                  },
+                },
+                file: path,
+              })
             }
-          }
-
-          if (markers.length > 0) {
-            // @ts-ignore
-            await this.call('editor', 'addErrorMarker', markers)
-          } else {
-            // @ts-ignore
-            await this.call('editor', 'clearErrorMarkers', [path])
-            this.emit('statusChanged', { key: 'none' })
           }
         }
 
-        return [result, mapReportFilePathToId]
-      } catch (e) {
-        throw new Error(e)
+        if (markers.length > 0) {
+          // @ts-ignore
+          await this.call('editor', 'addErrorMarker', markers)
+        } else {
+          // @ts-ignore
+          await this.call('editor', 'clearErrorMarkers', [path])
+          this.emit('statusChanged', { key: 'none' })
+        }
       }
+
+      return [result, mapReportFilePathToId]
+    } catch (e) {
+      throw new Error(e)
     }
   }
 
@@ -314,7 +309,7 @@ export class CircomPluginClient extends PluginClient {
                   path = `.deps/https/raw.githubusercontent.com/iden3/circomlib/${version[0]}/${splitInclude.slice(2).join('/')}`
                   dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
                 } else {
-                  path = `.deps/https/raw.githubusercontent.com/iden3/circomlib/master/${splitInclude.slice(1).join('/')}`
+                  path = `.deps/https/raw.githubusercontent.com/iden3/circomlib/${splitInclude.slice(1).join('/')}`
                   dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
                 }
               } catch (e) {
@@ -324,7 +319,15 @@ export class CircomPluginClient extends PluginClient {
                   dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
                 } else {
                   path = `https://raw.githubusercontent.com/iden3/circomlib/master/${splitInclude.slice(1).join('/')}`
-                  dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
+                  const { content } = await this.call('contentImport', 'resolve', path)
+
+                  if (content) {
+                    dependencyContent = await this.call('contentImport', 'resolveAndSave', path, null)
+                    const savePath = `.deps/https/raw.githubusercontent.com/iden3/${include}`
+
+                    // @ts-ignore
+                    await this.call('fileManager', 'writeFile', savePath, dependencyContent)
+                  }
                 }
               }
             } else {
