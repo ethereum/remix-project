@@ -219,7 +219,7 @@ export const populateWorkspace = async (
         dispatch(cloneRepositorySuccess())
       }).catch((e) => {
         dispatch(cloneRepositorySuccess())
-        plugin.call('notification', 'toast', 'error adding template ' + e.message || e)
+        plugin.call('notification', 'toast', 'error adding template ' + (e.message || e))
       })
     }, 5000)
   } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
