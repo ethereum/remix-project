@@ -45,16 +45,9 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
     if (!this.isCircomInstalled) await this.install()
     // @ts-ignore
     const wd = await this.call('fs', 'getWorkingDir')
+    const depPath = path.join(wd, '.deps/https/raw.githubusercontent.com/iden3/')
+
     filePath = path.join(wd, filePath)
-    console.log('Running circom compilation for ', filePath)
-    await circomCli.run(filePath)
-  }
-
-  parse(): void {
-    console.log('parsing circom electron plugin...')
-  }
-
-  generateR1cs(): void {
-    console.log('generating r1cs circom electron plugin...')
+    await circomCli.run(`${filePath} -l ${depPath}`)
   }
 }
