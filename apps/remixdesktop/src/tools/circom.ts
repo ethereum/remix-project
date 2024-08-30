@@ -84,9 +84,19 @@ export const circomCli = {
 
   async run (filePath: string, options?: Record<string, string>) {
     const cmd = `${CIRCOM_INSTALLATION_PATH} ${filePath} ${Object.keys(options || {}).map((key) => `--${key} ${options[key]}`).join(' ')}`
+    console.log('cmd: ', cmd)
     const { stdout, stderr } = await execAsync(cmd)
 
     if (stderr) return console.error(stderr)
     console.log(stdout)
   }
+}
+
+export const extractParentFromKey = (key: string):string => {
+  if (!key) return
+  const keyPath = key.split('/')
+
+  keyPath.pop()
+
+  return keyPath.join('/')
 }

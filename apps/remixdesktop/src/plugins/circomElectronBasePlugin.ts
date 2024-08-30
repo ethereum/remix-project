@@ -1,6 +1,6 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-import { circomCli } from "../tools/circom"
+import { circomCli, extractParentFromKey } from "../tools/circom"
 import path from "path"
 
 const profile: Profile = {
@@ -22,7 +22,7 @@ const clientProfile: Profile = {
   name: 'circom',
   displayName: 'circom',
   description: 'Circom Language Compiler',
-  methods: ['parse', 'compile', 'generateR1cs']
+  methods: ['install', 'run',]
 }
 
 class CircomElectronPluginClient extends ElectronBasePluginClient {
@@ -41,13 +41,18 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
     }
   }
 
-  async compile(filePath: string) {
+  async run(filePath: string, options: Record<string, string>) {
     if (!this.isCircomInstalled) await this.install()
     // @ts-ignore
     const wd = await this.call('fs', 'getWorkingDir')
-    const depPath = path.join(wd, '.deps/https/raw.githubusercontent.com/iden3/')
-
+    // @ts-ignore
+    const outputDirExists = await this.call('fs', 'exists', extractParentFromKey(filePath) + '/.bin')
+    // @ts-ignore
+    if (!outputDirExists) await this.call('fs', 'mkdir', extractParentFromKey(filePath) + '/.bin')
     filePath = path.join(wd, filePath)
-    await circomCli.run(`${filePath} -l ${depPath}`)
+    const depPath = path.join(wd, '.deps/https/raw.githubusercontent.com/iden3/')
+    const outputDir = extractParentFromKey(filePath) + '/.bin'
+
+    await circomCli.run(`${filePath} -l ${depPath} -o ${outputDir}`, options)
   }
 }
