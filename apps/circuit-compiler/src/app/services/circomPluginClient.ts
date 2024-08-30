@@ -137,8 +137,27 @@ export class CircomPluginClient extends PluginClient {
 
   async compile(path: string, compilationConfig?: CompilationConfig): Promise<void> {
     if (isElectron()) {
+      this.internalEvents.emit('circuit_compiling_start')
+      this.emit('statusChanged', { key: 'loading', title: 'Compiling...', type: 'info' })
       // @ts-ignore
-      return await this.call('circom', 'compile', path)
+      this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
+      // @ts-ignore
+      await this.call('circom', 'run', path, {
+        prime: this._compilationConfig.prime,
+        wasm: ""
+      })
+      // const fileContent = this.lastParsedFiles[path]
+      // const searchComponentName = fileContent.match(/component\s+main\s*(?:{[^{}]*})?\s*=\s*([A-Za-z_]\w*)\s*\(.*\)/)
+
+      // if (searchComponentName) {
+      //   const componentName = searchComponentName[1]
+      //   const signals = circuitApi.input_signals(componentName)
+
+      //   this.internalEvents.emit('circuit_compiling_done', signals)
+      // } else {
+      this.internalEvents.emit('circuit_compiling_done', [])
+      this.emit('statusChanged', { key: 'succeed', title: 'circuit compiled successfully', type: 'success' })
+      // }
     } else {
       this.internalEvents.emit('circuit_compiling_start')
       this.emit('statusChanged', { key: 'loading', title: 'Compiling...', type: 'info' })
@@ -204,8 +223,17 @@ export class CircomPluginClient extends PluginClient {
 
   async generateR1cs (path: string, compilationConfig?: CompilationConfig): Promise<void> {
     if (isElectron()) {
+      this.internalEvents.emit('circuit_generating_r1cs_start')
+      this.emit('statusChanged', { key: 'loading', title: 'Generating...', type: 'info' })
       // @ts-ignore
-      return await this.call('circom', 'generateR1cs', path)
+      this.call('terminal', 'log', { type: 'log', value: 'Generating R1CS for ' + path })
+      // @ts-ignore
+      await this.call('circom', 'run', path, {
+        prime: this._compilationConfig.prime,
+        r1cs: ""
+      })
+      this.internalEvents.emit('circuit_generating_r1cs_done')
+      this.emit('statusChanged', { key: 'succeed', title: 'r1cs generated successfully', type: 'success' })
     } else {
       const [parseErrors, filePathToId] = await this.parse(path)
 
