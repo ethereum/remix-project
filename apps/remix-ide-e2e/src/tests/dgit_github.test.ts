@@ -31,8 +31,11 @@ module.exports = {
             .waitForElementVisible('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="gitubUsername"]')
             .setValue('*[data-id="githubToken"]', process.env.dgit_token)
+            .pause(1000)
             .setValue('*[data-id="gitubUsername"]', 'git')
+            .pause(1000)
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
+            .pause(1000)
             .click('*[data-id="saveGitHubCredentials"]')
     },
     'check if the settings are loaded #group1 #group2': function (browser: NightwatchBrowser) {
