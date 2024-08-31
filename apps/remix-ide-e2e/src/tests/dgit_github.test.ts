@@ -25,7 +25,7 @@ module.exports = {
             .waitForElementVisible('*[data-id="filepanel-login-github"]')
             .click('*[data-id="filepanel-login-github"]')
     },
-    'login to github #group1 #group2': function (browser: NightwatchBrowser) {
+    'login to github #flaky #group1 #group2': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="gitubUsername"]')
