@@ -22,6 +22,7 @@ module.exports = {
     'launch github login via FE #group1 #group2': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('filePanel')
+            .pause(1000)
             .waitForElementVisible('*[data-id="filepanel-login-github"]')
             .click('*[data-id="filepanel-login-github"]')
     },
