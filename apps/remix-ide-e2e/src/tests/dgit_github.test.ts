@@ -19,7 +19,7 @@ module.exports = {
             .pause(1000)
             .waitForElementVisible('*[data-id="initgit-btn"]')
             .click('*[data-id="initgit-btn"]')
-            .pause(1000)
+            .waitForElementNotPresent('*[data-id="initgit-btn"]')
     },
     'launch github login via FE #group1 #group2': function (browser: NightwatchBrowser) {
         browser
