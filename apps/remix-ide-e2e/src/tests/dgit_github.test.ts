@@ -290,6 +290,7 @@ module.exports = {
                 selector: "//div[@id='commands-local-branch-select']//div[contains(@class, 'singleValue') and contains(text(), 'main')]",
                 locateStrategy: 'xpath'
             })
+            .pause(1000)
             .getAttribute({
                 selector: '//*[@data-id="sourcecontrol-pull"]',
                 locateStrategy: 'xpath'
