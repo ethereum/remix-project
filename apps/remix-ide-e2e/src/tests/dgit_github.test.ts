@@ -52,7 +52,7 @@ module.exports = {
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
     },
-    'clone a repository #group1': function (browser: NightwatchBrowser) {
+    'clone a repository #flaky #group1': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('dgit')
             .click('*[data-id="clone-panel"]')
