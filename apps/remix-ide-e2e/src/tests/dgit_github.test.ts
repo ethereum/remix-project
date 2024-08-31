@@ -213,6 +213,7 @@ module.exports = {
             .waitForElementVisible('*[data-id="github-panel"]')
             .click('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="disconnect-github"]')
+            .pause(1000)
             .click('*[data-id="disconnect-github"]')
             .waitForElementNotPresent('*[data-id="connected-as-bunsenstraat"]')
     },
