@@ -16,8 +16,10 @@ module.exports = {
     'Update settings for git #group1 #group2': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
+            .pause(1000)
             .waitForElementVisible('*[data-id="initgit-btn"]')
             .click('*[data-id="initgit-btn"]')
+            .pause(1000)
     },
     'launch github login via FE #group1 #group2': function (browser: NightwatchBrowser) {
         browser
