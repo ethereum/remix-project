@@ -25,7 +25,7 @@ module.exports = {
             .waitForElementVisible('*[data-id="filepanel-login-github"]')
             .click('*[data-id="filepanel-login-github"]')
     },
-    'login to github #flaky #group1 #group2': function (browser: NightwatchBrowser) {
+    'login to github #group1 #group2': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="gitubUsername"]')
@@ -45,7 +45,7 @@ module.exports = {
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
     },
-    'clone a repository #group1': function (browser: NightwatchBrowser) {
+    'clone a repository #flaky #group1': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('dgit')
             .click('*[data-id="clone-panel"]')
