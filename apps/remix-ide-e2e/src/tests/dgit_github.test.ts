@@ -364,7 +364,6 @@ module.exports = {
             .setValue('*[data-id="githubToken"]', 'invalidtoken')
             .setValue('*[data-id="gitubUsername"]', 'git')
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
-            .pause(1000)
             .click('*[data-id="saveGitHubCredentials"]')
             .modalFooterOKClick('github-credentials-error')
     },
@@ -383,7 +382,6 @@ module.exports = {
             .click('*[data-id="load-more-commits"]')
             .waitForElementVisible('*[data-id="loader-indicator"]')
             .waitForElementNotPresent('*[data-id="loader-indicator"]')
-            .pause(1000)
             .elements('xpath', '//*[@data-id="commits-current-branch-master"]//*[@data-type="commit-summary"]', function (result) {
                 console.log('Number of commit-summary elements:', (result.value as any).length);
                 browser.assert.ok((result.value as any).length > 2)
