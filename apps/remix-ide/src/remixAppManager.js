@@ -93,6 +93,8 @@ const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
 const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'etherscan', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'learneth', 'quick-dapp']
 
+const partnerPlugins = ['cookbookdev']
+
 const sensitiveCalls = {
   fileManager: ['writeFile', 'copyFile', 'rename', 'copyDir'],
   contentImport: ['resolveAndSave'],
@@ -203,6 +205,11 @@ export class RemixAppManager extends PluginManager {
     }
     // skipping native plugins' requests
     if (isNative(from)) {
+      return true
+    }
+
+    // skipping partner plugins' requests
+    if (partnerPlugins[from]) {
       return true
     }
 
