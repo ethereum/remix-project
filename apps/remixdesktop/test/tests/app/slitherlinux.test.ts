@@ -14,9 +14,11 @@ const tests = {
       .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .waitForElementVisible('button[data-id="landingPageImportFromTemplate"]')
       .click('button[data-id="landingPageImportFromTemplate"]')
+      .waitForElementPresent('*[data-id="create-remixDefault"]')
+      .scrollAndClick('*[data-id="create-remixDefault"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-      .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-      .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+      .waitForElementPresent('[data-id="TemplatesSelectionModalDialogContainer-react"] .modal-ok')
+      .click('[data-id="TemplatesSelectionModalDialogContainer-react"] .modal-ok')
       .pause(3000)
       .windowHandles(function (result) {
         console.log(result.value)
