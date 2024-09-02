@@ -56,6 +56,8 @@ const tests = {
     'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
+            .waitForElementVisible('*[data-id="github-panel"]')
+            .click('*[data-id="github-panel"]')
             .setValue('*[data-id="gitubUsername"]', 'git')
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .click('*[data-id="saveGitHubCredentials"]')
