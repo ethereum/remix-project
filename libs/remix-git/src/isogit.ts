@@ -161,7 +161,7 @@ const getAuthor = async (input, plugin: any) => {
 }
 
 
-const getGitHubUser = async (input: { token: string }): Promise<{
+const getGitHubUser = async(input: { token: string }): Promise<{
   user: GitHubUser,
   emails: userEmails,
   scopes: string[]
@@ -171,17 +171,22 @@ const getGitHubUser = async (input: { token: string }): Promise<{
       auth: input.token
     })
 
-    const user = await octokit.request('GET /user')
+    const user = await octokit.request('GET /user', {
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    })
     const emails = await octokit.request('GET /user/emails')
 
     const scopes = user.headers['x-oauth-scopes'] || ''
 
-    console.log('USER', user.data)
-
     return {
-      user: user.data,
+      user: {
+        ...user.data, isConnected:
+          user.data.login !== undefined && user.data.login !== null && user.data.login !== ''
+      },
       emails: emails.data,
-      scopes: scopes && scopes.split(',')
+      scopes: scopes && scopes.split(',').map(scope => scope.trim())
     }
   } catch (e) {
     return null

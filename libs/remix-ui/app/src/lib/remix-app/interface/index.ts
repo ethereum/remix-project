@@ -1,4 +1,4 @@
-import { GitHubUser } from '@remix-ui/git'
+import { GitHubUser } from '@remix-api'
 import { ModalTypes } from '../types'
 
 export type ValidationResult = {
