@@ -1,6 +1,12 @@
 import { Endpoints } from "@octokit/types"
 import { GitHubUser, branch, branchDifference, commitChange, pagedCommits, remote, remoteBranch, repository, syncStatus, userEmails } from "@remix-api"
 import { ReadCommitResult } from "isomorphic-git"
+import { Plugin } from "@remixproject/engine";
+import { CustomRemixApi } from "@remix-api"
+
+export interface IGitUi {
+    plugin: Plugin<any, CustomRemixApi>
+  }
 
 export type gitState = {
     currentBranch: branch
