@@ -58,6 +58,7 @@ import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
+import { VMStates } from './app/plugins/vm-states'
 
 import {SolCoder} from './app/plugins/solcoderAI'
 
@@ -230,6 +231,9 @@ class AppComponent {
     //---- matomo
     const matomo = new Matomo()
 
+    //---- vm states
+    const vmState = new VMStates()
+
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
 
@@ -371,7 +375,8 @@ class AppComponent {
       git,
       pluginStateLogger,
       matomo,
-      templateSelection
+      templateSelection,
+      vmState
     ])
 
     //---- fs plugin
@@ -510,7 +515,8 @@ class AppComponent {
       'fetchAndCompile',
       'contentImport',
       'gistHandler',
-      'compilerloader'
+      'compilerloader',
+      'vm-states'
     ])
     await this.appManager.activatePlugin(['settings'])
 

@@ -39,6 +39,10 @@ const loadContractFromAddress = (plugin: RunTab, address, confirmCb, cb) => {
   }
 }
 
+export const saveVMStateInternal = (plugin: RunTab) => {
+  plugin.call('vm-states', 'saveVmState')
+}
+
 export const getSelectedContract = (contractName: string, compiler: CompilerAbstractType): ContractData => {
   if (!contractName) return null
   // const compiler = plugin.compilersArtefacts[compilerAtributeName]

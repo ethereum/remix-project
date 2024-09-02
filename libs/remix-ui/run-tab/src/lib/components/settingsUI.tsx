@@ -3,6 +3,7 @@ import React from 'react'
 import { SettingsProps } from '../types'
 import { EnvironmentUI } from './environment'
 import { NetworkUI } from './network'
+import { SaveStateUI } from './save-state'
 import { AccountUI } from './account'
 import { GasLimitUI } from './gasLimit'
 import { ValueUI } from './value'
@@ -14,6 +15,7 @@ export function SettingsUI(props: SettingsProps) {
     <div className="udapp_settings">
       <EnvironmentUI selectedEnv={props.selectExEnv} providers={props.providers} setExecutionContext={props.setExecutionContext} />
       <NetworkUI networkName={props.networkName} />
+      <SaveStateUI saveVMState={props.saveVMState} />
       <AccountUI
         personalMode={props.personalMode}
         selectExEnv={props.selectExEnv}

@@ -163,6 +163,7 @@ export interface SettingsProps {
   signMessageWithAddress: (account: string, message: string, modalContent: (hash: string, data: string) => JSX.Element, passphrase?: string) => void,
   passphrase: string,
   setSendValue: (value: string) => void
+  saveVMState: () => void
 }
 
 export interface EnvironmentProps {
@@ -178,6 +179,10 @@ export interface EnvironmentProps {
 
 export interface NetworkProps {
   networkName: string
+}
+
+export interface SaveStateUIProps {
+  saveVMState: () => void
 }
 
 export interface AccountProps {

@@ -259,6 +259,20 @@ export class RunTab extends ViewPlugin {
       }
     )
     if (!isElectron()) window.dispatchEvent(new Event("eip6963:requestProvider"))
+
+    let pos = 100
+    this.on('vm-states', 'newVMStateSaved', async (state) => {
+      await addProvider(pos, state, state, false, true, '', 'settingsVM' + state, titleVM)
+      pos++
+    })
+    this.on('filePanel', 'workspaceInitializationCompleted', async () => {
+      const states = await this.call('vm-states', 'listStates')
+      console.log('states', states)
+      for (const state of states) {
+        await addProvider(pos, state, state, false, true, '', 'settingsVM' + state, titleVM)
+        pos++
+      }
+    })    
   }
 
   writeFile(fileName, content) {

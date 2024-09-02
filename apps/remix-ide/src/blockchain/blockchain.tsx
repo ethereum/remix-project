@@ -23,7 +23,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders', 'getStateDetails'],
   version: packageJson.version
 }
 
@@ -685,15 +685,13 @@ export class Blockchain extends Plugin {
   }
 
   async loadContext(context: string) {
-    const saveEvmState = this.config.get('settings/save-evm-state')
-
-    if (saveEvmState) {
-      const contextExists = await this.call('fileManager', 'exists', `.states/${context}/state.json`)
-
-      if (contextExists) {
-        const stateDb = await this.call('fileManager', 'readFile', `.states/${context}/state.json`)
-
-        await this.getCurrentProvider().resetEnvironment(stateDb)
+    if (context) {
+      let state
+      try { 
+       state = await this.call('vm-states', 'loadVmState', context)
+      } catch (err) {}
+      if (state) {
+        await this.getCurrentProvider().resetEnvironment(state)
       } else {
         await this.getCurrentProvider().resetEnvironment()
       }
@@ -769,6 +767,10 @@ export class Blockchain extends Plugin {
 
   async getTransactionReceipt(hash) {
     return await this.web3().eth.getTransactionReceipt(hash)
+  }
+
+  async getStateDetails () {
+    return await this.executionContext.getStateDetails()
   }
 
   /**
@@ -947,15 +949,6 @@ export class Blockchain extends Plugin {
       let execResult
       let returnValue = null
       if (isVM) {
-        if (!tx.useCall && this.config.get('settings/save-evm-state')) {
-          try {
-            const state = await this.executionContext.getStateDetails()
-            this.call('fileManager', 'writeFile', `.states/${this.executionContext.getProvider()}/state.json`, state)
-          } catch (e) {
-            console.error(e)
-          }
-        }
-
         const hhlogs = await this.web3().remix.getHHLogsForTx(txResult.transactionHash)
         if (hhlogs && hhlogs.length) {
           const finalLogs = (

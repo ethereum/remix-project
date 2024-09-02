@@ -45,14 +45,15 @@ import {
   updateSelectedContract,
   syncContracts,
   isValidProxyAddress,
-  isValidProxyUpgrade
+  isValidProxyUpgrade,
+  saveVMState
 } from './actions'
 import './css/run-tab.css'
 import { PublishToStorage } from '@remix-ui/publish-to-storage'
 import { PassphrasePrompt } from './components/passphrase'
 import { MainnetPrompt } from './components/mainnet'
 import { ScenarioPrompt } from './components/scenario'
-import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
+import { setIpfsCheckedState } from './actions/payload'
 
 export function RunTabUI(props: RunTabProps) {
   const { plugin } = props
@@ -278,6 +279,7 @@ export function RunTabUI(props: RunTabProps) {
       <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
         <div className="list-group pb-4 list-group-flush">
           <SettingsUI
+            saveVMState={saveVMState}
             networkName={runTab.networkName}
             personalMode={runTab.personalMode}
             selectExEnv={runTab.selectExEnv}
