@@ -59,8 +59,11 @@ const tests = {
             .waitForElementVisible('*[data-id="github-panel"]')
             .click('*[data-id="github-panel"]')
             .setValue('*[data-id="gitubUsername"]', 'git')
+            .pause(1000)
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
+            .pause(1000)
             .click('*[data-id="saveGitHubCredentials"]')
+            .pause(1000)
             .modalFooterOKClick('github-credentials-error')
 
     },
