@@ -17,13 +17,13 @@ module.exports = {
     browser.clickLaunchIcon('pluginManager')
       .scrollAndClick('[data-id="pluginManagerComponentActivateButtonvyper"]')
       .clickLaunchIcon('vyper')
-      .pause(5000)
-      // @ts-ignore
       .frame(0)
   },
 
   'Should clone the Vyper repo #group1': function (browser: NightwatchBrowser) {
-    browser.click('button[data-id="add-repository"]')
+    browser
+      .waitForElementVisible('button[data-id="add-repository"]')
+      .click('button[data-id="add-repository"]')
       .frameParent()
       .clickLaunchIcon('filePanel')
       .waitForElementVisible({
@@ -31,11 +31,10 @@ module.exports = {
         locateStrategy: 'xpath',
         timeout: 120000
       })
-      .currentWorkspaceIs('snekmate')
       .waitForElementVisible({
-        selector: "//*[@data-id='treeViewLitreeViewItemsrc' and contains(.,'src')]",
+        selector: "//*[contains(., 'Vyper repository cloned')]",
         locateStrategy: 'xpath',
-        timeout: 1200000
+        timeout: 120000
       })
   },
   // 'Add vyper file to run tests #group1': function (browser: NightwatchBrowser) {
@@ -123,6 +122,7 @@ module.exports = {
       .clickLaunchIcon('vyper')
       // @ts-ignore
       .frame(0)
+      .waitForElementVisible('[data-id="compile"]')
       .click('[data-id="compile"]')
       .waitForElementVisible({
         selector:'[data-id="compilation-details"]',
