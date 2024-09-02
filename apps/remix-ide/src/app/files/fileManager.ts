@@ -40,7 +40,6 @@ const errorMsg = {
 const createError = (err) => {
   return new Error(`${errorMsg[err.code]} ${err.message || ''}`)
 }
-const _paq = (window._paq = window._paq || [])
 class FileManager extends Plugin {
   mode: string
   openedFiles: any
@@ -216,11 +215,6 @@ class FileManager extends Plugin {
       } else {
         const ret = await this.setFileContent(path, data, options)
         this.emit('fileAdded', path)
-        // Temporary solution to tracking scripts execution for zk in matomo
-        if (path === 'scripts/groth16/zk/keys/zkey_final.txt' && data) _paq.push(['trackEvent', 'circuit-compiler', 'script', 'groth16', 'zk trusted setup done'])
-        if (path === 'scripts/groth16/zk/build/zk_verifier.sol' && data) _paq.push(['trackEvent', 'circuit-compiler', 'script', 'groth16', 'zk proof done'])
-        if (path === 'scripts/plonk/zk/keys/zkey_final.txt' && data) _paq.push(['trackEvent', 'circuit-compiler', 'script', 'plonk', 'zk trusted setup done'])
-        if (path === 'scripts/plonk/zk/build/zk_verifier.sol' && data) _paq.push(['trackEvent', 'circuit-compiler', 'script', 'plonk', 'zk proof done'])
         return ret
       }
     } catch (e) {
@@ -318,7 +312,7 @@ class FileManager extends Plugin {
       await this._handleExists(dest, `Cannot paste content into ${dest}. Path does not exist.`)
       await this._handleIsDir(dest, `Cannot paste content into ${dest}. Path is not directory.`)
       const content = await this.readFile(src)
-      let copiedFilePath = dest + (customName ? '/' + customName : '/' + `Copy_${helper.extractNameFromKey(src)}`)
+      let copiedFilePath = dest + (customName ? '/' + customName : '/' + `${helper.extractNameFromKey(src)}`)
       copiedFilePath = await helper.createNonClashingNameAsync(copiedFilePath, this)
 
       await this.writeFile(copiedFilePath, content)

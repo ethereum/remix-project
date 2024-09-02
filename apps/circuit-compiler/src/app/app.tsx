@@ -50,16 +50,11 @@ function App() {
     })
     plugin.internalEvents.on('circuit_compiling_errored', compilerErrored)
 
-    // r1cs events
-    plugin.internalEvents.on('circuit_generating_r1cs_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'generating' }))
-    plugin.internalEvents.on('circuit_generating_r1cs_done', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' }))
-    plugin.internalEvents.on('circuit_generating_r1cs_errored', compilerErrored)
-
     // witness events
     plugin.internalEvents.on('circuit_computing_witness_start', () => dispatch({ type: 'SET_COMPILER_STATUS', payload: 'computing' }))
     plugin.internalEvents.on('circuit_computing_witness_done', () => {
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
-      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
+      dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: null })
     })
     plugin.internalEvents.on('circuit_computing_witness_errored', compilerErrored)
 
@@ -86,6 +81,7 @@ function App() {
         if (appState.autoCompile) await compileCircuit(plugin, appState)
       })()
       setIsContentChanged(false)
+      if (appState.setupExportStatus === 'done') dispatch({ type: 'SET_SETUP_EXPORT_STATUS', payload: 'update' })
     }
   }, [appState.autoCompile, isContentChanged])
 
@@ -103,6 +99,12 @@ function App() {
       dispatch({ type: 'SET_SIGNAL_INPUTS', payload: [] })
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
+      dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: null })
+      dispatch({ type: 'SET_SETUP_EXPORT_FEEDBACK', payload: null })
+      dispatch({ type: 'SET_PROOF_FEEDBACK', payload: null })
+      dispatch({ type: 'SET_SETUP_EXPORT_STATUS', payload: null })
+      dispatch({ type: 'SET_VERIFICATION_KEY', payload: null })
+      dispatch({ type: 'SET_ZKEY', payload: null })
     }
   }, [appState.filePath])
 
@@ -118,9 +120,9 @@ function App() {
     try {
       const report = JSON.parse(err.message)
 
-      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
+      dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: report })
     } catch (e) {
-      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: err.message })
+      dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: err.message })
     }
   }
 

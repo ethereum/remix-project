@@ -6,7 +6,7 @@ import { RemixAppManager } from 'libs/remix-ui/plugin-manager/src/types'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { appPlatformTypes } from '@remix-ui/app'
 import { Placement } from 'react-bootstrap/esm/Overlay'
-import { branch } from '@remix-ui/git'
+import { branch, GitHubUser } from '@remix-ui/git'
 
 export type action = { name: string, type?: Array<WorkspaceElement>, path?: string[], extension?: string[], pattern?: string[], id: string, multiselect: boolean, label: string, sticky?: boolean, group: number, platform?: appPlatformTypes }
 export interface JSONStandardInput {
@@ -101,6 +101,7 @@ export interface FilePanelType extends ViewPlugin {
 export interface FileExplorerProps {
     name: string,
     menuItems?: string[],
+    canPaste: boolean
     contextMenuItems: MenuItems,
     removedContextMenuItems: MenuItems,
     files: { [x: string]: Record<string, FileType> },
@@ -158,6 +159,15 @@ export interface FileExplorerProps {
     dragStatus: (status: boolean) => void
     importFromIpfs: any
     importFromHttps: any
+    handleMultiCopies: any
+    feTarget: { key: string, type: 'file' | 'folder' }[]
+    setFeTarget: Dispatch<React.SetStateAction<{
+      key: string;
+      type: "file" | "folder";
+  }[]>>
+    publishManyFilesToGist: () => Promise<void>
+    hasCopied: boolean
+    setHasCopied: Dispatch<React.SetStateAction<boolean>>
 }
 
 export interface FileExplorerMenuProps {
@@ -199,12 +209,14 @@ export interface FileExplorerContextMenuProps {
   copyPath?: (path: string, type: string) => void
   generateUml?: (path: string) => Promise<void>
   uploadFile?: (target: EventTarget & HTMLInputElement) => void
+  publishManyFilesToGist: () => Promise<void>
 }
 
 export interface WorkSpaceState {
     ctrlKey: boolean
     deleteKey?: boolean
     F2Key?: boolean
+    cutShortcut: boolean
     newFileName: string
     actions: {
       id: string

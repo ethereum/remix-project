@@ -22,7 +22,11 @@ export const GitHubCredentials = () => {
   useEffect(() => {
     refresh()
     if (context.gitHubUser) {
-      setScopeWarning(!(context.gitHubScopes && context.gitHubScopes.length > 0))
+      setScopeWarning(!(context.gitHubScopes
+        && context.gitHubScopes.includes('repo')
+        && context.gitHubScopes.includes('read:user')
+        && context.gitHubScopes.includes('user:email')
+        && context.gitHubScopes.includes('gist')))
     } else {
       setScopeWarning(false)
     }
@@ -92,7 +96,7 @@ export const GitHubCredentials = () => {
         </button>
       </div>
       {scopeWarning ?
-        <div className="text-warning">Your GitHub token may not have the correct permissions. Please use the login with GitHub feature.</div> : null}
+        <div className="text-warning">Your GitHub token may or may not have the correct permissions. Remix can't verify the permissions when using your own token. Please use the login with GitHub feature.</div> : null}
       <hr />
     </>
   );

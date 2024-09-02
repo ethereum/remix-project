@@ -61,7 +61,7 @@ export const CommitSummary = (props: CommitSummaryProps) => {
 
   return (
     <>
-      <div data-id={`commit-summary-${removeLineBreaks(commit.commit.message)}-${isAheadOfRepo ? 'ahead' : ''}`} className="long-and-truncated ml-2">
+      <div data-type='commit-summary' data-id={`commit-summary-${removeLineBreaks(commit.commit.message)}-${isAheadOfRepo ? 'ahead' : ''}`} className="long-and-truncated ml-2">
         {commit.commit.message}
       </div>
       {commit.commit.author.name || ""}

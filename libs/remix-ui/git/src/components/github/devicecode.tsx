@@ -65,7 +65,6 @@ export const GetDeviceCode = () => {
     } else {
       await sendToMatomo(gitMatomoEventTypes.CONNECTTOGITHUBFAIL)
     }
-
   }
 
   const disconnect = async () => {
@@ -78,11 +77,11 @@ export const GetDeviceCode = () => {
 
   return (
     <>
-      {(context.gitHubUser && context.gitHubUser.login) ? null : <>
+      {(context.gitHubUser && context.gitHubUser.isConnected) ? null : <>
         <label className="text-uppercase">Connect to GitHub</label>
         <button className='btn btn-secondary mt-1 w-100' onClick={async () => {
           await getDeviceCodeFromGitHub()
-        }}><i className="fab fa-github mr-1"></i>Login in with github</button></>
+        }}><i className="fab fa-github mr-1"></i>Login with GitHub</button></>
       }
       {gitHubResponse && !authorized &&
         <div className="pt-2">
@@ -105,15 +104,15 @@ export const GetDeviceCode = () => {
         </div>
       }
       {
-        (context.gitHubUser && context.gitHubUser.login) ?
+        (context.gitHubUser && context.gitHubUser.isConnected) ?
           <div className="pt-2">
-            <button className='btn btn-primary mt-1 w-100' onClick={async () => {
+            <button data-id='disconnect-github' className='btn btn-primary mt-1 w-100' onClick={async () => {
               disconnect()
             }}>Disconnect</button>
           </div> : null
       }
       {
-        (context.gitHubUser && context.gitHubUser.login) ?
+        (context.gitHubUser && context.gitHubUser.isConnected) ?
           <div className="pt-2">
 
             <div className="mb-1" data-id={`connected-as-${context.gitHubUser.login}`}>Connected as {context.gitHubUser.login}</div>
