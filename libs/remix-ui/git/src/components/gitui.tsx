@@ -33,6 +33,7 @@ import { Init } from './panels/init'
 import { Disabled } from './disabled'
 import { AppContext, platformContext } from '@remix-ui/app'
 import { Version } from './panels/version'
+import { IGitUi } from '@remix-api'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
