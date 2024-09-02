@@ -1,7 +1,7 @@
 {
   "settings.displayName": "Settings",
   "settings.reset": "Reset to Default settings",
-  "settings.general": "General settings",
+  "settings.general": "General",
   "settings.generateContractMetadataText": "Generate contract metadata",
   "settings.generateContractMetadataTooltip": "Generate a JSON file in the contract folder. Allows to specify library addresses the contract depends on. If nothing is specified, Remix deploys libraries automatically.",
   "settings.ethereunVMText": "Always use the Remix VM at load",
