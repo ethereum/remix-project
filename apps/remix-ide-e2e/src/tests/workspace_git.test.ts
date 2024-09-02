@@ -53,6 +53,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_blank')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
       .click('[data-id="initGitRepositoryLabel"]')
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
@@ -423,6 +425,9 @@ module.exports = {
       clickLaunchIcon('dgit')
       .waitForElementVisible('*[data-id="initgit-btn"]')
       .click('*[data-id="initgit-btn"]')
+      .waitForElementVisible('*[data-id="github-panel"]')
+      .click('*[data-id="github-panel"]')
+      .waitForElementVisible('*[data-id="gitubUsername"]')
       .setValue('*[data-id="gitubUsername"]', 'git')
       .setValue('*[data-id="githubEmail"]', 'git@example.com')
       .click('*[data-id="saveGitHubCredentials"]')
@@ -430,6 +435,8 @@ module.exports = {
   },
   'check source controle panel #group5': function (browser: NightwatchBrowser) {
     browser
+      .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
+      .click('*[data-id="sourcecontrol-panel"]')
       .waitForElementVisible({
         selector: "//*[@data-status='new-untracked' and @data-file='/tests/MyToken_test.sol']",
         locateStrategy: 'xpath'

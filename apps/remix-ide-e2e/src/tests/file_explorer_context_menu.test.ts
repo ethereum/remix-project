@@ -18,6 +18,7 @@ module.exports = {
       .click('*[data-id="fileExplorerNewFilecreateNewFile"]')
       .pause(1000)
       .waitForElementVisible('*[data-id$="fileExplorerTreeItemInput"]')
+      .pause(1000)
       .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.CONTROL + 'v')
       .pause(1000)
       .sendKeys('*[data-id$="fileExplorerTreeItemInput"]', browser.Keys.ENTER)
@@ -93,7 +94,7 @@ module.exports = {
       .rightClick('*[data-id="treeViewUltreeViewMenu"]')
       .saveScreenshot('./reports/screenshot/file_explorer_context_menu.png')
       .click('*[data-id="contextMenuItempaste"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemCopy_README.txt"]', 7000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME1.txt"]', 7000)
   },
   'Should copy file and paste in contracts with right click and it will contain a new file #group1 ': function (browser: NightwatchBrowser) {
     browser
@@ -103,7 +104,7 @@ module.exports = {
       .click('[data-id="contextMenuItemcopy"]')
       .rightClick('*[data-id="treeViewLitreeViewItemcontracts"]')
       .click('*[data-id="contextMenuItempaste"]')
-      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/Copy_README.txt"]', 7000)
+      .waitForElementVisible('*[data-id="treeViewLitreeViewItemcontracts/README1.txt"]', 7000)
   },
   // folder copy paste tests
   'Should copy folder and paste in root with right click and it will contain a copied folder #group1 ': function (browser: NightwatchBrowser) {

@@ -22,9 +22,9 @@ export default function ScamDetails ({ refs, floatStyle, scamAlerts }: ScamDetai
       className="px-1 ml-1 mb-1 d-flex w-25 alert alert-warning border border-warning"
     >
       <span className="align-self-center pl-4 mt-1">
-        <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }} className="pr-2 far text-warning fa-exclamation-triangle"></i>
+        <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }} className="pr-2 far fa-exclamation-triangle"></i>
       </span>
-      <div className="d-flex flex-column text-warning">
+      <div className="d-flex flex-column">
         {scamAlerts && scamAlerts.map((alert, index) => (
           <span className="pl-4 mt-1" key={`${alert.url}${index}`}>
             {alert.url.length < 1 ? <FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} />

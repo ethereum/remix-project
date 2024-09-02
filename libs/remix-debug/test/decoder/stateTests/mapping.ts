@@ -29,11 +29,12 @@ module.exports = async function testMappingStorage (st, cb) {
       st.end(error)
     } else {
       web3.eth.getTransactionReceipt(hash)
-        .then(tx =>
+        .then(tx => {
           // const storage = await this.vm.stateManager.dumpStorage(data.to)
-          // (vmCall as any).web3().eth.getCode(tx.contractAddress).then((code) => console.log('code:', code))
+          // web3.eth.getCode(tx.contractAddress).then((code) => console.log('code:---', code))
           // (vmCall as any).web3().debug.traceTransaction(hash).then((code) => console.log('trace:', code))
           testMapping(st, privateKey, tx.contractAddress, output, compilationResults, web3, cb)
+        }
           // st.end()
         )
         .catch(error => {
@@ -71,7 +72,7 @@ function testMapping (st, privateKey, contractAddress, output, compilationResult
             })
             callTree.event.register('callTreeReady', (scopes, scopeStarts) => {
               const storageViewer = new StorageViewer({
-                stepIndex: 268,
+                stepIndex: 472,
                 tx: tx,
                 address: contractAddress
               }, new StorageResolver({ web3 }), traceManager)

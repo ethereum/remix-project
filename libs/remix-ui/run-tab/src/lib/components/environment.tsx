@@ -23,7 +23,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
     'L2 - Arbitrum': 'https://bridge.arbitrum.io/'
   }
 
-  const isL2 = (providerDisplayName: string) => providerDisplayName === 'L2 - Optimism' || providerDisplayName === 'L2 - Arbitrum'
+  const isL2 = (providerDisplayName: string) => providerDisplayName && (providerDisplayName.startsWith('L2 - Optimism') || providerDisplayName.startsWith('L2 - Arbitrum'))
   return (
     <div className="udapp_crow">
       <label id="selectExEnv" className="udapp_settingsLabel">
@@ -39,19 +39,19 @@ export function EnvironmentUI(props: EnvironmentProps) {
           </a>
         </CustomTooltip>
       </label>
-      <div className="udapp_environment">
+      <div className="udapp_environment" data-id={`selected-provider-${currentProvider && currentProvider.name}`}>
         <Dropdown id="selectExEnvOptions" data-id="settingsSelectEnvOptions" className="udapp_selectExEnvOptions">
           <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components" className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control" icon={null}>
             {isL2(currentProvider && currentProvider.displayName)}
             {currentProvider && currentProvider.displayName}
-            {currentProvider && bridges[currentProvider.displayName] && (
+            {currentProvider && bridges[currentProvider.displayName.substring(0, 13)] && (
               <CustomTooltip placement={'auto-end'} tooltipClasses="text-nowrap" tooltipId="info-recorder" tooltipText={<FormattedMessage id="udapp.tooltipText3" />}>
                 <i
                   style={{ fontSize: 'medium' }}
                   className={'ml-2 fa fa-rocket-launch'}
                   aria-hidden="true"
                   onClick={() => {
-                    window.open(bridges[currentProvider.displayName], '_blank')
+                    window.open(bridges[currentProvider.displayName.substring(0, 13)], '_blank')
                   }}
                 ></i>
               </CustomTooltip>

@@ -40,6 +40,7 @@ contract Owner {
      * @param newOwner address of new owner
      */
     function changeOwner(address newOwner) public isOwner {
+        require(newOwner != address(0), "New owner should not be the zero address");
         emit OwnerSet(owner, newOwner);
         owner = newOwner;
     }

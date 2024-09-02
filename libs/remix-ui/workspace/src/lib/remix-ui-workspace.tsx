@@ -14,10 +14,10 @@ import { MenuItems, WorkSpaceState, WorkspaceMetadata } from './types'
 import { contextMenuActions } from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
-import { appPlatformTypes, platformContext } from '@remix-ui/app'
+import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
-import { branch } from '@remix-ui/git'
+import { branch, GitHubUser, gitUIPanels, userEmails } from '@remix-ui/git'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -49,8 +49,13 @@ export function Workspace() {
 
   const [canPaste, setCanPaste] = useState(false)
 
+  const appContext = useContext(AppContext)
+
   const [state, setState] = useState<WorkSpaceState>({
     ctrlKey: false,
+    cutShortcut: false,
+    deleteKey: false,
+    F2Key: false,
     newFileName: '',
     actions: contextMenuActions,
     focusContext: {
@@ -126,6 +131,7 @@ export function Workspace() {
   })
 
   const [validationResult, setValidationResult] = useState<ValidationResult>({ valid: true, message: '' })
+  const [feTarget, setFeTarget] = useState<{ key: string, type: 'file' | 'folder' }[]>({} as { key: string, type: 'file' | 'folder' }[])
 
   const loadingInitialState = {
     tooltip: '',
@@ -143,12 +149,43 @@ export function Workspace() {
   }
   const inputValue = useRef(null)
   const [, dispatch] = useReducer(loadingReducer, loadingInitialState)
+  const [hasCopied, setHasCopied] = useState(false)
 
   const toast = (message: string) => {
     setModalState((prevState) => {
       return { ...prevState, toasterMsg: message }
     })
   }
+
+  const nameGistFolder = (filePath: string) => {
+    const prepend = `Gist_${filePath}`
+    const append = `${prepend}-folder`
+    return append
+  }
+
+  /**
+   * Void action to ensure multiselected files are published
+   * folders are not handled
+   */
+  const handlePublishingMultiSelectedFilesToGist = async () => {
+    try {
+      const selectedFiles = []
+      for (const one of feTarget) {
+        if (one.type === 'folder') return
+        const content = await global.plugin.call('fileManager', 'readFile', one.key)
+        selectedFiles.push({ key: one.key, type: one.type, content: content })
+      }
+      global.dispatchPublishFilesToGist(selectedFiles)
+    } catch (error) {
+      await global.plugin.call('notification', 'toast', 'Could not publish files to gist. There was an error')
+      await global.plugin.call('notification', 'toast', typeof(error) === 'string' ? error : `${console.log(error)} check the console for more details`)
+    }
+  }
+
+  useEffect(() => {
+    global.plugin.on('finishedGistPublish', (folderName) => {
+    })
+  }, [])
 
   const showFullMessage = async (title: string, loadItem: string, examples: Array<string>, prefix = '') => {
     setModalState((prevState) => {
@@ -512,12 +549,23 @@ export function Workspace() {
     }
   }
 
+  const handleMultipleItemCopies = (copied: {key: string, type: 'folder' | 'file' | 'workspace'}[]) => {
+    setState((prevState) => {
+      return { ...prevState, copyElement: copied }
+    })
+    setCanPaste(true)
+    const path = copied[0].key
+    global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { path }))
+    setHasCopied(true)
+  }
+
   const handleCopyClick = (path: string, type: 'folder' | 'file' | 'workspace') => {
     setState((prevState) => {
       return { ...prevState, copyElement: [{ key: path, type }]}
     })
     setCanPaste(true)
     global.toast(intl.formatMessage({ id: 'filePanel.copiedToClipboard' }, { path }))
+    setHasCopied(true)
   }
 
   const handlePasteClick = (dest: string, destType: string) => {
@@ -840,6 +888,13 @@ export function Workspace() {
       </>
     )
   }
+
+  const logInGithub = async () => {
+    await global.plugin.call('menuicons', 'select', 'dgit');
+    await global.plugin.call('dgit', 'open', gitUIPanels.GITHUB)
+    _paq.push(['trackEvent', 'Workspace', 'GIT', 'login'])
+  }
+
   return (
     <div className="d-flex flex-column justify-content-between h-100">
       <div
@@ -889,27 +944,53 @@ export function Workspace() {
                       </Dropdown>
                     </span>
                   ) : null}
-                  <span className="d-flex">
-                    <label className="pl-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
-                      {(platform == appPlatformTypes.desktop) ? (
-                        <ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />
-                      ) : <FormattedMessage id='filePanel.workspace' />}
-                    </label>
-                    {selectedWorkspace && selectedWorkspace.name === 'code-sample' && <CustomTooltip
-                      placement="right"
-                      tooltipId="saveCodeSample"
-                      tooltipClasses="text-nowrap"
-                      tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
-                    >
-                      <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
-                    </CustomTooltip>}
+                  <div className='d-flex w-100 justify-content-between'>
+                    <span className="d-flex">
+                      <label className="pl-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
+                        {(platform == appPlatformTypes.desktop) ? (
+                          <ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />
+                        ) : <FormattedMessage id='filePanel.workspace' />}
+                      </label>
+                      {selectedWorkspace && selectedWorkspace.name === 'code-sample' && <CustomTooltip
+                        placement="right"
+                        tooltipId="saveCodeSample"
+                        tooltipClasses="text-nowrap"
+                        tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
+                      >
+                        <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
+                      </CustomTooltip>}
 
-                    {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
-                      <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{ fontSize: '1.1rem', cursor: 'pointer' }} ></i>
-                    </CopyToClipboard>
-                    }
-
-                  </span>
+                      {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
+                        <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{ fontSize: '1.1rem', cursor: 'pointer' }} ></i>
+                      </CopyToClipboard>
+                      }
+                    </span>
+                    <span className="d-flex">
+                      {
+                        (!appContext.appState.gitHubUser || !appContext.appState.gitHubUser.isConnected) && <CustomTooltip
+                          placement="right"
+                          tooltipId="githubNotLogged"
+                          tooltipClasses="text-nowrap"
+                          tooltipText={<FormattedMessage id="filePanel.logInGithub" />}
+                        >
+                          <div data-id='filepanel-login-github' className='d-flex'>
+                            <i onClick={() => logInGithub() } className="fa-brands fa-github-alt ml-2 align-self-center" style={{ fontSize: '1.1rem', cursor: 'pointer' }} aria-hidden="true"></i>
+                            <span onClick={() => logInGithub() } className="ml-1 style={{ cursor: 'pointer' }} "> Sign in </span>
+                          </div>
+                        </CustomTooltip>
+                      }
+                      {
+                        appContext.appState.gitHubUser && appContext.appState.gitHubUser.isConnected && <CustomTooltip
+                          placement="right"
+                          tooltipId="githubLoggedIn"
+                          tooltipClasses="text-nowrap"
+                          tooltipText={appContext.appState.gitHubUser && intl.formatMessage({ id: 'filePanel.gitHubLoggedAs' }, { githubuser: appContext.appState.gitHubUser.login }) || ''}
+                        >
+                          <img width={20} height={20} data-id={`filepanel-connected-img-${appContext.appState.gitHubUser && appContext.appState.gitHubUser.login}`} src={appContext.appState.gitHubUser && appContext.appState.gitHubUser.avatar_url} className="remixui_avatar_user ml-2" />
+                        </CustomTooltip>
+                      }
+                    </span>
+                  </div>
                 </div>
                 <div className='mx-2'>
                   {(platform !== appPlatformTypes.desktop) ? (
@@ -1008,6 +1089,9 @@ export function Workspace() {
                   files={global.fs.browser.files}
                   flatTree={global.fs.browser.flatTree}
                   workspaceState={state}
+                  feTarget={feTarget}
+                  setFeTarget={setFeTarget}
+                  publishManyFilesToGist={handlePublishingMultiSelectedFilesToGist}
                   expandPath={global.fs.browser.expandPath}
                   focusEdit={global.fs.focusEdit}
                   focusElement={global.fs.focusElement}
@@ -1040,6 +1124,7 @@ export function Workspace() {
                   dispatchMoveFolder={global.dispatchMoveFolder}
                   dispatchMoveFolders={global.dispatchMoveFolders}
                   handleCopyClick={handleCopyClick}
+                  handleMultiCopies={handleMultipleItemCopies}
                   handlePasteClick={handlePasteClick}
                   addMenuItems={addMenuItems}
                   removeMenuItems={removeMenuItems}
@@ -1058,6 +1143,9 @@ export function Workspace() {
                   renamePath={editModeOn}
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
+                  canPaste={canPaste}
+                  hasCopied={hasCopied}
+                  setHasCopied={setHasCopied}
                 />
 
               )}
@@ -1075,7 +1163,11 @@ export function Workspace() {
                   files={global.fs.localhost.files}
                   flatTree={global.fs.localhost.flatTree}
                   fileState={[]}
+                  canPaste={canPaste}
                   workspaceState={state}
+                  feTarget={feTarget}
+                  setFeTarget={setFeTarget}
+                  publishManyFilesToGist={handlePublishingMultiSelectedFilesToGist}
                   expandPath={global.fs.localhost.expandPath}
                   focusEdit={global.fs.focusEdit}
                   focusElement={global.fs.focusElement}
@@ -1108,6 +1200,7 @@ export function Workspace() {
                   dispatchMoveFolder={global.dispatchMoveFolder}
                   dispatchMoveFolders={global.dispatchMoveFolders}
                   handleCopyClick={handleCopyClick}
+                  handleMultiCopies={handleMultipleItemCopies}
                   handlePasteClick={handlePasteClick}
                   addMenuItems={addMenuItems}
                   removeMenuItems={removeMenuItems}
@@ -1126,6 +1219,8 @@ export function Workspace() {
                   dragStatus={dragStatus}
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
+                  hasCopied={hasCopied}
+                  setHasCopied={setHasCopied}
                 />
               )}
             </div>
@@ -1250,7 +1345,7 @@ export function Workspace() {
       )}
       {state.showContextMenu && (
         <FileExplorerContextMenu
-          actions={global.fs.focusElement.length > 1 ? state.actions.filter((item) => item.multiselect) : state.actions.filter((item) => !item.multiselect)}
+          actions={(global.fs.focusElement.length > 1 || feTarget.length > 1) ? state.actions.filter((item) => item.multiselect) : state.actions.filter((item) => !item.multiselect)}
           hideContextMenu={hideContextMenu}
           createNewFile={handleNewFileInput}
           createNewFolder={handleNewFolderInput}
@@ -1273,6 +1368,7 @@ export function Workspace() {
           publishFileToGist={publishFileToGist}
           uploadFile={uploadFile}
           downloadPath={downloadPath}
+          publishManyFilesToGist={handlePublishingMultiSelectedFilesToGist}
         />
       )}
 

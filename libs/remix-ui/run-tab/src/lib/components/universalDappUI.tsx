@@ -300,6 +300,7 @@ export function UniversalDappUI(props: UdappProps) {
               {props.exEnvironment && props.exEnvironment.startsWith('injected') && (
                 <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappEditTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextEdit" />}>
                   <i
+                    data-id="instanceEditIcon"
                     className="fas fa-edit pr-3"
                     onClick={() => {
                       props.editInstance(props.instance)

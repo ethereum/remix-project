@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
@@ -12,6 +12,9 @@ import { appProviderContextType, onLineContext, platformContext } from './contex
 import { FormattedMessage, IntlProvider } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper'
 import { UsageTypes } from './types'
+import { AppState } from './interface'
+import { appReducer } from './reducer/app'
+import { appInitialState } from './state/app'
 
 declare global {
   interface Window {
@@ -40,6 +43,8 @@ const RemixApp = (props: IRemixAppUi) => {
   const sidePanelRef = useRef(null)
   const pinnedPanelRef = useRef(null)
 
+  const [appState, appStateDispatch] = useReducer(appReducer, appInitialState)
+
   useEffect(() => {
     async function activateApp() {
       props.app.themeModule.initTheme(() => {
@@ -64,6 +69,9 @@ const RemixApp = (props: IRemixAppUi) => {
       if (!hadUsageTypeAsked && props.app.matomoCurrentSetting) {
         setShowEnterDialog(true)
       }
+    }
+    if (hadUsageTypeAsked) {
+      _paq.push(['trackEvent', 'userEntry', 'usageType', hadUsageTypeAsked])
     }
   }, [])
 
@@ -130,7 +138,9 @@ const RemixApp = (props: IRemixAppUi) => {
     showMatamo: props.app.showMatamo,
     appManager: props.app.appManager,
     showEnter: props.app.showEnter,
-    modal: props.app.notification
+    modal: props.app.notification,
+    appState: appState,
+    appStateDispatch: appStateDispatch
   }
 
   const handleUserChosenType = async (type) => {
@@ -150,23 +160,26 @@ const RemixApp = (props: IRemixAppUi) => {
       // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
 
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'beginner'])
       break
     }
     case UsageTypes.Advance: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'advanced'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'advanced'])
       break
     }
     case UsageTypes.Prototyper: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'prototyper'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'prototyper'])
       break
     }
     case UsageTypes.Production: {
       _paq.push(['trackEvent', 'enterDialog', 'usageType', 'production'])
+      _paq.push(['trackEvent', 'userEntry', 'usageType', 'production'])
       break
     }
     default: throw new Error()
     }
-
   }
 
   return (

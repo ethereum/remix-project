@@ -129,6 +129,8 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
 
   const handleSwichToRecentWorkspace = async (e, workspaceName) => {
     e.preventDefault()
+    plugin.call('sidePanel', 'showContent', 'filePanel')
+    plugin.verticalIcons.select('filePanel')
     _paq.push(['trackEvent', 'hometab', 'filesSection', 'loadRecentWorkspace'])
     await plugin.call('filePanel', 'switchToWorkspace', { name: workspaceName, isLocalhost: false })
   }

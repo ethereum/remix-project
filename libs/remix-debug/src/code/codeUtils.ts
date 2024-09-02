@@ -30,6 +30,7 @@ export function nameOpCodes (raw, hardfork) {
     }
 
     const hexCode = bytesToHex((pushData as any))
+    // @ts-ignore
     const data = hexCode !== '' ? ' ' + hexCode : ''
 
     code.push(pad(pc, roundLog(raw.length, 10)) + ' ' + curOpCode + data)
