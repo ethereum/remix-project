@@ -25,7 +25,7 @@ const profile = {
   methods: []
 }
 
-type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals'
+type ProvidersSection = `Injected` | 'Remix VMs' | 'Externals' | 'Remix forked VMs'
 
 export class EnvironmentExplorer extends ViewPlugin {
   providers: { [key in ProvidersSection]: Provider[] }
@@ -39,6 +39,7 @@ export class EnvironmentExplorer extends ViewPlugin {
     this.providers = {
       'Injected': [],
       'Remix VMs': [],
+      'Remix forked VMs': [],
       'Externals': []
     }
   }
@@ -52,6 +53,8 @@ export class EnvironmentExplorer extends ViewPlugin {
   addProvider (provider: Provider) {
     if (provider.isInjected) {
       this.providers['Injected'].push(provider)
+    } else if (provider.isForkedVM) {
+      this.providers['Remix forked VMs'].push(provider)
     } else if (provider.isVM) {
       this.providers['Remix VMs'].push(provider)
     } else {
@@ -81,7 +84,8 @@ export class EnvironmentExplorer extends ViewPlugin {
     this.providers = {
       'Injected': [],
       'Remix VMs': [],
-      'Externals': []
+      'Externals': [],
+      'Remix forked VMs': []
     }
     for (const [key, provider] of Object.entries(this.providersFlat)) {
       this.addProvider(provider)
@@ -138,6 +142,40 @@ export class EnvironmentExplorer extends ViewPlugin {
           title='Deploy to an In-browser Virtual Machine.'
           hScrollable={false}
         >{this.providers['Remix VMs'].map(provider => {
+            return <RemixUIGridCell
+              plugin={this}
+              title={provider.displayName}
+              logos={provider.logos}
+              classList='EECellStyle'
+              searchKeywords={['Remix VMs', provider.name, provider.displayName, provider.title, provider.description]}
+              pinned={this.pinnedProviders.includes(provider.name)}
+              key={provider.name}
+              id={provider.name}
+              pinStateCallback={async (pinned: boolean) => {
+                if (pinned) {
+                  this.emit('providerPinned', provider.name, provider)
+                  this.call('notification', 'toast', `"${provider.displayName}" has been added to the Environment list of the Deploy & Run Transactions plugin.`)
+                  return true
+                }
+                const providerName = await this.call('blockchain', 'getProvider')
+                if (providerName !== provider.name) {
+                  this.emit('providerUnpinned', provider.name, provider)
+                  this.call('notification', 'toast', `"${provider.displayName}" has been removed from the Environment list of the Deploy & Run Transactions plugin.`)
+                  return true
+                } else {
+                  this.call('notification', 'toast', 'Cannot unpin the current selected provider')
+                  return false
+                }
+              }}
+            >
+              <div>{provider.description}</div>
+            </RemixUIGridCell>
+          })}</RemixUIGridSection>
+        <RemixUIGridSection
+          plugin={this}
+          title='Deploy to an In-browser forked Virtual Machine.'
+          hScrollable={false}
+        >{this.providers['Remix forked VMs'].map(provider => {
             return <RemixUIGridCell
               plugin={this}
               title={provider.displayName}
