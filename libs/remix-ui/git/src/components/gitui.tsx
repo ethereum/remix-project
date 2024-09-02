@@ -4,7 +4,7 @@ import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, openFolderInSameWindow, sendToMatomo, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
-import { defaultGitState, defaultLoaderState, gitMatomoEventTypes, gitState, gitUIPanels, loaderState } from '../types'
+import { IGitUi, defaultGitState, defaultLoaderState, gitMatomoEventTypes, gitState, gitUIPanels, loaderState } from '../types'
 import { Accordion, Button } from "react-bootstrap";
 import { CommitMessage } from './buttons/commitmessage'
 import { Commits } from './panels/commits'
@@ -31,9 +31,8 @@ import { GitHubCredentials } from './panels/githubcredentials'
 import { Setup } from './panels/setup'
 import { Init } from './panels/init'
 import { Disabled } from './disabled'
-import { AppContext, platformContext } from '@remix-ui/app'
+import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { Version } from './panels/version'
-import { IGitUi } from '@remix-api'
 
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
@@ -248,6 +247,8 @@ export const GitUI = (props: IGitUi) => {
                     </div>
                   </Accordion.Collapse>
                 </Accordion>
+                { platform === appPlatformTypes.desktop &&
+                <Version /> }
               </pluginActionsContext.Provider>
             </gitActionsContext.Provider>
           </loaderContext.Provider>

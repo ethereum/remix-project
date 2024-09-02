@@ -1,7 +1,5 @@
 import { Endpoints } from "@octokit/types"
-import { CustomRemixApi } from "@remix-api"
 import { AuthCallback, HttpClient, ReadCommitResult } from "isomorphic-git"
-import { Plugin } from "@remixproject/engine";
 
 export type branchDifference = {
   uniqueHeadCommits: ReadCommitResult[],
@@ -206,6 +204,3 @@ export type GitHubUser = Partial<Endpoints["GET /user"]["response"]['data']> & {
 
 export type userEmails = Endpoints["GET /user/emails"]["response"]["data"]
 
-export interface IGitUi {
-  plugin: Plugin<any, CustomRemixApi>
-}
