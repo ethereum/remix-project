@@ -44,7 +44,6 @@ export async function downloadLatestReleaseExecutable(platform: string, outputDi
     console.log(`Downloading executables for ${platform}..., ${executables} `);
 
     for (const executable of executables) {
-			// sort out the correct executable
       const filePath = path.join(outputDir, executable.name);
       console.log(`Downloading ${executable.name}...`);
       await downloadFile(executable.browser_download_url, filePath);

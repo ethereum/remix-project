@@ -84,6 +84,9 @@ export class InferenceManager implements ICompletions {
 
       if (this.inferenceProcess === null) await this._startServer()
 
+      // check if resources are met before initializing the models
+      this._handleResources(true)
+
       console.log('Initializing model request', model.modelType)
       switch (model.modelType) {
       case ModelType.CODE_COMPLETION_INSERTION || ModelType.CODE_COMPLETION:{
@@ -125,6 +128,8 @@ export class InferenceManager implements ICompletions {
   }
 
   async _processStatus() {
+
+    // check if the server is running
     const options = { headers: { 'Content-Type': 'application/json', } }
     const state = await axios.get(this.inferenceURL+"/state", options)
 
@@ -146,7 +151,36 @@ export class InferenceManager implements ICompletions {
       // console.log('completion is runnig', state.data?.completion)
       // console.log('general is runnig', state.data?.general)
     }
+    
+    // this._handleResources()
+  }
 
+  async _handleResources(logger:boolean=false) {
+    // check resrource usage
+    const options = { headers: { 'Content-Type': 'application/json', } }
+    const res = await axios.get(this.inferenceURL+"/sys", options)
+
+    if (res.data?.status) {
+      const max_memory = res.data.memory.total
+      const used_memory = res.data.memory.used
+      const memory_usage = res.data.memory.percent * 100
+      const gpu_available = res.data.gpus
+
+      for (const model of this.selectedModels) {
+        if (model.modelReqs.minSysMemory > max_memory) {
+          if (logger) console.warn('Insufficient memory for the model')
+        }
+
+        if (model.modelReqs.minSysMemory > used_memory) {
+          if (logger) console.warn('Insufficient memory for the model')
+        }
+        if (model.modelReqs.GPURequired) {
+          if (gpu_available.length < 1) {
+            if (logger)console.warn('GPU requiredfor desktop inference but not available')
+          }
+        }
+      }
+    }
   }
 
   async _downloadModel(model:IModel): Promise<string> {
@@ -449,7 +483,7 @@ export class InferenceManager implements ICompletions {
       console.log('model not ready yet')
       return
     }
-    if (GenerationParams.stream_result) {
+    if (params.stream_result) {
       return this._streamInferenceRequest('code_explaining', { code, context, ...params })
     } else {
       return this._makeInferenceRequest('code_explaining', { code, context, ...params }, AIRequestType.GENERAL)
@@ -461,7 +495,7 @@ export class InferenceManager implements ICompletions {
       console.log('model not ready yet')
       return ""
     }
-    if (GenerationParams.stream_result) {
+    if (params.stream_result) {
       return this._streamInferenceRequest('error_explaining', { prompt, ...params })
     } else {
       return this._makeInferenceRequest('error_explaining', { prompt, ...params }, AIRequestType.GENERAL)
@@ -481,7 +515,7 @@ export class InferenceManager implements ICompletions {
     }
     const prompt = buildSolgptPromt(userPrompt, modelOP)
 
-    if (GenerationParams.stream_result) {
+    if (params.stream_result) {
       return this._streamInferenceRequest('solidity_answer', { prompt, ...params })
     } else {
       return this._makeInferenceRequest('solidity_answer', { prompt, ...params }, AIRequestType.GENERAL)
