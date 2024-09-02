@@ -8,7 +8,6 @@ import { ModalTypes, appActionTypes, AppAction } from "@remix-ui/app";
 import { sendToMatomo, setFileDecorators } from "./pluginActions";
 import { Plugin } from "@remixproject/engine";
 import { addInputType, branch, branchDifference, checkoutInputType, cloneInputType, commitChange, CustomRemixApi, fetchInputType, GitHubUser, pullInputType, pushInputType, remote, rmInputType, userEmails } from "@remix-api";
-import { app } from "electron";
 
 export const fileStatuses = [
   ["new,untracked", 0, 2, 0], // new, untracked
