@@ -1,4 +1,4 @@
-import { COMPLETION_SYSTEM_PROMPT } from "../types/constants";  
+import { COMPLETION_SYSTEM_PROMPT } from "../types/constants";
 import { IModel } from "../types/types";
 
 export const getInsertionPrompt = (model:IModel, msg_pfx, msg_sfx) => {
