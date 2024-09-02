@@ -16,12 +16,15 @@ module.exports = {
     'Update settings for git #group1 #group2': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
+            .pause(1000)
             .waitForElementVisible('*[data-id="initgit-btn"]')
             .click('*[data-id="initgit-btn"]')
+            .waitForElementNotPresent('*[data-id="initgit-btn"]')
     },
     'launch github login via FE #group1 #group2': function (browser: NightwatchBrowser) {
         browser
             .clickLaunchIcon('filePanel')
+            .pause(1000)
             .waitForElementVisible('*[data-id="filepanel-login-github"]')
             .click('*[data-id="filepanel-login-github"]')
     },
@@ -30,8 +33,11 @@ module.exports = {
             .waitForElementVisible('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="gitubUsername"]')
             .setValue('*[data-id="githubToken"]', process.env.dgit_token)
+            .pause(1000)
             .setValue('*[data-id="gitubUsername"]', 'git')
+            .pause(1000)
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
+            .pause(1000)
             .click('*[data-id="saveGitHubCredentials"]')
     },
     'check if the settings are loaded #group1 #group2': function (browser: NightwatchBrowser) {
@@ -39,6 +45,7 @@ module.exports = {
             .waitForElementVisible('*[data-id="connected-as-bunsenstraat"]')
             .waitForElementVisible('*[data-id="connected-img-bunsenstraat"]')
             .waitForElementVisible('*[data-id="connected-link-bunsenstraat"]')
+            .waitForElementVisible('*[data-id="remotes-panel"]')
     },
     'check the FE for the auth user #group1 #group2': function (browser: NightwatchBrowser) {
         browser
@@ -117,6 +124,7 @@ module.exports = {
 
             .click('*[data-id="remotes-panel"]')
             .waitForElementVisible('*[data-id="remotes-panel-content"]')
+            .pause(2000)
             .waitForElementVisible({
                 selector: '//*[@data-id="remotes-panel-content"]//*[@data-id="remote-detail-origin-default"]',
                 locateStrategy: 'xpath'
@@ -212,6 +220,7 @@ module.exports = {
             .waitForElementVisible('*[data-id="github-panel"]')
             .click('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="disconnect-github"]')
+            .pause(1000)
             .click('*[data-id="disconnect-github"]')
             .waitForElementNotPresent('*[data-id="connected-as-bunsenstraat"]')
     },
@@ -284,6 +293,7 @@ module.exports = {
                 selector: "//div[@id='commands-local-branch-select']//div[contains(@class, 'singleValue') and contains(text(), 'main')]",
                 locateStrategy: 'xpath'
             })
+            .pause(1000)
             .getAttribute({
                 selector: '//*[@data-id="sourcecontrol-pull"]',
                 locateStrategy: 'xpath'
