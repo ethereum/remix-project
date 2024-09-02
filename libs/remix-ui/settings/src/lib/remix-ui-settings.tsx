@@ -251,12 +251,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               <FormattedMessage id="settings.generateContractMetadataText" />
               <CustomTooltip
                 placement="auto"
-                tooltipId="overlay-tooltip-compile"
+                tooltipId="settings-tooltip-metadata"
                 tooltipText={intl.formatMessage({ id: 'settings.generateContractMetadataTooltip' })}
               >
                 <i className="ml-2 fas fa-info-circle"></i>
               </CustomTooltip>
-              
             </label>
           </div>
           <div className="mt-2 custom-control custom-checkbox mb-1">
@@ -304,11 +303,16 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked={isPersonalChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
-              <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span> </span>
-              <span> </span>
+              <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
               <FormattedMessage id="settings.enablePersonalModeText" />
-              &nbsp;
-              <FormattedMessage id="settings.warnText" />
+              <i className="ml-1 fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> 
+              <CustomTooltip
+                placement="auto"
+                tooltipId="settings-tooltip-personalMode"
+                tooltipText={intl.formatMessage({ id: 'settings.enablePersonalModeTooltip' })}
+              >
+                <i className="ml-2 fas fa-info-circle"></i>
+              </CustomTooltip>
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
