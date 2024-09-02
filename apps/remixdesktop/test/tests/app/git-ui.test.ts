@@ -56,6 +56,8 @@ const tests = {
     'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
+            .waitForElementVisible('*[data-id="github-panel"]')
+            .click('*[data-id="github-panel"]')
             .setValue('*[data-id="gitubUsername"]', 'git')
             .setValue('*[data-id="githubEmail"]', 'git@example.com')
             .click('*[data-id="saveGitHubCredentials"]')
@@ -70,6 +72,7 @@ const tests = {
             .addFile('test.txt', { content: 'hello world' }, 'README.md')
             .clickLaunchIcon('dgit')
             .pause(1000)
+            .click('*[data-id="sourcecontrol-panel"]')
             .waitForElementVisible({
                 selector: "//*[@data-status='new-untracked' and @data-file='/test.txt']",
                 locateStrategy: 'xpath'
