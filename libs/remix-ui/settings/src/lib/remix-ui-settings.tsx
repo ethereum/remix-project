@@ -249,6 +249,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               htmlFor="generatecontractmetadata"
             >
               <FormattedMessage id="settings.generateContractMetadataText" />
+              <CustomTooltip
+                placement="auto"
+                tooltipId="overlay-tooltip-compile"
+                tooltipText={intl.formatMessage({ id: 'settings.generateContractMetadataTooltip' })}
+              >
+                <i className="ml-2 fas fa-info-circle"></i>
+              </CustomTooltip>
+              
             </label>
           </div>
           <div className="mt-2 custom-control custom-checkbox mb-1">
