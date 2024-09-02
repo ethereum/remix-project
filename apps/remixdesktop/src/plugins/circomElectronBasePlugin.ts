@@ -1,7 +1,8 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-import { circomCli, extractParentFromKey } from "../tools/circom"
+import { CIRCOM_INSTALLATION_PATH, circomCli, extractParentFromKey } from "../tools/circom"
 import path from "path"
+import { existsSync, readFileSync } from "fs"
 
 const profile: Profile = {
   displayName: 'circom',
@@ -22,7 +23,7 @@ const clientProfile: Profile = {
   name: 'circom',
   displayName: 'circom',
   description: 'Circom Language Compiler',
-  methods: ['install', 'run',]
+  methods: ['install', 'run', 'getInputs']
 }
 
 class CircomElectronPluginClient extends ElectronBasePluginClient {
@@ -53,6 +54,23 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
     const depPath = path.join(wd, '.deps/https/raw.githubusercontent.com/iden3/')
     const outputDir = extractParentFromKey(filePath) + '/.bin'
 
-    await circomCli.run(`${filePath} -l ${depPath} -o ${outputDir}`, options)
+    return await circomCli.run(`${filePath} -l ${depPath} -o ${outputDir}`, options)
+  }
+
+  getInputs() {
+    const inputsFile = extractParentFromKey(CIRCOM_INSTALLATION_PATH) + '/log_input_signals.txt'
+    const inputsFileExists = existsSync(inputsFile)
+    const signals: string[] = []
+
+    if (inputsFileExists) {
+      const inputsContent = readFileSync(inputsFile, 'utf-8')
+      const regexPattern = /main\.(\w+)/g
+
+      let match
+      while ((match = regexPattern.exec(inputsContent)) !== null) {
+        signals.push(match[1])
+      }
+      return signals
+    }
   }
 }

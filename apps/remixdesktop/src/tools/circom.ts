@@ -6,7 +6,7 @@ import fs, { existsSync } from 'fs'
 import axios from 'axios'
 
 const execAsync = promisify(exec)
-const CIRCOM_INSTALLATION_PATH = getInstallationPath()
+export const CIRCOM_INSTALLATION_PATH = getInstallationPath()
 const CIRCOM_INSTALLATION_URL = getInstallationUrl()
 
 async function downloadFile(url: string, dest: string) {
@@ -83,12 +83,9 @@ export const circomCli = {
   },
 
   async run (filePath: string, options?: Record<string, string>) {
-    const cmd = `${CIRCOM_INSTALLATION_PATH} ${filePath} ${Object.keys(options || {}).map((key) => `--${key} ${options[key]}`).join(' ')}`
-    console.log('cmd: ', cmd)
-    const { stdout, stderr } = await execAsync(cmd)
+    const cmd = `${CIRCOM_INSTALLATION_PATH} ${filePath} ${Object.keys(options || {}).map((key) => options[key] ? `--${key} ${options[key]}` : `--${key}`).join(' ')}`
 
-    if (stderr) return console.error(stderr)
-    console.log(stdout)
+    return await execAsync(cmd)
   }
 }
 
