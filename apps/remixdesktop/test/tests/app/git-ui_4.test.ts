@@ -164,6 +164,7 @@ const tests = {
             .pause(5000)
             .click('*[data-id="remotes-panel"]')
             .waitForElementVisible('*[data-id="set-as-default-origin"]')
+            .pause(1000)
             .click('*[data-id="set-as-default-origin"]')
     },
     'check the commands for origin #group4': function (browser: NightwatchBrowser) {
