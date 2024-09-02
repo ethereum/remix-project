@@ -31,7 +31,22 @@ module.exports = {
             1: 'uint256: out2 15'
           }
         })
-     .end()
+  },
+
+  'Should clear transient storage after tx execution' : function (browser: NightwatchBrowser) {
+    browser.addFile('clear_transient.sol', { content: clearTransient })
+    .clickLaunchIcon('solidity')
+    .verifyContracts(['ClearTransient'])
+    .clickLaunchIcon('udapp')
+    .createContract('')
+    .clickInstance(0)
+    .clickFunction('get - call')
+    .testFunction('last',
+      {
+        'decoded output': {
+          0: 'uint256: 0'
+        }
+      })
   }
 }
 
@@ -48,4 +63,23 @@ contract TestTransientStorage {
            out2 := tload(1)
         }
     }    
+}`
+
+const clearTransient = `
+// SPDX-License-Identifier: none
+pragma solidity 0.8.26;
+import "hardhat/console.sol"; 
+   
+contract ClearTransient {
+    uint p;
+    constructor() {
+      uint256 value;
+      assembly { value := tload(hex"1234") }
+      p = value;
+      assembly { tstore(hex"1234", 10)  }       
+    }
+
+    function get () public view returns (uint) {
+      return p;
+    }
 }`
