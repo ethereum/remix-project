@@ -6,7 +6,7 @@ import { addDeployOption, clearAllInstances, clearAllPinnedInstances, clearRecor
 import { updateInstanceBalance } from './deploy'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 import { Plugin } from "@remixproject/engine"
 import { getNetworkProxyAddresses } from "./deploy"
 import { shortenAddress } from "@remix-ui/helper"

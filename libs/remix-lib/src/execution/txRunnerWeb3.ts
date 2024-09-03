@@ -1,7 +1,7 @@
 'use strict'
 import { EventManager } from '../eventManager'
 import type { Transaction as InternalTransaction } from './txRunner'
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 import { toBigInt, toHex } from 'web3-utils'
 
 export class TxRunnerWeb3 {

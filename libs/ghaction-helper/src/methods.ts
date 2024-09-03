@@ -3,7 +3,7 @@ import { ethers } from "ethers"
 import { Provider } from '@remix-project/remix-simulator'
 import { getArtifactsByContractName } from './artifacts-helper'
 import { SignerWithAddress } from './signer'
-import Web3 from "web3"
+import { Web3 } from "web3"
 
 const providerConfig = {
   fork: global.fork || null,
