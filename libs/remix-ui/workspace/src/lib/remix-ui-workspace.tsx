@@ -335,6 +335,16 @@ export function Workspace() {
     )
   }
 
+  const createBlankWorkspace = () => {
+    global.modal(
+      intl.formatMessage({ id: 'filePanel.workspace.createBlank' }),
+      <></>,
+      intl.formatMessage({ id: 'filePanel.ok' }),
+      () => global.dispatchCreateWorkspace('blank_workspace', 'blank', false),
+      intl.formatMessage({ id: 'filePanel.cancel' })
+    )
+  }
+
   const saveSampleCodeWorkspace = () => {
     const workspaceName = global.plugin.getAvailableWorkspaceName('code-sample')
     global.modal(
@@ -926,6 +936,7 @@ export function Workspace() {
                           <HamburgerMenu
                             selectedWorkspace={selectedWorkspace}
                             createWorkspace={createWorkspace}
+                            createBlankWorkspace={createBlankWorkspace}
                             renameCurrentWorkspace={renameCurrentWorkspace}
                             downloadCurrentWorkspace={downloadCurrentWorkspace}
                             deleteCurrentWorkspace={deleteCurrentWorkspace}
