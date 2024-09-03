@@ -1,5 +1,12 @@
 .TSCellStyle {
-  min-height: 8.5rem;
+  min-height: 9rem;
+  max-width: 13rem;
+  min-width: 13rem;
+  max-height: 8.5rem;
+}
+
+.TSCellStyleShort {
+  min-height: 5rem;
   max-width: 13rem;
   min-width: 13rem;
   max-height: 8.5rem;
