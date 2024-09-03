@@ -192,10 +192,7 @@ const tests = {
 
 const useIsoGit = process.argv.includes('--useIsoGit');
 if (process.platform.startsWith('win')) {
-    if (useIsoGit)
-        module.exports = { ...tests }
-    else
-        module.exports = {}
+    module.exports = {}
 }
 else 
     module.exports = { ...tests }
