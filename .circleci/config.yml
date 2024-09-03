@@ -276,12 +276,19 @@ jobs:
               yarn
               ./rundist.bash
       - run:
-          name: start tests offline
+          name: run tests
           command: |
             cd "apps/remixdesktop/"
             yarn -v
             sleep 15
             ./run_ci_test.sh  
+      - run:  
+          name: "Run isogit tests"
+          command: |
+            cd apps/remixdesktop/
+            yarn -v
+            sleep 15
+            ./run_git_ui_isogit_tests.sh
       - store_test_results:
           path: ./apps/remixdesktop/reports/tests
       - store_artifacts:
@@ -528,6 +535,12 @@ jobs:
             nvm use 20
             cd apps/remixdesktop
             ./run_ci_test.sh  
+      - run:
+          name: "Run isogit tests"
+          command: |
+            nvm use 20
+            cd apps/remixdesktop
+            ./run_git_ui_isogit_tests.sh
       - store_test_results:
           path: ./apps/remixdesktop/reports/tests
       - store_artifacts:

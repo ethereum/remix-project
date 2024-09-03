@@ -144,6 +144,11 @@ const tests = {
 }
 
 const useIsoGit = process.argv.includes('--useIsoGit');
-module.exports = {
-    ...process.platform.startsWith('win') ? {} : process.platform.startsWith('linux') || useIsoGit ? tests : {}
+if (process.platform.startsWith('win')) {
+    if (useIsoGit)
+        module.exports = { ...tests }
+    else
+        module.exports = {}
 }
+else 
+    module.exports = { ...tests }
