@@ -133,6 +133,11 @@ jobs:
             command: |
               cd apps/remixdesktop/
               ./run_ci_test.sh
+        - run:  
+            name: "Run isogit tests"
+            command: |
+              cd apps/remixdesktop/
+              ./run_git_ui_isogit_tests.sh
         - store_test_results:
             path: ./apps/remixdesktop/reports/tests
         - store_artifacts:
