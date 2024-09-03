@@ -56,7 +56,11 @@ const tests = {
     'Update settings for git #group1 #group2 #group3': function (browser: NightwatchBrowser) {
         browser.
             clickLaunchIcon('dgit')
+            .saveScreenshot('./reports/screenshots/gitui.png')
             .waitForElementVisible('*[data-id="github-panel"]')
+            .saveScreenshot('./reports/screenshots/gitui2.png')
+            .pause(1000)
+            .saveScreenshot('./reports/screenshots/gitui3.png')
             .click('*[data-id="github-panel"]')
             .pause(1000)
             .setValue('*[data-id="gitubUsername"]', 'git')
