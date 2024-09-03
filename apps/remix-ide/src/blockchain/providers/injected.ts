@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 import { hashPersonalMessage, isHexString, bytesToHex } from '@ethereumjs/util'
 import { ExecutionContext } from '../execution-context'
 
