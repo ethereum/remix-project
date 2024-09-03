@@ -26,7 +26,7 @@ const tests = {
 
     },
     'Update settings for git #group1 #group2': function (browser: NightwatchBrowser) {
-        browser.pause()
+        browser
             .clickLaunchIcon('dgit')
             .pause(1000)
             .waitForElementVisible('*[data-id="initgit-btn"]')
@@ -108,10 +108,16 @@ const tests = {
                 selector: '//*[@data-id="clone-panel-content"]//*[@data-id="clonebtn-ethereum/awesome-remix-master"]',
                 locateStrategy: 'xpath'
             })
+            .pause(5000)
+            .windowHandles(function (result) {
+                console.log(result.value)
+                browser.switchWindow(result.value[2])
+                    .pause(1000)
+                    .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+            })
     },
     'check if there is a README.md file #group1': function (browser: NightwatchBrowser) {
         browser
-            .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemREADME.md"]')
     },
     'check the commands panel #group1': function (browser: NightwatchBrowser) {
