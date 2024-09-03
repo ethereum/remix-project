@@ -1,6 +1,6 @@
 import * as packageJson from '../../../../../package.json'
 import { InjectedCustomProvider } from './injected-custom-provider'
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 
 const profile = {
   name: 'injected-ephemery-testnet-provider',

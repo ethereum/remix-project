@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 import { Contract, ContractSendMethod, Options } from 'web3-eth-contract'
 
 /**
