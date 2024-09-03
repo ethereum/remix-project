@@ -7,11 +7,10 @@ for TESTFILE in $TESTFILES; do
     yarn run test --test ./build-e2e/remixdesktop/test/tests/app/${TESTFILE} || TEST_EXITCODE=1
 done
 
-# if [ "$CIRCLE_NODE_INDEX" -eq 0 ]; then
-#  sh ./run_git_ui_isogit_tests.sh
-# elif [ "$CIRCLE_NODE_INDEX" -eq 1 ]; then
-#  yarn test:offline
-# fi
+
+if [ "$CIRCLE_NODE_INDEX" -eq 1 ]; then
+  yarn test:offline || TEST_EXITCODE=1
+fi
 
 echo "$TEST_EXITCODE"
 if [ "$TEST_EXITCODE" -eq 1 ]
