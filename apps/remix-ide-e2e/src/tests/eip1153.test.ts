@@ -33,9 +33,8 @@ module.exports = {
         })
   },
 
-  'Should clear transient storage after tx execution' : function (browser: NightwatchBrowser) {
+  'Should clear transient storage after tx execution #group1' : function (browser: NightwatchBrowser) {
     browser.addFile('clear_transient.sol', { content: clearTransient })
-    .clickLaunchIcon('solidity')
     .verifyContracts(['ClearTransient'])
     .clickLaunchIcon('udapp')
     .createContract('')
