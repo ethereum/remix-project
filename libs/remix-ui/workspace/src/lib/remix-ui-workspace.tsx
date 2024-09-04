@@ -335,6 +335,12 @@ export function Workspace() {
     )
   }
 
+  const createBlankWorkspace = async () => {
+    global.modal(
+      
+    )
+  }
+
   const saveSampleCodeWorkspace = () => {
     const workspaceName = global.plugin.getAvailableWorkspaceName('code-sample')
     global.modal(
