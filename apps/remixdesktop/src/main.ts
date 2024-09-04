@@ -36,8 +36,8 @@ const windowSet = new Set<BrowserWindow>([]);
 export const createWindow = async (dir?: string): Promise<void> => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1280,//  (isE2E ? 3840 : screen.getPrimaryDisplay().size.width * 0.8),
-    height: 720, //(isE2E ? 2160 : screen.getPrimaryDisplay().size.height * 0.8),
+    width: 2560,//  (isE2E ? 3840 : screen.getPrimaryDisplay().size.width * 0.8),
+    height: 1140, //(isE2E ? 2160 : screen.getPrimaryDisplay().size.height * 0.8),
     frame: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
@@ -66,8 +66,8 @@ export const createWindow = async (dir?: string): Promise<void> => {
     windowSet.delete(mainWindow)
   })
 
-  //if (isE2E)
-  //  mainWindow.maximize()
+  if (isE2E)
+    mainWindow.maximize()
 
   windowSet.add(mainWindow)
   //mainWindow.webContents.openDevTools();
