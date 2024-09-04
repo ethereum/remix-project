@@ -7,6 +7,7 @@ import { WorkspaceMetadata } from '../types'
 export interface HamburgerMenuProps {
   selectedWorkspace: WorkspaceMetadata
   createWorkspace: () => void
+  createBlankWorkspace: () => Promise<void>
   renameCurrentWorkspace: () => void
   downloadCurrentWorkspace: () => void
   deleteCurrentWorkspace: () => void
@@ -41,7 +42,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
         fa="far fa-plus"
         hideOption={hideWorkspaceOptions}
         actionOnClick={() => {
-          props.createWorkspace()
+          props.createBlankWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}
         platforms={[appPlatformTypes.web]}
