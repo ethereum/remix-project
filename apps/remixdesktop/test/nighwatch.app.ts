@@ -75,8 +75,8 @@ module.exports = {
             if(useOffline) args = [...args, '--useOffline'];
 
             // Set display size
-            const windowSize = "--window-size=2920,2080";
-            args = [...args, windowSize];
+            const windowSize = "--window-size=1000,1000";
+            args = [...args];
 
             switch (type) {
               case 'Windows_NT':
