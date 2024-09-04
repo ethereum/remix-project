@@ -305,7 +305,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
               <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
               <FormattedMessage id="settings.enablePersonalModeText" />
-              <i className="ml-1 fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> 
+              <i className="ml-1 fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
               <CustomTooltip
                 placement="auto"
                 tooltipId="settings-tooltip-personalMode"
