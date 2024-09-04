@@ -107,7 +107,7 @@ export const gitProxy = {
     },
 
     async init(path: string) {
-        await execAsync(`git init`, { cwd: path });
+        await execAsync(`git init --initial-branch=main`, { cwd: path });
     },
 
     async updateSubmodules(path: string) {
