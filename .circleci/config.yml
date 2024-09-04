@@ -246,11 +246,13 @@ jobs:
       - run: 
           name: Naive impl to wait until the screen stretches 
           command: Start-Sleep 5
+          shell: powershell.exe
       - run:
           name: Get screen info
           command: |
             Add-Type -AssemblyName System.Windows.Forms
             [System.Windows.Forms.Screen]::AllScreens | fl *
+          shell: powershell.exe
       - checkout
       - attach_workspace:
           at: .
