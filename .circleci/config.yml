@@ -238,6 +238,17 @@ jobs:
     parallelism: 10
     working_directory: ~/remix-project
     steps:
+      - run:
+          name: Restart local mstsc
+          command: psexec64.exe -accepteula -nobanner -i 0 mstsc /v:localhost /w:3840 /h:2160
+          background: true
+          shell: powershell.exe
+      - run: name: Naive impl to wait until the screen stretches command: Start-Sleep 5
+      - run:
+          name: Get screen info
+          command: |
+            Add-Type -AssemblyName System.Windows.Forms
+            [System.Windows.Forms.Screen]::AllScreens | fl *
       - checkout
       - attach_workspace:
           at: .
