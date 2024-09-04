@@ -73,7 +73,7 @@ export const Branches = () => {
                         <RemoteBranchDetails allowCheckout={true} key={index} branch={branch}></RemoteBranchDetails>
                       );
                     })}
-                  {context.branches && remoteBranches.length > remoteBranchPage * pageLength && <><GitUIButton className="btn btn-sm" onClick={() => {
+                  {context.branches && remoteBranches.length > remoteBranchPage * pageLength && <><GitUIButton data-id='show-more-branches-on-remote' className="btn btn-sm" onClick={() => {
                     setRemoteBranchPage(remoteBranchPage + 1);
                   }}>Show more</GitUIButton><br></br></>}
                   <GitUIButton data-id={`remote-sync-${context.upstream.name}`} className="btn btn-sm" onClick={async () => {
