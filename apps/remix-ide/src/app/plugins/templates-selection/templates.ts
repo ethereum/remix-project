@@ -14,24 +14,24 @@ export const templates = (intl, plugin) => {
           value: "ozerc20",
           displayName: "ERC20",
           tagList: ["ERC20", "Solidity"],
-          description: 'A simple ERC20 project'
+          description: 'A simple ERC20 Project'
         },
         {
           value: "ozerc721",
           displayName: "ERC721 (NFT)",
           tagList: ["ERC721", "Solidity"],
-          description: 'A simple ERC721 (aka NFT) project'
+          description: 'A simple ERC721 (aka NFT) Project'
         },
         {
           value: "ozerc1155",
           tagList: ["Solidity"],
           displayName: "ERC1155",
-          description: 'A simple ERC1155 (multi token) project'
+          description: 'A simple ERC1155 (multi token) Project'
         },
         {
           value: "ozerc20",
           displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          description: "A Standard Interface for fungible Tokens",
           tagList: ["Solidity"],
           opts: {
             mintable: true
@@ -50,7 +50,7 @@ export const templates = (intl, plugin) => {
           value: "ozerc1155",
           displayName: "ERC1155",
           tagList: ["Solidity"],
-          description: "A standard interface for contracts that manage multiple token types",
+          description: "A Standard Interface for Contracts that manage Multiple Token types",
           opts: {
             mintable: true
           }
@@ -58,7 +58,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          description: "A Standard Interface for fungible Tokens",
           tagList: ["Solidity", "ERC20"],
           opts: {
             mintable: true,
@@ -78,7 +78,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
+          description: "A Standard Interface for Contracts that Manage multiple Token types",
           opts: {
             mintable: true,
             burnable: true
@@ -88,7 +88,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          description: "A Standard Interface for fungible Tokens",
           opts: {
             mintable: true,
             pausable: true
@@ -108,7 +108,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
+          description: "A Standard Interface for Contracts that manage Multiple Token types",
           tagList: ["ERC20"],
           opts: {
             mintable: true,
@@ -123,7 +123,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          description: "A Standard Interface for fungible Tokens",
           opts: {
             upgradeable: 'uups'
           },
@@ -141,7 +141,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
+          description: "A Standard Interface for Contracts that manage Multiple Token types",
           opts: {
             upgradeable: 'uups'
           },
@@ -150,7 +150,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          description: "A Standard Interface for fungible Tokens",
           opts: {
             upgradeable: 'uups',
             mintable: true
@@ -170,7 +170,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
+          description: "A Standard Interface for Contracts that manage Multiple Token types",
           opts: {
             upgradeable: 'uups',
             mintable: true
@@ -180,7 +180,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          description: "A Standard Interface for fungible Tokens",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -202,7 +202,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
+          description: "A Standard Interface for Contracts that manage Multiple Token types",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -213,7 +213,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          description: "A Standard Interface for fungible Tokens",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -235,7 +235,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
+          description: "A Standard Interface for Contracts that manage Multiple Token types",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -246,7 +246,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc1155",
           displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
+          description: "A Standard Interface for Contracts that manage Multiple Token types",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -259,12 +259,12 @@ export const templates = (intl, plugin) => {
     },
     {
       name: "Cookbook",
-      tooltip: "Cookbook is a smart contract search tool. Click here to open cookbook and browse contracts.",
+      tooltip: "Cookbook is a Smart Contract Search Tool. Click here to open Cookbook and browse Contracts.",
       onClick: async () => {
         await plugin.call('manager', 'activatePlugin', 'cookbookdev')
         plugin.call('menuicons', 'showContent', 'cookbookdev')
       },
-      onClickLabel: 'Open cookbook plugin',
+      onClickLabel: 'Open Cookbook Plugin',
       items: [
         { value: "token-sale", displayName: 'Token Sale' },
         { value: "simple-nft-sale", displayName: 'Simple Nft Sale' },
@@ -280,7 +280,7 @@ export const templates = (intl, plugin) => {
     {
       name: "OxProject",
       items: [
-        { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: "A standard interface for fungible tokens by 0xProject" }
+        { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: "A standard Interface for fungible Tokens by 0xProject" }
       ]
     },
     {
@@ -292,9 +292,9 @@ export const templates = (intl, plugin) => {
     {
       name: "Circom ZKP",
       items: [
-        { value: "semaphore", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.semaphore' }), description: 'Run a ZK Semaphore circom circuit.' },
-        { value: "hashchecker", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.hashchecker' }), description: 'Run a ZK Hash checker circom circuit.' },
-        { value: "rln", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.rln' }), description: 'Run a Rate Limiting Nullifier circom circuit.' }
+        { value: "semaphore", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.semaphore' }), description: 'Run a ZK Semaphore Circom Circuit.' },
+        { value: "hashchecker", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.hashchecker' }), description: 'Run a ZK Hash checker Circom Circuit.' },
+        { value: "rln", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.rln' }), description: 'Run a Rate Limiting Nullifier Circom Circuit.' }
       ]
     },
     {
@@ -304,7 +304,7 @@ export const templates = (intl, plugin) => {
           value: "sindriScripts",
           tagList: ["ZKP"],
           displayName: intl.formatMessage({ id: 'filePanel.addscriptsindri' }),
-          description: 'Use the Sindri API to compile and generate proof.'
+          description: 'Use the Sindri API to Compile and Generate Proof.'
         },
       ],
     },

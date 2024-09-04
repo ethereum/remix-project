@@ -37,6 +37,16 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
         platforms={[appPlatformTypes.web]}
       ></HamburgerMenuItem>
       <HamburgerMenuItem
+        kind="createBlank"
+        fa="far fa-plus"
+        hideOption={hideWorkspaceOptions}
+        actionOnClick={() => {
+          props.createWorkspace()
+          props.hideIconsMenu(!showIconsMenu)
+        }}
+        platforms={[appPlatformTypes.web]}
+      ></HamburgerMenuItem>
+      <HamburgerMenuItem
         kind="create.desktop"
         fa="far fa-plus"
         hideOption={hideWorkspaceOptions}
