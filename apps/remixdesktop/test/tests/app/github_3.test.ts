@@ -1,6 +1,8 @@
 import { NightwatchBrowser } from "nightwatch"
 
-
+const useIsoGit = process.argv.includes('--useIsoGit');
+let commitCount = 0
+let branchCount = 0
 const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         browser.hideToolTips()
@@ -64,83 +66,112 @@ const tests = {
             .clickLaunchIcon('filePanel')
             .waitForElementVisible('*[data-id="filepanel-connected-img-bunsenstraat"]')
     },
-        // pagination test
-        'clone repo #group3': function (browser: NightwatchBrowser) {
-            browser
-                .clickLaunchIcon('dgit')
-                .waitForElementVisible('*[data-id="clone-panel"]')
-                .click('*[data-id="clone-panel"]')
-                .waitForElementVisible('*[data-id="clone-url"]')
-                .setValue('*[data-id="clone-url"]', 'https://github.com/ethereum/awesome-remix')
-                .waitForElementVisible('*[data-id="clone-branch"]')
-                .setValue('*[data-id="clone-branch"]', 'master')
-                .waitForElementVisible('*[data-id="clone-btn"]')
-                .click('*[data-id="clone-btn"]')
-                .clickLaunchIcon('filePanel')
-                .pause(5000)
-                .windowHandles(function (result) {
-                    console.log(result.value)
-                    browser.switchWindow(result.value[2])
-                        .pause(1000)
-                        .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
-                })
-        },
-        'Update settings for git #group3': function (browser: NightwatchBrowser) {
-            browser.
-                clickLaunchIcon('dgit')
-                .waitForElementVisible('*[data-id="github-panel"]')
-                .click('*[data-id="github-panel"]')
-                .pause(1000)
-                .setValue('*[data-id="githubToken"]', 'invalidtoken')
-                .pause(1000)
-                .setValue('*[data-id="gitubUsername"]', 'git')
-                .pause(1000)
-                .setValue('*[data-id="githubEmail"]', 'git@example.com')
-                .pause(1000)
-                .click('*[data-id="saveGitHubCredentials"]')
-                .pause(1000)
-                .modalFooterOKClick('github-credentials-error')
-        },
-        'check the commits panel for pagination #group3': function (browser: NightwatchBrowser) {
-            browser
-                .waitForElementVisible('*[data-id="commits-panel"]')
-                .click('*[data-id="commits-panel"]')
-                .elements('xpath', '//*[@data-id="commits-current-branch-master"]//*[@data-type="commit-summary"]', function (result) {
-                    console.log('Number of commit-summary elements:', (result.value as any).length);
+    // pagination test
+    'clone repo #group3': function (browser: NightwatchBrowser) {
+        browser
+            .clickLaunchIcon('dgit')
+            .waitForElementVisible('*[data-id="clone-panel"]')
+            .click('*[data-id="clone-panel"]')
+            .waitForElementVisible('*[data-id="clone-url"]')
+            .setValue('*[data-id="clone-url"]', 'https://github.com/yann300/remix-reward')
+            .waitForElementVisible('*[data-id="clone-branch"]')
+            .setValue('*[data-id="clone-branch"]', 'master')
+            .waitForElementVisible('*[data-id="clone-btn"]')
+            .click('*[data-id="clone-btn"]')
+            .clickLaunchIcon('filePanel')
+            .pause(5000)
+            .windowHandles(function (result) {
+                console.log(result.value)
+                browser.switchWindow(result.value[2])
+                    .pause(1000)
+                    .waitForElementVisible('*[data-id="treeViewLitreeViewItem.git"]')
+            })
+    },
+    'Update settings for git #group3': function (browser: NightwatchBrowser) {
+        browser.
+            clickLaunchIcon('dgit')
+            .waitForElementVisible('*[data-id="github-panel"]')
+            .click('*[data-id="github-panel"]')
+            .pause(1000)
+            .setValue('*[data-id="githubToken"]', 'invalidtoken')
+            .pause(1000)
+            .setValue('*[data-id="gitubUsername"]', 'git')
+            .pause(1000)
+            .setValue('*[data-id="githubEmail"]', 'git@example.com')
+            .pause(1000)
+            .click('*[data-id="saveGitHubCredentials"]')
+            .pause(1000)
+            .modalFooterOKClick('github-credentials-error')
+    },
+    'check the commits panel for pagination #group3': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="commits-panel"]')
+            .click('*[data-id="commits-panel"]')
+            .elements('xpath', '//*[@data-id="commits-current-branch-master"]//*[@data-type="commit-summary"]', function (result) {
+                console.log('Number of commit-summary elements:', (result.value as any).length);
+                if (useIsoGit) {
+                    commitCount = (result.value as any).length
                     browser.assert.ok((result.value as any).length == 1)
-                })
-        },
-        'load more commits #group3': function (browser: NightwatchBrowser) {
-            browser
-                .waitForElementVisible('*[data-id="load-more-commits"]')
-                .click('*[data-id="load-more-commits"]')
-                .waitForElementVisible('*[data-id="loader-indicator"]')
-                .waitForElementNotPresent('*[data-id="loader-indicator"]')
-                .elements('xpath', '//*[@data-id="commits-current-branch-master"]//*[@data-type="commit-summary"]', function (result) {
-                    console.log('Number of commit-summary elements:', (result.value as any).length);
+                } else {
+                    commitCount = (result.value as any).length
                     browser.assert.ok((result.value as any).length > 2)
-                })
-        },
-        'load more branches from remote #group3': function (browser: NightwatchBrowser) {
-            browser
-                .click('*[data-id="branches-panel"]')
-                .waitForElementVisible({
-                    selector: '//*[@data-id="branches-panel-content-remote-branches"]',
-                    locateStrategy: 'xpath'
-                })
-                .elements('xpath', '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]', function (result) {
-                    console.log('Number of branches elements:', (result.value as any).length);
+                }
+            })
+
+    },
+    'load more commits #group3': function (browser: NightwatchBrowser) {
+        console.log('commitCount:', commitCount)
+        browser
+            .waitForElementVisible('*[data-id="load-more-commits"]')
+            .click('*[data-id="load-more-commits"]')
+            .waitForElementVisible('*[data-id="loader-indicator"]')
+            .waitForElementNotPresent('*[data-id="loader-indicator"]')
+            .elements('xpath', '//*[@data-id="commits-current-branch-master"]//*[@data-type="commit-summary"]', function (result) {
+                console.log('Number of commit-summary elements:', (result.value as any).length);
+                browser.assert.ok((result.value as any).length > commitCount)
+            })
+    },
+    'load more branches from remote #group3': function (browser: NightwatchBrowser) {
+
+        browser
+            .click('*[data-id="branches-panel"]')
+            .waitForElementVisible({
+                selector: '//*[@data-id="branches-panel-content-remote-branches"]',
+                locateStrategy: 'xpath'
+            })
+            .elements('xpath', '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]', function (result) {
+                console.log('Number of branches elements:', (result.value as any).length);
+                if (useIsoGit) {
+                    branchCount = (result.value as any).length
                     browser.assert.ok((result.value as any).length == 1)
-                })
-                .waitForElementVisible('*[data-id="remote-sync-origin"]')
+                } else {
+                    branchCount = (result.value as any).length
+                    browser.assert.ok((result.value as any).length > 2)
+                }
+            })
+
+
+        if (useIsoGit) {
+
+            browser.waitForElementVisible('*[data-id="remote-sync-origin"]')
                 .click('*[data-id="remote-sync-origin"]')
                 .waitForElementVisible('*[data-id="loader-indicator"]')
                 .waitForElementNotPresent('*[data-id="loader-indicator"]')
                 .elements('xpath', '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]', function (result) {
                     console.log('Number of branches elements:', (result.value as any).length);
-                    browser.assert.ok((result.value as any).length > 2)
+                    browser.assert.ok((result.value as any).length > branchCount)
+                })
+        } else {
+            browser.waitForElementVisible('*[data-id="show-more-branches-on-remote"]')
+                .click('*[data-id="show-more-branches-on-remote"]')
+                .pause(1000)
+                .elements('xpath', '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-type="branches-branch"]', function (result) {
+                    console.log('Number of branches elements:', (result.value as any).length);
+                    browser.assert.ok((result.value as any).length > branchCount)
                 })
         }
+
+    }
 }
 
 module.exports = tests
