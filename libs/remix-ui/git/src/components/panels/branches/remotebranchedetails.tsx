@@ -60,7 +60,6 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
     })
     await actions.checkout({
       ref: branch.name,
-      //remote: branch.remote && branch.remote.name || null,
       refresh: true
     });
     await actions.getBranches()
