@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import { CommitObject, ReadCommitResult } from 'isomorphic-git';
 import { promisify } from 'util';
-import { cloneInputType, commitInputType, fetchInputType, pullInputType, pushInputType } from "@remix-api";
+import { cloneInputType, commitInputType, fetchInputType, pullInputType, pushInputType, checkoutInputType } from "@remix-api";
 const execAsync = promisify(exec);
 
 const statusTransFormMatrix = (status: string) => {
@@ -95,6 +95,11 @@ export const gitProxy = {
         } catch (error) {
             console.error('Error during fetch:', error);
         }
+    },
+
+    async checkout(path: string, input: checkoutInputType) {
+        let force = input.force ? ' -f' : '';
+        const { stdout, stderr } = await execAsync(`git checkout ${force} ${input.ref}`, { cwd: path });
     },
 
     async commit(path: string, input: commitInputType) {
