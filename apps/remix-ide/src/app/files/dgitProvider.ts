@@ -101,10 +101,9 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   }
 
   async status(cmd: statusInput): Promise<Array<StatusRow>> {
-    console.log('status', cmd)
+
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'status', cmd)
-      console.log('STATUS', { ...status })
       return status
     }
 
@@ -112,7 +111,7 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
       ...await this.addIsomorphicGitConfigFS(),
       ...cmd
     })
-    console.log('STATUS', JSON.stringify(status))
+
     return status
   }
 
@@ -131,7 +130,7 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   }
 
   async rm(cmd: rmInputType) {
-    console.log('RM', cmd)
+
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'rm', cmd)
     } else {
@@ -144,7 +143,7 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   }
 
   async checkout(cmd: checkoutInputType): Promise<void> {
-    console.log('checkout', cmd)
+
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       await this.call('isogit', 'checkout', cmd)
     } else {
@@ -185,12 +184,12 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   }
 
   async log(cmd: logInputType): Promise<ReadCommitResult[]> {
-    console.log('LOG', cmd)
+
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const status = await this.call('isogit', 'log', {
         ...cmd,
       })
-      console.log('LOG END', status)
+
       return status
     }
 
@@ -198,7 +197,7 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
       ...await this.addIsomorphicGitConfigFS(),
       ...cmd,
     })
-    console.log('LOG END', status)
+
     return status
   }
 
@@ -260,7 +259,6 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
 
     if ((Registry.getInstance().get('platform').api.isDesktop())) {
       const branches = await this.call('isogit', 'branches')
-      console.log(branches)
       return branches
     }
     const defaultConfig = await this.addIsomorphicGitConfigFS()
@@ -618,7 +616,7 @@ class DGitProvider extends Plugin<any, CustomRemixApi> {
   }
 
   async remotecommits(input: remoteCommitsInputType): Promise<pagedCommits[]> {
-    console.log('remotecommits', input)
+
     const octokit = new Octokit({
       auth: input.token
     })
