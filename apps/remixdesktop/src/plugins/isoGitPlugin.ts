@@ -1,11 +1,11 @@
-import { Profile } from "@remixproject/plugin-utils";
-import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
+import {Profile} from '@remixproject/plugin-utils'
+import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
 import fs from 'fs/promises'
 import git from 'isomorphic-git'
 import http from 'isomorphic-git/http/web'
-import { gitProxy } from "../tools/git";
-import { isoGit } from "@remix-git"
-import { branchDifference, branchInputType, cloneInputType, commitChange, commitInputType, compareBranchesInput, currentBranchInput, fetchInputType, initInputType, logInputType, pullInputType, pushInputType, remote, resolveRefInput, statusInput } from "@remix-api";
+import {gitProxy} from '../tools/git'
+import {isoGit} from '@remix-git'
+import {branchDifference, branchInputType, checkoutInputType, cloneInputType, commitChange, commitInputType, compareBranchesInput, currentBranchInput, fetchInputType, initInputType, logInputType, pullInputType, pushInputType, remote, resolveRefInput, statusInput} from '@remix-api'
 
 const profile: Profile = {
   name: 'isogit',
@@ -13,7 +13,7 @@ const profile: Profile = {
   description: 'isogit plugin',
 }
 // used in e2e tests
-const useIsoGit = process.argv.includes('--use-isogit');
+const useIsoGit = process.argv.includes('--use-isogit')
 export class IsoGitPlugin extends ElectronBasePlugin {
   clients: IsoGitPluginClient[] = []
   constructor() {
@@ -21,19 +21,18 @@ export class IsoGitPlugin extends ElectronBasePlugin {
   }
 
   startClone(webContentsId: any): void {
-    const client = this.clients.find(c => c.webContentsId === webContentsId)
+    const client = this.clients.find((c) => c.webContentsId === webContentsId)
     if (client) {
       client.startClone()
     }
   }
 }
 
-
 const clientProfile: Profile = {
   name: 'isogit',
   displayName: 'isogit',
   description: 'isogit plugin',
-  methods: ['init', 'localStorageUsed', 'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder', 'getCommitChanges', 'compareBranches', 'startClone', 'updateSubmodules']
+  methods: ['init', 'localStorageUsed', 'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder', 'getCommitChanges', 'compareBranches', 'startClone', 'updateSubmodules'],
 }
 
 class IsoGitPluginClient extends ElectronBasePluginClient {
@@ -44,15 +43,15 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     this.onload(async () => {
       this.on('fs' as any, 'workingDirChanged', async (path: string) => {
         this.workingDir = path
-        this.gitIsInstalled = await gitProxy.version() && !useIsoGit ? true : false
+        this.gitIsInstalled = (await gitProxy.version()) && !useIsoGit ? true : false
       })
       this.workingDir = await this.call('fs' as any, 'getWorkingDir')
-      this.gitIsInstalled =  await gitProxy.version() && !useIsoGit ? true : false
+      this.gitIsInstalled = (await gitProxy.version()) && !useIsoGit ? true : false
     })
   }
 
   async version() {
-    return this.gitIsInstalled? gitProxy.version(): 'built-in'
+    return this.gitIsInstalled ? gitProxy.version() : 'built-in'
   }
 
   async getGitConfig() {
@@ -68,7 +67,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       throw new Error('No working directory')
     }
 
-
     if (this.workingDir === '') {
       return []
     }
@@ -79,8 +77,8 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
 
     const status = await git.statusMatrix({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
     //console.log('STATUS', status, await this.getGitConfig())
     return status
@@ -90,15 +88,15 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     console.log('LOG', cmd)
     const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
     console.log('LOG', token)
-   
+
     if (this.workingDir === '') {
       return []
     }
 
     const log = await git.log({
-      ...await this.getGitConfig(),
+      ...(await this.getGitConfig()),
       ...cmd,
-      depth: cmd.depth || 10
+      depth: cmd.depth || 10,
     })
     console.log('LOG')
     return log
@@ -110,22 +108,21 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
 
     const add = await git.add({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return add
   }
 
   async rm(cmd: any) {
-
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     const rm = await git.remove({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return rm
@@ -142,15 +139,14 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
 
     const commit = await git.commit({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return commit
   }
 
   async init(input: initInputType) {
-
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
@@ -159,8 +155,8 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       return status
     }
     await git.init({
-      ...await this.getGitConfig(),
-      defaultBranch: (input && input.defaultBranch) || 'main'
+      ...(await this.getGitConfig()),
+      defaultBranch: (input && input.defaultBranch) || 'main',
     })
   }
 
@@ -169,8 +165,8 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       return null
     }
     const branch = await git.branch({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return branch
@@ -183,40 +179,41 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
 
     const resolveref = await git.resolveRef({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
     console.log('RESOLVE REF', resolveref)
     return resolveref
   }
 
-
   async readblob(cmd: any) {
-
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     const readblob = await git.readBlob({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return readblob
   }
 
-  async checkout(cmd: any) {
+  async checkout(cmd: checkoutInputType) {
+    console.log('CHECKOUT', cmd)
 
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
-
-    const checkout = await git.checkout({
-      ...await this.getGitConfig(),
-      ...cmd
-    })
-
-    return checkout
+    if (this.gitIsInstalled) {
+      return await gitProxy.checkout(this.workingDir, cmd)
+    } else {
+      const checkout = await git.checkout({
+        ...(await this.getGitConfig()),
+        ...cmd,
+      })
+      return checkout
+    }
   }
 
   async push(input: pushInputType) {
@@ -231,7 +228,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       const push = await isoGit.push(input, await this.getGitConfig(), this)
       return push
     }
-
   }
 
   async pull(input: pullInputType) {
@@ -256,7 +252,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
 
     if (this.gitIsInstalled) {
       await gitProxy.fetch(this.workingDir, input)
-
     } else {
       const fetch = await isoGit.fetch(input, await this.getGitConfig(), this)
       return fetch
@@ -264,7 +259,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async clone(cmd: cloneInputType) {
-
     if (this.gitIsInstalled) {
       try {
         this.call('terminal' as any, 'log', 'Cloning using git... please wait.')
@@ -285,26 +279,23 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async addremote(input: remote) {
-
     const addremote = await git.addRemote({
-      ...await this.getGitConfig(),
-      url: input.url, remote: input.name
+      ...(await this.getGitConfig()),
+      url: input.url,
+      remote: input.name,
     })
 
     return addremote
   }
 
   async delremote(input: remote) {
-
     const delremote = await git.deleteRemote({
-      ...await this.getGitConfig(),
-      remote: input.name
+      ...(await this.getGitConfig()),
+      remote: input.name,
     })
 
     return delremote
   }
-
-
 
   async remotes() {
     console.log('REMOTES')
@@ -324,7 +315,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return await isoGit.currentbranch(input, defaultConfig)
   }
 
-
   async branches(config: any) {
     console.log('BRANCHES')
     if (!this.workingDir || this.workingDir === '') {
@@ -335,7 +325,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return await isoGit.branches(defaultConfig)
   }
 
-
   async startClone() {
     this.call('filePanel' as any, 'clone')
   }
@@ -344,8 +333,8 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     return await isoGit.getCommitChanges(commitHash1, commitHash2, await this.getGitConfig())
   }
 
-  async compareBranches({ branch, remote }: compareBranchesInput): Promise<branchDifference> {
-    return await isoGit.compareBranches({ branch, remote }, await this.getGitConfig())
+  async compareBranches({branch, remote}: compareBranchesInput): Promise<branchDifference> {
+    return await isoGit.compareBranches({branch, remote}, await this.getGitConfig())
   }
 
   async updateSubmodules(input) {
@@ -356,10 +345,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
         throw e
       }
     } else {
-      this.call('terminal', 'log', { type: 'error', value: 'Please install git into your OS to use this functionality...' })
+      this.call('terminal', 'log', {type: 'error', value: 'Please install git into your OS to use this functionality...'})
     }
   }
 }
-
-
-
