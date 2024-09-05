@@ -1,6 +1,6 @@
 import { NightwatchBrowser } from "nightwatch"
 
-const useIsoGit = process.argv.includes('--useIsoGit');
+const useIsoGit = process.argv.includes('--use-isogit');
 let commitCount = 0
 let branchCount = 0
 const tests = {

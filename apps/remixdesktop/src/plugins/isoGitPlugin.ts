@@ -13,7 +13,7 @@ const profile: Profile = {
   description: 'isogit plugin',
 }
 // used in e2e tests
-const useIsoGit = process.argv.includes('--useIsoGit');
+const useIsoGit = process.argv.includes('--use-isogit');
 export class IsoGitPlugin extends ElectronBasePlugin {
   clients: IsoGitPluginClient[] = []
   constructor() {
