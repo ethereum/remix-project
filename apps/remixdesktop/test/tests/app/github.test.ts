@@ -184,6 +184,7 @@ const tests = {
                 selector: '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-id="branches-branch-links"]',
                 locateStrategy: 'xpath'
             })
+            .pause(1000)
             .click({
                 selector: '//*[@data-id="branches-panel-content-remote-branches"]//*[@data-id="branches-toggle-branch-links"]',
                 locateStrategy: 'xpath'
