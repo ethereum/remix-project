@@ -108,7 +108,8 @@ module.exports = {
         browser
             .waitForElementVisible('*[data-id="toggle_replace"]').click('*[data-id="toggle_replace"]')
             .waitForElementVisible('*[id="search_replace"]')
-            .setValue('*[id="search_replace"]', 'replacing').sendKeys('*[id="search_replace"]', browser.Keys.ENTER).pause(1000)
+            .clearValue('*[id="search_include"]').setValue('*[id="search_include"]', 'contracts/*.sol')
+            .setValue('*[id="search_replace"]', 'replacing').sendKeys('*[id="search_include"]', browser.Keys.ENTER).pause(1000)
             .waitForElementVisible('*[data-id="contracts/2_Owner.sol-33-71"]')
             .moveToElement('*[data-id="contracts/2_Owner.sol-33-71"]', 10, 10)
             .waitForElementVisible('*[data-id="replace-contracts/2_Owner.sol-33-71"]')
@@ -153,7 +154,8 @@ module.exports = {
     'Should replace all & undo & switch between files #group1': function (browser: NightwatchBrowser) {
         browser.waitForElementVisible('*[id="search_input"]')
             .clearValue('*[id="search_input"]')
-            .setValue('*[id="search_input"]', 'storage').sendKeys('*[id="search_input"]', browser.Keys.ENTER)
+            .clearValue('*[id="search_include"]').setValue('*[id="search_include"]', '*.sol, *.js, *.txt')
+            .setValue('*[id="search_input"]', 'storage').sendKeys('*[id="search_include"]', browser.Keys.ENTER)
             .clearValue('*[id="search_replace"]')
             .setValue('*[id="search_replace"]', '123test').pause(1000)
             .waitForElementVisible('*[data-id="replace-all-contracts/1_Storage.sol"]')
