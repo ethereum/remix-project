@@ -116,6 +116,7 @@ const tests = {
                 selector: "//*[@data-status='new-untracked' and @data-file='/test_rename.txt']",
                 locateStrategy: 'xpath'
             })
+            .pause(2000)
             .click('*[data-id="sourcecontrol-add-all"]')
             .waitForElementVisible({
                 selector: "//*[@data-status='added-staged' and @data-file='/test_rename.txt']",
