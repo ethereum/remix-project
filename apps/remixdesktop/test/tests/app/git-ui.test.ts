@@ -193,7 +193,7 @@ const tests = {
             .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest2.txt"]')
     },
 }
-const useIsoGit = process.argv.includes('--useIsoGit');
+const useIsoGit = process.argv.includes('--use-isogit');
 if (process.platform.startsWith('win')) {
     module.exports = {}
 }

@@ -145,7 +145,7 @@ const tests = {
 
 }
 
-const useIsoGit = process.argv.includes('--useIsoGit');
+const useIsoGit = process.argv.includes('--use-isogit');
 if (process.platform.startsWith('win')) {
     module.exports = {}
 }
