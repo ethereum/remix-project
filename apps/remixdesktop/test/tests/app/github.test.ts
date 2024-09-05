@@ -237,6 +237,7 @@ const tests = {
     'disconnect github #group1': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="github-panel"]')
+            .pause(1000)
             .click('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="disconnect-github"]')
             .pause(1000)

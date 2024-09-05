@@ -218,6 +218,7 @@ module.exports = {
     'disconnect github #group1': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="github-panel"]')
+            .pause(1000)
             .click('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="disconnect-github"]')
             .pause(1000)
@@ -370,6 +371,7 @@ module.exports = {
         browser.
             clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="github-panel"]')
+            .pause(1000)
             .click('*[data-id="github-panel"]')
             .pause(1000)
             .setValue('*[data-id="githubToken"]', 'invalidtoken')

@@ -37,6 +37,7 @@ module.exports = {
             .waitForElementVisible('*[data-id="initgit-btn"]')
             .click('*[data-id="initgit-btn"]')
             .waitForElementVisible('*[data-id="github-panel"]')
+            .pause(1000)
             .click('*[data-id="github-panel"]')
             .waitForElementVisible('*[data-id="gitubUsername"]')
             .setValue('*[data-id="gitubUsername"]', 'git')

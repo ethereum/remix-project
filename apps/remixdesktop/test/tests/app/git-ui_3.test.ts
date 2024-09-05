@@ -58,6 +58,7 @@ const tests = {
             clickLaunchIcon('dgit')
             .saveScreenshot('./reports/screenshots/gitui.png')
             .waitForElementVisible('*[data-id="github-panel"]')
+            .pause(1000)
             .saveScreenshot('./reports/screenshots/gitui2.png')
             .pause(1000)
             .saveScreenshot('./reports/screenshots/gitui3.png')

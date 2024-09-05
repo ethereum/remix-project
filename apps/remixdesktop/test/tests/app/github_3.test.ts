@@ -91,6 +91,7 @@ const tests = {
         browser.
             clickLaunchIcon('dgit')
             .waitForElementVisible('*[data-id="github-panel"]')
+            .pause(1000)
             .click('*[data-id="github-panel"]')
             .pause(1000)
             .setValue('*[data-id="githubToken"]', 'invalidtoken')
