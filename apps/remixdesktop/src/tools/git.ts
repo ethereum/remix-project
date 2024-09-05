@@ -83,7 +83,7 @@ export const gitProxy = {
         if(!input.remote || !input.remote.name) {
             input.remote = { name:  await gitProxy.defaultRemoteName(path), url: '' }
         }
-        console.log('fetch', input, path, `git fetch ${input.remote.name} ${(input.ref && input.ref.name) ? input.ref.name : ''}`);
+
         try {
             const { stdout, stderr } = await execAsync(`git fetch ${input.remote.name} ${(input.ref && input.ref.name) ? input.ref.name : ''}`, { cwd: path });
             if (stdout) {
