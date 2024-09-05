@@ -62,7 +62,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async status(cmd: statusInput) {
-    console.log('status', cmd)
+
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
@@ -80,14 +80,13 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       ...(await this.getGitConfig()),
       ...cmd,
     })
-    //console.log('STATUS', status, await this.getGitConfig())
+
     return status
   }
 
   async log(cmd: logInputType) {
-    console.log('LOG', cmd)
+
     const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
-    console.log('LOG', token)
 
     if (this.workingDir === '') {
       return []
@@ -98,7 +97,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       ...cmd,
       depth: cmd.depth || 10,
     })
-    console.log('LOG')
+
     return log
   }
 
@@ -173,7 +172,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async resolveref(cmd: resolveRefInput) {
-    console.log('RESOLVE REF', cmd)
+
     if (!this.workingDir || this.workingDir === '') {
       return null
     }
@@ -182,7 +181,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       ...(await this.getGitConfig()),
       ...cmd,
     })
-    console.log('RESOLVE REF', resolveref)
+
     return resolveref
   }
 
@@ -200,7 +199,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async checkout(cmd: checkoutInputType) {
-    console.log('CHECKOUT', cmd)
 
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
@@ -217,7 +215,6 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async push(input: pushInputType) {
-    console.log('PUSH', input, this.gitIsInstalled)
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
@@ -231,7 +228,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async pull(input: pullInputType) {
-    console.log('PULL', input)
+
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
@@ -245,7 +242,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async fetch(input: fetchInputType) {
-    console.log('FETCH', input)
+
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
@@ -298,7 +295,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async remotes() {
-    console.log('REMOTES')
+
     if (!this.workingDir || this.workingDir === '') {
       return []
     }
@@ -307,7 +304,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async currentbranch(input: currentBranchInput) {
-    console.log('CURRENT BRANCH', input)
+
     if (!this.workingDir || this.workingDir === '') {
       return ''
     }
@@ -316,7 +313,7 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
   }
 
   async branches(config: any) {
-    console.log('BRANCHES')
+
     if (!this.workingDir || this.workingDir === '') {
       return []
     }

@@ -8,7 +8,6 @@ import http from 'isomorphic-git/http/web'
 import { Octokit } from "octokit"
 import { ElectronBasePluginClient } from "@remixproject/plugin-electron"
 const currentbranch = async (input: currentBranchInput, fsConfig: isoGitFSConfig) => {
-  console.log('CURRENT BRANCH', input)
 
   try {
     const cmd = input ? fsConfig ? { ...fsConfig, ...input } : input : fsConfig
@@ -31,8 +30,6 @@ const currentbranch = async (input: currentBranchInput, fsConfig: isoGitFSConfig
     } catch (e) {
       // do nothing
     }
-    console.log('NAME', name)
-    console.log('REMOTE', remote)
 
     return {
       remote: remote,
@@ -201,7 +198,6 @@ const addIsomorphicGitProxyConfig = async (input: {
 }, plugin: any) => {
 
   const token = await plugin.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
-  console.log('TOKEN', token)
 
   let config: isoGitProxyConfig = {
     corsProxy: 'https://corsproxy.remixproject.org/',
