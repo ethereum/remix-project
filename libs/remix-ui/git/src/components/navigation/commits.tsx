@@ -9,6 +9,7 @@ import { SourceControlBase } from "../buttons/sourceControlBase";
 import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
 import { gitPluginContext } from "../gitui";
 import LoaderIndicator from "./loaderindicator";
+import { gitUIPanels } from "../../types";
 
 export interface CommitsNavigationProps {
   title: string,
@@ -53,7 +54,7 @@ export const CommitsNavigation = ({ eventKey, activePanel, callback, title, bran
         </span>
         {showButtons ?
           <SourceControlBase branch={branch} remote={remote}>
-            <SourceControlButtons />
+            <SourceControlButtons panel={gitUIPanels.COMMITS} />
           </SourceControlBase> : null}
 
       </div>

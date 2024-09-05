@@ -51,6 +51,7 @@ export const getBranches = async () => {
   const branches = await plugin.call('dgitApi', 'branches')
 
   dispatch(setBranches(branches));
+  await showCurrentBranch();
 }
 export const getRemotes = async () => {
 
