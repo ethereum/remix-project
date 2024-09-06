@@ -14,7 +14,6 @@ const profile = {
 export class AppUpdaterPlugin extends ElectronBasePlugin {
   clients: AppUpdaterPluginClient[] = []
   constructor() {
-    console.log('AppUpdaterPlugin')
     super(profile, clientProfile, AppUpdaterPluginClient)
     this.methods = [...super.methods]
 
