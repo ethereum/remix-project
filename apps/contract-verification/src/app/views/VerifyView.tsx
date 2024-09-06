@@ -103,7 +103,7 @@ export const VerifyView = () => {
           continue
         }
 
-        proxyReceipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: true, failedChecks: 0 })
+        proxyReceipts.push({ verifierInfo, status: 'awaiting implementation verification', contractId, isProxyReceipt: true, failedChecks: 0 })
       }
 
       newSubmittedContract.proxyAddress = proxyAddress
@@ -123,6 +123,15 @@ export const VerifyView = () => {
       }
 
       const { verifierInfo } = receipt
+
+      if (receipt.status === 'awaiting implementation verification') {
+        const implementationReceipt = newSubmittedContract.receipts.find((r) => r.verifierInfo.name === verifierInfo.name)
+        if (implementationReceipt.status === 'pending') {
+          setTimeout(() => verify(receipt), 1000)
+          return
+        }
+      }
+
       const verifierSettings = chainSettings.verifiers[verifierInfo.name]
       try {
         const verifier = getVerifier(verifierInfo.name, verifierSettings)
