@@ -1,11 +1,11 @@
-import React, { useEffect, useReducer, useState } from 'react'
-import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init, showAlert, gitlog } from '../lib/gitactions'
+import React, { useEffect, useReducer, useState, useContext } from 'react'
+import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init, showAlert, gitlog, setStateGitLogCount } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
 import { openDiff, openFile, saveToken, sendToMatomo, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
 import { defaultGitState, defaultLoaderState, gitMatomoEventTypes, gitState, gitUIPanels, loaderState } from '../types'
-import { Accordion } from "react-bootstrap";
+import { Accordion, Button } from "react-bootstrap";
 import { CommitMessage } from './buttons/commitmessage'
 import { Commits } from './panels/commits'
 import { Branches } from './panels/branches'
@@ -19,7 +19,6 @@ import { Commands } from './panels/commands'
 import { CommandsNavigation } from './navigation/commands'
 import { RemotesNavigation } from './navigation/remotes'
 import { Remotes } from './panels/remotes'
-import { ViewPlugin } from '@remixproject/engine-web'
 import { GitHubNavigation } from './navigation/github'
 import { loaderReducer } from '../state/loaderReducer'
 import { GetDeviceCode } from './github/devicecode'
@@ -31,16 +30,11 @@ import { SourceControl } from './panels/sourcontrol'
 import { GitHubCredentials } from './panels/githubcredentials'
 import { Setup } from './panels/setup'
 import { Init } from './panels/init'
-import { CustomRemixApi } from "@remix-api"
-import { Plugin } from "@remixproject/engine"
 import { Disabled } from './disabled'
-
+import { IGitUi } from '../types'
+import { AppContext } from '@remix-ui/app'
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
-
-interface IGitUi {
-  plugin: Plugin<any, CustomRemixApi>
-}
 
 export const GitUI = (props: IGitUi) => {
   const plugin = props.plugin
@@ -50,6 +44,7 @@ export const GitUI = (props: IGitUi) => {
   const [setup, setSetup] = useState<boolean>(false)
   const [needsInit, setNeedsInit] = useState<boolean>(true)
   const [appLoaded, setAppLoaded] = useState<boolean>(false)
+  const appContext = useContext(AppContext)
 
   useEffect(() => {
     plugin.emit('statusChanged', {
@@ -64,11 +59,16 @@ export const GitUI = (props: IGitUi) => {
 
   useEffect(() => {
     if (!appLoaded) return
-    setCallBacks(plugin, gitDispatch, loaderDispatch, setActivePanel)
+    setCallBacks(plugin, gitDispatch, appContext.appStateDispatch, loaderDispatch, setActivePanel)
     setPlugin(plugin, gitDispatch, loaderDispatch)
     loaderDispatch({ type: 'plugin', payload: true })
 
   }, [appLoaded])
+
+  useEffect(() => {
+    if (!appLoaded) return
+    gitlog(gitState.gitLogCount)
+  }, [gitState.timestamp, gitState.gitLogCount])
 
   useEffect(() => {
     if (!appLoaded) return
@@ -155,7 +155,8 @@ export const GitUI = (props: IGitUi) => {
     clearGitLog,
     getFileStatusMatrix,
     gitlog,
-    init
+    init,
+    setStateGitLogCount
   }
 
   const pluginActionsProviderValue = {
@@ -177,13 +178,10 @@ export const GitUI = (props: IGitUi) => {
             <gitActionsContext.Provider value={gitActionsProviderValue}>
               <pluginActionsContext.Provider value={pluginActionsProviderValue}>
                 <BranchHeader />
-
-                {setup && !needsInit ? <Setup></Setup> : null}
-                {needsInit ? <Init></Init> : null}
-                {!setup && !needsInit ?
-                  <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
+                {setup ? <Setup callback={setActivePanel}></Setup> : null}
+                <Accordion activeKey={activePanel} defaultActiveKey="0" className="">
+                  {!setup && !needsInit ? <>
                     <SourceControlNavigation eventKey={gitUIPanels.SOURCECONTROL} activePanel={activePanel} callback={setActivePanel} />
-
                     <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.SOURCECONTROL}>
                       <div className="px-2 py-2">
                         <SourceControlBase><CommitMessage /></SourceControlBase>
@@ -219,30 +217,32 @@ export const GitUI = (props: IGitUi) => {
                       </div>
                     </Accordion.Collapse>
                     <hr></hr>
-                    <CloneNavigation eventKey={gitUIPanels.CLONE} activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.CLONE}>
-                      <div className="px-2 py-2">
-                        <Clone /></div>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <GitHubNavigation eventKey={gitUIPanels.GITHUB} activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.GITHUB}>
-                      <div className="px-2 py-2">
-                        <GetDeviceCode></GetDeviceCode>
-                        <hr></hr>
-                        <GitHubCredentials></GitHubCredentials>
-                      </div>
-                    </Accordion.Collapse>
-                    <hr></hr>
-                    <LogNavigation eventKey={gitUIPanels.LOG} activePanel={activePanel} callback={setActivePanel} />
-                    <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.LOG}>
-                      <div className="px-2 py-2">
-                        <LogViewer />
-                      </div>
-                    </Accordion.Collapse>
+                  </> : null}
+                  {needsInit ? <>
+                    <Init /></> : null}
+                  <CloneNavigation eventKey={gitUIPanels.CLONE} activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.CLONE}>
+                    <div className="px-2 py-2">
+                      <Clone /></div>
+                  </Accordion.Collapse>
+                  <hr></hr>
 
-                  </Accordion>
-                  : null}
+                  <GitHubNavigation eventKey={gitUIPanels.GITHUB} activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.GITHUB}>
+                    <div className="px-2 py-2">
+                      <GetDeviceCode></GetDeviceCode>
+                      <hr></hr>
+                      <GitHubCredentials></GitHubCredentials>
+                    </div>
+                  </Accordion.Collapse>
+                  <hr></hr>
+                  <LogNavigation eventKey={gitUIPanels.LOG} activePanel={activePanel} callback={setActivePanel} />
+                  <Accordion.Collapse className='bg-light' eventKey={gitUIPanels.LOG}>
+                    <div className="px-2 py-2">
+                      <LogViewer />
+                    </div>
+                  </Accordion.Collapse>
+                </Accordion>
               </pluginActionsContext.Provider>
             </gitActionsContext.Provider>
           </loaderContext.Provider>

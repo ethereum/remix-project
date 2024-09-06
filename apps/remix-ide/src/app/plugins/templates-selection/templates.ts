@@ -1,5 +1,4 @@
-
-export const templates = (intl) => {
+export const templates = (intl, plugin) => {
   return [
     {
       name: "Generic",
@@ -256,6 +255,26 @@ export const templates = (intl) => {
           },
           tagList: ["ERC1155", "Solidity"]
         }
+      ]
+    },
+    {
+      name: "Cookbook",
+      tooltip: "Cookbook is a smart contract search tool. Click here to open cookbook and browse contracts.",
+      onClick: async () => {
+        await plugin.call('manager', 'activatePlugin', 'cookbookdev')
+        plugin.call('menuicons', 'showContent', 'cookbookdev')
+      },
+      onClickLabel: 'Open cookbook plugin',
+      items: [
+        { value: "token-sale", displayName: 'Token Sale' },
+        { value: "simple-nft-sale", displayName: 'Simple Nft Sale' },
+        { value: "Azuki-ERC721A-NFT-Sale-basic", displayName: 'Azuki ERC721A NFT Sale basic' },
+        { value: "Azuki-ERC721A-ERC721A", displayName: 'Azuki ERC721A' },
+        { value: "token-staking-with-infinite-rewards", displayName: 'Token Staking with infinite rewards' },
+        { value: "nft-staking-with-infinite-rewards", displayName: 'Nft Staking with infinite rewards' },
+        { value: "basic-dao", displayName: 'Basic DAO' },
+        { value: "soulbound-nft", displayName: 'Soulbound Nft' },
+        { value: "multi-collection-nft-with-burnable-nfts-and-pausable-transfers", displayName: 'Multi collection nft with burnable nfts and pausable transfers' },
       ]
     },
     {

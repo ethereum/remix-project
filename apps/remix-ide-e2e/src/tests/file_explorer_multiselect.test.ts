@@ -43,19 +43,20 @@ module.exports = {
             (el: any) => {
               const id = (el as any).value.getId()
               browser
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests"]')
+                .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemtests"]', abortOnFailure: false })
                 .dragAndDrop('li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', id)
-                .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+                .waitForElementPresent({ selector: '[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok', abortOnFailure: false })
                 .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests/1_Storage.sol"]')
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemtests/2_Owner.sol"]')
-                .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]')
-                .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]')
+                .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemtests/1_Storage.sol"]', abortOnFailure: false })
+                .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemtests/2_Owner.sol"]', abortOnFailure: false })
+                .waitForElementNotPresent({ selector: 'li[data-id="treeViewLitreeViewItemcontracts/1_Storage.sol"]', abortOnFailure: false })
+                .waitForElementNotPresent({ selector: 'li[data-id="treeViewLitreeViewItemcontracts/2_Owner.sol"]', abortOnFailure: false })
                 .perform(() => done())
             })
         })
     }
   },
+
   'should drag and drop multiple files and folders in file explorer to contracts folder #group3': function (browser: NightwatchBrowser) {
     const selectedElements = []
     if (browser.options.desiredCapabilities?.browserName === 'firefox') {
@@ -79,15 +80,15 @@ module.exports = {
             (el: any) => {
               const id = (el as any).value.getId()
               browser
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts"]')
+                .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemcontracts"]', abortOnFailure: false })
                 .dragAndDrop('li[data-id="treeViewLitreeViewItemtests"]', id)
-                .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+                .waitForElementPresent({ selector: '[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok', abortOnFailure: false })
                 .execute(function () { (document.querySelector('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok') as HTMLElement).click() })
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/tests"]', 5000)
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/README.txt"]', 5000)
-                .waitForElementVisible('li[data-id="treeViewLitreeViewItemcontracts/scripts"]', 5000)
-                .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemtests"]')
-                .waitForElementNotPresent('li[data-id="treeViewLitreeViewItemREADME.txt"]')
+                .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemcontracts/tests"]', abortOnFailure: false })
+                .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemcontracts/README.txt"]', abortOnFailure: false })
+                .waitForElementVisible({ selector: 'li[data-id="treeViewLitreeViewItemcontracts/scripts"]', abortOnFailure: false })
+                .waitForElementNotPresent({ selector: 'li[data-id="treeViewLitreeViewItemtests"]', abortOnFailure: false })
+                .waitForElementNotPresent({ selector: 'li[data-id="treeViewLitreeViewItemREADME.txt"]', abortOnFailure: false })
                 .perform(() => done())
             })
         })

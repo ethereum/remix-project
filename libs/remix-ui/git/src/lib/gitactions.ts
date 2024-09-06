@@ -1,13 +1,14 @@
 import { ReadBlobResult, ReadCommitResult } from "isomorphic-git";
 import React from "react";
-import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails, setCurrenHead, setStoragePayload, resetBranchDifferences } from "../state/gitpayload";
+import { fileStatus, fileStatusMerge, setRemoteBranchCommits, resetRemoteBranchCommits, setBranches, setCanCommit, setCommitChanges, setCommits, setCurrentBranch, setGitHubUser, setLoading, setRemoteBranches, setRemotes, setRepos, setUpstream, setLocalBranchCommits, setBranchDifferences, setRemoteAsDefault, setScopes, setLog, clearLog, setUserEmails, setCurrenHead, setStoragePayload, resetBranchDifferences, setGitLogCount, setTimestamp } from "../state/gitpayload";
 import { GitHubUser, branch, commitChange, gitActionDispatch, statusMatrixType, gitState, branchDifference, remote, gitLog, fileStatusResult, customGitApi, IGitApi, cloneInputType, fetchInputType, pullInputType, pushInputType, checkoutInput, rmInput, addInput, repository, userEmails, storage, gitMatomoEventTypes } from '../types';
 import { removeSlash } from "../utils";
 import { disableCallBacks, enableCallBacks } from "./listeners";
-import { ModalTypes } from "@remix-ui/app";
+import { ModalTypes, appActionTypes, AppAction } from "@remix-ui/app";
 import { sendToMatomo, setFileDecorators } from "./pluginActions";
 import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi } from "@remix-api";
+import { app } from "electron";
 
 export const fileStatuses = [
   ["new,untracked", 0, 2, 0], // new, untracked
@@ -31,17 +32,18 @@ const statusmatrix: statusMatrixType[] = fileStatuses.map((x: any) => {
   };
 });
 
-let plugin: Plugin<any, CustomRemixApi>, dispatch: React.Dispatch<gitActionDispatch>
+let plugin: Plugin<any, CustomRemixApi>, dispatch: React.Dispatch<gitActionDispatch>, appDispatcher: React.Dispatch<AppAction>
 
-export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatch>) => {
+export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatch>, appDispatch: React.Dispatch<AppAction>) => {
   plugin = p
   dispatch = dispatcher
+  appDispatcher = appDispatch
 }
 
 export const init = async () => {
   await sendToMatomo(gitMatomoEventTypes.INIT)
   await plugin.call('dgitApi', "init");
-  await gitlog();
+  dispatch(setTimestamp(Date.now()))
   await getBranches();
 }
 
@@ -81,13 +83,13 @@ export const getFileStatusMatrix = async (filepaths: string[]) => {
   dispatch(setLoading(false))
 }
 
-export const getCommits = async () => {
+export const getCommits = async (depth: number) => {
 
   try {
     const commits: ReadCommitResult[] = await plugin.call(
       'dgitApi',
       "log",
-      { ref: "HEAD" }
+      { ref: "HEAD", depth: depth }
     );
 
     return commits;
@@ -96,16 +98,21 @@ export const getCommits = async () => {
   }
 }
 
-export const gitlog = async () => {
+export const gitlog = async (depth: number) => {
+  console.log('gitlog start')
   dispatch(setLoading(true))
   let commits = []
   try {
-    commits = await getCommits()
+    commits = await getCommits(depth)
   } catch (e) {
   }
   dispatch(setCommits(commits))
   await showCurrentBranch()
   dispatch(setLoading(false))
+}
+
+export const setStateGitLogCount = async (count: number) => {
+  dispatch(setGitLogCount(count))
 }
 
 export const showCurrentBranch = async () => {
@@ -342,7 +349,7 @@ export const fetch = async (input: fetchInputType) => {
   try {
     await plugin.call('dgitApi', 'fetch', input);
     if (!input.quiet) {
-      await gitlog()
+      dispatch(setTimestamp(Date.now()))
       await getBranches()
     }
   } catch (e: any) {
@@ -359,7 +366,7 @@ export const pull = async (input: pullInputType) => {
   await disableCallBacks()
   try {
     await plugin.call('dgitApi', 'pull', input)
-    await gitlog()
+    dispatch(setTimestamp(Date.now()))
   } catch (e: any) {
     console.log(e)
     await parseError(e)
@@ -393,6 +400,8 @@ const tokenWarning = async () => {
 
 const parseError = async (e: any) => {
   console.trace(e)
+  if (!e.message) return
+
   // if message conttains 401 Unauthorized, show token warning
   if (e.message.includes('401')) {
     await sendToMatomo(gitMatomoEventTypes.ERROR, ['401'])
@@ -571,7 +580,9 @@ export const saveGitHubCredentials = async (credentials: { username: string, ema
       }
       dispatch(setGitHubUser({
         login: credentials.username,
+        isConnected: false
       }))
+      appDispatcher({ type: appActionTypes.setGitHubUser, payload: { login: credentials.username, isConnected: false } })
       dispatch(setUserEmails([{
         email: credentials.email,
         primary: true,
@@ -631,6 +642,7 @@ export const loadGitHubUserFromToken = async () => {
         if (data.user && data.user.login && (storedUsername !== data.user.login)) await plugin.call('config', 'setAppParameter', 'settings/github-user-name', data.user.login)
 
         dispatch(setGitHubUser(data.user))
+        appDispatcher({ type: appActionTypes.setGitHubUser, payload: data.user })
         dispatch(setScopes(data.scopes))
         dispatch(setUserEmails(data.emails))
         sendToGitLog({
@@ -646,6 +658,7 @@ export const loadGitHubUserFromToken = async () => {
           message: `Please check your GitHub token in the GitHub settings.`
         })
         dispatch(setGitHubUser(null))
+        appDispatcher({ type: appActionTypes.setGitHubUser, payload: null })
         return false
       }
     } else {
@@ -654,6 +667,7 @@ export const loadGitHubUserFromToken = async () => {
         message: `Please check your GitHub token in the GitHub settings.`
       })
       dispatch(setGitHubUser(null))
+      appDispatcher({ type: appActionTypes.setGitHubUser, payload: null })
       return false
     }
   } catch (e) {

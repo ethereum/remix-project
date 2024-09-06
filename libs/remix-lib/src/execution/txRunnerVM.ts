@@ -5,7 +5,7 @@ import { LegacyTransaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
 import { Block } from '@ethereumjs/block'
 import { bytesToHex, Address, hexToBytes } from '@ethereumjs/util'
 import { EVM } from '@ethereumjs/evm'
-import type { Account } from '@ethereumjs/util'
+import type { Account, AddressLike, BigIntLike } from '@ethereumjs/util'
 import { EventManager } from '../eventManager'
 import { LogsManager } from './logsManager'
 import type { Transaction as InternalTransaction } from './txRunner'
@@ -69,47 +69,60 @@ export class TxRunnerVM {
     }
 
     try {
-      this.runInVm(args.from, args.to, data, args.value, args.gasLimit, args.useCall, callback)
+      this.runInVm(args, callback)
     } catch (e) {
       callback(e, null)
     }
   }
 
-  async runInVm (from: string, to: string, data: string, value: string, gasLimit: number, useCall: boolean, callback: VMExecutionCallBack) {
+  async runInVm (tx: InternalTransaction, callback: VMExecutionCallBack) {
+    const { to, data, value, gasLimit, useCall, signed } = tx
+    let { from } = tx
     let account
-    if (!from && useCall && Object.keys(this.vmaccounts).length) {
-      from = Object.keys(this.vmaccounts)[0]
-      account = this.vmaccounts[from]
-    } else account = this.vmaccounts[from]
-
-    if (!account) {
-      return callback('Invalid account selected')
-    }
 
     try {
-      const res = await this.getVMObject().stateManager.getAccount(Address.fromString(from))
       const EIP1559 = this.commonContext.hardfork() !== 'berlin' // berlin is the only pre eip1559 fork that we handle.
       let tx
-      if (!EIP1559) {
-        tx = LegacyTransaction.fromTxData({
-          nonce: useCall ? this.nextNonceForCall : res.nonce,
-          gasPrice: '0x1',
-          gasLimit: gasLimit,
-          to: to,
-          value: value,
-          data: hexToBytes(data)
-        }, { common: this.commonContext }).sign(account.privateKey)
-      } else {
-        tx = FeeMarketEIP1559Transaction.fromTxData({
-          nonce: useCall ? this.nextNonceForCall : res.nonce,
-          maxPriorityFeePerGas: '0x01',
-          maxFeePerGas: '0x7',
-          gasLimit: gasLimit,
-          to: to,
-          value: value,
-          data: hexToBytes(data)
-        }).sign(account.privateKey)
+      if (signed) {
+        if (!EIP1559) {
+          tx = LegacyTransaction.fromSerializedTx(hexToBytes(data), { common: this.commonContext })
+        } else {
+          tx = FeeMarketEIP1559Transaction.fromSerializedTx(hexToBytes(data), { common: this.commonContext })
+        }
       }
+      else {
+        if (!from && useCall && Object.keys(this.vmaccounts).length) {
+          from = Object.keys(this.vmaccounts)[0]
+          account = this.vmaccounts[from]
+        } else account = this.vmaccounts[from]
+
+        if (!account) {
+          return callback('Invalid account selected')
+        }
+
+        const res = await this.getVMObject().stateManager.getAccount(Address.fromString(from))
+        if (!EIP1559) {
+          tx = LegacyTransaction.fromTxData({
+            nonce: useCall ? this.nextNonceForCall : res.nonce,
+            gasPrice: '0x1',
+            gasLimit: gasLimit,
+            to: (to as AddressLike),
+            value: (value as BigIntLike),
+            data: hexToBytes(data)
+          }, { common: this.commonContext }).sign(account.privateKey)
+        } else {
+          tx = FeeMarketEIP1559Transaction.fromTxData({
+            nonce: useCall ? this.nextNonceForCall : res.nonce,
+            maxPriorityFeePerGas: '0x01',
+            maxFeePerGas: '0x7',
+            gasLimit: gasLimit,
+            to: (to as AddressLike),
+            value: (value as BigIntLike),
+            data: hexToBytes(data)
+          }).sign(account.privateKey)
+        }
+      }
+
       if (useCall) this.nextNonceForCall++
 
       const coinbases = ['0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a', '0x8945a1288dc78a6d8952a92c77aee6730b414778', '0x94d76e24f818426ae84aa404140e8d5f60e10e7e']

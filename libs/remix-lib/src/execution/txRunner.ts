@@ -3,13 +3,14 @@ import { EventManager } from '../eventManager'
 
 export type Transaction = {
   from: string,
-  to: string,
+  to?: string,
   value: string,
   data: string,
   gasLimit: number,
-  useCall: boolean,
-  timestamp?: number
-  type: '0x1' | '0x2'
+  useCall?: boolean,
+  timestamp?: number,
+  signed?: boolean,
+  type?: '0x1' | '0x2'
 }
 
 export class TxRunner {
@@ -32,9 +33,8 @@ export class TxRunner {
   }
 
   execute (args: Transaction, confirmationCb, gasEstimationForceSend, promptCb, callback) {
-    let data = args.data
-    if (data.slice(0, 2) !== '0x') {
-      data = '0x' + data
+    if (args.data && args.data.slice(0, 2) !== '0x') {
+      args.data = '0x' + args.data
     }
     this.internalRunner.execute(args, confirmationCb, gasEstimationForceSend, promptCb, callback)
   }

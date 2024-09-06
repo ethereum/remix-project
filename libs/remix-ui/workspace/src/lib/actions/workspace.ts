@@ -219,7 +219,7 @@ export const populateWorkspace = async (
         dispatch(cloneRepositorySuccess())
       }).catch((e) => {
         dispatch(cloneRepositorySuccess())
-        plugin.call('notification', 'toast', 'error adding template ' + e.message || e)
+        plugin.call('notification', 'toast', 'error adding template ' + (e.message || e))
       })
     }, 5000)
   } else if (!isEmpty && !(isGitRepo && createCommit)) await loadWorkspacePreset(workspaceTemplateName, opts)
@@ -272,6 +272,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       let content
 
       if (params.code) {
+        _paq.push(['trackEvent', 'workspace', 'template', 'code-template-code-param'])
         const hashed = bytesToHex(hash.keccakFromString(params.code))
 
         path = 'contract-' + hashed.replace('0x', '').substring(0, 10) + (params.language && params.language.toLowerCase() === 'yul' ? '.yul' : '.sol')
@@ -279,6 +280,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         await workspaceProvider.set(path, content)
       }
       if (params.shareCode) {
+        _paq.push(['trackEvent', 'workspace', 'template', 'code-template-shareCode-param'])
         const host = '127.0.0.1'
         const port = 5001
         const protocol = 'http'
@@ -303,6 +305,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
         await workspaceProvider.set(path, content)
       }
       if (params.url) {
+        _paq.push(['trackEvent', 'workspace', 'template', 'code-template-url-param'])
         const data = await plugin.call('contentImport', 'resolve', params.url)
         path = data.cleanUrl
         content = data.content
@@ -326,6 +329,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       }
       if (params.ghfolder) {
         try {
+          _paq.push(['trackEvent', 'workspace', 'template', 'code-template-ghfolder-param'])
           const files = await plugin.call('contentImport', 'resolveGithubFolder', params.ghfolder)
           for (const [path, content] of Object.entries(files)) {
             await workspaceProvider.set(path, content)
@@ -344,6 +348,7 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
   case 'gist-template':
     // creates a new workspace gist-sample and get the file from gist
     try {
+      _paq.push(['trackEvent', 'workspace', 'template', 'gist-template'])
       const gistId = params.gist
       const response: AxiosResponse = await axios.get(`https://api.github.com/gists/${gistId}`)
       const data = response.data as { files: any }
