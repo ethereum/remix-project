@@ -29,7 +29,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     return {
       name,
       on: (cb:any) => {
-        if(name === 'isogit') console.log('isogit', cb)
         ipcRenderer.on(`${name}:send`, cb)
       },
       send: (message: Partial<Message>) => {
