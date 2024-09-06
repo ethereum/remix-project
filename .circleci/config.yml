@@ -199,8 +199,8 @@ jobs:
           key: node-20-windows-v3
       - run: 
           command: |
-            nvm install 20.0.0
-            nvm use 20.0.0
+            nvm install 20
+            nvm use 20
             node -v
             npx -v
             npm install --global yarn
@@ -261,8 +261,8 @@ jobs:
           key: node-20-windows-v3
       - run: 
           command: |
-            nvm install 20.0.0
-            nvm use 20.0.0
+            nvm install 20
+            nvm use 20
             node -v
             npx -v
             npm install --global yarn
@@ -285,7 +285,7 @@ jobs:
               mkdir apps/remixdesktop/build
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
-              nvm use 20.0.0
+              nvm use 20
               node -v
               pip install setuptools
               yarn
@@ -450,14 +450,14 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20.0.0
-            nvm use 20.0.0
+            nvm install 20
+            nvm use 20
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 20.0.0
+            nvm use 20
             cd apps/remixdesktop 
             yarn || yarn
             yarn add @remix-project/remix-ws-templates
@@ -518,14 +518,14 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20.0.0
-            nvm use 20.0.0
+            nvm install 20
+            nvm use 20
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 20.0.0
+            nvm use 20
             cd apps/remixdesktop 
             yarn || yarn
             yarn add @remix-project/remix-ws-templates
