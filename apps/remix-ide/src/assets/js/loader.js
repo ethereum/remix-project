@@ -10,7 +10,7 @@ let domainToTrack = domains[window.location.hostname]
 
 function trackDomain(domainToTrack) {
   var _paq = window._paq = window._paq || []
-  console.log('Tracking domain', domainToTrack, _paq)
+
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
   _paq.push(["setExcludedQueryParams", ["code", "gist"]]);
   _paq.push(["setExcludedReferrers", ["etherscan.io"]]);
