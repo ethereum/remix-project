@@ -107,7 +107,7 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
           })}
 
         </div>
-        {hasNextPage && <GitUIButton className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
+        {hasNextPage && <GitUIButton data-id='load-more-remote-branches' className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
       </>
     </Accordion.Collapse>
   </Accordion>)

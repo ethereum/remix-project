@@ -215,6 +215,17 @@ export const gitReducer = (state: gitState = defaultGitState, action: Actions): 
       ...state,
       storage: action.payload
     }
+  case 'SET_TIMESTAMP':
+    return {
+      ...state,
+      timestamp: action.payload
+    }
 
+  case 'SET_GIT_LOG_COUNT':
+    return {
+      ...state,
+      gitLogCount: action.payload
+    }
   }
+
 }

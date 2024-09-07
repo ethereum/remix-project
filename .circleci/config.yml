@@ -16,6 +16,7 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
+      - run: sudo apt update && sudo apt install zstd
       - checkout
       - restore_cache:
           keys:
@@ -44,8 +45,8 @@ jobs:
           key: soljson-v7-{{ checksum "soljson-versions.txt" }}
           paths:
             - dist/apps/remix-ide/assets/js/soljson
-      
-      - run: mkdir persist && zip -0 -r persist/dist.zip dist
+
+      - run: mkdir persist && tar -cf - dist | zstd -1 -o persist/dist.tar.zst
       - persist_to_workspace:
           root: .
           paths:
@@ -360,11 +361,13 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
+      - run: sudo apt update && sudo apt install python3-pip -y zstd
+      - run: zstd -d persist/dist.tar.zst -o persist/dist.tar
+      - run: tar -xf persist/dist.tar
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules || yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
       - run: ls -la ./dist/apps/remix-ide/assets/js
-      - run: sudo apt update && sudo apt install python3-pip -y
+
       - when:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
@@ -395,7 +398,7 @@ jobs:
 
   tests-passed:
     machine:
-      image: ubuntu-2004:202010-01
+      image: default
     steps:
       - run: echo done
 
@@ -416,7 +419,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
+      - run: sudo apt update && sudo apt install zstd
+      - run: zstd -d persist/dist.tar.zst -o persist/dist.tar
+      - run: tar -xf persist/dist.tar
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules || yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - browser-tools/install-browser-tools:

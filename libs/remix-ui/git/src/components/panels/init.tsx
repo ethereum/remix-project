@@ -27,9 +27,6 @@ export const Init = () => {
           ><FormattedMessage id='git.init' /></GitUIButton>
         </div>
       </div>
-      <hr></hr>
-      <h5>CLONE</h5>
-      <Clone></Clone>
     </>
   )
 }
