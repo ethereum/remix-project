@@ -67,7 +67,7 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
               </div>
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <a href="https://remix-project.org" target="__blank">
-                  <img src={'assets/img/bgRemi_small.webp'} className="remixui_carouselImage" alt=""></img>
+                  <img src={'assets/img/remi-desk-470.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
@@ -79,10 +79,12 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                   <span
                     className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
                     onClick={async () => {
-                      await props.plugin.appManager.activatePlugin(['learneth'])
-                      await props.plugin.verticalIcons.select('learneth')
-                      _paq.push(['trackEvent', 'hometab', 'featuredSection', 'LearnEth'])}
+                      await props.plugin.appManager.activatePlugin(['LearnEth', 'solidity', 'solidityUnitTesting'])
+                      props.plugin.verticalIcons.select('LearnEth')
+                      await props.plugin.call('LearnEth', 'home')
+                    	}
                     }
+                    
                   >
                     <FormattedMessage id="home.learnEthPromoButton" />
                   </span>
