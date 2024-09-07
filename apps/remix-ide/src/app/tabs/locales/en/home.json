@@ -37,6 +37,7 @@
   "home.ozerc1155TemplateDesc": "Create an ERC1155 token by importing OpenZeppelin library.",
   "home.gnosisSafeMultisigTemplateDesc": "Create Multi-Signature wallets using this template.",
   "home.zeroxErc20TemplateDesc": "Create an ERC20 token by importing 0xProject contract.",
+  "home.learnEthPluginDesc": "Learn about Remix, Solidity, and other Web3 projects.",
   "home.learn": "Learn",
   "home.learnEth1": "Remix Basics",
   "home.learnEth1Desc": "An introduction to Remix's interface and basic operations.",
