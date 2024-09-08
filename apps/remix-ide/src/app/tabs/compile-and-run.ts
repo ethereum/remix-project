@@ -62,7 +62,7 @@ export class CompileAndRun extends Plugin {
       if (clearAllInstances) {
         await this.call('udapp', 'clearAllInstances')
       }
-      await this.call('scriptRunner', 'execute', content, fileName)
+      await this.call('scriptRunnerBridge', 'execute', content, fileName)
     } catch (e) {
       this.call('notification', 'toast', e.message || e)
     }

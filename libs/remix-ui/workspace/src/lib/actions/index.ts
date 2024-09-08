@@ -506,7 +506,7 @@ export const runScript = async (path: string) => {
     if (error) {
       return dispatch(displayPopUp(error))
     }
-    plugin.call('scriptRunner', 'execute', content, path)
+    plugin.call('scriptRunnerBridge', 'execute', content, path)
   })
 }
 

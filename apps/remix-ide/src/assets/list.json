@@ -1022,9 +1022,21 @@
       "urls": [
         "dweb:/ipfs/QmS5JdeXtYhGBvdgNTLWuBNHupyP623X4sf43fRbrgiTaA"
       ]
+    },
+    {
+      "path": "soljson-v0.8.27+commit.40a35a09.js",
+      "version": "0.8.27",
+      "build": "commit.40a35a09",
+      "longVersion": "0.8.27+commit.40a35a09",
+      "keccak256": "0x68c7a06651a847fc9a60886a6ba590a2b20d87f2d4f9570bf70fbb2b901e7713",
+      "sha256": "0xd91c08277f801321af4e80958015aea18b41c01d2c6a38310a23014485b0e51c",
+      "urls": [
+        "dweb:/ipfs/QmVTALD1WUQwRvEL19jgwrEFyBJMQmy9z32zvT6TAtYPY1"
+      ]
     }
   ],
   "releases": {
+    "0.8.27": "soljson-v0.8.27+commit.40a35a09.js",
     "0.8.26": "soljson-v0.8.26+commit.8a97fa7a.js",
     "0.8.25": "soljson-v0.8.25+commit.b61c2a91.js",
     "0.8.24": "soljson-v0.8.24+commit.e11b9ed9.js",
@@ -1119,5 +1131,5 @@
     "0.4.0": "soljson-v0.4.0+commit.acd334c9.js",
     "0.3.6": "soljson-v0.3.6+commit.3fc68da5.js"
   },
-  "latestRelease": "0.8.26"
+  "latestRelease": "0.8.27"
 }
