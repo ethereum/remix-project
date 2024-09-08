@@ -6,7 +6,7 @@ import { Profile } from '@remixproject/plugin-utils'
 import { Engine } from '@remixproject/engine'
 const profile = {
   name: 'scriptRunnerBridge',
-  displayName: 'Script Bridge',
+  displayName: 'Script configuration',
   methods: ['execute'],
   events: ['log', 'info', 'warn', 'error'],
   icon: 'assets/img/settings.webp',
