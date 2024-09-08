@@ -27,7 +27,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     this.engine = engine
   }
 
-  async onActivation () {
+  async onActivation() {
     console.log('onActivation', this)
   }
 
@@ -40,40 +40,45 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       url: 'http://localhost:3000?template=' + name
     }
     console.log('loadScriptRunner', newProfile)
-    const plugin: IframePlugin = new IframePlugin(newProfile)
-    await this.engine.register(plugin)
-    
-    await this.call('manager', 'activatePlugin', newProfile.name)
-    this.current = newProfile.name
-    this.currentTemplate = name
-    this.on(newProfile.name, 'log', this.log.bind(this))
-    this.on(newProfile.name, 'info', this.log.bind(this))
-    this.on(newProfile.name, 'warn', this.log.bind(this))
-    this.on(newProfile.name, 'error', this.log.bind(this))
+    try {
+      const plugin: IframePlugin = new IframePlugin(newProfile)
+      await this.engine.register(plugin)
+      await this.call('manager', 'activatePlugin', newProfile.name)
+      this.current = newProfile.name
+      this.currentTemplate = name
+      this.on(newProfile.name, 'log', this.log.bind(this))
+      this.on(newProfile.name, 'info', this.log.bind(this))
+      this.on(newProfile.name, 'warn', this.log.bind(this))
+      this.on(newProfile.name, 'error', this.log.bind(this))
+    } catch (e) {
+      this.current = newProfile.name
+      this.currentTemplate = name
+      console.log('Already loaded')
+    }
   }
 
-  async execute (script: string, filePath: string) {
-    if(!this.current) await this.loadScriptRunner('default')
+  async execute(script: string, filePath: string) {
+    if (!this.current) await this.loadScriptRunner('default')
     console.log('execute', this.current)
     await this.call(this.current, 'execute', script, filePath)
   }
 
-  async log(data: any){
+  async log(data: any) {
     console.log('log', data)
     this.emit('log', data)
   }
 
-  async warn(data: any){
+  async warn(data: any) {
     console.log('warn', data)
     this.emit('warn', data)
   }
 
-  async error(data: any){
+  async error(data: any) {
     console.log('error', data)
     this.emit('error', data)
   }
 
-  async info(data: any){
+  async info(data: any) {
     console.log('info', data)
     this.emit('info', data)
   }
