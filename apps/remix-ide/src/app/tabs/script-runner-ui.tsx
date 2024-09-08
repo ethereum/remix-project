@@ -20,6 +20,7 @@ const profile = {
 export class ScriptRunnerUIPlugin extends ViewPlugin {
   engine: Engine
   current: string
+  currentTemplate: string
   constructor(engine: Engine) {
     super(profile)
     console.log('ScriptRunnerUIPlugin', this)
@@ -44,6 +45,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     
     await this.call('manager', 'activatePlugin', newProfile.name)
     this.current = newProfile.name
+    this.currentTemplate = name
     this.on(newProfile.name, 'log', this.log.bind(this))
     this.on(newProfile.name, 'info', this.log.bind(this))
     this.on(newProfile.name, 'warn', this.log.bind(this))
@@ -52,8 +54,8 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
 
   async execute (script: string, filePath: string) {
     if(!this.current) await this.loadScriptRunner('default')
-    console.log('execute', script, filePath)
-    this.call(this.current, 'execute', script, filePath)
+    console.log('execute', this.current)
+    await this.call(this.current, 'execute', script, filePath)
   }
 
   async log(data: any){
