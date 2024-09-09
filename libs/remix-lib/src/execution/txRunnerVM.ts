@@ -146,7 +146,6 @@ export class TxRunnerVM {
         const root = await this.getVMObject().stateManager.getStateRoot()
         this.runBlockInVm(tx, block, async (err, result) => {
           await this.getVMObject().stateManager.setStateRoot(root)
-          this.getVMObject().vm.evm.transientStorage.clear()
           callback(err, result)
         })
       } else {
