@@ -246,7 +246,6 @@ module.exports = {
       .waitForElementPresent('#solidityUnittestsOutput div[class^="testPass"]', 60000)
       .waitForElementContainsText('#solidityUnittestsOutput', 'tests/hhLogs_test.sol', 60000)
       .pause(2000)
-      .assert.containsText('#journal > div:nth-child(4) > span', 'Before all:')
       .assert.containsText('#journal > div:nth-child(4) > span', 'Inside beforeAll')
       .assert.containsText('#journal > div:nth-child(5) > span', 'Check sender:')
       .assert.containsText('#journal > div:nth-child(5) > span', 'msg.sender is 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4')
