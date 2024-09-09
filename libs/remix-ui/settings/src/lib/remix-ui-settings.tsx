@@ -139,13 +139,11 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
   const onchangeCopilotActivate = () => {
     if (!props.useCopilot) {
       copilotActivate(props.config, props.useCopilot, dispatch)
-      props.plugin.call('terminal', 'log', { type: 'typewriterlog', value: `Solidity copilot not activated!` })
       return
     }
 
     const startCopilot = async () => {
       copilotActivate(props.config, props.useCopilot, dispatch)
-      props.plugin.call('terminal', 'log', { type: 'typewriterlog', value: `Solidity copilot activated!` })
     }
 
     startCopilot()
