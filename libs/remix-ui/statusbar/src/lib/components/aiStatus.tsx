@@ -14,13 +14,11 @@ export default function AIStatus(props: AIStatusProps) {
   const [copilotActive, setCopilotActive] = useState(false)
   useEffect(() => {
     const run = async () => {
-      props.plugin.on('fileManager', 'currentFileChanged', async (isAiActive) => {
-        const aiActivate = await props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
-        setCopilotActive(aiActivate)
-      })
+      const aiActivate = await props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
+      setCopilotActive(aiActivate)
     }
     run()
-  }, [props.plugin.isAiActive, props.isAiActive])
+  }, [])
 
   useEffect(() => {
     const run = async () => {
@@ -30,7 +28,7 @@ export default function AIStatus(props: AIStatusProps) {
       })
     }
     run()
-  }, [props.plugin.isAiActive])
+  }, [props.plugin.isAiActive, props.plugin.isAiActive])
   return (
     <CustomTooltip
       tooltipText={copilotActive ? "Remix Copilot activated" : "Remix Copilot disabled. To activate copilot, open a .sol file and toggle the ai switch at the top of the Ide"}
