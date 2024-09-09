@@ -31,7 +31,7 @@ export default function AIStatus(props: AIStatusProps) {
   }, [props.plugin.isAiActive, props.plugin.isAiActive])
   return (
     <CustomTooltip
-      tooltipText={copilotActive ? "Remix Copilot activated" : "Remix Copilot disabled. To activate copilot, open a .sol file and toggle the ai switch at the top of the Ide"}
+      tooltipText={copilotActive ? "Remix Copilot enabled" : "Remix Copilot disabled. To enable, open a .sol file and toggle the switch at the left-top of the editor"}
     >
       <div className="d-flex flex-row pr-2 text-white justify-content-center align-items-center">
         <span className={copilotActive === false ? "small mx-1 text-white semi-bold" : "small mx-1 text-white semi-bold" }>
