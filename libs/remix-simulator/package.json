@@ -21,7 +21,7 @@
     "@ethereumjs/common": "4.4.0",
     "@ethereumjs/tx": "5.4.0",
     "@ethereumjs/util": "9.1.0",
-    "@ethereumjs/vm": "8.1.0",
+    "@ethereumjs/vm": "8.1.1",
     "@metamask/eth-sig-util": "^7.0.2",
     "@remix-project/remix-lib": "^0.5.63",
     "ansi-gray": "^0.1.1",
