@@ -4,6 +4,7 @@ import React from 'react' // eslint-disable-line
 import { ScriptRunnerUI } from '@remix-scriptrunner' // eslint-disable-line
 import { Profile } from '@remixproject/plugin-utils'
 import { Engine } from '@remixproject/engine'
+
 const profile = {
   name: 'scriptRunnerBridge',
   displayName: 'Script configuration',
@@ -32,12 +33,26 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async loadScriptRunner(name: string) {
-    console.log('loadScriptRunner', name, this)
+    console.log('loadScriptRunner', name)
     const profile: IframeProfile = await this.call('manager', 'getProfile', 'scriptRunner')
+    const testPluginName = localStorage.getItem('test-plugin-name')
+    const testPluginUrl = localStorage.getItem('test-plugin-url')
+    let baseUrl = 'http://localhost:3000'
+    let url = `${baseUrl}?template=${name}`
+    if(testPluginName === 'scriptRunner'){
+      // if testpluginurl has template specified only use that
+      if(testPluginUrl.indexOf('template')>-1){
+          url = testPluginUrl
+      }else{
+        baseUrl = `//${new URL(testPluginUrl).host}`
+        url = `${baseUrl}?template=${name}` 
+      }
+    }
+    
     const newProfile: IframeProfile = {
       ...profile,
       name: profile.name + name,
-      url: 'http://localhost:3000?template=' + name
+      url: url
     }
     console.log('loadScriptRunner', newProfile)
     try {
@@ -47,9 +62,9 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       this.current = newProfile.name
       this.currentTemplate = name
       this.on(newProfile.name, 'log', this.log.bind(this))
-      this.on(newProfile.name, 'info', this.log.bind(this))
-      this.on(newProfile.name, 'warn', this.log.bind(this))
-      this.on(newProfile.name, 'error', this.log.bind(this))
+      this.on(newProfile.name, 'info', this.info.bind(this))
+      this.on(newProfile.name, 'warn', this.warn.bind(this))
+      this.on(newProfile.name, 'error', this.error.bind(this))
     } catch (e) {
       this.current = newProfile.name
       this.currentTemplate = name
