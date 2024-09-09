@@ -38,7 +38,7 @@ module.exports = {
     .verifyContracts(['ClearTransient'])
     .clickLaunchIcon('udapp')
     .createContract('')
-    .clickInstance(0)
+    .clickInstance(1)
     .clickFunction('get - call')
     .testFunction('last',
       {
