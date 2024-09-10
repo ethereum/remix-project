@@ -2835,10 +2835,10 @@
     bigint-crypto-utils "^3.2.2"
     ethereum-cryptography "^2.2.1"
 
-"@ethereumjs/evm@3.1.0", "@ethereumjs/evm@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@ethereumjs/evm/-/evm-3.1.0.tgz#d036a7986d2a4914a82324ee4fbc2ae7a503e515"
-  integrity sha512-m6L8wPDpNDqCBeiCQDwoKtKMcFjcvctuZs6XHaVnFocMwsAsN9Wg89nAT7Gs6ic2kDUgVGhtGTvEAaH51B70ew==
+"@ethereumjs/evm@3.1.1", "@ethereumjs/evm@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@ethereumjs/evm/-/evm-3.1.1.tgz#f593ea99e564ba6d916d81a833bb9af5713caf34"
+  integrity sha512-JbDXtIn0PPZFU2oqVngje0YvW/JuNa6Y+kIYp1MCh5pn9NRplR8FkBbvb991fVSSo6AzuFMHJxSwgVl+OksnvQ==
   dependencies:
     "@ethereumjs/common" "^4.4.0"
     "@ethereumjs/statemanager" "^2.4.0"
@@ -2914,15 +2914,15 @@
     ethereum-cryptography "^2.0.0"
     micro-ftch "^0.3.1"
 
-"@ethereumjs/vm@8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@ethereumjs/vm/-/vm-8.1.0.tgz#9f795a7802b0ccdedd4ca45193a3895eafe51ef9"
-  integrity sha512-CjQ57Kl2JYMyX8UNUW2aWFWJnb7M5a8gUEtBMZ+A3K+wNNTALVPOKx9eNCiSwBn1bijB05FyvcNMnHEDwqSuiA==
+"@ethereumjs/vm@8.1.1":
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@ethereumjs/vm/-/vm-8.1.1.tgz#6b58f298ee6f665d4ac412cd0d3351bb9c0ceea3"
+  integrity sha512-h9gIN/maMKXltM4VxZ9ac581PPUUObnFVBniLuu9vJgGTELdnwqxLwJVxSfho/Bhk56YyvKBYf1RpHwoLZZ6xw==
   dependencies:
     "@ethereumjs/block" "^5.3.0"
     "@ethereumjs/blockchain" "^7.3.0"
     "@ethereumjs/common" "^4.4.0"
-    "@ethereumjs/evm" "^3.1.0"
+    "@ethereumjs/evm" "^3.1.1"
     "@ethereumjs/rlp" "^5.0.2"
     "@ethereumjs/statemanager" "^2.4.0"
     "@ethereumjs/trie" "^6.2.1"
