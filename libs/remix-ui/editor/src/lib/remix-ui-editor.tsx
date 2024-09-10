@@ -779,10 +779,11 @@ export const EditorUI = (props: EditorUIProps) => {
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
         const cm = await props.plugin.call('remixAI', 'code_explaining', message)
 
+        console.log(cm)
         const natSpecCom = "\n" + extractNatspecComments(cm)
+        console.log(natSpecCom)
         const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
         const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
-
         const lines = natSpecCom.split('\n')
         const newNatSpecCom = []
 
