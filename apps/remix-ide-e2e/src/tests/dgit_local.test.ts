@@ -606,7 +606,7 @@ async function createCommitOnLocalServer(path: string, message: string) {
 async function spawnGitServer(path: string): Promise<ChildProcess> {
     console.log(process.cwd())
     try {
-        const server = spawn('yarn && sh setup.sh && npx ts-node server.ts', [`${path}`], { cwd: process.cwd() + '/apps/remix-ide-e2e/src/githttpbackend/', shell: true, detached: true })
+        const server = spawn('yarn && sh setup.sh && yarn start:server', [`${path}`], { cwd: process.cwd() + '/apps/remix-ide-e2e/src/githttpbackend/', shell: true, detached: true })
         console.log('spawned', server.stdout.closed, server.stderr.closed)
         return new Promise((resolve, reject) => {
             server.stdout.on('data', function (data) {
