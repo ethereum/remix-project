@@ -254,7 +254,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                 tooltipId="settings-tooltip-metadata"
                 tooltipText={intl.formatMessage({ id: 'settings.generateContractMetadataTooltip' })}
               >
-                <i className="ml-1 fas fa-info-circle"></i>
+                <i className="ml-1 far fa-info-circle"></i>
               </CustomTooltip>
             </label>
           </div>
@@ -303,7 +303,6 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked={isPersonalChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
-              <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
               <FormattedMessage id="settings.enablePersonalModeText" />
               <i className="ml-1 fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
               <CustomTooltip
@@ -311,7 +310,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                 tooltipId="settings-tooltip-personalMode"
                 tooltipText={intl.formatMessage({ id: 'settings.enablePersonalModeTooltip' })}
               >
-                <i className="ml-1 fas fa-info-circle"></i>
+                <i className="ml-1 far fa-info-circle"></i>
               </CustomTooltip>
             </label>
           </div>
@@ -334,7 +333,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
                 tooltipId="settings-tooltip-matomo"
                 tooltipText={intl.formatMessage({ id: 'settings.matomoAnalyticsTooltip' })}
               >
-                <i className="ml-1 fas fa-info-circle"></i>
+                <i className="ml-1 far fa-info-circle"></i>
               </CustomTooltip>
             </label>
           </div>
