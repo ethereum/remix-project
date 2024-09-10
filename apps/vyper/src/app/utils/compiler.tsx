@@ -47,6 +47,7 @@ export function normalizeContractPath(contractPath: string): string[] {
 
 function parseErrorString(errorString) {
   // Split the string into lines
+  console.log(errorString)
   let lines = errorString.trim().split('\n')
   // Extract the line number and message
   let message = errorString.trim()
@@ -141,20 +142,21 @@ const compileReturnType = (output, contract) => {
 }
 
 const fixContractContent = (content: string) => {
+  const pragmaRegex = /#\s*pragma\s+[@]*version\s+([\^~<>!=^]+)\s*(\d+\.\d+\.\d+)/
   if (content.length === 0) return
-  const pragmaFound = content.includes('#pragma version ^0.3.10')
+  const pragmaFound = content.match(pragmaRegex)
   const wrongpragmaFound = content.includes('# pragma version ^0.3.10')
-  const evmVerFound = content.includes('#pragma evm-version shanghai')
-  const pragma = '#pragma version ^0.3.10'
-  const evmVer = '#pragma evm-version shanghai'
+  const evmVerFound = content.includes('#pragma evm-version cancun')
+  const pragma = '# pragma version ~=0.4.0'
+  const evmVer = '# pragma evm-version cancun'
 
-  if (evmVerFound === false) {
-    content = `${evmVer}\n${content}`
-  }
+  // if (evmVerFound === false) {
+  //   content = `${evmVer}\n${content}`
+  // }
   if (wrongpragmaFound === true) {
     content = content.replace('# pragma version ^0.3.10', '')
   }
-  if (pragmaFound === false ) {
+  if (!pragmaFound) {
     content = `${pragma}\n${content}`
   }
   return content
@@ -174,13 +176,17 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     throw new Error('Use extension .vy for Vyper.')
   }
 
+  const cleanedUpContent = fixContractContent(contract.content)
+  console.log('cleanedUp', cleanedUpContent)
+
   let contractName = contract['name']
   const compilePackage = {
     manifest: 'ethpm/3',
     sources: {
-      [contractName] : { content : fixContractContent(contract.content) }
+      [contractName] : { content : cleanedUpContent }
     }
   }
+  console.log(compilePackage)
   let response = await axios.post(`${url}compile`, compilePackage )
 
   if (response.status === 404) {
@@ -204,11 +210,12 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     })).data
 
     return result
-  } else if (status === 'FAILED') {
+  } else if (status !== 'SUCCESS') {
     const intermediate = await(await axios.get(url + 'exceptions/' + compileCode , {
       method: 'Get'
     })).data
-    result = parseErrorString(intermediate[0])
+    result = parseErrorString(intermediate)
+    console.log('Errors found', intermediate)
     return result
   }
   await new Promise((resolve) => setTimeout(() => resolve({}), 3000))
