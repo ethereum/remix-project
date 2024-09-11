@@ -14,7 +14,6 @@ export const DefaultLayout = ({ children, title, description }: PropsWithChildre
       <NavMenu />
       <div className="my-4 px-3">
         <div>
-          <h2 className="text-center text-uppercase font-weight-bold">{title}</h2>
           <p className="text-center" style={{ fontSize: '0.8rem' }}>
             {description}
           </p>
