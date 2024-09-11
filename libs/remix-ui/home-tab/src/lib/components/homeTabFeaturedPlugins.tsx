@@ -109,7 +109,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               }
             }}
             renderButtonGroupOutside={true}
-            ssr={true} // means to render carousel on server-side.
+            ssr={false} // means to render carousel on server-side.
             keyBoardControl={true}
             containerClass="carousel-container"
             deviceType={'desktop'}
