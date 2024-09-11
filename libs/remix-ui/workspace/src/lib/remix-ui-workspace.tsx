@@ -1254,22 +1254,32 @@ export function Workspace() {
           <div className="d-flex justify-content-between p-1">
             <div className="text-uppercase text-dark pt-1 px-1">GIT</div>
             { selectedWorkspace.hasGitSubmodules?
-              <CustomTooltip
-                placement="top"
-                tooltipId="updateSubmodules"
-                tooltipClasses="text-nowrap"
-                tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
-              >
+              
                 <div className="pr-1">
-                  { global.fs.browser.isRequestingCloning ? <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
-                    <i className="fad fa-spinner fa-spin"></i>
-                  Updating submodules
-                  </button> :
-                    <button style={{ height: 30, minWidth: "9rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
-                    Update submodules
-                    </button> }
+                  { global.fs.browser.isRequestingCloning ? 
+                    <CustomTooltip
+                      placement="top"
+                      tooltipId="updatingSubmodules"
+                      tooltipClasses="text-nowrap"
+                      tooltipText={"Updating submodules"}
+                    >
+                      <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
+                        <i className="fad fa-spinner fa-spin mr-2"></i>
+                        Updating...
+                      </button>
+                    </CustomTooltip> :
+                    <CustomTooltip
+                      placement="top"
+                      tooltipId="updateSubmodules"
+                      tooltipClasses="text-nowrap"
+                      tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
+                    >
+                      <button style={{ height: 30, minWidth: "9rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
+                       Update submodules
+                      </button>
+                    </CustomTooltip>
+                  }
                 </div>
-              </CustomTooltip>
               : null
             }
             <CustomTooltip
