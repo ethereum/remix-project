@@ -2,7 +2,7 @@ import async, { ErrorCallback } from 'async'
 import { compileContractSources, writeTestAccountsContract } from './compiler'
 import { deployAll } from './deployer'
 import { runTest } from './testRunner'
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 import { EventEmitter } from 'events'
 import { Provider, extend } from '@remix-project/remix-simulator'
 import {

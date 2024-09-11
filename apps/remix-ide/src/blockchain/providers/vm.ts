@@ -1,4 +1,4 @@
-import Web3, { FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
+import { Web3, FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
 import { fromWei, toBigInt } from 'web3-utils'
 import { privateToAddress, hashPersonalMessage, isHexString, bytesToHex } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
