@@ -23,6 +23,9 @@ if [ -z "$listJson" ]; then
     exit 0  # Silently exit
 fi
 
+# Overwrite the local list.json with the fetched content
+echo "$listJson" > ./apps/remix-ide/src/assets/list.json
+
 # Check if the specified version exists in the list
 check=$(echo "$listJson" | grep "\"$defaultVersion\"")
 
