@@ -67,7 +67,7 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
               </div>
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
                 <a href="https://remix-project.org" target="__blank">
-                  <img src={'assets/img/remi-desk-470.webp'} className="remixui_carouselImage" alt=""></img>
+                  <img src={'assets/img/remi-prof.webp'} className="remixui_carouselImage" alt=""></img>
                 </a>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
