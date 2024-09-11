@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 
 import {PluginClient} from '@remixproject/plugin'
 import {CustomTooltip} from '@remix-ui/helper'

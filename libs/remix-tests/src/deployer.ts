@@ -1,6 +1,6 @@
 import async from 'async'
 import { execution } from '@remix-project/remix-lib'
-import Web3, { FMT_BYTES, FMT_NUMBER } from 'web3'
+import { Web3, FMT_BYTES, FMT_NUMBER } from 'web3'
 import { compilationInterface } from './types'
 
 /**

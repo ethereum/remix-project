@@ -1,6 +1,6 @@
 import async from 'async'
 import * as changeCase from 'change-case'
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 import assertionEvents from './assertionEvents'
 import {
   RunListInterface, TestCbInterface, TestResultInterface, ResultCbInterface,
