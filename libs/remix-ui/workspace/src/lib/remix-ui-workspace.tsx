@@ -336,7 +336,7 @@ export function Workspace() {
     )
   }
 
-  const [counter, setCounter] = useState(0)
+  const [counter, setCounter] = useState(1)
   const createBlankWorkspace = async () => {
     const username = await global.plugin.call('settings', 'get', 'settings/github-user-name')
     const email = await global.plugin.call('settings', 'get', 'settings/github-email')
