@@ -2,6 +2,7 @@
   "filePanel.displayName": "File explorer",
   "filePanel.workspace": "WORKSPACES",
   "filePanel.create": "Create",
+  "filePanel.createLabel": "Create using Template",
   "filePanel.createBlank":"Create Blank",
   "filePanel.create.desktop": "Create Project",
   "filePanel.clone": "Clone",
