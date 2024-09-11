@@ -79,12 +79,11 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                   <span
                     className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
                     onClick={async () => {
-                      await props.plugin.appManager.activatePlugin(['LearnEth', 'solidity', 'solidityUnitTesting'])
+                      await props.plugin.appManager.activatePlugin(['LearnEth', 'solidityUnitTesting'])
                       props.plugin.verticalIcons.select('LearnEth')
                       await props.plugin.call('LearnEth', 'home')
                     	}
                     }
-                    
                   >
                     <FormattedMessage id="home.learnEthPromoButton" />
                   </span>
