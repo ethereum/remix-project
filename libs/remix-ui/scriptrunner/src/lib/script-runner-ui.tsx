@@ -24,7 +24,7 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
     // Fetch the JSON data from the localhost server using Axios
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/projects.json');
+        const response = await axios.get('http://localhost:3000/projects.json?timestamp=' + Date.now());
         setConfigurations(response.data);
       } catch (error) {
         console.error("Error fetching the projects data:", error);

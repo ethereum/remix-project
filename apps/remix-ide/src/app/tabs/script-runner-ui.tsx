@@ -45,7 +45,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
           url = testPluginUrl
       }else{
         baseUrl = `//${new URL(testPluginUrl).host}`
-        url = `${baseUrl}?template=${name}` 
+        url = `${baseUrl}?template=${name}&timestamp=${Date.now()}`
       }
     }
     
