@@ -69,6 +69,7 @@ const remixLib = require('@remix-project/remix-lib')
 
 import { QueryParams } from '@remix-project/remix-lib'
 import { SearchPlugin } from './app/tabs/search'
+import { ScriptRunnerUIPlugin } from './app/tabs/script-runner-ui'
 import { ElectronProvider } from './app/files/electronProvider'
 
 const Storage = remixLib.Storage
@@ -221,6 +222,9 @@ class AppComponent {
     //----- search
     const search = new SearchPlugin()
 
+    //---------------- Script Runner UI Plugin -------------------------
+    const scriptRunnerUI = new ScriptRunnerUIPlugin(this.engine)
+
     //---- templates
     const templates = new TemplatesPlugin()
 
@@ -371,7 +375,8 @@ class AppComponent {
       git,
       pluginStateLogger,
       matomo,
-      templateSelection
+      templateSelection,
+      scriptRunnerUI
     ])
 
     //---- fs plugin
@@ -611,7 +616,7 @@ class AppComponent {
     })
 
     // activate solidity plugin
-    this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy'])
+    this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy', 'scriptRunnerBridge'])
   }
 }
 

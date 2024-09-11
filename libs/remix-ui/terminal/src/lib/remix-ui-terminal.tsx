@@ -245,7 +245,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         await call('solcoder', 'solidity_answer', script)
         _paq.push(['trackEvent', 'ai', 'solcoder', 'askFromTerminal'])
       } else {
-        await call('scriptRunner', 'execute', script)
+        await call('scriptRunnerBridge', 'execute', script)
       }
       done()
     } catch (error) {
