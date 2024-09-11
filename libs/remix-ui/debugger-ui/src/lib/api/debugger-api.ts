@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 import { init , traceHelper, TransactionDebugger as Debugger } from '@remix-project/remix-debug'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { lineText } from '@remix-ui/editor'

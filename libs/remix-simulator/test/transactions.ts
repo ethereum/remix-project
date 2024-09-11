@@ -1,5 +1,5 @@
 /* global describe, before, it */
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 import { LegacyTransaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
 import { Provider } from '../src/index'
 const web3 = new Web3()
