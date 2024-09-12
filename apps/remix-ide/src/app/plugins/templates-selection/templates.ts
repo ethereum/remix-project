@@ -274,7 +274,7 @@ export const templates = (intl, plugin) => {
         { value: "nft-staking-with-infinite-rewards", displayName: 'Nft Staking with infinite rewards' },
         { value: "basic-dao", displayName: 'Basic DAO' },
         { value: "soulbound-nft", displayName: 'Soulbound Nft' },
-        { value: "multi-collection-nft-with-burnable-nfts-and-pausable-transfers", displayName: 'Multi collection NFT', description: "Multi collection NFT with:",  opts: {
+        { value: "multi-collection-nft-with-burnable-nfts-and-pausable-transfers", displayName: 'Multi collection NFT', description: "Multi collection NFT with:", opts: {
           burnable: true,
           pausable: true
         }, },
