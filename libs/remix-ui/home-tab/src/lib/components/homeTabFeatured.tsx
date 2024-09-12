@@ -78,7 +78,7 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                   </div>
                   <span
                     className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
-                    style={{cursor: 'pointer'}}
+                    style={{ cursor: 'pointer' }}
                     onClick={async () => {
                       await props.plugin.appManager.activatePlugin(['LearnEth', 'solidityUnitTesting'])
                       props.plugin.verticalIcons.select('LearnEth')
