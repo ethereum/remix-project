@@ -2,7 +2,8 @@
   "filePanel.displayName": "File explorer",
   "filePanel.workspace": "WORKSPACES",
   "filePanel.create": "Create",
-  "filePanel.createLabel": "Create using Template",
+
+  "filePanel.createLabel": "Create Using Template",
   "filePanel.createBlank":"Create Blank",
   "filePanel.create.desktop": "Create Project",
   "filePanel.clone": "Clone",
@@ -11,7 +12,7 @@
   "filePanel.restore": "Restore",
   "filePanel.name": "Name",
   "filePanel.save": "Save",
-  "filePanel.workspace.create": "Create Workspace using Templates",
+  "filePanel.workspace.create": "Create Workspace using template",
   "filePanel.workspace.createBlank": "Create Blank Workspace",
   "filePanel.workspace.create.desktop": "Create project in new folder",
   "filePanel.workspace.rename": "Rename Workspace",
