@@ -18,6 +18,7 @@ import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
 import { branch, GitHubUser, gitUIPanels, userEmails } from '@remix-ui/git'
+import { createModalMessage } from './components/createModal'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -331,6 +332,26 @@ export function Workspace() {
       renameModalMessage(),
       intl.formatMessage({ id: 'filePanel.save' }),
       onFinishRenameWorkspace,
+      intl.formatMessage({ id: 'filePanel.cancel' })
+    )
+  }
+
+  const [counter, setCounter] = useState(1)
+  const createBlankWorkspace = async () => {
+    const username = await global.plugin.call('settings', 'get', 'settings/github-user-name')
+    const email = await global.plugin.call('settings', 'get', 'settings/github-email')
+    const gitNotSet = !username || !email
+    const defaultName = await global.plugin.call('filePanel', 'getAvailableWorkspaceName', 'blank')
+    let workspace = defaultName
+    let gitInit = false
+    setCounter((previous) => {
+      return previous + 1
+    })
+    global.modal(
+      intl.formatMessage({ id: 'filePanel.workspace.createBlank' }),
+      await createModalMessage(`blank - ${counter}`, gitNotSet, (value) => { workspace = value }, (value) => gitInit = false),
+      intl.formatMessage({ id: 'filePanel.ok' }),
+      () => global.dispatchCreateWorkspace(`blank - ${counter}`, 'blank', false),
       intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
@@ -926,6 +947,7 @@ export function Workspace() {
                           <HamburgerMenu
                             selectedWorkspace={selectedWorkspace}
                             createWorkspace={createWorkspace}
+                            createBlankWorkspace={createBlankWorkspace}
                             renameCurrentWorkspace={renameCurrentWorkspace}
                             downloadCurrentWorkspace={downloadCurrentWorkspace}
                             deleteCurrentWorkspace={deleteCurrentWorkspace}
