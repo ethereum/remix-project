@@ -249,6 +249,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               htmlFor="generatecontractmetadata"
             >
               <FormattedMessage id="settings.generateContractMetadataText" />
+              <CustomTooltip
+                placement="auto"
+                tooltipId="settings-tooltip-metadata"
+                tooltipText={intl.formatMessage({ id: 'settings.generateContractMetadataTooltip' })}
+              >
+                <i className="ml-1 far fa-info-circle"></i>
+              </CustomTooltip>
             </label>
           </div>
           <div className="mt-2 custom-control custom-checkbox mb-1">
@@ -296,11 +303,14 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <div className="custom-control custom-checkbox mb-1">
             <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked={isPersonalChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
-              <i className="fas fa-exclamation-triangle text-warning" aria-hidden="true"></i> <span> </span>
-              <span> </span>
               <FormattedMessage id="settings.enablePersonalModeText" />
-              &nbsp;
-              <FormattedMessage id="settings.warnText" />
+              <CustomTooltip
+                placement="auto"
+                tooltipId="settings-tooltip-personalMode"
+                tooltipText={intl.formatMessage({ id: 'settings.enablePersonalModeTooltip' })}
+              >
+                <i className="ml-1 fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+              </CustomTooltip>
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
@@ -309,7 +319,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               <span>
                 <FormattedMessage id="settings.matomoAnalytics" />
               </span>
-              <a href="https://medium.com/p/66ef69e14931/" target="_blank">
+              <a href="https://medium.com/remix-ide/help-us-improve-remix-ide-66ef69e14931" target="_blank">
                 {' '}
                 <FormattedMessage id="settings.analyticsInRemix" />
               </a>{' '}
@@ -317,6 +327,13 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               <a target="_blank" href="https://matomo.org/free-software">
                 Matomo
               </a>
+              <CustomTooltip
+                placement="auto"
+                tooltipId="settings-tooltip-matomo"
+                tooltipText={intl.formatMessage({ id: 'settings.matomoAnalyticsTooltip' })}
+              >
+                <i className="ml-1 far fa-info-circle"></i>
+              </CustomTooltip>
             </label>
           </div>
           <div className="custom-control custom-checkbox mb-1">
