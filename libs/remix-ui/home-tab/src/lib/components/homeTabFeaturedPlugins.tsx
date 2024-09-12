@@ -67,10 +67,10 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
     plugin.verticalIcons.select('solidityStaticAnalysis')
     _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'solidityStaticAnalysis'])
   }
-  const startSourceVerify = async () => {
-    await plugin.appManager.activatePlugin(['solidity', 'sourcify'])
-    plugin.verticalIcons.select('sourcify')
-    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'sourcify'])
+  const startLearnEth = async () => {
+    await plugin.appManager.activatePlugin(['LearnEth', 'solidity', 'solidityUnitTesting'])
+    plugin.verticalIcons.select('LearnEth')
+    _paq.push(['trackEvent', 'hometabActivate', 'userActivate', 'LearnEth'])
   }
   const startCookbook = async () => {
     await plugin.appManager.activatePlugin(['cookbookdev'])
@@ -109,7 +109,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               }
             }}
             renderButtonGroupOutside={true}
-            ssr={true} // means to render carousel on server-side.
+            ssr={false} // means to render carousel on server-side.
             keyBoardControl={true}
             containerClass="carousel-container"
             deviceType={'desktop'}
@@ -126,6 +126,16 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               callback={() => startCodeAnalyzer()}
             />
             <PluginButton
+              imgPath="assets/img/learnEthLogo.webp"
+              envID="learnEthLogo"
+              envText="LearnEth Tutorials"
+              description={intl.formatMessage({
+                id: 'home.learnEthPluginDesc'
+              })}
+              remixMaintained={true}
+              callback={() => startLearnEth()}
+            />
+            <PluginButton
               imgPath="assets/img/cookbook.webp"
               envID="cookbookLogo"
               envText="Cookbook"
@@ -140,13 +150,6 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               description={intl.formatMessage({ id: 'home.solidityPluginDesc' })}
               remixMaintained={true}
               callback={() => startSolidity()}
-            />
-            <PluginButton
-              imgPath="assets/img/sourcifyNewLogo.webp"
-              envID="sourcifyLogo"
-              envText="Sourcify"
-              description={intl.formatMessage({ id: 'home.sourcifyPluginDesc' })}
-              callback={() => startSourceVerify()}
             />
             <PluginButton
               imgPath="assets/img/unitTesting.webp"
