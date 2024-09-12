@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start:server": "npx ts-node server.ts"
+    "start:server": "tsc && node ./dist/server.js"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
@@ -9,5 +9,9 @@
     "git-http-backend": "^1.1.2",
     "path": "^0.12.7",
     "zlib": "^1.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "typescript": "^5.6.2"
   }
 }

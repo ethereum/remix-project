@@ -14,13 +14,11 @@ export default function AIStatus(props: AIStatusProps) {
   const [copilotActive, setCopilotActive] = useState(false)
   useEffect(() => {
     const run = async () => {
-      props.plugin.on('fileManager', 'currentFileChanged', async (isAiActive) => {
-        const aiActivate = await props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
-        setCopilotActive(aiActivate)
-      })
+      const aiActivate = await props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
+      setCopilotActive(aiActivate)
     }
     run()
-  }, [props.plugin.isAiActive, props.isAiActive])
+  }, [])
 
   useEffect(() => {
     const run = async () => {
@@ -30,14 +28,14 @@ export default function AIStatus(props: AIStatusProps) {
       })
     }
     run()
-  }, [props.plugin.isAiActive])
+  }, [props.plugin.isAiActive, props.plugin.isAiActive])
   return (
     <CustomTooltip
-      tooltipText={copilotActive ? "Remix Copilot activated" : "Remix Copilot disabled. To activate copilot, open a .sol file and toggle the ai switch at the top of the Ide"}
+      tooltipText={copilotActive ? "RemixAI Copilot enabled" : "RemixAI Copilot disabled. To enable, open a .sol file and toggle the switch at the left-top of the editor"}
     >
       <div className="d-flex flex-row pr-2 text-white justify-content-center align-items-center">
         <span className={copilotActive === false ? "small mx-1 text-white semi-bold" : "small mx-1 text-white semi-bold" }>
-          {copilotActive === false ? 'Remix Copilot (disabled)' : 'Remix Copilot (enabled)'}
+          {copilotActive === false ? 'RemixAI Copilot (disabled)' : 'RemixAI Copilot (enabled)'}
         </span>
       </div>
     </CustomTooltip>
