@@ -304,13 +304,12 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
             <input onChange={onchangePersonal} id="personal" type="checkbox" className="custom-control-input" checked={isPersonalChecked} />
             <label className={`form-check-label custom-control-label align-middle ${getTextClass('settings/personal-mode')}`} htmlFor="personal">
               <FormattedMessage id="settings.enablePersonalModeText" />
-              <i className="ml-1 fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
               <CustomTooltip
                 placement="auto"
                 tooltipId="settings-tooltip-personalMode"
                 tooltipText={intl.formatMessage({ id: 'settings.enablePersonalModeTooltip' })}
               >
-                <i className="ml-1 far fa-info-circle"></i>
+                <i className="ml-1 fas fa-exclamation-triangle text-warning" aria-hidden="true"></i>
               </CustomTooltip>
             </label>
           </div>
