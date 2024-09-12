@@ -9,7 +9,7 @@ import { DeployMode, MainnetPrompt } from "../types"
 import { displayNotification, fetchProxyDeploymentsSuccess, setDecodedResponse, updateInstancesBalance } from "./payload"
 import { addInstance } from "./actions"
 import { addressToString, logBuilder } from "@remix-ui/helper"
-import Web3 from "web3"
+import { Web3 } from "web3"
 
 declare global {
   interface Window {
