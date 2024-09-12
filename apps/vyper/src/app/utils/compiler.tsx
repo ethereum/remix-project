@@ -47,6 +47,8 @@ export function normalizeContractPath(contractPath: string): string[] {
 
 function parseErrorString(errorString) {
   // Split the string into lines
+  console.log(errorString)
+  return
   let lines = errorString.trim().split('\n')
   // Extract the line number and message
   let message = errorString.trim()
@@ -140,24 +142,30 @@ const compileReturnType = (output, contract) => {
   return result
 }
 
-const fixContractContent = (content: string) => {
-  if (content.length === 0) return
-  const pragmaFound = content.includes('#pragma version ^0.3.10')
-  const wrongpragmaFound = content.includes('# pragma version ^0.3.10')
-  const evmVerFound = content.includes('#pragma evm-version shanghai')
-  const pragma = '#pragma version ^0.3.10'
-  const evmVer = '#pragma evm-version shanghai'
+const updatePragmaDeclaration = (content: string) => {
+  const pragmaRegex = /#\s*pragma\s+[@]*version\s+([~<>!=^]+)\s*(\d+\.\d+\.\d+)/
+  const oldPragmaRegex = /#\s*pragma\s+[@]*version\s+([\^^]+)\s*(\d+\.\d+\.\d+)/
+  const oldPragmaDeclaration = ['# pragma version ^0.2.16', '# pragma version ^0.3.10', '#pragma version ^0.2.16', '#pragma version ^0.3.10']
+  const pragmaFound = content.match(pragmaRegex)
+  const oldPragmaFound = content.match(oldPragmaRegex)
 
-  if (evmVerFound === false) {
-    content = `${evmVer}\n${content}`
+  const pragma = '# pragma version ~=0.4.0'
+
+  if (oldPragmaFound) {
+    console.log('found old pragma')
+    // oldPragmaDeclaration.forEach(declaration => {
+    //   content = content.replace(declaration, '# pragma version ~=0.4.0')
+    // })
   }
-  if (wrongpragmaFound === true) {
-    content = content.replace('# pragma version ^0.3.10', '')
-  }
-  if (pragmaFound === false ) {
-    content = `${pragma}\n${content}`
+  if (!pragmaFound) {
+    content = `${pragma}\n\n${content}`
   }
   return content
+}
+
+const fixContractContent = (content: string) => {
+  if (content.length === 0) return
+  return updatePragmaDeclaration(content)
 }
 
 /**
@@ -174,13 +182,18 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     throw new Error('Use extension .vy for Vyper.')
   }
 
+  const cleanedUpContent = fixContractContent(contract.content)
+  // console.log('cleanedUp', cleanedUpContent)
+
   let contractName = contract['name']
   const compilePackage = {
     manifest: 'ethpm/3',
     sources: {
-      [contractName] : { content : fixContractContent(contract.content) }
+      [contractName] : { content : cleanedUpContent }
     }
   }
+  console.log(compilePackage)
+
   let response = await axios.post(`${url}compile`, compilePackage )
 
   if (response.status === 404) {
@@ -191,9 +204,11 @@ export async function compile(url: string, contract: Contract): Promise<any> {
   }
 
   const compileCode = response.data
+  console.log('compileCode', compileCode)
   contractName = null
   response = null
   let result: any
+  let intermediateError
 
   const status = await (await axios.get(url + 'status/' + compileCode , {
     method: 'Get'
@@ -208,7 +223,9 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     const intermediate = await(await axios.get(url + 'exceptions/' + compileCode , {
       method: 'Get'
     })).data
-    result = parseErrorString(intermediate[0])
+    console.log('Errors found', intermediate)
+    result = parseErrorString(intermediate)
+    intermediateError = intermediate
     return result
   }
   await new Promise((resolve) => setTimeout(() => resolve({}), 3000))
