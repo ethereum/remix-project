@@ -1,5 +1,5 @@
 'use strict'
-import Web3, { Web3PluginBase } from 'web3'
+import { Web3, Web3PluginBase } from 'web3'
 import { toNumber } from 'web3-utils'
 
 export function extendWeb3 (web3) {
