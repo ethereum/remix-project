@@ -17,7 +17,7 @@ import { customAction } from '@remixproject/plugin-api'
 import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
-import { branch} from '@remix-api'
+import { branch } from '@remix-api'
 import { gitUIPanels } from '@remix-ui/git'
 import { createModalMessage } from './components/createModal'
 
