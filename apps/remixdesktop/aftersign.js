@@ -1,6 +1,16 @@
 const { notarize } = require('@electron/notarize')
 const fs = require('fs')
 const { exec } = require('child_process') // Import the exec function
+
+// read the environment variables from process
+
+console.log(process.env.DO_NOT_NOTARIZE)
+
+if (process.env.DO_NOT_NOTARIZE) {
+  console.log('NOTARIZING DISABLED')
+  return []
+}
+
 exports.default = async function notarizing(context) {
   const { electronPlatformName, appOutDir } = context // Provided by electron-builder
 
