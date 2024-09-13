@@ -31,8 +31,10 @@ export class Layout extends Plugin {
   event: any
   panels: panels
   enhanced: { [key: string]: boolean }
+  maximized: { [key: string]: boolean }
   constructor () {
     super(profile)
+    this.maximized = {}
     this.enhanced = {
       'dgit': true,
       'LearnEth': true
@@ -129,13 +131,13 @@ export class Layout extends Plugin {
 
   async maximiseSidePanel () {
     const current = await this.call('sidePanel', 'currentFocus')
-    this.enhanced[current] = true
+    this.maximized[current] = true
     this.event.emit('maximisesidepanel')
   }
 
   async maximisePinnedPanel () {
     const current = await this.call('pinnedPanel', 'currentFocus')
-    this.enhanced[current] = true
+    this.maximized[current] = true
     this.event.emit('maximisepinnedpanel')
   }
 
