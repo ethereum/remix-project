@@ -11,68 +11,59 @@ if (process.env.DO_NOT_NOTARIZE) {
   exports.default = async function notarizing(context) {
     return []
   }
-}
+} else {
 
-exports.default = async function notarizing(context) {
-  const { electronPlatformName, appOutDir } = context // Provided by electron-builder
+  exports.default = async function notarizing(context) {
+    const { electronPlatformName, appOutDir } = context // Provided by electron-builder
 
-  console.log('NOTARIZING')
+    console.log('NOTARIZING')
 
-  if (electronPlatformName !== 'darwin' || !process.env.CIRCLE_BRANCH) {
-    return
-  }
-
-  const appName = context.packager.appInfo.productFilename
-  const appPath = `${appOutDir}/${appName}.app`
-
-  // Function to promisify the exec command
-  function execShellCommand(cmd) {
-    return new Promise((resolve, reject) => {
-      exec(cmd, (error, stdout, stderr) => {
-        if (error) {
-          reject(new Error(`Error: ${error.message}`));
-          return;
-        }
-        if (stderr) {
-          reject(new Error(`Stderr: ${stderr}`));
-          return;
-        }
-        console.log(`stdout: ${stdout}`);
-        resolve(stdout);
-      });
-    });
-  }
-
-  // Function to check if the app is stapled
-  // Async function to check the stapling status
-  async function checkStapleStatus() {
-    try {
-      console.log(`xcrun stapler validate "${appPath}"`)
-      await execShellCommand(`xcrun stapler validate "${appPath}"`);
-      console.log('App is already stapled. No action needed.');
-      return true
-    } catch (error) {
-      console.log(`App is not stapled: ${error.message}`);
-      return false
+    if (electronPlatformName !== 'darwin' || !process.env.CIRCLE_BRANCH) {
+      return
     }
-  }
+
+    const appName = context.packager.appInfo.productFilename
+    const appPath = `${appOutDir}/${appName}.app`
+
+    // Function to promisify the exec command
+    function execShellCommand(cmd) {
+      return new Promise((resolve, reject) => {
+        exec(cmd, (error, stdout, stderr) => {
+          if (error) {
+            reject(new Error(`Error: ${error.message}`));
+            return;
+          }
+          if (stderr) {
+            reject(new Error(`Stderr: ${stderr}`));
+            return;
+          }
+          console.log(`stdout: ${stdout}`);
+          resolve(stdout);
+        });
+      });
+    }
+
+    // Function to check if the app is stapled
+    // Async function to check the stapling status
+    async function checkStapleStatus() {
+      try {
+        console.log(`xcrun stapler validate "${appPath}"`)
+        await execShellCommand(`xcrun stapler validate "${appPath}"`);
+        console.log('App is already stapled. No action needed.');
+        return true
+      } catch (error) {
+        console.log(`App is not stapled: ${error.message}`);
+        return false
+      }
+    }
 
 
 
 
-  async function runNotarize() {
+    async function runNotarize() {
 
-    console.log('NOTARIZING + ', `xcrun stapler staple "${appPath}"`)
-    console.log({
-      appBundleId: 'org.ethereum.remix-ide', // Your app's bundle ID
-      appPath: `${appOutDir}/${appName}.app`, // Path to your .app
-      appleId: process.env.APPLE_ID, // Your Apple ID
-      appleIdPassword: process.env.APPLE_ID_PASSWORD, // App-specific password
-      teamId: process.env.APPLE_TEAM_ID, // Your Apple Developer team ID (optional)
-    })
-
-    try {
-      const r = await notarize({
+      console.log('NOTARIZING + ', `xcrun stapler staple "${appPath}"`)
+      console.log({
         appBundleId: 'org.ethereum.remix-ide', // Your app's bundle ID
         appPath: `${appOutDir}/${appName}.app`, // Path to your .app
         appleId: process.env.APPLE_ID, // Your Apple ID
@@ -80,24 +71,34 @@ exports.default = async function notarizing(context) {
         teamId: process.env.APPLE_TEAM_ID, // Your Apple Developer team ID (optional)
       })
 
-      console.log(r)
+      try {
+        const r = await notarize({
+          appBundleId: 'org.ethereum.remix-ide', // Your app's bundle ID
+          appPath: `${appOutDir}/${appName}.app`, // Path to your .app
+          appleId: process.env.APPLE_ID, // Your Apple ID
+          appleIdPassword: process.env.APPLE_ID_PASSWORD, // App-specific password
+          teamId: process.env.APPLE_TEAM_ID, // Your Apple Developer team ID (optional)
+        })
 
-      // Stapling the app
-      console.log('STAPLING', `xcrun stapler staple "${appPath}"`)
+        console.log(r)
 
-      await execShellCommand(`xcrun stapler staple "${appPath}"`)
+        // Stapling the app
+        console.log('STAPLING', `xcrun stapler staple "${appPath}"`)
 
-    } catch (error) {
-      console.error('Error during notarization:', error)
-      throw new Error('Error during notarization', error)
+        await execShellCommand(`xcrun stapler staple "${appPath}"`)
+
+      } catch (error) {
+        console.error('Error during notarization:', error)
+        throw new Error('Error during notarization', error)
+      }
+
     }
 
-  }
-
-  if(!await checkStapleStatus()){
-    await runNotarize()
-    await checkStapleStatus()
-  }else{
-    return []
+    if (!await checkStapleStatus()) {
+      await runNotarize()
+      await checkStapleStatus()
+    } else {
+      return []
+    }
   }
 }
