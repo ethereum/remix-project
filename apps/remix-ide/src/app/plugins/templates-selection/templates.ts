@@ -265,6 +265,7 @@ export const templates = (intl, plugin) => {
         plugin.call('menuicons', 'showContent', 'cookbookdev')
       },
       onClickLabel: 'Open Cookbook Plugin',
+      description: 'Discover more templates!',
       items: [
         { value: "token-sale", displayName: 'Token Sale' },
         { value: "simple-nft-sale", displayName: 'Simple Nft Sale' },
