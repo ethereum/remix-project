@@ -77,6 +77,7 @@ exports.default = async function notarizing(context) {
 
     } catch (error) {
       console.error('Error during notarization:', error)
+      throw new Error('Error during notarization', error)
     }
 
   }
