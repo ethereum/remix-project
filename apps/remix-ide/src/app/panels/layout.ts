@@ -30,11 +30,12 @@ export type PanelConfiguration = {
 export class Layout extends Plugin {
   event: any
   panels: panels
-  maximised: { [key: string]: boolean }
+  enhanced: { [key: string]: boolean }
   constructor () {
     super(profile)
-    this.maximised = {
-      'dgit': true
+    this.enhanced = {
+      'dgit': true,
+      'LearnEth': true
     }
     this.event = new EventEmitter()
   }
@@ -80,8 +81,8 @@ export class Layout extends Plugin {
     })
     this.on('sidePanel', 'focusChanged', async (name) => {
       const current = await this.call('sidePanel', 'currentFocus')
-      if (this.maximised[current]) {
-        this.event.emit('maximisesidepanel')
+      if (this.enhanced[current]) {
+        this.event.emit('enhancesidepanel')
       } else {
         this.event.emit('resetsidepanel')
       }
@@ -89,8 +90,8 @@ export class Layout extends Plugin {
 
     this.on('pinnedPanel', 'pinnedPlugin', async (name) => {
       const current = await this.call('pinnedPanel', 'currentFocus')
-      if (this.maximised[current]) {
-        this.event.emit('maximisepinnedpanel')
+      if (this.enhanced[current]) {
+        this.event.emit('enhancepinnedpanel')
       } else {
         this.event.emit('resetpinnedpanel')
       }
@@ -128,13 +129,13 @@ export class Layout extends Plugin {
 
   async maximiseSidePanel () {
     const current = await this.call('sidePanel', 'currentFocus')
-    this.maximised[current] = true
+    this.enhanced[current] = true
     this.event.emit('maximisesidepanel')
   }
 
   async maximisePinnedPanel () {
     const current = await this.call('pinnedPanel', 'currentFocus')
-    this.maximised[current] = true
+    this.enhanced[current] = true
     this.event.emit('maximisepinnedpanel')
   }
 
@@ -146,13 +147,13 @@ export class Layout extends Plugin {
 
   async resetSidePanel () {
     const current = await this.call('sidePanel', 'currentFocus')
-    this.maximised[current] = false
+    this.enhanced[current] = false
     this.event.emit('resetsidepanel')
   }
 
   async resetPinnedPanel () {
     const current = await this.call('pinnedPanel', 'currentFocus')
-    this.maximised[current] = false
+    this.enhanced[current] = false
     this.event.emit('resetpinnedpanel')
   }
 }

@@ -32,8 +32,10 @@ const RemixApp = (props: IRemixAppUi) => {
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [hidePinnedPanel, setHidePinnedPanel] = useState<boolean>(true)
   const [maximiseLeftTrigger, setMaximiseLeftTrigger] = useState<number>(0)
+  const [enhanceLeftTrigger, setEnhanceLeftTrigger] = useState<number>(0)
   const [resetLeftTrigger, setResetLeftTrigger] = useState<number>(0)
   const [maximiseRightTrigger, setMaximiseRightTrigger] = useState<number>(0)
+  const [enhanceRightTrigger, setEnhanceRightTrigger] = useState<number>(0)
   const [resetRightTrigger, setResetRightTrigger] = useState<number>(0)
   const [online, setOnline] = useState<boolean>(true)
   const [locale, setLocale] = useState<{ code: string; messages: any }>({
@@ -98,6 +100,12 @@ const RemixApp = (props: IRemixAppUi) => {
       })
     })
 
+    props.app.layout.event.on('enhancesidepanel', () => {
+      setEnhanceLeftTrigger((prev) => {
+        return prev + 1
+      })
+    })
+
     props.app.layout.event.on('resetsidepanel', () => {
       setResetLeftTrigger((prev) => {
         return prev + 1
@@ -106,6 +114,12 @@ const RemixApp = (props: IRemixAppUi) => {
 
     props.app.layout.event.on('maximisepinnedpanel', () => {
       setMaximiseRightTrigger((prev) => {
+        return prev + 1
+      })
+    })
+
+    props.app.layout.event.on('enhancepinnedpanel', () => {
+      setEnhanceRightTrigger((prev) => {
         return prev + 1
       })
     })
@@ -205,6 +219,7 @@ const RemixApp = (props: IRemixAppUi) => {
                   {props.app.sidePanel.render()}
                 </div>
                 <DragBar
+                  enhanceTrigger={enhanceLeftTrigger}
                   resetTrigger={resetLeftTrigger}
                   maximiseTrigger={maximiseLeftTrigger}
                   minWidth={305}
@@ -222,6 +237,7 @@ const RemixApp = (props: IRemixAppUi) => {
                 {
                   !hidePinnedPanel &&
                   <DragBar
+                    enhanceTrigger={enhanceRightTrigger}
                     resetTrigger={resetRightTrigger}
                     maximiseTrigger={maximiseRightTrigger}
                     minWidth={331}
