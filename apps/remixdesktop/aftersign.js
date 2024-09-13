@@ -8,7 +8,9 @@ console.log(process.env.DO_NOT_NOTARIZE)
 
 if (process.env.DO_NOT_NOTARIZE) {
   console.log('NOTARIZING DISABLED')
-  return []
+  exports.default = async function notarizing(context) {
+    return []
+  }
 }
 
 exports.default = async function notarizing(context) {
