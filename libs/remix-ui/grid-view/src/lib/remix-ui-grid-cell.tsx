@@ -47,7 +47,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
     // check for filter
     if (filterCon.filter != '')
       enabled = (props.title?.toLowerCase().includes(filterCon.filter?.toLowerCase()) ||
-        props.searchKeywords?.map(keyword => keyword.toLowerCase()).some(searchKeyword => searchKeyword.toLowerCase().includes(filterCon.filter.toLocaleLowerCase())))
+        props.searchKeywords?.map(keyword => keyword?.toLowerCase()).some(searchKeyword => searchKeyword?.toLowerCase().includes(filterCon.filter?.toLocaleLowerCase())))
 
     setAnyEnabled(enabled)
   }, [filterCon, props.tagList])
