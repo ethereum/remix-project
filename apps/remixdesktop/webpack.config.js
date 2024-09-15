@@ -10,7 +10,7 @@ module.exports = {
     preload: './src/preload.ts',
   },
   target: 'electron-main',
-  externals: [nodeExternals()],
+  //externals: [nodeExternals()],
   module: {
     rules: [
       {
