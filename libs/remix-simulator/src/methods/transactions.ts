@@ -63,6 +63,7 @@ export class Transactions {
   methods () {
     return {
       eth_sendTransaction: this.eth_sendTransaction.bind(this),
+      eth_sendRawTransaction: this.eth_sendRawTransaction.bind(this),
       eth_getTransactionReceipt: this.eth_getTransactionReceipt.bind(this),
       eth_getCode: this.eth_getCode.bind(this),
       eth_call: this.eth_call.bind(this),
@@ -78,6 +79,29 @@ export class Transactions {
       eth_getStateDb: this.eth_getStateDb.bind(this),
       eth_getBlocksData: this.eth_getBlocksData.bind(this)
     }
+  }
+
+  eth_sendRawTransaction (payload, cb) {
+    payload.params[0] = { data: payload.params[0], signed: true }
+    processTx(this.txRunnerInstance, payload, false, (error, result: VMexecutionResult) => {
+      if (!error && result) {
+        this.vmContext.addBlock(result.block)
+        const hash = bytesToHex(result.tx.hash())
+        this.vmContext.trackTx(hash, result.block, result.tx)
+        const returnValue = `${bytesToHex(result.result.execResult.returnValue) || '0x0'}`
+        const execResult: VMExecResult = {
+          exceptionError: result.result.execResult.exceptionError,
+          executionGasUsed: result.result.execResult.executionGasUsed,
+          gas: result.result.execResult.gas,
+          gasRefund: result.result.execResult.gasRefund,
+          logs: result.result.execResult.logs,
+          returnValue
+        }
+        this.vmContext.trackExecResult(hash, execResult)
+        return cb(null, result.transactionHash)
+      }
+      cb(error)
+    })
   }
 
   eth_sendTransaction (payload, cb) {

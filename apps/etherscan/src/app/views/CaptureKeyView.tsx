@@ -13,7 +13,7 @@ export const CaptureKeyView = () => {
   const context = React.useContext(AppContext)
 
   useEffect(() => {
-    if (!context.apiKey) setMsg('Please provide a 34-character API key to continue')
+    if (!context.apiKey) setMsg('Please provide a 34 or 32 character API key to continue')
   }, [context.apiKey])
 
   return (
@@ -24,14 +24,14 @@ export const CaptureKeyView = () => {
           const errors = {} as any
           if (!values.apiKey) {
             errors.apiKey = 'Required'
-          } else if (values.apiKey.length !== 34) {
-            errors.apiKey = 'API key should be 34 characters long'
+          } else if (values.apiKey.length !== 34 && values.apiKey.length !== 32) {
+            errors.apiKey = 'API key should be 34 or 32 characters long'
           }
           return errors
         }}
         onSubmit={(values) => {
           const apiKey = values.apiKey
-          if (apiKey.length === 34) {
+          if (apiKey.length === 34 || apiKey.length === 32) {
             context.setAPIKey(values.apiKey)
             navigate(location && location.state ? location.state : '/')
           }

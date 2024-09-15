@@ -77,6 +77,10 @@
     background: var(--custom-select);
   }
 
+  .branches-dropdown {
+    max-width: 16rem;
+  }
+
   .custom-dropdown-items a {
     border-radius: .25rem;
     text-transform: none;

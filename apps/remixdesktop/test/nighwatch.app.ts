@@ -3,8 +3,8 @@ import fs from 'fs';
 
 
 
-const useIsoGit = process.argv.includes('--useIsoGit');
-const useOffline = process.argv.includes('--useOffline');
+const useIsoGit = process.argv.includes('--use-isogit');
+const useOffline = process.argv.includes('--use-offline');
 
 // Function to read JSON file synchronously
 function readJSONFileSync(filename: string): any {
@@ -71,12 +71,12 @@ module.exports = {
             // Check if running on CircleCI or locally
             let args = process.env.CIRCLECI ? ["--e2e"] : ["--e2e-local"];
             
-            if(useIsoGit) args = [...args, '--useIsoGit'];
-            if(useOffline) args = [...args, '--useOffline'];
+            if(useIsoGit) args = [...args, '--use-isogit'];
+            if(useOffline) args = [...args, '--use-offline'];
 
             // Set display size
-            const windowSize = "--window-size=1920,1080";
-            args = [...args, windowSize];
+            const windowSize = "--window-size=1000,1000";
+            args = [...args];
 
             switch (type) {
               case 'Windows_NT':

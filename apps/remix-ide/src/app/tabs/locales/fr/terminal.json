@@ -38,6 +38,8 @@
   "terminal.executionCost": "coût d'exécution",
   "terminal.input": "entrée",
   "terminal.decodedInput": "entrée décodée",
+  "terminal.output": "sortie",
   "terminal.decodedOutput": "sortie décodée",
-  "terminal.logs": "logs"
+  "terminal.rawlogs": "logs bruts",
+  "terminal.logs": "Log"
 }

@@ -38,6 +38,8 @@
   "terminal.executionCost": "执行成本",
   "terminal.input": "输入",
   "terminal.decodedInput": "解码输入",
+  "terminal.output": "输出",
   "terminal.decodedOutput": "解码输出",
+  "terminal.rawlogs": "原始日志",
   "terminal.logs": "日志"
 }

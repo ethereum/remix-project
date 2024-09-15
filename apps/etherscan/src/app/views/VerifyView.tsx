@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 
 import {PluginClient} from '@remixproject/plugin'
 import {CustomTooltip} from '@remix-ui/helper'
@@ -211,7 +211,7 @@ export const VerifyView = ({apiKey, client, contracts, onVerifiedContract, netwo
                   type="button"
                   className="mr-2 mb-2 py-1 px-2 btn btn-secondary btn-block"
                   onClick={async () => {
-                    etherscanScripts(client)
+                    etherscanScripts({}, client)
                   }}
                 >
                   Generate Verification Scripts

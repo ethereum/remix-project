@@ -10,7 +10,6 @@ class RemixClient extends PluginClient {
   }
 
   startTutorial(name: any, branch: any, id: any): void {
-    console.log('start tutorial', name, branch, id)
     void router.navigate('/home')
     store.dispatch({
       type: 'workshop/loadRepo',
@@ -23,7 +22,6 @@ class RemixClient extends PluginClient {
   }
 
   addRepository(name: any, branch: any) {
-    console.log('add repo', name, branch)
     void router.navigate('/home')
     store.dispatch({
       type: 'workshop/loadRepo',

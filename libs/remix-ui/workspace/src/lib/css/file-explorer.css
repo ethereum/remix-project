@@ -69,3 +69,11 @@ ul {
 .remixui_icons:hover {
     color: var(--text);
 }
+
+.remixui_avatar_user {
+    border-radius: 50% !important;
+}
+
+.remixui_selected {
+
+}

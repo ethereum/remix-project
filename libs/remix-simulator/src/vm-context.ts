@@ -1,7 +1,7 @@
 /* global ethereum */
 'use strict'
 import { hash } from '@remix-project/remix-lib'
-import { bytesToHex, Account, bigIntToHex, MapDB, toBytes, bytesToBigInt } from '@ethereumjs/util'
+import { bytesToHex, Account, bigIntToHex, MapDB, toBytes, bytesToBigInt, BIGINT_0 } from '@ethereumjs/util'
 import { keccak256 } from 'ethereum-cryptography/keccak'
 import { Address } from '@ethereumjs/util'
 import { decode } from 'rlp'
@@ -347,7 +347,7 @@ export class VMContext {
     const genesisBlock: Block = blocks.length > 0 && (blocks[0] || {}).isGenesis ? blocks[0] : Block.fromBlockData({
       header: {
         timestamp: (new Date().getTime() / 1000 | 0),
-        number: 0,
+        number: BIGINT_0,
         coinbase: '0x0e9281e9c6a0808672eaba6bd1220e144c9bb07a',
         difficulty,
         gasLimit: 8000000
