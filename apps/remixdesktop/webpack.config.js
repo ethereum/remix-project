@@ -10,13 +10,16 @@ module.exports = {
     preload: './src/preload.ts',
   },
   target: 'electron-main',
-  //externals: [nodeExternals()],
   module: {
     rules: [
       {
         test: /\.ts$/,
         include: /src/,
         use: [{ loader: 'ts-loader' }]
+      },
+      {
+        test: /\.node$/,
+        use: 'node-loader'
       }
     ]
   },
