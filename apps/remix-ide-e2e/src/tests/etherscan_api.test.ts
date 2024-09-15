@@ -6,7 +6,7 @@ declare global {
   interface Window { testplugin: { name: string, url: string }; }
 }
 
-module.exports = {
+const tests = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, null)
@@ -57,6 +57,14 @@ module.exports = {
         .waitForElementContainsText('*[data-id="terminalJournal"]', 'Already Verified', 60000)
       }
 }
+
+const branch = process.env.CIRCLE_BRANCH;
+const isMasterBranch = branch === 'master';
+
+module.exports = {
+  ...(branch ? (isMasterBranch ? tests : {}) : tests),
+};
+
 
 const verifiedContract = `
 // SPDX-License-Identifier: GPL-3.0

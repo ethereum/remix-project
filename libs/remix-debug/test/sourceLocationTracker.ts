@@ -66,12 +66,12 @@ tape('SourceLocationTracker', function (t) {
         map = await sourceLocationTracker.getSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
         st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
 
-        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
+        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 30, output.contracts)
         st.equal(map['file'], 0) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
         st.equal(map['start'], 303)
         st.equal(map['length'], 448)
 
-        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 36, output.contracts)
+        map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 26, output.contracts)
         st.equal(map['file'], 0) // 0 refers to the initial solidity code. see source below (ABIEncoderV2)
         st.equal(map['start'], 303)
         st.equal(map['length'], 448)
@@ -93,8 +93,8 @@ tape('SourceLocationTracker', function (t) {
 
         map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 45, output.contracts)
         st.equal(map['file'], 1) // 1 refers to the generated source (pragma experimental ABIEncoderV2)
-        st.equal(map['start'], 1297)
-        st.equal(map['length'], 32)
+        st.equal(map['start'], 2085)
+        st.equal(map['length'], 139)
 
         map = await sourceLocationTracker.getValidSourceLocationFromVMTraceIndex('0x0d3a18d64dfe4f927832ab58d6451cecc4e517c5', 36, output.contracts)
         st.equal(map['file'], 0) // 0 refers to the initial solidity code. see source below (ABIEncoderV2)

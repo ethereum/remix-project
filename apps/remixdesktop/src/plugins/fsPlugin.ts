@@ -33,7 +33,6 @@ const getBaseName = (pathName: string): string => {
 }
 
 function onlyUnique(value: recentFolder, index: number, self: recentFolder[]) {
-  console.log(index, value)
   return self.findIndex((rc, index) => rc.path === value.path) === index
 }
 

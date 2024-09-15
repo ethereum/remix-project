@@ -1,10 +1,13 @@
 {
-    "version": "v0.51.0",
+    "version": "v0.54.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Integration of SolidityScan to analyze code for vulnerabilities",
-    "highlight2": "'eth_signTypedData' supported in remix-simulator",
-    "highlight3": "Home tab updated & status bar introduced",
+    "highlight1": "Login to GitHub from 'File Explorer'",
+    "highlight2": "Added Cookbook workspace templates",
+    "highlight3": "Added 'sendRawTransaction' API to remix-simulator",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-51-0-ffe0260a9ad5?source=friends_link&sk=8c739ab9148dfae968108a90d9d0c6c3"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-54-0-021575d54849?source=friends_link&sk=e3960ba90994b63993987b007ee3ac63"
   }
+  
+
+  

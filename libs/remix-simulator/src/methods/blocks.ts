@@ -90,6 +90,7 @@ export class Blocks {
   toHex (value) {
     if (!value) return '0x0'
     const v = bytesToHex(value)
+    // @ts-ignore
     return ((v === '0x' || v === '') ? '0x0' : v)
   }
 

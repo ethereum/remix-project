@@ -1,78 +1,5 @@
 import { TemplateType } from '../types'
 export const ROOT_PATH = '/'
-export const solTestYml = `
-name: Running Solidity Unit Tests
-on: [push]
-
-jobs:
-  run_sol_contracts_job:
-    runs-on: ubuntu-latest
-    name: A job to run solidity unit tests on github actions CI
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Environment Setup
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20.0.0
-    - name: Run SUT Action
-      uses: EthereumRemix/sol-test@v1.1
-      with:
-        test-path: 'tests'
-        compiler-version: '0.8.15'
-//      evm-version: 'paris'
-//      optimize: true
-//      optimizer-runs: 200
-//      node-url: 'https://mainnet.infura.io/v3/08b2a484451e4635a28b3d8234f24332'
-//      block-number: 'latest'
-//      hard-fork: 'merge'
-
-`
-export const tsSolTestYml = `
-name: Running Mocha Chai Solidity Unit Tests
-on: [push]
-
-jobs:
-  run_sample_test_job:
-    runs-on: ubuntu-latest
-    name: A job to run mocha and chai tests for solidity on github actions CI
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Environment Setup
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20.0.0
-    - name: Run Mocha Chai Unit Test Action
-      uses: EthereumRemix/ts-sol-test@v1.3.1
-      with:
-        test-path: 'tests'
-        contract-path: 'contracts'
-        compiler-version: '0.8.7'
-//      evm-version: 'paris'
-//      optimize: true
-//      optimizer-runs: 200
-//      node-url: 'https://mainnet.infura.io/v3/08b2a484451e4635a28b3d8234f24332'
-//      block-number: 'latest'
-//      hard-fork: 'merge'
-`
-export const slitherYml = `
-name: Slither Analysis
-on: [push]
-
-jobs:
-  analyze:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - run: npm install
-    - uses: crytic/slither-action@v0.2.0
-      with:
-        target: 'contracts'
-        slither-args: '--solc-remaps "@openzeppelin/contracts=./node_modules/@openzeppelin/contracts hardhat=./node_modules/hardhat"'
-        fail-on: 'low'
-        solc-version: '0.8.2'
-`
 
 export const TEMPLATE_NAMES = {
   'remixDefault': 'Basic',
@@ -107,6 +34,78 @@ export const TEMPLATE_METADATA: Record<string, TemplateType> = {
     name: 'cookbookdev',
     endpoint: 'openPattern',
     params: ['Uniswap-V4-HookBook-MultiSigSwapHook', true]
+  },
+  'token-sale': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['token-sale']
+  },
+  'simple-nft-sale': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['simple-nft-sale']
+  },
+  'Azuki-ERC721A-NFT-Sale-basic': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['Azuki-ERC721A-NFT-Sale-basic']
+  },
+  'Azuki-ERC721A-ERC721A': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['Azuki-ERC721A-ERC721A']
+  },
+  'token-staking-with-infinite-rewards': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['token-staking-with-infinite-rewards']
+  },
+  'nft-staking-with-infinite-rewards': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['nft-staking-with-infinite-rewards']
+  },
+  'basic-dao': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['basic-dao']
+  },
+  'soulbound-nft': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['soulbound-nft']
+  },
+  'multi-collection-nft-with-burnable-nfts-and-pausable-transfers': {
+    type: 'plugin',
+    name: 'cookbookdev',
+    endpoint: 'openContract',
+    params: ['multi-collection-nft-with-burnable-nfts-and-pausable-transfers']
   }
+}
+
+export type TemplateOption = {
+  mintable?: boolean
+  burnable?: boolean
+  pausable?: boolean
+  upgradeable?: 'uups' | 'transparent'
+}
+
+export type Template = {
+  value: string
+  displayName: string
+  opts?: TemplateOption
+}
+
+export type TemplateGroup = {
+  name: string
+  items: Array<Template>
 }
 

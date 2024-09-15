@@ -8,7 +8,6 @@ const profile = {
 
 export class appUpdaterPlugin extends ElectronPlugin {
   constructor() {
-    console.log('appUpdaterPlugin')
     super(profile)
   }
 

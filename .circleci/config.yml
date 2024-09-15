@@ -16,6 +16,7 @@ jobs:
       xlarge
     working_directory: ~/remix-project
     steps:
+      - run: sudo apt update && sudo apt install zstd
       - checkout
       - restore_cache:
           keys:
@@ -44,8 +45,8 @@ jobs:
           key: soljson-v7-{{ checksum "soljson-versions.txt" }}
           paths:
             - dist/apps/remix-ide/assets/js/soljson
-      
-      - run: mkdir persist && zip -0 -r persist/dist.zip dist
+
+      - run: mkdir persist && tar -cf - dist | zstd -1 -o persist/dist.tar.zst
       - persist_to_workspace:
           root: .
           paths:
@@ -132,6 +133,11 @@ jobs:
             command: |
               cd apps/remixdesktop/
               ./run_ci_test.sh
+        - run:  
+            name: "Run isogit tests"
+            command: |
+              cd apps/remixdesktop/
+              ./run_git_ui_isogit_tests.sh
         - store_test_results:
             path: ./apps/remixdesktop/reports/tests
         - store_artifacts:
@@ -193,8 +199,8 @@ jobs:
           key: node-20-windows-v3
       - run: 
           command: |
-            nvm install 20.0.0
-            nvm use 20.0.0
+            nvm install 20
+            nvm use 20
             node -v
             npx -v
             npm install --global yarn
@@ -232,6 +238,21 @@ jobs:
     parallelism: 10
     working_directory: ~/remix-project
     steps:
+      - run:
+          name: Restart local mstsc
+          command: psexec64.exe -accepteula -nobanner -i 0 mstsc /v:localhost /w:2560 /h:1140
+          background: true
+          shell: powershell.exe
+      - run: 
+          name: Naive impl to wait until the screen stretches 
+          command: Start-Sleep 5
+          shell: powershell.exe
+      - run:
+          name: Get screen info
+          command: |
+            Add-Type -AssemblyName System.Windows.Forms
+            [System.Windows.Forms.Screen]::AllScreens | fl *
+          shell: powershell.exe
       - checkout
       - attach_workspace:
           at: .
@@ -240,8 +261,8 @@ jobs:
           key: node-20-windows-v3
       - run: 
           command: |
-            nvm install 20.0.0
-            nvm use 20.0.0
+            nvm install 20
+            nvm use 20
             node -v
             npx -v
             npm install --global yarn
@@ -264,18 +285,25 @@ jobs:
               mkdir apps/remixdesktop/build
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
-              nvm use 20.0.0
+              nvm use 20
               node -v
               pip install setuptools
               yarn
               ./rundist.bash
       - run:
-          name: start tests offline
+          name: run tests
           command: |
             cd "apps/remixdesktop/"
             yarn -v
             sleep 15
             ./run_ci_test.sh  
+      - run:  
+          name: "Run isogit tests"
+          command: |
+            cd apps/remixdesktop/
+            yarn -v
+            sleep 15
+            ./run_git_ui_isogit_tests.sh
       - store_test_results:
           path: ./apps/remixdesktop/reports/tests
       - store_artifacts:
@@ -422,15 +450,16 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20.0.0
-            nvm use 20.0.0
+            nvm install 20
+            nvm use 20
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 20.0.0
-            cd apps/remixdesktop && yarn
+            nvm use 20
+            cd apps/remixdesktop 
+            yarn || yarn
             yarn add @remix-project/remix-ws-templates
       - save_cache:
           key: remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
@@ -489,15 +518,16 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20.0.0
-            nvm use 20.0.0
+            nvm install 20
+            nvm use 20
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 20.0.0
-            cd apps/remixdesktop && yarn
+            nvm use 20
+            cd apps/remixdesktop 
+            yarn || yarn
             yarn add @remix-project/remix-ws-templates
       - save_cache:
           key: remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
@@ -515,13 +545,19 @@ jobs:
             nvm use 20
             cd apps/remixdesktop
             yarn installRipGrepMacOXarm64
-            PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false ./rundist.bash --arm64
+            PUBLISH_FOR_PULL_REQUEST='false' DO_NOT_NOTARIZE='true' USE_HARD_LINKS=false ./rundist.bash --arm64
       - run:
           name: "Run tests"
           command: |
             nvm use 20
             cd apps/remixdesktop
             ./run_ci_test.sh  
+      - run:
+          name: "Run isogit tests"
+          command: |
+            nvm use 20
+            cd apps/remixdesktop
+            ./run_git_ui_isogit_tests.sh
       - store_test_results:
           path: ./apps/remixdesktop/reports/tests
       - store_artifacts:
@@ -607,11 +643,13 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
+      - run: sudo apt update && sudo apt install python3-pip -y zstd
+      - run: zstd -d persist/dist.tar.zst -o persist/dist.tar
+      - run: tar -xf persist/dist.tar
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules || yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - run: mkdir node_modules/hardhat && wget https://unpkg.com/hardhat/console.sol -O node_modules/hardhat/console.sol
       - run: ls -la ./dist/apps/remix-ide/assets/js
-      - run: sudo apt update && sudo apt install python3-pip -y
+
       - when:
           condition:
               equal: [ "chrome", << parameters.browser >> ]
@@ -642,7 +680,7 @@ jobs:
 
   tests-passed:
     machine:
-      image: ubuntu-2004:202010-01
+      image: default
     steps:
       - run: echo done
 
@@ -663,7 +701,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: unzip ./persist/dist.zip
+      - run: sudo apt update && sudo apt install zstd
+      - run: zstd -d persist/dist.tar.zst -o persist/dist.tar
+      - run: tar -xf persist/dist.tar
       - run: unzip ./persist/plugin-<< parameters.plugin >>.zip
       - run: yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules || yarn install --cwd ./apps/remix-ide-e2e --modules-folder ../../node_modules
       - browser-tools/install-browser-tools:
@@ -746,7 +786,7 @@ workflows:
       - build-desktop:
           filters:
             branches:
-              only: ['master', /.*desktop.*/]
+              only: [/.*desktop.*/]
       - build-remixdesktop-mac:
           requires:
             - build-desktop

@@ -36,7 +36,7 @@ let requiredModules = [ // services + layout views + system views
   'pluginManager',
   'tabs',
   'udapp',
-  'dGitProvider',
+  'dgitApi',
   'solidity',
   'solidity-logic',
   'gistHandler',
@@ -78,17 +78,20 @@ let requiredModules = [ // services + layout views + system views
   'doc-gen',
   'remix-templates',
   'solhint',
+  'dgit',
   'pinnedPanel',
   'pluginStateLogger',
-  'remixGuide'
+  'remixGuide',
+  'environmentExplorer',
+  'templateSelection',
+  'matomo',
+  'walletconnect'
 ]
-
-
 
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'etherscan', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'learneth']
+const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'etherscan', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'learneth', 'quick-dapp']
 
 const sensitiveCalls = {
   fileManager: ['writeFile', 'copyFile', 'rename', 'copyDir'],
@@ -131,7 +134,9 @@ export function isNative(name) {
     'circuit-compiler',
     'compilationDetails',
     'vyperCompilationDetails',
-    'remixGuide',
+    //'remixGuide',
+    'environmentExplorer',
+    'templateSelection',
     'walletconnect'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
@@ -249,6 +254,7 @@ export class RemixAppManager extends PluginManager {
       const res = await fetch(this.pluginsDirectory)
       plugins = await res.json()
       plugins = plugins.filter((plugin) => {
+        if (plugin.name === 'dgit') return false
         if (plugin.targets && Array.isArray(plugin.targets) && plugin.targets.length > 0) {
           return plugin.targets.includes('remix')
         }
@@ -386,7 +392,16 @@ class PluginLoader {
 
   constructor() {
     const queryParams = new QueryParams()
-    this.donotAutoReload = ['remixd'] // that would be a bad practice to force loading some plugins at page load.
+    // some plugins should not be activated at page load.
+    this.donotAutoReload = [
+      'remixd',
+      'environmentExplorer',
+      'templateSelection',
+      'compilationDetails',
+      'walletconnect',
+      'dapp-draft',
+      'solidityumlgen'
+    ]
     this.loaders = {}
     this.loaders.localStorage = {
       set: (plugin, actives) => {

@@ -15,7 +15,7 @@ contract miscLocal {
             enumDef testEnum;
             testEnum = enumDef.three;
             address sender = msg.sender;
-            byte _bytes1 = hex"99";
+            bytes1 _bytes1 = hex"99";
             bytes1 __bytes1 = hex"99";
             bytes2 __bytes2 = hex"99AB";
             bytes4 __bytes4 = hex"99FA";

@@ -39,6 +39,8 @@
   "terminal.executionCost": "execution cost",
   "terminal.input": "input",
   "terminal.decodedInput": "decoded input",
+  "terminal.output": "output",
   "terminal.decodedOutput": "decoded output",
+  "terminal.rawlogs": "raw logs",
   "terminal.logs": "logs"
 }

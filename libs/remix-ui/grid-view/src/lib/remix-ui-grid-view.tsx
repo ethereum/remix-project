@@ -51,7 +51,6 @@ export const RemixUIGridView = (props: RemixUIGridViewProps) => {
       searchInputRef.current.value = ''
     } else {
       setState((prevState) => {
-        console.log("update filter", searchInputRef.current.value)
         return {
           ...prevState,
           searchDisable: searchInputRef.current.value === '',
@@ -120,7 +119,7 @@ export const RemixUIGridView = (props: RemixUIGridViewProps) => {
                     ref={searchInputRef}
                     type="text"
                     style={{ minWidth: '100px' }}
-                    className="border form-control border-right-0 mr-4"
+                    className="border form-control mr-4"
                     id="GVFilterInput"
                     placeholder={"Filter the list"}
                     data-id="RemixGVFilterInput"

@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 import path from 'path'
 import axios, { AxiosResponse } from 'axios'
 import { runTestFiles } from './runTestFiles'

@@ -23,7 +23,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentNetworkStatus'],
+  methods: ['getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentNetworkStatus', 'getAllProviders', 'getPinnedProviders'],
   version: packageJson.version
 }
 
@@ -39,9 +39,28 @@ export type Transaction = {
   to: string
   value: string
   data: string
-  gasLimit: number
+  gasLimit: string
   useCall: boolean
   timestamp?: number
+}
+
+export type Provider = {
+  options: { [key: string]: string }
+  dataId: string
+  name: string
+  displayName: string
+  logo?: string,
+  logos?: string[],
+  fork: string
+  description?: string
+  isInjected: boolean
+  isVM: boolean
+  isForkedVM: boolean
+  title: string
+  init: () => Promise<void>
+  provider:{
+    sendAsync: (payload: any) => Promise<void>
+  }
 }
 
 export class Blockchain extends Plugin {
@@ -62,6 +81,8 @@ export class Blockchain extends Plugin {
   providers: {[key: string]: VMProvider | InjectedProvider | NodeProvider}
   transactionContextAPI: TransactionContextAPI
   registeredPluginEvents: string[]
+  defaultPinnedProviders: string[]
+  pinnedProviders: string[]
 
   // NOTE: the config object will need to be refactored out in remix-lib
   constructor(config: Config) {
@@ -93,6 +114,8 @@ export class Blockchain extends Plugin {
     this.networkcallid = 0
     this.networkStatus = { network: { name: ' - ', id: ' - ' } }
     this.registeredPluginEvents = []
+    this.defaultPinnedProviders = ['vm-cancun', 'vm-mainnet-fork', 'walletconnect', 'injected-MetaMask', 'basic-http-provider', 'hardhat-provider', 'foundry-provider']
+    this.pinnedProviders = []
     this.setupEvents()
     this.setupProviders()
   }
@@ -116,6 +139,28 @@ export class Blockchain extends Plugin {
         })
       }
     })
+
+    this.on('environmentExplorer', 'providerPinned', (name, provider) => {
+      this.emit('shouldAddProvidertoUdapp', name, provider)
+      this.pinnedProviders.push(name)
+      this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.pinnedProviders))
+    })
+
+    this.on('environmentExplorer', 'providerUnpinned', (name, provider) => {
+      this.emit('shouldRemoveProviderFromUdapp', name, provider)
+      const index = this.pinnedProviders.indexOf(name)
+      this.pinnedProviders.splice(index, 1)
+      this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.pinnedProviders))
+    })
+
+    this.call('config', 'getAppParameter', 'settings/pinned-providers').then((providers) => {
+      if (!providers) {
+        this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.defaultPinnedProviders))
+        this.pinnedProviders = this.defaultPinnedProviders
+      } else {
+        this.pinnedProviders = JSON.parse(providers)
+      }
+    }).catch((error) => { console.log(error) })
   }
 
   onDeactivation() {
@@ -136,12 +181,12 @@ export class Blockchain extends Plugin {
       })
     })
 
-    this.executionContext.event.register('addProvider', (network) => {
-      this._triggerEvent('addProvider', [network])
+    this.executionContext.event.register('providerAdded', (network) => {
+      this._triggerEvent('providerAdded', [network])
     })
 
-    this.executionContext.event.register('removeProvider', (name) => {
-      this._triggerEvent('removeProvider', [name])
+    this.executionContext.event.register('providerRemoved', (name) => {
+      this._triggerEvent('providerRemoved', [name])
     })
 
     setInterval(() => {
@@ -504,7 +549,11 @@ export class Blockchain extends Plugin {
   }
 
   changeExecutionContext(context, confirmCb, infoCb, cb) {
-    return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
+    if (context.context === 'item-another-chain') {
+      this.call('manager', 'activatePlugin', 'environmentExplorer').then(() => this.call('tabs', 'focus', 'environmentExplorer'))
+    } else {
+      return this.executionContext.executionContextChange(context, null, confirmCb, infoCb, cb)
+    }
   }
 
   detectNetwork(cb) {
@@ -611,12 +660,21 @@ export class Blockchain extends Plugin {
     this.executionContext.listenOnLastBlock()
   }
 
-  addProvider(provider) {
+  addProvider(provider: Provider) {
+    if (this.pinnedProviders.includes(provider.name)) this.emit('shouldAddProvidertoUdapp', provider.name, provider)
     this.executionContext.addProvider(provider)
   }
 
   removeProvider(name) {
     this.executionContext.removeProvider(name)
+  }
+
+  getAllProviders() {
+    return this.executionContext.getAllProviders()
+  }
+
+  getPinnedProviders() {
+    return this.pinnedProviders
   }
 
   // TODO : event should be triggered by Udapp instead of TxListener
@@ -723,6 +781,8 @@ export class Blockchain extends Plugin {
   sendTransaction(tx: Transaction) {
     return new Promise((resolve, reject) => {
       this.executionContext.detectNetwork((error, network) => {
+        tx.gasLimit = '0x0' // force using gas estimation
+
         if (error) return reject(error)
         if (network.name === 'Main' && network.id === '1') {
           return reject(new Error('It is not allowed to make this action against mainnet'))

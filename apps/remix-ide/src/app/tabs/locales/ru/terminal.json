@@ -38,6 +38,8 @@
   "terminal.executionCost": "стоимость исполнения",
   "terminal.input": "ввод",
   "terminal.decodedInput": "декодированный ввод",
+  "terminal.output": "вывод",
   "terminal.decodedOutput": "декодированный вывод",
+  "terminal.rawlogs": "необработанные журналы",
   "terminal.logs": "журналы"
 }

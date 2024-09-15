@@ -1,4 +1,4 @@
-import Web3 from 'web3'
+import { Web3 } from 'web3'
 import { InjectedProviderDefault } from './injected-provider-default'
 
 export class InjectedCustomProvider extends InjectedProviderDefault {
