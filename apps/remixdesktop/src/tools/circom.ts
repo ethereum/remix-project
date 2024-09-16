@@ -6,8 +6,6 @@ import fs, { existsSync } from 'fs'
 import axios from 'axios'
 
 const execAsync = promisify(exec)
-export const CIRCOM_INSTALLATION_PATH = getInstallationPath()
-const CIRCOM_INSTALLATION_URL = getInstallationUrl()
 
 async function downloadFile(url: string, dest: string) {
   const writer = fs.createWriteStream(dest)
@@ -37,37 +35,39 @@ async function downloadFile(url: string, dest: string) {
   })
 }
 
-function getInstallationPath() {
+export function getInstallationPath(version = 'latest') {
   switch (process.platform) {
   case 'win32':
-    return path.join(app.getPath('temp'), 'circom-windows-amd64.exe')
+    return path.join(app.getPath('temp'), version, 'circom-windows-amd64.exe')
 
   case 'darwin':
-    return path.join(app.getAppPath(), 'circom-macos-amd64')
+    return path.join(app.getAppPath(), version, 'circom-macos-amd64')
 
   case 'linux':
-    return path.join(app.getAppPath(), 'circom-linux-amd64')
+    return path.join(app.getAppPath(), version, 'circom-linux-amd64')
   }
 }
 
-function getInstallationUrl() {
+function getInstallationUrl(version = 'latest') {
   switch (process.platform) {
   case 'win32':
-    return "https://github.com/iden3/circom/releases/latest/download/circom-windows-amd64.exe"
+    return `https://github.com/iden3/circom/releases/${version}/download/circom-windows-amd64.exe`
 
   case 'darwin':
-    return "https://github.com/iden3/circom/releases/latest/download/circom-macos-amd64"
+    return `https://github.com/iden3/circom/releases/${version}/download/circom-macos-amd64`
 
   case 'linux':
-    return "https://github.com/iden3/circom/releases/latest/download/circom-linux-amd64"
+    return `https://github.com/iden3/circom/releases/${version}/download/circom-linux-amd64`
   }
 }
 
 export const circomCli = {
   async installCircom () {
     try {
-      console.log('downloading circom to ', CIRCOM_INSTALLATION_PATH)
-      await downloadFile(CIRCOM_INSTALLATION_URL, CIRCOM_INSTALLATION_PATH)
+      const installationPath = getInstallationPath()
+      console.log('downloading circom to ', installationPath)
+      const installationUrl = getInstallationUrl()
+      await downloadFile(installationUrl, installationPath)
       console.log('downloading done')
     } catch (e) {
       console.error(e)
@@ -76,14 +76,16 @@ export const circomCli = {
 
   async isCircomInstalled () {
     try {
-      return existsSync(CIRCOM_INSTALLATION_PATH)
+      const installationPath = getInstallationPath()
+      return existsSync(installationPath)
     } catch (e) {
       return false
     }
   },
 
   async run (filePath: string, options?: Record<string, string>) {
-    const cmd = `${CIRCOM_INSTALLATION_PATH} ${filePath} ${Object.keys(options || {}).map((key) => options[key] ? `--${key} ${options[key]}` : `--${key}`).join(' ')}`
+    const installationPath = getInstallationPath()
+    const cmd = `${installationPath} ${filePath} ${Object.keys(options || {}).map((key) => options[key] ? `--${key} ${options[key]}` : `--${key}`).join(' ')}`
 
     return await execAsync(cmd)
   }
