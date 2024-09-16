@@ -47,13 +47,13 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc721",
-          displayName: "ERC721",
+          displayName: "ERC721 (NFT)",
           tagList: ["ERC721", "Solidity"],
           description: 'A simple non-fungible token (NFT) contract'
         },
         {
           value: "ozerc721",
-          displayName: "ERC721",
+          displayName: "ERC721 (NFT)",
           description: "An ERC721 contract with:",
           tagList: ["Solidity", "ERC721"],
           opts: {
@@ -163,7 +163,7 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc721",
-          displayName: "UUPS ERC721",
+          displayName: "UUPS ERC721 (NFT)",
           description: "A simple UUPS ERC721 contract",
           opts: {
             upgradeable: 'uups'
@@ -172,7 +172,7 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc721",
-          displayName: "UUPS ERC721",
+          displayName: "UUPS ERC721 (NFT)",
           description: "UUPS ERC721 contract with:",
           opts: {
             upgradeable: 'uups',
@@ -183,7 +183,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc721",
           displayName: "UUPS ERC721 (NFT)",
-          description: "Non-fungible Token Standard",
+          description: "UUPS ERC721 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -194,7 +194,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc721",
           displayName: "UUPS ERC721 (NFT)",
-          description: "UUPS ERC721 with: ",
+          description: "UUPS ERC721 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -290,7 +290,7 @@ export const templates = (intl, plugin) => {
     {
       name: "Gnosis Safe",
       items: [
-        { value: "gnosisSafeMultisig", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.multiSigWallet' }), description: 'Deploy or customize the Gnosis Safe.' }
+        { value: "gnosisSafeMultisig", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.multiSigWallet' }), description: 'Deploy or customize the Gnosis Safe MultiSig Wallet' }
       ]
     },
     {
@@ -317,12 +317,12 @@ export const templates = (intl, plugin) => {
       items: [
         { value: "uniswapV4Template",
           displayName: intl.formatMessage({ id: 'filePanel.uniswapV4Template' }),
-          description: 'Use an Uniswap hook'
+          description: 'Use a Uniswap hook'
         },
         {
           value: "breakthroughLabsUniswapv4Hooks",
           displayName: intl.formatMessage({ id: 'filePanel.breakthroughLabsUniswapv4Hooks' }),
-          description: 'Use an Uniswap hook developed by Breakthrough Labs'
+          description: 'Use a Uniswap hook developed by Breakthrough Labs'
         },
         {
           value: "uniswapV4HookBookMultiSigSwapHook",
@@ -353,25 +353,25 @@ export const templates = (intl, plugin) => {
         {
           value: "etherscanScripts",
           displayName: intl.formatMessage({ id: 'filePanel.addscriptetherscan' }),
-          description: 'Script for verifying a Contract in Etherscan.'
+          description: 'Script for verifying a Contract in Etherscan'
         },
       ],
     },
     {
-      name: 'Github Actions',
+      name: 'GitHub Actions',
       items: [
         { value: "runJsTestAction",
           displayName: intl.formatMessage({ id: 'filePanel.tssoltestghaction' }),
-          description: 'A Mocha Chai test workflow in a GitHub CI.'
+          description: 'A Mocha Chai test workflow in a GitHub CI'
         },
         { value: "runSolidityUnittestingAction",
           displayName: intl.formatMessage({ id: 'filePanel.solghaction' }),
-          description: 'Run a Solidity unit test workflow in a GitHub CI.'
+          description: 'Run a Solidity unit test workflow in a GitHub CI'
         },
         {
           value: "runSlitherAction",
           displayName: intl.formatMessage({ id: 'filePanel.slitherghaction' }),
-          description: 'Run a Slither security analysis in a GitHub CI.'
+          description: 'Run a Slither security analysis in a GitHub CI'
         }
       ],
       IsArtefact: true
