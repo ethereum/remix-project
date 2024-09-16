@@ -25,7 +25,7 @@
     "start:dev": "yarn webpack --config webpack.config.js && electron --inspect=5858 .",
     "start:production": "cross-env NODE_ENV=production yarn webpack --config webpack.config.js && electron .",
     "dist": "cross-env NODE_ENV=production yarn webpack --config webpack.config.js && electron-builder -p never",
-    "esbuild": "cross-env NODE_ENV=production node build-main.js && electron-builder -p never",
+    "esbuild": "cross-env NODE_ENV=production node esbuild.js && electron-builder -p never",
     "installRipGrepMacOXx64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=x64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
     "installRipGrepMacOXarm64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=arm64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
     "postinstall": "electron-builder install-app-deps",
