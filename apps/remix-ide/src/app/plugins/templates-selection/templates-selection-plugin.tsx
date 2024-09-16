@@ -147,7 +147,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
           ['ERC721', 'secondary'],
           ['ERC1155', 'primary'],
         ]}
-        title='Template explorer'
+        title='Workspace Templates'
         description="Select a template to create a workspace or to add it to current workspace"
       >
         {

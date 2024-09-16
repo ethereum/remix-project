@@ -3,7 +3,7 @@ export const templates = (intl, plugin) => {
     {
       name: "Generic",
       items: [
-        { value: "remixDefault", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.basic' }), description: 'A default project' },
+        { value: "remixDefault", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.basic' }), description: 'The default project' },
         { value: "blank", displayName: intl.formatMessage({ id: 'filePanel.blank' }), IsArtefact: true, description: 'A blank project' }
       ]
     },
@@ -14,43 +14,13 @@ export const templates = (intl, plugin) => {
           value: "ozerc20",
           displayName: "ERC20",
           tagList: ["ERC20", "Solidity"],
-          description: 'A simple ERC20 project'
-        },
-        {
-          value: "ozerc721",
-          displayName: "ERC721 (NFT)",
-          tagList: ["ERC721", "Solidity"],
-          description: 'A simple ERC721 (aka NFT) project'
-        },
-        {
-          value: "ozerc1155",
-          tagList: ["Solidity"],
-          displayName: "ERC1155",
-          description: 'A simple ERC1155 (multi token) project'
+          description: 'A simple fungible token contract'
         },
         {
           value: "ozerc20",
           displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          description: "An ERC20 contract with:",
           tagList: ["Solidity"],
-          opts: {
-            mintable: true
-          }
-        },
-        {
-          value: "ozerc721",
-          displayName: "ERC721 (NFT)",
-          description: "Non-fungible Token Standard",
-          tagList: ["Solidity", "ERC721"],
-          opts: {
-            mintable: true
-          }
-        },
-        {
-          value: "ozerc1155",
-          displayName: "ERC1155",
-          tagList: ["Solidity"],
-          description: "A standard interface for contracts that manage multiple token types",
           opts: {
             mintable: true
           }
@@ -58,7 +28,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          description: "An ERC20 contract with:",
           tagList: ["Solidity", "ERC20"],
           opts: {
             mintable: true,
@@ -66,29 +36,9 @@ export const templates = (intl, plugin) => {
           },
         },
         {
-          value: "ozerc721",
-          displayName: "ERC721 (NFT)",
-          description: "Non-fungible Token Standard",
-          opts: {
-            mintable: true,
-            burnable: true
-          },
-          tagList: ["ERC721", "Solidity"]
-        },
-        {
-          value: "ozerc1155",
-          displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
-          opts: {
-            mintable: true,
-            burnable: true
-          },
-          tagList: ["ERC1155", "Solidity"]
-        },
-        {
           value: "ozerc20",
           displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          description: "An ERC20 contract with:",
           opts: {
             mintable: true,
             pausable: true
@@ -97,8 +47,33 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc721",
+          displayName: "ERC721",
+          tagList: ["ERC721", "Solidity"],
+          description: 'A simple non-fungible token (NFT) contract'
+        },
+        {
+          value: "ozerc721",
+          displayName: "ERC721",
+          description: "An ERC721 contract with:",
+          tagList: ["Solidity", "ERC721"],
+          opts: {
+            mintable: true
+          }
+        },
+        {
+          value: "ozerc721",
           displayName: "ERC721 (NFT)",
-          description: "Non-fungible Token Standard",
+          description: "An ERC721 contract with:",
+          opts: {
+            mintable: true,
+            burnable: true
+          },
+          tagList: ["ERC721", "Solidity"]
+        },
+        {
+          value: "ozerc721",
+          displayName: "ERC721 (NFT)",
+          description: "An ERC721 contract with:",
           opts: {
             mintable: true,
             pausable: true
@@ -107,9 +82,34 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc1155",
+          tagList: ["Solidity"],
           displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
-          tagList: ["ERC20"],
+          description: 'A simple multi token contract'
+        },
+        {
+          value: "ozerc1155",
+          displayName: "ERC1155",
+          tagList: ["Solidity"],
+          description: "An ERC1155 contract with:",
+          opts: {
+            mintable: true
+          }
+        },
+        {
+          value: "ozerc1155",
+          displayName: "ERC1155",
+          description: "An ERC1155 contract with:",
+          opts: {
+            mintable: true,
+            burnable: true
+          },
+          tagList: ["ERC1155", "Solidity"]
+        },
+        {
+          value: "ozerc1155",
+          displayName: "ERC1155",
+          description: "An ERC1155 contract with:",
+          tagList: ["ERC1155"],
           opts: {
             mintable: true,
             pausable: true
@@ -122,35 +122,17 @@ export const templates = (intl, plugin) => {
       items: [
         {
           value: "ozerc20",
-          displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          displayName: "UUPS ERC20",
+          description: "A simple ERC20 contract using the Universal Upgradeable Proxy Standard (UUPS) pattern",
           opts: {
             upgradeable: 'uups'
           },
           tagList: ["ERC20", "Solidity"]
         },
         {
-          value: "ozerc721",
-          displayName: "ERC721 (NFT)",
-          description: "Non-fungible Token Standard",
-          opts: {
-            upgradeable: 'uups'
-          },
-          tagList: ["ERC721", "Solidity"]
-        },
-        {
-          value: "ozerc1155",
-          displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
-          opts: {
-            upgradeable: 'uups'
-          },
-          tagList: ["ERC1155", "Solidity"]
-        },
-        {
           value: "ozerc20",
-          displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          displayName: "UUPS ERC20",
+          description: "UUSP ERC20 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true
@@ -158,29 +140,9 @@ export const templates = (intl, plugin) => {
           tagList: ["ERC20", "Solidity"]
         },
         {
-          value: "ozerc721",
-          displayName: "ERC721 (NFT)",
-          description: "Non-fungible Token Standard",
-          opts: {
-            upgradeable: 'uups',
-            mintable: true
-          },
-          tagList: ["ERC721", "Solidity"]
-        },
-        {
-          value: "ozerc1155",
-          displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
-          opts: {
-            upgradeable: 'uups',
-            mintable: true
-          },
-          tagList: ["ERC1155", "Solidity"]
-        },
-        {
           value: "ozerc20",
-          displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          displayName: "UUPS ERC20",
+          description: "UUSP ERC20 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -189,31 +151,9 @@ export const templates = (intl, plugin) => {
           tagList: ["ERC20", "Solidity"]
         },
         {
-          value: "ozerc721",
-          displayName: "ERC721 (NFT)",
-          description: "Non-fungible Token Standard",
-          opts: {
-            upgradeable: 'uups',
-            mintable: true,
-            burnable: true
-          },
-          tagList: ["ERC721", "Solidity"]
-        },
-        {
-          value: "ozerc1155",
-          displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
-          opts: {
-            upgradeable: 'uups',
-            mintable: true,
-            burnable: true
-          },
-          tagList: ["ERC1155", "Solidity"]
-        },
-        {
           value: "ozerc20",
-          displayName: "ERC20",
-          description: "A standard interface for fungible tokens",
+          displayName: "UUPS ERC20",
+          description: "UUSP ERC20 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -223,8 +163,38 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc721",
-          displayName: "ERC721 (NFT)",
+          displayName: "UUPS ERC721",
+          description: "A simple UUPS ERC721 contract",
+          opts: {
+            upgradeable: 'uups'
+          },
+          tagList: ["ERC721", "Solidity"]
+        },
+        {
+          value: "ozerc721",
+          displayName: "UUPS ERC721",
+          description: "UUPS ERC721 contract with:",
+          opts: {
+            upgradeable: 'uups',
+            mintable: true
+          },
+          tagList: ["ERC721", "Solidity"]
+        },
+        {
+          value: "ozerc721",
+          displayName: "UUPS ERC721 (NFT)",
           description: "Non-fungible Token Standard",
+          opts: {
+            upgradeable: 'uups',
+            mintable: true,
+            burnable: true
+          },
+          tagList: ["ERC721", "Solidity"]
+        },
+        {
+          value: "ozerc721",
+          displayName: "UUPS ERC721 (NFT)",
+          description: "UUPS ERC721 with: ",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -234,8 +204,38 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc1155",
-          displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
+          displayName: "UUPS ERC1155",
+          description: "A simple multi token contract using the UUPS pattern",
+          opts: {
+            upgradeable: 'uups'
+          },
+          tagList: ["ERC1155", "Solidity"]
+        },
+        {
+          value: "ozerc1155",
+          displayName: "UUPS ERC1155",
+          description: "UUPS ERC1155 with:",
+          opts: {
+            upgradeable: 'uups',
+            mintable: true
+          },
+          tagList: ["ERC1155", "Solidity"]
+        },
+        {
+          value: "ozerc1155",
+          displayName: "UUPS ERC1155",
+          description: "UUPS ERC1155 with:",
+          opts: {
+            upgradeable: 'uups',
+            mintable: true,
+            burnable: true
+          },
+          tagList: ["ERC1155", "Solidity"]
+        },
+        {
+          value: "ozerc1155",
+          displayName: "UUPS ERC1155",
+          description: "UUPS ERC1155 with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -245,8 +245,8 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc1155",
-          displayName: "ERC1155",
-          description: "A standard interface for contracts that manage multiple token types",
+          displayName: "UUPS ERC1155",
+          description: "UUPS ERC1155 with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -259,12 +259,12 @@ export const templates = (intl, plugin) => {
     },
     {
       name: "Cookbook",
-      tooltip: "Cookbook is a smart contract search tool. Click here to open cookbook and browse contracts.",
+      tooltip: "Cookbook is a Smart Contract Search Tool. Click here to open Cookbook and browse Contracts.",
       onClick: async () => {
         await plugin.call('manager', 'activatePlugin', 'cookbookdev')
         plugin.call('menuicons', 'showContent', 'cookbookdev')
       },
-      onClickLabel: 'Open cookbook plugin',
+      onClickLabel: 'Open Cookbook Plugin',
       items: [
         { value: "token-sale", displayName: 'Token Sale' },
         { value: "simple-nft-sale", displayName: 'Simple Nft Sale' },
@@ -274,27 +274,30 @@ export const templates = (intl, plugin) => {
         { value: "nft-staking-with-infinite-rewards", displayName: 'Nft Staking with infinite rewards' },
         { value: "basic-dao", displayName: 'Basic DAO' },
         { value: "soulbound-nft", displayName: 'Soulbound Nft' },
-        { value: "multi-collection-nft-with-burnable-nfts-and-pausable-transfers", displayName: 'Multi collection nft with burnable nfts and pausable transfers' },
+        { value: "multi-collection-nft-with-burnable-nfts-and-pausable-transfers", displayName: 'Multi collection NFT', description: "Multi collection NFT with:", opts: {
+          burnable: true,
+          pausable: true
+        }, },
       ]
     },
     {
       name: "OxProject",
       items: [
-        { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: "A standard interface for fungible tokens by 0xProject" }
+        { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: "A fungible token contract by 0xProject" }
       ]
     },
     {
       name: "Gnosis Safe",
       items: [
-        { value: "gnosisSafeMultisig", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.multiSigWallet' }), description: 'Deploy or Customize the Gnosis Safe.' }
+        { value: "gnosisSafeMultisig", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.multiSigWallet' }), description: 'Deploy or customize the Gnosis Safe.' }
       ]
     },
     {
       name: "Circom ZKP",
       items: [
-        { value: "semaphore", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.semaphore' }), description: 'Run a ZK Semaphore circom circuit.' },
-        { value: "hashchecker", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.hashchecker' }), description: 'Run a ZK Hash checker circom circuit.' },
-        { value: "rln", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.rln' }), description: 'Run a Rate Limiting Nullifier circom circuit.' }
+        { value: "semaphore", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.semaphore' }), description: 'Semaphore protocol for casting a message as a provable group member' },
+        { value: "hashchecker", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.hashchecker' }), description: 'Hash checker Circom circuit' },
+        { value: "rln", tagList: ["ZKP"], displayName: intl.formatMessage({ id: 'filePanel.rln' }), description: 'Rate Limiting Nullifier Circom circuit' }
       ]
     },
     {
@@ -304,7 +307,7 @@ export const templates = (intl, plugin) => {
           value: "sindriScripts",
           tagList: ["ZKP"],
           displayName: intl.formatMessage({ id: 'filePanel.addscriptsindri' }),
-          description: 'Use the Sindri API to compile and generate proof.'
+          description: 'Use the Sindri API to compile and generate proofs'
         },
       ],
     },
@@ -334,12 +337,12 @@ export const templates = (intl, plugin) => {
           value: "contractCreate2Factory",
           tagList: ["Solidity"],
           displayName: intl.formatMessage({ id: 'filePanel.addcreate2solidityfactory' }),
-          description: 'Factory for deploying a Contract using the CREATE2 opcode.'
+          description: 'Factory for deploying a contract using the CREATE2 opcode'
         },
         {
           value: "contractDeployerScripts",
           displayName: intl.formatMessage({ id: 'filePanel.addscriptdeployer' }),
-          description: 'Script for deploying a Contract using the CREATE2 opcode.'
+          description: 'Script for deploying a contract using the CREATE2 opcode'
         }
       ]
     },
@@ -358,16 +361,16 @@ export const templates = (intl, plugin) => {
       items: [
         { value: "runJsTestAction",
           displayName: intl.formatMessage({ id: 'filePanel.tssoltestghaction' }),
-          description: 'A Mocha Chai Test Workflow in a GitHub CI.'
+          description: 'A Mocha Chai test workflow in a GitHub CI.'
         },
         { value: "runSolidityUnittestingAction",
           displayName: intl.formatMessage({ id: 'filePanel.solghaction' }),
-          description: 'Run a Solidity Unittest Workflow in a GitHub CI.'
+          description: 'Run a Solidity unit test workflow in a GitHub CI.'
         },
         {
           value: "runSlitherAction",
           displayName: intl.formatMessage({ id: 'filePanel.slitherghaction' }),
-          description: 'Run a Slither Security Analysis in a GitHub CI.'
+          description: 'Run a Slither security analysis in a GitHub CI.'
         }
       ],
       IsArtefact: true
