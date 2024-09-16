@@ -142,20 +142,16 @@ export class CircomPluginClient extends PluginClient {
       // @ts-ignore
       this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
       // @ts-ignore
-      await this.call('circom', 'run', path, {
-        prime: this._compilationConfig.prime,
-        wasm: ""
-      })
-      // const fileContent = this.lastParsedFiles[path]
-      // const searchComponentName = fileContent.match(/component\s+main\s*(?:{[^{}]*})?\s*=\s*([A-Za-z_]\w*)\s*\(.*\)/)
+      const { stdout, stderr } = await this.call('circom', 'run', path, { prime: this._compilationConfig.prime, wasm: "", inputs: "" })
+      const fileName = extractNameFromKey(path)
 
-      // if (searchComponentName) {
-      //   const componentName = searchComponentName[1]
-      //   const signals = circuitApi.input_signals(componentName)
+      this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('circom', 'wasm')
+      if (stderr) this.call('terminal', 'log', { type: 'error', value: stderr })
+      if (stdout) this.call('terminal', 'log', { type: 'log', value: stdout })
+      // @ts-ignore
+      const signals = await this.call('circom', 'getInputs')
 
-      //   this.internalEvents.emit('circuit_compiling_done', signals)
-      // } else {
-      this.internalEvents.emit('circuit_compiling_done', [])
+      this.internalEvents.emit('circuit_compiling_done', signals)
       this.emit('statusChanged', { key: 'succeed', title: 'circuit compiled successfully', type: 'success' })
       // }
     } else {
@@ -287,7 +283,7 @@ export class CircomPluginClient extends PluginClient {
     const dataRead = new Uint8Array(buffer)
     const witness = this.compiler ? await this.compiler.generate_witness(dataRead, input) : await generate_witness(dataRead, input)
     // @ts-ignore
-    await this.call('fileManager', 'writeFile', wasmPath.replace('.wasm', '.wtn'), witness, true)
+    await this.call('fileManager', 'writeFile', wasmPath.replace('.wasm', '.wtn'), witness, { encoding: null })
     this._paq.push(['trackEvent', 'circuit-compiler', 'computeWitness', 'compiler.generate_witness', wasmPath.replace('.wasm', '.wtn')])
     this.internalEvents.emit('circuit_computing_witness_done')
     this.emit('statusChanged', { key: 'succeed', title: 'witness computed successfully', type: 'success' })
