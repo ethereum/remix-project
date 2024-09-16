@@ -167,7 +167,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                   id={item.name}
                   searchKeywords={[item.displayName, item.description, template.name]}
                   tagList={item.tagList}
-                  classList={'TSCellStyle' + (!item.description ? 'Short' : '')}
+                  classList={'TSCellStyle'}
                 >
                   <div className='d-flex justify-content-between h-100 flex-column'>
                     <div className='d-flex flex-column'>
