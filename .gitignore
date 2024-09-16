@@ -69,4 +69,8 @@ apps/remixdesktop/build*
 apps/remixdesktop/reports
 apps/remixdesktop/logs/
 apps/remixdesktop/bin/
+apps/remixdesktop/circom-windows-amd64.exe
+apps/remixdesktop/circom-macos-amd64
+apps/remixdesktop/circom-linux-amd64
+apps/remixdesktop/log_input_signals.txt
 logs
