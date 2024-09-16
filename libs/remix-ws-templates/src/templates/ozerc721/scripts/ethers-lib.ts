@@ -17,7 +17,7 @@ export const deploy = async (contractName: string, args: Array<any>, accountInde
   const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
   // 'web3Provider' is a remix global variable object
 
-  const signer = (new ethers.BrowserProvider(web3Provider)).getSigner(accountIndex)
+  const signer = await (new ethers.BrowserProvider(web3Provider)).getSigner(accountIndex)
 
   const factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
 

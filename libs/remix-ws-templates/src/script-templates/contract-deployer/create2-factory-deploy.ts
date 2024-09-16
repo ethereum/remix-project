@@ -15,7 +15,7 @@ export const CREATE2_DEPLOYER_ADDRESS = '0x13b0D85CcB8bf860b6b79AF3029fCA081AE9b
 export const deploy = async (contractName: string, args: Array<any>, salt: string, accountIndex?: number): Promise<string> => {
   console.log(`deploying ${contractName}`)
 
-  const signer = new ethers.BrowserProvider(web3Provider).getSigner(accountIndex)
+  const signer = await (new ethers.BrowserProvider(web3Provider)).getSigner(accountIndex)
 
   const factory = new ethers.Contract(CREATE2_DEPLOYER_ADDRESS, contractDeployerAbi, signer)
   //@ts-ignore
