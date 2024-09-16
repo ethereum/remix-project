@@ -99,7 +99,6 @@ export const getCommits = async (depth: number) => {
 }
 
 export const gitlog = async (depth: number) => {
-  console.log('gitlog start')
   dispatch(setLoading(true))
   let commits = []
   try {
