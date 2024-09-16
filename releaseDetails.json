@@ -1,11 +1,13 @@
 {
-    "version": "v0.53.0",
+    "version": "v0.54.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Keyboard shortcut for Cut-Copy-Paste files and folder",
-    "highlight2": "Interface to generate proof in Circom compiler plugin",
-    "highlight3": "Publish multi-selected files to Gist",
+    "highlight1": "Login to GitHub from 'File Explorer'",
+    "highlight2": "Added Cookbook workspace templates",
+    "highlight3": "Added 'sendRawTransaction' API to remix-simulator",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-53-0-615d9e7c6c58?source=friends_link&sk=35e918e8487aaab02e79ea4dc557a7e7"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-54-0-021575d54849?source=friends_link&sk=e3960ba90994b63993987b007ee3ac63"
   }
+  
+
   
