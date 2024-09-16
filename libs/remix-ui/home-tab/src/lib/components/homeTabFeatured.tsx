@@ -82,6 +82,8 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                     onClick={async () => {
                       await props.plugin.appManager.activatePlugin(['LearnEth', 'solidityUnitTesting'])
                       props.plugin.verticalIcons.select('LearnEth')
+                      _paq.push(['trackEvent', 'hometab', 'featuredSection', 'LearnEth'])
+
                       await props.plugin.call('LearnEth', 'home')
                     	}
                     }
