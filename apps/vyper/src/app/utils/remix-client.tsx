@@ -90,15 +90,15 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
         { url: 'https://github.com/vyperlang/vyper', token: null, branch: 'master', singleBranch: false, workspaceName: 'vyper' },
       )
 
-      await this.call(
-        'dgitApi',
-        'checkout',
-        {
-          ref:'v0.0.5',
-          force: true,
-          refresh: true,
-        }
-      )
+      // await this.call(
+      //   'dgitApi',
+      //   'checkout',
+      //   {
+      //     ref:'v0.0.5',
+      //     force: true,
+      //     refresh: true,
+      //   }
+      // )
 
       this.call(
         // @ts-ignore
