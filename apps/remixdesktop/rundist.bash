@@ -5,13 +5,13 @@ version=$(awk -F'"' '/"version":/ {print $4}' package.json)
 
 # Determine the command to run based on the version
 if [[ $version == *"beta"* ]]; then
-  command="yarn tscbuild -c beta.json"
+  command="yarn esbuild -c beta.json"
 elif [[ $version == *"alpha"* ]]; then
-  command="yarn tscbuild -c alpha.json"
+  command="yarn esbuild -c alpha.json"
 elif [[ $version == *"insiders"* ]]; then
-  command="yarn tscbuild -c insiders.json"
+  command="yarn esbuild -c insiders.json"
 else
-  command="yarn tscbuild -c latest.json"
+  command="yarn esbuild -c latest.json"
 fi
 
 # Append any arguments passed in CLI

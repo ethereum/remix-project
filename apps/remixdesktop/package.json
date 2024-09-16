@@ -1,7 +1,7 @@
 {
   "name": "remixdesktop",
   "version": "1.0.8-insiders",
-  "main": "build/apps/remixdesktop/src/main.js",
+  "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
   "description": "Remix IDE Desktop",
