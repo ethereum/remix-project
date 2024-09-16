@@ -987,7 +987,7 @@ export function Workspace() {
                       </CopyToClipboard>
                       }
                     </span>
-                    <span className="d-flex">
+                    <span className="d-flex" style={{ cursor: 'pointer' }} >
                       {
                         (!appContext.appState.gitHubUser || !appContext.appState.gitHubUser.isConnected) && <CustomTooltip
                           placement="right"
@@ -997,7 +997,7 @@ export function Workspace() {
                         >
                           <div data-id='filepanel-login-github' className='d-flex'>
                             <i onClick={() => logInGithub() } className="fa-brands fa-github-alt ml-2 align-self-center" style={{ fontSize: '1.1rem', cursor: 'pointer' }} aria-hidden="true"></i>
-                            <span onClick={() => logInGithub() } className="ml-1 style={{ cursor: 'pointer' }} "> Sign in </span>
+                            <span onClick={() => logInGithub() } className="ml-1"> Sign in </span>
                           </div>
                         </CustomTooltip>
                       }
