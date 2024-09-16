@@ -1,6 +1,6 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-import { CIRCOM_INSTALLATION_PATH, circomCli, extractParentFromKey } from "../tools/circom"
+import { getInstallationPath, circomCli, extractParentFromKey } from "../tools/circom"
 import path from "path"
 import { existsSync, readFileSync } from "fs"
 
@@ -58,7 +58,7 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
   }
 
   getInputs() {
-    const inputsFile = extractParentFromKey(CIRCOM_INSTALLATION_PATH) + '/log_input_signals.txt'
+    const inputsFile = extractParentFromKey(getInstallationPath()) + '/log_input_signals.txt'
     const inputsFileExists = existsSync(inputsFile)
     const signals: string[] = []
 
