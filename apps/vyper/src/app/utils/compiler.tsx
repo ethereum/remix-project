@@ -111,10 +111,10 @@ const compileReturnType = (output, contract) => {
   const normal = normalizeContractPath(contract)[2]
   const abi = temp[normal]['abi']
   const evm = _.merge(temp[normal]['evm'])
-  const dpb = evm.deployedBytecode
+  const depByteCode = evm.deployedBytecode
   const runtimeBytecode = evm.bytecode
   const methodIdentifiers = evm.methodIdentifiers
-  const version = output?.compilers[0]?.version ?? '0.3.10'
+  const version = output?.compilers[0]?.version ?? '0.4.0'
   const optimized = output?.compilers[0]?.settings?.optimize ?? true
   const evmVersion = ''
 
@@ -131,7 +131,7 @@ const compileReturnType = (output, contract) => {
   } = {
     contractName: normal,
     abi,
-    bytecode: dpb,
+    bytecode: depByteCode,
     runtimeBytecode,
     ir: '',
     methodIdentifiers,
