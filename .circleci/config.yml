@@ -483,6 +483,7 @@ jobs:
               cat release/latest-mac.yml
               mv release/latest-mac.yml release/latest-mac-<< parameters.arch >>.yml
             fi
+            find build
       - run:
           name: Notarize the app
           command: |
@@ -545,7 +546,8 @@ jobs:
             nvm use 20
             cd apps/remixdesktop
             yarn installRipGrepMacOXarm64
-            PUBLISH_FOR_PULL_REQUEST='false' DO_NOT_NOTARIZE='true' USE_HARD_LINKS=false ./rundist.bash --arm64
+            PUBLISH_FOR_PULL_REQUEST='false' DO_NOT_NOTARIZE='true' USE_HARD_LINKS=false ./rundist.bash --arm64   
+            find build
       - run:
           name: "Run tests"
           command: |
