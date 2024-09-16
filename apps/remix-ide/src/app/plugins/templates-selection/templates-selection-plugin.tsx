@@ -157,8 +157,6 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
               key={template.name}
               title={template.name}
               tooltipTitle={template.tooltip}
-              onClick={template.onClick}
-              onClickLabel={template.onClickLabel}
               hScrollable={false}
             >
               {template.items.map(item => {
@@ -214,6 +212,20 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                   </div>
                 </RemixUIGridCell>
               })}
+              { template.name === 'Cookbook' && <RemixUIGridCell
+                plugin={this}
+                title={"More from Cookbook"}
+                key={"cookbookMore"}
+                id={"cookBookMore"}
+                searchKeywords={["cookbook"]}
+                tagList={[]}
+                classList='TSCellStyle'
+              >
+                <div className='d-flex justify-content-between h-100 flex-column'>
+                  <span className='pt-4 px-1 h6 text-dark'>{ template.description }</span>
+                  <span style={{ cursor: 'pointer' }} className='mt-2 btn btn-sm border align-items-left' onClick={() => template.onClick() }>{ template.onClickLabel }</span>
+                </div>
+              </RemixUIGridCell> }
             </RemixUIGridSection>
           })}
       </RemixUIGridView>
