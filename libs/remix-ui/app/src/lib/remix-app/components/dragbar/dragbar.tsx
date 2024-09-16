@@ -46,21 +46,17 @@ const DragBar = (props: IRemixDragBarUi) => {
       if (layoutPosition === 'left') {
         const width = coeff * window.innerWidth
 
-        if (width > refObject.current.offsetWidth) {
-          props.refObject.current.style.width = width + 'px'
-          setTimeout(() => {
-            setDragBarPosX(offset + width)
-          }, 300)
-        }
+        props.refObject.current.style.width = width + 'px'
+        setTimeout(() => {
+          setDragBarPosX(offset + width)
+        }, 300)
       } else if (layoutPosition === 'right') {
         const width = coeff * window.innerWidth
 
-        if (width > refObject.current.offsetWidth) {
-          refObject.current.style.width = width + 'px'
-          setTimeout(() => {
-            setDragBarPosX(window.innerWidth - width)
-          }, 300)
-        }
+        refObject.current.style.width = width + 'px'
+        setTimeout(() => {
+          setDragBarPosX(window.innerWidth - width)
+        }, 300)
       }
     }
   }

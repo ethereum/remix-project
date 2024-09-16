@@ -85,7 +85,13 @@ export class Layout extends Plugin {
       const current = await this.call('sidePanel', 'currentFocus')
       if (this.enhanced[current]) {
         this.event.emit('enhancesidepanel')
-      } else {
+      }
+
+      if (this.maximized[current]) {
+        this.event.emit('maximisesidepanel')
+      }
+
+      if (!this.enhanced[current] && !this.maximized[current]) {
         this.event.emit('resetsidepanel')
       }
     })
@@ -94,7 +100,13 @@ export class Layout extends Plugin {
       const current = await this.call('pinnedPanel', 'currentFocus')
       if (this.enhanced[current]) {
         this.event.emit('enhancepinnedpanel')
-      } else {
+      }
+
+      if (this.maximized[current]) {
+        this.event.emit('maximisepinnedpanel')
+      }
+
+      if (!this.enhanced[current] && !this.maximized[current]) {
         this.event.emit('resetpinnedpanel')
       }
     })
