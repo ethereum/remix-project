@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
+    "target": "ES6",
     "allowJs": true,
     "module": "CommonJS",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
-    "allowSyntheticDefaultImports": true,
-    "isolatedModules": true,
     "sourceMap": true,
     "baseUrl": ".",
     "outDir": "./build",
