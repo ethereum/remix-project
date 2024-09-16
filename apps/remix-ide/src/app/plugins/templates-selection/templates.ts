@@ -132,7 +132,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "UUPS ERC20",
-          description: "UUSP ERC20 contract with:",
+          description: "UUPS ERC20 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true
@@ -142,7 +142,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "UUPS ERC20",
-          description: "UUSP ERC20 contract with:",
+          description: "UUPS ERC20 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -153,7 +153,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "UUPS ERC20",
-          description: "UUSP ERC20 contract with:",
+          description: "UUPS ERC20 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
