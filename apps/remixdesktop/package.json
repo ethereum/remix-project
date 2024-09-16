@@ -1,7 +1,7 @@
 {
   "name": "remixdesktop",
   "version": "1.0.8-insiders",
-  "main": "build/main.js",
+  "main": "build/apps/remixdesktop/src/main.js",
   "license": "MIT",
   "type": "commonjs",
   "description": "Remix IDE Desktop",
@@ -25,6 +25,7 @@
     "start:dev": "yarn webpack --config webpack.config.js && electron --inspect=5858 .",
     "start:production": "cross-env NODE_ENV=production yarn webpack --config webpack.config.js && electron .",
     "dist": "cross-env NODE_ENV=production yarn webpack --config webpack.config.js && electron-builder -p never",
+    "tscbuild": "tsc && cp -R node_modules/yarn build/tools/ && electron-builder -p never",
     "esbuild": "cross-env NODE_ENV=production node esbuild.js && electron-builder -p never",
     "installRipGrepMacOXx64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=x64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
     "installRipGrepMacOXarm64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=arm64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
