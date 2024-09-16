@@ -282,7 +282,7 @@ export const templates = (intl, plugin) => {
       ]
     },
     {
-      name: "OxProject",
+      name: "0xProject",
       items: [
         { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: "A fungible token contract by 0xProject" }
       ]
