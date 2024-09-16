@@ -7,7 +7,6 @@
     "files": [
         "build/**/*"
     ],
-    "afterPack": "after-pack.js",
     "afterSign": "aftersign.js",
     "afterAllArtifactBuild": "afterbuild.js",
     "publish": [
