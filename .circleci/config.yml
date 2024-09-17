@@ -217,6 +217,7 @@ jobs:
               mkdir apps/remixdesktop/build
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
+              python -m pip install --upgrade pip
               pip install setuptools
               yarn
               ./rundist.bash
