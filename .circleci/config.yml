@@ -199,7 +199,7 @@ jobs:
           key: node-20-windows-v3
       - run: 
           command: |
-            nvm install 20
+            nvm install 20.0.0
             nvm use 20
             node -v
             npx -v
@@ -261,7 +261,7 @@ jobs:
           key: node-20-windows-v3
       - run: 
           command: |
-            nvm install 20
+            nvm install 20.0.0
             nvm use 20
             node -v
             npx -v
@@ -520,7 +520,7 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20
+            nvm install 20.0.0
             nvm use 20
       - restore_cache:
           keys:
