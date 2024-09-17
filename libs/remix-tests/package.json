@@ -44,7 +44,7 @@
     "@remix-project/remix-lib": "^0.5.59",
     "@remix-project/remix-simulator": "^0.2.52",
     "@remix-project/remix-solidity": "^0.5.38",
-    "@remix-project/remix-url-resolver": "^0.0.42",
+    "@remix-project/remix-url-resolver": "^0.0.67",
     "ansi-gray": "^0.1.1",
     "async": "^2.6.0",
     "axios": "1.6.0",
