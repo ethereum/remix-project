@@ -1,6 +1,6 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-import { getInstallationPath, circomCli, extractParentFromKey } from "../tools/circom"
+import { getInstallationPath, circomCli, extractParentFromKey, getInstallationUrl, getLogInputSignalsPath } from "../tools/circom"
 import path from "path"
 import { existsSync, readFileSync } from "fs"
 
@@ -23,7 +23,7 @@ const clientProfile: Profile = {
   name: 'circom',
   displayName: 'circom',
   description: 'Circom Language Compiler',
-  methods: ['install', 'run', 'getInputs']
+  methods: ['install', 'run', 'getInputs', 'isVersionInstalled']
 }
 
 class CircomElectronPluginClient extends ElectronBasePluginClient {
@@ -34,16 +34,18 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
     this.onload()
   }
 
-  async install() {
-    this.isCircomInstalled = await circomCli.isCircomInstalled()
+  async install(version = 'latest') {
+    this.isCircomInstalled = await circomCli.isCircomInstalled(version)
     if (!this.isCircomInstalled) {
-      await circomCli.installCircom()
+      this.call('terminal' as any, 'logHtml', 'Downloading circom compiler from ' + getInstallationUrl(version))
+      await circomCli.installCircom(version)
       this.isCircomInstalled = true
+      this.call('terminal' as any, 'logHtml', `Circom compiler (${version}) downloaded from ${getInstallationUrl(version)} to ${getInstallationPath(version)}`)
     }
   }
 
-  async run(filePath: string, options: Record<string, string>) {
-    if (!this.isCircomInstalled) await this.install()
+  async run(filePath: string, version = 'latest', options: Record<string, string>) {
+    if (!this.isCircomInstalled) await this.install(version)
     // @ts-ignore
     const wd = await this.call('fs', 'getWorkingDir')
     // @ts-ignore
@@ -54,11 +56,11 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
     const depPath = path.join(wd, '.deps/https/raw.githubusercontent.com/iden3/')
     const outputDir = extractParentFromKey(filePath) + '/.bin'
 
-    return await circomCli.run(`${filePath} -l ${depPath} -o ${outputDir}`, options)
+    return await circomCli.run(`${filePath} -l ${depPath} -o ${outputDir}`, version, options)
   }
 
   getInputs() {
-    const inputsFile = extractParentFromKey(getInstallationPath()) + '/log_input_signals.txt'
+    const inputsFile = getLogInputSignalsPath()
     const inputsFileExists = existsSync(inputsFile)
     const signals: string[] = []
 
@@ -72,5 +74,9 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
       }
       return signals
     }
+  }
+
+  async isVersionInstalled(version: string) {
+    return await circomCli.isCircomInstalled(version)
   }
 }
