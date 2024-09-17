@@ -23,7 +23,8 @@ export const VerifyView = () => {
 
   const sourcifySupported = useSourcifySupported(selectedChain, chainSettings)
 
-  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || !selectedContract || (hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress)
+  const noVerifierEnabled = VERIFIERS.every((verifierId) => !validConfiguration(chainSettings, verifierId) || (verifierId === 'Sourcify' && !sourcifySupported)) || Object.values(enabledVerifiers).every((enabled) => !enabled)
+  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || !selectedContract || (hasProxy && !!proxyAddressError) || (hasProxy && !proxyAddress) || noVerifierEnabled
 
   // Enable all verifiers with valid configuration
   useEffect(() => {

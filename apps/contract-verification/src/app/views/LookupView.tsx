@@ -23,7 +23,8 @@ export const LookupView = () => {
 
   const sourcifySupported = useSourcifySupported(selectedChain, chainSettings)
 
-  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain
+  const noVerifierEnabled = VERIFIERS.every((verifierId) => !validConfiguration(chainSettings, verifierId) || (verifierId === 'Sourcify' && !sourcifySupported))
+  const submitDisabled = !!contractAddressError || !contractAddress || !selectedChain || noVerifierEnabled
 
   // Reset results when chain or contract changes
   useEffect(() => {
