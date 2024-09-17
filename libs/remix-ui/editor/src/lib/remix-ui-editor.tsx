@@ -769,8 +769,8 @@ export const EditorUI = (props: EditorUIProps) => {
       contextMenuOrder: 0, // choose the order
       contextMenuGroupId: 'gtp', // create a new grouping
       keybindings: [
-        // Keybinding for Ctrl + D
-        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KeyD
+        // Keybinding for Ctrl + H
+        monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KeyH,
       ],
       run: async () => {
         const unsupportedDocTags = ['@title'] // these tags are not supported by the current docstring parser
