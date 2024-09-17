@@ -7,6 +7,7 @@ import {CircuitAppContext} from './contexts'
 import {appInitialState, appReducer} from './reducers/state'
 import {CircomPluginClient} from './services/circomPluginClient'
 import { compileCircuit } from './actions'
+import { version } from 'os'
 
 const plugin = new CircomPluginClient()
 
@@ -21,6 +22,11 @@ function App() {
 
   useEffect(() => {
     plugin.internalEvents.on('circom_activated', () => {
+      (async () => {
+        const downloadList = await plugin.getCompilerDownloadList()
+
+        dispatch({ type: 'SET_VERSION_DOWNLOAD_LIST', payload: downloadList })
+      })();
       // @ts-ignore
       plugin.on('locale', 'localeChanged', (locale: any) => {
         setLocale(locale)
@@ -72,6 +78,14 @@ function App() {
       dispatch({ type: 'SET_FILE_PATH_TO_ID', payload: filePathToId })
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'warning' })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
+    })
+    plugin.internalEvents.on('download_success', (version) => {
+      dispatch({ type: 'SET_COMPILER_VERSION', payload: version })
+      dispatch({ type: 'REMOVE_VERSION_FROM_DOWNLOAD_LIST', payload: version })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
+    })
+    plugin.internalEvents.on('download_failed', (version) => {
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: 'Download failed! Please check your internet connection and try again.' })
     })
   }, [])
 

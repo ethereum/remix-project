@@ -1,0 +1,2 @@
+main.a 1
+main.b 1
