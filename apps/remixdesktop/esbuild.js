@@ -1,8 +1,8 @@
 const esbuild = require('esbuild');
 
 esbuild.build({
-  entryPoints: ['src/main.ts'],  // Your TypeScript entry point
-  outfile: 'build/main.js',       // Output bundled file
+  entryPoints: ['src/main.ts', 'src/preload.ts'],  // Your TypeScript entry point
+  outdir: 'build',      // Output bundled file
   bundle: true,                  // Bundle all dependencies
   platform: 'node',              // Target Node.js platform
   external: ['electron', 'fsevents', 'node-pty'], // Exclude native modules
