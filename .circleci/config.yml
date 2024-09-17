@@ -203,6 +203,7 @@ jobs:
             node -v
             npx -v
             npm install --global yarn
+            npm install --global node-gyp
             yarn -v 
 
       - run: 
