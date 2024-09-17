@@ -205,13 +205,7 @@ jobs:
             npx -v
             npm install --global yarn
             yarn -v 
-      - save_cache:
-          key: node-20-windows-v3
-          paths:
-            - /ProgramData/nvm/v20.0.0
-      - restore_cache:
-          keys:
-            - remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+
       - run: 
           command: |
               mkdir apps/remixdesktop/build
@@ -222,10 +216,7 @@ jobs:
               yarn
               ./rundist.bash
               rm -rf release/*-unpacked
-      - save_cache:
-          key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
-          paths:
-            - apps/remixdesktop/node_modules
+
       - persist_to_workspace:
             root: apps/remixdesktop
             paths:
