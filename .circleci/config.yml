@@ -452,19 +452,15 @@ jobs:
             ls -la dist/apps/remix-ide
             nvm install 20
             nvm use 20
-      - restore_cache:
-          keys:
-            - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
+
       - run: 
           command: |
             nvm use 20
             cd apps/remixdesktop 
             yarn || yarn
+            find ./node_modules
             yarn add @remix-project/remix-ws-templates
-      - save_cache:
-          key: remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
-          paths:
-            - apps/remixdesktop/node_modules
+      
       # use USE_HARD_LINK=false https://github.com/electron-userland/electron-builder/issues/3179
       - run: 
           command: |
