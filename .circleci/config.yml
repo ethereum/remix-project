@@ -450,7 +450,7 @@ jobs:
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20
+            nvm install 20.0.0
             nvm use 20
 
       - run: 
