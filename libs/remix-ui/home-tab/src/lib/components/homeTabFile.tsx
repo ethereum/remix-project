@@ -169,7 +169,7 @@ function HomeTabFile({ plugin }: HomeTabFileProps) {
           </label>
           <div className="d-flex flex-row flex-wrap">
             <CustomTooltip placement={'top'} tooltipId="overlay-tooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="home.newFileTooltip" />} tooltipTextClasses="border bg-light text-dark p-1 pr-3">
-              <button className="btn btn-primary text-nowrap p-2 mr-2 border my-1 mb-2" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={async () => {
+              <button className="btn text-nowrap p-2 mr-2 border my-1 mb-2" data-id="homeTabNewFile" style={{ width: 'fit-content' }} onClick={async () => {
                 _paq.push(['trackEvent', 'hometab', 'filesSection', 'newFile'])
                 await plugin.call('menuicons', 'select', 'filePanel')
                 await plugin.call('filePanel', 'createNewFile')
