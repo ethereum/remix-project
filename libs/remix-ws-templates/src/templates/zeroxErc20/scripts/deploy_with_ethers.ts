@@ -3,7 +3,7 @@ import { deploy } from './ethers-lib'
 (async () => {
   try {
     const result = await deploy('SampleERC20', ["TestToken", "TST", 18, 1000])
-    console.log(`address: ${result.address}`)
+    console.log(`address: ${await result.getAddress()}`)
   } catch (e) {
     console.log(e.message)
   }

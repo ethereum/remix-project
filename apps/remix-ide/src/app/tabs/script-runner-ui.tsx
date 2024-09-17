@@ -39,16 +39,16 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     const testPluginUrl = localStorage.getItem('test-plugin-url')
     let baseUrl = 'http://localhost:3000'
     let url = `${baseUrl}?template=${name}`
-    if(testPluginName === 'scriptRunner'){
+    if(testPluginName === 'scriptRunner') {
       // if testpluginurl has template specified only use that
-      if(testPluginUrl.indexOf('template')>-1){
-          url = testPluginUrl
-      }else{
+      if (testPluginUrl.indexOf('template')>-1) {
+        url = testPluginUrl
+      } else {
         baseUrl = `//${new URL(testPluginUrl).host}`
         url = `${baseUrl}?template=${name}&timestamp=${Date.now()}`
       }
     }
-    
+
     const newProfile: IframeProfile = {
       ...profile,
       name: profile.name + name,
@@ -97,7 +97,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     console.log('info', data)
     this.emit('info', data)
   }
-
 
   render() {
     return (
