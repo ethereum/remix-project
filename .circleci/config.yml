@@ -195,8 +195,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: unzip ./persist/desktopbuild.zip
-      - restore_cache:
-          key: node-20-windows-v3
+
       - run: 
           command: |
             nvm install 22
@@ -249,8 +248,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: unzip ./persist/desktopbuild.zip
-      - restore_cache:
-          key: node-20-windows-v3
+
       - run: 
           command: |
             nvm install 22
@@ -265,13 +263,7 @@ jobs:
             cd "apps/remixdesktop/"
             yarn -v
           shell: powershell.exe      
-      - save_cache:
-          key: node-20-windows-v3
-          paths:
-            - /ProgramData/nvm/v20.0.0
-      - restore_cache:
-          keys:
-            - remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+
       - run: 
           command: |
               mkdir apps/remixdesktop/build
