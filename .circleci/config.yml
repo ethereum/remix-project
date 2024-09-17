@@ -198,8 +198,8 @@ jobs:
 
       - run: 
           command: |
-            nvm install 22
-            nvm use 22
+            nvm install 20.0.0
+            nvm use 20.0.0
             node -v
             npx -v
             npm install --global yarn
