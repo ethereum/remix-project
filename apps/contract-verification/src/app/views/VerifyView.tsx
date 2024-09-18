@@ -113,7 +113,11 @@ export const VerifyView = () => {
 
     setSubmittedContracts((prev) => ({ ...prev, [newSubmittedContract.id]: newSubmittedContract }))
 
+    // Reset form
     setContractAddress('')
+    setAbiEncodedConstructorArgs('')
+    setSelectedContract(undefined)
+    setProxyAddress('')
 
     // Take user to receipt view
     navigate('/receipts')
