@@ -7,8 +7,10 @@ export const ReceiptsView = () => {
   const contracts = Object.values(submittedContracts).reverse()
 
   return (
-    <div className="accordion" id="receiptsAccordion">
-      {contracts.length > 0 ? contracts.map((contract, index) => <AccordionReceipt contract={contract} index={index} />) : <div className="text-center mt-5">No contracts submitted for verification</div>}
+    <div>
+      {contracts.length > 0 ? contracts.map((contract, index) => (
+        <AccordionReceipt contract={contract} index={index} />
+      )) : <div className="text-center mt-5">No contracts submitted for verification</div>}
     </div>
   )
 }
