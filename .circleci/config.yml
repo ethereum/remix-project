@@ -257,6 +257,7 @@ jobs:
             node -v
             npx -v
             npm install --global yarn
+            npm install --global node-gyp
             yarn -v 
       - run:
           name: start selenium
@@ -272,6 +273,7 @@ jobs:
               cd apps/remixdesktop/
               nvm use 20
               node -v
+              python -m pip install --upgrade pip
               pip install setuptools
               yarn
               ./rundist.bash
