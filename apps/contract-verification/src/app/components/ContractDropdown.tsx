@@ -43,29 +43,24 @@ export const ContractDropdown: React.FC<ContractDropdownProps> = ({ label, id, s
   return (
     <div className="form-group">
       <label htmlFor={id}>{label}</label>
-      <select value={selectedContract ? JSON.stringify(selectedContract) : ''} className={`form-control custom-select pr-4 ${!hasContracts ? 'disabled-cursor' : ''}`} id={id} disabled={!hasContracts} onChange={handleSelectContract}>
+      <select value={selectedContract ? JSON.stringify(selectedContract) : ''} className={`form-control custom-select pr-4 ${!hasContracts ? 'disabled-cursor' : ''} ${!hasContracts ? 'text-muted' : ''}`} id={id} disabled={!hasContracts} onChange={handleSelectContract}>
         {hasContracts ? (
           Object.keys(compilationOutput).map((compilationTriggerFileName) => (
-            <optgroup key={compilationTriggerFileName} label={`[Compilation Trigger File]: ${compilationTriggerFileName}`}>
-              {Object.keys(compilationOutput[compilationTriggerFileName].data.contracts).map((fileName) => (
-                <Fragment key={`${compilationTriggerFileName}:${fileName}`}>
-                  <option disabled value={`${compilationTriggerFileName}:${fileName}`} style={{ fontWeight: 'bold' }}>
-                    [File]: {fileName}
-                  </option>
-                  {Object.keys(compilationOutput[compilationTriggerFileName].data.contracts[fileName]).map((contractName) => {
-                    const value = JSON.stringify({ triggerFilePath: compilationTriggerFileName, filePath: fileName, contractName: contractName })
-                    return (
-                      <option key={`${compilationTriggerFileName}:${fileName}:${contractName}`} value={value}>
-                        {'\u00A0\u00A0\u00A0' + contractName} {/* Indentation for contract names */}
-                      </option>
-                    )
-                  })}
-                </Fragment>
-              ))}
+            <optgroup key={compilationTriggerFileName} label={`Compilation trigger: ${compilationTriggerFileName}`}>
+              {Object.keys(compilationOutput[compilationTriggerFileName].data.contracts).map((fileName) => {
+                return Object.keys(compilationOutput[compilationTriggerFileName].data.contracts[fileName]).map((contractName) => {
+                  const value = JSON.stringify({ triggerFilePath: compilationTriggerFileName, filePath: fileName, contractName: contractName })
+                  return (
+                    <option key={`${compilationTriggerFileName}:${fileName}:${contractName}`} value={value}>
+                      {contractName} - {fileName}
+                    </option>
+                  )
+                })
+              })}
             </optgroup>
           ))
         ) : (
-          <option>No Compiled Contracts. Please compile and select a contract</option>
+          <option>Compiled contract required</option>
         )}
       </select>
     </div>
