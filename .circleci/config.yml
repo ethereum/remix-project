@@ -120,6 +120,8 @@ jobs:
         - run: unzip ./persist/desktopbuild.zip
         - run: 
             command: |
+                nvm install 20.2
+                nvm use 20.2
                 node -v
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
@@ -157,6 +159,8 @@ jobs:
         - run: unzip ./persist/desktopbuild.zip
         - run: 
             command: |
+                nvm install 20.2
+                nvm use 20.2
                 node -v
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
