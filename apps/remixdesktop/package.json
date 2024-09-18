@@ -13,6 +13,9 @@
     "name": "Remix Team",
     "email": "remix@ethereum.org"
   },
+  "engines": {
+    "node": "20.2.0"
+  },
   "bugs": {
     "url": "https://github.com/ethereum/remix-project/issues"
   },
