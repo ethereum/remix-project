@@ -12,7 +12,7 @@ export const DefaultLayout = ({ children, title, description }: PropsWithChildre
   return (
     <div>
       <NavMenu />
-      <div className="my-4 px-3">
+      <div className="py-4 px-3" style={{ marginTop: '40px' }}>
         <div>
           <p className="text-center" style={{ fontSize: '0.8rem' }}>
             {description}
