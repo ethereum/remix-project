@@ -99,9 +99,9 @@ export const SearchableChainDropdown: React.FC<DropdownProps> = ({ label, id, se
       <label htmlFor={id}>{label}</label>
       <input type="text" value={searchTerm} onChange={handleInputChange} onClick={openDropdown} placeholder="Select a chain" className="form-control" />
       {isOpen && (
-        <ul className="dropdown-menu show w-100" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+        <ul className="dropdown-menu show w-100 bg-light" style={{ maxHeight: '400px', overflowY: 'auto' }}>
           {filteredOptions.map((chain) => (
-            <li key={chain.chainId} onClick={() => handleOptionClick(chain)} className={`dropdown-item ${selectedChain?.chainId === chain.chainId ? 'active' : ''}`} style={{ cursor: 'pointer', whiteSpace: 'normal' }}>
+            <li key={chain.chainId} onClick={() => handleOptionClick(chain)} className={`dropdown-item text-dark ${selectedChain?.chainId === chain.chainId ? 'active' : ''}`} style={{ cursor: 'pointer', whiteSpace: 'normal' }}>
               {getChainDescriptor(chain)}
             </li>
           ))}
