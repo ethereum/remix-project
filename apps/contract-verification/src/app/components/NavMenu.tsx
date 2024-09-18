@@ -25,7 +25,7 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
 
 export const NavMenu = () => {
   return (
-    <nav className="d-flex flex-row justify-content-around bg-secondary">
+    <nav className="d-flex flex-row justify-content-around bg-secondary fixed-top">
       <NavItem to="/" icon={<i className="fas fa-home"></i>} title="Verify" />
       <NavItem to="/receipts" icon={<i className="fas fa-receipt"></i>} title="Receipts" />
       <NavItem to="/lookup" icon={<i className="fas fa-search"></i>} title="Lookup" />
