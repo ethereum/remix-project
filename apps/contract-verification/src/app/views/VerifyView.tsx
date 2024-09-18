@@ -180,11 +180,13 @@ export const VerifyView = () => {
 
       {selectedContract && <ConstructorArguments abiEncodedConstructorArgs={abiEncodedConstructorArgs} setAbiEncodedConstructorArgs={setAbiEncodedConstructorArgs} selectedContract={selectedContract} abiEncodingError={abiEncodingError} setAbiEncodingError={setAbiEncodingError} />}
 
-      <div className="pt-3 form-check form-switch">
-        <input className="form-check-input" type="checkbox" id="has-proxy" checked={!!hasProxy} onChange={(e) => setHasProxy(e.target.checked)} />
-        <label className="form-check-label" htmlFor="has-proxy">
-          The deployed contract is behind a proxy
-        </label>
+      <div className="pt-3">
+        <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+          <input id="has-proxy" className="form-check-input custom-control-input" type="checkbox" checked={!!hasProxy} onChange={(e) => setHasProxy(e.target.checked)} />
+          <label htmlFor="has-proxy" className="m-0 form-check-label custom-control-label" style={{ paddingTop: '2px' }}>
+            The deployed contract is behind a proxy
+          </label>
+        </div>
         {hasProxy && <ContractAddressInput label="Proxy Address" id="proxy-address" contractAddress={proxyAddress} setContractAddress={setProxyAddress} contractAddressError={proxyAddressError} setContractAddressError={setProxyAddressError} />}
       </div>
 
@@ -194,13 +196,15 @@ export const VerifyView = () => {
           const disabledVerifier = !chainSettings || !validConfiguration(chainSettings, verifierId) || (verifierId === 'Sourcify' && !sourcifySupported)
 
           return (
-            <div key={verifierId} className="pt-2 form-check">
-              <input className="form-check-input" type="checkbox" id={`verifier-${verifierId}`} checked={!!enabledVerifiers[verifierId]} onChange={(e) => handleVerifierCheckboxClick(verifierId, e.target.checked)} disabled={disabledVerifier} />
+            <div key={verifierId} className="pt-2">
+              <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
+                <input className="form-check-input custom-control-input" type="checkbox" id={`verifier-${verifierId}`} checked={!!enabledVerifiers[verifierId]} onChange={(e) => handleVerifierCheckboxClick(verifierId, e.target.checked)} disabled={disabledVerifier} />
 
-              <div className="d-flex flex-column align-items-start">
-                <label htmlFor={`verifier-${verifierId}`} style={{ fontSize: '1rem', lineHeight: '1.5', color: 'var(--text)' }} className={`mb-0 font-weight-bold${!disabledVerifier ? '' : ' text-secondary'}`}>
+                <label htmlFor={`verifier-${verifierId}`} className={`m-0 form-check-label custom-control-label large  font-weight-bold${!disabledVerifier ? '' : ' text-secondary'}`} style={{ fontSize: '1rem', lineHeight: '1.5', color: 'var(--text)' }}>
                   {verifierId}
                 </label>
+              </div>
+              <div className="d-flex flex-column align-items-start pl-4">
                 {!chainSettings ? (
                   ''
                 ) : !validConfiguration(chainSettings, verifierId) ? (
