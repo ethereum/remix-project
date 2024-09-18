@@ -56,6 +56,7 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
     const depPath = path.join(wd, '.deps/https/raw.githubusercontent.com/iden3/')
     const outputDir = extractParentFromKey(filePath) + '/.bin'
 
+    this.call('terminal' as any, 'logHtml', `Compiling ${filePath} with circom compiler (${version})`)
     return await circomCli.run(`${filePath} -l ${depPath} -o ${outputDir}`, version, options)
   }
 

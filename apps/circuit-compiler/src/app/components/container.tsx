@@ -31,6 +31,7 @@ export function Container () {
 
   const handleVersionSelect = (version: string) => {
     circuitApp.plugin.compilerVersion = version
+    circuitApp.dispatch({ type: 'SET_COMPILER_VERSION', payload: version })
   }
 
   const handleOpenErrorLocation = async (location: string, startRange: string) => {
