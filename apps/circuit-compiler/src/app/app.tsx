@@ -80,7 +80,6 @@ function App() {
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
     })
     plugin.internalEvents.on('download_success', (version) => {
-      dispatch({ type: 'SET_COMPILER_VERSION', payload: version })
       dispatch({ type: 'REMOVE_VERSION_FROM_DOWNLOAD_LIST', payload: version })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
     })
