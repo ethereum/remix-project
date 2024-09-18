@@ -18,9 +18,13 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
           <label className="udapp_deployedContracts" data-id="pinnedContracts">
             <FormattedMessage id="udapp.pinnedContracts" />
-            <span style={{ fontSize: '0.75rem' }} data-id="pinnedContractsSublabel"> (network: {props.plugin.REACT_API.chainId}) </span>
           </label>
         </CustomTooltip>
+      </div>
+      <div className="d-flex justify-content-between align-items-center pl-2">
+        <label className="udapp_deployedContracts" data-id="pinnedContractsNetwork">
+          <span style={{ fontSize: '0.75rem' }} data-id="pinnedContractsSublabel"> (network: {props.plugin.REACT_API.chainId}) </span>
+        </label>
       </div>
 
       {props.pinnedInstances.instanceList.length > 0 ? (
