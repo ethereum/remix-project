@@ -3,3 +3,4 @@ body {
 }
 
 .fa-arrow-up-right-from-square::before { content: "\f08e"; }
+.fa-xmark::before { content: "\f00d"; }
