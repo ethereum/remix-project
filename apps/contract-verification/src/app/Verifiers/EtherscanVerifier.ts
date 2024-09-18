@@ -75,6 +75,10 @@ export class EtherscanVerifier extends AbstractVerifier {
 
     const verificationResponse: EtherscanRpcResponse = await response.json()
 
+    if (verificationResponse.result.includes('already verified')) {
+      return { status: 'already verified', receiptId: null, lookupUrl: this.getContractCodeUrl(submittedContract.address) }
+    }
+
     if (verificationResponse.status !== '1' || verificationResponse.message !== 'OK') {
       console.error('Error on Etherscan API verification at ' + this.apiUrl + '\nStatus: ' + verificationResponse.status + '\nMessage: ' + verificationResponse.message + '\nResult: ' + verificationResponse.result)
       throw new Error(verificationResponse.result)

@@ -57,7 +57,7 @@ export interface SubmittedContracts {
 
 type SourcifyStatus = 'fully verified' | 'partially verified'
 type EtherscanStatus = 'verified' | 'already verified'
-export type VerificationStatus = SourcifyStatus | EtherscanStatus | 'failed' | 'pending' | 'not verified' | 'unknown' | 'lookup failed' | 'awaiting implementation verification'
+export type VerificationStatus = SourcifyStatus | EtherscanStatus | 'failed' | 'pending' | 'awaiting implementation verification' | 'not verified' | 'lookup failed' | 'unknown'
 
 export interface VerificationResponse {
   status: VerificationStatus
