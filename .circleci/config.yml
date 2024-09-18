@@ -123,7 +123,7 @@ jobs:
                 nvm install 20.2
                 nvm use 20.2
                 node -v
-                npm install --global yarn
+                npm install --global yarn node-gyp
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
@@ -163,7 +163,7 @@ jobs:
                 nvm install 20.2
                 nvm use 20.2
                 node -v
-                npm install --global yarn
+                npm install --global yarn node-gyp
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
