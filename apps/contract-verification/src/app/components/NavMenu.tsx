@@ -9,7 +9,7 @@ interface NavItemProps {
 
 const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
   return (
-    <NavLink to={to} className={({ isActive }) => 'text-decoration-none d-flex flex-column justify-content-center px-2 ' + (isActive ? 'bg-transparent' : 'bg-dark')}>
+    <NavLink to={to} className={({ isActive }) => 'text-decoration-none d-flex flex-column justify-content-center px-2 ' + (isActive ? 'bg-light' : 'bg-transparent')}>
       <span>
         <span>{icon}</span>
         <span className="ml-2">{title}</span>
@@ -25,7 +25,7 @@ export const NavMenu = () => {
       <NavItem to="/receipts" icon={<i className="fas fa-receipt"></i>} title="Receipts" />
       <NavItem to="/lookup" icon={<i className="fas fa-search"></i>} title="Lookup" />
       <NavItem to="/settings" icon={<i className="fas fa-cog"></i>} title="Settings" />
-      <div className="flex-grow-1 bg-dark"></div>
+      <div className="flex-grow-1"></div>
     </nav>
   )
 }
