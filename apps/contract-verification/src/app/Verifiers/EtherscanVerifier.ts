@@ -188,7 +188,7 @@ export class EtherscanVerifier extends AbstractVerifier {
 
     const checkStatusResponse: EtherscanRpcResponse = await response.json()
 
-    if (checkStatusResponse.result === 'A corresponding implementation contract was unfortunately not detected for the proxy address.' || checkStatusResponse.result === 'The provided expected results are different than the retrieved implementation address!') {
+    if (checkStatusResponse.result === 'A corresponding implementation contract was unfortunately not detected for the proxy address.' || checkStatusResponse.result === 'The provided expected results are different than the retrieved implementation address!' || checkStatusResponse.result === 'This contract does not look like it contains any delegatecall opcode sequence.') {
       return { status: 'failed', receiptId, message: checkStatusResponse.result }
     }
     if (checkStatusResponse.result === 'Verification in progress') {
