@@ -9,15 +9,10 @@ interface NavItemProps {
 
 const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
   return (
-    <NavLink
-      // data-id="home"
-      to={to}
-      className={({ isActive }) => 'p-2 text-decoration-none ' + (isActive ? 'bg-primary text-white' : 'bg-secondary')}
-      // state={from}
-    >
-      <span className="d-flex flex-column align-items-center justify-content-center" style={{ width: '60px' }}>
+    <NavLink to={to} className={({ isActive }) => 'text-decoration-none d-flex flex-column justify-content-center px-2 ' + (isActive ? 'bg-transparent' : 'bg-dark')}>
+      <span>
         <span>{icon}</span>
-        <span>{title}</span>
+        <span className="ml-2">{title}</span>
       </span>
     </NavLink>
   )
@@ -25,11 +20,12 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
 
 export const NavMenu = () => {
   return (
-    <nav className="d-flex flex-row justify-content-around bg-secondary fixed-top">
+    <nav className="d-flex flex-row justify-start fixed-top w-100" style={{ height: '40px' }}>
       <NavItem to="/" icon={<i className="fas fa-home"></i>} title="Verify" />
       <NavItem to="/receipts" icon={<i className="fas fa-receipt"></i>} title="Receipts" />
       <NavItem to="/lookup" icon={<i className="fas fa-search"></i>} title="Lookup" />
       <NavItem to="/settings" icon={<i className="fas fa-cog"></i>} title="Settings" />
+      <div className="flex-grow-1 bg-dark"></div>
     </nav>
   )
 }
