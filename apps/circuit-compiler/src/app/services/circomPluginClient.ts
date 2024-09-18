@@ -14,7 +14,7 @@ import isElectron from 'is-electron'
 export class CircomPluginClient extends PluginClient {
   public internalEvents: EventManager
   private _compilationConfig: CompilationConfig = {
-    version: "2.1.8",
+    version: isElectron() ? "latest" : "2.1.8",
     prime: "bn128"
   }
   private lastCompiledCircuitPath: string = ''
@@ -44,11 +44,12 @@ export class CircomPluginClient extends PluginClient {
   }
 
   set compilerVersion (version: string) {
-    if (!compiler_list.versions.includes(version)) throw new Error("Unsupported compiler version")
+    if (!compiler_list.versions.includes(version) && version !== "latest") throw new Error("Unsupported compiler version")
     this._compilationConfig.version = version
     if (isElectron()) {
+      const versionToInstall = version === 'latest' ? 'latest' : `v${version}`
       // @ts-ignore
-      this.call('circom', 'install', `v${version}`).then(() => {
+      this.call('circom', 'install', versionToInstall).then(() => {
         this.internalEvents.emit('download_success', version)
       }).catch((e) => {
         this.internalEvents.emit('download_failed')
@@ -151,8 +152,9 @@ export class CircomPluginClient extends PluginClient {
       // @ts-ignore
       this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
       const { version, prime } = this._compilationConfig
+      const versionToInstall = version === 'latest' ? 'latest' : `v${version}`
       // @ts-ignore
-      const { stdout, stderr } = await this.call('circom', 'run', path, `v${version}`, { prime: prime, wasm: "", inputs: "" })
+      const { stdout, stderr } = await this.call('circom', 'run', path, versionToInstall, { prime: prime, wasm: "", inputs: "" })
       const fileName = extractNameFromKey(path)
 
       this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('circom', 'wasm')
@@ -234,8 +236,9 @@ export class CircomPluginClient extends PluginClient {
       // @ts-ignore
       this.call('terminal', 'log', { type: 'log', value: 'Generating R1CS for ' + path })
       const { version, prime } = this._compilationConfig
+      const versionToInstall = version === 'latest' ? 'latest' : `v${version}`
       // @ts-ignore
-      await this.call('circom', 'run', path, `v${version}`, {
+      await this.call('circom', 'run', path, versionToInstall, {
         prime: prime,
         r1cs: ""
       })
@@ -479,8 +482,9 @@ export class CircomPluginClient extends PluginClient {
     if (!isElectron()) return []
     else {
       return await Promise.all(compiler_list.versions.map(async (version) => {
+        const versionToInstall = version === 'latest' ? 'latest' : `v${version}`
         // @ts-ignore
-        const exists = await this.call('circom', 'isVersionInstalled', `v${version}`)
+        const exists = await this.call('circom', 'isVersionInstalled', versionToInstall)
 
         if (!exists) return version
       }))

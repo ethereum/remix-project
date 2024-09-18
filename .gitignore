@@ -70,4 +70,5 @@ apps/remixdesktop/reports
 apps/remixdesktop/logs/
 apps/remixdesktop/bin/
 apps/remixdesktop/circom-download
+apps/remixdesktop/log_input_signals.txt
 logs

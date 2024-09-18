@@ -1,10 +1,20 @@
 import { PTAU_LIST } from '../actions/constant'
 import { Actions, AppState } from '../types'
 import { compiler_list } from 'circom_wasm'
+import isElectron from 'is-electron'
+
+const VersionList = isElectron() ? { ...compiler_list.wasm_builds,
+  "latest": {
+    "name": "latest",
+    "version": "latest",
+    "repo": "",
+    "build_source": ""
+  }
+} : compiler_list.wasm_builds
 
 export const appInitialState: AppState = {
-  version: compiler_list.latest,
-  versionList: compiler_list.wasm_builds,
+  version: isElectron() ? "latest" : compiler_list.latest,
+  versionList: VersionList,
   versionDownloadList: [],
   filePath: "",
   filePathToId: {},
