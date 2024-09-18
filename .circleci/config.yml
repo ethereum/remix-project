@@ -136,11 +136,13 @@ jobs:
         - run:  
             name: "Run tests"
             command: |
+              nvm use 20.2
               cd apps/remixdesktop/
               ./run_ci_test.sh
         - run:  
             name: "Run isogit tests"
             command: |
+              nvm use 20.2
               cd apps/remixdesktop/
               ./run_git_ui_isogit_tests.sh
         - store_test_results:
