@@ -1,5 +1,7 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { GitHubUser, branch, commitChange, fileStatusResult, remote, pagedCommits, branchDifference, gitLog, repository, userEmails, storage } from "../types"
+import { fileStatusResult, gitLog } from "../types"
+import { repository, pagedCommits, branch, remote, commitChange, branchDifference, GitHubUser, userEmails } from "@remix-api"
+import { storage } from "../types"
 import { Endpoints } from "@octokit/types"
 
 export const fileStatus = (files: fileStatusResult[]) => {
@@ -225,6 +227,19 @@ export const clearLog = () => {
   }
 }
 
+export const setDesktopWorkingDir = (dir: string) => {
+  return {
+    type: 'DESKTOP_SET_WORKING_DIR',
+    payload: dir
+  }
+}
+
+export const setVersion = (version: string) => {
+  return {
+    type: 'SET_VERSION',
+    payload: version
+  }
+}
 export const setStoragePayload = (storage: storage) => {
   return {
     type: 'SET_STORAGE',

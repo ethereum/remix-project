@@ -129,26 +129,26 @@ export class CompileTabLogic {
   }
 
   async isHardhatProject () {
-    if (this.api.getFileManagerMode() === 'localhost') {
+    if (this.api.getFileManagerMode() === ('localhost') || this.api.isDesktop()) {
       return await this.api.fileExists('hardhat.config.js') || await this.api.fileExists('hardhat.config.ts')
     } else return false
   }
 
   async isTruffleProject () {
-    if (this.api.getFileManagerMode() === 'localhost') {
+    if (this.api.getFileManagerMode() === ('localhost') || this.api.isDesktop()) {
       return await this.api.fileExists('truffle-config.js')
     } else return false
   }
 
   async isFoundryProject () {
-    if (this.api.getFileManagerMode() === 'localhost') {
+    if (this.api.getFileManagerMode() === ('localhost') || this.api.isDesktop()) {
       return await this.api.fileExists('foundry.toml')
     } else return false
   }
 
   runCompiler (externalCompType) {
     try {
-      if (this.api.getFileManagerMode() === 'localhost') {
+      if (this.api.getFileManagerMode() === 'localhost' || this.api.isDesktop()) {
         if (externalCompType === 'hardhat') {
           const { currentVersion, optimize, runs } = this.compiler.state
           if (currentVersion) {

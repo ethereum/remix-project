@@ -267,18 +267,53 @@ export const templates = (intl, plugin) => {
       onClickLabel: 'Open Cookbook Plugin',
       description: 'Discover more templates!',
       items: [
-        { value: "token-sale", displayName: 'Token Sale' },
-        { value: "simple-nft-sale", displayName: 'Simple Nft Sale' },
-        { value: "Azuki-ERC721A-NFT-Sale-basic", displayName: 'Azuki ERC721A NFT Sale basic' },
-        { value: "Azuki-ERC721A-ERC721A", displayName: 'Azuki ERC721A' },
-        { value: "token-staking-with-infinite-rewards", displayName: 'Token Staking with infinite rewards' },
-        { value: "nft-staking-with-infinite-rewards", displayName: 'Nft Staking with infinite rewards' },
-        { value: "basic-dao", displayName: 'Basic DAO' },
-        { value: "soulbound-nft", displayName: 'Soulbound Nft' },
-        { value: "multi-collection-nft-with-burnable-nfts-and-pausable-transfers", displayName: 'Multi collection NFT', description: "Multi collection NFT with:", opts: {
-          burnable: true,
-          pausable: true
-        }, },
+        {
+          value: "token-sale",
+          displayName: 'Token Sale',
+          description: "ERC20 token sale contact. Sell tokens for ETH"
+        },
+        {
+          value: "simple-nft-sale",
+          displayName: 'Simple Nft Sale',
+          description: "ERC721 NFT with an adjustable price & to mint free NFTs"
+        },
+        {
+          value: "Azuki-ERC721A-NFT-Sale-basic",
+          displayName: 'Azuki ERC721A NFT Sale basic',
+          description: "An implementation of the ERC721A standard"
+        },
+        {
+          value: "Azuki-ERC721A-NFT-Sale",
+          displayName: 'Azuki ERC721A NFT Sale',
+          description: "An extension of the ERC721A standard with wallet limit"
+        },
+        {
+          value: "token-staking-with-infinite-rewards",
+          displayName: 'Token Staking with infinite rewards',
+          description: "Token staking contract to reward ERC20 tokens for every token staked"
+        },
+        {
+          value: "nft-staking-with-infinite-rewards",
+          displayName: 'NFT Staking with infinite rewards',
+          description: "NFT staking contract to reward exact number of ERC20 tokens per day"
+        },
+        {
+          value: "basic-dao",
+          displayName: 'Basic DAO',
+          description: "A very simple implementation of a DAO"
+        },
+        {
+          value: "soulbound-nft",
+          displayName: 'Soulbound NFT',
+          description: "ERC721 Soulbound NFT with no transfer capability"
+        },
+        { value: "multi-collection-nft-with-burnable-nfts-and-pausable-transfers",
+          displayName: 'Multi collection NFT',
+          description: "Multi collection NFT with:",
+          opts: {
+            burnable: true,
+            pausable: true
+          }, },
       ]
     },
     {

@@ -1,4 +1,4 @@
-import { GitHubUser } from '@remix-ui/git';
+import { GitHubUser } from '@remix-api';
 import { AppModal } from '../interface'
 
 type ActionMap<M extends { [index: string]: any }> = {

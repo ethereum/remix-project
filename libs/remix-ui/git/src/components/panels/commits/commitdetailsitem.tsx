@@ -1,4 +1,4 @@
-import { branch, commitChange } from "../../../types";
+import { branch, commitChange } from "@remix-api";
 import React from "react";
 import path from "path";
 import { gitActionsContext, pluginActionsContext } from "../../../state/context";

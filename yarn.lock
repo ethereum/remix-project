@@ -7603,11 +7603,6 @@
   dependencies:
     undici-types "~5.26.4"
 
-"@types/node@^18.11.18":
-  version "18.16.16"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.16.tgz#3b64862856c7874ccf7439e6bab872d245c86d8e"
-  integrity sha512-NpaM49IGQQAUlBhHMF82QH80J08os4ZmyF9MkpCzWAGuOHqE4gTEbhzd7L3l5LmWuZ6E0OiC1FweQ4tsiW35+g==
-
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz#d3357479a0fdfdd5907fe67e17e0a85c906e1301"
@@ -14030,9 +14025,9 @@ domhandler@^4.2.0:
     domelementtype "^2.2.0"
 
 dompurify@^2.2.0:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.4.1.tgz#f9cb1a275fde9af6f2d0a2644ef648dd6847b631"
-  integrity sha512-ewwFzHzrrneRjxzmK6oVz/rZn9VWspGFRDb4/rRtIsM1n36t9AKma/ye8syCpcw+XJ25kOK/hOG7t1j2I2yBqA==
+  version "2.5.6"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.5.6.tgz#8402b501611eaa7fb3786072297fcbe2787f8592"
+  integrity sha512-zUTaUBO8pY4+iJMPE1B9XlO2tXVYIcEA4SNGtvDELzTSCQO7RzH+j7S180BmhmJId78lqGU2z19vgVx2Sxs/PQ==
 
 domutils@^2.6.0:
   version "2.8.0"
@@ -14251,15 +14246,6 @@ electron-to-chromium@^1.5.4:
   version "1.5.13"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.13.tgz#1abf0410c5344b2b829b7247e031f02810d442e6"
   integrity sha512-lbBcvtIJ4J6sS4tb5TLp1b4LyfCdMkwStzXPyAgVgTRAsep4bvrAGaBOP7ZJtQMNJpSQ9SqG4brWOroNaQtm7Q==
-
-electron@^24.4.0:
-  version "24.4.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-24.4.0.tgz#48d05561dab6a5835ec1a3a96852797f69824eea"
-  integrity sha512-A9YzLHRUA+HfYVf2daNv0jPXNCWShgcgcTaGntrZRGynQLEhDTbti9Lfmq2tjRKoEgXZ7qj+aJFw+tJZsT/Cfw==
-  dependencies:
-    "@electron/get" "^2.0.0"
-    "@types/node" "^18.11.18"
-    extract-zip "^2.0.1"
 
 elliptic@6.5.4, elliptic@^6.5.2, elliptic@^6.5.3, elliptic@^6.5.4:
   version "6.5.4"
@@ -15552,7 +15538,7 @@ extract-files@^11.0.0:
   resolved "https://registry.yarnpkg.com/extract-files/-/extract-files-11.0.0.tgz#b72d428712f787eef1f5193aff8ab5351ca8469a"
   integrity sha512-FuoE1qtbJ4bBVvv94CC7s0oTnKUGvQs+Rjf1L2SJFfS+HTVVjhPFtehPdQ0JiGPqVNfSSZvL5yzHHQq2Z4WNhQ==
 
-extract-zip@2.0.1, extract-zip@^2.0.0, extract-zip@^2.0.1:
+extract-zip@2.0.1, extract-zip@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/extract-zip/-/extract-zip-2.0.1.tgz#663dca56fe46df890d5f131ef4a06d22bb8ba13a"
   integrity sha512-GDhU9ntwuKyGXdZBUgTIe+vXnWj0fppUEtMDL0+idd5Sta8TGpHssn/eusA9mrPr9qNDym6SxAYZjNvCn/9RBg==

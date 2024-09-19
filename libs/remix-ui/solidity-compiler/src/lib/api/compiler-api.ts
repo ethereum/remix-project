@@ -203,14 +203,17 @@ export const CompilerApiMixin = (Base) => class extends Base {
     return this.call('fileManager', 'saveCurrentFile')
   }
 
-  resetResults () {
-    this.currentFile = ''
-    this.compilationDetails = {
-      contractsDetails: {},
-      contractMap: {}
+  resetResults() {
+    try {
+      this.currentFile = ''
+      this.compilationDetails = {
+        contractsDetails: {},
+        contractMap: {}
+      }
+      this.statusChanged({ key: 'none' })
+    } catch (e) {
+      // do nothing
     }
-    this.statusChanged({ key: 'none' })
-    // if (this.onResetResults) this.onResetResults()
   }
 
   listenToEvents () {

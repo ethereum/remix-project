@@ -42,20 +42,26 @@ class TemplatesPluginClient extends ElectronBasePluginClient {
     super(webContentsId, profile)
   }
 
-  async loadTemplateInNewWindow (files: any) {
+  async loadTemplateInNewWindow(files: any) {
 
-    let folder = await this.call('fs' as any, 'selectFolder', null ,'Select or create a folder to load the template in', 'Set as destination folder for the template')
+    let folder = await this.call('fs' as any, 'selectFolder', null, 'Select or create a folder to load the files in', 'Set as destination folder for the files')
     if (!folder || folder === '') return
     // @ts-ignore
 
     for (const file in files) {
       try {
-        if(!folder.endsWith('/')) folder += '/'
+        if (!folder.endsWith('/')) folder += '/'
 
-        await fs.mkdir(path.dirname(folder + file), { recursive: true})
-        await fs.writeFile(folder + file, files[file], {
-          encoding: 'utf8'
-        })
+        await fs.mkdir(path.dirname(folder + file), { recursive: true })
+        if (typeof files[file] !== 'string' && files[file].content) {
+          await fs.writeFile(folder + file, files[file].content, {
+            encoding: 'utf8',
+          })
+        } else {
+          await fs.writeFile(folder + file, files[file], {
+            encoding: 'utf8'
+          })
+        }
       } catch (error) {
         console.error(error)
       }
@@ -63,7 +69,7 @@ class TemplatesPluginClient extends ElectronBasePluginClient {
     createWindow(folder)
   }
 
-  async openTemplate(){
+  async openTemplate() {
     this.call('filePanel' as any, 'loadTemplate')
   }
 
