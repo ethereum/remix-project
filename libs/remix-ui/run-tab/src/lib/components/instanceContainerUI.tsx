@@ -14,17 +14,22 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
 
   return (
     <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
-      <div className="d-flex justify-content-between align-items-center pl-2">
-        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
-          <label className="udapp_deployedContracts" data-id="pinnedContracts">
-            <FormattedMessage id="udapp.pinnedContracts" />
+      <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-2">
+        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
+          <label className="udapp_deployedContracts" data-id="unpinnedContracts">
+            <FormattedMessage id="udapp.deployedContracts" />
           </label>
         </CustomTooltip>
-      </div>
-      <div className="d-flex justify-content-between align-items-center pl-2">
-        <label className="udapp_deployedContracts" data-id="pinnedContractsNetwork">
-          <span style={{ fontSize: '0.75rem' }} data-id="pinnedContractsSublabel"> (network: {props.plugin.REACT_API.chainId}) </span>
-        </label>
+        {instanceList.length > 0 ? (
+          <CustomTooltip
+            placement={'auto-end'}
+            tooltipClasses="text-nowrap"
+            tooltipId="deployAndRunClearInstancesTooltip"
+            tooltipText={<FormattedMessage id="udapp.deployAndRunClearInstances" />}
+          >
+            <i className="mr-1 p-2 udapp_icon far fa-trash-alt" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
+          </CustomTooltip>
+        ) : null}
       </div>
 
       {props.pinnedInstances.instanceList.length > 0 ? (
@@ -54,29 +59,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             )
           })}
         </div>
-      ) : (
-        <span className="mx-2 mt-3 alert alert-secondary" data-id="NoPinnedInstanceText">
-          <FormattedMessage id="udapp.NoPinnedInstanceText" />
-        </span>
-      )}
+      ) : ''}
 
-      <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-2">
-        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
-          <label className="udapp_deployedContracts" data-id="unpinnedContracts">
-            <FormattedMessage id="udapp.deployedContracts" />
-          </label>
-        </CustomTooltip>
-        {instanceList.length > 0 ? (
-          <CustomTooltip
-            placement={'auto-end'}
-            tooltipClasses="text-nowrap"
-            tooltipId="deployAndRunClearInstancesTooltip"
-            tooltipText={<FormattedMessage id="udapp.deployAndRunClearInstances" />}
-          >
-            <i className="mr-1 p-2 udapp_icon far fa-trash-alt" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
-          </CustomTooltip>
-        ) : null}
-      </div>
       {instanceList.length > 0 ? (
         <div>
           {' '}
@@ -104,11 +88,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             )
           })}
         </div>
-      ) : (
-        <span className="mx-2 mt-3 alert alert-secondary" data-id="deployAndRunNoInstanceText" role="alert">
-          <FormattedMessage id="udapp.deployAndRunNoInstanceText" />
-        </span>
-      )}
+      ) : ''}
     </div>
   )
 }
