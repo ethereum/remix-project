@@ -77,7 +77,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       const ask = split[split.length - 2].trimStart()
       if (split[split.length - 1].trim() === '' && ask.startsWith('///')) {
         // use the code generation model, only take max 1000 word as context
-        this.props.plugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'Solcoder - generating code for following comment: ' + ask.replace('///', '') })
+        this.props.plugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'RemixAI - generating code for following comment: ' + ask.replace('///', '') })
 
         const data = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
         this.task = 'code_generation'
@@ -178,11 +178,11 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
   handleItemDidShow?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, updatedInsertText: string): void {
     this.currentCompletion.displayed = true
-    _paq.push(['trackEvent', 'ai', 'solcoder', this.task + '_did_show'])
+    _paq.push(['trackEvent', 'ai', 'remixAI', this.task + '_did_show'])
   }
   handlePartialAccept?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, acceptedCharacters: number): void {
     this.currentCompletion.accepted = true
-    _paq.push(['trackEvent', 'ai', 'solcoder', this.task + '_partial_accept'])
+    _paq.push(['trackEvent', 'ai', 'remixAI', this.task + '_partial_accept'])
   }
   freeInlineCompletions(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>): void {
   }

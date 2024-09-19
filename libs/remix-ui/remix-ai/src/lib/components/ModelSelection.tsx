@@ -8,11 +8,10 @@
 // Once selected, the model is either loaded from the local storage or downloaded
 // the remix ai desktop plugin provided the interface for storing the model in the local storage after downloading
 
-
 import React, { useState, useEffect } from 'react';
 import { Select, Input, Button, Icon } from 'antd';
-import { Model } from '@remix/remix-ai-core';
-import { getModels } from '../services';
+import { IModel } from '@remix/remix-ai-core';
+import { DefaultModels } from '@remix/remix-ai-core';
 import { ModelType } from '@remix/remix-ai-core';
 import { useTranslation } from 'react-i18next';
 
@@ -20,24 +19,24 @@ const { Option } = Select;
 const { Search } = Input;
 
 interface ModelSelectionProps {
-  onSelect: (model: Model) => void;
+  onSelect: (model: IModel) => void;
 }
 
 export const ModelSelection: React.FC<ModelSelectionProps> = ({ onSelect }) => {
   const { t } = useTranslation();
-  const [models, setModels] = useState<Model[]>([]);
-  const [filteredModels, setFilteredModels] = useState<Model[]>([]);
+  const [models, setModels] = useState<IModel[]>([]);
+  const [filteredModels, setFilteredModels] = useState<IModel[]>([]);
   const [search, setSearch] = useState<string>('');
   const [type, setType] = useState<ModelType | 'all'>('all');
 
   useEffect(() => {
-    getModels().then(setModels);
+    setModels(DefaultModels());
   }, []);
 
   useEffect(() => {
     setFilteredModels(models.filter((model) => {
       return model.name.toLowerCase().includes(search.toLowerCase()) &&
-        (type === 'all' || model.type === type);
+        (type === 'all' || model.modelType === type);
     }));
   }, [models, search, type]);
 

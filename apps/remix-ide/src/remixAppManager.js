@@ -72,7 +72,6 @@ let requiredModules = [ // services + layout views + system views
   'vyperCompilationDetails',
   'contractflattener',
   'solidity-script',
-  'solcoder',
   'home',
   'doc-viewer',
   'doc-gen',
