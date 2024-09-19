@@ -10,9 +10,11 @@ module.exports = {
             .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
             .waitForElementVisible('button[data-id="landingPageImportFromTemplate"]')
             .click('button[data-id="landingPageImportFromTemplate"]')
+            .waitForElementPresent('*[data-id="create-remixDefault"]')
+            .scrollAndClick('*[data-id="create-remixDefault"]')
             .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
-            .waitForElementPresent('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
-            .click('[data-id="fileSystemModalDialogModalFooter-react"] .modal-ok')
+            .waitForElementPresent('[data-id="TemplatesSelectionModalDialogContainer-react"] .modal-ok')
+            .click('[data-id="TemplatesSelectionModalDialogContainer-react"] .modal-ok')
             .pause(3000)
             .windowHandles(function (result) {
                 console.log(result.value)
@@ -106,7 +108,8 @@ module.exports = {
         browser
             .waitForElementVisible('*[data-id="toggle_replace"]').click('*[data-id="toggle_replace"]')
             .waitForElementVisible('*[id="search_replace"]')
-            .setValue('*[id="search_replace"]', 'replacing').sendKeys('*[id="search_replace"]', browser.Keys.ENTER).pause(1000)
+            .clearValue('*[id="search_include"]').setValue('*[id="search_include"]', 'contracts/2_*.sol')
+            .setValue('*[id="search_replace"]', 'replacing').sendKeys('*[id="search_include"]', browser.Keys.ENTER).pause(1000)
             .waitForElementVisible('*[data-id="contracts/2_Owner.sol-33-71"]')
             .moveToElement('*[data-id="contracts/2_Owner.sol-33-71"]', 10, 10)
             .waitForElementVisible('*[data-id="replace-contracts/2_Owner.sol-33-71"]')
@@ -132,7 +135,8 @@ module.exports = {
     'Should replace all & undo #group1': function (browser: NightwatchBrowser) {
         browser
             .clearValue('*[id="search_input"]')
-            .setValue('*[id="search_input"]', 'storage').sendKeys('*[id="search_input"]', browser.Keys.ENTER)
+            .clearValue('*[id="search_include"]').setValue('*[id="search_include"]', 'contracts/1_*.sol')
+            .setValue('*[id="search_input"]', 'storage').sendKeys('*[id="search_include"]', browser.Keys.ENTER)
             .clearValue('*[id="search_replace"]')
             .setValue('*[id="search_replace"]', '123test').pause(1000)
             .waitForElementVisible('*[data-id="replace-all-contracts/1_Storage.sol"]')
@@ -151,7 +155,8 @@ module.exports = {
     'Should replace all & undo & switch between files #group1': function (browser: NightwatchBrowser) {
         browser.waitForElementVisible('*[id="search_input"]')
             .clearValue('*[id="search_input"]')
-            .setValue('*[id="search_input"]', 'storage').sendKeys('*[id="search_input"]', browser.Keys.ENTER)
+            .clearValue('*[id="search_include"]').setValue('*[id="search_include"]', '*.sol, *.js, *.txt')
+            .setValue('*[id="search_input"]', 'storage').sendKeys('*[id="search_include"]', browser.Keys.ENTER)
             .clearValue('*[id="search_replace"]')
             .setValue('*[id="search_replace"]', '123test').pause(1000)
             .waitForElementVisible('*[data-id="replace-all-contracts/1_Storage.sol"]')
