@@ -6,7 +6,7 @@ console.log('preload.ts', new Date().toLocaleTimeString())
 
 /* preload script needs statically defined API for each plugin */
 
-const exposedPLugins = ['fs', 'git', 'xterm', 'isogit', 'electronconfig', 'electronTemplates', 'ripgrep', 'compilerloader', 'appUpdater', 'remixAID', 'slither']
+const exposedPLugins = ['fs', 'git', 'xterm', 'isogit', 'electronconfig', 'electronTemplates', 'ripgrep', 'compilerloader', 'appUpdater', 'slither', 'foundry', 'hardhat', 'remixAID']
 
 let webContentsId: number | undefined
 
@@ -18,8 +18,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   isPackaged: () => ipcRenderer.invoke('config:isPackaged'),
   isE2E: () => ipcRenderer.invoke('config:isE2E'),
   canTrackMatomo: () => ipcRenderer.invoke('config:canTrackMatomo'),
-  trackEvent: (args: any[]) => ipcRenderer.invoke('matomo:trackEvent', args),
-
+  trackEvent: (args: any[]) => ipcRenderer.invoke('matomo:trackEvent', args), 
+  openFolder: (path: string) => ipcRenderer.invoke('fs:openFolder', webContentsId, path),
+  openFolderInSameWindow: (path: string) => ipcRenderer.invoke('fs:openFolderInSameWindow', webContentsId, path),
   activatePlugin: (name: string) => {
     return ipcRenderer.invoke('manager:activatePlugin', name)
   },
@@ -27,10 +28,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
   plugins: exposedPLugins.map(name => {
     return {
       name,
-      on: (cb:any) => ipcRenderer.on(`${name}:send`, cb),
+      on: (cb:any) => {
+        ipcRenderer.on(`${name}:send`, cb)
+      },
       send: (message: Partial<Message>) => {
+        //if(name === 'isogit') console.log(name, message)
+        //if(name === 'isogit') ipcRenderer.invoke(`logger`, name, message)
         ipcRenderer.send(`${name}:on:${webContentsId}`, message)
       }
     }
   })
+
+
 })
