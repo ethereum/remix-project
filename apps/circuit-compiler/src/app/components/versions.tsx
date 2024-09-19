@@ -23,7 +23,7 @@ export function VersionList ({ currentVersion, versionList, downloadList, setVer
                 <div>
                   <span className={`fas fa-check text-success mr-2 ${currentVersion === version ? 'visible' : 'invisible'}`}></span>
                   <span>
-                    { versionList[version].name }
+                    { isElectron() ? versionList[version].name.replace('wasm', '') : versionList[version].name }
                   </span>
                 </div>
                 { isElectron() ? downloadList.includes(version) ? <div className='far fa-arrow-circle-down'></div> : <div className='fas fa-arrow-circle-down text-success ml-auto'></div> : null }
