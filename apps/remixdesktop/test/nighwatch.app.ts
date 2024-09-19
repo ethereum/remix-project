@@ -92,6 +92,7 @@ module.exports = {
                 break;
             }
             
+            console.log('binaryPath', binaryPath);
             return {
               binary: binaryPath,
               args: args
