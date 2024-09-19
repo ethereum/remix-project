@@ -9,7 +9,7 @@ import { QueryParams } from '@remix-project/remix-lib'
 import * as packageJson from '../../../../../package.json'
 import { compilerConfigChangedToastMsg, compileToastMsg } from '@remix-ui/helper'
 import { isNative } from '../../remixAppManager'
-
+import { Registry } from '@remix-project/remix-lib'
 const profile = {
   name: 'solidity',
   displayName: 'Solidity compiler',
@@ -88,6 +88,10 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
 
   getFileManagerMode () {
     return this.fileManager.mode
+  }
+
+  isDesktop () {
+    return Registry.getInstance().get('platform').api.isDesktop()
   }
 
   /**

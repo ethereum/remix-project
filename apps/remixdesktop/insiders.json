@@ -1,0 +1,62 @@
+{
+    "productName": "Remix-Desktop-Insiders",
+    "appId": "org.ethereum.remix-ide",
+    "asar": true,
+    "generateUpdatesFilesForAllChannels": false,
+    "icon": "assets",
+    "files": [
+        "build/**/*",
+        "node_modules/node-pty/**/*"
+    ],
+    "afterSign": "aftersign.js",
+    "afterAllArtifactBuild": "afterbuild.js",
+    "publish": [
+        {
+            "provider": "github",
+            "owner": "remix-project-org",
+            "repo": "remix-desktop-insiders",
+            "releaseType": "draft",
+            "publishAutoUpdate": true
+        }
+    ],
+    "mac": {
+        "category": "public.app-category.productivity",
+        "icon": "assets/icon.png",
+        "darkModeSupport": true,
+        "hardenedRuntime": true,
+        "gatekeeperAssess": false,
+        "entitlements": "entitlements.mac.plist",
+        "entitlementsInherit": "entitlements.mac.plist"
+    },
+    "dmg": {
+        "writeUpdateInfo": true,
+        "sign": true
+    },
+    "nsis": {
+        "createDesktopShortcut": "always",
+        "allowToChangeInstallationDirectory": true,
+        "oneClick": false,
+        "shortcutName": "Remix Desktop Insiders",
+        "differentialPackage": false
+    },
+    "win": {
+        "target": [
+            "nsis"
+        ],
+        "artifactName": "Remix-Desktop-Setup-${version}.${ext}",
+        "icon": "assets/icon.png"
+    },
+    "deb": {},
+    "linux": {
+        "target": [
+            "deb",
+            "snap",
+            "AppImage"
+        ],
+        "category": "WebBrowser",
+        "icon": "assets"
+    },
+    "directories": {
+        "output": "release"
+    }
+}

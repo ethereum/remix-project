@@ -20,7 +20,6 @@ export const Commits = () => {
   };
 
   const loadNextPage = async () => {
-
     await actions.fetch({
       remote: null,
       ref: context.currentBranch,
@@ -29,7 +28,6 @@ export const Commits = () => {
       singleBranch: true,
       quiet: true
     })
-
     await actions.setStateGitLogCount(context.gitLogCount + 5)
   }
 

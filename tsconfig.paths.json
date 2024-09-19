@@ -180,6 +180,9 @@
             ],
             "@remix-api": [
               "libs/remix-api/src/index.ts"
+            ],
+            "@remix-git": [
+              "libs/remix-git/"
             ]
         }
     }

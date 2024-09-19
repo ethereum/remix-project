@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { gitActionsContext } from "../../state/context";
-import { branch, remote } from "../../types";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
 import { LocalBranchDetails } from "./branches/localbranchdetails";
 import { RemoteBranchDetails } from "./branches/remotebranchedetails";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { branch } from "@remix-api";
 
 const pageLength = 5;
 
@@ -73,7 +73,7 @@ export const Branches = () => {
                         <RemoteBranchDetails allowCheckout={true} key={index} branch={branch}></RemoteBranchDetails>
                       );
                     })}
-                  {context.branches && remoteBranches.length > remoteBranchPage * pageLength && <><GitUIButton className="btn btn-sm" onClick={() => {
+                  {context.branches && remoteBranches.length > remoteBranchPage * pageLength && <><GitUIButton data-id='show-more-branches-on-remote' className="btn btn-sm" onClick={() => {
                     setRemoteBranchPage(remoteBranchPage + 1);
                   }}>Show more</GitUIButton><br></br></>}
                   <GitUIButton data-id={`remote-sync-${context.upstream.name}`} className="btn btn-sm" onClick={async () => {

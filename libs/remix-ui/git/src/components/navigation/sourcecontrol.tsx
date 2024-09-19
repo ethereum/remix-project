@@ -9,6 +9,7 @@ import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
 import { gitPluginContext } from "../gitui";
 import LoaderIndicator from "./loaderindicator";
 import { SourceControlMenu } from "./menu/sourcecontrolmenu";
+import { gitUIPanels } from "../../types";
 
 export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => {
   const pluginactions = React.useContext(pluginActionsContext)
@@ -35,7 +36,7 @@ export const SourceControlNavigation = ({ eventKey, activePanel, callback }) => 
 
         </span>
 
-        <SourceControlBase><SourceControlButtons/></SourceControlBase>
+        <SourceControlBase><SourceControlButtons panel={gitUIPanels.SOURCECONTROL}/></SourceControlBase>
 
       </div>
     </>

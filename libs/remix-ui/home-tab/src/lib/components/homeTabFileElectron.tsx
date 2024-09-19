@@ -32,9 +32,9 @@ export const HomeTabFileElectron = ({ plugin }: HomeTabFileProps) => {
       <label style={{ fontSize: "0.8rem" }} className="pt-2"><FormattedMessage id='home.loadFrom' /></label>
       <div className="d-flex">
 
-        <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={async () => await loadTemplate()}>Project Template</button>
-        <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={async () => await clone()}>Clone a Git Repository</button>
-        <button className="btn p-2 border mr-2" data-id="landingPageImportFromGistButton" onClick={() => importFromGist()}>Gist</button>
+        <button className="btn p-2 border mr-2" data-id="landingPageImportFromTemplate" onClick={async () => await loadTemplate()}>Project Template</button>
+        <button className="btn p-2 border mr-2" data-id="landingPageImportFromGit" onClick={async () => await clone()}>Clone a Git Repository</button>
+        <button className="btn p-2 border mr-2" data-id="landingPageImportFromGist" onClick={() => importFromGist()}>Gist</button>
       </div>
     </div>
   )
