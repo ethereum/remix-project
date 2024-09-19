@@ -67,6 +67,7 @@ module.exports = {
   'Compile blind_auction should success #group1': function (browser: NightwatchBrowser) {
     browser
       // @ts-ignore
+      .clickLaunchIcon('vyper')
       .frame(0)
       .click('[data-id="compile"]')
       .waitForElementVisible({
@@ -209,7 +210,7 @@ const sources = [{
 
   'blindAuction' : { content: `
 # Blind Auction. Adapted to Vyper from [Solidity by Example](https://github.com/ethereum/solidity/blob/develop/docs/solidity-by-example.rst#blind-auction-1)
-#pragma version ^0.3.10
+#pragma version >0.3.10
 
 struct Bid:
   blindedBid: bytes32
