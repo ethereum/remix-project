@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { gitActionsContext } from '../../state/context';
-import { gitMatomoEventTypes, repository } from '../../types';
+import { repository } from '@remix-api';
+import { gitMatomoEventTypes } from '../../types';
 import { selectStyles, selectTheme } from '../../types/styles';
 import { gitPluginContext } from '../gitui';
 import { sendToMatomo } from '../../lib/pluginActions';

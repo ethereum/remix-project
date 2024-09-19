@@ -2,7 +2,7 @@ import { faCaretUp, faCaretDown, faCaretRight, faArrowUp, faArrowDown, faArrowRo
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
 import { gitActionsContext } from "../../state/context";
-import { branch } from "../../types";
+import { branch } from "@remix-api";
 import GitUIButton from "../buttons/gituibutton";
 import { gitPluginContext } from "../gitui";
 import { removeGitFromUrl } from "../../utils";

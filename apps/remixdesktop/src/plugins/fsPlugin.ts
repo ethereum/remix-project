@@ -3,13 +3,16 @@ import fs from 'fs/promises'
 import {Profile} from '@remixproject/plugin-utils'
 import chokidar from 'chokidar'
 import {dialog, shell} from 'electron'
-import {createWindow, isPackaged} from '../main'
+import {createWindow, isE2E, isPackaged} from '../main'
 import {writeConfig} from '../utils/config'
 import path from 'path'
 import {customAction} from '@remixproject/plugin-api'
 import { PluginEventDataBatcher } from '../utils/pluginEventDataBatcher'
 
-
+type recentFolder = {
+  timestamp: number,
+  path: string
+}
 
 const profile: Profile = {
   displayName: 'fs',
@@ -29,36 +32,44 @@ const getBaseName = (pathName: string): string => {
   return path.basename(pathName)
 }
 
+function onlyUnique(value: recentFolder, index: number, self: recentFolder[]) {
+  return self.findIndex((rc, index) => rc.path === value.path) === index
+}
+
+const deplucateFolderList = (list: recentFolder[]): recentFolder[] => {
+  return list.filter(onlyUnique)
+}
+
 export class FSPlugin extends ElectronBasePlugin {
   clients: FSPluginClient[] = []
   constructor() {
-    super(profile, clientProfile, FSPluginClient)
+    super(profile, clientProfile, isE2E? FSPluginClientE2E: FSPluginClient)
     this.methods = [...super.methods, 'closeWatch', 'removeCloseListener']
   }
 
   async onActivation(): Promise<void> {
-    const config = await this.call('electronconfig' as any, 'readConfig')
+    const config = await this.call('electronconfig', 'readConfig')
     const openedFolders = (config && config.openedFolders) || []
-    const recentFolders = (config && config.recentFolders) || []
+    const recentFolders: recentFolder[] = (config && config.recentFolders) || []
     this.call('electronconfig', 'writeConfig', {...config, 
-      recentFolders: recentFolders,
+      recentFolders: deplucateFolderList(recentFolders),
       openedFolders: openedFolders})
     const foldersToDelete: string[] = []
-    if (openedFolders && openedFolders.length) {
-      for (const folder of openedFolders) {
+    if (recentFolders && recentFolders.length) {
+      for (const folder of recentFolders) {
         try {
-          const stat = await fs.stat(folder)
+          const stat = await fs.stat(folder.path);
           if (stat.isDirectory()) {
             // do nothing
           }
         } catch (e) {
           console.log('error opening folder', folder, e)
-          foldersToDelete.push(folder)
+          foldersToDelete.push(folder.path)
         }
       }
       if (foldersToDelete.length) {
-        const newFolders = openedFolders.filter((f: string) => !foldersToDelete.includes(f))
-        this.call('electronconfig', 'writeConfig', {recentFolders: newFolders})
+        const newFolders = recentFolders.filter((f: recentFolder) => !foldersToDelete.includes(f.path))
+        this.call('electronconfig', 'writeConfig', {recentFolders: deplucateFolderList(newFolders)})
       }
     }
     createWindow()
@@ -80,6 +91,13 @@ export class FSPlugin extends ElectronBasePlugin {
     const client = this.clients.find((c) => c.webContentsId === webContentsId)
     if (client) {
       client.openFolder(path)
+    }
+  }
+
+  openFolderInSameWindow(webContentsId: any, path?: string): void {
+    const client = this.clients.find((c) => c.webContentsId === webContentsId)
+    if (client) {
+      client.openFolderInSameWindow(path)
     }
   }
 }
@@ -200,6 +218,7 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async exists(path: string): Promise<boolean> {
+    if (this.workingDir === '') return false
     return fs
       .access(this.fixPath(path))
       .then(() => true)
@@ -257,7 +276,7 @@ class FSPluginClient extends ElectronBasePluginClient {
         depth: 0,
       })
       .on('all', async (eventName, path, stats) => {
-        this.watcherExec(eventName, path)
+        this.watcherExec(eventName, convertPathToPosix(path))
       })
       .on('error', (error) => {
         watcher.close()
@@ -294,7 +313,6 @@ class FSPluginClient extends ElectronBasePluginClient {
     } else {
       try {
         const dirname = path.dirname(pathWithoutPrefix)
-        //console.log('check emitting', eventName, pathWithoutPrefix, this.expandedPaths, dirname)
         if (this.expandedPaths.includes(dirname) || this.expandedPaths.includes(pathWithoutPrefix)) {
           //console.log('emitting', eventName, pathWithoutPrefix, this.expandedPaths)
           //this.emit('change', eventName, pathWithoutPrefix)
@@ -312,11 +330,38 @@ class FSPluginClient extends ElectronBasePluginClient {
     }
   }
 
+  async convertRecentFolders(): Promise<void> {
+    const config = await this.call('electronconfig' as any, 'readConfig')
+    if(config.recentFolders) {
+
+      const remaps = config.recentFolders.map((f: any) => {
+        // if type is string
+        if(typeof f ==='string') {
+          return {
+            path: f,
+            timestamp: new Date().getTime(),
+          }
+        }else{
+          return f
+        }
+      })
+
+      config.recentFolders = remaps
+      await writeConfig(config)
+    }
+  }
+
   async updateRecentFolders(path: string): Promise<void> {
+    await this.convertRecentFolders()
     const config = await this.call('electronconfig' as any, 'readConfig')
     config.recentFolders = config.recentFolders || []
     config.recentFolders = config.recentFolders.filter((p: string) => p !== path)
-    config.recentFolders.push(path)
+    const timestamp = new Date().getTime()
+    config.recentFolders.push({
+      path,
+      timestamp,
+    })
+    config.recentFolders = deplucateFolderList(config.recentFolders)
     writeConfig(config)
   }
 
@@ -336,16 +381,18 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async getRecentFolders(): Promise<string[]> {
+    await this.convertRecentFolders()
     const config = await this.call('electronconfig' as any, 'readConfig')
-    let folders: string[] = config.recentFolders || []
-    folders = folders.map((f: string) => convertPathToPosix(f))
+    let folders: string[] = []
+    folders = (config.recentFolders || []).map((f: recentFolder) => convertPathToPosix(f.path)).sort((a: recentFolder, b: recentFolder) => a.timestamp - b.timestamp).slice(-15).reverse()
     return folders
   }
 
   async removeRecentFolder(path: string): Promise<void> {
+    await this.convertRecentFolders()
     const config = await this.call('electronconfig' as any, 'readConfig')
     config.recentFolders = config.recentFolders || []
-    config.recentFolders = config.recentFolders.filter((p: string) => p !== path)
+    config.recentFolders = config.recentFolders.filter((p: recentFolder) => p.path !== path)
     writeConfig(config)
   }
 
@@ -389,7 +436,7 @@ class FSPluginClient extends ElectronBasePluginClient {
     }
     path = dirs && dirs.length && dirs[0] ? dirs[0] : path
     if (!path) return
-    this.workingDir = path
+    this.workingDir = convertPathToPosix(path)
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
     this.window.setTitle(this.workingDir)
@@ -398,13 +445,14 @@ class FSPluginClient extends ElectronBasePluginClient {
   }
 
   async setWorkingDir(path: string): Promise<void> {
-    this.workingDir = path
+    console.log('setWorkingDir', path)
+    this.workingDir = convertPathToPosix(path)
     await this.updateRecentFolders(path)
     await this.updateOpenedFolders(path)
     this.window.setTitle(getBaseName(this.workingDir))
     this.watch()
     this.emit('workingDirChanged', path)
-    await this.call('fileManager', 'closeAllFiles')
+    return
   }
 
   async revealInExplorer(action: customAction, isAbsolutePath: boolean = false): Promise<void> {
@@ -432,4 +480,44 @@ class FSPluginClient extends ElectronBasePluginClient {
   openWindow(path: string): void {
     createWindow(path)
   }
+}
+
+import os from 'os'
+export class FSPluginClientE2E extends FSPluginClient {
+  constructor(webContentsId: number, profile: Profile) {
+    super(webContentsId, profile)
+  }
+
+  async selectFolder(dir?: string, title?: string, button?: string): Promise<string> {
+    if (!dir) {
+      // create random directory on os homedir
+      const randomdir = path.join(os.homedir(), 'remix-tests' + Date.now().toString())
+      await fs.mkdir(randomdir)
+      return randomdir
+    }
+    if (!dir) return ''
+    return dir
+  }
+
+  async openFolder(dir?: string): Promise<void> {
+    dir = await this.selectFolder(dir)
+
+    await this.updateRecentFolders(dir)
+    await this.updateOpenedFolders(dir)
+    if (!dir) return
+    
+    this.openWindow(dir)
+  }
+
+  async openFolderInSameWindow(dir?: string): Promise<void> {
+    dir = await this.selectFolder(dir)
+    if (!dir) return
+    this.workingDir = convertPathToPosix(dir)
+    await this.updateRecentFolders(dir)
+    await this.updateOpenedFolders(dir)
+    this.window.setTitle(this.workingDir)
+    this.watch()
+    this.emit('workingDirChanged', dir)
+  }
+
 }

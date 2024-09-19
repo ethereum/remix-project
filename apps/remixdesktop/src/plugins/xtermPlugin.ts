@@ -1,18 +1,15 @@
 import {PluginClient} from '@remixproject/plugin'
 import {Profile} from '@remixproject/plugin-utils'
-import {
-  ElectronBasePlugin,
-  ElectronBasePluginClient,
-} from '@remixproject/plugin-electron'
+import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
 
 import os from 'os'
 import * as pty from 'node-pty'
 import process from 'node:process'
 import {userInfo} from 'node:os'
 import {findExecutable} from '../utils/findExecutable'
-import {spawnSync} from 'child_process'
-import { stripAnsi } from '../lib'
-import { DataBatcher } from '../lib/databatcher'
+import {exec, spawnSync} from 'child_process'
+import {stripAnsi} from '../lib'
+import {DataBatcher} from '../lib/databatcher'
 
 export const detectDefaultShell = () => {
   const {env} = process
@@ -38,10 +35,7 @@ export const detectDefaultShell = () => {
 // Stores default shell when imported.
 const defaultShell = detectDefaultShell()
 
-const getShellEnvArgs = [
-  '-ilc',
-  'echo -n "_SHELL_ENV_DELIMITER_"; env; echo -n "_SHELL_ENV_DELIMITER_"; exit',
-]
+const getShellEnvArgs = ['-ilc', 'echo -n "_SHELL_ENV_DELIMITER_"; env; echo -n "_SHELL_ENV_DELIMITER_"; exit']
 
 const getShellEnvEnv = {
   // Disables Oh My Zsh auto-update thing that can block the process.
@@ -81,7 +75,9 @@ export class XtermPlugin extends ElectronBasePlugin {
 
   new(webContentsId: any): void {
     const client = this.clients.find((c) => c.webContentsId === webContentsId)
+    console.log('new terminal', webContentsId)
     if (client) {
+      console.log('client exists')
       client.new()
     }
   }
@@ -104,6 +100,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
   terminals: pty.IPty[] = []
   dataBatchers: DataBatcher[] = []
   workingDir: string = ''
+  parsedEnv: any = null
   constructor(webContentsId: number, profile: Profile) {
     super(webContentsId, profile)
     this.onload(async () => {
@@ -114,6 +111,13 @@ class XtermPluginClient extends ElectronBasePluginClient {
       this.workingDir = await this.call('fs' as any, 'getWorkingDir')
       console.log('workingDir', this.workingDir)
     })
+
+    if (!(process.platform === 'win32')) {
+      const {stdout} = spawnSync(defaultShell, getShellEnvArgs, {
+        encoding: 'utf8',
+      })
+      this.parsedEnv = parseEnv(stdout)
+    }
   }
 
   async keystroke(key: string, pid: number): Promise<void> {
@@ -123,7 +127,7 @@ class XtermPluginClient extends ElectronBasePluginClient {
   async getShells(): Promise<string[]> {
     if (os.platform() === 'win32') {
       let bash = await findExecutable('bash.exe')
-      if(bash.length === 0) {
+      if (bash.length === 0) {
         bash = await findExecutable('bash.exe', undefined, [process.env['ProgramFiles'] + '\\Git\\bin'])
       }
       if (bash) {
@@ -137,40 +141,72 @@ class XtermPluginClient extends ElectronBasePluginClient {
   }
 
   async createTerminal(path?: string, shell?: string): Promise<number> {
-    let parsedEnv: any = null
-    if (!(process.platform === 'win32')) {
-      const {stdout} = spawnSync(defaultShell, getShellEnvArgs, {
-        encoding: 'utf8',
-      })
-      parsedEnv = parseEnv(stdout)
-    }
+    const start_time = Date.now()
+    console.log('createTerminal', path, shell || defaultShell)
 
-    const env = parsedEnv || process.env
+    const env = this.parsedEnv || process.env
 
     const ptyProcess = pty.spawn(shell || defaultShell, [], {
       name: 'xterm-color',
       cols: 80,
       rows: 20,
-      cwd: path || process.cwd(),
+      cwd: path || this.workingDir || process.cwd(),
       env: env,
+      encoding: 'utf8',
     })
     const dataBatcher = new DataBatcher(ptyProcess.pid)
+    this.dataBatchers[ptyProcess.pid] = dataBatcher
     ptyProcess.onData((data: string) => {
       dataBatcher.write(Buffer.from(data))
-      //this.sendData(data, ptyProcess.pid)
+    })
+    ptyProcess.onExit(() => {
+      const pid = ptyProcess.pid
+      this.closeTerminal(pid)
     })
     dataBatcher.on('flush', (data: string, uid: number) => {
       this.sendData(data, uid)
     })
     this.terminals[ptyProcess.pid] = ptyProcess
-
+    const end_time = Date.now()
+    console.log('createTerminal', end_time - start_time)
     return ptyProcess.pid
   }
 
   async closeTerminal(pid: number): Promise<void> {
-    this.terminals[pid].kill()
-    delete this.terminals[pid]
-    this.emit('close', pid)
+    console.log('closeTerminal', pid)
+
+    try {
+      if (this.terminals) {
+
+        if (this.dataBatchers[pid]) delete this.dataBatchers[pid]
+
+        if (this.terminals[pid]) {
+          try {
+            if (os.platform() === 'win32') {
+              // For Windows, use taskkill to terminate the process
+              exec(`taskkill /PID ${pid} /T /F`, (error, stdout, stderr) => {
+                if (error) {
+                  console.error(`Error killing process: ${error}`);
+                }else{
+                  console.log(`stdout: ${stdout}`);
+                  console.error(`stderr: ${stderr}`);
+                }
+              });
+            } else {
+              this.terminals[pid].kill();
+            }
+          } catch (err) {
+            console.error(err)
+            // ignore
+          }
+          delete this.terminals[pid]
+        }
+      }
+      this.emit('close', pid)
+    } catch (err) {
+      console.error(err)
+    }
+
   }
 
   async resize({cols, rows}: {cols: number; rows: number}, pid: number) {
@@ -199,8 +235,6 @@ class XtermPluginClient extends ElectronBasePluginClient {
   }
 
   async new(): Promise<void> {
-    console.log('new terminal')
-    const pid = await this.createTerminal(this.workingDir)
-    this.emit('new', pid)
+    this.emit('new')
   }
 }
