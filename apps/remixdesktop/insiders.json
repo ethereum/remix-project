@@ -5,7 +5,8 @@
     "generateUpdatesFilesForAllChannels": false,
     "icon": "assets",
     "files": [
-        "build/**/*"
+        "build/**/*",
+        "node_modules/node-pty/**/*"
     ],
     "afterSign": "aftersign.js",
     "afterAllArtifactBuild": "afterbuild.js",

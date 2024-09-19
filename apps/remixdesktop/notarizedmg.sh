@@ -11,7 +11,7 @@ echo $DMG_PATHS
 xcrun notarytool store-credentials "notarytool-password" \
                --apple-id ${APPLE_ID} \
                --team-id ${APPLE_TEAM_ID} \
-               --password ${APPLE_ID_PASSWORD}
+               --password ${APPLE_ID_PASSWORD} || exit 1
 
 # Use jq to parse the DMGs array and read each line
 while IFS= read -r DMG_PATH; do

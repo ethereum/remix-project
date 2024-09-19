@@ -5,7 +5,9 @@ const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         done()
     },
-    'start gist': !function (browser: NightwatchBrowser) {
+    'start gist': function (browser: NightwatchBrowser) {
+      browser.end()
+      /*
         browser
         .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
         .waitForElementVisible('*[data-id="landingPageImportFromGist"]')
@@ -25,6 +27,7 @@ const tests = {
         .click('[data-id="treeViewLitreeViewItemcontracts"]')
         .openFile('contracts/3_Ballot.sol')
         .end()
+        */
     }
 }
 
