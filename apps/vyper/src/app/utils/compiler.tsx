@@ -47,7 +47,6 @@ export function normalizeContractPath(contractPath: string): string[] {
 
 function parseErrorString(errorStructure: string[]) {
   // Split the string into lines
-  console.log(errorStructure)
   let errorType = ''
   let message = ''
   let tline = ''
@@ -55,10 +54,10 @@ function parseErrorString(errorStructure: string[]) {
     const choppedup = errorMsg.split(': ')
     errorType = choppedup[0].trim().split('\n')[1]
     message = choppedup[1]
-    if (errorStructure.length > 2) {
-      console.log(choppedup[2].split(',')[1])
-    }
-    console.log(choppedup)
+    // if (errorStructure.length > 2) {
+    //   console.log(choppedup[2].split(',')[1])
+    // }
+    // console.log(choppedup)
   })
   let lines = errorStructure[0].trim().split('\n')
 
@@ -198,7 +197,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
       [contractName] : { content : cleanedUpContent }
     }
   }
-  console.log(compilePackage)
 
   let response = await axios.post(`${url}compile`, compilePackage )
 
@@ -228,7 +226,7 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     const intermediate = await(await axios.get(url + 'exceptions/' + compileCode , {
       method: 'Get'
     })).data
-    console.log('Errors found', intermediate)
+    // console.log('Errors found', intermediate)
     result = parseErrorString(intermediate)
     intermediateError = intermediate
     return result
