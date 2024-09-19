@@ -1,32 +1,29 @@
-import { PluginClient } from '@remixproject/plugin'
-import { Profile } from '@remixproject/plugin-utils'
-import {
-  ElectronBasePlugin,
-  ElectronBasePluginClient,
-} from '@remixproject/plugin-electron'
+import {PluginClient} from '@remixproject/plugin'
+import {Profile} from '@remixproject/plugin-utils'
+import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
 
 import os from 'os'
 import * as pty from 'node-pty'
 import process from 'node:process'
-import { userInfo } from 'node:os'
-import { findExecutable } from '../utils/findExecutable'
-import { spawnSync } from 'child_process'
-import { stripAnsi } from '../lib'
-import { DataBatcher } from '../lib/databatcher'
+import {userInfo} from 'node:os'
+import {findExecutable} from '../utils/findExecutable'
+import {exec, spawnSync} from 'child_process'
+import {stripAnsi} from '../lib'
+import {DataBatcher} from '../lib/databatcher'
 
 export const detectDefaultShell = () => {
-  const { env } = process
+  const {env} = process
 
   if (process.platform === 'win32') {
     return env.SHELL || 'powershell.exe'
   }
 
   try {
-    const { shell } = userInfo()
+    const {shell} = userInfo()
     if (shell) {
       return shell
     }
-  } catch { }
+  } catch {}
 
   if (process.platform === 'darwin') {
     return env.SHELL || '/bin/zsh'
@@ -38,10 +35,7 @@ export const detectDefaultShell = () => {
 // Stores default shell when imported.
 const defaultShell = detectDefaultShell()
 
-const getShellEnvArgs = [
-  '-ilc',
-  'echo -n "_SHELL_ENV_DELIMITER_"; env; echo -n "_SHELL_ENV_DELIMITER_"; exit',
-]
+const getShellEnvArgs = ['-ilc', 'echo -n "_SHELL_ENV_DELIMITER_"; env; echo -n "_SHELL_ENV_DELIMITER_"; exit']
 
 const getShellEnvEnv = {
   // Disables Oh My Zsh auto-update thing that can block the process.
@@ -117,9 +111,9 @@ class XtermPluginClient extends ElectronBasePluginClient {
       this.workingDir = await this.call('fs' as any, 'getWorkingDir')
       console.log('workingDir', this.workingDir)
     })
-    
+
     if (!(process.platform === 'win32')) {
-      const { stdout } = spawnSync(defaultShell, getShellEnvArgs, {
+      const {stdout} = spawnSync(defaultShell, getShellEnvArgs, {
         encoding: 'utf8',
       })
       this.parsedEnv = parseEnv(stdout)
@@ -149,7 +143,6 @@ class XtermPluginClient extends ElectronBasePluginClient {
   async createTerminal(path?: string, shell?: string): Promise<number> {
     const start_time = Date.now()
     console.log('createTerminal', path, shell || defaultShell)
-   
 
     const env = this.parsedEnv || process.env
 
@@ -160,11 +153,10 @@ class XtermPluginClient extends ElectronBasePluginClient {
       cwd: path || this.workingDir || process.cwd(),
       env: env,
       encoding: 'utf8',
-    });
+    })
     const dataBatcher = new DataBatcher(ptyProcess.pid)
     this.dataBatchers[ptyProcess.pid] = dataBatcher
     ptyProcess.onData((data: string) => {
-      //console.log('data', data)
       dataBatcher.write(Buffer.from(data))
     })
     ptyProcess.onExit(() => {
@@ -181,27 +173,48 @@ class XtermPluginClient extends ElectronBasePluginClient {
   }
 
   async closeTerminal(pid: number): Promise<void> {
-    if (this.terminals) {
-      if (this.terminals[pid]) {
-        try {
-          this.terminals[pid].kill()
-        } catch (err) {
-          // ignore
+    console.log('closeTerminal', pid)
+
+    try {
+      if (this.terminals) {
+
+        if (this.dataBatchers[pid]) delete this.dataBatchers[pid]
+
+        if (this.terminals[pid]) {
+          try {
+            if (os.platform() === 'win32') {
+              // For Windows, use taskkill to terminate the process
+              exec(`taskkill /PID ${pid} /T /F`, (error, stdout, stderr) => {
+                if (error) {
+                  console.error(`Error killing process: ${error}`);
+                }else{
+                  console.log(`stdout: ${stdout}`);
+                  console.error(`stderr: ${stderr}`);
+                }
+              });
+            } else {
+              this.terminals[pid].kill();
+            }
+          } catch (err) {
+            console.error(err)
+            // ignore
+          }
+          delete this.terminals[pid]
         }
-        delete this.terminals[pid]
       }
-      if (this.dataBatchers[pid])
-        delete this.dataBatchers[pid]
+      this.emit('close', pid)
+    } catch (err) {
+      console.error(err)
     }
-    this.emit('close', pid)
+
   }
 
-  async resize({ cols, rows }: { cols: number; rows: number }, pid: number) {
+  async resize({cols, rows}: {cols: number; rows: number}, pid: number) {
     if (this.terminals[pid]) {
       try {
         this.terminals[pid].resize(cols, rows)
       } catch (_err) {
-        const err = _err as { stack: any }
+        const err = _err as {stack: any}
         console.error(err.stack)
       }
     } else {

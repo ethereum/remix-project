@@ -12,7 +12,7 @@ export const baseURLWasm = 'https://binaries.soliditylang.org/wasm'
 const appExpress = express()
 
 // used in e2e tests
-const useOffline = process.argv.includes('--useOffline');
+const useOffline = process.argv.includes('--use-offline');
 
 console.log('cacheDir', cacheDir)
 appExpress.use(express.static(cacheDir))
