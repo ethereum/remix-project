@@ -1,17 +1,35 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
+    "target": "ES2018",
+    "allowJs": true,
+    "module": "CommonJS",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "noImplicitAny": true,
-    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
     "sourceMap": true,
-    "strictPropertyInitialization": false,
-    "strict": true,
-    "outDir": "build",
-    "rootDir": "./src/",
-    "noEmitOnError": true,
-    "typeRoots": ["node_modules/@types", "./types"]
-  }
+    "baseUrl": ".",
+    "outDir": "./build",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "paths": {
+      "*": [
+        "node_modules/*"
+      ],
+      "@remix-api": [
+        "../../libs/remix-api/src/lib/types/git.ts"
+      ],
+      "@remix-git": [
+        "../../libs/remix-git/"
+      ],
+    },
+    "typeRoots": [
+      "src/**/*.d.ts",
+      "node_modules/@types",
+      "test/**/*.d.ts",
+      "../remix-ide-e2e/src/**/*.d.ts"
+    ]
+  },
+  "include": [
+    "src/**/*",
+  ]
 }

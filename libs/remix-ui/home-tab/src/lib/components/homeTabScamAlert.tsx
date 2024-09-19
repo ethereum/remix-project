@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from 'react'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
+import React, { useContext } from 'react'
 import { FormattedMessage } from 'react-intl'
 
 const _paq = (window._paq = window._paq || []) // eslint-disable-line
 
 function HomeTabScamAlert() {
+  const platform = useContext(platformContext)
   return (
     <div className="" id="hTScamAlertSection">
       <label className="pl-2 text-danger" style={{ fontSize: '1.2rem' }}>
@@ -15,9 +17,10 @@ function HomeTabScamAlert() {
           <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }} className="pr-2 text-danger far fa-exclamation-triangle"></i>
         </span>
         <div className="d-flex flex-column">
-          <span className="pl-4 mt-1">
-            <FormattedMessage id="home.scamAlertText" />
-          </span>
+          {platform === appPlatformTypes.web && (
+            <span className="pl-4 mt-1">
+              <FormattedMessage id="home.scamAlertText" />
+            </span>)}
           <span className="pl-4 mt-1">
             <FormattedMessage id="home.scamAlertText2" />:
             <a

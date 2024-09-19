@@ -1,15 +1,18 @@
-import {Profile} from '@remixproject/plugin-utils'
-import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
+import { Profile } from '@remixproject/plugin-utils'
+import { ElectronBasePlugin, ElectronBasePluginClient } from '@remixproject/plugin-electron'
 import fs from 'fs/promises'
 import axios from 'axios'
 
 import express from 'express'
-import {cacheDir} from '../utils/config'
+import { cacheDir } from '../utils/config'
 
 export const baseURLBin = 'https://binaries.soliditylang.org/bin'
 export const baseURLWasm = 'https://binaries.soliditylang.org/wasm'
 
 const appExpress = express()
+
+// used in e2e tests
+const useOffline = process.argv.includes('--use-offline');
 
 console.log('cacheDir', cacheDir)
 appExpress.use(express.static(cacheDir))
@@ -28,9 +31,9 @@ export class CompilerLoaderPlugin extends ElectronBasePlugin {
   constructor() {
     super(profile, clientProfile, CompilerLoaderPluginClient)
     this.methods = [...super.methods]
-    ;(async () => {
-      await getLists()
-    })()
+      ; (async () => {
+        await getLists()
+      })()
   }
 
 
@@ -66,16 +69,14 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
   }
 
   async onActivation(): Promise<void> {
-    console.log('onActivation', 'CompilerLoaderPluginClient')
     this.onload(() => {
-      console.log('onload', 'CompilerLoaderPluginClient')
       this.emit('loaded')
     })
   }
 
   async downloadCompiler(url: string): Promise<void> {
     console.log('downloadCompiler', url)
-    if(url.includes('localhost')) return
+    if (url.includes('localhost')) return
     const plugin = this
     try {
       const fileName = url.split('/').pop()
@@ -129,7 +130,7 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
 
   async getJsonBinData() {
     const lists = await this.getLists()
-    
+
     this.solJsonBinData = {
       baseURLWasm: 'http://localhost:' + (server.address() as any).port + '/compilers',
       baseURLBin: 'http://localhost:' + (server.address() as any).port + '/compilers',
@@ -139,11 +140,11 @@ class CompilerLoaderPluginClient extends ElectronBasePluginClient {
 
     const localCompilers = await this.listCompilers()
     this.solJsonBinData.wasmList && (this.solJsonBinData.wasmList = this.solJsonBinData.wasmList.map((item) => {
-      localCompilers.includes(item.path) ? (item.wasmURL = 'http://localhost:' + (server.address() as any).port + '/compilers/') && (item.isDownloaded=true) : (item.wasmURL = baseURLWasm) && (item.isDownloaded = false)
+      localCompilers.includes(item.path) ? (item.wasmURL = 'http://localhost:' + (server.address() as any).port + '/compilers/') && (item.isDownloaded = true) : (item.wasmURL = baseURLWasm) && (item.isDownloaded = false)
       return item
     }))
     this.solJsonBinData.binList && (this.solJsonBinData.binList = this.solJsonBinData.binList.map((item) => {
-      localCompilers.includes(item.path) ? (item.binURL = 'http://localhost:' + (server.address() as any).port + '/compilers/') && (item.isDownloaded=true) : (item.binURL = baseURLBin) && (item.isDownloaded = false)
+      localCompilers.includes(item.path) ? (item.binURL = 'http://localhost:' + (server.address() as any).port + '/compilers/') && (item.isDownloaded = true) : (item.binURL = baseURLBin) && (item.isDownloaded = false)
       return item
     }))
     this.emit('jsonBinDataLoaded', this.solJsonBinData)
@@ -158,17 +159,19 @@ const getLists = async () => {
   let binData
   let wasmData
 
-  try {
-    const binRes = await axios.get(baseURLBin + '/list.json')
-    await fs.writeFile(cacheDir + '/binlist.json', JSON.stringify(binRes.data, null, 2))
-    binData = binRes.data
-  } catch (e) {}
+  if (!useOffline) {
+    try {
+      const binRes = await axios.get(baseURLBin + '/list.json')
+      await fs.writeFile(cacheDir + '/binlist.json', JSON.stringify(binRes.data, null, 2))
+      binData = binRes.data
+    } catch (e) { }
 
-  try {
-    const wasmRes = await axios.get(baseURLWasm + '/list.json')
-    await fs.writeFile(cacheDir + '/wasmlist.json', JSON.stringify(wasmRes.data, null, 2))
-    wasmData = wasmRes.data
-  } catch (e) {}
+    try {
+      const wasmRes = await axios.get(baseURLWasm + '/list.json')
+      await fs.writeFile(cacheDir + '/wasmlist.json', JSON.stringify(wasmRes.data, null, 2))
+      wasmData = wasmRes.data
+    } catch (e) { }
+  }
 
   if (!wasmData) {
     try {

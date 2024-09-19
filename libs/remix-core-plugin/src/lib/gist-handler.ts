@@ -2,6 +2,7 @@
 'use strict'
 import { Plugin } from '@remixproject/engine'
 import isElectron from 'is-electron'
+import { Registry } from '@remix-project/remix-lib'
 
 interface StringByString {
   [key: string]: string;
@@ -17,12 +18,16 @@ const profile = {
 type GistCallBackFn = (gistId: string) => void
 
 export class GistHandler extends Plugin {
-  constructor () {
+  isDesktop: boolean = false
+  constructor() {
     super(profile)
+    if (Registry.getInstance().get('platform').api.isDesktop()) {
+      this.isDesktop = true
+    }
   }
 
-  async handleLoad (gistId: string | null, cb: GistCallBackFn) {
-    if (!cb) cb = () => {}
+  async handleLoad(gistId: string | null, cb: GistCallBackFn) {
+    if (!cb) cb = () => { }
 
     let loadingFromGist = false
     if (!gistId) {
@@ -36,7 +41,7 @@ export class GistHandler extends Plugin {
               title: 'Load a Gist',
               message: 'Enter the ID of the Gist or URL you would like to load.',
               modalType: 'prompt',
-              okLabel: 'OK',
+              okLabel: (this.isDesktop ? 'Load and select destination' : 'OK'),
               cancelLabel: 'Cancel',
               okFn: (value) => {
                 setTimeout(() => resolve(value), 0)
@@ -86,7 +91,7 @@ export class GistHandler extends Plugin {
     return loadingFromGist
   }
 
-  load (gistId: string | null) {
+  load(gistId: string | null) {
     const self = this
     return self.handleLoad(gistId, async (gistId: string | null) => {
       let data: any
@@ -115,34 +120,38 @@ export class GistHandler extends Plugin {
       }
 
       const gistIdWorkspace = 'gist ' + gistId
-      const workspaces = await this.call('filePanel', 'getWorkspaces')
-      const found = workspaces.find((workspace) => workspace.name === gistIdWorkspace)
-      if (found) {
-        await this.call('notification', 'alert', {
-          id: 'gistAlert',
-          message: `workspace "${gistIdWorkspace}" already exists`,
-        })
-        return
-      }
-      await this.call('filePanel', 'createWorkspace', 'gist ' + gistId, '', true)
-      await this.call('filePanel', 'switchToWorkspace', { name: 'gist ' + gistId, isLocalHost: false })
-
       const obj: StringByString = {}
       Object.keys(data.files).forEach((element) => {
         const path = element.replace(/\.\.\./g, '/')
         obj['/' + path] = data.files[element]
       })
-      this.call('fileManager', 'setBatchFiles', obj, isElectron()? 'electron':'workspace', true, async (errorSavingFiles: any) => {
-        if (errorSavingFiles) {
-          const modalContent = {
-            id: 'gisthandler',
-            title: 'Gist load error',
-            message: errorSavingFiles.message || errorSavingFiles
 
-          }
-          this.call('notification', 'alert', modalContent)
+      if (this.isDesktop) {
+        await this.call('remix-templates', 'loadFilesInNewWindow', obj)
+      } else {
+        const workspaces = await this.call('filePanel', 'getWorkspaces')
+        const found = workspaces.find((workspace) => workspace.name === gistIdWorkspace)
+        if (found) {
+          await this.call('notification', 'alert', {
+            id: 'gistAlert',
+            message: `workspace "${gistIdWorkspace}" already exists`,
+          })
+          return
         }
-      })
+        await this.call('filePanel', 'createWorkspace', 'gist ' + gistId, '', true)
+        await this.call('filePanel', 'switchToWorkspace', { name: 'gist ' + gistId, isLocalHost: false })
+        this.call('fileManager', 'setBatchFiles', obj, isElectron() ? 'electron' : 'workspace', true, async (errorSavingFiles: any) => {
+          if (errorSavingFiles) {
+            const modalContent = {
+              id: 'gisthandler',
+              title: 'Gist load error',
+              message: errorSavingFiles.message || errorSavingFiles
+
+            }
+            this.call('notification', 'alert', modalContent)
+          }
+        })
+      }
     })
   }
 }

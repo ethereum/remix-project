@@ -28,7 +28,7 @@ export const ElectronMenu = () => {
     (platform !== appPlatformTypes.desktop) ? null :
       (global.fs.browser.isSuccessfulWorkspace ? null :
         <>
-          <div onClick={async () => { await openFolderElectron(null) }} className='btn btn-primary'><FormattedMessage id="electron.openFolder" /></div>
+          <div data-id="openFolderButton" onClick={async () => { await openFolderElectron(null) }} className='btn btn-primary'><FormattedMessage id="electron.openFolder" /></div>
           {global.fs.browser.recentFolders.length > 0 ?
             <>
               <label className="py-2 pt-3 align-self-center m-0">

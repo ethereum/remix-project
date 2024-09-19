@@ -4,11 +4,12 @@ import { gitPluginContext } from "../gitui";
 import { default as dateFormat } from "dateformat";
 import { RemotesDetailsNavigation } from "../navigation/remotesdetails";
 import { Accordion } from "react-bootstrap";
-import { branch, remote } from "../../types";
+import { remote } from "@remix-api";
 import { RemoteBranchDetails } from "./branches/remotebranchedetails";
 import GitUIButton from "../buttons/gituibutton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
+import { branch } from "@remix-api";
 
 export interface RemoteSelectProps {
   remote: remote

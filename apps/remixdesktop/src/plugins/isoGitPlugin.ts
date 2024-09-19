@@ -1,19 +1,19 @@
-import { PluginClient } from "@remixproject/plugin";
-import { Profile } from "@remixproject/plugin-utils";
-import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
+import {Profile} from '@remixproject/plugin-utils'
+import {ElectronBasePlugin, ElectronBasePluginClient} from '@remixproject/plugin-electron'
 import fs from 'fs/promises'
 import git from 'isomorphic-git'
-import { dialog } from "electron";
 import http from 'isomorphic-git/http/web'
-import { gitProxy } from "../tools/git";
-import { remote } from "../types";
+import {gitProxy} from '../tools/git'
+import {isoGit} from '@remix-git'
+import {branchDifference, branchInputType, checkoutInputType, cloneInputType, commitChange, commitInputType, compareBranchesInput, currentBranchInput, fetchInputType, initInputType, logInputType, pullInputType, pushInputType, remote, resolveRefInput, statusInput} from '@remix-api'
 
 const profile: Profile = {
   name: 'isogit',
   displayName: 'isogit',
   description: 'isogit plugin',
 }
-
+// used in e2e tests
+const useIsoGit = process.argv.includes('--use-isogit')
 export class IsoGitPlugin extends ElectronBasePlugin {
   clients: IsoGitPluginClient[] = []
   constructor() {
@@ -21,24 +21,9 @@ export class IsoGitPlugin extends ElectronBasePlugin {
   }
 
   startClone(webContentsId: any): void {
-    const client = this.clients.find(c => c.webContentsId === webContentsId)
+    const client = this.clients.find((c) => c.webContentsId === webContentsId)
     if (client) {
       client.startClone()
-    }
-  }
-}
-
-const parseInput = (input: any) => {
-  return {
-    corsProxy: 'https://corsproxy.remixproject.org/',
-    http,
-    onAuth: (url: any) => {
-      url
-      const auth = {
-        username: input.token,
-        password: ''
-      }
-      return auth
     }
   }
 }
@@ -47,7 +32,7 @@ const clientProfile: Profile = {
   name: 'isogit',
   displayName: 'isogit',
   description: 'isogit plugin',
-  methods: ['init', 'localStorageUsed', 'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'reset', 'rm', 'lsfiles', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder']
+  methods: ['init', 'localStorageUsed', 'version', 'addremote', 'delremote', 'remotes', 'fetch', 'clone', 'export', 'import', 'status', 'log', 'commit', 'add', 'remove', 'rm', 'readblob', 'resolveref', 'branches', 'branch', 'checkout', 'currentbranch', 'push', 'pin', 'pull', 'pinList', 'unPin', 'setIpfsConfig', 'zip', 'setItem', 'getItem', 'openFolder', 'getCommitChanges', 'compareBranches', 'startClone', 'updateSubmodules'],
 }
 
 class IsoGitPluginClient extends ElectronBasePluginClient {
@@ -58,15 +43,15 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     this.onload(async () => {
       this.on('fs' as any, 'workingDirChanged', async (path: string) => {
         this.workingDir = path
-        this.gitIsInstalled = await gitProxy.version() ? true : false
+        this.gitIsInstalled = (await gitProxy.version()) && !useIsoGit ? true : false
       })
       this.workingDir = await this.call('fs' as any, 'getWorkingDir')
-      this.gitIsInstalled = await gitProxy.version() ? true : false
+      this.gitIsInstalled = (await gitProxy.version()) && !useIsoGit ? true : false
     })
   }
 
   async version() {
-    return gitProxy.version()
+    return this.gitIsInstalled ? gitProxy.version() : 'built-in'
   }
 
   async getGitConfig() {
@@ -76,12 +61,11 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
   }
 
-  async status(cmd: any) {
+  async status(cmd: statusInput) {
 
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
-
 
     if (this.workingDir === '') {
       return []
@@ -93,30 +77,25 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
 
     const status = await git.statusMatrix({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
-    //console.log('STATUS', status, await this.getGitConfig())
+
     return status
   }
 
-  async log(cmd: any) {
+  async log(cmd: logInputType) {
 
-    /* we will use isomorphic git for now
-    if(this.gitIsInstalled){
-      const log = await gitProxy.log(this.workingDir, cmd.ref)
-      console.log('LOG', log)
-      return log
-    }
-    */
+    const token = await this.call('config' as any, 'getAppParameter', 'settings/gist-access-token')
 
     if (this.workingDir === '') {
       return []
     }
 
     const log = await git.log({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
+      depth: cmd.depth || 10,
     })
 
     return log
@@ -128,62 +107,45 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
 
     const add = await git.add({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return add
   }
 
   async rm(cmd: any) {
-
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     const rm = await git.remove({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return rm
   }
 
-  async reset(cmd: any) {
-
-    if (!this.workingDir || this.workingDir === '') {
-      throw new Error('No working directory')
-    }
-
-    const reset = await git.resetIndex({
-      ...await this.getGitConfig(),
-      ...cmd
-    })
-
-    return reset
-  }
-
-
-  async commit(cmd: any) {
+  async commit(cmd: commitInputType) {
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     if (this.gitIsInstalled) {
-      const status = await gitProxy.commit(this.workingDir, cmd.message)
+      const status = await gitProxy.commit(this.workingDir, cmd)
       return status
     }
 
     const commit = await git.commit({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return commit
   }
 
-  async init(input: any) {
-
+  async init(input: initInputType) {
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
@@ -192,157 +154,119 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
       return status
     }
     await git.init({
-      ...await this.getGitConfig(),
-      defaultBranch: (input && input.branch) || 'main'
+      ...(await this.getGitConfig()),
+      defaultBranch: (input && input.defaultBranch) || 'main',
     })
   }
 
-  async branch(cmd: any) {
+  async branch(cmd: branchInputType) {
     if (!this.workingDir || this.workingDir === '') {
       return null
     }
     const branch = await git.branch({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return branch
   }
 
-  async lsfiles(cmd: any) {
-    if (!this.workingDir || this.workingDir === '') {
-      return []
-    }
-    const lsfiles = await git.listFiles({
-      ...await this.getGitConfig(),
-      ...cmd
-    })
-    return lsfiles
-  }
+  async resolveref(cmd: resolveRefInput) {
 
-  async resolveref(cmd: any) {
     if (!this.workingDir || this.workingDir === '') {
       return null
     }
 
     const resolveref = await git.resolveRef({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return resolveref
   }
 
-
   async readblob(cmd: any) {
-
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     const readblob = await git.readBlob({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      ...cmd,
     })
 
     return readblob
   }
 
-  async checkout(cmd: any) {
+  async checkout(cmd: checkoutInputType) {
 
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
-
-    const checkout = await git.checkout({
-      ...await this.getGitConfig(),
-      ...cmd
-    })
-
-    return checkout
+    if (this.gitIsInstalled) {
+      return await gitProxy.checkout(this.workingDir, cmd)
+    } else {
+      const checkout = await git.checkout({
+        ...(await this.getGitConfig()),
+        ...cmd,
+      })
+      return checkout
+    }
   }
 
-  async push(cmd: any) {
-
+  async push(input: pushInputType) {
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     if (this.gitIsInstalled) {
-      await gitProxy.push(this.workingDir, cmd.remote, cmd.ref, cmd.remoteRef, cmd.force)
-
+      return await gitProxy.push(this.workingDir, input)
     } else {
-
-      const push = await git.push({
-        ...await this.getGitConfig(),
-        ...cmd,
-        ...parseInput(cmd.input)
-      })
+      const push = await isoGit.push(input, await this.getGitConfig(), this)
       return push
     }
-
   }
 
-  async pull(cmd: any) {
+  async pull(input: pullInputType) {
 
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     if (this.gitIsInstalled) {
-      await gitProxy.pull(this.workingDir, cmd.remote, cmd.ref, cmd.remoteRef)
-
+      return await gitProxy.pull(this.workingDir, input)
     } else {
-
-      const pull = await git.pull({
-        ...await this.getGitConfig(),
-        ...cmd,
-        ...parseInput(cmd.input)
-      })
-
+      const pull = await isoGit.pull(input, await this.getGitConfig(), this)
       return pull
-
     }
   }
 
-  async fetch(cmd: any) {
+  async fetch(input: fetchInputType) {
 
     if (!this.workingDir || this.workingDir === '') {
       throw new Error('No working directory')
     }
 
     if (this.gitIsInstalled) {
-      await gitProxy.fetch(this.workingDir, cmd.remote, cmd.remoteRef)
-
+      await gitProxy.fetch(this.workingDir, input)
     } else {
-
-      const fetch = await git.fetch({
-        ...await this.getGitConfig(),
-        ...cmd,
-        ...parseInput(cmd.input)
-      })
-
+      const fetch = await isoGit.fetch(input, await this.getGitConfig(), this)
       return fetch
     }
   }
 
-  async clone(cmd: any) {
-
+  async clone(cmd: cloneInputType) {
     if (this.gitIsInstalled) {
       try {
-        await gitProxy.clone(cmd.url, cmd.dir)
+        this.call('terminal' as any, 'log', 'Cloning using git... please wait.')
+        await gitProxy.clone(cmd)
       } catch (e) {
         throw e
       }
     } else {
       try {
-        const clone = await git.clone({
-          ...await this.getGitConfig(),
-          ...cmd,
-          ...parseInput(cmd.input),
-          dir: cmd.dir || this.workingDir
-        })
-
+        this.call('terminal' as any, 'log', 'Cloning using builtin git... please wait.')
+        const clone = await isoGit.clone(cmd, await this.getGitConfig(), this)
         return clone
       } catch (e) {
         console.log('CLONE ERROR', e)
@@ -351,85 +275,74 @@ class IsoGitPluginClient extends ElectronBasePluginClient {
     }
   }
 
-  async addremote(cmd: any) {
-
+  async addremote(input: remote) {
     const addremote = await git.addRemote({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      url: input.url,
+      remote: input.name,
     })
 
     return addremote
   }
 
-  async delremote(cmd: any) {
-
+  async delremote(input: remote) {
     const delremote = await git.deleteRemote({
-      ...await this.getGitConfig(),
-      ...cmd
+      ...(await this.getGitConfig()),
+      remote: input.name,
     })
 
     return delremote
   }
 
+  async remotes() {
 
-
-  remotes = async () => {
     if (!this.workingDir || this.workingDir === '') {
       return []
     }
-    let remotes: remote[] = []
-    remotes = (await git.listRemotes({ ...await this.getGitConfig() })).map((remote) => { return { name: remote.remote, url: remote.url } }
-    )
-    return remotes
+    const defaultConfig = await this.getGitConfig()
+    return await isoGit.remotes(defaultConfig)
   }
 
-  async currentbranch() {
+  async currentbranch(input: currentBranchInput) {
+
     if (!this.workingDir || this.workingDir === '') {
       return ''
     }
-    try {
-      const defaultConfig = await this.getGitConfig()
-      const name = await git.currentBranch(defaultConfig)
-
-      return name
-    } catch (e) {
-      return ''
-    }
+    const defaultConfig = await this.getGitConfig()
+    return await isoGit.currentbranch(input, defaultConfig)
   }
 
+  async branches(config: any) {
 
-  async branches() {
     if (!this.workingDir || this.workingDir === '') {
       return []
     }
-    try {
-      let cmd: any = { ...await this.getGitConfig() }
-      const remotes = await this.remotes()
-      let branches = []
-      branches = (await git.listBranches(cmd)).map((branch) => { return { remote: undefined, name: branch } })
-      for (const remote of remotes) {
-        cmd = {
-          ...cmd,
-          remote: remote.name
-        }
 
-        const remotebranches = (await git.listBranches(cmd)).map((branch) => { return { remote: remote.name, name: branch } })
-        branches = [...branches, ...remotebranches]
-
-      }
-
-      return branches
-    } catch (e) {
-      return []
-    }
+    const defaultConfig = await this.getGitConfig()
+    return await isoGit.branches(defaultConfig)
   }
-
 
   async startClone() {
     this.call('filePanel' as any, 'clone')
   }
 
+  async getCommitChanges(commitHash1: string, commitHash2: string): Promise<commitChange[]> {
+    return await isoGit.getCommitChanges(commitHash1, commitHash2, await this.getGitConfig())
+  }
+
+  async compareBranches({branch, remote}: compareBranchesInput): Promise<branchDifference> {
+    return await isoGit.compareBranches({branch, remote}, await this.getGitConfig())
+  }
+
+  async updateSubmodules(input) {
+    if (this.gitIsInstalled) {
+      try {
+        return await gitProxy.updateSubmodules(this.workingDir)
+      } catch (e) {
+        throw e
+      }
+    } else {
+      this.call('terminal', 'log', {type: 'error', value: 'Please install git into your OS to use this functionality...'})
+    }
+  }
 }
-
-
-

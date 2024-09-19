@@ -43,10 +43,11 @@ import { ROOT_PATH } from '../utils/constants'
 import { IndexedDBStorage } from '../../../../../../apps/remix-ide/src/app/files/filesystems/indexedDB'
 import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
-import { branch, cloneInputType, IGitApi, gitUIPanels } from '@remix-ui/git'
+
+import { gitUIPanels } from '@remix-ui/git'
 import * as templates from '@remix-project/remix-ws-templates'
 import { Plugin } from "@remixproject/engine";
-import { CustomRemixApi } from '@remix-api'
+import { CustomRemixApi, branch, cloneInputType } from '@remix-api'
 
 declare global {
   interface Window {

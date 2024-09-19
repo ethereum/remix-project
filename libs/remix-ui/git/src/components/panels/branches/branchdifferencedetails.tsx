@@ -3,7 +3,7 @@ import { Accordion } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import { CommitDetails } from "../commits/commitdetails";
 import { CommitsNavigation } from "../../navigation/commits";
-import { branch, remote } from "../../../types";
+import { branch, remote } from "@remix-api";
 import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
 
