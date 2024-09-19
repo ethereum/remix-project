@@ -45,22 +45,30 @@ export function normalizeContractPath(contractPath: string): string[] {
   return [folders,resultingPath, filename]
 }
 
-function parseErrorString(errorString) {
+function parseErrorString(errorStructure: string[]) {
   // Split the string into lines
-  let lines = errorString.trim().split('\n')
-  // Extract the line number and message
-  let message = errorString.trim()
-  let targetLine = lines[2].split(',')
-  let tline = lines[2].trim().split(' ')[1].split(':')
+  let errorType = ''
+  let message = ''
+  let tline = ''
+  errorStructure.forEach(errorMsg => {
+    const choppedup = errorMsg.split(': ')
+    errorType = choppedup[0].trim().split('\n')[1]
+    message = choppedup[1]
+    // if (errorStructure.length > 2) {
+    //   console.log(choppedup[2].split(',')[1])
+    // }
+    // console.log(choppedup)
+  })
+  let lines = errorStructure[0].trim().split('\n')
 
   const errorObject = {
     status: 'failed',
-    message: message,
-    column: tline[1],
-    line: tline[0]
+    message: `${errorType} - ${message}`,
+    column: '',
+    line: ''
   }
   message = null
-  targetLine = null
+  // targetLine = null
   lines = null
   tline = null
   return errorObject
@@ -109,10 +117,10 @@ const compileReturnType = (output, contract) => {
   const normal = normalizeContractPath(contract)[2]
   const abi = temp[normal]['abi']
   const evm = _.merge(temp[normal]['evm'])
-  const dpb = evm.deployedBytecode
+  const depByteCode = evm.deployedBytecode
   const runtimeBytecode = evm.bytecode
   const methodIdentifiers = evm.methodIdentifiers
-  const version = output?.compilers[0]?.version ?? '0.3.10'
+  const version = output?.compilers[0]?.version ?? '0.4.0'
   const optimized = output?.compilers[0]?.settings?.optimize ?? true
   const evmVersion = ''
 
@@ -129,7 +137,7 @@ const compileReturnType = (output, contract) => {
   } = {
     contractName: normal,
     abi,
-    bytecode: dpb,
+    bytecode: depByteCode,
     runtimeBytecode,
     ir: '',
     methodIdentifiers,
@@ -140,24 +148,30 @@ const compileReturnType = (output, contract) => {
   return result
 }
 
-const fixContractContent = (content: string) => {
-  if (content.length === 0) return
-  const pragmaFound = content.includes('#pragma version ^0.3.10')
-  const wrongpragmaFound = content.includes('# pragma version ^0.3.10')
-  const evmVerFound = content.includes('#pragma evm-version shanghai')
-  const pragma = '#pragma version ^0.3.10'
-  const evmVer = '#pragma evm-version shanghai'
+const updatePragmaDeclaration = (content: string) => {
+  const pragmaRegex = /#\s*pragma\s+[@]*version\s+([~<>!=^]+)\s*(\d+\.\d+\.\d+)/
+  const oldPragmaRegex = /#\s*pragma\s+[@]*version\s+([\^^]+)\s*(\d+\.\d+\.\d+)/
+  const oldPragmaDeclaration = ['# pragma version ^0.2.16', '# pragma version ^0.3.10', '#pragma version ^0.2.16', '#pragma version ^0.3.10']
+  const pragmaFound = content.match(pragmaRegex)
+  const oldPragmaFound = content.match(oldPragmaRegex)
 
-  if (evmVerFound === false) {
-    content = `${evmVer}\n${content}`
+  const pragma = '# pragma version ~=0.4.0'
+
+  if (oldPragmaFound) {
+    // oldPragmaDeclaration.forEach(declaration => {
+    //   content = content.replace(declaration, '# pragma version >0.3.10')
+    // })
+    return content
   }
-  if (wrongpragmaFound === true) {
-    content = content.replace('# pragma version ^0.3.10', '')
-  }
-  if (pragmaFound === false ) {
-    content = `${pragma}\n${content}`
+  if (!pragmaFound) {
+    content = `${pragma}\n\n${content}`
   }
   return content
+}
+
+const fixContractContent = (content: string) => {
+  if (content.length === 0) return
+  return updatePragmaDeclaration(content)
 }
 
 /**
@@ -174,13 +188,16 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     throw new Error('Use extension .vy for Vyper.')
   }
 
+  const cleanedUpContent = fixContractContent(contract.content)
+
   let contractName = contract['name']
   const compilePackage = {
     manifest: 'ethpm/3',
     sources: {
-      [contractName] : { content : fixContractContent(contract.content) }
+      [contractName] : { content : cleanedUpContent }
     }
   }
+
   let response = await axios.post(`${url}compile`, compilePackage )
 
   if (response.status === 404) {
@@ -194,6 +211,7 @@ export async function compile(url: string, contract: Contract): Promise<any> {
   contractName = null
   response = null
   let result: any
+  let intermediateError
 
   const status = await (await axios.get(url + 'status/' + compileCode , {
     method: 'Get'
@@ -208,7 +226,9 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     const intermediate = await(await axios.get(url + 'exceptions/' + compileCode , {
       method: 'Get'
     })).data
-    result = parseErrorString(intermediate[0])
+    // console.log('Errors found', intermediate)
+    result = parseErrorString(intermediate)
+    intermediateError = intermediate
     return result
   }
   await new Promise((resolve) => setTimeout(() => resolve({}), 3000))
