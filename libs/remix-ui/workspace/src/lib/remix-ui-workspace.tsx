@@ -988,7 +988,7 @@ export function Workspace() {
                       </CopyToClipboard>
                       }
                     </span>
-                    <span className="d-flex">
+                    <span className="d-flex" style={{ cursor: 'pointer' }} >
                       {
                         (!appContext.appState.gitHubUser || !appContext.appState.gitHubUser.isConnected) && <CustomTooltip
                           placement="right"
@@ -998,7 +998,7 @@ export function Workspace() {
                         >
                           <div data-id='filepanel-login-github' className='d-flex'>
                             <i onClick={() => logInGithub() } className="fa-brands fa-github-alt ml-2 align-self-center" style={{ fontSize: '1.1rem', cursor: 'pointer' }} aria-hidden="true"></i>
-                            <span onClick={() => logInGithub() } className="ml-1 style={{ cursor: 'pointer' }} "> Sign in </span>
+                            <span onClick={() => logInGithub() } className="ml-1"> Sign in </span>
                           </div>
                         </CustomTooltip>
                       }
@@ -1255,22 +1255,32 @@ export function Workspace() {
           <div className="d-flex justify-content-between p-1">
             <div className="text-uppercase text-dark pt-1 px-1">GIT</div>
             { selectedWorkspace.hasGitSubmodules?
-              <CustomTooltip
-                placement="top"
-                tooltipId="updateSubmodules"
-                tooltipClasses="text-nowrap"
-                tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
-              >
-                <div className="pr-1">
-                  { global.fs.browser.isRequestingCloning ? <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
-                    <i className="fad fa-spinner fa-spin"></i>
-                  Updating submodules
-                  </button> :
+
+              <div className="pr-1">
+                { global.fs.browser.isRequestingCloning ?
+                  <CustomTooltip
+                    placement="top"
+                    tooltipId="updatingSubmodules"
+                    tooltipClasses="text-nowrap"
+                    tooltipText={"Updating submodules"}
+                  >
+                    <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
+                      <i className="fad fa-spinner fa-spin mr-2"></i>
+                        Updating...
+                    </button>
+                  </CustomTooltip> :
+                  <CustomTooltip
+                    placement="top"
+                    tooltipId="updateSubmodules"
+                    tooltipClasses="text-nowrap"
+                    tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
+                  >
                     <button style={{ height: 30, minWidth: "9rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
-                    Update submodules
-                    </button> }
-                </div>
-              </CustomTooltip>
+                       Update submodules
+                    </button>
+                  </CustomTooltip>
+                }
+              </div>
               : null
             }
             <CustomTooltip
