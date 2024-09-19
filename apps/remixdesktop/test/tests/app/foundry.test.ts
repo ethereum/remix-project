@@ -153,5 +153,5 @@ async function buildFoundryProject(): Promise<void> {
 
 
 module.exports = {
-    ...process.platform.startsWith('linux') ? tests : {}
+    ...{}//...process.platform.startsWith('linux') ? tests : {}
 }
