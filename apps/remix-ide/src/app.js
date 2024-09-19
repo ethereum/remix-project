@@ -263,7 +263,7 @@ class AppComponent {
     const contractFlattener = new ContractFlattener()
 
     // ----------------- AI --------------------------------------
-    const solcoder = new SolCoder()
+    const remixAI = new RemixAIPlugin(isElectron())
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -386,11 +386,11 @@ class AppComponent {
       contractFlattener,
       solidityScript,
       templates,
-      solcoder,
       git,
       pluginStateLogger,
       matomo,
-      templateSelection
+      templateSelection,
+      remixAI
     ])
 
     //---- fs plugin
@@ -412,8 +412,6 @@ class AppComponent {
       const remixAIDesktop = new remixAIDesktopPlugin()
       this.engine.register([remixAIDesktop])
     }
-    const remixAI = new RemixAIPlugin(isElectron())
-    this.engine.register([remixAI])
 
     const compilerloader = isElectron() ? new compilerLoaderPluginDesktop() : new compilerLoaderPlugin()
     this.engine.register([compilerloader])
@@ -567,7 +565,6 @@ class AppComponent {
       }
     )
     await this.appManager.activatePlugin(['solidity-script'])
-    await this.appManager.activatePlugin(['solcoder'])
     await this.appManager.activatePlugin(['filePanel'])
 
     // Set workspace after initial activation

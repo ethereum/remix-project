@@ -708,7 +708,7 @@ export const EditorUI = (props: EditorUIProps) => {
         const changes = e.changes;
         // Check if the change matches the current completion
         if (changes.some(change => change.text === inlineCompletionProvider.currentCompletion.item.insertText)) {
-          _paq.push(['trackEvent', 'ai', 'solcoder', inlineCompletionProvider.currentCompletion.task + '_accepted'])
+          _paq.push(['trackEvent', 'ai', 'remixAI', inlineCompletionProvider.currentCompletion.task + '_accepted'])
           console.log('Accepted completion', inlineCompletionProvider.currentCompletion)
         }
       }
