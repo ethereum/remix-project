@@ -94,6 +94,8 @@ const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
 const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'etherscan', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'learneth', 'quick-dapp']
 
+const partnerPlugins = ['cookbookdev']
+
 const sensitiveCalls = {
   fileManager: ['writeFile', 'copyFile', 'rename', 'copyDir'],
   contentImport: ['resolveAndSave'],
@@ -164,7 +166,7 @@ export class RemixAppManager extends PluginManager {
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
     if (Registry.getInstance().get('platform').api.isDesktop()) {
-      requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep', 'remixAID', 'slither']
+      requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep', 'slither', 'remixAID']
     }
   }
 
@@ -204,6 +206,11 @@ export class RemixAppManager extends PluginManager {
     }
     // skipping native plugins' requests
     if (isNative(from)) {
+      return true
+    }
+
+    // skipping partner plugins' requests
+    if (partnerPlugins[from]) {
       return true
     }
 
