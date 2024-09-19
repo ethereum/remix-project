@@ -53,6 +53,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_blank')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
       .click('[data-id="initGitRepositoryLabel"]')
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
@@ -179,7 +181,7 @@ module.exports = {
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
       .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
-      .pause()
+      .pause(1000)
       .waitForElementVisible('[data-id="custom-dropdown-menu"]')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/dev')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/production')
@@ -402,7 +404,7 @@ module.exports = {
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Counter is BaseHook {`) !== -1,
           'Incorrect content')
-      }).pause()
+      })
   },
 
   'Should create Remix default workspace with files #group5': function (browser: NightwatchBrowser) {
@@ -423,6 +425,10 @@ module.exports = {
       clickLaunchIcon('dgit')
       .waitForElementVisible('*[data-id="initgit-btn"]')
       .click('*[data-id="initgit-btn"]')
+      .waitForElementVisible('*[data-id="github-panel"]')
+      .pause(1000)
+      .click('*[data-id="github-panel"]')
+      .waitForElementVisible('*[data-id="gitubUsername"]')
       .setValue('*[data-id="gitubUsername"]', 'git')
       .setValue('*[data-id="githubEmail"]', 'git@example.com')
       .click('*[data-id="saveGitHubCredentials"]')
@@ -430,6 +436,8 @@ module.exports = {
   },
   'check source controle panel #group5': function (browser: NightwatchBrowser) {
     browser
+      .waitForElementVisible('*[data-id="sourcecontrol-panel"]')
+      .click('*[data-id="sourcecontrol-panel"]')
       .waitForElementVisible({
         selector: "//*[@data-status='new-untracked' and @data-file='/tests/MyToken_test.sol']",
         locateStrategy: 'xpath'

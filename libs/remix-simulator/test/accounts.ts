@@ -1,5 +1,5 @@
 /* global describe, before, it */
-import Web3, { FMT_BYTES, FMT_NUMBER } from 'web3'
+import { Web3, FMT_BYTES, FMT_NUMBER } from 'web3'
 import { Provider } from '../src/index'
 const web3 = new Web3()
 import * as assert from 'assert'

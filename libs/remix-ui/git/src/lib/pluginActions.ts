@@ -1,9 +1,10 @@
 
-import { commitChange, fileStatusResult, gitActionDispatch, gitMatomoEventTypes, gitState } from "../types"
+import { fileStatusResult, gitActionDispatch, gitState } from "../types"
+import { gitMatomoEventTypes } from "../types"
 import { fileDecoration, fileDecorationType } from "@remix-ui/file-decorators"
 import { removeSlash } from "../utils"
 import { getFilesByStatus } from "./fileHelpers"
-import { CustomRemixApi } from "@remix-api";
+import { commitChange, CustomRemixApi } from "@remix-api";
 import { Plugin } from "@remixproject/engine";
 
 let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>
@@ -98,6 +99,13 @@ export const clearFileDecorator = async(path: string) => {
   await plugin.call('fileDecorator', 'clearFileDecorators', path)
 }
 
+export const openFolderInSameWindow = async (path: string) => {
+  await plugin.call('fs', 'openFolderInSameWindow', path)
+}
+
+export const openCloneDialog = async () => {
+  plugin.call('filePanel', 'clone')
+}
 export const sendToMatomo = async (event: gitMatomoEventTypes, args?: string[]) => {
   const trackArgs = args ? ['trackEvent', 'git', event, ...args] : ['trackEvent', 'git', event];
   plugin && await plugin.call('matomo', 'track', trackArgs);

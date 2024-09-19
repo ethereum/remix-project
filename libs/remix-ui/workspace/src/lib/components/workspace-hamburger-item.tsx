@@ -32,7 +32,7 @@ export function HamburgerMenuItem(props: HamburgerMenuItemProps) {
             >
               <span hidden={hideOption} id={uid} data-id={uid} className={props.fa + ' pl-2'} style={{ width: '1.4rem' }}></span>
               <span className="px-2">
-                <FormattedMessage id={'filePanel.' + props.kind} />
+                {props.kind === 'create' ? <FormattedMessage id={'filePanel.createLabel'} /> :<FormattedMessage id={'filePanel.' + props.kind} />}
               </span>
             </div>
           </CustomTooltip>

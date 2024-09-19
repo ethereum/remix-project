@@ -1,5 +1,5 @@
 import * as async from 'async'
-import Web3 from 'web3';
+import { Web3 } from 'web3';
 import * as assert from 'assert'
 import { Provider, extend } from '@remix-project/remix-simulator'
 

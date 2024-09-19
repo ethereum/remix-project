@@ -20,7 +20,7 @@ export class CircomPluginClient extends PluginClient {
   private lastParsedFiles: Record<string, string> = {}
   private lastCompiledFile: string = ''
   private compiler: typeof compilerV215 & typeof compilerV216 & typeof compilerV217 & typeof compilerV218
-  private _paq = {
+  public _paq = {
     push: (args) => {
       this.call('matomo' as any, 'track', args)
     }
@@ -237,7 +237,7 @@ export class CircomPluginClient extends PluginClient {
     }
   }
 
-  async computeWitness (input: string): Promise<void> {
+  async computeWitness (input: string): Promise<Uint8Array> {
     this.internalEvents.emit('circuit_computing_witness_start')
     this.emit('statusChanged', { key: 'loading', title: 'Computing...', type: 'info' })
     const wasmPath = this.lastCompiledCircuitPath
@@ -249,9 +249,10 @@ export class CircomPluginClient extends PluginClient {
     const witness = this.compiler ? await this.compiler.generate_witness(dataRead, input) : await generate_witness(dataRead, input)
     // @ts-ignore
     await this.call('fileManager', 'writeFile', wasmPath.replace('.wasm', '.wtn'), witness, true)
-    this._paq.push(['trackEvent', 'circuit-compiler', 'computeWitness', 'Witness computing successful'])
+    this._paq.push(['trackEvent', 'circuit-compiler', 'computeWitness', 'compiler.generate_witness', wasmPath.replace('.wasm', '.wtn')])
     this.internalEvents.emit('circuit_computing_witness_done')
     this.emit('statusChanged', { key: 'succeed', title: 'witness computed successfully', type: 'success' })
+    return witness
   }
 
   async resolveDependencies(filePath: string, fileContent: string, output?: Record<string, string>, depPath: string = '', blackPath: string[] = []): Promise<Record<string, string>> {
