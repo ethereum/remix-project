@@ -1,12 +1,13 @@
+import { branch, addInputType, checkoutInputType, cloneInputType, commitChange, fetchInputType, pullInputType, pushInputType, remote, rmInputType } from "@remix-api"
 import { ReadCommitResult } from "isomorphic-git"
 import React from "react"
-import { addInput, branch, checkoutInput, cloneInputType, commitChange, fetchInputType, fileStatusResult, gitLog, gitState, pullInputType, pushInputType, remote, rmInput } from "../types"
+import { fileStatusResult, gitLog, gitState } from "../types"
 
 export interface gitActions {
     removeRemote(remote: remote): void
     clone(input: cloneInputType): Promise<void>
-    add(input: addInput): Promise<void>
-    rm(input: rmInput): Promise<void>
+    add(input: addInputType): Promise<void>
+    rm(input: rmInputType): Promise<void>
     commit(message: string): Promise<any>
     addall(files: fileStatusResult[]): Promise<void>
     push(input: pushInputType): Promise<void>
@@ -14,7 +15,7 @@ export interface gitActions {
     fetch(input: fetchInputType): Promise<void>
     repositories(): Promise<any>
     checkoutfile(file: string): Promise<void>
-    checkout(input: checkoutInput): Promise<void>
+    checkout(input: checkoutInputType): Promise<void>
     createBranch(branch: string): Promise<void>
     remoteBranches(owner: string, repo: string): Promise<any>
     getCommitChanges(oid1: string, oid2: string, branch?: branch, remote?: remote): Promise<commitChange[] | boolean>
@@ -31,8 +32,9 @@ export interface gitActions {
     sendToGitLog: (message: gitLog) => Promise<void>
     clearGitLog: () => Promise<void>
     getFileStatusMatrix(filespaths:[]): Promise<void>
-    gitlog(): Promise<void>
+    gitlog(depth: number): Promise<void>
     init(): Promise<void>
+    setStateGitLogCount(count: number): Promise<void>
 }
 
 export const gitActionsContext = React.createContext<gitActions>(null)
@@ -54,6 +56,7 @@ export interface pluginActions {
         token: string
     }>
     showAlert({ title, message }:{title: string, message: string}): Promise<void>
+    openFolderInSameWindow(path: string): Promise<void>
 }
 
 export const pluginActionsContext = React.createContext<pluginActions>(null)

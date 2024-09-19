@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import './style/remix-app.css'
 import { RemixUIMainPanel } from '@remix-ui/panel'
 import MatomoDialog from './components/modals/matomo'
@@ -12,6 +12,9 @@ import { appProviderContextType, onLineContext, platformContext } from './contex
 import { FormattedMessage, IntlProvider } from 'react-intl'
 import { CustomTooltip } from '@remix-ui/helper'
 import { UsageTypes } from './types'
+import { AppState } from './interface'
+import { appReducer } from './reducer/app'
+import { appInitialState } from './state/app'
 
 declare global {
   interface Window {
@@ -29,8 +32,10 @@ const RemixApp = (props: IRemixAppUi) => {
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [hidePinnedPanel, setHidePinnedPanel] = useState<boolean>(true)
   const [maximiseLeftTrigger, setMaximiseLeftTrigger] = useState<number>(0)
+  const [enhanceLeftTrigger, setEnhanceLeftTrigger] = useState<number>(0)
   const [resetLeftTrigger, setResetLeftTrigger] = useState<number>(0)
   const [maximiseRightTrigger, setMaximiseRightTrigger] = useState<number>(0)
+  const [enhanceRightTrigger, setEnhanceRightTrigger] = useState<number>(0)
   const [resetRightTrigger, setResetRightTrigger] = useState<number>(0)
   const [online, setOnline] = useState<boolean>(true)
   const [locale, setLocale] = useState<{ code: string; messages: any }>({
@@ -39,6 +44,8 @@ const RemixApp = (props: IRemixAppUi) => {
   })
   const sidePanelRef = useRef(null)
   const pinnedPanelRef = useRef(null)
+
+  const [appState, appStateDispatch] = useReducer(appReducer, appInitialState)
 
   useEffect(() => {
     async function activateApp() {
@@ -93,6 +100,12 @@ const RemixApp = (props: IRemixAppUi) => {
       })
     })
 
+    props.app.layout.event.on('enhancesidepanel', () => {
+      setEnhanceLeftTrigger((prev) => {
+        return prev + 1
+      })
+    })
+
     props.app.layout.event.on('resetsidepanel', () => {
       setResetLeftTrigger((prev) => {
         return prev + 1
@@ -101,6 +114,12 @@ const RemixApp = (props: IRemixAppUi) => {
 
     props.app.layout.event.on('maximisepinnedpanel', () => {
       setMaximiseRightTrigger((prev) => {
+        return prev + 1
+      })
+    })
+
+    props.app.layout.event.on('enhancepinnedpanel', () => {
+      setEnhanceRightTrigger((prev) => {
         return prev + 1
       })
     })
@@ -133,7 +152,9 @@ const RemixApp = (props: IRemixAppUi) => {
     showMatamo: props.app.showMatamo,
     appManager: props.app.appManager,
     showEnter: props.app.showEnter,
-    modal: props.app.notification
+    modal: props.app.notification,
+    appState: appState,
+    appStateDispatch: appStateDispatch
   }
 
   const handleUserChosenType = async (type) => {
@@ -198,6 +219,7 @@ const RemixApp = (props: IRemixAppUi) => {
                   {props.app.sidePanel.render()}
                 </div>
                 <DragBar
+                  enhanceTrigger={enhanceLeftTrigger}
                   resetTrigger={resetLeftTrigger}
                   maximiseTrigger={maximiseLeftTrigger}
                   minWidth={305}
@@ -215,6 +237,7 @@ const RemixApp = (props: IRemixAppUi) => {
                 {
                   !hidePinnedPanel &&
                   <DragBar
+                    enhanceTrigger={enhanceRightTrigger}
                     resetTrigger={resetRightTrigger}
                     maximiseTrigger={maximiseRightTrigger}
                     minWidth={331}

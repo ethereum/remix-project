@@ -4,7 +4,8 @@ import { Accordion } from "react-bootstrap";
 import { CommitDetailsNavigation } from "../../navigation/commitdetails";
 import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
-import { branch, gitMatomoEventTypes } from "../../../types";
+import { branch } from "@remix-api";
+import { gitMatomoEventTypes } from "../../../types";
 import { BrancheDetailsNavigation } from "../../navigation/branchedetails";
 import { CommitDetailsItems } from "../commits/commitdetailsitem";
 import { CommitDetails } from "../commits/commitdetails";
@@ -81,7 +82,7 @@ export const LocalBranchDetails = (props: BrancheDetailsProps) => {
             })}
           </div>
         </div>
-        {hasNextPage && <GitUIButton className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
+        {hasNextPage && <GitUIButton data-id='load-more-local-branches' className="mb-1 ml-2 btn btn-sm" onClick={loadNextPage}>Load more</GitUIButton>}
       </>
     </Accordion.Collapse>
   </Accordion>)

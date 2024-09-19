@@ -23,6 +23,7 @@ export const appInitialState: AppState = {
   exportVerificationContract: true,
   exportVerificationKey: true,
   exportVerifierCalldata: true,
+  exportWtnsJson: false,
   verificationKey: null,
   zKey: null
 }
@@ -136,6 +137,12 @@ export const appReducer = (state = appInitialState, action: Actions): AppState =
     return {
       ...state,
       setupExportStatus: action.payload
+    }
+
+  case 'SET_EXPORT_WTNS_JSON':
+    return {
+      ...state,
+      exportWtnsJson: action.payload
     }
 
   case 'SET_VERIFICATION_KEY':

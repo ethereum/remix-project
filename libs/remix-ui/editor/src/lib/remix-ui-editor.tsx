@@ -925,6 +925,7 @@ export const EditorUI = (props: EditorUIProps) => {
       if (freeFunctionNode) {
         executeFreeFunctionAction.label = intl.formatMessage({ id: 'editor.executeFreeFunction2' }, { name: freeFunctionNode.name })
         freeFunctionAction = editor.addAction(executeFreeFunctionAction)
+        freeFunctionCondition.set(true)
       }
 
       const functionImpl = nodesAtPosition.find((node) => node.kind === 'function')
@@ -944,7 +945,6 @@ export const EditorUI = (props: EditorUIProps) => {
         executeSolgptExplainFunctionAction.label = intl.formatMessage({ id: 'editor.explainFunctionSol' })
         solgptExplainFunctionAction = editor.addAction(executeSolgptExplainFunctionAction)
       }
-      freeFunctionCondition.set(!!freeFunctionNode)
     }
     contextmenu._onContextMenu = (...args) => {
       if (args[0]) args[0].event?.preventDefault()

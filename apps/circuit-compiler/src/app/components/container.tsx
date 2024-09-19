@@ -140,7 +140,7 @@ export function Container () {
             <RenderIf condition={circuitApp.appState.signalInputs.length > 0}>
               <Toggler title='circuit.computeWitness' dataId='witness_toggler' show={!!circuitApp.appState.setupExportStatus}>
                 <>
-                  <WitnessSection plugin={circuitApp.plugin} signalInputs={circuitApp.appState.signalInputs} status={circuitApp.appState.status} />
+                  <WitnessSection />
                   <RenderIf condition={circuitApp.appState.status !== 'computing'}>
                     <CompilerFeedback feedback={circuitApp.appState.computeFeedback} filePathToId={circuitApp.appState.filePathToId} openErrorLocation={handleOpenErrorLocation} hideWarnings={circuitApp.appState.hideWarnings} askGPT={askGPT} />
                   </RenderIf>

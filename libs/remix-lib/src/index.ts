@@ -21,6 +21,7 @@ export { ICompilerApi, ConfigurationSettings, iSolJsonBinData, iSolJsonBinDataBu
 export { QueryParams } from './query-params'
 export { VMexecutionResult } from './execution/txRunnerVM'
 export { Registry } from './registry'
+export type { Transaction } from './execution/txRunner'
 
 const helpers = {
   ui: uiHelper,

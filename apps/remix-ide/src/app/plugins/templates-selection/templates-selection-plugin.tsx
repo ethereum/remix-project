@@ -147,15 +147,16 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
           ['ERC721', 'secondary'],
           ['ERC1155', 'primary'],
         ]}
-        title='Template explorer'
+        title='Workspace Templates'
         description="Select a template to create a workspace or to add it to current workspace"
       >
         {
-          templates(window._intl).map(template => {
+          templates(window._intl, this).map(template => {
             return <RemixUIGridSection
               plugin={this}
               key={template.name}
               title={template.name}
+              tooltipTitle={template.tooltip}
               hScrollable={false}
             >
               {template.items.map(item => {
@@ -166,14 +167,14 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                   id={item.name}
                   searchKeywords={[item.displayName, item.description, template.name]}
                   tagList={item.tagList}
-                  classList='TSCellStyle'
+                  classList={'TSCellStyle'}
                 >
                   <div className='d-flex justify-content-between h-100 flex-column'>
                     <div className='d-flex flex-column'>
                       <div>
                         {item.description && <span className='text-dark'>{item.description}</span>}
                       </div>
-                      <div className='d-flex flex-wrap'>
+                      <div className='d-flex flex-wrap mb-2'>
                         {(item.opts && item.opts.upgradeable && item.opts.upgradeable === 'uupds') && <span className='badgeForCell badge text-secondary'>Upgradeable-UUPS</span>}
                         {(item.opts && item.opts.mintable) && <span className='badgeForCell text-secondary'>mintable</span>}
                         {(item.opts && item.opts.burnable) && <span className='badgeForCell text-secondary'>burnable</span>}
@@ -211,6 +212,20 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
                   </div>
                 </RemixUIGridCell>
               })}
+              { template.name === 'Cookbook' && <RemixUIGridCell
+                plugin={this}
+                title={"More from Cookbook"}
+                key={"cookbookMore"}
+                id={"cookBookMore"}
+                searchKeywords={["cookbook"]}
+                tagList={[]}
+                classList='TSCellStyle'
+              >
+                <div className='d-flex justify-content-between h-100 flex-column'>
+                  <span className='pt-4 px-1 h6 text-dark'>{ template.description }</span>
+                  <span style={{ cursor: 'pointer' }} className='mt-2 btn btn-sm border align-items-left' onClick={() => template.onClick() }>{ template.onClickLabel }</span>
+                </div>
+              </RemixUIGridCell> }
             </RemixUIGridSection>
           })}
       </RemixUIGridView>

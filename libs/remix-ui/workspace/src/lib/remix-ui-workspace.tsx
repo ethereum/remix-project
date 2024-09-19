@@ -14,11 +14,12 @@ import { MenuItems, WorkSpaceState, WorkspaceMetadata } from './types'
 import { contextMenuActions } from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
-import { appPlatformTypes, platformContext } from '@remix-ui/app'
+import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { ElectronMenu } from './components/electron-menu'
 import { ElectronWorkspaceName } from './components/electron-workspace-name'
-import { branch } from '@remix-ui/git'
-import { publishFilesToGist } from './actions'
+import { branch } from '@remix-api'
+import { gitUIPanels } from '@remix-ui/git'
+import { createModalMessage } from './components/createModal'
 
 const _paq = (window._paq = window._paq || [])
 
@@ -49,6 +50,8 @@ export function Workspace() {
   const currentBranch = selectedWorkspace ? selectedWorkspace.currentBranch : null
 
   const [canPaste, setCanPaste] = useState(false)
+
+  const appContext = useContext(AppContext)
 
   const [state, setState] = useState<WorkSpaceState>({
     ctrlKey: false,
@@ -330,6 +333,26 @@ export function Workspace() {
       renameModalMessage(),
       intl.formatMessage({ id: 'filePanel.save' }),
       onFinishRenameWorkspace,
+      intl.formatMessage({ id: 'filePanel.cancel' })
+    )
+  }
+
+  const [counter, setCounter] = useState(1)
+  const createBlankWorkspace = async () => {
+    const username = await global.plugin.call('settings', 'get', 'settings/github-user-name')
+    const email = await global.plugin.call('settings', 'get', 'settings/github-email')
+    const gitNotSet = !username || !email
+    const defaultName = await global.plugin.call('filePanel', 'getAvailableWorkspaceName', 'blank')
+    let workspace = defaultName
+    let gitInit = false
+    setCounter((previous) => {
+      return previous + 1
+    })
+    global.modal(
+      intl.formatMessage({ id: 'filePanel.workspace.createBlank' }),
+      await createModalMessage(`blank - ${counter}`, gitNotSet, (value) => { workspace = value }, (value) => gitInit = false),
+      intl.formatMessage({ id: 'filePanel.ok' }),
+      () => global.dispatchCreateWorkspace(`blank - ${counter}`, 'blank', false),
       intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
@@ -887,6 +910,13 @@ export function Workspace() {
       </>
     )
   }
+
+  const logInGithub = async () => {
+    await global.plugin.call('menuicons', 'select', 'dgit');
+    await global.plugin.call('dgit', 'open', gitUIPanels.GITHUB)
+    _paq.push(['trackEvent', 'Workspace', 'GIT', 'login'])
+  }
+
   return (
     <div className="d-flex flex-column justify-content-between h-100">
       <div
@@ -918,6 +948,7 @@ export function Workspace() {
                           <HamburgerMenu
                             selectedWorkspace={selectedWorkspace}
                             createWorkspace={createWorkspace}
+                            createBlankWorkspace={createBlankWorkspace}
                             renameCurrentWorkspace={renameCurrentWorkspace}
                             downloadCurrentWorkspace={downloadCurrentWorkspace}
                             deleteCurrentWorkspace={deleteCurrentWorkspace}
@@ -936,27 +967,53 @@ export function Workspace() {
                       </Dropdown>
                     </span>
                   ) : null}
-                  <span className="d-flex">
-                    <label className="pl-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
-                      {(platform == appPlatformTypes.desktop) ? (
-                        <ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />
-                      ) : <FormattedMessage id='filePanel.workspace' />}
-                    </label>
-                    {selectedWorkspace && selectedWorkspace.name === 'code-sample' && <CustomTooltip
-                      placement="right"
-                      tooltipId="saveCodeSample"
-                      tooltipClasses="text-nowrap"
-                      tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
-                    >
-                      <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
-                    </CustomTooltip>}
+                  <div className='d-flex w-100 justify-content-between'>
+                    <span className="d-flex">
+                      <label className="pl-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
+                        {(platform == appPlatformTypes.desktop) ? (
+                          <ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />
+                        ) : <FormattedMessage id='filePanel.workspace' />}
+                      </label>
+                      {selectedWorkspace && selectedWorkspace.name === 'code-sample' && <CustomTooltip
+                        placement="right"
+                        tooltipId="saveCodeSample"
+                        tooltipClasses="text-nowrap"
+                        tooltipText={<FormattedMessage id="filePanel.saveCodeSample" />}
+                      >
+                        <i onClick={() => saveSampleCodeWorkspace()} className="far fa-exclamation-triangle text-warning ml-2 align-self-center" aria-hidden="true"></i>
+                      </CustomTooltip>}
 
-                    {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
-                      <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{ fontSize: '1.1rem', cursor: 'pointer' }} ></i>
-                    </CopyToClipboard>
-                    }
-
-                  </span>
+                      {selectedWorkspace && selectedWorkspace.isGist && <CopyToClipboard tip={'Copy Gist ID to clipboard'} getContent={() => selectedWorkspace.isGist} direction="bottom" icon="far fa-copy">
+                        <i className="remixui_copyIcon ml-2 fab fa-github text-info" aria-hidden="true" style={{ fontSize: '1.1rem', cursor: 'pointer' }} ></i>
+                      </CopyToClipboard>
+                      }
+                    </span>
+                    <span className="d-flex" style={{ cursor: 'pointer' }} >
+                      {
+                        (!appContext.appState.gitHubUser || !appContext.appState.gitHubUser.isConnected) && <CustomTooltip
+                          placement="right"
+                          tooltipId="githubNotLogged"
+                          tooltipClasses="text-nowrap"
+                          tooltipText={<FormattedMessage id="filePanel.logInGithub" />}
+                        >
+                          <div data-id='filepanel-login-github' className='d-flex'>
+                            <i onClick={() => logInGithub() } className="fa-brands fa-github-alt ml-2 align-self-center" style={{ fontSize: '1.1rem', cursor: 'pointer' }} aria-hidden="true"></i>
+                            <span onClick={() => logInGithub() } className="ml-1"> Sign in </span>
+                          </div>
+                        </CustomTooltip>
+                      }
+                      {
+                        appContext.appState.gitHubUser && appContext.appState.gitHubUser.isConnected && <CustomTooltip
+                          placement="right"
+                          tooltipId="githubLoggedIn"
+                          tooltipClasses="text-nowrap"
+                          tooltipText={appContext.appState.gitHubUser && intl.formatMessage({ id: 'filePanel.gitHubLoggedAs' }, { githubuser: appContext.appState.gitHubUser.login }) || ''}
+                        >
+                          <img width={20} height={20} data-id={`filepanel-connected-img-${appContext.appState.gitHubUser && appContext.appState.gitHubUser.login}`} src={appContext.appState.gitHubUser && appContext.appState.gitHubUser.avatar_url} className="remixui_avatar_user ml-2" />
+                        </CustomTooltip>
+                      }
+                    </span>
+                  </div>
                 </div>
                 <div className='mx-2'>
                   {(platform !== appPlatformTypes.desktop) ? (
@@ -1198,22 +1255,32 @@ export function Workspace() {
           <div className="d-flex justify-content-between p-1">
             <div className="text-uppercase text-dark pt-1 px-1">GIT</div>
             { selectedWorkspace.hasGitSubmodules?
-              <CustomTooltip
-                placement="top"
-                tooltipId="updateSubmodules"
-                tooltipClasses="text-nowrap"
-                tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
-              >
-                <div className="pr-1">
-                  { global.fs.browser.isRequestingCloning ? <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
-                    <i className="fad fa-spinner fa-spin"></i>
-                  Updating submodules
-                  </button> :
+
+              <div className="pr-1">
+                { global.fs.browser.isRequestingCloning ?
+                  <CustomTooltip
+                    placement="top"
+                    tooltipId="updatingSubmodules"
+                    tooltipClasses="text-nowrap"
+                    tooltipText={"Updating submodules"}
+                  >
+                    <button style={{ height: 30, minWidth: "9rem" }} className='btn btn-sm border text-dark'>
+                      <i className="fad fa-spinner fa-spin mr-2"></i>
+                        Updating...
+                    </button>
+                  </CustomTooltip> :
+                  <CustomTooltip
+                    placement="top"
+                    tooltipId="updateSubmodules"
+                    tooltipClasses="text-nowrap"
+                    tooltipText={<FormattedMessage id="filePanel.updateSubmodules" />}
+                  >
                     <button style={{ height: 30, minWidth: "9rem" }} onClick={updateSubModules} data-id='updatesubmodules' className={`btn btn-sm border  ${highlightUpdateSubmodules ? 'text-warning' : 'text-dark'}`}>
-                    Update submodules
-                    </button> }
-                </div>
-              </CustomTooltip>
+                       Update submodules
+                    </button>
+                  </CustomTooltip>
+                }
+              </div>
               : null
             }
             <CustomTooltip

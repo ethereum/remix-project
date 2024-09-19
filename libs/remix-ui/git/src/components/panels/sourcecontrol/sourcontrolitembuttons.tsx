@@ -1,4 +1,4 @@
-import { commitChange, fileStatusResult, sourceControlGroup } from "../../../types";
+import { fileStatusResult, sourceControlGroup } from "../../../types";
 import React from "react";
 import path from "path";
 import { gitActionsContext, pluginActionsContext } from "../../../state/context";
