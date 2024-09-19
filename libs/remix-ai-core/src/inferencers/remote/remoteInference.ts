@@ -23,7 +23,6 @@ export class RemoteInferencer implements ICompletions {
     this.event.emit("onInference")
     const requesURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
     const userPrompt = data.data[0]
-    console.log('userPrompt reuesting...')
 
     try {
       const result = await axios(requesURL, {
