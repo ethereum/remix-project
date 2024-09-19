@@ -8,6 +8,7 @@ interface IRemixDragBarUi {
   hidden: boolean
   minWidth: number
   maximiseTrigger: number
+  enhanceTrigger: number
   resetTrigger: number
   layoutPosition: 'left' | 'right'
 }
@@ -40,32 +41,36 @@ const DragBar = (props: IRemixDragBarUi) => {
     }
   }, [props.hidden, offset])
 
-  useEffect(() => {
-    if (props.maximiseTrigger > 0) {
-      if (props.layoutPosition === 'left') {
-        const width = 0.4 * window.innerWidth
+  const triggerWidth = (maximiseTrigger, layoutPosition, refObject, coeff) => {
+    if (maximiseTrigger > 0) {
+      if (layoutPosition === 'left') {
+        const width = coeff * window.innerWidth
 
-        if (width > props.refObject.current.offsetWidth) {
-          props.refObject.current.style.width = width + 'px'
-          setTimeout(() => {
-            setDragBarPosX(offset + width)
-          }, 300)
-        }
-      } else if (props.layoutPosition === 'right') {
-        const width = 0.4 * window.innerWidth
+        props.refObject.current.style.width = width + 'px'
+        setTimeout(() => {
+          setDragBarPosX(offset + width)
+        }, 300)
+      } else if (layoutPosition === 'right') {
+        const width = coeff * window.innerWidth
 
-        if (width > props.refObject.current.offsetWidth) {
-          props.refObject.current.style.width = width + 'px'
-          setTimeout(() => {
-            setDragBarPosX(window.innerWidth - width)
-          }, 300)
-        }
+        refObject.current.style.width = width + 'px'
+        setTimeout(() => {
+          setDragBarPosX(window.innerWidth - width)
+        }, 300)
       }
     }
+  }
+
+  useEffect(() => {
+    triggerWidth(props.maximiseTrigger, props.layoutPosition, props.refObject, 0.4)
   }, [props.maximiseTrigger])
 
   useEffect(() => {
-    if (props.maximiseTrigger > 0) {
+    triggerWidth(props.enhanceTrigger, props.layoutPosition, props.refObject, 0.25)
+  }, [props.enhanceTrigger])
+
+  useEffect(() => {
+    if (props.maximiseTrigger > 0 || props.enhanceTrigger) {
       if (props.layoutPosition === 'left') {
         props.refObject.current.style.width = initialWidth.current + 'px'
         setTimeout(() => {

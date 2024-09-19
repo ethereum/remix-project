@@ -47,13 +47,13 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc721",
-          displayName: "ERC721",
+          displayName: "ERC721 (NFT)",
           tagList: ["ERC721", "Solidity"],
           description: 'A simple non-fungible token (NFT) contract'
         },
         {
           value: "ozerc721",
-          displayName: "ERC721",
+          displayName: "ERC721 (NFT)",
           description: "An ERC721 contract with:",
           tagList: ["Solidity", "ERC721"],
           opts: {
@@ -132,7 +132,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "UUPS ERC20",
-          description: "UUSP ERC20 contract with:",
+          description: "UUPS ERC20 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true
@@ -142,7 +142,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "UUPS ERC20",
-          description: "UUSP ERC20 contract with:",
+          description: "UUPS ERC20 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -153,7 +153,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc20",
           displayName: "UUPS ERC20",
-          description: "UUSP ERC20 contract with:",
+          description: "UUPS ERC20 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -163,7 +163,7 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc721",
-          displayName: "UUPS ERC721",
+          displayName: "UUPS ERC721 (NFT)",
           description: "A simple UUPS ERC721 contract",
           opts: {
             upgradeable: 'uups'
@@ -172,7 +172,7 @@ export const templates = (intl, plugin) => {
         },
         {
           value: "ozerc721",
-          displayName: "UUPS ERC721",
+          displayName: "UUPS ERC721 (NFT)",
           description: "UUPS ERC721 contract with:",
           opts: {
             upgradeable: 'uups',
@@ -183,7 +183,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc721",
           displayName: "UUPS ERC721 (NFT)",
-          description: "Non-fungible Token Standard",
+          description: "UUPS ERC721 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -194,7 +194,7 @@ export const templates = (intl, plugin) => {
         {
           value: "ozerc721",
           displayName: "UUPS ERC721 (NFT)",
-          description: "UUPS ERC721 with: ",
+          description: "UUPS ERC721 contract with:",
           opts: {
             upgradeable: 'uups',
             mintable: true,
@@ -265,23 +265,59 @@ export const templates = (intl, plugin) => {
         plugin.call('menuicons', 'showContent', 'cookbookdev')
       },
       onClickLabel: 'Open Cookbook Plugin',
+      description: 'Discover more templates!',
       items: [
-        { value: "token-sale", displayName: 'Token Sale' },
-        { value: "simple-nft-sale", displayName: 'Simple Nft Sale' },
-        { value: "Azuki-ERC721A-NFT-Sale-basic", displayName: 'Azuki ERC721A NFT Sale basic' },
-        { value: "Azuki-ERC721A-ERC721A", displayName: 'Azuki ERC721A' },
-        { value: "token-staking-with-infinite-rewards", displayName: 'Token Staking with infinite rewards' },
-        { value: "nft-staking-with-infinite-rewards", displayName: 'Nft Staking with infinite rewards' },
-        { value: "basic-dao", displayName: 'Basic DAO' },
-        { value: "soulbound-nft", displayName: 'Soulbound Nft' },
-        { value: "multi-collection-nft-with-burnable-nfts-and-pausable-transfers", displayName: 'Multi collection NFT', description: "Multi collection NFT with:", opts: {
-          burnable: true,
-          pausable: true
-        }, },
+        {
+          value: "token-sale",
+          displayName: 'Token Sale',
+          description: "ERC20 token sale contact. Sell tokens for ETH"
+        },
+        {
+          value: "simple-nft-sale",
+          displayName: 'Simple Nft Sale',
+          description: "ERC721 NFT with an adjustable price & to mint free NFTs"
+        },
+        {
+          value: "Azuki-ERC721A-NFT-Sale-basic",
+          displayName: 'Azuki ERC721A NFT Sale basic',
+          description: "An implementation of the ERC721A standard"
+        },
+        {
+          value: "Azuki-ERC721A-NFT-Sale",
+          displayName: 'Azuki ERC721A NFT Sale',
+          description: "An extension of the ERC721A standard with wallet limit"
+        },
+        {
+          value: "token-staking-with-infinite-rewards",
+          displayName: 'Token Staking with infinite rewards',
+          description: "Token staking contract to reward ERC20 tokens for every token staked"
+        },
+        {
+          value: "nft-staking-with-infinite-rewards",
+          displayName: 'NFT Staking with infinite rewards',
+          description: "NFT staking contract to reward exact number of ERC20 tokens per day"
+        },
+        {
+          value: "basic-dao",
+          displayName: 'Basic DAO',
+          description: "A very simple implementation of a DAO"
+        },
+        {
+          value: "soulbound-nft",
+          displayName: 'Soulbound NFT',
+          description: "ERC721 Soulbound NFT with no transfer capability"
+        },
+        { value: "multi-collection-nft-with-burnable-nfts-and-pausable-transfers",
+          displayName: 'Multi collection NFT',
+          description: "Multi collection NFT with:",
+          opts: {
+            burnable: true,
+            pausable: true
+          }, },
       ]
     },
     {
-      name: "OxProject",
+      name: "0xProject",
       items: [
         { value: "zeroxErc20", displayName: "ERC20", tagList: ["ERC20", "Solidity"], description: "A fungible token contract by 0xProject" }
       ]
@@ -289,7 +325,7 @@ export const templates = (intl, plugin) => {
     {
       name: "Gnosis Safe",
       items: [
-        { value: "gnosisSafeMultisig", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.multiSigWallet' }), description: 'Deploy or customize the Gnosis Safe.' }
+        { value: "gnosisSafeMultisig", tagList: ["Solidity"], displayName: intl.formatMessage({ id: 'filePanel.multiSigWallet' }), description: 'Deploy or customize the Gnosis Safe MultiSig Wallet' }
       ]
     },
     {
@@ -316,12 +352,12 @@ export const templates = (intl, plugin) => {
       items: [
         { value: "uniswapV4Template",
           displayName: intl.formatMessage({ id: 'filePanel.uniswapV4Template' }),
-          description: 'Use an Uniswap hook'
+          description: 'Use a Uniswap hook'
         },
         {
           value: "breakthroughLabsUniswapv4Hooks",
           displayName: intl.formatMessage({ id: 'filePanel.breakthroughLabsUniswapv4Hooks' }),
-          description: 'Use an Uniswap hook developed by Breakthrough Labs'
+          description: 'Use a Uniswap hook developed by Breakthrough Labs'
         },
         {
           value: "uniswapV4HookBookMultiSigSwapHook",
@@ -352,25 +388,25 @@ export const templates = (intl, plugin) => {
         {
           value: "etherscanScripts",
           displayName: intl.formatMessage({ id: 'filePanel.addscriptetherscan' }),
-          description: 'Script for verifying a Contract in Etherscan.'
+          description: 'Script for verifying a Contract in Etherscan'
         },
       ],
     },
     {
-      name: 'Github Actions',
+      name: 'GitHub Actions',
       items: [
         { value: "runJsTestAction",
           displayName: intl.formatMessage({ id: 'filePanel.tssoltestghaction' }),
-          description: 'A Mocha Chai test workflow in a GitHub CI.'
+          description: 'A Mocha Chai test workflow in a GitHub CI'
         },
         { value: "runSolidityUnittestingAction",
           displayName: intl.formatMessage({ id: 'filePanel.solghaction' }),
-          description: 'Run a Solidity unit test workflow in a GitHub CI.'
+          description: 'Run a Solidity unit test workflow in a GitHub CI'
         },
         {
           value: "runSlitherAction",
           displayName: intl.formatMessage({ id: 'filePanel.slitherghaction' }),
-          description: 'Run a Slither security analysis in a GitHub CI.'
+          description: 'Run a Slither security analysis in a GitHub CI'
         }
       ],
       IsArtefact: true

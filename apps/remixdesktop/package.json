@@ -76,7 +76,7 @@
     "byline": "^5.0.0",
     "chokidar": "^3.5.3",
     "electron-updater": "^6.1.8",
-    "express": "^4.19.2",
+    "express": "^4.20.0",
     "isomorphic-git": "^1.24.2",
     "matomo-tracker": "^2.2.4",
     "node-pty": "^1.0.0",
