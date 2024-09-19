@@ -26,7 +26,6 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
   const [scamAlerts, setScamAlerts] = useState<ScamAlert[]>([])
   const [gitBranchName, setGitBranchName] = useState('')
   const [isAiActive, setIsAiActive] = useState(false)
-  const platform = useContext(platformContext)
   const { refs, context, floatingStyles } = useFloating({
     open: showScamDetails,
     onOpenChange: setShowScamDetails,
