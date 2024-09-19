@@ -139,7 +139,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       // Code completion
       this.task = 'code_completion'
       const output = await this.props.plugin.call('remixAI', 'code_completion', word)
-      console.log('output', output)
       const generatedText = output
       let clean = generatedText
 
@@ -178,10 +177,12 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
   handleItemDidShow?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, updatedInsertText: string): void {
     this.currentCompletion.displayed = true
+    this.currentCompletion.task = this.task
     _paq.push(['trackEvent', 'ai', 'remixAI', this.task + '_did_show'])
   }
   handlePartialAccept?(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>, item: monacoTypes.languages.InlineCompletion, acceptedCharacters: number): void {
     this.currentCompletion.accepted = true
+    this.currentCompletion.task = this.task
     _paq.push(['trackEvent', 'ai', 'remixAI', this.task + '_partial_accept'])
   }
   freeInlineCompletions(completions: monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>): void {
