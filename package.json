@@ -1,6 +1,6 @@
 {
   "name": "remix-project",
-  "version": "0.54.0-dev",
+  "version": "0.55.0-dev",
   "license": "MIT",
   "description": "Ethereum Remix Monorepo",
   "main": "index.js",
@@ -309,7 +309,6 @@
     "css-minimizer-webpack-plugin": "^4.2.2",
     "csslint": "^1.0.2",
     "dotenv": "^8.2.0",
-    "electron": "^24.4.0",
     "eslint": "^8.26.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "2.26.0",

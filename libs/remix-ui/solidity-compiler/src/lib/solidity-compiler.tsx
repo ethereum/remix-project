@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react' // eslint-disable-line
+import React, { useContext, useEffect, useState } from 'react' // eslint-disable-line
 import { CompileErrors, ContractsFile, SolidityCompilerProps } from './types'
 import { CompilerContainer } from './compiler-container' // eslint-disable-line
 import { ContractSelection } from './contract-selection' // eslint-disable-line
@@ -9,6 +9,7 @@ import { baseURLBin, baseURLWasm, pathToURL } from '@remix-project/remix-solidit
 import * as packageJson from '../../../../../package.json'
 import './css/style.css'
 import { iSolJsonBinData, iSolJsonBinDataBuild } from '@remix-project/remix-lib'
+import { appPlatformTypes, platformContext } from '@remix-ui/app'
 
 export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const {
@@ -47,6 +48,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   const [compileErrors, setCompileErrors] = useState<Record<string, CompileErrors>>({ [currentFile]: api.compileErrors })
   const [badgeStatus, setBadgeStatus] = useState<Record<string, { key: string; title?: string; type?: string }>>({})
   const [contractsFile, setContractsFile] = useState<ContractsFile>({})
+  const platform = useContext(platformContext)
 
   useEffect(() => {
     ; (async () => {
@@ -77,9 +79,12 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
   }
 
   api.onSetWorkspace = async (isLocalhost: boolean, workspaceName: string) => {
-    const isHardhat = isLocalhost && (await compileTabLogic.isHardhatProject())
-    const isTruffle = isLocalhost && (await compileTabLogic.isTruffleProject())
-    const isFoundry = isLocalhost && (await compileTabLogic.isFoundryProject())
+    const isDesktop = platform === appPlatformTypes.desktop
+
+    const isHardhat = (isLocalhost || isDesktop) && (await compileTabLogic.isHardhatProject())
+    const isTruffle = (isLocalhost || isDesktop) && (await compileTabLogic.isTruffleProject())
+    const isFoundry = (isLocalhost || isDesktop) && (await compileTabLogic.isFoundryProject())
+
     setState((prevState) => {
       return {
         ...prevState,

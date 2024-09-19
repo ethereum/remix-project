@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import { CommitObject, ReadCommitResult } from 'isomorphic-git';
 import { promisify } from 'util';
+import { cloneInputType, commitInputType, fetchInputType, pullInputType, pushInputType, checkoutInputType } from "@remix-api";
 const execAsync = promisify(exec);
 
 const statusTransFormMatrix = (status: string) => {
@@ -9,12 +10,16 @@ const statusTransFormMatrix = (status: string) => {
             return [0, 2, 0]
         case 'A ':
             return [0, 2, 2]
+        case 'R ':
+            return [0, 2, 2]
         case 'M ':
             return [1, 2, 2]
         case 'MM':
             return [1, 2, 3]
         case ' M':
-            return [1, 2, 0]
+            return [1, 2, 1]
+        case 'AD':
+            return [0, 0, 3]
         case ' D':
             return [1, 0, 1]
         case 'D ':
@@ -37,34 +42,87 @@ export const gitProxy = {
         }
     },
 
-
-
-    clone: async (url: string, path: string) => {
-        const { stdout, stderr } = await execAsync(`git clone ${url} ${path}`);
+    async defaultRemoteName(path: string) {
+        try {
+            const { stdout } = await execAsync('git remote', { cwd: path });
+            const remotes = stdout.trim().split('\n');
+            return remotes[0];
+        } catch (error) {
+            throw new Error(`Failed to get the default remote name: ${error.message}`);
+        }
     },
 
-    async push(path: string, remote: string, src: string, branch: string, force: boolean = false) {
-        const { stdout, stderr } = await execAsync(`git push  ${force ? ' -f' : ''}  ${remote} ${src}:${branch}`, { cwd: path });
+
+    clone: async (input: cloneInputType) => {
+        const { stdout, stderr } = await execAsync(`git clone ${input.url} "${input.dir}"`);
     },
 
-    async pull(path: string, remote: string, src: string, branch: string) {
-        const { stdout, stderr } = await execAsync(`git pull ${remote} ${src}:${branch}`, { cwd: path });
+    async push(path: string, input: pushInputType) {
+        if(!input.remote || !input.remote.name) {
+            input.remote = { name:  await gitProxy.defaultRemoteName(path), url: '' }
+        }
+        let remoteRefString = ''
+        if(input.remoteRef && !input.remoteRef.name) {
+            remoteRefString = `:${input.remoteRef.name}`
+        }
+        const { stdout, stderr } = await execAsync(`git push  ${input.force ? ' -f' : ''}  ${input.remote.name}${remoteRefString} ${input.ref.name}`, { cwd: path });
     },
 
-    async fetch(path: string, remote: string, branch: string) {
-        const { stdout, stderr } = await execAsync(`git fetch ${remote} ${branch}`, { cwd: path });
+    async pull(path: string, input: pullInputType) {
+        if(!input.remote || !input.remote.name) {
+            input.remote = { name:  await gitProxy.defaultRemoteName(path), url: '' }
+        }
+        let remoteRefString = ''
+        if(input.remoteRef && !input.remoteRef.name) {
+            remoteRefString = `:${input.remoteRef.name}`
+        }
+        const { stdout, stderr } = await execAsync(`git pull ${input.remote.name} ${input.ref.name}${remoteRefString}`, { cwd: path });
     },
 
-    async commit(path: string, message: string) {
+    async fetch(path: string, input: fetchInputType) {
+        if(!input.remote || !input.remote.name) {
+            input.remote = { name:  await gitProxy.defaultRemoteName(path), url: '' }
+        }
 
-        await execAsync(`git commit -m '${message}'`, { cwd: path });
+        try {
+            const { stdout, stderr } = await execAsync(`git fetch ${input.remote.name} ${(input.ref && input.ref.name) ? input.ref.name : ''}`, { cwd: path });
+            if (stdout) {
+                console.log('stdout:', stdout);
+            }
+            if (stderr) {
+                console.error('stderr:', stderr);
+            }
+        } catch (error) {
+            console.error('Error during fetch:', error);
+        }
+    },
+
+    async checkout(path: string, input: checkoutInputType) {
+        let force = input.force ? ' -f' : '';
+        const { stdout, stderr } = await execAsync(`git checkout ${force} ${input.ref}`, { cwd: path });
+    },
+
+    async commit(path: string, input: commitInputType) {
+
+        await execAsync(`git commit -m '${input.message}'`, { cwd: path });
         const { stdout, stderr } = await execAsync(`git rev-parse HEAD`, { cwd: path });
+        console.log('stdout commit:', stdout);
         return stdout;
 
     },
 
     async init(path: string) {
-        await execAsync(`git init`, { cwd: path });
+        await execAsync(`git init --initial-branch=main`, { cwd: path });
+    },
+
+    async updateSubmodules(path: string) {
+        const { stdout, stderr } = await execAsync(`git submodule update --init --recursive`, { cwd: path });
+        if (stdout) {
+            console.log('stdout:', stdout);
+        }
+        if (stderr) {
+            console.error('stderr:', stderr);
+        }
     },
 
 
@@ -103,7 +161,7 @@ export const gitProxy = {
             return 0
         })
 
-
+        console.log('files', files)
         return files
     },
 

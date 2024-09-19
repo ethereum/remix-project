@@ -105,6 +105,51 @@ jobs:
             paths:
               - "persist"
 
+  test-remixdesktop-linux:
+    machine:
+      image: ubuntu-2004:current
+    resource_class:
+      xlarge
+    working_directory: ~/remix-project
+    parallelism: 10
+    steps:
+        - run: ldd --version
+        - checkout
+        - attach_workspace:
+            at: .
+        - run: unzip ./persist/desktopbuild.zip
+        - run: 
+            command: |
+                nvm install 20.2
+                nvm use 20.2
+                node -v
+                npm install --global yarn node-gyp
+                python -m pip install --upgrade pip
+                pip install setuptools
+                mkdir apps/remixdesktop/build
+                cp -r dist/apps/remix-ide apps/remixdesktop/build
+                cd apps/remixdesktop/
+                yarn add node-pty
+                yarn --ignore-optional
+                yarn add @remix-project/remix-ws-templates
+                ./rundist.bash
+        - run:  
+            name: "Run tests"
+            command: |
+              nvm use 20.2
+              cd apps/remixdesktop/
+              ./run_ci_test.sh
+        - run:  
+            name: "Run isogit tests"
+            command: |
+              nvm use 20.2
+              cd apps/remixdesktop/
+              ./run_git_ui_isogit_tests.sh
+        - store_test_results:
+            path: ./apps/remixdesktop/reports/tests
+        - store_artifacts:
+            path: ./apps/remixdesktop/reports/screenshots
+
   build-remixdesktop-linux:
       machine:
         image: ubuntu-2004:current
@@ -119,22 +164,37 @@ jobs:
         - run: unzip ./persist/desktopbuild.zip
         - run: 
             command: |
+                nvm install 20.2
+                nvm use 20.2
                 node -v
+                npm install --global yarn node-gyp
+                python -m pip install --upgrade pip
+                pip install setuptools
                 mkdir apps/remixdesktop/build
                 cp -r dist/apps/remix-ide apps/remixdesktop/build
                 cd apps/remixdesktop/
                 yarn add node-pty
                 yarn --ignore-optional
                 yarn add @remix-project/remix-ws-templates
-                PUBLISH_FOR_PULL_REQUEST='true' yarn dist
+                ./rundist.bash
                 rm -rf release/*-unpacked
         - save_cache:
             key: remixdesktop-linux-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
             paths:
               - apps/remixdesktop/node_modules
+        - run:
+            name: "remove unnecessary files"
+            command: |
+              rm -rf ~/remix-project/apps/remixdesktop/release/.icon*
+              rm -rf ~/remix-project/apps/remixdesktop/release/builder*
         - store_artifacts:
             path: apps/remixdesktop/release/
             destination: remixdesktop-linux
+        - persist_to_workspace:
+            root: apps/remixdesktop
+            paths:
+              - "release"
+
 
   build-remixdesktop-windows:
     executor:
@@ -147,39 +207,107 @@ jobs:
       - attach_workspace:
           at: .
       - run: unzip ./persist/desktopbuild.zip
-      - restore_cache:
-          key: node-20-windows-v3
+
       - run: 
           command: |
-            nvm install 20.0.0
-            nvm use 20.0.0
+            nvm install 20.2
+            nvm use 20.2
             node -v
             npx -v
             npm install --global yarn
+            npm install --global node-gyp
             yarn -v 
-      - save_cache:
-          key: node-20-windows-v3
-          paths:
-            - /ProgramData/nvm/v20.0.0
-      - restore_cache:
-          keys:
-            - remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
+
       - run: 
           command: |
               mkdir apps/remixdesktop/build
               cp -r dist/apps/remix-ide apps/remixdesktop/build
               cd apps/remixdesktop/
+              python -m pip install --upgrade pip
+              pip install setuptools
               yarn
-              PUBLISH_FOR_PULL_REQUEST='true' yarn dist
+              ./rundist.bash
               rm -rf release/*-unpacked
-      - save_cache:
-          key: remixdesktop-windows-deps-{{ checksum "apps/remixdesktop/yarn.lock" }}
-          paths:
-            - apps/remixdesktop/node_modules
+
       - persist_to_workspace:
             root: apps/remixdesktop
             paths:
               - "release"
+
+  test-remixdesktop-windows:
+    executor:
+      name: win/default # executor type
+      size: xlarge # can be medium, large, xlarge, 2xlarge
+      shell: bash.exe
+    parallelism: 10
+    working_directory: ~/remix-project
+    steps:
+      - run:
+          name: Restart local mstsc
+          command: psexec64.exe -accepteula -nobanner -i 0 mstsc /v:localhost /w:2560 /h:1140
+          background: true
+          shell: powershell.exe
+      - run: 
+          name: Naive impl to wait until the screen stretches 
+          command: Start-Sleep 5
+          shell: powershell.exe
+      - run:
+          name: Get screen info
+          command: |
+            Add-Type -AssemblyName System.Windows.Forms
+            [System.Windows.Forms.Screen]::AllScreens | fl *
+          shell: powershell.exe
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: unzip ./persist/desktopbuild.zip
+
+      - run: 
+          command: |
+            nvm install 20.2
+            nvm use 20.2
+            node -v
+            npx -v
+            npm install --global yarn
+            npm install --global node-gyp
+            yarn -v 
+      - run:
+          name: start selenium
+          command: |
+            cd "apps/remixdesktop/"
+            yarn -v
+          shell: powershell.exe      
+
+      - run: 
+          command: |
+              mkdir apps/remixdesktop/build
+              cp -r dist/apps/remix-ide apps/remixdesktop/build
+              cd apps/remixdesktop/
+              nvm use 20.2
+              node -v
+              python -m pip install --upgrade pip
+              pip install setuptools
+              yarn
+              ./rundist.bash
+      - run:
+          name: run tests
+          command: |
+            cd "apps/remixdesktop/"
+            yarn -v
+            sleep 15
+            ./run_ci_test.sh  
+      - run:  
+          name: "Run isogit tests"
+          command: |
+            cd apps/remixdesktop/
+            yarn -v
+            sleep 15
+            ./run_git_ui_isogit_tests.sh
+      - store_test_results:
+          path: ./apps/remixdesktop/reports/tests
+      - store_artifacts:
+          path: ./apps/remixdesktop/reports/screenshots
+
   # see https://docs.digicert.com/en/software-trust-manager/ci-cd-integrations/script-integrations/github-integration-ksp.html    
   sign-remixdesktop-windows:
     executor: win/default # executor type
@@ -230,28 +358,66 @@ jobs:
           command: |
             Get-ChildItem -Path 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit' -Filter signtool.exe -Recurse
       - run:
-          name: "Signtool-Signing"
+          name: read env
           shell: powershell.exe
           command: |
-            & $env:Signtool sign /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $env:RemixSetupExe
+            # Specify the path to your package.json file
+            $packageJsonPath = "C:\Users\circleci\remix-project\apps\remixdesktop\package.json"
+
+            # Check if the file exists
+            if (Test-Path $packageJsonPath) {
+                # Read the content of the package.json file
+                $packageJsonContent = Get-Content $packageJsonPath -Raw | ConvertFrom-Json
+
+                # Check if the 'version' field exists in the package.json
+                if ($packageJsonContent.'version' -ne $null) {
+                    # Store the version value in an environment variable
+                    $version = $packageJsonContent.version
+                    $file = "C:\Users\circleci\remix-project\release\Remix-Desktop-Setup-$($version).exe" 
+                    Write-Host "Version $(file) stored in PACKAGE_VERSION environment variable."
+                    "Set-Variable -Name 'PACKAGE_VERSION' -Value '$file' -Scope Global" > SetEnvVars.ps1
+                    dir Env:
+                } else {
+                    Write-Host "Error: 'version' field not found in package.json."
+                }
+            } else {
+                Write-Host "Error: package.json file not found at $packageJsonPath."
+            }
+      - run:
+          name: "Signtool-Signing"
+          shell: powershell.exe
+          command: | 
+            . .\SetEnvVars.ps1
+            dir Env:
+            & $env:Signtool sign /sha1 $env:SM_CODE_SIGNING_CERT_SHA1_HASH /tr http://timestamp.digicert.com /td SHA256 /fd SHA256 $PACKAGE_VERSION
       - run:
           name: "Signtool-Verification"
           shell: powershell.exe
           command: |
-            $verify_output = $(& $env:Signtool verify /v /pa $env:RemixSetupExe)
+            . .\SetEnvVars.ps1
+            $verify_output = $(& $env:Signtool verify /v /pa $PACKAGE_VERSION)
             echo ${verify_output}
             if (!$verify_output.Contains("Number of files successfully Verified: 1")) {
               echo 'Verification failed'
               exit 1
             }
+      - run:
+          name: "remove unnecessary files"
+          shell: bash.exe
+          command: |
+            rm -rf ~/remix-project/release/.icon*
+            rm -rf ~/remix-project/release/builder*
       - store_artifacts:
           path: ~/remix-project/release/
           destination: remixdesktop-windows
+      - persist_to_workspace:
+          root: ~/remix-project/
+          paths:
+            - "release"
     environment:
       SM_CLIENT_CERT_FILE: 'C:\Certificate_pkcs12.p12'
       Signtool: 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe'
       SSM: 'C:\Program Files\DigiCert\DigiCert One Signing Manager Tools'
-      RemixSetupExe: 'C:\Users\circleci\remix-project\release\Remix IDE.exe'
         
   build-remixdesktop-mac:
     macos:
@@ -259,23 +425,41 @@ jobs:
     resource_class:
         macos.m1.large.gen1
     working_directory: ~/remix-project
+    parameters:
+      arch:
+        type: string
     steps:
       - checkout
       - attach_workspace:
           at: .
+      - run:
+          name: Install Apple Certificate
+          command: |
+            echo $APPLE_CERTIFICATE_BASE64 | base64 --decode > /tmp/certificate.p12
+            security create-keychain -p ci-password build.keychain
+            security default-keychain -s build.keychain
+            security unlock-keychain -p ci-password build.keychain
+            curl -o DeveloperIDG2CA.cer "https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer"
+            sudo security import DeveloperIDG2CA.cer -k /Library/Keychains/System.keychain -T /usr/bin/codesign
+            sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain DeveloperIDG2CA.cer
+            security import /tmp/certificate.p12 -k build.keychain -P $APPLE_CERTIFICATE_PASSWORD -T /usr/bin/codesign
+            security set-key-partition-list -S apple-tool:,apple: -s -k ci-password build.keychain
+            security find-identity -v -p codesigning
       - run: unzip ./persist/desktopbuild.zip
       - run: 
           command: |
             ls -la dist/apps/remix-ide
-            nvm install 20.0.0
-            nvm use 20.0.0
+            nvm install 20.2
+            nvm use 20.2
       - restore_cache:
           keys:
             - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
       - run: 
           command: |
-            nvm use 20.0.0
-            cd apps/remixdesktop && yarn
+            nvm use 20.2
+            cd apps/remixdesktop 
+            yarn || yarn
+            find ./node_modules
             yarn add @remix-project/remix-ws-templates
       - save_cache:
           key: remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
@@ -284,20 +468,120 @@ jobs:
       # use USE_HARD_LINK=false https://github.com/electron-userland/electron-builder/issues/3179
       - run: 
           command: |
-            nvm use 20.0.0
+            nvm use 20.2
             mkdir apps/remixdesktop/build
             cp -r dist/apps/remix-ide apps/remixdesktop/build
             cd apps/remixdesktop
             yarn
-            yarn installRipGrepMacOXarm64
-            PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --arm64
-            yarn installRipGrepMacOXx64
-            PUBLISH_FOR_PULL_REQUEST='true' USE_HARD_LINKS=false yarn dist --mac --x64
-            rm -rf release/mac*
+      - run: 
+          command: |
+            nvm use 20.2
+            cd apps/remixdesktop
+            yarn installRipGrepMacOX<< parameters.arch >>
+            PUBLISH_FOR_PULL_REQUEST='false' USE_HARD_LINKS=false ./rundist.bash --<< parameters.arch >>
+            if [ -f release/latest-mac.yml ]; then
+              cat release/latest-mac.yml
+              mv release/latest-mac.yml release/latest-mac-<< parameters.arch >>.yml
+            fi
+            find build
+      - run:
+          name: Notarize the app
+          command: |
+            brew install jq
+            cd apps/remixdesktop
+            zsh notarizedmg.sh
+      - run:
+          name: "remove unnecessary files"
+          command: |
+            rm -rf ~/remix-project/apps/remixdesktop/release/.icon*
+            rm -rf ~/remix-project/apps/remixdesktop/release/builder*
+            rm -rf ~/remix-project/apps/remixdesktop/release/*.blockmap
+            rm -rf ~/remix-project/apps/remixdesktop/release/_.*
       - store_artifacts:
           path: apps/remixdesktop/release/
           destination: remixdesktop-mac
-    
+      - persist_to_workspace:
+          root: apps/remixdesktop
+          paths:
+            - "release"
+  test-remixdesktop-mac:
+    macos:
+      xcode: 14.2.0
+    resource_class:
+        macos.m1.large.gen1
+    working_directory: ~/remix-project
+    parallelism: 10
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: unzip ./persist/desktopbuild.zip
+      - run: 
+          command: |
+            ls -la dist/apps/remix-ide
+            nvm install 20.2
+            nvm use 20.2
+      - restore_cache:
+          keys:
+            - remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
+      - run: 
+          command: |
+            nvm use 20.2
+            cd apps/remixdesktop 
+            yarn || yarn
+            yarn add @remix-project/remix-ws-templates
+      - save_cache:
+          key: remixdesktop-deps-mac-{{ checksum "apps/remixdesktop/yarn.lock" }}
+          paths:
+            - apps/remixdesktop/node_modules
+      - run: 
+          command: |
+            nvm use 20.2
+            mkdir apps/remixdesktop/build
+            cp -r dist/apps/remix-ide apps/remixdesktop/build
+            cd apps/remixdesktop
+            yarn
+      - run: 
+          command: |
+            nvm use 20.2
+            cd apps/remixdesktop
+            yarn installRipGrepMacOXarm64
+            PUBLISH_FOR_PULL_REQUEST='false' DO_NOT_NOTARIZE='true' USE_HARD_LINKS=false ./rundist.bash --arm64   
+            find build
+      - run:
+          name: "Run tests"
+          command: |
+            nvm use 20.2
+            cd apps/remixdesktop
+            ./run_ci_test.sh  
+      - run:
+          name: "Run isogit tests"
+          command: |
+            nvm use 20.2
+            cd apps/remixdesktop
+            ./run_git_ui_isogit_tests.sh
+      - store_test_results:
+          path: ./apps/remixdesktop/reports/tests
+      - store_artifacts:
+          path: ./apps/remixdesktop/reports/screenshots
+  
+  uploadartifacts:
+    docker:
+      - image: cimg/node:20.0.0-browsers
+    resource_class:
+      xlarge
+    working_directory: ~/remix-project
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - run: 
+          name: "Upload Artifacts"
+          command: npx ts-node apps/remix-ide/ci/update_desktop_release_assets.ts
   lint:
     docker:
       - image: cimg/node:20.0.0-browsers
@@ -508,6 +792,12 @@ workflows:
       - build-remixdesktop-mac:
           requires:
             - build-desktop
+          matrix:
+            parameters: 
+              arch: ["arm64", "x64"]
+      - test-remixdesktop-mac:
+          requires:
+            - build-desktop
       - build-remixdesktop-windows:
           requires:
             - build-desktop
@@ -517,6 +807,20 @@ workflows:
       - build-remixdesktop-linux:
           requires:
             - build-desktop
+      - test-remixdesktop-linux:
+          requires:
+            - build-desktop
+      - test-remixdesktop-windows:
+          requires:
+           - build-desktop
+      - uploadartifacts:
+          requires:
+            - build-remixdesktop-mac
+            - build-remixdesktop-linux
+            - sign-remixdesktop-windows
+            - test-remixdesktop-windows
+            - test-remixdesktop-linux
+            - test-remixdesktop-mac
       - build-plugin:
           matrix:
             parameters:

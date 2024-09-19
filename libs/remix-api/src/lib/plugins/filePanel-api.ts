@@ -7,6 +7,6 @@ export interface IFilePanelApi {
         switchToWorkspace: (workspace: string) => Promise<void>;
     } & StatusEvents
     methods: IFilePanel['methods'] & {
-        
+        clone: () => Promise<void>;
     }
 }

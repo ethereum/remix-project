@@ -1,4 +1,4 @@
-import { branch, remote } from "../../../types";
+import { branch, remote } from "@remix-api";
 import React, { useEffect, useState } from "react";
 import { gitPluginContext } from "../../gitui";
 import { CommitDetails } from "../commits/commitdetails";

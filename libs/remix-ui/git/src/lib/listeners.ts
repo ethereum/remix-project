@@ -1,12 +1,13 @@
 
 import React from "react";
-import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog, setGitHubUser, setUserEmails, setTimestamp } from "../state/gitpayload";
+import { setCanUseApp, setLoading, setRepoName, setGItHubToken, setLog, setGitHubUser, setUserEmails, setTimestamp, setDesktopWorkingDir, setVersion } from "../state/gitpayload";
 import { gitActionDispatch, gitUIPanels, storage } from "../types";
 import { Plugin } from "@remixproject/engine";
 import { getBranches, getFileStatusMatrix, loadGitHubUserFromToken, getRemotes, gitlog, setPlugin, setStorage } from "./gitactions";
 import { Profile } from "@remixproject/plugin-utils";
 import { CustomRemixApi } from "@remix-api";
 import { statusChanged } from "./pluginActions";
+import { appPlatformTypes } from "@remix-ui/app";
 import { AppAction } from "@remix-ui/app";
 
 let plugin: Plugin<any, CustomRemixApi>, gitDispatch: React.Dispatch<gitActionDispatch>, loaderDispatch: React.Dispatch<any>, loadFileQueue: AsyncDebouncedQueue
@@ -35,7 +36,7 @@ class AsyncDebouncedQueue {
   }
 }
 
-export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<gitActionDispatch>, appDispatcher: React.Dispatch<AppAction>, loaderDispatcher: React.Dispatch<any>, setAtivePanel: React.Dispatch<React.SetStateAction<string>>) => {
+export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<gitActionDispatch>, appDispatcher: React.Dispatch<AppAction>, loaderDispatcher: React.Dispatch<any>, setAtivePanel: React.Dispatch<React.SetStateAction<string>>, platform: appPlatformTypes) => {
   plugin = viewPlugin
   gitDispatch = gitDispatcher
   loaderDispatch = loaderDispatcher
@@ -67,8 +68,39 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     })
   });
 
+  plugin.on('fs', 'workingDirChanged', async (path: string) => {
+
+    gitDispatcher(setDesktopWorkingDir(path))
+    gitDispatch(setCanUseApp(path ? true : false))
+    const version = await plugin.call('dgitApi', 'version')
+
+    gitDispatch(setVersion(version))
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    })
+    loadFileQueue.enqueue(async () => {
+      gitDispatch(setTimestamp(Date.now()))
+    })
+    loadFileQueue.enqueue(async () => {
+      getBranches()
+    })
+    loadFileQueue.enqueue(async () => {
+      getRemotes()
+    })
+  })
+
   plugin.on("filePanel", "setWorkspace", async (x: any) => {
-    gitDispatch(setCanUseApp(x && !x.isLocalhost && x.name))
+
+    if (platform == appPlatformTypes.desktop) {
+      const workingDir = await plugin.call('fs', 'getWorkingDir')
+      gitDispatch(setCanUseApp(workingDir? true : false))
+      const version = await plugin.call('dgitApi', 'version')
+
+      gitDispatch(setVersion(version))
+    } else {
+      gitDispatch(setCanUseApp(x && !x.isLocalhost && x.name))
+    }
+
     loadFileQueue.enqueue(async () => {
       loadFiles()
     })
@@ -111,6 +143,10 @@ export const setCallBacks = (viewPlugin: Plugin, gitDispatcher: React.Dispatch<g
     }, 10)
   })
   plugin.on('dgitApi', 'commit', async () => {
+
+    loadFileQueue.enqueue(async () => {
+      loadFiles()
+    }, 10)
     loadFileQueue.enqueue(async () => {
       gitDispatch(setTimestamp(Date.now()))
     }, 10)

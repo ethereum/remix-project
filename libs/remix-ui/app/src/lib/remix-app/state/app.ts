@@ -1,4 +1,4 @@
-import { GitHubUser } from "@remix-ui/git";
+import { GitHubUser } from "@remix-api";
 import { AppState } from "../interface";
 
 export const appInitialState: AppState = {

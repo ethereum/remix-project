@@ -1,165 +1,12 @@
 import { Endpoints } from "@octokit/types"
-import { IRemixApi } from "@remixproject/plugin-api"
-import { LibraryProfile, StatusEvents } from "@remixproject/plugin-utils"
-import { CommitObject, ReadBlobResult, ReadCommitResult, StatusRow } from "isomorphic-git"
-import { CustomRemixApi } from "@remix-api";
+import { GitHubUser, branch, branchDifference, commitChange, pagedCommits, remote, remoteBranch, repository, syncStatus, userEmails } from "@remix-api"
+import { ReadCommitResult } from "isomorphic-git"
 import { Plugin } from "@remixproject/engine";
-
-export type GitHubUser = Partial<Endpoints["GET /user"]["response"]['data']> & {
-    isConnected: boolean
-}
-
-export type userEmails = Endpoints["GET /user/emails"]["response"]["data"]
+import { CustomRemixApi } from "@remix-api"
 
 export interface IGitUi {
     plugin: Plugin<any, CustomRemixApi>
-}
-
-export interface IGitApi {
-    events: {
-        "checkout": () => void
-        "clone": () => void
-        "add": () => void
-        "rm": () => void
-        "commit": () => void
-        "branch": () => void
-        "init": () => void
-    } & StatusEvents,
-    methods: {
-        getCommitChanges(oid1: string, oid2: string): Promise<commitChange[]>
-        repositories(input: repositoriesInput): Promise<repository[]>
-        clone(input: cloneInputType): Promise<any>
-        branches(input?: branchesInput): Promise<branch[]>,
-        remotes(): Promise<remote[]>,
-        log(cmd: { ref: string, depth?: number }): Promise<ReadCommitResult[]>,
-        remotecommits(input: remoteCommitsInputType): Promise<pagedCommits[]>
-        fetch(input: fetchInputType): Promise<any>
-        pull(input: pullInputType): Promise<any>
-        push(input: pushInputType): Promise<any>
-        currentbranch(input?: currentBranchInput): Promise<branch>
-        branch(input: branchInputType): Promise<void>
-        checkout(input: checkoutInput): Promise<void>
-        add(input: addInput): Promise<void>
-        rm(input: rmInput): Promise<void>
-        resolveref(input: resolveRefInput): Promise<string>
-        readblob(input: readBlobInput): Promise<ReadBlobResult>
-        commit(input: commitInput): Promise<string>
-        addremote(input: remote): Promise<void>
-        delremote(input: remote): Promise<void>
-        status(input?: statusInput): Promise<Array<StatusRow>>
-        compareBranches(input: compareBranchesInput): Promise<branchDifference>
-        init(input?: initInput): Promise<void>
-        updateSubmodules: (input: updateSubmodulesInput) => Promise<void>
-    }
-}
-
-export type initInput = {
-    defaultBranch: string
-}
-
-export type updateSubmodulesInput = {
-    dir?: string
-    token?: string
-}
-
-export type remoteCommitsInputType = {
-    owner: string, repo: string, token: string, branch: string, length: number, page: number
-}
-
-export type compareBranchesInput = {
-    branch: branch, remote: remote
-}
-
-export type fetchInputType = {
-    remote: remote,
-    ref?: branch,
-    remoteRef?: branch,
-    depth?: number,
-    singleBranch?: boolean,
-    relative?: boolean,
-    quiet?: boolean
-}
-
-export type pullInputType = {
-    remote: remote, ref: branch, remoteRef?: branch
-}
-
-export type pushInputType = {
-    remote: remote, ref: branch, remoteRef?: branch, force?: boolean
-}
-
-export type branchInputType = {
-    ref: string,
-    checkout?: boolean
-    refresh?: boolean
-    force?: boolean
-}
-
-export type currentBranchInput = {
-    fs: any,
-    dir: string
-}
-
-export type checkoutInput = {
-    ref: string,
-    force?: boolean,
-    remote?: string
-    refresh?: boolean
-    fetch?: boolean
-}
-
-export type addInput = {
-    filepath: string | string[]
-}
-
-export type rmInput = {
-    filepath: string
-}
-
-export type resolveRefInput = {
-    ref: string
-}
-
-export type readBlobInput = {
-    oid: string,
-    filepath: string
-}
-
-export type commitInput = {
-    author: {
-        name: string,
-        email: string,
-    },
-    message: string,
-}
-
-export type branchesInput = {
-    fs?: any
-    dir?: string
-}
-
-export interface cloneInputType {
-    url: string,
-    branch?: string,
-    depth?: number,
-    singleBranch?: boolean
-    workspaceName?: string
-    workspaceExists?: boolean
-    token?: string
-}
-
-export interface repositoriesInput { token: string, page?: number, per_page?: number }
-
-export interface statusInput { ref: string, filepaths?: string[] }
-
-export const dGitProfile: LibraryProfile<IGitApi> = {
-  name: 'dgitApi',
-  methods: ['clone', 'branches', 'remotes', 'getCommitChanges', 'log', 'remotecommits'],
-}
-
-export interface customGitApi extends IRemixApi {
-    dgit: IGitApi
-}
+  }
 
 export type gitState = {
     currentBranch: branch
@@ -195,6 +42,8 @@ export type gitState = {
     gitHubScopes: string[]
     gitHubAccessToken: string
     log: gitLog[]
+    desktopWorkingDir?: string
+    version: string
     timestamp: number
     gitLogCount: number
 }
@@ -205,76 +54,12 @@ export type gitLog = {
 
 export type remoteBranchIdentifier = `${string}/${string}`
 
-export type branchDifference = {
-    uniqueHeadCommits: ReadCommitResult[],
-    uniqueRemoteCommits: ReadCommitResult[],
-}
-
-export type pagedCommits = {
-    page: number,
-    perPage: number,
-    total: number,
-    hasNextPage: boolean,
-    commits: ReadCommitResult[]
-}
-
 export type loaderState = {
     branches: boolean
     remotes: boolean
     commits: boolean
     sourcecontrol: boolean
     plugin: boolean
-}
-
-export type commitChangeTypes = {
-    "deleted": "D"
-    "modified": "M"
-    "added": "A",
-    "unknown": "?"
-}
-
-export enum syncStatus {
-    "sync" = "sync",
-    "publishBranch" = "publishBranch",
-    "none" = "none",
-}
-
-export type commitChangeType = keyof commitChangeTypes
-
-export type commitChange = {
-    type: commitChangeType
-    path: string,
-    hashModified: string,
-    hashOriginal: string,
-    original?: string,
-    modified?: string,
-    readonly?: boolean
-}
-
-export type repository = {
-    name: string
-    html_url: string
-    owner: {
-        login: string
-    },
-    full_name: string
-    default_branch: string
-    id: number
-    url: string
-}
-
-export type branch = {
-    name: string
-    remote: remote
-}
-
-export type remote = {
-    name: string
-    url: string
-}
-
-export type remoteBranch = {
-    name: string
 }
 
 export const defaultGitState: gitState = {
@@ -292,7 +77,7 @@ export const defaultGitState: gitState = {
   deleted: [],
   modified: [],
   allchangesnotstaged: [],
-  canUseApp: true,
+  canUseApp: false,
   loading: false,
   storage: {
     used: 0,
@@ -317,6 +102,8 @@ export const defaultGitState: gitState = {
   gitHubScopes: [],
   gitHubAccessToken: "",
   log: [],
+  desktopWorkingDir: null,
+  version: "",
   timestamp: 0,
   gitLogCount: 22
 }
@@ -508,9 +295,14 @@ export interface clearLogAction {
     type: string
 }
 
+export interface setDesktopWorkingDirAction {
+    type: string,
+    payload: string
+}
+
 export interface setTimeStampAction {
     type: string,
     payload: number
 }
 
-export type gitActionDispatch = setTimeStampAction | setCurrentHeadAction | clearLogAction | setLogAction | setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
+export type gitActionDispatch = setTimeStampAction |setDesktopWorkingDirAction | setCurrentHeadAction | clearLogAction | setLogAction | setDefaultRemoteAction | setTokenAction | setUpstreamAction | setRemoteBranchCommitsAction | setLocalBranchCommitsAction | setBranchDifferencesAction | setRemotesAction | setCurrentBranchAction | fileStatusAction | setLoadingAction | setCanUseAppAction | setRepoNameAction | setCommitsAction | setBranchesAction | setReposAction | setRemoteBranchesAction
