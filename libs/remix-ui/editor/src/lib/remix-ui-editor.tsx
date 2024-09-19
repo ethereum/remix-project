@@ -709,7 +709,7 @@ export const EditorUI = (props: EditorUIProps) => {
         // Check if the change matches the current completion
         if (changes.some(change => change.text === inlineCompletionProvider.currentCompletion.item.insertText)) {
           _paq.push(['trackEvent', 'ai', 'solcoder', inlineCompletionProvider.currentCompletion.task + '_accepted'])
-          inlineCompletionProvider.currentCompletion = null;
+          console.log('Accepted completion', inlineCompletionProvider.currentCompletion)
         }
       }
     });
@@ -777,11 +777,9 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
-        const cm = await props.plugin.call('remixAI', 'code_explaining', message)
+        const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
 
-        console.log(cm)
         const natSpecCom = "\n" + extractNatspecComments(cm)
-        console.log(natSpecCom)
         const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
         const range = new monacoRef.current.Range(cln.start.line, cln.start.column, cln.start.line, cln.start.column)
         const lines = natSpecCom.split('\n')

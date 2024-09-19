@@ -118,6 +118,7 @@ export class RemixAIPlugin extends ViewPlugin {
     }
     if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
+    return result
   }
 
   async code_explaining(prompt: string): Promise<any> {
@@ -137,6 +138,7 @@ export class RemixAIPlugin extends ViewPlugin {
     }
     if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
+    return result
   }
 
   async error_explaining(prompt: string): Promise<any> {
@@ -155,6 +157,7 @@ export class RemixAIPlugin extends ViewPlugin {
     }
     if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
+    return result
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
