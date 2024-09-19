@@ -1,11 +1,5 @@
 /* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
-import { CompletionTimeout } from './completionTimer';
-
-import axios, { AxiosResponse } from 'axios'
-import { slice } from 'lodash';
-import { activateService } from '@remixproject/plugin-utils';
-import { any } from 'async';
 const _paq = (window._paq = window._paq || [])
 
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
@@ -23,7 +17,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     this.completionEnabled = true
     this.currentCompletion = {
       text: '',
-      item: any,
+      item: [],
       task : this.task,
       displayed: false,
       accepted: false
