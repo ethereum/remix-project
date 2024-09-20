@@ -59,7 +59,7 @@
   "udapp.tooltipText2": "chainlist.org을 열고 상호 작용하려는 체인의 연결 사양을 가져옵니다.",
   "udapp.tooltipText3": "L1 메인넷 ETH를 선택한 네트워크 통화로 변환하기 위한 브리지를 열기 위해 클릭하세요.",
   "udapp._comment_instanceContainerUI.tsx": "libs/remix-ui/run-tab/src/lib/components/instanceContainerUI.tsx",
-  "udapp.deployedContracts": "배포된 컨트랙트",
+  "udapp.deployedContracts": "배포된 컨트랙트 ",
   "udapp.deployAndRunClearInstances": "인스턴스 목록을 지우고 레코더를 재설정",
   "udapp.deployAndRunNoInstanceText": "현재 상호 작용할 컨트랙트 인스턴스가 없습니다.",
   "udapp.tooltipText6": "배포된 컨트랙트와 상호 작용하기 위해 자동 생성된 일반 사용자 인터페이스",
