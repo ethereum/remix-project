@@ -59,7 +59,7 @@
   "udapp.tooltipText2": "Abra chainlist.org y obtenga las especificaciones de conexión de la cadena con la que desea interactuar.",
   "udapp.tooltipText3": "Haz clic para abrir un puente para convertir ETH de L1 mainnet a la moneda de red seleccionada.",
   "udapp._comment_instanceContainerUI.tsx": "libs/remix-ui/run-tab/src/lib/components/instanceContainerUI.tsx",
-  "udapp.deployedContracts": "Contratos Publicados",
+  "udapp.deployedContracts": "Contratos Publicados ",
   "udapp.deployAndRunClearInstances": "Limpiar lista de instancias y restablecer grabadora",
   "udapp.deployAndRunNoInstanceText": "Actualmente no tiene instancias de contrato con las que interactuar.",
   "udapp.tooltipText6": "Interfaces de usuario genéricas generadas automáticamente para la interacción con los contratos publicados",

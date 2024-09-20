@@ -18,6 +18,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
           <label className="udapp_deployedContracts" data-id="unpinnedContracts">
             <FormattedMessage id="udapp.deployedContracts" />
+            <span>({instanceList.length})</span>
           </label>
         </CustomTooltip>
         {instanceList.length > 0 ? (
