@@ -32,35 +32,6 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         ) : null}
       </div>
 
-      {/* {props.pinnedInstances.instanceList.length > 0 ? (
-        <div>
-          {' '}
-          {props.pinnedInstances.instanceList.map((instance, index) => {
-            return (
-              <UniversalDappUI
-                key={index}
-                instance={instance}
-                isPinnedContract={true}
-                context={props.getContext()}
-                removeInstance={props.removeInstance}
-                index={index}
-                gasEstimationPrompt={props.gasEstimationPrompt}
-                passphrasePrompt={props.passphrasePrompt}
-                mainnetPrompt={props.mainnetPrompt}
-                runTransactions={props.runTransactions}
-                sendValue={props.sendValue}
-                getFuncABIInputs={props.getFuncABIInputs}
-                plugin={props.plugin}
-                exEnvironment={props.exEnvironment}
-                editInstance={props.editInstance}
-                solcVersion={props.solcVersion}
-                getVersion={props.getVersion}
-              />
-            )
-          })}
-        </div>
-      ) : ''} */}
-
       {instanceList.length > 0 ? (
         <div>
           {' '}
@@ -70,6 +41,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 key={index}
                 instance={instance}
                 context={props.getContext()}
+                unpinInstance={props.unpinInstance}
                 removeInstance={props.removeInstance}
                 index={index}
                 gasEstimationPrompt={props.gasEstimationPrompt}

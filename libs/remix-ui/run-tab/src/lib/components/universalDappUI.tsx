@@ -117,9 +117,15 @@ export function UniversalDappUI(props: UdappProps) {
   const remove = async() => {
     if (props.instance.isPinned) {
       await unsavePinnedContract()
-      _paq.push(['trackEvent', 'udapp', 'pinContracts', 'unpinned'])
+      _paq.push(['trackEvent', 'udapp', 'pinContracts', 'removePinned'])
     }
-    props.removeInstance(props.index, props.instance.isPinned, false)
+    props.removeInstance(props.index)
+  }
+
+  const unpinContract = async() => {
+    await unsavePinnedContract()
+    _paq.push(['trackEvent', 'udapp', 'pinContracts', 'unpinned'])
+    props.unpinInstance(props.index)
   }
 
   const pinContract = async() => {
@@ -136,7 +142,7 @@ export function UniversalDappUI(props: UdappProps) {
     await props.plugin.call('udapp', 'addPinnedInstance', objToSave.address, objToSave.abi, objToSave.name, objToSave.pinnedAt, objToSave.filePath)
     _paq.push(['trackEvent', 'udapp', 'pinContracts', `pinned at ${props.plugin.REACT_API.chainId}`])
     // Remove contract from deployed contracts list on UI
-    props.removeInstance(props.index, false, false)
+    props.removeInstance(props.index)
   }
 
   const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
@@ -263,7 +269,7 @@ export function UniversalDappUI(props: UdappProps) {
           </div>
           { props.instance.isPinned ? ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappUnpinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextUnpin" />}>
-              <i className="fas fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={remove}></i>
+              <i className="fas fa-thumbtack p-2" aria-hidden="true" data-id="universalDappUiUdappUnpin" onClick={unpinContract}></i>
             </CustomTooltip>
           </div> ) : ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
             <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappPinTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPin" />}>
