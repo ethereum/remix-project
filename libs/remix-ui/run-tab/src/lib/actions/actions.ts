@@ -79,8 +79,8 @@ export const addPinnedInstance = (dispatch: React.Dispatch<any>, instance: { con
   dispatch(addNewPinnedInstance(instance))
 }
 
-export const removeInstance = (dispatch: React.Dispatch<any>, index: number, isPinnedContract: boolean, shouldDelete: boolean) => {
-  dispatch(removeExistingInstance(index, isPinnedContract, shouldDelete))
+export const removeInstance = (dispatch: React.Dispatch<any>, index: number) => {
+  dispatch(removeExistingInstance(index))
 }
 
 export const clearInstances = (dispatch: React.Dispatch<any>) => {

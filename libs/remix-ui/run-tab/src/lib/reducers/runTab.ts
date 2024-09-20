@@ -523,28 +523,8 @@ export const runTabReducer = (state: RunTabState = runTabInitialState, action: A
   }
 
   case REMOVE_INSTANCE: {
-    const payload: { index: number, isPinnedContract: boolean, shouldDelete: boolean } = action.payload
-
-    if (payload.isPinnedContract) {
-      if (payload.shouldDelete) return {
-        ...state,
-        pinnedInstances: {
-          ...state.pinnedInstances,
-          instanceList: state.pinnedInstances.instanceList.filter((_, index) => index !== payload.index)
-        }
-      }
-      else return {
-        ...state,
-        pinnedInstances: {
-          ...state.pinnedInstances,
-          instanceList: state.pinnedInstances.instanceList.filter((_, index) => index !== payload.index)
-        },
-        instances: {
-          ...state.instances,
-          instanceList: [...state.instances.instanceList, state.pinnedInstances.instanceList[payload.index]]
-        }
-      }
-    } else return {
+    const payload: { index: number } = action.payload
+    return {
       ...state,
       instances: {
         ...state.instances,
