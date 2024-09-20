@@ -4,7 +4,6 @@ import { Plugin } from '@remixproject/engine';
 import { RemixAITab } from '@remix-ui/remix-ai'
 import React from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel } from '@remix/remix-ai-core';
-import { resourceUsage } from 'process';
 
 const profile = {
   name: 'remixAI',
@@ -17,13 +16,13 @@ const profile = {
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
   kind: '',
-  location: 'sidePanel',
+  // location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
   version: packageJson.version,
   maintainedBy: 'Remix'
 }
 
-export class RemixAIPlugin extends ViewPlugin {
+export class RemixAIPlugin extends Plugin {
   isOnDesktop:boolean = false
   aiIsActivated:boolean = false
   readonly remixDesktopPluginName = 'remixAID'
@@ -31,7 +30,6 @@ export class RemixAIPlugin extends ViewPlugin {
   isInferencing: boolean = false
 
   constructor(inDesktop:boolean) {
-    console.log('remixAIPlugin loaded')
     super(profile)
     this.isOnDesktop = inDesktop
 
@@ -41,16 +39,20 @@ export class RemixAIPlugin extends ViewPlugin {
   onActivation(): void {
     if (this.isOnDesktop) {
       console.log('Activating RemixAIPlugin on desktop')
+      this.on(this.remixDesktopPluginName, 'activated', () => {
+        this.call("remixAI", 'initialize', null, null, null, false);
+      })
     } else {
       console.log('Activating RemixAIPlugin on browser')
       this.initialize()
     }
   }
 
-  async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel){
-
+  async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
     if (this.isOnDesktop) {
-      const res = await this.call(this.remixDesktopPluginName, 'initializeModelBackend', false, model1, model2)
+      // on desktop use remote inferencer -> false
+      console.log('initialize on desktop')
+      const res = await this.call(this.remixDesktopPluginName, 'initializeModelBackend', useRemote, model1, model2)
       if (res) {
         this.on(this.remixDesktopPluginName, 'onStreamResult', (value) => {
           this.call('terminal', 'log', { type: 'log', value: value })
@@ -67,7 +69,6 @@ export class RemixAIPlugin extends ViewPlugin {
 
     } else {
       // on browser
-      console.log('Initializing RemixAIPlugin on browser')
       this.remoteInferencer = new RemoteInferencer(remoteModel?.apiUrl, remoteModel?.completionUrl)
       this.remoteInferencer.event.on('onInference', () => {
         this.isInferencing = true
@@ -168,9 +169,9 @@ export class RemixAIPlugin extends ViewPlugin {
     }
   }
 
-  render() {
-    return (
-      <RemixAITab plugin={this}></RemixAITab>
-    )
-  }
+  // render() {
+  //   return (
+  //     <RemixAITab plugin={this}></RemixAITab>
+  //   )
+  // }
 }

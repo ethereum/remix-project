@@ -539,7 +539,8 @@ class AppComponent {
       'fetchAndCompile',
       'contentImport',
       'gistHandler',
-      'compilerloader'
+      'compilerloader',
+      'remixAI'
     ])
     await this.appManager.activatePlugin(['settings'])
 
