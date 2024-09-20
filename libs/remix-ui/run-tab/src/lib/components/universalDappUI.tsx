@@ -149,7 +149,6 @@ export function UniversalDappUI(props: UdappProps) {
 
     props.runTransactions(
       props.index,
-      props.instance.isPinned,
       lookupOnly,
       funcABI,
       inputsValues,
