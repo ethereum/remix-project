@@ -41,6 +41,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 key={index}
                 instance={instance}
                 context={props.getContext()}
+                pinInstance={props.pinInstance}
                 unpinInstance={props.unpinInstance}
                 removeInstance={props.removeInstance}
                 index={index}

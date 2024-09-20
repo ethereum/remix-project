@@ -138,11 +138,8 @@ export function UniversalDappUI(props: UdappProps) {
       pinnedAt: Date.now()
     }
     await props.plugin.call('fileManager', 'writeFile', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}/${props.instance.address}.json`, JSON.stringify(objToSave, null, 2))
-    // Add contract to saved contracts list on UI
-    await props.plugin.call('udapp', 'addPinnedInstance', objToSave.address, objToSave.abi, objToSave.name, objToSave.pinnedAt, objToSave.filePath)
     _paq.push(['trackEvent', 'udapp', 'pinContracts', `pinned at ${props.plugin.REACT_API.chainId}`])
-    // Remove contract from deployed contracts list on UI
-    props.removeInstance(props.index)
+    props.pinInstance(props.index, objToSave.pinnedAt, objToSave.filePath)
   }
 
   const runTransaction = (lookupOnly, funcABI: FuncABI, valArr, inputsValues, funcIndex?: number) => {
