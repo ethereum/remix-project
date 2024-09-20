@@ -32,6 +32,7 @@ import {
   setGasPriceStatus,
   setMaxFee,
   setMaxPriorityFee,
+  unpinPinnedInstance,
   removeInstances,
   removeSingleInstance,
   getExecutionContext,
@@ -344,6 +345,7 @@ export function RunTabUI(props: RunTabProps) {
             instances={runTab.instances}
             pinnedInstances={runTab.pinnedInstances}
             clearInstances={removeInstances}
+            unpinInstance={unpinPinnedInstance}
             removeInstance={removeSingleInstance}
             getContext={getExecutionContext}
             gasEstimationPrompt={gasEstimationPrompt}
