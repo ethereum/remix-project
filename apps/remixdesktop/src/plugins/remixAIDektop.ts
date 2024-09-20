@@ -1,6 +1,5 @@
 import { ElectronBasePlugin, ElectronBasePluginClient } from "@remixproject/plugin-electron"
 import { Profile } from "@remixproject/plugin-utils"
-// import { IModel, ModelType, DefaultModels } from '@remix/remix-ai-core';
 
 // use remix ai core
 import { InferenceManager } from "../lib/InferenceServerManager"
