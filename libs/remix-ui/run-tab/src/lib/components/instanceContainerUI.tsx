@@ -9,7 +9,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
   const { instanceList } = props.instances
 
   const clearInstance = async() => {
-    await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}`)
+    const isPinnedAvailable = await props.plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}`)
+    if (isPinnedAvailable) await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}`)
     props.clearInstances()
   }
 
@@ -21,7 +22,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             <FormattedMessage id="udapp.deployedContracts" />
           </label>
         </CustomTooltip>
-        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText="Number of deployed contracts">
+        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="numOfDeployedInstancesTooltip" tooltipText="Number of deployed contracts">
           <div className="badge badge-pill badge-primary text-center ml-2 mb-1">{instanceList.length}</div>
         </CustomTooltip>
         <div className="w-100"></div>
