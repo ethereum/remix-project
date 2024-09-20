@@ -1,5 +1,5 @@
 import { ContractData } from "@remix-project/core-plugin"
-import { addNewInstance, pinUnpinnedInstance, unpinPinnedInstance, addProvider, clearAllInstances, clearAllPinnedInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setChainId, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
+import { addNewInstance, pinUnpinnedInstance, unpinPinnedInstance, addProvider, clearAllInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setChainId, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
 
 export const setAccount = (dispatch: React.Dispatch<any>, account: string) => {
   dispatch(setSelectedAccount(account))
@@ -88,11 +88,6 @@ export const removeInstance = (dispatch: React.Dispatch<any>, index: number) => 
 
 export const clearInstances = (dispatch: React.Dispatch<any>) => {
   dispatch(clearAllInstances())
-  dispatch(clearRecorderCount())
-}
-
-export const clearPinnedInstances = (dispatch: React.Dispatch<any>) => {
-  dispatch(clearAllPinnedInstances())
   dispatch(clearRecorderCount())
 }
 

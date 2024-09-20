@@ -31,9 +31,7 @@ const profile = {
     'getSettings',
     'setEnvironmentMode',
     'clearAllInstances',
-    'clearAllPinnedInstances',
     'addInstance',
-    'addPinnedInstance',
     'resolveContractAndAddInstance'
   ]
 }
@@ -83,10 +81,6 @@ export class RunTab extends ViewPlugin {
 
   clearAllInstances() {
     this.emit('clearAllInstancesReducer')
-  }
-
-  clearAllPinnedInstances() {
-    this.emit('clearAllPinnedInstancesReducer')
   }
 
   addInstance(address, abi, name, contractData) {

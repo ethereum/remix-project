@@ -111,18 +111,6 @@ export interface RunTabState {
     }[],
     error: string
   },
-  pinnedInstances: {
-    instanceList: {
-      contractData?: ContractData,
-      address: string,
-      balance?: number,
-      name: string,
-      decodedResponse?: Record<number, any>,
-      abi?: any,
-      pinnedAt?: number
-    }[],
-    error: string
-  },
   recorder: {
     pathToScenario: string,
     transactionCount: number
@@ -316,19 +304,6 @@ export interface InstanceContainerProps {
     }[],
     error: string
   },
-  pinnedInstances: {
-    instanceList: {
-      contractData?: ContractData,
-      address: string,
-      balance?: number,
-      name: string,
-      decodedResponse?: Record<number, any>,
-      abi?: any,
-      pinnedAt?: number,
-      filePath?: string
-    }[],
-    error: string
-  },
   clearInstances: () => void,
   removeInstance: (index: number) => void,
   pinInstance: (index: number, pinnedAt: number, filePath: string) => void,
@@ -336,7 +311,6 @@ export interface InstanceContainerProps {
   getContext: () => 'memory' | 'blockchain',
   runTransactions: (
     instanceIndex: number,
-    isPinnedContract: boolean,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
@@ -457,7 +431,6 @@ export interface UdappProps {
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   runTransactions: (
     instanceIndex: number,
-    isPinnedContract: boolean,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
