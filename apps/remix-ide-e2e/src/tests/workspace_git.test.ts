@@ -181,7 +181,7 @@ module.exports = {
       .waitForElementVisible('[data-id="workspaceGitPanel"]')
       .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
-      .pause()
+      .pause(1000)
       .waitForElementVisible('[data-id="custom-dropdown-menu"]')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/dev')
       .waitForElementContainsText('[data-id="custom-dropdown-items"]', 'origin/production')
@@ -404,7 +404,7 @@ module.exports = {
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Counter is BaseHook {`) !== -1,
           'Incorrect content')
-      }).pause()
+      })
   },
 
   'Should create Remix default workspace with files #group5': function (browser: NightwatchBrowser) {
@@ -426,6 +426,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="initgit-btn"]')
       .click('*[data-id="initgit-btn"]')
       .waitForElementVisible('*[data-id="github-panel"]')
+      .pause(1000)
       .click('*[data-id="github-panel"]')
       .waitForElementVisible('*[data-id="gitubUsername"]')
       .setValue('*[data-id="gitubUsername"]', 'git')

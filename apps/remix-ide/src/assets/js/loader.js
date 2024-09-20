@@ -2,20 +2,17 @@ const domains = {
   'remix-alpha.ethereum.org': 27,
   'remix-beta.ethereum.org': 25,
   'remix.ethereum.org': 23,
-  '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
+  'localhost': 35 // remix desktop
 }
 
-const domainsSecondaryTracker = {
-  'remix-alpha.ethereum.org': 27,
-  'remix-beta.ethereum.org': 25,
-  'remix.ethereum.org': 23,
-  '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
-}
+let domainToTrack = domains[window.location.hostname]
 
-if (domains[window.location.hostname]) {
+
+function trackDomain(domainToTrack) {
   var _paq = window._paq = window._paq || []
+
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-  _paq.push(["setExcludedQueryParams", ["code","gist"]]);
+  _paq.push(["setExcludedQueryParams", ["code", "gist"]]);
   _paq.push(["setExcludedReferrers", ["etherscan.io"]]);
   _paq.push(['enableJSErrorTracking']);
   _paq.push(['trackPageView']);
@@ -31,13 +28,37 @@ if (domains[window.location.hostname]) {
   }
   (function () {
     var u = "https://ethereumfoundation.matomo.cloud/";
-    _paq.push(['setTrackerUrl', u + 'matomo.php']);
-    _paq.push(['setSiteId', domains[window.location.hostname]]);
+    _paq.push(['setTrackerUrl', u + 'matomo.php?debug=1']);
+    _paq.push(['setSiteId', domainToTrack]);
     var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-    g.async = true; g.src = '//cdn.matomo.cloud/ethereumfoundation.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g,s);
-  })()
+    g.async = true; g.src = 'https://cdn.matomo.cloud/ethereumfoundation.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g, s);
+  })();
 }
 
+if (window.electronAPI) {
+  window.electronAPI.canTrackMatomo().then((canTrack) => {
+    if (!canTrack) {
+      console.log('Matomo tracking is disabled on Dev mode')
+      return
+    }
+    window._paq = {
+      push: function (...data) {
+        if (!window.localStorage.getItem('config-v0.8:.remix.config') ||
+          (window.localStorage.getItem('config-v0.8:.remix.config') && !window.localStorage.getItem('config-v0.8:.remix.config').includes('settings/matomo-analytics'))) {
+            // require user tracking consent before processing data
+        } else {
+          if (JSON.parse(window.localStorage.getItem('config-v0.8:.remix.config'))['settings/matomo-analytics']) {
+            window.electronAPI.trackEvent(...data)
+          }
+        }
+      }
+    }
+  })
+} else {
+  if (domainToTrack) {
+    trackDomain(domainToTrack)
+  }
+}
 function isElectron() {
   // Renderer process
   if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process.type === 'renderer') {

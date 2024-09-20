@@ -1,5 +1,5 @@
 {
-  "logo": "/assets/img/YouTubeLogo.webp",
+  "logo": "assets/img/YouTubeLogo.webp",
   "title": "Remix Guide",
   "description": "Streamlined access to categorized video tutorials for mastering Remix IDE. From fundamentals to advanced techniques, level up your development skills with ease.",
   "sections": [
