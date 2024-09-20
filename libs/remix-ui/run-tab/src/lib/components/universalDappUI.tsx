@@ -122,12 +122,6 @@ export function UniversalDappUI(props: UdappProps) {
     props.removeInstance(props.index, props.instance.isPinned, false)
   }
 
-  const deletePinnedContract = async() => {
-    await unsavePinnedContract()
-    _paq.push(['trackEvent', 'udapp', 'pinContracts', 'deletePinned'])
-    props.removeInstance(props.index, props.instance.isPinned, true)
-  }
-
   const pinContract = async() => {
     const workspace = await props.plugin.call('filePanel', 'getCurrentWorkspace')
     const objToSave = {
@@ -278,16 +272,11 @@ export function UniversalDappUI(props: UdappProps) {
           </div> )
           }
         </div>
-        { props.instance.isPinned ? ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
-          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappDeleteTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextDelete" />}>
-            <i className="far fa-trash p-2" aria-hidden="true" data-id="universalDappUiUdappDelete" onClick={deletePinnedContract}></i>
-          </CustomTooltip>
-        </div> ) : ( <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
+        <div className="btn" style={{ padding: '0.15rem', marginLeft: '-0.5rem' }}>
           <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappCloseTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextRemove" />}>
             <i className="fas fa-times p-2" aria-hidden="true" data-id="universalDappUiUdappClose" onClick={remove}></i>
           </CustomTooltip>
-        </div> )
-        }
+        </div>
       </div>
       <div className="udapp_cActionsWrapper" data-id="universalDappUiContractActionWrapper">
         <div className="udapp_contractActionsContainer">
