@@ -191,7 +191,8 @@ const loadPinnedContracts = async (plugin, dispatch, dirName) => {
       for (const file of filePaths) {
         const pinnedContract = await plugin.call('fileManager', 'readFile', file)
         const pinnedContractObj = JSON.parse(pinnedContract)
-        if (pinnedContractObj) addPinnedInstance(dispatch, pinnedContractObj)
+        pinnedContractObj.isPinned = true
+        if (pinnedContractObj) addInstance(dispatch, pinnedContractObj)
       }
     } catch (err) {
       console.log(err)

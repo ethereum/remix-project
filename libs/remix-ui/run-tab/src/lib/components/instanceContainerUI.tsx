@@ -32,7 +32,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
         ) : null}
       </div>
 
-      {props.pinnedInstances.instanceList.length > 0 ? (
+      {/* {props.pinnedInstances.instanceList.length > 0 ? (
         <div>
           {' '}
           {props.pinnedInstances.instanceList.map((instance, index) => {
@@ -59,7 +59,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             )
           })}
         </div>
-      ) : ''}
+      ) : ''} */}
 
       {instanceList.length > 0 ? (
         <div>
@@ -69,7 +69,6 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
               <UniversalDappUI
                 key={index}
                 instance={instance}
-                isPinnedContract={false}
                 context={props.getContext()}
                 removeInstance={props.removeInstance}
                 index={index}

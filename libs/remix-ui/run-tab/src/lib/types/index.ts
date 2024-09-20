@@ -104,7 +104,9 @@ export interface RunTabState {
       balance?: number,
       name: string,
       decodedResponse?: Record<number, any>,
-      abi?: any
+      abi?: any,
+      isPinned?: boolean,
+      pinnedAt?: number
     }[],
     error: string
   },
@@ -306,7 +308,10 @@ export interface InstanceContainerProps {
       balance?: number,
       name: string,
       decodedResponse?: Record<number, any>,
-      abi?: any
+      abi?: any,
+      isPinned?: boolean,
+      pinnedAt?: number,
+      filePath?: string
     }[],
     error: string
   },
@@ -435,6 +440,7 @@ export interface UdappProps {
     name: string,
     decodedResponse?: Record<number, any>,
     abi?: any,
+    isPinned?: boolean
     pinnedAt?: number,
     filePath?: string
   },
