@@ -1,5 +1,5 @@
 import { ContractData } from "@remix-project/core-plugin"
-import { addNewInstance, addNewPinnedInstance, unpinPinnedInstance, addProvider, clearAllInstances, clearAllPinnedInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setChainId, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
+import { addNewInstance, pinUnpinnedInstance, unpinPinnedInstance, addProvider, clearAllInstances, clearAllPinnedInstances, clearRecorderCount, hidePopUp, newProxyDeployment, removeExistingInstance, removeProvider, setBaseFeePerGas, setConfirmSettings, setCurrentContract, setExecutionEnvironment, setExternalEndpoint, setGasLimit, setGasPrice, setGasPriceStatus, setMatchPassphrase, setMaxFee, setMaxPriorityFee, setNetworkName, setChainId, setPassphrase, setPathToScenario, setSelectedAccount, setSendUnit, setSendValue } from "./payload"
 
 export const setAccount = (dispatch: React.Dispatch<any>, account: string) => {
   dispatch(setSelectedAccount(account))
@@ -74,9 +74,8 @@ export const addInstance = (dispatch: React.Dispatch<any>, instance: { contractD
   dispatch(addNewInstance(instance))
 }
 
-export const addPinnedInstance = (dispatch: React.Dispatch<any>, instance: { contractData?: ContractData, address: string, name: string, abi?: any, decodedResponse?: Record<number, any>, pinnedAt?: number, filePath?: string }) => {
-  instance.decodedResponse = {}
-  dispatch(addNewPinnedInstance(instance))
+export const pinInstance = (dispatch: React.Dispatch<any>, index: number, pinnedAt: number, filePath: string) => {
+  dispatch(pinUnpinnedInstance(index, pinnedAt, filePath))
 }
 
 export const unpinInstance = (dispatch: React.Dispatch<any>, index: number) => {

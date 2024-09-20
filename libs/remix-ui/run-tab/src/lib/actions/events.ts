@@ -1,7 +1,7 @@
 import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances, fillAccountsList } from "./account"
-import { addExternalProvider, addInstance, addPinnedInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider, setPinnedChainId } from "./actions"
+import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider, setPinnedChainId } from "./actions"
 import { addDeployOption, clearAllInstances, clearAllPinnedInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
 import { updateInstanceBalance } from './deploy'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
@@ -106,10 +106,6 @@ export const setupEvents = (plugin: RunTab) => {
 
   plugin.on('udapp', 'addInstanceReducer', (address, abi, name, contractData?) => {
     addInstance(dispatch, { contractData, abi, address, name })
-  })
-
-  plugin.on('udapp', 'addPinnedInstanceReducer', (address, abi, name, pinnedAt, filePath) => {
-    addPinnedInstance(dispatch, { abi, address, name, pinnedAt, filePath })
   })
 
   plugin.on('filePanel', 'setWorkspace', async () => {
