@@ -230,7 +230,7 @@ export const updateInstancesBalance = (instances: Array<{ contractData?: Contrac
   }
 }
 
-export const addNewInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any }) => {
+export const addNewInstance = (instance: { contractData?: ContractData, address: string, name: string, abi?: any, isPinned?: boolean, pinnedAt?: number }) => {
   return {
     type: ADD_INSTANCE,
     payload: instance
