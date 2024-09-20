@@ -3,7 +3,7 @@ import React from 'react'
 import { RunTab } from '../types/run-tab'
 import { resetAndInit, setupEvents, setEventsDispatch } from './events'
 import { createNewBlockchainAccount, setExecutionContext, signMessageWithAddress } from './account'
-import { clearInstances, clearPopUp, removeInstance, unpinInstance, setAccount, setGasFee, setMatchPassphrasePrompt,
+import { clearInstances, clearPopUp, removeInstance, pinInstance, unpinInstance, setAccount, setGasFee, setMatchPassphrasePrompt,
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit,
   updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
 import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance, syncContractsInternal, isValidContractAddress, isValidContractUpgrade } from './deploy'
@@ -50,6 +50,7 @@ export const setGasPrice = (price: string) => updateGasPrice(dispatch, price)
 export const setGasPriceStatus = (status: boolean) => updateGasPriceStatus(dispatch, status)
 export const setMaxFee = (fee: string) => updateMaxFee(dispatch, fee)
 export const setMaxPriorityFee = (fee: string) => updateMaxPriorityFee(dispatch, fee)
+export const pinUnpinnedInstance = (index: number, pinnedAt: number, filePath: string) => pinInstance(dispatch, index, pinnedAt, filePath)
 export const unpinPinnedInstance = (index: number) => unpinInstance(dispatch, index)
 export const removeInstances = () => clearInstances(dispatch)
 export const removeSingleInstance = (index: number) => removeInstance(dispatch, index)

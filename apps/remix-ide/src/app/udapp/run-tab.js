@@ -93,10 +93,6 @@ export class RunTab extends ViewPlugin {
     this.emit('addInstanceReducer', address, abi, name, contractData)
   }
 
-  addPinnedInstance(address, abi, name, pinnedAt, filePath) {
-    this.emit('addPinnedInstanceReducer', address, abi, name, pinnedAt, filePath)
-  }
-
   createVMAccount(newAccount) {
     return this.blockchain.createVMAccount(newAccount)
   }

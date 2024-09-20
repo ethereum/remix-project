@@ -106,7 +106,8 @@ export interface RunTabState {
       decodedResponse?: Record<number, any>,
       abi?: any,
       isPinned?: boolean,
-      pinnedAt?: number
+      pinnedAt?: number,
+      filePath?: string
     }[],
     error: string
   },
@@ -330,6 +331,7 @@ export interface InstanceContainerProps {
   },
   clearInstances: () => void,
   removeInstance: (index: number) => void,
+  pinInstance: (index: number, pinnedAt: number, filePath: string) => void,
   unpinInstance: (index: number) => void,
   getContext: () => 'memory' | 'blockchain',
   runTransactions: (
@@ -447,6 +449,7 @@ export interface UdappProps {
   },
   context: 'memory' | 'blockchain',
   removeInstance: (index: number) => void,
+  pinInstance: (index: number, pinnedAt: number, filePath: string) => void,
   unpinInstance: (index: number) => void,
   index: number,
   gasEstimationPrompt: (msg: string) => JSX.Element,
