@@ -59,7 +59,7 @@
   "udapp.tooltipText2": "Откройте chainlist.org и получите данные подключения к цепочке, с которой вы хотите взаимодействовать.",
   "udapp.tooltipText3": "Нажмите, чтобы открыть мост для преобразования L1 mainnet ETH в выбранную сетевую валюту.",
   "udapp._comment_instanceContainerUI.tsx": "libs/remix-ui/run-tab/src/lib/components/instanceContainerUI.tsx",
-  "udapp.deployedContracts": "Развернутые контракты ",
+  "udapp.deployedContracts": "Развернутые контракты",
   "udapp.deployAndRunClearInstances": "Очистить список экземпляров и сбросить рекордер",
   "udapp.deployAndRunNoInstanceText": "В настоящее время у вас нет экземпляров контракта для взаимодействия.",
   "udapp.tooltipText6": "Автоматически создаваемые пользовательские интерфейсы для взаимодействия с развернутыми контрактами",
