@@ -5,7 +5,7 @@ import { Profile } from "@remixproject/plugin-utils"
 // use remix ai core
 import { InferenceManager } from "../lib/InferenceServerManager"
 import { cacheDir } from "../utils/config"
-import { RemoteInferencer } from "../../../../libs/remix-ai-core/src/index"
+import { RemoteInferencer } from "@remix/remix-ai-core"
 
 // import { isE2E } from "../main";
 

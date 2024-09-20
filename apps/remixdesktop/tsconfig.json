@@ -22,7 +22,7 @@
         "../../libs/remix-git/"
       ],
       "@remix/remix-ai-core": [
-        "../../libs/remix-ai-core/src"
+        "../../libs/remix-ai-core/src/index"
       ]
     },
     "typeRoots": [
