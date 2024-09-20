@@ -17,7 +17,6 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
     await props.plugin.appManager.activatePlugin(['LearnEth', 'solidityUnitTesting'])
     props.plugin.verticalIcons.select('LearnEth')
     _paq.push(['trackEvent', 'hometab', 'featuredSection', 'LearnEth'])
-    await props.plugin.call('LearnEth', 'home')
   }
   return (
     <div className="pt-1 pl-2" id="hTFeaturedeSection">
