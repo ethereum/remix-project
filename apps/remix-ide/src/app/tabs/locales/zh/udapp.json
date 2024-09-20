@@ -59,7 +59,7 @@
   "udapp.tooltipText2": "打开 chainlist.org 并获取您想要交互的链的连接规范。",
   "udapp.tooltipText3": "单击可打开用于将 L1 主网 ETH 转换为所选网络货币的桥接器。",
   "udapp._comment_instanceContainerUI.tsx": "libs/remix-ui/run-tab/src/lib/components/instanceContainerUI.tsx",
-  "udapp.deployedContracts": "已部署的合约",
+  "udapp.deployedContracts": "已部署的合约 ",
   "udapp.deployAndRunClearInstances": "清空合约实例并重置交易记录",
   "udapp.deployAndRunNoInstanceText": "当前您没有可交互的合约实例.",
   "udapp.tooltipText6": "自动生成的通用用户界面，用于与已部署的合约进行交互",
