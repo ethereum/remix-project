@@ -6,7 +6,7 @@ import { EventEmitter } from 'events';
 import { ICompletions, IModel, IParams, InsertionParams,
   CompletionParams, GenerationParams, ModelType, AIRequestType,
   IStreamResponse, ChatHistory, downloadLatestReleaseExecutable,
-  buildSolgptPromt } from "../../../../libs/remix-ai-core/src/index"
+  buildSolgptPromt } from "@remix/remix-ai-core"
 
 class ServerStatusTimer {
   private intervalId: NodeJS.Timeout | null = null;
