@@ -10,18 +10,17 @@ const desktop_profile = {
   description: 'RemixAI provides AI services to Remix IDE Desktop.',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
   icon: 'assets/img/remix-logo-blue.png',
-  methods: ['downloadModel', 'loadTransformerModel', 'code_completion'],
+  methods: ['initializeModelBackend', 'code_completion', 'code_insertion', 'code_generation', 'code_explaining', 'error_explaining', 'solidity_answer'],
 }
 
 export class remixAIDesktopPlugin extends ElectronPlugin {
   constructor() {
-    console.log('remixAIDesktopPlugin loaded')
     super(desktop_profile)
   }
 
   onActivation(): void {
-    this.on('remixAI', 'enabled', () => {console.log('someone enable the remixAI desktop plugin')} )
-    console.log('remixAIDesktopPlugin ---------------------- activated')
+    this.on('remixAI', 'enabled', () => {} )
+    console.log('remixAIDesktopPlugin activated')
   }
 
 }
