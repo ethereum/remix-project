@@ -69,8 +69,6 @@ import { HardhatHandleDesktop } from './app/plugins/electron/hardhatPlugin'
 import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
 
-
-
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
 const isElectron = require('is-electron')
