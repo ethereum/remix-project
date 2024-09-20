@@ -8,7 +8,8 @@ import { UniversalDappUI } from './universalDappUI'
 export function InstanceContainerUI(props: InstanceContainerProps) {
   const { instanceList } = props.instances
 
-  const clearInstance = () => {
+  const clearInstance = async() => {
+    await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}`)
     props.clearInstances()
   }
 
