@@ -14,8 +14,8 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
   }
 
   return (
-    <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
-      <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-2">
+    <div className="udapp_instanceContainer mt-2 border-0 list-group-item">
+      <div className="d-flex justify-content-between align-items-center p-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
           <label className="udapp_deployedContracts" data-id="unpinnedContracts">
             <FormattedMessage id="udapp.deployedContracts" />
@@ -29,7 +29,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             tooltipId="deployAndRunClearInstancesTooltip"
             tooltipText={<FormattedMessage id="udapp.deployAndRunClearInstances" />}
           >
-            <i className="mr-1 p-2 udapp_icon far fa-trash-alt" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
+            <i className="far fa-trash-alt udapp_icon mr-1 mb-2" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
           </CustomTooltip>
         ) : null}
       </div>
