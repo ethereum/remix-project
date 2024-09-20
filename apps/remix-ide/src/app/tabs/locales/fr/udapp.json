@@ -59,7 +59,7 @@
   "udapp.tooltipText2": "Ouvrez chainlist.org et obtenez les spécifications de connexion de la chaîne avec laquelle vous voulez interagir.",
   "udapp.tooltipText3": "Cliquez pour ouvrir un pont de connexion pour convertir l'ETH principal L1 dans la devise réseau sélectionnée.",
   "udapp._comment_instanceContainerUI.tsx": "libs/remix-ui/run-tab/src/lib/components/instanceContainerUI.tsx",
-  "udapp.deployedContracts": "Contrats déployés ",
+  "udapp.deployedContracts": "Contrats déployés",
   "udapp.deployAndRunClearInstances": "Effacer la liste des instances et réinitialiser l'enregistreur",
   "udapp.deployAndRunNoInstanceText": "Actuellement, vous n'avez aucune instance de contrat avec laquelle interagir.",
   "udapp.tooltipText6": "Interfaces utilisateur génériques générées automatiquement pour l'interaction avec les contrats déployés",

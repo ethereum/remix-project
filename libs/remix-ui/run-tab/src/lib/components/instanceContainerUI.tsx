@@ -17,11 +17,14 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
     <div className="udapp_instanceContainer mt-2 border-0 list-group-item">
       <div className="d-flex justify-content-between align-items-center p-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
-          <label className="udapp_deployedContracts" data-id="unpinnedContracts">
+          <label className="udapp_deployedContracts text-nowrap" data-id="unpinnedContracts">
             <FormattedMessage id="udapp.deployedContracts" />
-            <span>({instanceList.length})</span>
           </label>
         </CustomTooltip>
+        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText="Number of deployed contracts">
+          <div className="badge badge-pill badge-primary text-center ml-2 mb-1">{instanceList.length}</div>
+        </CustomTooltip>
+        <div className="w-100"></div>
         {instanceList.length > 0 ? (
           <CustomTooltip
             placement={'auto-end'}
