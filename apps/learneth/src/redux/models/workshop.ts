@@ -22,7 +22,7 @@ export const repoMap = {
 const Model: ModelType = {
   namespace: 'workshop',
   state: {
-    list: [],
+    list: Object.keys(repoMap).map(item => repoMap[item]),
     detail: {},
     selectedId: '',
   },
@@ -104,7 +104,7 @@ const Model: ModelType = {
             ...payload,
           },
         },
-        list: detail[repoId] ? list : [...list, payload],
+        list: list.map(item => `${item.name}/${item.branch}`).includes(`${payload.name}/${payload.branch}`) ? list : [...list, payload],
         selectedId: repoId,
       }
       yield put({
@@ -137,7 +137,7 @@ const Model: ModelType = {
       yield put({
         type: 'workshop/save',
         payload: {
-          list: [],
+          list: Object.keys(repoMap).map(item => repoMap[item]),
           detail: {},
           selectedId: '',
         },
