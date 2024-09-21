@@ -3,11 +3,21 @@ import { toast } from 'react-toastify'
 import groupBy from 'lodash/groupBy'
 import pick from 'lodash/pick'
 import { type ModelType } from '../store'
-import remixClient from '../../remix-client'
 import { router } from '../../App'
 
 // const apiUrl = 'http://localhost:3001';
 const apiUrl = 'https://static.220.14.12.49.clients.your-server.de:3000'
+
+export const repoMap = {
+  en: {
+    name: 'ethereum/remix-workshops',
+    branch: 'master',
+  },
+  zh: {
+    name: 'ethereum/remix-workshops',
+    branch: 'cn',
+  },
+}
 
 const Model: ModelType = {
   namespace: 'workshop',
@@ -22,26 +32,9 @@ const Model: ModelType = {
     },
   },
   effects: {
-    *init(_, { put }) {
-      const cache = null // don't use cache because remote might change
-
-      if (cache) {
-        const workshopState = JSON.parse(cache)
-        yield put({
-          type: 'workshop/save',
-          payload: workshopState,
-        })
-      } else {
-        yield put({
-          type: 'workshop/loadRepo',
-          payload: {
-            name: 'ethereum/remix-workshops',
-            branch: 'master',
-          },
-        })
-      }
-    },
     *loadRepo({ payload }, { put, select }) {
+      yield router.navigate('/home')
+
       toast.info(`loading ${payload.name}/${payload.branch}`)
 
       yield put({
@@ -118,7 +111,6 @@ const Model: ModelType = {
         type: 'workshop/save',
         payload: workshopState,
       })
-      localStorage.setItem('workshop.state', JSON.stringify(workshopState))
 
       toast.dismiss()
       yield put({
@@ -141,7 +133,7 @@ const Model: ModelType = {
       }
       (<any>window)._paq.push(['trackEvent', 'learneth', 'load_repo', payload.name])
     },
-    *resetAll(_, { put }) {
+    *resetAll({ payload }, { put }) {
       yield put({
         type: 'workshop/save',
         payload: {
@@ -151,10 +143,9 @@ const Model: ModelType = {
         },
       })
 
-      localStorage.removeItem('workshop.state')
-
       yield put({
-        type: 'workshop/init',
+        type: 'workshop/loadRepo',
+        payload: repoMap[payload.code]
       });
       (<any>window)._paq.push(['trackEvent', 'learneth', 'reset_all'])
     },
