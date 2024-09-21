@@ -34,20 +34,28 @@ export const router = createHashRouter([
 function App(): JSX.Element {
   const dispatch = useAppDispatch()
 
+  const loadRepo = (locale: any) => {
+    dispatch({
+      type: 'remixide/save',
+      payload: { localeCode: locale.code },
+    })
+    dispatch({
+      type: 'workshop/loadRepo',
+      payload: repoMap[locale.code] || repoMap.en,
+    })
+  }
+
   useEffect(() => {
     dispatch({
       type: 'remixide/connect',
       callback: () => {
         // @ts-ignore
+        remixClient.call('locale', 'currentLocale').then((locale: any) => {
+          loadRepo(locale)
+        })
+        // @ts-ignore
         remixClient.on('locale', 'localeChanged', (locale: any) => {
-          dispatch({
-            type: 'remixide/save',
-            payload: { localeCode: locale.code },
-          })
-          dispatch({
-            type: 'workshop/loadRepo',
-            payload: repoMap[locale.code] || repoMap.en,
-          })
+          loadRepo(locale)
         })
       }
     })
