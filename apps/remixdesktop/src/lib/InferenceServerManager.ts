@@ -7,6 +7,7 @@ import { ICompletions, IModel, IParams, InsertionParams,
   CompletionParams, GenerationParams, ModelType, AIRequestType,
   IStreamResponse, ChatHistory, downloadLatestReleaseExecutable,
   buildSolgptPromt } from "@remix/remix-ai-core"
+import { platform } from 'os';
 
 class ServerStatusTimer {
   private intervalId: NodeJS.Timeout | null = null;
@@ -265,11 +266,11 @@ export class InferenceManager implements ICompletions {
     // get platform name and return the path to the python script
     let exec_name = ''
     if (process.platform === 'win32') {
-      exec_name = 'InferenceServer_' + process.platform + '.exe'
+      exec_name = 'InferenceServer_' + process.platform + '_' + exec_suffix + '.exe'
     } else if (process.platform === 'linux') {
-      exec_name = 'InferenceServer_' + process.platform
+      exec_name = 'InferenceServer_' + process.platform + '_' + exec_suffix
     } else if (process.platform === 'darwin') {
-      exec_name = 'InferenceServer_' + process.platform
+      exec_name = 'InferenceServer_' + process.platform + '_' + exec_suffix
     } else {
       throw new Error('Unsupported platform')
     }
