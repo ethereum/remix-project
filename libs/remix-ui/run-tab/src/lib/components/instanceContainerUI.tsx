@@ -8,60 +8,24 @@ import { UniversalDappUI } from './universalDappUI'
 export function InstanceContainerUI(props: InstanceContainerProps) {
   const { instanceList } = props.instances
 
-  const clearInstance = () => {
+  const clearInstance = async() => {
+    const isPinnedAvailable = await props.plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}`)
+    if (isPinnedAvailable) await props.plugin.call('fileManager', 'remove', `.deploys/pinned-contracts/${props.plugin.REACT_API.chainId}`)
     props.clearInstances()
   }
 
   return (
-    <div className="udapp_instanceContainer mt-3 border-0 list-group-item">
-      <div className="d-flex justify-content-between align-items-center pl-2">
-        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunPinnedContractsTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextPinnedContracts" />}>
-          <label className="udapp_deployedContracts" data-id="pinnedContracts">
-            <FormattedMessage id="udapp.pinnedContracts" />
-            <span style={{ fontSize: '0.75rem' }} data-id="pinnedContractsSublabel"> (network: {props.plugin.REACT_API.chainId}) </span>
-          </label>
-        </CustomTooltip>
-      </div>
-
-      {props.pinnedInstances.instanceList.length > 0 ? (
-        <div>
-          {' '}
-          {props.pinnedInstances.instanceList.map((instance, index) => {
-            return (
-              <UniversalDappUI
-                key={index}
-                instance={instance}
-                isPinnedContract={true}
-                context={props.getContext()}
-                removeInstance={props.removeInstance}
-                index={index}
-                gasEstimationPrompt={props.gasEstimationPrompt}
-                passphrasePrompt={props.passphrasePrompt}
-                mainnetPrompt={props.mainnetPrompt}
-                runTransactions={props.runTransactions}
-                sendValue={props.sendValue}
-                getFuncABIInputs={props.getFuncABIInputs}
-                plugin={props.plugin}
-                exEnvironment={props.exEnvironment}
-                editInstance={props.editInstance}
-                solcVersion={props.solcVersion}
-                getVersion={props.getVersion}
-              />
-            )
-          })}
-        </div>
-      ) : (
-        <span className="mx-2 mt-3 alert alert-secondary" data-id="NoPinnedInstanceText">
-          <FormattedMessage id="udapp.NoPinnedInstanceText" />
-        </span>
-      )}
-
-      <div className="d-flex justify-content-between align-items-center pl-2 mb-2 mt-2">
+    <div className="udapp_instanceContainer mt-2 border-0 list-group-item">
+      <div className="d-flex justify-content-between align-items-center p-2">
         <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="deployAndRunClearInstancesTooltip" tooltipText={<FormattedMessage id="udapp.tooltipText6" />}>
-          <label className="udapp_deployedContracts" data-id="unpinnedContracts">
+          <label className="udapp_deployedContracts text-nowrap" data-id="deployedContracts">
             <FormattedMessage id="udapp.deployedContracts" />
           </label>
         </CustomTooltip>
+        <CustomTooltip placement="top-start" tooltipClasses="text-nowrap" tooltipId="numOfDeployedInstancesTooltip" tooltipText="Number of deployed contracts">
+          <div className="badge badge-pill badge-primary text-center ml-2 mb-1" data-id="deployedContractsBadge">{instanceList.length}</div>
+        </CustomTooltip>
+        <div className="w-100"></div>
         {instanceList.length > 0 ? (
           <CustomTooltip
             placement={'auto-end'}
@@ -69,10 +33,11 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             tooltipId="deployAndRunClearInstancesTooltip"
             tooltipText={<FormattedMessage id="udapp.deployAndRunClearInstances" />}
           >
-            <i className="mr-1 p-2 udapp_icon far fa-trash-alt" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
+            <i className="far fa-trash-alt udapp_icon mr-1 mb-2" data-id="deployAndRunClearInstances" onClick={clearInstance} aria-hidden="true"></i>
           </CustomTooltip>
         ) : null}
       </div>
+
       {instanceList.length > 0 ? (
         <div>
           {' '}
@@ -81,8 +46,9 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
               <UniversalDappUI
                 key={index}
                 instance={instance}
-                isPinnedContract={false}
                 context={props.getContext()}
+                pinInstance={props.pinInstance}
+                unpinInstance={props.unpinInstance}
                 removeInstance={props.removeInstance}
                 index={index}
                 gasEstimationPrompt={props.gasEstimationPrompt}
@@ -100,11 +66,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
             )
           })}
         </div>
-      ) : (
-        <span className="mx-2 mt-3 alert alert-secondary" data-id="deployAndRunNoInstanceText" role="alert">
-          <FormattedMessage id="udapp.deployAndRunNoInstanceText" />
-        </span>
-      )}
+      ) : ''}
     </div>
   )
 }

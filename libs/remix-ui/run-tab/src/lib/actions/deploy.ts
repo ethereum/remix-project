@@ -286,7 +286,6 @@ export const runTransactions = (
   plugin: RunTab,
   dispatch: React.Dispatch<any>,
   instanceIndex: number,
-  isPinnedContract: boolean,
   lookupOnly: boolean,
   funcABI: FuncABI,
   inputsValues: string,
@@ -323,7 +322,7 @@ export const runTransactions = (
     (returnValue) => {
       const response = txFormat.decodeResponse(returnValue, funcABI)
 
-      dispatch(setDecodedResponse(instanceIndex, response, funcIndex, isPinnedContract))
+      dispatch(setDecodedResponse(instanceIndex, response, funcIndex))
     },
     (network, tx, gasEstimation, continueTxExecution, cancelCb) => {
       confirmationHandler(plugin, dispatch, mainnetPrompt, network, tx, gasEstimation, continueTxExecution, cancelCb)
@@ -342,9 +341,8 @@ export const getFuncABIInputs = (plugin: RunTab, funcABI: FuncABI) => {
 }
 
 export const updateInstanceBalance = async (plugin: RunTab, dispatch: React.Dispatch<any>) => {
-  if (plugin.REACT_API?.instances?.instanceList?.length || plugin.REACT_API?.pinnedInstances?.instanceList?.length) {
-    let instances = plugin.REACT_API?.instances?.instanceList?.length ? plugin.REACT_API?.instances?.instanceList : []
-    instances = plugin.REACT_API?.pinnedInstances?.instanceList.length ? instances.concat(plugin.REACT_API.pinnedInstances.instanceList) : instances
+  if (plugin.REACT_API?.instances?.instanceList?.length) {
+    const instances = plugin.REACT_API?.instances?.instanceList?.length ? plugin.REACT_API?.instances?.instanceList : []
     for (const instance of instances) {
       const balInEth = await plugin.blockchain.getBalanceInEther(instance.address)
       instance.balance = balInEth
