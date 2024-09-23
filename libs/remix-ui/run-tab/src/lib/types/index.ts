@@ -104,19 +104,10 @@ export interface RunTabState {
       balance?: number,
       name: string,
       decodedResponse?: Record<number, any>,
-      abi?: any
-    }[],
-    error: string
-  },
-  pinnedInstances: {
-    instanceList: {
-      contractData?: ContractData,
-      address: string,
-      balance?: number,
-      name: string,
-      decodedResponse?: Record<number, any>,
       abi?: any,
-      pinnedAt?: number
+      isPinned?: boolean,
+      pinnedAt?: number,
+      filePath?: string
     }[],
     error: string
   },
@@ -306,29 +297,20 @@ export interface InstanceContainerProps {
       balance?: number,
       name: string,
       decodedResponse?: Record<number, any>,
-      abi?: any
-    }[],
-    error: string
-  },
-  pinnedInstances: {
-    instanceList: {
-      contractData?: ContractData,
-      address: string,
-      balance?: number,
-      name: string,
-      decodedResponse?: Record<number, any>,
       abi?: any,
+      isPinned?: boolean,
       pinnedAt?: number,
       filePath?: string
     }[],
     error: string
   },
   clearInstances: () => void,
-  removeInstance: (index: number, isPinnedContract:boolean, shouldDelete: boolean) => void,
+  removeInstance: (index: number) => void,
+  pinInstance: (index: number, pinnedAt: number, filePath: string) => void,
+  unpinInstance: (index: number) => void,
   getContext: () => 'memory' | 'blockchain',
   runTransactions: (
     instanceIndex: number,
-    isPinnedContract: boolean,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
@@ -435,19 +417,20 @@ export interface UdappProps {
     name: string,
     decodedResponse?: Record<number, any>,
     abi?: any,
+    isPinned?: boolean
     pinnedAt?: number,
     filePath?: string
   },
   context: 'memory' | 'blockchain',
-  isPinnedContract?: boolean
-  removeInstance: (index: number, isPinnedContract: boolean, shouldDelete: boolean) => void,
+  removeInstance: (index: number) => void,
+  pinInstance: (index: number, pinnedAt: number, filePath: string) => void,
+  unpinInstance: (index: number) => void,
   index: number,
   gasEstimationPrompt: (msg: string) => JSX.Element,
   passphrasePrompt: (message: string) => JSX.Element,
   mainnetPrompt: (tx: Tx, network: Network, amount: string, gasEstimation: string, gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void, determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void) => JSX.Element,
   runTransactions: (
     instanceIndex: number,
-    isPinnedContract: boolean,
     lookupOnly: boolean,
     funcABI: FuncABI,
     inputsValues: string,
