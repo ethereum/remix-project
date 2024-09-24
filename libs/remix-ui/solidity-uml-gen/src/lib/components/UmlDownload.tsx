@@ -67,54 +67,60 @@ interface UmlDownloadProps {
 export default function UmlDownload(props: UmlDownloadProps) {
   return (
     <Fragment>
-      <Dropdown id="solUmlMenuDropdown">
-        <Dropdown.Toggle icon="far fa-arrow-to-bottom uml-btn-icon" as={Markup} className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"></Dropdown.Toggle>
-        <Dropdown.Menu as={UmlCustomMenu} className="custom-dropdown-items">
-          <Dropdown.Item
-            onClick={() => {
-              _paq.push(['trackEvent', 'solidityumlgen', 'umlpngdownload', 'downloadAsPng'])
-              props.download('png')
-            }}
-            data-id="umlPngDownload"
-          >
-            <CustomTooltip
-              placement="left-start"
-              tooltipId="solUmlgenDownloadAsPngTooltip"
-              tooltipClasses="text-nowrap"
-              tooltipText={<FormattedMessage id="solUmlGen.pngDownloadTooltip" />}
+      <CustomTooltip
+        tooltipText="Download the UML"
+        tooltipId="genUMLundo"
+        placement="top"
+      >
+        <Dropdown id="solUmlMenuDropdown">
+          <Dropdown.Toggle icon="far fa-arrow-to-bottom uml-btn-icon" as={Markup} className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2"></Dropdown.Toggle>
+          <Dropdown.Menu as={UmlCustomMenu} className="custom-dropdown-items">
+            <Dropdown.Item
+              onClick={() => {
+                _paq.push(['trackEvent', 'solidityumlgen', 'umlpngdownload', 'downloadAsPng'])
+                props.download('png')
+              }}
+              data-id="umlPngDownload"
             >
-              <div data-id="umlPngDownload">
-                <span id="umlPngDownloadBtn" data-id="umlPngDownload" className="far fa-image pl-2"></span>
-                <span className="pl-1">
-                  <FormattedMessage id="solUmlGen.pngDownload" />
-                </span>
-              </div>
-            </CustomTooltip>
-          </Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item
-            onClick={() => {
-              _paq.push(['trackEvent', 'solUmlGen', 'umlpdfdownload', 'downloadAsPdf'])
-              props.download('pdf')
-            }}
-            data-id="umlPdfDownload"
-          >
-            <CustomTooltip
-              placement="left-start"
-              tooltipId="solUmlgenDownloadAsPdfTooltip"
-              tooltipClasses="text-nowrap"
-              tooltipText={<FormattedMessage id="solUmlGen.pdfDownloadTooltip" />}
+              <CustomTooltip
+                placement="left-start"
+                tooltipId="solUmlgenDownloadAsPngTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={<FormattedMessage id="solUmlGen.pngDownloadTooltip" />}
+              >
+                <div data-id="umlPngDownload">
+                  <span id="umlPngDownloadBtn" data-id="umlPngDownload" className="far fa-image pl-2"></span>
+                  <span className="pl-1">
+                    <FormattedMessage id="solUmlGen.pngDownload" />
+                  </span>
+                </div>
+              </CustomTooltip>
+            </Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item
+              onClick={() => {
+                _paq.push(['trackEvent', 'solUmlGen', 'umlpdfdownload', 'downloadAsPdf'])
+                props.download('pdf')
+              }}
+              data-id="umlPdfDownload"
             >
-              <div data-id="umlPdfDownload">
-                <span id="umlPdfDownloadBtn" data-id="umlPdfDownload" className="far fa-file-pdf pl-2"></span>
-                <span className="pl-2">
-                  <FormattedMessage id="solUmlGen.pdfDownload" />
-                </span>
-              </div>
-            </CustomTooltip>
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+              <CustomTooltip
+                placement="left-start"
+                tooltipId="solUmlgenDownloadAsPdfTooltip"
+                tooltipClasses="text-nowrap"
+                tooltipText={<FormattedMessage id="solUmlGen.pdfDownloadTooltip" />}
+              >
+                <div data-id="umlPdfDownload">
+                  <span id="umlPdfDownloadBtn" data-id="umlPdfDownload" className="far fa-file-pdf pl-2"></span>
+                  <span className="pl-2">
+                    <FormattedMessage id="solUmlGen.pdfDownload" />
+                  </span>
+                </div>
+              </CustomTooltip>
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </CustomTooltip>
     </Fragment>
   )
 }
