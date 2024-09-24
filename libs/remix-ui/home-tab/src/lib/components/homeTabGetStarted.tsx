@@ -25,7 +25,7 @@ type WorkspaceTemplate = {
   workspaceTitle: string
   description: string
   projectLogo: string
-  templateName?: string
+  templateName: string
 }
 
 const workspaceTemplates: WorkspaceTemplate[] = [
@@ -160,17 +160,25 @@ function HomeTabGetStarted({ plugin }: HomeTabGetStartedProps) {
           <div className="pt-3">
             <div className="d-flex flex-row align-items-center flex-wrap">
               {workspaceTemplates.map((template, index) => (
-                <CustomTooltip tooltipText={template.description} tooltipId={template.gsID} tooltipClasses="text-nowrap" tooltipTextClasses="border bg-light text-dark p-1 pr-3" placement="top-start" key={`${template.gsID}-${template.workspaceTitle}-${index}`}>
+                <CustomTooltip
+                  tooltipText={template.description}
+                  tooltipId={template.gsID}
+                  tooltipClasses="text-nowrap"
+                  tooltipTextClasses="border bg-light text-dark p-1 pr-3"
+                  placement="top-start"
+                  key={`${template.gsID}-${template.workspaceTitle}-${index}`}
+                >
                   <button
                     key={index}
-                    className={index === 0 ? 'btn btn-primary border p-2 text-nowrap mr-3 mb-2' : index === workspaceTemplates.length - 1 ? 'btn border p-2 text-nowrap mr-2 mb-3' : 'btn border p-2 text-nowrap mr-3 mb-3'}
+                    className={index === 0 ?
+                      'btn btn-primary border p-2 text-nowrap mr-3 mb-2' :
+                      index === workspaceTemplates.length - 1 ?
+                        'btn border p-2 text-nowrap mr-2 mb-3' :
+                        'btn border p-2 text-nowrap mr-3 mb-3'
+                    }
                     onClick={async (e) => {
-                      if (template.gsID === 'browseTemplate') {
-                        await plugin.call('manager', 'activatePlugin', 'templateSelection')
-                        plugin.call('tabs' as any, 'focus', 'templateSelection')
-                      } else {
-                        createWorkspace(template.templateName)
-                      }
+                      createWorkspace(template.templateName)
+                      _paq.push(['trackEvent', 'hometab', 'homeGetStarted', template.templateName])
                     }}
                     data-id={`homeTabGetStarted${template.templateName}`}
                   >

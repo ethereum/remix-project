@@ -863,7 +863,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                     </span>
                   }
                 >
-                  <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
+                  <i className={'ml-2 fas fa-info'} aria-hidden="true"></i>
                 </CustomTooltip>
               </a>
             </div>
@@ -892,7 +892,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
                     </span>
                   }
                 >
-                  <i style={{ fontSize: 'medium' }} className={'ml-2 fal fa-info-circle'} aria-hidden="true"></i>
+                  <i style={{ fontSize: 'medium' }} className={'ml-2 fas fa-info'} aria-hidden="true"></i>
                 </CustomTooltip>
               </a>
             </div>
