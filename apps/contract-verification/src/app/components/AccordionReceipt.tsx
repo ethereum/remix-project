@@ -32,8 +32,8 @@ export const AccordionReceipt: React.FC<AccordionReceiptProps> = ({ contract, in
           <i className={`fas ${expanded ? 'fa-angle-down' : 'fa-angle-right'} text-secondary`}></i>
         </button>
 
-        <div className="small w-100 text-uppercase overflow-hidden text-break text-nowrap">
-          <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipText={`Contract: ${contract.contractName},  Address: ${contract.address}, Chain: ${chainName}, Proxy: ${contract.proxyAddress}`}>
+        <div className="small w-100 text-uppercase overflow-hidden text-nowrap">
+          <CustomTooltip placement="bottom" tooltipClasses=" text-break" tooltipText={`Contract: ${contract.contractName},  Address: ${contract.address}, Chain: ${chainName}, Proxy: ${contract.proxyAddress}`}>
             <span>
               {contract.contractName} at {shortenAddress(contract.address)} {contract.proxyAddress ? 'with proxy' : ''}
             </span>
@@ -68,7 +68,7 @@ export const AccordionReceipt: React.FC<AccordionReceiptProps> = ({ contract, in
           <>
             <div className="mt-3">
               <span className="font-weight-bold">Proxy Address: </span>
-              <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipText={contract.proxyAddress}>
+              <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={contract.proxyAddress}>
                 <span>{shortenAddress(contract.proxyAddress)}</span>
               </CustomTooltip>
               <CopyToClipboard tip="Copy" content={contract.proxyAddress} direction={'top'} />
@@ -89,11 +89,11 @@ const ReceiptsBody = ({ receipts }: { receipts: VerificationReceipt[] }) => {
     <ul className="list-group">
       {receipts.map((receipt) => (
         <li className="list-group-item">
-          <CustomTooltip placement="top" tooltipText={`API: ${receipt.verifierInfo.apiUrl}`}>
+          <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipText={`API: ${receipt.verifierInfo.apiUrl}`}>
             <span className="font-weight-bold medium">{receipt.verifierInfo.name}</span>
           </CustomTooltip>
 
-          <CustomTooltip placement="top" tooltipTextClasses="text-capitalize" tooltipText={`Status: ${receipt.status}${receipt.message ? `, Message: ${receipt.message}` : ''}`}>
+          <CustomTooltip placement="top" tooltipClasses=" text-break" tooltipTextClasses="text-capitalize" tooltipText={`Status: ${receipt.status}${receipt.message ? `, Message: ${receipt.message}` : ''}`}>
             <span className="ml-2">{['verified', 'partially verified', 'already verified'].includes(receipt.status) ? <i className="fas fa-check"></i> : receipt.status === 'fully verified' ? <i className="fas fa-check-double"></i> : receipt.status === 'failed' ? <i className="fas fa-xmark"></i> : ['pending', 'awaiting implementation verification'].includes(receipt.status) ? <i className="fas fa-spinner fa-spin"></i> : <i className="fas fa-question"></i>}</span>
           </CustomTooltip>
 
