@@ -19,6 +19,7 @@ interface RemixUIGridCellProps {
   logos?: string[]
   logoURL?: string
   title: string
+  titleTooltip: string
   hideTitle?: boolean
   tagList?: string[] // max 8, others will be ignored
   classList?: string
@@ -89,7 +90,7 @@ export const RemixUIGridCell = (props: RemixUIGridCellProps) => {
                   <CustomTooltip
                     placement="top"
                     tooltipId={`overlay-tooltip-new${props.title}`}
-                    tooltipText={ props.title }
+                    tooltipText={ props.titleTooltip ? props.titleTooltip : props.title }
                   >
                     <label
                       className='m-0 p-0 text-uppercase align-items-left font-weight-bold text-truncate overflow-hidden whitespace-nowra'
