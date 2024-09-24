@@ -778,7 +778,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               tooltipClasses="text-nowrap"
               tooltipText={<FormattedMessage id="solidity.addACustomCompilerWithURL" />}
             >
-              <span className="far fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()}></span>
+              <span className="fas fa-plus border-0 p-0 ml-3" onClick={() => promptCompiler()}></span>
             </CustomTooltip>
             <CustomTooltip
               placement="bottom"
