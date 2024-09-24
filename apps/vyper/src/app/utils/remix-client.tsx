@@ -89,7 +89,7 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
         'clone',
         { url: 'https://github.com/vyperlang/vyper', token: null, branch: 'master', singleBranch: false, workspaceName: 'vyper' },
       )
-
+      // for snekmate
       // await this.call(
       //   'dgitApi',
       //   'checkout',
