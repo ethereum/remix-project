@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
-import {isCompilationError} from '../utils'
-import {CopyToClipboard} from '@remix-ui/clipboard'
+import React, { useState } from 'react'
+import { isCompilationError } from '../utils'
+import { CopyToClipboard } from '@remix-ui/clipboard'
 
 interface VyperResultProps {
   output?: any
