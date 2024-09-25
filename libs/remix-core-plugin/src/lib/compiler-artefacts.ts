@@ -1,7 +1,7 @@
 'use strict'
-import {Plugin} from '@remixproject/engine'
-import {util} from '@remix-project/remix-lib'
-import {CompilerAbstract} from '@remix-project/remix-solidity'
+import { Plugin } from '@remixproject/engine'
+import { util } from '@remix-project/remix-lib'
+import { CompilerAbstract } from '@remix-project/remix-solidity'
 
 const profile = {
   name: 'compilerArtefacts',
@@ -36,7 +36,7 @@ export class CompilerArtefacts extends Plugin {
     const saveCompilationResult = (file, source, languageVersion, data, input?) => {
       this.compilersArtefactsPerFile[file] = new CompilerAbstract(languageVersion, data, source, input)
       this.compilersArtefacts.__last = this.compilersArtefactsPerFile[file]
-      this.emit('compilationSaved', {[file]: this.compilersArtefactsPerFile[file]})
+      this.emit('compilationSaved', { [file]: this.compilersArtefactsPerFile[file] })
     }
 
     this.on('solidity', 'compilationFinished', saveCompilationResult)
@@ -156,7 +156,7 @@ export class CompilerArtefacts extends Plugin {
       else {
         const allContractsData = {}
         await this._populateAllContractArtefactsFromFE('contracts', contract, allContractsData)
-        if (allContractsData[fullyQualifiedName]) return {fullyQualifiedName, artefact: allContractsData[fullyQualifiedName]}
+        if (allContractsData[fullyQualifiedName]) return { fullyQualifiedName, artefact: allContractsData[fullyQualifiedName] }
         else throw new Error(`Could not find artifacts for ${fullyQualifiedName}. Compile contract to generate artifacts.`)
       }
     } else {
@@ -167,7 +167,7 @@ export class CompilerArtefacts extends Plugin {
         await this._populateAllContractArtefactsFromFE('contracts', contractName, contractArtefacts)
         keys = Object.keys(contractArtefacts)
       }
-      if (keys.length === 1) return {fullyQualifiedName: keys[0], artefact: contractArtefacts[keys[0]]}
+      if (keys.length === 1) return { fullyQualifiedName: keys[0], artefact: contractArtefacts[keys[0]] }
       else if (keys.length > 1) {
         throw new Error(`There are multiple artifacts for contract "${contractName}", please use a fully qualified name.\n
           Please replace ${contractName} for one of these options wherever you are trying to read its artifact: \n
@@ -216,7 +216,7 @@ export class CompilerArtefacts extends Plugin {
       for (const name of Object.keys(contractsData)) {
         const contract = contractsData[name]
         if (util.compareByteCode(code, '0x' + contract.evm.deployedBytecode.object)) {
-          found = {name, contract, file}
+          found = { name, contract, file }
           return true
         }
       }
