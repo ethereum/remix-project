@@ -7,7 +7,7 @@ interface Props {
   environment: 'remote' | 'local'
 }
 
-function LocalUrlInput({url, setUrl, environment}: Props) {
+function LocalUrlInput({ url, setUrl, environment }: Props) {
   if (environment === 'remote') {
     return <></>
   }
