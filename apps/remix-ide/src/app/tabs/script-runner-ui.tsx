@@ -1,9 +1,10 @@
 import { IframePlugin, IframeProfile, ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import { ScriptRunnerUI } from '@remix-scriptrunner' // eslint-disable-line
+import { customScriptRunnerConfig, Dependency, ScriptRunnerUI } from '@remix-scriptrunner' // eslint-disable-line
 import { Profile } from '@remixproject/plugin-utils'
 import { Engine } from '@remixproject/engine'
+import axios from 'axios'
 
 const profile = {
   name: 'scriptRunnerBridge',
@@ -98,10 +99,42 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     this.emit('info', data)
   }
 
+  async buildScriptRunner(dependencies: Dependency[]) {
+    console.log('buildScriptRunner', dependencies)
+  }
+
+  async loadCustomConfig(){
+    console.log('loadCustomConfig')
+    await this.call('fileManager', 'open', 'script.config.json')
+    const content = await this.call('fileManager', 'readFile', 'script.config.json')
+    return JSON.parse(content)
+  }
+
+  async saveCustomConfig(content: customScriptRunnerConfig){
+    console.log('saveCustomConfig', content)
+    await this.call('fileManager', 'writeFile', 'script.config.json', JSON.stringify(content, null, 2))
+  }
+
+  async activateCustomScriptRunner(config: customScriptRunnerConfig){
+    console.log('activateCustomScriptRunner', config)
+    // post config to localhost:4000 using axios
+    const result = await axios.post('http://localhost:4000/build', config)
+    console.log(result)
+    if(result.data.hash) {
+      await this.loadScriptRunner(result.data.hash)
+    }
+    return result.data.hash
+  }
+
   render() {
     return (
       <div id="scriptRunnerTab">
-        <ScriptRunnerUI loadScriptRunner={this.loadScriptRunner.bind(this)} />
+        <ScriptRunnerUI 
+        activateCustomScriptRunner={this.activateCustomScriptRunner.bind(this)}
+        saveCustomConfig={this.saveCustomConfig.bind(this)} 
+        loadCustomConfig={this.loadCustomConfig.bind(this)} 
+        buildScriptRunner={this.buildScriptRunner.bind(this)} 
+        loadScriptRunner={this.loadScriptRunner.bind(this)} />
       </div>
     )
   }
