@@ -18,3 +18,8 @@ export interface Dependency {
     dependencies: Dependency[];
     replacements: Replacements;
   }
+
+  export interface customScriptRunnerConfig {
+    baseConfiguration: string;
+    dependencies: Dependency[];
+  }

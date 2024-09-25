@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Accordion, Card, Button } from "react-bootstrap";
 import axios from "axios";
-import { ProjectConfiguration } from "./types";
+import { customScriptRunnerConfig, Dependency, ProjectConfiguration } from "../types";
 import { FormattedMessage } from "react-intl";
 import { faCheck, faToggleOn } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Profile } from "@remixproject/plugin-utils";
 import { IframeProfile, ViewProfile } from "@remixproject/engine-web";
 import { Plugin } from "@remixproject/engine";
+import { CustomScriptRunner } from "./custom-script-runner";
 
 export interface ScriptRunnerUIProps {
   // Add your props here
   loadScriptRunner: (name: string) => void;
+  // build custom script runner
+  buildScriptRunner: (dependencies: Dependency[]) => void;
+  loadCustomConfig: () => any;
+  saveCustomConfig(content: customScriptRunnerConfig): void;
+  activateCustomScriptRunner(config: customScriptRunnerConfig): string;
 }
 
 export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
   const { loadScriptRunner } = props;
-  const [configurations, setConfigurations] = useState([]);
+  const [configurations, setConfigurations] = useState<ProjectConfiguration[]>([]);
   const [activeKey, setActiveKey] = useState('default');
   const [activeConfig, setActiveConfig] = useState('default');
 
@@ -41,23 +47,34 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
     loadScriptRunner(key)
   };
 
-  // Filter out unpublished configurations
-  const publishedConfigurations = configurations.filter((config) => config.publish);
+  const addCustomConfig = (config: ProjectConfiguration) => {
+    if(configurations.find((c) => c.name === config.name)) {
+      return;
+    }
+    setConfigurations([...configurations, config]);
+    setActiveConfig(config.name);
+  }
+
 
   return (
     <div className="px-1">
       <Accordion defaultActiveKey="default">
-        {publishedConfigurations.map((config: ProjectConfiguration, index) => (
+        {configurations.filter((config) => config.publish).map((config: ProjectConfiguration, index) => (
           <div key={index}>
             <div className="d-flex align-items-baseline justify-content-between">
-              <Accordion.Toggle as={Button} variant="link" eventKey={config.name}>
-                <span className="pl-2">{config.name}</span>
+              <Accordion.Toggle as={Button} variant="link" eventKey={config.name}
+                style={{
+                  overflowX: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}
+              >
+                <div className="pl-2">{config.name}</div>
               </Accordion.Toggle>
               <div onClick={() => handleSelect(config.name)} className="pointer px-2">
-              {activeConfig !== config.name ?
-                <FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon> :
-                <FontAwesomeIcon className="text-success" icon={faCheck}></FontAwesomeIcon>
-              }
+                {activeConfig !== config.name ?
+                  <FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon> :
+                  <FontAwesomeIcon className="text-success" icon={faCheck}></FontAwesomeIcon>
+                }
               </div>
             </div>
 
@@ -75,7 +92,13 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
                 </ul></>
             </Accordion.Collapse></div>))}
       </Accordion>
-
+      <CustomScriptRunner
+        addCustomConfig={addCustomConfig}
+        activateCustomScriptRunner={props.activateCustomScriptRunner}
+        saveCustomConfig={props.saveCustomConfig}
+        loadCustomConfig={props.loadCustomConfig}
+        publishedConfigurations={configurations.filter((config) => config.publish)}
+        buildScriptRunner={props.buildScriptRunner} />
     </div>
   );
 };
