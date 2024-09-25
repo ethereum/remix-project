@@ -45,24 +45,30 @@ export function normalizeContractPath(contractPath: string): string[] {
   return [folders,resultingPath, filename]
 }
 
-function parseErrorString(errorString) {
+function parseErrorString(errorStructure: string[]) {
   // Split the string into lines
-  console.log(errorString)
-  return
-  let lines = errorString.trim().split('\n')
-  // Extract the line number and message
-  let message = errorString.trim()
-  let targetLine = lines[2].split(',')
-  let tline = lines[2].trim().split(' ')[1].split(':')
+  let errorType = ''
+  let message = ''
+  let tline = ''
+  errorStructure.forEach(errorMsg => {
+    const choppedup = errorMsg.split(': ')
+    errorType = choppedup[0].trim().split('\n')[1]
+    message = choppedup[1]
+    // if (errorStructure.length > 2) {
+    //   console.log(choppedup[2].split(',')[1])
+    // }
+    // console.log(choppedup)
+  })
+  let lines = errorStructure[0].trim().split('\n')
 
   const errorObject = {
     status: 'failed',
-    message: message,
-    column: tline[1],
-    line: tline[0]
+    message: `${errorType} - ${message}`,
+    column: '',
+    line: ''
   }
   message = null
-  targetLine = null
+  // targetLine = null
   lines = null
   tline = null
   return errorObject
@@ -111,10 +117,10 @@ const compileReturnType = (output, contract) => {
   const normal = normalizeContractPath(contract)[2]
   const abi = temp[normal]['abi']
   const evm = _.merge(temp[normal]['evm'])
-  const dpb = evm.deployedBytecode
+  const depByteCode = evm.deployedBytecode
   const runtimeBytecode = evm.bytecode
   const methodIdentifiers = evm.methodIdentifiers
-  const version = output?.compilers[0]?.version ?? '0.3.10'
+  const version = output?.compilers[0]?.version ?? '0.4.0'
   const optimized = output?.compilers[0]?.settings?.optimize ?? true
   const evmVersion = ''
 
@@ -131,7 +137,7 @@ const compileReturnType = (output, contract) => {
   } = {
     contractName: normal,
     abi,
-    bytecode: dpb,
+    bytecode: depByteCode,
     runtimeBytecode,
     ir: '',
     methodIdentifiers,
@@ -152,10 +158,10 @@ const updatePragmaDeclaration = (content: string) => {
   const pragma = '# pragma version ~=0.4.0'
 
   if (oldPragmaFound) {
-    console.log('found old pragma')
     // oldPragmaDeclaration.forEach(declaration => {
-    //   content = content.replace(declaration, '# pragma version ~=0.4.0')
+    //   content = content.replace(declaration, '# pragma version >0.3.10')
     // })
+    return content
   }
   if (!pragmaFound) {
     content = `${pragma}\n\n${content}`
@@ -183,7 +189,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
   }
 
   const cleanedUpContent = fixContractContent(contract.content)
-  // console.log('cleanedUp', cleanedUpContent)
 
   let contractName = contract['name']
   const compilePackage = {
@@ -192,7 +197,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
       [contractName] : { content : cleanedUpContent }
     }
   }
-  console.log(compilePackage)
 
   let response = await axios.post(`${url}compile`, compilePackage )
 
@@ -204,7 +208,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
   }
 
   const compileCode = response.data
-  console.log('compileCode', compileCode)
   contractName = null
   response = null
   let result: any
@@ -223,7 +226,7 @@ export async function compile(url: string, contract: Contract): Promise<any> {
     const intermediate = await(await axios.get(url + 'exceptions/' + compileCode , {
       method: 'Get'
     })).data
-    console.log('Errors found', intermediate)
+    // console.log('Errors found', intermediate)
     result = parseErrorString(intermediate)
     intermediateError = intermediate
     return result
