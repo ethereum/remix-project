@@ -152,7 +152,6 @@ export class InferenceManager implements ICompletions {
       // console.log('completion is runnig', state.data?.completion)
       // console.log('general is runnig', state.data?.general)
     }
-    
     // this._handleResources()
   }
 
@@ -266,11 +265,11 @@ export class InferenceManager implements ICompletions {
     // get platform name and return the path to the python script
     let exec_name = ''
     if (process.platform === 'win32') {
-      exec_name = 'InferenceServer_' + process.platform + '_' + exec_suffix + '.exe'
+      exec_name = 'InferenceServer_' + process.platform + '.exe'
     } else if (process.platform === 'linux') {
       exec_name = 'InferenceServer_' + process.platform + '_' + exec_suffix
     } else if (process.platform === 'darwin') {
-      exec_name = 'InferenceServer_' + process.platform + '_' + exec_suffix
+      exec_name = 'InferenceServer_' + 'mac'
     } else {
       throw new Error('Unsupported platform')
     }
