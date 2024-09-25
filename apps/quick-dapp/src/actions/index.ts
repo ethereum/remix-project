@@ -10,8 +10,8 @@ const { encodeFunctionId } = execution.txHelper;
 
 const surgeClient = new SurgeClient({
   // surge backend doesn't support cross-domain, that's why the proxy goes
-  // here is the codebase of proxy: https://github.com/drafish/vercel-proxy
-  proxy: 'https://vercel-proxy-bice-six.vercel.app',
+  // here is the codebase of proxy: https://github.com/remix-project-org/remix-wildcard/blob/master/src/hosts/common-corsproxy.ts
+  proxy: 'https://common-corsproxy.remixproject.org/',
   onError: (err: Error) => {
     console.log(err);
   },
