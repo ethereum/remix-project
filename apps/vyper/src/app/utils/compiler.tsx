@@ -47,7 +47,6 @@ export function normalizeContractPath(contractPath: string): string[] {
 
 function parseErrorString(errorString) {
   // Split the string into lines
-  console.log(errorString)
   let lines = errorString.trim().split('\n')
   // Extract the line number and message
   let message = errorString.trim()
@@ -177,7 +176,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
   }
 
   const cleanedUpContent = fixContractContent(contract.content)
-  console.log('cleanedUp', cleanedUpContent)
 
   let contractName = contract['name']
   const compilePackage = {
@@ -186,7 +184,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
       [contractName] : { content : cleanedUpContent }
     }
   }
-  console.log(compilePackage)
   let response = await axios.post(`${url}compile`, compilePackage )
 
   if (response.status === 404) {
@@ -215,7 +212,6 @@ export async function compile(url: string, contract: Contract): Promise<any> {
       method: 'Get'
     })).data
     result = parseErrorString(intermediate)
-    console.log('Errors found', intermediate)
     return result
   }
   await new Promise((resolve) => setTimeout(() => resolve({}), 3000))
