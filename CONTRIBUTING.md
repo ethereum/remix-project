@@ -77,7 +77,7 @@ const locales = [
 ]
 ```
 You can find the language's `code, name, localeName` in this link
-https://github.com/ethereum/ethereum-org-website/blob/dev/i18n/config.json
+https://github.com/ethereum/ethereum-org-website/blob/dev/i18n.config.json
 
 ### Whether or not to use `defaultMessage`?
 If you search `FormattedMessage` or `intl.formatMessage` in this project, you will notice that most of them only have a `id` prop, but a few of them have a `defaultMessage` prop.
