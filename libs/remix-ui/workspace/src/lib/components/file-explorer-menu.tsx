@@ -53,6 +53,13 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         icon: 'fa-solid fa-link',
         placement: 'top',
         platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
+      },
+      {
+        action: 'connectToLocalFileSystem',
+        title: 'Import files with https',
+        icon: 'fa-solid fa-desktop',
+        placement: 'top',
+        platforms: [appPlatformTypes.web]
       }
     ].filter(
       (item) =>
@@ -158,6 +165,9 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                         props.createNewFolder()
                       } else if (action === 'publishToGist' || action == 'updateGist') {
                         props.publishToGist()
+                      } else if (action === 'connectToLocalFileSystem') {
+                        _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
+                        props.connectToLocalFileSystem()
                       } else if (action === 'importFromIpfs') {
                         _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                         props.importFromIpfs('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')
