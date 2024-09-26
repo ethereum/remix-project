@@ -160,6 +160,7 @@ export interface FileExplorerProps {
     importFromIpfs: any
     importFromHttps: any
     connectToLocalFileSystem?: any
+    handleGitInit?: () => Promise<void>
     handleMultiCopies: any
     feTarget: { key: string, type: 'file' | 'folder' }[]
     setFeTarget: Dispatch<React.SetStateAction<{
@@ -182,6 +183,7 @@ export interface FileExplorerMenuProps {
   importFromIpfs: any
   importFromHttps: any
   connectToLocalFileSystem?: any
+  handleGitInit?: () => Promise<void>
   tooltipPlacement?: Placement
 }
 export interface FileExplorerContextMenuProps {
