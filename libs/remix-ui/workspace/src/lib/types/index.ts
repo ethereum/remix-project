@@ -159,6 +159,7 @@ export interface FileExplorerProps {
     dragStatus: (status: boolean) => void
     importFromIpfs: any
     importFromHttps: any
+    connectToLocalFileSystem?: any
     handleMultiCopies: any
     feTarget: { key: string, type: 'file' | 'folder' }[]
     setFeTarget: Dispatch<React.SetStateAction<{
@@ -180,6 +181,7 @@ export interface FileExplorerMenuProps {
   uploadFolder: (target: EventTarget & HTMLInputElement) => void
   importFromIpfs: any
   importFromHttps: any
+  connectToLocalFileSystem?: any
   tooltipPlacement?: Placement
 }
 export interface FileExplorerContextMenuProps {
