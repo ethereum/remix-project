@@ -15,7 +15,11 @@ export const repoMap = {
   },
   zh: {
     name: 'ethereum/remix-workshops',
-    branch: 'cn',
+    branch: 'zh',
+  },
+  es: {
+    name: 'ethereum/remix-workshops',
+    branch: 'es',
   },
 }
 
