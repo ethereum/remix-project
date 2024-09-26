@@ -609,6 +609,7 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   uploadFolder={uploadFolder}
                   importFromIpfs={props.importFromIpfs}
                   importFromHttps={props.importFromHttps}
+                  connectToLocalFileSystem={() => console.log('connectToLocalFileSystem')}
                 />
               </div>
             </span>
