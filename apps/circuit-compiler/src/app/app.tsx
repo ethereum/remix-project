@@ -7,7 +7,6 @@ import {CircuitAppContext} from './contexts'
 import {appInitialState, appReducer} from './reducers/state'
 import {CircomPluginClient} from './services/circomPluginClient'
 import { compileCircuit } from './actions'
-import { version } from 'os'
 
 const plugin = new CircomPluginClient()
 
