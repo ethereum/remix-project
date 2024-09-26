@@ -66,7 +66,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         title: 'Initialize workspace as a git repository',
         icon: 'fa-brands fa-git-alt',
         placement: 'top',
-        platforms: [appPlatformTypes.web]
+        platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
       }
     ].filter(
       (item) =>
