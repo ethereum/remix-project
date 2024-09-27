@@ -9,6 +9,7 @@
       "cells": [
         {
           "title": "Intro to Remix",
+          "titleTooltip": "Example tooltip",
           "tagList": [
             "L2",
             "AI" 
