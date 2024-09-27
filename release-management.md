@@ -19,7 +19,7 @@ Together with the team, the release manager will refine the list of issues and P
 More generally and a non-negligible part of the planning is to properly ensure that bugs, issues that weren't totally identified in the roadmap, and the roadmap issues are still being processed as they should.
 During this phase, **all the current project issues have to be assigned.**
 
-After the release planning each one of us has to specify the effort need for each issue (1 - 2 - 3 - 5 - 8 - 13)
+After the release planning each one of us has to specify the effort needed for each issue (1 - 2 - 3 - 5 - 8 - 13)
 
 ## Release planning - refinement meeting:
 This meeting happens a few days after the release planning meeting.
