@@ -16,13 +16,13 @@ const profile = {
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
   kind: '',
-  // location: 'sidePanel',
+  location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
   version: packageJson.version,
   maintainedBy: 'Remix'
 }
 
-export class RemixAIPlugin extends Plugin {
+export class RemixAIPlugin extends ViewPlugin {
   isOnDesktop:boolean = false
   aiIsActivated:boolean = false
   readonly remixDesktopPluginName = 'remixAID'
@@ -169,9 +169,9 @@ export class RemixAIPlugin extends Plugin {
     }
   }
 
-  // render() {
-  //   return (
-  //     <RemixAITab plugin={this}></RemixAITab>
-  //   )
-  // }
+  render() {
+    return (
+      <RemixAITab plugin={this}></RemixAITab>
+    )
+  }
 }
