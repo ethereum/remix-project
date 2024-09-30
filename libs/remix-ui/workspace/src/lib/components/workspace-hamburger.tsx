@@ -17,6 +17,7 @@ export interface HamburgerMenuProps {
   downloadWorkspaces: () => void
   restoreBackup: () => void
   hideIconsMenu: (showMenu: boolean) => void
+  handleRemixdWorkspace: () => void
   showIconsMenu: boolean
   hideWorkspaceOptions: boolean
   hideLocalhostOptions: boolean
@@ -135,6 +136,16 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
         hideOption={hideWorkspaceOptions}
         actionOnClick={() => {
           props.restoreBackup()
+          props.hideIconsMenu(!showIconsMenu)
+        }}
+        platforms={[appPlatformTypes.web]}
+      ></HamburgerMenuItem>
+      <HamburgerMenuItem
+        kind="localFileSystem"
+        fa="far fa-desktop"
+        hideOption={hideWorkspaceOptions}
+        actionOnClick={() => {
+          props.handleRemixdWorkspace()
           props.hideIconsMenu(!showIconsMenu)
         }}
         platforms={[appPlatformTypes.web]}
