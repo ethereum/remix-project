@@ -1044,6 +1044,7 @@ export function Workspace() {
                           <HamburgerMenu
                             selectedWorkspace={selectedWorkspace}
                             createWorkspace={createWorkspace}
+                            handleRemixdWorkspace={()=>switchWorkspace(LOCALHOST)}
                             createBlankWorkspace={createBlankWorkspace}
                             renameCurrentWorkspace={renameCurrentWorkspace}
                             downloadCurrentWorkspace={downloadCurrentWorkspace}
@@ -1134,10 +1135,11 @@ export function Workspace() {
                           {currentWorkspace === LOCALHOST ? (
                             <span>&#10003; Connected to Local Filesystem </span>
                           ) : (
-                            <span className="pl-3">
-                              {' '}
-                              <FormattedMessage id="filePanel.connectToLocalhost" />{' '}
-                            </span>
+                            // <span className="pl-3">
+                            //   {' '}
+                            //   <FormattedMessage id="filePanel.connectToLocalhost" />{' '}
+                            // </span>
+                            null
                           )}
                         </Dropdown.Item>
                         <ShowNonLocalHostMenuItems />
