@@ -10,8 +10,7 @@ import { fetchContractFromEtherscan, fetchContractFromBlockscout } from '@remix-
 import JSZip from 'jszip'
 import { Actions, FileTree } from '../types'
 import IpfsHttpClient from 'ipfs-http-client'
-import { AppModal } from '@remix-ui/app'
-import { MessageWrapper } from '../components/file-explorer'
+import { AppModal, ModalTypes } from '@remix-ui/app'
 
 export * from './events'
 export * from './workspace'
@@ -508,6 +507,32 @@ export const runScript = async (path: string) => {
     }
     plugin.call('scriptRunner', 'execute', content, path)
   })
+}
+
+export const signTypedData = async (path: string) => {
+  const typedData = await plugin.call('fileManager', 'readFile', path)
+  const web3 = await plugin.call('blockchain', 'web3')
+  const settings = await plugin.call('udapp', 'getSettings') 
+  let parsed
+  try {
+    parsed = JSON.parse(typedData)
+  } catch (err) {
+    dispatch(displayPopUp(`${path} isn't a valid JSON.`))
+    return
+  } 
+
+  try {
+    const result = await web3.currentProvider.request({
+      method: 'eth_signTypedData',
+      params: [settings.selectedAccount, parsed]
+    })
+    
+    plugin.call('terminal', 'log', { type: 'log', value: `${path} signature using ${settings.selectedAccount} : ${result}` })
+  } catch (e) {
+    console.error(e)
+    plugin.call('terminal', 'log', { type: 'error', value: `error while signing ${path}: ${e}` })
+    dispatch(displayPopUp(e.message))
+  }
 }
 
 export const emitContextMenuEvent = async (cmd: customAction) => {

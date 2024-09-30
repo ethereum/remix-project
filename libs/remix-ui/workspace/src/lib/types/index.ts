@@ -128,6 +128,7 @@ export interface FileExplorerProps {
     dispatchCopyShareURL: (path:string) => Promise<void>,
     dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
     dispatchRunScript: (path: string) => Promise<void>,
+    dispatchSignTypedData: (path: string) => Promise<void>,
     dispatchPublishToGist: (path?: string, type?: string) => Promise<void>,
     dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
     dispatchHandleClickFile: (path: string, type: WorkspaceElement) => Promise<void>,
@@ -197,6 +198,7 @@ export interface FileExplorerContextMenuProps {
   pushChangesToGist?: (path?: string) => void
   publishFolderToGist?: (path?: string) => void
   publishFileToGist?: (path?: string) => void
+  signTypedData?: (path?: string) => void
   runScript?: (path: string) => void
   emit?: (cmd: customAction) => void
   pageX: number
