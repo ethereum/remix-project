@@ -8,6 +8,7 @@ import { Filters } from './methods/filters'
 import { methods as miscMethods } from './methods/misc'
 import { methods as netMethods } from './methods/net'
 import { Transactions } from './methods/transactions'
+import { Miner } from './methods/miner'
 import { Debug } from './methods/debug'
 import { VMContext } from './vm-context'
 import { Web3PluginBase } from 'web3'
@@ -65,6 +66,7 @@ export class Provider {
     this.methods = merge(this.methods, netMethods())
     this.methods = merge(this.methods, this.Transactions.methods())
     this.methods = merge(this.methods, (new Debug(this.vmContext)).methods())
+    this.methods = merge(this.methods, (new Miner(this.vmContext)).methods())
   }
 
   async init () {
