@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
 import { RemixAITab } from '@remix-ui/remix-ai'
 import React from 'react';
-import { ICompletions, IModel, RemoteInferencer, IRemoteModel } from '@remix/remix-ai-core';
+import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams } from '@remix/remix-ai-core';
 
 const profile = {
   name: 'remixAI',
@@ -127,7 +127,8 @@ export class RemixAIPlugin extends ViewPlugin {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
-
+    const params:IParams = GenerationParams
+    params.stream_result = true
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
 
     let result
@@ -135,7 +136,7 @@ export class RemixAIPlugin extends ViewPlugin {
       result = await this.call(this.remixDesktopPluginName, 'code_explaining', prompt)
 
     } else {
-      result = await this.remoteInferencer.code_explaining(prompt)
+      result = await this.remoteInferencer.code_explaining(prompt, "", params)
     }
     if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
@@ -148,13 +149,16 @@ export class RemixAIPlugin extends ViewPlugin {
       return
     }
 
+    const params:IParams = GenerationParams
+    params.stream_result = true
+
     this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
 
     let result
     if (this.isOnDesktop) {
       result = await this.call(this.remixDesktopPluginName, 'error_explaining', prompt)
     } else {
-      result = await this.remoteInferencer.error_explaining(prompt)
+      result = await this.remoteInferencer.error_explaining(prompt, params)
     }
     if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })

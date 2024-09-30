@@ -484,9 +484,9 @@ export class InferenceManager implements ICompletions {
       return
     }
     if (params.stream_result) {
-      return this._streamInferenceRequest('code_explaining', { code, context, ...params })
+      return this._streamInferenceRequest('code_explaining', { prompt: code, context, ...params })
     } else {
-      return this._makeInferenceRequest('code_explaining', { code, context, ...params }, AIRequestType.GENERAL)
+      return this._makeInferenceRequest('code_explaining', { prompt: code, context, ...params }, AIRequestType.GENERAL)
     }
   }
 

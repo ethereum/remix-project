@@ -58,7 +58,7 @@ export interface IParams {
   temperature?: number;
   max_new_tokens?: number;
   repetition_penalty?: number;
-  repeatPenalty?:any
+  repeat_penalty?:any
   no_repeat_ngram_size?: number;
   num_beams?: number;
   num_return_sequences?: number;
