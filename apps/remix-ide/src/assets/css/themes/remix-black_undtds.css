@@ -5080,6 +5080,7 @@ a.close.disabled {
 .modal-header .close {
   padding: 15px;
   margin: -1rem -1rem -1rem auto;
+  cursor: pointer;
 }
 .modal-title {
   margin-bottom: 0;
