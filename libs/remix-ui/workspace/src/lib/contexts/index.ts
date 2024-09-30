@@ -34,6 +34,7 @@ export const FileSystemContext = createContext<{
   dispatchCopyShareURL: (path: string) => Promise<void>,
   dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
   dispatchRunScript: (path: string) => Promise<void>,
+  dispatchSignTypedData: (path: string) => Promise<void>,
   dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
   dispatchHandleClickFile: (path: string, type: 'file' | 'folder' ) => Promise<void>
   dispatchHandleExpandPath: (paths: string[]) => Promise<void>,
