@@ -35,7 +35,7 @@ export function EnvironmentUI(props: EnvironmentProps) {
         </CustomTooltip>
         <CustomTooltip placement={'auto-end'} tooltipClasses="text-wrap" tooltipId="runAndDeployAddresstooltip" tooltipText={<FormattedMessage id="udapp.environmentDocs" />}>
           <a href="https://remix-ide.readthedocs.io/en/latest/run.html#environment" target="_blank" rel="noreferrer">
-            <i className="udapp_infoDeployAction ml-2 fas fa-info-circle"></i>
+            <i className="udapp_infoDeployAction ml-2 fas fa-info"></i>
           </a>
         </CustomTooltip>
       </label>

@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 import { GlassMagnifier, MagnifierContainer } from '@ricarso/react-image-magnifiers'
 import { ThemeSummary } from '../types'
+import { CustomTooltip } from '@remix-ui/helper'
 import UmlDownload from './components/UmlDownload'
 import './css/solidity-uml-gen.css'
 import { UmlDownloadContext, UmlFileType } from './utilities/UmlDownloadStrategy'
@@ -58,15 +59,33 @@ export function RemixUiSolidityUmlGen({ updatedSvg, loading, fileName, themeDark
         <div className="position-absolute bg-transparent mt-2" id="buttons" style={{ zIndex: 3, top: '10', right: '2em' }}>
           <div className="py-2 px-2 d-flex justify-content-center align-items-center">
             <UmlDownload download={download} />
-            <button data-id="umlZoominbtn" className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => zoomIn()}>
-              <i className="far fa-plus uml-btn-icon"></i>
-            </button>
-            <button data-id="umlZoomoutbtn" className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => zoomOut()}>
-              <i className="far fa-minus uml-btn-icon"></i>
-            </button>
-            <button data-id="umlResetbtn" className="badge badge-info remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => resetTransform()}>
-              <i className="far fa-undo uml-btn-icon"></i>
-            </button>
+            <CustomTooltip
+              tooltipText="Zoom in"
+              tooltipId="genUMLzoomin"
+              placement="top"
+            >
+              <button data-id="umlZoominbtn" className="badge badge-secondary remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => zoomIn()}>
+                <i className="far fa-plus uml-btn-icon"></i>
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              tooltipText="Zoom out"
+              tooltipId="genUMLzoomout"
+              placement="top"
+            >
+              <button data-id="umlZoomoutbtn" className="badge badge-secondary remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => zoomOut()}>
+                <i className="far fa-minus uml-btn-icon"></i>
+              </button>
+            </CustomTooltip>
+            <CustomTooltip
+              tooltipText="Undo"
+              tooltipId="genUMLundo"
+              placement="top"
+            >
+              <button data-id="umlResetbtn" className="badge badge-secondary remixui_no-shadow p-2 rounded-circle mr-2" onClick={() => resetTransform()}>
+                <i className="far fa-undo uml-btn-icon"></i>
+              </button>
+            </CustomTooltip>
           </div>
         </div>
       </>
