@@ -150,5 +150,7 @@
   "filePanel.saveCodeSample": "This code-sample workspace will not be persisted. Click here to save it.",
   "filePanel.logInGithub": "Sign in to GitHub.",
   "filePanel.gitHubLoggedAs": "Signed in as {githubuser}",
-  "filePanel.updateSubmodules": "Update all submodules of repository. Click to pull dependencies."
+  "filePanel.updateSubmodules": "Update all submodules of repository. Click to pull dependencies.",
+  "filePanel.signTypedData": "Sign Typed Data",
+  "filePanel.signTypedDataError": "Error while signing this typed data."
 }
