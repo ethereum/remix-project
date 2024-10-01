@@ -11,4 +11,8 @@ export class ContractVerificationPluginClient extends PluginClient {
     createClient(this)
     this.onload()
   }
+
+  onActivation(): void {
+    this.internalEvents.emit('verification_activated')
+  }
 }
