@@ -22,11 +22,6 @@ export class RemixAIDesktopPlugin extends ElectronBasePlugin {
   constructor() {
     super(profile, clientProfile, RemixAIDesktopPluginClient)
     this.methods = [...super.methods]
-
-    for (const client of this.clients) {
-      console.log(client)
-      client.enable()
-    }
   }
 }
 
@@ -52,7 +47,6 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
   async onActivation(): Promise<void> {
     console.log("Activation", "loaded the remix plugin client application side")
     this.onload(() => {
-      this.emit('activated')
     })
   }
 
