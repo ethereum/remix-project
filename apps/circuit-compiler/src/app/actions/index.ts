@@ -6,7 +6,7 @@ import { extractNameFromKey, extractParentFromKey } from '@remix-ui/helper'
 import isElectron from 'is-electron'
 
 export const compileCircuit = async (plugin: CircomPluginClient, appState: AppState) => {
-  if (appState.status === "compiling") {
+  if (appState.status !== "compiling") {
     return console.log('Existing circuit compilation in progress')
   }
 
@@ -24,7 +24,7 @@ export const computeWitness = async (
   status: string,
   witnessValues: Record<string, string>
 ) => {
-  if (status === "computing") {
+  if (status !== "computing") {
     return console.log('Existing witness computation in progress')
   }
 
