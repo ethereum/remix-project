@@ -178,19 +178,19 @@ export function AccountUI(props: AccountProps) {
         <div className='mt-2'>
           <span>otherwise</span><button className='ml-2 modal-ok btn btn-sm border-primary' data-id="sign-eip-712" onClick={() => {
             props.modal(
-              'Message signing with EIP-712', 
+              'Message signing with EIP-712',
               <div>
                 <div>{intl.formatMessage({ id: 'udapp.EIP712-2' }, {
-                      a: (chunks) => (
-                        <a href='https://eips.ethereum.org/EIPS/eip-712' target="_blank" rel="noreferrer">
-                          {chunks}
-                        </a>
-                      )
-                    })}</div>
+                  a: (chunks) => (
+                    <a href='https://eips.ethereum.org/EIPS/eip-712' target="_blank" rel="noreferrer">
+                      {chunks}
+                    </a>
+                  )
+                })}</div>
                 <div>{intl.formatMessage({ id: 'udapp.EIP712-3' })}</div></div>,
               intl.formatMessage({ id: 'udapp.EIP712-create-template' }),
               () => { props.addFile('EIP-712-data.json', JSON.stringify(EIP712_Example, null, '\t')) },
-              intl.formatMessage({ id: 'udapp.EIP712-close' }), 
+              intl.formatMessage({ id: 'udapp.EIP712-close' }),
               () => {})
           }}>Sign with EIP 712</button>
         </div>

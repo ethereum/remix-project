@@ -39,8 +39,8 @@ export class VMProvider {
     return new Promise((resolve, reject) => {
       this.worker.addEventListener('message', (msg) => {
         if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
-          let result = msg.data.result
-          if (stamps[msg.data.stamp].request && msg.data.result) result = msg.data.result.result
+          const result = msg.data.result
+          // if (stamps[msg.data.stamp].request && msg.data.result) result = msg.data.result.result
 
           if (stamps[msg.data.stamp].callback) {
             stamps[msg.data.stamp].callback(msg.data.error, result)
