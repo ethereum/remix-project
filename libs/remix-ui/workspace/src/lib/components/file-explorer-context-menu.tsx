@@ -234,11 +234,11 @@ export const FileExplorerContextMenu = (props: FileExplorerContextMenuProps) => 
               case 'Publish Workspace to Gist':
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'publishWorkspace'])
                 publishFolderToGist(path)
-              break
-                case 'Sign Typed Data':
+                break
+              case 'Sign Typed Data':
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', 'signTypedData'])
                 signTypedData(path)
-              break
+                break
               default:
                 _paq.push(['trackEvent', 'fileExplorer', 'contextMenu', `${item.id}/${item.name}`])
                 emit && emit({ ...item, path: [path]} as customAction)
