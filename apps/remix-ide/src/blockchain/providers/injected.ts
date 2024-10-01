@@ -41,7 +41,7 @@ export class InjectedProvider {
     const messageHash = hashPersonalMessage(Buffer.from(message))
     try {
       message = isHexString(message) ? message : Web3.utils.utf8ToHex(message)
-      this.executionContext.web3().eth.personal.sign(message, account).then((error, signedData) => {
+      this.executionContext.web3().eth.sign(message, account).then((error, signedData) => {
         cb(error, bytesToHex(messageHash), signedData)
       }).catch((error => cb(error)))
     } catch (e) {
