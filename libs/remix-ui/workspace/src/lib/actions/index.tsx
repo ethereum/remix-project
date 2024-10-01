@@ -512,21 +512,21 @@ export const runScript = async (path: string) => {
 export const signTypedData = async (path: string) => {
   const typedData = await plugin.call('fileManager', 'readFile', path)
   const web3 = await plugin.call('blockchain', 'web3')
-  const settings = await plugin.call('udapp', 'getSettings') 
+  const settings = await plugin.call('udapp', 'getSettings')
   let parsed
   try {
     parsed = JSON.parse(typedData)
   } catch (err) {
     dispatch(displayPopUp(`${path} isn't a valid JSON.`))
     return
-  } 
+  }
 
   try {
     const result = await web3.currentProvider.request({
       method: 'eth_signTypedData',
       params: [settings.selectedAccount, parsed]
     })
-    
+
     plugin.call('terminal', 'log', { type: 'log', value: `${path} signature using ${settings.selectedAccount} : ${result}` })
   } catch (e) {
     console.error(e)
