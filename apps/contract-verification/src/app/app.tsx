@@ -36,23 +36,23 @@ const App = () => {
   const timer = useRef(null)
 
   useEffect(() => {
-    // Fetch compiler artefacts initially
-    plugin.call('compilerArtefacts' as any, 'getAllCompilerAbstracts').then((obj: any) => {
-      setCompilationOutput(obj)
+    plugin.internalEvents.on('verification_activated', () => {
+      // Fetch compiler artefacts initially
+      plugin.call('compilerArtefacts' as any, 'getAllCompilerAbstracts').then((obj: any) => {
+        setCompilationOutput(obj)
+      })
+
+      // Subscribe to compilations
+      plugin.on('compilerArtefacts' as any, 'compilationSaved', (compilerAbstracts: { [key: string]: CompilerAbstract }) => {
+        setCompilationOutput((prev) => ({ ...(prev || {}), ...compilerAbstracts }))
+      })
+
+      // Fetch chains.json and update state
+      fetch('https://chainid.network/chains.json')
+        .then((response) => response.json())
+        .then((data) => setChains(data))
+        .catch((error) => console.error('Failed to fetch chains.json:', error))
     })
-
-    // Subscribe to compilations
-    plugin.on('compilerArtefacts' as any, 'compilationSaved', (compilerAbstracts: { [key: string]: CompilerAbstract }) => {
-      setCompilationOutput((prev) => ({ ...(prev || {}), ...compilerAbstracts }))
-    })
-
-    // TODO: Is there a way to get all compilations from the `build-info` files without having to compile again?
-
-    // Fetch chains.json and update state
-    fetch('https://chainid.network/chains.json')
-      .then((response) => response.json())
-      .then((data) => setChains(data))
-      .catch((error) => console.error('Failed to fetch chains.json:', error))
 
     // Clean up on unmount
     return () => {
