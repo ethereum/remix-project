@@ -138,6 +138,6 @@ module.exports = {
         }, [], (res) => {
             console.log('res', res)
             browser.assert.ok((res as any).value, 'matomo analytics is enabled')
-        }).pause()
+        })
     }
 }
