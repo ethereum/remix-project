@@ -1,27 +1,45 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../remix-ai.css'
-import { DefaultModels, GenerationParams } from '@remix/remix-ai-core';
+import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
 import { StreamSend, StreamingAdapterObserver } from '@nlux/react';
 import axios from 'axios';
-import { AiChat, useAsStreamAdapter } from '@nlux/react';
+import { AiChat, useAsStreamAdapter, ChatItem} from '@nlux/react';
 import '@nlux/themes/nova.css';
-
+import { JsonStreamParser } from '@remix/remix-ai-core';
 import { user, assistantAvatar } from './personas';
+
 const demoProxyServerUrl = 'https://solcoder.remixproject.org';
+let chatobserver: StreamingAdapterObserver = null
+
 
 export const Default = (props) => {
-
   const send: StreamSend = async (
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
-    console.log(prompt);
-    const response = await props.plugin.call('remixAI', 'solidity_answer', prompt);
-    observer.next(response);
-    observer.complete();
-};
+    chatobserver = observer
+    GenerationParams.stream_result = true
+    GenerationParams.return_stream_response = true
 
+    const response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams);
+    HandleStreamResponse(response, 
+      (text) => {observer.next(text)},
+      (result) => { 
+        ChatHistory.pushHistory(prompt, result)
+        observer.complete() }
+    )
+
+  };
+
+  // Define initial messages
+  const initialMessages: ChatItem[] = [
+    {
+      role: 'assistant',
+      message: 'Welcome to Remix AI! How can I assist you today?'
+    }
+  ];
   const adapter = useAsStreamAdapter(send, []);
+
   return (
     <AiChat
       adapter={ adapter }
@@ -32,10 +50,19 @@ export const Default = (props) => {
           avatar: assistantAvatar
         },
         user
+        
       }}
+      //initialConversation={initialMessages}
       conversationOptions={{ layout: 'bubbles' }}
-      displayOptions={{ colorScheme: "dark" }}
-      composerOptions={{ placeholder: "Type your query" }}
+      displayOptions={{ colorScheme: "auto" }}
+      composerOptions={{ placeholder: "Type your query",
+        submitShortcut: 'Enter',
+        hideStopButton: false,
+      }}
+      messageOptions={{ showCodeBlockCopyButton: true,
+        streamingAnimationSpeed: 2,
+        waitTimeBeforeStreamCompletion: 1000,
+      }}
     />
   );
 };

@@ -1,12 +1,14 @@
-import { ICompletions, IParams, AIRequestType, RemoteBackendOPModel } from "../../types/types";
+import { ICompletions, IParams, AIRequestType, RemoteBackendOPModel, JsonStreamParser } from "../../types/types";
 import { GenerationParams, CompletionParams, InsertionParams } from "../../types/models";
 import { buildSolgptPromt } from "../../prompts/promptBuilder";
 import EventEmitter from "events";
 import { ChatHistory } from "../../prompts/chat";
 import axios, { AxiosResponse } from 'axios';
 import { Readable } from 'stream';
+import { StreamingAdapterObserver } from '@nlux/react';
 
 const defaultErrorMessage = `Unable to get a response from AI server`
+
 
 export class RemoteInferencer implements ICompletions {
   api_url: string
@@ -24,8 +26,7 @@ export class RemoteInferencer implements ICompletions {
 
   private async _makeRequest(endpoint, payload, rType:AIRequestType){
     this.event.emit("onInference")
-    let requesURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
-    const userPrompt = payload.prompt
+    const requesURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
 
     console.log(requesURL)
     try {
@@ -42,7 +43,7 @@ export class RemoteInferencer implements ICompletions {
       case AIRequestType.GENERAL:
         if (result.statusText === "OK") {
           const resultText = result.data.generatedText
-          ChatHistory.pushHistory(userPrompt, resultText)
+          ChatHistory.pushHistory(payload.prompt, resultText)
           return resultText
         } else {
           return defaultErrorMessage
@@ -63,46 +64,61 @@ export class RemoteInferencer implements ICompletions {
     try {
       this.event.emit('onInference')
       const requestURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
-      const userPrompt = payload.prompt
-      const response:AxiosResponse<Readable> = await axios({
-        method: 'post',
-        url: `${requestURL}/${endpoint}`,
-        data: payload,
+      const response = await fetch(`${requestURL}/${endpoint}`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           "Accept": "text/event-stream",
-        }
-        , responseType: 'blob' });
+        },
+        body: JSON.stringify(payload),
+      });
 
-      response.data.on('data', (chunk: Buffer) => {
+      if (payload.return_stream_response) {
+        return response
+      }
+    
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      const parser = new JsonStreamParser();
+    
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
         try {
-          const parsedData = JSON.parse(chunk.toString());
-          if (parsedData.isGenerating) {
-            this.event.emit('onStreamResult', parsedData.generatedText);
-            resultText = resultText + parsedData.generatedText
-            console.log("resultText" + resultText)
-          } else {
-            // stream generation is complete
-            resultText = resultText + parsedData.generatedText
-            ChatHistory.pushHistory(userPrompt, resultText)
-            return parsedData.generatedText
+          console.log("value" + decoder.decode(value))
+          const chunk = parser.safeJsonParse<{ generatedText: string; isGenerating: boolean }>(decoder.decode(value, { stream: true }));
+          
+          for (const parsedData of chunk) {
+            if (parsedData.isGenerating) {
+              this.event.emit('onStreamResult', parsedData.generatedText);
+              resultText = resultText + parsedData.generatedText
+            } else {
+              // stream generation is complete
+              resultText = resultText + parsedData.generatedText
+              ChatHistory.pushHistory(payload.prompt, resultText)
+              return parsedData.generatedText
+            }
           }
         } catch (error) {
           console.error('Error parsing JSON:', error);
           ChatHistory.clearHistory()
         }
-      });
+      }
 
-      return "" // return empty string for now as handled in event
+      return resultText
     } catch (error) {
       ChatHistory.clearHistory()
       console.error('Error making stream request to Inference server:', error.message);
     }
     finally {
-      console.log("end streamin" + resultText)
+      console.log("end streaming\n" + resultText)
       this.event.emit('onInferenceDone')
     }
   }
+
+  
+  
 
   async code_completion(prompt, options:IParams=CompletionParams): Promise<any> {
     const payload = { prompt, "endpoint":"code_completion", ...options }
@@ -112,7 +128,7 @@ export class RemoteInferencer implements ICompletions {
 
   async code_insertion(msg_pfx, msg_sfx, options:IParams=InsertionParams): Promise<any> {
     // const payload = { "data":[msg_pfx, "code_insertion", msg_sfx, 1024, 0.5, 0.92, 50]}
-    const payload = { prompt, "endpoint":"code_insertion", msg_pfx, msg_sfx, ...options }
+    const payload = {"endpoint":"code_insertion", msg_pfx, msg_sfx, ...options, prompt: '' }
     if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.COMPLETION) 
     else return this._makeRequest(payload.endpoint, payload, AIRequestType.COMPLETION)
   }
@@ -127,7 +143,7 @@ export class RemoteInferencer implements ICompletions {
   async solidity_answer(prompt, options:IParams=GenerationParams): Promise<any> {
     const main_prompt = buildSolgptPromt(prompt, this.model_op)
     // const payload = { "data":[main_prompt, "solidity_answer", false,2000,0.9,0.8,50]}
-    const payload = { prompt, "endpoint":"solidity_answer", ...options }
+    const payload = { 'prompt': main_prompt, "endpoint":"solidity_answer", ...options }
     if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.GENERAL) 
     else return this._makeRequest(payload.endpoint, payload, AIRequestType.GENERAL)
   }

@@ -77,6 +77,7 @@ const GenerationParams:IParams = {
   max_new_tokens: 2000,
   stream_result: false,
   repeat_penalty: 1.2,
+  terminal_output: false,
 }
 
 export { DefaultModels, CompletionParams, InsertionParams, GenerationParams }
