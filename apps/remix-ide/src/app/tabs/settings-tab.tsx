@@ -2,7 +2,7 @@
 import React from 'react' // eslint-disable-line
 import { ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
-import {RemixUiSettings} from '@remix-ui/settings' //eslint-disable-line
+import { RemixUiSettings } from '@remix-ui/settings' //eslint-disable-line
 import { Registry } from '@remix-project/remix-lib'
 import { PluginViewWrapper } from '@remix-ui/helper'
 declare global {
@@ -37,7 +37,7 @@ module.exports = class SettingsTab extends ViewPlugin {
   element: HTMLDivElement
   public useMatomoAnalytics: any
   public useCopilot: any
-  dispatch: React.Dispatch<any> = () => {}
+  dispatch: React.Dispatch<any> = () => { }
   constructor(config, editor) {
     super(profile)
     this.config = config
@@ -103,13 +103,14 @@ module.exports = class SettingsTab extends ViewPlugin {
     })
   }
 
-  getCopilotSetting(){
+  getCopilotSetting() {
     return this.useCopilot
   }
 
   updateMatomoAnalyticsChoice(isChecked) {
-    console.log('isChecked', isChecked)
     this.config.set('settings/matomo-analytics', isChecked)
+    // set timestamp to local storage to track when the user has given consent
+    localStorage.setItem('matomo-analytics-consent', Date.now().toString())
     this.useMatomoAnalytics = isChecked
     if (!isChecked) {
       // revoke tracking consent

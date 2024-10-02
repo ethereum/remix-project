@@ -1,45 +1,45 @@
 'use strict'
-import {RunTab, makeUdapp} from './app/udapp'
-import {RemixEngine} from './remixEngine'
-import {RemixAppManager} from './remixAppManager'
-import {ThemeModule} from './app/tabs/theme-module'
-import {LocaleModule} from './app/tabs/locale-module'
-import {NetworkModule} from './app/tabs/network-module'
-import {Web3ProviderModule} from './app/tabs/web3-provider'
-import {CompileAndRun} from './app/tabs/compile-and-run'
-import {PluginStateLogger} from './app/tabs/state-logger'
-import {SidePanel} from './app/components/side-panel'
-import {StatusBar} from './app/components/status-bar'
-import {HiddenPanel} from './app/components/hidden-panel'
-import {PinnedPanel} from './app/components/pinned-panel'
-import {VerticalIcons} from './app/components/vertical-icons'
-import {LandingPage} from './app/ui/landing-page/landing-page'
-import {MainPanel} from './app/components/main-panel'
-import {PermissionHandlerPlugin} from './app/plugins/permission-handler-plugin'
-import {AstWalker} from '@remix-project/remix-astwalker'
-import {LinkLibraries, DeployLibraries, OpenZeppelinProxy} from '@remix-project/core-plugin'
-import {CodeParser} from './app/plugins/parser/code-parser'
-import {SolidityScript} from './app/plugins/solidity-script'
+import { RunTab, makeUdapp } from './app/udapp'
+import { RemixEngine } from './remixEngine'
+import { RemixAppManager } from './remixAppManager'
+import { ThemeModule } from './app/tabs/theme-module'
+import { LocaleModule } from './app/tabs/locale-module'
+import { NetworkModule } from './app/tabs/network-module'
+import { Web3ProviderModule } from './app/tabs/web3-provider'
+import { CompileAndRun } from './app/tabs/compile-and-run'
+import { PluginStateLogger } from './app/tabs/state-logger'
+import { SidePanel } from './app/components/side-panel'
+import { StatusBar } from './app/components/status-bar'
+import { HiddenPanel } from './app/components/hidden-panel'
+import { PinnedPanel } from './app/components/pinned-panel'
+import { VerticalIcons } from './app/components/vertical-icons'
+import { LandingPage } from './app/ui/landing-page/landing-page'
+import { MainPanel } from './app/components/main-panel'
+import { PermissionHandlerPlugin } from './app/plugins/permission-handler-plugin'
+import { AstWalker } from '@remix-project/remix-astwalker'
+import { LinkLibraries, DeployLibraries, OpenZeppelinProxy } from '@remix-project/core-plugin'
+import { CodeParser } from './app/plugins/parser/code-parser'
+import { SolidityScript } from './app/plugins/solidity-script'
 
-import {WalkthroughService} from './walkthroughService'
+import { WalkthroughService } from './walkthroughService'
 
-import {OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler} from '@remix-project/core-plugin'
+import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
 
-import {Registry} from '@remix-project/remix-lib'
-import {ConfigPlugin} from './app/plugins/config'
-import {StoragePlugin} from './app/plugins/storage'
-import {Layout} from './app/panels/layout'
-import {NotificationPlugin} from './app/plugins/notification'
-import {Blockchain} from './blockchain/blockchain'
-import {MergeVMProvider, LondonVMProvider, BerlinVMProvider, ShanghaiVMProvider, CancunVMProvider} from './app/providers/vm-provider'
-import {MainnetForkVMProvider} from './app/providers/mainnet-vm-fork-provider'
-import {SepoliaForkVMProvider} from './app/providers/sepolia-vm-fork-provider'
-import {GoerliForkVMProvider} from './app/providers/goerli-vm-fork-provider'
-import {CustomForkVMProvider} from './app/providers/custom-vm-fork-provider'
-import {HardhatProvider} from './app/providers/hardhat-provider'
-import {GanacheProvider} from './app/providers/ganache-provider'
-import {FoundryProvider} from './app/providers/foundry-provider'
-import {ExternalHttpProvider} from './app/providers/external-http-provider'
+import { Registry } from '@remix-project/remix-lib'
+import { ConfigPlugin } from './app/plugins/config'
+import { StoragePlugin } from './app/plugins/storage'
+import { Layout } from './app/panels/layout'
+import { NotificationPlugin } from './app/plugins/notification'
+import { Blockchain } from './blockchain/blockchain'
+import { MergeVMProvider, LondonVMProvider, BerlinVMProvider, ShanghaiVMProvider, CancunVMProvider } from './app/providers/vm-provider'
+import { MainnetForkVMProvider } from './app/providers/mainnet-vm-fork-provider'
+import { SepoliaForkVMProvider } from './app/providers/sepolia-vm-fork-provider'
+import { GoerliForkVMProvider } from './app/providers/goerli-vm-fork-provider'
+import { CustomForkVMProvider } from './app/providers/custom-vm-fork-provider'
+import { HardhatProvider } from './app/providers/hardhat-provider'
+import { GanacheProvider } from './app/providers/ganache-provider'
+import { FoundryProvider } from './app/providers/foundry-provider'
+import { ExternalHttpProvider } from './app/providers/external-http-provider'
 import { EnvironmentExplorer } from './app/providers/environment-explorer'
 import { FileDecorator } from './app/plugins/file-decorator'
 import { CodeFormat } from './app/plugins/code-format'
@@ -59,7 +59,7 @@ import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins
 import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
 
-import {SolCoder} from './app/plugins/solcoderAI'
+import { SolCoder } from './app/plugins/solcoderAI'
 
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
@@ -86,19 +86,19 @@ const PluginManagerComponent = require('./app/components/plugin-manager-componen
 const CompileTab = require('./app/tabs/compile-tab')
 const SettingsTab = require('./app/tabs/settings-tab')
 const AnalysisTab = require('./app/tabs/analysis-tab')
-const {DebuggerTab} = require('./app/tabs/debugger-tab')
+const { DebuggerTab } = require('./app/tabs/debugger-tab')
 const TestTab = require('./app/tabs/test-tab')
 const FilePanel = require('./app/panels/file-panel')
 const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
-const {TabProxy} = require('./app/panels/tab-proxy.js')
+const { TabProxy } = require('./app/panels/tab-proxy.js')
 
 
 export class platformApi {
-  get name () {
+  get name() {
     return isElectron() ? appPlatformTypes.desktop : appPlatformTypes.web
   }
-  isDesktop () {
+  isDesktop() {
     return isElectron()
   }
 }
@@ -118,7 +118,7 @@ class AppComponent {
 
     // load app config
     const config = new Config(configStorage)
-    Registry.getInstance().put({api: config, name: 'config'})
+    Registry.getInstance().put({ api: config, name: 'config' })
 
     // load file system
     this._components.filesProviders = {}
@@ -170,7 +170,17 @@ class AppComponent {
 
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
-    this.showMatomo = (matomoDomains[window.location.hostname] || (window.localStorage.getItem('showMatomo') && window.localStorage.getItem('showMatomo') === 'true')) && !this.matomoConfAlreadySet
+    const lastMatomoCheck = window.localStorage.getItem('matomo-analytics-consent')
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    this.showMatomo =
+      (matomoDomains[window.location.hostname]
+        || (window.localStorage.getItem('showMatomo')
+          && window.localStorage.getItem('showMatomo') === 'true'))
+      && (!this.matomoConfAlreadySet
+        || (this.matomoCurrentSetting === false
+          && (!lastMatomoCheck || new Date(lastMatomoCheck) < sixMonthsAgo)));
 
     this.walkthroughService = new WalkthroughService(appManager)
 
@@ -192,12 +202,12 @@ class AppComponent {
     this.themeModule = new ThemeModule()
     // ----------------- locale service ---------------------------------
     this.localeModule = new LocaleModule()
-    Registry.getInstance().put({api: this.themeModule, name: 'themeModule'})
-    Registry.getInstance().put({api: this.localeModule, name: 'localeModule'})
+    Registry.getInstance().put({ api: this.themeModule, name: 'themeModule' })
+    Registry.getInstance().put({ api: this.localeModule, name: 'localeModule' })
 
     // ----------------- editor service ----------------------------
     const editor = new Editor() // wrapper around ace editor
-    Registry.getInstance().put({api: editor, name: 'editor'})
+    Registry.getInstance().put({ api: editor, name: 'editor' })
     editor.event.register('requiringToSaveCurrentfile', (currentFile) => {
       fileManager.saveCurrentFile()
       if (currentFile.endsWith('.circom')) this.appManager.activatePlugin(['circuit-compiler'])
@@ -205,7 +215,7 @@ class AppComponent {
 
     // ----------------- fileManager service ----------------------------
     const fileManager = new FileManager(editor, appManager)
-    Registry.getInstance().put({api: fileManager, name: 'filemanager'})
+    Registry.getInstance().put({ api: fileManager, name: 'filemanager' })
     // ----------------- dGit provider ---------------------------------
     const dGitProvider = new DGitProvider()
 
@@ -292,7 +302,7 @@ class AppComponent {
     // -------------------Terminal----------------------------------------
     makeUdapp(blockchain, compilersArtefacts, (domEl) => terminal.logHtml(domEl))
     const terminal = new Terminal(
-      {appManager, blockchain},
+      { appManager, blockchain },
       {
         getPosition: (event) => {
           const limitUp = 36
@@ -357,7 +367,7 @@ class AppComponent {
       ganacheProvider,
       foundryProvider,
       externalHttpProvider,
-      environmentExplorer,  
+      environmentExplorer,
       this.walkthroughService,
       search,
       solidityumlgen,
@@ -390,12 +400,12 @@ class AppComponent {
       this.engine.register([ripgrep])
     }
 
-    const compilerloader = isElectron()? new compilerLoaderPluginDesktop(): new compilerLoaderPlugin()
+    const compilerloader = isElectron() ? new compilerLoaderPluginDesktop() : new compilerLoaderPlugin()
     this.engine.register([compilerloader])
 
     // LAYOUT & SYSTEM VIEWS
     const appPanel = new MainPanel()
-    Registry.getInstance().put({api: this.mainview, name: 'mainview'})
+    Registry.getInstance().put({ api: this.mainview, name: 'mainview' })
     const tabProxy = new TabProxy(fileManager, editor)
     this.engine.register([appPanel, tabProxy])
 
@@ -458,10 +468,10 @@ class AppComponent {
     ])
 
     this.layout.panels = {
-      tabs: {plugin: tabProxy, active: true},
-      editor: {plugin: editor, active: true},
-      main: {plugin: appPanel, active: false},
-      terminal: {plugin: terminal, active: true, minimized: false}
+      tabs: { plugin: tabProxy, active: true },
+      editor: { plugin: editor, active: true },
+      main: { plugin: appPanel, active: false },
+      terminal: { plugin: terminal, active: true, minimized: false }
     }
   }
 
@@ -474,7 +484,7 @@ class AppComponent {
     } catch (e) {
       console.log("couldn't register iframe plugins", e.message)
     }
-    if (isElectron()){
+    if (isElectron()) {
       await this.appManager.activatePlugin(['fs'])
     }
     await this.appManager.activatePlugin(['layout'])
@@ -517,7 +527,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['walkthrough', 'storage', 'search', 'compileAndRun', 'recorder', 'dgitApi', 'dgit'])
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
-    if (isElectron()){
+    if (isElectron()) {
       await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep'])
     }
 
