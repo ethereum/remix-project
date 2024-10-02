@@ -1,6 +1,5 @@
 import { AppModalCancelTypes } from "@remix-ui/app"
 
-
 export type ValidationResult = {
   valid: boolean,
   message?: string

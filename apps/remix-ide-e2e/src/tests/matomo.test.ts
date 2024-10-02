@@ -12,12 +12,14 @@ module.exports = {
         browser.perform((done) => {
 
             browser
-                .execute(function () { // override a plugin url for testing purpose
+                .execute(function () {
+                    localStorage.removeItem('config-v0.8:.remix.config')
                     localStorage.setItem('showMatomo', 'true')
                 }, [])
                 .refreshPage()
                 .perform(done())
         })
+            .pause()
             .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .pause(1000)
             .click('[data-id="matomoModal-modal-footer-ok-react"]') // submitted
