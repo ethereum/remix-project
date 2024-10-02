@@ -3,16 +3,19 @@ import { Accordion, Card, Button } from "react-bootstrap";
 import axios from "axios";
 import { customScriptRunnerConfig, Dependency, ProjectConfiguration } from "../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faToggleOff, faToggleOn, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { CustomTooltip } from "@remix-ui/helper";
+import { use } from "chai";
 
 export interface ScriptRunnerUIProps {
     // build custom script runner
     buildScriptRunner: (dependencies: Dependency[]) => void;
     publishedConfigurations: ProjectConfiguration[];
-    loadCustomConfig: () => any;
+    openCustomConfig: () => any;
     saveCustomConfig(content: customScriptRunnerConfig): void;
     activateCustomScriptRunner(config: customScriptRunnerConfig): string;
-    addCustomConfig(config: ProjectConfiguration) : void;
+    addCustomConfig(config: ProjectConfiguration): void;
+    customConfig: customScriptRunnerConfig;
 }
 
 export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
@@ -22,10 +25,24 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
     const [version, setVersion] = useState<string>('');
     const [baseConfig, setBaseConfig] = useState<string>('default');
     const [loading, setLoading] = useState<boolean>(false);
+    const [useRequire, setUseRequire] = useState<boolean>(false)
+
+    const { customConfig } = props;
+
+    useEffect(() =>{
+       console.log('CustomScriptRunner', props.customConfig)
+    },[])
+
+    useEffect(() => {
+        console.log('CustomScriptRunner', props.customConfig)
+        if(!customConfig) return;
+        setDependencies(customConfig.dependencies);
+        setBaseConfig(customConfig.baseConfiguration);
+    },[customConfig])
 
     const handleAddDependency = () => {
         if (name.trim() && version.trim()) {
-            const newDependency: Dependency = { name, version, import: true, alias };
+            const newDependency: Dependency = { name, version, require: useRequire, alias };
             setDependencies([...dependencies, newDependency]);
             setName('');
             setVersion('');
@@ -39,6 +56,14 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
         setDependencies(updatedDependencies);
     };
 
+    useEffect(() => {
+        async function saveData() {
+            //await handleSaveToFile();
+        }
+
+        saveData();
+    },[dependencies])
+
     const handleSaveToFile = () => {
         const fileData = JSON.stringify(dependencies, null, 2);
         console.log(fileData, baseConfig);
@@ -47,11 +72,8 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
         props.saveCustomConfig(customConfig);
     };
 
-    const loadFromFile = async () => {
-        const fileData: customScriptRunnerConfig = await props.loadCustomConfig();
-        console.log(fileData);
-        setDependencies(fileData.dependencies);
-        setBaseConfig(fileData.baseConfiguration);
+    const openConfig = async () => {
+        const fileData: customScriptRunnerConfig = await props.openCustomConfig();
     }
 
     const activateCustomConfig = async () => {
@@ -59,22 +81,32 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
         const customConfig: customScriptRunnerConfig = { baseConfiguration: baseConfig, dependencies };
         console.log(customConfig);
         setLoading(true);
-        const loadedConfig = await props.activateCustomScriptRunner(customConfig);
-        console.log(loadedConfig);
-        const newConfig: ProjectConfiguration = {
-            name: loadedConfig,
-            publish: true,
-            description: `Extension of ${baseConfig}`,
-            dependencies: dependencies,
-            replacements: {}
-        };
-        console.log(newConfig);
-        props.addCustomConfig(newConfig);
-        setLoading(false);
+        try {
+            const loadedConfig = await props.activateCustomScriptRunner(customConfig);
+            console.log(loadedConfig);
+            const newConfig: ProjectConfiguration = {
+                name: loadedConfig,
+                publish: true,
+                description: `Extension of ${baseConfig}`,
+                dependencies: dependencies,
+                replacements: {}
+            };
+            console.log(newConfig);
+            props.addCustomConfig(newConfig);
+
+        } catch (e) {
+            console.log(e)
+        } finally {
+            setLoading(false);
+        }
     }
 
     const onSelectBaseConfig = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setBaseConfig(e.target.value);
+    }
+
+    const toggleRequire = () => {
+        setUseRequire((prev) => !prev)
     }
 
     if (loading) {
@@ -120,6 +152,15 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
                     value={version}
                     onChange={(e) => setVersion(e.target.value)}
                 />
+                <CustomTooltip
+                    placement="bottom"
+                    tooltipText="use require when the module doesn't support import statements"
+                >
+                    <div>
+                        <label className="pr-2 pt-2">Use 'require':</label>
+                        <FontAwesomeIcon className={useRequire ? 'text-success' : ''} onClick={toggleRequire} icon={useRequire ? faToggleOn : faToggleOff}></FontAwesomeIcon>
+                    </div>
+                </CustomTooltip>
                 <button
                     className="btn btn-primary w-100 mt-1"
                     onClick={handleAddDependency}>
@@ -130,30 +171,30 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
                 {dependencies.map((dependency, index) => (
                     <li key={index} style={{ marginBottom: '5px' }}>
                         <div className="d-flex align-items-baseline justify-content-between">
-                        {dependency.name} - {dependency.version}
-                        <button
-                            onClick={() => handleRemoveDependency(index)}
-                            className="btn btn-danger"
-                            style={{ marginLeft: '10px' }}
-                        >
-                            <FontAwesomeIcon icon={faTrash} />
-                        </button>
+                            {dependency.name} - {dependency.version}
+                            <button
+                                onClick={() => handleRemoveDependency(index)}
+                                className="btn btn-danger"
+                                style={{ marginLeft: '10px' }}
+                            >
+                                <FontAwesomeIcon icon={faTrash} />
+                            </button>
                         </div>
                     </li>
                 ))}
             </ul>
             {dependencies.length > 0 && (
                 <button className="btn btn-primary w-100" onClick={handleSaveToFile} style={{ marginTop: '20px' }}>
-                    Save List to File
+                    Save config
                 </button>
             )}
-            <button className="btn btn-primary w-100" onClick={loadFromFile} style={{ marginTop: '20px' }}>
-                Load from File
+            <button className="btn btn-primary w-100" onClick={openConfig} style={{ marginTop: '20px' }}>
+                Open config
             </button>
             {dependencies.length > 0 && (
-            <button className="btn btn-success w-100" onClick={activateCustomConfig} style={{ marginTop: '20px' }}>
-                Activate
-            </button>)}
+                <button className="btn btn-success w-100" onClick={activateCustomConfig} style={{ marginTop: '20px' }}>
+                    Activate
+                </button>)}
         </div>
     );
 }

@@ -2,8 +2,8 @@ export interface Dependency {
     version: string;
     name: string;
     alias?: string;
-    import: boolean;
-    require?: boolean;
+    import?: boolean;
+    require: boolean;
     windowImport?: boolean;
   }
   
