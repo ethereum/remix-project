@@ -18,3 +18,6 @@ export {
   RemoteInferencer, InsertionParams, CompletionParams, GenerationParams,
   ChatEntry, AIRequestType, RemoteBackendOPModel, ChatHistory, downloadLatestReleaseExecutable
 }
+
+export * from './types/types'
+export * from './helpers/streamHandler'

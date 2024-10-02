@@ -71,6 +71,8 @@ export interface IParams {
   topK?: number;
   topP?: number;
   temp?: number;
+  return_stream_response?: boolean;
+  terminal_output?: boolean;
 }
 
 export enum AIRequestType {
@@ -84,4 +86,40 @@ export enum RemoteBackendOPModel{
   DEEPSEEK,
   CODELLAMA,
   MISTRAL
+}
+
+export class JsonStreamParser {
+  buffer: string
+  constructor() {
+    this.buffer = '';
+  }
+
+  safeJsonParse<T>(chunk: string): T[] | null {
+    this.buffer += chunk;
+    const results = [];
+
+    while (true) {
+      try {
+        const result = JSON.parse(this.buffer);
+        results.push(result);
+        this.buffer = '';
+        break;
+      } catch (error) {
+        const match = /^([^\{]*\{[^\}]*\})(.*)/.exec(this.buffer);
+        if (match) {
+          try {
+            const result = JSON.parse(match[1]);
+            results.push(result);
+            this.buffer = match[2];
+          } catch (e) {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+
+    return results;
+  }
 }
