@@ -5,13 +5,6 @@ const domains = {
   '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
 }
 
-const domainsSecondaryTracker = {
-  'remix-alpha.ethereum.org': 27,
-  'remix-beta.ethereum.org': 25,
-  'remix.ethereum.org': 23,
-  '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
-}
-
 if (domains[window.location.hostname]) {
   const _paq = window._paq = window._paq || []
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */

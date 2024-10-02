@@ -108,6 +108,7 @@ module.exports = class SettingsTab extends ViewPlugin {
   }
 
   updateMatomoAnalyticsChoice(isChecked) {
+    console.log('isChecked', isChecked)
     this.config.set('settings/matomo-analytics', isChecked)
     this.useMatomoAnalytics = isChecked
     if (!isChecked) {

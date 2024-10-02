@@ -1,3 +1,5 @@
+import { AppModalCancelTypes } from "libs/remix-ui/app/src/lib/remix-app/types"
+
 export type ValidationResult = {
   valid: boolean,
   message?: string
@@ -15,7 +17,7 @@ export interface ModalDialogProps {
   okFn?: (value?:any) => void,
   donotHideOnOkClick?: boolean,
   cancelLabel?: string | JSX.Element,
-  cancelFn?: () => void,
+  cancelFn?: (reason?: AppModalCancelTypes) => void,
   modalClass?: string,
   modalParentClass?: string
   showCancelIcon?: boolean,

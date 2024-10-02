@@ -8,6 +8,15 @@ export const enum ModalTypes {
   forceChoice = 'forceChoice'
 }
 
+export const enum AppModalCancelTypes {
+  close = 'close',
+  cancel = 'cancel',
+  blur = 'blur',
+  escape = 'escape',
+  enter = 'enter',
+  click = 'click'
+}
+
 export const enum UsageTypes {
   Beginner = 1,
   Prototyper,

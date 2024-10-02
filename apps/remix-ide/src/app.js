@@ -170,7 +170,7 @@ class AppComponent {
 
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
-    this.showMatamo = matomoDomains[window.location.hostname] && !this.matomoConfAlreadySet
+    this.showMatomo = (matomoDomains[window.location.hostname] || (window.localStorage.getItem('showMatomo') && window.localStorage.getItem('showMatomo') === 'true')) && !this.matomoConfAlreadySet
 
     this.walkthroughService = new WalkthroughService(appManager)
 
@@ -538,6 +538,7 @@ class AppComponent {
 
     // Set workspace after initial activation
     this.appManager.on('editor', 'editorMounted', () => {
+      console.log('editor mounted')
       if (Array.isArray(this.workspace)) {
         this.appManager
           .activatePlugin(this.workspace)
@@ -557,6 +558,7 @@ class AppComponent {
               if (this.appManager.pluginLoader.current === 'queryParams' && this.workspace.length > 0) {
                 this.menuicons.select(this.workspace[this.workspace.length - 1])
               } else {
+                console.log('focus on home')
                 this.appManager.call('tabs', 'focus', 'home')
               }
             }

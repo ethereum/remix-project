@@ -1,5 +1,5 @@
 import { GitHubUser } from '@remix-ui/git'
-import { ModalTypes } from '../types'
+import { AppModalCancelTypes, ModalTypes } from '../types'
 
 export type ValidationResult = {
     valid: boolean,
@@ -17,7 +17,7 @@ export interface AppModal {
     okLabel: string | JSX.Element
     okFn?: (value?:any) => void
     cancelLabel?: string | JSX.Element
-    cancelFn?: () => void,
+    cancelFn?: (reason?: AppModalCancelTypes) => void,
     modalType?: ModalTypes,
     modalParentClass?: string
     defaultValue?: string
