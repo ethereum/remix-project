@@ -6,7 +6,7 @@ import merge from 'merge'
 import { Web3Accounts } from './methods/accounts'
 import { Filters } from './methods/filters'
 import { methods as miscMethods } from './methods/misc'
-import { methods as netMethods } from './methods/net'
+import { Net } from './methods/net'
 import { Transactions } from './methods/transactions'
 import { Miner } from './methods/miner'
 import { Debug } from './methods/debug'
@@ -31,6 +31,7 @@ export type JSONRPCResponseCallback = (err: Error, result?: JSONRPCResponsePaylo
 export type State = Record<string, string>
 
 export type ProviderOptions = {
+  chainId?: number
   fork?: string,
   nodeUrl?: string,
   blockNumber?: number | 'latest',
@@ -55,7 +56,7 @@ export class Provider {
     this.connected = true
     this.vmContext = new VMContext(options['fork'], options['nodeUrl'], options['blockNumber'], options['stateDb'], options['blocks'])
 
-    this.Accounts = new Web3Accounts(this.vmContext)
+    this.Accounts = new Web3Accounts(this.vmContext, options)
     this.Transactions = new Transactions(this.vmContext)
 
     this.methods = {}
@@ -63,7 +64,7 @@ export class Provider {
     this.methods = merge(this.methods, (new Blocks(this.vmContext, options)).methods())
     this.methods = merge(this.methods, miscMethods())
     this.methods = merge(this.methods, (new Filters(this.vmContext)).methods())
-    this.methods = merge(this.methods, netMethods())
+    this.methods = merge(this.methods, (new Net(this.vmContext, options)).methods())
     this.methods = merge(this.methods, this.Transactions.methods())
     this.methods = merge(this.methods, (new Debug(this.vmContext)).methods())
     this.methods = merge(this.methods, (new Miner(this.vmContext)).methods())
