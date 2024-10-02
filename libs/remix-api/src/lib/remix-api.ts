@@ -12,6 +12,7 @@ import { ISidePanelApi } from "./plugins/sidePanel-api"
 import { IPinnedPanelApi } from "./plugins/pinned-panel-api"
 import { ILayoutApi } from "./plugins/layout-api"
 import { IMatomoApi } from "./plugins/matomo-api"
+import { IMenuIconsApi } from "./plugins/menuicons-api"
 
 export interface ICustomRemixApi extends IRemixApi {
   dgitApi: IGitApi
@@ -25,6 +26,7 @@ export interface ICustomRemixApi extends IRemixApi {
   pinnedPanel: IPinnedPanelApi
   layout: ILayoutApi
   matomo: IMatomoApi
+  menuicons: IMenuIconsApi
 }
 
 export declare type CustomRemixApi = Readonly<ICustomRemixApi>

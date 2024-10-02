@@ -15,29 +15,21 @@ export interface ScriptRunnerUIProps {
   loadScriptRunner: (name: string) => void;
   // build custom script runner
   buildScriptRunner: (dependencies: Dependency[]) => void;
-  loadCustomConfig: () => any;
+  openCustomConfig: () => any;
   saveCustomConfig(content: customScriptRunnerConfig): void;
   activateCustomScriptRunner(config: customScriptRunnerConfig): string;
+  customConfig: customScriptRunnerConfig;
+  configurations: ProjectConfiguration[];
 }
 
 export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
-  const { loadScriptRunner } = props;
-  const [configurations, setConfigurations] = useState<ProjectConfiguration[]>([]);
+  const { loadScriptRunner, configurations } = props;
   const [activeKey, setActiveKey] = useState('default');
   const [activeConfig, setActiveConfig] = useState('default');
 
   useEffect(() => {
     // Fetch the JSON data from the localhost server using Axios
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/projects.json?timestamp=' + Date.now());
-        setConfigurations(response.data);
-      } catch (error) {
-        console.error("Error fetching the projects data:", error);
-      }
-    };
 
-    fetchData();
   }, []); // Empty array ensures this effect runs once when the component mounts
 
   const handleSelect = (key) => {
@@ -51,8 +43,12 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
     if(configurations.find((c) => c.name === config.name)) {
       return;
     }
-    setConfigurations([...configurations, config]);
+    //setConfigurations([...configurations, config]);
     setActiveConfig(config.name);
+  }
+
+  if (!configurations) {
+    return <div>Loading...</div>;
   }
 
 
@@ -93,10 +89,11 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
             </Accordion.Collapse></div>))}
       </Accordion>
       <CustomScriptRunner
+        customConfig={props.customConfig}
         addCustomConfig={addCustomConfig}
         activateCustomScriptRunner={props.activateCustomScriptRunner}
         saveCustomConfig={props.saveCustomConfig}
-        loadCustomConfig={props.loadCustomConfig}
+        openCustomConfig={props.openCustomConfig}
         publishedConfigurations={configurations.filter((config) => config.publish)}
         buildScriptRunner={props.buildScriptRunner} />
     </div>
