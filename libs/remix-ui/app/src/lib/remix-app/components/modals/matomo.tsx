@@ -80,7 +80,7 @@ const MatomoDialog = (props: MatomoDialogProps) => {
 
   const declineModal = async (reason: AppModalCancelTypes) => {
     console.log('declineModal', reason)
-    if (reason === AppModalCancelTypes.click) {
+    if (reason === AppModalCancelTypes.click || reason === AppModalCancelTypes.enter) {
       settings.updateMatomoAnalyticsChoice(false)
       // revoke tracking consent
       _paq.push(['forgetConsentGiven'])
