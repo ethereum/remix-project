@@ -13,7 +13,7 @@ const domainsSecondaryTracker = {
 }
 
 if (domains[window.location.hostname]) {
-  var _paq = window._paq = window._paq || []
+  const _paq = window._paq = window._paq || []
   /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
   _paq.push(["setExcludedQueryParams", ["code","gist"]]);
   _paq.push(["setExcludedReferrers", ["etherscan.io"]]);
@@ -21,13 +21,24 @@ if (domains[window.location.hostname]) {
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   _paq.push(['enableHeartBeatTimer']);
-  if (!window.localStorage.getItem('config-v0.8:.remix.config') ||
-    (window.localStorage.getItem('config-v0.8:.remix.config') && !window.localStorage.getItem('config-v0.8:.remix.config').includes('settings/matomo-analytics'))) {
+  const remixConfig = window.localStorage.getItem('config-v0.8:.remix.config');
+  if (!remixConfig || (remixConfig && !remixConfig.includes('settings/matomo-analytics'))) {
     // require user tracking consent before processing data
     _paq.push(['requireConsent']);
   } else {
-    // user has given consent to process their data
-    _paq.push(['setConsentGiven'])
+    try {
+      const config = JSON.parse(remixConfig);
+      if (config['settings/matomo-analytics'] === true) {
+        // user has given consent to process their data
+        _paq.push(['setConsentGiven']);
+      } else {
+        // user has not given consent to process their data
+        _paq.push(['requireConsent']);
+      }
+    } catch (e) {
+      console.error('Error parsing remix config:', e);
+      _paq.push(['requireConsent']);
+    }
   }
   (function () {
     var u = "https://ethereumfoundation.matomo.cloud/";
