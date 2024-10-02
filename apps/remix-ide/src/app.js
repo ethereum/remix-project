@@ -538,7 +538,6 @@ class AppComponent {
 
     // Set workspace after initial activation
     this.appManager.on('editor', 'editorMounted', () => {
-      console.log('editor mounted')
       if (Array.isArray(this.workspace)) {
         this.appManager
           .activatePlugin(this.workspace)
@@ -558,7 +557,6 @@ class AppComponent {
               if (this.appManager.pluginLoader.current === 'queryParams' && this.workspace.length > 0) {
                 this.menuicons.select(this.workspace[this.workspace.length - 1])
               } else {
-                console.log('focus on home')
                 this.appManager.call('tabs', 'focus', 'home')
               }
             }
