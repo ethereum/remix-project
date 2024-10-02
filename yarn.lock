@@ -5316,6 +5316,14 @@
   resolved "https://registry.yarnpkg.com/@nlux/core/-/core-2.17.1.tgz#18a95e21e5aafae83bf6d515651780497f0f39cc"
   integrity sha512-hIvOnuENVqWaIg5Co4JtFmHph7Sp0Nj+QixOMdOW9Ou7CjU7HK+maB5koLoayNL64B+wHTtgPN7zBrB8NCSPXw==
 
+"@nlux/highlighter@^2.17.1":
+  version "2.17.1"
+  resolved "https://registry.yarnpkg.com/@nlux/highlighter/-/highlighter-2.17.1.tgz#e4d0f43b5afeff2631bc118b1cc6db80afb7e99f"
+  integrity sha512-/ETnJPbNJWY8ZQH6XAQ5zooEMPsy44Lk2tIxMfr5Ca7+0ICpkMP0mppOmAoKCQBNVsqmKe0oczFBk8blddNDaA==
+  dependencies:
+    "@nlux/core" "2.17.1"
+    highlight.js "^11"
+
 "@nlux/react@^2.17.1":
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/@nlux/react/-/react-2.17.1.tgz#e4668e7cbe42dd195ea86a02350c8b15cb8f48f0"
@@ -17649,6 +17657,11 @@ hey-listen@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/hey-listen/-/hey-listen-1.0.8.tgz#8e59561ff724908de1aa924ed6ecc84a56a9aa68"
   integrity sha512-COpmrF2NOg4TBWUJ5UVyaCU2A88wEMkUPK4hNqyCkqHbxT92BbvfjoSozkAIIm6XhicGlJHhFdullInrdhwU8Q==
+
+highlight.js@^11:
+  version "11.10.0"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-11.10.0.tgz#6e3600dc4b33d6dc23d5bd94fbf72405f5892b92"
+  integrity sha512-SYVnVFswQER+zu1laSya563s+F8VDGt7o35d4utbamowvUNLLMovFqwCLSocpZTz3MgaSRA1IbqRWZv97dtErQ==
 
 hmac-drbg@^1.0.1:
   version "1.0.1"

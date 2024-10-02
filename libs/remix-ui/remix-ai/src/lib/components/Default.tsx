@@ -1,35 +1,49 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useCallback} from 'react'
 import '../remix-ai.css'
-import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse } from '@remix/remix-ai-core';
-import { StreamSend, StreamingAdapterObserver } from '@nlux/react';
+import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse, HandleSimpleResponse } from '@remix/remix-ai-core';
+import { StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
 import axios from 'axios';
-import { AiChat, useAsStreamAdapter, ChatItem} from '@nlux/react';
+import { AiChat, useAsStreamAdapter, ChatItem, AiChatUI} from '@nlux/react';
 import '@nlux/themes/nova.css';
 import { JsonStreamParser } from '@remix/remix-ai-core';
 import { user, assistantAvatar } from './personas';
+import {highlighter} from '@nlux/highlighter'
 
 const demoProxyServerUrl = 'https://solcoder.remixproject.org';
-let chatobserver: StreamingAdapterObserver = null
 
+export let ChatApi = null
 
 export const Default = (props) => {
   const send: StreamSend = async (
     prompt: string,
     observer: StreamingAdapterObserver,
   ) => {
-    chatobserver = observer
     GenerationParams.stream_result = true
-    GenerationParams.return_stream_response = true
+    GenerationParams.return_stream_response = GenerationParams.stream_result
 
-    const response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams);
-    HandleStreamResponse(response, 
+    let response = null
+    if (await props.plugin.call('remixAI', 'isChatRequestPending')){
+      response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams);
+    }
+    else{
+      response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams);
+    }
+
+
+    if (GenerationParams.return_stream_response) HandleStreamResponse(response, 
       (text) => {observer.next(text)},
       (result) => { 
         ChatHistory.pushHistory(prompt, result)
-        observer.complete() }
+        observer.complete()
+      }
     )
+    else{
+        observer.next(response)
+        observer.complete()
+    }
 
   };
+  ChatApi = useAiChatApi();
 
   // Define initial messages
   const initialMessages: ChatItem[] = [
@@ -42,6 +56,7 @@ export const Default = (props) => {
 
   return (
     <AiChat
+      api={ChatApi}
       adapter={ adapter }
       personaOptions={{
         assistant: {
@@ -62,6 +77,7 @@ export const Default = (props) => {
       messageOptions={{ showCodeBlockCopyButton: true,
         streamingAnimationSpeed: 2,
         waitTimeBeforeStreamCompletion: 1000,
+        syntaxHighlighter: highlighter
       }}
     />
   );

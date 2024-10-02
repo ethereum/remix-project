@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import '../remix-ai.css'
-import { Default } from './Default'
+import { Default, ChatApi } from './Default'
 
 export const RemixAITab = (props) => {
 
@@ -13,3 +13,4 @@ export const RemixAITab = (props) => {
     </>
   )
 }
+export { ChatApi }

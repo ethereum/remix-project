@@ -28,7 +28,6 @@ export class RemoteInferencer implements ICompletions {
     this.event.emit("onInference")
     const requesURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
 
-    console.log(requesURL)
     try {
       const options = { headers: { 'Content-Type': 'application/json', } }
       const result = await axios.post(`${requesURL}/${endpoint}`, payload, options)
@@ -76,6 +75,7 @@ export class RemoteInferencer implements ICompletions {
       if (payload.return_stream_response) {
         return response
       }
+
     
       const reader = response.body!.getReader();
       const decoder = new TextDecoder();
@@ -112,7 +112,6 @@ export class RemoteInferencer implements ICompletions {
       console.error('Error making stream request to Inference server:', error.message);
     }
     finally {
-      console.log("end streaming\n" + resultText)
       this.event.emit('onInferenceDone')
     }
   }
