@@ -106,7 +106,6 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const renderTab = (tab: Tab, index) => {
-
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
@@ -251,7 +250,8 @@ export const TabsUI = (props: TabsUIProps) => {
                   const content = await props.plugin.call('fileManager', 'readFile', path)
                   if (tabsState.currentExt === 'sol') {
                     setExplaining(true)
-                    await props.plugin.call('remixAI', 'code_explaining', content)
+                    await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
+                    // await props.plugin.call('remixAI', 'code_explaining', content)
                     setExplaining(false)
                     _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file'])
                   }

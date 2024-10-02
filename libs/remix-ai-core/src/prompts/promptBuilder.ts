@@ -17,7 +17,6 @@ export const buildSolgptPromt = (userPrompt:string, modelOP:RemoteBackendOPModel
   } else {
     let newPrompt = ""
     for (const [question, answer] of ChatHistory.getHistory()) {
-      console.log("question", question)
       if (question.startsWith('sol-gpt')) newPrompt += PromptBuilder(question.split('sol-gpt')[1], answer, modelOP)
       else if (question.startsWith('gpt')) newPrompt += PromptBuilder(question.split('gpt')[1], answer, modelOP)
       else newPrompt += PromptBuilder(question, answer, modelOP)
