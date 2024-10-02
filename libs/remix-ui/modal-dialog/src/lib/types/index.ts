@@ -1,4 +1,5 @@
-import { AppModalCancelTypes } from "libs/remix-ui/app/src/lib/remix-app/types"
+import { AppModalCancelTypes } from "@remix-ui/app"
+
 
 export type ValidationResult = {
   valid: boolean,

@@ -2,7 +2,7 @@ import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
 import {ModalDialogProps} from './types' // eslint-disable-line
 
 import './remix-ui-modal-dialog.css'
-import { AppModalCancelTypes } from 'libs/remix-ui/app/src/lib/remix-app/types'
+import { AppModalCancelTypes } from '@remix-ui/app'
 
 declare global {
   // eslint-disable-next-line no-unused-vars
