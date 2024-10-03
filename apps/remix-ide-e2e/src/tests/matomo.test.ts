@@ -24,6 +24,11 @@ module.exports = {
                 .refreshPage()
                 .perform(done())
         })
+            .waitForElementPresent({
+                selector: `//*[@data-id='compilerloaded']`,
+                locateStrategy: 'xpath',
+                timeout: 120000
+            })
             .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .pause(1000)
             .click('[data-id="matomoModal-modal-footer-ok-react"]') // submitted
@@ -168,7 +173,7 @@ module.exports = {
                 localStorage.setItem('showMatomo', 'true')
                 localStorage.removeItem('matomo-analytics-consent')
             }, [])
-                .pause(1000)
+                .pause(10000)
                 .refreshPage()
                 .perform(done())
         })
