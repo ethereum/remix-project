@@ -180,7 +180,8 @@ class AppComponent {
           && window.localStorage.getItem('showMatomo') === 'true'))
       && (!this.matomoConfAlreadySet
         || (this.matomoCurrentSetting === false
-          && (!lastMatomoCheck || new Date(lastMatomoCheck) < sixMonthsAgo)));
+          && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo)
+        ));
 
     this.walkthroughService = new WalkthroughService(appManager)
 

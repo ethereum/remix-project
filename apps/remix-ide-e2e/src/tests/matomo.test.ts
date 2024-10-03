@@ -182,7 +182,23 @@ module.exports = {
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .pause(2000)
             .execute(function () {
-                return window.localStorage.getItem('matomo-analytics-consent')
+
+                const timestamp = window.localStorage.getItem('matomo-analytics-consent');
+                if (timestamp) {
+
+                    const consentDate = new Date(Number(timestamp));
+                    // validate it is actually a date
+                    if (isNaN(consentDate.getTime())) {
+                        return false;
+                    }
+                    const now = new Date();
+                    console.log('timestamp', timestamp, consentDate, now.getTime())
+                    const diffInMinutes = (now.getTime() - consentDate.getTime()) / (1000 * 60);
+                    console.log('diffInMinutes', diffInMinutes)
+                    return diffInMinutes < 2;
+                }
+                return false;
+
             }, [], (res) => {
                 console.log('res', res)
                 browser.assert.ok((res as any).value, 'matomo analytics consent timestamp is set')
@@ -193,7 +209,7 @@ module.exports = {
             browser.execute(function () {
                 const oldTimestamp = new Date()
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
-                localStorage.setItem('matomo-analytics-consent', oldTimestamp.toString())
+                localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
                 .pause(1000)
                 .refreshPage()
@@ -204,6 +220,29 @@ module.exports = {
                 locateStrategy: 'xpath',
                 timeout: 120000
             })
+            .execute(function () {
+
+                const timestamp = window.localStorage.getItem('matomo-analytics-consent');
+                if (timestamp) {
+
+                    const consentDate = new Date(Number(timestamp));
+                    // validate it is actually a date
+                    if (isNaN(consentDate.getTime())) {
+                        return false;
+                    }
+                    // validate it's older than 6 months
+                    const now = new Date();
+                    const diffInMonths = (now.getFullYear() - consentDate.getFullYear()) * 12 + now.getMonth() - consentDate.getMonth();
+                    console.log('timestamp', timestamp, consentDate, now.getTime())
+                    console.log('diffInMonths', diffInMonths)
+                    return diffInMonths > 6;
+                }
+                return false;
+
+            }, [], (res) => {
+                console.log('res', res)
+                browser.assert.ok((res as any).value, 'matomo analytics consent timestamp is set')
+            })
             .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
@@ -213,12 +252,36 @@ module.exports = {
             browser.execute(function () {
                 const recentTimestamp = new Date()
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
-                localStorage.setItem('matomo-analytics-consent', recentTimestamp.toString())
+                localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
                 .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
+            // check if timestamp is younger than 6 months
+            .execute(function () {
+
+                const timestamp = window.localStorage.getItem('matomo-analytics-consent');
+                if (timestamp) {
+
+                    const consentDate = new Date(Number(timestamp));
+                    // validate it is actually a date
+                    if (isNaN(consentDate.getTime())) {
+                        return false;
+                    }
+                    // validate it's younger than 2 months
+                    const now = new Date();
+                    const diffInMonths = (now.getFullYear() - consentDate.getFullYear()) * 12 + now.getMonth() - consentDate.getMonth();
+                    console.log('timestamp', timestamp, consentDate, now.getTime())
+                    console.log('diffInMonths', diffInMonths)
+                    return diffInMonths < 2;
+                }
+                return false;
+
+            }, [], (res) => {
+                console.log('res', res)
+                browser.assert.ok((res as any).value, 'matomo analytics consent timestamp is set')
+            })
             .waitForElementPresent({
                 selector: `//*[@data-id='compilerloaded']`,
                 locateStrategy: 'xpath',
@@ -248,10 +311,26 @@ module.exports = {
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .pause(2000)
             .execute(function () {
-                return window.localStorage.getItem('matomo-analytics-consent')
+
+                const timestamp = window.localStorage.getItem('matomo-analytics-consent');
+                if (timestamp) {
+
+                    const consentDate = new Date(Number(timestamp));
+                    // validate it is actually a date
+                    if (isNaN(consentDate.getTime())) {
+                        return false;
+                    }
+                    const now = new Date();
+                    console.log('timestamp', timestamp, consentDate, now.getTime())
+                    const diffInMinutes = (now.getTime() - consentDate.getTime()) / (1000 * 60);
+                    console.log('diffInMinutes', diffInMinutes)
+                    return diffInMinutes < 1;
+                }
+                return false;
+
             }, [], (res) => {
                 console.log('res', res)
-                browser.assert.ok((res as any).value, 'matomo analytics consent timestamp is set')
+                browser.assert.ok((res as any).value, 'matomo analytics consent timestamp is to a recent date')
             })
     },
     'check old timestamp and do not reappear Matomo after accept #group3': function (browser: NightwatchBrowser) {
@@ -259,7 +338,7 @@ module.exports = {
             browser.execute(function () {
                 const oldTimestamp = new Date()
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
-                localStorage.setItem('matomo-analytics-consent', oldTimestamp.toString())
+                localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
                 .pause(1000)
                 .refreshPage()
@@ -278,7 +357,7 @@ module.exports = {
             browser.execute(function () {
                 const recentTimestamp = new Date()
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
-                localStorage.setItem('matomo-analytics-consent', recentTimestamp.toString())
+                localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
                 .pause(1000)
                 .refreshPage()
@@ -291,6 +370,38 @@ module.exports = {
             })
             .pause(2000)
             .waitForElementNotPresent('*[data-id="matomoModalModalDialogModalBody-react"]')
+    },
+    'when there is a recent timestamp but no config the dialog should reappear #group3': function (browser: NightwatchBrowser) {
+        browser.perform((done) => {
+            browser.execute(function () {
+                localStorage.removeItem('config-v0.8:.remix.config')
+                const recentTimestamp = new Date()
+                recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
+                localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
+            }, [])
+                .pause(1000)
+                .refreshPage()
+                .perform(done())
+        })
+            .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
+            .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
+            .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
+    },
+    'when there is a old timestamp but no config the dialog should reappear #group3': function (browser: NightwatchBrowser) {
+        browser.perform((done) => {
+            browser.execute(function () {
+                localStorage.removeItem('config-v0.8:.remix.config')
+                const oldTimestamp = new Date()
+                oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
+                localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
+            }, [])
+                .pause(1000)
+                .refreshPage()
+                .perform(done())
+        })
+            .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
+            .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
+            .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
     'verify Matomo events are tracked on app start #group4': function (browser: NightwatchBrowser) {
         browser
