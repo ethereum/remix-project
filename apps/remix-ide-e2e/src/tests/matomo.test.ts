@@ -53,7 +53,7 @@ module.exports = {
             })
     },
     'decline Matomo #group1': function (browser: NightwatchBrowser) {
-        browser.perform((done) => {
+        browser.pause(2000).perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
                 localStorage.setItem('showMatomo', 'true')
