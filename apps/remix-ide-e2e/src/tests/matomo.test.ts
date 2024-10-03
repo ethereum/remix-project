@@ -13,7 +13,7 @@ module.exports = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done, 'http://127.0.0.1:8080', false)
     },
-    'confirm Matomo #group1 #flaky': function (browser: NightwatchBrowser) {
+    'confirm Matomo #group1': function (browser: NightwatchBrowser) {
         browser.pause(1000).perform((done) => {
             browser
                 .execute(function () {
@@ -387,7 +387,7 @@ module.exports = {
             .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
-    'when there is a old timestamp but no config the dialog should reappear #group3': function (browser: NightwatchBrowser) {
+    'when there is a old timestamp but no config the dialog should reappear #group3 #flaky': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
