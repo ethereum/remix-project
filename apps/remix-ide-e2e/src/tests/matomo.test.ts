@@ -20,6 +20,7 @@ module.exports = {
                     localStorage.removeItem('config-v0.8:.remix.config')
                     localStorage.setItem('showMatomo', 'true')
                 }, [])
+                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -58,6 +59,7 @@ module.exports = {
                 localStorage.setItem('showMatomo', 'true')
                 localStorage.removeItem('matomo-analytics-consent')
             }, [])
+                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -166,6 +168,7 @@ module.exports = {
                 localStorage.setItem('showMatomo', 'true')
                 localStorage.removeItem('matomo-analytics-consent')
             }, [])
+                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -192,6 +195,7 @@ module.exports = {
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
                 localStorage.setItem('matomo-analytics-consent', oldTimestamp.toString())
             }, [])
+                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -211,6 +215,7 @@ module.exports = {
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
                 localStorage.setItem('matomo-analytics-consent', recentTimestamp.toString())
             }, [])
+                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -229,6 +234,7 @@ module.exports = {
                 localStorage.setItem('showMatomo', 'true')
                 localStorage.removeItem('matomo-analytics-consent')
             }, [])
+                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -255,6 +261,7 @@ module.exports = {
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
                 localStorage.setItem('matomo-analytics-consent', oldTimestamp.toString())
             }, [])
+                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -273,6 +280,7 @@ module.exports = {
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
                 localStorage.setItem('matomo-analytics-consent', recentTimestamp.toString())
             }, [])
+                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -306,6 +314,7 @@ module.exports = {
                 browser.assert.ok(areEventsPresent, 'Matomo events are tracked correctly');
             })
     },
+
     '@sources': function () {
         return sources
     },
@@ -320,7 +329,23 @@ module.exports = {
             .waitForElementVisible('*[data-id="compilerContainerCompileBtn"]')
             .click('*[data-id="compilerContainerCompileBtn"]')
             .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
-            .pause()
     },
+    'verify Matomo compiler events are tracked #group4': function (browser: NightwatchBrowser) {
+        browser
+            .execute(function () {
+                return (window as any)._paq
+            }, [], (res) => {
+                const expectedEvent = ["trackEvent", "compiler", "compiled"];
+                const actualEvents = (res as any).value;
 
+                const isEventPresent = actualEvents.some(actualEvent =>
+                    actualEvent[0] === expectedEvent[0] &&
+                    actualEvent[1] === expectedEvent[1] &&
+                    actualEvent[2] === expectedEvent[2] &&
+                    actualEvent[3].startsWith("with_version_")
+                );
+
+                browser.assert.ok(isEventPresent, 'Matomo compiler events are tracked correctly');
+            })
+    },
 }
