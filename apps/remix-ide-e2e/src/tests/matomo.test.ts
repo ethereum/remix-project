@@ -14,13 +14,13 @@ module.exports = {
         init(browser, done, 'http://127.0.0.1:8080', false)
     },
     'confirm Matomo #group1 #flaky': function (browser: NightwatchBrowser) {
-        browser.perform((done) => {
+        browser.pause(1000).perform((done) => {
             browser
                 .execute(function () {
                     localStorage.removeItem('config-v0.8:.remix.config')
                     localStorage.setItem('showMatomo', 'true')
                 }, [])
-                .pause(1000)
+                .pause(2000)
                 .refreshPage()
                 .perform(done())
         })
