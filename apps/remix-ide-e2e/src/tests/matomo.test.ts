@@ -13,7 +13,7 @@ module.exports = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done, 'http://127.0.0.1:8080', false)
     },
-    'confirm Matomo #group1': function (browser: NightwatchBrowser) {
+    'confirm Matomo #group1 #flaky': function (browser: NightwatchBrowser) {
         browser.pause(1000).perform((done) => {
             browser
                 .execute(function () {
@@ -29,9 +29,19 @@ module.exports = {
                 locateStrategy: 'xpath',
                 timeout: 120000
             })
+            .execute(function () {
+                return (window as any)._paq
+            }, [], (res) => {
+                console.log('_paq', res)
+            })
             .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .pause(1000)
             .click('[data-id="matomoModal-modal-footer-ok-react"]') // submitted
+            .execute(function () {
+                return (window as any)._paq
+            }, [], (res) => {
+                console.log('_paq', res)
+            })
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .waitForElementVisible('*[data-id="beginnerbtn"]', 10000)
             .pause(1000)
@@ -73,8 +83,18 @@ module.exports = {
                 locateStrategy: 'xpath',
                 timeout: 120000
             })
+            .execute(function () {
+                return (window as any)._paq
+            }, [], (res) => {
+                console.log('_paq', res)
+            })
             .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
+            .execute(function () {
+                return (window as any)._paq
+            }, [], (res) => {
+                console.log('_paq', res)
+            })
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .pause(2000)
             .waitForElementNotPresent('*[data-id="beginnerbtn"]', 10000)
@@ -402,7 +422,7 @@ module.exports = {
             .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
-    'when there is a old timestamp but no config the dialog should reappear #group3 #flaky': function (browser: NightwatchBrowser) {
+    'when there is a old timestamp but no config the dialog should reappear #group3': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
