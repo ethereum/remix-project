@@ -64,6 +64,8 @@ const MatomoDialog = (props: MatomoDialogProps) => {
   }
 
   useEffect(() => {
+    _paq.push(['trackEvent', 'Matomo', 'visible', visible])
+    _paq.push(['trackEvent', 'Matomo', 'show', showMatomo])
     if (visible && showMatomo) {
       modal({
         id: 'matomoModal',

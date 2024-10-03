@@ -182,7 +182,7 @@ class AppComponent {
         || (this.matomoCurrentSetting === false
           && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo)
         ));
-
+    _paq.push(['trackEvent', 'App', 'showMatomo', this.showMatomo]);
     this.walkthroughService = new WalkthroughService(appManager)
 
     this.platform = isElectron() ? 'desktop' : 'web'
