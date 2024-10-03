@@ -7,7 +7,7 @@ module.exports = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done)
     },
-    'confirmMatomo #group1': function (browser: NightwatchBrowser) {
+    'confirmMatomo #group1 #flaky': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser
                 .execute(function () {
@@ -81,9 +81,11 @@ module.exports = {
                 localStorage.setItem('showMatomo', 'true')
                 localStorage.removeItem('matomo-analytics-consent')
             }, [])
+                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
+            .pause(5000)
             .waitForElementPresent({
                 selector: `//*[@data-id='compilerloaded']`,
                 locateStrategy: 'xpath',
