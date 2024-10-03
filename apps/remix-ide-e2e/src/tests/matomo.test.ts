@@ -215,5 +215,67 @@ module.exports = {
             })
             .pause(2000)
             .waitForElementNotPresent('*[data-id="matomoModalModalDialogModalBody-react"]')
+    },
+    'accept Matomo and check timestamp #group3': function (browser: NightwatchBrowser) {
+        browser.perform((done) => {
+            browser.execute(function () {
+                localStorage.removeItem('config-v0.8:.remix.config')
+                localStorage.setItem('showMatomo', 'true')
+                localStorage.removeItem('matomo-analytics-consent')
+            }, [])
+                .refreshPage()
+                .perform(done())
+        })
+            .waitForElementPresent({
+                selector: `//*[@data-id='compilerloaded']`,
+                locateStrategy: 'xpath',
+                timeout: 120000
+            })
+            .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
+            .click('[data-id="matomoModal-modal-footer-ok-react"]') // accept
+            .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
+            .pause(2000)
+            .execute(function () {
+                return window.localStorage.getItem('matomo-analytics-consent')
+            }, [], (res) => {
+                console.log('res', res)
+                browser.assert.ok((res as any).value, 'matomo analytics consent timestamp is set')
+            })
+    },
+    'check old timestamp and do not reappear Matomo after accept #group3': function (browser: NightwatchBrowser) {
+        browser.perform((done) => {
+            browser.execute(function () {
+                const oldTimestamp = new Date()
+                oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
+                localStorage.setItem('matomo-analytics-consent', oldTimestamp.toString())
+            }, [])
+                .refreshPage()
+                .perform(done())
+        })
+            .waitForElementPresent({
+                selector: `//*[@data-id='compilerloaded']`,
+                locateStrategy: 'xpath',
+                timeout: 120000
+            })
+            .pause(2000)
+            .waitForElementNotPresent('*[data-id="matomoModalModalDialogModalBody-react"]')
+    },
+    'check recent timestamp and do not reappear Matomo after accept #group3': function (browser: NightwatchBrowser) {
+        browser.perform((done) => {
+            browser.execute(function () {
+                const recentTimestamp = new Date()
+                recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
+                localStorage.setItem('matomo-analytics-consent', recentTimestamp.toString())
+            }, [])
+                .refreshPage()
+                .perform(done())
+        })
+            .waitForElementPresent({
+                selector: `//*[@data-id='compilerloaded']`,
+                locateStrategy: 'xpath',
+                timeout: 120000
+            })
+            .pause(2000)
+            .waitForElementNotPresent('*[data-id="matomoModalModalDialogModalBody-react"]')
     }
 }
