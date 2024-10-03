@@ -29,6 +29,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }
 
   useEffect(() => {
+    _paq.push(['trackEvent', 'modal', 'propshide', props.hide])
     calledHideFunctionOnce.current = props.hide
     modal.current.focus()
 
@@ -42,7 +43,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }, [props.hide])
 
   function handleBlur(e) {
-    _paq.push(['trackEvent', 'modal', 'blur', e.relatedTarget])
+    _paq.push(['trackEvent', 'modal', 'blur', JSON.stringify(e)])
     if (!e.currentTarget.contains(e.relatedTarget)) {
       e.stopPropagation()
       if (document.activeElement !== this) {
