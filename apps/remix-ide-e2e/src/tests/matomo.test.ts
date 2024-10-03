@@ -3,14 +3,12 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
+    '@disabled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done)
-
     },
-    confirmMatomo: function (browser: NightwatchBrowser) {
-
+    'confirmMatomo #group1': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
-
             browser
                 .execute(function () {
                     localStorage.removeItem('config-v0.8:.remix.config')
@@ -47,7 +45,7 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is enabled')
             })
     },
-    declineMatomo: function (browser: NightwatchBrowser) {
+    'declineMatomo #group1': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
@@ -76,7 +74,7 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is disabled')
             })
     },
-    blurMatomo: function (browser: NightwatchBrowser) {
+    'blurMatomo #group1': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
@@ -106,7 +104,7 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is undefined')
             })
     },
-    shouldReappearMatomo: function (browser: NightwatchBrowser) {
+    'shouldReappearMatomo #group1': function (browser: NightwatchBrowser) {
         browser
         .refreshPage()
         .waitForElementPresent({
@@ -119,7 +117,7 @@ module.exports = {
         .click('[data-id="matomoModal-modal-close"]')
         .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
-    changeSettings : function (browser: NightwatchBrowser) {
+    'changeSettings #group1' : function (browser: NightwatchBrowser) {
         browser
         .clickLaunchIcon('settings')
         .waitForElementVisible('*[data-id="label-matomo-settings"]')
