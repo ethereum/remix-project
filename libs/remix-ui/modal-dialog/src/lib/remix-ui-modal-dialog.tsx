@@ -15,6 +15,7 @@ declare global {
 const _paq = (window._paq = window._paq || [])
 
 export const ModalDialog = (props: ModalDialogProps) => {
+  console.log('ModalDialog', props)
   const [state, setState] = useState({
     toggleBtn: true
   })
@@ -33,7 +34,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
     calledHideFunctionOnce.current = props.hide
     modal.current.focus()
 
-    if (modal.current) {
+    if (modal.current && !props.preventBlur) {
       modal.current.removeEventListener('blur', handleBlur)
       modal.current.addEventListener('blur', handleBlur)
     }
@@ -45,6 +46,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
   function handleBlur(e) {
     _paq.push(['trackEvent', 'modal', 'blur', JSON.stringify(e), this.id, props.title, e.currentTarget, e.relatedTarget])
     console.log('handleBlur', e.currentTarget, e.relatedTarget, this)
+    console.trace()
     if (e.currentTarget && !e.currentTarget.contains(e.relatedTarget)) {
       e.stopPropagation()
       if (document.activeElement !== this) {

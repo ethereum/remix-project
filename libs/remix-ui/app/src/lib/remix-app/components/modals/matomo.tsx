@@ -74,7 +74,8 @@ const MatomoDialog = (props: MatomoDialogProps) => {
         okLabel: <FormattedMessage id="remixApp.accept" />,
         okFn: handleModalOkClick,
         cancelLabel: <FormattedMessage id="remixApp.decline" />,
-        cancelFn: declineModal
+        cancelFn: declineModal,
+        preventBlur: true
       })
     }
     console.log('visible', visible)

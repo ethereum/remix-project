@@ -24,7 +24,8 @@ export interface AppModal {
     hideFn?: () => void,
     resolve?: (value?:any) => void,
     next?: () => void,
-    data?: any
+    data?: any,
+    preventBlur?: boolean
 }
 
 export interface AlertModal {

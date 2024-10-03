@@ -28,5 +28,6 @@ export interface ModalDialogProps {
   next?: () => void,
   data?: any,
   okBtnClass?: string,
-  cancelBtnClass?: string
+  cancelBtnClass?: string,
+  preventBlur?: boolean
 }
