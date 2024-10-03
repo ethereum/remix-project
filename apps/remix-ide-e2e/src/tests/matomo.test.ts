@@ -182,6 +182,16 @@ module.exports = {
                 locateStrategy: 'xpath',
                 timeout: 120000
             })
+            // output the contents of the storage
+            .execute(function () {
+                return {
+                    consent: window.localStorage.getItem('matomo-analytics-consent'),
+                    config: window.localStorage.getItem('config-v0.8:.remix.config'),
+                    showMatomo: window.localStorage.getItem('showMatomo')
+                }
+            }, [], (res) => {
+                console.log('res', res)                
+            })
             .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
