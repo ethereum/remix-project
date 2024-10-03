@@ -5,9 +5,9 @@ import init from '../helpers/init'
 module.exports = {
     '@disabled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        init(browser, done)
+        init(browser, done, 'http://127.0.0.1:8080', false)
     },
-    'confirmMatomo #group1 #flaky': function (browser: NightwatchBrowser) {
+    'confirm Matomo #group1 #flaky': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser
                 .execute(function () {
@@ -45,7 +45,7 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is enabled')
             })
     },
-    'declineMatomo #group1': function (browser: NightwatchBrowser) {
+    'decline Matomo #group1': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
@@ -74,7 +74,7 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is disabled')
             })
     },
-    'blurMatomo #group1': function (browser: NightwatchBrowser) {
+    'blur matomo #group2': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
@@ -85,7 +85,6 @@ module.exports = {
                 .refreshPage()
                 .perform(done())
         })
-            .pause(5000)
             .waitForElementPresent({
                 selector: `//*[@data-id='compilerloaded']`,
                 locateStrategy: 'xpath',
@@ -106,39 +105,52 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is undefined')
             })
     },
-    'shouldReappearMatomo #group1': function (browser: NightwatchBrowser) {
+    'matomo should reappear #group2': function (browser: NightwatchBrowser) {
         browser
-        .refreshPage()
-        .waitForElementPresent({
-            selector: `//*[@data-id='compilerloaded']`,
-            locateStrategy: 'xpath',
-            timeout: 120000
-        })
-        .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
-        .waitForElementVisible('*[data-id="matomoModal-modal-close"]')
-        .click('[data-id="matomoModal-modal-close"]')
-        .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
+            .refreshPage()
+            .waitForElementPresent({
+                selector: `//*[@data-id='compilerloaded']`,
+                locateStrategy: 'xpath',
+                timeout: 120000
+            })
+            .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
+            .waitForElementVisible('*[data-id="matomoModal-modal-close"]')
+            .click('[data-id="matomoModal-modal-close"]')
+            .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
-    'changeSettings #group1' : function (browser: NightwatchBrowser) {
+    'change settings #group2': function (browser: NightwatchBrowser) {
         browser
-        .clickLaunchIcon('settings')
-        .waitForElementVisible('*[data-id="label-matomo-settings"]')
-        .pause(1000)
-        .click('*[data-id="label-matomo-settings"]')
-        .refreshPage()
-        .waitForElementPresent({
-            selector: `//*[@data-id='compilerloaded']`,
-            locateStrategy: 'xpath',
-            timeout: 120000
-        })
-        .waitForElementNotPresent('*[data-id="matomoModalModalDialogModalBody-react"]')
-        .clickLaunchIcon('settings')
-        .waitForElementPresent('[id="settingsMatomoAnalytics"]:checked')
-        .execute(function () {
-            return JSON.parse(window.localStorage.getItem('config-v0.8:.remix.config'))['settings/matomo-analytics'] == true
-        }, [], (res) => {
-            console.log('res', res)
-            browser.assert.ok((res as any).value, 'matomo analytics is enabled')
-        })
+            .clickLaunchIcon('settings')
+            .waitForElementVisible('*[data-id="label-matomo-settings"]')
+            .pause(1000)
+            .click('*[data-id="label-matomo-settings"]')
+            .refreshPage()
+            .waitForElementPresent({
+                selector: `//*[@data-id='compilerloaded']`,
+                locateStrategy: 'xpath',
+                timeout: 120000
+            })
+            .waitForElementNotPresent('*[data-id="matomoModalModalDialogModalBody-react"]')
+    },
+    'should get enter dialog again #group2': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="beginnerbtn"]', 10000)
+            .pause(1000)
+            .click('[data-id="beginnerbtn"]')
+            .waitForElementNotPresent('*[data-id="beginnerbtn"]')
+            .waitForElementVisible({
+                selector: `//*[contains(text(), 'Welcome to Remix IDE')]`,
+                locateStrategy: 'xpath'
+            })
+            .waitForElementVisible('*[id="remixTourSkipbtn"]')
+            .click('*[id="remixTourSkipbtn"]')
+            .clickLaunchIcon('settings')
+            .waitForElementPresent('[id="settingsMatomoAnalytics"]:checked')
+            .execute(function () {
+                return JSON.parse(window.localStorage.getItem('config-v0.8:.remix.config'))['settings/matomo-analytics'] == true
+            }, [], (res) => {
+                console.log('res', res)
+                browser.assert.ok((res as any).value, 'matomo analytics is enabled')
+            })
     }
 }
