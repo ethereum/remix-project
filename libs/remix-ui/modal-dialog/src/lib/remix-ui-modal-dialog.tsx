@@ -43,7 +43,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }, [props.hide])
 
   function handleBlur(e) {
-    _paq.push(['trackEvent', 'modal', 'blur', JSON.stringify(e)], this.id, props.title, e.currentTarget, e.relatedTarget)
+    _paq.push(['trackEvent', 'modal', 'blur', JSON.stringify(e), this.id, props.title, e.currentTarget, e.relatedTarget])
     console.log('handleBlur', e.currentTarget, e.relatedTarget, this)
     if (e.currentTarget && !e.currentTarget.contains(e.relatedTarget)) {
       e.stopPropagation()
