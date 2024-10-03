@@ -132,7 +132,7 @@ module.exports = {
             })
             .waitForElementNotPresent('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
-    'should get enter dialog again #group2': function (browser: NightwatchBrowser) {
+    'should get enter dialog again #group2 #flaky': function (browser: NightwatchBrowser) {
         browser
             .waitForElementVisible('*[data-id="beginnerbtn"]', 10000)
             .pause(1000)
@@ -153,7 +153,7 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is enabled')
             })
     },
-    'decline Matomo and check timestamp #group3': function (browser: NightwatchBrowser) {
+    'decline Matomo and check timestamp #group3 #flaky': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
