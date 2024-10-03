@@ -10,6 +10,8 @@ import './styles/preload.css'
 import isElectron from 'is-electron'
 const _paq = (window._paq = window._paq || [])
 
+_paq.push(['trackEvent', 'Preload', 'start'])
+
 export const Preload = (props: any) => {
   const [tip, setTip] = useState<string>('')
   const [supported, setSupported] = useState<boolean>(true)
@@ -28,6 +30,8 @@ export const Preload = (props: any) => {
   const testBlockStorage = useRef<boolean>(
     window.location.hash.includes('e2e_testblock_storage=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:'
   )
+
+
 
   function loadAppComponent() {
     import('../../app')

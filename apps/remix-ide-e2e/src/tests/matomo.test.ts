@@ -2,6 +2,12 @@
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
+import examples from '../examples/example-contracts'
+
+const sources = [
+    { 'Untitled.sol': { content: examples.ballot.content } }
+]
+
 module.exports = {
     '@disabled': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -277,5 +283,44 @@ module.exports = {
             })
             .pause(2000)
             .waitForElementNotPresent('*[data-id="matomoModalModalDialogModalBody-react"]')
-    }
+    },
+    'verify Matomo events are tracked on app start #group4': function (browser: NightwatchBrowser) {
+        browser
+            .execute(function () {
+                return (window as any)._paq
+            }, [], (res) => {
+                const expectedEvents = [
+                    ["trackEvent", "Preload", "start"],
+                    ["trackEvent", "Storage", "activate", "indexedDB"],
+                    ["trackEvent", "App", "load"],
+                ];
+
+                const actualEvents = (res as any).value;
+
+                const areEventsPresent = expectedEvents.every(expectedEvent =>
+                    actualEvents.some(actualEvent =>
+                        JSON.stringify(actualEvent) === JSON.stringify(expectedEvent)
+                    )
+                );
+
+                browser.assert.ok(areEventsPresent, 'Matomo events are tracked correctly');
+            })
+    },
+    '@sources': function () {
+        return sources
+    },
+    'Add Ballot #group4': function (browser: NightwatchBrowser) {
+        browser
+            .addFile('Untitled.sol', sources[0]['Untitled.sol'])
+    },
+    'Deploy Ballot #group4': function (browser: NightwatchBrowser) {
+        browser
+            .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+            .clickLaunchIcon('solidity')
+            .waitForElementVisible('*[data-id="compilerContainerCompileBtn"]')
+            .click('*[data-id="compilerContainerCompileBtn"]')
+            .testContracts('Untitled.sol', sources[0]['Untitled.sol'], ['Ballot'])
+            .pause()
+    },
+
 }

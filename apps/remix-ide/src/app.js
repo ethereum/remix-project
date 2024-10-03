@@ -167,7 +167,7 @@ class AppComponent {
       'remix.ethereum.org': 23,
       '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
     }
-
+    _paq.push(['trackEvent', 'App', 'load']);
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
     const lastMatomoCheck = window.localStorage.getItem('matomo-analytics-consent')

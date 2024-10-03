@@ -33,6 +33,7 @@ if (domains[window.location.hostname]) {
       _paq.push(['requireConsent']);
     }
   }
+  _paq.push(['trackEvent', 'loader', 'load']);
   (function () {
     var u = "https://ethereumfoundation.matomo.cloud/";
     _paq.push(['setTrackerUrl', u + 'matomo.php']);
