@@ -8,8 +8,11 @@ declare global {
   // eslint-disable-next-line no-unused-vars
   interface Window {
     testmode: boolean
+    _paq: any
   }
 }
+
+const _paq = (window._paq = window._paq || [])
 
 export const ModalDialog = (props: ModalDialogProps) => {
   const [state, setState] = useState({
@@ -18,6 +21,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
   const calledHideFunctionOnce = useRef<boolean>()
   const modal = useRef(null)
   const handleHide = () => {
+    _paq.push(['trackEvent', 'modal', 'hide', props.id])
     if (!calledHideFunctionOnce.current) {
       props.handleHide()
     }
@@ -38,6 +42,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }, [props.hide])
 
   function handleBlur(e) {
+    _paq.push(['trackEvent', 'modal', 'blur', e.relatedTarget])
     if (!e.currentTarget.contains(e.relatedTarget)) {
       e.stopPropagation()
       if (document.activeElement !== this) {
@@ -48,6 +53,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }
 
   const modalKeyEvent = (keyCode) => {
+    _paq.push(['trackEvent', 'modal', 'keyEvent', keyCode])
     if (keyCode === 27) {
       // Esc
       if (props.cancelFn) props.cancelFn(AppModalCancelTypes.escape)
@@ -69,6 +75,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }
 
   const enterHandler = () => {
+    _paq.push(['trackEvent', 'modal', 'enterHandler', state.toggleBtn])
     if (state.toggleBtn) {
       if (props.okFn) props.okFn()
     } else {
