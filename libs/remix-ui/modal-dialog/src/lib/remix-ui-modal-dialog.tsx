@@ -8,22 +8,16 @@ declare global {
   // eslint-disable-next-line no-unused-vars
   interface Window {
     testmode: boolean
-    _paq: any
   }
 }
 
-const _paq = (window._paq = window._paq || [])
-
 export const ModalDialog = (props: ModalDialogProps) => {
-  if (!props.id)
-    console.log('modal dialog', props)
   const [state, setState] = useState({
     toggleBtn: true
   })
   const calledHideFunctionOnce = useRef<boolean>()
   const modal = useRef(null)
   const handleHide = () => {
-    _paq.push(['trackEvent', 'modal', 'hide', props.id])
     if (!calledHideFunctionOnce.current) {
       props.handleHide()
     }
@@ -32,17 +26,12 @@ export const ModalDialog = (props: ModalDialogProps) => {
 
   useEffect(() => {
     if (!props.id) return
-    _paq.push(['trackEvent', 'modal', 'propshide', props.hide])
-    console.log('useEffect HIDE', props.hide, props.id)
     calledHideFunctionOnce.current = props.hide
     if (!props.hide) {
       modal.current.focus()
       modal.current.removeEventListener('blur', handleBlur)
       if (modal.current && !props.preventBlur) {
-        console.log('set blur event listener')
         modal.current.addEventListener('blur', handleBlur)
-      } else {
-        console.log('PREVENT blur event listener', props.id)
       }
     }
     return () => {
@@ -51,9 +40,6 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }, [props.hide])
 
   function handleBlur(e) {
-    _paq.push(['trackEvent', 'modal', 'blur', JSON.stringify(e), this.id, props.title, e.currentTarget, e.relatedTarget])
-    console.log('handleBlur', e, e.currentTarget, e.relatedTarget, this)
-    console.trace()
     if (e.currentTarget && !e.currentTarget.contains(e.relatedTarget)) {
       e.stopPropagation()
       if (document.activeElement !== this) {
@@ -64,7 +50,6 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }
 
   const modalKeyEvent = (keyCode) => {
-    _paq.push(['trackEvent', 'modal', 'keyEvent', keyCode])
     if (keyCode === 27) {
       // Esc
       if (props.cancelFn) props.cancelFn(AppModalCancelTypes.escape)
@@ -86,7 +71,6 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }
 
   const enterHandler = () => {
-    _paq.push(['trackEvent', 'modal', 'enterHandler', state.toggleBtn])
     if (state.toggleBtn) {
       if (props.okFn) props.okFn()
     } else {
