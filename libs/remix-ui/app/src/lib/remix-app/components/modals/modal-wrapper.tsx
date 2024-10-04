@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ModalDialog, ModalDialogProps, ValidationResult } from '@remix-ui/modal-dialog'
-import { ModalTypes } from '../../types'
+import { AppModalCancelTypes, ModalTypes } from '../../types'
 
 interface ModalWrapperProps extends ModalDialogProps {
   modalType?: ModalTypes
@@ -42,8 +42,8 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     props.okFn ? props.okFn(data.current) : props.resolve(data.current || true)
   }
 
-  const onCancelFn = async () => {
-    props.cancelFn ? props.cancelFn() : props.resolve(false)
+  const onCancelFn = async (reason?: AppModalCancelTypes) => {
+    props.cancelFn ? props.cancelFn(reason) : props.resolve(false)
   }
 
   const onInputChanged = (event) => {
@@ -141,6 +141,8 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     })
     props.handleHide()
   }
+
+  if (!props.id || props.id === '') return null
 
   return <ModalDialog id={props.id} {...state} handleHide={handleHide} />
 }

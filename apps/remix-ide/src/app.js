@@ -178,16 +178,30 @@ class AppComponent {
       '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
     }
 
+    _paq.push(['trackEvent', 'App', 'load']);
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
 
-    let electronTracking = false
+    let electronTracking = window.electronAPI ? await window.electronAPI.canTrackMatomo() : false
 
-    if (window.electronAPI) {
-      electronTracking = await window.electronAPI.canTrackMatomo()
-    }
+    const lastMatomoCheck = window.localStorage.getItem('matomo-analytics-consent')
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    this.showMatamo = (matomoDomains[window.location.hostname] || electronTracking) && !this.matomoConfAlreadySet
+    this.showMatomo =
+      (matomoDomains[window.location.hostname] || electronTracking
+        || (window.localStorage.getItem('showMatomo')
+          && window.localStorage.getItem('showMatomo') === 'true'))
+      && (!this.matomoConfAlreadySet
+        || (this.matomoCurrentSetting === false
+          && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo)
+        ));
+
+    if(this.matomoCurrentSetting === false
+      && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo)) {
+        _paq.push(['trackEvent', 'Matomo', 'refreshMatomoPermissions']);
+      }    
+    
 
     this.walkthroughService = new WalkthroughService(appManager)
 
