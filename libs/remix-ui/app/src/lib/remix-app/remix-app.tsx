@@ -60,7 +60,7 @@ const RemixApp = (props: IRemixAppUi) => {
       activateApp()
     }
     const hadUsageTypeAsked = localStorage.getItem('hadUsageTypeAsked')
-    if (props.app.showMatamo) {
+    if (props.app.showMatomo) {
       // if matomo dialog is displayed, it will take care of calling "setShowEnterDialog",
       // if the user approves matomo tracking.
       // so "showEnterDialog" stays false
@@ -149,7 +149,7 @@ const RemixApp = (props: IRemixAppUi) => {
 
   const value: appProviderContextType = {
     settings: props.app.settings,
-    showMatamo: props.app.showMatamo,
+    showMatomo: props.app.showMatomo,
     appManager: props.app.appManager,
     showEnter: props.app.showEnter,
     modal: props.app.notification,
