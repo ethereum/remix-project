@@ -107,7 +107,7 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is disabled')
             })
     },
-    'blur matomo #group2': function (browser: NightwatchBrowser) {
+    'blur matomo #group2 #flaky': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
@@ -125,7 +125,7 @@ module.exports = {
             })
             .waitForElementVisible({
                 selector: '*[data-id="matomoModalModalDialogModalBody-react"]',
-                abortOnFailure: false
+                abortOnFailure: true
             })
             .waitForElementVisible('*[data-id="matomoModal-modal-close"]')
             .click('[data-id="matomoModal-modal-close"]')
@@ -151,8 +151,8 @@ module.exports = {
             })
             .waitForElementVisible({
                 selector: '*[data-id="matomoModalModalDialogModalBody-react"]',
-                abortOnFailure: false
-            }).pause()
+                abortOnFailure: true
+            })
             .waitForElementVisible('*[data-id="matomoModal-modal-close"]')
             .click('[data-id="matomoModal-modal-close"]')
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
@@ -192,7 +192,7 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is enabled')
             })
     },
-    'decline Matomo and check timestamp #group3': function (browser: NightwatchBrowser) {
+    'decline Matomo and check timestamp #group3 #flaky': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
@@ -216,7 +216,7 @@ module.exports = {
                     showMatomo: window.localStorage.getItem('showMatomo')
                 }
             }, [], (res) => {
-                console.log('res', res)                
+                console.log('res', res)
             })
             .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
             .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
@@ -444,7 +444,7 @@ module.exports = {
             .click('[data-id="matomoModal-modal-footer-cancel-react"]') // cancel
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
     },
-    'verify Matomo events are tracked on app start #group4': function (browser: NightwatchBrowser) {
+    'verify Matomo events are tracked on app start #group4 #lfaky': function (browser: NightwatchBrowser) {
         browser
             .execute(function () {
                 return (window as any)._paq
@@ -470,7 +470,7 @@ module.exports = {
     '@sources': function () {
         return sources
     },
-    'Add Ballot #group4': function (browser: NightwatchBrowser) {
+    'Add Ballot #group4 #flaky': function (browser: NightwatchBrowser) {
         browser
             .addFile('Untitled.sol', sources[0]['Untitled.sol'])
     },
