@@ -64,10 +64,7 @@ const MatomoDialog = (props: MatomoDialogProps) => {
   }
 
   useEffect(() => {
-    _paq.push(['trackEvent', 'Matomo', 'visible', visible])
-    _paq.push(['trackEvent', 'Matomo', 'show', showMatomo])
     if (visible && showMatomo) {
-      console.log('show matomo dialog')
       modal({
         id: 'matomoModal',
         title: <FormattedMessage id="remixApp.matomoTitle" />,
@@ -79,12 +76,9 @@ const MatomoDialog = (props: MatomoDialogProps) => {
         preventBlur: true
       })
     }
-    console.log('visible', visible)
   }, [visible])
 
   const declineModal = async (reason: AppModalCancelTypes) => {
-    console.log('declineModal', reason)
-    _paq.push(['trackEvent', 'Matomo', 'decline', reason])
     if (reason === AppModalCancelTypes.click || reason === AppModalCancelTypes.enter) {
       settings.updateMatomoAnalyticsChoice(false)
       // revoke tracking consent
