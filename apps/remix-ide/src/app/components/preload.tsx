@@ -31,8 +31,6 @@ export const Preload = (props: any) => {
     window.location.hash.includes('e2e_testblock_storage=true') && window.location.host === '127.0.0.1:8080' && window.location.protocol === 'http:'
   )
 
-
-
   function loadAppComponent() {
     import('../../app')
       .then((AppComponent) => {
