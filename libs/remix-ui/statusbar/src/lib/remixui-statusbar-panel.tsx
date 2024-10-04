@@ -71,7 +71,9 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
     <>
       <StatusBarContextProvider>
         {(platform !== appPlatformTypes.desktop) && showScamDetails && (
-          <ScamDetails data-id='scamAlert' refs={refs} floatStyle={{ ...floatingStyles, minHeight: 'auto', alignContent: 'center', paddingRight: '0.5rem' }} getFloatingProps={getFloatingProps} scamAlerts={scamAlerts} />
+          <FloatingFocusManager context={context} modal={false}>
+            <ScamDetails refs={refs} floatStyle={{ ...floatingStyles, minHeight: 'auto', alignContent: 'center', paddingRight: '0.5rem' }} getFloatingProps={getFloatingProps} scamAlerts={scamAlerts} />
+          </FloatingFocusManager>
         )}
         <div className="d-flex remixui_statusbar_height flex-row bg-info justify-content-between align-items-center">
           <div className="remixui_statusbar remixui_statusbar_gitstatus">
