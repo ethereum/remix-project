@@ -37,7 +37,7 @@ module.exports = class SettingsTab extends ViewPlugin {
   element: HTMLDivElement
   public useMatomoAnalytics: any
   public useCopilot: any
-  dispatch: React.Dispatch<any> = () => { }
+  dispatch: React.Dispatch<any> = () => {}
   constructor(config, editor) {
     super(profile)
     this.config = config
