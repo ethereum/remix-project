@@ -123,7 +123,10 @@ module.exports = {
                 locateStrategy: 'xpath',
                 timeout: 120000
             })
-            .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
+            .waitForElementVisible({
+                selector: '*[data-id="matomoModalModalDialogModalBody-react"]',
+                abortOnFailure: false
+            })
             .waitForElementVisible('*[data-id="matomoModal-modal-close"]')
             .click('[data-id="matomoModal-modal-close"]')
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
@@ -146,7 +149,10 @@ module.exports = {
                 locateStrategy: 'xpath',
                 timeout: 120000
             })
-            .waitForElementVisible('*[data-id="matomoModalModalDialogModalBody-react"]')
+            .waitForElementVisible({
+                selector: '*[data-id="matomoModalModalDialogModalBody-react"]',
+                abortOnFailure: false
+            }).pause()
             .waitForElementVisible('*[data-id="matomoModal-modal-close"]')
             .click('[data-id="matomoModal-modal-close"]')
             .waitForElementNotVisible('*[data-id="matomoModalModalDialogModalBody-react"]')

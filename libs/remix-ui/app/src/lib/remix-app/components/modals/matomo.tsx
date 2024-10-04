@@ -67,6 +67,7 @@ const MatomoDialog = (props: MatomoDialogProps) => {
     _paq.push(['trackEvent', 'Matomo', 'visible', visible])
     _paq.push(['trackEvent', 'Matomo', 'show', showMatomo])
     if (visible && showMatomo) {
+      console.log('show matomo dialog')
       modal({
         id: 'matomoModal',
         title: <FormattedMessage id="remixApp.matomoTitle" />,

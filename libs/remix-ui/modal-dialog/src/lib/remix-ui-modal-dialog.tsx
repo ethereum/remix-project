@@ -15,7 +15,8 @@ declare global {
 const _paq = (window._paq = window._paq || [])
 
 export const ModalDialog = (props: ModalDialogProps) => {
-  console.log('ModalDialog', props)
+  if(props.id == 'matomoModal')
+    console.log('matomoModal', props)
   const [state, setState] = useState({
     toggleBtn: true
   })
@@ -32,9 +33,10 @@ export const ModalDialog = (props: ModalDialogProps) => {
   useEffect(() => {
     _paq.push(['trackEvent', 'modal', 'propshide', props.hide])
     calledHideFunctionOnce.current = props.hide
-    modal.current.focus()
-
+    //modal.current.focus()
+    console.log('modal.current.focus()', props)
     if (modal.current && !props.preventBlur) {
+      console.log('set blur event listener')
       modal.current.removeEventListener('blur', handleBlur)
       modal.current.addEventListener('blur', handleBlur)
     }
@@ -45,7 +47,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
 
   function handleBlur(e) {
     _paq.push(['trackEvent', 'modal', 'blur', JSON.stringify(e), this.id, props.title, e.currentTarget, e.relatedTarget])
-    console.log('handleBlur', e.currentTarget, e.relatedTarget, this)
+    console.log('handleBlur', e, e.currentTarget, e.relatedTarget, this)
     console.trace()
     if (e.currentTarget && !e.currentTarget.contains(e.relatedTarget)) {
       e.stopPropagation()
