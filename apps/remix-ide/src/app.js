@@ -168,9 +168,22 @@ class AppComponent {
       '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
     }
 
+    _paq.push(['trackEvent', 'App', 'load']);
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
-    this.showMatamo = matomoDomains[window.location.hostname] && !this.matomoConfAlreadySet
+    const lastMatomoCheck = window.localStorage.getItem('matomo-analytics-consent')
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    this.showMatomo =
+      (matomoDomains[window.location.hostname]
+        || (window.localStorage.getItem('showMatomo')
+          && window.localStorage.getItem('showMatomo') === 'true'))
+      && (!this.matomoConfAlreadySet
+        || (this.matomoCurrentSetting === false
+          && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo)
+        ));
+    _paq.push(['trackEvent', 'App', 'showMatomo', this.showMatomo]);
 
     this.walkthroughService = new WalkthroughService(appManager)
 
