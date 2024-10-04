@@ -13,7 +13,7 @@ module.exports = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
         init(browser, done, 'http://127.0.0.1:8080', false)
     },
-    'confirm Matomo #group1 #flaky': function (browser: NightwatchBrowser) {
+    'confirm Matomo #group1': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser
                 .execute(function () {
@@ -105,7 +105,7 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is disabled')
             })
     },
-    'blur matomo #group2 #flaky': function (browser: NightwatchBrowser) {
+    'blur matomo #group2': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
@@ -189,7 +189,7 @@ module.exports = {
                 browser.assert.ok((res as any).value, 'matomo analytics is enabled')
             })
     },
-    'decline Matomo and check timestamp #group3 #flaky': function (browser: NightwatchBrowser) {
+    'decline Matomo and check timestamp #group3': function (browser: NightwatchBrowser) {
         browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
@@ -459,7 +459,7 @@ module.exports = {
     '@sources': function () {
         return sources
     },
-    'Add Ballot #group4 #flaky': function (browser: NightwatchBrowser) {
+    'Add Ballot #group4': function (browser: NightwatchBrowser) {
         browser
             .addFile('Untitled.sol', sources[0]['Untitled.sol'])
     },
