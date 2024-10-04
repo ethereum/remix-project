@@ -109,6 +109,8 @@ module.exports = class SettingsTab extends ViewPlugin {
 
   updateMatomoAnalyticsChoice(isChecked) {
     this.config.set('settings/matomo-analytics', isChecked)
+    // set timestamp to local storage to track when the user has given consent
+    localStorage.setItem('matomo-analytics-consent', Date.now().toString())
     this.useMatomoAnalytics = isChecked
     if (!isChecked) {
       // revoke tracking consent
