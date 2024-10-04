@@ -142,6 +142,8 @@ const ModalWrapper = (props: ModalWrapperProps) => {
     props.handleHide()
   }
 
+  if(!props.id || props.id === '') return null
+
   return <ModalDialog id={props.id} {...state} handleHide={handleHide} />
 }
 export default ModalWrapper

@@ -1,5 +1,5 @@
-import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
-import {ModalDialogProps} from './types' // eslint-disable-line
+import React, { useRef, useState, useEffect } from 'react' // eslint-disable-line
+import { ModalDialogProps } from './types' // eslint-disable-line
 
 import './remix-ui-modal-dialog.css'
 import { AppModalCancelTypes } from '@remix-ui/app'
@@ -15,8 +15,8 @@ declare global {
 const _paq = (window._paq = window._paq || [])
 
 export const ModalDialog = (props: ModalDialogProps) => {
-  if(props.id == 'matomoModal')
-    console.log('matomoModal', props)
+  if (!props.id)
+    console.log('modal dialog', props)
   const [state, setState] = useState({
     toggleBtn: true
   })
@@ -31,14 +31,19 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }
 
   useEffect(() => {
+    if (!props.id) return
     _paq.push(['trackEvent', 'modal', 'propshide', props.hide])
+    console.log('useEffect HIDE', props.hide, props.id)
     calledHideFunctionOnce.current = props.hide
-    //modal.current.focus()
-    console.log('modal.current.focus()', props)
-    if (modal.current && !props.preventBlur) {
-      console.log('set blur event listener')
+    if (!props.hide) {
+      modal.current.focus()
       modal.current.removeEventListener('blur', handleBlur)
-      modal.current.addEventListener('blur', handleBlur)
+      if (modal.current && !props.preventBlur) {
+        console.log('set blur event listener')
+        modal.current.addEventListener('blur', handleBlur)
+      } else {
+        console.log('PREVENT blur event listener', props.id)
+      }
     }
     return () => {
       modal.current && modal.current.removeEventListener('blur', handleBlur)
