@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react' // eslint-disable-line
-import { ModalDialogProps } from './types' // eslint-disable-line
+import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
+import {ModalDialogProps} from './types' // eslint-disable-line
 
 import './remix-ui-modal-dialog.css'
 import { AppModalCancelTypes } from '@remix-ui/app'
