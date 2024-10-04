@@ -14,13 +14,12 @@ module.exports = {
         init(browser, done, 'http://127.0.0.1:8080', false)
     },
     'confirm Matomo #group1 #flaky': function (browser: NightwatchBrowser) {
-        browser.pause(1000).perform((done) => {
+        browser.perform((done) => {
             browser
                 .execute(function () {
                     localStorage.removeItem('config-v0.8:.remix.config')
                     localStorage.setItem('showMatomo', 'true')
                 }, [])
-                .pause(2000)
                 .refreshPage()
                 .perform(done())
         })
@@ -68,13 +67,12 @@ module.exports = {
             })
     },
     'decline Matomo #group1': function (browser: NightwatchBrowser) {
-        browser.pause(2000).perform((done) => {
+        browser.perform((done) => {
             browser.execute(function () {
                 localStorage.removeItem('config-v0.8:.remix.config')
                 localStorage.setItem('showMatomo', 'true')
                 localStorage.removeItem('matomo-analytics-consent')
             }, [])
-                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -114,7 +112,6 @@ module.exports = {
                 localStorage.setItem('showMatomo', 'true')
                 localStorage.removeItem('matomo-analytics-consent')
             }, [])
-                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -199,7 +196,6 @@ module.exports = {
                 localStorage.setItem('showMatomo', 'true')
                 localStorage.removeItem('matomo-analytics-consent')
             }, [])
-                .pause(10000)
                 .refreshPage()
                 .perform(done())
         })
@@ -252,7 +248,6 @@ module.exports = {
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
                 localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
-                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -295,7 +290,6 @@ module.exports = {
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
                 localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
-                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -338,7 +332,6 @@ module.exports = {
                 localStorage.setItem('showMatomo', 'true')
                 localStorage.removeItem('matomo-analytics-consent')
             }, [])
-                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -381,7 +374,6 @@ module.exports = {
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
                 localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
-                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -400,7 +392,6 @@ module.exports = {
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
                 localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
-                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -420,7 +411,6 @@ module.exports = {
                 recentTimestamp.setMonth(recentTimestamp.getMonth() - 1)
                 localStorage.setItem('matomo-analytics-consent', recentTimestamp.getTime().toString())
             }, [])
-                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })
@@ -436,7 +426,6 @@ module.exports = {
                 oldTimestamp.setMonth(oldTimestamp.getMonth() - 7)
                 localStorage.setItem('matomo-analytics-consent', oldTimestamp.getTime().toString())
             }, [])
-                .pause(1000)
                 .refreshPage()
                 .perform(done())
         })

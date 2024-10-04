@@ -183,7 +183,12 @@ class AppComponent {
         || (this.matomoCurrentSetting === false
           && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo)
         ));
-    _paq.push(['trackEvent', 'App', 'showMatomo', this.showMatomo]);
+
+    if(this.matomoCurrentSetting === false
+      && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo)) {
+        _paq.push(['trackEvent', 'Matomo', 'refreshMatomoPermissions']);
+      }    
+    
 
     this.walkthroughService = new WalkthroughService(appManager)
 
