@@ -93,6 +93,7 @@ const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const {TabProxy} = require('./app/panels/tab-proxy.js')
 
+const _paq = (window._paq = window._paq || [])
 
 export class platformApi {
   get name () {
@@ -186,8 +187,8 @@ class AppComponent {
 
     if(this.matomoCurrentSetting === false
       && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo)) {
-        _paq.push(['trackEvent', 'Matomo', 'refreshMatomoPermissions']);
-      }    
+      _paq.push(['trackEvent', 'Matomo', 'refreshMatomoPermissions']);
+    }    
     
 
     this.walkthroughService = new WalkthroughService(appManager)
