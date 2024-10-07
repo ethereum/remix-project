@@ -917,22 +917,6 @@ export function Workspace() {
     _paq.push(['trackEvent', 'Workspace', 'GIT', 'login'])
   }
 
-  const CreateDropDownMenuItem = () => {
-    return (
-      <>
-        <Dropdown.Item
-          onClick={() => {
-            createWorkspace()
-          }}
-        >
-          <span className="pl-3">
-            {' '}
-            - <FormattedMessage id="filePanel.createNewWorkspace" /> -{' '}
-          </span>
-        </Dropdown.Item>
-      </>
-    )
-  }
   const IsGitRepoDropDownMenuItem = (props: { isGitRepo: boolean, mName: string}) => {
     return (
       <>
@@ -1124,9 +1108,6 @@ export function Workspace() {
                         {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
                       </Dropdown.Toggle>
                       <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
-                        {
-                          currentWorkspace !== LOCALHOST && <CreateDropDownMenuItem />
-                        }
                         <Dropdown.Item
                           onClick={() => {
                             switchWorkspace(LOCALHOST)

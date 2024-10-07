@@ -140,6 +140,7 @@ export function HamburgerMenu(props: HamburgerMenuProps) {
         }}
         platforms={[appPlatformTypes.web]}
       ></HamburgerMenuItem>
+      <Dropdown.Divider className="border mb-0 mt-0 remixui_menuhr" style={{ pointerEvents: 'none' }} />
       <HamburgerMenuItem
         kind="localFileSystem"
         fa="far fa-desktop"
