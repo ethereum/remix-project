@@ -9,7 +9,7 @@ This document includes the release instructions for:
  - Updating Remix's beta version on remix-beta.ethereum.org
 
 ## Feature Freeze
-Once feature freeze is done, `remix_beta` should be updated latest to the master which will automatically update `remix-beta.ethereum.org` through a CI job.
+Once feature freeze is done, `remix_beta` should be updated to the latest master which will automatically update `remix-beta.ethereum.org` through a CI job.
 
 Use this unified command:
 
@@ -45,7 +45,7 @@ This command will ask for a new version.
 
 ### Other libraries NPM release
 
-  `yarn run publish:libs `
+  `yarn run publish:libs`
  
 This command uses `lerna` and is solely responsible for publishing all the remix libraries. It will ask for a new version of each library. Make sure you are logged in to NPM.
 
