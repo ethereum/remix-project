@@ -189,20 +189,14 @@ class AppComponent {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    this.showMatomo =
-      (matomoDomains[window.location.hostname] || electronTracking
-        || (window.localStorage.getItem('showMatomo')
-          && window.localStorage.getItem('showMatomo') === 'true'))
-      && (!this.matomoConfAlreadySet
-        || (this.matomoCurrentSetting === false
-          && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo)
-        ));
+    const e2eforceMatomoToShow = window.localStorage.getItem('showMatomo') && window.localStorage.getItem('showMatomo') === 'true'
+    const contextShouldShowMatomo = matomoDomains[window.location.hostname] || e2eforceMatomoToShow || electronTracking
+    const shouldRenewConsent = this.matomoCurrentSetting === false && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo) // it is set to false for more than 6 months.
+    this.showMatomo = contextShouldShowMatomo && (!this.matomoConfAlreadySet || shouldRenewConsent)        
 
-    if(this.matomoCurrentSetting === false
-      && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo)) {
+    if (this.showMatomo && shouldRenewConsent) {
       _paq.push(['trackEvent', 'Matomo', 'refreshMatomoPermissions']);
     }    
-    
 
     this.walkthroughService = new WalkthroughService(appManager)
 
