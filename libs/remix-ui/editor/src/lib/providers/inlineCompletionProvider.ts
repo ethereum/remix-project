@@ -1,5 +1,6 @@
 /* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
+import { JsonStreamParser } from '@remix/remix-ai-core';
 const _paq = (window._paq = window._paq || [])
 
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
@@ -81,6 +82,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
         const data = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
         this.task = 'code_generation'
+        console.log("data: " + this.task, data)
 
         const parsedData = data.trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
@@ -131,6 +133,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         }
       }
       catch (err){
+        console.log("err: " + err)
         return
       }
     }

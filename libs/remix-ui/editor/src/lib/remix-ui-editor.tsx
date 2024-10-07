@@ -776,6 +776,8 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
+        
+        // do not stream this response
         const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
 
         const natSpecCom = "\n" + extractNatspecComments(cm)
@@ -827,9 +829,10 @@ export const EditorUI = (props: EditorUIProps) => {
       ],
       run: async () => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
-        const content = await props.plugin.call('fileManager', 'readFile', file)
-        const message = intl.formatMessage({ id: 'editor.explainFunctionByAI' }, { content, currentFunction: currentFunction.current })
-        await props.plugin.call('remixAI', 'code_explaining', message, content)
+        const context = await props.plugin.call('fileManager', 'readFile', file)
+        const message = intl.formatMessage({ id: 'editor.explainFunctionByAI' }, { content:context, currentFunction: currentFunction.current })
+        // await props.plugin.call('remixAI', 'code_explaining', message, context)
+        await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', message, context)
         _paq.push(['trackEvent', 'ai', 'remixAI', 'explainFunction'])
       },
     }
@@ -848,8 +851,10 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const selectedCode = editor.getModel().getValueInRange(editor.getSelection())
+        const pipeMessage = intl.formatMessage({ id: 'editor.ExplainPipeMessage' }, { content:selectedCode })
 
-        await props.plugin.call('remixAI', 'code_explaining', selectedCode, content)
+        await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', selectedCode, content, pipeMessage)
+        // await props.plugin.call('remixAI', 'code_explaining', selectedCode, content)
         _paq.push(['trackEvent', 'ai', 'remixAI', 'explainFunction'])
       },
     }
