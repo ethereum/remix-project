@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useCallback} from 'react'
 import '../remix-ai.css'
 import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse, HandleSimpleResponse } from '@remix/remix-ai-core';
-import { StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
+import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
 import axios from 'axios';
 import { AiChat, useAsStreamAdapter, ChatItem, AiChatUI} from '@nlux/react';
 import '@nlux/themes/nova.css';
@@ -29,7 +29,6 @@ export const Default = (props) => {
       response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams);
     }
 
-
     if (GenerationParams.return_stream_response) HandleStreamResponse(response, 
       (text) => {observer.next(text)},
       (result) => { 
@@ -44,6 +43,9 @@ export const Default = (props) => {
 
   };
   ChatApi = useAiChatApi();
+  const conversationStarters: ConversationStarter[] = [
+    {prompt: 'Explain what is a solidity contract!', icon: <span>⭐️</span>},
+    {prompt: 'Explain the current file in Editor'}]
 
   // Define initial messages
   const initialMessages: ChatItem[] = [
@@ -68,8 +70,8 @@ export const Default = (props) => {
         
       }}
       //initialConversation={initialMessages}
-      conversationOptions={{ layout: 'bubbles' }}
-      displayOptions={{ colorScheme: "auto" }}
+      conversationOptions={{ layout: 'bubbles', conversationStarters }}
+      displayOptions={{ colorScheme: "auto", themeId: "nova" }}
       composerOptions={{ placeholder: "Type your query",
         submitShortcut: 'Enter',
         hideStopButton: false,

@@ -26,11 +26,11 @@ export class RemoteInferencer implements ICompletions {
 
   private async _makeRequest(endpoint, payload, rType:AIRequestType){
     this.event.emit("onInference")
-    const requesURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
+    const requestURL = rType === AIRequestType.COMPLETION ? this.completion_url : this.api_url
 
     try {
       const options = { headers: { 'Content-Type': 'application/json', } }
-      const result = await axios.post(`${requesURL}/${endpoint}`, payload, options)
+      const result = await axios.post(`${requestURL}/${endpoint}`, payload, options)
 
       switch (rType) {
       case AIRequestType.COMPLETION:
@@ -75,7 +75,6 @@ export class RemoteInferencer implements ICompletions {
       if (payload.return_stream_response) {
         return response
       }
-
     
       const reader = response.body!.getReader();
       const decoder = new TextDecoder();
@@ -116,20 +115,16 @@ export class RemoteInferencer implements ICompletions {
     }
   }
 
-  
-  
 
   async code_completion(prompt, options:IParams=CompletionParams): Promise<any> {
     const payload = { prompt, "endpoint":"code_completion", ...options }
-    if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.COMPLETION) 
-    else return this._makeRequest(payload.endpoint, payload, AIRequestType.COMPLETION)
+    return this._makeRequest(payload.endpoint, payload, AIRequestType.COMPLETION)
   }
 
   async code_insertion(msg_pfx, msg_sfx, options:IParams=InsertionParams): Promise<any> {
     // const payload = { "data":[msg_pfx, "code_insertion", msg_sfx, 1024, 0.5, 0.92, 50]}
     const payload = {"endpoint":"code_insertion", msg_pfx, msg_sfx, ...options, prompt: '' }
-    if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.COMPLETION) 
-    else return this._makeRequest(payload.endpoint, payload, AIRequestType.COMPLETION)
+    return this._makeRequest(payload.endpoint, payload, AIRequestType.COMPLETION)
   }
 
   async code_generation(prompt, options:IParams=GenerationParams): Promise<any> {
@@ -156,6 +151,7 @@ export class RemoteInferencer implements ICompletions {
 
   async error_explaining(prompt, options:IParams=GenerationParams): Promise<any> {
     const payload = { prompt, "endpoint":"error_explaining", ...options }
+    console.log("payload: ", payload)
     if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload  , AIRequestType.GENERAL) 
     else return this._makeRequest(payload.endpoint, payload, AIRequestType.GENERAL)
   }
