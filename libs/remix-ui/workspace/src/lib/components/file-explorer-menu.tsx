@@ -56,7 +56,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       },
       {
         action: 'connectToLocalFileSystem',
-        title: 'Connect to local filesystem with remixd',
+        title: 'Connect to local filesystem using remixd',
         icon: 'fa-solid fa-desktop',
         placement: 'top',
         platforms: [appPlatformTypes.web]
