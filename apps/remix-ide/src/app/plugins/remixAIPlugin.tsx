@@ -4,7 +4,6 @@ import { Plugin } from '@remixproject/engine';
 import { RemixAITab } from '@remix-ui/remix-ai'
 import React from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel } from '@remix/remix-ai-core';
-import { CustomRemixApi } from '@remix-api'
 
 const profile = {
   name: 'remixAI',
@@ -12,7 +11,7 @@ const profile = {
   methods: ['code_generation', 'code_completion',
     "solidity_answer", "code_explaining",
     "code_insertion", "error_explaining",
-    "initialize", "chatPipe", "ProcessChatRequestBuffer"],
+    "initialize"],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
@@ -23,7 +22,7 @@ const profile = {
   maintainedBy: 'Remix'
 }
 
-export class RemixAIPlugin extends Plugin<any, CustomRemixApi> {
+export class RemixAIPlugin extends Plugin {
   isOnDesktop:boolean = false
   aiIsActivated:boolean = false
   readonly remixDesktopPluginName = 'remixAID'
@@ -85,7 +84,7 @@ export class RemixAIPlugin extends Plugin<any, CustomRemixApi> {
 
   async code_generation(prompt: string): Promise<any> {
     if (this.isInferencing) {
-      this.call('terminal', 'logHtml', "RemixAI is already busy!")
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
 
@@ -106,11 +105,11 @@ export class RemixAIPlugin extends Plugin<any, CustomRemixApi> {
 
   async solidity_answer(prompt: string): Promise<any> {
     if (this.isInferencing) {
-      this.call('terminal', 'logHtml', "RemixAI is already busy!" )
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
 
-    this.call('terminal', 'logHtml', '\n\nWaiting for RemixAI answer...')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
 
     let result
     if (this.isOnDesktop) {
@@ -118,18 +117,18 @@ export class RemixAIPlugin extends Plugin<any, CustomRemixApi> {
     } else {
       result = await this.remoteInferencer.solidity_answer(prompt)
     }
-    if (result) this.call('terminal', 'logHtml', result)
+    if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
     return result
   }
 
   async code_explaining(prompt: string): Promise<any> {
     if (this.isInferencing) {
-      this.call('terminal', 'logHtml',"RemixAI is already busy!")
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
 
-    this.call('terminal', 'logHtml', '\n\nWaiting for RemixAI answer...')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
 
     let result
     if (this.isOnDesktop) {
@@ -138,18 +137,18 @@ export class RemixAIPlugin extends Plugin<any, CustomRemixApi> {
     } else {
       result = await this.remoteInferencer.code_explaining(prompt)
     }
-    if (result) this.call('terminal', 'logHtml', result )
+    if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
     return result
   }
 
   async error_explaining(prompt: string): Promise<any> {
     if (this.isInferencing) {
-      this.call('terminal', 'logHtml', "RemixAI is already busy!")
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
 
-    this.call('terminal', 'logHtml', '\n\nWaiting for RemixAI answer...')
+    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
 
     let result
     if (this.isOnDesktop) {
@@ -157,7 +156,7 @@ export class RemixAIPlugin extends Plugin<any, CustomRemixApi> {
     } else {
       result = await this.remoteInferencer.error_explaining(prompt)
     }
-    if (result) this.call('terminal', 'logHtml', result)
+    if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
     return result
   }
