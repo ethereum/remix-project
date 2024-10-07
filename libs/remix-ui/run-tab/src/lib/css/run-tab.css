@@ -533,3 +533,19 @@
   line-height: 0.75rem;
   color: var(--runtab);
 }
+
+#my-select-outer-container{
+  /* display: flex;
+  align-items: stretch;
+  justify-content: center; */
+  height: auto;
+  overflow: visible;
+  padding: 0px !important;
+}
+
+#my-select-outer-container .custom-select{
+  padding: 0 !important;
+}
+#my-select-outer-container .form-control{
+  padding: 0 !important;
+}
