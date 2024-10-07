@@ -5045,8 +5045,10 @@ a.close.disabled {
 }
 .modal-header .close {
     padding:1rem 1rem;
-    margin:-1rem -1rem -1rem auto
+    margin:-1rem -1rem -1rem auto;
+    cursor: pointer;
 }
+
 .modal-title {
     margin-bottom:0;
     line-height:1.5
