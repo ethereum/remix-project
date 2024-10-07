@@ -175,6 +175,13 @@
             "@remix-ui/xterm": [
               "libs/remix-ui/xterm/src/index.ts"
             ],
+            "@remix-ui/remix-ai": [
+              "libs/remix-ui/remix-ai/src/index.ts"
+            ],
+
+            "@remix/remix-ai-core": [
+              "libs/remix-ai-core/src/index.ts"
+            ],
             "@remix-ui/git": [
                 "libs/remix-ui/git/src/index.ts"
             ],
