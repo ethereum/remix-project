@@ -37,15 +37,7 @@ export class RemixAIPlugin extends Plugin {
   }
 
   onActivation(): void {
-    if (this.isOnDesktop) {
-      console.log('Activating RemixAIPlugin on desktop')
-      this.on(this.remixDesktopPluginName, 'activated', () => {
-        this.call("remixAI", 'initialize', null, null, null, false);
-      })
-    } else {
-      console.log('Activating RemixAIPlugin on browser')
-      this.initialize()
-    }
+    this.initialize(null, null, null, false)
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
