@@ -2,6 +2,7 @@ import React, {useRef, useState, useEffect} from 'react' // eslint-disable-line
 import {ModalDialogProps} from './types' // eslint-disable-line
 
 import './remix-ui-modal-dialog.css'
+import { AppModalCancelTypes } from '@remix-ui/app'
 
 declare global {
   // eslint-disable-next-line no-unused-vars
@@ -24,12 +25,14 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }
 
   useEffect(() => {
+    if (!props.id) return
     calledHideFunctionOnce.current = props.hide
-    modal.current.focus()
-
-    if (modal.current) {
+    if (!props.hide) {
+      modal.current.focus()
       modal.current.removeEventListener('blur', handleBlur)
-      modal.current.addEventListener('blur', handleBlur)
+      if (modal.current && !props.preventBlur) {
+        modal.current.addEventListener('blur', handleBlur)
+      }
     }
     return () => {
       modal.current && modal.current.removeEventListener('blur', handleBlur)
@@ -37,11 +40,11 @@ export const ModalDialog = (props: ModalDialogProps) => {
   }, [props.hide])
 
   function handleBlur(e) {
-    if (!e.currentTarget.contains(e.relatedTarget)) {
+    if (e.currentTarget && !e.currentTarget.contains(e.relatedTarget)) {
       e.stopPropagation()
       if (document.activeElement !== this) {
         !window.testmode && handleHide()
-        !window.testmode && props.cancelFn && props.cancelFn()
+        !window.testmode && props.cancelFn && props.cancelFn(AppModalCancelTypes.blur)
       }
     }
   }
@@ -49,7 +52,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
   const modalKeyEvent = (keyCode) => {
     if (keyCode === 27) {
       // Esc
-      if (props.cancelFn) props.cancelFn()
+      if (props.cancelFn) props.cancelFn(AppModalCancelTypes.escape)
       handleHide()
     } else if (keyCode === 13) {
       // Enter
@@ -71,7 +74,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
     if (state.toggleBtn) {
       if (props.okFn) props.okFn()
     } else {
-      if (props.cancelFn) props.cancelFn()
+      if (props.cancelFn) props.cancelFn(AppModalCancelTypes.enter)
     }
     handleHide()
   }
@@ -99,7 +102,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
               {props.title && props.title}
             </h6>
             {!props.showCancelIcon && (
-              <span className="modal-close" onClick={() => handleHide()}>
+              <span data-id={`${props.id}-modal-close`} className="modal-close" onClick={() => handleHide()}>
                 <i className="fas fa-times" aria-hidden="true"></i>
               </span>
             )}
@@ -130,7 +133,7 @@ export const ModalDialog = (props: ModalDialogProps) => {
                 className={'modal-cancel btn btn-sm ' + (props.cancelBtnClass ? props.cancelBtnClass : state.toggleBtn ? 'border-secondary' : 'border-primary')}
                 data-dismiss="modal"
                 onClick={() => {
-                  if (props.cancelFn) props.cancelFn()
+                  if (props.cancelFn) props.cancelFn(AppModalCancelTypes.click)
                   handleHide()
                 }}
               >

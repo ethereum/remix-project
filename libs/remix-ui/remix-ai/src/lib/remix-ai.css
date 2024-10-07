@@ -1,0 +1,167 @@
+/* Existing CSS */
+
+.remix_ai_plugin_search_result_item_title {
+    display: flex;
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+    cursor: pointer;
+    align-items: center;
+    color: #58a6ff;
+    text-decoration: none;
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+.remix_ai_plugin_search_result_item_title:hover {
+    text-decoration: underline;
+}
+
+.remix_ai_plugin_wrap_summary {
+    overflow: hidden;
+    white-space: nowrap;
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+    cursor: pointer;
+}
+
+.remix_ai_plugin_find-part {
+    display: flex;
+    flex-direction: column;
+    padding-top: 5px;
+}
+
+.remix_ai_plugin_controls {
+    display: flex;
+}
+
+.remix_ai_plugin_search_tab .remix_ai_plugin_search_line_container {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+.remix_ai_plugin_search_tab .remix_ai_plugin_search_line {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+}
+
+.remix_ai_plugin_search_tab .remix_ai_plugin_search_control {
+    flex-grow: 0;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
+.remix_ai_plugin_summary_right {
+    min-width: 0;
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.remix_ai_plugin_search_tab .remix_ai_plugin_replace_strike {
+    text-decoration: line-through;
+}
+
+.remix_ai_plugin_summary_left {
+    white-space: pre;
+}
+
+.remix_ai_plugin_search_tab mark {
+    padding: 0;
+    white-space: pre;
+}
+
+.remix_ai_plugin_search_tab .remix_ai_plugin_search_line_container .remix_ai_plugin_search_control {
+    display: none;
+}
+
+.remix_ai_plugin_search_tab .remix_ai_plugin_search_line_container:hover .remix_ai_plugin_search_control {
+    display: block;
+}
+
+.remix_ai_plugin_search_tab .remix_ai_plugin_search_line_container:hover .remix_ai_plugin_search_line {
+    width: 93%;
+}
+
+.remix_ai_plugin_search-input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.remix_ai_plugin_search_tab .checked {
+    background-color: var(--secondary);
+}
+
+.remix_ai_plugin_search_tab .remix_ai_plugin_search_file_name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-transform: uppercase;
+}
+
+.remix_ai_plugin_search_tab .remix_ai_plugin_result_count {
+    flex-grow: 1;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.remix_ai_plugin_search_tab .remix_ai_plugin_result_count_number {
+    font-size: x-small;
+}
+
+.remix_ai_plugin_search_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.remix_ai_plugin_search_container_internal {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.remix_ai_plugin_search_container_arrow {
+    display: flex !important;
+    align-items: center;
+    cursor: pointer !important;
+}
+
+.remix_ai_plugin_wrap_summary_replace {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.remix_ai_plugin_search_indicator {
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.remix_ai_plugin_search_result_textbox {
+    width: 100%;
+    max-width: 500px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+    margin: 10px 0;
+    color: #333;
+}
