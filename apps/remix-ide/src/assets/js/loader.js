@@ -18,14 +18,26 @@ function trackDomain(domainToTrack) {
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   _paq.push(['enableHeartBeatTimer']);
-  if (!window.localStorage.getItem('config-v0.8:.remix.config') ||
-    (window.localStorage.getItem('config-v0.8:.remix.config') && !window.localStorage.getItem('config-v0.8:.remix.config').includes('settings/matomo-analytics'))) {
+  const remixConfig = window.localStorage.getItem('config-v0.8:.remix.config');
+  if (!remixConfig || (remixConfig && !remixConfig.includes('settings/matomo-analytics'))) {
     // require user tracking consent before processing data
     _paq.push(['requireConsent']);
   } else {
-    // user has given consent to process their data
-    _paq.push(['setConsentGiven'])
+    try {
+      const config = JSON.parse(remixConfig);
+      if (config['settings/matomo-analytics'] === true) {
+        // user has given consent to process their data
+        _paq.push(['setConsentGiven']);
+      } else {
+        // user has not given consent to process their data
+        _paq.push(['requireConsent']);
+      }
+    } catch (e) {
+      console.error('Error parsing remix config:', e);
+      _paq.push(['requireConsent']);
+    }
   }
+  _paq.push(['trackEvent', 'loader', 'load']);
   (function () {
     var u = "https://ethereumfoundation.matomo.cloud/";
     _paq.push(['setTrackerUrl', u + 'matomo.php?debug=1']);

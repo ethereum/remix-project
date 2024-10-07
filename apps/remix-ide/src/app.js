@@ -102,6 +102,7 @@ const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const { TabProxy } = require('./app/panels/tab-proxy.js')
 
+const _paq = (window._paq = window._paq || [])
 
 export class platformApi {
   get name() {
@@ -177,16 +178,24 @@ class AppComponent {
       '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
     }
 
+    _paq.push(['trackEvent', 'App', 'load']);
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
 
-    let electronTracking = false
+    let electronTracking = window.electronAPI ? await window.electronAPI.canTrackMatomo() : false
 
-    if (window.electronAPI) {
-      electronTracking = await window.electronAPI.canTrackMatomo()
-    }
+    const lastMatomoCheck = window.localStorage.getItem('matomo-analytics-consent')
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    this.showMatamo = (matomoDomains[window.location.hostname] || electronTracking) && !this.matomoConfAlreadySet
+    const e2eforceMatomoToShow = window.localStorage.getItem('showMatomo') && window.localStorage.getItem('showMatomo') === 'true'
+    const contextShouldShowMatomo = matomoDomains[window.location.hostname] || e2eforceMatomoToShow || electronTracking
+    const shouldRenewConsent = this.matomoCurrentSetting === false && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo) // it is set to false for more than 6 months.
+    this.showMatomo = contextShouldShowMatomo && (!this.matomoConfAlreadySet || shouldRenewConsent)        
+
+    if (this.showMatomo && shouldRenewConsent) {
+      _paq.push(['trackEvent', 'Matomo', 'refreshMatomoPermissions']);
+    }    
 
     this.walkthroughService = new WalkthroughService(appManager)
 
