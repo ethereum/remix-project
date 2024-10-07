@@ -2,6 +2,8 @@ import { branch } from '@remix-ui/git'
 import { customAction } from '@remixproject/plugin-api'
 import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
+import { Plugin } from '@remixproject/engine'
+import { CustomRemixApi } from '@remix-api'
 
 export const FileSystemContext = createContext<{
   fs: any,

@@ -581,6 +581,12 @@ export const FileExplorer = (props: FileExplorerProps) => {
 
   }
 
+  const handleGitInit = async () => {
+    const isActive = await plugin.call('manager', 'isActive', 'dgit')
+    if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+    await plugin.call('dgitApi', 'init')
+  }
+
   return (
     <div className="h-100 remixui_treeview" data-id="filePanelFileExplorerTree">
       <div ref={treeRef} tabIndex={0} style={{
@@ -609,6 +615,8 @@ export const FileExplorer = (props: FileExplorerProps) => {
                   uploadFolder={uploadFolder}
                   importFromIpfs={props.importFromIpfs}
                   importFromHttps={props.importFromHttps}
+                  connectToLocalFileSystem={() => props.connectToLocalFileSystem()}
+                  handleGitInit={handleGitInit}
                 />
               </div>
             </span>

@@ -21,6 +21,9 @@
       "@remix-git": [
         "../../libs/remix-git/"
       ],
+      "@remix/remix-ai-core": [
+        "../../libs/remix-ai-core/src/index"
+      ]
     },
     "typeRoots": [
       "src/**/*.d.ts",

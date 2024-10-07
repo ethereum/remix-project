@@ -6,5 +6,6 @@ export interface IExtendedTerminalApi extends ITerminal {
   } & StatusEvents
   methods: ITerminal['methods'] & {
     logHtml(html: string): void
+    log(message: any): void
   }
 }
