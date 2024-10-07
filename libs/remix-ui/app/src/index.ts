@@ -3,5 +3,5 @@ export { dispatchModalContext, dispatchModalInterface, AppContext, appProviderCo
 export { ModalProvider, useDialogDispatchers } from './lib/remix-app/context/provider'
 export { AppModal } from './lib/remix-app/interface/index'
 export { AlertModal } from './lib/remix-app/interface/index'
-export { ModalTypes } from './lib/remix-app/types/index'
+export { ModalTypes, AppModalCancelTypes } from './lib/remix-app/types/index'
 export { AppAction, appActionTypes } from './lib/remix-app/actions/app'

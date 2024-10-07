@@ -4153,7 +4153,7 @@ a.close.disabled {
 	display:-ms-flexbox;	display:flex;	-ms-flex-align:start;	align-items:flex-start;	-ms-flex-pack:justify;	justify-content:space-between;	padding:1rem 1rem;	border-bottom:1px solid #dee2e6;	border-top-left-radius:calc(.3rem - 1px);	border-top-right-radius:calc(.3rem - 1px)
 }
 .modal-header .close {
-	padding:1rem 1rem;	margin:-1rem -1rem -1rem auto
+	padding:1rem 1rem;	margin:-1rem -1rem -1rem auto; cursor: pointer;
 }
 .modal-title {
 	margin-bottom:0;	line-height:1.5
