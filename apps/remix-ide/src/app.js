@@ -57,6 +57,8 @@ import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 import { appUpdaterPlugin } from './app/plugins/electron/appUpdaterPlugin'
+import { remixAIDesktopPlugin } from './app/plugins/electron/remixAIDesktopPlugin' 
+import { RemixAIPlugin } from './app/plugins/remixAIPlugin'
 import { SlitherHandleDesktop } from './app/plugins/electron/slitherPlugin'
 import { SlitherHandle } from './app/files/slither-handle'
 import { FoundryHandle } from './app/files/foundry-handle'
@@ -64,11 +66,8 @@ import { FoundryHandleDesktop } from './app/plugins/electron/foundryPlugin'
 import { HardhatHandle } from './app/files/hardhat-handle'
 import { HardhatHandleDesktop } from './app/plugins/electron/hardhatPlugin'
 
-import { SolCoder } from './app/plugins/solcoderAI'
 import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
-
-
 
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
@@ -270,7 +269,7 @@ class AppComponent {
     const contractFlattener = new ContractFlattener()
 
     // ----------------- AI --------------------------------------
-    const solcoder = new SolCoder()
+    const remixAI = new RemixAIPlugin(isElectron())
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -393,11 +392,11 @@ class AppComponent {
       contractFlattener,
       solidityScript,
       templates,
-      solcoder,
       git,
       pluginStateLogger,
       matomo,
-      templateSelection
+      templateSelection,
+      remixAI
     ])
 
     //---- fs plugin
@@ -416,6 +415,8 @@ class AppComponent {
       this.engine.register([ripgrep])
       const appUpdater = new appUpdaterPlugin()
       this.engine.register([appUpdater])
+      const remixAIDesktop = new remixAIDesktopPlugin()
+      this.engine.register([remixAIDesktop])
     }
 
     const compilerloader = isElectron() ? new compilerLoaderPluginDesktop() : new compilerLoaderPlugin()
@@ -547,7 +548,8 @@ class AppComponent {
       'fetchAndCompile',
       'contentImport',
       'gistHandler',
-      'compilerloader'
+      'compilerloader',
+      'remixAI'
     ])
     await this.appManager.activatePlugin(['settings'])
 
@@ -555,7 +557,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()) {
-      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'slither', 'foundry', 'hardhat'])
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'slither', 'foundry', 'hardhat', 'remixAID'])
     }
 
     this.appManager.on(
@@ -570,7 +572,6 @@ class AppComponent {
       }
     )
     await this.appManager.activatePlugin(['solidity-script'])
-    await this.appManager.activatePlugin(['solcoder'])
     await this.appManager.activatePlugin(['filePanel'])
 
     // Set workspace after initial activation
