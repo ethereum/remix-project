@@ -13,6 +13,7 @@ import { SlitherPlugin } from './plugins/slitherPlugin';
 import { AppUpdaterPlugin } from './plugins/appUpdater';
 import { FoundryPlugin } from './plugins/foundryPlugin';
 import { HardhatPlugin } from './plugins/hardhatPlugin';
+import { CircomElectronPlugin } from './plugins/circomElectronBasePlugin';
 import { isE2E } from './main';
 
 const engine = new Engine()
@@ -28,6 +29,7 @@ const slitherPlugin = new SlitherPlugin()
 const appUpdaterPlugin = new AppUpdaterPlugin()
 const foundryPlugin = new FoundryPlugin()
 const hardhatPlugin = new HardhatPlugin()
+const circomPlugin = new CircomElectronPlugin()
 
 engine.register(appManager)
 engine.register(fsPlugin)
@@ -41,6 +43,7 @@ engine.register(slitherPlugin)
 engine.register(foundryPlugin)
 engine.register(appUpdaterPlugin)
 engine.register(hardhatPlugin)
+engine.register(circomPlugin)
 
 appManager.activatePlugin('electronconfig')
 appManager.activatePlugin('fs')

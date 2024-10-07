@@ -165,7 +165,7 @@ export class RemixAppManager extends PluginManager {
     this.pluginsDirectory = 'https://raw.githubusercontent.com/ethereum/remix-plugins-directory/master/build/metadata.json'
     this.pluginLoader = new PluginLoader()
     if (Registry.getInstance().get('platform').api.isDesktop()) {
-      requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep', 'slither']
+      requiredModules = [...requiredModules, 'fs', 'electronTemplates', 'isogit', 'remix-templates', 'electronconfig', 'xterm', 'compilerloader', 'ripgrep', 'slither', 'circom']
     }
   }
 
