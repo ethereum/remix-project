@@ -29,6 +29,7 @@
   "filePanel.workspace.chooseTemplate": "Choose a template",
   "filePanel.workspace.backup": "Backup All Workspaces",
   "filePanel.workspace.restore": "Restore Workspaces from the Backup",
+  "filePanel.workspace.localFileSystem": "Connect to Local Filesystem using Remixd",
   "filePanel.workspace.clone": "Clone Git Repository",
   "filePanel.workspace.cloneMessage": "Please provide a valid git repository url.",
   "filePanel.workspace.enterGitUrl": "Enter git repository url",
