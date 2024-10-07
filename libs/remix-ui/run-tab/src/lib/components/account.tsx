@@ -5,6 +5,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
 import { CustomTooltip } from '@remix-ui/helper'
+const _paq = window._paq = window._paq || []
 
 export function AccountUI(props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
@@ -96,6 +97,7 @@ export function AccountUI(props: AccountProps) {
   }
 
   const signMessage = () => {
+    _paq.push(['trackEvent', 'udapp', 'signUsingAccount', `selectExEnv: ${selectExEnv}`])
     if (!accounts[0]) {
       return props.tooltip(intl.formatMessage({ id: 'udapp.tooltipText1' }))
     }
