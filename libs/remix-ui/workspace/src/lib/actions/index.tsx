@@ -523,14 +523,14 @@ export const signTypedData = async (path: string) => {
 
   try {
     const result = await web3.currentProvider.request({
-      method: 'eth_signTypedData',
+      method: 'eth_signTypedData_v4',
       params: [settings.selectedAccount, parsed]
     })
 
     plugin.call('terminal', 'log', { type: 'log', value: `${path} signature using ${settings.selectedAccount} : ${result}` })
   } catch (e) {
     console.error(e)
-    plugin.call('terminal', 'log', { type: 'error', value: `error while signing ${path}: ${e}` })
+    plugin.call('terminal', 'log', { type: 'error', value: `error while signing ${path}: ${e.message}` })
     dispatch(displayPopUp(e.message))
   }
 }
