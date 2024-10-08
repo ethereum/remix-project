@@ -126,9 +126,11 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
   private async sendAsyncInternal(data: JsonDataRequest, resolve: SuccessRequest, reject: RejectRequest): Promise<void> {
     if (this.provider) {
       try {
+        console.log('sendAsyncInternal', data)
         const result = await this.provider.send(data.method, data.params)
         resolve({ jsonrpc: '2.0', result, id: data.id })
       } catch (error) {
+        console.log('CATCH', error.message)
         if (error && error.message && error.message.includes('net_version') && error.message.includes('SERVER_ERROR')) {
           this.switchAway(true)
         }

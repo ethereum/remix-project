@@ -38,7 +38,6 @@ export class VMProvider {
 
     return new Promise((resolve, reject) => {
       this.worker.addEventListener('message', (msg) => {
-        console.log('message', msg)
         if (msg.data.cmd === 'requestResult' && stamps[msg.data.stamp]) {
           if (msg.data.error) {
             stamps[msg.data.stamp].reject(msg.data.error)
@@ -63,7 +62,6 @@ export class VMProvider {
                   const stamp = Date.now() + incr
                   incr++
                   stamps[stamp] = { callback, resolve, reject }
-                  console.log('sendAsync', query, stamp)
                   this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
                 })
               },
@@ -72,7 +70,6 @@ export class VMProvider {
                   const stamp = Date.now() + incr
                   incr++
                   stamps[stamp] = { resolve, reject }
-                  console.log('request', query, stamp)
                   this.worker.postMessage({ cmd: 'request', query, stamp })
                 })
               }
