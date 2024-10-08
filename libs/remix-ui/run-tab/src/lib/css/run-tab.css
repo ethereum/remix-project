@@ -141,11 +141,6 @@
 .udapp_input {
   font-size: 10px !important;
 }
-.udapp_noInstancesText {
-  font-style: italic;
-  text-align: left;
-  padding-left: 15px;
-}
 .udapp_pendingTxsText {
   font-style: italic;
   display: flex;
