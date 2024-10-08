@@ -18,8 +18,8 @@ export const enum AppModalCancelTypes {
 }
 
 export const enum UsageTypes {
-  Beginner = 1,
-  Prototyper,
-  Advance,
-  Production
+  Beginner = 'beginner',
+  Prototyper = 'prototyper',
+  Advance = 'advance',
+  Production = 'prototyper'
 }
