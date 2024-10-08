@@ -6,7 +6,7 @@ import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
 import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
 export interface RunTabProps {
   plugin: RunTab,
-  initialState: RunTabState
+  initialState?: RunTabState
 }
 
 export interface Contract {

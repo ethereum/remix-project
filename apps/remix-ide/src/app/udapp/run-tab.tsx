@@ -6,8 +6,11 @@ import {addressToString} from '@remix-ui/helper'
 import {InjectedProviderDefault} from '../providers/injected-provider-default'
 import {InjectedCustomProvider} from '../providers/injected-custom-provider'
 import * as packageJson from '../../../../../package.json'
-
-const EventManager = require('../../lib/events')
+import { EventManager } from '@remix-project/remix-lib'
+import type { Blockchain } from '../../blockchain/blockchain'
+import type { CompilerArtefacts } from '@remix-project/core-plugin'
+// import type { NetworkModule } from '../tabs/network-module'
+// import type FileProvider from '../files/fileProvider'
 const Recorder = require('../tabs/runTab/model/recorder.js')
 const _paq = (window._paq = window._paq || [])
 
@@ -37,7 +40,20 @@ const profile = {
 }
 
 export class RunTab extends ViewPlugin {
-  constructor(blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, fileProvider, engine) {
+  event: EventManager
+  engine: any
+  config: any
+  blockchain: Blockchain
+  fileManager: any
+  editor: any
+  filePanel: any
+  compilersArtefacts: CompilerArtefacts
+  networkModule: any
+  fileProvider: any
+  recorder: any
+  REACT_API: any
+  el: any
+  constructor(blockchain: Blockchain, config: any, fileManager: any, editor: any, filePanel: any, compilersArtefacts: CompilerArtefacts, networkModule: any, fileProvider: any, engine: any) {
     super(profile)
     this.event = new EventManager()
     this.engine = engine
@@ -83,7 +99,7 @@ export class RunTab extends ViewPlugin {
     this.emit('clearAllInstancesReducer')
   }
 
-  addInstance(address, abi, name, contractData) {
+  addInstance(address, abi, name, contractData?) {
     this.emit('addInstanceReducer', address, abi, name, contractData)
   }
 
@@ -180,27 +196,38 @@ export class RunTab extends ViewPlugin {
         },
         provider: {
           sendAsync (payload) {
+            console.log('sendAsync', payload)
             return udapp.call(name, 'sendAsync', payload)
           },
           async request (payload) {
-            const requestResult = await udapp.call(name, 'sendAsync', payload)
-            if (requestResult.error) throw new Error(requestResult.error.message)
-            return requestResult.result
+            console.log('REQUEST', payload)
+            try {
+              const requestResult = await udapp.call(name, 'sendAsync', payload)
+              console.log('run ok', requestResult)
+              if (requestResult.error) {
+                console.log('inner error', requestResult.error)
+                throw new Error(requestResult.error.message)
+              }
+              return requestResult.result
+            } catch (err) {
+              console.log('run failed', err)
+              throw new Error(err.error.message)
+            }
           }
         }
       })
     }
 
-    const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency) => {
+    const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency?) => {
       // name = `${name} through ${event.detail.info.name}`
       await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, networkId, urls, nativeCurrency)])
-      await addProvider(position, name, displayName, true, false, false)
+      await addProvider(position, name, displayName, true, false)
     }
     const registerInjectedProvider = async (event) => {
       const name = 'injected-' + event.detail.info.name
       const displayName = 'Injected Provider - ' + event.detail.info.name
       await this.engine.register([new InjectedProviderDefault(event.detail.provider, name)])
-      await addProvider(0, name, displayName, true, false, false)
+      await addProvider(0, name, displayName, true, false)
 
       if (event.detail.info.name === 'MetaMask') {
         await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism - ' + event.detail.info.name, '0xa', ['https://mainnet.optimism.io'])
