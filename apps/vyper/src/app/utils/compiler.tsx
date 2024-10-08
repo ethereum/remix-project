@@ -54,10 +54,6 @@ function parseErrorString(errorStructure: string[]) {
     const choppedup = errorMsg.split(': ')
     errorType = choppedup[0].trim().split('\n')[1]
     message = choppedup[1]
-    // if (errorStructure.length > 2) {
-    //   console.log(choppedup[2].split(',')[1])
-    // }
-    // console.log(choppedup)
   })
   let lines = errorStructure[0].trim().split('\n')
 
