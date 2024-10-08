@@ -1,9 +1,13 @@
 import * as packageJson from '../../../../../package.json'
 import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
-import { RemixAITab } from '@remix-ui/remix-ai'
-import React from 'react';
-import { ICompletions, IModel, RemoteInferencer, IRemoteModel } from '@remix/remix-ai-core';
+import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
+import React, { useCallback } from 'react';
+import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, HandleStreamResponse } from '@remix/remix-ai-core';
+
+type chatRequestBufferT<T> = {
+  [key in keyof T]: T[key]
+}
 
 const profile = {
   name: 'remixAI',
@@ -11,23 +15,24 @@ const profile = {
   methods: ['code_generation', 'code_completion',
     "solidity_answer", "code_explaining",
     "code_insertion", "error_explaining",
-    "initialize"],
+    "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
   kind: '',
-  // location: 'sidePanel',
+  location: 'sidePanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
   version: packageJson.version,
   maintainedBy: 'Remix'
 }
 
-export class RemixAIPlugin extends Plugin {
+export class RemixAIPlugin extends ViewPlugin {
   isOnDesktop:boolean = false
   aiIsActivated:boolean = false
   readonly remixDesktopPluginName = 'remixAID'
   remoteInferencer:RemoteInferencer = null
   isInferencing: boolean = false
+  chatRequestBuffer: chatRequestBufferT<any> = null
 
   constructor(inDesktop:boolean) {
     super(profile)
@@ -60,7 +65,6 @@ export class RemixAIPlugin extends Plugin {
       }
 
     } else {
-      // on browser
       this.remoteInferencer = new RemoteInferencer(remoteModel?.apiUrl, remoteModel?.completionUrl)
       this.remoteInferencer.event.on('onInference', () => {
         this.isInferencing = true
@@ -95,13 +99,11 @@ export class RemixAIPlugin extends Plugin {
     }
   }
 
-  async solidity_answer(prompt: string): Promise<any> {
+  async solidity_answer(prompt: string, params: IParams=GenerationParams): Promise<any> {
     if (this.isInferencing) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
-
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
 
     let result
     if (this.isOnDesktop) {
@@ -109,47 +111,40 @@ export class RemixAIPlugin extends Plugin {
     } else {
       result = await this.remoteInferencer.solidity_answer(prompt)
     }
-    if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
-    // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
+    if (result && params.terminal_output) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     return result
   }
 
-  async code_explaining(prompt: string): Promise<any> {
+  async code_explaining(prompt: string, context: string, params: IParams=GenerationParams): Promise<any> {
     if (this.isInferencing) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
-
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
-
+    
     let result
     if (this.isOnDesktop) {
-      result = await this.call(this.remixDesktopPluginName, 'code_explaining', prompt)
+      result = await this.call(this.remixDesktopPluginName, 'code_explaining', prompt, context, params)
 
     } else {
-      result = await this.remoteInferencer.code_explaining(prompt)
+      result = await this.remoteInferencer.code_explaining(prompt, context, params)
     }
-    if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
-    // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
+    if (result && params.terminal_output) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     return result
   }
 
-  async error_explaining(prompt: string): Promise<any> {
+  async error_explaining(prompt: string, context: string="", params: IParams=GenerationParams): Promise<any> {
     if (this.isInferencing) {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
-
-    this.call('terminal', 'log', { type: 'aitypewriterwarning', value: `\n\nWaiting for RemixAI answer...` })
 
     let result
     if (this.isOnDesktop) {
       result = await this.call(this.remixDesktopPluginName, 'error_explaining', prompt)
     } else {
-      result = await this.remoteInferencer.error_explaining(prompt)
+      result = await this.remoteInferencer.error_explaining(prompt, params)
     }
-    if (result) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
-    // this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI Done" })
+    if (result && params.terminal_output) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     return result
   }
 
@@ -161,9 +156,46 @@ export class RemixAIPlugin extends Plugin {
     }
   }
 
-  // render() {
-  //   return (
-  //     <RemixAITab plugin={this}></RemixAITab>
-  //   )
-  // }
+  chatPipe(fn, prompt: string, context?: string, pipeMessage?: string){
+    if (this.chatRequestBuffer == null){
+      this.chatRequestBuffer = {
+        fn_name: fn,
+        prompt: prompt,
+        context: context
+      }
+      console.log('pipe message', pipeMessage)
+      if (pipeMessage) ChatApi.composer.send(pipeMessage)
+      else {
+        if      (fn === "code_explaining")  ChatApi.composer.send("Explain the current code")
+        else if (fn === "error_explaining") ChatApi.composer.send("Explain the error")
+        else if (fn === "solidity_answer")  ChatApi.composer.send("Answer the following question")
+        else console.log("chatRequestBuffer is not empty. First process the last request.")
+      }
+    }
+    else{
+      console.log("chatRequestBuffer is not empty. First process the last request.")
+    }
+  }
+
+
+  async ProcessChatRequestBuffer(params:IParams=GenerationParams){
+    if (this.chatRequestBuffer != null){
+      const result = this[this.chatRequestBuffer.fn_name](this.chatRequestBuffer.prompt, this.chatRequestBuffer.context, params)
+      this.chatRequestBuffer = null
+      return result
+    }
+    else{
+      console.log("chatRequestBuffer is empty.")
+      return ""
+    }
+  }
+  isChatRequestPending(){
+    return this.chatRequestBuffer != null
+  }
+
+  render() {
+    return (
+      <RemixAITab plugin={this}></RemixAITab>
+    )
+  }
 }
