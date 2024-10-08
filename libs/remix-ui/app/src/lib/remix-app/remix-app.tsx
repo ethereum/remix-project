@@ -160,7 +160,6 @@ const RemixApp = (props: IRemixAppUi) => {
   const handleUserChosenType = async (type) => {
     setShowEnterDialog(false)
     localStorage.setItem('hadUsageTypeAsked', type)
-
     // Use the type to setup the UI accordingly
     switch (type) {
     case UsageTypes.Beginner: {
@@ -172,28 +171,24 @@ const RemixApp = (props: IRemixAppUi) => {
       //   await props.app.appManager.call('filePanel', 'createWorkspace', wName, 'playground')
       // }
       // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
-
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
-      _paq.push(['trackEvent', 'userEntry', 'usageType', 'beginner'])
       break
     }
     case UsageTypes.Advance: {
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'advanced'])
-      _paq.push(['trackEvent', 'userEntry', 'usageType', 'advanced'])
+      // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
       break
     }
     case UsageTypes.Prototyper: {
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'prototyper'])
-      _paq.push(['trackEvent', 'userEntry', 'usageType', 'prototyper'])
+      // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
       break
     }
     case UsageTypes.Production: {
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'production'])
-      _paq.push(['trackEvent', 'userEntry', 'usageType', 'production'])
+      // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
       break
     }
     default: throw new Error()
     }
+    _paq.push(['trackEvent', 'enterDialog', 'usageType', type])
+    _paq.push(['trackEvent', 'userEntry', 'usageType', type])
   }
 
   return (
