@@ -42,27 +42,27 @@ module.exports = {
   },
 
   // '@sources': () => sources,
-  // 'Context menu click to compile blind_auction should succeed #group1': function (browser: NightwatchBrowser) {
-  //   browser
-  //     // .click('*[data-id="treeViewLitreeViewItemblind_auction.vy"]')
-  //     // .rightClick('*[data-id="treeViewLitreeViewItemblind_auction.vy"]')
-  //     // .waitForElementPresent('[data-id="contextMenuItemvyper"]')
-  //     // .click('[data-id="contextMenuItemvyper"]')
-  //     .clickLaunchIcon('vyper')
-  //     // @ts-ignore
-  //     .frame(0)
-  //     .waitForElementVisible({
-  //       selector:'[data-id="compilation-details"]',
-  //       timeout: 120000
-  //     })
-  //     .click('[data-id="compilation-details"]')
-  //     .frameParent()
-  //     .waitForElementVisible('[data-id="copy-abi"]')
-  //     .waitForElementVisible({
-  //       selector: "//*[@class='variable-value' and contains(.,'highestBidder')]",
-  //       locateStrategy: 'xpath',
-  //     })
-  // },
+  'Context menu click to compile blind_auction should succeed #group1': function (browser: NightwatchBrowser) {
+    browser
+      // .click('*[data-id="treeViewLitreeViewItemblind_auction.vy"]')
+      // .rightClick('*[data-id="treeViewLitreeViewItemblind_auction.vy"]')
+      // .waitForElementPresent('[data-id="contextMenuItemvyper"]')
+      // .click('[data-id="contextMenuItemvyper"]')
+      .clickLaunchIcon('vyper')
+      // @ts-ignore
+      .frame(0)
+      .waitForElementVisible({
+        selector:'[data-id="compilation-details"]',
+        timeout: 120000
+      })
+      .click('[data-id="compilation-details"]')
+      .frameParent()
+      .waitForElementVisible('[data-id="copy-abi"]')
+      .waitForElementVisible({
+        selector: "//*[@class='variable-value' and contains(.,'highestBidder')]",
+        locateStrategy: 'xpath',
+      })
+  },
 
   'Compile blind_auction should success #group1': function (browser: NightwatchBrowser) {
     browser
@@ -146,32 +146,32 @@ module.exports = {
       })
   },
 
-  // 'Compile Ownable contract from snekmate #group1': function (browser: NightwatchBrowser) {
-  //   let contractAddress
-  //   browser
-  //     .frameParent()
-  //     .clickLaunchIcon('filePanel')
-  //     .switchWorkspace('vyper')
-  //     .openFile('src')
-  //     .openFile('src/snekmate')
-  //     .openFile('src/snekmate/auth')
-  //     .openFile('src/snekmate/auth/Ownable.vy')
-  //     .rightClick('*[data-id="treeViewLitreeViewItemsrc/snekmate/auth/Ownable.vy"]')
-  //     .waitForElementVisible('*[data-id="contextMenuItemvyper"]')
-  //     .click('*[data-id="contextMenuItemvyper"]')
-  //     .clickLaunchIcon('vyper')
-  //     // @ts-ignore
-  //     .frame(0)
-  //     .click('[data-id="compile"]')
-  //     .waitForElementVisible({
-  //       selector:'[data-id="compilation-details"]',
-  //       timeout: 60000
-  //     })
-  //     .click('[data-id="compilation-details"]')
-  //     .frameParent()
-  //     .waitForElementVisible('[data-id="copy-abi"]')
-  //     .end()
-  // }
+  'Compile Ownable contract from snekmate #group1': function (browser: NightwatchBrowser) {
+    let contractAddress
+    browser
+      .frameParent()
+      .clickLaunchIcon('filePanel')
+      .switchWorkspace('vyper')
+      .openFile('src')
+      .openFile('src/snekmate')
+      .openFile('src/snekmate/auth')
+      .openFile('src/snekmate/auth/Ownable.vy')
+      .rightClick('*[data-id="treeViewLitreeViewItemsrc/snekmate/auth/Ownable.vy"]')
+      .waitForElementVisible('*[data-id="contextMenuItemvyper"]')
+      .click('*[data-id="contextMenuItemvyper"]')
+      .clickLaunchIcon('vyper')
+      // @ts-ignore
+      .frame(0)
+      .click('[data-id="compile"]')
+      .waitForElementVisible({
+        selector:'[data-id="compilation-details"]',
+        timeout: 60000
+      })
+      .click('[data-id="compilation-details"]')
+      .frameParent()
+      .waitForElementVisible('[data-id="copy-abi"]')
+      .end()
+  }
 }
 
 const testContract = `
