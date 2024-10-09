@@ -11,11 +11,27 @@ export interface VyperCompilationResult {
   }
 }
 
-export interface VyperCompilationError {
+export type VyperCompilationError = {
   status: 'failed'
   column?: number
   line?: number
   message: string
+  error_type: string
+}
+
+export type VyperCompilationOutput = VyperCompilationResult | VyperCompilationError
+
+
+export type VyperCompilationResult = {
+  contractName: string
+  abi: any,
+  bytecode: any,
+  runtimeBytecode: any,
+  ir: string,
+  methodIdentifiers: any,
+  version?: string,
+  evmVersion?: string
+  optimized?: boolean
 }
 
 export type VyperCompilationResultType = {

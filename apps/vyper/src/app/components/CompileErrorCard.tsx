@@ -1,8 +1,9 @@
 import {CopyToClipboard} from '@remix-ui/clipboard'
 import Reaact from 'react'
 import { RemixClient } from '../utils'
+import { VyperCompilationError} from '../utils/types'
 
-export function CompileErrorCard(props: { output: any, plugin: RemixClient }) {
+export function CompileErrorCard(props: { output: VyperCompilationError, plugin: RemixClient }) {
   return (
     <div
       id="vyperErrorResult"
