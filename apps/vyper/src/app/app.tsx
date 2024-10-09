@@ -15,7 +15,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { Form } from 'react-bootstrap'
 import { CompileErrorCard } from './components/CompileErrorCard'
 import CustomAccordionToggle from './components/CustomAccordionToggle'
-import { VyperCompilationError, VyperCompilationResultType } from './utils/types'
+import { VyperCompilationResultWrapper, VyperCompilationErrorsWrapper } from './utils/types'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -24,13 +24,9 @@ interface AppState {
   localUrl: string
 }
 
-interface OutputMap {
-  [fileName: string]: any
-}
-
 const App = () => {
   const [contract, setContract] = useState<string>()
-  const [output, setOutput] = useState<VyperCompilationError[] | VyperCompilationResultType>(remixClient.compilerOutput)
+  const [output, setOutput] = useState<VyperCompilationErrorsWrapper | VyperCompilationResultWrapper>(remixClient.compilerOutput)
   const [state, setState] = useState<AppState>({
     status: 'idle',
     environment: 'remote',
@@ -45,7 +41,7 @@ const App = () => {
         await remixClient.loaded()
         remixClient.onFileChange((name) => {
           !name.endsWith('.vy') && remixClient.changeStatus({ key: 'none' })
-          setOutput({})
+          setOutput(null)
           setContract(name)
         })
         remixClient.onNoFileSelected(() => setContract(''))
@@ -101,16 +97,8 @@ const App = () => {
     setOutput(remixClient.compilerOutput)
   }
 
-  const startingCompilation = () => {
-    if (!spinnerIcon.current) return
-    spinnerIcon.current.setAttribute('title', 'compiling...')
-    spinnerIcon.current.classList.remove('remixui_bouncingIcon')
-    spinnerIcon.current.classList.add('remixui_spinningIcon')
-  }
-
   const [cloneCount, setCloneCount] = useState(0)
 
-  console.log((output))
   return (
     <main id="vyper-plugin">
       <section>
