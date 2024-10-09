@@ -25,43 +25,6 @@ export function normalizeContractPath(contractPath: string): string[] {
   return [folders,resultingPath, filename]
 }
 
-const buildError = (output) => {
-  if (isCompilationError(output)) {
-    const line = output.line
-    if (line) {
-      const lineColumnPos = {
-        start: { line: line - 1, column: 10 },
-        end: { line: line - 1, column: 10 }
-      }
-      // remixClient.highlight(lineColumnPos as any, _contract.name, '#e0b4b4')
-    } else {
-      const regex = output?.message?.match(/line ((\d+):(\d+))+/g)
-      const errors = output?.message?.split(/line ((\d+):(\d+))+/g) // extract error message
-      if (regex) {
-        let errorIndex = 0
-        regex.map((errorLocation) => {
-          const location = errorLocation?.replace('line ', '').split(':')
-          let message = errors[errorIndex]
-          errorIndex = errorIndex + 4
-          if (message && message?.split('\n\n').length > 0) {
-            try {
-              message = message?.split('\n\n')[message.split('\n\n').length - 1]
-            } catch (e) {}
-          }
-          if (location?.length > 0) {
-            const lineColumnPos = {
-              start: { line: parseInt(location[0]) - 1, column: 10 },
-              end: { line: parseInt(location[0]) - 1, column: 10 }
-            }
-            // remixClient.highlight(lineColumnPos as any, _contract.name, message)
-          }
-        })
-      }
-    }
-    throw new Error(output.message)
-  }
-}
-
 const compileReturnType = (output, contract): VyperCompilationResult => {
   const t: any = toStandardOutput(contract, output)
   const temp = _.merge(t['contracts'][contract])
@@ -100,32 +63,6 @@ const compileReturnType = (output, contract): VyperCompilationResult => {
   return result
 }
 
-const updatePragmaDeclaration = (content: string) => {
-  const pragmaRegex = /#\s*pragma\s+[@]*version\s+([~<>!=^]+)\s*(\d+\.\d+\.\d+)/
-  const oldPragmaRegex = /#\s*pragma\s+[@]*version\s+([\^^]+)\s*(\d+\.\d+\.\d+)/
-  const oldPragmaDeclaration = ['# pragma version ^0.2.16', '# pragma version ^0.3.10', '#pragma version ^0.2.16', '#pragma version ^0.3.10']
-  const pragmaFound = content.match(pragmaRegex)
-  const oldPragmaFound = content.match(oldPragmaRegex)
-
-  const pragma = '# pragma version ~=0.4.0'
-
-  if (oldPragmaFound) {
-    // oldPragmaDeclaration.forEach(declaration => {
-    //   content = content.replace(declaration, '# pragma version >0.3.10')
-    // })
-    return content
-  }
-  if (!pragmaFound) {
-    content = `${pragma}\n\n${content}`
-  }
-  return content
-}
-
-const fixContractContent = (content: string) => {
-  if (content.length === 0) return
-  return updatePragmaDeclaration(content)
-}
-
 /**
  * Compile the a contract
  * @param url The url of the compiler
@@ -140,13 +77,11 @@ export async function compile(url: string, contract: Contract): Promise<VyperCom
     throw new Error('Use extension .vy for Vyper.')
   }
 
-  const cleanedUpContent = fixContractContent(contract.content)
-
   let contractName = contract['name']
   const compilePackage = {
     manifest: 'ethpm/3',
     sources: {
-      [contractName] : { content : cleanedUpContent }
+      [contractName] : { content : contract.content }
     }
   }
 
