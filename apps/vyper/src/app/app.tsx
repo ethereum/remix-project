@@ -88,7 +88,7 @@ const App = () => {
   useEffect(() => {
     remixClient.eventEmitter.on('setOutput', (payload) => {
       setOutput(payload)
-    })   
+    })
 
     return () => {
       remixClient.eventEmitter.off('setOutput', (payload) => {
@@ -181,8 +181,6 @@ const App = () => {
           }
           {output && output.status === 'failed' &&
             output.errors && output.errors.map((error: VyperCompilationError, index: number) => {
-              // we need to tweak the path to not show the filesystem absolute error.
-              
               return <Renderer key={index}
                   message={extractRelativePath(error.message, contract)}
                   plugin={remixClient}
