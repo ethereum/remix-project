@@ -14,6 +14,7 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
   compilerUrl: VyperComplierAddress = 'https://vyper2.remixproject.org/'
   compilerOutput: any
   eventEmitter = new EventEmitter()
+  devMode = true
 
   constructor() {
     super()
