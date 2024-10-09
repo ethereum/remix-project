@@ -14,7 +14,6 @@ import Accordion from 'react-bootstrap/Accordion'
 import './app.css'
 import { CustomTooltip } from '@remix-ui/helper'
 import { Form } from 'react-bootstrap'
-import { CompileErrorCard } from './components/CompileErrorCard'
 import CustomAccordionToggle from './components/CustomAccordionToggle'
 import { VyperCompilationResultWrapper, VyperCompilationErrorsWrapper, VyperCompilationError } from './utils/types'
 
@@ -53,6 +52,19 @@ const App = () => {
       } catch (err) {
         console.log(err)
       }
+
+      try {
+        remixClient.call('locale' as any, 'currentLocale').then((currentLocale) => {
+          setLocale(currentLocale)
+        })        
+  
+        remixClient.on('locale' as any, 'localeChanged', (locale: any) => {
+          setLocale(locale)
+        })
+      } catch (err) {
+        console.log(err)
+      }
+
       try {
         const name = await remixClient.getContractName() // throw if no file are selected
         setContract(name)
@@ -76,16 +88,7 @@ const App = () => {
   useEffect(() => {
     remixClient.eventEmitter.on('setOutput', (payload) => {
       setOutput(payload)
-    })
-
-    remixClient.call('locale' as any, 'currentLocale').then((currentLocale) => {
-      setLocale(currentLocale)
-    })
-    
-
-    remixClient.on('locale' as any, 'localeChanged', (locale: any) => {
-      setLocale(locale)
-    })
+    })   
 
     return () => {
       remixClient.eventEmitter.off('setOutput', (payload) => {
