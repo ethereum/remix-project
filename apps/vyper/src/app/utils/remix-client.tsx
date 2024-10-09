@@ -84,7 +84,7 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
 
     try {
       // @ts-ignore
-      this.call('notification', 'toast', 'cloning Snekmate Vyper repository...')
+      this.call('notification', 'toast', 'cloning Vyper repository...')
       await this.call(
         'dgitApi',
         'clone',
