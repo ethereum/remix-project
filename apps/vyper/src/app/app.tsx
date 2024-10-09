@@ -15,6 +15,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { Form } from 'react-bootstrap'
 import { CompileErrorCard } from './components/CompileErrorCard'
 import CustomAccordionToggle from './components/CustomAccordionToggle'
+import { VyperCompilationError, VyperCompilationResultType } from './utils/types'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -29,7 +30,7 @@ interface OutputMap {
 
 const App = () => {
   const [contract, setContract] = useState<string>()
-  const [output, setOutput] = useState<any>(remixClient.compilerOutput)
+  const [output, setOutput] = useState<VyperCompilationError[] | VyperCompilationResultType>(remixClient.compilerOutput)
   const [state, setState] = useState<AppState>({
     status: 'idle',
     environment: 'remote',
@@ -109,6 +110,7 @@ const App = () => {
 
   const [cloneCount, setCloneCount] = useState(0)
 
+  console.log((output))
   return (
     <main id="vyper-plugin">
       <section>
@@ -165,15 +167,17 @@ const App = () => {
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
           <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({ ...output, [name]: update })} resetCompilerState={resetCompilerResultState} output={output} remixClient={remixClient}/>
         </div>
-
         <article id="result" className="p-2 mx-3 border-top mt-2">
-          {output && Object.keys(output).length > 0 && output.status !== 'failed' ? (
+          {output && output.status === 'success' && 
             <>
               <VyperResult output={output} plugin={remixClient} />
             </>
-          ) : output.status === 'failed' ? (
-            <CompileErrorCard output={output} plugin={remixClient} />
-          ) : null}
+          }
+          {output && output.status === 'failed' &&
+            output.errors && output.errors.map((error) => {
+              return <CompileErrorCard output={error} plugin={remixClient} />
+            })            
+          }
         </article>
       </section>
     </main>
