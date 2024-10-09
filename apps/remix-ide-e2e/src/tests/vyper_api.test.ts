@@ -114,6 +114,25 @@ module.exports = {
     }
   },
 
+  'Should lead to a compilation error #group1': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .switchWorkspace('default_workspace')
+      .addFile('test_error.vy', { content: wrongContract })
+      .clickLaunchIcon('vyper')
+      // @ts-ignore
+      .frame(0)
+      .waitForElementVisible('[data-id="compile"]')
+      .click('[data-id="compile"]')
+      .waitForElementVisible({
+        selector:'[data-id="test_error.vy"]',
+        timeout: 60000
+      })
+      .waitForElementContainsText('[data-id="test_error.vy"]', 'ERROR')
+      .waitForElementContainsText('[data-id="test_error.vy"]', 'StructureException:Unsupported syntax for module namespace')
+      .frameParent()
+  },
+
   'Compile test contract and deploy to remix VM #group1': function (browser: NightwatchBrowser) {
     let contractAddress
     browser
@@ -206,6 +225,39 @@ def _createPokemon(_name: String[32], _dna: uint256, _HP: uint256):
         wins: 0
     })
     self.totalPokemonCount += 1`
+
+const wrongContract = `
+DNA_DIGITS: constant(uint256) = 16
+DNA_MODULUS: constant(uint256) = 10 ** DNA_DIGITS
+# add HP_LIMIT
+ERROR
+struct Pokemon:
+    name: String[32]
+    dna: uint256
+    HP: uint256
+    matches: uint256
+    wins: uint256
+
+totalPokemonCount: public(uint256)
+pokemonList: HashMap[uint256, Pokemon]
+
+@pure
+@internal
+def _generateRandomDNA(_name: String[32]) -> uint256:
+    random: uint256 = convert(keccak256(_name), uint256)
+    return random % DNA_MODULUS
+# modify _createPokemon
+@internal
+def _createPokemon(_name: String[32], _dna: uint256, _HP: uint256):
+    self.pokemonList[self.totalPokemonCount] = Pokemon({
+        name: _name,
+        dna: _dna,
+        HP: _HP,
+        matches: 0,
+        wins: 0
+    })
+    self.totalPokemonCount += 1`
+
 const sources = [{
 
   'blindAuction' : { content: `
