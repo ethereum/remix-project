@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-
+import { IntlProvider } from 'react-intl'
+import { Renderer } from '@remix-ui/renderer'
 import { remixClient } from './utils'
 import { CompilationResult } from '@remixproject/plugin-api'
 
@@ -15,7 +16,7 @@ import { CustomTooltip } from '@remix-ui/helper'
 import { Form } from 'react-bootstrap'
 import { CompileErrorCard } from './components/CompileErrorCard'
 import CustomAccordionToggle from './components/CustomAccordionToggle'
-import { VyperCompilationResultWrapper, VyperCompilationErrorsWrapper } from './utils/types'
+import { VyperCompilationResultWrapper, VyperCompilationErrorsWrapper, VyperCompilationError } from './utils/types'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -25,6 +26,10 @@ interface AppState {
 }
 
 const App = () => {
+  const [locale, setLocale] = useState<{code: string; messages: any}>({
+    code: 'en',
+    messages: null
+  })
   const [contract, setContract] = useState<string>()
   const [output, setOutput] = useState<VyperCompilationErrorsWrapper | VyperCompilationResultWrapper>(remixClient.compilerOutput)
   const [state, setState] = useState<AppState>({
@@ -73,6 +78,15 @@ const App = () => {
       setOutput(payload)
     })
 
+    remixClient.call('locale' as any, 'currentLocale').then((currentLocale) => {
+      setLocale(currentLocale)
+    })
+    
+
+    remixClient.on('locale' as any, 'localeChanged', (locale: any) => {
+      setLocale(locale)
+    })
+
     return () => {
       remixClient.eventEmitter.off('setOutput', (payload) => {
         setOutput(payload)
@@ -100,6 +114,7 @@ const App = () => {
   const [cloneCount, setCloneCount] = useState(0)
 
   return (
+    <IntlProvider locale={locale.code} messages={locale.messages}>
     <main id="vyper-plugin">
       <section>
         <div className="px-3 pt-3 mb-3 w-100">
@@ -162,13 +177,25 @@ const App = () => {
             </>
           }
           {output && output.status === 'failed' &&
-            output.errors && output.errors.map((error) => {
-              return <CompileErrorCard output={error} plugin={remixClient} />
+            output.errors && output.errors.map((error: VyperCompilationError, index: number) => {
+              return <Renderer key={index}
+                  message={error.message}
+                  plugin={remixClient}
+                  opt={{
+                    useSpan: false,
+                    type: 'error',
+                    errorType: error.error_type,
+                    errCol: error.column,
+                    errLine: error.line - 1,
+                    errFile: contract
+                  }}
+                />
             })            
           }
         </article>
       </section>
     </main>
+    </IntlProvider>
   )
 }
 
