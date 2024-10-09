@@ -706,6 +706,14 @@ export function Workspace() {
     }
   }
 
+  const signTypedData = async (path: string) => {
+    try {
+      global.dispatchSignTypedData(path)
+    } catch (error) {
+      global.toast(intl.formatMessage({ id: 'filePanel.signTypedDataError' }))
+    }
+  }
+
   const emitContextMenuEvent = (cmd: customAction) => {
     try {
       global.dispatchEmitContextMenuEvent(cmd)
@@ -1186,6 +1194,7 @@ export function Workspace() {
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
                   dispatchRunScript={global.dispatchRunScript}
+                  dispatchSignTypedData={global.dispatchSignTypedData}
                   dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
                   dispatchHandleClickFile={global.dispatchHandleClickFile}
                   dispatchSetFocusElement={global.dispatchSetFocusElement}
@@ -1263,6 +1272,7 @@ export function Workspace() {
                   dispatchCopyFolder={global.dispatchCopyFolder}
                   dispatchPublishToGist={global.dispatchPublishToGist}
                   dispatchRunScript={global.dispatchRunScript}
+                  dispatchSignTypedData={global.dispatchSignTypedData} //
                   dispatchEmitContextMenuEvent={global.dispatchEmitContextMenuEvent}
                   dispatchHandleClickFile={global.dispatchHandleClickFile}
                   dispatchSetFocusElement={global.dispatchSetFocusElement}
@@ -1437,6 +1447,7 @@ export function Workspace() {
           deletePath={deletePath}
           renamePath={editModeOn}
           runScript={runScript}
+          signTypedData={signTypedData}
           copy={handleCopyClick}
           paste={handlePasteClick}
           copyFileName={handleCopyFileNameClick}

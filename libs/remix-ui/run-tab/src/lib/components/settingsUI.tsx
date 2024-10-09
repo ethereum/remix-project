@@ -15,6 +15,7 @@ export function SettingsUI(props: SettingsProps) {
       <EnvironmentUI selectedEnv={props.selectExEnv} providers={props.providers} setExecutionContext={props.setExecutionContext} />
       <NetworkUI networkName={props.networkName} />
       <AccountUI
+        addFile={props.addFile}
         personalMode={props.personalMode}
         selectExEnv={props.selectExEnv}
         accounts={props.accounts}

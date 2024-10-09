@@ -95,3 +95,8 @@ export const signMessageWithAddress = (plugin: RunTab, dispatch: React.Dispatch<
     dispatch(displayNotification('Signed Message', modalContent(msgHash, signedData), 'OK', null, () => {}, null))
   })
 }
+
+export const addFileInternal = async (plugin: RunTab, path: string, content: string) => {
+  const file = await plugin.call('fileManager', 'writeFileNoRewrite', path, content)
+  await plugin.call('fileManager', 'open', file.newPath)
+}
