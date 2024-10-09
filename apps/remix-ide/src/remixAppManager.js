@@ -82,7 +82,7 @@ let requiredModules = [ // services + layout views + system views
   'dgit',
   'pinnedPanel',
   'pluginStateLogger',
-  'remixGuide',
+  //'remixGuide',
   'environmentExplorer',
   'templateSelection',
   'matomo',
