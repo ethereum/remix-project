@@ -135,9 +135,13 @@ export class RemixGuidePlugin extends ViewPlugin {
                     this.showVideo = true
                     this.videoID = cell.expandViewElement.videoID
                     this.renderComponent()
+                    _paq.push(['trackEvent', 'remixGuide', 'playGuide', cell.title])
                   }}
                 >
-                  <img src={"//img.youtube.com/vi/" + cell.expandViewElement.videoID + "/0.jpg"} style={{ height: '100px', width: 'fit-content' }}></img>
+                  <img
+                    src={"//img.youtube.com/vi/" + cell.expandViewElement.videoID + "/0.jpg"}
+                    style={{ height: '100px', width: 'fit-content', cursor: 'pointer' }}
+                  ></img>
                 </RemixUIGridCell>
               })}
             </RemixUIGridSection>
