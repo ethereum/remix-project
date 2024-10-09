@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { IntlProvider } from 'react-intl'
 import { Renderer } from '@remix-ui/renderer'
-import { remixClient } from './utils'
+import { remixClient, extractRelativePath } from './utils'
 import { CompilationResult } from '@remixproject/plugin-api'
 
 // Components
@@ -173,7 +173,7 @@ const App = () => {
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
           <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({ ...output, [name]: update })} resetCompilerState={resetCompilerResultState} output={output} remixClient={remixClient}/>
         </div>
-        <article id="result" className="px-3 p-2 mx-3 border-top mt-2">
+        <article id="result" className="px-3 p-2 mx-3 border-top mt-2 vyper-errorBlobs">
           {output && output.status === 'success' && 
             <>
               <VyperResult output={output} plugin={remixClient} />
@@ -181,8 +181,10 @@ const App = () => {
           }
           {output && output.status === 'failed' &&
             output.errors && output.errors.map((error: VyperCompilationError, index: number) => {
+              // we need to tweak the path to not show the filesystem absolute error.
+              
               return <Renderer key={index}
-                  message={error.message}
+                  message={extractRelativePath(error.message, contract)}
                   plugin={remixClient}
                   opt={{
                     useSpan: false,
