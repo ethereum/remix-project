@@ -173,7 +173,7 @@ const App = () => {
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
           <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({ ...output, [name]: update })} resetCompilerState={resetCompilerResultState} output={output} remixClient={remixClient}/>
         </div>
-        <article id="result" className="p-2 mx-3 border-top mt-2">
+        <article id="result" className="px-3 p-2 mx-3 border-top mt-2">
           {output && output.status === 'success' && 
             <>
               <VyperResult output={output} plugin={remixClient} />
