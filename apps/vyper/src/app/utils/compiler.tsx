@@ -2,7 +2,7 @@ import { ABIDescription } from '@remixproject/plugin-api'
 import axios from 'axios'
 import { remixClient } from './remix-client'
 import _ from 'lodash'
-import { VyperCompilationError , VyperCompilationOutput} from './types'
+import { VyperCompilationError , VyperCompilationOutput, VyperCompilationResult } from './types'
 
 export interface Contract {
   name: string
@@ -62,7 +62,7 @@ const buildError = (output) => {
   }
 }
 
-const compileReturnType = (output, contract) => {
+const compileReturnType = (output, contract): VyperCompilationResult => {
   const t: any = toStandardOutput(contract, output)
   const temp = _.merge(t['contracts'][contract])
   const normal = normalizeContractPath(contract)[2]
