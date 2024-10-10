@@ -1,0 +1,10 @@
+{
+  "panel.author": "著者",
+  "panel.maintainedBy": "メインテナー",
+  "panel.documentation": "ドキュメント",
+  "panel.description": "説明",
+  "panel.maintainedByRemix": "メインテナー: Remix",
+  "panel.pluginInfo": "プラグイン情報",
+  "panel.linkToDoc": "ドキュメントへのリンク",
+  "panel.makeAnissue": "イシューの作成"
+}
