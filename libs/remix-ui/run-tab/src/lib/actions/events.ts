@@ -38,7 +38,6 @@ export const setupEvents = (plugin: RunTab) => {
   })
 
   plugin.blockchain.event.register('contextChanged', async (context) => {
-    console.log('contextChanged')
     dispatch(resetProxyDeployments())
     if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
     if (context !== 'walletconnect') {
@@ -54,7 +53,6 @@ export const setupEvents = (plugin: RunTab) => {
   })
 
   plugin.blockchain.event.register('networkStatus', async ({ error, network }) => {
-    console.log('networkStatus')
     if (error) {
       const netUI = 'can\'t detect network'
       setNetworkNameFromProvider(dispatch, netUI)
