@@ -1,13 +1,13 @@
 {
-  "permissionHandler.allPermissionsReset": "All permisssions have been reset.",
-  "permissionHandler.rememberText": "has changed and",
-  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} would like to access to \"{method}\" of \"{to}\"`",
-  "permissionHandler.description": "Description",
-  "permissionHandler.noDescriptionProvided": "No description Provided",
-  "permissionHandler.makeSureYouTrustThisPlugin": "Make sure you trust this plugin before processing this call. If you choose to remember the choice for this specific call, the value will be kept only for the current session.",
-  "permissionHandler.rememberThisChoice": "Remember this choice",
-  "permissionHandler.resetAllPermissions": "Reset all Permissions",
-  "permissionHandler.permissionNeededFor": "Permission needed for {to}",
-  "permissionHandler.accept": "Accept",
-  "permissionHandler.decline": "Decline"
+  "permissionHandler.allPermissionsReset": "Todos los permisos se han restablecido.",
+  "permissionHandler.rememberText": "ha cambiado y",
+  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} desea acceder a \"{method}\" de \"{to}\"`",
+  "permissionHandler.description": "Descripción",
+  "permissionHandler.noDescriptionProvided": "No hay descripción proporcionada",
+  "permissionHandler.makeSureYouTrustThisPlugin": "Asegúrese de confiar en este complemento antes de procesar esta llamada. Si decide recordar dicha opción para esta llamada específica, el valor se mantendrá sólo para la sesión actual.",
+  "permissionHandler.rememberThisChoice": "Recordar esta elección",
+  "permissionHandler.resetAllPermissions": "Restablecer todos los permisos",
+  "permissionHandler.permissionNeededFor": "Permiso requerido para {to}",
+  "permissionHandler.accept": "Aceptar",
+  "permissionHandler.decline": "Rechazar"
 }
