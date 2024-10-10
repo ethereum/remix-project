@@ -1,15 +1,15 @@
 {
-  "circuit.compiler": "编译器",
-  "circuit.autoCompile": "自动编译",
-  "circuit.hideWarnings": "隐藏警告",
-  "circuit.advancedConfigurations": "高级配置",
-  "circuit.compilerConfiguration": "编译器配置",
-  "circuit.prime": "素数",
-  "circuit.useConfigurationFile": "使用配置文件",
-  "circuit.compile": "编译",
-  "circuit.noFileSelected": "未选中文件",
-  "circuit.generateR1cs": "生成 R1CS",
-  "circuit.computeWitness": "计算见证",
-  "circuit.signalInput": "信号输入",
-  "circuit.compute": "计算"
+  "circuit.compiler": "編譯器",
+  "circuit.autoCompile": "自動編譯",
+  "circuit.hideWarnings": "隱藏警告",
+  "circuit.advancedConfigurations": "進階設定",
+  "circuit.compilerConfiguration": "編譯器設定",
+  "circuit.prime": "Prime",
+  "circuit.useConfigurationFile": "使用設定檔",
+  "circuit.compile": "編譯",
+  "circuit.noFileSelected": "沒有選擇檔案",
+  "circuit.generateR1cs": "Generate R1CS",
+  "circuit.computeWitness": "Compute Witness",
+  "circuit.signalInput": "Signal Input",
+  "circuit.compute": "Compute"
 }
