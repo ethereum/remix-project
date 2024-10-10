@@ -27,9 +27,9 @@ export const Renderer = ({ message, opt, plugin }: RendererProps) => {
     useSpan: false,
     type: '',
     errorType: '',
-    errCol: undefined,
-    errLine: undefined,
-    errFile: undefined
+    errCol: null,
+    errLine: null,
+    errFile: null
   })
   const [classList, setClassList] = useState(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
   const [close, setClose] = useState(false)
@@ -50,10 +50,9 @@ export const Renderer = ({ message, opt, plugin }: RendererProps) => {
 
     if (!opt.errLine) {
       const positionDetails = helper.getPositionDetails(text)
-
-      opt.errLine = positionDetails.errLine as number
-      opt.errCol = positionDetails.errCol as number
-      opt.errFile = positionDetails.errFile ? (positionDetails.errFile as string).trim() : ''
+      opt.errLine = !opt.errLine ? positionDetails.errLine as number : opt.errLine
+      opt.errCol = !opt.errCol ? positionDetails.errCol as number : opt.errCol
+      opt.errFile = !opt.errFile ? (positionDetails.errFile ? (positionDetails.errFile as string).trim() : '') : opt.errFile
     }
 
     setMessageText(text)
@@ -123,7 +122,7 @@ export const Renderer = ({ message, opt, plugin }: RendererProps) => {
             </span>
             <span
               className="button border text-ai btn-sm"
-              onClick={() => { askGtp() }}
+              onClick={(event) => { event.preventDefault(); askGtp() }}
               style={{ borderColor: "var(--ai)" }}
             >
               Ask RemixAI
