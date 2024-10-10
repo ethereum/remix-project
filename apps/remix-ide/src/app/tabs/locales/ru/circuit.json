@@ -1,0 +1,15 @@
+{
+  "circuit.compiler": "Компилятор",
+  "circuit.autoCompile": "Автокомпиляция",
+  "circuit.hideWarnings": "Скрыть предупреждения",
+  "circuit.advancedConfigurations": "Расширенные настройки",
+  "circuit.compilerConfiguration": "Настройки компилятора",
+  "circuit.prime": "Изначально",
+  "circuit.useConfigurationFile": "Использовать файл настроек",
+  "circuit.compile": "Скомпилировать",
+  "circuit.noFileSelected": "нет выбранных файлов",
+  "circuit.generateR1cs": "Сгенерировать R1CS",
+  "circuit.computeWitness": "Вычислить Witness",
+  "circuit.signalInput": "Сигнал ввода",
+  "circuit.compute": "Вычислить"
+}
