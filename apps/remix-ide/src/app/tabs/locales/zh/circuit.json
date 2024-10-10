@@ -1,0 +1,15 @@
+{
+  "circuit.compiler": "编译器",
+  "circuit.autoCompile": "自动编译",
+  "circuit.hideWarnings": "隐藏警告",
+  "circuit.advancedConfigurations": "高级配置",
+  "circuit.compilerConfiguration": "编译器配置",
+  "circuit.prime": "素数",
+  "circuit.useConfigurationFile": "使用配置文件",
+  "circuit.compile": "编译",
+  "circuit.noFileSelected": "未选中文件",
+  "circuit.generateR1cs": "生成 R1CS",
+  "circuit.computeWitness": "计算见证",
+  "circuit.signalInput": "信号输入",
+  "circuit.compute": "计算"
+}
