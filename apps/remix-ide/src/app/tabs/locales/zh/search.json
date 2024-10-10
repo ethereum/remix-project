@@ -10,5 +10,15 @@
   "search.useRegularExpression": "使用正则表达式",
   "search.replaceWithoutConfirmation": "替换无需确认",
   "search.filesToInclude": "文件包含",
-  "search.filesToExclude": "文件排除"
+  "search.filesToExclude": "文件排除",
+  "search.toggleReplace": "展开替换",
+  "search.replaceInFiles": "在文件中替换",
+  "search.stop": "停止",
+  "search.undoChanges": "撤销 {path} 的修改",
+  "search.confirmreplaceMsg": "您确定要将 {filename} 中的 \"{find}\" 替换为 \"{replace}\" 吗？",
+  "search.yes": "是",
+  "search.no": "否",
+  "search.loading": "加载中",
+  "search.text1": "显示 {fileCount} 个文件中的 {count} 个结果",
+  "search.text2": "结果太多，无法显示...{br}请缩小搜索范围。"
 }
