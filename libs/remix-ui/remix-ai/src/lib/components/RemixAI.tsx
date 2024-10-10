@@ -7,7 +7,7 @@ export const RemixAITab = (props) => {
   const plugin = props.plugin
   return (
     <>
-      <div id="remixAITab pr-4 px-2 pb-4">
+      <div id="remixAITab" className="px-2 pb-4">
         <Default plugin={plugin}></Default>
       </div>
     </>

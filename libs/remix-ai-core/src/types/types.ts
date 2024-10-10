@@ -122,4 +122,7 @@ export class JsonStreamParser {
 
     return results;
   }
+  safeJsonParseSingle<T>(chunk: string): T[] | null {
+    return JSON.parse(this.buffer);
+  }
 }
