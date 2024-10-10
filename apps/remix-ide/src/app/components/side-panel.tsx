@@ -70,6 +70,7 @@ export class SidePanel extends AbstractPanel {
   }
 
   async pinView (profile) {
+    if (typeof profile === 'string') profile = this.plugins[profile]
     await this.call('pinnedPanel', 'pinView', profile, this.plugins[profile.name].view)
     if (this.plugins[profile.name].active) this.call('menuicons', 'select', 'filePanel')
     super.remove(profile.name)
