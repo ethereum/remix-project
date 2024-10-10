@@ -1,13 +1,13 @@
 {
-  "permissionHandler.allPermissionsReset": "已重置所有权限。",
-  "permissionHandler.rememberText": "已变更且",
-  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText}要访问 \"{to}\" 的 \"{method}\"",
-  "permissionHandler.description": "描述",
-  "permissionHandler.noDescriptionProvided": "没有提供描述",
-  "permissionHandler.makeSureYouTrustThisPlugin": "在处理此调用之前，请确保您信任此插件。",
-  "permissionHandler.rememberThisChoice": "记住此选项",
-  "permissionHandler.resetAllPermissions": "重置所有权限",
-  "permissionHandler.permissionNeededFor": "需要 {to} 的权限",
-  "permissionHandler.accept": "接受",
-  "permissionHandler.decline": "拒绝"
+  "permissionHandler.allPermissionsReset": "All permisssions have been reset.",
+  "permissionHandler.rememberText": "has changed and",
+  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} would like to access to \"{method}\" of \"{to}\"`",
+  "permissionHandler.description": "Description",
+  "permissionHandler.noDescriptionProvided": "No description Provided",
+  "permissionHandler.makeSureYouTrustThisPlugin": "Make sure you trust this plugin before processing this call. If you choose to remember the choice for this specific call, the value will be kept only for the current session.",
+  "permissionHandler.rememberThisChoice": "Remember this choice",
+  "permissionHandler.resetAllPermissions": "Reset all Permissions",
+  "permissionHandler.permissionNeededFor": "Permission needed for {to}",
+  "permissionHandler.accept": "Accept",
+  "permissionHandler.decline": "Decline"
 }
