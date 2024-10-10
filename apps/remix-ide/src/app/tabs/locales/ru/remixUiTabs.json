@@ -1,0 +1,7 @@
+{
+  "remixUiTabs.tooltipText1": "Запуск скрипта (CTRL + SHIFT + S)",
+  "remixUiTabs.tooltipText2": "Компилировать CTRL + S",
+  "remixUiTabs.tooltipText3": "Выберите файл c расширением .sol или .yul для компиляции или файл .ts или .js для запуска",
+  "remixUiTabs.zoomOut": "Уменьшить",
+  "remixUiTabs.zoomIn": "Увеличить"
+}
