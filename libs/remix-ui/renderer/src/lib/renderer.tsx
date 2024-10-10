@@ -27,9 +27,9 @@ export const Renderer = ({ message, opt, plugin }: RendererProps) => {
     useSpan: false,
     type: '',
     errorType: '',
-    errCol: -1,
-    errLine: -1,
-    errFile: ''
+    errCol: undefined,
+    errLine: undefined,
+    errFile: undefined
   })
   const [classList, setClassList] = useState(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
   const [close, setClose] = useState(false)
