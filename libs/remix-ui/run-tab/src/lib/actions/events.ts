@@ -38,6 +38,7 @@ export const setupEvents = (plugin: RunTab) => {
   })
 
   plugin.blockchain.event.register('contextChanged', async (context) => {
+    console.log('contextChanged')
     dispatch(resetProxyDeployments())
     if (!context.startsWith('vm')) getNetworkProxyAddresses(plugin, dispatch)
     if (context !== 'walletconnect') {
@@ -45,12 +46,15 @@ export const setupEvents = (plugin: RunTab) => {
     }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
-    // 'contextChanged' is triggered on workspace change
-    // Load pinned contracts for updated workspace
+    // 'contextChanged' & 'networkStatus' both are triggered on workspace & network change
+    // There is chance that pinned contracts state is overrided by othe event
+    // We load pinned contracts for VM environment in this event
+    // and for other environments in 'networkStatus' event
     if (context.startsWith('vm')) await loadPinnedContracts(plugin, dispatch, context)
   })
 
   plugin.blockchain.event.register('networkStatus', async ({ error, network }) => {
+    console.log('networkStatus')
     if (error) {
       const netUI = 'can\'t detect network'
       setNetworkNameFromProvider(dispatch, netUI)
