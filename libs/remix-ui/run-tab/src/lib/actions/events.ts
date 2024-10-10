@@ -45,6 +45,9 @@ export const setupEvents = (plugin: RunTab) => {
     }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
+    // 'contextChanged' is triggered on workspace change
+    // Load pinned contracts for updated workspace
+    if (context.startsWith('vm')) await loadPinnedContracts(plugin, dispatch, context)
   })
 
   plugin.blockchain.event.register('networkStatus', async ({ error, network }) => {
@@ -62,9 +65,9 @@ export const setupEvents = (plugin: RunTab) => {
     setPinnedChainId(dispatch, pinnedChainId)
 
     // Check if provider is changed or network is changed for same provider e.g; Metamask
-    if (currentNetwork.provider !== networkProvider() || (!isVM && currentNetwork.chainId !== network.id)) {
+    if (!isVM && (currentNetwork.provider !== networkProvider() || currentNetwork.chainId !== network.id)) {
       currentNetwork.provider = networkProvider()
-      if (!isVM) currentNetwork.chainId = network.id
+      currentNetwork.chainId = network.id
       await loadPinnedContracts(plugin, dispatch, pinnedChainId)
     }
   })
