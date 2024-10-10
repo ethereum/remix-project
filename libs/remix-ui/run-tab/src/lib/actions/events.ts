@@ -65,9 +65,9 @@ export const setupEvents = (plugin: RunTab) => {
     setPinnedChainId(dispatch, pinnedChainId)
 
     // Check if provider is changed or network is changed for same provider e.g; Metamask
-    if (!isVM && (currentNetwork.provider !== networkProvider() || currentNetwork.chainId !== network.id)) {
+    if (currentNetwork.provider !== networkProvider() || (!isVM && currentNetwork.chainId !== network.id)) {
       currentNetwork.provider = networkProvider()
-      currentNetwork.chainId = network.id
+      if (!isVM) currentNetwork.chainId = network.id
       await loadPinnedContracts(plugin, dispatch, pinnedChainId)
     }
   })
