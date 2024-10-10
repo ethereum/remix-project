@@ -404,8 +404,12 @@ export class InferenceManager implements ICompletions {
         }
         , responseType: 'stream' });
 
-      const userPrompt = payload[Object.keys(payload)[0]]
+      const userPrompt = payload.prompt
       let resultText = ""
+      if (payload.return_stream_response) {
+        return response
+      }
+      
       response.data.on('data', (chunk: Buffer) => {
         try {
           const parsedData = JSON.parse(chunk.toString());

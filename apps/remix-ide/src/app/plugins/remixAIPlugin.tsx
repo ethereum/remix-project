@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
 import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
 import React, { useCallback } from 'react';
-import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, HandleStreamResponse } from '@remix/remix-ai-core';
+import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent} from '@remix/remix-ai-core';
 
 type chatRequestBufferT<T> = {
   [key in keyof T]: T[key]
@@ -33,11 +33,12 @@ export class RemixAIPlugin extends ViewPlugin {
   remoteInferencer:RemoteInferencer = null
   isInferencing: boolean = false
   chatRequestBuffer: chatRequestBufferT<any> = null
+  agent: CodeExplainAgent
 
   constructor(inDesktop:boolean) {
     super(profile)
     this.isOnDesktop = inDesktop
-
+    this.agent = new CodeExplainAgent(this)
     // user machine dont use ressource for remote inferencing
   }
 
@@ -113,11 +114,12 @@ export class RemixAIPlugin extends ViewPlugin {
       return
     }
 
+    const newPrompt = await this.agent.chatCommand(prompt)
     let result
     if (this.isOnDesktop) {
-      result = await this.call(this.remixDesktopPluginName, 'solidity_answer', prompt)
+      result = await this.call(this.remixDesktopPluginName, 'solidity_answer', newPrompt)
     } else {
-      result = await this.remoteInferencer.solidity_answer(prompt)
+      result = await this.remoteInferencer.solidity_answer(newPrompt)
     }
     if (result && params.terminal_output) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
     return result
@@ -171,7 +173,6 @@ export class RemixAIPlugin extends ViewPlugin {
         prompt: prompt,
         context: context
       }
-      console.log('pipe message', pipeMessage)
       if (pipeMessage) ChatApi.composer.send(pipeMessage)
       else {
         if      (fn === "code_explaining")  ChatApi.composer.send("Explain the current code")
