@@ -1,0 +1,10 @@
+{
+  "panel.author": "Author",
+  "panel.maintainedBy": "Maintained By",
+  "panel.documentation": "Documentation",
+  "panel.description": "Description",
+  "panel.maintainedByRemix": "Maintained by Remix",
+  "panel.pluginInfo": "Plugin info",
+  "panel.linkToDoc": "Link to documentation",
+  "panel.makeAnissue": "Make an issue"
+}
