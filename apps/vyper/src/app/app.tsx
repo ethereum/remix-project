@@ -189,7 +189,7 @@ const App = () => {
                     type: 'error',
                     errorType: error.error_type,
                     errCol: error.column,
-                    errLine: error.line - 1,
+                    errLine: error.line ? error.line - 1 : null,
                     errFile: contract
                   }}
                 />
