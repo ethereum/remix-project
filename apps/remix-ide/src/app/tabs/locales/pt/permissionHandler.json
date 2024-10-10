@@ -1,0 +1,13 @@
+{
+  "permissionHandler.allPermissionsReset": "All permisssions have been reset.",
+  "permissionHandler.rememberText": "has changed and",
+  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} would like to access to \"{method}\" of \"{to}\"`",
+  "permissionHandler.description": "Description",
+  "permissionHandler.noDescriptionProvided": "No description Provided",
+  "permissionHandler.makeSureYouTrustThisPlugin": "Make sure you trust this plugin before processing this call. If you choose to remember the choice for this specific call, the value will be kept only for the current session.",
+  "permissionHandler.rememberThisChoice": "Remember this choice",
+  "permissionHandler.resetAllPermissions": "Reset all Permissions",
+  "permissionHandler.permissionNeededFor": "Permission needed for {to}",
+  "permissionHandler.accept": "Accept",
+  "permissionHandler.decline": "Decline"
+}
