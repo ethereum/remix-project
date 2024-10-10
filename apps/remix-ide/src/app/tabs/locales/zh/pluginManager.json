@@ -19,6 +19,10 @@
   "pluginManager.localForm.sidePanel": "侧面板",
   "pluginManager.localForm.mainPanel": "主面板",
   "pluginManager.localForm.none": "无",
+  "pluginManager.localForm.methods": "插件方法",
+  "pluginManager.localForm.pluginNames": "插件名称",
+  "pluginManager.localForm.ok": "确认",
+  "pluginManager.localForm.cancel": "取消",
   "pluginManager.Permissions": "权限",
   "pluginManager.permissions": "权限",
   "pluginManager.pluginManagerPermissions": "插件管理权限",
@@ -27,5 +31,13 @@
   "pluginManager.allow": "允许",
   "pluginManager.toCall": "调用",
   "pluginManager.ok": "确认",
-  "pluginManager.cancel": "取消"
+  "pluginManager.cancel": "取消",
+  "pluginManager.maintainedByRemix": "由 Remix 维护",
+  "pluginManager.linkToDoc": "文档链接",
+  "pluginManager.versionAlpha": "Alpha 版",
+  "pluginManager.versionBeta": "Beta 版",
+  "pluginManager.deactivatePlugin": "停用 {pluginName}",
+  "pluginManager.activatePlugin": "启用 {pluginName}",
+  "pluginManager.search": "搜索",
+  "pluginManager.managePluginsPermissions": "管理插件权限"
 }
