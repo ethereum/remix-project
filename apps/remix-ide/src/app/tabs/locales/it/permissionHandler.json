@@ -1,0 +1,13 @@
+{
+  "permissionHandler.allPermissionsReset": "Tutti i permessi sono stati resettati.",
+  "permissionHandler.rememberText": "è cambiato e",
+  "permissionHandler.permissionHandlerMessage": "\"{from}\" {rememberText} vorrebbe accedere a \"{method}\" di \"{to}\"`",
+  "permissionHandler.description": "Descrizione",
+  "permissionHandler.noDescriptionProvided": "Nessuna descrizione Fornita",
+  "permissionHandler.makeSureYouTrustThisPlugin": "Assicurati di fidarti in questo plugin prima di elaborare questa chiamata. Se si sceglie di ricordare la scelta per questa specifica chiamata, il valore sarà mantenuto solo per la sessione corrente.",
+  "permissionHandler.rememberThisChoice": "Ricorda questa scelta",
+  "permissionHandler.resetAllPermissions": "Resetta tutti i Permessi",
+  "permissionHandler.permissionNeededFor": "Permesso necessario per {to}",
+  "permissionHandler.accept": "Accetta",
+  "permissionHandler.decline": "Rifiuta"
+}
