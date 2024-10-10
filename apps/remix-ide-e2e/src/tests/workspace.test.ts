@@ -121,6 +121,7 @@ module.exports = {
       .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
       .modalFooterOKClick('TemplatesSelection')
       .pause(100)
+      .currentWorkspaceIs('workspace_name')
       .waitForElementPresent('*[data-id="treeViewUltreeViewMenu"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem.prettierrc.json"]')
       .execute(function () {
