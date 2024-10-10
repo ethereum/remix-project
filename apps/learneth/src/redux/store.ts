@@ -46,19 +46,20 @@ function watchEffects(model: ModelType): ForkEffect {
   return fork(function* () {
     for (const key in model.effects) {
       const effect = model.effects[key]
-      yield takeEvery(`${model.namespace}/${key}`, function* (action: PayloadAction) {
+      yield takeEvery(`${model.namespace}/${key}`, function* ({ callback, ...action }: {type: string; payload: any; callback?: any}) {
         yield put({
           type: 'loading/save',
           payload: {
             [`${model.namespace}/${key}`]: true,
           },
         })
-        yield effect(action, {
+        const result = yield effect(action, {
           call,
           put,
           delay,
           select,
         })
+        callback && callback(result)
         yield put({
           type: 'loading/save',
           payload: {
@@ -82,7 +83,13 @@ const configureAppStore = (initialState = {}) => {
 
   const store = configureStore({
     reducer: rootReducer,
-    middleware: (gDM) => gDM().concat([...middleware]),
+    middleware: (gDM) =>
+      gDM({
+        serializableCheck: {
+          // Ignore these field paths in all actions
+          ignoredActionPaths: ['callback'],
+        },
+      }).concat([...middleware]),
     preloadedState: initialState,
     devTools: process.env.NODE_ENV !== 'production',
   })
