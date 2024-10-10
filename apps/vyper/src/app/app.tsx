@@ -184,6 +184,7 @@ const App = () => {
               return <Renderer key={index}
                   message={extractRelativePath(error.message, contract)}
                   plugin={remixClient}
+                  context='vyper'
                   opt={{
                     useSpan: false,
                     type: 'error',

@@ -9,6 +9,7 @@ interface RendererProps {
   message: any
   opt?: RendererOptions
   plugin: any
+  context?: string
 }
 
 type RendererOptions = {
@@ -20,7 +21,7 @@ type RendererOptions = {
   errFile?: string
 }
 
-export const Renderer = ({ message, opt, plugin }: RendererProps) => {
+export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
   const intl = useIntl()
   const [messageText, setMessageText] = useState(null)
   const [editorOptions, setEditorOptions] = useState<RendererOptions>({
@@ -88,7 +89,7 @@ export const Renderer = ({ message, opt, plugin }: RendererProps) => {
   const askGtp = async () => {
     try {
       const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
-      const message = intl.formatMessage({ id: 'solidity.openaigptMessage' }, { content, messageText })
+      const message = intl.formatMessage({ id: `${context || 'solidity' }.openaigptMessage` }, { content, messageText })
       await plugin.call('remixAI', 'error_explaining', message)
       _paq.push(['trackEvent', 'ai', 'remixAI', 'error_explaining_SolidityError'])
     } catch (err) {
