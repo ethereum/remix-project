@@ -1,0 +1,15 @@
+{
+  "circuit.compiler": "コンパイラ",
+  "circuit.autoCompile": "自動コンパイル",
+  "circuit.hideWarnings": "警告を隠す",
+  "circuit.advancedConfigurations": "高度な設定",
+  "circuit.compilerConfiguration": "コンパイラ設定",
+  "circuit.prime": "プライム",
+  "circuit.useConfigurationFile": "設定ファイルを使用",
+  "circuit.compile": "コンパイル",
+  "circuit.noFileSelected": "ファイルが選択されていません",
+  "circuit.generateR1cs": "R1CSを生成",
+  "circuit.computeWitness": "Witnessを計算",
+  "circuit.signalInput": "シグナル入力",
+  "circuit.compute": "計算"
+}
