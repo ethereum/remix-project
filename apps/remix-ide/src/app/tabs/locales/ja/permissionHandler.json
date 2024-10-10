@@ -1,0 +1,13 @@
+{
+  "permissionHandler.allPermissionsReset": "すべてのパーミッションがリセットされました。",
+  "permissionHandler.rememberText": "は変更され",
+  "permissionHandler.permissionHandlerMessage": "「{from}」 {rememberText} が「{to}」の「{method}」にアクセスしようとしています",
+  "permissionHandler.description": "説明",
+  "permissionHandler.noDescriptionProvided": "説明無し",
+  "permissionHandler.makeSureYouTrustThisPlugin": "この呼び出しを処理する前に、このプラグインが信頼できるかを確かめてください。この特定の呼び出しを選択したこと記憶することを選んだ場合、この値は現在のセッションにおいてのみ保持されます。",
+  "permissionHandler.rememberThisChoice": "この選択を記憶",
+  "permissionHandler.resetAllPermissions": "すべてのパーミッションをリセット",
+  "permissionHandler.permissionNeededFor": " {to} のパーミッションが必要です",
+  "permissionHandler.accept": "承認",
+  "permissionHandler.decline": "拒否"
+}
