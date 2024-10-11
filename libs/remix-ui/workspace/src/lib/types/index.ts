@@ -159,7 +159,6 @@ export interface FileExplorerProps {
     dragStatus: (status: boolean) => void
     importFromIpfs: any
     importFromHttps: any
-    connectToLocalFileSystem?: any
     handleGitInit?: () => Promise<void>
     handleMultiCopies: any
     feTarget: { key: string, type: 'file' | 'folder' }[]
