@@ -210,6 +210,13 @@ export class RunTab extends ViewPlugin {
             "symbol": "ETH",
             "decimals": 18
           })
+        await addCustomInjectedProvider(10, event, 'injected-metamask-gnosis', 'Gnosis Mainnet - ' + event.detail.info.name, '', ['https://rpc.ankr.com/gnosis', 'https://1rpc.io/gnosis'],
+          {
+            "name": "XDAI",
+            "symbol": "XDAI",
+            "decimals": 18
+          })
+        
         /*
         await addCustomInjectedProvider(9, event, 'SKALE Chaos Testnet', '0x50877ed6', ['https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix'],
           {
