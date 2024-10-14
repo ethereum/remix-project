@@ -47,7 +47,7 @@ self.onmessage = (e: MessageEvent) => {
   {
     (function (data) {
       const stamp = data.stamp
-      if (provider) {      
+      if (provider) {
         provider.request(data.query).then((result) => {
           self.postMessage({
             cmd: 'requestResult',

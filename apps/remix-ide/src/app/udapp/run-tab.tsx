@@ -1,17 +1,17 @@
 import React from 'react' // eslint-disable-line
-import {RunTabUI} from '@remix-ui/run-tab'
-import {ViewPlugin} from '@remixproject/engine-web'
+import { RunTabUI } from '@remix-ui/run-tab'
+import { ViewPlugin } from '@remixproject/engine-web'
 import isElectron from 'is-electron'
-import {addressToString} from '@remix-ui/helper'
-import {InjectedProviderDefault} from '../providers/injected-provider-default'
-import {InjectedCustomProvider} from '../providers/injected-custom-provider'
+import { addressToString } from '@remix-ui/helper'
+import { InjectedProviderDefault } from '../providers/injected-provider-default'
+import { InjectedCustomProvider } from '../providers/injected-custom-provider'
 import * as packageJson from '../../../../../package.json'
 import { EventManager } from '@remix-project/remix-lib'
 import type { Blockchain } from '../../blockchain/blockchain'
 import type { CompilerArtefacts } from '@remix-project/core-plugin'
 // import type { NetworkModule } from '../tabs/network-module'
 // import type FileProvider from '../files/fileProvider'
-const Recorder = require('../tabs/runTab/model/recorder.js')
+import { Recorder } from '../tabs/runTab/model/recorder'
 const _paq = (window._paq = window._paq || [])
 
 const profile = {
@@ -90,7 +90,7 @@ export class RunTab extends ViewPlugin {
   async setEnvironmentMode(env) {
     const canCall = await this.askUserPermission('setEnvironmentMode', 'change the environment used')
     if (canCall) {
-      env = typeof env === 'string' ? {context: env} : env
+      env = typeof env === 'string' ? { context: env } : env
       this.emit('setEnvironmentModeReducer', env, this.currentRequest.from)
     }
   }
@@ -169,7 +169,7 @@ export class RunTab extends ViewPlugin {
       'injected-Brave Wallet': ['assets/img/brave.png'],
       'injected-Trust Wallet': ['assets/img/trust-wallet.png'],
       'hardhat-provider': ['assets/img/hardhat.png'],
-      'walletconnect': ['assets/img/Walletconnect-logo.png'],     
+      'walletconnect': ['assets/img/Walletconnect-logo.png'],
       'foundry-provider': ['assets/img/foundry.png']
     }
 
@@ -231,13 +231,13 @@ export class RunTab extends ViewPlugin {
 
       if (event.detail.info.name === 'MetaMask') {
         await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism - ' + event.detail.info.name, '0xa', ['https://mainnet.optimism.io'])
-        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum - ' + event.detail.info.name, '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
+        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum - ' + event.detail.info.name, '0xa4b1', ['https://arb1.arbitrum.io/rpc'])
         await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Sepolia Testnet - ' + event.detail.info.name, '0xaa36a7', [],
           {
             "name": "Sepolia ETH",
             "symbol": "ETH",
             "decimals": 18
-          })    
+          })
         await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet - ' + event.detail.info.name, '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
           {
             "name": "Ephemery ETH",
@@ -259,10 +259,10 @@ export class RunTab extends ViewPlugin {
             "decimals": 18
           })
         */
-      }      
+      }
     }
 
-    // VM    
+    // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
     await addProvider(1, 'vm-cancun', 'Remix VM (Cancun)', false, true, 'cancun', 'settingsVMCancunMode', titleVM)
     await addProvider(50, 'vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
@@ -283,7 +283,7 @@ export class RunTab extends ViewPlugin {
     await addProvider(22, 'foundry-provider', 'Dev - Foundry Provider', false, false)
 
     // register injected providers
-    
+
     window.addEventListener(
       "eip6963:announceProvider",
       (event) => {
