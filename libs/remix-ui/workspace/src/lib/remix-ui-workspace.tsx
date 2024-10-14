@@ -350,9 +350,9 @@ export function Workspace() {
     })
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.createBlank' }),
-      await createModalMessage(workspace ? workspace: `blank - ${counter}`, gitNotSet, (value) => { workspace = value }, (value) => gitInit = false),
+      await createModalMessage(workspace ? workspace: `blank - ${counter}`, gitNotSet, (value) => { workspace = value }, (value) => {gitInit = value === 'on'}),
       intl.formatMessage({ id: 'filePanel.ok' }),
-      () => global.dispatchCreateWorkspace(workspace ? workspace: `blank - ${counter}`, 'blank', false),
+      () => global.dispatchCreateWorkspace(workspace ? workspace: `blank - ${counter}`, 'blank', null, gitInit),
       intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
@@ -1014,7 +1014,7 @@ export function Workspace() {
             <header>
               <div className="mx-2 my-2 d-flex flex-column">
                 <div className="mx-2 d-flex">
-                  {currentWorkspace !== LOCALHOST ? (
+                  { currentWorkspace !== LOCALHOST ? (
                     <span className="remixui_topmenu d-flex">
                       <Dropdown id="workspacesMenuDropdown" data-id="workspacesMenuDropdown" onToggle={() => hideIconsMenu(!showIconsMenu)} show={showIconsMenu}>
                         <Dropdown.Toggle
