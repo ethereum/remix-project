@@ -1,13 +1,14 @@
-import React, {useState, useEffect} from 'react'
-import {Button, Dropdown, Form, Tooltip, OverlayTrigger} from 'react-bootstrap'
-import {useAppDispatch} from '../../redux/hooks'
+import React, { useState, useEffect } from 'react'
+import { Button, Dropdown, Form, Tooltip, OverlayTrigger } from 'react-bootstrap'
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import './index.css'
 
-function RepoImporter({list, selectedRepo}: any): JSX.Element {
+function RepoImporter({ list, selectedRepo }: any): JSX.Element {
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [branch, setBranch] = useState('')
   const dispatch = useAppDispatch()
+  const localeCode = useAppSelector((state) => state.remixide.localeCode)
 
   useEffect(() => {
     setName(selectedRepo.name)
@@ -19,18 +20,18 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
   }
 
   const selectRepo = (repo: {name: string; branch: string}) => {
-    dispatch({type: 'workshop/loadRepo', payload: repo});
+    dispatch({ type: 'workshop/loadRepo', payload: repo });
     (window as any)._paq.push(['trackEvent', 'learneth', 'select_repo', `${name}/${branch}`])
   }
 
   const importRepo = (event: {preventDefault: () => void}) => {
     event.preventDefault()
-    dispatch({type: 'workshop/loadRepo', payload: {name, branch}});
+    dispatch({ type: 'workshop/loadRepo', payload: { name, branch } });
     (window as any)._paq.push(['trackEvent', 'learneth', 'import_repo', `${name}/${branch}`])
   }
 
   const resetAll = () => {
-    dispatch({type: 'workshop/resetAll'})
+    dispatch({ type: 'workshop/resetAll', payload: { code: localeCode } })
     setName('')
     setBranch('')
   }
@@ -45,7 +46,7 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
         </div>
       )}
 
-      <div onClick={panelChange} style={{cursor: 'pointer'}} className="container-fluid d-flex mb-3 small">
+      <div onClick={panelChange} style={{ cursor: 'pointer' }} className="container-fluid d-flex mb-3 small">
         <div className="d-flex pr-2 pl-2">
           <i className={`arrow-icon pt-1 fas fa-xs ${open ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
         </div>
@@ -71,7 +72,7 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-          <div onClick={resetAll} className="small mb-3" style={{cursor: 'pointer'}}>
+          <div onClick={resetAll} className="small mb-3" style={{ cursor: 'pointer' }}>
             reset list
           </div>
         </div>
