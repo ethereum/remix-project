@@ -776,9 +776,11 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const content = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.generateDocumentationByAI' }, { content, currentFunction: currentFunction.current })
-        
+
         // do not stream this response
-        const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
+        const pipeMessage = `Generate the documentation for the function **${currentFunction.current}**`
+        // const cm = await await props.plugin.call('remixAI', 'code_explaining', message)
+        const cm = await props.plugin.call('remixAI' as any, 'chatPipe', 'solidity_answer', message, '', pipeMessage)
 
         const natSpecCom = "\n" + extractNatspecComments(cm)
         const cln = await props.plugin.call('codeParser', "getLineColumnOfNode", currenFunctionNode)
