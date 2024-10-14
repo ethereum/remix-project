@@ -406,7 +406,6 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/plonk_verifier.sol.ejs"]')
-      .pause()
       .click('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Groth16Verifier {`) !== -1,
@@ -421,7 +420,7 @@ module.exports = {
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')
       .waitForElementPresent('*[data-id="create-remixDefault"]')
-      .scrollAndClick('*[data-id="create-remixDefault"]')
+      .click('*[data-id="create-remixDefault"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .click('input[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name')
