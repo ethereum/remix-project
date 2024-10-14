@@ -63,6 +63,7 @@ module.exports = {
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('"primaryType": "AuthRequest",') !== -1, 'EIP 712 data file must be opened')
       })
+      .clickLaunchIcon('filePanel')
       .rightClick('li[data-id="treeViewLitreeViewItemEIP-712-data.json"]')
       .click('*[data-id="contextMenuItemsignTypedData"]')
       .journalChildIncludes('0x248d23de0e23231370db8aa21ad5908ca90c33ae2b8c611b906674bda6b1a8b85813f945c2ea896316e240089029619ab3d801a1b098c199bd462dd8026349da1c')
