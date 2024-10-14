@@ -1338,7 +1338,7 @@ export function Workspace() {
               placement="right"
               tooltipId="branchesDropdown"
               tooltipClasses="text-nowrap"
-              tooltipText={'Current branch: ' + currentBranch || 'Branches'}
+              tooltipText={'Current branch: ' + (currentBranch && currentBranch.name) || 'Branches'}
             >
               <div className="pt-0 mr-2" data-id="workspaceGitBranchesDropdown">
                 <Dropdown style={{ height: 30, maxWidth: "6rem", minWidth: "6rem" }} onToggle={toggleBranches} show={showBranches} drop={'up'}>
