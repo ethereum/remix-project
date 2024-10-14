@@ -137,6 +137,7 @@ export class RunTab extends ViewPlugin {
       'injected-Brave Wallet': 'Deploy through the Brave Wallet extension.',
       'injected-Brave': 'Deploy through the Brave browser extension.',
       'injected-metamask-optimism': 'Deploy to Optimism through the Metamask browser extension.',
+      'injected-metamask-gnosis': 'Deploy to Gnosis through the Metamask browser extension.',
       'injected-metamask-arbitrum': 'Deploy to Arbitrum through the Metamask browser extension.',
       'injected-metamask-sepolia': 'Deploy to the Sepolia testnet through the Metamask browser extension.',
       'injected-metamask-ephemery': 'Deploy to the Ephemery testnet through the Metamask browser extension.'
