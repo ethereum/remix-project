@@ -5,6 +5,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
 import { CustomTooltip } from '@remix-ui/helper'
+const _paq = window._paq = window._paq || []
 
 export function AccountUI(props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
@@ -96,6 +97,7 @@ export function AccountUI(props: AccountProps) {
   }
 
   const signMessage = () => {
+    _paq.push(['trackEvent', 'udapp', 'signUsingAccount', `selectExEnv: ${selectExEnv}`])
     if (!accounts[0]) {
       return props.tooltip(intl.formatMessage({ id: 'udapp.tooltipText1' }))
     }
@@ -202,7 +204,7 @@ export function AccountUI(props: AccountProps) {
         <FormattedMessage id="udapp.account" />
         <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixPlusWrapperTooltip" tooltipText={plusOpt.title}>
           <span id="remixRunPlusWraper">
-            <i id="remixRunPlus" className={`ml-2 fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
+            <i id="remixRunPlus" className={`ml-2 fas fa-plus udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
           </span>
         </CustomTooltip>
         <CustomTooltip placement={'top'} tooltipClasses="text-nowrap" tooltipId="remixSignMsgTooltip" tooltipText={<FormattedMessage id="udapp.signMsgUsingAccount" />}>

@@ -27,12 +27,35 @@ module.exports = {
       .assert.elementPresent('*[data-id="universalDappUiUdappUnpin"]')
       .assert.elementPresent('*[data-id="pinnedInstance0xd9145CCE52D386f254917e481eB44e9943F39138"]')
   },
-  'Test pinned contract loading on environment change #group1': function (browser: NightwatchBrowser) {
+  'Test pinned contracts loading on environment change #group1': function (browser: NightwatchBrowser) {
     browser
       .switchEnvironment('vm-shanghai')
       .assert.elementPresent('*[data-id="deployedContracts"]')
       .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
       .switchEnvironment('vm-cancun')
+      .assert.textContains('*[data-id="deployedContractsBadge"]', '1')
+      .assert.elementPresent('*[data-id="pinnedInstance0xd9145CCE52D386f254917e481eB44e9943F39138"]')
+  },
+  'Test pinned contracts loading on workspace change #group1': function (browser: NightwatchBrowser) {
+    browser
+      .clickLaunchIcon('filePanel')
+      .click('*[data-id="workspacesMenuDropdown"]')
+      .click('*[data-id="workspacecreate"]')
+      .waitForElementPresent('*[data-id="create-remixDefault"]')
+      .scrollAndClick('*[data-id="create-remixDefault"]')
+      .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
+      .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_remix_default')
+      // eslint-disable-next-line dot-notation
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_remix_default' })
+      .modalFooterOKClick('TemplatesSelection')
+      .clickLaunchIcon('udapp')
+      .assert.elementPresent('*[data-id="deployedContracts"]')
+      .assert.textContains('*[data-id="deployedContractsBadge"]', '0')
+      .clickLaunchIcon('filePanel')
+      .switchWorkspace('default_workspace')
+      .currentWorkspaceIs('default_workspace')
+      .clickLaunchIcon('udapp')
       .assert.textContains('*[data-id="deployedContractsBadge"]', '1')
       .assert.elementPresent('*[data-id="pinnedInstance0xd9145CCE52D386f254917e481eB44e9943F39138"]')
   },
