@@ -44,7 +44,7 @@ export const ElectronMenu = () => {
                     >
                       <div className="recentfolder pb-1">
                         <span onClick={async () => { await openFolderElectron(folder) }} className="pl-2 recentfolder_name pr-2">{lastFolderName(folder)}</span>
-                        <span onClick={async () => { await openFolderElectron(folder) }} data-id={{ folder }} className="recentfolder_path pr-2">{folder}</span>
+                        <span onClick={async () => { await openFolderElectron(folder) }} data-id={`recent_folder_${folder}`} className="recentfolder_path pr-2">{folder}</span>
                         <i
                           onClick={() => {
                             global.dispatchRemoveRecentFolder(folder)
