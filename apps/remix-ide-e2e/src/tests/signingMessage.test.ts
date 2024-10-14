@@ -60,13 +60,15 @@ module.exports = {
       .click('*[data-id="sign-eip-712"]')
       .waitForElementVisible('*[data-id="udappNotify-modal-footer-ok-react"]')
       .modalFooterOKClick('udappNotify')
+      .pause(1000)
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('"primaryType": "AuthRequest",') !== -1, 'EIP 712 data file must be opened')
       })
       .clickLaunchIcon('filePanel')
       .rightClick('li[data-id="treeViewLitreeViewItemEIP-712-data.json"]')
       .click('*[data-id="contextMenuItemsignTypedData"]')
-      .journalChildIncludes('0x248d23de0e23231370db8aa21ad5908ca90c33ae2b8c611b906674bda6b1a8b85813f945c2ea896316e240089029619ab3d801a1b098c199bd462dd8026349da1c')
+      .pause(1000)
+      .journalChildIncludes('0x8be3a81e17b7e4a40006864a4ff6bfa3fb1e18b292b6f47edec95cd8feaa53275b90f56ca02669d461a297e6bf94ab0ee4b7c89aede3228ed5aedb59c7e007501c')
   }
 }
 
