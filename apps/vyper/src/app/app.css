@@ -266,3 +266,9 @@ html, body, #root, main {
 .vyper-panel-width {
   width: 94%;
 }
+
+.vyper-errorBlobs {
+  padding-left: 5px;
+  padding-right: 5px;
+  word-break: break-word;
+}

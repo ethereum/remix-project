@@ -1,21 +1,36 @@
 import { CompilationResult, ABIDescription } from '@remixproject/plugin-api'
 
-export interface VyperCompilationResult {
-  status: 'success'
-  bytecode: string
-  bytecode_runtime: string
-  abi: ABIDescription[]
-  ir: string
-  method_identifiers: {
-    [method: string]: string
-  }
-}
-
-export interface VyperCompilationError {
+export type VyperCompilationError = {
   status: 'failed'
   column?: number
   line?: number
   message: string
+  error_type: string
+}
+
+export type VyperCompilationOutput = VyperCompilationResultWrapper | VyperCompilationError
+
+export type VyperCompilationErrorsWrapper = {
+  status: 'failed'
+  errors: VyperCompilationError[]
+}
+
+export type VyperCompilationResultWrapper = {
+  status: 'success'
+  contractName: string
+  compileResult: VyperCompilationResult
+}
+
+export type VyperCompilationResult = {
+  contractName: string
+  abi: any,
+  bytecode: any,
+  runtimeBytecode: any,
+  ir: string,
+  methodIdentifiers: any,
+  version?: string,
+  evmVersion?: string
+  optimized?: boolean
 }
 
 export type VyperCompilationResultType = {

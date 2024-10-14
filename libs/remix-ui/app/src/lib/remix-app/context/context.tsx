@@ -5,7 +5,7 @@ import { AppAction } from '../actions/app'
 
 export type appProviderContextType = {
   settings: any,
-  showMatamo: boolean,
+  showMatomo: boolean,
   showEnter: boolean,
   appManager: any
   modal: any

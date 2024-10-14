@@ -113,30 +113,6 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                   </a>
                 </div>
               </div>
-              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform" target="__blank">
-                  <img src={'assets/img/remixRewardBetaTester_small.webp'} className="remixui_carouselImage_remixbeta" alt=""></img>
-                </a>
-                <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
-                  <h5>
-                    <FormattedMessage id="home.betaTesting" />
-                  </h5>
-                  <p style={{ fontStyle: 'italic', fontSize: '1rem' }}>
-                    <FormattedMessage id="home.betaTestingText1" />
-                  </p>
-                  <div style={{ fontSize: '0.8rem' }} className="mb-3">
-                    <FormattedMessage id="home.betaTestingText2" />
-                  </div>
-                  <a
-                    className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
-                    onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'betatesting'])}
-                    target="__blank"
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform"
-                  >
-                    <FormattedMessage id="home.betaTestingMore" />
-                  </a>
-                </div>
-              </div>
             </Carousel>
           </ThemeContext.Provider>
         </div>

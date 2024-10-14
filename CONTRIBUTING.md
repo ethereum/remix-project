@@ -27,7 +27,7 @@ Then you can replace the string with a intl component. The `id` prop will be the
 +  <FormattedMessage id="home.learn" />
 </label>
 ```
-In some cases, jsx maybe not acceptable, you can use `intl.formatMessage` .
+In some cases, jsx maybe not be acceptable, you can use `intl.formatMessage` .
 ```jsx
 <input
    ref={searchInputRef}
@@ -77,7 +77,7 @@ const locales = [
 ]
 ```
 You can find the language's `code, name, localeName` in this link
-https://github.com/ethereum/ethereum-org-website/blob/dev/i18n/config.json
+https://github.com/ethereum/ethereum-org-website/blob/dev/i18n.config.json
 
 ### Whether or not to use `defaultMessage`?
 If you search `FormattedMessage` or `intl.formatMessage` in this project, you will notice that most of them only have a `id` prop, but a few of them have a `defaultMessage` prop.
@@ -92,7 +92,7 @@ But in some cases, the `id` prop may not be static. For example,
  <FormattedMessage id={plugin?.profile.name + '.displayName'} defaultMessage={plugin?.profile.displayName || plugin?.profile.name} />
 </h6>
 ```
-You can't be sure there is a match key in locale file or not. So it will be better to provide a `defaultMessage` prop.
+You can't be sure whether there is a match key in locale file or not. So it will be better to provide a `defaultMessage` prop.
 
 ### Should I update the non-english locale json files?
 You probably will have this question when you are updating the english locale json files. 

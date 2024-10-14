@@ -788,7 +788,7 @@ workflows:
       - build-desktop:
           filters:
             branches:
-              only: [/.*desktop.*/]
+              only: [/.*desktop.*/, 'remix_beta']
       - build-remixdesktop-mac:
           requires:
             - build-desktop
@@ -821,6 +821,9 @@ workflows:
             - test-remixdesktop-windows
             - test-remixdesktop-linux
             - test-remixdesktop-mac
+          filters:
+            branches:
+              only: [/.*desktop.*/]
       - build-plugin:
           matrix:
             parameters:

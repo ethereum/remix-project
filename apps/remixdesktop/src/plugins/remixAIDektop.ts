@@ -22,11 +22,6 @@ export class RemixAIDesktopPlugin extends ElectronBasePlugin {
   constructor() {
     super(profile, clientProfile, RemixAIDesktopPluginClient)
     this.methods = [...super.methods]
-
-    for (const client of this.clients) {
-      console.log(client)
-      client.enable()
-    }
   }
 }
 
@@ -45,14 +40,11 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
   desktopInferencer:InferenceManager | RemoteInferencer = null
 
   constructor (webContentsId: number, profile: Profile){
-    console.log("loading the remix plugin client ........................")
     super(webContentsId, profile)
   }
 
   async onActivation(): Promise<void> {
-    console.log("Activation", "loaded the remix plugin client application side")
     this.onload(() => {
-      this.emit('activated')
     })
   }
 
@@ -63,16 +55,13 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
 
   async initializeModelBackend(local, generalModel?, completionModel?){
     if (!local){
-      console.log('RemixAI remote enpoints')
       this.desktopInferencer = new RemoteInferencer()
     } else if (generalModel || completionModel){
       if (!this.desktopInferencer){
-        console.log('RemixAI local enpoints')
         this.desktopInferencer = InferenceManager.getInstance(this.modelCacheDir)
         if (this.desktopInferencer instanceof InferenceManager && generalModel) await this.desktopInferencer.init(generalModel)
         if (this.desktopInferencer instanceof InferenceManager && completionModel) await this.desktopInferencer.init(completionModel)
       } else {
-        console.log('Inference model already initialized')
         return false // do not set event listener twice
       }
     } else {
