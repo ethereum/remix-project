@@ -36,7 +36,7 @@ export const ElectronWorkspaceName = (props: ElectronWorkspaceNameProps) => {
               textOverflow: 'ellipsis',
               flexGrow: 1,
             }}
-          
+
           >{parsePath()}</div>
         </CustomTooltip>
         <CustomTooltip
