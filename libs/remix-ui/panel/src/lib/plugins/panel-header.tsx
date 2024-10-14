@@ -48,12 +48,16 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
         </h6>
         <div className="d-flex flex-row">
           <div className="d-flex flex-row">
-            {plugin?.profile?.maintainedBy?.toLowerCase() === 'remix' ? (
-              <CustomTooltip placement="auto-end" tooltipId="maintainedByTooltip" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.maintainedByRemix" />}>
-                <i aria-hidden="true" className="text-success mt-1 px-1 fas fa-check"></i>
+            { plugin?.profile?.maintainedBy?.toLowerCase() === 'remix' ? (
+              <CustomTooltip placement="auto" tooltipId="maintainedByTooltipRemix" tooltipText={<FormattedMessage id="home.maintainedByRemix" />}>
+                <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>
+              </CustomTooltip>) :
+              plugin?.profile?.maintainedBy ?
+              (<CustomTooltip placement="auto" tooltipId={"maintainedByTooltip" + plugin?.profile?.maintainedBy} tooltipText={"Maintained by " + plugin?.profile?.maintainedBy}>
+                <i aria-hidden="true" className="mt-1 px-1 text-secondary far fa-exclamation-circle"></i>
               </CustomTooltip>)
-              : (<CustomTooltip placement="auto-end" tooltipId="maintainedExternally" tooltipClasses="text-nowrap" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
-                <i aria-hidden="true" className="mt-1 px-1 text-warning far fa-exclamation-circle"></i>
+              : (<CustomTooltip placement="auto" tooltipId="maintainedByTooltipRemixUnknown" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
+                <i aria-hidden="true" className="mt-1 px-1 text-secondary far fa-exclamation-circle"></i>
               </CustomTooltip>)
             }
           </div>
