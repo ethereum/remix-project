@@ -252,10 +252,9 @@ export const TabsUI = (props: TabsUIProps) => {
                     setExplaining(true)
                     // if plugin is pinned,
                     if (await props.plugin.call('pinnedPanel', 'currentFocus') === 'remixAI'){
-                      console.log("pinned has focus")
                       await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
                     }
-                    else{
+                    else {
                       const profile = {
                         name: 'remixAI',
                         displayName: 'Remix AI',
@@ -271,14 +270,12 @@ export const TabsUI = (props: TabsUIProps) => {
                         documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
                         maintainedBy: 'Remix'
                       }
-                      console.log("pinned does not have focus")
                       // await props.plugin.call('sidePanel', 'focus', 'remixAI')
                       await props.plugin.call('sidePanel', 'pinView', profile)
                       setTimeout(async () => {
-                    await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-                  }, 500)
+                        await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
+                      }, 500)
                     }
-                    
                     // await props.plugin.call('remixAI', 'code_explaining', content)
                     setExplaining(false)
                     _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file'])
