@@ -110,18 +110,19 @@ module.exports = {
 
   'Should create blank workspace with no files #group1': function (browser: NightwatchBrowser) {
     browser
-      .click('*[data-id="workspacesMenuDropdown"]')
-      .click('*[data-id="workspacecreate"]')
-      .waitForElementPresent('*[data-id="create-blank"]')
-      .scrollAndClick('*[data-id="create-blank"]')
+      .click('*[data-id="workspaceMenuDropdown"]')
+      .click('*[data-id="workspacecreateBlank"]')
+      .waitForElementPresent('*[data-id="fileSystemModalDialogModalTitle-react"]')
+      .assert.containsText('*[data-id="fileSystemModalDialogModalTitle-react"]', 'Create Blank Workspace')
+      // .scrollAndClick('*[data-id="create-blank"]')
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .scrollAndClick('*[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('*[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_blank')
       // eslint-disable-next-line dot-notation
-      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'my_workspace' })
-      .modalFooterOKClick('TemplatesSelection')
+      .execute(function () { document.querySelector('*[data-id="modalDialogCustomPromptTextCreate"]')['value'] = 'workspace_blank' })
+      .click('*[data-id="fileSystem-modal-footer-ok-react"]')
       .pause(100)
-      .currentWorkspaceIs('my_workspace')
+      .currentWorkspaceIs('workspace_blank')
       .waitForElementPresent('*[data-id="treeViewUltreeViewMenu"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItem.prettierrc.json"]')
       .execute(function () {
@@ -405,6 +406,7 @@ module.exports = {
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtemplates/plonk_verifier.sol.ejs"]')
+      .pause()
       .click('*[data-id="treeViewLitreeViewItemtemplates/groth16_verifier.sol.ejs"]')
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf(`contract Groth16Verifier {`) !== -1,
@@ -423,7 +425,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .click('input[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name')
-      .modalFooterOKClick('TemplatesSelection')
+      // .modalFooterOKClick('TemplatesSelection')
+      .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .addFile('test.sol', { content: 'test' })
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtest.sol"]')
@@ -438,7 +441,8 @@ module.exports = {
       .waitForElementVisible('*[data-id="modalDialogCustomPromptTextCreate"]')
       .click('input[data-id="modalDialogCustomPromptTextCreate"]')
       .setValue('input[data-id="modalDialogCustomPromptTextCreate"]', 'workspace_name_1')
-      .modalFooterOKClick('TemplatesSelection')
+      // .modalFooterOKClick('TemplatesSelection')
+      .click('*[data-id="TemplatesSelection-modal-footer-ok-react"]')
       .waitForElementVisible('*[data-id="treeViewLitreeViewItemtests"]')
       .waitForElementNotPresent('*[data-id="treeViewLitreeViewItemtest.sol"]')
       .switchWorkspace('workspace_name')
