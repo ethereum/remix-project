@@ -52,8 +52,18 @@ export class RemixAIPlugin extends ViewPlugin {
       console.log('Activating RemixAIPlugin on browser')
       this.initialize()
     }
-    this.call('sidePanel', 'pinView', profile)
+    this.setRemixAIOnSidePannel(false)
   }
+
+  setRemixAIOnSidePannel(resize:boolean=false){
+    if (resize){
+      this.call('sidePanel', 'pinView', profile)
+
+    } else {
+      this.call('sidePanel', 'pinView', profile)
+    }
+  }
+
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
     if (this.isOnDesktop) {
       // on desktop use remote inferencer -> false
