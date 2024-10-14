@@ -5,8 +5,8 @@ This document aims to address contributors best practices of the following repos
  - Remix Project: https://github.com/ethereum/remix-project
  - Remix Libraries: https://github.com/ethereum/remix-project/tree/master/libs
 
-This document is not in its final version, **a team meeting which aim to address new/old best practices, feedback, workflows, all kind of issues related to how the team work together occurs every 2 weeks.**
-This document link to other specialised best practices (like coding best practices).
+This document is not in its final version, **a team meeting which aims to address new/old best practices, feedback, workflows, all kind of issues related to how the team works together occurs every 2 weeks.**
+This document link to other specialized best practices (like coding best practices).
 
 Related links:
  - Public Website: https://remix-project.org
@@ -38,7 +38,7 @@ Related links:
 
  - A milestone standup - scheduled before the beginning of each milestone, roughly on a monthly basis - which aim to define what will be included in the **next milestone** and who will work on what. This standup also help to set a clear long term vision.
  
- - A retrospective standup - after each releases - which aim to talk about **best practices in general**: what is good, what is bad, how we can improve workflows.
+ - A retrospective standup - after each release - which aims to talk about **best practices in general**: what is good, what is bad, how we can improve workflows.
 
  - A tour standup - Just after a release or whenever it is needed - which aim to demo, **explain in details** features, bug fixes or any part of the codebase.
  
@@ -122,7 +122,7 @@ Before starting coding, we should ensure all devs / contributors are aware of:
  - The end of a milestone triggers a new release.
  - Milestone items and duration should take in account time spent in bugs fixing and support.
  - The team should commit to the milestone duration.
- - If a dev finish early he/she can help other to push remaining tasks.
+ - If a dev finish early he/she can help others to push remaining tasks.
  - If a dev finish early he/she can work on specifying / integrating the next milestone.
  - A milestone duration is fixed at the start of the milestone (but should better not exceed 1 month).
  - Progress and issues regarding a milestone are discussed on regular standups.

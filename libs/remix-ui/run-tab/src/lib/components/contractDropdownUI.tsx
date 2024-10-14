@@ -6,7 +6,6 @@ import { ContractData, FuncABI, OverSizeLimit } from '@remix-project/core-plugin
 import * as ethJSUtil from '@ethereumjs/util'
 import { ContractGUI } from './contractGUI'
 import { CustomTooltip, deployWithProxyMsg, upgradeWithProxyMsg } from '@remix-ui/helper'
-import { title } from 'process'
 const _paq = (window._paq = window._paq || [])
 
 export function ContractDropdownUI(props: ContractDropdownProps) {
@@ -80,6 +79,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
         content: '',
       })
       if (!currentContract) enableAtAddress(false)
+      if (currentContract && loadedAddress) enableAtAddress(true)
     } else {
       setAbiLabel({
         display: 'none',

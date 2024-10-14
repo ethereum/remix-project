@@ -53,6 +53,20 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         icon: 'fa-solid fa-link',
         placement: 'top',
         platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
+      },
+      {
+        action: 'connectToLocalFileSystem',
+        title: 'Connect to local filesystem using remixd',
+        icon: 'fa-solid fa-desktop',
+        placement: 'top',
+        platforms: [appPlatformTypes.web]
+      },
+      {
+        action: 'initializeWorkspaceAsGitRepo',
+        title: 'Initialize workspace as a git repository',
+        icon: 'fa-brands fa-git-alt',
+        placement: 'top',
+        platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
       }
     ].filter(
       (item) =>
@@ -136,6 +150,29 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                   </label>
                 </CustomTooltip>
               )
+            } else if (action === 'initializeWorkspaceAsGitRepo') {
+              return (
+                <CustomTooltip
+                  placement={placement as Placement}
+                  tooltipId="uploadFolderTooltip"
+                  tooltipClasses="text-nowrap"
+                  tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
+                  key={`index-${action}-${placement}-${icon}`}
+                >
+                  <label
+                    id={action}
+                    style={{ fontSize: '1.1rem', cursor: 'pointer' }}
+                    data-id={'fileExplorerUploadFolder' + action}
+                    className={icon + ' mx-1 remixui_menuItem'}
+                    key={`index-${action}-${placement}-${icon}`}
+                    onClick={() => {
+                      _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
+                      props.handleGitInit()
+                    }}
+                  >
+                  </label>
+                </CustomTooltip>
+              )
             } else {
               return (
                 <CustomTooltip
@@ -158,6 +195,9 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                         props.createNewFolder()
                       } else if (action === 'publishToGist' || action == 'updateGist') {
                         props.publishToGist()
+                      } else if (action === 'connectToLocalFileSystem') {
+                        _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
+                        props.connectToLocalFileSystem()
                       } else if (action === 'importFromIpfs') {
                         _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                         props.importFromIpfs('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')

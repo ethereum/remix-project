@@ -139,7 +139,7 @@ function errorHandler (error: any, service: string) {
           sharedFolderClient.sharedFolder(options.sharedFolder)
         })
       }
-      // Run foundry service if a founndry project is shared as folder
+      // Run foundry service if a foundry project is shared as folder
       const foundryConfigFilePath = absolutePath('./', options.sharedFolder)
       const isFoundryProject = existsSync(foundryConfigFilePath + '/foundry.toml')
       if (isFoundryProject) {

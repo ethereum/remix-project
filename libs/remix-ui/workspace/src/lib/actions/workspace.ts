@@ -193,6 +193,7 @@ export const createWorkspace = async (
         }
       }
     }
+
     await populateWorkspace(workspaceTemplateName, opts, isEmpty, (err: Error) => { cb && cb(err, workspaceName) }, isGitRepo, createCommit)
     // this call needs to be here after the callback because it calls dGitProvider which also calls this function and that would cause an infinite loop
     await plugin.setWorkspaces(await getWorkspaces())
@@ -545,7 +546,6 @@ export const switchToWorkspace = async (name: string) => {
     await plugin.fileProviders.workspace.setWorkspace(name)
     await plugin.setWorkspace({ name, isLocalhost: false })
     const isGitRepo = await plugin.fileManager.isGitRepo()
-
     dispatch(setMode('browser'))
     dispatch(setCurrentWorkspace({ name, isGitRepo }))
     dispatch(setReadOnlyMode(false))
@@ -703,9 +703,10 @@ export const cloneRepository = async (url: string) => {
       dispatch(cloneRepositoryRequest())
       promise
         .then(async () => {
-          const isActive = await plugin.call('manager', 'isActive', 'dgit')
-
-          if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+          if (!plugin.registry.get('platform').api.isDesktop()) {
+            const isActive = await plugin.call('manager', 'isActive', 'dgit')
+            if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
+          }
           await fetchWorkspaceDirectory(ROOT_PATH)
           const workspacesPath = plugin.fileProviders.workspace.workspacesPath
           const branches = await getGitRepoBranches(workspacesPath + '/' + repoName)
@@ -790,7 +791,7 @@ export const getGitRepoCurrentBranch = async (workspaceName: string) => {
 }
 
 export const showAllBranches = async () => {
-
+  if (plugin.registry.get('platform').api.isDesktop()) return
   const isActive = await plugin.call('manager', 'isActive', 'dgit')
   if (!isActive) await plugin.call('manager', 'activatePlugin', 'dgit')
   plugin.call('menuicons', 'select', 'dgit')

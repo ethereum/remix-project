@@ -57,8 +57,7 @@ export function RecorderUI(props: RecorderProps) {
             tooltipText={<FormattedMessage id="udapp.transactionsWalkthroughTooltip" />}
           >
             <i
-              style={{ fontSize: 'medium' }}
-              className={'ml-2 fal fa-info-circle align-self-center'}
+              className={'ml-2 fas fa-info align-self-center'}
               aria-hidden="true"
               onClick={() => startWalkthrough()}
               data-id="recorderStartWalkthrough"

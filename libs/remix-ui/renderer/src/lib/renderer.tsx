@@ -7,17 +7,30 @@ const _paq = (window._paq = window._paq || [])
 
 interface RendererProps {
   message: any
-  opt?: any
+  opt?: RendererOptions
   plugin: any
+  context?: string
 }
 
-export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
+type RendererOptions = {
+  useSpan?: boolean
+  type: string
+  errorType?: string
+  errCol?: number
+  errLine?: number
+  errFile?: string
+}
+
+export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
   const intl = useIntl()
   const [messageText, setMessageText] = useState(null)
-  const [editorOptions, setEditorOptions] = useState({
+  const [editorOptions, setEditorOptions] = useState<RendererOptions>({
     useSpan: false,
     type: '',
-    errFile: ''
+    errorType: '',
+    errCol: null,
+    errLine: null,
+    errFile: null
   })
   const [classList, setClassList] = useState(opt.type === 'error' ? 'alert alert-danger' : 'alert alert-warning')
   const [close, setClose] = useState(false)
@@ -35,11 +48,13 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
     // ^ e.g:
     // browser/gm.sol: Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.6.12
     // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.2.0/contracts/introspection/IERC1820Registry.sol:3:1: ParserError: Source file requires different compiler version (current compiler is 0.7.4+commit.3f05b770.Emscripten.clang) - note that nightly builds are considered to be strictly less than the released version
-    const positionDetails = helper.getPositionDetails(text)
 
-    opt.errLine = positionDetails.errLine
-    opt.errCol = positionDetails.errCol
-    opt.errFile = positionDetails.errFile ? (positionDetails.errFile as string).trim() : ''
+    if (!opt.errLine) {
+      const positionDetails = helper.getPositionDetails(text)
+      opt.errLine = !opt.errLine ? positionDetails.errLine as number : opt.errLine
+      opt.errCol = !opt.errCol ? positionDetails.errCol as number : opt.errCol
+      opt.errFile = !opt.errFile ? (positionDetails.errFile ? (positionDetails.errFile as string).trim() : '') : opt.errFile
+    }
 
     setMessageText(text)
     setEditorOptions(opt)
@@ -74,9 +89,9 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
   const askGtp = async () => {
     try {
       const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
-      const message = intl.formatMessage({ id: 'solidity.openaigptMessage' }, { content, messageText })
-      await plugin.call('solcoder', 'error_explaining', message)
-      _paq.push(['trackEvent', 'ai', 'solcoder', 'error_explaining_SolidityError'])
+      const message = intl.formatMessage({ id: `${context || 'solidity' }.openaigptMessage` }, { content, messageText })
+      await plugin.call('remixAI', 'error_explaining', message)
+      _paq.push(['trackEvent', 'ai', 'remixAI', 'error_explaining_SolidityError'])
     } catch (err) {
       console.error('unable to askGtp')
       console.error(err)
@@ -108,7 +123,7 @@ export const Renderer = ({ message, opt = {}, plugin }: RendererProps) => {
             </span>
             <span
               className="button border text-ai btn-sm"
-              onClick={() => { askGtp() }}
+              onClick={(event) => { event.preventDefault(); askGtp() }}
               style={{ borderColor: "var(--ai)" }}
             >
               Ask RemixAI

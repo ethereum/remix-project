@@ -917,6 +917,86 @@ export function Workspace() {
     _paq.push(['trackEvent', 'Workspace', 'GIT', 'login'])
   }
 
+  const IsGitRepoDropDownMenuItem = (props: { isGitRepo: boolean, mName: string}) => {
+    return (
+      <>
+        {props.isGitRepo ? (
+          <div className="d-flex justify-content-between">
+            <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="pl-3">{props.mName}</span>}</span>
+            <i className="fas fa-code-branch pt-1"></i>
+          </div>
+        ) : (
+          <span>{currentWorkspace === props.mName ? <span>&#10003; {props.mName} </span> : <span className="pl-3">{props.mName}</span>}</span>
+        )}
+      </>
+    )
+  }
+
+  const ShowNonLocalHostMenuItems = () => {
+    const cachedFilter = global.fs.browser.workspaces.filter(x => !x.name.includes('localhost'))
+    return (
+      <>
+        {
+          currentWorkspace === LOCALHOST && cachedFilter.length > 0 ? cachedFilter.map(({ name, isGitRepo }, index) => (
+            <Dropdown.Item
+              key={index}
+              onClick={() => {
+                switchWorkspace(name)
+              }}
+              data-id={`dropdown-item-${name}`}
+            >
+              <IsGitRepoDropDownMenuItem isGitRepo={isGitRepo} mName={name} />
+            </Dropdown.Item>
+          )) : <ShowAllMenuItems />
+        }
+      </>
+    )
+  }
+
+  const ShowAllMenuItems = () => {
+    return (
+      <>
+        { global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
+          <Dropdown.Item
+            key={index}
+            onClick={() => { switchWorkspace(name) }}
+            data-id={`dropdown-item-${name}`}
+          >
+            <IsGitRepoDropDownMenuItem isGitRepo={isGitRepo} mName={name} />
+          </Dropdown.Item>
+        ))}
+      </>
+    )
+  }
+  const [togglerText, setTogglerText] = useState<'Connecting' | 'Connected to Local FileSystem'>('Connecting')
+
+  useEffect(() => {
+    setTimeout(() => {
+      setTogglerText('Connected to Local FileSystem')
+    }, 1000)
+  }, [selectedWorkspace])
+
+  const WorkspaceDropdownToggle = () => {
+    const [togglerText, setTogglerText] = useState<'Connecting' | 'Connected to Local FileSystem'>('Connecting')
+
+    useEffect(() => {
+      setTimeout(() => {
+        setTogglerText('Connected to Local FileSystem')
+      }, 1000)
+    }, [selectedWorkspace])
+
+    return (
+      <Dropdown.Toggle
+        as={CustomToggle}
+        id="dropdown-custom-components"
+        className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1"
+        icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
+      >
+        {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
+      </Dropdown.Toggle>
+    )
+  }
+
   return (
     <div className="d-flex flex-column justify-content-between h-100">
       <div
@@ -948,6 +1028,7 @@ export function Workspace() {
                           <HamburgerMenu
                             selectedWorkspace={selectedWorkspace}
                             createWorkspace={createWorkspace}
+                            handleRemixdWorkspace={()=>switchWorkspace(LOCALHOST)}
                             createBlankWorkspace={createBlankWorkspace}
                             renameCurrentWorkspace={renameCurrentWorkspace}
                             downloadCurrentWorkspace={downloadCurrentWorkspace}
@@ -1024,54 +1105,25 @@ export function Workspace() {
                         className="btn btn-light btn-block w-100 d-inline-block border border-dark form-control mt-1"
                         icon={selectedWorkspace && selectedWorkspace.isGitRepo && !(currentWorkspace === LOCALHOST) ? 'far fa-code-branch' : null}
                       >
-                        {selectedWorkspace ? selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
+                        {selectedWorkspace ? selectedWorkspace.name === LOCALHOST ? togglerText : selectedWorkspace.name : currentWorkspace === LOCALHOST ? formatNameForReadonly('localhost') : NO_WORKSPACE}
                       </Dropdown.Toggle>
-
                       <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items" data-id="custom-dropdown-items">
-                        <Dropdown.Item
-                          onClick={() => {
-                            createWorkspace()
-                          }}
-                        >
-                          {
-                            <span className="pl-3">
-                              {' '}
-                            - <FormattedMessage id="filePanel.createNewWorkspace" /> -{' '}
-                            </span>
-                          }
-                        </Dropdown.Item>
                         <Dropdown.Item
                           onClick={() => {
                             switchWorkspace(LOCALHOST)
                           }}
                         >
                           {currentWorkspace === LOCALHOST ? (
-                            <span>&#10003; localhost </span>
+                            <span>&#10003; Connected to Local Filesystem </span>
                           ) : (
-                            <span className="pl-3">
-                              {' '}
-                              <FormattedMessage id="filePanel.connectToLocalhost" />{' '}
-                            </span>
+                            // <span className="pl-3">
+                            //   {' '}
+                            //   <FormattedMessage id="filePanel.connectToLocalhost" />{' '}
+                            // </span>
+                            null
                           )}
                         </Dropdown.Item>
-                        {global.fs.browser.workspaces.map(({ name, isGitRepo }, index) => (
-                          <Dropdown.Item
-                            key={index}
-                            onClick={() => {
-                              switchWorkspace(name)
-                            }}
-                            data-id={`dropdown-item-${name}`}
-                          >
-                            {isGitRepo ? (
-                              <div className="d-flex justify-content-between">
-                                <span>{currentWorkspace === name ? <span>&#10003; {name} </span> : <span className="pl-3">{name}</span>}</span>
-                                <i className="fas fa-code-branch pt-1"></i>
-                              </div>
-                            ) : (
-                              <span>{currentWorkspace === name ? <span>&#10003; {name} </span> : <span className="pl-3">{name}</span>}</span>
-                            )}
-                          </Dropdown.Item>
-                        ))}
+                        <ShowNonLocalHostMenuItems />
                         {(global.fs.browser.workspaces.length <= 0 || currentWorkspace === NO_WORKSPACE) && (
                           <Dropdown.Item
                             onClick={() => {
@@ -1105,8 +1157,7 @@ export function Workspace() {
                 <FileExplorer
                   fileState={global.fs.browser.fileState}
                   name={currentWorkspace}
-                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '', 'importFromIpfs',
-                    'importFromHttps']}
+                  menuItems={['createNewFile', 'createNewFolder', selectedWorkspace && selectedWorkspace.isGist ? 'updateGist' : 'publishToGist', canUpload ? 'uploadFile' : '', canUpload ? 'uploadFolder' : '', 'importFromIpfs','importFromHttps', 'connectToLocalFileSystem', 'initializeWorkspaceAsGitRepo']}
                   contextMenuItems={global.fs.browser.contextMenu.registeredMenuItems}
                   removedContextMenuItems={global.fs.browser.contextMenu.removedMenuItems}
                   files={global.fs.browser.files}
@@ -1166,6 +1217,7 @@ export function Workspace() {
                   renamePath={editModeOn}
                   importFromIpfs={importFromUrl}
                   importFromHttps={importFromUrl}
+                  connectToLocalFileSystem={()=>switchWorkspace(LOCALHOST)}
                   canPaste={canPaste}
                   hasCopied={hasCopied}
                   setHasCopied={setHasCopied}

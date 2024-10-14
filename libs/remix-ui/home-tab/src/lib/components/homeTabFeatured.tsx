@@ -13,7 +13,11 @@ export type HomeTabFeaturedProps = {
 
 function HomeTabFeatured(props:HomeTabFeaturedProps) {
   const themeFilter = useContext(ThemeContext)
-
+  const handleStartLearneth = async () => {
+    await props.plugin.appManager.activatePlugin(['LearnEth', 'solidityUnitTesting'])
+    props.plugin.verticalIcons.select('LearnEth')
+    _paq.push(['trackEvent', 'hometab', 'featuredSection', 'LearnEth'])
+  }
   return (
     <div className="pt-1 pl-2" id="hTFeaturedeSection">
       <div className="mb-2 remix_ui-carousel-container">
@@ -66,9 +70,9 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                 </div>
               </div>
               <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
-                <a href="https://remix-project.org" target="__blank">
+                <button className='btn' onClick={()=>handleStartLearneth()}>
                   <img src={'assets/img/remi-prof.webp'} className="remixui_carouselImage" alt=""></img>
-                </a>
+                </button>
                 <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
                   <h5>
                     <FormattedMessage id="home.learnEthPromoTitle" />
@@ -79,12 +83,7 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                   <span
                     className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
                     style={{ cursor: 'pointer' }}
-                    onClick={async () => {
-                      await props.plugin.appManager.activatePlugin(['LearnEth', 'solidityUnitTesting'])
-                      props.plugin.verticalIcons.select('LearnEth')
-                      await props.plugin.call('LearnEth', 'home')
-                    	}
-                    }
+                    onClick={()=>handleStartLearneth()}
                   >
                     <FormattedMessage id="home.learnEthPromoButton" />
                   </span>
@@ -111,30 +110,6 @@ function HomeTabFeatured(props:HomeTabFeaturedProps) {
                     href="https://www.youtube.com/@EthereumRemix/videos"
                   >
                     <FormattedMessage id="home.remixYouTubeMore" />
-                  </a>
-                </div>
-              </div>
-              <div className="mr-1 pr-1 d-flex align-items-center justify-content-center h-100">
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform" target="__blank">
-                  <img src={'assets/img/remixRewardBetaTester_small.webp'} className="remixui_carouselImage_remixbeta" alt=""></img>
-                </a>
-                <div className="h6 w-50 p-2 pl-4  align-self-center" style={{ flex: '1' }}>
-                  <h5>
-                    <FormattedMessage id="home.betaTesting" />
-                  </h5>
-                  <p style={{ fontStyle: 'italic', fontSize: '1rem' }}>
-                    <FormattedMessage id="home.betaTestingText1" />
-                  </p>
-                  <div style={{ fontSize: '0.8rem' }} className="mb-3">
-                    <FormattedMessage id="home.betaTestingText2" />
-                  </div>
-                  <a
-                    className="remixui_home_text btn-sm btn-secondary mt-2 text-decoration-none mb-3"
-                    onClick={() => _paq.push(['trackEvent', 'hometab', 'featuredSection', 'betatesting'])}
-                    target="__blank"
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSd0WsJnKbeJo-BGrnf7WijxAdmE4PnC_Z4M0IApbBfHLHZdsQ/viewform"
-                  >
-                    <FormattedMessage id="home.betaTestingMore" />
                   </a>
                 </div>
               </div>

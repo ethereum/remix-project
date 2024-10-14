@@ -10,8 +10,8 @@ const { encodeFunctionId } = execution.txHelper;
 
 const surgeClient = new SurgeClient({
   // surge backend doesn't support cross-domain, that's why the proxy goes
-  // here is the codebase of proxy: https://github.com/drafish/vercel-proxy
-  proxy: 'https://vercel-proxy-bice-six.vercel.app',
+  // here is the codebase of proxy: https://github.com/remix-project-org/remix-wildcard/blob/master/src/hosts/common-corsproxy.ts
+  proxy: 'https://common-corsproxy.remixproject.org/',
   onError: (err: Error) => {
     console.log(err);
   },
@@ -160,19 +160,10 @@ export const deploy = async (payload: any, callback: any) => {
   const { data } = await axios.get(
     // It's the json file contains all the static files paths of dapp-template.
     // It's generated through the build process automatically.
-    'https://dev.remix-dapp.pages.dev/manifest.json'
+    `${window.origin}/plugins/remix-dapp/manifest.json`
   );
 
-  let paths: any = [];
-
-  Object.keys(data).forEach((key) => {
-    if (data[key].src === 'index.html') {
-      const { src, file, css, assets } = data[key];
-      paths = paths.concat([src, file, ...css, ...assets]);
-    } else {
-      paths.push(data[key].file);
-    }
-  });
+  const paths = Object.keys(data);
 
   const { logo, ...instance } = state.instance;
 
@@ -183,7 +174,7 @@ export const deploy = async (payload: any, callback: any) => {
   })
 
   const files: Record<string, string> = {
-    'dir/instance.json': instanceJson,
+    'dir/assets/instance.json': instanceJson,
   };
 
   // console.log(
@@ -197,11 +188,11 @@ export const deploy = async (payload: any, callback: any) => {
     const path = paths[index];
     // download all the static files from the dapp-template domain.
     // here is the codebase of dapp-template: https://github.com/drafish/remix-dapp
-    const resp = await axios.get(`https://dev.remix-dapp.pages.dev/${path}`);
+    const resp = await axios.get(`${window.origin}/plugins/remix-dapp/${path}`);
     files[`dir/${path}`] = resp.data;
   }
 
-  files['dir/logo.png'] = logo
+  files['dir/assets/logo.png'] = logo
   files['dir/CORS'] = '*'
   files['dir/index.html'] = files['dir/index.html'].replace(
     'assets/css/themes/remix-dark_tvx1s2.css',
@@ -236,7 +227,7 @@ export const deploy = async (payload: any, callback: any) => {
 
   try {
     // some times deployment might fail even if it says successfully, that's why we need to do the double check.
-    const instanceResp = await axios.get(`https://${payload.subdomain}.surge.sh/instance.json`);
+    const instanceResp = await axios.get(`https://${payload.subdomain}.surge.sh/assets/instance.json`);
     if (instanceResp.status === 200 && JSON.stringify(instanceResp.data) === instanceJson) {
       callback({ code: 'SUCCESS', error: '' });
       return;

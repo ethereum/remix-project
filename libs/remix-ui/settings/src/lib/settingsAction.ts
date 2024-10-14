@@ -41,6 +41,7 @@ export const copilotTemperature = (config, checked, dispatch) => {
 
 export const useMatomoAnalytics = (config, checked, dispatch) => {
   config.set('settings/matomo-analytics', checked)
+  localStorage.setItem('matomo-analytics-consent', Date.now().toString())
   dispatch({ type: 'useMatomoAnalytics', payload: { isChecked: checked, textClass: checked ? textDark : textSecondary } })
   if (checked) {
     // user has given consent to process their data

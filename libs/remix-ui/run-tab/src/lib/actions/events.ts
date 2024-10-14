@@ -1,8 +1,8 @@
 import { envChangeNotification } from "@remix-ui/helper"
 import { RunTab } from "../types/run-tab"
 import { setExecutionContext, setFinalContext, updateAccountBalances, fillAccountsList } from "./account"
-import { addExternalProvider, addInstance, addPinnedInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider, setPinnedChainId } from "./actions"
-import { addDeployOption, clearAllInstances, clearAllPinnedInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
+import { addExternalProvider, addInstance, addNewProxyDeployment, removeExternalProvider, setNetworkNameFromProvider, setPinnedChainId } from "./actions"
+import { addDeployOption, clearAllInstances, clearRecorderCount, fetchContractListSuccess, resetProxyDeployments, resetUdapp, setCurrentContract, setCurrentFile, setLoadType, setRecorderCount, setRemixDActivated, setSendValue, fetchAccountsListSuccess } from "./payload"
 import { updateInstanceBalance } from './deploy'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import BN from 'bn.js'
@@ -45,6 +45,11 @@ export const setupEvents = (plugin: RunTab) => {
     }
     setFinalContext(plugin, dispatch)
     fillAccountsList(plugin, dispatch)
+    // 'contextChanged' & 'networkStatus' both are triggered on workspace & network change
+    // There is chance that pinned contracts state is overrided by othe event
+    // We load pinned contracts for VM environment in this event
+    // and for other environments in 'networkStatus' event
+    if (context.startsWith('vm')) await loadPinnedContracts(plugin, dispatch, context)
   })
 
   plugin.blockchain.event.register('networkStatus', async ({ error, network }) => {
@@ -64,8 +69,10 @@ export const setupEvents = (plugin: RunTab) => {
     // Check if provider is changed or network is changed for same provider e.g; Metamask
     if (currentNetwork.provider !== networkProvider() || (!isVM && currentNetwork.chainId !== network.id)) {
       currentNetwork.provider = networkProvider()
-      if (!isVM) currentNetwork.chainId = network.id
-      await loadPinnedContracts(plugin, dispatch, pinnedChainId)
+      if (!isVM) {
+        currentNetwork.chainId = network.id
+        await loadPinnedContracts(plugin, dispatch, pinnedChainId)
+      }
     }
   })
 
@@ -100,16 +107,8 @@ export const setupEvents = (plugin: RunTab) => {
     dispatch(clearAllInstances())
   })
 
-  plugin.on('udapp', 'clearAllPinnedInstancesReducer', () => {
-    dispatch(clearAllPinnedInstances())
-  })
-
   plugin.on('udapp', 'addInstanceReducer', (address, abi, name, contractData?) => {
     addInstance(dispatch, { contractData, abi, address, name })
-  })
-
-  plugin.on('udapp', 'addPinnedInstanceReducer', (address, abi, name, pinnedAt, filePath) => {
-    addPinnedInstance(dispatch, { abi, address, name, pinnedAt, filePath })
   })
 
   plugin.on('filePanel', 'setWorkspace', async () => {
@@ -182,7 +181,7 @@ export const setupEvents = (plugin: RunTab) => {
 }
 
 const loadPinnedContracts = async (plugin, dispatch, dirName) => {
-  await plugin.call('udapp', 'clearAllPinnedInstances')
+  await plugin.call('udapp', 'clearAllInstances')
   const isPinnedAvailable = await plugin.call('fileManager', 'exists', `.deploys/pinned-contracts/${dirName}`)
   if (isPinnedAvailable) {
     try {
@@ -191,7 +190,8 @@ const loadPinnedContracts = async (plugin, dispatch, dirName) => {
       for (const file of filePaths) {
         const pinnedContract = await plugin.call('fileManager', 'readFile', file)
         const pinnedContractObj = JSON.parse(pinnedContract)
-        if (pinnedContractObj) addPinnedInstance(dispatch, pinnedContractObj)
+        pinnedContractObj.isPinned = true
+        if (pinnedContractObj) addInstance(dispatch, pinnedContractObj)
       }
     } catch (err) {
       console.log(err)

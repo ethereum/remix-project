@@ -10,6 +10,8 @@ import './styles/preload.css'
 import isElectron from 'is-electron'
 const _paq = (window._paq = window._paq || [])
 
+_paq.push(['trackEvent', 'Preload', 'start'])
+
 export const Preload = (props: any) => {
   const [tip, setTip] = useState<string>('')
   const [supported, setSupported] = useState<boolean>(true)

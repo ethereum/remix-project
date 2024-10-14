@@ -361,18 +361,16 @@ module.exports = {
         Resolver resolver = ens.resolver(node);
         console.log(resolver.addr(node));
     }
-    `
+    `    
     if (runMasterTests) {
+      const path = "//*[@class='view-line' and contains(.,'resolveENS') and contains(.,'view')]//span//span[contains(.,'(')]"
+      
       browser
         // .clickLaunchIcon('udapp')
         .switchEnvironment('vm-mainnet-fork')
         .clickLaunchIcon('filePanel')
         .addFile('test_mainnet.sol', { content: script })
-
-      const path = "//*[@class='view-line' and contains(.,'resolveENS') and contains(.,'view')]//span//span[contains(.,'(')]"
-      const pathRunFunction = `//li//*[@aria-label='Run the free function "resolveENS"']`
-      browser.waitForElementVisible('#editorView')
-        //.waitForElementPresent(pathRunFunction)
+        .waitForElementVisible('#editorView')
         .pause(10000) // the parser need to parse the code
         .useXpath()
         .scrollToLine(16)
@@ -396,15 +394,15 @@ module.exports = {
         console.log("test running free function");
     }
     `
+
+    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"
     browser
       .addFile('test.sol', { content: script })
-      .scrollToLine(3)
-    const path = "//*[@class='view-line' and contains(.,'runSomething') and contains(.,'view')]//span//span[contains(.,'(')]"
-    const pathRunFunction = `//li//*[@aria-label='Run the free function "runSomething"']`
-    browser.waitForElementVisible('#editorView')
+      .waitForElementVisible('#editorView')
+      .pause(10000) // the parser need to parse the code
       .useXpath()
-      .click(path)
-      .pause(3000) // the parser need to parse the code
+      .scrollToLine(3)      
+      .click(path)      
       .perform(function () {
         const actions = this.actions({ async: true });
         return actions

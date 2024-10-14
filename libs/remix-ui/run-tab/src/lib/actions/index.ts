@@ -3,7 +3,7 @@ import React from 'react'
 import { RunTab } from '../types/run-tab'
 import { resetAndInit, setupEvents, setEventsDispatch } from './events'
 import { createNewBlockchainAccount, setExecutionContext, signMessageWithAddress } from './account'
-import { clearInstances, clearPopUp, removeInstance, setAccount, setGasFee, setMatchPassphrasePrompt,
+import { clearInstances, clearPopUp, removeInstance, pinInstance, unpinInstance, setAccount, setGasFee, setMatchPassphrasePrompt,
   setNetworkNameFromProvider, setPassphrasePrompt, setSelectedContract, setSendTransactionValue, setUnit,
   updateBaseFeePerGas, updateConfirmSettings, updateGasPrice, updateGasPriceStatus, updateMaxFee, updateMaxPriorityFee, updateScenarioPath } from './actions'
 import { createInstance, getContext, getFuncABIInputs, getSelectedContract, loadAddress, runTransactions, updateInstanceBalance, syncContractsInternal, isValidContractAddress, isValidContractUpgrade } from './deploy'
@@ -50,10 +50,12 @@ export const setGasPrice = (price: string) => updateGasPrice(dispatch, price)
 export const setGasPriceStatus = (status: boolean) => updateGasPriceStatus(dispatch, status)
 export const setMaxFee = (fee: string) => updateMaxFee(dispatch, fee)
 export const setMaxPriorityFee = (fee: string) => updateMaxPriorityFee(dispatch, fee)
+export const pinUnpinnedInstance = (index: number, pinnedAt: number, filePath: string) => pinInstance(dispatch, index, pinnedAt, filePath)
+export const unpinPinnedInstance = (index: number) => unpinInstance(dispatch, index)
 export const removeInstances = () => clearInstances(dispatch)
-export const removeSingleInstance = (index: number, isPinnedContract: boolean, shouldDelete: boolean) => removeInstance(dispatch, index, isPinnedContract, shouldDelete)
+export const removeSingleInstance = (index: number) => removeInstance(dispatch, index)
 export const getExecutionContext = () => getContext(plugin)
-export const executeTransactions = (instanceIndex: number, isPinnedContract: boolean, lookupOnly: boolean, funcABI: FuncABI, inputsValues: string, contractName: string, contractABI, contract, address, logMsg:string, mainnetPrompt: MainnetPrompt, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, funcIndex?: number) => runTransactions(plugin, dispatch, instanceIndex, isPinnedContract, lookupOnly, funcABI, inputsValues, contractName, contractABI, contract, address, logMsg, mainnetPrompt, gasEstimationPrompt, passphrasePrompt, funcIndex)
+export const executeTransactions = (instanceIndex: number, lookupOnly: boolean, funcABI: FuncABI, inputsValues: string, contractName: string, contractABI, contract, address, logMsg:string, mainnetPrompt: MainnetPrompt, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, funcIndex?: number) => runTransactions(plugin, dispatch, instanceIndex, lookupOnly, funcABI, inputsValues, contractName, contractABI, contract, address, logMsg, mainnetPrompt, gasEstimationPrompt, passphrasePrompt, funcIndex)
 export const loadFromAddress = (contract: ContractData, address: string) => loadAddress(plugin, dispatch, contract, address)
 export const storeNewScenario = async (prompt: (msg: string, defaultValue: string) => JSX.Element) => storeScenario(plugin, dispatch, prompt)
 export const runScenario = (liveMode: boolean, gasEstimationPrompt: (msg: string) => JSX.Element, passphrasePrompt: (msg: string) => JSX.Element, confirmDialogContent: MainnetPrompt) => runCurrentScenario(liveMode, plugin, dispatch, gasEstimationPrompt, passphrasePrompt, confirmDialogContent)

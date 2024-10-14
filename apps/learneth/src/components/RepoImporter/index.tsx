@@ -109,7 +109,7 @@ function RepoImporter({list, selectedRepo}: any): JSX.Element {
               Import {name}
             </Button>
             <a href="https://github.com/bunsenstraat/remix-learneth-plugin/blob/master/README.md" className="d-none" target="_blank" rel="noreferrer">
-              <i className="fas fa-info-circle" /> how to setup your repo
+              <i className="fas fa-info" /> How to setup your repo
             </a>
           </Form>
         )}

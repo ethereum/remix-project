@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { AppContext } from '../../context/context'
 import { useDialogDispatchers } from '../../context/provider'
+import { AppModalCancelTypes } from '../../types'
 declare global {
   interface Window {
     _paq: any
@@ -15,7 +16,7 @@ interface MatomoDialogProps {
 }
 
 const MatomoDialog = (props: MatomoDialogProps) => {
-  const { settings, showMatamo, appManager } = useContext(AppContext)
+  const { settings, showMatomo, appManager } = useContext(AppContext)
   const { modal } = useDialogDispatchers()
   const [visible, setVisible] = useState<boolean>(props.hide)
 
@@ -63,7 +64,7 @@ const MatomoDialog = (props: MatomoDialogProps) => {
   }
 
   useEffect(() => {
-    if (visible && showMatamo) {
+    if (visible && showMatomo) {
       modal({
         id: 'matomoModal',
         title: <FormattedMessage id="remixApp.matomoTitle" />,
@@ -72,18 +73,22 @@ const MatomoDialog = (props: MatomoDialogProps) => {
         okFn: handleModalOkClick,
         cancelLabel: <FormattedMessage id="remixApp.decline" />,
         cancelFn: declineModal,
+        preventBlur: true
       })
     }
   }, [visible])
 
-  const declineModal = async () => {
-    settings.updateMatomoAnalyticsChoice(false)
-    // revoke tracking consent
-    _paq.push(['forgetConsentGiven'])
-    setVisible(false)
+  const declineModal = async (reason: AppModalCancelTypes) => {
+    if (reason === AppModalCancelTypes.click || reason === AppModalCancelTypes.enter) {
+      settings.updateMatomoAnalyticsChoice(false)
+      // revoke tracking consent
+      _paq.push(['forgetConsentGiven'])
+      setVisible(false)
+    }
   }
 
   const handleModalOkClick = async () => {
+
     // user has given consent to process their data
     _paq.push(['setConsentGiven'])
     settings.updateMatomoAnalyticsChoice(true)

@@ -2,10 +2,10 @@
   
 ## What's RLN?
 
- Welcome to the Remix Circom ZKP RLN Workspace.
+Welcome to the Remix Circom ZKP RLN Workspace.
 
 RLN is a zero-knowledge gadget that enables spam prevention in anonymous environments.
-To learn more on RLN and how it works - check out [documentation](https://rate-limiting-nullifier.github.io/rln-docs/).
+To learn more about RLN and how it works - check out [documentation](https://rate-limiting-nullifier.github.io/rln-docs/).
 
 The workspace comprises two main directories:
 
@@ -19,7 +19,7 @@ The workspace comprises two main directories:
 
 #### 2) execute the file `run_setup.ts`:
 
-This step generate a verification key that can be used for generating proof, it will also generate a Solidity contract for on-chain verification.
+This step generates a verification key that can be used for generating proof, it will also generate a Solidity contract for on-chain verification.
 
 Note that this section should only be used for development purposes as this way of running the setup is heavily centralized (although some pieces of this script can be used to achieve that).
 

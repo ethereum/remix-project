@@ -57,6 +57,8 @@ import { xtermPlugin } from './app/plugins/electron/xtermPlugin'
 import { ripgrepPlugin } from './app/plugins/electron/ripgrepPlugin'
 import { compilerLoaderPlugin, compilerLoaderPluginDesktop } from './app/plugins/electron/compilerLoaderPlugin'
 import { appUpdaterPlugin } from './app/plugins/electron/appUpdaterPlugin'
+import { remixAIDesktopPlugin } from './app/plugins/electron/remixAIDesktopPlugin' 
+import { RemixAIPlugin } from './app/plugins/remixAIPlugin'
 import { SlitherHandleDesktop } from './app/plugins/electron/slitherPlugin'
 import { SlitherHandle } from './app/files/slither-handle'
 import { FoundryHandle } from './app/files/foundry-handle'
@@ -64,11 +66,8 @@ import { FoundryHandleDesktop } from './app/plugins/electron/foundryPlugin'
 import { HardhatHandle } from './app/files/hardhat-handle'
 import { HardhatHandleDesktop } from './app/plugins/electron/hardhatPlugin'
 
-import { SolCoder } from './app/plugins/solcoderAI'
 import { GitPlugin } from './app/plugins/git'
 import { Matomo } from './app/plugins/matomo'
-
-
 
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
@@ -103,6 +102,7 @@ const Editor = require('./app/editor/editor')
 const Terminal = require('./app/panels/terminal')
 const { TabProxy } = require('./app/panels/tab-proxy.js')
 
+const _paq = (window._paq = window._paq || [])
 
 export class platformApi {
   get name() {
@@ -178,16 +178,24 @@ class AppComponent {
       '6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod': 35 // remix desktop
     }
 
+    _paq.push(['trackEvent', 'App', 'load']);
     this.matomoConfAlreadySet = Registry.getInstance().get('config').api.exists('settings/matomo-analytics')
     this.matomoCurrentSetting = Registry.getInstance().get('config').api.get('settings/matomo-analytics')
 
-    let electronTracking = false
+    let electronTracking = window.electronAPI ? await window.electronAPI.canTrackMatomo() : false
 
-    if (window.electronAPI) {
-      electronTracking = await window.electronAPI.canTrackMatomo()
-    }
+    const lastMatomoCheck = window.localStorage.getItem('matomo-analytics-consent')
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    this.showMatamo = (matomoDomains[window.location.hostname] || electronTracking) && !this.matomoConfAlreadySet
+    const e2eforceMatomoToShow = window.localStorage.getItem('showMatomo') && window.localStorage.getItem('showMatomo') === 'true'
+    const contextShouldShowMatomo = matomoDomains[window.location.hostname] || e2eforceMatomoToShow || electronTracking
+    const shouldRenewConsent = this.matomoCurrentSetting === false && (!lastMatomoCheck || new Date(Number(lastMatomoCheck)) < sixMonthsAgo) // it is set to false for more than 6 months.
+    this.showMatomo = contextShouldShowMatomo && (!this.matomoConfAlreadySet || shouldRenewConsent)        
+
+    if (this.showMatomo && shouldRenewConsent) {
+      _paq.push(['trackEvent', 'Matomo', 'refreshMatomoPermissions']);
+    }    
 
     this.walkthroughService = new WalkthroughService(appManager)
 
@@ -261,7 +269,7 @@ class AppComponent {
     const contractFlattener = new ContractFlattener()
 
     // ----------------- AI --------------------------------------
-    const solcoder = new SolCoder()
+    const remixAI = new RemixAIPlugin(isElectron())
 
     // ----------------- import content service ------------------------
     const contentImport = new CompilerImports()
@@ -384,11 +392,11 @@ class AppComponent {
       contractFlattener,
       solidityScript,
       templates,
-      solcoder,
       git,
       pluginStateLogger,
       matomo,
-      templateSelection
+      templateSelection,
+      remixAI
     ])
 
     //---- fs plugin
@@ -407,6 +415,8 @@ class AppComponent {
       this.engine.register([ripgrep])
       const appUpdater = new appUpdaterPlugin()
       this.engine.register([appUpdater])
+      const remixAIDesktop = new remixAIDesktopPlugin()
+      this.engine.register([remixAIDesktop])
     }
 
     const compilerloader = isElectron() ? new compilerLoaderPluginDesktop() : new compilerLoaderPlugin()
@@ -538,7 +548,8 @@ class AppComponent {
       'fetchAndCompile',
       'contentImport',
       'gistHandler',
-      'compilerloader'
+      'compilerloader',
+      'remixAI'
     ])
     await this.appManager.activatePlugin(['settings'])
 
@@ -546,7 +557,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['solidity-script', 'remix-templates'])
 
     if (isElectron()) {
-      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'slither', 'foundry', 'hardhat'])
+      await this.appManager.activatePlugin(['isogit', 'electronconfig', 'electronTemplates', 'xterm', 'ripgrep', 'appUpdater', 'slither', 'foundry', 'hardhat', 'remixAID'])
     }
 
     this.appManager.on(
@@ -561,7 +572,6 @@ class AppComponent {
       }
     )
     await this.appManager.activatePlugin(['solidity-script'])
-    await this.appManager.activatePlugin(['solcoder'])
     await this.appManager.activatePlugin(['filePanel'])
 
     // Set workspace after initial activation

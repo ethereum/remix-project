@@ -1,4 +1,4 @@
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
 import { StringDecoder } from 'string_decoder';
 // Max duration to batch session data before sending it to the renderer process.
 const BATCH_DURATION_MS = 16;

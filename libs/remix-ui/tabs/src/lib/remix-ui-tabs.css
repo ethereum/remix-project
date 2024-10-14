@@ -21,7 +21,8 @@
   vertical-align: middle;
 }
 .tab:hover .close-tabs{
-  visibility: visible
+  visibility: visible;
+  cursor: pointer;
 }
 .active .close-tabs {
   visibility: visible
@@ -29,6 +30,7 @@
 .close-tabs {
   visibility: hidden;
   font-size: medium;
+  cursor: pointer;
 }
 .iconImage {
   width: 1rem;
