@@ -3,7 +3,7 @@ import { ViewPlugin } from '@remixproject/engine-web'
 import { Plugin } from '@remixproject/engine';
 import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
 import React, { useCallback } from 'react';
-import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent} from '@remix/remix-ai-core';
+import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent } from '@remix/remix-ai-core';
 
 type chatRequestBufferT<T> = {
   [key in keyof T]: T[key]
@@ -52,8 +52,8 @@ export class RemixAIPlugin extends ViewPlugin {
       console.log('Activating RemixAIPlugin on browser')
       this.initialize()
     }
+    this.call('sidePanel', 'pinView', profile)
   }
-
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
     if (this.isOnDesktop) {
       // on desktop use remote inferencer -> false
@@ -130,7 +130,7 @@ export class RemixAIPlugin extends ViewPlugin {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
-    
+
     let result
     if (this.isOnDesktop) {
       result = await this.call(this.remixDesktopPluginName, 'code_explaining', prompt, context, params)
@@ -175,17 +175,16 @@ export class RemixAIPlugin extends ViewPlugin {
       }
       if (pipeMessage) ChatApi.composer.send(pipeMessage)
       else {
-        if      (fn === "code_explaining")  ChatApi.composer.send("Explain the current code")
+        if (fn === "code_explaining") ChatApi.composer.send("Explain the current code")
         else if (fn === "error_explaining") ChatApi.composer.send("Explain the error")
-        else if (fn === "solidity_answer")  ChatApi.composer.send("Answer the following question")
+        else if (fn === "solidity_answer") ChatApi.composer.send("Answer the following question")
         else console.log("chatRequestBuffer is not empty. First process the last request.")
       }
     }
-    else{
+    else {
       console.log("chatRequestBuffer is not empty. First process the last request.")
     }
   }
-
 
   async ProcessChatRequestBuffer(params:IParams=GenerationParams){
     if (this.chatRequestBuffer != null){
@@ -193,7 +192,7 @@ export class RemixAIPlugin extends ViewPlugin {
       this.chatRequestBuffer = null
       return result
     }
-    else{
+    else {
       console.log("chatRequestBuffer is empty.")
       return ""
     }
