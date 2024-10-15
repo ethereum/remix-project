@@ -350,9 +350,9 @@ export function Workspace() {
     })
     global.modal(
       intl.formatMessage({ id: 'filePanel.workspace.createBlank' }),
-      await createModalMessage(`blank - ${counter}`, gitNotSet, (value) => { workspace = value }, (value) => gitInit = false),
+      await createModalMessage(workspace ? workspace: `blank - ${counter}`, gitNotSet, (value) => { workspace = value }, (value) => gitInit = false),
       intl.formatMessage({ id: 'filePanel.ok' }),
-      () => global.dispatchCreateWorkspace(`blank - ${counter}`, 'blank', false),
+      () => global.dispatchCreateWorkspace(workspace ? workspace: `blank - ${counter}`, 'blank', false),
       intl.formatMessage({ id: 'filePanel.cancel' })
     )
   }
