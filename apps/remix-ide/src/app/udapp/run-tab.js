@@ -137,6 +137,7 @@ export class RunTab extends ViewPlugin {
       'injected-Brave Wallet': 'Deploy through the Brave Wallet extension.',
       'injected-Brave': 'Deploy through the Brave browser extension.',
       'injected-metamask-optimism': 'Deploy to Optimism through the Metamask browser extension.',
+      'injected-metamask-gnosis': 'Deploy to Gnosis through the Metamask browser extension.',
       'injected-metamask-arbitrum': 'Deploy to Arbitrum through the Metamask browser extension.',
       'injected-metamask-sepolia': 'Deploy to the Sepolia testnet through the Metamask browser extension.',
       'injected-metamask-ephemery': 'Deploy to the Ephemery testnet through the Metamask browser extension.'
@@ -145,6 +146,7 @@ export class RunTab extends ViewPlugin {
     const logos = {
       'injected-metamask-optimism': ['assets/img/optimism-ethereum-op-logo.png', 'assets/img/metamask.png'],
       'injected-metamask-arbitrum': ['assets/img/arbitrum-arb-logo.png', 'assets/img/metamask.png'],
+      'injected-metamask-gnosis': ['assets/img/gnosis_chain.png', 'assets/img/metamask.png'],
       'injected-metamask-sepolia': ['assets/img/metamask.png'],
       'injected-metamask-ephemery': ['assets/img/metamask.png'],
       'injected-MetaMask': ['assets/img/metamask.png'],
@@ -210,6 +212,13 @@ export class RunTab extends ViewPlugin {
             "symbol": "ETH",
             "decimals": 18
           })
+        await addCustomInjectedProvider(10, event, 'injected-metamask-gnosis', 'Gnosis Mainnet - ' + event.detail.info.name, '', ['https://rpc.ankr.com/gnosis', 'https://1rpc.io/gnosis'],
+          {
+            "name": "XDAI",
+            "symbol": "XDAI",
+            "decimals": 18
+          })
+        
         /*
         await addCustomInjectedProvider(9, event, 'SKALE Chaos Testnet', '0x50877ed6', ['https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix'],
           {
