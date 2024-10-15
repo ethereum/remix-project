@@ -132,7 +132,6 @@ export const showCurrentBranch = async () => {
     const currentHead = await getCommitFromRef('HEAD');
     dispatch(setCurrenHead(currentHead));
   } catch (e) {
-    console.log(e)
     dispatch(setCurrenHead(''));
   }
 
