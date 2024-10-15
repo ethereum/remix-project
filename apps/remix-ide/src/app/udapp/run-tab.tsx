@@ -245,7 +245,6 @@ export class RunTab extends ViewPlugin {
             "symbol": "XDAI",
             "decimals": 18
           })
-        
         /*
         await addCustomInjectedProvider(9, event, 'SKALE Chaos Testnet', '0x50877ed6', ['https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix'],
           {
