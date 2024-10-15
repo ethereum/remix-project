@@ -1,18 +1,13 @@
-import React, { useContext, useEffect, useState, useCallback} from 'react'
+import React from 'react'
 import '../remix-ai.css'
 import { DefaultModels, GenerationParams, ChatHistory, HandleStreamResponse, HandleSimpleResponse } from '@remix/remix-ai-core';
 import { ConversationStarter, StreamSend, StreamingAdapterObserver, useAiChatApi } from '@nlux/react';
-import axios from 'axios';
-import { AiChat, useAsStreamAdapter, ChatItem, AiChatUI} from '@nlux/react';
+import { AiChat, useAsStreamAdapter, ChatItem } from '@nlux/react';
 import { JsonStreamParser } from '@remix/remix-ai-core';
 import { user, assistantAvatar } from './personas';
-import {highlighter} from '@nlux/highlighter'
+import { highlighter } from '@nlux/highlighter'
 import './color.css'
 import '@nlux/themes/unstyled.css';
-// import '@nlux/themes'
-import { result } from 'lodash';
-
-const demoProxyServerUrl = 'https://solcoder.remixproject.org';
 
 export let ChatApi = null
 
@@ -27,28 +22,27 @@ export const Default = (props) => {
     let response = null
     if (await props.plugin.call('remixAI', 'isChatRequestPending')){
       response = await props.plugin.call('remixAI', 'ProcessChatRequestBuffer', GenerationParams);
-    }
-    else{
+    } else {
       response = await props.plugin.call('remixAI', 'solidity_answer', prompt, GenerationParams);
     }
 
-    if (GenerationParams.return_stream_response) HandleStreamResponse(response, 
+    if (GenerationParams.return_stream_response) HandleStreamResponse(response,
       (text) => {observer.next(text)},
-      (result) => { 
+      (result) => {
         ChatHistory.pushHistory(prompt, result)
         observer.complete()
       }
     )
-    else{
-        observer.next(response)
-        observer.complete()
+    else {
+      observer.next(response)
+      observer.complete()
     }
 
   };
   ChatApi = useAiChatApi();
   const conversationStarters: ConversationStarter[] = [
-    {prompt: 'Explain briefly the current file in Editor', icon: <span>⭐️</span>},
-    {prompt: 'Explain what is a solidity contract!'}]
+    { prompt: 'Explain briefly the current file in Editor', icon: <span>⭐️</span> },
+    { prompt: 'Explain what is a solidity contract!' }]
 
   // Define initial messages
   const initialMessages: ChatItem[] = [
@@ -70,7 +64,6 @@ export const Default = (props) => {
           avatar: assistantAvatar
         },
         user
-        
       }}
       //initialConversation={initialMessages}
       conversationOptions={{ layout: 'bubbles', conversationStarters }}

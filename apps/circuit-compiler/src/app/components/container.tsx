@@ -73,18 +73,14 @@ export function Container () {
           full circom error: ${JSON.stringify(report, null, 2)}
           explain why the error occurred and how to fix it.
           `
-        // @ts-ignore
         await circuitApp.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
-        // await circuitApp.plugin.call('remixAI', 'error_explaining', message)
       } else {
         const message = `
           error message: ${error}
           full circom error: ${JSON.stringify(report, null, 2)}
           explain why the error occurred and how to fix it.
           `
-        // @ts-ignore
         await circuitApp.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
-        //await circuitApp.plugin.call('remixAI', 'error_explaining', message)
       }
     } else {
       const error = report.message
@@ -93,8 +89,6 @@ export function Container () {
       full circom error: ${JSON.stringify(report, null, 2)}
       explain why the error occurred and how to fix it.
       `
-      // @ts-ignore
-      //await circuitApp.plugin.call('remixAI', 'error_explaining', message)
       await circuitApp.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
     }
   }
