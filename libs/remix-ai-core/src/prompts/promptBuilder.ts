@@ -24,8 +24,6 @@ export const buildSolgptPromt = (userPrompt:string, modelOP:RemoteBackendOPModel
 
     // remove sol-gpt or gpt from the start of the prompt
     const parsedPrompt = userPrompt.replace(/^sol-gpt|^gpt/gm, '')
-    
-    // finally add the new prompt to the end of the history
     newPrompt = "sol-gpt " + newPrompt + PromptBuilder(parsedPrompt, "", modelOP)
     return newPrompt
   }
