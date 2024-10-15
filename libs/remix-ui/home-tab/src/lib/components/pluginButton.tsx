@@ -35,12 +35,12 @@ function PluginButton({ imgPath, envID, envText, callback, l2, description, main
           <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>
         </CustomTooltip>) :
         maintainedBy ?
-        (<CustomTooltip placement="bottom" tooltipId="overlay-tooltip-external" tooltipText={"Maintained by " + maintainedBy}>
-          <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel text-secondary far fa-exclamation-circle"></i>
-        </CustomTooltip>)
-        : (<CustomTooltip placement="bottom" tooltipId="overlay-tooltip-external" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
-          <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel text-secondary far fa-exclamation-circle"></i>
-        </CustomTooltip>)
+          (<CustomTooltip placement="bottom" tooltipId="overlay-tooltip-external" tooltipText={"Maintained by " + maintainedBy}>
+            <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel text-secondary far fa-exclamation-circle"></i>
+          </CustomTooltip>)
+          : (<CustomTooltip placement="bottom" tooltipId="overlay-tooltip-external" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
+            <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel text-secondary far fa-exclamation-circle"></i>
+          </CustomTooltip>)
       }
     </div>
   )

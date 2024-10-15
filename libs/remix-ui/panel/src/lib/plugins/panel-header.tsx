@@ -50,12 +50,12 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
                 <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>
               </CustomTooltip>) :
               plugin?.profile?.maintainedBy ?
-              (<CustomTooltip placement="auto" tooltipId={"maintainedByTooltip" + plugin?.profile?.maintainedBy} tooltipText={"Maintained by " + plugin?.profile?.maintainedBy}>
-                <i aria-hidden="true" className="mt-1 px-1 text-secondary far fa-exclamation-circle"></i>
-              </CustomTooltip>)
-              : (<CustomTooltip placement="auto" tooltipId="maintainedByTooltipRemixUnknown" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
-                <i aria-hidden="true" className="mt-1 px-1 text-secondary far fa-exclamation-circle"></i>
-              </CustomTooltip>)
+                (<CustomTooltip placement="auto" tooltipId={"maintainedByTooltip" + plugin?.profile?.maintainedBy} tooltipText={"Maintained by " + plugin?.profile?.maintainedBy}>
+                  <i aria-hidden="true" className="mt-1 px-1 text-secondary far fa-exclamation-circle"></i>
+                </CustomTooltip>)
+                : (<CustomTooltip placement="auto" tooltipId="maintainedByTooltipRemixUnknown" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
+                  <i aria-hidden="true" className="mt-1 px-1 text-secondary far fa-exclamation-circle"></i>
+                </CustomTooltip>)
             }
           </div>
           <div className="swapitHeaderInfoSection d-flex justify-content-between" data-id="swapitHeaderInfoSectionId" onClick={toggleClass}>
