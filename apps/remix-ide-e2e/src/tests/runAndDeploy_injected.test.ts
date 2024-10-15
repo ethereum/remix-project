@@ -269,15 +269,13 @@ const tests = {
       .pause(1000)
       .journalChildIncludes('0x8be3a81e17b7e4a40006864a4ff6bfa3fb1e18b292b6f47edec95cd8feaa53275b90f56ca02669d461a297e6bf94ab0ee4b7c89aede3228ed5aedb59c7e007501c')
   }
-
-
 }
 
 const branch = process.env.CIRCLE_BRANCH;
 const isMasterBranch = branch === 'master';
 
 module.exports = {
-  ...{} //(branch ? (isMasterBranch ? tests : {}) : tests),
+  ...tests,
 };
 
 const localsCheck = {
