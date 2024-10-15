@@ -8,7 +8,6 @@ export class CodeExplainAgent {
 
   constructor(props) {
     this.plugin = props
-    
     // git or fs
     const codebase = this.loadCodebase("codebasePath");
   }
@@ -23,7 +22,7 @@ export class CodeExplainAgent {
 
   async chatCommand(prompt:string){
     // change this function with indexer or related
-    try{
+    try {
       if (prompt.includes('Explain briefly the current file')){
         const file = await this.plugin.call('fileManager', 'getCurrentFile')
         const content = `Explain this code:\n ${await this.plugin.call('fileManager', 'readFile', file)}`

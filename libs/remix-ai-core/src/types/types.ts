@@ -98,6 +98,7 @@ export class JsonStreamParser {
     this.buffer += chunk;
     const results = [];
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         const result = JSON.parse(this.buffer);
@@ -105,6 +106,7 @@ export class JsonStreamParser {
         this.buffer = '';
         break;
       } catch (error) {
+        // eslint-disable-next-line no-useless-escape
         const match = /^([^\{]*\{[^\}]*\})(.*)/.exec(this.buffer);
         if (match) {
           try {

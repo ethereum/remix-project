@@ -73,7 +73,7 @@
     --nlux-CodeBlock--Padding: 20px;
     --nlux-CodeBlock--TextColor: var(--text);
     --nlux-CodeBlock--FontSize: 14px;
-    --nlux-cvStrt--wd: 180px
+    --nlux-cvStrt--wd: var(--nlux-ConversationStarter--Width, 100px);
 
     /* Conversation starter colors */
     --nlux-ConversationStarter--BackgroundColor: var(--light);
