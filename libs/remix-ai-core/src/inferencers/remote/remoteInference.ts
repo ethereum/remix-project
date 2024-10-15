@@ -3,13 +3,9 @@ import { GenerationParams, CompletionParams, InsertionParams } from "../../types
 import { buildSolgptPromt } from "../../prompts/promptBuilder";
 import EventEmitter from "events";
 import { ChatHistory } from "../../prompts/chat";
-import axios, { AxiosResponse } from 'axios';
-import { Readable } from 'stream';
-import { StreamingAdapterObserver } from '@nlux/react';
+import axios from 'axios';
 
 const defaultErrorMessage = `Unable to get a response from AI server`
-
-
 export class RemoteInferencer implements ICompletions {
   api_url: string
   completion_url: string
@@ -76,9 +72,10 @@ export class RemoteInferencer implements ICompletions {
       if (payload.return_stream_response) {
         return response
       }
-      const reader = response.body!.getReader();
+      const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       const parser = new JsonStreamParser();
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -112,7 +109,6 @@ export class RemoteInferencer implements ICompletions {
       this.event.emit('onInferenceDone')
     }
   }
-
 
   async code_completion(prompt, options:IParams=CompletionParams): Promise<any> {
     const payload = { prompt, "endpoint":"code_completion", ...options }
@@ -149,7 +145,7 @@ export class RemoteInferencer implements ICompletions {
 
   async error_explaining(prompt, options:IParams=GenerationParams): Promise<any> {
     const payload = { prompt, "endpoint":"error_explaining", ...options }
-    if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload  , AIRequestType.GENERAL)
+    if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }
 }

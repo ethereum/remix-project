@@ -4,6 +4,7 @@ import { Plugin } from '@remixproject/engine';
 import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
 import React, { useCallback } from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent } from '@remix/remix-ai-core';
+import { CustomRemixApi } from '@remix-api'
 
 type chatRequestBufferT<T> = {
   [key in keyof T]: T[key]
@@ -26,6 +27,7 @@ const profile = {
   maintainedBy: 'Remix'
 }
 
+// add Plugin<any, CustomRemixApi>
 export class RemixAIPlugin extends ViewPlugin {
   isOnDesktop:boolean = false
   aiIsActivated:boolean = false
