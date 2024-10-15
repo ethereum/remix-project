@@ -244,7 +244,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
               checked={isMetadataChecked}
             />
             <label
-              className={`form-check-label vertical-align custom-control-label vertical-align ${getTextClass('settings/generate-contract-metadata')}`}
+              className={`form-check-label vertical-align custom-control-label align-middle ${getTextClass('settings/generate-contract-metadata')}`}
               data-id="settingsTabGenerateContractMetadataLabel"
               htmlFor="generatecontractmetadata"
             >
