@@ -141,7 +141,8 @@ export function isNative(name) {
     //'remixGuide',
     'environmentExplorer',
     'templateSelection',
-    'walletconnect'
+    'walletconnect',
+    'contract-verification'
   ]
   return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
 }

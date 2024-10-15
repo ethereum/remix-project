@@ -4,6 +4,7 @@ import type { Chain } from '../types'
 import { AppContext } from '../AppContext'
 
 function getChainDescriptor(chain: Chain): string {
+  if (!chain) return ''
   return `${chain.title || chain.name} (${chain.chainId})`
 }
 
