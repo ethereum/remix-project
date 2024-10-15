@@ -206,7 +206,7 @@ export class RunTab extends ViewPlugin {
               }
               return requestResult.result
             } catch (err) {
-              throw new Error(err.error.message)
+              throw new Error(err.message)
             }
           }
         }
