@@ -17,12 +17,11 @@ export class Blockchain extends Plugin<any, any> {
     };
   setupEvents(): void;
   getCurrentNetworkStatus(): {
-        name: string;
-        id: string;
         network?: {
             name: string;
             id: string;
         };
+        error?: string;
     };
   setupProviders(): void;
   providers: any;
@@ -35,8 +34,8 @@ export class Blockchain extends Plugin<any, any> {
   determineGasPrice(cb: any): void;
   getInputs(funABI: any): any;
   fromWei(value: any, doTypeConversion: any, unit: any): string;
-  toWei(value: any, unit: any): import("bn.js");
-  calculateFee(gas: any, gasPrice: any, unit: any): import("bn.js");
+  toWei(value: any, unit: any): string;
+  calculateFee(gas: any, gasPrice: any, unit: any): bigint;
   determineGasFees(tx: any): (gasPrice: any, cb: any) => void;
   changeExecutionContext(context: any, confirmCb: any, infoCb: any, cb: any): Promise<any>;
   detectNetwork(cb: any): void;
@@ -58,7 +57,6 @@ export class Blockchain extends Plugin<any, any> {
   removeProvider(name: any): void;
   /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
   startListening(txlistener: any): void;
-  resetEnvironment(): Promise<void>;
   /**
      * Create a VM Account
      * @param {{privateKey: string, balance: string}} newAccount The new account to create

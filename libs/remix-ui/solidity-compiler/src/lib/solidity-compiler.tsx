@@ -299,6 +299,7 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
                 <Renderer
                   message={compileErrors[currentFile].error.formattedMessage || compileErrors[currentFile].error}
                   plugin={api}
+                  context='solidity'
                   opt={{
                     type: compileErrors[currentFile].error.severity || 'error',
                     errorType: compileErrors[currentFile].error.type
@@ -313,10 +314,10 @@ export const SolidityCompiler = (props: SolidityCompilerProps) => {
                 compileErrors[currentFile].errors.map((err, index) => {
                   if (hideWarnings) {
                     if (err.severity !== 'warning') {
-                      return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
+                      return <Renderer context='solidity' key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
                     }
                   } else {
-                    return <Renderer key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
+                    return <Renderer context='solidity' key={index} message={err.formattedMessage} plugin={api} opt={{ type: err.severity, errorType: err.type }} />
                   }
                 })}
             </>

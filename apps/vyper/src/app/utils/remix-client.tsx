@@ -5,7 +5,6 @@ import { PluginClient } from '@remixproject/plugin'
 import { Contract, compileContract } from './compiler'
 import { ExampleContract } from '../components/VyperResult'
 import EventEmitter from 'events'
-import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi } from '@remix-api'
 
 export type VyperComplierAddress = 'https://vyper2.remixproject.org/' | 'http://localhost:8000/'
@@ -83,7 +82,7 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
 
     try {
       // @ts-ignore
-      this.call('notification', 'toast', 'cloning Snekmate Vyper repository...')
+      this.call('notification', 'toast', 'cloning Vyper repository...')
       await this.call(
         'dgitApi',
         'clone',

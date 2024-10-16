@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-
-import { remixClient } from './utils'
+import { IntlProvider } from 'react-intl'
+import { Renderer } from '@remix-ui/renderer'
+import { remixClient, extractRelativePath } from './utils'
 import { CompilationResult } from '@remixproject/plugin-api'
 
 // Components
@@ -13,8 +14,8 @@ import Accordion from 'react-bootstrap/Accordion'
 import './app.css'
 import { CustomTooltip } from '@remix-ui/helper'
 import { Form } from 'react-bootstrap'
-import { CompileErrorCard } from './components/CompileErrorCard'
 import CustomAccordionToggle from './components/CustomAccordionToggle'
+import { VyperCompilationResultWrapper, VyperCompilationErrorsWrapper, VyperCompilationError } from './utils/types'
 
 interface AppState {
   status: 'idle' | 'inProgress'
@@ -23,13 +24,13 @@ interface AppState {
   localUrl: string
 }
 
-interface OutputMap {
-  [fileName: string]: any
-}
-
 const App = () => {
+  const [locale, setLocale] = useState<{code: string; messages: any}>({
+    code: 'en',
+    messages: null
+  })
   const [contract, setContract] = useState<string>()
-  const [output, setOutput] = useState<any>(remixClient.compilerOutput)
+  const [output, setOutput] = useState<VyperCompilationErrorsWrapper | VyperCompilationResultWrapper>(remixClient.compilerOutput)
   const [state, setState] = useState<AppState>({
     status: 'idle',
     environment: 'remote',
@@ -44,13 +45,26 @@ const App = () => {
         await remixClient.loaded()
         remixClient.onFileChange((name) => {
           !name.endsWith('.vy') && remixClient.changeStatus({ key: 'none' })
-          setOutput({})
+          setOutput(null)
           setContract(name)
         })
         remixClient.onNoFileSelected(() => setContract(''))
       } catch (err) {
         console.log(err)
       }
+
+      try {
+        remixClient.call('locale' as any, 'currentLocale').then((currentLocale) => {
+          setLocale(currentLocale)
+        })        
+  
+        remixClient.on('locale' as any, 'localeChanged', (locale: any) => {
+          setLocale(locale)
+        })
+      } catch (err) {
+        console.log(err)
+      }
+
       try {
         const name = await remixClient.getContractName() // throw if no file are selected
         setContract(name)
@@ -100,16 +114,10 @@ const App = () => {
     setOutput(remixClient.compilerOutput)
   }
 
-  const startingCompilation = () => {
-    if (!spinnerIcon.current) return
-    spinnerIcon.current.setAttribute('title', 'compiling...')
-    spinnerIcon.current.classList.remove('remixui_bouncingIcon')
-    spinnerIcon.current.classList.add('remixui_spinningIcon')
-  }
-
   const [cloneCount, setCloneCount] = useState(0)
 
   return (
+    <IntlProvider locale={locale.code} messages={locale.messages}>
     <main id="vyper-plugin">
       <section>
         <div className="px-3 pt-3 mb-3 w-100">
@@ -165,18 +173,33 @@ const App = () => {
         <div className="px-3 w-100 mb-3 mt-1" id="compile-btn">
           <CompilerButton compilerUrl={compilerUrl()} contract={contract} setOutput={(name, update) => setOutput({ ...output, [name]: update })} resetCompilerState={resetCompilerResultState} output={output} remixClient={remixClient}/>
         </div>
-
-        <article id="result" className="p-2 mx-3 border-top mt-2">
-          {output && Object.keys(output).length > 0 && output.status !== 'failed' ? (
+        <article id="result" className="px-3 p-2 mx-3 border-top mt-2 vyper-errorBlobs">
+          {output && output.status === 'success' && 
             <>
               <VyperResult output={output} plugin={remixClient} />
             </>
-          ) : output.status === 'failed' ? (
-            <CompileErrorCard output={output} plugin={remixClient} />
-          ) : null}
+          }
+          {output && output.status === 'failed' &&
+            output.errors && output.errors.map((error: VyperCompilationError, index: number) => {
+              return <Renderer key={index}
+                  message={extractRelativePath(error.message, contract)}
+                  plugin={remixClient}
+                  context='vyper'
+                  opt={{
+                    useSpan: false,
+                    type: 'error',
+                    errorType: error.error_type,
+                    errCol: error.column,
+                    errLine: error.line ? error.line - 1 : null,
+                    errFile: contract
+                  }}
+                />
+            })            
+          }
         </article>
       </section>
     </main>
+    </IntlProvider>
   )
 }
 

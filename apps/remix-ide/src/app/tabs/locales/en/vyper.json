@@ -1,0 +1,3 @@
+{
+  "vyper.openaigptMessage": "vyper code: {content}\n error message: {messageText}\n explain why the error occurred and how to fix it."
+}

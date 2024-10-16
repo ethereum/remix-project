@@ -3,6 +3,7 @@ import { FormattedMessage } from 'react-intl'
 import { PluginRecord } from '../types'
 import './panel.css'
 import { CustomTooltip, RenderIf, RenderIfNot } from '@remix-ui/helper'
+const _paq = (window._paq = window._paq || [])
 
 export interface RemixPanelProps {
   plugins: Record<string, PluginRecord>,
@@ -29,10 +30,12 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
 
   const pinPlugin = () => {
     props.pinView && props.pinView(plugin.profile, plugin.view)
+    _paq.push(['trackEvent', 'PluginPanel', 'pinToRight', plugin.profile.name])
   }
 
   const unPinPlugin = () => {
     props.unPinView && props.unPinView(plugin.profile)
+    _paq.push(['trackEvent', 'PluginPanel', 'pinToLeft', plugin.profile.name])
   }
 
   const tooltipChild = <i className={`px-1 ml-2 pt-1 pb-2 ${!toggleExpander ? 'fas fa-angle-right' : 'fas fa-angle-down bg-light'}`} aria-hidden="true"></i>

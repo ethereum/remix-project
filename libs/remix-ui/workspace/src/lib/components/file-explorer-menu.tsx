@@ -55,13 +55,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
       },
       {
-        action: 'connectToLocalFileSystem',
-        title: 'Connect to local filesystem using remixd',
-        icon: 'fa-solid fa-desktop',
-        placement: 'top',
-        platforms: [appPlatformTypes.web]
-      },
-      {
         action: 'initializeWorkspaceAsGitRepo',
         title: 'Initialize workspace as a git repository',
         icon: 'fa-brands fa-git-alt',
@@ -154,7 +147,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
               return (
                 <CustomTooltip
                   placement={placement as Placement}
-                  tooltipId="uploadFolderTooltip"
+                  tooltipId="initializeWorkspaceAsGitRepoTooltip"
                   tooltipClasses="text-nowrap"
                   tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
                   key={`index-${action}-${placement}-${icon}`}
@@ -162,7 +155,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                   <label
                     id={action}
                     style={{ fontSize: '1.1rem', cursor: 'pointer' }}
-                    data-id={'fileExplorerUploadFolder' + action}
+                    data-id={'fileExplorerInitializeWorkspaceAsGitRepo' + action}
                     className={icon + ' mx-1 remixui_menuItem'}
                     key={`index-${action}-${placement}-${icon}`}
                     onClick={() => {
@@ -195,9 +188,6 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                         props.createNewFolder()
                       } else if (action === 'publishToGist' || action == 'updateGist') {
                         props.publishToGist()
-                      } else if (action === 'connectToLocalFileSystem') {
-                        _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
-                        props.connectToLocalFileSystem()
                       } else if (action === 'importFromIpfs') {
                         _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
                         props.importFromIpfs('Ipfs', 'ipfs hash', ['ipfs://QmQQfBMkpDgmxKzYaoAtqfaybzfgGm9b2LWYyT56Chv6xH'], 'ipfs://')

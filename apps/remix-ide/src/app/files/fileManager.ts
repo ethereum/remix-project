@@ -271,7 +271,7 @@ class FileManager extends Plugin {
       } else {
         const ret = await this.setFileContent(path, data)
         this.emit('fileAdded', path)
-        return { newContent: ret, newpath: path }
+        return { newContent: ret, newPath: path }
       }
     } catch (e) {
       throw new Error(e)
