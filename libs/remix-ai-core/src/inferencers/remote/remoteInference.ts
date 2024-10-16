@@ -110,19 +110,17 @@ export class RemoteInferencer implements ICompletions {
     }
   }
 
-  async code_completion(prompt, options:IParams=CompletionParams): Promise<any> {
-    const payload = { prompt, "endpoint":"code_completion", ...options }
+  async code_completion(prompt, promptAfter, options:IParams=CompletionParams): Promise<any> {
+    const payload = { prompt, 'context':promptAfter, "endpoint":"code_completion", ...options }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 
   async code_insertion(msg_pfx, msg_sfx, options:IParams=InsertionParams): Promise<any> {
-    // const payload = { "data":[msg_pfx, "code_insertion", msg_sfx, 1024, 0.5, 0.92, 50]}
     const payload = { "endpoint":"code_insertion", msg_pfx, msg_sfx, ...options, prompt: '' }
     return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 
   async code_generation(prompt, options:IParams=GenerationParams): Promise<any> {
-    // const payload = { "data":[prompt, "code_completion", "", false,1000,0.9,0.92,50]}
     const payload = { prompt, "endpoint":"code_completion", ...options }
     if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.COMPLETION)
     else return this._makeRequest(payload, AIRequestType.COMPLETION)
@@ -130,14 +128,12 @@ export class RemoteInferencer implements ICompletions {
 
   async solidity_answer(prompt, options:IParams=GenerationParams): Promise<any> {
     const main_prompt = buildSolgptPromt(prompt, this.model_op)
-    // const payload = { "data":[main_prompt, "solidity_answer", false,2000,0.9,0.8,50]}
     const payload = { 'prompt': main_prompt, "endpoint":"solidity_answer", ...options }
     if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }
 
   async code_explaining(prompt, context:string="", options:IParams=GenerationParams): Promise<any> {
-    // const payload = { "data":[prompt, "code_explaining", false,2000,0.9,0.8,50, context]}
     const payload = { prompt, "endpoint":"code_explaining", context, ...options }
     if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
