@@ -9,7 +9,10 @@ interface NavItemProps {
 
 const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
   return (
-    <NavLink to={to} className={({ isActive }) => 'text-decoration-none d-flex flex-column justify-content-center py-2 px-1 small ' + (isActive ? 'bg-light' : 'bg-transparent')}>
+    <NavLink
+      to={to}
+      className={({ isActive }) => 'text-decoration-none d-flex flex-column justify-content-center py-2 px-2 small ' + (isActive ? 'bg-transparent' : 'bg-dark')}
+    >
       <span>
         <span>{icon}</span>
         <span className="ml-2">{title}</span>
