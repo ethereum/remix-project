@@ -112,11 +112,11 @@ export class RemixAIPlugin extends ViewPlugin {
     }
   }
 
-  async code_completion(prompt: string): Promise<any> {
+  async code_completion(prompt: string, promptAfter: string): Promise<any> {
     if (this.isOnDesktop) {
       return await this.call(this.remixDesktopPluginName, 'code_completion', prompt)
     } else {
-      return await this.remoteInferencer.code_completion(prompt)
+      return await this.remoteInferencer.code_completion(prompt, promptAfter)
     }
   }
 
