@@ -44,7 +44,7 @@ export function getInstallationPath(version) {
     return path.join(app.getAppPath(), 'circom-download', version, 'circom-macos-amd64')
 
   case 'linux':
-    return path.join(app.getAppPath(), 'circom-download', version, 'circom-linux-amd64')
+    return path.join(app.getPath('temp'), 'circom-download', version, 'circom-linux-amd64')
   }
 }
 
@@ -70,7 +70,7 @@ export function getLogInputSignalsPath() {
     return path.join(app.getAppPath(), 'log_input_signals.txt')
 
   case 'linux':
-    return path.join(app.getAppPath(), 'log_input_signals.txt')
+    return path.join(app.getPath('temp'), 'log_input_signals.txt')
   }
 }
 
