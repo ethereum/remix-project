@@ -1,4 +1,4 @@
-import { Web3, FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider } from 'web3'
+import { Web3, FMT_BYTES, FMT_NUMBER, LegacySendAsyncProvider, LegacyRequestProvider } from 'web3'
 import { fromWei, toBigInt } from 'web3-utils'
 import { privateToAddress, hashPersonalMessage, isHexString, bytesToHex } from '@ethereumjs/util'
 import { extend, JSONRPCRequestPayload, JSONRPCResponseCallback } from '@remix-project/remix-simulator'
@@ -10,6 +10,7 @@ export class VMProvider {
   worker: Worker
   provider: {
     sendAsync: (query: JSONRPCRequestPayload, callback: JSONRPCResponseCallback) => void
+    request: (query: JSONRPCRequestPayload) => Promise<any>
   }
   newAccountCallback: {[stamp: number]: (error: Error, address: string) => void}
   constructor (executionContext: ExecutionContext) {
@@ -37,7 +38,13 @@ export class VMProvider {
 
     return new Promise((resolve, reject) => {
       this.worker.addEventListener('message', (msg) => {
-        if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
+        if (msg.data.cmd === 'requestResult' && stamps[msg.data.stamp]) {
+          if (msg.data.error) {
+            stamps[msg.data.stamp].reject(msg.data.error)
+          } else {
+            stamps[msg.data.stamp].resolve(msg.data.result)
+          }
+        } else if (msg.data.cmd === 'sendAsyncResult' && stamps[msg.data.stamp]) {
           if (stamps[msg.data.stamp].callback) {
             stamps[msg.data.stamp].callback(msg.data.error, msg.data.result)
             return
@@ -57,9 +64,17 @@ export class VMProvider {
                   stamps[stamp] = { callback, resolve, reject }
                   this.worker.postMessage({ cmd: 'sendAsync', query, stamp })
                 })
+              },
+              request: (query) => {
+                return new Promise((resolve, reject) => {
+                  const stamp = Date.now() + incr
+                  incr++
+                  stamps[stamp] = { resolve, reject }
+                  this.worker.postMessage({ cmd: 'request', query, stamp })
+                })
               }
             }
-            this.web3 = new Web3(this.provider as LegacySendAsyncProvider)
+            this.web3 = new Web3(this.provider as (LegacySendAsyncProvider | LegacyRequestProvider))
             this.web3.setConfig({ defaultTransactionType: '0x0' })
             extend(this.web3)
             this.executionContext.setWeb3(this.executionContext.getProvider(), this.web3)

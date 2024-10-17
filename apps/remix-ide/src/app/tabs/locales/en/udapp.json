@@ -46,7 +46,7 @@
   "udapp._comment_account.tsx": "libs/remix-ui/run-tab/src/lib/components/account.tsx",
   "udapp.account": "Account",
   "udapp.signAMessage": "Sign a message",
-  "udapp.enterAMessageToSign": "Enter a message to sign",
+  "udapp.enterAMessageToSign": "Enter a message to sign and click `Sign`",
   "udapp.hash": "hash",
   "udapp.signature": "signature",
   "udapp.injectedTitle": "Unfortunately it's not possible to create an account using injected provider. Please create the account directly from your provider (i.e metamask or other of the same type).",
@@ -161,5 +161,10 @@
   "udapp.ganacheProviderText1": "Note: To run Ganache on your system, run:",
   "udapp.ganacheProviderText2": "For more info, visit: <a>Ganache Documentation</a>",
   "udapp.hardhatProviderText1": "Note: To run Hardhat network node on your system, go to hardhat project folder and run command:",
-  "udapp.hardhatProviderText2": "For more info, visit: <a>Hardhat Documentation</a>"
+  "udapp.hardhatProviderText2": "For more info, visit: <a>Hardhat Documentation</a>",
+  "udapp.EIP712-2": "Please follow <a>this link</a> to get more information.",
+  "udapp.EIP712-3": "In Remix, signing typed data is possible by right clicking (right click / Sign Typed Data) on a JSON file whose content is EIP-712 compatible.",
+  "udapp.EIP712-create-template": "Create a JSON compliant with EIP-712",
+  "udapp.EIP712-close": "Close",
+  "udapp.sign": "Sign"
 }
