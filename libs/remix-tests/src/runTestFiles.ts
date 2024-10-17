@@ -82,12 +82,12 @@ export function runTestFiles (filepath: string, isDirectory: boolean, web3: Web3
           // If contract deployment fails because of 'Out of Gas' error, try again with double gas
           // This is temporary, should be removed when remix-tests will have a dedicated UI to
           // accept deployment params from UI
-          if (err.message.includes('The contract code couldn\'t be stored, please check your gas limit')) {
+          if (err.error.includes('The contract code couldn\'t be stored, please check your gas limit')) {
             deployAll(compilationResult, web3, accounts, true, null, (error, contracts) => {
-              if (error) next([{ message: 'contract deployment failed after trying twice: ' + error.innerError || error.message, severity: 'error' }]) // IDE expects errors in array
+              if (error) next([{ message: 'contract deployment failed after trying twice: ' + (error.innerError || error.error), severity: 'error' }]) // IDE expects errors in array
               else next(null, compilationResult, contracts)
             })
-          } else { next([{ message: 'contract deployment failed: ' + err.innerError || err.message, severity: 'error' }]) } // IDE expects errors in array
+          } else { next([{ message: 'contract deployment failed: ' + (err.innerError || err.error), severity: 'error' }]) } // IDE expects errors in array
         } else { next(null, compilationResult, contracts) }
       })
     },
