@@ -86,7 +86,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         this.currentCompletion.item = item
         return {
           items: [item],
-          enableForwardStability: false
+          enableForwardStability: true
         }
       }
     } catch (e) {
@@ -120,7 +120,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
         return {
           items: [item],
-          enableForwardStability: false,
+          enableForwardStability: true,
         }
       }
       catch (err){
@@ -152,7 +152,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
       return {
         items: [item],
-        enableForwardStability: false
+        enableForwardStability: true,
       }
     } catch (err) {
       return
