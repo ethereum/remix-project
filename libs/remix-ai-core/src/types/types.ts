@@ -58,7 +58,7 @@ export interface IParams {
   temperature?: number;
   max_new_tokens?: number;
   repetition_penalty?: number;
-  repeatPenalty?:any
+  repeat_penalty?:any
   no_repeat_ngram_size?: number;
   num_beams?: number;
   num_return_sequences?: number;
@@ -71,6 +71,8 @@ export interface IParams {
   topK?: number;
   topP?: number;
   temp?: number;
+  return_stream_response?: boolean;
+  terminal_output?: boolean;
 }
 
 export enum AIRequestType {
@@ -84,4 +86,45 @@ export enum RemoteBackendOPModel{
   DEEPSEEK,
   CODELLAMA,
   MISTRAL
+}
+
+export class JsonStreamParser {
+  buffer: string
+  constructor() {
+    this.buffer = '';
+  }
+
+  safeJsonParse<T>(chunk: string): T[] | null {
+    this.buffer += chunk;
+    const results = [];
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        const result = JSON.parse(this.buffer);
+        results.push(result);
+        this.buffer = '';
+        break;
+      } catch (error) {
+        // eslint-disable-next-line no-useless-escape
+        const match = /^([^\{]*\{[^\}]*\})(.*)/.exec(this.buffer);
+        if (match) {
+          try {
+            const result = JSON.parse(match[1]);
+            results.push(result);
+            this.buffer = match[2];
+          } catch (e) {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+
+    return results;
+  }
+  safeJsonParseSingle<T>(chunk: string): T[] | null {
+    return JSON.parse(this.buffer);
+  }
 }

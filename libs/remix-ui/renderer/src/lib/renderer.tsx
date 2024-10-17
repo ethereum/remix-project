@@ -90,7 +90,7 @@ export const Renderer = ({ message, opt, plugin, context }: RendererProps) => {
     try {
       const content = await plugin.call('fileManager', 'readFile', editorOptions.errFile)
       const message = intl.formatMessage({ id: `${context || 'solidity' }.openaigptMessage` }, { content, messageText })
-      await plugin.call('remixAI', 'error_explaining', message)
+      await plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', message)
       _paq.push(['trackEvent', 'ai', 'remixAI', 'error_explaining_SolidityError'])
     } catch (err) {
       console.error('unable to askGtp')
