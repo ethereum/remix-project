@@ -453,14 +453,14 @@ export class InferenceManager implements ICompletions {
     }
   }
 
-  async code_completion(context: any, params:IParams=CompletionParams): Promise<any> {
+  async code_completion(prompt, promptAfter, params:IParams=CompletionParams): Promise<any> {
     if (!this.isReady) {
       console.log('model not ready yet')
       return
     }
 
     // as of now no prompt required
-    const payload = { context_code: context, ...params }
+    const payload = { prompt, 'context':promptAfter, ...params }
     return this._makeInferenceRequest('code_completion', payload, AIRequestType.COMPLETION)
   }
 
