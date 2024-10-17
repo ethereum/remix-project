@@ -6,7 +6,7 @@ import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
 import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
 export interface RunTabProps {
   plugin: RunTab,
-  initialState: RunTabState
+  initialState?: RunTabState
 }
 
 export interface Contract {
@@ -145,6 +145,7 @@ export interface SettingsProps {
     isSuccessful: boolean,
     error: string
   },
+  addFile: (path: string, content: string) => void,
   setExecutionContext: (executionContext: { context: string, fork: string }) => void,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
   setPassphrase: (passphrase: string) => void,
@@ -180,6 +181,7 @@ export interface AccountProps {
     isSuccessful: boolean,
     error: string
   },
+  addFile: (path: string, content: string) => void,
   setAccount: (account: string) => void,
   personalMode: boolean,
   createNewBlockchainAccount: (cbMessage: JSX.Element) => void,
