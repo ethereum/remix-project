@@ -29,7 +29,7 @@ export const Default = (props) => {
     if (GenerationParams.return_stream_response) HandleStreamResponse(response,
       (text) => {observer.next(text)},
       (result) => {
-        observer.next(' ') // Add a space to flush
+        observer.next(' ') // Add a space to flush the last message
         ChatHistory.pushHistory(prompt, result)
         observer.complete()
       }
