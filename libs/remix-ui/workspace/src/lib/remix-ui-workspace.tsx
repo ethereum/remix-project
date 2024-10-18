@@ -1060,7 +1060,7 @@ export function Workspace() {
                     <span className="d-flex">
                       <label className="pl-2 form-check-label" style={{ wordBreak: 'keep-all' }}>
                         {(platform == appPlatformTypes.desktop) ? (
-                          <ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />
+                          null
                         ) : <FormattedMessage id='filePanel.workspace' />}
                       </label>
                       {selectedWorkspace && selectedWorkspace.name === 'code-sample' && <CustomTooltip
@@ -1143,7 +1143,7 @@ export function Workspace() {
                         )}
                       </Dropdown.Menu>
                     </Dropdown>
-                  ):null}
+                  ):<ElectronWorkspaceName plugin={global.plugin} path={global.fs.browser.currentLocalFilePath} />}
                 </div>
               </div>
             </header>
