@@ -83,7 +83,7 @@ let requiredModules = [
   'dgit',
   'pinnedPanel',
   'pluginStateLogger',
-  'remixGuide',
+  //'remixGuide',
   'environmentExplorer',
   'templateSelection',
   'matomo',
