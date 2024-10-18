@@ -75,6 +75,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         this.props.plugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'RemixAI - generating code for following comment: ' + ask.replace('///', '') })
 
         const data = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
+        _paq.push(['trackEvent', 'ai', 'remixAI', 'code_generation'])
         this.task = 'code_generation'
         console.log("data: " + this.task, data)
 
@@ -107,6 +108,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       // Code insertion
       try {
         const output = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
+        _paq.push(['trackEvent', 'ai', 'remixAI', 'code_insertion'])
+
         const generatedText = output // no need to clean it. should already be
 
         this.task = 'code_insertion'
@@ -133,7 +136,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       // Code completion
       this.task = 'code_completion'
       const output = await this.props.plugin.call('remixAI', 'code_completion', word, word_after)
-      _paq.push(['trackEvent', 'ai', 'remixAI', this.task])
+      _paq.push(['trackEvent', 'ai', 'remixAI', 'code_completion'])
       const generatedText = output
       let clean = generatedText
 
