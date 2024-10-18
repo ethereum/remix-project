@@ -161,7 +161,7 @@ export class RemixGuidePlugin extends ViewPlugin {
                 <iframe style={{ minHeight: "500px", minWidth: "1000px" }} width="1000" height="500" src={"https://www.youtube.com/embed/" + this.videoID + "?si=ZdckOaSPR7VsLj_2"} allowFullScreen></iframe>
               </div>
               <div className="modal-footer d-flex flex-column">
-                <button onClick={() => {
+                <button className="btn btn-secondary" onClick={() => {
                   this.showVideo = false
                   this.renderComponent()
                 }}>Close</button>
