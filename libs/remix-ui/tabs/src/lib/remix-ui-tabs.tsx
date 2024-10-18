@@ -106,7 +106,6 @@ export const TabsUI = (props: TabsUIProps) => {
   }
 
   const renderTab = (tab: Tab, index) => {
-
     const classNameImg = 'my-1 mr-1 text-dark ' + tab.iconClass
     const classNameTab = 'nav-item nav-link d-flex justify-content-center align-items-center px-2 py-1 tab' + (index === currentIndexRef.current ? ' active' : '')
     const invert = props.themeQuality === 'dark' ? 'invert(1)' : 'invert(0)'
@@ -251,7 +250,32 @@ export const TabsUI = (props: TabsUIProps) => {
                   const content = await props.plugin.call('fileManager', 'readFile', path)
                   if (tabsState.currentExt === 'sol') {
                     setExplaining(true)
-                    await props.plugin.call('remixAI', 'code_explaining', content)
+                    // if plugin is pinned,
+                    if (await props.plugin.call('pinnedPanel', 'currentFocus') === 'remixAI'){
+                      await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
+                    }
+                    else {
+                      const profile = {
+                        name: 'remixAI',
+                        displayName: 'Remix AI',
+                        methods: ['code_generation', 'code_completion',
+                          "solidity_answer", "code_explaining",
+                          "code_insertion", "error_explaining",
+                          "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
+                        events: [],
+                        icon: 'assets/img/remix-logo-blue.png',
+                        description: 'RemixAI provides AI services to Remix IDE.',
+                        kind: '',
+                        location: 'sidePanel',
+                        documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
+                        maintainedBy: 'Remix'
+                      }
+                      // await props.plugin.call('sidePanel', 'focus', 'remixAI')
+                      await props.plugin.call('sidePanel', 'pinView', profile)
+                      setTimeout(async () => {
+                        await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
+                      }, 500)
+                    }
                     setExplaining(false)
                     _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file'])
                   }
