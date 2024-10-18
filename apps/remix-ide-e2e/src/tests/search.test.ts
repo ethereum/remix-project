@@ -24,7 +24,7 @@ module.exports = {
             .waitForElementContainsText('*[data-id="search_results"]', 'sender.voted')
             .waitForElementContainsText('*[data-id="search_results"]', 'read')
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 6)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 7)
             })
     },
     'Should find text with exclude #group1': function (browser: NightwatchBrowser) {
@@ -34,7 +34,7 @@ module.exports = {
             .clearValue('*[id="search_include"]').pause(2000)
             .setValue('*[id="search_include"]', '**').sendKeys('*[id="search_include"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 62)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 63)
             })
             .setValue('*[id="search_exclude"]', ',contracts/**').sendKeys('*[id="search_exclude"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
@@ -79,7 +79,7 @@ module.exports = {
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'contract').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 15)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 16)
             })
     },
     'Should replace text #group1': function (browser: NightwatchBrowser) {
