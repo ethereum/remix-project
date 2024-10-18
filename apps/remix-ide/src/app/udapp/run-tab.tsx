@@ -1,14 +1,17 @@
 import React from 'react' // eslint-disable-line
-import {RunTabUI} from '@remix-ui/run-tab'
-import {ViewPlugin} from '@remixproject/engine-web'
+import { RunTabUI } from '@remix-ui/run-tab'
+import { ViewPlugin } from '@remixproject/engine-web'
 import isElectron from 'is-electron'
-import {addressToString} from '@remix-ui/helper'
-import {InjectedProviderDefault} from '../providers/injected-provider-default'
-import {InjectedCustomProvider} from '../providers/injected-custom-provider'
+import { addressToString } from '@remix-ui/helper'
+import { InjectedProviderDefault } from '../providers/injected-provider-default'
+import { InjectedCustomProvider } from '../providers/injected-custom-provider'
 import * as packageJson from '../../../../../package.json'
-
-const EventManager = require('../../lib/events')
-const Recorder = require('../tabs/runTab/model/recorder.js')
+import { EventManager } from '@remix-project/remix-lib'
+import type { Blockchain } from '../../blockchain/blockchain'
+import type { CompilerArtefacts } from '@remix-project/core-plugin'
+// import type { NetworkModule } from '../tabs/network-module'
+// import type FileProvider from '../files/fileProvider'
+import { Recorder } from '../tabs/runTab/model/recorder'
 const _paq = (window._paq = window._paq || [])
 
 const profile = {
@@ -37,7 +40,20 @@ const profile = {
 }
 
 export class RunTab extends ViewPlugin {
-  constructor(blockchain, config, fileManager, editor, filePanel, compilersArtefacts, networkModule, fileProvider, engine) {
+  event: EventManager
+  engine: any
+  config: any
+  blockchain: Blockchain
+  fileManager: any
+  editor: any
+  filePanel: any
+  compilersArtefacts: CompilerArtefacts
+  networkModule: any
+  fileProvider: any
+  recorder: any
+  REACT_API: any
+  el: any
+  constructor(blockchain: Blockchain, config: any, fileManager: any, editor: any, filePanel: any, compilersArtefacts: CompilerArtefacts, networkModule: any, fileProvider: any, engine: any) {
     super(profile)
     this.event = new EventManager()
     this.engine = engine
@@ -74,7 +90,7 @@ export class RunTab extends ViewPlugin {
   async setEnvironmentMode(env) {
     const canCall = await this.askUserPermission('setEnvironmentMode', 'change the environment used')
     if (canCall) {
-      env = typeof env === 'string' ? {context: env} : env
+      env = typeof env === 'string' ? { context: env } : env
       this.emit('setEnvironmentModeReducer', env, this.currentRequest.from)
     }
   }
@@ -83,7 +99,7 @@ export class RunTab extends ViewPlugin {
     this.emit('clearAllInstancesReducer')
   }
 
-  addInstance(address, abi, name, contractData) {
+  addInstance(address, abi, name, contractData?) {
     this.emit('addInstanceReducer', address, abi, name, contractData)
   }
 
@@ -137,6 +153,7 @@ export class RunTab extends ViewPlugin {
       'injected-Brave Wallet': 'Deploy through the Brave Wallet extension.',
       'injected-Brave': 'Deploy through the Brave browser extension.',
       'injected-metamask-optimism': 'Deploy to Optimism through the Metamask browser extension.',
+      'injected-metamask-gnosis': 'Deploy to Gnosis through the Metamask browser extension.',
       'injected-metamask-arbitrum': 'Deploy to Arbitrum through the Metamask browser extension.',
       'injected-metamask-sepolia': 'Deploy to the Sepolia testnet through the Metamask browser extension.',
       'injected-metamask-ephemery': 'Deploy to the Ephemery testnet through the Metamask browser extension.'
@@ -145,13 +162,14 @@ export class RunTab extends ViewPlugin {
     const logos = {
       'injected-metamask-optimism': ['assets/img/optimism-ethereum-op-logo.png', 'assets/img/metamask.png'],
       'injected-metamask-arbitrum': ['assets/img/arbitrum-arb-logo.png', 'assets/img/metamask.png'],
+      'injected-metamask-gnosis': ['assets/img/gnosis_chain.png', 'assets/img/metamask.png'],
       'injected-metamask-sepolia': ['assets/img/metamask.png'],
       'injected-metamask-ephemery': ['assets/img/metamask.png'],
       'injected-MetaMask': ['assets/img/metamask.png'],
       'injected-Brave Wallet': ['assets/img/brave.png'],
       'injected-Trust Wallet': ['assets/img/trust-wallet.png'],
       'hardhat-provider': ['assets/img/hardhat.png'],
-      'walletconnect': ['assets/img/Walletconnect-logo.png'],     
+      'walletconnect': ['assets/img/Walletconnect-logo.png'],
       'foundry-provider': ['assets/img/foundry.png']
     }
 
@@ -179,35 +197,52 @@ export class RunTab extends ViewPlugin {
         provider: {
           sendAsync (payload) {
             return udapp.call(name, 'sendAsync', payload)
+          },
+          async request (payload) {
+            try {
+              const requestResult = await udapp.call(name, 'sendAsync', payload)
+              if (requestResult.error) {
+                throw new Error(requestResult.error.message)
+              }
+              return requestResult.result
+            } catch (err) {
+              throw new Error(err.message)
+            }
           }
         }
       })
     }
 
-    const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency) => {
+    const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency?) => {
       // name = `${name} through ${event.detail.info.name}`
       await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, networkId, urls, nativeCurrency)])
-      await addProvider(position, name, displayName, true, false, false)
+      await addProvider(position, name, displayName, true, false)
     }
     const registerInjectedProvider = async (event) => {
       const name = 'injected-' + event.detail.info.name
       const displayName = 'Injected Provider - ' + event.detail.info.name
       await this.engine.register([new InjectedProviderDefault(event.detail.provider, name)])
-      await addProvider(0, name, displayName, true, false, false)
+      await addProvider(0, name, displayName, true, false)
 
       if (event.detail.info.name === 'MetaMask') {
         await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism - ' + event.detail.info.name, '0xa', ['https://mainnet.optimism.io'])
-        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum - ' + event.detail.info.name, '0xa4b1', ['https://arb1.arbitrum.io/rpc'])    
+        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum - ' + event.detail.info.name, '0xa4b1', ['https://arb1.arbitrum.io/rpc'])
         await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Sepolia Testnet - ' + event.detail.info.name, '0xaa36a7', [],
           {
             "name": "Sepolia ETH",
             "symbol": "ETH",
             "decimals": 18
-          })    
+          })
         await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet - ' + event.detail.info.name, '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
           {
             "name": "Ephemery ETH",
             "symbol": "ETH",
+            "decimals": 18
+          })
+        await addCustomInjectedProvider(10, event, 'injected-metamask-gnosis', 'Gnosis Mainnet - ' + event.detail.info.name, '', ['https://rpc.ankr.com/gnosis', 'https://1rpc.io/gnosis'],
+          {
+            "name": "XDAI",
+            "symbol": "XDAI",
             "decimals": 18
           })
         /*
@@ -218,10 +253,10 @@ export class RunTab extends ViewPlugin {
             "decimals": 18
           })
         */
-      }      
+      }
     }
 
-    // VM    
+    // VM
     const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
     await addProvider(1, 'vm-cancun', 'Remix VM (Cancun)', false, true, 'cancun', 'settingsVMCancunMode', titleVM)
     await addProvider(50, 'vm-shanghai', 'Remix VM (Shanghai)', false, true, 'shanghai', 'settingsVMShanghaiMode', titleVM)
@@ -242,7 +277,7 @@ export class RunTab extends ViewPlugin {
     await addProvider(22, 'foundry-provider', 'Dev - Foundry Provider', false, false)
 
     // register injected providers
-    
+
     window.addEventListener(
       "eip6963:announceProvider",
       (event) => {
