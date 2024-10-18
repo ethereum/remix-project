@@ -100,14 +100,11 @@ export class RemixGuidePlugin extends ViewPlugin {
           showPin={false}
           tagList={[
             ['Remix', 'primary'],
-            ['L2', 'primary'],
             ['Beginner', 'danger'],
             ['Advanced', 'warning'],
             ['AI', 'success'],
-            ['plugins', 'secondary'],
+            ['Plugins', 'secondary'],
             ['Solidity', 'primary'],
-            ['Vyper', 'info'],
-            ['L2', 'danger'],
             ['EVM', 'secondary']
           ]}
           title={Data.title}
