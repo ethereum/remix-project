@@ -88,6 +88,10 @@ export enum RemoteBackendOPModel{
   MISTRAL
 }
 
+interface GeneratedTextObject {
+  generatedText: string;
+  isGenerating: boolean;
+}
 export class JsonStreamParser {
   buffer: string
   constructor() {
@@ -97,33 +101,34 @@ export class JsonStreamParser {
   safeJsonParse<T>(chunk: string): T[] | null {
     this.buffer += chunk;
     const results = [];
-
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      try {
-        const result = JSON.parse(this.buffer);
-        results.push(result);
-        this.buffer = '';
-        break;
-      } catch (error) {
-        // eslint-disable-next-line no-useless-escape
-        const match = /^([^\{]*\{[^\}]*\})(.*)/.exec(this.buffer);
-        if (match) {
-          try {
-            const result = JSON.parse(match[1]);
-            results.push(result);
-            this.buffer = match[2];
-          } catch (e) {
-            break;
-          }
-        } else {
-          break;
-        }
+    let startIndex = 0;
+    let endIndex: number;
+    while ((endIndex = this.buffer.indexOf('}', startIndex)) !== -1) {
+      // check if next character is a opening curly bracket
+      let modifiedEndIndex = endIndex;
+      if ((modifiedEndIndex = this.buffer.indexOf('{', endIndex)) !== -1 ) {
+        endIndex = modifiedEndIndex - 1;
       }
-    }
 
+      if (((modifiedEndIndex = this.buffer.indexOf('{', endIndex)) === -1) &&
+          (this.buffer.indexOf('}', endIndex) < this.buffer.length)) {
+        endIndex = this.buffer.indexOf('}', endIndex+1) <0 ? this.buffer.length - 1 : this.buffer.indexOf('}', endIndex+1);
+      }
+
+      const jsonStr = this.buffer.slice(startIndex, endIndex + 1);
+      try {
+        const obj: GeneratedTextObject = JSON.parse(jsonStr);
+        console.log('parsed:', obj);
+        results.push(obj);
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+      }
+      startIndex = endIndex + 1;
+    }
+    this.buffer = this.buffer.slice(startIndex);
     return results;
   }
+
   safeJsonParseSingle<T>(chunk: string): T[] | null {
     return JSON.parse(this.buffer);
   }

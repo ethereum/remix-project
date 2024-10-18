@@ -19,7 +19,7 @@ export const HandleSimpleResponse = async (response,
 }
 
 export const HandleStreamResponse = async (streamResponse,
-  cb?: (streamText: string) => void,
+  cb: (streamText: string) => void,
   done_cb?: (result: string) => void) => {
   try {
     let resultText = ''
