@@ -1,3 +1,5 @@
+import { defaultConfig } from "@web3modal/ethers5/react";
+
 export interface Dependency {
     version: string;
     name: string;
@@ -17,9 +19,19 @@ export interface Dependency {
     description: string;
     dependencies: Dependency[];
     replacements: Replacements;
+    title: string;
+    errorStatus: boolean;
+    error: string;
+    isLoading: boolean;
   }
 
   export interface customScriptRunnerConfig {
     baseConfiguration: string;
     dependencies: Dependency[];
   }
+
+  export interface ScriptRunnerConfig {
+    defaultConfig: string,
+    customConfig: customScriptRunnerConfig
+  }
+

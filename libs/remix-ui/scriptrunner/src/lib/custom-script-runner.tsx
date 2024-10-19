@@ -13,8 +13,7 @@ export interface ScriptRunnerUIProps {
     publishedConfigurations: ProjectConfiguration[];
     openCustomConfig: () => any;
     saveCustomConfig(content: customScriptRunnerConfig): void;
-    activateCustomScriptRunner(config: customScriptRunnerConfig): string;
-    addCustomConfig(config: ProjectConfiguration): void;
+    activateCustomScriptRunner(config: customScriptRunnerConfig): Promise<string>;
     customConfig: customScriptRunnerConfig;
 }
 
@@ -82,18 +81,7 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
         console.log(customConfig);
         setLoading(true);
         try {
-            const loadedConfig = await props.activateCustomScriptRunner(customConfig);
-            console.log(loadedConfig);
-            const newConfig: ProjectConfiguration = {
-                name: loadedConfig,
-                publish: true,
-                description: `Extension of ${baseConfig}`,
-                dependencies: dependencies,
-                replacements: {}
-            };
-            console.log(newConfig);
-            props.addCustomConfig(newConfig);
-
+            await props.activateCustomScriptRunner(customConfig);
         } catch (e) {
             console.log(e)
         } finally {
