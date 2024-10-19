@@ -3,54 +3,35 @@ import { Accordion, Card, Button } from "react-bootstrap";
 import axios from "axios";
 import { customScriptRunnerConfig, Dependency, ProjectConfiguration } from "../types";
 import { FormattedMessage } from "react-intl";
-import { faCheck, faToggleOn } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faExclamationCircle, faToggleOn } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Profile } from "@remixproject/plugin-utils";
 import { IframeProfile, ViewProfile } from "@remixproject/engine-web";
 import { Plugin } from "@remixproject/engine";
 import { CustomScriptRunner } from "./custom-script-runner";
+import { CustomTooltip } from "@remix-ui/helper";
 
 export interface ScriptRunnerUIProps {
   // Add your props here
-  loadScriptRunner: (name: string) => void;
+  loadScriptRunner: (config: ProjectConfiguration) => void;
   // build custom script runner
   buildScriptRunner: (dependencies: Dependency[]) => void;
   openCustomConfig: () => any;
   saveCustomConfig(content: customScriptRunnerConfig): void;
-  activateCustomScriptRunner(config: customScriptRunnerConfig): string;
+  activateCustomScriptRunner(config: customScriptRunnerConfig): Promise<string>;
   customConfig: customScriptRunnerConfig;
   configurations: ProjectConfiguration[];
+  activeConfig: ProjectConfiguration;
+  enableCustomScriptRunner: boolean;
 }
 
 export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
-  const { loadScriptRunner, configurations } = props;
+  const { loadScriptRunner, configurations, activeConfig, enableCustomScriptRunner } = props;
   const [activeKey, setActiveKey] = useState('default');
-  const [activeConfig, setActiveConfig] = useState('default');
-
-  useEffect(() => {
-    // Fetch the JSON data from the localhost server using Axios
-
-  }, []); // Empty array ensures this effect runs once when the component mounts
-
-  const handleSelect = (key) => {
-    console.log("Selected key:", key, activeKey);
-    setActiveConfig(key);
-    console.log(loadScriptRunner)
-    loadScriptRunner(key)
-  };
-
-  const addCustomConfig = (config: ProjectConfiguration) => {
-    if(configurations.find((c) => c.name === config.name)) {
-      return;
-    }
-    //setConfigurations([...configurations, config]);
-    setActiveConfig(config.name);
-  }
 
   if (!configurations) {
     return <div>Loading...</div>;
   }
-
 
   return (
     <div className="px-1">
@@ -64,12 +45,24 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
                   textOverflow: 'ellipsis'
                 }}
               >
-                <div className="pl-2">{config.name}</div>
+                <div className="pl-2">{config.title || config.name}</div>
               </Accordion.Toggle>
-              <div onClick={() => handleSelect(config.name)} className="pointer px-2">
-                {activeConfig !== config.name ?
-                  <FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon> :
-                  <FontAwesomeIcon className="text-success" icon={faCheck}></FontAwesomeIcon>
+              <div className="d-flex align-items-baseline">
+                {config.isLoading && <div className="">
+                  <i className="fas fa-spinner fa-spin mr-1"></i>
+                </div>}
+                {config.errorStatus && config.error && <div className="text-danger">
+                  <CustomTooltip tooltipText={config.error}>
+                    <FontAwesomeIcon icon={faExclamationCircle}></FontAwesomeIcon>
+                  </CustomTooltip>
+                </div>}
+                {!config.isLoading &&
+                  <div onClick={() => loadScriptRunner(config)} className="pointer px-2">
+                    {activeConfig && activeConfig.name !== config.name ?
+                      <FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon> :
+                      <FontAwesomeIcon className="text-success" icon={faCheck}></FontAwesomeIcon>
+                    }
+                  </div>
                 }
               </div>
             </div>
@@ -88,14 +81,14 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
                 </ul></>
             </Accordion.Collapse></div>))}
       </Accordion>
-      <CustomScriptRunner
-        customConfig={props.customConfig}
-        addCustomConfig={addCustomConfig}
-        activateCustomScriptRunner={props.activateCustomScriptRunner}
-        saveCustomConfig={props.saveCustomConfig}
-        openCustomConfig={props.openCustomConfig}
-        publishedConfigurations={configurations.filter((config) => config.publish)}
-        buildScriptRunner={props.buildScriptRunner} />
+      {enableCustomScriptRunner &&
+        <CustomScriptRunner
+          customConfig={props.customConfig}
+          activateCustomScriptRunner={props.activateCustomScriptRunner}
+          saveCustomConfig={props.saveCustomConfig}
+          openCustomConfig={props.openCustomConfig}
+          publishedConfigurations={configurations.filter((config) => config.publish)}
+          buildScriptRunner={props.buildScriptRunner} />}
     </div>
   );
 };
