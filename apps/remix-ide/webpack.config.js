@@ -25,7 +25,7 @@ const loadLocalSolJson = async () => {
 fs.writeFileSync(__dirname + '/src/assets/version.json', JSON.stringify(versionData))
 
 
-// loadLocalSolJson()
+loadLocalSolJson()
 
 const project = fs.readFileSync(__dirname + '/project.json', 'utf8')
 
