@@ -21,7 +21,7 @@ const profile = {
 /**
   * Record transaction as long as the user create them.
   */
-class Recorder extends Plugin {
+export class Recorder extends Plugin {
   constructor (blockchain) {
     super(profile)
     this.event = new EventManager()
@@ -328,5 +328,3 @@ class Recorder extends Plugin {
     })
   }
 }
-
-module.exports = Recorder

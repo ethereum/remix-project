@@ -25,6 +25,7 @@ import {
   copyShareURL,
   copyFolder,
   runScript,
+  signTypedData,
   emitContextMenuEvent,
   handleClickFile,
   handleExpandPath,
@@ -169,6 +170,10 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
 
   const dispatchRunScript = async (path: string) => {
     await runScript(path)
+  }
+
+  const dispatchSignTypedData = async (path: string) => {
+    await signTypedData(path)
   }
 
   const dispatchEmitContextMenuEvent = async (cmd: customAction) => {
@@ -358,6 +363,7 @@ export const FileSystemProvider = (props: WorkspaceProps) => {
     dispatchCopyShareURL,
     dispatchCopyFolder,
     dispatchRunScript,
+    dispatchSignTypedData,
     dispatchEmitContextMenuEvent,
     dispatchHandleClickFile,
     dispatchHandleExpandPath,

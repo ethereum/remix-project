@@ -43,6 +43,37 @@ self.onmessage = (e: MessageEvent) => {
 
     break
   }
+  case 'request':
+  {
+    (function (data) {
+      const stamp = data.stamp
+      if (provider) {
+        provider.request(data.query).then((result) => {
+          self.postMessage({
+            cmd: 'requestResult',
+            error: null,
+            result: result,
+            stamp: stamp
+          })
+        }).catch((error) => {
+          self.postMessage({
+            cmd: 'requestResult',
+            error: error,
+            result: null,
+            stamp: stamp
+          })
+        })
+      } else {
+        self.postMessage({
+          cmd: 'requestResult',
+          error: 'Provider not instantiated',
+          result: null,
+          stamp: stamp
+        })
+      }
+    })(data)
+    break
+  }
   case 'addAccount':
   {
     if (provider) {

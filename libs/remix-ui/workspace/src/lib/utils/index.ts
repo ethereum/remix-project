@@ -81,6 +81,13 @@ export const contextMenuActions: MenuItems = [{
   label: '',
   group: 3
 }, {
+  id: 'signTypedData',
+  name: 'Sign Typed Data',
+  extension: ['.json'],
+  multiselect: false,
+  label: '',
+  group: 3
+}, {
   id: 'publishFolderToGist',
   name: 'Publish folder to gist',
   type: ['folder'],
