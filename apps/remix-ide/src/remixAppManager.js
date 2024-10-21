@@ -75,7 +75,7 @@ let requiredModules = [
   'solidity-script',
   'home',
   'doc-viewer',
-  'doc-gen',
+  // 'doc-gen',
   'remix-templates',
   'remixAID',
   'remixAI',
