@@ -54,7 +54,7 @@ export class RemixAIPlugin extends ViewPlugin {
       console.log('Activating RemixAIPlugin on browser')
       this.initialize()
     }
-    this.setRemixAIOnSidePannel(false)
+    // this.setRemixAIOnSidePannel(false)
   }
 
   setRemixAIOnSidePannel(resize:boolean=false){
