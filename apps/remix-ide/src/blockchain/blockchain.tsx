@@ -144,6 +144,7 @@ export class Blockchain extends Plugin {
       this.emit('shouldAddProvidertoUdapp', name, provider)
       this.pinnedProviders.push(name)
       this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.pinnedProviders))
+      _paq.push(['trackEvent', 'blockchain', 'providerPinned', name])
     })
 
     this.on('environmentExplorer', 'providerUnpinned', (name, provider) => {
@@ -151,6 +152,7 @@ export class Blockchain extends Plugin {
       const index = this.pinnedProviders.indexOf(name)
       this.pinnedProviders.splice(index, 1)
       this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.pinnedProviders))
+      _paq.push(['trackEvent', 'blockchain', 'providerUnpinned', name])
     })
 
     this.call('config', 'getAppParameter', 'settings/pinned-providers').then((providers) => {
