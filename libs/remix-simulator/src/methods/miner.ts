@@ -14,5 +14,5 @@ export class Miner {
 
   miner_start (payload, cb) { cb() }
 
-  miner_stop (payload, cb) { cb()}
+  miner_stop (payload, cb) { cb() }
 }

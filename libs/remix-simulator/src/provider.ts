@@ -10,6 +10,7 @@ import { Net } from './methods/net'
 import { Transactions } from './methods/transactions'
 import { Miner } from './methods/miner'
 import { Debug } from './methods/debug'
+import { EVM } from './methods/evm'
 import { VMContext } from './vm-context'
 import { Web3PluginBase } from 'web3'
 
@@ -49,9 +50,11 @@ export class Provider {
   methods
   connected: boolean
   initialized: boolean
+  initializing: boolean
   pendingRequests: Array<any>
 
   constructor (options: ProviderOptions = {} as ProviderOptions) {
+    console.log(options)
     this.options = options
     this.connected = true
     this.vmContext = new VMContext(options['fork'], options['nodeUrl'], options['blockNumber'], options['stateDb'], options['blocks'])
@@ -67,10 +70,12 @@ export class Provider {
     this.methods = merge(this.methods, (new Net(this.vmContext, options)).methods())
     this.methods = merge(this.methods, this.Transactions.methods())
     this.methods = merge(this.methods, (new Debug(this.vmContext)).methods())
+    this.methods = merge(this.methods, (new EVM(this.vmContext, this.Transactions)).methods())
     this.methods = merge(this.methods, (new Miner(this.vmContext)).methods())
   }
 
   async init () {
+    this.initializing = true
     this.initialized = false
     this.pendingRequests = []
     await this.vmContext.init()
@@ -83,6 +88,7 @@ export class Provider {
       })
       this.pendingRequests = []
     }
+    this.initializing = false
   }
 
   _send(payload: JSONRPCRequestPayload, callback: (err: Error, result?: JSONRPCResponsePayload) => void) {
