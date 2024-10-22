@@ -11,9 +11,9 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
   return (
     <NavLink
       to={to}
-      className={({ isActive }) => 'text-decoration-none d-flex flex-column justify-content-center py-2 small ' + (isActive ? 'bg-transparent' : 'bg-dark')}
+      className={({ isActive }) => 'text-decoration-none d-flex px-1 flex-column justify-content-center small ' + (isActive ? "bg-light" : "bg-transparent")}
     >
-      <span>
+      <span className=''>
         <span>{icon}</span>
         <span className="ml-2">{title}</span>
       </span>
@@ -23,7 +23,7 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
 
 export const NavMenu = () => {
   return (
-    <nav className="d-flex flex-row justify-content-between w-100">
+    <nav className="d-flex medium flex-row w-100" style={{backgroundColor: 'var(--body-bg)!important'}}>
       <NavItem to="/" icon={<i className="fas fa-home"></i>} title="Verify" />
       <NavItem to="/receipts" icon={<i className="fas fa-receipt"></i>} title="Receipts" />
       <NavItem to="/lookup" icon={<i className="fas fa-search"></i>} title="Lookup" />
