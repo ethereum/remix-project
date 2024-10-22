@@ -171,6 +171,7 @@ export const deploy = async (payload: any, callback: any) => {
     ...instance,
     shortname: payload.shortname,
     shareTo: payload.shareTo,
+    showLogo: !!logo,
   })
 
   const files: Record<string, string> = {
@@ -192,7 +193,9 @@ export const deploy = async (payload: any, callback: any) => {
     files[`dir/${path}`] = resp.data;
   }
 
-  files['dir/assets/logo.png'] = logo
+  if (logo) {
+    files['dir/assets/logo.png'] = logo
+  }
   files['dir/CORS'] = '*'
   files['dir/index.html'] = files['dir/index.html'].replace(
     'assets/css/themes/remix-dark_tvx1s2.css',
@@ -341,7 +344,7 @@ export const initInstance = async ({
       }
       : { A: ids };
 
-  const logo = await axios.get('https://dev.remix-dapp.pages.dev/logo.png', { responseType: 'arraybuffer' })
+  // const logo = await axios.get('https://dev.remix-dapp.pages.dev/logo.png', { responseType: 'arraybuffer' })
 
   await dispatch({
     type: 'SET_INSTANCE',
@@ -353,7 +356,7 @@ export const initInstance = async ({
       natSpec,
       solcVersion: getVersion(solcVersion),
       ...lowLevel,
-      logo: logo.data,
+      // logo: logo.data,
     },
   });
 };

@@ -24,9 +24,9 @@ const PCPage: React.FC = () => {
     >
       <div className="col-xl-9 col-lg-8 col-md-7 d-inline-block pr-0">
         <div className="mx-3 my-2 row">
-          <div className="col-2 text-center">
+          {instance.showLogo && <div className="col-2 text-center">
             <img src="/assets/logo.png" style={{ width: 95, height: 95 }} />
-          </div>
+          </div>}
           <DappTop />
         </div>
         <UniversalDappUI />
