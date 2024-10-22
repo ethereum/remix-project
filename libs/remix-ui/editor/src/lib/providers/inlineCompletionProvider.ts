@@ -1,5 +1,6 @@
 /* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
+import * as monaco from 'monaco-editor';
 const _paq = (window._paq = window._paq || [])
 
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
@@ -81,10 +82,12 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
         const data = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
         this.task = 'code_generation'
+        _paq.push(['trackEvent', 'ai', 'remixAI', 'code_generation'])
 
         const parsedData = data.trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
-          insertText: parsedData
+          insertText: parsedData,
+          range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
         };
         this.currentCompletion.text = parsedData
         this.currentCompletion.item = item
@@ -116,11 +119,13 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       // Code insertion
       try {
         const output = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
+        _paq.push(['trackEvent', 'ai', 'remixAI', 'code_insertion'])
         const generatedText = output // no need to clean it. should already be
 
         this.task = 'code_insertion'
         const item: monacoTypes.languages.InlineCompletion = {
-          insertText: generatedText
+          insertText: generatedText,
+          range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
         };
         this.currentCompletion.text = generatedText
         this.currentCompletion.item = item
@@ -138,7 +143,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     try {
       // Code completion
       this.task = 'code_completion'
-      const output = await this.props.plugin.call('remixAI', 'code_completion', word)
+      const output = await this.props.plugin.call('remixAI', 'code_completion', word, word_after)
+      _paq.push(['trackEvent', 'ai', 'remixAI', 'code_completion'])
       const generatedText = output
       let clean = generatedText
 
@@ -150,6 +156,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
       const item: monacoTypes.languages.InlineCompletion = {
         insertText: clean,
+        range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
       };
       this.currentCompletion.text = clean
       this.currentCompletion.item = item
