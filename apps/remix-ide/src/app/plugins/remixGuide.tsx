@@ -16,6 +16,7 @@ const profile = {
   displayName: 'Remix Guide',
   description: 'Learn remix with videos',
   location: 'mainPanel',
+  maintainedBy: 'remix',
   events: []
 }
 
