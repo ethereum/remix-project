@@ -492,6 +492,7 @@
   ],
   "noTerminal": false,
   "verified": true,
+  "showLogo": true,
   "solcVersion": {
     "version": "0.8.26",
     "canReceive": true
