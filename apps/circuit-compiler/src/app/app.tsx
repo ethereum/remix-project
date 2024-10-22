@@ -82,8 +82,8 @@ function App() {
       dispatch({ type: 'REMOVE_VERSION_FROM_DOWNLOAD_LIST', payload: version })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
     })
-    plugin.internalEvents.on('download_failed', (version) => {
-      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: 'Download failed! Please check your internet connection and try again.' })
+    plugin.internalEvents.on('download_failed', (error) => {
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: 'Download failed! Please check your internet connection. ' + error.message })
     })
   }, [])
 

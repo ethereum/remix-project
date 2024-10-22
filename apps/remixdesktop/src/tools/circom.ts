@@ -84,7 +84,7 @@ export const circomCli = {
       await downloadFile(installationUrl, installationPath)
     } catch (e) {
       fs.rmSync(installationPath)
-      throw new Error('Download failed!')
+      throw new Error(e.message)
     }
   },
 

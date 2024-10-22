@@ -52,7 +52,7 @@ export class CircomPluginClient extends PluginClient {
       this.call('circom', 'install', versionToInstall).then(() => {
         this.internalEvents.emit('download_success', version)
       }).catch((e) => {
-        this.internalEvents.emit('download_failed')
+        this.internalEvents.emit('download_failed', e)
       })
     } else {
       if (version === '2.1.5') this.compiler = compilerV215
@@ -153,13 +153,18 @@ export class CircomPluginClient extends PluginClient {
       this.call('terminal', 'log', { type: 'log', value: 'Compiling ' + path })
       const { version, prime } = this._compilationConfig
       const versionToInstall = version === 'latest' ? 'latest' : `v${version}`
-      // @ts-ignore
-      const { stdout, stderr } = await this.call('circom', 'run', path, versionToInstall, { prime: prime, wasm: "", inputs: "" })
-      const fileName = extractNameFromKey(path)
+      try {
+        // @ts-ignore
+        const { stdout, stderr } = await this.call('circom', 'run', path, versionToInstall, { prime: prime, wasm: "", inputs: "" })
+        const fileName = extractNameFromKey(path)
 
-      this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('circom', 'wasm')
-      if (stderr) this.call('terminal', 'log', { type: 'error', value: stderr })
-      if (stdout) this.call('terminal', 'log', { type: 'log', value: stdout })
+        this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('circom', 'wasm')
+        if (stderr) this.call('terminal', 'log', { type: 'error', value: stderr })
+        if (stdout) this.call('terminal', 'log', { type: 'log', value: stdout })
+      } catch (error) {
+        this.call('terminal', 'log', { type: 'error', value: error.message })
+        return
+      }
       // @ts-ignore
       const signals = await this.call('circom', 'getInputs')
 
