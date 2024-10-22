@@ -31,18 +31,49 @@ const ImageUpload = () => {
   return (
     <div className="col-3 pr-0">
       <input data-id="uploadLogo" className="d-none" type="file" accept="image/*" onChange={handleImageChange} id="upload-button" />
-      <CustomTooltip
-        placement="right"
-        tooltipText={intl.formatMessage({ id: 'quickDapp.uploadLogoTooltip' })}
-      >
-        <label htmlFor="upload-button" className="cursor_pointer d-flex justify-content-center align-items-center position-relative" style={{ height: 170 }}>
-          {logo ? (
-            <img src={preview} alt="preview" style={{ width: 120, height: 120 }} />
-          ) : (
+      <label htmlFor="upload-button" className="cursor_pointer d-flex justify-content-center align-items-center position-relative" style={{ height: 170 }}>
+        {logo ? (
+          <>
+            <CustomTooltip
+              placement="right"
+              tooltipText={intl.formatMessage({ id: 'quickDapp.updateLogoTooltip' })}
+            >
+              <img src={preview} alt="preview" style={{ width: 120, height: 120 }} />
+            </CustomTooltip>
+            <CustomTooltip
+              placement="right"
+              tooltipText={intl.formatMessage({ id: 'quickDapp.deleteLogoTooltip' })}
+            >
+              <button
+                className="d-flex justify-content-center align-items-center position-absolute border-0 rounded-circle"
+                style={{
+                  top: 5,
+                  right: 5,
+                  width: 20,
+                  height: 20,
+                  backgroundColor: 'var(--gray-dark)'
+                }}
+                onClick={(event) => {
+                  event.preventDefault()
+                  dispatch({ type: 'SET_INSTANCE', payload: { logo: '' } })
+                }}
+              >
+                <i className="fas fa-times" style={{
+                  color: 'var(--text-bg-mark)',
+                  fontSize: 'large'
+                }}></i>
+              </button>
+            </CustomTooltip>
+          </>
+        ) : (
+          <CustomTooltip
+            placement="right"
+            tooltipText={intl.formatMessage({ id: 'quickDapp.addLogoTooltip' })}
+          >
             <i className="fas fa-upload" style={{ fontSize: 120 }}></i>
-          )}
-        </label>
-      </CustomTooltip>
+          </CustomTooltip>
+        )}
+      </label>
     </div>
   )
 }
