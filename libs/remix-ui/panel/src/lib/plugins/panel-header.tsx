@@ -50,7 +50,7 @@ const RemixUIPanelHeader = (props: RemixPanelProps) => {
           <div className="d-flex flex-row">
             { plugin?.profile?.maintainedBy?.toLowerCase() === 'remix' ? (
               <CustomTooltip placement="auto" tooltipId="maintainedByTooltipRemix" tooltipText={<FormattedMessage id="home.maintainedByRemix" />}>
-                <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>
+                <i className="text-success mt-1 px-1 fas fa-check"></i>
               </CustomTooltip>) :
               plugin?.profile?.maintainedBy ?
                 (<CustomTooltip placement="auto" tooltipId={"maintainedByTooltip" + plugin?.profile?.maintainedBy} tooltipText={"Maintained by " + plugin?.profile?.maintainedBy}>
