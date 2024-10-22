@@ -1,7 +1,7 @@
 import { signTypedData, SignTypedDataVersion, TypedMessage, MessageTypes } from '@metamask/eth-sig-util'
 import { privateToAddress, toChecksumAddress, isValidPrivate, Address, toBytes, bytesToHex, Account } from '@ethereumjs/util'
 import { privateKeyToAccount } from 'web3-eth-accounts'
-import { toBigInt } from 'web3-utils'
+import { toBigInt, toHex } from 'web3-utils'
 import * as crypto from 'crypto'
 
 type AccountType = {
@@ -123,7 +123,9 @@ export class Web3Accounts {
   }
 
   eth_chainId (_payload, cb) {
-    return cb(null, this.options.chainId || '0x539') // 0x539 is hex of 1337
+    if (!this.options.chainId) return cb(null, '0x539') // 0x539 is hex of 1337
+    const id = (typeof this.options.chainId === 'number') ? toHex(this.options.chainId) : this.options.chainId
+    return cb(null, id) 
   }
 
   eth_signTypedData_v4 (payload, cb) {
