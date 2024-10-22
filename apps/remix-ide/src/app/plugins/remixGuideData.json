@@ -1,44 +1,261 @@
 {
-  "logo": "assets/img/YouTubeLogo.webp",
   "title": "Remix Guide",
   "description": "Streamlined access to categorized video tutorials for mastering Remix IDE. From fundamentals to advanced techniques, level up your development skills with ease.",
   "sections": [
     {
-      "title": "Basics",
-      "hScrollable": "true",
+      "title": "Remix Basics",
+      "hScrollable": "false",
       "cells": [
         {
-          "title": "first item",
+          "title": "Intro to Remix",
+          "titleTooltip": "Example tooltip",
           "tagList": [
-            "L2",
-            "AI" 
+            "Remix",
+            "Beginner" 
           ],
           "authorURL": "EatTheBlocks",
           "expandViewElement": {
-            "videoID": "vH8T3In6ZkE",
-            "logo": "https://yt3.ggpht.com/9NFZbC9mkA152sSWJJgNBls6GlBdknsF-9gi6ZVk_xsHjmc82j3q1Pd5a--GCnOKUrP-YtNbHls=s48-c-k-c0x00ffffff-no-rj"
+            "videoID": "vH8T3In6ZkE"
           }
         },
         {
-          "title": "second item",
+          "title": "Workspaces",
           "tagList": [
-            "solidity",
-            "AI" 
+            "Remix",
+            "Beginner"
           ],
           "expandViewElement": {
-            "videoID": "vH8T3In6ZkE",
-            "logo": "https://yt3.ggpht.com/9NFZbC9mkA152sSWJJgNBls6GlBdknsF-9gi6ZVk_xsHjmc82j3q1Pd5a--GCnOKUrP-YtNbHls=s48-c-k-c0x00ffffff-no-rj"
+            "videoID": "_VepN5pcA0k"
           }
         },
         {
-          "title": "third item",
+          "title": "Remixd",
           "tagList": [
-            "vyper",
-            "AI" 
+            "Remix",
+            "Beginner"
           ],
           "expandViewElement": {
-            "videoID": "vH8T3In6ZkE",
-            "logo": "https://yt3.ggpht.com/9NFZbC9mkA152sSWJJgNBls6GlBdknsF-9gi6ZVk_xsHjmc82j3q1Pd5a--GCnOKUrP-YtNbHls=s48-c-k-c0x00ffffff-no-rj"
+            "videoID": "2OAx2UoLYEI"
+          }
+        },
+        {
+          "title": "Verifying w/ Etherscan",
+          "tagList": [
+            "Remix",
+            "Solidity",
+            "Plugins"
+          ],
+          "expandViewElement": {
+            "videoID": "hEJ1OlT8jQ4"
+          }
+        },
+        {
+          "title": "Essential Features",
+          "tagList": [
+            "Remix",
+            "Plugins"
+          ],
+          "expandViewElement": {
+            "videoID": "rBExlmWLCBA"
+          }
+        },
+        {
+          "title": "Remix w/ Hardhat",
+          "tagList": [
+            "Remix"
+          ],
+          "expandViewElement": {
+            "videoID": "8adSqvhvumQ"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Solidity Basics",
+      "hScrollable": "false",
+      "cells": [
+        {
+          "title": "Hello World",
+          "tagList": [
+            "Solidity",
+            "Beginner"
+          ],
+          "expandViewElement": {
+            "videoID": "g_t0Td4Kr6M"
+          }
+        },
+        {
+          "title": "Events",
+          "tagList": [
+            "Solidity",
+            "Beginner"
+          ],
+          "expandViewElement": {
+            "videoID": "nopo9KwwRg4"
+          }
+        },
+        {
+          "title": "Functions",
+          "tagList": [
+            "Solidity",
+            "Beginner"
+          ],
+          "expandViewElement": {
+            "videoID": "71cmPaD_AnQ"
+          }
+        },
+        {
+          "title": "Payable Functions",
+          "tagList": [
+            "Solidity",
+            "Beginner"
+          ],
+          "expandViewElement": {
+            "videoID": "yD9EL1QN40Q"
+          }
+        },
+        {
+          "title": "State Variables",
+          "tagList": [
+            "Solidity",
+            "Beginner"
+          ],
+          "expandViewElement": {
+            "videoID": "4XQsHBJScEk"
+          }
+        },
+        {
+          "title": "Gas & Gas Price",
+          "tagList": [
+            "Solidity",
+            "Beginner"
+          ],
+          "expandViewElement": {
+            "videoID": "oTS9uxU6cAM"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Remix Techniques",
+      "hScrollable": "false",
+      "cells": [
+        {
+          "title": "Proxy Contracts",
+          "tagList": [
+            "Remix",
+            "Solidity" 
+          ],
+          "expandViewElement": {
+            "videoID": "YJZV9uiDbJI"
+          }
+        },
+        {
+          "title": "Compile & Run",
+          "tagList": [
+            "Remix"
+          ],
+          "expandViewElement": {
+            "videoID": "ZR8sh7MRDQ4"
+            }
+        },
+        {
+          "title": "Scripts",
+          "tagList": [
+            "Remix"
+          ],
+          "expandViewElement": {
+            "videoID": "Eh1qgOurDxU"
+          }
+        },
+        {
+          "title": "Txn Recorder",
+          "tagList": [
+            "Remix"
+          ],
+          "expandViewElement": {
+            "videoID": "GchvmIRSxUo"
+                        }
+        },
+        {
+          "title": "Solidity Static Analyzers",
+          "tagList": [
+            "Remix",
+            "Solidity"
+          ],
+          "expandViewElement": {
+            "videoID": "0frxvI-r5oU"
+          }
+        },
+        {
+          "title": "Eth Doc Generator",
+          "tagList": [
+            "Remix",
+            "Solidity"
+          ],
+          "expandViewElement": {
+            "videoID": "UkMqdI7TGxw"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Low Level Solidity Videos",
+      "hScrollable": "false",
+      "cells": [
+        {
+          "title": "EVM Storage",
+          "tagList": [
+            "EVM",
+            "Solidity",
+            "Advanced"
+          ],
+          "expandViewElement": {
+            "videoID": "vTeav5Rinco"
+          }
+        },
+        {
+          "title": "Transient Storage",
+          "tagList": [
+            "EVM",
+            "Solidity",
+            "Advanced"
+          ],
+          "expandViewElement": {
+            "videoID": "0-hiB5I39Mk"
+          }
+        },
+        {
+          "title": "Bit Masking",
+          "tagList": [
+            "EVM",
+            "Solidity",
+            "Advanced"
+          ],
+          "expandViewElement": {
+            "videoID": "luCjY2IQEuw"
+          }
+        },
+        {
+          "title": "Structs in Storage",
+          "tagList": [
+            "EVM",
+            "Solidity",
+            "Advanced"
+          ],
+          "expandViewElement": {
+            "videoID": "xWkOlxerVJw"
+          }
+        },
+        {
+          "title": "Arrays in Storage",
+          "tagList": [
+            "EVM",
+            "Solidity",
+            "Advanced"
+          ],
+          "expandViewElement": {
+            "videoID": "74vyHBD_L1E"
           }
         }
       ]
