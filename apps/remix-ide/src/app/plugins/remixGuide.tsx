@@ -7,6 +7,7 @@ import { RemixUIGridView } from '@remix-ui/remix-ui-grid-view'
 import { RemixUIGridSection } from '@remix-ui/remix-ui-grid-section'
 import { RemixUIGridCell } from '@remix-ui/remix-ui-grid-cell'
 import * as Data from './remixGuideData.json'
+import './remixGuide.css'
 //@ts-ignore
 const _paq = (window._paq = window._paq || [])
 
@@ -15,6 +16,7 @@ const profile = {
   displayName: 'Remix Guide',
   description: 'Learn remix with videos',
   location: 'mainPanel',
+  maintainedBy: 'remix',
   events: []
 }
 
@@ -98,13 +100,13 @@ export class RemixGuidePlugin extends ViewPlugin {
           showUntagged={true}
           showPin={false}
           tagList={[
-            ['beginner', 'danger'],
-            ['advanced', 'warning'],
+            ['Remix', 'primary'],
+            ['Beginner', 'danger'],
+            ['Advanced', 'warning'],
             ['AI', 'success'],
-            ['plugins', 'secondary'],
-            ['solidity', 'primary'],
-            ['vyper', 'info'],
-            ['L2', 'danger']
+            ['Plugins', 'secondary'],
+            ['Solidity', 'primary'],
+            ['EVM', 'secondary']
           ]}
           title={Data.title}
           description={Data.description}
@@ -119,7 +121,9 @@ export class RemixGuidePlugin extends ViewPlugin {
                 return <RemixUIGridCell
                   plugin={this}
                   title={cell.title}
+                  titleTooltip={cell.titleTooltip}
                   tagList={cell.tagList}
+                  classList='RGCellStyle'
                   expandViewEl={
                     cell.expandViewElement
                   }
@@ -129,12 +133,13 @@ export class RemixGuidePlugin extends ViewPlugin {
                     this.showVideo = true
                     this.videoID = cell.expandViewElement.videoID
                     this.renderComponent()
+                    _paq.push(['trackEvent', 'remixGuide', 'playGuide', cell.title])
                   }}
-                  logo={cell.expandViewElement.logo}
                 >
-                  <a href={"https://www.youtube.com/@" + cell.authorURL} target="__blank">
-                    <img src={"//img.youtube.com/vi/" + this.videoID + "/0.jpg"} style={{ height: '70px', width: '70px' }}></img>
-                  </a>
+                  <img
+                    src={"//img.youtube.com/vi/" + cell.expandViewElement.videoID + "/0.jpg"}
+                    style={{ height: '100px', width: 'fit-content', cursor: 'pointer' }}
+                  ></img>
                 </RemixUIGridCell>
               })}
             </RemixUIGridSection>
@@ -157,7 +162,7 @@ export class RemixGuidePlugin extends ViewPlugin {
                 <iframe style={{ minHeight: "500px", minWidth: "1000px" }} width="1000" height="500" src={"https://www.youtube.com/embed/" + this.videoID + "?si=ZdckOaSPR7VsLj_2"} allowFullScreen></iframe>
               </div>
               <div className="modal-footer d-flex flex-column">
-                <button onClick={() => {
+                <button className="btn btn-secondary" onClick={() => {
                   this.showVideo = false
                   this.renderComponent()
                 }}>Close</button>
