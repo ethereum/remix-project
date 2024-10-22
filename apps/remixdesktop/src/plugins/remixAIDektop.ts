@@ -45,6 +45,7 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
 
   async onActivation(): Promise<void> {
     this.onload(() => {
+      this.emit('activated')
     })
   }
 
