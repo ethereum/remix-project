@@ -36,6 +36,7 @@ export class RemixAIPlugin extends ViewPlugin {
   isInferencing: boolean = false
   chatRequestBuffer: chatRequestBufferT<any> = null
   agent: CodeExplainAgent
+  useRemoteInferencer:boolean = false
 
   constructor(inDesktop:boolean) {
     super(profile)
@@ -47,11 +48,13 @@ export class RemixAIPlugin extends ViewPlugin {
   onActivation(): void {
     if (this.isOnDesktop) {
       console.log('Activating RemixAIPlugin on desktop')
-      this.on(this.remixDesktopPluginName, 'activated', () => {
-        this.call("remixAI", 'initialize', null, null, null, false);
-      })
+      // this.on(this.remixDesktopPluginName, 'activated', () => {
+      this.useRemoteInferencer = true
+      this.initialize(null, null, null, this.useRemoteInferencer);
+      // })
     } else {
       console.log('Activating RemixAIPlugin on browser')
+      this.useRemoteInferencer = true
       this.initialize()
     }
     // this.setRemixAIOnSidePannel(false)
@@ -67,9 +70,8 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
-    if (this.isOnDesktop) {
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
       // on desktop use remote inferencer -> false
-      console.log('initialize on desktop')
       const res = await this.call(this.remixDesktopPluginName, 'initializeModelBackend', useRemote, model1, model2)
       if (res) {
         this.on(this.remixDesktopPluginName, 'onStreamResult', (value) => {
@@ -105,7 +107,7 @@ export class RemixAIPlugin extends ViewPlugin {
       return
     }
 
-    if (this.isOnDesktop) {
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_generation', prompt)
     } else {
       return await this.remoteInferencer.code_generation(prompt)
@@ -113,7 +115,7 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async code_completion(prompt: string, promptAfter: string): Promise<any> {
-    if (this.isOnDesktop) {
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_completion', prompt, promptAfter)
     } else {
       return await this.remoteInferencer.code_completion(prompt, promptAfter)
@@ -128,7 +130,7 @@ export class RemixAIPlugin extends ViewPlugin {
 
     const newPrompt = await this.agent.chatCommand(prompt)
     let result
-    if (this.isOnDesktop) {
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'solidity_answer', newPrompt)
     } else {
       result = await this.remoteInferencer.solidity_answer(newPrompt)
@@ -144,7 +146,7 @@ export class RemixAIPlugin extends ViewPlugin {
     }
 
     let result
-    if (this.isOnDesktop) {
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'code_explaining', prompt, context, params)
 
     } else {
@@ -161,7 +163,7 @@ export class RemixAIPlugin extends ViewPlugin {
     }
 
     let result
-    if (this.isOnDesktop) {
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
       result = await this.call(this.remixDesktopPluginName, 'error_explaining', prompt)
     } else {
       result = await this.remoteInferencer.error_explaining(prompt, params)
@@ -171,7 +173,7 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
-    if (this.isOnDesktop) {
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx)
     } else {
       return await this.remoteInferencer.code_insertion(msg_pfx, msg_sfx)

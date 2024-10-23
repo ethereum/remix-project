@@ -118,7 +118,6 @@ export class JsonStreamParser {
       const jsonStr = this.buffer.slice(startIndex, endIndex + 1);
       try {
         const obj: GeneratedTextObject = JSON.parse(jsonStr);
-        console.log('parsed:', obj);
         results.push(obj);
       } catch (error) {
         console.error('Error parsing JSON:', error);
