@@ -101,7 +101,15 @@ export const circomCli = {
     const installationPath = getInstallationPath(version)
     const cmd = `${installationPath} ${filePath} ${Object.keys(options || {}).map((key) => options[key] ? `--${key} ${options[key]}` : `--${key}`).join(' ')}`
 
-    return await execAsync(cmd)
+    return new Promise((resolve, reject) => {
+      exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve({ stdout, stderr })
+        }
+      })
+    })
   }
 }
 
