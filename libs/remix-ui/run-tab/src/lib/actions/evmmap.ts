@@ -1,77 +1,35 @@
-type ChainInfo = {
-  id: number;
-  name: string;
-};
+export type ChainInfo = {
+  id: number
+  name: string
+}
 
-type HardFork =
-  | 'berlin'
-  | 'byzantium'
+export type HardFork =
   | 'cancun'
-  | 'constantinople'
-  | 'homestead'
-  | 'istanbul'
-  | 'london'
-  | 'paris'
-  | 'petersburg'
   | 'shanghai'
+  | 'paris'
+  | 'london'
+  | 'berlin'
+  | 'istanbul'
+  | 'petersburg'
+  | 'constantinople'
+  | 'byzantium'
   | 'spuriousDragon'
-  | 'tangarineWhistle';
+  | 'tangerineWhistle'
+  | 'homestead'
 
 export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
-  ['berlin', {
-    chainId: [
-      { id: 1, name: "Ethereum Mainnet" },
-      { id: 5, name: "Goerli" },
-      { id: 11155111, name: "Sepolia" }
-    ]
-  }],
-  ['byzantium', {
-    chainId: [
-      { id: 1, name: "Ethereum Mainnet" }
-    ]
-  }],
   ['cancun', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
       { id: 5, name: "Goerli" },
-      { id: 11155111, name: "Sepolia" },
+      { id: 11155111, name: "Sepolia" }
     ]
   }],
-  ['constantinople', {
+  ['shanghai', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
-    ]
-  }],
-  ['homestead', {
-    chainId: [
-      { id: 1, name: "Ethereum Mainnet" },
-      { id: 5, name: "Goerli" },
-      { id: 11155111, name: "Sepolia" }
-    ]
-  }],
-  ['istanbul', {
-    chainId: [
-      { id: 1, name: "Ethereum Mainnet" },
-      { id: 5, name: "Goerli" },
-      { id: 11155111, name: "Sepolia" }
-    ]
-  }],
-  ['london', {
-    chainId: [
-      { id: 1, name: "Ethereum Mainnet" },
-      { id: 5, name: "Goerli" },
-      { id: 10, name: "Optimism" },
-      { id: 25, name: "Cronos Mainnet" },
-      { id: 30, name: "Rootstock Mainnet" },
-      { id: 56, name: "BNB Smart Chain Mainnet" },
-      { id: 100, name: "Gnosis Chain" },
-      { id: 137, name: "Polygon Mainnet" },
-      { id: 250, name: "Fantom Opera" },
-      { id: 1280, name: "HALO Mainnet" },
-      { id: 42161, name: "Arbitrum One" },
-      { id: 42220, name: "Celo Mainnet" }
     ]
   }],
   ['paris', {
@@ -83,10 +41,10 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 56, name: "BNB Smart Chain Mainnet" },
       { id: 100, name: "Gnosis Chain" },
       { id: 137, name: "Polygon Mainnet" },
-      { id: 300, name: "zkSync Sepolia Testnet" },
+      { id: 300, name: "zkSync Era Mainnet" },
       { id: 302, name: "zkSync Era Testnet" },
       { id: 314, name: "Filecoin - Mainnet" },
-      { id: 324, name: "zkSync Mainnet" },
+      { id: 324, name: "zkSync Era Mainnet" },
       { id: 369, name: "PulseChain" },
       { id: 388, name: "HALO Mainnet" },
       { id: 1101, name: "Polygon zkEVM" },
@@ -103,6 +61,35 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 1666600000, name: "Harmony Mainnet Shard 0" }
     ]
   }],
+  ['london', {
+    chainId: [
+      { id: 1, name: "Ethereum Mainnet" },
+      { id: 5, name: "Goerli" },
+      { id: 10, name: "Optimism" },
+      { id: 25, name: "Cronos Mainnet" },
+      { id: 30, name: "Rootstock Mainnet" },
+      { id: 56, name: "BNB Smart Chain Mainnet" },
+      { id: 137, name: "Polygon Mainnet" },
+      { id: 250, name: "Fantom Opera" },
+      { id: 1280, name: "HALO Mainnet" },
+      { id: 42161, name: "Arbitrum One" },
+      { id: 42220, name: "Celo Mainnet" }
+    ]
+  }],
+  ['berlin', {
+    chainId: [
+      { id: 1, name: "Ethereum Mainnet" },
+      { id: 5, name: "Goerli" },
+      { id: 11155111, name: "Sepolia" }
+    ]
+  }],
+  ['istanbul', {
+    chainId: [
+      { id: 1, name: "Ethereum Mainnet" },
+      { id: 5, name: "Goerli" },
+      { id: 11155111, name: "Sepolia" }
+    ]
+  }],
   ['petersburg', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
@@ -110,11 +97,16 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 11155111, name: "Sepolia" }
     ]
   }],
-  ['shanghai', {
+  ['constantinople', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
+    ]
+  }],
+  ['byzantium', {
+    chainId: [
+      { id: 1, name: "Ethereum Mainnet" }
     ]
   }],
   ['spuriousDragon', {
@@ -122,9 +114,16 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 1, name: "Ethereum Mainnet" }
     ]
   }],
-  ['tangarineWhistle', {
+  ['tangerineWhistle', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" }
+    ]
+  }],
+  ['homestead', {
+    chainId: [
+      { id: 1, name: "Ethereum Mainnet" },
+      { id: 5, name: "Goerli" },
+      { id: 11155111, name: "Sepolia" }
     ]
   }]
 ])
