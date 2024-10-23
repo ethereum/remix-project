@@ -17,7 +17,7 @@ type HardFork =
   | 'spuriousDragon'
   | 'tangarineWhistle';
 
-const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
+export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
   ['berlin', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
@@ -127,6 +127,18 @@ const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 1, name: "Ethereum Mainnet" }
     ]
   }]
-]);
+])
 
-export default evmMap
+export function getCompatibleChains(fork: HardFork): ChainInfo[] {
+  const forkData = evmMap.get(fork);
+  return forkData ? forkData.chainId : [];
+}
+
+export function isChainCompatible(fork: HardFork, chainId: number): boolean {
+  const compatibleChains = getCompatibleChains(fork);
+  return compatibleChains.some(chain => chain.id === chainId);
+}
+
+export function isChainCompatibleWithAnyFork(chainId: number, forks: HardFork[]): boolean {
+  return forks.some(fork => isChainCompatible(fork, chainId));
+}
