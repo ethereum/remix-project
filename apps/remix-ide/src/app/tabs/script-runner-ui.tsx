@@ -15,7 +15,7 @@ const profile = {
   displayName: 'Script configuration',
   methods: ['execute'],
   events: ['log', 'info', 'warn', 'error'],
-  icon: 'assets/img/settings.webp',
+  icon: 'assets/img/ts-logo.svg',
   description: 'Set up a script runner',
   kind: '',
   location: 'sidePanel',
@@ -122,13 +122,12 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async selectScriptRunner(config: ProjectConfiguration) {
-    console.log('selectScriptRunner', config)
-    await this.loadScriptRunner(config)
-    await this.saveCustomConfig(this.customConfig)
+    if (await this.loadScriptRunner(config))
+      await this.saveCustomConfig(this.customConfig)
   }
 
   async loadScriptRunner(config: ProjectConfiguration): Promise<boolean> {
-    console.log('loadScriptRunner', config)
+    //console.log('loadScriptRunner', config)
     const profile: Profile = await this.plugin.call('manager', 'getProfile', 'scriptRunner')
     this.scriptRunnerProfileName = profile.name
     const testPluginName = localStorage.getItem('test-plugin-name')
@@ -144,13 +143,14 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
         url = `${baseUrl}?template=${config.name}&timestamp=${Date.now()}`
       }
     }
-    console.log('loadScriptRunner', profile)
+    //console.log('loadScriptRunner', profile)
     const newProfile: IframeProfile = {
       ...profile,
       name: profile.name + config.name,
       location: 'hiddenPanel',
       url: url
     }
+
     console.log('loadScriptRunner', newProfile)
     let result = null
     try {
@@ -161,7 +161,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
         await this.engine.register(plugin)
       }
       await this.plugin.call('manager', 'activatePlugin', newProfile.name)
-
+      console.log('activate done', newProfile.name)
       this.activeConfig = config
       this.on(newProfile.name, 'log', this.log.bind(this))
       this.on(newProfile.name, 'info', this.info.bind(this))
@@ -172,13 +172,22 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       this.setErrorStatus(config.name, false, '')
       result = true
     } catch (e) {
-
-      this.engine.remove(newProfile.name)
+      console.log('Error loading script runner: ', newProfile.name, e)
+      const iframe = document.getElementById(`plugin-${newProfile.name}`);
+      if (iframe) {
+        console.log('remove iframe', iframe)
+        await this.call('hiddenPanel', 'removeView', newProfile)
+      }
+      console.log('deactivate', (this.engine as any))
+      delete (this.engine as any).manager.profiles[newProfile.name]
+      delete (this.engine as any).plugins[newProfile.name]
       console.log('is registered', newProfile.name, this.engine.isRegistered(newProfile.name))
       console.log('Error loading script runner: ', newProfile.name, e)
+      console.log('REMOVE', newProfile.name)
       this.setErrorStatus(config.name, true, e)
       result = false
     }
+    console.log('ENGINE', this.engine)
     this.setIsLoading(config.name, false)
     this.renderComponent()
     return result
@@ -186,6 +195,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async execute(script: string, filePath: string) {
+    console.log(this.engine)
     console.log('is registered', `${this.scriptRunnerProfileName}${this.activeConfig.name}`, this.engine.isRegistered(`${this.scriptRunnerProfileName}${this.activeConfig.name}`))
     if (!this.scriptRunnerProfileName || !this.engine.isRegistered(`${this.scriptRunnerProfileName}${this.activeConfig.name}`)) {
       if (!await this.loadScriptRunner(this.activeConfig)) {
@@ -195,10 +205,12 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     }
     console.log('execute', this.activeConfig)
     try {
+      this.setIsLoading(this.activeConfig.name, true)
       await this.call(`${this.scriptRunnerProfileName}${this.activeConfig.name}`, 'execute', script, filePath)
     } catch (e) {
       console.error('Error executing script', e)
     }
+    this.setIsLoading(this.activeConfig.name, false)
 
   }
 

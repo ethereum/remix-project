@@ -3,7 +3,7 @@ import { Accordion, Card, Button } from "react-bootstrap";
 import axios from "axios";
 import { customScriptRunnerConfig, Dependency, ProjectConfiguration } from "../types";
 import { FormattedMessage } from "react-intl";
-import { faCheck, faExclamationCircle, faToggleOn } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown, faAngleRight, faCaretDown, faCaretRight, faCheck, faChevronLeft, faChevronUp, faExclamationCircle, faRedoAlt, faToggleOn } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Profile } from "@remixproject/plugin-utils";
 import { IframeProfile, ViewProfile } from "@remixproject/engine-web";
@@ -29,13 +29,18 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
   const { loadScriptRunner, configurations, activeConfig, enableCustomScriptRunner } = props;
   const [activeKey, setActiveKey] = useState('default');
 
+  useEffect(() => {
+  }, [activeKey])
+
   if (!configurations) {
     return <div>Loading...</div>;
   }
 
+
+
   return (
     <div className="px-1">
-      <Accordion defaultActiveKey="default">
+      <Accordion activeKey={activeKey} defaultActiveKey="default">
         {configurations.filter((config) => config.publish).map((config: ProjectConfiguration, index) => (
           <div key={index}>
             <div className="d-flex align-items-baseline justify-content-between">
@@ -44,8 +49,14 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
                   overflowX: 'hidden',
                   textOverflow: 'ellipsis'
                 }}
+                onClick={() => setActiveKey(activeKey === config.name ? '' : config.name)}
               >
-                <div className="pl-2">{config.title || config.name}</div>
+                <div className="d-flex">
+                  {activeKey === config.name ?
+                    <FontAwesomeIcon icon={faCaretDown}></FontAwesomeIcon> :
+                    <FontAwesomeIcon icon={faCaretRight}></FontAwesomeIcon>}
+                  <div className="pl-2">{config.title || config.name}</div>
+                </div>
               </Accordion.Toggle>
               <div className="d-flex align-items-baseline">
                 {config.isLoading && <div className="">
@@ -55,8 +66,13 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
                   <CustomTooltip tooltipText={config.error}>
                     <FontAwesomeIcon icon={faExclamationCircle}></FontAwesomeIcon>
                   </CustomTooltip>
+
                 </div>}
-                {!config.isLoading &&
+                {!config.isLoading && config.errorStatus && config.error &&
+                  <div onClick={() => loadScriptRunner(config)} className="pointer px-2">
+                    <FontAwesomeIcon icon={faRedoAlt}></FontAwesomeIcon>
+                  </div>}
+                {!config.isLoading && !config.errorStatus && !config.error &&
                   <div onClick={() => loadScriptRunner(config)} className="pointer px-2">
                     {activeConfig && activeConfig.name !== config.name ?
                       <FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon> :

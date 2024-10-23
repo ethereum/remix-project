@@ -29,7 +29,7 @@ export class RemixEngine extends Engine {
     if (name === 'solcoder') return { queueTimeout: 60000 * 2 }
     if (name === 'cookbookdev') return { queueTimeout: 60000 * 3 }
     if (name === 'contentImport') return { queueTimeout: 60000 * 3 }
-    
+    if (name === 'scriptRunnerBridge') return { queueTimeout: 2000 }
     return { queueTimeout: 10000 }
   }
 
