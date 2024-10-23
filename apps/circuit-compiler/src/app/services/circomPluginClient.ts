@@ -163,6 +163,8 @@ export class CircomPluginClient extends PluginClient {
         if (stdout) this.call('terminal', 'log', { type: 'log', value: stdout })
       } catch (error) {
         this.call('terminal', 'log', { type: 'error', value: error.message })
+        this.internalEvents.emit('circuit_compiling_errored', error)
+        this.emit('statusChanged', { key: 'errored', title: 'Compilation failed', type: 'error' })
         return
       }
       // @ts-ignore
