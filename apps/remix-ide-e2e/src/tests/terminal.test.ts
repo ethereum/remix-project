@@ -499,7 +499,7 @@ const deployWithEthersJs = `
 
         const metadata = JSON.parse(await remix.call('fileManager', 'getFile', artifactsPath))
         // 'web3Provider' is a remix global variable object
-        const signer = await (new ethers.BrowserProvider(web3Provider)).getSigner()
+        const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
 
         let factory = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
 
@@ -508,7 +508,7 @@ const deployWithEthersJs = `
         console.log('Contract Address: ', contract.address);
 
         // The contract is NOT deployed yet; we must wait until it is mined
-        await contract.waitForDeployment()
+        await contract.deployed()
         console.log('Deployment successful.')
 
         contract.on('OwnerSet', (previousOwner, newOwner) => {
@@ -529,20 +529,20 @@ describe("Storage with lib", function () {
   it("test initial value", async function () {
     // Make sure contract is compiled and artifacts are generated
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
-    const signer = await (new ethers.BrowserProvider(web3Provider)).getSigner()
+    const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
     let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
     console.log('storage contract Address: ' + storage.address);
-    await storage.waitForDeployment()
+    await storage.deployed()
     expect((await storage.retrieve()).toNumber()).to.equal(0);
   });
 
   it("test updating and retrieving updated value", async function () {
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
-    const signer = await (new ethers.BrowserProvider(web3Provider)).getSigner()
+    const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
     let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
-    await storage.waitForDeployment()
+    await storage.deployed()
     const setValue = await storage.store(56);
     await setValue.wait();
     expect((await storage.retrieve()).toNumber()).to.equal(56);
@@ -550,10 +550,10 @@ describe("Storage with lib", function () {
 
   it("fail test updating and retrieving updated value", async function () {
     const metadata = JSON.parse(await remix.call('fileManager', 'getFile', 'contracts/artifacts/Storage.json'))
-    const signer = await (new ethers.BrowserProvider(web3Provider)).getSigner()
+    const signer = (new ethers.providers.Web3Provider(web3Provider)).getSigner()
     let Storage = new ethers.ContractFactory(metadata.abi, metadata.data.bytecode.object, signer)
     let storage = await Storage.deploy();
-    await storage.waitForDeployment()
+    await storage.deployed()
     const setValue = await storage.store(56);
     await setValue.wait();
     expect((await storage.retrieve()).toNumber(), 'incorrect number').to.equal(55);
@@ -621,7 +621,7 @@ describe("Storage", function () {
         const optionsLib = {}
         const factoryLib = await ethers.getContractFactoryFromArtifact(artifactLib, optionsLib)
         const lib = await factoryLib.deploy();
-        await lib.waitForDeployment()
+        await lib.deployed()
 
         const metadata = JSON.parse(await remix.call('fileManager', 'readFile', 'contracts/artifacts/StorageWithLib.json'))
         const artifact  = {
@@ -641,7 +641,7 @@ describe("Storage", function () {
 
         const factory = await ethers.getContractFactoryFromArtifact(artifact, options)
         const storage = await factory.deploy();
-        await storage.waitForDeployment()
+        await storage.deployed()
         const storeValue = await storage.store(333);
         await storeValue.wait();
         expect((await storage.getFromLib()).toString()).to.equal('34');
@@ -777,7 +777,7 @@ const scriptAutoExec = {
 
           const lib = await factoryLib.deploy();
 
-          await lib.waitForDeployment()
+          await lib.deployed()
 
           console.log('lib deployed', lib.address)
 
@@ -801,7 +801,7 @@ const scriptAutoExec = {
 
           const storage = await factory.deploy();
 
-          await storage.waitForDeployment()
+          await storage.deployed()
 
           const storeValue = await storage.store(333);
 
@@ -824,7 +824,7 @@ const scriptBlockAndTransaction = `
     try {
       web3.eth.getTransaction('0x0d2baaed96425861677e87dcf6961d34e2b73ad9a0929c32a05607ca94f98d17').then(console.log).catch(console.error)
       web3.eth.getBlock(4757766).then(console.log).catch(console.error)
-      let ethersProvider = new ethers.BrowserProvider(web3Provider)
+      let ethersProvider = new ethers.providers.Web3Provider(web3Provider)
       ethersProvider.getBlock(4757767).then(console.log).catch(console.error)
     } catch (e) {
         console.log(e.message)
