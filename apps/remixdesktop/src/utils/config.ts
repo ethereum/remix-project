@@ -4,7 +4,7 @@ import path from 'path'
 
 export const cacheDir = path.join(os.homedir(), '.cache_remix_ide')
 
-console.log('cacheDir', cacheDir)
+console.log('cache dir is:', cacheDir)
 
 export const createDefaultConfigLocations = async() => {
   try {
@@ -13,6 +13,12 @@ export const createDefaultConfigLocations = async() => {
     }
     if (!fs.existsSync(cacheDir + '/compilers')) {
       fs.mkdirSync(cacheDir + '/compilers')
+    }
+    if (!fs.existsSync(cacheDir + '/models')) {
+      fs.mkdirSync(cacheDir + '/models')
+    }
+    if (!fs.existsSync(cacheDir + '/inferenceServer')) {
+      fs.mkdirSync(cacheDir + '/inferenceServer')
     }
     if (!fs.existsSync(cacheDir + '/remixdesktop.json')) {
       console.log('create config file')

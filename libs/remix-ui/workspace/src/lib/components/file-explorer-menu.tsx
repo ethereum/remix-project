@@ -53,6 +53,13 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
         icon: 'fa-solid fa-link',
         placement: 'top',
         platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
+      },
+      {
+        action: 'initializeWorkspaceAsGitRepo',
+        title: 'Initialize workspace as a git repository',
+        icon: 'fa-brands fa-git-alt',
+        placement: 'top',
+        platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
       }
     ].filter(
       (item) =>
@@ -133,6 +140,29 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
                       {...enableDirUpload}
                       multiple
                     />
+                  </label>
+                </CustomTooltip>
+              )
+            } else if (action === 'initializeWorkspaceAsGitRepo') {
+              return (
+                <CustomTooltip
+                  placement={placement as Placement}
+                  tooltipId="initializeWorkspaceAsGitRepoTooltip"
+                  tooltipClasses="text-nowrap"
+                  tooltipText={<FormattedMessage id={`filePanel.${action}`} defaultMessage={title} />}
+                  key={`index-${action}-${placement}-${icon}`}
+                >
+                  <label
+                    id={action}
+                    style={{ fontSize: '1.1rem', cursor: 'pointer' }}
+                    data-id={'fileExplorerInitializeWorkspaceAsGitRepo' + action}
+                    className={icon + ' mx-1 remixui_menuItem'}
+                    key={`index-${action}-${placement}-${icon}`}
+                    onClick={() => {
+                      _paq.push(['trackEvent', 'fileExplorer', 'fileAction', action])
+                      props.handleGitInit()
+                    }}
+                  >
                   </label>
                 </CustomTooltip>
               )

@@ -25,7 +25,7 @@ export const ElectronWorkspaceName = (props: ElectronWorkspaceNameProps) => {
     (dir === undefined || dir === '') ? <></> :
       <div className="d-flex align-items-baseline">
         <CustomTooltip
-          placement="top"
+          placement="bottom"
           tooltipId="workspace-name"
           tooltipClasses="text-nowrap"
           tooltipText={dir}

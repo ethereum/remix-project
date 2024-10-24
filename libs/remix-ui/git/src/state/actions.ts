@@ -1,5 +1,7 @@
 import { ReadCommitResult } from "isomorphic-git"
-import { branch, branchDifference, commitChange, fileStatusResult, GitHubUser, gitLog, pagedCommits, remote, remoteBranch, repository, storage, userEmails } from "../types"
+import { fileStatusResult, gitLog } from "../types"
+import { GitHubUser, branch, branchDifference, commitChange, pagedCommits, remote, remoteBranch, repository, userEmails } from '@remix-api'
+import { storage } from "../types"
 
 export interface ActionPayloadTypes {
   FILE_STATUS: fileStatusResult[],
@@ -43,6 +45,8 @@ export interface ActionPayloadTypes {
   SET_LOG: gitLog
   CLEAR_LOG: void
   SET_USER_EMAILS: userEmails
+  DESKTOP_SET_WORKING_DIR: string
+  SET_VERSION: string
   SET_STORAGE: storage
   SET_TIMESTAMP: number
   SET_GIT_LOG_COUNT: number

@@ -157,11 +157,11 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       this.setIsLoading(config.name, true)
       const plugin: IframePlugin = new IframePlugin(newProfile)
       if (!this.engine.isRegistered(newProfile.name)) {
-        console.log('registering plugin', plugin)
+        
         await this.engine.register(plugin)
       }
       await this.plugin.call('manager', 'activatePlugin', newProfile.name)
-      console.log('activate done', newProfile.name)
+
       this.activeConfig = config
       this.on(newProfile.name, 'log', this.log.bind(this))
       this.on(newProfile.name, 'info', this.info.bind(this))
@@ -178,7 +178,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
         console.log('remove iframe', iframe)
         await this.call('hiddenPanel', 'removeView', newProfile)
       }
-      console.log('deactivate', (this.engine as any))
+      
       delete (this.engine as any).manager.profiles[newProfile.name]
       delete (this.engine as any).plugins[newProfile.name]
       console.log('is registered', newProfile.name, this.engine.isRegistered(newProfile.name))
@@ -187,7 +187,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       this.setErrorStatus(config.name, true, e)
       result = false
     }
-    console.log('ENGINE', this.engine)
+
     this.setIsLoading(config.name, false)
     this.renderComponent()
     return result
@@ -195,7 +195,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async execute(script: string, filePath: string) {
-    console.log(this.engine)
+    console.log('execute', script, filePath)
     console.log('is registered', `${this.scriptRunnerProfileName}${this.activeConfig.name}`, this.engine.isRegistered(`${this.scriptRunnerProfileName}${this.activeConfig.name}`))
     if (!this.scriptRunnerProfileName || !this.engine.isRegistered(`${this.scriptRunnerProfileName}${this.activeConfig.name}`)) {
       if (!await this.loadScriptRunner(this.activeConfig)) {
@@ -294,7 +294,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
     console.log('buildScriptRunner', dependencies)
   }
 
-  async loadCustomConfig(): Promise<ScriptRunnerConfig> {
+  async loadCustomConfig(): Promise<void> {
     console.log('loadCustomConfig')
     //await this.plugin.call('fileManager', 'open', 'script.config.json')
     try {
@@ -304,7 +304,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       this.customConfig = parsed
       console.log('loadCustomConfig', this.customConfig)
     } catch (e) {
-      return {
+      this.customConfig = {
         defaultConfig: 'default',
         customConfig: {
           baseConfiguration: 'default',

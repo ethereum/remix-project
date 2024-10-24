@@ -4,7 +4,8 @@ import { gitPluginContext } from "../../gitui";
 import { selectStyles, selectTheme } from "../../../types/styles";
 import Select, { Options, OptionsOrGroups } from 'react-select'
 import GitUIButton from "../../buttons/gituibutton";
-import { gitMatomoEventTypes, remote } from "../../../types";
+import { remote } from "@remix-api";
+import { gitMatomoEventTypes } from "../../../types";
 import { relative } from "path";
 import { sendToMatomo } from "../../../lib/pluginActions";
 

@@ -1,0 +1,14 @@
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+a:focus {
+  background-color: var(bg-light) !important;
+}
+
+.fa-arrow-up-right-from-square::before { content: "\f08e"; }
+.fa-xmark::before { content: "\f00d"; }

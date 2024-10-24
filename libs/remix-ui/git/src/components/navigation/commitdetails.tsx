@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect } from "react";
 import { CommitSummary } from "../panels/commits/commitsummary";
 import { ReadCommitResult } from "isomorphic-git"
-import { branch } from "../../types";
+import { branch } from "@remix-api";
 
 interface CommitDetailsNavigationProps {
   commit: ReadCommitResult,

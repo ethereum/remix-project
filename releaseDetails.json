@@ -1,11 +1,15 @@
 {
-    "version": "v0.53.0",
+    "version": "v0.56.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Keyboard shortcut for Cut-Copy-Paste files and folder",
-    "highlight2": "Interface to generate proof in Circom compiler plugin",
-    "highlight3": "Publish multi-selected files to Gist",
+    "highlight1": "Added new 'Contract Verification' plugin to verify contract on multiple platforms",
+    "highlight2": "Added new 'Remix Guide' plugin to learn using Remix IDE using videos",
+    "highlight3": "Added support for message signing using EIP712",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-53-0-615d9e7c6c58?source=friends_link&sk=35e918e8487aaab02e79ea4dc557a7e7"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-56-0-574a5774f94c?source=friends_link&sk=af46111d5a9976306e5770ccc468ae28"
   }
+  
+
+  
+
   

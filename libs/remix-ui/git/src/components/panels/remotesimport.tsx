@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react"
-import { Alert, Button } from "react-bootstrap"
-import { gitActionsContext } from "../../state/context"
-import { repository } from "../../types"
-import { gitPluginContext } from "../gitui"
+import React, { useEffect, useState } from "react";
+import { Alert, Button } from "react-bootstrap";
+import { gitActionsContext } from "../../state/context";
+import { repository } from "@remix-api";
+import { gitPluginContext } from "../gitui";
 import Select from 'react-select'
 import { selectStyles, selectTheme } from "../../types/styles"
 import { TokenWarning } from "./tokenWarning"

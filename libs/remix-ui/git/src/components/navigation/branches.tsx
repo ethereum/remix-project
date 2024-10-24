@@ -3,6 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { } from "react";
 import { gitActionsContext, pluginActionsContext } from "../../state/context";
 import LoaderIndicator from "./loaderindicator";
+import { gitUIPanels } from "../../types";
+import { SourceControlBase } from "../buttons/sourceControlBase";
+import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
 
 export const BranchesNavigation = ({ eventKey, activePanel, callback }) => {
   const pluginactions = React.useContext(pluginActionsContext)
@@ -26,6 +29,7 @@ export const BranchesNavigation = ({ eventKey, activePanel, callback }) => {
           <label className="pl-2 nav form-check-label">BRANCHES</label>
           <LoaderIndicator></LoaderIndicator>
         </span>
+        <SourceControlBase><SourceControlButtons panel={gitUIPanels.BRANCHES}/></SourceControlBase>
       </div>
     </>
   );

@@ -1,10 +1,10 @@
 import React, { useEffect, useReducer, useState, useContext } from 'react'
 import { add, addall, checkout, checkoutfile, clone, commit, createBranch, remoteBranches, repositories, rm, getCommitChanges, diff, resolveRef, getBranchCommits, setUpstreamRemote, loadGitHubUserFromToken, getBranches, getRemotes, remoteCommits, saveGitHubCredentials, getGitHubCredentialsFromLocalStorage, fetch, pull, push, setDefaultRemote, addRemote, removeRemote, sendToGitLog, clearGitLog, getBranchDifferences, getFileStatusMatrix, init, showAlert, gitlog, setStateGitLogCount } from '../lib/gitactions'
 import { loadFiles, setCallBacks } from '../lib/listeners'
-import { openDiff, openFile, saveToken, sendToMatomo, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
+import { openDiff, openFile, openFolderInSameWindow, sendToMatomo, saveToken, setModifiedDecorator, setPlugin, setUntrackedDecorator, statusChanged } from '../lib/pluginActions'
 import { gitActionsContext, pluginActionsContext } from '../state/context'
 import { gitReducer } from '../state/gitreducer'
-import { defaultGitState, defaultLoaderState, gitMatomoEventTypes, gitState, gitUIPanels, loaderState } from '../types'
+import { IGitUi, defaultGitState, defaultLoaderState, gitMatomoEventTypes, gitState, gitUIPanels, loaderState } from '../types'
 import { Accordion, Button } from "react-bootstrap";
 import { CommitMessage } from './buttons/commitmessage'
 import { Commits } from './panels/commits'
@@ -31,8 +31,9 @@ import { GitHubCredentials } from './panels/githubcredentials'
 import { Setup } from './panels/setup'
 import { Init } from './panels/init'
 import { Disabled } from './disabled'
-import { IGitUi } from '../types'
-import { AppContext } from '@remix-ui/app'
+import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
+import { Version } from './panels/version'
+
 export const gitPluginContext = React.createContext<gitState>(defaultGitState)
 export const loaderContext = React.createContext<loaderState>(defaultLoaderState)
 
@@ -45,6 +46,8 @@ export const GitUI = (props: IGitUi) => {
   const [needsInit, setNeedsInit] = useState<boolean>(true)
   const [appLoaded, setAppLoaded] = useState<boolean>(false)
   const appContext = useContext(AppContext)
+
+  const platform = useContext(platformContext)
 
   useEffect(() => {
     plugin.emit('statusChanged', {
@@ -59,7 +62,7 @@ export const GitUI = (props: IGitUi) => {
 
   useEffect(() => {
     if (!appLoaded) return
-    setCallBacks(plugin, gitDispatch, appContext.appStateDispatch, loaderDispatch, setActivePanel)
+    setCallBacks(plugin, gitDispatch, appContext.appStateDispatch, loaderDispatch, setActivePanel, platform)
     setPlugin(plugin, gitDispatch, loaderDispatch)
     loaderDispatch({ type: 'plugin', payload: true })
 
@@ -167,7 +170,8 @@ export const GitUI = (props: IGitUi) => {
     saveToken,
     saveGitHubCredentials,
     getGitHubCredentialsFromLocalStorage,
-    showAlert
+    showAlert,
+    openFolderInSameWindow
   }
 
   return (
@@ -243,6 +247,8 @@ export const GitUI = (props: IGitUi) => {
                     </div>
                   </Accordion.Collapse>
                 </Accordion>
+                { platform === appPlatformTypes.desktop &&
+                <Version /> }
               </pluginActionsContext.Provider>
             </gitActionsContext.Provider>
           </loaderContext.Provider>

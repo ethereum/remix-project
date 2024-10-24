@@ -4,11 +4,12 @@ import { CustomTooltip } from "@remix-ui/helper";
 import React, { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { pluginActionsContext } from "../../state/context";
-import { branch, remote } from "../../types";
+import { branch, remote } from "@remix-api";
 import { SourceControlBase } from "../buttons/sourceControlBase";
 import { SourceControlButtons } from "../buttons/sourcecontrolbuttons";
 import { gitPluginContext } from "../gitui";
 import LoaderIndicator from "./loaderindicator";
+import { gitUIPanels } from "../../types";
 
 export interface CommitsNavigationProps {
   title: string,
@@ -53,7 +54,7 @@ export const CommitsNavigation = ({ eventKey, activePanel, callback, title, bran
         </span>
         {showButtons ?
           <SourceControlBase branch={branch} remote={remote}>
-            <SourceControlButtons />
+            <SourceControlButtons panel={gitUIPanels.COMMITS} />
           </SourceControlBase> : null}
 
       </div>
