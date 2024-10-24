@@ -26,7 +26,7 @@ function hash(message: any): bigint {
 
     const ptau_final = "https://ipfs-cluster.ethdevops.io/ipfs/QmTiT4eiYz5KF7gQrDsgfCSTRv3wBPYJ4bRN1MmTRshpnW";
     // @ts-ignore
-    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/semaphore.r1cs', true);
+    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/bin/semaphore.r1cs', true);
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer);
     const zkey_0 = { type: "mem" };

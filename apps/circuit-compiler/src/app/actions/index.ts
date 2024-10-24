@@ -29,7 +29,7 @@ export const computeWitness = async (plugin: CircomPluginClient, appState: AppSt
         const wtns = await snarkjs.wtns.exportJson(witness)
         const wtnsJson = wtns.map(wtn => wtn.toString())
         const fileName = extractNameFromKey(appState.filePath)
-        const writePath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.wtn.json')}`
+        const writePath = extractParentFromKey(appState.filePath) + `/bin/${fileName.replace('.circom', '.wtn.json')}`
 
         await plugin.call('fileManager', 'writeFile', writePath, JSON.stringify(wtnsJson, null, 2))
         plugin._paq.push(['trackEvent', 'circuit-compiler', 'computeWitness', 'wtns.exportJson', writePath])
@@ -53,7 +53,7 @@ export const runSetupAndExport = async (plugin: CircomPluginClient, appState: Ap
     await plugin.generateR1cs(appState.filePath, { version: appState.version, prime: appState.primeValue })
 
     const fileName = extractNameFromKey(appState.filePath)
-    const readPath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.r1cs')}`
+    const readPath = extractParentFromKey(appState.filePath) + `/bin/${fileName.replace('.circom', '.r1cs')}`
     // @ts-ignore
     const r1csBuffer = await plugin.call('fileManager', 'readFile', readPath, { encoding: null })
     // @ts-ignore
@@ -112,12 +112,12 @@ export const generateProof = async (plugin: CircomPluginClient, appState: AppSta
     dispatch({ type: 'SET_PROOF_FEEDBACK', payload: null })
     plugin.emit('statusChanged', { key: 'none' })
     const fileName = extractNameFromKey(appState.filePath)
-    const r1csPath = extractParentFromKey(appState.filePath) + `/.bin/${fileName.replace('.circom', '.r1cs')}`
+    const r1csPath = extractParentFromKey(appState.filePath) + `/bin/${fileName.replace('.circom', '.r1cs')}`
     // @ts-ignore
     const r1csBuffer = await plugin.call('fileManager', 'readFile', r1csPath, { encoding: null })
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer)
-    const wtnsPath = isElectron() ? extractParentFromKey(appState.filePath) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('.circom', '.wtn') : r1csPath.replace('.r1cs', '.wtn')
+    const wtnsPath = isElectron() ? extractParentFromKey(appState.filePath) + "/bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('.circom', '.wtn') : r1csPath.replace('.r1cs', '.wtn')
     // @ts-ignore
     const wtnsBuffer = await plugin.call('fileManager', 'readFile', wtnsPath, { encoding: null })
     // @ts-ignore
