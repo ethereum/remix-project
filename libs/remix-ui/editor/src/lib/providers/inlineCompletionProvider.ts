@@ -135,7 +135,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     try {
       // Code completion
       this.task = 'code_completion'
-      const output = await this.props.plugin.call('remixAI', 'code_completion', word, word_after)
+      const output = await this.props.plugin.call('remixAI', 'code_completion', word, word_after.trimStart())
       _paq.push(['trackEvent', 'ai', 'remixAI', 'code_completion'])
       const generatedText = output
       let clean = generatedText
@@ -144,7 +144,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
       }
       clean = clean.replace(word, '')
-      clean = this.process_completion(clean)
+      clean = this.process_completion(clean, word_after)
 
       const item: monacoTypes.languages.InlineCompletion = {
         insertText: clean,
@@ -162,15 +162,19 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     }
   }
 
-  process_completion(data: any) {
-    let clean = data.split('\n')[0].startsWith('\n') ? [data.split('\n')[0], data.split('\n')[1]].join('\n'): data.split('\n')[0]
-
+  process_completion(data: any, word_after: any) {
+    let clean = data
     // if clean starts with a comment, remove it
     if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
+      console.log("clean starts with comment")
       return ""
     }
-    // remove comment inline
-    clean = clean.split('//')[0]
+
+    const text_after = word_after.split('\n')[0].trim()
+    // if clean contains the content of text_after, remove it
+    if (clean.includes(text_after)){
+      clean = clean.replace(text_after, '')
+    }
     return clean
   }
 
