@@ -215,8 +215,8 @@ export class RunTab extends ViewPlugin {
 
     const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency?) => {
       // name = `${name} through ${event.detail.info.name}`
-      await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, networkId, urls, nativeCurrency)])
-      await addProvider(position, name, displayName, true, false)
+      await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, displayName, networkId, urls, nativeCurrency)])
+      await addProvider(position, name, displayName + ' - ' + event.detail.info.name, true, false)
     }
     const registerInjectedProvider = async (event) => {
       const name = 'injected-' + event.detail.info.name
@@ -225,21 +225,21 @@ export class RunTab extends ViewPlugin {
       await addProvider(0, name, displayName, true, false)
 
       if (event.detail.info.name === 'MetaMask') {
-        await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism - ' + event.detail.info.name, '0xa', ['https://mainnet.optimism.io'])
-        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum - ' + event.detail.info.name, '0xa4b1', ['https://arb1.arbitrum.io/rpc'])
-        await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Sepolia Testnet - ' + event.detail.info.name, '0xaa36a7', [],
+        await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
+        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])
+        await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Sepolia Testnet', '0xaa36a7', [],
           {
             "name": "Sepolia ETH",
             "symbol": "ETH",
             "decimals": 18
           })
-        await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet - ' + event.detail.info.name, '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
+        await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
           {
             "name": "Ephemery ETH",
             "symbol": "ETH",
             "decimals": 18
           })
-        await addCustomInjectedProvider(10, event, 'injected-metamask-gnosis', 'Gnosis Mainnet - ' + event.detail.info.name, '', ['https://rpc.ankr.com/gnosis', 'https://1rpc.io/gnosis'],
+        await addCustomInjectedProvider(10, event, 'injected-metamask-gnosis', 'Gnosis Mainnet', '', ['https://rpc.ankr.com/gnosis', 'https://1rpc.io/gnosis'],
           {
             "name": "XDAI",
             "symbol": "XDAI",
