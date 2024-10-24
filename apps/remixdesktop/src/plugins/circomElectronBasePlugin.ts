@@ -49,12 +49,12 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
     // @ts-ignore
     const wd = await this.call('fs', 'getWorkingDir')
     // @ts-ignore
-    const outputDirExists = await this.call('fs', 'exists', extractParentFromKey(filePath) + '/.bin')
+    const outputDirExists = await this.call('fs', 'exists', path.normalize(extractParentFromKey(filePath) + '/.bin'))
     // @ts-ignore
-    if (!outputDirExists) await this.call('fs', 'mkdir', extractParentFromKey(filePath) + '/.bin')
+    if (!outputDirExists) await this.call('fs', 'mkdir', path.normalize(extractParentFromKey(filePath) + '/.bin'))
     filePath = path.join(wd, filePath)
-    const depPath = path.join(wd, '.deps/https/raw.githubusercontent.com/iden3/')
-    const outputDir = extractParentFromKey(filePath) + '/.bin'
+    const depPath = path.normalize(path.join(wd, '.deps/https/raw.githubusercontent.com/iden3/'))
+    const outputDir = path.normalize(extractParentFromKey(filePath) + '/.bin')
 
     this.call('terminal' as any, 'logHtml', `Compiling ${filePath} with circom compiler (${version})`)
     return await circomCli.run(`${filePath} -l ${depPath} -o ${outputDir}`, version, options)

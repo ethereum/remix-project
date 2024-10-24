@@ -158,7 +158,7 @@ export class CircomPluginClient extends PluginClient {
         const { stdout, stderr } = await this.call('circom', 'run', path, versionToInstall, { prime: prime, wasm: "", inputs: "" })
         const fileName = extractNameFromKey(path)
 
-        this.lastCompiledCircuitPath = extractParentFromKey(path) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('circom', 'wasm')
+        this.lastCompiledCircuitPath = pathModule.normalize(extractParentFromKey(path) + "/.bin/" + fileName.replace('.circom', '_js') + "/" + fileName.replace('circom', 'wasm'))
         if (stderr) this.call('terminal', 'log', { type: 'error', value: stderr })
         if (stdout) this.call('terminal', 'log', { type: 'log', value: stdout })
       } catch (error) {
