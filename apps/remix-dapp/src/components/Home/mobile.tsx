@@ -18,9 +18,9 @@ const MobilePage: React.FC = () => {
       } col-xl-9 col-lg-8 col-md-7 pr-0`}
     >
       <div className="mx-3 my-2 row">
-        <div className="col-2 text-center px-0 d-flex align-items-center">
+        {instance.showLogo && <div className="col-2 text-center px-0 d-flex align-items-center">
           <img src="/assets/logo.png" style={{ width: 55, height: 55 }} />
-        </div>
+        </div>}
         <DappTop />
       </div>
       <UniversalDappUI />
