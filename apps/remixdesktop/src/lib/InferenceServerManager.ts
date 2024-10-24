@@ -404,8 +404,12 @@ export class InferenceManager implements ICompletions {
         }
         , responseType: 'stream' });
 
-      const userPrompt = payload[Object.keys(payload)[0]]
+      const userPrompt = payload.prompt
       let resultText = ""
+      if (payload.return_stream_response) {
+        return response
+      }
+      
       response.data.on('data', (chunk: Buffer) => {
         try {
           const parsedData = JSON.parse(chunk.toString());
@@ -449,14 +453,14 @@ export class InferenceManager implements ICompletions {
     }
   }
 
-  async code_completion(context: any, params:IParams=CompletionParams): Promise<any> {
+  async code_completion(prompt, promptAfter, params:IParams=CompletionParams): Promise<any> {
     if (!this.isReady) {
       console.log('model not ready yet')
       return
     }
 
     // as of now no prompt required
-    const payload = { context_code: context, ...params }
+    const payload = { prompt, 'context':promptAfter, ...params }
     return this._makeInferenceRequest('code_completion', payload, AIRequestType.COMPLETION)
   }
 
@@ -484,9 +488,9 @@ export class InferenceManager implements ICompletions {
       return
     }
     if (params.stream_result) {
-      return this._streamInferenceRequest('code_explaining', { code, context, ...params })
+      return this._streamInferenceRequest('code_explaining', { prompt: code, context, ...params })
     } else {
-      return this._makeInferenceRequest('code_explaining', { code, context, ...params }, AIRequestType.GENERAL)
+      return this._makeInferenceRequest('code_explaining', { prompt: code, context, ...params }, AIRequestType.GENERAL)
     }
   }
 
