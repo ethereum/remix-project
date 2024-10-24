@@ -75,14 +75,13 @@ let requiredModules = [
   'solidity-script',
   'home',
   'doc-viewer',
-  'doc-gen',
+  // 'doc-gen',
   'remix-templates',
   'remixAID',
   'solhint',
   'dgit',
   'pinnedPanel',
   'pluginStateLogger',
-  'remixGuide',
   'environmentExplorer',
   'templateSelection',
   'matomo',
@@ -92,7 +91,7 @@ let requiredModules = [
 // dependentModules shouldn't be manually activated (e.g hardhat is activated by remixd)
 const dependentModules = ['foundry', 'hardhat', 'truffle', 'slither']
 
-const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'etherscan', 'contract-verification', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'learneth', 'quick-dapp']
+const loadLocalPlugins = ['doc-gen', 'doc-viewer', 'contract-verification', 'vyper', 'solhint', 'walletconnect', 'circuit-compiler', 'learneth', 'quick-dapp']
 
 const partnerPlugins = ['cookbookdev']
 
@@ -137,7 +136,7 @@ export function isNative(name) {
     'circuit-compiler',
     'compilationDetails',
     'vyperCompilationDetails',
-    //'remixGuide',
+    'remixGuide',
     'environmentExplorer',
     'templateSelection',
     'walletconnect',
@@ -409,7 +408,8 @@ class PluginLoader {
       'compilationDetails',
       'walletconnect',
       'dapp-draft',
-      'solidityumlgen'
+      'solidityumlgen',
+      'remixGuide'
     ]
     this.loaders = {}
     this.loaders.localStorage = {
