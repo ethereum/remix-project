@@ -171,10 +171,10 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
     }
 
     const text_after = word_after.split('\n')[0].trim()
-    // if clean contains the content of text_after, remove it
-    if (clean.includes(text_after)){
-      clean = clean.replace(text_after, '')
+    if (clean.toLowerCase().includes(text_after.toLowerCase())){
+      clean = clean.replace(text_after, '') // apply regex to conserve the case
     }
+
     return clean
   }
 
