@@ -4,7 +4,8 @@ import { Accordion } from "react-bootstrap";
 import { CommitDetailsNavigation } from "../../navigation/commitdetails";
 import { gitActionsContext } from "../../../state/context";
 import { gitPluginContext } from "../../gitui";
-import { branch, gitMatomoEventTypes } from "../../../types";
+import { branch } from "@remix-api";
+import { gitMatomoEventTypes } from "../../../types";
 import { BrancheDetailsNavigation } from "../../navigation/branchedetails";
 import { CommitDetailsItems } from "../commits/commitdetailsitem";
 import { CommitDetails } from "../commits/commitdetails";
@@ -59,7 +60,6 @@ export const RemoteBranchDetails = (props: BrancheDetailsProps) => {
     })
     await actions.checkout({
       ref: branch.name,
-      remote: branch.remote && branch.remote.name || null,
       refresh: true
     });
     await actions.getBranches()

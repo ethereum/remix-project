@@ -32,8 +32,10 @@ const RemixApp = (props: IRemixAppUi) => {
   const [hideSidePanel, setHideSidePanel] = useState<boolean>(false)
   const [hidePinnedPanel, setHidePinnedPanel] = useState<boolean>(true)
   const [maximiseLeftTrigger, setMaximiseLeftTrigger] = useState<number>(0)
+  const [enhanceLeftTrigger, setEnhanceLeftTrigger] = useState<number>(0)
   const [resetLeftTrigger, setResetLeftTrigger] = useState<number>(0)
   const [maximiseRightTrigger, setMaximiseRightTrigger] = useState<number>(0)
+  const [enhanceRightTrigger, setEnhanceRightTrigger] = useState<number>(0)
   const [resetRightTrigger, setResetRightTrigger] = useState<number>(0)
   const [online, setOnline] = useState<boolean>(true)
   const [locale, setLocale] = useState<{ code: string; messages: any }>({
@@ -58,7 +60,7 @@ const RemixApp = (props: IRemixAppUi) => {
       activateApp()
     }
     const hadUsageTypeAsked = localStorage.getItem('hadUsageTypeAsked')
-    if (props.app.showMatamo) {
+    if (props.app.showMatomo) {
       // if matomo dialog is displayed, it will take care of calling "setShowEnterDialog",
       // if the user approves matomo tracking.
       // so "showEnterDialog" stays false
@@ -98,6 +100,12 @@ const RemixApp = (props: IRemixAppUi) => {
       })
     })
 
+    props.app.layout.event.on('enhancesidepanel', () => {
+      setEnhanceLeftTrigger((prev) => {
+        return prev + 1
+      })
+    })
+
     props.app.layout.event.on('resetsidepanel', () => {
       setResetLeftTrigger((prev) => {
         return prev + 1
@@ -106,6 +114,12 @@ const RemixApp = (props: IRemixAppUi) => {
 
     props.app.layout.event.on('maximisepinnedpanel', () => {
       setMaximiseRightTrigger((prev) => {
+        return prev + 1
+      })
+    })
+
+    props.app.layout.event.on('enhancepinnedpanel', () => {
+      setEnhanceRightTrigger((prev) => {
         return prev + 1
       })
     })
@@ -135,7 +149,7 @@ const RemixApp = (props: IRemixAppUi) => {
 
   const value: appProviderContextType = {
     settings: props.app.settings,
-    showMatamo: props.app.showMatamo,
+    showMatomo: props.app.showMatomo,
     appManager: props.app.appManager,
     showEnter: props.app.showEnter,
     modal: props.app.notification,
@@ -146,7 +160,6 @@ const RemixApp = (props: IRemixAppUi) => {
   const handleUserChosenType = async (type) => {
     setShowEnterDialog(false)
     localStorage.setItem('hadUsageTypeAsked', type)
-
     // Use the type to setup the UI accordingly
     switch (type) {
     case UsageTypes.Beginner: {
@@ -158,28 +171,24 @@ const RemixApp = (props: IRemixAppUi) => {
       //   await props.app.appManager.call('filePanel', 'createWorkspace', wName, 'playground')
       // }
       // await props.app.appManager.call('filePanel', 'switchToWorkspace', { name: wName, isLocalHost: false })
-
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'beginner'])
-      _paq.push(['trackEvent', 'userEntry', 'usageType', 'beginner'])
       break
     }
     case UsageTypes.Advance: {
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'advanced'])
-      _paq.push(['trackEvent', 'userEntry', 'usageType', 'advanced'])
+      // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
       break
     }
     case UsageTypes.Prototyper: {
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'prototyper'])
-      _paq.push(['trackEvent', 'userEntry', 'usageType', 'prototyper'])
+      // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
       break
     }
     case UsageTypes.Production: {
-      _paq.push(['trackEvent', 'enterDialog', 'usageType', 'production'])
-      _paq.push(['trackEvent', 'userEntry', 'usageType', 'production'])
+      // Here activate necessary plugins, walkthrough. Filter hometab features slides and plugins.
       break
     }
     default: throw new Error()
     }
+    _paq.push(['trackEvent', 'enterDialog', 'usageType', type])
+    _paq.push(['trackEvent', 'userEntry', 'usageType', type])
   }
 
   return (
@@ -205,6 +214,7 @@ const RemixApp = (props: IRemixAppUi) => {
                   {props.app.sidePanel.render()}
                 </div>
                 <DragBar
+                  enhanceTrigger={enhanceLeftTrigger}
                   resetTrigger={resetLeftTrigger}
                   maximiseTrigger={maximiseLeftTrigger}
                   minWidth={305}
@@ -222,6 +232,7 @@ const RemixApp = (props: IRemixAppUi) => {
                 {
                   !hidePinnedPanel &&
                   <DragBar
+                    enhanceTrigger={enhanceRightTrigger}
                     resetTrigger={resetRightTrigger}
                     maximiseTrigger={maximiseRightTrigger}
                     minWidth={331}

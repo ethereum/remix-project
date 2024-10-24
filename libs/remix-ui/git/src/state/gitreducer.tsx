@@ -1,6 +1,6 @@
-import { ReadCommitResult } from "isomorphic-git"
-import { allChangedButNotStagedFiles, getFilesByStatus, getFilesWithNotModifiedStatus } from "../lib/fileHelpers"
-import { branch, commitChange, defaultGitState, fileStatusResult, gitState, setRemoteBranchCommitsAction, setLocalBranchCommitsAction, setBranchDifferencesAction, setDefaultRemoteAction, setRemotesAction, setUpstreamAction } from "../types"
+import { commitChange } from "@remix-api"
+import { allChangedButNotStagedFiles, getFilesByStatus } from "../lib/fileHelpers"
+import { defaultGitState, fileStatusResult, gitState } from "../types"
 import { Actions } from "./actions"
 
 export const gitReducer = (state: gitState = defaultGitState, action: Actions): gitState => {
@@ -210,6 +210,17 @@ export const gitReducer = (state: gitState = defaultGitState, action: Actions): 
       log: []
     }
 
+  case 'DESKTOP_SET_WORKING_DIR':
+    return {
+      ...state,
+      desktopWorkingDir: action.payload
+    }
+
+  case 'SET_VERSION':
+    return {
+      ...state,
+      version: action.payload
+    }
   case 'SET_STORAGE':
     return {
       ...state,

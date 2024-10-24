@@ -37,7 +37,7 @@ export default function SolidityCompile({ contractProperties, selectedContract, 
               >
                 <span className="remixui_questionMark">
                   <i
-                    className="fas fa-info-circle"
+                    className="fas fa-info"
                     aria-hidden="true"
                   ></i>
                 </span>

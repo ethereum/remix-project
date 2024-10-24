@@ -6,7 +6,7 @@ Release managers are responsible for the release management lifecycle, focusing 
 
 ## Pre release planning:
 In this stage, release manager and the team lead will elaborate a plan for the coming release. 
-This should take in account:
+This should take into account:
  - the current issues list (a fair amount of time should be taken to go over the github issues).
  - the current critical bugs.
  - the current roadmap.
@@ -19,7 +19,7 @@ Together with the team, the release manager will refine the list of issues and P
 More generally and a non-negligible part of the planning is to properly ensure that bugs, issues that weren't totally identified in the roadmap, and the roadmap issues are still being processed as they should.
 During this phase, **all the current project issues have to be assigned.**
 
-After the release planning each one of us has to specify the effort need for each issue (1 - 2 - 3 - 5 - 8 - 13)
+After the release planning each one of us has to specify the effort needed for each issue (1 - 2 - 3 - 5 - 8 - 13)
 
 ## Release planning - refinement meeting:
 This meeting happens a few days after the release planning meeting.
@@ -27,8 +27,8 @@ We check all the issues and associated effort and identify critical issues.
 e.g:
  - issues that'll need to be split.
  - issues that miss important information.
- - issues that are dependent each others.
- - issued that require different skills or that the team member is less available during this release.
+ - issues that are dependent on each others.
+ - issues that require different skills or that the team member is less available during this release.
 
 ## Configuring releases: 
 Release managers will oversee the various aspects of a project before it is due to be deployed, ensuring everyone is on track and meeting the agreed timeline.
@@ -56,7 +56,7 @@ The release manager is still responsible for ensuring a project is rolled out sm
 ## Detailed Responsibilities:
 
  - Lead the daily standup meeting.
- - 10 minutes or more are reserved at the end of the daily standup meeting where the release manager update the team on the opened PRs (PRs which aim to be delivered in the planned release). 
+ - 10 minutes or more are reserved at the end of the daily standup meeting where the release manager update the team on the open PRs (PRs which aim to be delivered in the planned release). 
  - Regular check for new filed issues, identify those that require to be published (included in the release)
  - In some really specific situations, it could be required to deploy intermediate releases (e.g critical bug fixes).
  - Planning, refinement, retrospective meetings have to be organized by the release manager and any other required meetings.
@@ -80,7 +80,7 @@ The release manager is still responsible for ensuring a project is rolled out sm
 
 ### coding period
 
-- [ ] 10 min after each daily standup where the release manager give an update of the current situation and ETA.
+- [ ] 10 min after each daily standup where the release manager gives an update of the current situation and ETA.
 - [ ] release manager should make sure to be aware of the current state of each issues and PRs during the coding period in order to have a better overview of who is working on what and best provide support to all the team members that are involved in the release.
 
 ### QA preparation

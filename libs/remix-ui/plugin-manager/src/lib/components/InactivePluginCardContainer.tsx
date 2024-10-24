@@ -29,7 +29,12 @@ function InactivePluginCardContainer({ pluginComponent }: InactivePluginCardCont
       ) : null}
       {pluginComponent.inactivePlugins &&
         pluginComponent.inactivePlugins.map((profile, idx) => {
-          return <InactivePluginCard buttonText={intl.formatMessage({ id: 'pluginManager.activate' })} profile={profile} key={idx} activatePlugin={activatePlugin} />
+          return <InactivePluginCard
+            buttonText={intl.formatMessage({ id: 'pluginManager.activate' })}
+            profile={profile}
+            key={idx}
+            activatePlugin={activatePlugin}
+          />
         })}
     </React.Fragment>
   )

@@ -2,6 +2,8 @@ import { branch } from '@remix-ui/git'
 import { customAction } from '@remixproject/plugin-api'
 import { createContext, SyntheticEvent } from 'react'
 import { BrowserState } from '../reducers/workspace'
+import { Plugin } from '@remixproject/engine'
+import { CustomRemixApi } from '@remix-api'
 
 export const FileSystemContext = createContext<{
   fs: any,
@@ -32,6 +34,7 @@ export const FileSystemContext = createContext<{
   dispatchCopyShareURL: (path: string) => Promise<void>,
   dispatchCopyFolder: (src: string, dest: string) => Promise<void>,
   dispatchRunScript: (path: string) => Promise<void>,
+  dispatchSignTypedData: (path: string) => Promise<void>,
   dispatchEmitContextMenuEvent: (cmd: customAction) => Promise<void>,
   dispatchHandleClickFile: (path: string, type: 'file' | 'folder' ) => Promise<void>
   dispatchHandleExpandPath: (paths: string[]) => Promise<void>,

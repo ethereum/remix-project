@@ -1,17 +1,20 @@
 {
   "name": "remixdesktop",
-  "version": "0.0.11-Alpha",
+  "version": "1.0.8-insiders",
   "main": "build/main.js",
   "license": "MIT",
   "type": "commonjs",
   "description": "Remix IDE Desktop",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bunsenstraat/remix-desktop.git"
+    "url": "git+https://github.com/remix-project-org/remix-desktop.git"
   },
   "author": {
     "name": "Remix Team",
     "email": "remix@ethereum.org"
+  },
+  "engines": {
+    "node": "20.2.0"
   },
   "bugs": {
     "url": "https://github.com/ethereum/remix-project/issues"
@@ -22,100 +25,65 @@
     "category": "public.app-category.productivity"
   },
   "scripts": {
-    "start:dev": "tsc && cp -R node_modules/yarn build/tools/ &&  cross-env NODE_ENV=development electron --inspect=5858 .",
-    "start:production": "tsc &&  && cp -R node_modules/yarn build/tools/ && cross-env NODE_ENV=production electron .",
-    "dist": "tsc && cp -R node_modules/yarn build/tools/ && electron-builder",
+    "start:dev": "yarn webpack --config webpack.config.js && electron --inspect=5858 .",
+    "start:production": "cross-env NODE_ENV=production yarn webpack --config webpack.config.js && electron .",
+    "dist": "cross-env NODE_ENV=production yarn webpack --config webpack.config.js && electron-builder -p never",
+    "tscbuild": "tsc && cp -R node_modules/yarn build/tools/ && electron-builder -p never",
+    "esbuild": "cross-env NODE_ENV=production node esbuild.js && electron-builder -p never",
     "installRipGrepMacOXx64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=x64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
     "installRipGrepMacOXarm64": "rm -rf node_modules/@vscode/ripgrep/bin && npm_config_arch=arm64 node node_modules/@vscode/ripgrep/lib/postinstall.js",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "test": "yarn run build:e2e && nightwatch --config build-e2e/remixdesktop/test/nighwatch.app.js",
+    "test:isogit": "yarn run test --use-isogit",
+    "test:offline": "yarn run test --use-offline --test build-e2e/remixdesktop/test/tests/app/offline.test.js",
+    "build:e2e": "tsc -p tsconfig.e2e.json"
   },
   "devDependencies": {
-    "@electron/rebuild": "^3.2.13",
+    "@electron/notarize": "^2.3.0",
     "@types/byline": "^4.2.35",
     "@types/express": "^4.17.21",
+    "@types/nightwatch": "^2.3.23",
+    "chromedriver": "116",
     "cross-env": "^7.0.3",
-    "electron": "^25.0.1",
-    "electron-builder": "^23.6.0",
+    "deep-equal": "^2.2.3",
+    "electron": "^26.0.0",
+    "electron-builder": "24.9.1",
     "electron-devtools-installer": "^3.2.0",
+    "esbuild": "^0.23.1",
+    "nightwatch": "2.3",
+    "node-loader": "^2.0.0",
+    "selenium-standalone": "^9.3.1",
+    "tree-kill": "^1.2.2",
+    "ts-loader": "^9.5.1",
+    "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^5.1.3",
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-merge": "^6.0.1",
+    "webpack-node-externals": "^3.0.0",
     "yarn": "^1.22.21"
   },
   "dependencies": {
     "@remix-project/remix-url-resolver": "^0.0.65",
-    "@remixproject/engine": "0.3.41",
-    "@remixproject/engine-electron": "0.3.41",
-    "@remixproject/plugin": "0.3.41",
-    "@remixproject/plugin-api": "^0.3.38",
-    "@remixproject/plugin-electron": "0.3.41",
+    "@remixproject/engine": "0.3.43",
+    "@remixproject/engine-electron": "0.3.43",
+    "@remixproject/plugin": "0.3.43",
+    "@remixproject/plugin-api": "^0.3.43",
+    "@remixproject/plugin-electron": "0.3.43",
     "@vscode/ripgrep": "^1.15.6",
     "add": "^2.0.6",
     "axios": "^1.7.4",
     "byline": "^5.0.0",
     "chokidar": "^3.5.3",
-    "express": "^4.19.2",
+    "electron-updater": "^6.1.8",
+    "express": "^4.20.0",
     "isomorphic-git": "^1.24.2",
-    "node-pty": "^0.10.1",
+    "matomo-tracker": "^2.2.4",
+    "node-pty": "^1.0.0",
+    "octokit": "^3.1.2",
     "semver": "^7.5.4"
   },
   "optionalDependencies": {
     "@remix-project/remix-ws-templates": "^1.0.27"
-  },
-  "build": {
-    "productName": "Remix IDE",
-    "appId": "org.ethereum.remix-ide",
-    "asar": true,
-    "generateUpdatesFilesForAllChannels": true,
-    "icon": "assets",
-    "files": [
-      "build/**/*"
-    ],
-    "publish": [{
-      "provider": "github",
-      "owner": "bunsenstraat",
-      "repo": "remix-desktop",
-      "releaseType": "draft",
-      "publishAutoUpdate": true
-    }],
-    "mac": {
-      "category": "public.app-category.productivity",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        }
-      ],
-      "icon": "assets/icon.png",
-      "darkModeSupport": true
-    },
-    "dmg": {
-      "writeUpdateInfo": false
-    },
-    "nsis": {
-      "createDesktopShortcut": "always",
-      "allowToChangeInstallationDirectory": true,
-      "oneClick": false,
-      "shortcutName": "Remix IDE",
-      "differentialPackage": false
-    },
-    "win": {
-      "target": [
-        "nsis"
-      ],
-      "icon": "assets/icon.png",
-      "artifactName": "${productName}.${ext}"
-    },
-    "linux": {
-      "target": [
-        "deb"
-      ],
-      "category": "WebBrowser",
-      "icon": "assets"
-    },
-    "directories": {
-      "output": "release"
-    }
   }
 }

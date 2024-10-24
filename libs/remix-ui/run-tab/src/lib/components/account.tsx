@@ -5,6 +5,7 @@ import { CopyToClipboard } from '@remix-ui/clipboard'
 import { AccountProps } from '../types'
 import { PassphrasePrompt } from './passphrase'
 import { CustomTooltip } from '@remix-ui/helper'
+const _paq = window._paq = window._paq || []
 
 export function AccountUI(props: AccountProps) {
   const { selectedAccount, loadedAccounts } = props.accounts
@@ -96,6 +97,7 @@ export function AccountUI(props: AccountProps) {
   }
 
   const signMessage = () => {
+    _paq.push(['trackEvent', 'udapp', 'signUsingAccount', `selectExEnv: ${selectExEnv}`])
     if (!accounts[0]) {
       return props.tooltip(intl.formatMessage({ id: 'udapp.tooltipText1' }))
     }
@@ -109,7 +111,7 @@ export function AccountUI(props: AccountProps) {
           props.modal(
             intl.formatMessage({ id: 'udapp.signAMessage' }),
             signMessagePrompt(),
-            intl.formatMessage({ id: 'udapp.ok' }),
+            intl.formatMessage({ id: 'udapp.sign' }),
             () => {
               props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt, props.passphrase)
               props.setPassphrase('')
@@ -128,7 +130,7 @@ export function AccountUI(props: AccountProps) {
     props.modal(
       intl.formatMessage({ id: 'udapp.signAMessage' }),
       signMessagePrompt(),
-      intl.formatMessage({ id: 'udapp.ok' }),
+      intl.formatMessage({ id: 'udapp.sign' }),
       () => {
         props.signMessageWithAddress(selectedAccount, messageRef.current, signedMessagePrompt)
       },
@@ -165,7 +167,7 @@ export function AccountUI(props: AccountProps) {
         <FormattedMessage id="udapp.enterAMessageToSign" />
         <textarea
           id="prompt_text"
-          className="bg-light text-light"
+          className="bg-light text-light form-control"
           data-id="signMessageTextarea"
           style={{ width: '100%' }}
           rows={4}
@@ -173,6 +175,25 @@ export function AccountUI(props: AccountProps) {
           onInput={handleMessageInput}
           defaultValue={messageRef.current}
         ></textarea>
+        <div className='mt-2'>
+          <span>otherwise</span><button className='ml-2 modal-ok btn btn-sm border-primary' data-id="sign-eip-712" onClick={() => {
+            props.modal(
+              'Message signing with EIP-712',
+              <div>
+                <div>{intl.formatMessage({ id: 'udapp.EIP712-2' }, {
+                  a: (chunks) => (
+                    <a href='https://eips.ethereum.org/EIPS/eip-712' target="_blank" rel="noreferrer">
+                      {chunks}
+                    </a>
+                  )
+                })}</div>
+                <div>{intl.formatMessage({ id: 'udapp.EIP712-3' })}</div></div>,
+              intl.formatMessage({ id: 'udapp.EIP712-create-template' }),
+              () => { props.addFile('EIP-712-data.json', JSON.stringify(EIP712_Example, null, '\t')) },
+              intl.formatMessage({ id: 'udapp.EIP712-close' }),
+              () => {})
+          }}>Sign with EIP 712</button>
+        </div>
       </div>
     )
   }
@@ -202,7 +223,7 @@ export function AccountUI(props: AccountProps) {
         <FormattedMessage id="udapp.account" />
         <CustomTooltip placement={'top'} tooltipClasses="text-wrap" tooltipId="remixPlusWrapperTooltip" tooltipText={plusOpt.title}>
           <span id="remixRunPlusWraper">
-            <i id="remixRunPlus" className={`ml-2 fas fa-plus-circle udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
+            <i id="remixRunPlus" className={`ml-2 fas fa-plus udapp_icon ${plusOpt.classList}`} aria-hidden="true" onClick={newAccount}></i>
           </span>
         </CustomTooltip>
         <CustomTooltip placement={'top'} tooltipClasses="text-nowrap" tooltipId="remixSignMsgTooltip" tooltipText={<FormattedMessage id="udapp.signMsgUsingAccount" />}>
@@ -233,4 +254,30 @@ export function AccountUI(props: AccountProps) {
       </div>
     </div>
   )
+}
+
+const EIP712_Example = {
+  domain: {
+    chainId: 1,
+    name: "Example App",
+    verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    version: "1",
+  },
+  message: {
+    prompt: "Welcome! In order to authenticate to this website, sign this request and your public address will be sent to the server in a verifiable way.",
+    createdAt: 1718570375196,
+  },
+  primaryType: 'AuthRequest',
+  types: {
+    EIP712Domain: [
+      { name: 'name', type: 'string' },
+      { name: 'version', type: 'string' },
+      { name: 'chainId', type: 'uint256' },
+      { name: 'verifyingContract', type: 'address' },
+    ],
+    AuthRequest: [
+      { name: 'prompt', type: 'string' },
+      { name: 'createdAt', type: 'uint256' },
+    ],
+  },
 }

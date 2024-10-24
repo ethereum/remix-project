@@ -11,7 +11,7 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
 [![GitHub contributors](https://img.shields.io/github/contributors/ethereum/remix-project?style=flat&logo=github)](https://github.com/ethereum/remix-project/blob/master/CONTRIBUTING.md)
 [![Awesome Remix](https://img.shields.io/badge/Awesome--Remix-resources-green?logo=awesomelists)](https://github.com/ethereum/awesome-remix)
-![GitHub](https://img.shields.io/github/license/ethereum/remix-project)
+[![GitHub](https://img.shields.io/github/license/ethereum/remix-project)](https://github.com/ethereum/remix-project/blob/master/LICENSE)
 [![Discord](https://img.shields.io/badge/join-discord-brightgreen.svg?style=flat&logo=discord)](https://discord.gg/mh9hFCKkEq)
 [![X Follow](https://img.shields.io/twitter/follow/ethereumremix?style=flat&logo=x&color=green)](https://x.com/ethereumremix)
 
@@ -68,7 +68,7 @@ git clone https://github.com/ethereum/remix-project.git
 2. Install dependencies: `yarn install` or simply run `yarn`
 3. Build Remix libraries: `yarn run build:libs`
 4. Build Remix project: `yarn build`
-5. Build and run project server: `yarn serve`. Optionally, run `yarn serve:hot` to enable hot module reload for frontend updates.
+5. Build and run project server: `yarn serve`. Optionally, run `yarn serve:hot` to enable hot module to reload for frontend updates.
 
 Open `http://127.0.0.1:8080` in your browser to load Remix IDE locally.
 
