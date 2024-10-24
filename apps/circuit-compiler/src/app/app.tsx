@@ -132,9 +132,9 @@ function App() {
     try {
       const report = JSON.parse(err.message)
 
-      dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: report })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
     } catch (e) {
-      dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: err.message })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: err.message })
     }
   }
 
