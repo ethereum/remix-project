@@ -23,8 +23,15 @@ export class HiddenPanel extends AbstractPanel {
   }
 
   addView(profile: any, view: any): void {
+    console.log('addView', profile, view)
     super.removeView(profile)
+    this.renderComponent()
     super.addView(profile, view)
+    this.renderComponent()
+  }
+
+  removeView(profile: any): void {
+    super.removeView(profile)
     this.renderComponent()
   }
 

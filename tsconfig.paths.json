@@ -188,6 +188,9 @@
             "@remix-api": [
               "libs/remix-api/src/index.ts"
             ],
+            "@remix-scriptrunner": [
+              "libs/remix-ui/scriptrunner/src/index.ts"
+            ],
             "@remix-git": [
               "libs/remix-git/"
             ]
