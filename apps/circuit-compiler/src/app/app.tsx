@@ -21,6 +21,11 @@ function App() {
 
   useEffect(() => {
     plugin.internalEvents.on('circom_activated', () => {
+      (async () => {
+        const downloadList = await plugin.getCompilerDownloadList()
+
+        dispatch({ type: 'SET_VERSION_DOWNLOAD_LIST', payload: downloadList })
+      })();
       // @ts-ignore
       plugin.on('locale', 'localeChanged', (locale: any) => {
         setLocale(locale)
@@ -73,6 +78,13 @@ function App() {
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'warning' })
       dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
     })
+    plugin.internalEvents.on('download_success', (version) => {
+      dispatch({ type: 'REMOVE_VERSION_FROM_DOWNLOAD_LIST', payload: version })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
+    })
+    plugin.internalEvents.on('download_failed', (error) => {
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: 'Download failed! Please check your internet connection. ' + error.message })
+    })
   }, [])
 
   useEffect(() => {
@@ -120,9 +132,10 @@ function App() {
     try {
       const report = JSON.parse(err.message)
 
-      dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: report })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: report })
     } catch (e) {
-      dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: err.message })
+      if (process.platform === 'win32' && err.message.includes('3221225781')) return dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: 'The compiler failed to start because of some missing dependecies. Please install or repair the Microsoft Visual C++ Redistributable package to resolve this issue.' })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: err.message })
     }
   }
 
