@@ -158,7 +158,11 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         enableForwardStability: true,
       }
     } catch (err) {
-      return
+      const item: monacoTypes.languages.InlineCompletion = { insertText: " " }
+      return {
+        items: [item],
+        enableForwardStability: true,
+      }
     }
   }
 
