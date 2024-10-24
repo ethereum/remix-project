@@ -104,7 +104,7 @@ export const circomCli = {
     return new Promise((resolve, reject) => {
       exec(cmd, (error, stdout, stderr) => {
         if (error) {
-          reject(error)
+          reject(`${error.message} with error code ${error.code}`)
         } else {
           resolve({ stdout, stderr })
         }
