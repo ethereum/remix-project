@@ -1,11 +1,8 @@
 import { app } from 'electron'
-import { promisify } from 'util'
 import { exec } from 'child_process'
 import path from 'path'
 import fs, { existsSync } from 'fs'
 import axios from 'axios'
-
-const execAsync = promisify(exec)
 
 async function downloadFile(url: string, dest: string) {
   const writer = fs.createWriteStream(dest)
