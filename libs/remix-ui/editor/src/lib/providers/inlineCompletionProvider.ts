@@ -62,6 +62,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     if (!word.endsWith(' ') &&
       !word.endsWith('.') &&
+      !word.endsWith('"') &&
       !word.endsWith('(')) {
       return;
     }
