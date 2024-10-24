@@ -96,13 +96,13 @@ async function prove (signals, wasm, wtns, r1cs, zkey_final, vKey) {
 (async () => {
   try {
     // @ts-ignore
-    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/bin/rln.r1cs', { encoding: null });
+    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.r1cs', { encoding: null });
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer);
     // @ts-ignore
     await remix.call('circuit-compiler', 'compile', 'circuits/rln.circom');
     // @ts-ignore
-    const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/bin/rln.wasm', { encoding: null });
+    const wasmBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/rln.wasm', { encoding: null });
     // @ts-ignore
     const wasm = new Uint8Array(wasmBuffer);
 

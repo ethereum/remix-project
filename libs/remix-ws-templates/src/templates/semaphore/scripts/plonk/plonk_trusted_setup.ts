@@ -13,7 +13,7 @@ const logger = {
 
     const ptau_final = "https://ipfs-cluster.ethdevops.io/ipfs/QmciCq5JcZQyTLvC9GRanrLBi82ZmSriq1Fr5zANkGHebf";
     // @ts-ignore
-    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/bin/semaphore.r1cs', { encoding: null });
+    const r1csBuffer = await remix.call('fileManager', 'readFile', 'circuits/.bin/semaphore.r1cs', { encoding: null });
     // @ts-ignore
     const r1cs = new Uint8Array(r1csBuffer);
     const zkey_final = { type: "mem" };
