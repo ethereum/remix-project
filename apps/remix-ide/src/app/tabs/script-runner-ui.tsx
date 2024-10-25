@@ -26,7 +26,7 @@ const profile = {
 const configFileName = '.remix/script.config.json'
 
 let baseUrl = 'https://remix-project-org.github.io/script-runner-generator'
-let customBuildUrl = 'http://localhost:4000/build'
+const customBuildUrl = 'http://localhost:4000/build'
 
 interface IScriptRunnerState {
   customConfig: customScriptRunnerConfig
@@ -388,7 +388,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
         console.log('Error status:', error.response.status);
-        console.log('Error data:', error.response.data);  // This should give you the output being sent
+        console.log('Error data:', error.response.data); // This should give you the output being sent
         console.log('Error headers:', error.response.headers);
 
         if (error.response.data.error) {
@@ -423,6 +423,5 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
 
     }
   }
-
 
 }
