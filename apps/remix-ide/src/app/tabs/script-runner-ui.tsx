@@ -23,7 +23,7 @@ const profile = {
   maintainedBy: 'Remix'
 }
 
-const configFileName = 'script.config.json'
+const configFileName = '.remix/script.config.json'
 
 let baseUrl = 'http://localhost:3000'
 let customBuildUrl = 'http://localhost:4000/build'
@@ -157,7 +157,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       this.setIsLoading(config.name, true)
       const plugin: IframePlugin = new IframePlugin(newProfile)
       if (!this.engine.isRegistered(newProfile.name)) {
-        
+
         await this.engine.register(plugin)
       }
       await this.plugin.call('manager', 'activatePlugin', newProfile.name)
@@ -178,7 +178,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
         console.log('remove iframe', iframe)
         await this.call('hiddenPanel', 'removeView', newProfile)
       }
-      
+
       delete (this.engine as any).manager.profiles[newProfile.name]
       delete (this.engine as any).plugins[newProfile.name]
       console.log('is registered', newProfile.name, this.engine.isRegistered(newProfile.name))
@@ -295,8 +295,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async loadCustomConfig(): Promise<void> {
-    console.log('loadCustomConfig')
-    //await this.plugin.call('fileManager', 'open', 'script.config.json')
     try {
       const content = await this.plugin.call('fileManager', 'readFile', configFileName)
       console.log('loadCustomConfig', content)
@@ -317,7 +315,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
 
   async openCustomConfig() {
     try {
-      await this.plugin.call('fileManager', 'open', 'script.config.json')
+      await this.plugin.call('fileManager', 'open', '.remix/script.config.json')
     } catch (e) {
 
     }
@@ -347,7 +345,17 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
 
   async saveCustomConfig(content: ScriptRunnerConfig) {
     console.log('saveCustomConfig', content)
-    await this.plugin.call('fileManager', 'writeFile', 'script.config.json', JSON.stringify(content, null, 2))
+    if (content.customConfig.dependencies.length === 0 && content.defaultConfig === 'default') {
+      try {
+        const exists = await this.plugin.call('fileManager', 'exists', '.remix/script.config.json')
+        if (exists) {
+          await this.plugin.call('fileManager', 'remove', '.remix/script.config.json')
+        }
+      } catch (e) {
+      }
+      return
+    }
+    await this.plugin.call('fileManager', 'writeFile', '.remix/script.config.json', JSON.stringify(content, null, 2))
   }
 
   async activateCustomScriptRunner(config: customScriptRunnerConfig) {
