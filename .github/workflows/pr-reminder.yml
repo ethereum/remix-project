@@ -20,4 +20,8 @@ jobs:
         freeze-date: '2024-11-04T18:00:00Z'
     - name: Reminder for standup
       if: github.event.schedule == '0 9 * * 1-5'
-      run: echo "This works."
+      uses: Aniket-Engg/pr-reviews-reminder-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
