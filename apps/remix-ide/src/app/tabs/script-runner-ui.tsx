@@ -25,7 +25,7 @@ const profile = {
 
 const configFileName = '.remix/script.config.json'
 
-let baseUrl = 'http://localhost:3000'
+let baseUrl = 'https://remix-project-org.github.io/script-runner-generator'
 let customBuildUrl = 'http://localhost:4000/build'
 
 interface IScriptRunnerState {
