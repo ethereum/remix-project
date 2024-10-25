@@ -32,6 +32,12 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
   useEffect(() => {
   }, [activeKey])
 
+  useEffect(() => {
+    if(activeConfig) {
+      setActiveKey(activeConfig.name)
+    }
+  },[activeConfig])
+
   if (!configurations) {
     return <div>Loading...</div>;
   }
@@ -55,7 +61,7 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
                   {activeKey === config.name ?
                     <FontAwesomeIcon icon={faCaretDown}></FontAwesomeIcon> :
                     <FontAwesomeIcon icon={faCaretRight}></FontAwesomeIcon>}
-                  <div className="pl-2">{config.title || config.name}</div>
+                  <div data-id={`sr-list-${config.name}`} className="pl-2">{config.title || config.name}</div>
                 </div>
               </Accordion.Toggle>
               <div className="d-flex align-items-baseline">
@@ -64,19 +70,19 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
                 </div>}
                 {config.errorStatus && config.error && <div className="text-danger">
                   <CustomTooltip tooltipText={config.error}>
-                    <FontAwesomeIcon icon={faExclamationCircle}></FontAwesomeIcon>
+                    <FontAwesomeIcon data-id={`sr-error-${config.name}`} icon={faExclamationCircle}></FontAwesomeIcon>
                   </CustomTooltip>
 
                 </div>}
                 {!config.isLoading && config.errorStatus && config.error &&
                   <div onClick={() => loadScriptRunner(config)} className="pointer px-2">
-                    <FontAwesomeIcon icon={faRedoAlt}></FontAwesomeIcon>
+                    <FontAwesomeIcon data-id={`sr-reload-${config.name}`} icon={faRedoAlt}></FontAwesomeIcon>
                   </div>}
                 {!config.isLoading && !config.errorStatus && !config.error &&
                   <div onClick={() => loadScriptRunner(config)} className="pointer px-2">
                     {activeConfig && activeConfig.name !== config.name ?
-                      <FontAwesomeIcon icon={faToggleOn}></FontAwesomeIcon> :
-                      <FontAwesomeIcon className="text-success" icon={faCheck}></FontAwesomeIcon>
+                      <FontAwesomeIcon data-id={`sr-toggle-${config.name}`} icon={faToggleOn}></FontAwesomeIcon> :
+                      <FontAwesomeIcon data-id={`sr-loaded-${config.name}`} className="text-success" icon={faCheck}></FontAwesomeIcon>
                     }
                   </div>
                 }
