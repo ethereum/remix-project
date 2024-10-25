@@ -96,7 +96,7 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
                 <p><strong>Dependencies:</strong></p>
                 <ul>
                   {config.dependencies.map((dep, depIndex) => (
-                    <li key={depIndex}>
+                    <li data-id={`dependency-${dep.name}-${dep.version}`} key={depIndex}>
                       <strong>{dep.name}</strong> (v{dep.version})
                     </li>
                   ))}
