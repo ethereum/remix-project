@@ -122,7 +122,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               description={intl.formatMessage({
                 id: 'home.codeAnalyizerPluginDesc'
               })}
-              remixMaintained={true}
+              maintainedBy='Remix'
               callback={() => startCodeAnalyzer()}
             />
             <PluginButton
@@ -132,7 +132,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               description={intl.formatMessage({
                 id: 'home.learnEthPluginDesc'
               })}
-              remixMaintained={true}
+              maintainedBy='Remix'
               callback={() => startLearnEth()}
             />
             <PluginButton
@@ -140,7 +140,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               envID="cookbookLogo"
               envText="Cookbook"
               description={intl.formatMessage({ id: 'home.cookbookDesc' })}
-              remixMaintained={false}
+              maintainedBy="Cookbook"
               callback={() => startCookbook()}
             />
             <PluginButton
@@ -148,7 +148,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               envID="solidityLogo"
               envText="Solidity"
               description={intl.formatMessage({ id: 'home.solidityPluginDesc' })}
-              remixMaintained={true}
+              maintainedBy='Remix'
               callback={() => startSolidity()}
             />
             <PluginButton
@@ -156,7 +156,7 @@ function HomeTabFeaturedPlugins({ plugin }: HomeTabFeaturedPluginsProps) {
               envID="sUTLogo"
               envText="Solidity unit testing"
               description={intl.formatMessage({ id: 'home.unitTestPluginDesc' })}
-              remixMaintained={true}
+              maintainedBy='Remix'
               callback={() => startSolidityUnitTesting()}
             />
           </Carousel>

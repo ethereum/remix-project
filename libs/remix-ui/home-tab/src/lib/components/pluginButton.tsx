@@ -10,10 +10,10 @@ interface PluginButtonProps {
   callback: any
   l2?: boolean
   description: string
-  remixMaintained?: boolean
+  maintainedBy?: string
 }
 
-function PluginButton({ imgPath, envID, envText, callback, l2, description, remixMaintained }: PluginButtonProps) {
+function PluginButton({ imgPath, envID, envText, callback, l2, description, maintainedBy }: PluginButtonProps) {
   const themeFilter = useContext(ThemeContext)
 
   return (
@@ -30,13 +30,17 @@ function PluginButton({ imgPath, envID, envText, callback, l2, description, remi
         </div>
       </button>
       {l2 && <label className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_l2Label">L2</label>}
-      {remixMaintained ? (
+      { maintainedBy?.toLowerCase() === 'remix' ? (
         <CustomTooltip placement="bottom" tooltipId="overlay-tooltip-by-remix" tooltipText={<FormattedMessage id="home.maintainedByRemix" />}>
           <i className="bg-light text-success mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel fas fa-check"></i>
-        </CustomTooltip>)
-        : (<CustomTooltip placement="bottom" tooltipId="overlay-tooltip-external" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
-          <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel  text-warning far fa-exclamation-circle"></i>
-        </CustomTooltip>)
+        </CustomTooltip>) :
+        maintainedBy ?
+          (<CustomTooltip placement="bottom" tooltipId="overlay-tooltip-external" tooltipText={"Maintained by " + maintainedBy}>
+            <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel text-secondary far fa-exclamation-circle"></i>
+          </CustomTooltip>)
+          : (<CustomTooltip placement="bottom" tooltipId="overlay-tooltip-external" tooltipText={<FormattedMessage id="panel.maintainedExternally" />}>
+            <i aria-hidden="true" className="bg-light mx-1 px-1 mb-0 mx-2 position-absolute remixui_home_maintainedLabel text-secondary far fa-exclamation-circle"></i>
+          </CustomTooltip>)
       }
     </div>
   )

@@ -103,10 +103,10 @@ export class RemoteInferencer implements ICompletions {
     }
   }
 
-  async code_completion(prompt, options:IParams=null): Promise<any> {
+  async code_completion(prompt, promptAfter, options:IParams=null): Promise<any> {
     const payload = !options?
-      { "data": [prompt, "code_completion", "", false, 30, 0.9, 0.90, 50]} :
-      { "data": [prompt, "code_completion", "", options.stream_result,
+      { "data": [prompt, "code_completion", promptAfter, false, 30, 0.9, 0.90, 50]} :
+      { "data": [prompt, "code_completion", promptAfter, options.stream_result,
         options.max_new_tokens, options.temperature, options.top_p, options.top_k]
       }
 

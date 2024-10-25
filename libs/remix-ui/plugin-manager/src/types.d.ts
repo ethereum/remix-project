@@ -103,9 +103,9 @@ declare class LocalPlugin {
      * @returns {Promise<{api: any, profile: any}>} A promise with the new plugin profile
      */
   open(plugins: any[]): Promise<{
-        api: any
-        profile: any
-    }>
+    api: any
+    profile: any
+  }>
 
   profile: any
   /**
@@ -113,21 +113,21 @@ declare class LocalPlugin {
      */
   create(): any
   updateName({ target }: {
-        target: any
-    }): void
+    target: any
+  }): void
 
   updateUrl({ target }: {
-        target: any
-    }): void
+    target: any
+  }): void
 
   updateDisplayName({ target }: {
-        target: any
-    }): void
+    target: any
+  }): void
 
   updateProfile(key: any, e: any): void
   updateMethods({ target }: {
-        target: any
-    }): void
+    target: any
+  }): void
 
   /** The form to create a local plugin */
   form(): any

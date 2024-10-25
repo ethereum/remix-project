@@ -4,12 +4,14 @@ import { InjectedProviderDefault } from './injected-provider-default'
 export class InjectedCustomProvider extends InjectedProviderDefault {
   chainName: string
   chainId: string
+  pluginName: string
   rpcUrls: Array<string>
   nativeCurrency: Record<string, any>
   blockExplorerUrls: Array<string>
 
-  constructor(provider: any, chainName: string, chainId: string, rpcUrls: Array<string>, nativeCurrency?: Record<string, any>, blockExplorerUrls?: Array<string>) {
-    super(provider, chainName)
+  constructor(provider: any, pluginName: string, chainName: string, chainId: string, rpcUrls: Array<string>, nativeCurrency?: Record<string, any>, blockExplorerUrls?: Array<string>) {
+    super(provider, pluginName)
+    this.pluginName = pluginName
     this.chainName = chainName
     this.chainId = chainId
     this.rpcUrls = rpcUrls
@@ -44,8 +46,8 @@ export const setCustomNetwork = async (chainName: string, chainId: string, rpcUr
             chainName: chainName,
             rpcUrls: rpcUrls,
           }
-          if (nativeCurrency) paramsObj.nativeCurrency = nativeCurrency
-          if (blockExplorerUrls) paramsObj.blockExplorerUrls = blockExplorerUrls
+          paramsObj.nativeCurrency = nativeCurrency ? nativeCurrency : null
+          paramsObj.blockExplorerUrls = blockExplorerUrls ? blockExplorerUrls : null
           await (window as any).ethereum.request({
             method: 'wallet_addEthereumChain',
             params: [paramsObj]
