@@ -23,8 +23,6 @@ export class AbstractPanel extends HostPlugin {
   }
 
   addView (profile, view) {
-    console.log('addView', profile, view)
-    console.log('this', this.plugins)
     if (this.plugins[profile.name]) throw new Error(`Plugin ${profile.name} already rendered`)
     this.plugins[profile.name] = {
       profile: profile,

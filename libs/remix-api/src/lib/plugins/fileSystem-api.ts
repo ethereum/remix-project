@@ -9,5 +9,6 @@ export interface IExtendedFileSystem extends IFileSystem {
     refresh(): Promise<void>
     hasGitSubmodules(): Promise<boolean>
     isGitRepo(): Promise<boolean>
+    exists(file: string): Promise<boolean>
   };
 }
