@@ -2931,26 +2931,18 @@
     debug "^4.3.3"
     ethereum-cryptography "^2.2.1"
 
-"@ethersphere/bee-js@^8.1.0":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@ethersphere/bee-js/-/bee-js-8.1.0.tgz#e558a90bf22d1a243f527c7f7cca417c04f3c9b7"
-  integrity sha512-26IFcA6dOmKrr6Cok0PDOEmF00V6ij1R8cLpUAhGyRkcVoRhZRj5tuk9H+Zj7pOoBR9ytzbMHpvEkC66sn2Y9Q==
+"@ethersphere/bee-js@^8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@ethersphere/bee-js/-/bee-js-8.3.0.tgz#cea35ae6b5fcc80a91378382d017c080b7fedea1"
+  integrity sha512-/VLyAXluvftUcRDApvpA+H/oSP17W4rag95/N2IWdw6MPLkh92a/I724jhO+BmRmNomlAVspnl2UkhXSD2Xk5w==
   dependencies:
-    "@ethersphere/swarm-cid" "^0.1.0"
     axios "^0.28.1"
-    cafe-utility "^21.3.1"
+    cafe-utility "^23.10.0"
     elliptic "^6.5.4"
     isomorphic-ws "^4.0.1"
     js-sha3 "^0.8.0"
     semver "^7.3.5"
     ws "^8.7.0"
-
-"@ethersphere/swarm-cid@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@ethersphere/swarm-cid/-/swarm-cid-0.1.0.tgz#f7db289a1239cebb06d53fdf328868d6a210886b"
-  integrity sha512-n+n+w5RJBPm7CiPf8TIgNFIRMo4bLh5bYpZxHObgCaxFW8WNZ4UGfqg+qjS/jEr+A3Mmp0lugKDvd8GnfFy7JQ==
-  dependencies:
-    multiformats "^9.5.4"
 
 "@ethersproject/abi@5.7.0", "@ethersproject/abi@^5.1.2", "@ethersproject/abi@^5.7.0":
   version "5.7.0"
@@ -11398,10 +11390,10 @@ caching-transform@^3.0.1:
     package-hash "^3.0.0"
     write-file-atomic "^2.3.0"
 
-cafe-utility@^21.3.1:
-  version "21.5.0"
-  resolved "https://registry.yarnpkg.com/cafe-utility/-/cafe-utility-21.5.0.tgz#7a6b8c6a8e2704d43f255fe6a39655b9d22d1a84"
-  integrity sha512-5u+9cf7fvcH3j2Q3jrd7nA3bUITUBj8b9Arg4eA6almqeA5+dwQA6NKba4GnW6zS9uL1iVCEQqM3z3tQVs2Xjw==
+cafe-utility@^23.10.0:
+  version "23.11.0"
+  resolved "https://registry.yarnpkg.com/cafe-utility/-/cafe-utility-23.11.0.tgz#e48872a680516f3466ec96abe1e5ae4100cf9607"
+  integrity sha512-WF0ZpCDQ9c4pVwuyuSmPvlD5DZOt6w7HCtAQYjme7opSvF+qtK9ojnzBPNFe5COiM9B5+TeMt/0NBgyVJBQBrg==
 
 call-bind@^1.0.0, call-bind@^1.0.2, call-bind@~1.0.2:
   version "1.0.2"
@@ -22822,11 +22814,6 @@ multiformats@^9.4.2:
   version "9.4.10"
   resolved "https://registry.yarnpkg.com/multiformats/-/multiformats-9.4.10.tgz#d654d06b28cc066506e4e59b246d65267fb6b93b"
   integrity sha512-BwWGvgqB/5J/cnWaOA0sXzJ+UGl+kyFAw3Sw1L6TN4oad34C9OpW+GCpYTYPDp4pUaXDC1EjvB3yv9Iodo1EhA==
-
-multiformats@^9.5.4:
-  version "9.9.0"
-  resolved "https://registry.yarnpkg.com/multiformats/-/multiformats-9.9.0.tgz#c68354e7d21037a8f1f8833c8ccd68618e8f1d37"
-  integrity sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==
 
 multihashes@^3.0.1:
   version "3.1.2"
