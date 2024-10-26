@@ -16,7 +16,7 @@ const profile = {
   methods: ['execute'],
   events: ['log', 'info', 'warn', 'error'],
   icon: 'assets/img/solid-gear-circle-play.svg',
-  description: 'Set up a script runner',
+  description: 'Configure the dependencies for running scripts.',
   kind: '',
   location: 'sidePanel',
   version: packageJson.version,
