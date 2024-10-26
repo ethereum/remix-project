@@ -16,7 +16,6 @@ import { IMatomoApi } from "./plugins/matomo-api"
 import { IRemixAI } from "./plugins/remixai-api"
 import { IRemixAID } from "./plugins/remixAIDesktop-api"
 
-
 export interface ICustomRemixApi extends IRemixApi {
   dgitApi: IGitApi
   config: IConfigApi
