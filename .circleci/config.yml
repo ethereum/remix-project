@@ -132,7 +132,7 @@ jobs:
                 yarn add node-pty
                 yarn --ignore-optional
                 yarn add @remix-project/remix-ws-templates
-                ./rundist.bash
+                ./rundist.bash test_only
         - run:  
             name: "Run tests"
             command: |
