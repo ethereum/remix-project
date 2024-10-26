@@ -1,7 +1,7 @@
 import { IframePlugin, IframeProfile, ViewPlugin } from '@remixproject/engine-web'
 import * as packageJson from '../../../../../package.json'
 import React from 'react' // eslint-disable-line
-import { customScriptRunnerConfig, Dependency, ProjectConfiguration, ScriptRunnerConfig, ScriptRunnerUI } from '@remix-scriptrunner' // eslint-disable-line
+import { customScriptRunnerConfig, ProjectConfiguration, ScriptRunnerConfig, ScriptRunnerUI } from '@remix-scriptrunner' // eslint-disable-line
 import { Profile } from '@remixproject/plugin-utils'
 import { Engine, Plugin } from '@remixproject/engine'
 import axios from 'axios'
@@ -26,7 +26,7 @@ const profile = {
 const configFileName = '.remix/script.config.json'
 
 let baseUrl = 'https://remix-project-org.github.io/script-runner-generator'
-const customBuildUrl = 'http://localhost:4000/build'
+const customBuildUrl = 'http://localhost:4000/build' // this will be used when the server is ready
 
 interface IScriptRunnerState {
   customConfig: customScriptRunnerConfig
@@ -47,17 +47,15 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   scriptRunnerProfileName: string
   constructor(engine: Engine) {
     super(profile)
-    console.log('ScriptRunnerUIPlugin', this)
     this.engine = engine
     this.workspaceScriptRunnerDefaults = {}
     this.plugin = this
-    this.enableCustomScriptRunner = false
+    this.enableCustomScriptRunner = false // implement this later
   }
 
   async onActivation() {
 
     this.on('filePanel', 'setWorkspace', async (workspace: string) => {
-      console.log('setWorkspace', workspace)
       this.activeConfig = null
       this.customConfig =
       {
@@ -116,7 +114,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
         activateCustomScriptRunner={this.activateCustomScriptRunner.bind(this)}
         saveCustomConfig={this.saveCustomConfig.bind(this)}
         openCustomConfig={this.openCustomConfig.bind(this)}
-        buildScriptRunner={this.buildScriptRunner.bind(this)}
         loadScriptRunner={this.selectScriptRunner.bind(this)} />
     )
   }
@@ -127,7 +124,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async loadScriptRunner(config: ProjectConfiguration): Promise<boolean> {
-    //console.log('loadScriptRunner', config)
+
     const profile: Profile = await this.plugin.call('manager', 'getProfile', 'scriptRunner')
     this.scriptRunnerProfileName = profile.name
     const testPluginName = localStorage.getItem('test-plugin-name')
@@ -151,7 +148,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       url: url
     }
 
-    console.log('loadScriptRunner', newProfile)
     let result = null
     try {
       this.setIsLoading(config.name, true)
@@ -175,15 +171,12 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       console.log('Error loading script runner: ', newProfile.name, e)
       const iframe = document.getElementById(`plugin-${newProfile.name}`);
       if (iframe) {
-        console.log('remove iframe', iframe)
         await this.call('hiddenPanel', 'removeView', newProfile)
       }
 
       delete (this.engine as any).manager.profiles[newProfile.name]
       delete (this.engine as any).plugins[newProfile.name]
-      console.log('is registered', newProfile.name, this.engine.isRegistered(newProfile.name))
       console.log('Error loading script runner: ', newProfile.name, e)
-      console.log('REMOVE', newProfile.name)
       this.setErrorStatus(config.name, true, e)
       result = false
     }
@@ -195,15 +188,13 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async execute(script: string, filePath: string) {
-    console.log('execute', script, filePath)
-    console.log('is registered', `${this.scriptRunnerProfileName}${this.activeConfig.name}`, this.engine.isRegistered(`${this.scriptRunnerProfileName}${this.activeConfig.name}`))
+    this.call('terminal', 'log', { value: `running ${filePath} ...`, type: 'info' })
     if (!this.scriptRunnerProfileName || !this.engine.isRegistered(`${this.scriptRunnerProfileName}${this.activeConfig.name}`)) {
       if (!await this.loadScriptRunner(this.activeConfig)) {
         console.error('Error loading script runner')
         return
       }
     }
-    console.log('execute', this.activeConfig)
     try {
       this.setIsLoading(this.activeConfig.name, true)
       await this.call(`${this.scriptRunnerProfileName}${this.activeConfig.name}`, 'execute', script, filePath)
@@ -215,7 +206,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async setErrorStatus(name: string, status: boolean, error: string) {
-    console.log('setLoadingStatus', name, status, error)
     this.configurations.forEach((config) => {
       if (config.name === name) {
         config.errorStatus = status
@@ -226,7 +216,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async setIsLoading(name: string, status: boolean) {
-    console.log('setLoadingStatus', name, status)
     if (status) {
       this.emit('statusChanged', {
         key: 'loading',
@@ -247,7 +236,7 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async dependencyError(data: any) {
-    console.log('dependencyError', data)
+    console.log('Script runner dependency error: ', data)
     let message = `Error loading dependencies: `
     if (isArray(data.data)) {
       data.data.forEach((data: any) => {
@@ -271,36 +260,26 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async log(data: any) {
-    console.log('log', data)
     this.emit('log', data)
   }
 
   async warn(data: any) {
-    console.log('warn', data)
     this.emit('warn', data)
   }
 
   async error(data: any) {
-    console.log('error', data)
     this.emit('error', data)
   }
 
   async info(data: any) {
-    console.log('info', data)
     this.emit('info', data)
-  }
-
-  async buildScriptRunner(dependencies: Dependency[]) {
-    console.log('buildScriptRunner', dependencies)
   }
 
   async loadCustomConfig(): Promise<void> {
     try {
       const content = await this.plugin.call('fileManager', 'readFile', configFileName)
-      console.log('loadCustomConfig', content)
       const parsed = JSON.parse(content)
       this.customConfig = parsed
-      console.log('loadCustomConfig', this.customConfig)
     } catch (e) {
       this.customConfig = {
         defaultConfig: 'default',
@@ -327,16 +306,14 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       this.configurations = response.data;
       // find the default otherwise pick the first one as the active
       this.configurations.forEach((config) => {
-        console.log('loadConfigurations', config.name, this.customConfig.defaultConfig)
         if (config.name === (this.customConfig.defaultConfig)) {
           this.activeConfig = config;
-          console.log('loadConfigurations found', this.activeConfig)
         }
       });
       if (!this.activeConfig) {
         this.activeConfig = this.configurations[0];
       }
-      console.log('active config', this.configurations, this.activeConfig)
+      this.call('terminal', 'log', { value: `Loaded ${this.activeConfig.name} script configuration`, type: 'info' })
     } catch (error) {
       console.error("Error fetching the projects data:", error);
     }
@@ -344,7 +321,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async saveCustomConfig(content: ScriptRunnerConfig) {
-    console.log('saveCustomConfig', content)
     if (content.customConfig.dependencies.length === 0 && content.defaultConfig === 'default') {
       try {
         const exists = await this.plugin.call('fileManager', 'exists', '.remix/script.config.json')
@@ -359,11 +335,8 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
   }
 
   async activateCustomScriptRunner(config: customScriptRunnerConfig) {
-    console.log('activateCustomScriptRunner', config)
-    // post config to localhost:4000 using axios
     try {
       const result = await axios.post(customBuildUrl, config)
-      console.log(result)
       if (result.data.hash) {
 
         const newConfig: ProjectConfiguration = {

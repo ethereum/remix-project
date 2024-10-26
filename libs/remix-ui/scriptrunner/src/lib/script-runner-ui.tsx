@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Accordion, Card, Button } from "react-bootstrap";
-import axios from "axios";
-import { customScriptRunnerConfig, Dependency, ProjectConfiguration } from "../types";
-import { FormattedMessage } from "react-intl";
-import { faAngleDown, faAngleRight, faCaretDown, faCaretRight, faCheck, faChevronLeft, faChevronUp, faExclamationCircle, faRedoAlt, faToggleOn } from "@fortawesome/free-solid-svg-icons";
+import { Accordion, Button } from "react-bootstrap";
+import { customScriptRunnerConfig, ProjectConfiguration } from "../types";
+import { faCaretDown, faCaretRight, faCheck, faExclamationCircle, faRedoAlt, faToggleOn } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Profile } from "@remixproject/plugin-utils";
-import { IframeProfile, ViewProfile } from "@remixproject/engine-web";
-import { Plugin } from "@remixproject/engine";
 import { CustomScriptRunner } from "./custom-script-runner";
 import { CustomTooltip } from "@remix-ui/helper";
 
 export interface ScriptRunnerUIProps {
-  // Add your props here
   loadScriptRunner: (config: ProjectConfiguration) => void;
-  // build custom script runner
-  buildScriptRunner: (dependencies: Dependency[]) => void;
   openCustomConfig: () => any;
   saveCustomConfig(content: customScriptRunnerConfig): void;
   activateCustomScriptRunner(config: customScriptRunnerConfig): Promise<string>;
@@ -110,7 +102,7 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
           saveCustomConfig={props.saveCustomConfig}
           openCustomConfig={props.openCustomConfig}
           publishedConfigurations={configurations.filter((config) => config.publish)}
-          buildScriptRunner={props.buildScriptRunner} />}
+        />}
     </div>
   );
 };
