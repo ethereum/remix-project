@@ -8,12 +8,12 @@ export interface Dependency {
     require: boolean;
     windowImport?: boolean;
   }
-  
-  export interface Replacements {
+
+export interface Replacements {
     [key: string]: string;
   }
-  
-  export interface ProjectConfiguration {
+
+export interface ProjectConfiguration {
     name: string;
     publish: boolean;
     description: string;
@@ -25,12 +25,12 @@ export interface Dependency {
     isLoading: boolean;
   }
 
-  export interface customScriptRunnerConfig {
+export interface customScriptRunnerConfig {
     baseConfiguration: string;
     dependencies: Dependency[];
   }
 
-  export interface ScriptRunnerConfig {
+export interface ScriptRunnerConfig {
     defaultConfig: string,
     customConfig: customScriptRunnerConfig
   }

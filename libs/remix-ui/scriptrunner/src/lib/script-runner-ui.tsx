@@ -22,7 +22,7 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
   const [activeKey, setActiveKey] = useState('default');
 
   useEffect(() => {
-    if(activeConfig) {
+    if (activeConfig) {
       setActiveKey(activeConfig.name)
     }
   },[activeConfig])
@@ -30,8 +30,6 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
   if (!configurations) {
     return <div>Loading...</div>;
   }
-
-
 
   return (
     <div className="px-1">
@@ -78,7 +76,6 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
               </div>
             </div>
 
-
             <Accordion.Collapse className="px-4" eventKey={config.name}>
               <>
                 <p><strong>Description: </strong>{config.description}</p>
@@ -103,5 +100,4 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
     </div>
   );
 };
-
 
