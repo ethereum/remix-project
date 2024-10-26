@@ -835,7 +835,7 @@ workflows:
             - test-remixdesktop-mac
           filters:
             branches:
-              only: [/.*desktop.*/]
+              only: [/.*desktop-master.*/]
       - build-plugin:
           matrix:
             parameters:
