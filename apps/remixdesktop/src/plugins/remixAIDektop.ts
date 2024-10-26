@@ -83,7 +83,7 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
 
   async code_completion(context: any) {
     // use general purpose model
-    return this.desktopInferencer.code_completion(context)
+    return this.desktopInferencer.code_completion(context, null)
   }
 
   async code_insertion(msg_pfx: string, msg_sfx: string) {
