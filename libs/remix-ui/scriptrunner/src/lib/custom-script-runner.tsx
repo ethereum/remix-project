@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Accordion, Card, Button } from "react-bootstrap";
-import axios from "axios";
 import { customScriptRunnerConfig, Dependency, ProjectConfiguration } from "../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faToggleOff, faToggleOn, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { CustomTooltip } from "@remix-ui/helper";
-import { use } from "chai";
+
 
 export interface ScriptRunnerUIProps {
-    // build custom script runner
-    buildScriptRunner: (dependencies: Dependency[]) => void;
     publishedConfigurations: ProjectConfiguration[];
     openCustomConfig: () => any;
     saveCustomConfig(content: customScriptRunnerConfig): void;
@@ -28,12 +24,8 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
 
     const { customConfig } = props;
 
-    useEffect(() =>{
-       console.log('CustomScriptRunner', props.customConfig)
-    },[])
 
     useEffect(() => {
-        console.log('CustomScriptRunner', props.customConfig)
         if(!customConfig) return;
         setDependencies(customConfig.dependencies);
         setBaseConfig(customConfig.baseConfiguration);
@@ -76,9 +68,7 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
     }
 
     const activateCustomConfig = async () => {
-        console.log('activate');
         const customConfig: customScriptRunnerConfig = { baseConfiguration: baseConfig, dependencies };
-        console.log(customConfig);
         setLoading(true);
         try {
             await props.activateCustomScriptRunner(customConfig);
