@@ -107,19 +107,13 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
     })
   }
 
-  private async switchAway(showError) {
+  private async switchAway(showError: boolean, msg: string) {
     if (!this.provider) return
     this.provider = null
     this.connected = false
     if (showError) {
-      const modalContent: AlertModal = {
-        id: this.profile.name,
-        title: this.profile.displayName,
-        message: `Error while connecting to the provider, provider not connected`
-      }
-      this.call('notification', 'alert', modalContent)
+      this.call('notification', 'toast', 'Error while querying the provider: ' + msg)
     }
-    await this.call('udapp', 'setEnvironmentMode', { context: 'vm-cancun' })
     return
   }
 
@@ -130,7 +124,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
         resolve({ jsonrpc: '2.0', result, id: data.id })
       } catch (error) {
         if (error && error.message && error.message.includes('SERVER_ERROR')) {
-          this.switchAway(true)
+          this.switchAway(true, error.message)
         }
         error.code = -32603
         reject({ jsonrpc: '2.0', error, id: data.id })
