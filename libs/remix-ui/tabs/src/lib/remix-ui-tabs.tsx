@@ -242,7 +242,7 @@ export const TabsUI = (props: TabsUIProps) => {
                   props.plugin.call('menuicons', 'select', 'scriptRunnerBridge')
                 }}
               >
-                <i className="fas fa-cogs"></i>
+                <i className="fa-kit fa-solid-gear-circle-play"></i>
               </button></CustomTooltip>
           }
           <div className="d-flex border-left ml-2 align-items-center" style={{ height: "3em" }}>
