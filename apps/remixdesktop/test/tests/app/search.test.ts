@@ -47,7 +47,7 @@ module.exports = {
             .waitForElementContainsText('*[data-id="search_results"]', 'sender.voted')
             .waitForElementContainsText('*[data-id="search_results"]', 'read')
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 6)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 7)
             })
     }, 'Should find text with exclude #group1': function (browser: NightwatchBrowser) {
         browser
