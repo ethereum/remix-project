@@ -79,7 +79,6 @@ export const filterFnAction = (name: string, filterFn, dispatch: React.Dispatch<
 }
 
 export const registerLogScriptRunnerAction = (on, commandName, commandFn, dispatch: React.Dispatch<any>) => {
-  console.log('registerLogScriptRunnerAction', commandName)
   on('scriptRunnerBridge', commandName, (msg) => {
     commandFn.log.apply(commandFn, msg.data) // eslint-disable-line
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
