@@ -24,7 +24,6 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
 
     const { customConfig } = props;
 
-
     useEffect(() => {
         if(!customConfig) return;
         setDependencies(customConfig.dependencies);
@@ -47,13 +46,6 @@ export const CustomScriptRunner = (props: ScriptRunnerUIProps) => {
         setDependencies(updatedDependencies);
     };
 
-    useEffect(() => {
-        async function saveData() {
-            //await handleSaveToFile();
-        }
-
-        saveData();
-    },[dependencies])
 
     const handleSaveToFile = () => {
         const fileData = JSON.stringify(dependencies, null, 2);
