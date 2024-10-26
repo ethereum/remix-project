@@ -15,7 +15,7 @@ const profile = {
   displayName: 'Script configuration',
   methods: ['execute'],
   events: ['log', 'info', 'warn', 'error'],
-  icon: 'assets/img/ts-logo.svg',
+  icon: 'assets/img/solid-gear-circle-play.svg',
   description: 'Set up a script runner',
   kind: '',
   location: 'sidePanel',
