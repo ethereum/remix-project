@@ -785,34 +785,46 @@ workflows:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
       - build
-      - build-desktop:
-          filters:
-            branches:
-              only: [/.*desktop.*/, 'remix_beta']
+      - build-desktop
       - build-remixdesktop-mac:
           requires:
             - build-desktop
           matrix:
             parameters: 
               arch: ["arm64", "x64"]
+          filters:
+            branches:
+              only: [/.*desktop.*/]
       - test-remixdesktop-mac:
           requires:
             - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
       - build-remixdesktop-windows:
           requires:
             - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
       - sign-remixdesktop-windows:
           requires:
             - build-remixdesktop-windows
       - build-remixdesktop-linux:
           requires:
             - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
       - test-remixdesktop-linux:
           requires:
             - build-desktop
       - test-remixdesktop-windows:
           requires:
            - build-desktop
+          filters:
+            branches:
+              only: [/.*desktop.*/]
       - uploadartifacts:
           requires:
             - build-remixdesktop-mac
