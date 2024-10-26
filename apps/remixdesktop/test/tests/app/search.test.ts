@@ -101,7 +101,7 @@ module.exports = {
             .clearValue('*[id="search_input"]')
             .setValue('*[id="search_input"]', 'contract').sendKeys('*[id="search_input"]', browser.Keys.ENTER).pause(4000)
             .elements('css selector', '.search_plugin_search_line', (res) => {
-                Array.isArray(res.value) && browser.assert.equal(res.value.length, 15)
+                Array.isArray(res.value) && browser.assert.equal(res.value.length, 16)
             })
     },
     'Should replace text #group1': function (browser: NightwatchBrowser) {
