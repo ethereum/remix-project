@@ -313,7 +313,6 @@ export class ScriptRunnerUIPlugin extends ViewPlugin {
       if (!this.activeConfig) {
         this.activeConfig = this.configurations[0];
       }
-      this.call('terminal', 'log', { value: `Loaded ${this.activeConfig.name} script configuration`, type: 'info' })
     } catch (error) {
       console.error("Error fetching the projects data:", error);
     }
