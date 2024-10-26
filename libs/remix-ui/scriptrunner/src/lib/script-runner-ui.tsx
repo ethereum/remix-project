@@ -22,9 +22,6 @@ export const ScriptRunnerUI = (props: ScriptRunnerUIProps) => {
   const [activeKey, setActiveKey] = useState('default');
 
   useEffect(() => {
-  }, [activeKey])
-
-  useEffect(() => {
     if(activeConfig) {
       setActiveKey(activeConfig.name)
     }
