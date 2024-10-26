@@ -111,7 +111,7 @@ jobs:
     resource_class:
       xlarge
     working_directory: ~/remix-project
-    parallelism: 10
+    parallelism: 15
     steps:
         - run: ldd --version
         - checkout
