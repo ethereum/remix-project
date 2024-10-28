@@ -35,7 +35,7 @@ const tests = {
     return sources
   },
 
-  'Should connect to Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Sepolia Test Network using MetaMask #flaky #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
@@ -115,7 +115,7 @@ const tests = {
       })
   },
 
-  'Should connect to Ethereum Main Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
@@ -131,7 +131,7 @@ const tests = {
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
   },
 
-  'Should deploy contract on Ethereum Main Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should deploy contract on Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('filePanel')
@@ -146,7 +146,7 @@ const tests = {
       .modalFooterCancelClick('udappNotify')
   },
 
-  'Should deploy Ballot to Sepolia using metamask #group1': function (browser: NightwatchBrowser) {
+  'Should deploy Ballot to Sepolia using metamask #group3': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
@@ -204,7 +204,7 @@ const tests = {
    * - Metamask for getting the transaction
    * - Sepolia node for retrieving the trace and storage
    */
-  'Should debug Sepolia transaction with source highlighting MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should debug Sepolia transaction with source highlighting MetaMask #group3': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     let txhash
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -233,14 +233,14 @@ const tests = {
 
   },
 
-  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group1': function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group3': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser
       .executeScriptInTerminal('web3.eth.getAccounts()')
       .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
   },
 
-  'Test EIP 712 Signature with Injected Provider (Metamask) #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Test EIP 712 Signature with Injected Provider (Metamask) #group3': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
