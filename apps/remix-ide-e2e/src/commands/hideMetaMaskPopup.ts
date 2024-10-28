@@ -5,7 +5,7 @@ class HideMetaMaskPopup extends EventEmitter {
   command(this: NightwatchBrowser) {
     browser
       .pause(5000)
-      .isVisible({
+      .isPresent({
         selector: 'button[data-testid="popover-close"]',
         locateStrategy: 'css selector',
         suppressNotFoundErrors: true,
