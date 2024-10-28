@@ -198,16 +198,18 @@ export class RunTab extends ViewPlugin {
           sendAsync (payload) {
             return udapp.call(name, 'sendAsync', payload)
           },
-          async request (payload) {
-            try {
-              const requestResult = await udapp.call(name, 'sendAsync', payload)
-              if (requestResult.error) {
-                throw new Error(requestResult.error.message)
-              }
-              return requestResult.result
-            } catch (err) {
-              throw new Error(err.message)
-            }
+          request (payload) {
+            return new Promise<any>((resolve, reject) => {
+              udapp.call(name, 'sendAsync', payload).then((response) => {
+                if (response.error) {
+                  reject(response.error.message)
+                } else {
+                  resolve(response)
+                }
+              }).catch((err) => {
+                reject(err)
+              })
+            })
           }
         }
       })
