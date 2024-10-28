@@ -165,6 +165,8 @@ const tests = {
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
+            .saveScreenshot('./reports/screenshots/metamask_34.png')
+            .pause(2000)
             .hideMetaMaskPopup()
             .saveScreenshot('./reports/screenshots/metamask_4.png')
             .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
@@ -240,7 +242,8 @@ const tests = {
       .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
   },
 
-  'Test EIP 712 Signature with Injected Provider (Metamask) #group3': function (browser: NightwatchBrowser) {
+  'Test EIP 712 Signature with Injected Provider (Metamask) #group4': function (browser: NightwatchBrowser) {
+    if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
