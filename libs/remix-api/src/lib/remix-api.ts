@@ -16,10 +16,11 @@ import { IMatomoApi } from "./plugins/matomo-api"
 import { IRemixAI } from "./plugins/remixai-api"
 import { IRemixAID } from "./plugins/remixAIDesktop-api"
 import { IMenuIconsApi } from "./plugins/menuicons-api"
-
+import { IDgitPlugin } from "./plugins/dgitplugin-api"
 
 export interface ICustomRemixApi extends IRemixApi {
   dgitApi: IGitApi
+  dgit: IDgitPlugin
   config: IConfigApi
   notification: INotificationApi
   settings: ISettings
