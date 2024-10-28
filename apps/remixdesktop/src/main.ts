@@ -34,10 +34,19 @@ const homeDir = app.getPath('userData')
 
 const windowSet = new Set<BrowserWindow>([]);
 export const createWindow = async (dir?: string): Promise<void> => {
+  // reize factor
+  let resizeFactor = 0.8
+  // if the window is too small the size is 100%
+  if( screen.getPrimaryDisplay().size.width < 2560 || screen.getPrimaryDisplay().size.height < 1440) {
+    resizeFactor = 1
+  }
+  const width = screen.getPrimaryDisplay().size.width * resizeFactor
+  const height = screen.getPrimaryDisplay().size.height * resizeFactor
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: (isE2E ? 2560 : screen.getPrimaryDisplay().size.width * 0.8),
-    height: (isE2E ? 1140 : screen.getPrimaryDisplay().size.height * 0.8),
+    width: (isE2E ? 2560 : width),
+    height: (isE2E ? 1140 : height),
     frame: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
@@ -100,12 +109,10 @@ app.on('activate', () => {
 });
 
 const showAbout = () => {
-
-
   void dialog.showMessageBox({
     title: `About Remix`,
-    message: `Remix`,
-    detail: `Remix`,
+    message: `The Native IDE for Web3 Development.`,
+    detail: `Remix Desktop version ${app.getVersion()}`,
     buttons: [],
   });
 };
