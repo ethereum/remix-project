@@ -35,7 +35,7 @@ const tests = {
     return sources
   },
 
-  'Should connect to Sepolia Test Network using MetaMask #flaky #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Sepolia Test Network using MetaMask #group3 #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
@@ -146,7 +146,7 @@ const tests = {
       .modalFooterCancelClick('udappNotify')
   },
 
-  'Should deploy Ballot to Sepolia using metamask #group3': function (browser: NightwatchBrowser) {
+  'Should deploy Ballot to Sepolia using metamask #flaky #group3': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
