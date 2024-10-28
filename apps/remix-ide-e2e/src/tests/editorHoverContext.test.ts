@@ -26,7 +26,7 @@ module.exports = {
             .useXpath().waitForElementVisible("//*[@class='view-line' and contains(.,'gas')]")
 
     },
-    'Should show hover over contract in editor #group1 #flaky': function (browser: NightwatchBrowser) {
+    'Should show hover over contract in editor #group1': function (browser: NightwatchBrowser) {
         const path = "//*[contains(text(),'BallotHoverTest')]"
         checkEditorHoverContent(browser, path, 'contract BallotHoverTest is BallotHoverTest')
         checkEditorHoverContent(browser, path, 'contracts/3_BallotHover.sol 10:0')
