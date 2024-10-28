@@ -146,7 +146,7 @@ const tests = {
       .modalFooterCancelClick('udappNotify')
   },
 
-  'Should deploy Ballot to Sepolia using metamask': function (browser: NightwatchBrowser) {
+  'Should deploy Ballot to Sepolia using metamask #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
@@ -275,7 +275,7 @@ const branch = process.env.CIRCLE_BRANCH;
 const isMasterBranch = branch === 'master';
 
 module.exports = {
-  ...{} //(branch ? (isMasterBranch ? tests : {}) : tests),
+  ...tests //(branch ? (isMasterBranch ? tests : {}) : tests),
 };
 
 const localsCheck = {
