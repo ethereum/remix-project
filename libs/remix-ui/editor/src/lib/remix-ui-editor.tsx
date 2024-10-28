@@ -700,12 +700,12 @@ export const EditorUI = (props: EditorUIProps) => {
 
         const pastedCode = editor.getModel().getValueInRange(e.range)
         const pastedCodePrompt = intl.formatMessage({ id: 'editor.PastedCodeSafety' }, { content:pastedCode })
-        // props.plugin.call('remixAI', 'chatPipe', 'solidity_answer', pastedCodePrompt)
-        const result = props.plugin.call('remixAI', 'solidity_answer', pastedCodePrompt)
+        props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
         props.plugin.call('notification', 'alert', modalContent)
-        pasteCodeRef.current = true
+        // pasteCodeRef.current = true
         _paq.push(['trackEvent', 'editor', 'onDidPaste', 'more_than_10_lines'])
-        console.log('result test:', await result)
+        // const result = await props.plugin.call('remixAI', 'vulnerability_check', pastedCodePrompt)
+        // console.log(JSON.parse(result))
       }
     })
 
