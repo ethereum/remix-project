@@ -41,7 +41,7 @@ export const setPlugin = (p: Plugin, dispatcher: React.Dispatch<gitActionDispatc
 
 export const init = async () => {
   await sendToMatomo(gitMatomoEventTypes.INIT)
-  await plugin.call('dgitApi', "init");
+  await plugin.call('dgitApi', 'init');
   dispatch(setTimestamp(Date.now()))
   await getBranches();
 }
