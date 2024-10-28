@@ -138,7 +138,7 @@ export class TemplatesSelectionPlugin extends ViewPlugin {
       <RemixUIGridView
         plugin={this}
         styleList={""}
-        logo='/assets/img/bgRemi.webp'
+        logo='assets/img/bgRemi.webp'
         enableFilter={true}
         showUntagged={true}
         showPin={false}
