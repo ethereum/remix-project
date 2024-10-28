@@ -79,7 +79,6 @@ let requiredModules = [
   // 'doc-gen',
   'remix-templates',
   'remixAID',
-  'remixAI',
   'solhint',
   'dgit',
   'pinnedPanel',

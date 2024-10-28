@@ -1,6 +1,8 @@
 /* eslint-disable no-control-regex */
 import { EditorUIProps, monacoTypes } from '@remix-ui/editor';
+import { JsonStreamParser } from '@remix/remix-ai-core';
 import * as monaco from 'monaco-editor';
+
 const _paq = (window._paq = window._paq || [])
 
 export class RemixInLineCompletionProvider implements monacoTypes.languages.InlineCompletionsProvider {
@@ -26,9 +28,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
   }
 
   async provideInlineCompletions(model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, context: monacoTypes.languages.InlineCompletionContext, token: monacoTypes.CancellationToken): Promise<monacoTypes.languages.InlineCompletions<monacoTypes.languages.InlineCompletion>> {
-    if (context.selectedSuggestionInfo) {
-      return { items: []};
-    }
+    const isActivate = await await this.props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
+    if (!isActivate) return
 
     const currentTime = Date.now();
     const timeSinceLastRequest = currentTime - this.lastRequestTime;
@@ -61,14 +62,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
     if (!word.endsWith(' ') &&
       !word.endsWith('.') &&
+      !word.endsWith('"') &&
       !word.endsWith('(')) {
-      return;
-    }
-
-    try {
-      const isActivate = await await this.props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
-      if (!isActivate) return
-    } catch (err) {
       return;
     }
 
@@ -81,8 +76,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         this.props.plugin.call('terminal', 'log', { type: 'aitypewriterwarning', value: 'RemixAI - generating code for following comment: ' + ask.replace('///', '') })
 
         const data = await this.props.plugin.call('remixAI', 'code_insertion', word, word_after)
-        this.task = 'code_generation'
         _paq.push(['trackEvent', 'ai', 'remixAI', 'code_generation'])
+        this.task = 'code_generation'
 
         const parsedData = data.trimStart() //JSON.parse(data).trimStart()
         const item: monacoTypes.languages.InlineCompletion = {
@@ -93,7 +88,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         this.currentCompletion.item = item
         return {
           items: [item],
-          enableForwardStability: false
+          enableForwardStability: true
         }
       }
     } catch (e) {
@@ -110,11 +105,6 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       return { items: []}; // do not do completion on single and multiline comment
     }
 
-    // abort if there is a signal
-    if (token.isCancellationRequested) {
-      return
-    }
-
     if (word.replace(/ +$/, '').endsWith('\n')){
       // Code insertion
       try {
@@ -123,6 +113,7 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
         const generatedText = output // no need to clean it. should already be
 
         this.task = 'code_insertion'
+        _paq.push(['trackEvent', 'ai', 'remixAI', this.task])
         const item: monacoTypes.languages.InlineCompletion = {
           insertText: generatedText,
           range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column)
@@ -132,10 +123,11 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
         return {
           items: [item],
-          enableForwardStability: false,
+          enableForwardStability: true,
         }
       }
       catch (err){
+        console.log("err: " + err)
         return
       }
     }
@@ -151,8 +143,8 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
       if (generatedText.indexOf('@custom:dev-run-script./') !== -1) {
         clean = generatedText.replace('@custom:dev-run-script', '@custom:dev-run-script ')
       }
-      clean = clean.replace(word, '').trimStart()
-      clean = this.process_completion(clean)
+      clean = clean.replace(word, '')
+      clean = this.process_completion(clean, word_after)
 
       const item: monacoTypes.languages.InlineCompletion = {
         insertText: clean,
@@ -163,22 +155,30 @@ export class RemixInLineCompletionProvider implements monacoTypes.languages.Inli
 
       return {
         items: [item],
-        enableForwardStability: true
+        enableForwardStability: true,
       }
     } catch (err) {
-      return
+      const item: monacoTypes.languages.InlineCompletion = { insertText: " " }
+      return {
+        items: [item],
+        enableForwardStability: true,
+      }
     }
   }
 
-  process_completion(data: any) {
-    let clean = data.split('\n')[0].startsWith('\n') ? [data.split('\n')[0], data.split('\n')[1]].join('\n'): data.split('\n')[0]
-
+  process_completion(data: any, word_after: any) {
+    let clean = data
     // if clean starts with a comment, remove it
     if (clean.startsWith('//') || clean.startsWith('/*') || clean.startsWith('*') || clean.startsWith('*/')){
+      console.log("clean starts with comment")
       return ""
     }
-    // remove comment inline
-    clean = clean.split('//')[0].trimEnd()
+
+    const text_after = word_after.split('\n')[0].trim()
+    if (clean.toLowerCase().includes(text_after.toLowerCase())){
+      clean = clean.replace(text_after, '') // apply regex to conserve the case
+    }
+
     return clean
   }
 
