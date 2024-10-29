@@ -20,7 +20,7 @@ module.exports = {
       .clearValue('*[data-id="ganache-providerModalDialogModalBody-react"] input')
       .setValue('*[data-id="ganache-providerModalDialogModalBody-react"] input', 'http://127.0.0.1:8084')
       .modalFooterOKClick('ganache-provider')
-      .pause()
+      .pause(1000)
       .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
       .pause(1000)
   },
