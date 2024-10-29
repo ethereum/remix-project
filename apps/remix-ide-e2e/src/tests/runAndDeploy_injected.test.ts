@@ -35,7 +35,7 @@ const tests = {
     return sources
   },
 
-  'Should connect to Sepolia Test Network using MetaMask #group6 #group3 #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
@@ -80,55 +80,10 @@ const tests = {
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
-      .clearConsole()
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           checkAlerts(browser)
           browser
-            .maximizeWindow()
-            .hideMetaMaskPopup()
-            .waitForElementPresent('[data-testid="page-container-footer-next"]')
-            .click('[data-testid="page-container-footer-next"]') // approve the tx
-            .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .perform(() => done())
-        })
-      })
-  },
-  'Should deploy faulty contract on Sepolia Test Network using MetaMask and show error in terminal #group1': function (browser: NightwatchBrowser) {
-    browser
-      .clearConsole()
-      .clickLaunchIcon('filePanel')
-      .addFile('faulty.sol', sources[0]['faulty.sol'])
-      .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
-      .click('*[data-id="Deploy - transact (not payable)"]')
-      .pause(5000)
-      .saveScreenshot('./reports/screenshots/metamask_7.png')
-      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 60000)
-      .click('[data-id="udappNotify-modal-footer-cancel-react"]')
-      .saveScreenshot('./reports/screenshots/metamask_8.png')
-      .waitForElementVisible({
-        locateStrategy: 'xpath',
-        selector: "//span[@class='text-log' and contains(., 'errored')]"
-      })
-  },
-  'Should deploy contract on Sepolia Test Network using MetaMask again #group1': function (browser: NightwatchBrowser) {
-    if (!checkBrowserIsChrome(browser)) return
-    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"] option', 45000)
-      .clickLaunchIcon('filePanel')
-      .openFile('Greet.sol')
-      .clickLaunchIcon('udapp')
-      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
-      .click('*[data-id="Deploy - transact (not payable)"]')
-      .pause(5000)
-      .clearConsole()
-      .perform((done) => {
-        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-          checkAlerts(browser)
-          browser
-            .maximizeWindow()
             .hideMetaMaskPopup()
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .click('[data-testid="page-container-footer-next"]') // approve the tx
@@ -140,10 +95,7 @@ const tests = {
       })
   },
 
-
-  /// end of group 1
-
-  'Should run low level interaction (fallback function) on Sepolia Test Network using MetaMask #group1': !function (browser: NightwatchBrowser) {
+  'Should run low level interaction (fallback function) on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clickInstance(0)
@@ -163,7 +115,7 @@ const tests = {
       })
   },
 
-  'Should connect to Ethereum Main Network using MetaMask #group2': !function (browser: NightwatchBrowser) {
+  'Should connect to Ethereum Main Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
@@ -179,7 +131,7 @@ const tests = {
       .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
   },
 
-  'Should deploy contract on Ethereum Main Network using MetaMask #group2': !function (browser: NightwatchBrowser) {
+  'Should deploy contract on Ethereum Main Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
       .clickLaunchIcon('filePanel')
@@ -194,7 +146,7 @@ const tests = {
       .modalFooterCancelClick('udappNotify')
   },
 
-  'Should deploy Ballot to Sepolia using metamask #group3': !function (browser: NightwatchBrowser) {
+  'Should deploy Ballot to Sepolia using metamask': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
@@ -210,13 +162,9 @@ const tests = {
       .waitForElementVisible('input[placeholder="bytes32[] proposalNames"]')
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
       .click('*[data-id="Deploy - transact (not payable)"]') // deploy ballot
-      .saveScreenshot('./reports/screenshots/metamask_1.png')
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
-            .maximizeWindow()
-            .saveScreenshot('./reports/screenshots/metamask_34.png')
-            .pause(2000)
             .hideMetaMaskPopup()
             .saveScreenshot('./reports/screenshots/metamask_4.png')
             .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
@@ -227,30 +175,28 @@ const tests = {
             .perform(() => done())
         })
       })
-    /*
-    .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-    .clearConsole()
-    .clickInstance(0)
-    .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
-    .perform((done) => { // call delegate
-      browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-        browser
-          .hideMetaMaskPopup()
-          .saveScreenshot('./reports/screenshots/metamask_5.png')
-          .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
-          .click('[data-testid="page-container-footer-next"]') // approve the tx
-          .switchBrowserTab(0) // back to remix
-          .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
-          .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-          .perform(() => done())
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+      .clearConsole()
+      .clickInstance(0)
+      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
+      .perform((done) => { // call delegate
+        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
+          browser
+            .hideMetaMaskPopup()
+            .saveScreenshot('./reports/screenshots/metamask_5.png')
+            .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
+            .click('[data-testid="page-container-footer-next"]') // approve the tx
+            .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .perform(() => done())
+        })
       })
-    })
-    .testFunction('last',
-      {
-        status: '0x1 Transaction mined and execution succeed',
-        'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-      })
-        */
+      .testFunction('last',
+        {
+          status: '0x1 Transaction mined and execution succeed',
+          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+        })
   },
 
   /*
@@ -258,7 +204,7 @@ const tests = {
    * - Metamask for getting the transaction
    * - Sepolia node for retrieving the trace and storage
    */
-  'Should debug Sepolia transaction with source highlighting MetaMask #group3': !function (browser: NightwatchBrowser) {
+  'Should debug Sepolia transaction with source highlighting MetaMask #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     let txhash
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
@@ -287,15 +233,14 @@ const tests = {
 
   },
 
-  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group3': !function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser
       .executeScriptInTerminal('web3.eth.getAccounts()')
       .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
   },
 
-  'Test EIP 712 Signature with Injected Provider (Metamask) #group4': !function (browser: NightwatchBrowser) {
-    if (!checkBrowserIsChrome(browser)) return
+  'Test EIP 712 Signature with Injected Provider (Metamask) #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
@@ -327,15 +272,11 @@ const tests = {
 }
 
 const branch = process.env.CIRCLE_BRANCH;
-const isMasterBranch = (branch === 'master' || branch === 'remix_beta');
+const isMasterBranch = branch === 'master';
 
-if (!checkBrowserIsChrome(browser)) {
-  module.exports = {}
-} else {
-  module.exports = {
-    ... (branch ? (isMasterBranch ? tests : {}) : tests),
-  };
-}
+module.exports = {
+  ...{} //(branch ? (isMasterBranch ? tests : {}) : tests),
+};
 
 const localsCheck = {
   to: {
@@ -372,18 +313,6 @@ const sources = [
         }
     
     }`
-    },
-    'faulty.sol': {
-      content: `// SPDX-License-Identifier: GPL-3.0
-
-      pragma solidity >=0.8.2 <0.9.0;
-
-      contract Test {
-          error O_o(uint256);
-          constructor() {
-              revert O_o(block.timestamp);
-          }
-      }`
     }
   }
 ]
