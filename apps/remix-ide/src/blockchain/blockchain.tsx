@@ -245,7 +245,7 @@ export class Blockchain extends Plugin {
       true,
       constructor,
       args,
-      (error, data) => {        
+      (error, data) => {
         if (error) {
           return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error.error ? error.error : error}`)
         }

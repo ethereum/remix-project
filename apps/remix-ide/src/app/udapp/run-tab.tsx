@@ -316,7 +316,7 @@ class Provider {
         } else {
           let e
           try {
-            e = JSON.stringify(err)            
+            e = JSON.stringify(err)
           } catch (e) {
             reject('unknown error')
             return
