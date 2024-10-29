@@ -102,17 +102,15 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
   sendAsync(data: JsonDataRequest): Promise<JsonDataResult> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
-      if (!this.provider) return reject({ jsonrpc: '2.0', id: data.id, error: { message: 'provider node set', code: -32603 } } as JsonDataResult)
+      if (!this.provider) return reject({ jsonrpc: '2.0', id: data.id, error: { message: 'provider not set', code: -32603 } } as JsonDataResult)
       this.sendAsyncInternal(data, resolve, reject)
     })
   }
 
   private async switchAway(showError: boolean, msg: string) {
     if (!this.provider) return
-    this.provider = null
-    this.connected = false
     if (showError) {
-      this.call('notification', 'toast', 'Error while querying the provider: ' + msg)
+      this.call('terminal', 'log', { type: 'error', value: 'Error while querying the provider: ' + msg })
     }
     return
   }
@@ -138,10 +136,8 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
           } catch (error) {
             this.switchAway(true, error.message ? error.message : error.error ? error.error : error)
           }
-
         }
-        error.code = -32603
-        reject({ jsonrpc: '2.0', error, id: data.id })
+        reject({ jsonrpc: '2.0', error: { message: error.message, code: -32603 }, id: data.id })
       }
     } else {
       const result = data.method === 'net_listening' ? 'canceled' : []
