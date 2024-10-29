@@ -53,7 +53,7 @@ module.exports = {
       .pause(1000)
 
   },
-  'Should switch to foundry provider, use the default foundry URL and succeed to connect #group1': function (browser: NightwatchBrowser) {
+  'Should switch to foundry provider, use the default foundry URL and succeed to connect #group1': !function (browser: NightwatchBrowser) {
     browser.switchEnvironment('foundry-provider')
       .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
       .modalFooterOKClick('foundry-provider')
