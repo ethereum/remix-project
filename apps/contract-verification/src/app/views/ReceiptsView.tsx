@@ -10,7 +10,7 @@ export const ReceiptsView = () => {
     <div>
       {contracts.length > 0 ? contracts.map((contract, index) => (
         <AccordionReceipt contract={contract} index={index} />
-      )) : <div className="text-center mt-5">No contracts submitted for verification</div>}
+      )) : <div className="text-center mt-5" data-id="noContractsSubmitted">No contracts submitted for verification</div>}
     </div>
   )
 }

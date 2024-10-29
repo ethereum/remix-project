@@ -13,7 +13,7 @@ export const DefaultLayout = ({ children, title, description }: PropsWithChildre
     <div className="d-flex flex-column h-100">
       <NavMenu />
       <div className="py-4 px-3 flex-grow-1 bg-light" style={{ overflowY: 'auto' }}>
-        <div>
+        <div data-id={`${title}Description`}>
           <p className="text-center" style={{ fontSize: '0.8rem' }}>
             {description}
           </p>
