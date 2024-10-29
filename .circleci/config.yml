@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   run_flaky_tests:
     type: boolean
-    default: true
+    default: false
 orbs:
   browser-tools: circleci/browser-tools@1.4.4
   win: circleci/windows@5.0
@@ -640,7 +640,7 @@ jobs:
         type: string
       jobsize:
         type: string
-    parallelism: 1
+    parallelism: 10
     steps:
       - checkout
       - attach_workspace:
