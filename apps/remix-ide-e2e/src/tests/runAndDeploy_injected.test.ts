@@ -109,6 +109,10 @@ const tests = {
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 60000)
       .click('[data-id="udappNotify-modal-footer-cancel-react"]')
       .saveScreenshot('./reports/screenshots/metamask_8.png')
+      .waitForElementVisible({
+        locateStrategy: 'xpath',
+        selector: "//span[@class='text-log' and contains(text(), 'errored')]"
+      })
   },
 
 
