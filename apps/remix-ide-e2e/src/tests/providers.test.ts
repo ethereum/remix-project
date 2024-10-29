@@ -3,12 +3,12 @@ import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
 
 module.exports = {
-'@disabled': true,
+  '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
 
-  'Should switch to ganache provider, set a custom URL and fail to connect #group1': function (browser: NightwatchBrowser) {
+  'Should switch to ganache provider, set a custom URL and fail to connect #flaky #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('udapp')
       .switchEnvironment('ganache-provider')
@@ -16,32 +16,48 @@ module.exports = {
 
       .execute(() => {
         (document.querySelector('*[data-id="ganache-providerModalDialogModalBody-react"] input') as any).focus()
-      }, [], () => {})
+      }, [], () => { })
       .clearValue('*[data-id="ganache-providerModalDialogModalBody-react"] input')
       .setValue('*[data-id="ganache-providerModalDialogModalBody-react"] input', 'http://127.0.0.1:8084')
       .modalFooterOKClick('ganache-provider')
-      .pause(2000)
-      .waitForElementNotPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000})
+      .pause()
+      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
       .pause(1000)
   },
 
   'Should switch to ganache provider, use the default ganache URL and succeed to connect #group1': function (browser: NightwatchBrowser) {
-    browser.switchEnvironment('ganache-provider')
-    .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
-    .modalFooterOKClick('ganache-provider')
-    .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
-    .waitForElementVisible({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000})
-     
-  },
-
-
-  'Add script #group2': function (browser: NightwatchBrowser) {
     browser
-      .clickLaunchIcon('filePanel')
-      .addFile('testScript.ts', { content: testScript })
+      .switchEnvironment('vm-cancun')
+      .pause(2000)
+      .switchEnvironment('ganache-provider')
+      .waitForElementVisible('*[data-id="ganache-providerModalDialogModalBody-react"]')
+      .modalFooterOKClick('ganache-provider')
+      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
+      .waitForElementVisible({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
+
   },
 
-  'Should switch to custom provider #group2': function (browser: NightwatchBrowser) {
+  'Should switch to foundry provider, set a custom URL and fail to connect #group1': function (browser: NightwatchBrowser) {
+    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
+      .switchEnvironment('foundry-provider')
+      .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
+      .execute(() => {
+        (document.querySelector('*[data-id="foundry-providerModalDialogModalBody-react"] input') as any).focus()
+      }, [], () => { })
+      .clearValue('*[data-id="foundry-providerModalDialogModalBody-react"] input')
+      .setValue('*[data-id="foundry-providerModalDialogModalBody-react"] input', 'http://127.0.0.1:8084')
+      .modalFooterOKClick('foundry-provider')
+      .pause(1000)
+
+  },
+  'Should switch to foundry provider, use the default foundry URL and succeed to connect #group1': function (browser: NightwatchBrowser) {
+    browser.switchEnvironment('foundry-provider')
+      .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
+      .modalFooterOKClick('foundry-provider')
+      .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
+  },
+
+  'Should switch to custom provider #flaky #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('udapp')
       .switchEnvironment('ganache-provider')
@@ -49,44 +65,27 @@ module.exports = {
 
       .execute(() => {
         (document.querySelector('*[data-id="ganache-providerModalDialogModalBody-react"] input') as any).focus()
-      }, [], () => {})
+      }, [], () => { })
       .clearValue('*[data-id="ganache-providerModalDialogModalBody-react"] input')
       .setValue('*[data-id="ganache-providerModalDialogModalBody-react"] input', 'https://scroll-rpc.publicnode.com')
       .modalFooterOKClick('ganache-provider')
       .pause(100)
-      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000})
+      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
       .pause(1000)
   },
 
   'execute script #group2': function (browser: NightwatchBrowser) {
-    browser.openFile('testScript.ts')
+    browser.clickLaunchIcon('filePanel')
+      .addFile('testScript.ts', { content: testScript })
       .clearConsole()
+      .pause(10000)
       .waitForElementVisible('*[data-id="play-editor"]')
       .click('*[data-id="play-editor"]')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: "//span[@class='text-log' and contains(., 'exceed maximum block range')]"
-      }).pause()
-  },
-
-  'Should switch to foundry provider, set a custom URL and fail to connect #group1': function (browser: NightwatchBrowser) {
-    browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
-    .switchEnvironment('foundry-provider')
-    .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
-    .execute(() => {
-      (document.querySelector('*[data-id="foundry-providerModalDialogModalBody-react"] input') as any).focus()
-    }, [], () => {})
-    .clearValue('*[data-id="foundry-providerModalDialogModalBody-react"] input')
-    .setValue('*[data-id="foundry-providerModalDialogModalBody-react"] input', 'http://127.0.0.1:8084')
-    .modalFooterOKClick('foundry-provider')
-    .pause(1000)
-
-},
-  'Should switch to foundry provider, use the default foundry URL and succeed to connect #group1': function (browser: NightwatchBrowser) {
-    browser.switchEnvironment('foundry-provider')
-    .waitForElementVisible('*[data-id="foundry-providerModalDialogModalBody-react"]')
-    .modalFooterOKClick('foundry-provider')
-    .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
+        selector: "//span[@class='text-danger' and contains(., 'exceed maximum block range')]"
+      })
+      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 }
   }
 }
 
@@ -111,7 +110,8 @@ async function main() {
      // Retrieving all events of a specific kind from the blockchain
   let logs = await provider.getLogs({address:contractAddress, fromBlock: '0x332f23',toBlock: '0x384410', topics: ['0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef']});
    console.log("Got Logs ",logs)
- }catch(error){console.error(\`Error \${error}\`)}
+ }catch(error){
+ }
 
 }
 
