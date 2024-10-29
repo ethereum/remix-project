@@ -178,7 +178,7 @@ export class RemixURLResolver {
               if (version.startsWith("github:")) {
                 const [, repo, tag] = version.match(/github:([^#]+)#(.+)/);
                 const filePath = url.replace(/^[^/]+\//, '');
-                return yield this.handleGithubCall(repo, `blob/${tag}/${filePath}`);
+                return this.handleGithubCall(repo, `blob/${tag}/${filePath}`);
               }
               
               const versionSemver = semver.minVersion(version)
