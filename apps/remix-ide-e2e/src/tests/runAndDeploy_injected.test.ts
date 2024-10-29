@@ -100,7 +100,7 @@ const tests = {
     browser
       .clearConsole()
       .clickLaunchIcon('filePanel')
-      .addFile('faulty.sol', sources[1]['faulty.sol'])
+      .addFile('faulty.sol', sources[0]['faulty.sol'])
       .clickLaunchIcon('udapp')
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
