@@ -52,6 +52,7 @@ function App() {
       signalInputs = (signalInputs || []).filter(input => input)
       dispatch({ type: 'SET_SIGNAL_INPUTS', payload: signalInputs })
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+      dispatch({ type: 'SET_COMPILER_FEEDBACK', payload: null })
     })
     plugin.internalEvents.on('circuit_compiling_errored', compilerErrored)
 
@@ -61,7 +62,16 @@ function App() {
       dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
       dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: null })
     })
-    plugin.internalEvents.on('circuit_computing_witness_errored', compilerErrored)
+    plugin.internalEvents.on('circuit_computing_witness_errored', (err) => {
+      dispatch({ type: 'SET_COMPILER_STATUS', payload: 'idle' })
+      try {
+        const report = JSON.parse(err.message)
+  
+        dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: report })
+      } catch (e) {
+        dispatch({ type: 'SET_COMPUTE_FEEDBACK', payload: err.message })
+      }
+    })
 
     // parsing events
     plugin.internalEvents.on('circuit_parsing_done', (_, filePathToId) => {
