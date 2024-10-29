@@ -327,7 +327,7 @@ const tests = {
 }
 
 const branch = process.env.CIRCLE_BRANCH;
-const isMasterBranch = branch === 'master';
+const isMasterBranch = (branch === 'master' || branch === 'remix_beta');
 
 if (!checkBrowserIsChrome(browser)) {
   module.exports = {}
