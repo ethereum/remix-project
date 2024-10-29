@@ -8,7 +8,7 @@ module.exports = {
     init(browser, done, 'http://127.0.0.1:8080', false)
   },
 
-  'Should switch to ganache provider, set a custom URL and fail to connect #flaky #group1': function (browser: NightwatchBrowser) {
+  'Should switch to ganache provider, set a custom URL and fail to connect #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('udapp')
       .switchEnvironment('ganache-provider')
@@ -60,7 +60,7 @@ module.exports = {
       .waitForElementContainsText('*[data-id="settingsNetworkEnv"]', 'Custom (')
   },
 
-  'Should switch to custom provider #flaky #group2': function (browser: NightwatchBrowser) {
+  'Should switch to custom provider #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('div[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('udapp')
       .switchEnvironment('ganache-provider')
