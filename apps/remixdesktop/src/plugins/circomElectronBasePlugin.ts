@@ -48,13 +48,20 @@ class CircomElectronPluginClient extends ElectronBasePluginClient {
     if (!this.isCircomInstalled) await this.install(version)
     // @ts-ignore
     const wd = await this.call('fs', 'getWorkingDir')
-    const binDir = path.normalize(path.join(extractParentFromKey(filePath), '.bin'))
+    const binDir = path.join(wd, path.join(extractParentFromKey(filePath), '.bin'))
     // @ts-ignore
-    const outputDirExists = await this.call('fs', 'exists', binDir)
+    const outputDirExists = await this.call('fs', 'exists', path.join(extractParentFromKey(filePath), '.bin'))
     // @ts-ignore
-    if (!outputDirExists) await this.call('fs', 'mkdir', binDir)
+    if (!outputDirExists) await this.call('fs', 'mkdir', path.join(extractParentFromKey(filePath), '.bin'))
+    else {
+      // @ts-ignore
+      if (process.platform === 'win32' && 'wasm' in options) {
+        // @ts-ignore
+        await this.call('fs', 'rmdir', path.join(extractParentFromKey(filePath), '.bin', 'simple_js'))
+      }
+    }
     filePath = path.join(wd, filePath)
-    const depPath = path.normalize(path.join(wd, '.deps/https/raw.githubusercontent.com/iden3/'))
+    const depPath = path.join(wd, '.deps/https/raw.githubusercontent.com/iden3/')
     const outputDir = process.platform !== 'win32' ? path.join(extractParentFromKey(filePath), '.bin') : binDir
 
     this.call('terminal' as any, 'logHtml', `Compiling ${filePath} with circom compiler (${version})`)
