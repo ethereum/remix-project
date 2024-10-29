@@ -148,7 +148,7 @@ if (!checkBrowserIsChrome(browser)) {
   module.exports = {}
 } else {
   module.exports = {
-    ... (branch ? (isMasterBranch ? tests : {}) : tests),
+    ...tests// (branch ? (isMasterBranch ? tests : {}) : tests),
   };
 }
 
