@@ -35,7 +35,7 @@ const tests = {
     return sources
   },
 
-  'Should connect to Sepolia Test Network using MetaMask #flaky #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
@@ -148,16 +148,11 @@ if (!checkBrowserIsChrome(browser)) {
   module.exports = {}
 } else {
   module.exports = {
-    ...tests// (branch ? (isMasterBranch ? tests : {}) : tests),
+    ...(branch ? (isMasterBranch ? tests : {}) : tests),
   };
 }
 
-const localsCheck = {
-  to: {
-    value: '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB',
-    type: 'address'
-  }
-}
+
 
 const sources = [
   {
