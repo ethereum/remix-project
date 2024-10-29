@@ -62,7 +62,7 @@ const tests = {
       .switchBrowserTab(0) // back to remix
   },
 
-  'Should add a contract file #group1 #flaky': function (browser: NightwatchBrowser) {
+  'Should add a contract file #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
@@ -333,7 +333,7 @@ if (!checkBrowserIsChrome(browser)) {
   module.exports = {}
 } else {
   module.exports = {
-    ...tests //(branch ? (isMasterBranch ? tests : {}) : tests),
+    ... (branch ? (isMasterBranch ? tests : {}) : tests),
   };
 }
 
