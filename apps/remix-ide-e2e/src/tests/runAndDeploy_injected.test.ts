@@ -111,7 +111,7 @@ const tests = {
       .saveScreenshot('./reports/screenshots/metamask_8.png')
       .waitForElementVisible({
         locateStrategy: 'xpath',
-        selector: "//span[@class='text-log' and contains(text(), 'errored')]"
+        selector: "//span[@class='text-log' and contains(., 'errored')]"
       })
   },
 
