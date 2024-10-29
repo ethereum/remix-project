@@ -180,7 +180,6 @@ export class RemixURLResolver {
                 const filePath = url.replace(/^[^/]+\//, '');
                 return this.handleGithubCall(repo, `blob/${tag}/${filePath}`);
               }
-              
               const versionSemver = semver.minVersion(version)
               fetchUrl = url.replace(pkg, `${pkg}@${versionSemver.version}`)
             }
