@@ -114,6 +114,31 @@ const tests = {
         selector: "//span[@class='text-log' and contains(., 'errored')]"
       })
   },
+  'Should deploy contract on Sepolia Test Network using MetaMask again #group1': function (browser: NightwatchBrowser) {
+    if (!checkBrowserIsChrome(browser)) return
+    browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"] option', 45000)
+      .clickLaunchIcon('filePanel')
+      .openFile('Greet.sol')
+      .clickLaunchIcon('udapp')
+      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .pause(5000)
+      .clearConsole()
+      .perform((done) => {
+        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
+          checkAlerts(browser)
+          browser
+            .maximizeWindow()
+            .hideMetaMaskPopup()
+            .waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .click('[data-testid="page-container-footer-next"]') // approve the tx
+            .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .perform(() => done())
+        })
+      })
+  },
 
 
   /// end of group 1
