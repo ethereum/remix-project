@@ -96,6 +96,17 @@ const tests = {
         })
       })
   },
+  'Should deploy faulty contract on Sepolia Test Network using MetaMask and show error in terminal #group1': function (browser: NightwatchBrowser) {
+    browser
+      .clearConsole()
+      .clickLaunchIcon('filePanel')
+      .addFile('faulty.sol', sources[1]['faulty.sol'])
+      .clickLaunchIcon('udapp')
+      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .pause(5000)
+      .saveScreenshot('./reports/screenshots/metamask_7.png')
+  },
 
 
   /// end of group 1
@@ -184,30 +195,30 @@ const tests = {
             .perform(() => done())
         })
       })
-      /*
-      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
-      .clearConsole()
-      .clickInstance(0)
-      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
-      .perform((done) => { // call delegate
-        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
-          browser
-            .hideMetaMaskPopup()
-            .saveScreenshot('./reports/screenshots/metamask_5.png')
-            .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
-            .click('[data-testid="page-container-footer-next"]') // approve the tx
-            .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .perform(() => done())
-        })
+    /*
+    .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+    .clearConsole()
+    .clickInstance(0)
+    .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
+    .perform((done) => { // call delegate
+      browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
+        browser
+          .hideMetaMaskPopup()
+          .saveScreenshot('./reports/screenshots/metamask_5.png')
+          .waitForElementPresent('[data-testid="page-container-footer-next"]', 60000)
+          .click('[data-testid="page-container-footer-next"]') // approve the tx
+          .switchBrowserTab(0) // back to remix
+          .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+          .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+          .perform(() => done())
       })
-      .testFunction('last',
-        {
-          status: '0x1 Transaction mined and execution succeed',
-          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-        })
-          */
+    })
+    .testFunction('last',
+      {
+        status: '0x1 Transaction mined and execution succeed',
+        'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+      })
+        */
   },
 
   /*
@@ -286,9 +297,13 @@ const tests = {
 const branch = process.env.CIRCLE_BRANCH;
 const isMasterBranch = branch === 'master';
 
-module.exports = {
-  ...tests //(branch ? (isMasterBranch ? tests : {}) : tests),
-};
+if (!checkBrowserIsChrome(browser)) {
+  module.exports = {}
+} else {
+  module.exports = {
+    ...tests //(branch ? (isMasterBranch ? tests : {}) : tests),
+  };
+}
 
 const localsCheck = {
   to: {
@@ -325,6 +340,18 @@ const sources = [
         }
     
     }`
+    },
+    'faulty.sol': {
+      content: `// SPDX-License-Identifier: GPL-3.0
+
+      pragma solidity >=0.8.2 <0.9.0;
+
+      contract Test {
+          error O_o(uint256);
+          constructor() {
+              revert O_o(block.timestamp);
+          }
+      }`
     }
   }
 ]
