@@ -85,7 +85,7 @@ module.exports = {
         locateStrategy: 'xpath',
         selector: "//span[@class='text-danger' and contains(., 'exceed maximum block range')]"
       })
-      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 }
+      .waitForElementPresent({ selector: `[data-id="selected-provider-ganache-provider"]`, timeout: 5000 })
   }
 }
 
