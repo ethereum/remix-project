@@ -21,7 +21,7 @@ const profile = {
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
   kind: '',
-  location: 'sidePanel',
+  location: 'popupPanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
   version: packageJson.version,
   maintainedBy: 'Remix'
