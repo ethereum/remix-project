@@ -106,7 +106,7 @@ const tests = {
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
       .saveScreenshot('./reports/screenshots/metamask_7.png')
-      .waitForElementNotVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 60000)
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 60000)
       .click('[data-id="udappNotify-modal-footer-cancel-react"]')
       .saveScreenshot('./reports/screenshots/metamask_8.png')
   },
