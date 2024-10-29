@@ -26,8 +26,8 @@ export type RejectRequest = (error: JsonDataResult) => void
 export type SuccessRequest = (data: JsonDataResult) => void
 
 export interface IProvider {
-  options: {[id: string]: any}
-  init(): Promise<{[id: string]: any}>
+  options: { [id: string]: any }
+  init(): Promise<{ [id: string]: any }>
   body(): JSX.Element
   sendAsync(data: JsonDataRequest): Promise<JsonDataResult>
 }
@@ -38,7 +38,7 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
   defaultUrl: string
   connected: boolean
   nodeUrl: string
-  options: {[id: string]: any} = {}
+  options: { [id: string]: any } = {}
 
   constructor(profile, blockchain, defaultUrl) {
     super(profile)
@@ -107,19 +107,13 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
     })
   }
 
-  private async switchAway(showError) {
+  private async switchAway(showError: boolean, msg: string) {
     if (!this.provider) return
     this.provider = null
     this.connected = false
     if (showError) {
-      const modalContent: AlertModal = {
-        id: this.profile.name,
-        title: this.profile.displayName,
-        message: `Error while connecting to the provider, provider not connected`
-      }
-      this.call('notification', 'alert', modalContent)
+      this.call('notification', 'toast', 'Error while querying the provider: ' + msg)
     }
-    await this.call('udapp', 'setEnvironmentMode', { context: 'vm-cancun' })
     return
   }
 
@@ -130,7 +124,21 @@ export abstract class AbstractProvider extends Plugin implements IProvider {
         resolve({ jsonrpc: '2.0', result, id: data.id })
       } catch (error) {
         if (error && error.message && error.message.includes('SERVER_ERROR')) {
-          this.switchAway(true)
+          try {
+            // replace escaped quotes with normal quotes
+            const errorString = String(error.message).replace(/\\"/g, '"');
+            const messageMatches = Array.from(errorString.matchAll(/"message":"(.*?)"/g));
+            // Extract the message values
+            const messages = messageMatches.map(match => match[1]);
+            if (messages && messages.length > 0) {
+              this.switchAway(true, messages[0])
+            } else {
+              this.switchAway(true, error.message ? error.message : error.error ? error.error : error)
+            }
+          } catch (error) {
+            this.switchAway(true, error.message ? error.message : error.error ? error.error : error)
+          }
+
         }
         error.code = -32603
         reject({ jsonrpc: '2.0', error, id: data.id })
