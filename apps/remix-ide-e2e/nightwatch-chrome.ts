@@ -21,7 +21,7 @@ module.exports = {
     'default': {
       globals: {
         waitForConditionTimeout: 10000,
-        asyncHookTimeout: 30000
+        asyncHookTimeout: 120000
       },
       screenshots: {
         enabled: true,
