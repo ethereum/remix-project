@@ -35,7 +35,7 @@ const tests = {
     return sources
   },
 
-  'Should connect to Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Sepolia Test Network using MetaMask #flaky #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
@@ -96,6 +96,28 @@ const tests = {
         })
       })
   },
+  'Should run low level interaction (fallback function) on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+    if (!checkBrowserIsChrome(browser)) return
+    browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+      .clickInstance(0)
+      .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
+      .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
+      .perform((done) => {
+        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
+          browser
+            .maximizeWindow()
+            .hideMetaMaskPopup()
+            .saveScreenshot('./reports/screenshots/metamask_tr1.png')
+            .waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .saveScreenshot('./reports/screenshots/metamask_tr2.png')
+            .click('[data-testid="page-container-footer-next"]') // approve the tx
+            .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .perform(() => done())
+        })
+      })
+  },
   'Should deploy faulty contract on Sepolia Test Network using MetaMask and show error in terminal #group1': function (browser: NightwatchBrowser) {
     browser
       .clearConsole()
@@ -148,7 +170,7 @@ if (!checkBrowserIsChrome(browser)) {
   module.exports = {}
 } else {
   module.exports = {
-    ...(branch ? (isMasterBranch ? tests : {}) : tests),
+    ...tests//(branch ? (isMasterBranch ? tests : {}) : tests),
   };
 }
 
