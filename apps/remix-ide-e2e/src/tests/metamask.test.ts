@@ -25,6 +25,13 @@ const checkAlerts = function (browser: NightwatchBrowser) {
   })
 }
 
+const localsCheck = {
+  _message: {
+    value: 'test',
+    type: 'string'
+  }
+}
+
 const tests = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
@@ -35,8 +42,7 @@ const tests = {
     return sources
   },
 
-  'Should connect to Sepolia Test Network using MetaMask #flaky #group1': function (browser: NightwatchBrowser) {
-    if (!checkBrowserIsChrome(browser)) return
+  'Should connect to Sepolia Test Network using MetaMask #flaky #group2 #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
       .useCss().switchBrowserTab(0)
@@ -63,7 +69,6 @@ const tests = {
   },
 
   'Should add a contract file #group1': function (browser: NightwatchBrowser) {
-    if (!checkBrowserIsChrome(browser)) return
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
@@ -72,7 +77,6 @@ const tests = {
   },
 
   'Should deploy contract on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
-    if (!checkBrowserIsChrome(browser)) return
     browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"] option', 45000)
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
@@ -97,7 +101,6 @@ const tests = {
       })
   },
   'Should run low level interaction (fallback function) on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
-    if (!checkBrowserIsChrome(browser)) return
     browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clickInstance(0)
       .clearConsole()
@@ -128,7 +131,6 @@ const tests = {
       })
   },
   'Should run transaction (greet function) on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
-    if (!checkBrowserIsChrome(browser)) return
     browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clearConsole()
       .waitForElementPresent('*[data-title="string _message"]')
@@ -162,6 +164,34 @@ const tests = {
         })
       })
   },
+  'Should debug Sepolia transaction with source highlighting MetaMask #group1': function (browser: NightwatchBrowser) {
+    let txhash
+    browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .clickLaunchIcon('pluginManager') // load debugger and source verification
+      // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
+      // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
+      .clickLaunchIcon('udapp')
+      .perform((done) => {
+        browser.getLastTransactionHash((hash) => {
+          txhash = hash
+          done()
+        })
+      })
+      .perform((done) => {
+        browser
+          .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+          .clickLaunchIcon('debugger')
+          .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
+          .saveScreenshot('./reports/screenshots/metamask_debug.png')
+          .saveScreenshot('./reports/screenshots/metamask_2.png')
+          .click('*[data-id="debuggerTransactionStartButton"]')
+          .saveScreenshot('./reports/screenshots/metamask_3.png')
+          .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
+          .checkVariableDebug('soliditylocals', localsCheck)
+          .perform(() => done())
+      })
+
+  },
   'Should deploy faulty contract on Sepolia Test Network using MetaMask and show error in terminal #group1': function (browser: NightwatchBrowser) {
     browser
       .clearConsole()
@@ -181,7 +211,6 @@ const tests = {
       })
   },
   'Should deploy contract on Sepolia Test Network using MetaMask again #group1': function (browser: NightwatchBrowser) {
-    if (!checkBrowserIsChrome(browser)) return
     browser.clearConsole().waitForElementPresent('*[data-id="runTabSelectAccount"] option', 45000)
       .clickLaunchIcon('filePanel')
       .openFile('Greet.sol')
@@ -204,11 +233,41 @@ const tests = {
             .perform(() => done())
         })
       })
-  }
+  },
+
+  // main network tests
+  'Should connect to Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
+    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+      .switchBrowserTab(1)
+      .click('[data-testid="network-display"]')
+      .click('div[data-testid="Ethereum Mainnet"]') // switch to mainnet
+      .useCss().switchBrowserTab(0)
+      .refreshPage()
+      .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .click('*[data-id="landingPageStartSolidity"]')
+      .clickLaunchIcon('udapp')
+      .switchEnvironment('injected-MetaMask')
+      .waitForElementPresent('*[data-id="settingsNetworkEnv"]')
+      .assert.containsText('*[data-id="settingsNetworkEnv"]', 'Main (1) network')
+  },
+
+  'Should deploy contract on Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
+    browser.waitForElementPresent('*[data-id="runTabSelectAccount"] option')
+      .clickLaunchIcon('filePanel')
+      .addFile('Greet.sol', sources[0]['Greet.sol'])
+      .clickLaunchIcon('udapp')
+      .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
+      .click('*[data-id="Deploy - transact (not payable)"]')
+      .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 65000)
+      .modalFooterOKClick('udappNotify')
+      .pause(10000)
+      .assert.containsText('*[data-id="udappNotifyModalDialogModalBody-react"]', 'You are about to create a transaction on Main Network. Confirm the details to send the info to your provider.')
+      .modalFooterCancelClick('udappNotify')
+  },
 }
 
 const branch = process.env.CIRCLE_BRANCH
-const runTestsConditions = (branch === 'master' || branch === 'remix_live' || branch.includes('remix_beta') || branch.includes('metamask'))
+const runTestsConditions = branch && (branch === 'master' || branch === 'remix_live' || branch.includes('remix_beta') || branch.includes('metamask'))
 
 if (!checkBrowserIsChrome(browser)) {
   module.exports = {}
