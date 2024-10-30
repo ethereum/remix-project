@@ -116,6 +116,8 @@ const tests = {
             .pause(2000)
             //.click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'transact to Helloworld', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'fallback', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .saveScreenshot('./reports/screenshots/metamask_tr3.png')
@@ -168,14 +170,14 @@ const tests = {
   }
 }
 
-const branch = process.env.CIRCLE_BRANCH;
-const isMasterBranch = (branch === 'master' || branch === 'remix_beta');
+const branch = process.env.CIRCLE_BRANCH
+const runTestsConditions = (branch === 'master' || branch === 'remix_live' || branch.includes('remix_beta') || branch.includes('metamask'))
 
 if (!checkBrowserIsChrome(browser)) {
   module.exports = {}
 } else {
   module.exports = {
-    ...tests//(branch ? (isMasterBranch ? tests : {}) : tests),
+    ...(branch ? (runTestsConditions ? tests : {}) : tests)
   };
 }
 
