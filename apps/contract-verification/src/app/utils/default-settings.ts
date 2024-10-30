@@ -13,6 +13,8 @@ export function mergeChainSettingsWithDefaults(chainId: string, userSettings: Co
     let defaultsForVerifier: VerifierSettings
     if (verifierId === 'Sourcify') {
       defaultsForVerifier = DEFAULT_APIS['Sourcify']
+    } else if (verifierId === 'Routescan') {
+      defaultsForVerifier = { ...DEFAULT_APIS['Routescan'][chainId], explorerUrl: DEFAULT_APIS['Routescan'].explorerUrl }
     } else {
       defaultsForVerifier = DEFAULT_APIS[verifierId][chainId] ?? {}
     }
