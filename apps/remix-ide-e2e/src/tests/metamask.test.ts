@@ -1,6 +1,7 @@
 'use strict'
 import { NightwatchBrowser } from 'nightwatch'
 import init from '../helpers/init'
+import examples from '../examples/example-contracts'
 
 const passphrase = process.env.account_passphrase
 const password = process.env.account_password
@@ -244,8 +245,7 @@ const tests = {
       .click('[data-testid="network-display"]')
       .click('div[data-testid="Sepolia"]') // switch to sepolia
       .useCss().switchBrowserTab(0)
-      .openFile('contracts')
-      .openFile('contracts/3_Ballot.sol')
+      .addFile('BallotTest.sol', examples.ballot)
       .clickLaunchIcon('udapp')
       .clearConsole()
       .clearTransactions()
@@ -274,7 +274,7 @@ const tests = {
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .clearConsole()
       .clickInstance(0)
-      .clickFunction('giveRightToVote - transact (not payable)', { types: 'address voter', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
+      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .saveScreenshot('./reports/screenshots/metamask_6.png')
       .pause(5000)
       .perform((done) => { // call delegate
@@ -285,22 +285,22 @@ const tests = {
             
             .pause(5000)
             .saveScreenshot('./reports/screenshots/metamask_7.png')
-            // .scrollAndClick('[data-testid="page-container-footer-next"]')
+            .scrollAndClick('[data-testid="page-container-footer-next"]')
             // .click('[data-testid="page-container-footer-next"]') // approve the tx
-            // .pause(2000)
-            // .switchBrowserTab(0) // back to remix
-            // .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
-            // .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .pause(2000)
+            .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
       })
-      //.testFunction('last',
-      //  {
-       //   status: '0x1 Transaction mined and execution succeed',
-       //   'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-       // })
+      .testFunction('last',
+        {
+          status: '0x1 Transaction mined and execution succeed',
+          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+        })
   },
-  'Should debug Sepolia transaction with source highlighting MetaMask #group3': !function (browser: NightwatchBrowser) {
+  'Should debug Sepolia transaction with source highlighting MetaMask #group3': function (browser: NightwatchBrowser) {
     let txhash
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('pluginManager') // load debugger and source verification
