@@ -116,11 +116,44 @@ const tests = {
             .pause(2000)
             //.click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'transact to Helloworld', 60000)
-            .waitForElementContainsText('*[data-id="terminalJournal"]', 'fallback', 60000)
+            .waitForElementVisible({
+              locateStrategy: 'xpath',
+              selector: "//span[@class='text-log' and contains(., 'transact to HelloWorld.(fallback) pending')]"
+            })
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .saveScreenshot('./reports/screenshots/metamask_tr3.png')
+            .perform(() => done())
+        })
+      })
+  },
+  'Should run transaction (greet function) on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
+    if (!checkBrowserIsChrome(browser)) return
+    browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+      .clickInstance(0)
+      .clearConsole()
+      .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
+      .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
+      .perform((done) => {
+        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
+          browser
+            .maximizeWindow()
+            .hideMetaMaskPopup()
+            .saveScreenshot('./reports/screenshots/metamask_tr4.png')
+            .pause(3000)
+            .scrollAndClick('[data-testid="page-container-footer-next"]')
+            //.waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .saveScreenshot('./reports/screenshots/metamask_tr5.png')
+            .pause(2000)
+            //.click('[data-testid="page-container-footer-next"]') // approve the tx
+            .switchBrowserTab(0) // back to remix
+            .waitForElementVisible({
+              locateStrategy: 'xpath',
+              selector: "//span[@class='text-log' and contains(., 'transact to HelloWorld.greet pending')]"
+            })
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .saveScreenshot('./reports/screenshots/metamask_tr6.png')
             .perform(() => done())
         })
       })
