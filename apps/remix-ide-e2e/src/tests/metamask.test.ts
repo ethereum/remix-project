@@ -100,6 +100,7 @@ const tests = {
     if (!checkBrowserIsChrome(browser)) return
     browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .clickInstance(0)
+      .clearConsole()
       .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
       .perform((done) => {
@@ -108,9 +109,10 @@ const tests = {
             .maximizeWindow()
             .hideMetaMaskPopup()
             .saveScreenshot('./reports/screenshots/metamask_tr1.png')
-            .waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .scrollAndClick('[data-testid="page-container-footer-next"]')
+            //.waitForElementPresent('[data-testid="page-container-footer-next"]')
             .saveScreenshot('./reports/screenshots/metamask_tr2.png')
-            .click('[data-testid="page-container-footer-next"]') // approve the tx
+            //.click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
