@@ -12,7 +12,7 @@ export function SettingsUI(props: SettingsProps) {
 
   return (
     <div className="udapp_settings">
-      <EnvironmentUI selectedEnv={props.selectExEnv} providers={props.providers} setExecutionContext={props.setExecutionContext} />
+      <EnvironmentUI runTabPlugin={props.runTabPlugin} selectedEnv={props.selectExEnv} providers={props.providers} setExecutionContext={props.setExecutionContext} />
       <NetworkUI networkName={props.networkName} />
       <AccountUI
         addFile={props.addFile}

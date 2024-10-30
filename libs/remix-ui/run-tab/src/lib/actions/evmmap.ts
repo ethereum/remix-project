@@ -1,5 +1,5 @@
 export type ChainInfo = {
-  id: number
+  id: number | string
   name: string
 }
 
@@ -200,15 +200,22 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
 ])
 
 export function getCompatibleChains(fork: HardFork): ChainInfo[] {
-  const forkData = evmMap.get(fork);
-  return forkData ? forkData.chainId : [];
+  const forkData = evmMap.get(fork)
+  return forkData ? forkData.chainId : []
 }
 
 export function isChainCompatible(fork: HardFork, chainId: number): boolean {
-  const compatibleChains = getCompatibleChains(fork);
-  return compatibleChains.some(chain => chain.id === chainId);
+  const compatibleChains = getCompatibleChains(fork)
+  return compatibleChains.some(chain => chain.id === chainId)
 }
 
 export function isChainCompatibleWithAnyFork(chainId: number, forks: HardFork[]): boolean {
-  return forks.some(fork => isChainCompatible(fork, chainId));
+  return forks.some(fork => isChainCompatible(fork, chainId))
+}
+
+export function getCompatibleChain(fork: HardFork, chainId: number): ChainInfo | undefined {
+  const compatibleChains = getCompatibleChains(fork)
+  console.log('fork in getCompatibleChain', fork)
+  console.log('compatibleChains', compatibleChains)
+  return compatibleChains.find(chain => chain.id === chainId)
 }
