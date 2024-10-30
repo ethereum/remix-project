@@ -67,10 +67,7 @@ export const VerifyView = () => {
         name: verifierId as VerifierIdentifier,
       }
       receipts.push({ verifierInfo, status: 'pending', contractId, isProxyReceipt: false, failedChecks: 0 })
-      if (enabledVerifiers.Blockscout) await sendToMatomo('verify', "verifyWith: Blockscout On: " + selectedChain?.chainId + " IsProxy: " + (hasProxy && proxyAddress))
-      if (enabledVerifiers.Etherscan) await sendToMatomo('verify', "verifyWithEtherscan On: " + selectedChain?.chainId + " IsProxy: " + (hasProxy && proxyAddress))
-      if (enabledVerifiers.Sourcify) await sendToMatomo('verify', "verifyWithSourcify On: " + selectedChain?.chainId + " IsProxy: " + (hasProxy && proxyAddress))
-      if (enabledVerifiers.Routescan) await sendToMatomo('verify', "verifyWithRoutescan On: " + selectedChain?.chainId + " IsProxy: " + (hasProxy && proxyAddress))
+      await sendToMatomo('verify', `verifyWith${verifierId} On: ${selectedChain?.chainId} IsProxy: ${hasProxy && proxyAddress}`)
     }
 
     const newSubmittedContract: SubmittedContract = {
