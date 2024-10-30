@@ -56,6 +56,7 @@ import { PassphrasePrompt } from './components/passphrase'
 import { MainnetPrompt } from './components/mainnet'
 import { ScenarioPrompt } from './components/scenario'
 import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
+import { getCompatibleChain, getCompatibleChains, HardFork, isChainCompatible, isChainCompatibleWithAnyFork } from './actions/evmmap'
 
 export function RunTabUI(props: RunTabProps) {
   const { plugin } = props
@@ -85,6 +86,7 @@ export function RunTabUI(props: RunTabProps) {
   const REACT_API = { runTab }
   const currentfile = plugin.config.get('currentFile')
   const [solcVersion, setSolcVersion] = useState<{version: string, canReceive: boolean}>({ version: '', canReceive: true })
+  const [chainEvmCompat, setChainEvmCompat] = useState()
 
   const getVersion = () => {
     let version = '0.8.25'
@@ -99,6 +101,64 @@ export function RunTabUI(props: RunTabProps) {
     } catch (e) {
       setSolcVersion({ version, canReceive: true })
       console.log(e)
+    }
+  }
+
+  const getCompilerDetails = async () => await checkEvmChainCompatibility()
+
+  const returnCompatibleChain = async (evmVersion: HardFork, targetChainId: number) => {
+    return getCompatibleChain(evmVersion ?? 'cancun', targetChainId)
+  }
+
+  const checkEvmChainCompatibilityOkFunction = async (targetChainId: number, fetchDetails: any, currentFile: string) => {
+    () => {
+      const compatibleChain = returnCompatibleChain(fetchDetails.evmVersion, targetChainId)
+      console.log('compatibleChain', compatibleChain)
+      plugin.call('manager', 'activatePlugin', 'environmentExplorer')
+      plugin.call('tabs', 'focus', 'environmentExplorer')
+      plugin.call('environmentExplorer', 'setChain', compatibleChain)
+      plugin.call('environmentExplorer', 'setEvmVersion', 'paris')
+      plugin.call('solidity', 'compile', currentFile)
+    }
+  }
+
+  const checkEvmChainCompatibilityCancelFunction = async (targetChainId: number, fetchDetails: any, currentFile: string) => {
+    () => {
+      plugin.call('manager', 'activatePlugin', 'environmentExplorer')
+      plugin.call('tabs', 'focus', 'environmentExplorer')
+      plugin.call('environmentExplorer', 'setChain', targetChainId)
+      plugin.call('environmentExplorer', 'setEvmVersion', fetchDetails.evmVersion)
+      plugin.call('solidity', 'compile', currentFile)
+    }
+  }
+
+  const checkEvmChainCompatibility = async () => {
+    const isVm = await plugin.call('blockchain', 'getProvider') // vms are exempt from this treatment
+    const fetchDetails = await plugin.call('solidity', 'getCompilerQueryParameters') //compiler details including evmVersion
+    console.log('isVm', isVm)
+    if (!isVm.startsWith('vm')) {
+      const targetChainId = runTab.chainId ? parseInt(runTab.chainId) : runTab.chainId
+      console.log('targetChainId', runTab.chainId)
+
+      const IsCompatible = isChainCompatible(fetchDetails.evmVersion ?? 'cancun', targetChainId)
+      console.log('evmVersion matches everywhere', fetchDetails.evmVersion)
+      console.log('compiler stuff', fetchDetails)
+      console.log('chain is compatible', IsCompatible)
+      const currentFile = await plugin.call('fileManager', 'getCurrentFile')
+      if (!IsCompatible) {
+        console.log('chain is undefined')
+        //show modal
+        plugin.call('notification', 'modal', {
+          id: 'evm-incompatible',
+          title: 'Incompatible EVM - ChainId Detected',
+          message: `The selected chain is not compatible with the selected compiler version. Please select a one of the two options below.`,
+          modalType: 'modal',
+          okLabel: 'Switch EVM and Recompile',
+          cancelLabel: 'Do not Switch EVM',
+          okFn: checkEvmChainCompatibilityOkFunction,
+          cancelFn: checkEvmChainCompatibilityCancelFunction
+        })
+      }
     }
   }
 
@@ -294,6 +354,7 @@ export function RunTabUI(props: RunTabProps) {
             gasLimit={runTab.gasLimit}
             setGasFee={setGasFeeAmount}
             providers={runTab.providers}
+            runTabPlugin={plugin}
             setExecutionContext={setExecutionEnvironment}
             createNewBlockchainAccount={createNewAddress}
             setPassphrase={setPassphraseModal}
@@ -331,6 +392,7 @@ export function RunTabUI(props: RunTabProps) {
             solCompilerVersion={solcVersion}
             setCompilerVersion={setSolcVersion}
             getCompilerVersion={getVersion}
+            getCompilerDetails={getCompilerDetails}
           />
           <RecorderUI
             plugin={plugin}
@@ -345,6 +407,7 @@ export function RunTabUI(props: RunTabProps) {
           />
           <InstanceContainerUI
             plugin={plugin}
+            getCompilerDetails={getCompilerDetails}
             instances={runTab.instances}
             clearInstances={removeInstances}
             unpinInstance={unpinPinnedInstance}
