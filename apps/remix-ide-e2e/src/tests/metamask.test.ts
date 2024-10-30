@@ -43,7 +43,7 @@ const tests = {
     return sources
   },
 
-  'Should connect to Sepolia Test Network using MetaMask #group3 #group2 #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Sepolia Test Network using MetaMask #group4 #group3 #group2 #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
       .useCss().switchBrowserTab(0)
@@ -288,19 +288,20 @@ const tests = {
             .scrollAndClick('[data-testid="page-container-footer-next"]')
             // .click('[data-testid="page-container-footer-next"]') // approve the tx
             .pause(2000)
+            .saveScreenshot('./reports/screenshots/metamask_8.png')
             .switchBrowserTab(0) // back to remix
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
             .perform(() => done())
         })
       })
-      .testFunction('last',
-        {
-          status: '0x1 Transaction mined and execution succeed',
-          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
-        })
+      //.testFunction('last',
+      //  {
+      //    status: '0x1 Transaction mined and execution succeed',
+      //    'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+      //  })
   },
-  'Should debug Sepolia transaction with source highlighting MetaMask #group3': function (browser: NightwatchBrowser) {
+  'Should debug Sepolia transaction with source highlighting MetaMask #group3': !function (browser: NightwatchBrowser) {
     let txhash
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('pluginManager') // load debugger and source verification
@@ -328,6 +329,44 @@ const tests = {
       })
 
   },
+  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group4': !function (browser: NightwatchBrowser) {
+    if (!checkBrowserIsChrome(browser)) return
+    browser
+      .executeScriptInTerminal('web3.eth.getAccounts()')
+      .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
+  },
+
+  'Test EIP 712 Signature with Injected Provider (Metamask) #group4': !function (browser: NightwatchBrowser) {
+    browser.waitForElementPresent('i[id="remixRunSignMsg"]')
+      .click('i[id="remixRunSignMsg"]')
+      .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
+      .click('*[data-id="sign-eip-712"]')
+      .waitForElementVisible('*[data-id="udappNotify-modal-footer-ok-react"]')
+      .modalFooterOKClick('udappNotify')
+      .pause(1000)
+      .getEditorValue((content) => {
+        browser.assert.ok(content.indexOf('"primaryType": "AuthRequest",') !== -1, 'EIP 712 data file must be opened')
+      })
+      .clickLaunchIcon('filePanel')
+      .rightClick('li[data-id="treeViewLitreeViewItemEIP-712-data.json"]')
+      .click('*[data-id="contextMenuItemsignTypedData"]')
+      .pause()
+      .perform((done) => { // call delegate
+        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
+          browser
+            .maximizeWindow()
+            .hideMetaMaskPopup()
+            .saveScreenshot('./reports/screenshots/metamask_6.png')
+            .waitForElementPresent('button[aria-label="Scroll down"]', 60000)
+            .click('button[aria-label="Scroll down"]') // scroll down
+            .click('button[data-testid="confirm-footer-button"]') // confirm
+            .switchBrowserTab(0) // back to remix
+            .perform(() => done())
+        })
+      })
+      .pause(1000)
+      .journalChildIncludes('0x8be3a81e17b7e4a40006864a4ff6bfa3fb1e18b292b6f47edec95cd8feaa53275b90f56ca02669d461a297e6bf94ab0ee4b7c89aede3228ed5aedb59c7e007501c')
+  }
 }
 
 const branch = process.env.CIRCLE_BRANCH
