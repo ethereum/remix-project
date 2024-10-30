@@ -123,6 +123,7 @@ export interface RunTabState {
 }
 
 export interface SettingsProps {
+  runTabPlugin: RunTab,
   selectExEnv: string,
   accounts: {
     loadedAccounts: Record<string, any>,
@@ -158,6 +159,7 @@ export interface SettingsProps {
 }
 
 export interface EnvironmentProps {
+  runTabPlugin: RunTab,
   selectedEnv: string,
   providers: {
     providerList: Provider[],
@@ -228,6 +230,7 @@ export type MainnetPrompt = (
   ) => JSX.Element
 
 export interface ContractDropdownProps {
+  getCompilerDetails: () => Promise<any>
   selectedAccount: string,
   exEnvironment: string,
   contracts: {
@@ -292,6 +295,7 @@ export interface RecorderProps {
 }
 
 export interface InstanceContainerProps {
+  getCompilerDetails: () => Promise<any>
   instances: {
     instanceList: {
       contractData?: ContractData,
@@ -373,6 +377,7 @@ export interface DeployOptions {
 }
 
 export interface ContractGUIProps {
+  getCompilerDetails: () => Promise<any>
   title?: string,
   funcABI: FuncABI,
   inputs: string,
@@ -412,6 +417,7 @@ export interface MainnetProps {
 }
 
 export interface UdappProps {
+  getCompilerDetails: () => Promise<any>
   instance: {
     contractData?: ContractData,
     address: string,

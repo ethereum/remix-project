@@ -462,6 +462,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
             <div>
               <ContractGUI
                 title={intl.formatMessage({ id: 'udapp.deploy' })}
+                getCompilerDetails={props.getCompilerDetails}
                 isDeploy={true}
                 deployOption={deployOptions[currentFile] && deployOptions[currentFile][currentContract] ? deployOptions[currentFile][currentContract].options : null}
                 initializerOptions={

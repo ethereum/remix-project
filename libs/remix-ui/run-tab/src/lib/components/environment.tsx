@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { EnvironmentProps, Provider } from '../types'
 import { Dropdown } from 'react-bootstrap'
