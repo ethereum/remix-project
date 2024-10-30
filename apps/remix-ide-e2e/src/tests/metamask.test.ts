@@ -327,11 +327,13 @@ const tests = {
           done()
         })
       })
+      .pause(5000)
       .perform((done) => {
         browser
           .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
           .clickLaunchIcon('debugger')
           .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
+          .pause()
           .saveScreenshot('./reports/screenshots/metamask_debug.png')
           .saveScreenshot('./reports/screenshots/metamask_2.png')
           .click('*[data-id="debuggerTransactionStartButton"]')
