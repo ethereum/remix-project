@@ -86,7 +86,7 @@ export class Web3ProviderModule extends Plugin {
             try {
               resultFn(null, await provider.sendAsync(payload))
             } catch (e) {
-              resultFn(e.error ? new Error(e.error) : new Error(e))
+              resultFn(e.error ? e.error : e)
             }
           } else {
             reject(new Error('User denied permission'))

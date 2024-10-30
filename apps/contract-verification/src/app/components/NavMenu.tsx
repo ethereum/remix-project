@@ -11,7 +11,7 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, title }) => {
   return (
     <NavLink
       to={to}
-      className={({ isActive }) => 'text-decoration-none d-flex px-1 flex-column justify-content-center small ' + (isActive ? "bg-light" : "bg-transparent")}
+      className={({ isActive }) => 'text-decoration-none d-flex px-1 py-1 flex-column justify-content-center small ' + (isActive ? "bg-light border-top border-left border-right" : "border-0 bg-transparent")}
     >
       <span className=''>
         <span>{icon}</span>

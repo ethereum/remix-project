@@ -267,7 +267,7 @@ export class TxRunner {
       };
     } catch (error: any) {
       console.log(
-        `Send transaction failed: ${error.message} . if you use an injected provider, please check it is properly unlocked. `
+        `Send transaction failed: ${error.message || error.error} . if you use an injected provider, please check it is properly unlocked. `
       );
       return { error };
     }
