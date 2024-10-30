@@ -274,7 +274,7 @@ const tests = {
       .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .clearConsole()
       .clickInstance(0)
-      .clickFunction('giveRightToVote - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
+      .clickFunction('giveRightToVote - transact (not payable)', { types: 'address voter', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
       .saveScreenshot('./reports/screenshots/metamask_6.png')
       .pause(5000)
       .perform((done) => { // call delegate
