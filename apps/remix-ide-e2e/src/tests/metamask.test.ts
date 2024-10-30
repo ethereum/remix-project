@@ -26,9 +26,9 @@ const checkAlerts = function (browser: NightwatchBrowser) {
 }
 
 const localsCheck = {
-  _message: {
-    value: 'test',
-    type: 'string'
+  to: {
+    value: '0x4B0897B0513FDC7C541B6D9D7E929C4E5364D2DB',
+    type: 'address'
   }
 }
 
@@ -42,7 +42,7 @@ const tests = {
     return sources
   },
 
-  'Should connect to Sepolia Test Network using MetaMask #flaky #group2 #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Sepolia Test Network using MetaMask #group3 #group2 #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
       .useCss().switchBrowserTab(0)
@@ -164,34 +164,7 @@ const tests = {
         })
       })
   },
-  'Should debug Sepolia transaction with source highlighting MetaMask #group1': function (browser: NightwatchBrowser) {
-    let txhash
-    browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-      .clickLaunchIcon('pluginManager') // load debugger and source verification
-      // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
-      // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
-      .clickLaunchIcon('udapp')
-      .perform((done) => {
-        browser.getLastTransactionHash((hash) => {
-          txhash = hash
-          done()
-        })
-      })
-      .perform((done) => {
-        browser
-          .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
-          .clickLaunchIcon('debugger')
-          .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
-          .saveScreenshot('./reports/screenshots/metamask_debug.png')
-          .saveScreenshot('./reports/screenshots/metamask_2.png')
-          .click('*[data-id="debuggerTransactionStartButton"]')
-          .saveScreenshot('./reports/screenshots/metamask_3.png')
-          .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
-          .checkVariableDebug('soliditylocals', localsCheck)
-          .perform(() => done())
-      })
 
-  },
   'Should deploy faulty contract on Sepolia Test Network using MetaMask and show error in terminal #group1': function (browser: NightwatchBrowser) {
     browser
       .clearConsole()
@@ -263,6 +236,91 @@ const tests = {
       .pause(10000)
       .assert.containsText('*[data-id="udappNotifyModalDialogModalBody-react"]', 'You are about to create a transaction on Main Network. Confirm the details to send the info to your provider.')
       .modalFooterCancelClick('udappNotify')
+  },
+  // debug transaction
+  'Should deploy Ballot to Sepolia using metamask #group3 #flaky': function (browser: NightwatchBrowser) {
+    browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
+      .switchBrowserTab(1)
+      .click('[data-testid="network-display"]')
+      .click('div[data-testid="Sepolia"]') // switch to sepolia
+      .useCss().switchBrowserTab(0)
+      .openFile('contracts')
+      .openFile('contracts/3_Ballot.sol')
+      .clickLaunchIcon('udapp')
+      .clearConsole()
+      .clearTransactions()
+      .clickLaunchIcon('udapp')
+      .waitForElementVisible('input[placeholder="bytes32[] proposalNames"]')
+      .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
+      .click('*[data-id="Deploy - transact (not payable)"]') // deploy ballot
+      .pause(5000)
+      .perform((done) => {
+        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
+          browser
+            .maximizeWindow()
+            .hideMetaMaskPopup()
+            .saveScreenshot('./reports/screenshots/metamask_4.png')
+            .scrollAndClick('[data-testid="page-container-footer-next"]')
+            .click('[data-testid="page-container-footer-next"]') // approve the tx
+            .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .perform(() => done())
+        })
+      })
+      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+      .clearConsole()
+      .clickInstance(0)
+      .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
+      .pause(5000)
+      .perform((done) => { // call delegate
+        browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
+          browser
+            .maximizeWindow()
+            .hideMetaMaskPopup()
+            .saveScreenshot('./reports/screenshots/metamask_5.png')
+            .scrollAndClick('[data-testid="page-container-footer-next"]')
+            .click('[data-testid="page-container-footer-next"]') // approve the tx
+            .pause(2000)
+            .switchBrowserTab(0) // back to remix
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
+            .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
+            .perform(() => done())
+        })
+      })
+      .testFunction('last',
+        {
+          status: '0x1 Transaction mined and execution succeed',
+          'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
+        })
+  },
+  'Should debug Sepolia transaction with source highlighting MetaMask #group3': !function (browser: NightwatchBrowser) {
+    let txhash
+    browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+      .clickLaunchIcon('pluginManager') // load debugger and source verification
+      // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
+      // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
+      .clickLaunchIcon('udapp')
+      .perform((done) => {
+        browser.getLastTransactionHash((hash) => {
+          txhash = hash
+          done()
+        })
+      })
+      .perform((done) => {
+        browser
+          .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
+          .clickLaunchIcon('debugger')
+          .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
+          .saveScreenshot('./reports/screenshots/metamask_debug.png')
+          .saveScreenshot('./reports/screenshots/metamask_2.png')
+          .click('*[data-id="debuggerTransactionStartButton"]')
+          .saveScreenshot('./reports/screenshots/metamask_3.png')
+          .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
+          .checkVariableDebug('soliditylocals', localsCheck)
+          .perform(() => done())
+      })
+
   },
 }
 
