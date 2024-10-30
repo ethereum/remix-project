@@ -130,10 +130,14 @@ const tests = {
   'Should run transaction (greet function) on Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser.clearConsole().waitForElementPresent('*[data-id="remixIdeSidePanel"]')
-      .clickInstance(0)
       .clearConsole()
-      .waitForElementPresent('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
-      .click('*[data-id="pluginManagerSettingsDeployAndRunLLTxSendTransaction"]')
+      .waitForElementPresent('*[data-title="string _message"]')
+      .setValue('*[data-title="string _message"]', 'test')
+      .saveScreenshot('./reports/screenshots/metamask_tr7.png')
+      .waitForElementVisible('*[data-id="greet - transact (not payable)"]')
+      .saveScreenshot('./reports/screenshots/metamask_tr9.png')
+      .click('*[data-id="greet - transact (not payable)"]')
+      .saveScreenshot('./reports/screenshots/metamask_tr8.png')
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
