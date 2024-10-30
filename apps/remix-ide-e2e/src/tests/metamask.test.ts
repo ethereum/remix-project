@@ -254,6 +254,7 @@ const tests = {
       .setValue('input[placeholder="bytes32[] proposalNames"]', '["0x48656c6c6f20576f726c64210000000000000000000000000000000000000000"]')
       .click('*[data-id="Deploy - transact (not payable)"]') // deploy ballot
       .pause(5000)
+      .saveScreenshot('./reports/screenshots/metamask_before.png')
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
