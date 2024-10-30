@@ -261,8 +261,8 @@ const tests = {
             .hideMetaMaskPopup()
             .saveScreenshot('./reports/screenshots/metamask_4.png')
             .pause(3000)
+            .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .scrollAndClick('[data-testid="page-container-footer-next"]')
-            .click('[data-testid="page-container-footer-next"]') // approve the tx
             .pause(2000)
             .switchBrowserTab(0) // back to remix
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
@@ -271,7 +271,10 @@ const tests = {
             .perform(() => done())
         })
       })
-      .waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
+    },
+
+    'do transaction #group3': function (browser: NightwatchBrowser) {
+      browser.waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .clearConsole()
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
@@ -282,11 +285,10 @@ const tests = {
           browser
             .maximizeWindow()
             .hideMetaMaskPopup()
-            
             .pause(5000)
             .saveScreenshot('./reports/screenshots/metamask_7.png')
+            .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .scrollAndClick('[data-testid="page-container-footer-next"]')
-            // .click('[data-testid="page-container-footer-next"]') // approve the tx
             .pause(2000)
             .saveScreenshot('./reports/screenshots/metamask_8.png')
             .switchBrowserTab(0) // back to remix
