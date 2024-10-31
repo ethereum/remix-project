@@ -17,7 +17,7 @@ export type HardFork =
   | 'tangerineWhistle'
   | 'homestead'
 
-export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
+export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: string }> = new Map([
   ['cancun', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
@@ -36,7 +36,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 421614, name: "Arbitrum Sepolia" },
       { id: 534352, name: "Scroll" },
       { id: 11155111, name: "Sepolia" }
-    ]
+    ],
+    minCompilerVersion: "0.8.24"
   }],
   ['shanghai', {
     chainId: [
@@ -58,10 +59,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 1088, name: "Metis Andromeda Mainnet" },
       { id: 1284, name: "Moonbeam" },
       { id: 2000, name: "Dogechain Mainnet" },
-      { id: 42220, name: "Celo Mainnet" },
       { id: 42161, name: "Arbitrum One" },
       { id: 42170, name: "Arbitrum Nova" },
-      { id: 44787, name: "Celo Alfajores Testnet" },
       { id: 59144, name: "Linea Mainnet" },
       { id: 59141, name: "Linea Testnet" },
       { id: 59902, name: "Metis Sepolia Testnet" },
@@ -69,7 +68,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 11155111, name: "Sepolia" },
       { id: 11155420, name: "Optimism Sepolia Testnet" },
       { id: 1666600000, name: "Harmony Mainnet Shard 0" }
-    ]
+    ],
+    minCompilerVersion: "0.8.20"
   }],
   ['paris', {
     chainId: [
@@ -102,7 +102,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 11155111, name: "Sepolia" },
       { id: 11155420, name: "Optimism Sepolia Testnet" },
       { id: 1666600000, name: "Harmony Mainnet Shard 0" }
-    ]
+    ],
+    minCompilerVersion: "0.8.18"
   }],
   ['london', {
     chainId: [
@@ -121,7 +122,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 59144, name: "Linea Mainnet" },
       { id: 59141, name: "Linea Testnet" },
       { id: 11155111, name: "Sepolia" },
-    ]
+    ],
+    minCompilerVersion: "0.8.7"
   }],
   ['berlin', {
     chainId: [
@@ -140,7 +142,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 59144, name: "Linea Mainnet" },
       { id: 59141, name: "Linea Testnet" },
       { id: 11155111, name: "Sepolia" }
-    ]
+    ],
+    minCompilerVersion: "0.8.5"
   }],
   ['istanbul', {
     chainId: [
@@ -159,44 +162,51 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[] }> = new Map([
       { id: 59144, name: "Linea Mainnet" },
       { id: 59141, name: "Linea Testnet" },
       { id: 11155111, name: "Sepolia" }
-    ]
+    ],
+    minCompilerVersion: "0.5.14"
   }],
   ['petersburg', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
-    ]
+    ],
+    minCompilerVersion: "0.5.5"
   }],
   ['constantinople', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
-    ]
+    ],
+    minCompilerVersion: "0.5.5"
   }],
   ['byzantium', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" }
-    ]
+    ],
+    minCompilerVersion: "0.4.21"
   }],
   ['spuriousDragon', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" }
-    ]
+    ],
+    minCompilerVersion: "0.4.9"
   }],
   ['tangerineWhistle', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" }
-    ]
+    ],
+    minCompilerVersion: "0.4.0"
   }],
   ['homestead', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
-    ]
-  }]
+    ],
+    minCompilerVersion: "0.1.2"
+  }],
 ])
 
 export function getCompatibleChains(fork: HardFork): ChainInfo[] {

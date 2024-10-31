@@ -110,25 +110,24 @@ export function RunTabUI(props: RunTabProps) {
     return getCompatibleChain(evmVersion ?? 'cancun', targetChainId)
   }
 
-  const checkEvmChainCompatibilityOkFunction = async (targetChainId: number, fetchDetails: any, currentFile: string) => {
-    () => {
-      const compatibleChain = returnCompatibleChain(fetchDetails.evmVersion, targetChainId)
-      console.log('compatibleChain', compatibleChain)
-      plugin.call('manager', 'activatePlugin', 'environmentExplorer')
-      plugin.call('tabs', 'focus', 'environmentExplorer')
-      plugin.call('environmentExplorer', 'setChain', compatibleChain)
-      plugin.call('environmentExplorer', 'setEvmVersion', 'paris')
-      plugin.call('solidity', 'compile', currentFile)
+  const checkEvmChainCompatibilityOkFunction = async (targetChainId: number, fetchDetails: any) => {
+    const compilerParams = {
+      evmVersion: 'paris',
+      optimize: false,
+      language: 'Solidity',
+      runs: 200,
+      version: '0.8.27+commit.40a35a09'
     }
+    await plugin.call('solidity', 'setCompilerConfig', compilerParams)
+    const compilerState = await plugin.call('solidity', 'getCompilerState')
+    console.log('compilerState', compilerState)
+    const currentFile = await plugin.call('fileManager', 'getCurrentFile')
+    await plugin.call('solidity', 'compile', currentFile)
   }
 
   const checkEvmChainCompatibilityCancelFunction = async (targetChainId: number, fetchDetails: any, currentFile: string) => {
     () => {
-      plugin.call('manager', 'activatePlugin', 'environmentExplorer')
-      plugin.call('tabs', 'focus', 'environmentExplorer')
-      plugin.call('environmentExplorer', 'setChain', targetChainId)
-      plugin.call('environmentExplorer', 'setEvmVersion', fetchDetails.evmVersion)
-      plugin.call('solidity', 'compile', currentFile)
+      console.log('cancel')
     }
   }
 
@@ -149,12 +148,19 @@ export function RunTabUI(props: RunTabProps) {
         console.log('chain is undefined')
         //show modal
         plugin.call('notification', 'modal', {
-          id: 'evm-incompatible',
+          id: 'evm-chainId-incompatible',
           title: 'Incompatible EVM - ChainId Detected',
-          message: `The selected chain is not compatible with the selected compiler version. Please select a one of the two options below.`,
+          message: <div className="px-3">
+            <p>The selected chain is not compatible with the selected EVM version. Please select a one of the options below.</p>
+            <ul className="px-3">
+              <li>Have Remix switch to a compatible EVM version for this chain and recompile the contract.</li>
+              <li>Cancel to keep the current EVM version.</li>
+            </ul>
+            <p>To manually change the EVM version, go to the Advanced Configurations section of the Solidity compiler.</p>
+          </div>,
           modalType: 'modal',
           okLabel: 'Switch EVM and Recompile',
-          cancelLabel: 'Do not Switch EVM',
+          cancelLabel: 'Cancel',
           okFn: checkEvmChainCompatibilityOkFunction,
           cancelFn: checkEvmChainCompatibilityCancelFunction
         })
