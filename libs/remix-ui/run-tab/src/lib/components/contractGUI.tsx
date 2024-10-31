@@ -172,20 +172,9 @@ export function ContractGUI(props: ContractGUIProps) {
     }
   }
 
-  const checkUrlLocationForEvmVersion = async () => {
-    // if the evmVersion is not provided in the url, we use the default value
-    // and the default would be the latest evmFork, which is now cancun.
-    // checking both url and compiler details
-    const url = window.location.href
-    const regVersion = url.match(/evmVersion=([a-zA-Z]+)/)?.[1]
-    const fetched = await props.getCompilerDetails()
-    return { regVersion, fetched }
-  }
-
   const handleActionClick = async () => {
     props.getVersion()
-    const { regVersion, fetched } = await checkUrlLocationForEvmVersion()
-    console.log('checkUrlLocationForEvmVersion', { regVersion, fetched })
+    await props.getCompilerDetails()
     if (deployState.deploy) {
       const proxyInitializeString = getMultiValsString(initializeFields.current)
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
