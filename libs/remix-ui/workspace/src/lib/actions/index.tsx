@@ -530,7 +530,7 @@ export const signTypedData = async (path: string) => {
     plugin.call('terminal', 'log', { type: 'log', value: `${path} signature using ${settings.selectedAccount} : ${result}` })
   } catch (e) {
     console.error(e)
-    plugin.call('terminal', 'log', { type: 'error', value: `error while signing ${path}: ${e.message}` })
+    plugin.call('terminal', 'log', { type: 'error', value: `error while signing ${path}: ${e.message || e}` })
     dispatch(displayPopUp(e.message))
   }
 }
