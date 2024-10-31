@@ -332,8 +332,9 @@ const tests = {
         browser
           .waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
           .clickLaunchIcon('debugger')
+          .waitForElementVisible('*[data-id="debuggerTransactionInput"]')
           .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
-          .pause()
+          .pause(2000)
           .saveScreenshot('./reports/screenshots/metamask_debug.png')
           .saveScreenshot('./reports/screenshots/metamask_2.png')
           .click('*[data-id="debuggerTransactionStartButton"]')
@@ -344,7 +345,7 @@ const tests = {
       })
 
   },
-  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group4': !function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group3': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser
       .executeScriptInTerminal('web3.eth.getAccounts()')
