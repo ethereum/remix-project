@@ -364,19 +364,21 @@ const tests = {
       .getEditorValue((content) => {
         browser.assert.ok(content.indexOf('"primaryType": "AuthRequest",') !== -1, 'EIP 712 data file must be opened')
       })
+      .setEditorValue(JSON.stringify(EIP712_Example, null, '\t'))
+      .pause(5000)
       .clickLaunchIcon('filePanel')
       .rightClick('li[data-id="treeViewLitreeViewItemEIP-712-data.json"]')
       .click('*[data-id="contextMenuItemsignTypedData"]')
-      .pause()
+      .pause(1000)
       .perform((done) => { // call delegate
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
             .maximizeWindow()
             .hideMetaMaskPopup()
             .saveScreenshot('./reports/screenshots/metamask_6.png')
-            .waitForElementPresent('button[aria-label="Scroll down"]', 60000)
-            .click('button[aria-label="Scroll down"]') // scroll down
-            .click('button[data-testid="confirm-footer-button"]') // confirm
+            .pause()
+            .waitForElementPresent('[data-testid="page-container-footer-next"]')
+            .scrollAndClick('button[data-testid="page-container-footer-next"]') // confirm
             .switchBrowserTab(0) // back to remix
             .perform(() => done())
         })
@@ -397,6 +399,32 @@ if (!checkBrowserIsChrome(browser)) {
   };
 }
 
+
+const EIP712_Example = {
+  domain: {
+    chainId: 11155111,
+    name: "Example App",
+    verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    version: "1",
+  },
+  message: {
+    prompt: "Welcome! In order to authenticate to this website, sign this request and your public address will be sent to the server in a verifiable way.",
+    createdAt: 1718570375196,
+  },
+  primaryType: 'AuthRequest',
+  types: {
+    EIP712Domain: [
+      { name: 'name', type: 'string' },
+      { name: 'version', type: 'string' },
+      { name: 'chainId', type: 'uint256' },
+      { name: 'verifyingContract', type: 'address' },
+    ],
+    AuthRequest: [
+      { name: 'prompt', type: 'string' },
+      { name: 'createdAt', type: 'uint256' },
+    ],
+  },
+}
 
 
 const sources = [
