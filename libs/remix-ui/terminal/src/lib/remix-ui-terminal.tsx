@@ -245,7 +245,7 @@ export const RemixUiTerminal = (props: RemixUiTerminalProps) => {
         await call('remixAI', 'solidity_answer', script) // No streaming supported in terminal
         _paq.push(['trackEvent', 'ai', 'remixAI', 'askFromTerminal'])
       } else {
-        await call('scriptRunner', 'execute', script)
+        await call('scriptRunnerBridge', 'execute', script)
       }
       done()
     } catch (error) {
