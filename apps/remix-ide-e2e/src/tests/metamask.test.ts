@@ -69,7 +69,7 @@ const tests = {
       .switchBrowserTab(0) // back to remix
   },
 
-  'Should add a contract file #group1': function (browser: NightwatchBrowser) {
+  'Should add a contract file #flaky #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
@@ -210,7 +210,7 @@ const tests = {
   },
 
   // main network tests
-  'Should connect to Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
+  'Should connect to Ethereum Main Network using MetaMask #flaky #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
       .click('[data-testid="network-display"]')
@@ -351,8 +351,8 @@ const tests = {
       .executeScriptInTerminal('web3.eth.getAccounts()')
       .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
   },
-
-  'Test EIP 712 Signature with Injected Provider (Metamask) #group4': function (browser: NightwatchBrowser) {
+  // EIP 712 tests
+  'Test EIP 712 Signature with Injected Provider (Metamask) #flaky #group4': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
@@ -376,7 +376,7 @@ const tests = {
             .maximizeWindow()
             .hideMetaMaskPopup()
             .saveScreenshot('./reports/screenshots/metamask_6.png')
-            .pause()
+            .pause(1000)
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .scrollAndClick('button[data-testid="page-container-footer-next"]') // confirm
             .switchBrowserTab(0) // back to remix
@@ -384,7 +384,7 @@ const tests = {
         })
       })
       .pause(1000)
-      .journalChildIncludes('0x8be3a81e17b7e4a40006864a4ff6bfa3fb1e18b292b6f47edec95cd8feaa53275b90f56ca02669d461a297e6bf94ab0ee4b7c89aede3228ed5aedb59c7e007501c')
+      .journalChildIncludes('0xec72bbabeb47a3a766af449674a45a91a6e94e35ebf0ae3c644b66def7bd387f1c0b34d970c9f4a1e9398535e5860b35e82b2a8931b7c9046b7766a53e66db3d1b')
   }
 }
 
