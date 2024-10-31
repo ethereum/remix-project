@@ -37,7 +37,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 534352, name: "Scroll" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.8.24"
+    minCompilerVersion: "0.8.24+commit.e11b9ed9"
   }],
   ['shanghai', {
     chainId: [
@@ -69,7 +69,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 11155420, name: "Optimism Sepolia Testnet" },
       { id: 1666600000, name: "Harmony Mainnet Shard 0" }
     ],
-    minCompilerVersion: "0.8.20"
+    minCompilerVersion: "0.8.20+commit.a1b79de6"
   }],
   ['paris', {
     chainId: [
@@ -103,7 +103,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 11155420, name: "Optimism Sepolia Testnet" },
       { id: 1666600000, name: "Harmony Mainnet Shard 0" }
     ],
-    minCompilerVersion: "0.8.18"
+    minCompilerVersion: "0.8.18+commit.87f61d96"
   }],
   ['london', {
     chainId: [
@@ -123,7 +123,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59141, name: "Linea Testnet" },
       { id: 11155111, name: "Sepolia" },
     ],
-    minCompilerVersion: "0.8.7"
+    minCompilerVersion: "0.8.7+commit.e28d00a7"
   }],
   ['berlin', {
     chainId: [
@@ -143,7 +143,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59141, name: "Linea Testnet" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.8.5"
+    minCompilerVersion: "0.8.5+commit.a4f2e591"
   }],
   ['istanbul', {
     chainId: [
@@ -163,7 +163,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59141, name: "Linea Testnet" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.5.14"
+    minCompilerVersion: "0.5.14+commit.01f1aaa4"
   }],
   ['petersburg', {
     chainId: [
@@ -171,7 +171,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.5.5"
+    minCompilerVersion: "0.5.5+commit.47a71e8f"
   }],
   ['constantinople', {
     chainId: [
@@ -179,25 +179,25 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.5.5"
+    minCompilerVersion: "0.5.5+commit.47a71e8f"
   }],
   ['byzantium', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" }
     ],
-    minCompilerVersion: "0.4.21"
+    minCompilerVersion: "0.4.21+commit.dfe3193c"
   }],
   ['spuriousDragon', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" }
     ],
-    minCompilerVersion: "0.4.9"
+    minCompilerVersion: "0.4.9+commit.364da425"
   }],
   ['tangerineWhistle', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" }
     ],
-    minCompilerVersion: "0.4.0"
+    minCompilerVersion: "0.4.0+commit.acd334c9"
   }],
   ['homestead', {
     chainId: [
@@ -205,7 +205,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.1.2"
+    minCompilerVersion: "0.1.2+commit.d0d36e3"
   }],
 ])
 
