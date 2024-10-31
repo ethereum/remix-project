@@ -260,7 +260,7 @@ export class RemixAppManager extends PluginManager {
 
   isRequired(name) {
     // excluding internal use plugins
-    return requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
+    return requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
   }
 
   async registeredPlugins() {
