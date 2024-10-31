@@ -25,6 +25,7 @@ let requiredModules = [
   'blockchain',
   'web3Provider',
   'scriptRunner',
+  'scriptRunnerBridge',
   'fetchAndCompile',
   'mainPanel',
   'hiddenPanel',
@@ -109,6 +110,10 @@ const isVM = (name) => {
   return name.startsWith('vm')
 }
 
+const isScriptRunner = (name) => {
+  return name.startsWith('scriptRunner')
+}
+
 export function isNative(name) {
 
   // nativePlugin allows to bypass the permission request
@@ -142,7 +147,7 @@ export function isNative(name) {
     'walletconnect',
     'contract-verification'
   ]
-  return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name)
+  return nativePlugins.includes(name) || requiredModules.includes(name) || isInjectedProvider(name) || isVM(name) || isScriptRunner(name)
 }
 
 /**
@@ -195,6 +200,8 @@ export class RemixAppManager extends PluginManager {
         }
       }
       await this.toggleActive(name)
+    }else{
+      console.log('cannot deactivate', name)
     }
   }
 
@@ -302,6 +309,7 @@ export class RemixAppManager extends PluginManager {
     return plugins.map(plugin => {
       if (plugin.name === 'dgit' && Registry.getInstance().get('platform').api.isDesktop()) { plugin.url = 'https://dgit4-76cc9.web.app/' }
       if (plugin.name === testPluginName) plugin.url = testPluginUrl
+      //console.log('plugin', plugin)
       return new IframePlugin(plugin)
     })
   }
