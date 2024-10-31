@@ -166,7 +166,7 @@ export class TxRunnerWeb3 {
         .catch(err => {
           if (err && err.error && err.error.indexOf('Invalid JSON RPC response') !== -1) {
             // // @todo(#378) this should be removed when https://github.com/WalletConnect/walletconnect-monorepo/issues/334 is fixed
-            callback(new Error('Gas estimation failed because of an unknown internal error. This may indicated that the transaction will fail.'))
+            callback(new Error('Gas estimation failed because of an unknown internal error. This indicates that the transaction could fail.'))
             return
           }
           err = network.name === 'VM' ? null : err // just send the tx if "VM"
