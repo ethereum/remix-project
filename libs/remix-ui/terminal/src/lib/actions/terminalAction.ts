@@ -79,28 +79,28 @@ export const filterFnAction = (name: string, filterFn, dispatch: React.Dispatch<
 }
 
 export const registerLogScriptRunnerAction = (on, commandName, commandFn, dispatch: React.Dispatch<any>) => {
-  on('scriptRunner', commandName, (msg) => {
+  on('scriptRunnerBridge', commandName, (msg) => {
     commandFn.log.apply(commandFn, msg.data) // eslint-disable-line
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
 export const registerInfoScriptRunnerAction = (on, commandName, commandFn, dispatch: React.Dispatch<any>) => {
-  on('scriptRunner', commandName, (msg) => {
+  on('scriptRunnerBridge', commandName, (msg) => {
     commandFn.info.apply(commandFn, msg.data) // eslint-disable-line
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
 export const registerWarnScriptRunnerAction = (on, commandName, commandFn, dispatch: React.Dispatch<any>) => {
-  on('scriptRunner', commandName, (msg) => {
+  on('scriptRunnerBridge', commandName, (msg) => {
     commandFn.warn.apply(commandFn, msg.data) // eslint-disable-line
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })
 }
 
 export const registerErrorScriptRunnerAction = (on, commandName, commandFn, dispatch: React.Dispatch<any>) => {
-  on('scriptRunner', commandName, (msg) => {
+  on('scriptRunnerBridge', commandName, (msg) => {
     commandFn.error.apply(commandFn, msg.data) // eslint-disable-line
     dispatch({ type: commandName, payload: { commandFn, message: msg.data } })
   })

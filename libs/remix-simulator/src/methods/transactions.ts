@@ -308,7 +308,6 @@ export class Transactions {
 
       const txBlock = this.vmContext.blockByTxHash[receipt.transactionHash]
       const tx = this.vmContext.txByHash[receipt.transactionHash]
-
       // TODO: params to add later
       const r: Record<string, unknown> = {
         blockHash: bytesToHex(txBlock.hash()),
@@ -322,11 +321,10 @@ export class Transactions {
         input: receipt.input,
         nonce: bigIntToHex(tx.nonce),
         transactionIndex: this.TX_INDEX,
-        value: bigIntToHex(tx.value)
-        // "value":"0xf3dbb76162000" // 4290000000000000
-        // "v": "0x25", // 37
-        // "r": "0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea",
-        // "s": "0x4ba69724e8f69de52f0125ad8b3c5c2cef33019bac3249e2c0a2192766d1721c"
+        value: bigIntToHex(tx.value),
+        v: bigIntToHex(tx.v),
+        r: bigIntToHex(tx.r),
+        s: bigIntToHex(tx.s)
       }
 
       if (receipt.to) {
