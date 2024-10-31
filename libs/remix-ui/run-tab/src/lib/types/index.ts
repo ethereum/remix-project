@@ -125,6 +125,7 @@ export interface RunTabState {
 export interface SettingsProps {
   runTabPlugin: RunTab,
   selectExEnv: string,
+  EvaluateEnvironmentSelection: any
   accounts: {
     loadedAccounts: Record<string, any>,
     selectedAccount: string,
@@ -159,6 +160,7 @@ export interface SettingsProps {
 }
 
 export interface EnvironmentProps {
+  checkSelectionCorrectness: any
   runTabPlugin: RunTab,
   selectedEnv: string,
   providers: {

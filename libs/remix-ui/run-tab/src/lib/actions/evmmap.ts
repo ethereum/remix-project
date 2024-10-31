@@ -3,6 +3,12 @@ export type ChainInfo = {
   name: string
 }
 
+export type ChainCompatibleInfo = {
+  chain: ChainInfo
+  minCompilerVersion: string
+  evmVersion: HardFork
+}
+
 export type HardFork =
   | 'cancun'
   | 'shanghai'
@@ -37,7 +43,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 534352, name: "Scroll" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.8.24+commit.e11b9ed9"
+    minCompilerVersion: "0.8.24+commit.e11b9ed9",
+    evmVersion: 'cancun'
   }],
   ['shanghai', {
     chainId: [
@@ -65,11 +72,13 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59141, name: "Linea Testnet" },
       { id: 59902, name: "Metis Sepolia Testnet" },
       { id: 421614, name: "Arbitrum Sepolia" },
+      { id: 534352, name: "Scroll" },
       { id: 11155111, name: "Sepolia" },
       { id: 11155420, name: "Optimism Sepolia Testnet" },
       { id: 1666600000, name: "Harmony Mainnet Shard 0" }
     ],
-    minCompilerVersion: "0.8.20+commit.a1b79de6"
+    minCompilerVersion: "0.8.20+commit.a1b79de6",
+    evmVersion: 'shanghai'
   }],
   ['paris', {
     chainId: [
@@ -99,11 +108,13 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59141, name: "Linea Testnet" },
       { id: 59902, name: "Metis Sepolia Testnet" },
       { id: 421614, name: "Arbitrum Sepolia" },
+      { id: 534352, name: "Scroll" },
       { id: 11155111, name: "Sepolia" },
       { id: 11155420, name: "Optimism Sepolia Testnet" },
       { id: 1666600000, name: "Harmony Mainnet Shard 0" }
     ],
-    minCompilerVersion: "0.8.18+commit.87f61d96"
+    minCompilerVersion: "0.8.18+commit.87f61d96",
+    evmVersion: 'paris'
   }],
   ['london', {
     chainId: [
@@ -123,7 +134,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59141, name: "Linea Testnet" },
       { id: 11155111, name: "Sepolia" },
     ],
-    minCompilerVersion: "0.8.7+commit.e28d00a7"
+    minCompilerVersion: "0.8.7+commit.e28d00a7",
+    evmVersion: 'london'
   }],
   ['berlin', {
     chainId: [
@@ -143,7 +155,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59141, name: "Linea Testnet" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.8.5+commit.a4f2e591"
+    minCompilerVersion: "0.8.5+commit.a4f2e591",
+    evmVersion: 'berlin'
   }],
   ['istanbul', {
     chainId: [
@@ -163,7 +176,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59141, name: "Linea Testnet" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.5.14+commit.01f1aaa4"
+    minCompilerVersion: "0.5.14+commit.01f1aaa4",
+    evmVersion: 'istanbul'
   }],
   ['petersburg', {
     chainId: [
@@ -171,7 +185,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.5.5+commit.47a71e8f"
+    minCompilerVersion: "0.5.5+commit.47a71e8f",
+    evmVersion: 'petersburg'
   }],
   ['constantinople', {
     chainId: [
@@ -179,25 +194,29 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.5.5+commit.47a71e8f"
+    minCompilerVersion: "0.5.5+commit.47a71e8f",
+    evmVersion: 'constantinople'
   }],
   ['byzantium', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" }
     ],
-    minCompilerVersion: "0.4.21+commit.dfe3193c"
+    minCompilerVersion: "0.4.21+commit.dfe3193c",
+    evmVersion: 'byzantium'
   }],
   ['spuriousDragon', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" }
     ],
-    minCompilerVersion: "0.4.9+commit.364da425"
+    minCompilerVersion: "0.4.9+commit.364da425",
+    evmVersion: 'spuriousDragon'
   }],
   ['tangerineWhistle', {
     chainId: [
       { id: 1, name: "Ethereum Mainnet" }
     ],
-    minCompilerVersion: "0.4.0+commit.acd334c9"
+    minCompilerVersion: "0.4.0+commit.acd334c9",
+    evmVersion: 'tangerineWhistle'
   }],
   ['homestead', {
     chainId: [
@@ -205,7 +224,8 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 5, name: "Goerli" },
       { id: 11155111, name: "Sepolia" }
     ],
-    minCompilerVersion: "0.1.2+commit.d0d36e3"
+    minCompilerVersion: "0.1.2+commit.d0d36e3",
+    evmVersion: 'homestead'
   }],
 ])
 
@@ -223,9 +243,21 @@ export function isChainCompatibleWithAnyFork(chainId: number, forks: HardFork[])
   return forks.some(fork => isChainCompatible(fork, chainId))
 }
 
-export function getCompatibleChain(fork: HardFork, chainId: number): ChainInfo | undefined {
-  const compatibleChains = getCompatibleChains(fork)
-  console.log('fork in getCompatibleChain', fork)
-  console.log('compatibleChains', compatibleChains)
-  return compatibleChains.find(chain => chain.id === chainId)
+export function getCompatibleChain(
+  fork: HardFork,
+  chainId: number
+): ChainCompatibleInfo | undefined {
+  const forkData = evmMap.get(fork)
+  if (!forkData) return undefined
+
+  const compatibleChain = forkData.chainId.find(chain => chain.id === chainId)
+  if (compatibleChain) {
+    return {
+      chain: compatibleChain,
+      minCompilerVersion: forkData.minCompilerVersion,
+      evmVersion: fork
+    }
+  }
+
+  return undefined;
 }

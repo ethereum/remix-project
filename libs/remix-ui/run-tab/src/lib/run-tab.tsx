@@ -56,7 +56,7 @@ import { PassphrasePrompt } from './components/passphrase'
 import { MainnetPrompt } from './components/mainnet'
 import { ScenarioPrompt } from './components/scenario'
 import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
-import { getCompatibleChain, getCompatibleChains, HardFork, isChainCompatible, isChainCompatibleWithAnyFork } from './actions/evmmap'
+import { ChainCompatibleInfo, getCompatibleChain, getCompatibleChains, HardFork, isChainCompatible, isChainCompatibleWithAnyFork } from './actions/evmmap'
 
 export function RunTabUI(props: RunTabProps) {
   const { plugin } = props
@@ -107,45 +107,34 @@ export function RunTabUI(props: RunTabProps) {
   const getCompilerDetails = async () => await checkEvmChainCompatibility()
 
   const returnCompatibleChain = async (evmVersion: HardFork, targetChainId: number) => {
-    return getCompatibleChain(evmVersion ?? 'cancun', targetChainId)
+    return getCompatibleChain(evmVersion ?? 'paris', targetChainId) // using paris evm as a default fallback version
   }
 
-  const checkEvmChainCompatibilityOkFunction = async (targetChainId: number, fetchDetails: any) => {
+  const checkEvmChainCompatibilityOkFunction = async (fetchDetails: ChainCompatibleInfo) => {
     const compilerParams = {
-      evmVersion: 'paris',
+      evmVersion: fetchDetails.evmVersion,
       optimize: false,
       language: 'Solidity',
-      runs: 200,
-      version: '0.8.27+commit.40a35a09'
+      runs: '200',
+      version: fetchDetails.minCompilerVersion
     }
     await plugin.call('solidity', 'setCompilerConfig', compilerParams)
-    const compilerState = await plugin.call('solidity', 'getCompilerState')
-    console.log('compilerState', compilerState)
     const currentFile = await plugin.call('fileManager', 'getCurrentFile')
     await plugin.call('solidity', 'compile', currentFile)
   }
 
-  const checkEvmChainCompatibilityCancelFunction = async (targetChainId: number, fetchDetails: any, currentFile: string) => {
-    () => {
-      console.log('cancel')
-    }
-  }
-
   const checkEvmChainCompatibility = async () => {
-    const isVm = await plugin.call('blockchain', 'getProvider') // vms are exempt from this treatment
-    const fetchDetails = await plugin.call('solidity', 'getCompilerQueryParameters') //compiler details including evmVersion
-    console.log('isVm', isVm)
-    if (!isVm.startsWith('vm')) {
+    const isVm = await plugin.call('blockchain', 'getProvider')
+    const fetchDetails = await plugin.call('solidity', 'getCompilerQueryParameters')
+    const compilerState = await plugin.call('solidity', 'getCompilerState')
+    console.log('compilerState', compilerState)
+    console.log('runTab', runTab)
+    if (!isVm.startsWith('vm') && compilerState.target !== null) { //vms are exempt from this treatment & if no contract file is open, don't do anything
       const targetChainId = runTab.chainId ? parseInt(runTab.chainId) : runTab.chainId
-      console.log('targetChainId', runTab.chainId)
-
       const IsCompatible = isChainCompatible(fetchDetails.evmVersion ?? 'cancun', targetChainId)
-      console.log('evmVersion matches everywhere', fetchDetails.evmVersion)
-      console.log('compiler stuff', fetchDetails)
-      console.log('chain is compatible', IsCompatible)
-      const currentFile = await plugin.call('fileManager', 'getCurrentFile')
       if (!IsCompatible) {
-        console.log('chain is undefined')
+        const chain = await returnCompatibleChain(fetchDetails.evmVersion, targetChainId)
+        console.log('chain obtained', { chain, targetChainId, fetchDetails })
         //show modal
         plugin.call('notification', 'modal', {
           id: 'evm-chainId-incompatible',
@@ -161,8 +150,8 @@ export function RunTabUI(props: RunTabProps) {
           modalType: 'modal',
           okLabel: 'Switch EVM and Recompile',
           cancelLabel: 'Cancel',
-          okFn: checkEvmChainCompatibilityOkFunction,
-          cancelFn: checkEvmChainCompatibilityCancelFunction
+          okFn: () => checkEvmChainCompatibilityOkFunction(chain),
+          cancelFn: () => {}
         })
       }
     }
@@ -351,6 +340,7 @@ export function RunTabUI(props: RunTabProps) {
             networkName={runTab.networkName}
             personalMode={runTab.personalMode}
             selectExEnv={runTab.selectExEnv}
+            EvaluateEnvironmentSelection={checkEvmChainCompatibility}
             accounts={runTab.accounts}
             setAccount={setAccountAddress}
             setUnit={setUnitValue}
