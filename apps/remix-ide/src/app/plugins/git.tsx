@@ -8,7 +8,7 @@ const profile = {
   name: 'dgit',
   displayName: 'Git',
   desciption: 'Git plugin for Remix',
-  methods: ['pull', 'track', 'diff', 'clone', 'open'],
+  methods: ['open', 'init'],
   events: [''],
   version: packageJson.version,
   maintainedBy: 'Remix',
@@ -32,6 +32,10 @@ export class GitPlugin extends ViewPlugin {
 
   async open(panel:string) {
     this.emit('openPanel', panel)
+  }
+
+  async init() {
+    this.emit('init')
   }
 
   render() {
