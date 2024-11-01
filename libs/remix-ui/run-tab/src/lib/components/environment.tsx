@@ -67,7 +67,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
               <Dropdown.Item
                 key={name}
                 onClick={async () => {
-                  await props.checkSelectionCorrectness()
                   handleChangeExEnv(name)
                 }}
                 data-id={`dropdown-item-${name}`}
