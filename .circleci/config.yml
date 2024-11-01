@@ -890,7 +890,9 @@ workflows:
           requires:
             - lint
             - remix-libs
-            - remix-ide-browser
+            - browser-tests
+            - metamask
+            - metamask
             - plugins
             
       - predeploy:
@@ -903,7 +905,8 @@ workflows:
           requires:
             - lint
             - remix-libs
-            - remix-ide-browser
+            - browser-tests
+            - metamask
             - plugins
             - predeploy
           filters:
@@ -915,7 +918,8 @@ workflows:
           requires:
             - lint
             - remix-libs
-            - remix-ide-browser
+            - browser-tests
+            - metamask
             - plugins
             - predeploy
           filters:
@@ -927,7 +931,8 @@ workflows:
           requires:
             - lint
             - remix-libs
-            - remix-ide-browser
+            - browser-tests
+            - metamask
             - plugins
             - predeploy
           filters:
