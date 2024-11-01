@@ -64,7 +64,7 @@ export function getLogInputSignalsPath() {
     return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
 
   case 'darwin':
-    return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
+    return path.join(app.getAppPath(), 'log_input_signals.txt')
 
   case 'linux':
     return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
