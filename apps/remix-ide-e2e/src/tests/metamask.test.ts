@@ -67,7 +67,7 @@ const tests = {
       .switchBrowserTab(0) // back to remix
   },
 
-  'Should add a contract file #flaky #group1': function (browser: NightwatchBrowser) {
+  'Should add a contract file #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
@@ -193,7 +193,7 @@ const tests = {
   },
 
   // main network tests
-  'Should connect to Ethereum Main Network using MetaMask #flaky #group2': function (browser: NightwatchBrowser) {
+  'Should connect to Ethereum Main Network using MetaMask #group2': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
       .click('[data-testid="network-display"]')
@@ -324,7 +324,7 @@ const tests = {
       .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
   },
   // EIP 712 tests
-  'Test EIP 712 Signature with Injected Provider (Metamask) #flaky #group4': function (browser: NightwatchBrowser) {
+  'Test EIP 712 Signature with Injected Provider (Metamask) #group4': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
