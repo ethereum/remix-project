@@ -993,7 +993,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.json.jsonDefaults.setDiagnosticsOptions({ enableSchemaRequest: true })
 
     // hide the module resolution error. We have to remove this when we know how to properly resolve imports.
-    monacoRef.current.languages.typescript.typescriptDefaults.setDiagnosticsOptions({ diagnosticCodesToIgnore: [2792] })
+    monacoRef.current.languages.typescript.typescriptDefaults.setDiagnosticsOptions({ diagnosticCodesToIgnore: [2792]})
 
     // Register a tokens provider for the language
     monacoRef.current.languages.setMonarchTokensProvider('remix-solidity', solidityTokensProvider as any)
