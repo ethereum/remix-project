@@ -863,7 +863,7 @@ workflows:
                 parallelism: 1
 
       - remix-ide-browser:
-          name: remix-ide-browser-chrome-firefox
+          alias: remix-ide-browser-tests
           requires:
             - build
           matrix:
@@ -874,7 +874,7 @@ workflows:
               jobsize: ["10"]
               parallelism: [15]
       - remix-ide-browser:
-          name: remix-ide-browser-chrome-metamask
+          alias: metamask
           requires:
             - build
           matrix:
