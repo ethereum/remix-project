@@ -327,6 +327,7 @@ export function UniversalDappUI(props: UdappProps) {
                   <ContractGUI
                     getVersion={props.getVersion}
                     getCompilerDetails={props.getCompilerDetails}
+                    evmCheckComplete={false}
                     funcABI={funcABI}
                     clickCallBack={(valArray: {name: string; type: string}[], inputsValues: string) => {
                       runTransaction(lookupOnly, funcABI, valArray, inputsValues, index)
