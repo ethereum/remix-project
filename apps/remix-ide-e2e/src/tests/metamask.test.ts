@@ -67,7 +67,7 @@ const tests = {
       .switchBrowserTab(0) // back to remix
   },
 
-  'Should add a contract file #flaky #group1': function (browser: NightwatchBrowser) {
+  'Should add a contract file #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementVisible('*[data-id="remixIdeSidePanel"]')
       .clickLaunchIcon('filePanel')
       .addFile('Greet.sol', sources[0]['Greet.sol'])
