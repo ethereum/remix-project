@@ -640,7 +640,7 @@ jobs:
         type: string
       jobsize:
         type: string
-    parallelism: 15
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - attach_workspace:
@@ -781,6 +781,20 @@ workflows:
               script: ["flaky.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
+              parallelism: 10
+  run_flaky_tests:
+    jobs:
+      - build
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            parameters:
+              browser: ["chrome"]
+              script: ["metamask.sh"]
+              job: ["nogroup"]
+              jobsize: ["1"]
+              parallelism: 1
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -867,6 +881,7 @@ workflows:
               script: ["browser_test.sh"]
               job: ["0","1","2","3","4","5","6","7","8","9"]
               jobsize: ["10"]
+              parallelism: 15
       - tests-passed:
           requires:
             - lint
