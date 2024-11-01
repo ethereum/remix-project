@@ -640,6 +640,9 @@ jobs:
         type: string
       jobsize:
         type: string
+      parallelism:
+        type: integer
+        default: 1
     parallelism: << parameters.parallelism >>
     steps:
       - checkout
