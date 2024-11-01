@@ -124,12 +124,10 @@ export function RunTabUI(props: RunTabProps) {
   }
 
   const checkEvmChainCompatibility = async () => {
-    const isVm = await plugin.call('blockchain', 'getProvider')
     const fetchDetails = await plugin.call('solidity', 'getCompilerQueryParameters')
     const compilerState = await plugin.call('solidity', 'getCompilerState')
-    console.log('compilerState', compilerState)
-    console.log('runTab', runTab)
-    if (!isVm.startsWith('vm') && compilerState.target !== null) { //vms are exempt from this treatment & if no contract file is open, don't do anything
+    // if no contract file is open, don't do anything
+    if (compilerState.target !== null) {
       const targetChainId = runTab.chainId ? parseInt(runTab.chainId) : runTab.chainId
       const IsCompatible = isChainCompatible(fetchDetails.evmVersion ?? 'cancun', targetChainId)
       if (!IsCompatible) {
