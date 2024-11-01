@@ -234,6 +234,8 @@ export type MainnetPrompt = (
 export interface ContractDropdownProps {
   getCompilerDetails: () => Promise<any>
   evmCheckComplete: boolean,
+  plugin: RunTab,
+  runTabState: RunTabState
   selectedAccount: string,
   exEnvironment: string,
   contracts: {
@@ -299,6 +301,7 @@ export interface RecorderProps {
 
 export interface InstanceContainerProps {
   getCompilerDetails: () => Promise<any>
+  runTabState: RunTabState
   instances: {
     instanceList: {
       contractData?: ContractData,
@@ -382,6 +385,8 @@ export interface DeployOptions {
 export interface ContractGUIProps {
   getCompilerDetails: () => Promise<any>
   evmCheckComplete: boolean,
+  plugin: RunTab,
+  runTabState: RunTabState
   title?: string,
   funcABI: FuncABI,
   inputs: string,
@@ -422,6 +427,7 @@ export interface MainnetProps {
 
 export interface UdappProps {
   getCompilerDetails: () => Promise<any>
+  runTabState: RunTabState
   instance: {
     contractData?: ContractData,
     address: string,
