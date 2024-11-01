@@ -136,7 +136,7 @@ export function RunTabUI(props: RunTabProps) {
       const chain = await returnCompatibleChain(ideDefault, targetChainId)
       if (chain === undefined) {
         //show modal
-        await plugin.call('notification', 'alert', { id: 'evm-chainId-error', message: 'No compatible chain found for the selected EVM version.', title: 'Error' })
+        plugin.call('terminal', 'log', { type: 'log', value: 'No compatible chain found for the selected EVM version.' })
         return
       } else {
         setEvmCheckComplete(true)
