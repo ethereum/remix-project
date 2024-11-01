@@ -29,51 +29,47 @@ const ImageUpload = () => {
   }
 
   return (
-    <div className="col-3 pr-0">
+    <div className="col-3 pr-0 my-2 d-flex justify-content-center align-items-center">
       <input data-id="uploadLogo" className="d-none" type="file" accept="image/*" onChange={handleImageChange} id="upload-button" />
-      <label htmlFor="upload-button" className="cursor_pointer d-flex justify-content-center align-items-center position-relative" style={{ height: 170 }}>
-        {logo ? (
-          <>
-            <CustomTooltip
-              placement="right"
-              tooltipText={intl.formatMessage({ id: 'quickDapp.updateLogoTooltip' })}
-            >
-              <img src={preview} alt="preview" style={{ width: 120, height: 120 }} />
-            </CustomTooltip>
-            <CustomTooltip
-              placement="right"
-              tooltipText={intl.formatMessage({ id: 'quickDapp.deleteLogoTooltip' })}
-            >
-              <button
-                className="d-flex justify-content-center align-items-center position-absolute border-0 rounded-circle"
-                style={{
-                  top: 5,
-                  right: 5,
-                  width: 20,
-                  height: 20,
-                  backgroundColor: 'var(--gray-dark)'
-                }}
-                onClick={(event) => {
-                  event.preventDefault()
-                  dispatch({ type: 'SET_INSTANCE', payload: { logo: '' } })
-                }}
-              >
-                <i className="fas fa-times" style={{
-                  color: 'var(--text-bg-mark)',
-                  fontSize: 'large'
-                }}></i>
-              </button>
-            </CustomTooltip>
-          </>
-        ) : (
+      {logo ? (
+        <div className='position-absolute'>
+          <img src={preview} alt="preview" style={{ width: 95, height: 95 }} />
           <CustomTooltip
             placement="right"
-            tooltipText={intl.formatMessage({ id: 'quickDapp.addLogoTooltip' })}
+            tooltipText={intl.formatMessage({ id: 'quickDapp.deleteLogoTooltip' })}
           >
-            <i className="fas fa-upload" style={{ fontSize: 120 }}></i>
+            <span
+              className="btn position-absolute"
+              style={{
+                top: -30,
+                right: -30,
+              }}
+              onClick={(event) => {
+                event.preventDefault()
+                // @ts-expect-error
+                document.getElementById('upload-button').value = ''
+                dispatch({ type: 'SET_INSTANCE', payload: { logo: '' } })
+              }}
+            >
+              <i className="fas fa-times text-dark"></i>
+            </span>
           </CustomTooltip>
-        )}
-      </label>
+        </div>
+      ) : (
+        <div className="bg-light" style={{ height: 158.5, width: 158.5 }}>
+          <div style={{ padding: 15 }}>
+            <div className='mt-2' style={{ fontSize: 15, lineHeight: '18px' }}>A logo is optional and should be<br/> 95px ✖️ 95px.</div>
+            <label htmlFor="upload-button" className='text-center d-block'>
+              <CustomTooltip
+                placement="right"
+                tooltipText={intl.formatMessage({ id: 'quickDapp.addLogoTooltip' })}
+              >
+                <div className='mt-4 btn btn-primary btn-sm' style={{ height: 32, width: 100, lineHeight: '22px' }}>Select Logo</div>
+              </CustomTooltip>
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
