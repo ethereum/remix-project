@@ -108,7 +108,6 @@ export function RunTabUI(props: RunTabProps) {
 
   const returnCompatibleChain = async (evmVersion: HardFork, targetChainId: number) => {
     const result = getCompatibleChain(evmVersion ?? 'paris', targetChainId) // using paris evm as a default fallback version
-    console.log('result', result)
     return result
   }
 
@@ -133,7 +132,6 @@ export function RunTabUI(props: RunTabProps) {
     if (compilerState.target !== null && !runTab.networkName.toLowerCase().includes('vm')) {
       const targetChainId = runTab.chainId
       const ideDefault = fetchDetails && fetchDetails.evmVersion !== null ? fetchDetails.evmVersion : 'cancun'
-      console.log(ideDefault)
       const IsCompatible = isChainCompatible(ideDefault, targetChainId)
       const chain = await returnCompatibleChain(ideDefault, targetChainId)
       if (chain === undefined) {
@@ -142,7 +140,6 @@ export function RunTabUI(props: RunTabProps) {
         return
       } else {
         setEvmCheckComplete(true)
-        console.log('check the things', { chain, fetchDetails, compilerState, targetChainId, runTab })
         if (!IsCompatible) {
         //show modal
           plugin.call('notification', 'modal', {
