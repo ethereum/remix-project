@@ -863,7 +863,6 @@ workflows:
                 parallelism: 1
 
       - remix-ide-browser:
-
           requires:
             - build
           matrix:
@@ -875,7 +874,6 @@ workflows:
               jobsize: ["10"]
               parallelism: [15]
       - remix-ide-browser:
-          
           requires:
             - build
           matrix:
