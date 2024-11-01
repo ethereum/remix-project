@@ -863,10 +863,11 @@ workflows:
                 parallelism: 1
 
       - remix-ide-browser:
-          alias: remix-ide-browser-tests
+
           requires:
             - build
           matrix:
+            alias: browser-tests
             parameters:
               browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
@@ -874,10 +875,11 @@ workflows:
               jobsize: ["10"]
               parallelism: [15]
       - remix-ide-browser:
-          alias: metamask
+          
           requires:
             - build
           matrix:
+            alias: metamask
             parameters:
               browser: ["chrome"]
               script: ["metamask.sh"]
