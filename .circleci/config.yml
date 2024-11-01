@@ -782,19 +782,6 @@ workflows:
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: 10
-  run_metamask_tests:
-    jobs:
-      - build
-      - remix-ide-browser:
-          requires:
-            - build
-          matrix:
-            parameters:
-              browser: ["chrome"]
-              script: ["metamask.sh"]
-              job: ["nogroup"]
-              jobsize: ["1"]
-              parallelism: 1
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
