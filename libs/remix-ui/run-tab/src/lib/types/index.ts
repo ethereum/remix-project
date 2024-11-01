@@ -233,6 +233,7 @@ export type MainnetPrompt = (
 
 export interface ContractDropdownProps {
   getCompilerDetails: () => Promise<any>
+  evmCheckComplete: boolean,
   selectedAccount: string,
   exEnvironment: string,
   contracts: {
@@ -380,6 +381,7 @@ export interface DeployOptions {
 
 export interface ContractGUIProps {
   getCompilerDetails: () => Promise<any>
+  evmCheckComplete: boolean,
   title?: string,
   funcABI: FuncABI,
   inputs: string,
