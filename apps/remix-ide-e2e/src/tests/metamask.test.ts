@@ -43,7 +43,7 @@ const tests = {
     return sources
   },
 
-  'Should connect to Sepolia Test Network using MetaMask #group4 #group3 #group2 #group1': function (browser: NightwatchBrowser) {
+  'Should connect to Sepolia Test Network using MetaMask #group1': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .setupMetamask(passphrase, password)
       .useCss().switchBrowserTab(0)
