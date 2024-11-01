@@ -884,15 +884,14 @@ workflows:
               job: ["0"]
               jobsize: ["10"]
               parallelism: [1]
-            filters:
-              branches:
-                only: [/.*metamask.*/, 'master', 'remix_live', 'remix_beta']
+          filters:
+            branches:
+              only: [/.*metamask.*/, 'master', 'remix_live', 'remix_beta']
       - tests-passed:
           requires:
             - lint
             - remix-libs
             - browser-tests
-            - metamask
             - metamask
             - plugins
             
