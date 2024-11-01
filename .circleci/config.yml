@@ -863,6 +863,7 @@ workflows:
                 parallelism: 1
 
       - remix-ide-browser:
+          name: remix-ide-browser-chrome-firefox
           requires:
             - build
           matrix:
