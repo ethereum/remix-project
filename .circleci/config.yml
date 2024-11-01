@@ -640,7 +640,7 @@ jobs:
         type: string
       jobsize:
         type: string
-    parallelism: 1
+    parallelism: 15
     steps:
       - checkout
       - attach_workspace:
