@@ -86,7 +86,6 @@ export function RunTabUI(props: RunTabProps) {
   const REACT_API = { runTab }
   const currentfile = plugin.config.get('currentFile')
   const [solcVersion, setSolcVersion] = useState<{version: string, canReceive: boolean}>({ version: '', canReceive: true })
-  const [chainEvmCompat, setChainEvmCompat] = useState()
 
   const getVersion = () => {
     let version = '0.8.25'
