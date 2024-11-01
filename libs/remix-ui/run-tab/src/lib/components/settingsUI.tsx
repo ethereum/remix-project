@@ -10,11 +10,6 @@ import { ValueUI } from './value'
 export function SettingsUI(props: SettingsProps) {
   //   this._deps.config.events.on('settings/personal-mode_changed', this.onPersonalChange.bind(this))
 
-  useEffect(() => {
-    // listen for chainId change on window.ethereum and call EvaluateEnvironmentSelection
-    // (window as any).ethereum?.on('chainChanged', console.log('metamask did something')) //props.EvaluateEnvironmentSelection)
-  }, [])
-
   return (
     <div className="udapp_settings">
       <EnvironmentUI runTabPlugin={props.runTabPlugin} selectedEnv={props.selectExEnv} providers={props.providers} setExecutionContext={props.setExecutionContext} checkSelectionCorrectness={props.EvaluateEnvironmentSelection} />
