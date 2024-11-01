@@ -304,7 +304,7 @@ class Provider {
         if (response.error) {
           reject(response.error.message)
         } else {
-          resolve(response.result)
+          resolve(response.result? response.result : response)
         }
       }).catch((err) => {
         if (typeof err === 'string') {
