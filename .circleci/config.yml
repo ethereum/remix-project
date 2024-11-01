@@ -782,7 +782,7 @@ workflows:
               job: ["nogroup"]
               jobsize: ["1"]
               parallelism: 10
-  run_flaky_tests:
+  run_metamask_tests:
     jobs:
       - build
       - remix-ide-browser:
