@@ -326,6 +326,7 @@ const tests = {
   // EIP 712 tests
   'Test EIP 712 Signature with Injected Provider (Metamask) #group1': function (browser: NightwatchBrowser) {
     browser
+      .clickLaunchIcon('udapp')
       .waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
       .waitForElementVisible('*[data-id="signMessageTextarea"]', 120000)
