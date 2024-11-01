@@ -11,16 +11,6 @@ export function EnvironmentUI(props: EnvironmentProps) {
   Object.entries(props.providers.providerList.filter((provider) => { return provider.isInjected }))
   Object.entries(props.providers.providerList.filter((provider) => { return !(provider.isVM || provider.isInjected) }))
 
-  const EvaluateSelectionForCorrectness = async () => {
-    // if the evmVersion is not provided in the url, we use the default value
-    // and the default would be the latest evmFork, which is now cancun.
-    // checking both url and compiler details
-    const url = window.location.href
-    const regVersion = url.match(/evmVersion=([a-zA-Z]+)/)?.[1]
-    const fetched = await props.checkSelectionCorrectness()
-    return { regVersion, fetched }
-  }
-
   const handleChangeExEnv = (env: string) => {
     const provider = props.providers.providerList.find((exEnv) => exEnv.name === env)
     const context = provider.name
@@ -76,11 +66,9 @@ export function EnvironmentUI(props: EnvironmentProps) {
             { (props.providers.providerList.filter((provider) => { return provider.isInjected })).map(({ name, displayName }) => (
               <Dropdown.Item
                 key={name}
-                onClick={() => {
+                onClick={async () => {
+                  await props.checkSelectionCorrectness()
                   handleChangeExEnv(name)
-                }}
-                onSelect={() => {
-                  EvaluateSelectionForCorrectness()
                 }}
                 data-id={`dropdown-item-${name}`}
               >
