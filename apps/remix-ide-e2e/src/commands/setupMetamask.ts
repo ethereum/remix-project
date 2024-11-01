@@ -67,7 +67,6 @@ function setupMetaMask(browser: NightwatchBrowser, passphrase: string, password:
         `)
       }, [], done())
     })
-    .pause()
 
     .saveScreenshot('./reports/screenshots/metamask.png')
     .click('[data-testid="network-display"]')
