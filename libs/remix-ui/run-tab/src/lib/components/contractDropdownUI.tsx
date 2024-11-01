@@ -483,6 +483,8 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 setSolcVersion={props.setCompilerVersion}
                 getVersion={props.getCompilerVersion}
                 evmCheckComplete={props.evmCheckComplete}
+                plugin={props.plugin}
+                runTabState={props.runTabState}
               />
               <div className="d-flex py-1 align-items-center custom-control custom-checkbox">
                 <input

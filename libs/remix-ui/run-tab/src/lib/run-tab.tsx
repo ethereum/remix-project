@@ -397,6 +397,8 @@ export function RunTabUI(props: RunTabProps) {
             getCompilerVersion={getVersion}
             getCompilerDetails={getCompilerDetails}
             evmCheckComplete={evmCheckComplete}
+            plugin={plugin}
+            runTabState={runTab}
           />
           <RecorderUI
             plugin={plugin}
@@ -412,6 +414,7 @@ export function RunTabUI(props: RunTabProps) {
           <InstanceContainerUI
             plugin={plugin}
             getCompilerDetails={getCompilerDetails}
+            runTabState={runTab}
             instances={runTab.instances}
             clearInstances={removeInstances}
             unpinInstance={unpinPinnedInstance}

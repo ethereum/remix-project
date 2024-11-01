@@ -175,7 +175,7 @@ export function ContractGUI(props: ContractGUIProps) {
   const handleActionClick = async () => {
     props.getVersion()
     await props.getCompilerDetails()
-    if (props.evmCheckComplete === false) return
+    if (props.evmCheckComplete === false && !props.runTabState.selectExEnv.toLowerCase().includes('vm-')) return
     if (deployState.deploy) {
       const proxyInitializeString = getMultiValsString(initializeFields.current)
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
