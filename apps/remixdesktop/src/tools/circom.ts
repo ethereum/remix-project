@@ -38,7 +38,7 @@ export function getInstallationPath(version) {
     return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'circom-download', version, 'circom-windows-amd64.exe') : path.join(app.getAppPath(), 'circom-download', version, 'circom-windows-amd64.exe')
 
   case 'darwin':
-    return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'circom-download', version, 'circom-macos-amd64') : path.join(app.getAppPath(), 'circom-download', version, 'circom-macos-amd64')
+    return path.join(app.getAppPath(), 'circom-download', version, 'circom-macos-amd64')
 
   case 'linux':
     return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'circom-download', version, 'circom-linux-amd64') : path.join(app.getAppPath(), 'circom-download', version, 'circom-linux-amd64')
@@ -64,7 +64,7 @@ export function getLogInputSignalsPath() {
     return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
 
   case 'darwin':
-    return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
+    return path.join(app.getAppPath(), 'log_input_signals.txt')
 
   case 'linux':
     return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
