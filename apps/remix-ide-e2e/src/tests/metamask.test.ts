@@ -222,7 +222,7 @@ const tests = {
       .modalFooterCancelClick('udappNotify')
   },
   // debug transaction
-  'Should deploy Ballot to Sepolia using metamask #group3 #flaky': function (browser: NightwatchBrowser) {
+  'Should deploy Ballot to Sepolia using metamask #group1 #flaky': function (browser: NightwatchBrowser) {
     browser.waitForElementPresent('*[data-id="remixIdeSidePanel"]')
       .switchBrowserTab(1)
       .click('[data-testid="network-display"]')
@@ -264,7 +264,7 @@ const tests = {
       })
     },
 
-    'do transaction #group3': function (browser: NightwatchBrowser) {
+    'do transaction #group1': function (browser: NightwatchBrowser) {
       browser.waitForElementPresent('*[data-id="universalDappUiContractActionWrapper"]', 60000)
       .clearConsole()
       .clickInstance(0)
@@ -291,7 +291,7 @@ const tests = {
           'decoded input': { 'address to': '0x4B0897b0513fdC7C541B6d9D7E929C4e5364D2dB' }
         })
   },
-  'Should debug Sepolia transaction with source highlighting MetaMask #group3': function (browser: NightwatchBrowser) {
+  'Should debug Sepolia transaction with source highlighting MetaMask #group1': function (browser: NightwatchBrowser) {
     let txhash
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('pluginManager') // load debugger and source verification
@@ -317,14 +317,14 @@ const tests = {
       })
 
   },
-  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group3': function (browser: NightwatchBrowser) {
+  'Call web3.eth.getAccounts() using Injected Provider (Metamask) #group1': function (browser: NightwatchBrowser) {
     if (!checkBrowserIsChrome(browser)) return
     browser
       .executeScriptInTerminal('web3.eth.getAccounts()')
       .journalLastChildIncludes('["0x76a3ABb5a12dcd603B52Ed22195dED17ee82708f"]')
   },
   // EIP 712 tests
-  'Test EIP 712 Signature with Injected Provider (Metamask) #group4': function (browser: NightwatchBrowser) {
+  'Test EIP 712 Signature with Injected Provider (Metamask) #group1': function (browser: NightwatchBrowser) {
     browser
       .waitForElementPresent('i[id="remixRunSignMsg"]')
       .click('i[id="remixRunSignMsg"]')
