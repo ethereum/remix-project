@@ -63,8 +63,6 @@ const tests = {
           .pause(2000)
           .waitForElementVisible('*[data-testid="page-container-footer-next"]', 60000)
           .click('*[data-testid="page-container-footer-next"]')
-        // .waitForElementVisible('*[data-testid="popover-close"]')
-        // .click('*[data-testid="popover-close"]')
       })
       .switchBrowserTab(0) // back to remix
   },
@@ -112,13 +110,9 @@ const tests = {
           browser
             .maximizeWindow()
             .hideMetaMaskPopup()
-            .saveScreenshot('./reports/screenshots/metamask_tr1.png')
             .pause(3000)
             .scrollAndClick('[data-testid="page-container-footer-next"]')
-            //.waitForElementPresent('[data-testid="page-container-footer-next"]')
-            .saveScreenshot('./reports/screenshots/metamask_tr2.png')
             .pause(2000)
-            //.click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
             .waitForElementVisible({
               locateStrategy: 'xpath',
@@ -126,7 +120,6 @@ const tests = {
             })
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .saveScreenshot('./reports/screenshots/metamask_tr3.png')
             .perform(() => done())
         })
       })
@@ -136,23 +129,16 @@ const tests = {
       .clearConsole()
       .waitForElementPresent('*[data-title="string _message"]')
       .setValue('*[data-title="string _message"]', 'test')
-      .saveScreenshot('./reports/screenshots/metamask_tr7.png')
       .waitForElementVisible('*[data-id="greet - transact (not payable)"]')
-      .saveScreenshot('./reports/screenshots/metamask_tr9.png')
       .click('*[data-id="greet - transact (not payable)"]')
-      .saveScreenshot('./reports/screenshots/metamask_tr8.png')
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
             .maximizeWindow()
             .hideMetaMaskPopup()
-            .saveScreenshot('./reports/screenshots/metamask_tr4.png')
             .pause(3000)
             .scrollAndClick('[data-testid="page-container-footer-next"]')
-            //.waitForElementPresent('[data-testid="page-container-footer-next"]')
-            .saveScreenshot('./reports/screenshots/metamask_tr5.png')
             .pause(2000)
-            //.click('[data-testid="page-container-footer-next"]') // approve the tx
             .switchBrowserTab(0) // back to remix
             .waitForElementVisible({
               locateStrategy: 'xpath',
@@ -160,7 +146,6 @@ const tests = {
             })
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .saveScreenshot('./reports/screenshots/metamask_tr6.png')
             .perform(() => done())
         })
       })
@@ -175,10 +160,8 @@ const tests = {
       .waitForElementPresent('*[data-id="Deploy - transact (not payable)"]')
       .click('*[data-id="Deploy - transact (not payable)"]')
       .pause(5000)
-      .saveScreenshot('./reports/screenshots/metamask_7.png')
       .waitForElementVisible('*[data-id="udappNotifyModalDialogModalBody-react"]', 60000)
       .click('[data-id="udappNotify-modal-footer-cancel-react"]')
-      .saveScreenshot('./reports/screenshots/metamask_8.png')
       .waitForElementVisible({
         locateStrategy: 'xpath',
         selector: "//span[@class='text-log' and contains(., 'errored')]"
@@ -264,13 +247,11 @@ const tests = {
         locateStrategy: 'xpath',
         selector: "//span[@class='text-log' and contains(., 'pending')]"
       })
-      .saveScreenshot('./reports/screenshots/metamask_before.png')
       .perform((done) => {
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
           browser
             .maximizeWindow()
             .hideMetaMaskPopup()
-            .saveScreenshot('./reports/screenshots/metamask_4.png')
             .pause(3000)
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .scrollAndClick('[data-testid="page-container-footer-next"]')
@@ -278,7 +259,6 @@ const tests = {
             .switchBrowserTab(0) // back to remix
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
-            .saveScreenshot('./reports/screenshots/metamask_5.png')
             .perform(() => done())
         })
       })
@@ -289,7 +269,6 @@ const tests = {
       .clearConsole()
       .clickInstance(0)
       .clickFunction('delegate - transact (not payable)', { types: 'address to', values: '"0x4b0897b0513fdc7c541b6d9d7e929c4e5364d2db"' })
-      .saveScreenshot('./reports/screenshots/metamask_6.png')
       .pause(5000)
       .perform((done) => { // call delegate
         browser.switchBrowserWindow(extension_url, 'MetaMask', (browser) => {
@@ -297,11 +276,9 @@ const tests = {
             .maximizeWindow()
             .hideMetaMaskPopup()
             .pause(5000)
-            .saveScreenshot('./reports/screenshots/metamask_7.png')
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .scrollAndClick('[data-testid="page-container-footer-next"]')
             .pause(2000)
-            .saveScreenshot('./reports/screenshots/metamask_8.png')
             .switchBrowserTab(0) // back to remix
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'view on etherscan', 60000)
             .waitForElementContainsText('*[data-id="terminalJournal"]', 'from: 0x76a...2708f', 60000)
@@ -318,8 +295,6 @@ const tests = {
     let txhash
     browser.waitForElementVisible('*[data-id="remixIdeIconPanel"]', 10000)
       .clickLaunchIcon('pluginManager') // load debugger and source verification
-      // .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_sourcify"] button')
-      // debugger already activated .scrollAndClick('#pluginManager article[id="remixPluginManagerListItem_debugger"] button')
       .clickLaunchIcon('udapp')
       .perform((done) => {
         browser.getLastTransactionHash((hash) => {
@@ -335,10 +310,7 @@ const tests = {
           .waitForElementVisible('*[data-id="debuggerTransactionInput"]')
           .setValue('*[data-id="debuggerTransactionInput"]', txhash) // debug tx
           .pause(2000)
-          .saveScreenshot('./reports/screenshots/metamask_debug.png')
-          .saveScreenshot('./reports/screenshots/metamask_2.png')
           .click('*[data-id="debuggerTransactionStartButton"]')
-          .saveScreenshot('./reports/screenshots/metamask_3.png')
           .waitForElementVisible('*[data-id="treeViewDivto"]', 30000)
           .checkVariableDebug('soliditylocals', localsCheck)
           .perform(() => done())
@@ -375,7 +347,6 @@ const tests = {
           browser
             .maximizeWindow()
             .hideMetaMaskPopup()
-            .saveScreenshot('./reports/screenshots/metamask_6.png')
             .pause(1000)
             .waitForElementPresent('[data-testid="page-container-footer-next"]')
             .scrollAndClick('button[data-testid="page-container-footer-next"]') // confirm
