@@ -1,4 +1,5 @@
 {
+  "home.home": "Главная",
   "home.scamAlert": "Предупреждение о мошенничестве",
   "home.scamAlertText": "Единственный URL, который использует Remix, - это remix.ethereum.org",
   "home.scamAlertText2": "Остерегайтесь видеороликов, рекламирующих \"ботов-передовиков ликвидности\"",
@@ -6,6 +7,9 @@
   "home.learnMore": "Узнать больше",
   "home.here": "здесь",
   "home.featured": "Рекомендуемые",
+  "home.learnEthPromoTitle": "LearnEth: Учебники внутри Remix",
+  "home.learnEthPromoButton": "Начать обучение",
+  "home.learnEthPromoText": "Ознакомьтесь с уроками по Remix, Solidity и другим проектам Web3. Отлично подходит для всех уровней навыков.",
   "home.jumpIntoWeb3": "Перейти в WEB3",
   "home.jumpIntoWeb3More": "Подробнее",
   "home.jumpIntoWeb3Text": "Remix IDE является частью проекта Remix, широкий выбор инструментов которого, может быть использован для всего путешествия по разработке контракта пользователями любого уровня знаний. Узнайте больше на сайте проекта Remix.",
@@ -36,6 +40,7 @@
   "home.ozerc1155TemplateDesc": "Создайте ERC1155 токен, импортируя библиотеку OpenZeppelin.",
   "home.gnosisSafeMultisigTemplateDesc": "Создайте кошельки с мульти-подписью с использованием этого шаблона.",
   "home.zeroxErc20TemplateDesc": "Создайте токен ERC20, импортируя контракт с 0xProject.",
+  "home.learnEthPluginDesc": "Узнайте о Remix, Solidity и других проектах Web3.",
   "home.learn": "Обучение",
   "home.learnEth1": "Основы Remix",
   "home.learnEth1Desc": "Введение в интерфейс Remix-а и основные операции.",
@@ -65,5 +70,8 @@
   "home.resources": "Источники",
   "home.connectToLocalhost": "Подключиться к локальному хосту",
   "home.seeAllTutorials": "Посмотреть все уроки",
-  "home.maintainedByRemix": "Поддерживается Remix"
+  "home.maintainedByRemix": "Поддерживается Remix",
+  "home.gitCloneTooltip": "Клонировать репозиторий Github в новую рабочую область",
+  "home.gistTooltip": "Открыть репозиторий Gist",
+  "home.newFileTooltip": "Добавить новый файл в рабочую область"
 }
