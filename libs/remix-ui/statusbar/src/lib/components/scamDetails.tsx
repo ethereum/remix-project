@@ -18,6 +18,7 @@ export default function ScamDetails ({ refs, floatStyle, scamAlerts }: ScamDetai
   return (
     <div
       ref={refs.setFloating}
+      id='scamDetails'
       style={{
         position: 'absolute',
         bottom: '-3.3rem',

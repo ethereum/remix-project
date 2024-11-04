@@ -27,8 +27,6 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     })
     .verifyLoad()
     .enableClipBoard()
-    .waitForElementVisible('*[data-id="hTScamAlertButton"]')
-    .click('*[data-id="hTScamAlertButton"]')
     .waitForElementVisible('*[data-id="aiStatusButton"]')
     .click('*[data-id="aiStatusButton"]')
     .perform((done) => {
@@ -41,6 +39,9 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
 
         addStyle(`
           .popover {
+            display:none !important;
+          }
+          #scamDetails {
             display:none !important;
           }
           `);
