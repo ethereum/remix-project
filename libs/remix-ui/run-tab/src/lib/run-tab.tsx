@@ -146,9 +146,9 @@ export function RunTabUI(props: RunTabProps) {
         //show modal
           plugin.call('notification', 'modal', {
             id: 'evm-chainId-incompatible',
-            title: 'Incompatible EVM - ChainId Detected',
+            title: 'Incompatible EVM for the selected chain',
             message: <div className="px-3">
-              <p>The selected chain is not compatible with the selected EVM version. Please select a one of the options below.</p>
+              <p>The selected chain is not compatible with the EVM version that the Solidity contract had been compiled with. Please select a one of the options below.</p>
               <ul className="px-3">
                 <li>Have Remix switch to a compatible EVM version for this chain and recompile the contract.</li>
                 <li>Cancel to keep the current EVM version.</li>
