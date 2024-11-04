@@ -10,10 +10,6 @@ import { PluginViewWrapper } from '@remix-ui/helper'
 type chatRequestBufferT<T> = {
   [key in keyof T]: T[key]
 }
-enum AIChatViewState {
-  minimized = 0,
-  open = 1
-}
 
 const profile = {
   name: 'remixAI',
@@ -53,7 +49,7 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   onActivation(): void {
-    //this.renderComponent(AIChatViewState.open)
+
     if (this.isOnDesktop) {
       console.log('Activating RemixAIPlugin on desktop')
       // this.on(this.remixDesktopPluginName, 'activated', () => {
@@ -65,10 +61,6 @@ export class RemixAIPlugin extends ViewPlugin {
       this.useRemoteInferencer = true
       this.initialize()
     }
-  }
-
-  toggle (open: AIChatViewState) {
-    this.renderComponent(open)
   }
   
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
@@ -220,13 +212,12 @@ export class RemixAIPlugin extends ViewPlugin {
 
   setDispatch(dispatch) {
     this.dispatch = dispatch
-    this.renderComponent(AIChatViewState.open)
+    this.renderComponent()
   }
 
-  renderComponent (open: AIChatViewState) {
+  renderComponent () {
     this.dispatch({
       plugin: this,
-      openState: open
     })
   }
 
@@ -247,7 +238,7 @@ export class RemixAIPlugin extends ViewPlugin {
 
   updateComponent(state) {
     return (
-      <RemixAITab plugin={state.plugin} openState={state.openState}></RemixAITab>
+      <RemixAITab plugin={state.plugin}></RemixAITab>
     )
   }
 }

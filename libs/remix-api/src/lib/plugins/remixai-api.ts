@@ -19,6 +19,5 @@ export interface IRemixAI {
     chatPipe(pipeMessage: string): Promise<void>,
     ProcessChatRequestBuffer(params:IParams): Promise<void>,
     initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean): Promise<void>,
-    toggle(boolean)
   }
 }

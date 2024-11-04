@@ -1,13 +1,9 @@
 import React, { useContext } from 'react'
 import '../remix-ai.css'
 import { Default, ChatApi } from './Default'
-enum AIChatViewState {
-  minimized = 0,
-  open = 1
-}
+
 interface IRemixAITab {
   plugin: any,
-  openState: AIChatViewState
 }
 export const RemixAITab = (props: IRemixAITab) => {
 

@@ -1,7 +1,8 @@
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 import { CustomTooltip } from '@remix-ui/helper'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { appActionTypes, AppContext } from '@remix-ui/app'
 
 interface AIStatusProps {
   plugin: StatusBar
@@ -12,7 +13,7 @@ interface AIStatusProps {
 
 export default function AIStatus(props: AIStatusProps) {
   const [copilotActive, setCopilotActive] = useState(false)
-
+  const appContext = useContext(AppContext)
   useEffect(() => {
   
     const run = async () => {
@@ -21,9 +22,6 @@ export default function AIStatus(props: AIStatusProps) {
     }
     run()
   
-    return () => {
-      props.plugin.off('popupPanel', 'popupPanelShown')
-    }
   }, [])
 
   useEffect(() => {
@@ -65,7 +63,10 @@ export default function AIStatus(props: AIStatusProps) {
           }}
           className='p-1 alert alert-info border border-info fa-solid fa-message-bot'
           onClick={async () => {
-            await props.plugin.call('popupPanel', 'showPopupPanel', true)
+            appContext.appStateDispatch({
+              type: appActionTypes.setShowPopupPanel,
+              payload: !appContext.appState.showPopupPanel
+            })
           }}
         >
 
