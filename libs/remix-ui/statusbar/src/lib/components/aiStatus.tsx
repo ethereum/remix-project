@@ -61,6 +61,7 @@ export default function AIStatus(props: AIStatusProps) {
             color: 'var(--ai)',
             boxShadow: '3px 3px var(--secondary), -0.1em 0 1.4em var(--secondary)'
           }}
+          data-id="aiStatusButton"
           className='p-1 alert alert-info border border-info fa-solid fa-message-bot'
           onClick={async () => {
             appContext.appStateDispatch({
