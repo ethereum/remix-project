@@ -42,8 +42,8 @@ export const Default = (props) => {
   };
   ChatApi = useAiChatApi();
   const conversationStarters: ConversationStarter[] = [
-    { prompt: 'Explain briefly the current file in Editor', icon: <span>⭐️</span> },
-    { prompt: 'Explain what is a solidity contract!' }]
+    { prompt: 'Explain what is a solidity contract!'},
+    { prompt: 'Explain briefly the current file in Editor'}]
 
   // Define initial messages
   const initialMessages: ChatItem[] = [

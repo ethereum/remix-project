@@ -1,4 +1,9 @@
 
+.remixui_statusbar_gitstatus {
+  position: relative;
+  left: 20rem;
+}
+
 .remixui_statusbar_gitstatus
 .remixui_statusbar_gitstatus:hover {
   cursor: pointer;
