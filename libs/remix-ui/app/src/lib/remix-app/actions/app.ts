@@ -17,6 +17,7 @@ export const enum appActionTypes {
   setCurrentBranch = 'SET_CURRENT_BRANCH',
   setNeedsGitInit = 'SET_NEEDS_GIT_INIT',
   setCanUseGit = 'SET_CAN_USE_GIT',
+  setShowPopupPanel = 'SET_SHOW_POPUP_PANEL',
 }
 
 type AppPayload = {
@@ -24,6 +25,7 @@ type AppPayload = {
   [appActionTypes.setCurrentBranch]: branch,
   [appActionTypes.setNeedsGitInit]: boolean,
   [appActionTypes.setCanUseGit]: boolean,
+  [appActionTypes.setShowPopupPanel]: boolean,
 }
 
 export type AppAction = ActionMap<AppPayload>[keyof ActionMap<

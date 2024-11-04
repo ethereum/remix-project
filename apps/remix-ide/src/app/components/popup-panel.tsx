@@ -1,9 +1,11 @@
 import React from 'react' // eslint-disable-line
 import { AbstractPanel } from './panel'
-import { RemixPluginPanel } from '@remix-ui/panel'
+import { PluginRecord, RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
-import {EventEmitter} from 'events'
+import { EventEmitter } from 'events'
+import { AppState } from 'libs/remix-ui/app/src/lib/remix-app/interface'
+import { AppAction, appActionTypes } from '@remix-ui/app'
 
 const profile = {
   name: 'popupPanel',
@@ -13,20 +15,26 @@ const profile = {
   events: ['popupPanelShown'],
   methods: ['addView', 'removeView', 'showContent', 'showPopupPanel']
 }
+type popupPanelState = {
+  plugins: Record<string, PluginRecord>
+}
 
 export class PopupPanel extends AbstractPanel {
   element: HTMLDivElement
-  dispatch: React.Dispatch<any> = () => {}
-  showPanel: boolean
+  dispatch: React.Dispatch<any> = () => { }
+  appStateDispatch: React.Dispatch<AppAction> = () => { }
   
   constructor(config) {
     super(profile)
     this.event = new EventEmitter()
-    this.showPanel = true
   }
 
   setDispatch(dispatch: React.Dispatch<any>) {
     this.dispatch = dispatch
+  }
+
+  setAppStateDispatch(appStateDispatch: React.Dispatch<AppAction>) {
+    this.appStateDispatch = appStateDispatch
   }
 
   onActivation() {
@@ -56,23 +64,31 @@ export class PopupPanel extends AbstractPanel {
   }
 
   async showPopupPanel(show) {
-    console.log("hide in popup-panel =", show)
-    this.showPanel = show
-    this.event.emit('popupPanelShown', show)
+    
+    this.appStateDispatch({
+      type: appActionTypes.setShowPopupPanel,
+      payload: show
+    })
     this.renderComponent()
   }
 
   renderComponent() {
     this.dispatch({
-      plugins: this.plugins,
-      showPpPanel: this.showPanel
+      plugins: this.plugins
     })
   }
 
   render() {
     return (
+      <PluginViewWrapper plugin={this} />
+    )
+  }
+
+  updateComponent(state: popupPanelState & Partial<AppState>) {
+    console.log("state in updateComponent =", state)
+    return (
       <div
-        className={'px-0 bg-light border-info ' + (!this.showPanel ? 'd-none' : 'd-flex')}
+        className={'px-0 bg-light border-info ' + (!state.showPopupPanel ? 'd-none' : 'd-flex')}
         style={{
           maxHeight: '40rem',
           maxWidth: '25rem',
@@ -86,14 +102,6 @@ export class PopupPanel extends AbstractPanel {
         }}
         data-id="popupPanelPluginsContainer"
       >
-        {this.showPanel && <PluginViewWrapper plugin={this} />}
-      </div>
-    )
-  }
-
-  updateComponent(state: any) {
-    return (
-      <div className={!state.showPpPanel ? 'd-none' : 'd-flex'}>
         <RemixPluginPanel
           header={
             <span id='menubarAIChat' className='pb-2 d-flex flex-row'>
@@ -108,6 +116,7 @@ export class PopupPanel extends AbstractPanel {
             </span>
           }
           plugins={state.plugins} />
-      </div>)
+      </div>
+    )
   }
 }
