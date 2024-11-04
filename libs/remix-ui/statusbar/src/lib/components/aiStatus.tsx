@@ -49,30 +49,42 @@ export default function AIStatus(props: AIStatusProps) {
           {copilotActive === false ? 'RemixAI Copilot (disabled)' : 'RemixAI Copilot (enabled)'}
         </span>
       </CustomTooltip>
-      <div className="d-flex text-sm flex-row pr-2 text-white justify-content-center align-items-center">
-        <button
-          style={{
-            position: 'absolute',
-            bottom: '0.7rem',
-            right: '0.3rem',
-            height: '3rem',
-            width: '3rem',
-            borderRadius: '50%',
-            color: 'var(--ai)',
-            boxShadow: '3px 3px var(--secondary), -0.1em 0 1.4em var(--secondary)'
-          }}
-          data-id="aiStatusButton"
-          className='p-1 alert alert-info border border-info fa-solid fa-message-bot'
-          onClick={async () => {
-            appContext.appStateDispatch({
-              type: appActionTypes.setShowPopupPanel,
-              payload: !appContext.appState.showPopupPanel
-            })
-          }}
-        >
-
-        </button>
-      </div>
+      <CustomTooltip
+        tooltipText={"Ask RemixAI for help!"}
+      >
+        <div className="d-flex text-sm flex-row pr-2 text-white justify-content-center align-items-center">
+          <style>{`
+            button.fa-robot:focus {
+              outline: none;
+              box-shadow: none;
+            }
+            button.fa-robot:hover {
+              border-color: var(--info)
+            }
+          `}</style>
+          <button
+            style={{
+              position: 'absolute',
+              bottom: '0.7rem',
+              right: '0.1rem',
+              height: '3rem',
+              width: '3rem',
+              borderRadius: '50%',
+              color: 'var(--ai)',
+              boxShadow: "0 1px 7px var(--secondary)"
+            }}
+            data-id="aiStatusButton"
+            className='h3 p-1 alert alert-info fal fa-robot'
+            onClick={async () => {
+              appContext.appStateDispatch({
+                type: appActionTypes.setShowPopupPanel,
+                payload: !appContext.appState.showPopupPanel
+              })
+            }}
+          >
+          </button>
+        </div>
+      </CustomTooltip>
     </div>
   )
 }

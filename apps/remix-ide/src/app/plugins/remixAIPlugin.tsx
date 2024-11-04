@@ -18,7 +18,7 @@ const profile = {
     "solidity_answer", "code_explaining",
     "code_insertion", "error_explaining",
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer',
-    'isChatRequestPending', 'toggle'],
+    'isChatRequestPending'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
@@ -224,7 +224,7 @@ export class RemixAIPlugin extends ViewPlugin {
   render() {
     return <div
       id='ai-view'
-      className='pb-2 mb-2 h-100 d-flex'
+      className='h-100 d-flex'
       data-id='aichat-view'
       style={{
         minHeight: 'max-content',
