@@ -27,6 +27,8 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     })
     .verifyLoad()
     .enableClipBoard()
+    .waitForElementVisible('*[data-id="hTScamAlertButton"]')
+    .click('*[data-id="hTScamAlertButton"]')
     .perform((done) => {
       browser.execute(function () { // hide tooltips
         function addStyle(styleString) {
@@ -76,6 +78,7 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
 
 function initModules(browser: NightwatchBrowser, callback: VoidFunction) {
   browser
+    .pause()
     .click('[data-id="verticalIconsKindpluginManager"]')
     .scrollAndClick('[data-id="pluginManagerComponentActivateButtonsolidityStaticAnalysis"]')
     .scrollAndClick('[data-id="pluginManagerComponentActivateButtondebugger"]')
