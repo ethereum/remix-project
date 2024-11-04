@@ -399,7 +399,7 @@ module.exports = {
                 locateStrategy: 'xpath'
             })
     },
-    'check the log #group4': async function (browser: NightwatchBrowser) {
+    'check the log #group4 #flaky': async function (browser: NightwatchBrowser) {
         const logs = await getGitLog('/tmp/git/bare2.git')
         console.log(logs)
         browser.assert.ok(logs.includes('testcommit'))
@@ -409,9 +409,11 @@ module.exports = {
     },
     'switch to origin #group4': function (browser: NightwatchBrowser) {
         browser
+            .pause(2000)
             .click('*[data-id="remotes-panel"]')
             .waitForElementVisible('*[data-id="set-as-default-origin"]')
             .click('*[data-id="set-as-default-origin"]')
+            .pause(3000)
     },
     'check the commands for origin #group4': function (browser: NightwatchBrowser) {
         browser
