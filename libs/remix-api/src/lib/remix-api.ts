@@ -18,14 +18,11 @@ import { IRemixAID } from "./plugins/remixAIDesktop-api"
 import { IMenuIconsApi } from "./plugins/menuicons-api"
 import { IDgitPlugin } from "./plugins/dgitplugin-api"
 import { Api } from "@remixproject/plugin-utils";
+import { IPopupPanelAPI } from "./plugins/popuppanel-api"
 
 
 export interface ICustomRemixApi extends IRemixApi {
-  popupPanel: {
-    methods: ['showPopupPanel']
-    events: ['popupPanelShown']
-    showPopupPanel(): void
-  } & Api
+  popupPanel: IPopupPanelAPI
   dgitApi: IGitApi
   dgit: IDgitPlugin
   config: IConfigApi

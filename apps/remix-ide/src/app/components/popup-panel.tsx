@@ -12,7 +12,7 @@ const profile = {
   displayName: 'Popup Panel',
   description: 'Remix IDE popup panel',
   version: packageJson.version,
-  events: ['popupPanelShown'],
+  events: [],
   methods: ['addView', 'removeView', 'showContent', 'showPopupPanel']
 }
 type popupPanelState = {
