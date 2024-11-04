@@ -4,8 +4,8 @@ import { PluginRecord, RemixPluginPanel } from '@remix-ui/panel'
 import packageJson from '../../../../../package.json'
 import { PluginViewWrapper } from '@remix-ui/helper'
 import { EventEmitter } from 'events'
-import { AppState } from 'libs/remix-ui/app/src/lib/remix-app/interface'
-import { AppAction, appActionTypes } from '@remix-ui/app'
+
+import { AppAction, appActionTypes, AppState } from '@remix-ui/app'
 
 const profile = {
   name: 'popupPanel',

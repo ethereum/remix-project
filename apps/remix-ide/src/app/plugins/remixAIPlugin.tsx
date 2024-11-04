@@ -62,7 +62,7 @@ export class RemixAIPlugin extends ViewPlugin {
       this.initialize()
     }
   }
-  
+
   async initialize(model1?:IModel, model2?:IModel, remoteModel?:IRemoteModel, useRemote?:boolean){
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       // on desktop use remote inferencer -> false

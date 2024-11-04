@@ -14,7 +14,7 @@ export const PluginViewWrapper = (props: IPluginViewWrapperProps) => {
     if (props.plugin.setDispatch) {
       props.plugin.setDispatch(setState)
     }
-    if(props.plugin.setAppStateDispatch) {
+    if (props.plugin.setAppStateDispatch) {
       props.plugin.setAppStateDispatch(appContext.appStateDispatch)
     }
   }, [])

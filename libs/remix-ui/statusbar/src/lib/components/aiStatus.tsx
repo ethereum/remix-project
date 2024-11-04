@@ -15,13 +15,13 @@ export default function AIStatus(props: AIStatusProps) {
   const [copilotActive, setCopilotActive] = useState(false)
   const appContext = useContext(AppContext)
   useEffect(() => {
-  
+
     const run = async () => {
       const aiActivate = await props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
       setCopilotActive(aiActivate)
     }
     run()
-  
+
   }, [])
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function AIStatus(props: AIStatusProps) {
         tooltipText={copilotActive ? "Disable RemixAI Copilot" : "Enable RemixAI Copilot. Switch to .sol file to try it."}
       >
         <span
-          style={{cursor: 'pointer'}}
+          style={{ cursor: 'pointer' }}
           className={"small mx-1 bg-info border-0 text-white " + (copilotActive === false ? "semi-bold" : "")}
           onClick={async () => {
             await props.plugin.call('settings' as any, 'updateCopilotChoice', !copilotActive)
