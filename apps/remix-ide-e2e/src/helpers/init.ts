@@ -27,8 +27,6 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     })
     .verifyLoad()
     .enableClipBoard()
-    .waitForElementVisible('*[data-id="aiStatusButton"]')
-    .click('*[data-id="aiStatusButton"]')
     .perform((done) => {
       browser.execute(function () { // hide tooltips
         function addStyle(styleString) {
