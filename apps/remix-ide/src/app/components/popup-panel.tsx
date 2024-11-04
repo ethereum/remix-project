@@ -80,14 +80,14 @@ export class PopupPanel extends AbstractPanel {
 
   render() {
     return (
-      <PluginViewWrapper plugin={this} />
+      <PluginViewWrapper useAppContext={true} plugin={this} />
     )
   }
 
-  updateComponent(state: popupPanelState & Partial<AppState>) {
+  updateComponent(state: popupPanelState, appState: Partial<AppState>) {
     return (
       <div
-        className={'px-0 bg-light border-info ' + (!state.showPopupPanel ? 'd-none' : 'd-flex')}
+        className={`px-0 bg-light border-info ${appState?.showPopupPanel ? 'd-flex' : 'd-none'}`}
         style={{
           maxHeight: '40rem',
           maxWidth: '25rem',
