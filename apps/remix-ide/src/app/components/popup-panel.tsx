@@ -23,7 +23,7 @@ export class PopupPanel extends AbstractPanel {
   element: HTMLDivElement
   dispatch: React.Dispatch<any> = () => { }
   appStateDispatch: React.Dispatch<AppAction> = () => { }
-  
+
   constructor(config) {
     super(profile)
     this.event = new EventEmitter()
@@ -64,7 +64,7 @@ export class PopupPanel extends AbstractPanel {
   }
 
   async showPopupPanel(show) {
-    
+
     this.appStateDispatch({
       type: appActionTypes.setShowPopupPanel,
       payload: show
@@ -85,7 +85,6 @@ export class PopupPanel extends AbstractPanel {
   }
 
   updateComponent(state: popupPanelState & Partial<AppState>) {
-    console.log("state in updateComponent =", state)
     return (
       <div
         className={'px-0 bg-light border-info ' + (!state.showPopupPanel ? 'd-none' : 'd-flex')}
@@ -102,20 +101,21 @@ export class PopupPanel extends AbstractPanel {
         }}
         data-id="popupPanelPluginsContainer"
       >
-        <RemixPluginPanel
-          header={
-            <span id='menubarAIChat' className='pb-2 d-flex flex-row'>
-              <button
-                className='btn fas fa-angle-double-down'
-                onClick={async () => {
-                  console.log("hide")
-                  await this.showPopupPanel(false)
-                }}
-              >
-              </button>
-            </span>
-          }
-          plugins={state.plugins} />
+        <div className='d-flex flex-column'>
+          <RemixPluginPanel
+            header={
+              <span id='popupPanelToggle' className='pb-2 d-flex flex-row'>
+                <button
+                  className='btn fas fa-angle-double-down'
+                  onClick={async () => {
+                    await this.showPopupPanel(false)
+                  }}
+                >
+                </button>
+              </span>
+            }
+            plugins={state.plugins} />
+        </div>
       </div>
     )
   }
