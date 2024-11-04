@@ -16,8 +16,15 @@ import { IMatomoApi } from "./plugins/matomo-api"
 import { IRemixAI } from "./plugins/remixai-api"
 import { IRemixAID } from "./plugins/remixAIDesktop-api"
 import { IDgitPlugin } from "./plugins/dgitplugin-api"
+import { Api } from "@remixproject/plugin-utils";
+
 
 export interface ICustomRemixApi extends IRemixApi {
+  popupPanel: {
+    methods: ['showPopupPanel']
+    events: ['popupPanelShown']
+    showPopupPanel(): void
+  } & Api
   dgitApi: IGitApi
   dgit: IDgitPlugin
   config: IConfigApi
@@ -36,5 +43,6 @@ export interface ICustomRemixApi extends IRemixApi {
   remixAI: IRemixAI,
   remixAID: IRemixAID
 }
+
 
 export declare type CustomRemixApi = Readonly<ICustomRemixApi>

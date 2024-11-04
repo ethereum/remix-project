@@ -261,7 +261,7 @@ export const TabsUI = (props: TabsUIProps) => {
                         methods: ['code_generation', 'code_completion',
                           "solidity_answer", "code_explaining",
                           "code_insertion", "error_explaining",
-                          "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
+                          "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending', 'toggle'],
                         events: [],
                         icon: 'assets/img/remix-logo-blue.png',
                         description: 'RemixAI provides AI services to Remix IDE.',

@@ -18,13 +18,21 @@ export default function ScamDetails ({ refs, floatStyle, scamAlerts }: ScamDetai
   return (
     <div
       ref={refs.setFloating}
-      style={ floatStyle }
-      className="px-1 ml-1 mb-1 d-flex w-25 alert alert-warning border border-warning"
+      style={{
+        position: 'absolute',
+        bottom: '-3.3rem',
+        left: '-4rem',
+        height: '6rem',
+        transform: 'translate(88.5px, -80px)',
+        willChange: 'transform',
+        boxShadow: '3px 3px var(--secondary), -0.1em 0 1.4em var(--secondary)'
+      } }
+      className="p-1 pb-0 mb-1 d-flex alert alert-warning border border-warning"
     >
       <span className="align-self-center pl-4 mt-1">
         <i style={{ fontSize: 'xxx-large', fontWeight: 'lighter' }} className="pr-2 far fa-exclamation-triangle"></i>
       </span>
-      <div className="d-flex flex-column">
+      <div className="d-flex flex-column pr-4 pt-2">
         {scamAlerts && scamAlerts.map((alert, index) => (
           <span className="pl-4 mt-1" key={`${alert.url}${index}`}>
             {alert.url.length < 1 ? <FormattedMessage id={`home.scamAlertText${index + 1}`} defaultMessage={alert.message} />

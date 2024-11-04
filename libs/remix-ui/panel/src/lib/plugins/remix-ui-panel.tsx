@@ -14,16 +14,21 @@ export interface RemixPanelProps {
 
 export function RemixPluginPanel(props: RemixPanelProps) {
   return (
-    <>
+    <div className='d-flex flex-column'>
       {props.header}
       <div className="pluginsContainer">
         <div className="plugins" id="plugins">
-          {Object.values(props.plugins).map((pluginRecord) => {
-            return <RemixUIPanelPlugin key={pluginRecord.profile.name} pluginRecord={pluginRecord} initialState={props.pluginState} highlightStamp={props.highlightStamp} />
-          })}
+          { Object.values(props.plugins).map((pluginRecord) => {
+            return <RemixUIPanelPlugin
+              key={pluginRecord.profile.name}
+              pluginRecord={pluginRecord}
+              initialState={props.pluginState}
+              highlightStamp={props.highlightStamp}
+            />
+          }) }
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

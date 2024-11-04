@@ -72,25 +72,35 @@ export function RemixUIStatusBar({ statusBarPlugin }: RemixUIStatusBarProps) {
       <StatusBarContextProvider>
         {(platform !== appPlatformTypes.desktop) && showScamDetails && (
           <FloatingFocusManager context={context} modal={false}>
-            <ScamDetails refs={refs} floatStyle={{ ...floatingStyles, minHeight: 'auto', alignContent: 'center', paddingRight: '0.5rem' }} getFloatingProps={getFloatingProps} scamAlerts={scamAlerts} />
+            <ScamDetails
+              refs={refs}
+              floatStyle={{
+                ...floatingStyles,
+                minHeight: 'auto',
+                alignContent: 'center',
+                paddingRight: '0.5rem',
+                bottom: '-8,5rem',
+                left: '0rem'
+              }}
+              getFloatingProps={getFloatingProps}
+              scamAlerts={scamAlerts}
+            />
           </FloatingFocusManager>
         )}
         <div className="d-flex remixui_statusbar_height flex-row bg-info justify-content-between align-items-center">
+          { (platform !== appPlatformTypes.desktop) && <div className="remixui_statusbar bg-warning px-2 remixui_statusbar_custom_padding d-flex justify-center align-items-center">
+              <ScamAlertStatus refs={refs} getReferenceProps={getReferenceProps} />
+            </div> }
           <div className="remixui_statusbar remixui_statusbar_gitstatus">
             <GitStatus plugin={statusBarPlugin} gitBranchName={gitBranchName} setGitBranchName={setGitBranchName} />
           </div>
-          <div className="remixui_statusbar"></div>
           <div className="remixui_statusbar">
             <DidYouKnow />
           </div>
-          <div className="remixui_statusbar"></div>
           <div className="remixui_statusbar d-flex align-items-center p-0">
             <div className="remixui_statusbar">
               <AIStatus plugin={statusBarPlugin} aiActive={lightAiUp} isAiActive={isAiActive} setIsAiActive={setIsAiActive} />
             </div>
-            { (platform !== appPlatformTypes.desktop) && <div className="remixui_statusbar bg-warning px-2 remixui_statusbar_custom_padding d-flex justify-center align-items-center">
-              <ScamAlertStatus refs={refs} getReferenceProps={getReferenceProps} />
-            </div> }
           </div>
         </div>
       </StatusBarContextProvider>

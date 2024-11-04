@@ -1,10 +1,31 @@
 .nlux-theme-remix_ai_theme[data-color-scheme='light'] {
     --nlux-ChatRoom--BackgroundColor: var(--text-background);
+    padding-bottom: 0.1rem;
 }
 
 .nlux-theme-remix_ai_theme[data-color-scheme='dark'] {
     --nlux-ChatRoom--BackgroundColor: var(--text-background);
+    padding-bottom: 0.1rem;
 }
+
+.nlux-launchPad-container {
+  padding-bottom: 2rem;
+}
+
+.nlux-conversationStarters-container {
+  overflow-y: hidden;
+}
+
+.nlux-comp-conversationStarters {
+  width: auto !important;
+  padding: 0px !important
+}
+
+.nlux-conversationStarters-container>.nlux-comp-conversationStarters>.nlux-comp-conversationStarter {
+  border-width: 1px !important;
+  border-color: var(--text-background) !important;
+}
+
 
 .nlux-theme-remix_ai_theme {
 
@@ -35,9 +56,13 @@
     --nlux-PromptInput-Focus-Outline--Width: 10px;
     --nlux-PromptInput-Max-Height: 50px;
     --nlux-PromptInput--BorderWidth: 0;
-    .nlux-comp-composer > textarea {padding: 8px;}
     --nlux-PromptInput--BorderRadius: 10px 0 0 10px;
-    --nlux-PromptInput-Height: 50px;
+    --nlux-PromptInput-Height: 30px;
+    --nlux-cvStrt--brdrWd: 0;
+    --nlux-cvStrt--brdClr: var(--light);
+    --nlux-cvStrt--brdrWd: 'hidden';
+    --nlux-comp-composer > textarea {padding: 8px;}
+
 
 
     /* Override input colors */
@@ -49,10 +74,10 @@
     --nlux-Composer--Gap: 0;
 
     /* Override submit button colors */
-    --nlux-SubmitButton--BackgroundColor: var(--primary);
-    --nlux-SubmitButton-Active--BackgroundColor:var(--primary);
+    --nlux-SubmitButton--BackgroundColor: var(--light);
+    --nlux-SubmitButton-Active--BackgroundColor:var(--light);
     --nlux-SubmitButton-Disabled--BackgroundColor: var(--dark);
-    --nlux-SubmitButton-Active--TextColor: var(--text);
+    --nlux-SubmitButton-Active--TextColor: var(--primary);
     --nlux-SubmitButton-Disabled--TextColor: var(--text);
 
     /** Inline code in markdown */
@@ -61,7 +86,6 @@
     --nlux-InlineCode--Padding: 0 2px;
     --nlux-InlineCode--FontSize: 14px;
     
-
     /*code block */
     --nlux-CodeBlock-CopyButton--BackgroundColor: var(--bg-text);
     --nlux-CodeBlock-CopyButton--TextColor: var(--text);
