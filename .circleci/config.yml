@@ -627,7 +627,7 @@ jobs:
 
   remix-ide-browser:
     docker:
-      - image: cimg/node:20.5.1-browsers
+      - image: cimg/node:20.17.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
