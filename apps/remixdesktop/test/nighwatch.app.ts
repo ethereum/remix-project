@@ -42,7 +42,7 @@ module.exports = {
         selenium_host: 'localhost',
         globals: {
           waitForConditionTimeout: 10000,
-          asyncHookTimeout: 100000
+          asyncHookTimeout: 30000
         },
         screenshots: {
           enabled: true,
