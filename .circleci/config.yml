@@ -627,7 +627,7 @@ jobs:
 
   remix-ide-browser:
     docker:
-      - image: cimg/node:20.0.0-browsers
+      - image: cimg/node:20.17.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
@@ -640,7 +640,10 @@ jobs:
         type: string
       jobsize:
         type: string
-    parallelism: 10
+      parallelism:
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - attach_workspace:
@@ -688,7 +691,7 @@ jobs:
 
   remix-test-plugins:
     docker:
-      - image: cimg/node:20.0.0-browsers
+      - image: cimg/node:20.17.0-browsers
     resource_class:
       xlarge
     working_directory: ~/remix-project
@@ -781,6 +784,7 @@ workflows:
               script: ["flaky.sh"]
               job: ["nogroup"]
               jobsize: ["1"]
+              parallelism: [1]
   build_all:
     unless: << pipeline.parameters.run_flaky_tests >>
     jobs:
@@ -862,16 +866,33 @@ workflows:
           requires:
             - build
           matrix:
+            alias: browser-tests
             parameters:
               browser: ["chrome", "firefox"]
               script: ["browser_test.sh"]
               job: ["0","1","2","3","4","5","6","7","8","9"]
               jobsize: ["10"]
+              parallelism: [15]
+      - remix-ide-browser:
+          requires:
+            - build
+          matrix:
+            alias: metamask
+            parameters:
+              browser: ["chrome"]
+              script: ["metamask.sh"]
+              job: ["0"]
+              jobsize: ["10"]
+              parallelism: [1]
+          filters:
+            branches:
+              only: [/.*metamask.*/, 'master', 'remix_live', 'remix_beta']
       - tests-passed:
           requires:
             - lint
             - remix-libs
-            - remix-ide-browser
+            - browser-tests
+            - metamask
             - plugins
             
       - predeploy:
@@ -884,7 +905,8 @@ workflows:
           requires:
             - lint
             - remix-libs
-            - remix-ide-browser
+            - browser-tests
+            - metamask
             - plugins
             - predeploy
           filters:
@@ -896,7 +918,8 @@ workflows:
           requires:
             - lint
             - remix-libs
-            - remix-ide-browser
+            - browser-tests
+            - metamask
             - plugins
             - predeploy
           filters:
@@ -908,7 +931,8 @@ workflows:
           requires:
             - lint
             - remix-libs
-            - remix-ide-browser
+            - browser-tests
+            - metamask
             - plugins
             - predeploy
           filters:

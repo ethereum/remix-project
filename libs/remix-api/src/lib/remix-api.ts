@@ -15,6 +15,7 @@ import { ILayoutApi } from "./plugins/layout-api"
 import { IMatomoApi } from "./plugins/matomo-api"
 import { IRemixAI } from "./plugins/remixai-api"
 import { IRemixAID } from "./plugins/remixAIDesktop-api"
+import { IMenuIconsApi } from "./plugins/menuicons-api"
 import { IDgitPlugin } from "./plugins/dgitplugin-api"
 import { Api } from "@remixproject/plugin-utils";
 import { IPopupPanelAPI } from "./plugins/popuppanel-api"
@@ -37,6 +38,7 @@ export interface ICustomRemixApi extends IRemixApi {
   pinnedPanel: IPinnedPanelApi
   layout: ILayoutApi
   matomo: IMatomoApi
+  menuicons: IMenuIconsApi
   remixAI: IRemixAI,
   remixAID: IRemixAID
 }
