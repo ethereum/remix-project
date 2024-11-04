@@ -12,14 +12,8 @@ interface AIStatusProps {
 
 export default function AIStatus(props: AIStatusProps) {
   const [copilotActive, setCopilotActive] = useState(false)
-  const [expandAIChat, setExpandAIChat] = useState(true)
 
   useEffect(() => {
-    const popupPanelListener = async (show) => {
-      setTimeout(() => setExpandAIChat(show), 0);
-    };
-  
-    props.plugin.on('popupPanel', 'popupPanelShown', popupPanelListener)
   
     const run = async () => {
       const aiActivate = await props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
@@ -71,10 +65,10 @@ export default function AIStatus(props: AIStatusProps) {
           }}
           className='p-1 alert alert-info border border-info fa-solid fa-message-bot'
           onClick={async () => {
-            await props.plugin.call('popupPanel', 'showPopupPanel', !expandAIChat)
+            await props.plugin.call('popupPanel', 'showPopupPanel', true)
           }}
         >
-          {expandAIChat ? '1' : '0'}
+
         </button>
       </div>
     </div>

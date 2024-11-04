@@ -14,7 +14,7 @@ export interface RemixPanelProps {
 
 export function RemixPluginPanel(props: RemixPanelProps) {
   return (
-    <div className='d-flex flex-column'>
+    <>
       {props.header}
       <div className="pluginsContainer">
         <div className="plugins" id="plugins">
@@ -28,7 +28,7 @@ export function RemixPluginPanel(props: RemixPanelProps) {
           }) }
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
