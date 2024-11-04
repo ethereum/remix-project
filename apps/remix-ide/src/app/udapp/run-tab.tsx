@@ -194,29 +194,14 @@ export class RunTab extends ViewPlugin {
             if (options['fork']) this.fork = options['fork']
           }
         },
-        provider: {
-          sendAsync (payload) {
-            return udapp.call(name, 'sendAsync', payload)
-          },
-          async request (payload) {
-            try {
-              const requestResult = await udapp.call(name, 'sendAsync', payload)
-              if (requestResult.error) {
-                throw new Error(requestResult.error.message)
-              }
-              return requestResult.result
-            } catch (err) {
-              throw new Error(err.message)
-            }
-          }
-        }
+        provider: new Provider(udapp, name)
       })
     }
 
     const addCustomInjectedProvider = async (position, event, name, displayName, networkId, urls, nativeCurrency?) => {
       // name = `${name} through ${event.detail.info.name}`
-      await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, networkId, urls, nativeCurrency)])
-      await addProvider(position, name, displayName, true, false)
+      await this.engine.register([new InjectedCustomProvider(event.detail.provider, name, displayName, networkId, urls, nativeCurrency)])
+      await addProvider(position, name, displayName + ' - ' + event.detail.info.name, true, false)
     }
     const registerInjectedProvider = async (event) => {
       const name = 'injected-' + event.detail.info.name
@@ -225,21 +210,21 @@ export class RunTab extends ViewPlugin {
       await addProvider(0, name, displayName, true, false)
 
       if (event.detail.info.name === 'MetaMask') {
-        await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism - ' + event.detail.info.name, '0xa', ['https://mainnet.optimism.io'])
-        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum - ' + event.detail.info.name, '0xa4b1', ['https://arb1.arbitrum.io/rpc'])
-        await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Sepolia Testnet - ' + event.detail.info.name, '0xaa36a7', [],
+        await addCustomInjectedProvider(7, event, 'injected-metamask-optimism', 'L2 - Optimism', '0xa', ['https://mainnet.optimism.io'])
+        await addCustomInjectedProvider(8, event, 'injected-metamask-arbitrum', 'L2 - Arbitrum', '0xa4b1', ['https://arb1.arbitrum.io/rpc'])
+        await addCustomInjectedProvider(5, event, 'injected-metamask-sepolia', 'Sepolia Testnet', '0xaa36a7', [],
           {
             "name": "Sepolia ETH",
             "symbol": "ETH",
             "decimals": 18
           })
-        await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet - ' + event.detail.info.name, '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
+        await addCustomInjectedProvider(9, event, 'injected-metamask-ephemery', 'Ephemery Testnet', '', ['https://otter.bordel.wtf/erigon', 'https://eth.ephemeral.zeus.fyi'],
           {
             "name": "Ephemery ETH",
             "symbol": "ETH",
             "decimals": 18
           })
-        await addCustomInjectedProvider(10, event, 'injected-metamask-gnosis', 'Gnosis Mainnet - ' + event.detail.info.name, '', ['https://rpc.ankr.com/gnosis', 'https://1rpc.io/gnosis'],
+        await addCustomInjectedProvider(10, event, 'injected-metamask-gnosis', 'Gnosis Mainnet', '', ['https://rpc.ankr.com/gnosis', 'https://1rpc.io/gnosis'],
           {
             "name": "XDAI",
             "symbol": "XDAI",
@@ -300,5 +285,45 @@ export class RunTab extends ViewPlugin {
 
     this.compilersArtefacts.addResolvedContract(addressToString(address), data)
     this.addInstance(address, contractObject.abi, contractObject.name)
+  }
+}
+
+class Provider {
+  udapp: RunTab
+  name: string
+  constructor(udapp, name) {
+    this.udapp = udapp
+    this.name = name
+  }
+  sendAsync (payload) {
+    return this.udapp.call(this.name, 'sendAsync', payload)
+  }
+  request (payload): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.udapp.call(this.name, 'sendAsync', payload).then((response) => {
+        if (response.error) {
+          reject(response.error.message)
+        } else {
+          resolve(response.result? response.result : response)
+        }
+      }).catch((err) => {
+        if (typeof err === 'string') {
+          reject(err)
+        } else if (err.error && err.error.message) {
+          reject(err.error.message)
+        } else if (err.error && typeof err.error === 'string') {
+          reject(err.error)
+        } else {
+          let e
+          try {
+            e = JSON.stringify(err)
+          } catch (e) {
+            reject('unknown error')
+            return
+          }
+          reject(e)
+        }
+      })
+    })
   }
 }
