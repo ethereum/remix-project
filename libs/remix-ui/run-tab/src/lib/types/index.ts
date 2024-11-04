@@ -4,6 +4,7 @@ import { ContractData, FuncABI, OverSizeLimit } from '@remix-project/core-plugin
 import { RunTab } from './run-tab'
 import { SolcInput, SolcOutput } from '@openzeppelin/upgrades-core'
 import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
+import { CheckStatus } from '../run-tab'
 export interface RunTabProps {
   plugin: RunTab,
   initialState?: RunTabState
@@ -232,7 +233,7 @@ export type MainnetPrompt = (
   ) => JSX.Element
 
 export interface ContractDropdownProps {
-  getCompilerDetails: () => Promise<any>
+  getCompilerDetails: () => Promise<CheckStatus>
   evmCheckComplete: boolean,
   plugin: RunTab,
   runTabState: RunTabState
@@ -300,7 +301,7 @@ export interface RecorderProps {
 }
 
 export interface InstanceContainerProps {
-  getCompilerDetails: () => Promise<any>
+  getCompilerDetails: () => Promise<CheckStatus>
   runTabState: RunTabState
   instances: {
     instanceList: {
@@ -383,7 +384,7 @@ export interface DeployOptions {
 }
 
 export interface ContractGUIProps {
-  getCompilerDetails: () => Promise<any>
+  getCompilerDetails: () => Promise<CheckStatus>
   evmCheckComplete: boolean,
   plugin: RunTab,
   runTabState: RunTabState
@@ -426,7 +427,7 @@ export interface MainnetProps {
 }
 
 export interface UdappProps {
-  getCompilerDetails: () => Promise<any>
+  getCompilerDetails: () => Promise<CheckStatus>
   runTabState: RunTabState
   instance: {
     contractData?: ContractData,

@@ -58,6 +58,8 @@ import { ScenarioPrompt } from './components/scenario'
 import { setIpfsCheckedState, setRemixDActivated } from './actions/payload'
 import { ChainCompatibleInfo, getCompatibleChain, getCompatibleChains, HardFork, isChainCompatible, isChainCompatibleWithAnyFork } from './actions/evmmap'
 
+export type CheckStatus = 'Passed' | 'Failed'
+
 export function RunTabUI(props: RunTabProps) {
   const { plugin } = props
   const [focusModal, setFocusModal] = useState<Modal>({
@@ -129,7 +131,7 @@ export function RunTabUI(props: RunTabProps) {
     const compilerState = await plugin.call('solidity', 'getCompilerState')
 
     // if no contract file is open, don't do anything
-    if (compilerState.target !== null && !runTab.networkName.toLowerCase().includes('vm')) {
+    if (compilerState.target !== null) {
       const targetChainId = runTab.chainId
       const ideDefault = fetchDetails && fetchDetails.evmVersion !== null ? fetchDetails.evmVersion : 'cancun'
       const IsCompatible = isChainCompatible(ideDefault, targetChainId)
@@ -137,7 +139,7 @@ export function RunTabUI(props: RunTabProps) {
       if (chain === undefined) {
         //show modal
         plugin.call('terminal', 'log', { type: 'log', value: 'No compatible chain found for the selected EVM version.' })
-        return
+        return 'Failed'
       } else {
         setEvmCheckComplete(true)
         if (!IsCompatible) {
@@ -161,6 +163,7 @@ export function RunTabUI(props: RunTabProps) {
           })
         }
       }
+      return 'Passed'
     }
   }
 
