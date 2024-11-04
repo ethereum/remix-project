@@ -175,12 +175,7 @@ export function ContractGUI(props: ContractGUIProps) {
   const handleActionClick = async () => {
     props.getVersion()
 
-    if (!props.runTabState.selectExEnv.toLowerCase().includes('vm-') || !props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider')) {
-      const status = await props.getCompilerDetails()
-      if (status === 'Failed') {
-        props.plugin.call('terminal', 'log', { type: 'log', value: 'Consider opening an issue to update our internal store with your desired chainId.' })
-        return
-      }
+    if (props.runTabState.selectExEnv.toLowerCase().startsWith('vm-') || props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider')) {
       if (deployState.deploy) {
         const proxyInitializeString = getMultiValsString(initializeFields.current)
         props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
@@ -231,6 +226,12 @@ export function ContractGUI(props: ContractGUIProps) {
         props.clickCallBack(props.funcABI.inputs, basicInput)
       }
     } else {
+      const status = await props.getCompilerDetails()
+      console.log('exenv', props.runTabState.selectExEnv)
+      if (status === 'Failed') {
+        props.plugin.call('terminal', 'log', { type: 'log', value: 'Consider opening an issue to update our internal store with your desired chainId.' })
+        return
+      }
       if (deployState.deploy) {
         const proxyInitializeString = getMultiValsString(initializeFields.current)
         props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
