@@ -41,7 +41,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59141, name: "Linea Testnet" },
       { id: 421614, name: "Arbitrum Sepolia" },
       { id: 534352, name: "Scroll" },
-      // { id: 11155111, name: "Sepolia" }
+      { id: 11155111, name: "Sepolia" }
     ],
     minCompilerVersion: "0.8.24+commit.e11b9ed9",
     evmVersion: 'cancun'
@@ -73,7 +73,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59902, name: "Metis Sepolia Testnet" },
       { id: 421614, name: "Arbitrum Sepolia" },
       { id: 534352, name: "Scroll" },
-      // { id: 11155111, name: "Sepolia" },
+      { id: 11155111, name: "Sepolia" },
       { id: 11155420, name: "Optimism Sepolia Testnet" },
       { id: 1666600000, name: "Harmony Mainnet Shard 0" }
     ],
@@ -109,7 +109,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 59902, name: "Metis Sepolia Testnet" },
       { id: 421614, name: "Arbitrum Sepolia" },
       { id: 534352, name: "Scroll" },
-      // { id: 11155111, name: "Sepolia" },
+      { id: 11155111, name: "Sepolia" },
       { id: 11155420, name: "Optimism Sepolia Testnet" },
       { id: 1666600000, name: "Harmony Mainnet Shard 0" }
     ],
@@ -132,7 +132,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 42220, name: "Celo Mainnet" },
       { id: 59144, name: "Linea Mainnet" },
       { id: 59141, name: "Linea Testnet" },
-      // { id: 11155111, name: "Sepolia" },
+      { id: 11155111, name: "Sepolia" },
     ],
     minCompilerVersion: "0.8.7+commit.e28d00a7",
     evmVersion: 'london'
@@ -153,7 +153,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 42220, name: "Celo Mainnet" },
       { id: 59144, name: "Linea Mainnet" },
       { id: 59141, name: "Linea Testnet" },
-      // { id: 11155111, name: "Sepolia" }
+      { id: 11155111, name: "Sepolia" }
     ],
     minCompilerVersion: "0.8.5+commit.a4f2e591",
     evmVersion: 'berlin'
@@ -174,7 +174,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
       { id: 42220, name: "Celo Mainnet" },
       { id: 59144, name: "Linea Mainnet" },
       { id: 59141, name: "Linea Testnet" },
-      // { id: 11155111, name: "Sepolia" }
+      { id: 11155111, name: "Sepolia" }
     ],
     minCompilerVersion: "0.5.14+commit.01f1aaa4",
     evmVersion: 'istanbul'
@@ -183,7 +183,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
       { id: 5, name: "Goerli" },
-      // { id: 11155111, name: "Sepolia" }
+      { id: 11155111, name: "Sepolia" }
     ],
     minCompilerVersion: "0.5.5+commit.47a71e8f",
     evmVersion: 'petersburg'
@@ -192,7 +192,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
       { id: 5, name: "Goerli" },
-      // { id: 11155111, name: "Sepolia" }
+      { id: 11155111, name: "Sepolia" }
     ],
     minCompilerVersion: "0.5.5+commit.47a71e8f",
     evmVersion: 'constantinople'
@@ -222,7 +222,7 @@ export const evmMap: Map<HardFork, { chainId: ChainInfo[], minCompilerVersion: s
     chainId: [
       { id: 1, name: "Ethereum Mainnet" },
       { id: 5, name: "Goerli" },
-      // { id: 11155111, name: "Sepolia" }
+      { id: 11155111, name: "Sepolia" }
     ],
     minCompilerVersion: "0.1.2+commit.d0d36e3",
     evmVersion: 'homestead'
@@ -247,17 +247,6 @@ export function getCompatibleChain(
   fork: HardFork,
   chainId: number
 ): ChainCompatibleInfo | undefined {
-  // const forkData = evmMap.get(fork)
-  // if (!forkData) return undefined
-
-  // const compatibleChain = forkData.chainId.find(chain => chain.id === chainId)
-  // if (compatibleChain) {
-  //   return {
-  //     chain: compatibleChain,
-  //     minCompilerVersion: forkData.minCompilerVersion,
-  //     evmVersion: fork
-  //   }
-  // }
 
   for (const [forkKey, forkData] of evmMap) {
     const compatibleChain = forkData.chainId.find(chain => chain.id === chainId)
