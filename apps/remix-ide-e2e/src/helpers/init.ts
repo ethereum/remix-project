@@ -14,6 +14,15 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     .url(url || 'http://127.0.0.1:8080')
     .pause(5000)
     .switchBrowserTab(0)
+    // get value from local storage
+    .execute(function () {
+      return localStorage.getItem('did_show_popup_panel')
+    }, [], function (result) {
+      if (!result.value) {
+        browser.waitForElementVisible('*[data-id="aiStatusButton"]')
+        .click('*[data-id="aiStatusButton"]')
+      }
+    })
     .perform((done) => {
       if (!loadPlugin) return done()
       browser
