@@ -9,6 +9,7 @@ const dir = '/tmp/' + projectDir
 
 const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
+        browser.hidePopupPanel()
         done()
     },
     installFoundry: function (browser: NightwatchBrowser) {

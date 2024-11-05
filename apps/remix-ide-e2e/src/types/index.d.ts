@@ -74,10 +74,10 @@ declare module 'nightwatch' {
     connectToExternalHttpProvider: (url: string, identifier: string) => NightwatchBrowser
     waitForElementNotContainsText: (id: string, value: string, timeout: number = 10000) => NightwatchBrowser
     hideToolTips: (this: NightwatchBrowser) => NightwatchBrowser
+    hidePopupPanel: (this: NightwatchBrowser) => NightwatchBrowser
     enableClipBoard: () => NightwatchBrowser
     addFileSnekmate: (name: string, content: NightwatchContractContent) => NightwatchBrowser
     selectFiles: (selelectedElements: any[]) => NightwatchBrowser
-    hidePopUpPanel: (this: NightwatchBrowser) => NightwatchBrowser
   }
 
   export interface NightwatchBrowser {

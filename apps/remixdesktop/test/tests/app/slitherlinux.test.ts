@@ -3,6 +3,7 @@ import { ChildProcess, spawn, execSync } from 'child_process'
 import { homedir } from 'os'
 const tests = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    browser.hidePopupPanel()
    done()
   },
   open: function (browser: NightwatchBrowser) {

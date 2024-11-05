@@ -2,6 +2,7 @@ import {NightwatchBrowser} from 'nightwatch'
 
 const testsBash = {
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    browser.hidePopupPanel()
     done()
   },
   open: function (browser: NightwatchBrowser) {
