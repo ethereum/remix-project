@@ -106,7 +106,7 @@ export class PopupPanel extends AbstractPanel {
             header={
               <span id='popupPanelToggle' className='d-flex flex-row'>
                 <button
-                   data-id='popupPanelToggle'
+                  data-id='popupPanelToggle'
                   className='btn fas fa-angle-double-down'
                   onClick={async () => {
                     await this.showPopupPanel(false)
