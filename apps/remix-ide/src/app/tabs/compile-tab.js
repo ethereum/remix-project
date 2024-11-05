@@ -99,13 +99,17 @@ class CompileTab extends CompilerApiMixin(ViewPlugin) { // implements ICompilerA
    * This function is used by remix-plugin compiler API.
    * @param {object} settings {evmVersion, optimize, runs, version, language}
    */
-  setCompilerConfig (settings) {
+  async setCompilerConfig (settings) {
     super.setCompilerConfig(settings)
     this.renderComponent()
     // @todo(#2875) should use loading compiler return value to check whether the compiler is loaded instead of "setInterval"
     const value = JSON.stringify(settings, null, '\t')
+    let pluginInfo
+    pluginInfo = await this.call('udapp', 'showPluginDetails')
 
-    this.call('notification', 'toast', compilerConfigChangedToastMsg(this.currentRequest.from, value))
+    if (this.currentRequest.from === 'udapp') {
+      this.call('notification', 'toast', compilerConfigChangedToastMsg((pluginInfo ? pluginInfo.displayName : this.currentRequest.from ), value))
+    }
   }
 
   compile (fileName) {
