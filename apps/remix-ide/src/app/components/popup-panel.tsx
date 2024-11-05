@@ -104,7 +104,7 @@ export class PopupPanel extends AbstractPanel {
         <div className='d-flex flex-column'>
           <RemixPluginPanel
             header={
-              <span id='popupPanelToggle' className='d-flex flex-row'>
+              <span data-id='popupPanelToggle' id='popupPanelToggle' className='d-flex flex-row'>
                 <button
                   className='btn fas fa-angle-double-down'
                   onClick={async () => {
