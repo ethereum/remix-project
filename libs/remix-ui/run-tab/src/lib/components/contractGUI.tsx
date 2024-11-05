@@ -172,114 +172,71 @@ export function ContractGUI(props: ContractGUIProps) {
     }
   }
 
+  const handleDeploy = async () => {
+    if (deployState.deploy) {
+      const proxyInitializeString = getMultiValsString(initializeFields.current)
+      props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
+    } else if (deployState.upgrade) {
+      if (proxyAddress === '') {
+        setProxyAddressError(intl.formatMessage({ id: 'udapp.proxyAddressError1' }))
+      } else {
+        const isValidProxyAddress = await props.isValidProxyAddress(proxyAddress)
+        if (isValidProxyAddress) {
+          setProxyAddressError('')
+          const upgradeReport: any = await props.isValidProxyUpgrade(proxyAddress)
+          if (upgradeReport.ok) {
+            !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+          } else {
+            if (upgradeReport.warning) {
+              props.modal(
+                'Proxy Upgrade Warning',
+                unavailableProxyLayoutMsg(),
+                'Proceed',
+                () => {
+                  !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+                },
+                'Cancel',
+                () => {},
+                'btn-warning',
+                'btn-secondary'
+              )
+            } else {
+              props.modal(
+                'Proxy Upgrade Error',
+                upgradeReportMsg(upgradeReport),
+                'Continue anyway ',
+                () => {
+                  !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
+                },
+                'Cancel',
+                () => {},
+                'btn-warning',
+                'btn-secondary'
+              )
+            }
+          }
+        } else {
+          setProxyAddressError(intl.formatMessage({ id: 'udapp.proxyAddressError2' }))
+        }
+      }
+    } else {
+      props.clickCallBack(props.funcABI.inputs, basicInput)
+    }
+  }
+
   const handleActionClick = async () => {
     props.getVersion()
 
     if (props.runTabState.selectExEnv.toLowerCase().startsWith('vm-') || props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider')) {
-      if (deployState.deploy) {
-        const proxyInitializeString = getMultiValsString(initializeFields.current)
-        props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
-      } else if (deployState.upgrade) {
-        if (proxyAddress === '') {
-          setProxyAddressError(intl.formatMessage({ id: 'udapp.proxyAddressError1' }))
-        } else {
-          const isValidProxyAddress = await props.isValidProxyAddress(proxyAddress)
-          if (isValidProxyAddress) {
-            setProxyAddressError('')
-            const upgradeReport: any = await props.isValidProxyUpgrade(proxyAddress)
-            if (upgradeReport.ok) {
-              !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
-            } else {
-              if (upgradeReport.warning) {
-                props.modal(
-                  'Proxy Upgrade Warning',
-                  unavailableProxyLayoutMsg(),
-                  'Proceed',
-                  () => {
-                    !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
-                  },
-                  'Cancel',
-                  () => {},
-                  'btn-warning',
-                  'btn-secondary'
-                )
-              } else {
-                props.modal(
-                  'Proxy Upgrade Error',
-                  upgradeReportMsg(upgradeReport),
-                  'Continue anyway ',
-                  () => {
-                    !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
-                  },
-                  'Cancel',
-                  () => {},
-                  'btn-warning',
-                  'btn-secondary'
-                )
-              }
-            }
-          } else {
-            setProxyAddressError(intl.formatMessage({ id: 'udapp.proxyAddressError2' }))
-          }
-        }
-      } else {
-        props.clickCallBack(props.funcABI.inputs, basicInput)
-      }
+      await handleDeploy()
     } else {
       const status = await props.getCompilerDetails()
-      console.log('exenv', props.runTabState.selectExEnv)
       if (status === 'Failed') {
         props.plugin.call('terminal', 'log', { type: 'log', value: 'Consider opening an issue to update our internal store with your desired chainId.' })
         return
       }
-      if (deployState.deploy) {
-        const proxyInitializeString = getMultiValsString(initializeFields.current)
-        props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
-      } else if (deployState.upgrade) {
-        if (proxyAddress === '') {
-          setProxyAddressError(intl.formatMessage({ id: 'udapp.proxyAddressError1' }))
-        } else {
-          const isValidProxyAddress = await props.isValidProxyAddress(proxyAddress)
-          if (isValidProxyAddress) {
-            setProxyAddressError('')
-            const upgradeReport: any = await props.isValidProxyUpgrade(proxyAddress)
-            if (upgradeReport.ok) {
-              !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
-            } else {
-              if (upgradeReport.warning) {
-                props.modal(
-                  'Proxy Upgrade Warning',
-                  unavailableProxyLayoutMsg(),
-                  'Proceed',
-                  () => {
-                    !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
-                  },
-                  'Cancel',
-                  () => {},
-                  'btn-warning',
-                  'btn-secondary'
-                )
-              } else {
-                props.modal(
-                  'Proxy Upgrade Error',
-                  upgradeReportMsg(upgradeReport),
-                  'Continue anyway ',
-                  () => {
-                    !proxyAddressError && props.clickCallBack(props.funcABI.inputs, proxyAddress, ['Upgrade with Proxy'])
-                  },
-                  'Cancel',
-                  () => {},
-                  'btn-warning',
-                  'btn-secondary'
-                )
-              }
-            }
-          } else {
-            setProxyAddressError(intl.formatMessage({ id: 'udapp.proxyAddressError2' }))
-          }
-        }
-      } else {
-        props.clickCallBack(props.funcABI.inputs, basicInput)
+      if (props.evmCheckComplete) {
+        await handleDeploy()
       }
     }
   }

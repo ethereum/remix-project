@@ -1,4 +1,4 @@
-import { Ref } from 'react'
+import { Dispatch, Ref } from 'react'
 import { CompilerAbstract } from '@remix-project/remix-solidity'
 import { ContractData, FuncABI, OverSizeLimit } from '@remix-project/core-plugin'
 import { RunTab } from './run-tab'
@@ -234,7 +234,8 @@ export type MainnetPrompt = (
 
 export interface ContractDropdownProps {
   getCompilerDetails: () => Promise<CheckStatus>
-  evmCheckComplete: boolean,
+  evmCheckComplete?: boolean,
+  setEvmCheckComplete?: Dispatch<React.SetStateAction<boolean>>,
   plugin: RunTab,
   runTabState: RunTabState
   selectedAccount: string,
@@ -385,7 +386,8 @@ export interface DeployOptions {
 
 export interface ContractGUIProps {
   getCompilerDetails: () => Promise<CheckStatus>
-  evmCheckComplete: boolean,
+  evmCheckComplete?: boolean,
+  setEvmCheckComplete?: React.Dispatch<React.SetStateAction<boolean>>,
   plugin: RunTab,
   runTabState: RunTabState
   title?: string,
