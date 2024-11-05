@@ -124,6 +124,7 @@ export function RunTabUI(props: RunTabProps) {
     await plugin.call('solidity', 'setCompilerConfig', compilerParams)
     const currentFile = await plugin.call('fileManager', 'getCurrentFile')
     await plugin.call('solidity', 'compile', currentFile)
+    setEvmCheckComplete(true)
   }
 
   const checkEvmChainCompatibility = async () => {
@@ -141,7 +142,6 @@ export function RunTabUI(props: RunTabProps) {
         plugin.call('terminal', 'log', { type: 'log', value: 'No compatible chain found for the selected EVM version.' })
         return 'Failed'
       } else {
-        setEvmCheckComplete(true)
         if (!IsCompatible) {
         //show modal
           plugin.call('notification', 'modal', {
@@ -400,6 +400,7 @@ export function RunTabUI(props: RunTabProps) {
             getCompilerVersion={getVersion}
             getCompilerDetails={getCompilerDetails}
             evmCheckComplete={evmCheckComplete}
+            setEvmCheckComplete={setEvmCheckComplete}
             plugin={plugin}
             runTabState={runTab}
           />

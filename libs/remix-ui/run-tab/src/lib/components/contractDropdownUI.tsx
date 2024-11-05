@@ -483,6 +483,7 @@ export function ContractDropdownUI(props: ContractDropdownProps) {
                 setSolcVersion={props.setCompilerVersion}
                 getVersion={props.getCompilerVersion}
                 evmCheckComplete={props.evmCheckComplete}
+                setEvmCheckComplete={props.setEvmCheckComplete}
                 plugin={props.plugin}
                 runTabState={props.runTabState}
               />
