@@ -95,7 +95,7 @@ export class PopupPanel extends AbstractPanel {
           height: '40rem',
           position: 'fixed',
           bottom: '2rem',
-          right: '3.5rem',
+          right: '1.5rem',
           zIndex: 200,
           boxShadow: "0 1px 7px var(--secondary)"
         }}
