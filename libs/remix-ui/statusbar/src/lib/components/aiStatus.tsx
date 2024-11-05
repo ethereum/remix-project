@@ -60,40 +60,40 @@ export default function AIStatus(props: AIStatusProps) {
           }
         `}</style>
         { !appContext.appState.showPopupPanel && <div className='d-flex flex-column' style={{
-                position: 'absolute',
-                bottom: '1.5rem',
-                right: '1.5rem',
-                color: 'var(--ai)',
-                alignItems: 'self-end',
-              }}>
-            <span className='p-1 bg-light text-info mr-4' style={{
-              boxShadow: "0 1px 7px var(--secondary)",
-              zIndex: '200',
-              marginBottom: '-7px'
-            }}>
+          position: 'absolute',
+          bottom: '1.5rem',
+          right: '1.5rem',
+          color: 'var(--ai)',
+          alignItems: 'self-end',
+        }}>
+          <span className='p-1 bg-light text-info mr-4' style={{
+            boxShadow: "0 1px 7px var(--secondary)",
+            zIndex: '200',
+            marginBottom: '-7px'
+          }}>
               👋 I'm here to help you!
-            </span>
-            <button
-              style={{
-                backgroundColor: 'var(--brand-dark-blue)',
-                height: '3rem',
-                width: '3rem',
-                borderRadius: '50%',
-                color: 'var(--ai)',
-                boxShadow: "0 1px 7px var(--secondary)"
-              }}
-              data-id="aiStatusButton"
-              className='aiButton d-flex align-items-center h3 p-1'
-              onClick={async () => {
-                appContext.appStateDispatch({
-                  type: appActionTypes.setShowPopupPanel,
-                  payload: !appContext.appState.showPopupPanel
-                })
-              }}
-            >
-              <img className="align-self-start" src="assets/img/aiLogoHead.webp" alt="" style={{height: "2rem"}}></img>
-            </button>
-          </div>
+          </span>
+          <button
+            style={{
+              backgroundColor: 'var(--brand-dark-blue)',
+              height: '3rem',
+              width: '3rem',
+              borderRadius: '50%',
+              color: 'var(--ai)',
+              boxShadow: "0 1px 7px var(--secondary)"
+            }}
+            data-id="aiStatusButton"
+            className='aiButton d-flex align-items-center h3 p-1'
+            onClick={async () => {
+              appContext.appStateDispatch({
+                type: appActionTypes.setShowPopupPanel,
+                payload: !appContext.appState.showPopupPanel
+              })
+            }}
+          >
+            <img className="align-self-start" src="assets/img/aiLogoHead.webp" alt="" style={{ height: "2rem" }}></img>
+          </button>
+        </div>
         }
       </div>
     </div>
