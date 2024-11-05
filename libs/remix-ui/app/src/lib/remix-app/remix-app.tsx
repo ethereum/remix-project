@@ -13,6 +13,7 @@ import { IntlProvider } from 'react-intl'
 import { UsageTypes } from './types'
 import { appReducer } from './reducer/app'
 import { appInitialState } from './state/app'
+import isElectron from 'is-electron'
 
 declare global {
   interface Window {
@@ -45,7 +46,7 @@ const RemixApp = (props: IRemixAppUi) => {
 
   const [appState, appStateDispatch] = useReducer(appReducer, {
     ...appInitialState,
-    showPopupPanel: !window.localStorage.getItem('did_show_popup_panel')
+    showPopupPanel: !window.localStorage.getItem('did_show_popup_panel') && !isElectron()
   })
 
   useEffect(() => {

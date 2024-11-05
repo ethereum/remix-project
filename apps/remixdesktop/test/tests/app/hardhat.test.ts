@@ -8,7 +8,6 @@ const dir = path.join('remix-desktop-test-' + Date.now().toString())
 
 const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        browser.hidePopupPanel()
         done()
     },
     setuphardhat: function (browser: NightwatchBrowser) {

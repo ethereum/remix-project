@@ -3,7 +3,7 @@ import { NightwatchBrowser } from "nightwatch"
 
 const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        browser.hideToolTips().hidePopupPanel()
+        browser.hideToolTips()
         done()
     },
 

@@ -3,7 +3,6 @@ import { NightwatchBrowser } from 'nightwatch'
 const gist_id  = '02a847917a6a7ecaf4a7e0d4e68715bf'
 const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        browser.hidePopupPanel()
         done()
     },
     'start gist': function (browser: NightwatchBrowser) {

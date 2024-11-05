@@ -4,7 +4,6 @@ import { NightwatchBrowser } from 'nightwatch'
 module.exports = {
     '@offline': true,
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        browser.hidePopupPanel()
         done()
     },
     'open default template': function (browser: NightwatchBrowser) {

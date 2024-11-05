@@ -5,7 +5,7 @@ let commitCount = 0
 let branchCount = 0
 const tests = {
     before: function (browser: NightwatchBrowser, done: VoidFunction) {
-        browser.hideToolTips().hidePopupPanel()
+        browser.hideToolTips()
         done()
     },
 
