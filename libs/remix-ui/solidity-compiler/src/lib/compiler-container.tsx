@@ -974,7 +974,7 @@ export const CompilerContainer = (props: CompilerContainerProps) => {
               >
                 {compileTabLogic.evmVersions.map((version, index) => (
                   <option key={index} data-id={state.evmVersion === version ? 'selected' : ''} value={version}>
-                    {version}
+                    {version === 'default' ? `default (${compileTabLogic.evmVersions[index + 1]})` : version}
                   </option>
                 ))}
               </select>
