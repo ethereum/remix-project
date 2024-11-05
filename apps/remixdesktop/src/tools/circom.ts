@@ -18,7 +18,7 @@ async function downloadFile(url: string, dest: string) {
     writer.on('finish', () => {
       if (process.platform !== 'win32') {
         // Sets permission to make the file executable
-        fs.chmod(dest, 0o755, (err) => {
+        fs.chmod(dest, 0o777, (err) => {
           if (err) {
             reject(`Error making file executable: ${err}`)
           } else {
@@ -38,7 +38,7 @@ export function getInstallationPath(version) {
     return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'circom-download', version, 'circom-windows-amd64.exe') : path.join(app.getAppPath(), 'circom-download', version, 'circom-windows-amd64.exe')
 
   case 'darwin':
-    return process.env.NODE_ENV === 'production' ? path.join(app.getPath('userData'), 'circom-download', version, 'circom-macos-amd64') : path.join(app.getAppPath(), 'circom-download', version, 'circom-macos-amd64')
+    return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'circom-download', version, 'circom-macos-amd64') : path.join(app.getAppPath(), 'circom-download', version, 'circom-macos-amd64')
 
   case 'linux':
     return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'circom-download', version, 'circom-linux-amd64') : path.join(app.getAppPath(), 'circom-download', version, 'circom-linux-amd64')
