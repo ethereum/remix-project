@@ -35,7 +35,8 @@ const profile = {
     'setEnvironmentMode',
     'clearAllInstances',
     'addInstance',
-    'resolveContractAndAddInstance'
+    'resolveContractAndAddInstance',
+    'showPluginDetails'
   ]
 }
 
@@ -85,6 +86,10 @@ export class RunTab extends ViewPlugin {
         networkEnvironment: this.REACT_API.networkName
       })
     })
+  }
+
+  showPluginDetails() {
+    return profile
   }
 
   async setEnvironmentMode(env) {
