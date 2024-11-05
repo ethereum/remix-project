@@ -79,7 +79,7 @@ const RemixApp = (props: IRemixAppUi) => {
   }, [])
 
   useEffect(() => {
-    if(!appState.showPopupPanel) {
+    if (!appState.showPopupPanel) {
       window.localStorage.setItem('did_show_popup_panel', 'true')
     }
   },[appState.showPopupPanel])
