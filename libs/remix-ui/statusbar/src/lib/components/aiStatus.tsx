@@ -62,13 +62,14 @@ export default function AIStatus(props: AIStatusProps) {
         { !appContext.appState.showPopupPanel && <div className='d-flex flex-column' style={{
           position: 'absolute',
           bottom: '1.5rem',
-          right: '1.5rem',
+          right: '0.5rem',
           color: 'var(--ai)',
           alignItems: 'self-end',
         }}>
-          <span className='p-1 bg-light text-info mr-4' style={{
+          <span className='p-1 alert alert-info' style={{
             boxShadow: "0 1px 7px var(--secondary)",
             zIndex: '200',
+            marginRight: '1.8rem',
             marginBottom: '-7px'
           }}>
               👋 I'm here to help you!
