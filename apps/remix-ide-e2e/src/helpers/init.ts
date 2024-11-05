@@ -15,7 +15,6 @@ export default function (browser: NightwatchBrowser, callback: VoidFunction, url
     .pause(5000)
     .switchBrowserTab(0)
     .hidePopupPanel()
-    .pause()
     .perform((done) => {
       if (!loadPlugin) return done()
       browser
