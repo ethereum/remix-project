@@ -18,7 +18,7 @@ async function downloadFile(url: string, dest: string) {
     writer.on('finish', () => {
       if (process.platform !== 'win32') {
         // Sets permission to make the file executable
-        fs.chmod(dest, 0o777, (err) => {
+        fs.chmod(dest, 0o775, (err) => {
           if (err) {
             reject(`Error making file executable: ${err}`)
           } else {
