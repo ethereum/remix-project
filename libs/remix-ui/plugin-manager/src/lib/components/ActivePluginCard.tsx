@@ -87,7 +87,7 @@ function ActivePluginCard({ profile, buttonText, deactivatePlugin }: PluginCardP
               >
                 <button
                   onClick={() => {
-                    _paq.push(['trackEvent', 'pluginManager', 'deactivateBtn', 'deactivate btn ' +  profile.name])
+                    _paq.push(['trackEvent', 'pluginManager', 'deactivateBtn', 'deactivate btn ' + profile.name])
                     deactivatePlugin(profile.name)
                   }}
                   className="btn btn-secondary btn-sm"

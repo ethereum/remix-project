@@ -105,7 +105,7 @@ function InactivePluginCard({ profile, buttonText, activatePlugin }: PluginCardP
                 {!canBeActivated ? <button className="btn btn-secondary btn-sm">{intl.formatMessage({ id: 'pluginManager.UnavailableOffline' })}</button> : (
                   <button
                     onClick={() => {
-                      _paq.push(['trackEvent', 'pluginManager', 'activateBtn', 'activate btn' +  profile.name])
+                      _paq.push(['trackEvent', 'pluginManager', 'activateBtn', 'activate btn' + profile.name])
                       activatePlugin(profile.name)
                     }}
                     className="btn btn-success btn-sm"
