@@ -66,7 +66,7 @@ export default function AIStatus(props: AIStatusProps) {
                 color: 'var(--ai)',
                 alignItems: 'self-end',
               }}>
-            <span className='p-1 bg-info mr-4' style={{
+            <span className='p-1 bg-light text-info mr-4' style={{
               boxShadow: "0 1px 7px var(--secondary)",
               zIndex: '200',
               marginBottom: '-7px'
