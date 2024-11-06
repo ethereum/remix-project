@@ -64,6 +64,7 @@ export function InstanceContainerUI(props: InstanceContainerProps) {
                 getVersion={props.getVersion}
                 getCompilerDetails={props.getCompilerDetails}
                 runTabState={props.runTabState}
+                evmCheckComplete={props.evmCheckComplete}
               />
             )
           })}
