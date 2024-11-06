@@ -1,7 +1,8 @@
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StatusBar } from 'apps/remix-ide/src/app/components/status-bar'
 import { CustomTooltip } from '@remix-ui/helper'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { appActionTypes, AppContext } from '@remix-ui/app'
 
 interface AIStatusProps {
   plugin: StatusBar
@@ -12,12 +13,15 @@ interface AIStatusProps {
 
 export default function AIStatus(props: AIStatusProps) {
   const [copilotActive, setCopilotActive] = useState(false)
+  const appContext = useContext(AppContext)
   useEffect(() => {
+
     const run = async () => {
       const aiActivate = await props.plugin.call('settings', 'get', 'settings/copilot/suggest/activate')
       setCopilotActive(aiActivate)
     }
     run()
+
   }, [])
 
   useEffect(() => {
@@ -29,15 +33,70 @@ export default function AIStatus(props: AIStatusProps) {
     }
     run()
   }, [props.plugin.isAiActive, props.plugin.isAiActive])
+
   return (
-    <CustomTooltip
-      tooltipText={copilotActive ? "RemixAI Copilot enabled" : "RemixAI Copilot disabled. To enable, open a .sol file and toggle the switch at the left-top of the editor"}
-    >
-      <div className="d-flex flex-row pr-2 text-white justify-content-center align-items-center">
-        <span className={copilotActive === false ? "small mx-1 text-white semi-bold" : "small mx-1 text-white semi-bold" }>
+    <div>
+      <CustomTooltip
+        tooltipText={copilotActive ? "Disable RemixAI Copilot" : "Enable RemixAI Copilot. Switch to .sol file to try it."}
+      >
+        <span
+          style={{ cursor: 'pointer' }}
+          className={"small mx-1 bg-info border-0 text-white " + (copilotActive === false ? "semi-bold" : "")}
+          onClick={async () => {
+            await props.plugin.call('settings' as any, 'updateCopilotChoice', !copilotActive)
+          }}
+        >
           {copilotActive === false ? 'RemixAI Copilot (disabled)' : 'RemixAI Copilot (enabled)'}
         </span>
+      </CustomTooltip>
+      <div className="d-flex text-sm flex-row pr-2 text-white justify-content-center align-items-center">
+        <style>{`
+          button.aiButton:focus {
+            outline: none;
+            box-shadow: none;
+          }
+          button.aiButton:hover {
+            border-color: var(--info)
+          }
+        `}</style>
+        { !appContext.appState.showPopupPanel && <div className='d-flex flex-column' style={{
+          position: 'absolute',
+          bottom: '1.5rem',
+          right: '0.5rem',
+          color: 'var(--ai)',
+          alignItems: 'self-end',
+        }}>
+          <span className='p-1 text-info alert alert-secondary' style={{
+            boxShadow: "0 1px 7px var(--secondary)",
+            zIndex: '200',
+            marginRight: '1.8rem',
+            marginBottom: '-7px'
+          }}>
+              👋 I'm here to help you!
+          </span>
+          <button
+            style={{
+              backgroundColor: 'var(--brand-dark-blue)',
+              height: '3rem',
+              width: '3rem',
+              borderRadius: '50%',
+              color: 'var(--ai)',
+              boxShadow: "0 1px 7px var(--secondary)"
+            }}
+            data-id="aiStatusButton"
+            className='aiButton d-flex align-items-center h3 p-1'
+            onClick={async () => {
+              appContext.appStateDispatch({
+                type: appActionTypes.setShowPopupPanel,
+                payload: !appContext.appState.showPopupPanel
+              })
+            }}
+          >
+            <img className="align-self-start" src="assets/img/aiLogoHead.webp" alt="" style={{ height: "2rem" }}></img>
+          </button>
+        </div>
+        }
       </div>
-    </CustomTooltip>
+    </div>
   )
 }

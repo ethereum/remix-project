@@ -17,8 +17,10 @@ import { IRemixAI } from "./plugins/remixai-api"
 import { IRemixAID } from "./plugins/remixAIDesktop-api"
 import { IMenuIconsApi } from "./plugins/menuicons-api"
 import { IDgitPlugin } from "./plugins/dgitplugin-api"
+import { IPopupPanelAPI } from "./plugins/popuppanel-api"
 
 export interface ICustomRemixApi extends IRemixApi {
+  popupPanel: IPopupPanelAPI
   dgitApi: IGitApi
   dgit: IDgitPlugin
   config: IConfigApi
@@ -38,5 +40,6 @@ export interface ICustomRemixApi extends IRemixApi {
   remixAI: IRemixAI,
   remixAID: IRemixAID
 }
+
 
 export declare type CustomRemixApi = Readonly<ICustomRemixApi>
