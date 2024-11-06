@@ -6,7 +6,7 @@
 // The user can select a model from the dropdown list
 // the panel controlling the model selection can be hidden or shown
 // Once selected, the model is either loaded from the local storage or downloaded
-// the remix ai desktop plugin provided the interface for storing the model in the local storage after downloading
+// the RemixAI desktop plugin provided the interface for storing the model in the local storage after downloading
 
 import React, { useState, useEffect } from 'react';
 import { Select, Input, Button, Icon } from 'antd';
