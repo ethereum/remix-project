@@ -250,7 +250,7 @@ export const TabsUI = (props: TabsUIProps) => {
               tooltipId="overlay-tooltip-explaination"
               tooltipText={
                 <span>
-                  {tabsState.currentExt === 'sol' ? (
+                  {((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) ? (
                     <FormattedMessage id="remixUiTabs.tooltipText5" />
                   ) : (
                     <FormattedMessage id="remixUiTabs.tooltipText4" />
@@ -262,11 +262,11 @@ export const TabsUI = (props: TabsUIProps) => {
                 data-id="explain-editor"
                 id='explain_btn'
                 className='btn text-ai pl-2 pr-0 py-0'
-                disabled={!(tabsState.currentExt === 'sol') || explaining}
+                disabled={!((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) || explaining}
                 onClick={async () => {
                   const path = active().substr(active().indexOf('/') + 1, active().length)
                   const content = await props.plugin.call('fileManager', 'readFile', path)
-                  if (tabsState.currentExt === 'sol') {
+                  if ((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) {
                     setExplaining(true)
                     // if plugin is pinned,
                     await props.plugin.call('popupPanel', 'showPopupPanel', true)
