@@ -473,7 +473,7 @@ export const RemixUiSettings = (props: RemixUiSettingsProps) => {
           <span
             data-id="remix_ai_docs"
             id="remix_ai_docs"
-            className="btn pl-2 pr-0 py-0 d-inline ai-docs"
+            className="btn pl-2 pr-0 py-0 d-inline ai-docs text-dark"
             role='link'
             onClick={()=>{
               window.open("https://remix-ide.readthedocs.io/en/latest/ai.html")
