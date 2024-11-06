@@ -50,8 +50,8 @@ function DeployPanel(): JSX.Element {
   return (
     <div className="col-3 d-inline-block">
       <h3 className="mb-3" data-id="quick-dapp-admin">QuickDapp <FormattedMessage id="quickDapp.admin" /></h3>
-      <Button
-        size="sm"
+      <button
+        className="btn btn-sm btn-primary"
         style={{ height: 32 }}
         data-id="resetFunctions"
         onClick={() => {
@@ -59,18 +59,17 @@ function DeployPanel(): JSX.Element {
         }}
       >
         <FormattedMessage id="quickDapp.resetFunctions" />
-      </Button>
-      <Button
-        size="sm"
+      </button>
+      <button
+        className="btn btn-sm btn-primary ml-3"
         style={{ height: 32, width: 100 }}
         data-id="deleteDapp"
-        className="ml-3"
         onClick={() => {
           emptyInstance();
         }}
       >
         <FormattedMessage id="quickDapp.deleteDapp" />
-      </Button>
+      </button>
       <Alert variant="info" className="my-2">
         <FormattedMessage
           id="quickDapp.text3"

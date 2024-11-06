@@ -356,7 +356,6 @@ export const initInstance = async ({
       natSpec,
       solcVersion: getVersion(solcVersion),
       ...lowLevel,
-      // logo: logo.data,
     },
   });
 };
