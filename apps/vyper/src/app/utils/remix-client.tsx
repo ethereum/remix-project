@@ -71,7 +71,11 @@ export class RemixClient extends PluginClient<any, CustomRemixApi> {
       const file = await this.client.call('fileManager', 'getCurrentFile')
       const content = await this.client.call('fileManager', 'readFile', file)
       const messageAI = `Vyper code: ${content}\n error message: ${message}\n explain why the error occurred and how to fix it.`
-      await this.client.call('remixAI' as any, 'chatPipe', 'error_explaining', messageAI)
+
+      await this.client.plugin.call('popupPanel', 'showPopupPanel', true)
+      setTimeout(async () => {
+        await this.client.plugin.call('remixAI' as any, 'chatPipe', 'error_explaining', messageAI)
+      }, 500)
     } catch (err) {
       console.error('unable to askGpt')
       console.error(err)
