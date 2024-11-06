@@ -5,6 +5,7 @@ import init from '../helpers/init'
 module.exports = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
+    browser.globals.asyncHookTimeout = 30000000; 
     init(browser, done)
   },
 

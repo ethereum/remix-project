@@ -52,5 +52,6 @@ export interface AppState {
     currentBranch: branch
     needsGitInit: boolean
     canUseGit: boolean
+    showPopupPanel: boolean
 }
 

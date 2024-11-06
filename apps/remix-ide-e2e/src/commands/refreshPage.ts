@@ -20,6 +20,9 @@ class RefreshPage extends EventEmitter {
                 .popover {
                   display:none !important;
                 }
+                #scamDetails {
+                  display:none !important;
+                }
                 `)
         }, [], done())
       })

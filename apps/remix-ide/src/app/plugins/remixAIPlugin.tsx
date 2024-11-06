@@ -5,6 +5,7 @@ import { RemixAITab, ChatApi } from '@remix-ui/remix-ai'
 import React, { useCallback } from 'react';
 import { ICompletions, IModel, RemoteInferencer, IRemoteModel, IParams, GenerationParams, CodeExplainAgent } from '@remix/remix-ai-core';
 import { CustomRemixApi } from '@remix-api'
+import { PluginViewWrapper } from '@remix-ui/helper'
 
 type chatRequestBufferT<T> = {
   [key in keyof T]: T[key]
@@ -16,12 +17,13 @@ const profile = {
   methods: ['code_generation', 'code_completion',
     "solidity_answer", "code_explaining",
     "code_insertion", "error_explaining",
-    "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
+    "initialize", 'chatPipe', 'ProcessChatRequestBuffer',
+    'isChatRequestPending'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
   description: 'RemixAI provides AI services to Remix IDE.',
   kind: '',
-  location: 'sidePanel',
+  location: 'popupPanel',
   documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
   version: packageJson.version,
   maintainedBy: 'Remix'
@@ -37,6 +39,7 @@ export class RemixAIPlugin extends ViewPlugin {
   chatRequestBuffer: chatRequestBufferT<any> = null
   agent: CodeExplainAgent
   useRemoteInferencer:boolean = false
+  dispatch: any
 
   constructor(inDesktop:boolean) {
     super(profile)
@@ -46,6 +49,7 @@ export class RemixAIPlugin extends ViewPlugin {
   }
 
   onActivation(): void {
+
     if (this.isOnDesktop) {
       console.log('Activating RemixAIPlugin on desktop')
       // this.on(this.remixDesktopPluginName, 'activated', () => {
@@ -201,13 +205,40 @@ export class RemixAIPlugin extends ViewPlugin {
       return ""
     }
   }
+
   isChatRequestPending(){
     return this.chatRequestBuffer != null
   }
 
+  setDispatch(dispatch) {
+    this.dispatch = dispatch
+    this.renderComponent()
+  }
+
+  renderComponent () {
+    this.dispatch({
+      plugin: this,
+    })
+  }
+
   render() {
+    return <div
+      id='ai-view'
+      className='h-100 d-flex'
+      data-id='aichat-view'
+      style={{
+        minHeight: 'max-content',
+        maxWidth: '25rem',
+        width: '24rem',
+      }}
+    >
+      <PluginViewWrapper plugin={this} />
+    </div>
+  }
+
+  updateComponent(state) {
     return (
-      <RemixAITab plugin={this}></RemixAITab>
+      <RemixAITab plugin={state.plugin}></RemixAITab>
     )
   }
 }

@@ -5,5 +5,6 @@ export const appInitialState: AppState = {
   gitHubUser: {} as GitHubUser,
   currentBranch: null,
   needsGitInit: true,
-  canUseGit: false
+  canUseGit: false,
+  showPopupPanel: false
 }
