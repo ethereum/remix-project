@@ -697,7 +697,7 @@ export const EditorUI = (props: EditorUIProps) => {
             </div>
           ),
         }
-
+        // get the file name
         const pastedCode = editor.getModel().getValueInRange(e.range)
         const pastedCodePrompt = intl.formatMessage({ id: 'editor.PastedCodeSafety' }, { content:pastedCode })
         props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
