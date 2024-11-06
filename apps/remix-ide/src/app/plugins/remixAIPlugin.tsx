@@ -13,7 +13,7 @@ type chatRequestBufferT<T> = {
 
 const profile = {
   name: 'remixAI',
-  displayName: 'Remix AI',
+  displayName: 'RemixAI',
   methods: ['code_generation', 'code_completion',
     "solidity_answer", "code_explaining",
     "code_insertion", "error_explaining",

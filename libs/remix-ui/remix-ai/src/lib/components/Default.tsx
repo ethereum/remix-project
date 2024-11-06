@@ -49,7 +49,7 @@ export const Default = (props) => {
   const initialMessages: ChatItem[] = [
     {
       role: 'assistant',
-      message: 'Welcome to Remix AI! How can I assist you today?'
+      message: 'Welcome to RemixAI! How can I assist you today?'
     }
   ];
   const adapter = useAsStreamAdapter(send, []);
@@ -60,7 +60,7 @@ export const Default = (props) => {
       adapter={ adapter }
       personaOptions={{
         assistant: {
-          name: "Remix AI",
+          name: "RemixAI",
           tagline: "Your Web3 AI Assistant",
           avatar: assistantAvatar
         },
