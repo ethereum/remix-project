@@ -12,6 +12,7 @@ import { SidePanel } from './app/components/side-panel'
 import { StatusBar } from './app/components/status-bar'
 import { HiddenPanel } from './app/components/hidden-panel'
 import { PinnedPanel } from './app/components/pinned-panel'
+import { PopupPanel } from './app/components/popup-panel'
 import { VerticalIcons } from './app/components/vertical-icons'
 import { LandingPage } from './app/ui/landing-page/landing-page'
 import { MainPanel } from './app/components/main-panel'
@@ -450,6 +451,7 @@ class AppComponent {
     this.sidePanel = new SidePanel()
     this.hiddenPanel = new HiddenPanel()
     this.pinnedPanel = new PinnedPanel()
+    this.popupPanel = new PopupPanel()
 
     const pluginManagerComponent = new PluginManagerComponent(appManager, this.engine)
     const filePanel = new FilePanel(appManager, contentImport)
@@ -457,7 +459,7 @@ class AppComponent {
     const landingPage = new LandingPage(appManager, this.menuicons, fileManager, filePanel, contentImport)
     this.settings = new SettingsTab(Registry.getInstance().get('config').api, editor, appManager)
 
-    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, this.statusBar, filePanel, pluginManagerComponent, this.settings, this.pinnedPanel])
+    this.engine.register([this.menuicons, landingPage, this.hiddenPanel, this.sidePanel, this.statusBar, filePanel, pluginManagerComponent, this.settings, this.pinnedPanel, this.popupPanel])
 
     // CONTENT VIEWS & DEFAULT PLUGINS
     const openZeppelinProxy = new OpenZeppelinProxy(blockchain)
@@ -540,6 +542,7 @@ class AppComponent {
     await this.appManager.activatePlugin(['statusBar'])
     await this.appManager.activatePlugin(['sidePanel']) // activating  host plugin separately
     await this.appManager.activatePlugin(['pinnedPanel'])
+    await this.appManager.activatePlugin(['popupPanel'])
     await this.appManager.activatePlugin(['home'])
     await this.appManager.activatePlugin(['settings', 'config'])
     await this.appManager.activatePlugin([

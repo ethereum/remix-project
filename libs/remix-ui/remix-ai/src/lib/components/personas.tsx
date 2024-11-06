@@ -1,8 +1,8 @@
 import { PersonaOptions, UserPersona } from '@nlux/react';
 
 export const user: UserPersona = {
-  name: 'Pipper',
+  name: 'Remi',
   avatar: 'assets/img/remix-logo-blue.png'
 };
 
-export const assistantAvatar = 'assets/img/remi-prof.webp';
+export const assistantAvatar = 'assets/img/aiLogo.svg'
