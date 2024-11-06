@@ -192,7 +192,7 @@ module.exports = {
       })
   },
 
-  'Should select deploy with proxy option from URL params #group2': function (browser: NightwatchBrowser) {
+  'Should select deploy with proxy option from URL params #flaky #group2': function (browser: NightwatchBrowser) {
     browser
       .url('http://127.0.0.1:8080/#optimize=false&runs=200&deployProxy=true')
       .refreshPage()
