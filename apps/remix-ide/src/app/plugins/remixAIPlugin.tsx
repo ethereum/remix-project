@@ -121,7 +121,7 @@ export class RemixAIPlugin extends ViewPlugin {
       this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
       return
     }
-    if (prompt.trimStart().startsWith('gpt') || prompt.trimStart().startsWith('sol-gpt')) {
+    if (prompt.trimStart().startsWith('gpt') || prompt.trimStart().startsWith('sol-gpt')) {
       params.terminal_output = true
       params.stream_result = false
       params.return_stream_response = false
