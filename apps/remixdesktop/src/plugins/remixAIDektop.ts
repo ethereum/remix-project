@@ -50,7 +50,7 @@ class RemixAIDesktopPluginClient extends ElectronBasePluginClient {
   }
 
   async enable (){
-    console.log('Remix AI desktop plugin enabled')
+    console.log('RemixAI desktop plugin enabled')
     this.emit('enabled')
   }
 
