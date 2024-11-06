@@ -32,7 +32,7 @@ export function ContractGUI(props: ContractGUIProps) {
   const multiFields = useRef<Array<HTMLInputElement | null>>([])
   const initializeFields = useRef<Array<HTMLInputElement | null>>([])
   const basicInputRef = useRef<HTMLInputElement>()
-  const [checkComplete, setCheckComplete] = useState<boolean>(props.evmCheckComplete)
+
   const intl = useIntl()
   useEffect(() => {
     if (props.deployOption && Array.isArray(props.deployOption)) {
@@ -225,12 +225,9 @@ export function ContractGUI(props: ContractGUIProps) {
     }
   }
 
-  useEffect(() => {
-    setCheckComplete(props.evmCheckComplete)
-  }, [props.evmCheckComplete])
-
   const handleActionClick = async () => {
     props.getVersion()
+    const compilerState = await props.plugin.call('solidity', 'getCompilerState')
 
     if (props.runTabState.selectExEnv.toLowerCase().startsWith('vm-') || props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider')) {
       await handleDeploy()
@@ -240,7 +237,9 @@ export function ContractGUI(props: ContractGUIProps) {
         props.plugin.call('terminal', 'log', { type: 'log', value: 'Consider opening an issue to update our internal store with your desired chainId.' })
         return
       }
-      if (status === 'Passed' && checkComplete) {
+      const tabState = props.runTabState
+      const IsCompatible = isChainCompatible(compilerState.evmVersion ?? 'cancun', parseInt(tabState.chainId))
+      if (status === 'Passed' && IsCompatible) {
         await handleDeploy()
       }
     }
