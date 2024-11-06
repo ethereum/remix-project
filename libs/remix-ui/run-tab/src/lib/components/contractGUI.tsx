@@ -233,8 +233,6 @@ export function ContractGUI(props: ContractGUIProps) {
     props.getVersion()
 
     if (props.runTabState.selectExEnv.toLowerCase().startsWith('vm-') || props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider')) {
-      const tabState = props.runTabState
-      console.log('checkComplete and status', { tabState })
       await handleDeploy()
     } else {
       const status = await props.getCompilerDetails()
