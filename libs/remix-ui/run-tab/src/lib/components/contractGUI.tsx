@@ -6,6 +6,7 @@ import { ContractGUIProps } from '../types'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { CustomTooltip, ProxyAddressToggle, ProxyDropdownMenu, shortenDate, shortenProxyAddress, unavailableProxyLayoutMsg, upgradeReportMsg } from '@remix-ui/helper'
 import { Dropdown } from 'react-bootstrap'
+import { getCompatibleChains, isChainCompatible, isChainCompatibleWithAnyFork } from '../actions/evmmap'
 
 const txFormat = remixLib.execution.txFormat
 const txHelper = remixLib.execution.txHelper
@@ -171,8 +172,7 @@ export function ContractGUI(props: ContractGUIProps) {
     }
   }
 
-  const handleActionClick = async () => {
-    props.getVersion()
+  const handleDeploy = async () => {
     if (deployState.deploy) {
       const proxyInitializeString = getMultiValsString(initializeFields.current)
       props.clickCallBack(props.initializerOptions.inputs.inputs, proxyInitializeString, ['Deploy with Proxy'])
@@ -221,6 +221,23 @@ export function ContractGUI(props: ContractGUIProps) {
       }
     } else {
       props.clickCallBack(props.funcABI.inputs, basicInput)
+    }
+  }
+
+  const handleActionClick = async () => {
+    props.getVersion()
+
+    if (props.runTabState.selectExEnv.toLowerCase().startsWith('vm-') || props.runTabState.selectExEnv.toLowerCase().includes('basic-http-provider')) {
+      await handleDeploy()
+    } else {
+      const status = await props.getCompilerDetails()
+      if (status === 'Failed') {
+        props.plugin.call('terminal', 'log', { type: 'log', value: 'Consider opening an issue to update our internal store with your desired chainId.' })
+        return
+      }
+      if (props.evmCheckComplete) {
+        await handleDeploy()
+      }
     }
   }
 
