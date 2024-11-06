@@ -660,7 +660,7 @@ export const EditorUI = (props: EditorUIProps) => {
       }
     })
 
-    editor.onDidPaste((e) => {
+    editor.onDidPaste(async (e) => {
       if (!pasteCodeRef.current && e && e.range && e.range.startLineNumber >= 0 && e.range.endLineNumber >= 0 && e.range.endLineNumber - e.range.startLineNumber > 10) {
         const modalContent: AlertModal = {
           id: 'newCodePasted',
@@ -697,9 +697,15 @@ export const EditorUI = (props: EditorUIProps) => {
             </div>
           ),
         }
+
+        const pastedCode = editor.getModel().getValueInRange(e.range)
+        const pastedCodePrompt = intl.formatMessage({ id: 'editor.PastedCodeSafety' }, { content:pastedCode })
+        props.plugin.call('remixAI', 'chatPipe', 'vulnerability_check', pastedCodePrompt)
         props.plugin.call('notification', 'alert', modalContent)
-        pasteCodeRef.current = true
+        // pasteCodeRef.current = true
         _paq.push(['trackEvent', 'editor', 'onDidPaste', 'more_than_10_lines'])
+        // const result = await props.plugin.call('remixAI', 'vulnerability_check', pastedCodePrompt)
+        // console.log(JSON.parse(result))
       }
     })
 

@@ -15,7 +15,7 @@ const profile = {
   displayName: 'Remix AI',
   methods: ['code_generation', 'code_completion',
     "solidity_answer", "code_explaining",
-    "code_insertion", "error_explaining",
+    "code_insertion", "error_explaining", "vulnerability_check",
     "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
   events: [],
   icon: 'assets/img/remix-logo-blue.png',
@@ -162,6 +162,23 @@ export class RemixAIPlugin extends ViewPlugin {
     return result
   }
 
+  async vulnerability_check(prompt: string, params: IParams=GenerationParams): Promise<any> {
+    if (this.isInferencing) {
+      this.call('terminal', 'log', { type: 'aitypewriterwarning', value: "RemixAI is already busy!" })
+      return
+    }
+
+    let result
+    if (this.isOnDesktop && !this.useRemoteInferencer) {
+      result = await this.call(this.remixDesktopPluginName, 'vulnerability_check', prompt)
+
+    } else {
+      result = await this.remoteInferencer.vulnerability_check(prompt)
+    }
+    if (result && params.terminal_output) this.call('terminal', 'log', { type: 'aitypewriterwarning', value: result })
+    return result
+  }
+
   async code_insertion(msg_pfx: string, msg_sfx: string): Promise<any> {
     if (this.isOnDesktop && !this.useRemoteInferencer) {
       return await this.call(this.remixDesktopPluginName, 'code_insertion', msg_pfx, msg_sfx)
@@ -182,11 +199,12 @@ export class RemixAIPlugin extends ViewPlugin {
         if (fn === "code_explaining") ChatApi.composer.send("Explain the current code")
         else if (fn === "error_explaining") ChatApi.composer.send("Explain the error")
         else if (fn === "solidity_answer") ChatApi.composer.send("Answer the following question")
-        else console.log("chatRequestBuffer is not empty. First process the last request.")
+        else if (fn === "vulnerability_check") ChatApi.composer.send("Is there any vulnerability in the pasted code?")
+        else console.log("chatRequestBuffer function name not recognized.")
       }
     }
     else {
-      console.log("chatRequestBuffer is not empty. First process the last request.")
+      console.log("chatRequestBuffer is not empty. First process the last request.", this.chatRequestBuffer)
     }
   }
 
