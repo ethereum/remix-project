@@ -27,7 +27,7 @@ export class RemoteInferencer implements ICompletions {
 
     try {
       const options = { headers: { 'Content-Type': 'application/json', } }
-      const result = await axios.post(`${requestURL}`, payload, options)
+      const result = await axios.post(requestURL, payload, options)
 
       switch (rType) {
       case AIRequestType.COMPLETION:
@@ -56,7 +56,7 @@ export class RemoteInferencer implements ICompletions {
     }
   }
 
-  private async _streamInferenceRequest(endpoint, payload, rType:AIRequestType){
+  private async _streamInferenceRequest(payload, rType:AIRequestType){
     let resultText = ""
     try {
       this.event.emit('onInference')
@@ -122,26 +122,32 @@ export class RemoteInferencer implements ICompletions {
 
   async code_generation(prompt, options:IParams=GenerationParams): Promise<any> {
     const payload = { prompt, "endpoint":"code_completion", ...options }
-    if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.COMPLETION)
+    if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.COMPLETION)
     else return this._makeRequest(payload, AIRequestType.COMPLETION)
   }
 
   async solidity_answer(prompt, options:IParams=GenerationParams): Promise<any> {
     const main_prompt = buildSolgptPromt(prompt, this.model_op)
     const payload = { 'prompt': main_prompt, "endpoint":"solidity_answer", ...options }
-    if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.GENERAL)
+    if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }
 
   async code_explaining(prompt, context:string="", options:IParams=GenerationParams): Promise<any> {
     const payload = { prompt, "endpoint":"code_explaining", context, ...options }
-    if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.GENERAL)
+    if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }
 
   async error_explaining(prompt, options:IParams=GenerationParams): Promise<any> {
     const payload = { prompt, "endpoint":"error_explaining", ...options }
-    if (options.stream_result) return this._streamInferenceRequest(payload.endpoint, payload, AIRequestType.GENERAL)
+    if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
+    else return this._makeRequest(payload, AIRequestType.GENERAL)
+  }
+
+  async vulnerability_check(prompt, options:IParams=GenerationParams): Promise<any> {
+    const payload = { prompt, "endpoint":"vulnerability_check", ...options }
+    if (options.stream_result) return this._streamInferenceRequest(payload, AIRequestType.GENERAL)
     else return this._makeRequest(payload, AIRequestType.GENERAL)
   }
 }

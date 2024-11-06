@@ -250,7 +250,7 @@ export const TabsUI = (props: TabsUIProps) => {
               tooltipId="overlay-tooltip-explaination"
               tooltipText={
                 <span>
-                  {tabsState.currentExt === 'sol' ? (
+                  {((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) ? (
                     <FormattedMessage id="remixUiTabs.tooltipText5" />
                   ) : (
                     <FormattedMessage id="remixUiTabs.tooltipText4" />
@@ -262,38 +262,17 @@ export const TabsUI = (props: TabsUIProps) => {
                 data-id="explain-editor"
                 id='explain_btn'
                 className='btn text-ai pl-2 pr-0 py-0'
-                disabled={!(tabsState.currentExt === 'sol') || explaining}
+                disabled={!((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) || explaining}
                 onClick={async () => {
                   const path = active().substr(active().indexOf('/') + 1, active().length)
                   const content = await props.plugin.call('fileManager', 'readFile', path)
-                  if (tabsState.currentExt === 'sol') {
+                  if ((tabsState.currentExt === 'sol') || (tabsState.currentExt === 'vy') || (tabsState.currentExt === 'circom')) {
                     setExplaining(true)
                     // if plugin is pinned,
-                    if (await props.plugin.call('pinnedPanel', 'currentFocus') === 'remixAI'){
+                    await props.plugin.call('popupPanel', 'showPopupPanel', true)
+                    setTimeout(async () => {
                       await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-                    }
-                    else {
-                      const profile = {
-                        name: 'remixAI',
-                        displayName: 'Remix AI',
-                        methods: ['code_generation', 'code_completion',
-                          "solidity_answer", "code_explaining",
-                          "code_insertion", "error_explaining",
-                          "initialize", 'chatPipe', 'ProcessChatRequestBuffer', 'isChatRequestPending'],
-                        events: [],
-                        icon: 'assets/img/remix-logo-blue.png',
-                        description: 'RemixAI provides AI services to Remix IDE.',
-                        kind: '',
-                        location: 'sidePanel',
-                        documentation: 'https://remix-ide.readthedocs.io/en/latest/remixai.html',
-                        maintainedBy: 'Remix'
-                      }
-                      // await props.plugin.call('sidePanel', 'focus', 'remixAI')
-                      await props.plugin.call('sidePanel', 'pinView', profile)
-                      setTimeout(async () => {
-                        await props.plugin.call('remixAI', 'chatPipe', 'code_explaining', content)
-                      }, 500)
-                    }
+                    }, 500)
                     setExplaining(false)
                     _paq.push(['trackEvent', 'ai', 'remixAI', 'explain_file'])
                   }

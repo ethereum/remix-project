@@ -1,15 +1,11 @@
 {
-    "version": "v0.56.0",
+    "version": "v0.57.0",
     "title": "RELEASE HIGHLIGHTS",
-    "highlight1": "Added new 'Contract Verification' plugin to verify contract on multiple platforms",
-    "highlight2": "Added new 'Remix Guide' plugin to learn using Remix IDE using videos",
-    "highlight3": "Added support for message signing using EIP712",
+    "highlight1": "Introduced RemixAI Web3 AI Assistant",
+    "highlight2": "Introduced Script Configuration plugin to configure scripts usage",
+    "highlight3": "Added Routescan support in Contract Verification plugin",
     "highlight4": "",
     "more": "Read More",
-    "moreLink": "https://medium.com/remix-ide/remix-release-v0-56-0-574a5774f94c?source=friends_link&sk=af46111d5a9976306e5770ccc468ae28"
+    "moreLink": "https://medium.com/remix-ide/remix-release-v0-57-0-3c550f26f2d0?source=friends_link&sk=d713cd9ea5840454d8e8c03dbfb86f93"
   }
-  
-
-  
-
   
