@@ -233,8 +233,8 @@ export function ContractGUI(props: ContractGUIProps) {
       await handleDeploy()
     } else {
       const status = await props.getCompilerDetails()
-      if (status === 'Failed') {
-        props.plugin.call('terminal', 'log', { type: 'log', value: 'Consider opening an issue to update our internal store with your desired chainId.' })
+      if (status === 'Not Found') {
+        await handleDeploy()
         return
       }
       const tabState = props.runTabState
