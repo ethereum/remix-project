@@ -236,7 +236,7 @@ module.exports = {
         })
   },
 
-  'Should switch to the mainnet VM fork and execute a tx to query ENS #group5': function (browser: NightwatchBrowser) {
+  'Should switch to the mainnet VM fork and execute a tx to query ENS #group5 #flaky': function (browser: NightwatchBrowser) {
     let addressRef
     browser
       .addFile('mainnet_ens.sol', sources[7]['mainnet_ens.sol'])
