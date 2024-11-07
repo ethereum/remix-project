@@ -829,7 +829,6 @@ export const EditorUI = (props: EditorUIProps) => {
         const file = await props.plugin.call('fileManager', 'getCurrentFile')
         const context = await props.plugin.call('fileManager', 'readFile', file)
         const message = intl.formatMessage({ id: 'editor.explainFunctionByAI' }, { content:context, currentFunction: currentFunction.current })
-        
         await props.plugin.call('popupPanel', 'showPopupPanel', true)
         setTimeout(async () => {
           await props.plugin.call('remixAI' as any, 'chatPipe', 'code_explaining', message, context)
