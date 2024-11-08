@@ -66,7 +66,11 @@ export function getLogInputSignalsPath() {
   console.log('exe: ', app.getPath('exe'))
   switch (process.platform) {
   case 'win32':
-    return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
+    // eslint-disable-next-line no-case-declarations
+    const programDir = app.getPath('exe').split('\\').slice(0, -1).join('\\')
+
+    console.log('programDir: ', programDir)
+    return process.env.NODE_ENV === 'production' ? path.join(programDir, 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
 
   case 'darwin':
     return path.join(app.getAppPath(), 'log_input_signals.txt')
