@@ -69,7 +69,6 @@ export function getLogInputSignalsPath() {
     // eslint-disable-next-line no-case-declarations
     const programDir = app.getPath('exe').split('\\').slice(0, -1).join('\\')
 
-    console.log('programDir: ', programDir)
     return process.env.NODE_ENV === 'production' ? path.join(programDir, 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
 
   case 'darwin':
