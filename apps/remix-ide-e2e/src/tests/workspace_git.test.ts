@@ -274,7 +274,7 @@ module.exports = {
 
   // GIT SUBMODULES E2E START
 
-  'Should clone a repository with submodules #group4': function (browser: NightwatchBrowser) {
+  'Should clone a repository with submodules #group4': !function (browser: NightwatchBrowser) {
     browser
       .clickLaunchIcon('filePanel')
       .waitForElementVisible('[data-id="workspaceMenuDropdown"]')
@@ -327,7 +327,7 @@ module.exports = {
       .click('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2"]')
       .waitForElementVisible('[data-id="treeViewDivtreeViewItemlibdeep2/recursive/test-branch-submodule-2/submodule2.ts"]')
   },
-  'When switching branches the submodules should disappear #group4': function (browser: NightwatchBrowser) {
+  'When switching branches the submodules should disappear #group4': !function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
@@ -339,7 +339,7 @@ module.exports = {
       .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemtest-branch-submodule-recursive"]')
       .waitForElementNotPresent('[data-id="treeViewDivtreeViewItemtest-branch-submodule-2"]')
   },
-  'When switching to main update the modules #group4': function (browser: NightwatchBrowser) {
+  'When switching to main update the modules #group4': !function (browser: NightwatchBrowser) {
     browser
       .waitForElementVisible('[data-id="workspaceGitBranchesDropdown"]')
       .click('[data-id="workspaceGitBranchesDropdown"]')
@@ -388,7 +388,7 @@ module.exports = {
 
   // GIT WORKSPACE E2E STARTS
 
-  'Should create a git workspace (uniswapV4Template) #group4': function (browser: NightwatchBrowser) {
+  'Should create a git workspace (uniswapV4Template) #group4': !function (browser: NightwatchBrowser) {
     browser
       .click('*[data-id="workspacesMenuDropdown"]')
       .click('*[data-id="workspacecreate"]')

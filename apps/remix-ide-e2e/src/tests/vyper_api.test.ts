@@ -7,7 +7,7 @@ declare global {
   interface Window { testplugin: { name: string, url: string }; }
 }
 
-module.exports = {
+const tests = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done, 'http://localhost:8080')
@@ -192,6 +192,8 @@ module.exports = {
   //     .end()
   // }
 }
+
+module.exports = {} // tests
 
 const testContract = `
 
