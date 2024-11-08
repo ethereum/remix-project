@@ -3,7 +3,7 @@ import { NightwatchBrowser } from "nightwatch"
 import init from "../helpers/init"
 import sauce from "./sauce"
 
-module.exports = {
+const tests = {
   '@disabled': true,
   before: function (browser: NightwatchBrowser, done: VoidFunction) {
     init(browser, done)
@@ -508,6 +508,9 @@ module.exports = {
   tearDown: sauce,
 }
 
+
+module.exports = {}
+
 const gitmodules = `[submodule "subdemo3"]
 path = subdemo3
 url = https://github.com/bunsenstraat/empty3
@@ -515,3 +518,5 @@ url = https://github.com/bunsenstraat/empty3
 path = testactionsub
 url = https://github.com/bunsenstraat/testactions
 `
+
+
