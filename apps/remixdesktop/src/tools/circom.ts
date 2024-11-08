@@ -59,6 +59,11 @@ export function getInstallationUrl(version) {
 }
 
 export function getLogInputSignalsPath() {
+  console.log('home: ', app.getPath('home'))
+  console.log('appData: ', app.getPath('appData'))
+  console.log('userData: ', app.getPath('userData'))
+  console.log('temp: ', app.getPath('temp'))
+  console.log('exe: ', app.getPath('exe'))
   switch (process.platform) {
   case 'win32':
     return process.env.NODE_ENV === 'production' ? path.join(app.getPath('temp'), 'log_input_signals.txt') : path.join(app.getAppPath(), 'log_input_signals.txt')
