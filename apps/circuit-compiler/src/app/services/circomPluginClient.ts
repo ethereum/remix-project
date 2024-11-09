@@ -14,7 +14,7 @@ import isElectron from 'is-electron'
 export class CircomPluginClient extends PluginClient {
   public internalEvents: EventManager
   private _compilationConfig: CompilationConfig = {
-    version: isElectron() ? "latest" : "2.1.8",
+    version: compiler_list.latest,
     prime: "bn128"
   }
   private lastCompiledCircuitPath: string = ''
