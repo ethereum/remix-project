@@ -13,8 +13,8 @@ const VersionList = isElectron() ? { ...compiler_list.wasm_builds,
 } : compiler_list.wasm_builds
 
 export const appInitialState: AppState = {
-  version: isElectron() ? "latest" : compiler_list.latest,
-  versionList: VersionList,
+  version: compiler_list.latest,
+  versionList: compiler_list.wasm_builds,
   versionDownloadList: [],
   filePath: "",
   filePathToId: {},

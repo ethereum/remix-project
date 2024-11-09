@@ -64,6 +64,7 @@ export function getLogInputSignalsPath() {
   console.log('userData: ', app.getPath('userData'))
   console.log('temp: ', app.getPath('temp'))
   console.log('exe: ', app.getPath('exe'))
+  console.log('getAppPath: ', app.getAppPath())
   switch (process.platform) {
   case 'win32':
     // eslint-disable-next-line no-case-declarations
